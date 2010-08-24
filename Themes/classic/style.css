@@ -1,0 +1,509 @@
+/* Normal, standard links. */
+a:link, a:visited
+{
+	color: #005177;
+	background-color: transparent;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #cc3333;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/* Navigation links - for the link tree. */
+.nav, .nav:link, .nav:visited
+{
+	color: #000;
+	background-color: transparent;
+	text-decoration: none;
+}
+a.nav:hover
+{
+	font-weight: bold;
+	color: #cc3333;
+	background-color: transparent;
+	text-decoration: underline;
+}
+
+/* Tables should show empty cells too. */
+table
+{
+	empty-cells: show;
+}
+
+/* By default (td, body..) use Verdana in #000. */
+body, td, th
+{
+	color: #000;
+	font-size: small;
+	font-family: verdana, sans-serif;
+}
+
+/* Input boxes - just a bit smaller than normal so they align well. */
+input, textarea
+{
+	font-size: 9pt;
+	color: #000;
+	font-family: verdana, sans-serif;
+	background-color: #afc6db;
+}
+
+/* Checkboxes/radios shouldn't have a background color. */
+input.check, input.input_radio, input.input_check
+{
+	background-color: transparent;
+}
+
+/* Selects are a bit smaller, because it makes them look even better 8). */
+select
+{
+	font-size: 8pt;
+	font-weight: normal;
+	color: #000;
+	font-family: verdana, sans-serif;
+	background-color: #afc6db;
+}
+
+/* Define strong as bold, and em as italics */
+strong
+{
+	font-weight: bold;
+}
+
+em
+{
+	font-style: italic;
+}
+
+/* Standard horizontal rule.. */
+hr
+{
+	color: #6394bd;
+	background-color: transparent;
+}
+/* A more colorful hr.. */
+.hrcolor
+{
+	height: 1px;
+	border: 0;
+	color: #6394bd;
+	background-color: #6394bd;
+}
+
+/* A quote, perhaps from another post. */
+blockquote
+{
+	color: #000;
+	background-color: #dee7ef;
+	border: 1px solid #000;
+	margin: 1px;
+	padding: 1px;
+	font-size: x-small;
+}
+
+/* A code block - maybe even PHP ;). */
+code
+{
+	color: #000;
+	background-color: #cccccc;
+	display: block;
+	border: 1px solid #000;
+	margin: 1px auto 1px auto;
+	padding: 1px;
+	font-size: x-small;
+	line-height: 1.3em;
+	overflow: auto;
+	width: 99%;
+	white-space: nowrap;
+}
+
+/* The "Quote:" and "Code:" header parts... */
+.quoteheader, .codeheader
+{
+	color: #000;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: bold;
+	font-size: x-small;
+	line-height: 1.2em;
+}
+
+/* For links to change the code stuff... */
+.codeoperation
+{
+	font-weight: normal;
+}
+
+/* Generally, those [?] icons. */
+.help
+{
+	cursor: help;
+	background-color: transparent;
+}
+
+/* /me uses this a lot. */
+.meaction
+{
+	color: red;
+	background-color: transparent;
+}
+
+/* The main post box - this makes it as wide as possible. */
+.editor
+{
+	width: 100%;
+}
+
+/* Highlighted text - such as search results. */
+.highlight
+{
+	background-color: #ff0;
+	font-weight: bold;
+	color: #000;
+}
+
+/* A more discreet highlight color, for selected membergroups etc. */
+.highlight2
+{
+	background-color: #b3f4b0;
+	color: #000;
+}
+
+/* Alternating backgrounds... */
+.windowbg
+{
+	color: #000;
+	background-color: #afc6db;
+}
+.windowbg2
+{
+	color: #000;
+	background-color: #f8f8f8;
+}
+
+/* Color for background of posts requiring approval */
+.approvebg
+{
+	color: #000;
+	background-color: #f6e0d4;
+}
+/* Color for background of *topics* requiring approval */
+.approvetbg
+{
+	color: #000;
+	background-color: #e4a17c;
+}
+
+/* Titles - such as table headers. */
+.titlebg, tr.titlebg th, tr.titlebg td, .titlebg a:link, .titlebg a:visited, .titlebg2, tr.titlebg2 th, tr.titlebg2 td, .titlebg2 a:link, .titlebg2 a:visited
+{
+	font-weight: bold;
+	font-style: normal;
+	color: #fff;
+	background-color: #6e94b7;
+}
+.titlebg a:hover, .titlebg2 a:hover
+{
+	color: #fff;
+	text-decoration: underline;
+}
+
+/* The category headers, page indexes, and such things. */
+.catbg, .catbg3
+{
+	font-weight: bold;
+	background-color: #afc6db;
+	background-image: url(images/catbg.gif);
+	color: #000;
+}
+
+/* The borders around things. */
+.bordercolor
+{
+	background-color: #6394bd;
+}
+.tborder
+{
+	border: 1px solid #6394bd;
+}
+.floatright
+{
+	float: right;
+}
+.floatleft
+{
+	float: left;
+}
+/* Default font sizes. */
+.smalltext
+{
+	font-size: x-small;
+}
+.normaltext
+{
+	font-size: small;
+}
+.largetext
+{
+	font-size: large;
+}
+.centertext
+{
+	margin: 0 auto;
+	text-align: center;
+}
+.righttext
+{
+	margin-left: auto;
+	margin-right: 0;
+	text-align: right;
+}
+.lefttext
+{
+	margin-left: 0;
+	margin-right: auto;
+	text-align: left;
+}
+/* No image should have a border when linked */
+a img{
+	border: 0;
+}
+
+/* Calendar colors for birthdays, events and holidays */
+.birthday
+{
+	color: #920ac4;
+}
+
+.event
+{
+	color: #078907;
+}
+
+.holiday
+{
+	color: #000080;
+}
+
+/* Colors for warnings */
+.warn_mute
+{
+	color: red;
+}
+
+.warn_moderate
+{
+	color: #ffa500;
+}
+
+.warn_watch
+{
+	color: green;
+}
+
+/* The AJAX notifier */
+#ajax_in_progress
+{
+	background: #32cd32;
+	color: #fff;
+	text-align: center;
+	font-weight: bold;
+	font-size: 18pt;
+	padding: 3px;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
+/* Styling for BBC tags */
+.bbc_color a
+{
+	color: inherit;
+}
+
+.bbc_img
+{
+	border: 0;
+}
+
+.bbc_list
+{
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.bbc_size
+{
+	line-height: 1.3em;
+}
+
+.bbc_table
+{
+	font: inherit;
+	color: inherit;
+}
+
+.bbc_table td
+{
+	font: inherit;
+	color: inherit;
+	vertical-align: top;
+}
+
+.bbc_u
+{
+	text-decoration: underline;
+}
+/* styling the admin section */
+ol.search_results
+{
+	margin-top: 0;
+	padding-top: 0;
+}
+ol.search_results li
+{
+	padding-top: 5px;
+}
+
+.button_strip_submit
+{
+	background: transparent;
+	color: #fff;
+	text-transform: uppercase;
+	vertical-align: top;
+	text-decoration: none;
+	font-size: 9px;
+	font-family: tahoma, sans-serif;
+	border: 0;
+}
+
+.button_strip_submit:hover
+{
+	color: #e0e0ff;
+}
+
+.openid_login
+{
+	background: white url(images/openid.gif) no-repeat;
+	padding-left: 18px;
+}
+
+/* new features settings screen */
+.features
+{
+	clear: both;
+	border-bottom: 1px solid #e0e0e0;
+}
+.features_image
+{
+	float: left;
+	margin: 1em 2em 0.5em 1em;
+}
+.features_switch
+{
+	margin: 0.2em 1em 1em 1em;
+	float: right;
+}
+.features h4
+{
+	padding: 2em 0 0.5em 0.5em;
+	margin: 0;
+	font-size: 1.1em;
+}
+.features p
+{
+	padding: 0 1em 1em 1em;
+	margin: 0;
+}
+
+/* These are for the auto suggest floating div type thing. */
+.auto_suggest_div
+{
+	border: 1px solid #000;
+	position: absolute;
+	visibility: hidden;
+}
+
+/* An auto suggest item */
+.auto_suggest_item
+{
+	background-color: #ddd;
+}
+
+/* hovered auto suggest item */
+.auto_suggest_item_hover
+{
+	background-color: #888;
+	cursor: pointer;
+	color: #eee;
+}
+
+/* Sometimes there will be an error when you post */
+.error
+{
+	color: red;
+}
+
+/* Messages that somehow need to attract the attention. */
+.alert
+{
+	color: red;
+}
+
+/* Error messages */
+.errorbox
+{
+	padding: 1em;
+	border: 1px solid #cc3344;
+	color: #000;
+	background-color: #ffe4e9;
+	margin-bottom: 1em;
+}
+.errorbox h3
+{
+	padding: 0;
+	margin: 0;
+	font-size: 1.1em;
+	text-decoration: underline;
+}
+.errorbox p
+{
+	margin: 1em 0 0 0;
+}
+.errorbox p.alert
+{
+	padding: 0;
+	margin: 0;
+	float: left;
+	width: 1em;
+	font-size: 1.5em;
+}
+/* a quick reset list class. */
+ul.reset, ul.reset li
+{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+/* All the signatures used in the forum.  If your forum users use Mozilla, Opera, or Safari, you might add max-height here ;). */
+.signature
+{
+	clear: right;
+	padding: 1em 0 3px 0;
+	border-top: 1px solid #6394bd;
+	width: 100%;
+	line-height: 1.3em;
+	font-size: 0.85em;
+}
+.custom_fields_above_signature
+{
+	clear: right;
+	padding: 1em 0 3px 0;
+	border-top: 1px solid #6394bd;
+	width: 100%;
+	line-height: 1.3em;
+	font-size: 0.85em;
+}
