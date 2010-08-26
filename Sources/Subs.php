@@ -1109,7 +1109,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
 
 						// Older browsers are annoying, aren\'t they?
-						if ($context[\'browser\'][\'is_ie4\'] || $context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
+						if ($context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
 							$data = str_replace("\t", "<pre style=\"display: inline;\">\t</pre>", $data);
 						elseif (!$context[\'browser\'][\'is_gecko\'])
 							$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
@@ -1153,7 +1153,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
 
 						// Older browsers are annoying, aren\'t they?
-						if ($context[\'browser\'][\'is_ie4\'] || $context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
+						if ($context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
 							$data[0] = str_replace("\t", "<pre style=\"display: inline;\">\t</pre>", $data[0]);
 						elseif (!$context[\'browser\'][\'is_gecko\'])
 							$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);

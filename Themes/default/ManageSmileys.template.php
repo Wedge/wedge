@@ -51,18 +51,9 @@ function template_editsets()
 			loadSmiley(', $context['selected_smiley'], ');';
 
 		echo '
-		}';
+		}
 
-		// Oh well, could be worse - at least it's only IE4.
-		if ($context['browser']['is_ie4'])
-			echo '
-			addLoadEvent(smfSetLatestSmileys);';
-		else
-			echo '
-
-			smfSetLatestSmileys();';
-
-		echo '
+		smfSetLatestSmileys();
 	// ]]></script>';
 }
 

@@ -178,7 +178,7 @@ function template_body_above()
 				<td valign="top">
 					<div class="headertitles" style="margin-right: 5px; position: relative;"><img src="', $settings['images_url'], '/blank.gif" height="12" alt="" /></div>
 					<div class="headerbodies" style="position: relative; margin-right: 5px; background-image: url(', $settings['images_url'], '/box_bg.gif);">
-						<img src="', $settings['lang_images_url'], '/userinfo.gif" style="position: absolute; left: ', $context['browser']['is_ie5'] || $context['browser']['is_ie4'] ? '0' : '-1px', '; top: -16px;" class="clear" alt="" />
+						<img src="', $settings['lang_images_url'], '/userinfo.gif" style="position: absolute; left: ', $context['browser']['is_ie5'] ? '0' : '-1px', '; top: -16px;" class="clear" alt="" />
 						<table width="99%" cellpadding="0" cellspacing="5" border="0"><tr>';
 
 	if (!empty($context['user']['avatar']))
@@ -396,8 +396,8 @@ function template_body_below()
 	echo '
 		</div>';
 
-	// This is an interesting bug in Internet Explorer AND Safari/Webkit.  Rather annoying, it makes overflows just not tall enough.
-	if (($context['browser']['is_ie'] && !$context['browser']['is_ie4']) || $context['browser']['is_mac_ie'] || $context['browser']['is_webkit'] || $context['browser']['is_firefox'])
+	// This is an interesting bug in Internet Explorer, Safari/Webkit or Firefox.  Rather annoying, it makes overflows just not tall enough.
+	if ($context['browser']['is_ie'] || $context['browser']['is_mac_ie'] || $context['browser']['is_webkit'] || $context['browser']['is_firefox'])
 	{
 		// The purpose of this code is to fix the height of overflow: auto div blocks, because IE can't figure it out for itself.
 		echo '

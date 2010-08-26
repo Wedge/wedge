@@ -1291,7 +1291,6 @@ function detectBrowser()
 		'is_opera8' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera 8') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera/8') !== false,
 		'is_opera9' => preg_match('~Opera[ /]9(?!\\.[89])~', $_SERVER['HTTP_USER_AGENT']) === 1,
 		'is_opera10' => preg_match('~Opera[ /]10\\.~', $_SERVER['HTTP_USER_AGENT']) === 1 || (preg_match('~Opera[ /]9\\.[89]~', $_SERVER['HTTP_USER_AGENT']) === 1 && preg_match('~Version/1[0-9]\\.~', $_SERVER['HTTP_USER_AGENT']) === 1),
-		'is_ie4' => strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 4') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'WebTV') === false,
 		'is_webkit' => strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false,
 		'is_mac_ie' => strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') !== false,
 		'is_web_tv' => strpos($_SERVER['HTTP_USER_AGENT'], 'WebTV') !== false,
@@ -1315,11 +1314,11 @@ function detectBrowser()
 	$context['browser']['is_ie5.5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.5') !== false;
 	$context['browser']['is_ie5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.0') !== false;
 
-	$context['browser']['is_ie'] = $context['browser']['is_ie4'] || $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'];
+	$context['browser']['is_ie'] = $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'];
 	// Before IE8 we need to fix IE... lots!
 	$context['browser']['ie_standards_fix'] = !$context['browser']['is_ie8'];
 
-	$context['browser']['needs_size_fix'] = ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie4'] || $context['browser']['is_opera6']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') === false;
+	$context['browser']['needs_size_fix'] = ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_opera6']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') === false;
 
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
@@ -2194,7 +2193,7 @@ function template_include($filename, $once = false)
 				$data2 = preg_split('~\<br( /)?\>~', $data2);
 
 				// Fix the PHP code stuff...
-				if ($context['browser']['is_ie4'] || $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'])
+				if ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'])
 					$data2 = str_replace("\t", '<pre style="display: inline;">' . "\t" . '</pre>', $data2);
 				elseif (!$context['browser']['is_gecko'])
 					$data2 = str_replace("\t", '<span style="white-space: pre;">' . "\t" . '</span>', $data2);

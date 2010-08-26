@@ -24,17 +24,16 @@ var is_safari = ua.indexOf('applewebkit') != -1 && !is_chrome;
 var is_webkit = ua.indexOf('applewebkit') != -1;
 
 var is_ie = ua.indexOf('msie') != -1 && !is_opera;
-var is_ie4 = is_ie && ua.indexOf('msie 4') != -1;
 var is_ie5 = is_ie && ua.indexOf('msie 5') != -1;
 var is_ie50 = is_ie && ua.indexOf('msie 5.0') != -1;
 var is_ie55 = is_ie && ua.indexOf('msie 5.5') != -1;
-var is_ie5up = is_ie && !is_ie4;
+var is_ie5up = is_ie;
 var is_ie6 = is_ie && ua.indexOf('msie 6') != -1;
 var is_ie6up = is_ie5up && !is_ie55 && !is_ie5;
-var is_ie6down = is_ie6 || is_ie5 || is_ie4;
+var is_ie6down = is_ie6 || is_ie5;
 var is_ie7 = is_ie && ua.indexOf('msie 7') != -1;
 var is_ie7up = is_ie6up && !is_ie6;
-var is_ie7down = is_ie7 || is_ie6 || is_ie5 || is_ie4;
+var is_ie7down = is_ie7 || is_ie6 || is_ie5;
 
 var is_ie8 = is_ie && ua.indexOf('msie 8') != -1;
 var is_ie8up = is_ie8 && !is_ie7down;

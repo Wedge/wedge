@@ -189,16 +189,7 @@ function template_main()
 				if (tempOldOnload)
 					tempOldOnload();
 			}
-		// ]]></script>';
-
-	// Gotta love IE4, and its hatefulness...
-	if ($context['browser']['is_ie4'])
-		echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
-			addLoadEvent(smfSetLatestThemes);
-		// ]]></script>';
-	else
-		echo '
+		// ]]></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			smfSetLatestThemes();
 		// ]]></script>';
