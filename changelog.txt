@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10062 $.
+Changelog started January 1, 2004; Currently at $Revision: 10069 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -25,7 +25,16 @@ August 2010
  * The warning for new replies while posting did not take deleted posts into account. (SSI.php, Display.php, Post.php, Display template, Post template, Xml template) [Bug 4400]
  * The warning for new replies while posting did not consider replies displayed by previewing as read. (SSI.php, Display.php, Post.php, Display template, Post template, Xml template) [Bug 4354]
  ! Links were corrupted when additional formatting was applied on WYSIWYG mode. (Subs-Editor.php) [Bug 4372]
-
+ ! Fixed Postgresql error at search as messages [Bug 4391]
+ ! Fixed error on Profile stats - Postgresql (thank you Nibogo! as usual lately :) ) [Bug 4393]
+ ! Implemented a simple MySQL-like behavior for REPLACE for Postgresql (Subs-Db-postgresql.php) (bug 4062)
+ ! Corrected the buggy implementation of attachments security fixes for Postgresql (upgrade script for Postgresql) (bug 4268)
+ ! Fixes for buddy lists: added the right setting enable_buddylist for upgrade (upgrade scripts), and a setting to avoid reseting user settings by running queries twice (install script) (bug 1451)
+ ! Upgrade for Postgresql should be working now (bug 4412)
+ ! Fixed an issue with the previous delivery (upgrade scripts for mysql and sqlite)
+ ! Undefined error when upgrade may need to chmod files (upgrade.php)
+ * Replaced incorrect use of substr with $smcFunc['substr'] (Calendar template) [Bug 3738]
+ * A few more fixes for using internationalized substr/strlen (ManageCalendar, ManageMail) [Bug 3738]
 
 July 2010
 --------------------------------------------------------------------------------

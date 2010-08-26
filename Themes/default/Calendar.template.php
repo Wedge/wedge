@@ -287,11 +287,9 @@ function template_show_month_grid($grid_name)
 						<th>&nbsp;</th>';
 
 		foreach ($calendar_data['week_days'] as $day)
-		{
-			$test = !empty($calendar_data['short_day_titles']) ? ($smcFunc['substr']($txt['days'][$day], 0, 1)) : $txt['days'][$day];
 			echo '
 						<th class="days" scope="col" ', $calendar_data['size'] == 'small' ? 'style="font-size: x-small;"' : '', '>', !empty($calendar_data['short_day_titles']) ? ($smcFunc['substr']($txt['days'][$day], 0, 1)) : $txt['days'][$day], '</th>';
-		}
+
 		echo '
 					</tr>';
 	}
