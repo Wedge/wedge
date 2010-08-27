@@ -50,7 +50,7 @@ function ShowHelp()
 	global $settings, $user_info, $language, $context, $txt, $sourcedir, $options, $scripturl;
 
 	loadTemplate('Help');
-	loadLanguage('Manual');
+	loadLanguage('Manual+Who');
 
 	$manual_areas = array(
 		'getting_started' => array(

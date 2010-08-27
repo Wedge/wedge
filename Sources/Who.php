@@ -536,6 +536,25 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
+						'<b>Nao</b> (Ren&eacute;-Gilles Deberdt)',
+						'<b>Arantor</b> (Peter Spicer)',
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_dev'],
+					'members' => array(
+						'<b>Arantor</b> (Peter Spicer)',
+						'<b>Nao</b> (Ren&eacute;-Gilles Deberdt)',
+					),
+				),
+			),
+		),
+		array(
+			'title' => $txt['credits_smf_team'],
+			'groups' => array(
+				array(
+					'title' => $txt['credits_groups_ps'],
+					'members' => array(
 						'Cathy &quot;Amacythe&quot; Bailey',
 						'Derek Schwab',
 						'Jeremy &quot;SleePy&quot; Darwood',
@@ -551,8 +570,9 @@ function Credits($in_admin = false)
 						'Bjoern &quot;Bloc&quot; Kristiansen',
 						'Juan &quot;JayBachatero&quot; Hernandez',
 						'Karl &quot;RegularExpression&quot; Benson',
-						$user_info['is_admin'] ? 'Matt &quot;Grudge&quot; Wolf': 'Grudge',
+						$user_info['is_admin'] ? 'Matt &quot;Grudge&quot; Wolf' : 'Grudge',
 						'Michael &quot;Thantos&quot; Miller',
+						'Ren&eacute;-Gilles &quot;Nao&quot; Deberdt',
 						'Theodore &quot;Orstio&quot; Hildebrandt',
 						'Thorsten &quot;TE&quot; Eurich',
 						'winrules',
@@ -614,6 +634,7 @@ function Credits($in_admin = false)
 						'Kirby',
 						'Marcus &quot;Nas&quot; Forsberg',
 						'Niko',
+						'Peter &quot;Arantor&quot; Spicer',
 						'Sinan &quot;Blue Dream&quot; &Ccedil;evik',
 						'snork13',
 						'Steven &quot;Fustrate&quot; Hoffman',

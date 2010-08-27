@@ -174,6 +174,7 @@ function template_manual_intro()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
+	<p>(<a href="', $scripturl, '?action=credits">', $txt['credits'], '</a>)</p>
 	<p>', $txt['manual_intro_welcome_to'], $context['forum_name'], $txt['manual_intro_welcome_after'], '<a href="http://www.simplemachines.org/">', $txt['manual_intro_smf_link'], '</a>', $txt['manual_intro_smf_abbreviation'], '</p>
 	<p>', $txt['manual_intro_overview'], '</p>
 	<p>', $txt['manual_intro_outline'], '</p>';
