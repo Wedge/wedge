@@ -543,11 +543,8 @@ function scheduled_auto_optimize()
 	$tables = $smcFunc['db_list_tables'](false, $db_prefix . '%');
 
 	// Actually do the optimisation.
-	if ($db_type == 'sqlite')
-		$smcFunc['db_optimize_table']($table[0]);
-	else
-		foreach ($tables as $table)
-			$smcFunc['db_optimize_table']($table);
+	foreach ($tables as $table)
+		$smcFunc['db_optimize_table']($table);
 
 	// Return for the log...
 	return true;

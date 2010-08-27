@@ -47,7 +47,7 @@ class custom_search
 	// What is the minimum word length?
 	protected $min_word_length = null;
 	// What databases support the custom index?
-	protected $supported_databases = array('mysql', 'postgresql', 'sqlite');
+	protected $supported_databases = array('mysql');
 
 	public function __construct()
 	{

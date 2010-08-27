@@ -416,54 +416,6 @@ function EditSearchMethod()
 			$smcFunc['db_free_result']($request);
 		}
 	}
-	elseif ($db_type == 'postgresql')
-	{
-		// In order to report the sizes correctly we need to perform vacuum (optimize) on the tables we will be using.
-		db_extend();
-		$temp_tables = $smcFunc['db_list_tables']();
-		foreach ($temp_tables as $table)
-			if ($table == $db_prefix. 'messages' || $table == $db_prefix. 'log_search_words')
-				$smcFunc['db_optimize_table']($table);
-
-		// PostGreSql has some hidden sizes.
-		$request = $smcFunc['db_query']('', '
-			SELECT relname, relpages * 8 *1024 AS "KB" FROM pg_class
-			WHERE relname = {string:messages} OR relname = {string:log_search_words}
-			ORDER BY relpages DESC',
-			array(
-				'messages' => $db_prefix. 'messages',
-				'log_search_words' => $db_prefix. 'log_search_words',
-			)
-		);
-
-		if ($request !== false && $smcFunc['db_num_rows']($request) > 0)
-		{
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if ($row['relname'] == $db_prefix . 'messages')
-				{
-					$context['table_info']['data_length'] = (int) $row['KB'];
-					$context['table_info']['index_length'] = (int) $row['KB'];
-					// Doesn't support fulltext
-					$context['table_info']['fulltext_length'] = $txt['not_applicable'];
-				}
-				elseif ($row['relname'] == $db_prefix. 'log_search_words')
-				{
-					$context['table_info']['index_length'] = (int) $row['KB'];
-					$context['table_info']['custom_index_length'] = (int) $row['KB'];
-				}
-			}
-			$smcFunc['db_free_result']($request);
-		}
-		else
-			// Didn't work for some reason...
-			$context['table_info'] = array(
-				'data_length' => $txt['not_applicable'],
-				'index_length' => $txt['not_applicable'],
-				'fulltext_length' => $txt['not_applicable'],
-				'custom_index_length' => $txt['not_applicable'],
-			);
-	}
 	else
 		$context['table_info'] = array(
 			'data_length' => $txt['not_applicable'],

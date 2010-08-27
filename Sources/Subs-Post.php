@@ -1103,14 +1103,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			}
 		}
 
-		// Note that PostgreSQL can return a lowercase t/f for FIND_IN_SET
-		if (!empty($row['ignored']) && $row['ignored'] != 'f' && $row['id_member'] != $from['id'])
-		{
-			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_ignored_by_user'], $row['real_name']);
-			unset($all_to[array_search($row['id_member'], $all_to)]);
-			continue;
-		}
-
 		// If the receiving account is banned (>=10) or pending deletion (4), refuse to send the PM.
 		if ($row['is_activated'] >= 10 || ($row['is_activated'] == 4 && !$user_info['is_admin']))
 		{
