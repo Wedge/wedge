@@ -67,7 +67,6 @@ smf_PersonalMessageSend.prototype.init = function()
 		aListItems: this.opt.aBccRecipients
 	});
 	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', this.opt.sSelf + '.callbackAddItem');
-
 }
 
 smf_PersonalMessageSend.prototype.showBcc = function()
@@ -76,7 +75,6 @@ smf_PersonalMessageSend.prototype.showBcc = function()
 	this.oBccDiv.style.display = '';
 	this.oBccDiv2.style.display = '';
 }
-
 
 // Prevent items to be added twice or to both the 'To' and 'Bcc'.
 smf_PersonalMessageSend.prototype.callbackAddItem = function(oAutoSuggestInstance, sSuggestId)

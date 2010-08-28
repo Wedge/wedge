@@ -452,7 +452,6 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 		oNewDivHandle.sItemId = aResults[i].sItemId;
 		oNewDivHandle.className = 'auto_suggest_item';
 		oNewDivHandle.innerHTML = aResults[i].sItemName;
-		//oNewDivHandle.style.width = this.oTextHandle.style.width;
 
 		this.oSuggestDivHandle.appendChild(oNewDivHandle);
 
@@ -548,9 +547,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	if (isEmptyText(this.oTextHandle))
 	{
 		this.aCache = [];
-
 		this.populateDiv();
-
 		this.autoSuggestHide();
 
 		return true;
@@ -570,7 +567,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	var sRealLastSearch = this.sLastSearch;
 	this.sLastSearch = sSearchString;
 
-	// Either nothing or we've completed a sentance.
+	// Either nothing or we've completed a sentence.
 	if (sSearchString == '' || sSearchString.substr(sSearchString.length - 1) == '"')
 	{
 		this.populateDiv();

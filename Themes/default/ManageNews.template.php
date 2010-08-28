@@ -147,8 +147,8 @@ function template_email_members()
 							<span class="smalltext">', $txt['admin_news_select_members_desc'], '</span>
 						</dt>
 						<dd>
-							<input type="text" name="members" id="members" value="" size="30" class="input_text" />
 							<span id="members_container"></span>
+							<input type="text" name="members" id="members" value="" size="30" class="input_text" />
 						</dd>
 					</dl>
 					<hr class="bordercolor" />
@@ -172,8 +172,8 @@ function template_email_members()
 							<span class="smalltext">', $txt['admin_news_select_excluded_members_desc'], '</span>
 						</dt>
 						<dd>
-							<input type="text" name="exclude_members" id="exclude_members" value="" size="30" class="input_text" />
 							<span id="exclude_members_container"></span>
+							<input type="text" name="exclude_members" id="exclude_members" value="" size="30" class="input_text" />
 						</dd>
 					</dl>
 					<hr class="bordercolor" />

@@ -965,15 +965,12 @@ function template_send()
 	// Autosuggest will be added by the JavaScript later on.
 	echo '
 					<dd id="pm_to" class="clear_right">
+						<div id="to_item_list_container"></div>
 						<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />';
 
 	// A link to add BCC, only visible with JavaScript enabled.
 	echo '
 						<span class="smalltext" id="bcc_link_container" style="display: none;"></span>';
-
-	// A div that'll contain the items found by the autosuggest.
-	echo '
-						<div id="to_item_list_container"></div>';
 
 	echo '
 					</dd>';
@@ -984,8 +981,8 @@ function template_send()
 						<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
 					</dt>
 					<dd id="bcc_div2">
-						<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />
 						<div id="bcc_item_list_container"></div>
+						<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />
 					</dd>';
 
 	// The subject of the PM.

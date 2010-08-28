@@ -195,8 +195,8 @@ function template_edit_group()
 							<label for="group_moderators"><strong>', $txt['moderators'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" name="group_moderators" id="group_moderators" value="', $context['group']['moderator_list'], '" size="30" class="input_text" />
 							<div id="moderator_container"></div>
+							<input type="text" name="group_moderators" id="group_moderators" value="', $context['group']['moderator_list'], '" size="30" class="input_text" />
 						</dd>
 						<dt id="group_hidden_text">
 							<label for="group_hidden_input"><strong>', $txt['membergroups_edit_hidden'], ':</strong></label>
@@ -507,8 +507,8 @@ function template_group_members()
 				<span class="topslice"><span></span></span>
 				<div class="content">
 					<strong>', $txt['membergroups_members_add_desc'], ':</strong>
-					<input type="text" name="toAdd" id="toAdd" value="" class="input_text" />
 					<div id="toAddItemContainer"></div>
+					<input type="text" name="toAdd" id="toAdd" value="" class="input_text" />
 					<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="button_submit" />
 				</div>
 				<span class="botslice"><span></span></span>
