@@ -402,6 +402,40 @@ code.bbc_code
 	color: #000 !important;
 }
 
+table.footnotes
+{
+	border-top: 1px solid #888;
+	margin-top: 20px;
+	padding-top: 4px;
+}
+blockquote table.footnotes
+{
+	margin: 8px 0 4px 0;
+}
+table.footnotes td
+{
+	font-size: smaller;
+	padding: 0 2px;
+}
+td.footnum
+{
+	vertical-align: top;
+	text-align: right;
+	width: 30px;
+}
+td.footnum a
+{
+	text-decoration: none;
+}
+a.fnotel
+{
+	text-decoration: none;
+	vertical-align: super;
+	font-size: smaller;
+	line-height: normal;
+}
+td.footnum a:target, a.fnotel:target { background-color: #ddeeff !important }
+
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 

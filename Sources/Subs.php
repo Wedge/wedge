@@ -889,7 +889,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 {
 	global $txt, $scripturl, $context, $modSettings, $user_info, $smcFunc;
 	static $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
-	static $disabled;
+	static $disabled, $feet = 0;
 
 	// Don't waste cycles
 	if ($message === '')
@@ -2424,6 +2424,57 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br />', '<br /> ' => '<br />&nbsp;', '&#13;' => "\n"));
+
+	// Deal with footnotes... They're very complex, so can't be parsed like other bbcodes.
+	if (stripos($message, '[nb]') !== false && (empty($parse_tags) || in_array('nb', $parse_tags)) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor'))
+	{
+		preg_match_all('~\s*\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
+
+		if (count($matches) > 0)
+		{
+			$f = 0;
+			global $addnote;
+			if (is_null($addnote))
+				$addnote = array();
+			foreach ($matches as $m)
+			{
+				$my_pos = $end_blockquote = strpos($message, $m[0]);
+				$message = substr_replace($message, '<a class="fnotel" name="footlink' . ++$feet . '" href="#footnote' . $feet . '">[' . ++$f . ']</a>', $my_pos, strlen($m[0]));
+				$addnote[$feet] = array($feet, $f, $m[1]);
+
+				while ($end_blockquote !== false)
+				{
+					$end_blockquote = strpos($message, '</blockquote>', $my_pos);
+					if ($end_blockquote === false)
+						continue;
+
+					$start_blockquote = strpos($message, '<blockquote', $my_pos);
+					if ($start_blockquote !== false && $start_blockquote < $end_blockquote)
+						$my_pos = $end_blockquote + 1;
+					else
+					{
+						$message = substr_replace($message, '<foot:' . $feet . '>', $end_blockquote, 0);
+						break;
+					}
+				}
+
+				if ($end_blockquote === false)
+					$message .= '<foot:' . $feet . '>';
+			}
+
+			$message = preg_replace_callback('~(?:<foot:\d+>)+~', create_function('$match', '
+				global $addnote;
+				$msg = \'<table class="footnotes" width="100%" cellspacing="0" border="0">\';
+				preg_match_all(\'~<foot:(\d+)>~\', $match[0], $mat);
+				foreach ($mat[1] as $note)
+				{
+					$n = &$addnote[$note];
+					$msg .= \'<tr><td class="footnum"><a name="footnote\' . $n[0] . \'" href="#footlink\' . $n[0] . \'">&nbsp;\' . $n[1] . \'.&nbsp;</a></td><td class="footnote">\'
+						 . (stripos($n[2], \'[nb]\', 1) === false ? $n[2] : parse_bbc($n[2])) . \'</td></tr>\';
+				}
+				return $msg . \'</table>\';'), $message);
+		}
+	}
 
 	// Cache the output if it took some time...
 	if (isset($cache_key, $cache_t) && array_sum(explode(' ', microtime())) - array_sum(explode(' ', $cache_t)) > 0.05)
@@ -4133,14 +4184,10 @@ function setupMenuContext()
 							unset($button['sub_buttons'][$key]);
 
 						// 2nd level sub buttons next
-						if(!empty($subbutton['sub_buttons']))
-						{
+						if (!empty($subbutton['sub_buttons']))
 							foreach($subbutton['sub_buttons'] as $key2 => $sub_button2)
-							{
-								if(empty($sub_button2['show']))
+								if (empty($sub_button2['show']))
 									unset($button['sub_buttons'][$key]['sub_buttons'][$key2]);
-							}
-						}
 					}
 
 				$menu_buttons[$act] = $button;

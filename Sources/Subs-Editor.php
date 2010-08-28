@@ -1637,6 +1637,13 @@ function create_control_richedit($editorOptions)
 			),
 			array(),
 			array(
+				'image' => 'nb',
+				'code' => 'nb',
+				'before' => '[nb]',
+				'after' => '[/nb]',
+				'description' => $txt['footnote']
+			),
+			array(
 				'image' => 'sup',
 				'code' => 'sup',
 				'before' => '[sup]',

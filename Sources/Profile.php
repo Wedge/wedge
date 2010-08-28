@@ -744,8 +744,8 @@ function loadCustomFields($memID, $area = 'summary')
 		// Parse BBCode
 		if ($row['bbc'])
 			$output_html = parse_bbc($output_html);
-		elseif($row['field_type'] == 'textarea')
-			// Allow for newlines at least
+		// Allow for newlines at least
+		elseif ($row['field_type'] == 'textarea')
 			$output_html = strtr($output_html, array("\n" => '<br />'));
 
 		// Enclosing the user input within some other text?
