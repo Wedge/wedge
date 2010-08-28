@@ -401,7 +401,7 @@ function scheduled_approval_notification()
 // Do some daily cleaning up.
 function scheduled_daily_maintenance()
 {
-	global $smcFunc, $modSettings, $sourcedir, $db_type;
+	global $smcFunc, $modSettings, $sourcedir;
 
 	// First clean out the data cache.
 	clean_cache('data');
@@ -475,7 +475,7 @@ function scheduled_daily_maintenance()
 
 	// Check the database version - for some buggy MySQL version.
 	$server_version = $smcFunc['db_server_info']();
-	if ($db_type == 'mysql' && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
+	if (in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
 		updateSettings(array('db_mysql_group_by_fix' => '1'));
 	elseif (!empty($modSettings['db_mysql_group_by_fix']))
 		$smcFunc['db_query']('', '
@@ -508,7 +508,7 @@ function scheduled_daily_maintenance()
 // Auto optimize the database?
 function scheduled_auto_optimize()
 {
-	global $modSettings, $smcFunc, $db_prefix, $db_type;
+	global $modSettings, $smcFunc, $db_prefix;
 
 	// By default do it now!
 	$delay = false;

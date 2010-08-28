@@ -198,7 +198,7 @@ function EditWeights()
 
 function EditSearchMethod()
 {
-	global $txt, $context, $modSettings, $smcFunc, $db_type, $db_prefix;
+	global $txt, $context, $modSettings, $smcFunc, $db_prefix;
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
@@ -358,71 +358,61 @@ function EditSearchMethod()
 	);
 
 	// Get some info about the messages table, to show its size and index size.
-	if ($db_type == 'mysql')
-	{
-		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = $smcFunc['db_query']('', '
-				SHOW TABLE STATUS
-				FROM {string:database_name}
-				LIKE {string:table_name}',
-				array(
-					'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-					'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
-				)
-			);
-		else
-			$request = $smcFunc['db_query']('', '
-				SHOW TABLE STATUS
-				LIKE {string:table_name}',
-				array(
-					'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
-				)
-			);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
-		{
-			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
-			$context['table_info']['data_length'] = $row['Data_length'];
-			$context['table_info']['index_length'] = $row['Index_length'];
-			$context['table_info']['fulltext_length'] = $row['Index_length'];
-			$smcFunc['db_free_result']($request);
-		}
-
-		// Now check the custom index table, if it exists at all.
-		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = $smcFunc['db_query']('', '
-				SHOW TABLE STATUS
-				FROM {string:database_name}
-				LIKE {string:table_name}',
-				array(
-					'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-					'table_name' => str_replace('_', '\_', $match[2]) . 'log_search_words',
-				)
-			);
-		else
-			$request = $smcFunc['db_query']('', '
-				SHOW TABLE STATUS
-				LIKE {string:table_name}',
-				array(
-					'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
-				)
-			);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
-		{
-			// Only do this if the user has permission to execute this query.
-			$row = $smcFunc['db_fetch_assoc']($request);
-			$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
-			$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
-			$smcFunc['db_free_result']($request);
-		}
-	}
-	else
-		$context['table_info'] = array(
-			'data_length' => $txt['not_applicable'],
-			'index_length' => $txt['not_applicable'],
-			'fulltext_length' => $txt['not_applicable'],
-			'custom_index_length' => $txt['not_applicable'],
+	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
+		$request = $smcFunc['db_query']('', '
+			SHOW TABLE STATUS
+			FROM {string:database_name}
+			LIKE {string:table_name}',
+			array(
+				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
+				'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
+			)
 		);
+	else
+		$request = $smcFunc['db_query']('', '
+			SHOW TABLE STATUS
+			LIKE {string:table_name}',
+			array(
+				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
+			)
+		);
+	if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+	{
+		// Only do this if the user has permission to execute this query.
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$context['table_info']['data_length'] = $row['Data_length'];
+		$context['table_info']['index_length'] = $row['Index_length'];
+		$context['table_info']['fulltext_length'] = $row['Index_length'];
+		$smcFunc['db_free_result']($request);
+	}
+
+	// Now check the custom index table, if it exists at all.
+	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
+		$request = $smcFunc['db_query']('', '
+			SHOW TABLE STATUS
+			FROM {string:database_name}
+			LIKE {string:table_name}',
+			array(
+				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
+				'table_name' => str_replace('_', '\_', $match[2]) . 'log_search_words',
+			)
+		);
+	else
+		$request = $smcFunc['db_query']('', '
+			SHOW TABLE STATUS
+			LIKE {string:table_name}',
+			array(
+				'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
+			)
+		);
+	if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+	{
+		// Only do this if the user has permission to execute this query.
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
+		$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
+		$smcFunc['db_free_result']($request);
+	}
 
 	// Format the data and index length in kilobytes.
 	foreach ($context['table_info'] as $type => $size)

@@ -603,7 +603,7 @@ function AdminHome()
 
 	$context['current_versions'] = array(
 		'php' => array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION),
-		'db' => array('title' => sprintf($txt['support_versions_db'], $smcFunc['db_title']), 'version' => ''),
+		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => ''),
 		'server' => array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']),
 	);
 	$context['forum_version'] = $forum_version;

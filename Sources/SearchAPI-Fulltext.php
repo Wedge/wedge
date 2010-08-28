@@ -47,19 +47,10 @@ class fulltext_search
 	protected $bannedWords = array();
 	// What is the minimum word length?
 	protected $min_word_length = 4;
-	// What databases support the fulltext index?
-	protected $supported_databases = array('mysql');
 
 	public function __construct()
 	{
-		global $smcFunc, $db_connection, $modSettings, $db_type;
-
-		// Is this database supported?
-		if (!in_array($db_type, $this->supported_databases))
-		{
-			$this->is_supported = false;
-			return;
-		}
+		global $smcFunc, $db_connection, $modSettings;
 
 		// Some MySQL versions are superior to others :P.
 		$this->canDoBooleanSearch = version_compare($smcFunc['db_server_info']($db_connection), '4.0.1', '>=') == 1;

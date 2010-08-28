@@ -2450,14 +2450,10 @@ function sessionGC($max_lifetime)
 function loadDatabase()
 {
 	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
-	global $db_type, $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix;
-
-	// Figure out what type of database we are using.
-	if (empty($db_type) || !file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
-		$db_type = 'mysql';
+	global $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix;
 
 	// Load the file for the database.
-	require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
+	require_once($sourcedir . '/Subs-Db-mysql.php');
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))

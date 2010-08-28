@@ -46,19 +46,10 @@ class custom_search
 	protected $bannedWords = array();
 	// What is the minimum word length?
 	protected $min_word_length = null;
-	// What databases support the custom index?
-	protected $supported_databases = array('mysql');
 
 	public function __construct()
 	{
-		global $modSettings, $db_type;
-
-		// Is this database supported?
-		if (!in_array($db_type, $this->supported_databases))
-		{
-			$this->is_supported = false;
-			return;
-		}
+		global $modSettings;
 
 		if (empty($modSettings['search_custom_index_config']))
 			return;

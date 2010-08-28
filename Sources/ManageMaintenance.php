@@ -220,11 +220,11 @@ function ManageMaintenance()
 // Supporting function for the database maintenance area.
 function MaintainDatabase()
 {
-	global $context, $db_type, $db_character_set, $modSettings, $smcFunc, $txt;
+	global $context, $db_character_set, $modSettings, $smcFunc, $txt;
 
 	// Show some conversion options?
-	$context['convert_utf8'] = $db_type == 'mysql' && (!isset($db_character_set) || $db_character_set !== 'utf8' || empty($modSettings['global_character_set']) || $modSettings['global_character_set'] !== 'UTF-8') && version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']())) <= 0;
-	$context['convert_entities'] = $db_type == 'mysql' && isset($db_character_set, $modSettings['global_character_set']) && $db_character_set === 'utf8' && $modSettings['global_character_set'] === 'UTF-8';
+	$context['convert_utf8'] = (!isset($db_character_set) || $db_character_set !== 'utf8' || empty($modSettings['global_character_set']) || $modSettings['global_character_set'] !== 'UTF-8') && version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']())) <= 0;
+	$context['convert_entities'] = isset($db_character_set, $modSettings['global_character_set']) && $db_character_set === 'utf8' && $modSettings['global_character_set'] === 'UTF-8';
 
 	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
 		$context['maintenance_finished'] = $txt['utf8_title'];
@@ -933,7 +933,7 @@ function ConvertEntities()
 // Optimize the database's tables.
 function OptimizeTables()
 {
-	global $db_type, $db_name, $db_prefix, $txt, $context, $scripturl, $sourcedir, $smcFunc;
+	global $db_name, $db_prefix, $txt, $context, $scripturl, $sourcedir, $smcFunc;
 
 	isAllowedTo('admin_forum');
 
