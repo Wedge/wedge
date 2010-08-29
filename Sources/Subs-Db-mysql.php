@@ -93,9 +93,9 @@ function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 // Extend the database functionality.
 function db_extend($type = 'extra')
 {
-	global $sourcedir, $db_type;
+	global $sourcedir;
 
-	require_once($sourcedir . '/Db' . strtoupper($type[0]) . substr($type, 1) . '-' . $db_type . '.php');
+	require_once($sourcedir . '/Db' . ucfirst($type) . '-mysql.php');
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
 }
