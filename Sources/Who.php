@@ -586,8 +586,6 @@ function Credits($in_admin = false)
 					'title' => $txt['credits_groups_support'],
 					'members' => array(
 						'Tyrsson',
-						'Antechinus',
-						'Arantor',
 						'Ben Scott',
 						'Bigguy',
 						'Duncan85',
@@ -609,7 +607,6 @@ function Credits($in_admin = false)
 						'Mashby',
 						'MrPhil',
 						'Nick &quot;Fizzy&quot; Dyer',
-						'Norv',
 						'Piro &quot;Sarge&quot; Dhima',
 						'Rumbaar',
 						'Pitti',
