@@ -31,98 +31,22 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has all the main functions in it that relate to, well,
-	everything.  It provides all of the following functions:
-
-	void updateStats(string statistic, string condition = '1')
-		- statistic can be 'member', 'message', 'topic', or 'postgroups'.
-		- parameter1 and parameter2 are optional, and are used to update only
-		  those stats that need updating.
-		- the 'member' statistic updates the latest member, the total member
-		  count, and the number of unapproved members.
-		- 'member' also only counts approved members when approval is on, but
-		  is much more efficient with it off.
-		- updating 'message' changes the total number of messages, and the
-		  highest message id by id_msg - which can be parameters 1 and 2,
-		  respectively.
-		- 'topic' updates the total number of topics, or if parameter1 is true
-		  simply increments them.
-		- the 'postgroups' case updates those members who match condition's
-		  post-based membergroups in the database (restricted by parameter1).
-
-	void updateSettings(array changeArray, use_update = false)
-		- updates both the settings table and $modSettings array.
-		- all of changeArray's indexes and values are assumed to have escaped
-		  apostrophes (')!
-		- if a variable is already set to what you want to change it to, that
-		  variable will be skipped over; it would be unnecessary to reset.
-		- if use_update is true, UPDATEs will be used instead of REPLACE.
-		- when use_update is true, the value can be true or false to increment
-		  or decrement it, respectively.
-
-	string comma_format(float number)
-		- formats a number to display in the style of the admins' choosing.
-		- uses the format of number_format to decide how to format the number.
-		- for example, it might display "1 234,50".
-		- caches the formatting data from the setting for optimization.
-
-	void parsesmileys(string &message)
-		- the smiley parsing function which makes pretty faces appear :).
-		- if custom smiley sets are turned off by smiley_enable, the default
-		  set of smileys will be used.
-		- these are specifically not parsed in code tags [url=mailto:Dad@blah.com]
-		- caches the smileys from the database or array in memory.
-		- doesn't return anything, but rather modifies message directly.
-
-	string highlight_php_code(string code)
-		- Uses PHP's highlight_string() to highlight PHP syntax
-		- does special handling to keep the tabs in the code available.
-		- used to parse PHP code from inside [code] and [php] tags.
-		- returns the code with highlighted HTML.
-
-	void writeLog(bool force = false)
-		// !!!
-
-	int logAction($action, $extra = array())
-		// !!!
-
-	void trackStats($stats = array())
-		- caches statistics changes, and flushes them if you pass nothing.
-		- if '+' is used as a value, it will be incremented.
-		- does not actually commit the changes until the end of the page view.
-		- depends on the trackStats setting.
-
-	void spamProtection(string error_type)
-		- attempts to protect from spammed messages and the like.
-		- takes a $txt index. (not an actual string.)
-		- time taken depends on error_type - generally uses the modSetting.
-
-	void template_header()
-		// !!!
-
-	void theme_copyright(bool get_it = false)
-		// !!!
-
-	void template_footer()
-		// !!!
-
-	void db_debug_junk()
-		// !!!
-
-	void getAttachmentFilename(string filename, int id_attach, bool new = true)
-		// !!!
-
-	string create_button(string filename, string alt, string label, bool custom = '')
-		// !!!
-
-	array call_integration_hook(string hook, array parameters = array())
-		- calls all functions of the given hook.
-		- supports static class method calls.
-		- returns the results of the functions as an array.
-
-*/
-
-// Update some basic statistics...
+/**
+ * This function updates some internal statistics as necessary.
+ *
+ * Although there are three parameters listed, the second and third parameters may be ignored depending on the first.
+ *
+ * This function handles four distinct branches of statistic/data management, reflected by the type: member, message, subject, topic.
+ * - If type is member, two operations can be carried out. If neither parameter 1 or parameter 2 is set, recalculate the total number of members, and obtain the user id and name of the latest member (and update the $modSettings with this for the board index), and also ensure the count of unapproved users is correct (excluding COPPA users). Alternatively, when coming directly from registration etc, supply parameter 1 as the numeric user id and parameter 2 as the user name.
+ * - If type is message, two operations can be carried out. If parameter 1 is boolean true, and parameter 2 is not null, have {@link updateSettings()} recalculate the total messages, and supply to it the contents of parameter 2 to be used as the id of the 'highest known message at this time', which is used for tracking read/unread status. Alternatively, recalculate the forum-wide total number of messages and the highest message id using the general board data.
+ * - If type is subject, this function should be being called to update search data when a subject changes in a message. Parameter 1 should be the topic id, parameter 2 the new subject of the topic.
+ * - If type is topic, two operations can be carried out. If parameter 1 is boolean true, increment the total number of topics (parameter 2 is ignored). Otherwise manually recalculate the forum-wide number of topics from the board data.
+ * - If type is postgroups, this function is to ensure post count groups are updated. Parameter 1 can be either null (update all members), an integer (a single user id) or an array (of user ids) as the scope of update. Parameter 2 will either be null, or an array of columns which should include 'posts' as a value (for when called from other areas where multiple other columns are being updated)
+ *
+ * @param string $type An string denoting the operation, can be any one of: member, message, subject, topic, postgroups.
+ * @param mixed $parameter1 See notes above as for operations
+ * @param mixed $parameter2 See notes above as for operations
+ */
 function updateStats($type, $parameter1 = null, $parameter2 = null)
 {
 	global $sourcedir, $modSettings, $smcFunc;
@@ -477,7 +401,16 @@ function updateMemberData($members, $data)
 	}
 }
 
-// Updates the settings table as well as $modSettings... only does one at a time if $update is true.
+/**
+ * Updates settings in the primary forum-wide settings table, and its local $modSettings equivalent.
+ *
+ * If a value to be updated would not be changed (is the same), that change will not be issued as a query. Also note that $modSettings will be updated too, and that the cache entry for $modSettings will be purged so that next page load is using the current (recached) settings.
+ *
+ * @param array $changeArray A key/value pair where the array key specifies the entry in the settings table and $modSettings array to be updated, and the value specifies the new value. Additionally, when $update is true, the value can be specified as true or false to increment or decrement (respectively) the current value.
+ * @param bool $update If the value is known to already exist, this can be specified as true to have the data in the table be managed through an UPDATE query, rather than a REPLACE query. Note that UPDATE queries are run individually, while a REPLACE applies all changes simultaneously to the table.
+ * @param bool $debug Not used.
+ * @todo Remove the debug parameter.
+ */
 function updateSettings($changeArray, $update = false, $debug = false)
 {
 	global $modSettings, $smcFunc;
@@ -641,7 +574,14 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	return $pageindex;
 }
 
-// Formats a number to display in the style of the admin's choosing.
+/**
+ * Format a number in a localized fashion.
+ *
+ * Each of the language packs should declare $txt['number_format'] in the index language file, which is simply a string that consists of the number 1234.00 localized to that region. This function detects the thousands and decimal separators, and uses those in its place. It also detects the number of digits in the decimal position, and rounds to that many digits. Note that the style is cached locally (statically) for the life of the page.
+ *
+ * @param float $number The number to format.
+ * @param bool $override_decimal_count If true, $number will be treated as an integer even if it is not (numbers will be rounded to suit)
+ */
 function comma_format($number, $override_decimal_count = false)
 {
 	global $txt;
@@ -2470,7 +2410,16 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	return $message;
 }
 
-// Parse smileys in the passed message.
+/**
+ * Takes the specified message, parses it for smileys and updates them in place.
+ *
+ * This function is called from {@link parse_bbc()} to manage smileys, depending on whether smileys were requested, whether this is the printer-friendly version or wireless mode.
+ * - Firstly, load the default smileys; if custom smileys are not enabled, use the default set, otherwise load them from cache (if available) or database. They will persist for the life of page in any case (stored statically in the function for multiple calls)
+ * - A complex regular expression is then built up of all the search/replaces to be made to substitute all the smileys for their image counterparts.
+ * - The regular expression is crafted so expressions within tags do not get parsed, e.g. [url=mailto:David@bla.com] doesn't parse the :D smiley
+ *
+ * @param string &$message The original message, by reference, so it can be updated in place for smileys.
+ */
 function parsesmileys(&$message)
 {
 	global $modSettings, $txt, $user_info, $context, $smcFunc;
@@ -2541,7 +2490,15 @@ function parsesmileys(&$message)
 	$message = preg_replace($smileyPregSearch, 'isset($smileyPregReplacements[\'$1\']) ? $smileyPregReplacements[\'$1\'] : \'\'', $message);
 }
 
-// Highlight any code...
+/**
+ * Highlights any PHP code within posts, where either the PHP start tag, or the php bbcode tag is used.
+ *
+ * Highlighting is performed with PHP's highlight_string() function and will use the coloring and formatting rules that come with that function.
+ *
+ * @param string $code The original code, as from the bbcode parser.
+ * @return string The string with HTML markup for formatting, and with custom handling of tabs in an attempt to preserve that formatting.
+ * @todo Remove PHP < 4.2 compatibility code
+ */
 function highlight_php_code($code)
 {
 	global $context;
@@ -2570,7 +2527,18 @@ function highlight_php_code($code)
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
 
-// Put this user in the online log.
+/**
+ * Log the current user (even as a guest), as being online and optionally including their current location.
+ *
+ * - If the theme settings are set to display users in a board or topic, ensure the user is listed as being in those places (adjusting $force as necessary)
+ * - If the user is possibly a robot, carry on with spider logging.
+ * - If the last time the user was logged online is less than 8 seconds ago, and force is off; exit.
+ * - If "Who's Online" is enabled, grab everything from $_GET, plus the user agent, prepare to store it.
+ * - Ensure we have their user id, check to see if older things need to be purged and if so, do so.
+ * - Log them online, store it in the session, and update how long the user has been online.
+ *
+ * @param bool $force Whether to force there to be an update of the table or not.
+ */
 function writeLog($force = false)
 {
 	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc, $sourcedir;
@@ -2704,7 +2672,6 @@ function writeLog($force = false)
 	}
 }
 
-// Make sure the browser doesn't come back and repost the form data.  Should be used whenever anything is posted.
 /**
  * Ensures the browser is redirected to another location. Should be used after anything is posted to ensure the browser cannot repost the form data.
  *
@@ -2775,7 +2742,6 @@ function redirectexit($setLocation = '', $refresh = false)
 	obExit(false);
 }
 
-// Ends execution.  Takes care of template loading and remembering the previous URL.
 /**
  * This function marks the end of processing, proceeds to close down output buffers, flushing content as it does so, before terminating execution.
  *
@@ -2783,7 +2749,7 @@ function redirectexit($setLocation = '', $refresh = false)
  *
  * Several side operations occur alongside principle handling:
  * - Recursive calls to this function will attempt to be blocked.
- * - The stats cache will be cleared.
+ * - The stats cache will be flushed to the tables (so instead of issuing queries that potentially update the same values multiple times, they are only updated on closedown)
  * - A call will be put in to work on the mail queue.
  * - Make sure the page title is sanitised.
  * - Begin the session ID injecting output buffer.
@@ -2912,7 +2878,13 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		exit;
 }
 
-// Usage: logAction('remove', array('starter' => $id_member_started));
+/**
+ * Log changes in the state of the forum, such as moderation events or administrative changes.
+ *
+ * @param string $action A code for the report; a list of such strings can be found in Modlog.{language}.php (modlog_ac_ strings)
+ * @param array $extra An associated array of parameters for the item being logged. Typically this will include 'topic' for the topic's id.
+ * @param string $log_type A string reflecting the type of log, moderate for moderation actions (e.g. thread changes), admin for administrative actions.
+ */
 function logAction($action, $extra = array(), $log_type = 'moderate')
 {
 	global $modSettings, $user_info, $smcFunc, $sourcedir;
@@ -3014,7 +2986,14 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 	return $smcFunc['db_insert_id']('{db_prefix}log_actions', 'id_action');
 }
 
-// Track Statistics.
+/**
+ * Track changes in statistics of the forum, through the life of the page, and commit them at the end of page generation.
+ *
+ * The stats array passed to this function is a key/value pair, the value may well be a '+' to indicate an increment of a field, otherwise it will be treated as the real value.
+ *
+ * @param mixed $stats Nominally a key/value pair array, listing one or more changes to master stats, in the log_activity table. Submit boolean false to flush changes to the table.
+ * @return bool As to whether the changes are logged and flushed, or whether they are not being processed.
+ */
 function trackStats($stats = array())
 {
 	global $modSettings, $smcFunc;
@@ -3067,7 +3046,13 @@ function trackStats($stats = array())
 	return true;
 }
 
-// Make sure the user isn't posting over and over again.
+/**
+ * Attempt to check whether a given user has been carrying out specific actions repeatedly, faster than a given frequency.
+ *
+ * Different actions take different periods of time. Each action also has a fatal message when triggered (and suspends execution), and the messages are based on the action, suffixed with 'WaitTime_broken' and which are specified in Errors.{language}.php.
+ *
+ * @param string $error_type The action whose frequency is being checked.
+ */
 function spamProtection($error_type)
 {
 	global $modSettings, $txt, $user_info, $smcFunc;
@@ -3423,6 +3408,18 @@ function template_rawdata()
 	echo $context['raw_data'];
 }
 
+/**
+ * Ensures content above the main page content is loaded, including HTTP page headers.
+ *
+ * Several things happen here.
+ * - {@link setupThemeContext()} is called to get some key values.
+ * - Issue HTTP headers that cause browser-side caching to be turned off (old expires and last modified). This is turned off for attachments errors, though.
+ * - Issue MIME type header
+ * - Step through the template layers from outermost, and ensure those happen.
+ * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
+ * - If the user is post-banned, provide a nice warning for them.
+ * - If the settings dictate it so, update the theme settings to use the default images and path.
+ */
 function template_header()
 {
 	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
@@ -3520,7 +3517,23 @@ function template_header()
 	}
 }
 
-// Show the copyright...
+/**
+ * Attempts to ensure the copyright is actually displayed.
+ *
+ * Several steps occur in the attempt to prevent copyright removal.
+ * - On a 1/3 chance, remove comments temporarily from the buffer - and if there's an unterminated comment, terminate it.
+ * - If a comment has been inserted into the copyright statement (presumably the copyright is commented out), uncomment it.
+ * - If a div has been inserted into the copyright statement (typically with a different style), strip the style.
+ * - If the version has been removed, or isn't present (e.g. SSI) or we are explicitly checking copyright, load this file and get the version from it.
+ * - Inject the version number into the copyright statement.
+ * - If we don't have the right key (or a key at all), output the copyright and mark it as found for later.
+ *
+ * This function should not appear in any public function database due to @ignore.
+ *
+ * @param bool $get_it If true, return whether the copyright has been displayed previously, otherwise add the copyright.
+ * @return mixed This function only returns a value (boolean) if $get_it was true (from template_footer). Otherwise the function is a void.
+ * @ignore
+ */
 function theme_copyright($get_it = false)
 {
 	global $forum_copyright, $context, $boardurl, $forum_version, $txt, $modSettings;
@@ -3569,6 +3582,15 @@ function theme_copyright($get_it = false)
 		</span>';
 }
 
+/**
+ * Ensure the content below the main content is loaded, i.e. the footer and including the copyright (and displaying a large warning if copyright has been hidden)
+ *
+ * Several things occur here.
+ * - Load time and query count are moved into $context.
+ * - Theme dirs and paths are re-established from the master values (as opposed to being modified through any other page)
+ * - Template layers after the main content are executed in reverse order of the layers (deepest layer first)
+ * - If not in SSI or wireless, and there were template layers, check the theme did display the copyright, and if not, displaying a big message and log this in the error log.
+ */
 function template_footer()
 {
 	global $context, $settings, $modSettings, $time_start, $db_count;
@@ -3605,7 +3627,19 @@ function template_footer()
 	}
 }
 
-// Debugging.
+/**
+ * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in wireless or the query viewer page.
+ *
+ * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
+ * - Clean up a list of things that might not have been initialized this page, especially if heavily caching.
+ * - Get the list of included files, and strip out the long paths to the board dir, replacing with a . for "current directory"; also collate the size of included files.
+ * - Examine the DB query cache, and see if any warnings have been issued from queries.
+ * - Grab the page content, and remove the trailing ending of body and html tags, so the footer information can replace them (and still leave legal HTML)
+ * - Output the list of included templates, subtemplates, language files, properly included (through loadTemplate) stylesheets, and master list of files.
+ * - If caching is enabled, also include the list of cache items included, how much data was loaded and how long was spent on caching retrieval.
+ * - Additionally, if we already have a list of queries in session (i.e. the query list is expanded), display that too, stripping out ones that we can't send for EXPLAIN.
+ * - Finally, clear cached language files.
+ */
 function db_debug_junk()
 {
 	global $context, $scripturl, $boarddir, $modSettings, $boarddir;
@@ -3726,7 +3760,16 @@ function db_debug_junk()
 		clean_cache('lang');
 }
 
-// Get an attachment's encrypted filename.  If $new is true, won't check for file existence.
+/**
+ * Establish the full encrypted filename where the details are specified in the database (for serving attachments). This should be used in preference to the legacy system; the filenames used by this system are more secure than the legacy function by ensuring there is a non-trivially-guessable component in the filename.
+ *
+ * @param string $filename The original unedited filename of the file to be served.
+ * @param int $attachment_id The numeric attachment id, which forms part of the attachment filename.
+ * @param mixed $dir If using multiple attachment folders, this should be set to the folder id.
+ * @param bool $new If true (this is a new file being attached), generate and return the hash that should subsequently be used.
+ * @param string $file_hash The file hash previously generated, which forms part of the attachment filename.
+ * @return string The full path to the file that contains the stated attachment.
+ */
 function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = false, $file_hash = '')
 {
 	global $modSettings, $smcFunc;
@@ -3770,7 +3813,19 @@ function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = fa
 	return $path . '/' . $attachment_id . '_' . $file_hash;
 }
 
-// Older attachments may still use this function.
+/**
+ * Older versions of the application used a method to convert filenames of attachments in to a safer form.
+ *
+ * - Accented characters are converted to filesystem safe versions.
+ * - Extended characters (dual characters in a single glyph) are converted to their ANSI equivalents.
+ * - Remove characters other than letters or other word characters, and replace . with _
+ * - Form the encrypted filename out of attachment id, the cleaned filename and the MD5 hash of the filename.
+ *
+ * @param string $filename The original filename, as it was originally uploaded (and stored in the database)
+ * @param mixed $attachment_id If using encrypted filenames, the attachment id is required as it forms part of the filename. Otherwise it is not required and simply can be submitted as false.
+ * @param mixed $dir If using multiple attachment folders, the id of the folder.
+ * @param bool $new Submit true if using a newer attachment, or encrypted filenames are enabled.
+ */
 function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $new = false)
 {
 	global $modSettings;
@@ -3808,7 +3863,6 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	return $filename;
 }
 
-// Convert a single IP to a ranged IP.
 /**
  * Converts a single IP string in SMF terms into an array showing ranges, which is suitable for database use.
  *
@@ -3958,7 +4012,20 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	}
 }
 
-// Creates an image/text button
+/**
+ * Create a 'button', comprised of an icon and a text string, subject to theme settings.
+ *
+ * This function first looks to see if the theme specifies its own button system, and if it does not (or, $force_use is true), this function manages the button generation.
+ *
+ * If the theme directs that image buttons should not be used, the button will simply be the text string dictated by $alt. If the theme does use image buttons, it looks to see if it uses full images, or image+text, and generates the appropriate HTML.
+ *
+ * @param string $name Name of the button, which is also the base of the filename of the image to be used.
+ * @param string $alt The key within $txt to use as the alt-text of the image, or the textual caption if there is no image.
+ * @param string $label The key within $txt to use in the event of image/text composite buttons.
+ * @param string $custom Any additional custom parameters to attach to the img item in the HTML, perhaps an HTML class, inline style or similar.
+ * @param bool $force_use By default, this function will transfer control of creating buttons to the theme if it provides for such; setting this value to true forces this to override the theme.
+ * @return string The HTML for the given button.
+ */
 function create_button($name, $alt, $label = '', $custom = '', $force_use = false)
 {
 	global $settings, $txt, $context;
@@ -4349,7 +4416,17 @@ function smf_seed_generator()
 	updateSettings(array('rand_seed' => mt_rand()));
 }
 
-// Process functions of an integration hook.
+/**
+ * Calls a given integration hook at the related point in the code.
+ *
+ * Each of the integration hooks is a parameter within $modSettings, which states a list of functions to call at relevant points in the code, such as integrate_login which is run during login (to facilitate login into an integrated application)
+ *
+ * The contents of the $modSettings value is a comma separated list of function names to be called at the relevant point. These are either procedural functions or static class methods (classname::method).
+ *
+ * @param string $hook The name of the hook as given in $modSettings, e.g. integrate_login, integrate_buffer
+ * @param array $parameters Parameters to be passed to the hooked functions. The list of parameters each method is exposed to is dependent on the calling code (e.g. the hook for 'new topic is posted' passes different parameters to the 'final buffer' hook), and parameters passed by reference will be passed to hook functions as such.
+ * @return array An array of results, one element per hooked function. This will be solely dependent on the hooked function.
+ */
 function call_integration_hook($hook, $parameters = array())
 {
 	global $modSettings;
