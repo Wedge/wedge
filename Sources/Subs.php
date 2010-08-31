@@ -22,6 +22,12 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file carries many useful functions that will come into use on most page loads, but not tied to a specific area of operations.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -44,18 +50,6 @@ if (!defined('SMF'))
 		- the 'postgroups' case updates those members who match condition's
 		  post-based membergroups in the database (restricted by parameter1).
 
-	void updateMemberData(int id_member, array data)
-		- updates the columns in the members table.
-		- id_member is either an int or an array of ints to be updated.
-		- data is an associative array of the columns to be updated and their
-		  respective values.
-		- any string values updated should be quoted and slashed.
-		- the value of any column can be '+' or '-', which mean 'increment'
-		  and decrement, respectively.
-		- if the member's post number is updated, updates their post groups.
-		- this function should be used whenever member data needs to be
-		  updated in place of an UPDATE query.
-
 	void updateSettings(array changeArray, use_update = false)
 		- updates both the settings table and $modSettings array.
 		- all of changeArray's indexes and values are assumed to have escaped
@@ -66,73 +60,11 @@ if (!defined('SMF'))
 		- when use_update is true, the value can be true or false to increment
 		  or decrement it, respectively.
 
-	string constructPageIndex(string base_url, int &start, int max_value,
-			int num_per_page, bool compact_start = false)
-		- builds the page list, e.g. 1 ... 6 7 [8] 9 10 ... 15.
-		- compact_start caused it to use "url.page" instead of
-		  "url;start=page".
-		- handles any wireless settings (adding special things to URLs.)
-		- very importantly, cleans up the start value passed, and forces it to
-		  be a multiple of num_per_page.
-		- also checks that start is not more than max_value.
-		- base_url should be the URL without any start parameter on it.
-		- uses the compactTopicPagesEnable and compactTopicPagesContiguous
-		  settings to decide how to display the menu.
-		- an example is available near the function definition.
-
 	string comma_format(float number)
 		- formats a number to display in the style of the admins' choosing.
 		- uses the format of number_format to decide how to format the number.
 		- for example, it might display "1 234,50".
 		- caches the formatting data from the setting for optimization.
-
-	string timeformat(int time, bool show_today = true, string offset_type = false)
-		- returns a pretty formated version of time based on the user's format
-		  in $user_info['time_format'].
-		- applies all necessary time offsets to the timestamp, unless offset_type
-		  is set.
-		- if todayMod is set and show_today was not not specified or true, an
-		  alternate format string is used to show the date with something to
-		  show it is "today" or "yesterday".
-		- performs localization (more than just strftime would do alone.)
-
-	string un_htmlspecialchars(string text)
-		- removes the base entities (&lt;, &quot;, etc.) from text.
-		- should be used instead of html_entity_decode for PHP version
-		  compatibility reasons.
-		- additionally converts &nbsp; and &#039;.
-		- returns the string without entities.
-
-	string shorten_subject(string regular_subject, int length)
-		- shortens a subject so that it is either shorter than length, or that
-		  length plus an ellipsis.
-		- respects internationalization characters and entities as one character.
-		- avoids trailing entities.
-		- returns the shortened string.
-
-	int forum_time(bool use_user_offset = true)
-		- returns the current time with offsets.
-		- always applies the offset in the time_offset setting.
-		- if use_user_offset is true, applies the user's offset as well.
-		- returns seconds since the unix epoch.
-
-	array permute(array input)
-		- calculates all the possible permutations (orders) of array.
-		- should not be called on huge arrays (bigger than like 10 elements.)
-		- returns an array containing each permutation.
-
-	string parse_bbc(string message, bool smileys = true, string cache_id = '', array parse_tags = null)
-		- this very hefty function parses bbc in message.
-		- only parses bbc tags which are not disabled in disabledBBC.
-		- also handles basic HTML, if enablePostHTML is on.
-		- caches the from/to replace regular expressions so as not to reload
-		  them every time a string is parsed.
-		- only parses smileys if smileys is true.
-		- does nothing if the enableBBC setting is off.
-		- applies the fixLongWords magic if the setting is set to on.
-		- uses the cache_id as a unique identifier to facilitate any caching
-		  it may do.
-		- returns the modified message.
 
 	void parsesmileys(string &message)
 		- the smiley parsing function which makes pretty faces appear :).
@@ -151,12 +83,6 @@ if (!defined('SMF'))
 	void writeLog(bool force = false)
 		// !!!
 
-	void redirectexit(string setLocation = '', bool use_refresh = false)
-		// !!!
-
-	void obExit(bool do_header = true, bool do_footer = do_header)
-		// !!!
-
 	int logAction($action, $extra = array())
 		// !!!
 
@@ -170,20 +96,6 @@ if (!defined('SMF'))
 		- attempts to protect from spammed messages and the like.
 		- takes a $txt index. (not an actual string.)
 		- time taken depends on error_type - generally uses the modSetting.
-
-	array url_image_size(string url)
-		- uses getimagesize() to determine the size of a file.
-		- attempts to connect to the server first so it won't time out.
-		- returns false on failure, otherwise the output of getimagesize().
-
-	void determineTopicClass(array &topic_context)
-		// !!!
-
-	void setupThemeContext(bool force_reload = false)
-		// !!!
-
-	void template_rawdata()
-		// !!!
 
 	void template_header()
 		// !!!
@@ -200,19 +112,7 @@ if (!defined('SMF'))
 	void getAttachmentFilename(string filename, int id_attach, bool new = true)
 		// !!!
 
-	array ip2range(string $fullip)
-		- converts a given IP string to an array.
-		- internal function used to convert a user-readable format to
-		  a format suitable for the database.
-		- returns 'unknown' if the ip in the input was '255.255.255.255'.
-
-	string host_from_ip(string ip_address)
-		// !!!
-
 	string create_button(string filename, string alt, string label, bool custom = '')
-		// !!!
-
-	void clean_cache(type = '')
 		// !!!
 
 	array call_integration_hook(string hook, array parameters = array())
@@ -220,14 +120,6 @@ if (!defined('SMF'))
 		- supports static class method calls.
 		- returns the results of the functions as an array.
 
-	void add_integration_function(string hook, string function, bool permanent = true)
-		- adds the given function to the given hook.
-		- does nothing if the functions is already added.
-		- if permanent parameter is true, updates the value in settings table.
-
-	void remove_integration_function(string hook, string function)
-		- removes the given function from the given hook.
-		- does nothing if the functions is not available.
 */
 
 // Update some basic statistics...
@@ -435,7 +327,19 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 	}
 }
 
-// Assumes the data has been htmlspecialchar'd.
+/**
+ * Update the members table with data.
+ *
+ * This function ensures the member table is updated for one, multiple or all users. Note:
+ * - If level 2 caching is in use, the appropriate cache data will be flushed with the new values.
+ * - The change_member_data integration hook where any of the common values are updated.
+ * - {@link updateStats() is also called so that if we have updated post count, post count groups will also be managed automatically.
+ * - This function should always be called for updating member data rather than updating the members table directly.
+ * - All string data should have been processed with htmlspecialchars for security; no sanitisation is performed on the data.
+ *
+ * @param mixed $members The member or members that are to be updated. null for all members, an integer for an individual user, or an array of integers for multiple users to be affected.
+ * @param array $data A key/value pair array that contains the field to be updated and the new value. Additionally, if the field is known to be an integer (of which a list of known columns is stated), supplying a value of + or - will allow the column to be incremented or decremented without explicitly specifying the new value.
+ */
 function updateMemberData($members, $data)
 {
 	global $modSettings, $user_info, $smcFunc;
@@ -633,8 +537,21 @@ function updateSettings($changeArray, $update = false, $debug = false)
 	cache_put_data('modSettings', null, 90);
 }
 
-// Constructs a page list.
-// $pageindex = constructPageIndex($scripturl . '?board=' . $board, $_REQUEST['start'], $num_messages, $maxindex, true);
+/**
+ * This function is used to construct the page lists used throughout the application, e.g. 1 ... 6 7 [8] 9 10 ... 15.
+ *
+ * - The function accepts a start position, for calculating the page out of the list of possible pages, however if the value is not the start of an actual page, the function will sanitise the value so that it will be the actual start of the 'page' of content. It also will sanitise where the start is beyond the last item.
+ * - Parameters such as wireless being in the URL are also managed.
+ * - Many URLs in the application are in the form of item=x.y format, e.g. index.php?topic=1.20 to denote topic 1, 20 items in. This can be achieved by specifying $flexible_start as true, and %1$d in the basic URL component, e.g. passing the base URL as index.php?topic=1.%1$d
+ * - If $modSettings['compactTopicPagesEnable'] is empty, no compaction of page items is used and all pages are displayed; if enabled, only the first, last and the display will consist of multiple contiguous items centered on the current page (stated as $modSettings['compactTopicPagesContiguous'], halved, either side of the current page)
+ *
+ * @param string $base_url The basic URL to be used for each link.
+ * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitised to be so and the value will persist upon the function's return.
+ * @param int $max_value The total number of items you are paginating for.
+ * @param int $num_per_page The number of items to be displayed on a given page. $start will be forced to be a multiple of this value.
+ * @param bool $flexible_start Whether a ;start=x component should be introduced into the URL automatically (see above)
+ * @return string The complete HTML of the page index that was requested.
+ */
 function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false)
 {
 	global $modSettings;
@@ -750,7 +667,17 @@ function comma_format($number, $override_decimal_count = false)
 	return number_format($number, is_float($number) ? ($override_decimal_count === false ? $decimal_count : $override_decimal_count) : 0, $decimal_separator, $thousands_separator);
 }
 
-// Format a time to make it look purdy.
+/**
+ * Format a given timestamp, optionally applying the forum and user offsets, for display including 'Today' and 'Yesterday' prefixes.
+ *
+ * This function also applies the date/time format string the admin can specify in the admin panel (Features and Options / General) user can specify in their Look and Layout Preferences through strftime.
+ *
+ * @param int $log_time Timestamp to use. No default is given, will often be derived from stored content.
+ * @param mixed $show_today When calling from outside this function, it is whether to use 'Today' format at all, or override the forum settings and not use it (use it is default). This function also makes use of this function to call itself for formatting the time part of 'Today' dates, and uses this to pass the time-only format back.
+ * @param mixed $offset_type The offset type to use when considering the timestamp; Boolean false (default) means to apply forum and user offsets to the given timestamp, 'forum' to apply only the forum's time offset, any other value to bypass any offsets being applied.
+ *
+ * @return string The formatted time and date, will include localized strings with HTML formatting the case of 'Today' and 'Yesterday' strings.
+ */
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $modSettings, $smcFunc;
@@ -822,7 +749,14 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	return strftime($str, $time);
 }
 
-// Removes special entities from strings.  Compatibility...
+/**
+ * Reconverts a number of the translations performed by {@link preparsecode()} with respect to HTML entity characters (e.g. angle brackets, quotes, apostrophes)
+ *
+ * This function effectively performs mostly as htmlspecialchars_decode(ENT_QUOTES) for the important characters, however this also works on PHP 4 as well as adding the apostrophe and non breaking spaces (and fixing a bug in PHP 4 in the process)
+ *
+ * @param string $string A string that has been converted through {@link preparsecode()} previously; this ensures the common HTML entities, non breaking spaces and apostrophes are not subject to double conversion or being over-escaped when submitted back to the editor component.
+ * @return string The string, with the characters converted back.
+ */
 function un_htmlspecialchars($string)
 {
 	static $translation;
@@ -833,7 +767,16 @@ function un_htmlspecialchars($string)
 	return strtr($string, $translation);
 }
 
-// Shorten a subject + internationalization concerns.
+/**
+ * Shortens a string, typically a thread subject, in a way that is intended to avoid breaking in internationalization ways.
+ *
+ * Specifically, if a string is longer than the specified length, shorten it and add an ellipsis. Internationlized characters and entities are respected as 'one' character for length calculations, and also trailing entities are avoided too.
+ *
+ * @param string $subject The string of the full subject.
+ * @param int $length The maximum length in characters of the shortened string.
+ *
+ * @return string The shortened string
+ */
 function shorten_subject($subject, $len)
 {
 	global $smcFunc;
@@ -846,7 +789,14 @@ function shorten_subject($subject, $len)
 	return $smcFunc['substr']($subject, 0, $len) . '...';
 }
 
-// The current time with offset.
+/**
+ * Returns the current timestamp (seconds since midnight 1/1/1970) with forum offset and optionally user's preference for time offset.
+ *
+ * @param bool $use_user_offset Specifies that the time returned should include the user's time offset set in their Look and Layout Preferences.
+ * @param mixed $timestamp Specifies a timestamp to be used for calculation; this will return the timestamp modified by the forum/user options. If unspecified or null, return the current time modified by these options.
+ *
+ * @return int Timestamp since Unix epoch in seconds
+ */
 function forum_time($use_user_offset = true, $timestamp = null)
 {
 	global $user_info, $modSettings;
@@ -859,7 +809,18 @@ function forum_time($use_user_offset = true, $timestamp = null)
 	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
 }
 
-// This gets all possible permutations of an array.
+/**
+ * This function returns all possible permutations of an array.
+ *
+ * Notes:
+ * - This function returns an array of arrays based on the values supplied to it. E.g. array(1,2,3,4) will be returned as a series of arrays of permutations based on that, e.g. array(4,3,2,1), array(1,3,2,4)
+ * - The algorithm used does not ensure uniqueness, in fact given array(1,2,3,4), there are 3 instances of duplicate permutations. However, this would be faster than exhaustively computing it, or searching the array for uniqueness after.
+ * - This function is used in one and only one place: within the bbcode parser, for parameters being provided so they can be processed regardless of the specified order.
+ * - It is strongly not recommended to call this function with many (more than 8) options in the source array.
+ *
+ * @param array $array An indexed array of values
+ * @return array An array of indexes arrays, representing all the permutations of the elements in the source $array.
+ */
 function permute($array)
 {
 	$orders = array($array);
@@ -884,7 +845,21 @@ function permute($array)
 	return $orders;
 }
 
-// Parse bulletin board code in a string, as well as smileys optionally.
+/**
+ * Returns the given string, parsed for most forms of bbcode, according to the function parameters and general application state.
+ *
+ * Notes:
+ * - This function handles all bbcode parsing, as well as containing the list of all bbcodes known to the system, and where new bbcodes should be added.
+ * - The state of bbcode disabled in the admin panel is stored in $modSettings['disabledBBC'] as a comma-separated list and parsed here.
+ * - The master toggle switch of $modSettings['enableBBC'] is applied here, as is $modSettings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, ins, del, pre, blockquote; a and img are converted to bbcode equivalents)
+ * - Long words are also fixed here as directed by $modSettings['fixLongWords'].
+ *
+ * @param mixed $message The original text, including bbcode, to be parsed. This is expected to have been parsed with {@link preparsecode()} previously (for handling of quotes and apostrophes). Alternatively, if boolean false is passed here, the return value is the array listing the acceptable bbcode types.
+ * @param mixed $smileys Whether smileys should be parsed too, prior to (and in addition to) any bbcode, defaults to true. Nominally this is a boolean value, true for 'parse smileys', false for not, however the function also accepts the string 'print', for parsing in the print-page environment, which disables non printable tags and smileys. This is also overridden in wireless mode.
+ * @param string $cache_id If specified, a quasi-unique key for the item being parsed, so that if it took over 0.05 seconds, it can be cached. (The final key used for the cache takes the supplied key and includes details such as the user's locale and time offsets, an MD5 digest of the message and other details that potentially affect the way parsing occurs)
+ * @param array $parse_tags An array of tags that will be allowed for this parse only. (This overrides any user settings for what is and is not allowed. Additionally, runs with this set are never cached, regardless of cache id being set)
+ * @return mixed If $message was boolean false, the return set is the master list of available bbcode, otherwise it is the parsed message.
+ */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
 	global $txt, $scripturl, $context, $modSettings, $user_info, $smcFunc;
@@ -2730,6 +2705,19 @@ function writeLog($force = false)
 }
 
 // Make sure the browser doesn't come back and repost the form data.  Should be used whenever anything is posted.
+/**
+ * Ensures the browser is redirected to another location. Should be used after anything is posted to ensure the browser cannot repost the form data.
+ *
+ * This often marks the end of general processing, since ultimately it diverts execution to {@link obExit()} which means a closedown of processing, buffers and final output. Things to note:
+ * - A call is made before continuing to ensure that the mail queue is processed.
+ * - Session IDs (where applicable, e.g. for those without cookies) are added in if needed.
+ * - The URL is also rewritten to support queryless URLs depending on server configuration.
+ * - The redirect integration hook is called, just before the actual redirect, in case the integration wishes to alter where redirection occurs.
+ * - The source of redirection is noted in the session when in debug mode.
+ *
+ * @param string $setLocation The string representing the URL. If an internal (into the forum) link, this should be in the form of action=whatever (i.e. without the full domain and path to index.php, or the ?). Note this can be an external URL too.
+ * @param bool $refresh Whether to use a Refresh HTTP header or whether to use Location (default).
+ */
 function redirectexit($setLocation = '', $refresh = false)
 {
 	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache;
@@ -2788,6 +2776,28 @@ function redirectexit($setLocation = '', $refresh = false)
 }
 
 // Ends execution.  Takes care of template loading and remembering the previous URL.
+/**
+ * This function marks the end of processing, proceeds to close down output buffers, flushing content as it does so, before terminating execution.
+ *
+ * This function operates in two principle ways - raw content, or forum page mode, depending on the parameters passed; this is so non HTML data can be passed through it, e.g. XML.
+ *
+ * Several side operations occur alongside principle handling:
+ * - Recursive calls to this function will attempt to be blocked.
+ * - The stats cache will be cleared.
+ * - A call will be put in to work on the mail queue.
+ * - Make sure the page title is sanitised.
+ * - Begin the session ID injecting output buffer.
+ * - If in a debug or XML mode or WAP, post-process the page to ensure it is valid Unicode with a further output buffer.
+ * - Ensure any integration-hooked buffers are called.
+ * - Display the header if correct to display then main page content, then the contents of $context['include_after_template'], followed by footer if correct to display, and lastly by debug data if enabled and available.
+ * - Store the user agent string from the browser for security comparisons next page load.
+ * - Attempt to clean up known issues with strict HTML doctypes, e.g. rewriting a hrefs that have explicit stated 'target' which is only available in XHTML 1.0 Transitional not Strict.
+ *
+ * @param mixed $header Whether to issue the header templates or not (often including the main menu). Normally this will be the case, because normally you will require standard templating (i.e pass null, or true here when calling from elsewhere in the app), or false if you require raw content output.
+ * @param mixed $do_footer Nominally this follows $header, with one important difference. Whereas with $header, null means to have headers, with $do_footer, null means to inherit from $header. So to have headers, a null/null combination is usually desirable (as index.php does), or to have raw output, simply pass $header as false and omit this parameter.
+ * @param bool $from_index If this function is being called in the normal process of execution, this will be true, which enables thie function to return so it can be called again later (so the header can be issued, followed by normal processing, followed by the footer, which is all driven by this function). Normally there will be no need to change this because when calling from elsewhere, execution is intended to end.
+ * @param boom $from_fatal_error If obExit is being called in resolution of a fatal error, this must be set. It is used in ensuring obExit cascades correctly for header/footer when a fatal error has been encountered. Note that the error handler itself should attend to this (and thus, should be called instead of invoking this with an error message)
+ */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
 	global $context, $settings, $modSettings, $txt, $smcFunc;
@@ -3109,7 +3119,18 @@ function spamProtection($error_type)
 	return false;
 }
 
-// Get the size of a specified image with better error handling.
+/**
+ * Gets the size of an image specified by a URL.
+ *
+ * Notes:
+ * - Used for remote avatars that aren't downloaded, regular images (to check they're not oversized), signature images and so on.
+ * - Attempts to use getimagesize with the provided URL bare if no match to a conventional URL fails (i.e. no protocol listed)
+ * - If a protocol is listed, attempt to connect to the server normally (half second timeout), and send an HTTP HEAD request to establish the file exists. If so, do a second request to actually get the data and pipe it into imagecreatefromstring() to be able to assess it.
+ * - If this took more than 0.8 seconds in total, cache the result.
+ *
+ * @param string $url A URL presumably containing an image, whose dimensions are requested.
+ * @return mixed Returns false if not able to obtain the image (either unknown format, or file not found), or an indexed array of (x,y) dimensions.
+ */
 function url_image_size($url)
 {
 	global $sourcedir;
@@ -3184,6 +3205,13 @@ function url_image_size($url)
 	return $size;
 }
 
+/**
+ * Determines the CSS class that the topic indicator will be comprised of.
+ *
+ * The composite icon for a topic indicates its activity level, whether it is a poll or post, whether it is locked and/or sticky. All of these factors are added into the class to form the composite icon.
+ *
+ * @param array &$topic_context The array within $context, either the full or partial array depending on whether it is called about a single topic (Display) or each topic (MessageIndex, Recent, Search), passed by reference so the actual array element can be updated correctly without passing an identifier to $context and subsequently pulling that into scope.
+ */
 function determineTopicClass(&$topic_context)
 {
 	// Set topic class depending on locked status and number of replies.
@@ -3206,7 +3234,20 @@ function determineTopicClass(&$topic_context)
 	$topic_context['extended_class'] = &$topic_context['class'];
 }
 
-// Sets up the basic theme context stuff.
+/**
+ * Begin to prepare $context for the theme.
+ *
+ * Several operations are performed:
+ * - Prevent multiple runs of the function unless necessary.
+ * - Check whether in maintenance.
+ * - Prepare the current time, current action and whether to show quick login to guests (for the theme to optionally display).
+ * - Prepare the news items (load, split from the one entry in the admin option, randomize the other).
+ * - Get various user details (or defaults for guests) such as number of PMs, avatar.
+ * - Call {@link setupMenuContext()} to load the main menu.
+ * - Load the Javascript if we need that to resize the user information area's instance of the avatar.
+ * - Load a few details about the latest member and current forum-wide stats.
+ * - Set the page title and meta keywords.
+ */
 function setupThemeContext($forceload = false)
 {
 	global $modSettings, $user_info, $scripturl, $context, $settings, $options, $txt, $maintenance;
@@ -3368,7 +3409,13 @@ function setupThemeContext($forceload = false)
 	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? $smcFunc['htmlspecialchars']($modSettings['meta_keywords']) : '';
 }
 
-// This is the only template included in the sources...
+/**
+ * Provides a template for sources to output raw content without running through the theme handler normally.
+ *
+ * This expects $context['raw_data'] to contain the full marked up content of the page, ready to display.
+ *
+ * @todo Remove this function as no subsystem makes use of it.
+ */
 function template_rawdata()
 {
 	global $context;
@@ -3762,6 +3809,12 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 }
 
 // Convert a single IP to a ranged IP.
+/**
+ * Converts a single IP string in SMF terms into an array showing ranges, which is suitable for database use.
+ *
+ * @param string $fullip A string in SMF format representing a single IP address, a range or wildcard (e.g. 127.0.0.1, 127.0.0.10-20 or 127.0.0.*) - if 'unknown' is passed, the effective IP address will be 255.255.255.255.
+ * @return array An array of 4 elements, representing each dotted number. Each element consists of a subarray, with 'low' and 'high' elements showing the limits of the range. For a single IP dot component, these will be the same (1 in the 127.0.0.1 example); for a range it will be the lower and upper bounds (10 and 20 respectively for 127.0.0.10-20); for a wildcard it will use 0-255 instead of the *.
+ */
 function ip2range($fullip)
 {
 	// Pretend that 'unknown' is 255.255.255.255. (since that can't be an IP anyway.)
@@ -3787,7 +3840,19 @@ function ip2range($fullip)
 	return $ip_array;
 }
 
-// Lookup an IP; try shell_exec first because we can do a timeout on it.
+/**
+ * Attempts to look up the hostname from a given IP address.
+ *
+ * Multiple steps are taken in the pursuit of a hostname.
+ * - Load from cache if the IP address has been looked up in the last 5 minutes, and was previously slow
+ * - On Linux, attempt to call the 'host' command with shell_exec
+ * - On Windows and specific Unix configurations, attempt to call 'nslookup' with shell_exec
+ * - Failing those, call {@link gethostbyaddr()}
+ * - If slow, cache the result
+ *
+ * @param string $ip A single IP address in dotted format (127.0.0.1 for example)
+ * @return string If possible, the hostname associated with that IP address, or empty string if that was not possible.
+ */
 function host_from_ip($ip)
 {
 	global $modSettings;
@@ -3840,7 +3905,16 @@ function host_from_ip($ip)
 	return $host;
 }
 
-// Chops a string into words and prepares them to be inserted into (or searched from) the database.
+/**
+ * Breaks a string up into word-units, primarily for the purposes of searching and related code.
+ *
+ * This function is used surprisingly often, not only for the actual business of searching, but also maintaining custom indexes on the text too.
+ *
+ * @param string $text The original text that is to be processed. Assumed to be from a post or other case where entities will be present.
+ * @param mixed $max_chars When $encrypt is true, this is the maximum number of bytes to use in the integer hashes for each word (typically 2-4); when $encrypt is false, the maximum number of letters in each 'word', null for no limit.
+ * @param bool $encrypt Whether to hash the words into integer hashes or not. This is off by default; it is only used for custom indexes, other search methods do not normally require this to be provided to them.
+ * @return array Returns an array of strings (if $encrypt is false) or an array of integers (if $encrypt is true) representing the unique words found in the source $text.
+ */
 function text2words($text, $max_chars = 20, $encrypt = false)
 {
 	global $smcFunc, $context;
@@ -3901,7 +3975,11 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . ' />';
 }
 
-// Empty out the cache folder.
+/**
+ * Cleans some or all of the files stored in the file cache.
+ *
+ * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically either 'data' or 'lang', to prune 'data_*.php' and 'lang_*.php' files respectively.
+ */
 function clean_cache($type = '')
 {
 	global $cachedir;
@@ -3919,7 +3997,14 @@ function clean_cache($type = '')
 	closedir($dh);
 }
 
-// Load classes that are both (E_STRICT) PHP 4 and PHP 5 compatible.
+/**
+ * Loads a PHP class from the sources directory.
+ *
+ * This function exists for PHP 4 compatibility; PHP 5 is able to load classes normally, but for PHP 4 (at least for E_STRICT compliance) some of the PHP 5 feature keywords have to be removed - visibility keywords and the __construct magic method do not exist in PHP 4.
+ *
+ * @param string $filename The filename (ending in .php) to be loaded.
+ * @todo Deprecate and remove this function as PHP 4 compatibility is no longer required.
+ */
 function loadClassFile($filename)
 {
 	global $sourcedir;
@@ -3961,6 +4046,15 @@ function loadClassFile($filename)
 		require_once($sourcedir . '/' . $filename);
 }
 
+/**
+ * This function handles the processing of the main application menu presented to the user.
+ *
+ * Notes:
+ * - It defines every master item in the menu, as well as any sub-buttons it may have.
+ * - It also matches the current action against the list of items to ensure the appropriate top level button is highlighted.
+ * - The principle menu data is also cached, based on the user groups and language.
+ * - The entire menu, as it will be displayed (i.e. disabled items/where show is set to false; these are removed) is pushed into $context['menu_buttons'].
+ */
 function setupMenuContext()
 {
 	global $context, $modSettings, $user_info, $txt, $scripturl;
@@ -4229,7 +4323,11 @@ function setupMenuContext()
 	}
 }
 
-// Generate a random seed and ensure it's stored in settings.
+/**
+ * Generates a random seed to be used application-wide.
+ *
+ * This function updates $modSettings['rand_sand'] which is used in generating tokens for major SMF actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
+ */
 function smf_seed_generator()
 {
 	global $modSettings;
@@ -4276,7 +4374,15 @@ function call_integration_hook($hook, $parameters = array())
 	return $results;
 }
 
-// Add a function for integration hook.
+/**
+ * Add a function to one of the integration hook stacks.
+ *
+ * This function adds a function to be called (or file to be loaded, for the pre_include hook). This function also prevents the same function being added to the same hook twice.
+ *
+ * @param string $hook The name of the hook that has zero or more functions attached, that the function will be added to.
+ * @param string $function The name of the function whose name should be added to the named hook.
+ * @param bool $permanent Whether the named function will be added to the hook registry permanently (default) or simply for the current page load only.
+ */
 function add_integration_function($hook, $function, $permanent = true)
 {
 	global $modSettings;
@@ -4296,7 +4402,15 @@ function add_integration_function($hook, $function, $permanent = true)
 		$modSettings[$hook] = implode(',', $functions);
 }
 
-// Remove an integration hook function.
+/**
+ * Remove a function from one of the integration hook stacks.
+ *
+ * This function not only removes the hook from the local registry, but also from the master registry. Note that this function does not check whether the named function is callable, simply that it is part of the stack - it can be used on the file-include hook as well. If the function is not attached to the named hook, the function will simply return.
+ *
+ * @param string $hook The name of the hook that has one or more functions attached.
+ * @param string $function The name of the function whose name should be removed from the named hook.
+ * @todo Modify the function to return true on success and false on fail.
+ */
 function remove_integration_function($hook, $function)
 {
 	global $modSettings;
