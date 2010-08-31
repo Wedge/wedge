@@ -22,119 +22,31 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file carries many useful functions for loading various general data from the database, often required on every page.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has the hefty job of loading information for the forum.  It uses
-	the following functions:
-
-	void reloadSettings()
-		- loads or reloads the $modSettings array.
-		- loads any integration settings, SMF_INTEGRATION_SETTINGS, etc.
-
-	void loadUserSettings()
-		- sets up the $user_info array
-		- assigns $user_info['query_wanna_see_board'] for what boards the user can see.
-		- first checks for cookie or intergration validation.
-		- uses the current session if no integration function or cookie is found.
-		- checks password length, if member is activated and the login span isn't over.
-		- if validation fails for the user, $id_member is set to 0.
-		- updates the last visit time when needed.
-
-	void loadBoard()
-		- sets up the $board_info array for current board information.
-		- if cache is enabled, the $board_info array is stored in cache.
-		- redirects to appropriate post if only message id is requested.
-		- is only used when inside a topic or board.
-		- determines the local moderators for the board.
-		- adds group id 3 if the user is a local moderator for the board they are in.
-		- prevents access if user is not in proper group nor a local moderator of the board.
-
-	void loadPermissions()
-		// !!!
-
-	array loadMemberData(array members, bool is_name = false, string set = 'normal')
-		// !!!
-
-	bool loadMemberContext(int id_member)
-		// !!!
-
-	void loadTheme(int id_theme = auto_detect)
-		// !!!
-
-	void loadTemplate(string template_name, array style_sheets = array(), bool fatal = true)
-		- loads a template file with the name template_name from the current,
-		  default, or base theme.
-		- uses the template_include() function to include the file.
-		- detects a wrong default theme directory and tries to work around it.
-		- if fatal is true, dies with an error message if the template cannot
-		  be found.
-
-	void loadSubTemplate(string sub_template_name, bool fatal = false)
-		- loads the sub template specified by sub_template_name, which must be
-		  in an already-loaded template.
-		- if ?debug is in the query string, shows administrators a marker after
-		  every sub template for debugging purposes.
-
-	string loadLanguage(string template_name, string language = default, bool fatal = true, bool force_reload = false)
-		// !!!
-
-	array getBoardParents(int id_parent)
-		- finds all the parents of id_parent, and that board itself.
-		- additionally detects the moderators of said boards.
-		- returns an array of information about the boards found.
-
-	string &censorText(string &text, bool force = false)
-		- censors the passed string.
-		- if the theme setting allow_no_censored is on, and the theme option
-		  show_no_censored is enabled, does not censor - unless force is set.
-		- caches the list of censored words to reduce parsing.
-
-	void template_include(string filename, bool only_once = false)
-		- loads the template or language file specified by filename.
-		- if once is true, only includes the file once (like include_once.)
-		- uses eval unless disableTemplateEval is enabled.
-		- outputs a parse error if the file did not exist or contained errors.
-		- attempts to detect the error and line, and show detailed information.
-
-	void loadSession()
-		// !!!
-
-	void loadDatabase()
-		- takes care of mysql_set_mode, if set.
-		// !!!
-
-	bool sessionOpen(string session_save_path, string session_name)
-	bool sessionClose()
-	bool sessionRead(string session_id)
-	bool sessionWrite(string session_id, string data)
-	bool sessionDestroy(string session_id)
-	bool sessionGC(int max_lifetime)
-		- implementations of PHP's session API.
-		- handle the session data in the database (more scalable.)
-		- use the databaseSession_lifetime setting for garbage collection.
-		- set by loadSession().
-
-	void cache_put_data(string key, mixed value, int ttl = 120)
-		- puts value in the cache under key for ttl seconds.
-		- may "miss" so shouldn't be depended on, and may go to any of many
-		  various caching servers.
-		- supports eAccelerator, Turck MMCache, ZPS, and memcached.
-
-	mixed cache_get_data(string key, int ttl = 120)
-		- gets the value from the cache specified by key, so long as it is not
-		  older than ttl seconds.
-		- may often "miss", so shouldn't be depended on.
-		- supports the same as cache_put_data().
-
-	void get_memcached_server(int recursion_level = 3)
-		- used by cache_get_data() and cache_put_data().
-		- attempts to connect to a random server in the cache_memcached
-		  setting.
-		- recursively calls itself up to recursion_level times.
-*/
-
-// Load the $modSettings array.
+/**
+ * Loads the forum-wide settings into $modSettings as an array.
+ *
+ * - Ensure the database is using the same character set as the application thinks it is.
+ * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
+ * - Save the value in cache for next time.
+ * - Determine whether UTF-8 in regular expressions is an option; this is a PHP 4 compatibility item.
+ * - Declare the common code for $smcFunc, including the bytesafe string handling functions.
+ * - Set the timezone (for PHP 5.1+)
+ * - Check the load average settings if available.
+ * - Check whether post moderation is enabled.
+ * - Check if SMF_INTEGRATION_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
+ * - Load any files specified in integrate_pre_include and run any functions specified in integrate_pre_load.
+ *
+ * @todo PHP 4 compatibility code removal
+ */
 function reloadSettings()
 {
 	global $modSettings, $boarddir, $smcFunc, $txt, $db_character_set, $context;
@@ -307,7 +219,20 @@ function reloadSettings()
 	call_integration_hook('integrate_pre_load');
 }
 
-// Load all the important user information...
+/**
+ * Loads the user general details, including username, id, groups, and a few more things.
+ *
+ * - Firstly, checks the verify_user integration hook, in case the user id is being supplied from another application.
+ * - If it is not, check the cookies to see if a user identity is being provided.
+ * - Failing that, investigate the session data (which optionally will be checking the User Agent matches)
+ * - Having established the user id, proceed to load the current member's data (from cache as appropriate) and make sure it is cached.
+ * - Store the member data in $user_settings, ensure it is cached and verify the password is right.
+ * - Check whether the user is attempting to flood the login with requests, and deal with it as appropriate.
+ * - Assuming the member is correct, check and update the last-visit information if appropriate.
+ * - Ensure the user groups are sanitised; or if not a logged in user, perform 'is this a spider' checks.
+ * - Populate $user_info with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level and user groups)
+ * - Establish board access rights based as an SQL clause (based on user groups) in $user_info['query_see_boards'], and a subset of this to include ignore boards preferences into $user_info['query_wanna_see_boards'].
+ */
 function loadUserSettings()
 {
 	global $modSettings, $user_settings, $sourcedir, $smcFunc;
@@ -556,7 +481,17 @@ function loadUserSettings()
 		$user_info['query_wanna_see_board'] = '(' . $user_info['query_see_board'] . ' AND b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . '))';
 }
 
-// Check for moderators and see if they have access to the board.
+/**
+ * Validate whether we are dealing with a board, and whether the current user has acces to that board.
+ *
+ * - Initialize the link tree (and later, populating it).
+ * - If only an individual msg is specified in the URL, identify the topic it belongs to, and redirect to that topic normally. (Assuming it exists; if not throw a fatal error that topic does not exist)
+ * - If no board or topic is applicable, return (we're not in a board, and there won't be board moderators)
+ * - See if we have checked this board or board+topic lately, and if so, grab from cache.
+ * - If we don't have this, load the board information into $board_info, including category id and name, board name and other details of this board
+ * - See if there are board moderators, and whether the current user is amongst them (which means possibly upgrading access if they did not have so before, as well as adding group id 3 to their groups)
+ * - If the user cannot see the topic (and isn't a local moderator), issue a fatal error.
+ */
 function loadBoard()
 {
 	global $txt, $scripturl, $context, $modSettings;
@@ -813,7 +748,18 @@ function loadBoard()
 		$user_info['groups'][] = 3;
 }
 
-// Load this user's permissions.
+/**
+ * Load the current user's permissions, to be stored in $user_info['permissions']
+ *
+ * - If the user is an admin, simply validate that they have not been banned then return.
+ * - Attempt to load from cache (level 2+ caching only); if matched, apply ban restrictions and return.
+ * - See if the user is possibly a spider, extend the user's "permissions" appropriately.
+ * - If we have not been able to establish permissions thus far (because caching failed us), query the general permissions table for our groups.
+ * - Then apply those permissions, both allow and denied.
+ * - If inside a board, identify the board profile, and load the permissions from that, following the same process.
+ * - If on caching level 2 or up, cache, then apply banned user permissions if banned.
+ * - If the user is not a guest, identify what other boards they may have access to through the moderator cache.
+ */
 function loadPermissions()
 {
 	global $user_info, $board, $board_info, $modSettings, $smcFunc, $sourcedir;
@@ -926,7 +872,16 @@ function loadPermissions()
 	}
 }
 
-// Loads an array of users' data by ID or member_name.
+/**
+ * Loads user data, either by id or member_name, and can load one or many users' data together.
+ *
+ * User data, where successful, is loaded into the global $user_profiles array, keyed by user id. The exact data set is dependent on $set.
+ *
+ * @param mixed $users This can be either a single value or an array, representing a single user or multiple users.
+ * @param bool $is_name If this parameter is true, treat the value(s) in $users as denoting user names, otherwise they are numeric user ids.
+ * @param string $set Complexity of data to load, from 'minimal', 'normal', 'profile', each successively increasing in complexity.
+ * @return mixed Returns either an array of users whose data was matched, or false if no matches were made.
+ */
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
 	global $user_profile, $modSettings, $board_info, $smcFunc;
@@ -1083,7 +1038,37 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	return empty($loaded_ids) ? false : $loaded_ids;
 }
 
-// Loads the user's basic values... meant for template/theme usage.
+/**
+ * Processes all the data previously loaded by {@link loadMemberData()} into a form more readily usable by the rest of the application.
+ *
+ * {@link loadMemberData()} issues the query and stores the result as-is, this function deals with formatting and setting up the results that make it much easier to use the data as-is, for example taking the raw data as issued about avatars, and creating a single unified array that can be used throughout the application.
+ *
+ * The following items are prepared by this function:
+ * - Identity: username (raw username), name (display name), id (user id)
+ * - Buddies: is_buddy (whether the user loaded is a buddy of the current user), is_reverse_buddy (whether the loaded user has the current user as a buddy), buddies (comma separated list of the user's buddies)
+ * - User details: title (custom title), href (URL of user profile), link (a full HTML link to the user profile), email (user email address), show_email (whether to show the loaded user's address to the current user), blurb (personal text, censored)
+ * - Dates: registered (formatted time/date of registration), registered_timestamp (timestap of registration), birth_date (regular date, showing the user's birth date)
+ * - Gender: gender (array; contains name, text string of male/female; image, the HTML img link to the relevant image)
+ * - Website: website (array; contains title, the title of the website; url, the bare URL of the given website)
+ * - Profile fields: signature (signature, censored), location (user location, censored)
+ * - IM fields, icq, aim, yim, msn; each an array containing: name (service name), href (URL of further information), link (standard HTML link to the href, using the service's icon), link_text (standard HTML link to the href, using text rather than images)
+ * - Post counts: real_posts (bare integer of post count), posts (a formatted version of the post count, additionally using a fun comment if the user has more than half a million posts)
+ * - Avatar: avatar (array; contains name, string for non uploaded avatar; image, HTML containing the final image link; href, basic href to uploaded avatar; url, URL to non uploaded avatar)
+ * - Last login: last_login (formatted string denoting the time of last login), last_login_timestamp (timestamp of last login)
+ * - Karma: karma (array; contains good, integer of current + karma; bad, integer of current - karma; allow, boolean of whether it is possible to alter karma)
+ * - IP address: ip and ip2 - the two user IP addresses held by a user.
+ * - Online details: online (array; is_online, boolean whether the user is online or not; text, localized string for 'online' or 'offline'; href, URL to send this user a PM; link, the HTML for a link to send this user a PM; image_href, the HTML to send this user a PM, but with the online/offline indicator; label, same as 'text')
+ * - User's language: language, the language name, capitalized
+ * - Account status: is_activated (boolean for whether account is active), is_banned (boolean for whether account is currently banned), is_guest (true - user is not a guest), warning (user's warning level), warning_status (level of warn status: '', watch, moderate, mute)
+ * - Groups: group (string, the user's primary group), group_color (string, color for user's primary group), group_id (integer, user's primary group id), post_group (string, the user's post group), post_group_color (string, color for user's post group), group_stars (HTML markup for displaying the user's badge)
+ * - Other: options (array of user's options), local_time (user's local time, using their offset), custom_fields (if $display_custom_fields is true, but content depends on custom fields)
+ *
+ * The results are stored in the global $memberContext array, keyed by user id.
+ *
+ * @param int $user The user id to process for.
+ * @param bool $display_custom_fields Whether to load and process custom fields.
+ * @return bool Return true if user's data was able to be loaded, false if not. (Error will be thrown if the user id is non-zero but the user was not passed through {@link loadMemberData()} first.
+ */
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
@@ -1279,6 +1264,25 @@ function loadMemberContext($user, $display_custom_fields = false)
 	return true;
 }
 
+/**
+ * Attempts to detect the browser, including version, needed for browser specific fixes and behaviours, and populates $context['browser'] with the findings.
+ *
+ * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected, so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
+ *
+ * Current detection:
+ * - Opera 6.x through 10.x, plus generic
+ * - Webkit (render core for Safari, Chrome, Konqueror) (generic)
+ * - Internet Explorer for Apple Mac (generic)
+ * - WebTV (generic)
+ * - Konqueror (generic)
+ * - Firefox 1.x through 3.x (including 3.5 and 3.6, though simply as Firefox 3.x) plus generic
+ * - iPhone/iPod (generic)
+ * - Android (generic)
+ * - Chrome (generic)
+ * - Safari (generic)
+ * - Gecko engine (used in Firefox, Seamonkey, others) (generic)
+ * - Internet Explorer 5.0, 5.5, 6, 7, 8 (plus generic)
+ */
 function detectBrowser()
 {
 	global $context, $user_info;
@@ -1329,6 +1333,28 @@ function detectBrowser()
 }
 
 // Load a theme, by ID.
+/**
+ * Load all the details of a theme.
+ *
+ * - Identify the theme to be loaded, from parameter or an external source: theme parameter in the URL, previously theme parameter in the URL and now in session, the user's preference, a board specific theme, and lastly the forum's default theme.
+ * - Validate that the supplied theme is a valid id and that permission to use such theme (e.g. admin allows users to choose own theme, etc) is available.
+ * - Load data from the themes table for this theme, both the user's preferences for this theme, plus the global settings for it, and load into $settings and $options respectively ($settings for theme settings/global settings, $options for user's specific settings within this theme)
+ * - Save details to cache as appropriate.
+ * - Prepare the list of folders to examine in priority for template loading (i.e. this theme's folder first, then default, but can include others)
+ * - Identify if the user has come to the board from the wrong place (e.g. a www in the URL that shouldn't be there) so it can be fixed.
+ * - Push common details into $context['user'] for the current user.
+ * - Identify what smiley set should be used.
+ * - Initialize $context['html_headers'] for later use, as well as some $settings paths, some global $context values, $txt initially.
+ * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
+ * - Ensure the forum name is the first item in the link tree.
+ * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
+ * - Initialize the theme by calling the init subtemplate.
+ * - Load the compatibility style sheet if it seems necessary.
+ * - Load any theme specific language files.
+ * - Prepare variables in the case of theme variants being available.
+ * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
+ * - Call the load_theme integration hook.
+ */
 function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_info, $user_settings, $board_info, $sc;
@@ -1779,7 +1805,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
-// Load a template - if the theme doesn't include it, use the default.
+/**
+ * Loads a named template file for later use, and/or one or more stylesheets to be used with that template.
+ *
+ * The function can be used to load just stylesheets as well as loading templates; neither is required for the other to operate. Both templates and stylesheets loaded here will be logged if full debugging is on.
+ *
+ * @param mixed $template_name Name of a template file to load from the current theme's directory (with .template.php suffix), falling back to locating it in the default theme directory. Alternatively if loading stylesheets only, supply boolean false instead.
+ * @param array $style_sheets Name of zero or more stylesheets to load (with .css suffix) from first the theme's css folder, then the default theme's css folder. Any stylesheets added here are tracked to avoid duplicate includes.
+ * @param bool $fatal Whether to exit execution with a fatal error if the template file could not be loaded.
+ * @return bool Returns true on success, false on failure (assuming $fatal is false; otherwise the fatal error will suspend execution)
+ */
 function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 {
 	global $context, $settings, $txt, $scripturl, $boarddir, $db_show_debug;
@@ -1860,7 +1895,16 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 		return false;
 }
 
-// Load a sub template... fatal is for templates that shouldn't get a 'pretty' error screen.
+/**
+ * Actually display a sub template.
+ *
+ * This is called by the header and footer templates to actually have content output to the buffer; this directs which template_ functions are called, including logging them for debugging purposes.
+ *
+ * Additionally, if debug is part of the URL (?debug or ;debug), there will be divs added for administrators to mark where template layers begin and end, with orange background and red borders.
+ *
+ * @param string $sub_template_name The name of the function (without template_ prefix) to be called.
+ * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
+ */
 function loadSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
@@ -1886,6 +1930,19 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 }
 
 // Load a language file.  Tries the current and default themes as well as the user and global languages.
+/**
+ * Attempt to load a language file.
+ *
+ * If full debugging is enabled, loads of language files will be logged too.
+ *
+ * Unlike normal processing, all language files are naturally cached, and here if the cache does not exist, the cache file is built, then loaded (rather than data accumulated then stored into cache). Additionally, some instances will request two language files together (e.g. index+Modifications); this is managed where the languages are cached in {@link cacheLanguages()}.
+ *
+ * @param string $template_name The name of the language file to load, without any .{language}.php prefix, e.g. 'Errors' or 'Who'.
+ * @param string $lang Specifies the language to attempt to load; if not specified (or empty), load it in the current user's default language.
+ * @param bool $fatal Whether to issue a fatal error in the event the language file could not be loaded.
+ * @param bool $force_reload Whether to reload the language file even if previously loaded before.
+ * @return string The name of the language from which the loaded language file was taken.
+ */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
 	global $user_info, $language, $settings, $context;
@@ -1926,6 +1983,14 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 }
 
 // Get all parent boards (requires first parent as parameter)
+/**
+ * From a given board, iterate up through the board hierarchy to find all of the parents back to forum root.
+ *
+ * Upon iterating up through the board hierarchy, the board's URL, name, depth and list of moderators will be provided upon return.
+ *
+ * @param int $id_parent The id of a board; this should only be called with the current board's id, the function will iterate itself until reaching the top level and does not require support with a list of boards to step through.
+ * @return array The result of iterating through the board hierarchy; the order of boards should be deepest first.
+ */
 function getBoardParents($id_parent)
 {
 	global $scripturl, $txt, $smcFunc;
@@ -1981,6 +2046,13 @@ function getBoardParents($id_parent)
 }
 
 // Attempt to reload our languages.
+/**
+ * Attempt to (re)load the list of known language packs, and removing non UTF-8 language packs if using UTF-8.
+ *
+ * @param bool $use_cache Whether to cache the results of searching the language folders for index.{language}.php files.
+ * @param bool $favor_utf8 Whether to lean towards UTF-8 if applicable.
+ * @return array Returns an array, one element per known language pack, with: name (capitalized name of language pack), selected (bool whether this is the current language), filename (the raw language code, e.g. english_british-utf8), location (full system path to the index.{language}.php file) - this is all part of $context['languages'] too.
+ */
 function getLanguages($use_cache = true, $favor_utf8 = true)
 {
 	global $context, $smcFunc, $settings, $modSettings;
@@ -2045,7 +2117,15 @@ function getLanguages($use_cache = true, $favor_utf8 = true)
 	return $context['languages'];
 }
 
-// Replace all vulgar words with respective proper words. (substring or whole words..)
+/**
+ * Handles censoring of provided text, subject to whether the current board can be disabled and it is disabled by the current user.
+ *
+ * Like a number of functions, this works by modifying the text in place through accepting the text by reference. The word censoring is based on two lists, held in $modSettings['censor_vulgar'] and $modSettings['censor_proper'], which are new-line delineated lists of search/replace pairs.
+ *
+ * @param string &$text The string to be censored, by reference (so updating this string, the master string will be updated too)
+ * @param bool $force Whether to force it to be censored, even if user and theme settings might indicate otherwise.
+ * @return string The censored text is also returned by reference and as such can be safely used in assignments as well as its more common use.
+ */
 function &censorText(&$text, $force = false)
 {
 	global $modSettings, $options, $settings, $txt;
@@ -2079,7 +2159,14 @@ function &censorText(&$text, $force = false)
 	return $text;
 }
 
-// Load the template/language file using eval or require? (with eval we can show an error message!)
+/**
+ * Manage the process of loading a template file. This should not normally be called directly (instead, use {@link loadTemplate()} which invokes this function)
+ *
+ * This function ultimately handles the physical loading of a template or language file, and if $modSettings['disableTemplateEval'] is off, it also loads it in such a way as to parse it first - to be able to produce a different output to highlight where the error is (which is also not cached)
+ *
+ * @param string $filename The full path of the template to be loaded.
+ * @param bool $once Whether to check that this template is uniquely loaded (for some templates, workflow dictates that it can be loaded only once, so passing it to require_once is an unnecessary performance hurt)
+ */
 function template_include($filename, $once = false)
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
@@ -2272,7 +2359,19 @@ function template_include($filename, $once = false)
 	}
 }
 
-// Attempt to start the session, unless it already has been.
+/**
+ * Attempt to start the session.
+ *
+ * There are multiple other parts here too.
+ * - Attempt to change some PHP settings (ensure cookies are enabled, but that cookies are not the only access method; disables PHP's auto tag rewriter to include sessions; turn off transparent session support; ensure normal ampersand separators for URL components)
+ * - Set cookies to be global if that's what configuration dictates.
+ * - Check if the session was started (e.g. session.auto_start) and attempt to close it if possible.
+ * - Check for people using invalid PHPSESSIDs
+ * - Enable database-based sessions and override PHP's own handler.
+ * - Set the session code randomly.
+ *
+ * @todo Remove PHP 4 compatibility code from here.
+ */
 function loadSession()
 {
 	global $HTTP_SESSION_VARS, $modSettings, $boardurl, $sc;
@@ -2347,16 +2446,34 @@ function loadSession()
 	$sc = $_SESSION['session_value'];
 }
 
+/**
+ * Part of the PHP Session API, this function is intended to apply when creating a session.
+ *
+ * @param string $save_path Normally the path that would be used in creating a session. Not applicable in the database replacement.
+ * @param string $session_name Normally the name that would be used for the session. Not applicable in the database replacement.
+ * @return bool Returns whether the session could be opened; in the database replacement this is always true.
+ */
 function sessionOpen($save_path, $session_name)
 {
 	return true;
 }
 
+/**
+ * Part of the PHP Session API, this function is intended to apply when session closure is required, as part of shutdown.
+ *
+ * @return bool Returns whether the session was successfully closed (typically a file handle). In the database this is not applicable so always returns true.
+ */
 function sessionClose()
 {
 	return true;
 }
 
+/**
+ * Part of the PHP Session API, this function retrieves the session data from the storage, as part of generally loading the session, for the database replacement.
+ *
+ * @param string $session_id The session's identifier, required.
+ * @return string The session data, as a serialized array.
+ */
 function sessionRead($session_id)
 {
 	global $smcFunc;
@@ -2380,6 +2497,13 @@ function sessionRead($session_id)
 	return $sess_data;
 }
 
+/**
+ * Part of the PHP Session API, this function manages the saving of session data, for the database replacement.
+ *
+ * @param string $session_id The session's identification, required. Note that the name is checked to ensure it is a valid formatted string from the application.
+ * @param string $data A string, containing the serialized data normally held in the $_SESSION array.
+ * @return bool Returns true on successful write, false on not.
+ */
 function sessionWrite($session_id, $data)
 {
 	global $smcFunc;
@@ -2411,6 +2535,12 @@ function sessionWrite($session_id, $data)
 	return $result;
 }
 
+/**
+ * Part of the PHP Session API, this function is for when the application terminates a session, typically on user actively logging out.
+ *
+ * @param string $session_id The id of the session to be removed.
+ * @return bool Returns true if the session was able to be removed, false if not.
+ */
 function sessionDestroy($session_id)
 {
 	global $smcFunc;
@@ -2428,6 +2558,11 @@ function sessionDestroy($session_id)
 	);
 }
 
+/**
+ * Part of the PHP Session API, this function manages 'garbage collection', i.e. pruning session data older than the current needs.
+ *
+ * @param int $max_lifetime The maximum time in seconds that a session should persist for without actively being updated. It is compared to the default value specified by the administrator (stored in $modSettings['databaseSession_lifetime'])
+ */
 function sessionGC($max_lifetime)
 {
 	global $modSettings, $smcFunc;
@@ -2446,7 +2581,15 @@ function sessionGC($max_lifetime)
 	);
 }
 
-// Load up a database connection.
+/**
+ * Initialize the database connection to be used.
+ *
+ * - Begin by loading the relevant function set (currently the MySQL driver)
+ * - Initiate the database connection with {@link smf_db_initiate()}
+ * - If the connection fails, revert to a fatal error to the user.
+ * - If in SSI mode, ensure the database prefix is attended to.
+ * - The global variable $db_connection will hold the connection data.
+ */
 function loadDatabase()
 {
 	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
@@ -2472,17 +2615,26 @@ function loadDatabase()
 		db_fix_prefix($db_prefix, $db_name);
 }
 
-// Try to retrieve a cache entry. On failure, call the appropriate function.
+/**
+ * Load a cache entry, and if the cache entry could not be found, load a named file and call a function to get the relevant information.
+ *
+ * The cache-serving function must consist of an array, and contain some or all of the following:
+ * - data, required, which is the content of the item to be cached
+ * - expires, required, the timestamp at which the item should expire
+ * - refresh_eval, optional, a string containing a piece of code to be evaluated that returns boolean as to whether some external factor may trigger a refresh
+ * - post_retri_eval, optional, a string containing a piece of code to be evaluated after the data has been updated and cached
+ *
+ * Refresh the cache if either:
+ * - Caching is disabled.
+ * - The cache level isn't high enough.
+ * - The item has not been cached or the cached item expired.
+ * - The cached item has a custom expiration condition evaluating to true.
+ * - The expire time set in the cache item has passed (needed for Zend).
+ */
 function cache_quick_get($key, $file, $function, $params, $level = 1)
 {
 	global $modSettings, $sourcedir;
 
-	// Refresh the cache if either:
-	// 1. Caching is disabled.
-	// 2. The cache level isn't high enough.
-	// 3. The item has not been cached or the cached item expired.
-	// 4. The cached item has a custom expiration condition evaluating to true.
-	// 5. The expire time set in the cache item has passed (needed for Zend).
 	if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
 		require_once($sourcedir . '/' . $file);
@@ -2499,6 +2651,24 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	return $cache_block['data'];
 }
 
+/**
+ * Store an item in the cache; supports multiple methods of which one is chosen by the admin in the server settings area.
+ *
+ * Important: things in the cache cannot be relied or assumed to continue to exist; cache misses on both reading and writing are possible and in some cases, frequent.
+ *
+ * This function supports the following cache methods:
+ * - Memcache
+ * - eAccelerator
+ * - Turck MMcache
+ * - Alternative PHP Cache
+ * - Zend Platform/ZPS
+ * - or a custom file cache
+ *
+ * @param string $key A string that denotes the identity of the data being saved, and for later retrieval.
+ * @param mixed $value The raw data to be cached. This may be any data type but it will be serialized prior to being stored in the cache.
+ * @param int $ttl The time the cache is valid for, in seconds. If a request to retrieve is received after this time, the item will not be retrieved.
+ * @todo Remove cache types that are obsolete and no longer maintained.
+ */
 function cache_put_data($key, $value, $ttl = 120)
 {
 	global $boardurl, $sourcedir, $modSettings, $memcached;
@@ -2598,6 +2768,15 @@ function cache_put_data($key, $value, $ttl = 120)
 		$cache_hits[$cache_count]['t'] = array_sum(explode(' ', microtime())) - array_sum(explode(' ', $st));
 }
 
+/**
+ * Attempt to retrieve an item from cache, previously stored with {@link cache_put_data()}.
+ *
+ * This function supports all of the same cache systems that {@link cache_put_data()} does, and with the same caveat that cache misses can occur so content should not be relied upon to exist.
+ *
+ * @param string $key A string denoting the identity of the key to be retrieved.
+ * @param int $ttl The maximum age in seconds that the data can be; if more than the specified time to live, no data will be returned even if it is in cache.
+ * @return mixed If retrieving from cache was not possible, null will be returned, otherwise the item will be unserialized and passed back.
+ */
 function cache_get_data($key, $ttl = 120)
 {
 	global $boardurl, $sourcedir, $modSettings, $memcached;
@@ -2664,6 +2843,15 @@ function cache_get_data($key, $ttl = 120)
 		return @unserialize($value);
 }
 
+/**
+ * Attempt to connect to Memcache server for retrieving cached items.
+ *
+ * This function acts to attempt to connect (or persistently connect, if persistent connections are enabled) to a memcached instance, looking up the server details from $modSettings['cache_memcached'].
+ *
+ * If connection is successful, the global $memcached will be a resource holding the connection or will be false if not successful. The function will attempt to call itself in a recursive fashion if there are more attempts remaining.
+ *
+ * @param int $level The number of connection attempts that will be made, defaulting to 3, but reduced if the number of server connections is fewer than this.
+ */
 function get_memcached_server($level = 3)
 {
 	global $modSettings, $memcached, $db_persist;
