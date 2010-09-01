@@ -720,7 +720,7 @@ function loadBoard()
 		$_GET['board'] = '';
 		$_GET['topic'] = '';
 
-		// The linktree should not give the game away mate!
+		// The linktree should not give the game away mate! However, it WILL be available to admins etc. for Who's Online so they can see what's going on.
 		$context['linktree'] = array(
 			array(
 				'url' => $scripturl,

@@ -164,6 +164,7 @@ function fatal_error($error, $log = 'general')
 	if (empty($txt))
 		die($error);
 
+	updateOnlineWithError($error, false);
 	setup_fatal_error_context($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
 }
 
@@ -201,6 +202,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array())
 		$error_message = empty($sprintf) ? $txt[$error] : vsprintf($txt[$error], $sprintf);
 	}
 
+	updateOnlineWithError($error, true, $sprintf);
 	setup_fatal_error_context($error_message);
 }
 
@@ -336,6 +338,63 @@ function setup_fatal_error_context($error_message)
 		your forum will be in a very easily hackable state.
 	*/
 	trigger_error('Hacking attempt...', E_USER_ERROR);
+}
+
+/**
+ * Update the user online log if there has been an error.
+ *
+ * The function will abort early if Who's Online is not enabled, since this operation becomes redundant.
+ *
+ * @param string $error Either the language string array key, or actual language string relating to the error.
+ * @param bool $is_lang If the value passed through $error is the language string key (from fatal_lang_error), this should be true.
+ * @param array $sprintf Any additional parameters needed that may be injected into the language string.
+ */
+function updateOnlineWithError($error, $is_lang, $sprintf = array())
+{
+	global $smcFunc, $user_info, $modSettings;
+
+	// Don't bother if Who's Online is disabled.
+	if (empty($modSettings['who_enabled']))
+		return;
+
+	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
+
+	// First, we have to get the online log, because we need to break apart the serialized string.
+	$query = $smcFunc['db_query']('', '
+		SELECT url
+		FROM {db_prefix}log_online
+		WHERE session = {string:session}',
+		array(
+			'session' => $session_id,
+		)
+	);
+	if ($smcFunc['db_num_rows']($query) != 0)
+	{
+		list($url) = $smcFunc['db_fetch_row']($query);
+		$url = unserialize($url);
+
+		if ($is_lang)
+			$url += array(
+				'who_error_lang' => $error,
+				'who_error_params' => $sprintf,
+			);
+		else
+			$url += array(
+				'who_error_raw' => $error,
+			);
+
+		$url = serialize($url);
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}log_online
+			SET url = {string:url}
+			WHERE session = {string:session}',
+			array(
+				'url' => $url,
+				'session' => $session_id,
+			)
+		);
+	}
+	$smcFunc['db_free_result']($query);
 }
 
 ?>

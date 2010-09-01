@@ -172,16 +172,16 @@ function validateSession()
 // Require a user who is logged in. (not a guest.)
 function is_not_guest($message = '')
 {
-	global $user_info, $txt, $context, $scripturl;
+	global $user_info, $txt, $context, $scripturl, $modSettings;
 
 	// Luckily, this person isn't a guest.
 	if (!$user_info['is_guest'])
 		return;
 
-	// People always worry when they see people doing things they aren't actually doing...
-	$_GET['action'] = '';
-	$_GET['board'] = '';
-	$_GET['topic'] = '';
+	// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
+	// But we do need to update the online log.
+	if (!empty($modSettings['who_enabled']))
+		$_GET['who_warn'] = 1;
 	writeLog(true);
 
 	// Just die.
@@ -905,10 +905,7 @@ function isAllowedTo($permission, $boards = null)
 			is_not_guest($txt['cannot_' . $error_permission]);
 		}
 
-		// Clear the action because they aren't really doing that!
-		$_GET['action'] = '';
-		$_GET['board'] = '';
-		$_GET['topic'] = '';
+		// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
 		writeLog(true);
 
 		fatal_lang_error('cannot_' . $error_permission, false);

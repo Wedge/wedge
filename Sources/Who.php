@@ -78,6 +78,10 @@ function Who()
 	loadTemplate('Who');
 	loadLanguage('Who');
 
+	// Display of errors may be applicable. It's only for people with POWARZ you can't comprehend though.
+	if (allowedTo('moderate_forum'))
+		loadLanguage('Errors');
+
 	// Sort out... the column sorting.
 	$sort_methods = array(
 		'user' => 'mem.real_name',
@@ -276,7 +280,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $smcFunc, $context;
+	global $txt, $user_info, $modSettings, $smcFunc, $context, $settings;
 
 	if (!allowedTo('who_view'))
 		return array();
@@ -294,6 +298,7 @@ function determineActions($urls, $preferred_prefix = false)
 		'manageattachments' => array('manage_attachments'),
 		'manageboards' => array('manage_boards'),
 		'mlist' => array('view_mlist'),
+		'moderate' => array('access_mod_center'),
 		'optimizetables' => array('admin_forum'),
 		'repairboards' => array('admin_forum'),
 		'search' => array('search_posts'),
@@ -438,6 +443,22 @@ function determineActions($urls, $preferred_prefix = false)
 			// Unlisted or unknown action.
 			else
 				$data[$k] = $txt['who_unknown'];
+		}
+
+		if (allowedTo('moderate_forum'))
+		{
+			$error_message = '';
+			$is_warn = isset($actions['who_warn']);
+
+			if (isset($actions['who_error_raw']))
+				$error_message = str_replace('"', '&quot;', $actions['who_error_raw']);
+			elseif (isset($actions['who_error_lang']))
+				$error_message = str_replace('"', '&quot;', (empty($action['who_error_params']) ? $txt[$actions['who_error_lang']] : vsprintf($txt[$actions['who_error_lang']], $action['who_error_params'])));
+			elseif (isset($actions['who_warn']))
+				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
+
+			if (!empty($error_message))
+				$data[$k] = '<img src="' . $settings['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '" /> ' . $data[$k];
 		}
 	}
 
