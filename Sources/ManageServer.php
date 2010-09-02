@@ -233,6 +233,7 @@ function ModifyGeneralSettings($return_config = false)
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
+		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 	);
 
@@ -2003,6 +2004,10 @@ function saveSettings(&$config_vars)
 		'db_persist', 'db_error_send',
 		'maintenance',
 	);
+	// Values that explicitly require bool true/false
+	$config_truebools = array(
+		'db_show_debug',
+	);
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
@@ -2027,6 +2032,13 @@ function saveSettings(&$config_vars)
 			$new_settings[$key] = '1';
 		else
 			$new_settings[$key] = '0';
+	}
+	foreach ($config_truebools as $key)
+	{
+		if (!empty($_POST[$key]))
+			$new_settings[$key] = 'true';
+		else
+			$new_settings[$key] = 'false';
 	}
 
 	// Save the relevant settings in the Settings.php file.
