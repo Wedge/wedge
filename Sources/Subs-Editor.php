@@ -2156,7 +2156,7 @@ function AutoSuggest_Search_Member()
 		WHERE real_name LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
 			AND id_member IN ({array_int:buddy_list})' : '') . '
 			AND is_activated IN (1, 11)
-		LIMIT ' . (strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
+		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
 		array(
 			'buddy_list' => $user_info['buddies'],
 			'search' => $_REQUEST['search'],

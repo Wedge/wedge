@@ -436,7 +436,7 @@ function Post()
 				$context['post_error']['no_subject'] = true;
 			if (htmltrim__recursive(htmlspecialchars__recursive($_REQUEST['message'])) == '')
 				$context['post_error']['no_message'] = true;
-			if (!empty($modSettings['max_messageLength']) && strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
+			if (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_REQUEST['message']) > $modSettings['max_messageLength'])
 				$context['post_error']['long_message'] = true;
 
 			// Are you... a guest?

@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10069 $.
+Changelog started January 1, 2004; Currently at $Revision: 10072 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -35,6 +35,9 @@ August 2010
  ! Undefined error when upgrade may need to chmod files (upgrade.php)
  * Replaced incorrect use of substr with $smcFunc['substr'] (Calendar template) [Bug 3738]
  * A few more fixes for using internationalized substr/strlen (ManageCalendar, ManageMail) [Bug 3738]
+ ! Fixed migration of a buddy lists setting (upgrade scripts for MySQL and SQlite)
+ ! Fixed a couple of issues with the RSS feeds optimization (News.php) [Bug 4428]
+ ! More fixes to use internationalized substr/strlen (more files) [Bug 3738]
 
 July 2010
 --------------------------------------------------------------------------------

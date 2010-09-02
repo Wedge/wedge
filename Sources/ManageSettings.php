@@ -1686,7 +1686,7 @@ function EditCustomProfiles()
 		// Come up with the unique name?
 		if (empty($context['fid']))
 		{
-			$colname = substr(strtr($_POST['field_name'], array(' ' => '')), 0, 6);
+			$colname = $smcFunc['substr'](strtr($_POST['field_name'], array(' ' => '')), 0, 6);
 			preg_match('~([\w\d_-]+)~', $colname, $matches);
 
 			// If there is nothing to the name, then let's start out own - for foreign languages etc.

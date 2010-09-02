@@ -690,7 +690,7 @@ function PlushSearch2()
 			unset($searchArray[$index]);
 		}
 		// Don't allow very, very short words.
-		elseif (strlen($value) < 2)
+		elseif ($smcFunc['strlen']($value) < 2)
 		{
 			$context['search_errors']['search_string_small_words'] = true;
 			unset($searchArray[$index]);
@@ -1897,10 +1897,10 @@ function prepareSearchContext($reset = false)
 		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], array('</div>' => '<br />', '</li>' => '<br />')), '<br>');
 
-		if (strlen($message['body']) > $charLimit)
+		if ($smcFunc['strlen']($message['body']) > $charLimit)
 		{
 			if (empty($context['key_words']))
-				$message['body'] = $smcFunc['strlen']($message['body']) > $charLimit ? $smcFunc['substr']($message['body'], 0, $charLimit) . '<strong>...</strong>' : $message['body'];
+				$message['body'] = $smcFunc['substr']($message['body'], 0, $charLimit) . '<strong>...</strong>';
 			else
 			{
 				$matchString = '';

@@ -1772,7 +1772,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 			{
 				// The idea is, find words xx long, and then replace them with xx + space + more.
-				if (strlen($data) > $modSettings['fixLongWords'])
+				if ($smcFunc['strlen']($data) > $modSettings['fixLongWords'])
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => $context['utf8'] ? "\xC2\xA0" : "\xA0"));

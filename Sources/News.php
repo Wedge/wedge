@@ -623,8 +623,8 @@ function getXmlNews($xml_format)
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
-				$context['optimize_msg']['lowest'] = 'm.id_msg >= b.id_first_msg';
-			$context['optimize_msg']['highest'] = 'm.id_msg <= b.id_last_msg';
+				$context['optimize_msg']['lowest'] = 'm.id_msg >= t.id_first_msg';
+			$context['optimize_msg']['highest'] = 'm.id_msg <= t.id_last_msg';
 			$loops++;
 		}
 		else
@@ -716,6 +716,7 @@ function getXmlRecent($xml_format)
 			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
+				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			WHERE ' . $query_this_board . (empty($optimize_msg) ? '' : '
 				AND {raw:optimize_msg}') . (empty($board) ? '' : '
 				AND m.id_board = {int:current_board}') . ($modSettings['postmod_active'] ? '
@@ -736,7 +737,7 @@ function getXmlRecent($xml_format)
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
-				$context['optimize_msg']['lowest'] = $loops ? 'm.id_msg >= b.id_first_msg' : 'm.id_msg >= (b.id_last_msg - b.id_first_msg) / 2';
+				$context['optimize_msg']['lowest'] = $loops ? 'm.id_msg >= t.id_first_msg' : 'm.id_msg >= (t.id_last_msg - t.id_first_msg) / 2';
 			$loops++;
 		}
 		else

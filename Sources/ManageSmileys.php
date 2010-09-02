@@ -748,7 +748,7 @@ function AddSmiley()
 	$context['current_smiley'] = array(
 		'id' => 0,
 		'code' => '',
-		'filename' => $context['filenames'][0]['id'],
+		'filename' => @$context['filenames'][0]['id'],
 		'description' => $txt['smileys_default_description'],
 		'location' => 0,
 		'is_new' => true,
