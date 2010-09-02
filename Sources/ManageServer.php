@@ -531,14 +531,14 @@ function AddLanguage()
 	{
 		// Need fetch_web_data.
 		require_once($sourcedir . '/Subs-Package.php');
+		require_once($sourcedir . '/Class-Package.php');
 
 		$context['smf_search_term'] = htmlspecialchars(trim($_POST['smf_add']));
 
 		// We're going to use this URL.
 		$url = 'http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => '')));
 
-		// Load the class file and stick it into an array.
-		loadClassFile('Class-Package.php');
+		// Load the data and stick it into an array.
 		$language_list = new xmlArray(fetch_web_data($url), true);
 
 		// Check it exists.

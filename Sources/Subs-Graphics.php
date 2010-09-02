@@ -664,8 +664,9 @@ if (!function_exists('imagecreatefrombmp'))
 
 function gif_loadFile($lpszFileName, $iIndex = 0)
 {
+	global $sourcedir;
 	// The classes needed are in this file.
-	loadClassFile('Class-Graphics.php');
+	require_once($sourcedir . '/Class-Graphics.php');
 	$gif = new gif_file();
 
 	if (!$gif->loadFile($lpszFileName, $iIndex))

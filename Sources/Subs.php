@@ -4065,55 +4065,6 @@ function clean_cache($type = '')
 }
 
 /**
- * Loads a PHP class from the sources directory.
- *
- * This function exists for PHP 4 compatibility; PHP 5 is able to load classes normally, but for PHP 4 (at least for E_STRICT compliance) some of the PHP 5 feature keywords have to be removed - visibility keywords and the __construct magic method do not exist in PHP 4.
- *
- * @param string $filename The filename (ending in .php) to be loaded.
- * @todo Deprecate and remove this function as PHP 4 compatibility is no longer required.
- */
-function loadClassFile($filename)
-{
-	global $sourcedir;
-	static $files_included = array();
-
-	if (!file_exists($sourcedir . '/' . $filename))
-		fatal_lang_error('error_bad_file', 'general', array($sourcedir . '/' . $filename));
-
-	// Using a version below PHP 5.0? Do a compatibility conversion.
-	if (@version_compare(PHP_VERSION, '5.0.0') != 1)
-	{
-		// Check if it was included before.
-		if (in_array($filename, $files_included))
-			return;
-
-		// Make sure we don't include it again.
-		$files_included[] = $filename;
-
-		// Do some replacements to make it PHP 4 compatible.
-		eval('?' . '>' . preg_replace(array(
-			'~class\s+([\w-_]+)([^}]+)function\s+__construct\s*\(~',
-			'~([\s\t]+)public\s+\$~',
-			'~([\s\t]+)private\s+\$~',
-			'~([\s\t]+)protected\s+\$~',
-			'~([\s\t]+)public\s+function\s+~',
-			'~([\s\t]+)private\s+function\s+~',
-			'~([\s\t]+)protected\s+function\s+~',
-		), array(
-			'class $1$2function $1(',
-			'$1var $',
-			'$1var $',
-			'$1var $',
-			'$1function ',
-			'$1function ',
-			'$1function ',
-		), rtrim(file_get_contents($sourcedir . '/' . $filename))));
-	}
-	else
-		require_once($sourcedir . '/' . $filename);
-}
-
-/**
  * This function handles the processing of the main application menu presented to the user.
  *
  * Notes:
