@@ -84,7 +84,7 @@ if (!defined('SMF'))
 		  is not accepting cookies and is using a standard web browser.
 		- handles rewriting URLs for the queryless URLs option.
 		- can be turned off entirely by setting $scripturl to an empty
-		  string, ''. (it wouldn't work well like that anyway.)
+		  string, ''. (It wouldn't work well like that anyway.)
 		- because of bugs in certain builds of PHP, does not function in
 		  versions lower than 4.3.0 - please upgrade if this hurts you.
 */
@@ -138,7 +138,7 @@ function cleanRequest()
 		// Was this redirected? If so, get the REDIRECT_QUERY_STRING.
 		$_SERVER['QUERY_STRING'] = urldecode(substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING']);
 
-		// Replace ';' with '&' and '&something&' with '&something=&'.  (this is done for compatibility...)
+		// Replace ';' with '&' and '&something&' with '&something=&'. (This is done for compatibility...)
 		// !!! smflib
 		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
 

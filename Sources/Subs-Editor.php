@@ -108,7 +108,7 @@ function bbc_to_html($text)
 	// !!! Tie in with bbc permissions ?
 	foreach (array('code', 'php', 'nobbc') as $code)
 	{
-		if (strpos($text, '['. $code) !== false)
+		if (strpos($text, '[' . $code) !== false)
 		{
 			$parts = preg_split('~(\[/' . $code . '\]|\[' . $code . '(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 

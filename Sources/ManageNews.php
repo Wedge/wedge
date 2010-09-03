@@ -395,7 +395,7 @@ function ComposeMailing()
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE email_address IN(' . implode(', ', $condition_array) .')',
+			WHERE email_address IN(' . implode(', ', $condition_array) . ')',
 			$condition_array_params
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))

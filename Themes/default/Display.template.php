@@ -31,26 +31,26 @@ function template_main()
 		if ($context['poll']['show_results'] || !$context['allow_vote'])
 		{
 			echo '
-					<dl class="options">';
+						<dl class="options">';
 
 			// Show each option with its corresponding percentage bar.
 			foreach ($context['poll']['options'] as $option)
 			{
 				echo '
-						<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
-						<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
+							<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
+							<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
 
 				if ($context['allow_poll_view'])
 					echo '
-							', $option['bar_ndt'], '
-							<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
+								', $option['bar_ndt'], '
+								<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
 
 				echo '
-						</dd>';
+							</dd>';
 			}
 
 			echo '
-					</dl>';
+						</dl>';
 
 			if ($context['allow_poll_view'])
 				echo '
