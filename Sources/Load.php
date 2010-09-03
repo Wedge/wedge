@@ -1935,7 +1935,7 @@ function loadSubTemplate($sub_template_name, $fatal = false)
  *
  * If full debugging is enabled, loads of language files will be logged too.
  *
- * Unlike normal processing, all language files are naturally cached, and here if the cache does not exist, the cache file is built, then loaded (rather than data accumulated then stored into cache). Additionally, some instances will request two language files together (e.g. index+Modifications); this is managed where the languages are cached in {@link cacheLanguages()}.
+ * Assuming caching is enabled (the default), all language files are naturally cached, and here if the cache does not exist, the cache file is built, then loaded (rather than data accumulated then stored into cache). Additionally, some instances will request two language files together (e.g. index+Modifications); this is managed where the languages are cached in {@link cacheLanguages()}.
  *
  * @param string $template_name The name of the language file to load, without any .{language}.php prefix, e.g. 'Errors' or 'Who'.
  * @param string $lang Specifies the language to attempt to load; if not specified (or empty), load it in the current user's default language.
