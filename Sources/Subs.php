@@ -875,7 +875,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				- optional: true if the parameter is optional.
 
 			test: a regular expression to test immediately after the tag's
-			  '=', ' ' or ']'.  Typically, should have a \] at the end.
+			  '=', ' ' or ']'. Typically, should have a \] at the end.
 			  Optional.
 
 			content: only available for unparsed_content, closed,
@@ -3830,9 +3830,9 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 {
 	global $modSettings;
 
-	// Remove special accented characters - ie. sí.
-	$clean_name = strtr($filename, 'ŠŽšžŸÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüýÿ', 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
-	$clean_name = strtr($clean_name, array('Þ' => 'TH', 'þ' => 'th', 'Ð' => 'DH', 'ð' => 'dh', 'ß' => 'ss', 'Œ' => 'OE', 'œ' => 'oe', 'Æ' => 'AE', 'æ' => 'ae', 'µ' => 'u'));
+	// Remove special accented characters - ie. sÃ­.
+	$clean_name = strtr($filename, 'Å Å½Å¡Å¾Å¸Ã€ÃÃ‚ÃƒÃ„Ã…Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃÃŽÃÃ‘Ã’Ã“Ã”Ã•Ã–Ã˜Ã™ÃšÃ›ÃœÃÃ Ã¡Ã¢Ã£Ã¤Ã¥Ã§Ã¨Ã©ÃªÃ«Ã¬Ã­Ã®Ã¯Ã±Ã²Ã³Ã´ÃµÃ¶Ã¸Ã¹ÃºÃ»Ã¼Ã½Ã¿', 'SZszYAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy');
+	$clean_name = strtr($clean_name, array('Ãž' => 'TH', 'Ã¾' => 'th', 'Ã' => 'DH', 'Ã°' => 'dh', 'ÃŸ' => 'ss', 'Å’' => 'OE', 'Å“' => 'oe', 'Ã†' => 'AE', 'Ã¦' => 'ae', 'Âµ' => 'u'));
 
 	// Sorry, no spaces, dots, or anything else but letters allowed.
 	$clean_name = preg_replace(array('/\s/', '/[^\w_\.\-]/'), array('_', ''), $clean_name);

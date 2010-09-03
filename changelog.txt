@@ -1,8 +1,18 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10072 $.
+Changelog started January 1, 2004; Currently at $Revision: 10081 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
+September 2010
+--------------------------------------------------------------------------------
+ ! Source files should be UTF-8 encoded. (convert.php, Subs.php)
+ ! Incorrect $smcFunc function use (Subs-Calendar.php)
+ ! Removed classic and babylon files from the core (they are in their own repository now) (/Themes/classic and Themes/babylon files) [Bug 4376]
+ ! Removed babylon directory (Themes/babylon) [Bug 4376]
+ ! Removed classic directory (Themes/classic) [Bug 4376]
+ ! Removed smflib (it is in tools repository now) (other/smflib)
+ ! Removed tools (they are in tools repository now) (other/tools content)
+ 
 August 2010
 --------------------------------------------------------------------------------
  * The new replies template for preview JavaScript was using outdated post layout. (Post.template.php) [Bug 4387]
