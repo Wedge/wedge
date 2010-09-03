@@ -19,8 +19,7 @@ function template_main()
 	foreach ($context['posts'] as $post)
 	{
 		echo '
-			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts">
-				<span class="topslice"><span></span></span>
+			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts wrc">
 				<div class="content">
 					<div class="counter">', $post['counter'], '</div>
 					<div class="topic_details">
@@ -61,7 +60,7 @@ function template_main()
 				</div>';
 
 		echo '
-				<span class="botslice clear"><span></span></span>
+				<div class="clear"></div>
 			</div>';
 
 	}

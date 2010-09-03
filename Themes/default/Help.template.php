@@ -1095,7 +1095,7 @@ function template_manual_profile_info_summary()
 			</div>
 			<div id="basicinfo">
 				<div class="windowbg2">
-					<span class="topslice windowbg"><span></span></span>
+					<span class="topslice"><span></span></span>
 					<div class="content">
 						<div class="username"><h4>', $txt['manual_profile_summary_display_name'], ' <span class="position">', $txt['manual_topic_membergroup'], '</span></h4></div>
 						<img class="avatar" src="', $settings['default_images_url'], '/admin/smilies_and_messageicons.png" alt="" />
