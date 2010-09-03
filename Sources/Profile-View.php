@@ -1466,7 +1466,7 @@ function TrackIP($memID = 0)
 			),
 			'arin' => array(
 				'name' => $txt['whois_arin'],
-				'url' => 'http://ws.arin.net/whois/?queryinput=' . $context['ip'],
+				'url' => 'http://whois.arin.net/ui/query.do?q=' . $context['ip'],
 				'range' => array(7, 24, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 96, 97, 98, 99,
 					128, 129, 130, 131, 132, 134, 135, 136, 137, 138, 139, 140, 142, 143, 144, 146, 147, 148, 149,
 					152, 155, 156, 157, 158, 159, 160, 161, 162, 164, 165, 166, 167, 168, 169, 170, 172, 173, 174,
