@@ -151,10 +151,10 @@ function reloadSettings()
 		'truncate' => create_function('$string, $length', (empty($modSettings['disableEntityCheck']) ? '
 			global $smcFunc;
 			$string = ' . implode('$string', $ent_check) . ';' : '') . '
-			preg_match(\'~^(' . $ent_list . '|.){\' . $smcFunc[\'strlen\'](substr($string, 0, $length)) . \'}~'.  ($utf8 ? 'u' : '') . '\', $string, $matches);
+			preg_match(\'~^(' . $ent_list . '|.){\' . $smcFunc[\'strlen\'](substr($string, 0, $length)) . \'}~' . ($utf8 ? 'u' : '') . '\', $string, $matches);
 			$string = $matches[0];
 			while (strlen($string) > $length)
-				$string = preg_replace(\'~(?:' . $ent_list . '|.)$~'.  ($utf8 ? 'u' : '') . '\', \'\', $string);
+				$string = preg_replace(\'~(?:' . $ent_list . '|.)$~' . ($utf8 ? 'u' : '') . '\', \'\', $string);
 			return $string;'),
 		'ucfirst' => $utf8 ? create_function('$string', '
 			global $smcFunc;
@@ -631,7 +631,7 @@ function loadBoard()
 						'id' => $row['id_moderator'],
 						'name' => $row['real_name'],
 						'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row['real_name'] . '</a>'
+						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 					);
 			}
 			while ($row = $smcFunc['db_fetch_assoc']($request));
@@ -2035,7 +2035,7 @@ function getBoardParents($id_parent)
 						'id' => $row['id_moderator'],
 						'name' => $row['real_name'],
 						'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '" title="' . $txt['board_moderator'] . '">' . $row['real_name'] . '</a>'
+						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 					);
 				}
 		}
