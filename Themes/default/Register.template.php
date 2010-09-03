@@ -341,6 +341,7 @@ function template_registration_form()
 				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
 			</div>
 			<input type="hidden" name="step" value="2" />
+			<input type="hidden" name="time_offset" value="0" id="time_offset" />
 		</form>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var regTextStrings = {
@@ -356,6 +357,22 @@ function template_registration_form()
 			var verificationHandle = new smfRegister("registration", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
 			// Update the authentication status.
 			updateAuthMethod();
+
+			function autoDetectTimeOffset()
+			{
+				var localTime = new Date();
+				var serverTime = new Date(', $context['current_forum_time_js'], ');
+
+				if (!localTime.getTime() || !serverTime.getTime())
+					return 0;
+
+				var diff = Math.round((localTime.getTime() - serverTime.getTime())/3600000);
+				diff %= 24;
+
+				return diff;
+			}
+
+			document.getElementById(\'time_offset\').value = autoDetectTimeOffset();
 		// ]]></script>';
 }
 

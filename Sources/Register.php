@@ -115,6 +115,8 @@ function Register($reg_errors = array())
 	$context['sub_template'] = $current_step == 1 ? 'registration_agreement' : 'registration_form';
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
+	$context['current_forum_time_js'] = strftime('%Y,' . ((int) strftime('%m', time() + $modSettings['time_offset'] * 3600) - 1) . ',%d,%H,%M,%S', time() + $modSettings['time_offset'] * 3600);
+
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=register',
