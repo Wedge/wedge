@@ -977,7 +977,7 @@ function template_send()
 
 	// This BCC row will be hidden by default if JavaScript is enabled.
 	echo '
-					<dt  class="clear_left" id="bcc_div">
+					<dt class="clear_left" id="bcc_div">
 						<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
 					</dt>
 					<dd id="bcc_div2">
@@ -995,21 +995,9 @@ function template_send()
 					</dd>
 				</dl><hr class="clear" />';
 
-	// Showing BBC?
-	if ($context['show_bbc'])
-	{
-		echo '
-				<div id="bbcBox_message"></div>';
-	}
-
-	// What about smileys?
-	if (!empty($context['smileys']['postform']) || !empty($context['smileys']['popup']))
-		echo '
-				<div id="smileyBox_message"></div>';
-
 	// Show BBC buttons, smileys and textbox.
 	echo '
-				', template_control_richedit($context['post_box_name'], 'smileyBox_message', 'bbcBox_message');
+				', $context['postbox']->outputEditor();
 
 	// Require an image to be typed to save spamming?
 	if ($context['require_verification'])
@@ -1028,7 +1016,7 @@ function template_send()
 					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
 				</p>
 				<p id="post_confirm_strip" class="righttext">
-					', template_control_richedit_buttons($context['post_box_name']), '
+					', $context['postbox']->outputButtons(), '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />

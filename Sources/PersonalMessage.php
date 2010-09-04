@@ -1766,21 +1766,20 @@ function MessagePost()
 
 	// Needed for the WYSIWYG editor.
 	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// Now create the editor.
-	$editorOptions = array(
-		'id' => 'message',
-		'value' => $context['message'],
-		'height' => '175px',
-		'width' => '100%',
-		'labels' => array(
-			'post_button' => $txt['send_message'],
-		),
+	$context['postbox'] = new wedgeEditor(
+		array(
+			'id' => 'message',
+			'value' => $context['message'],
+			'height' => '175px',
+			'width' => '100%',
+			'labels' => array(
+				'post_button' => $txt['send_message'],
+			),
+		)
 	);
-	create_control_richedit($editorOptions);
-
-	// Store the ID for old compatibility.
-	$context['post_box_name'] = $editorOptions['id'];
 
 	$context['bcc_value'] = '';
 
@@ -1916,26 +1915,24 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 
 	// We need to load the editor once more.
 	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// Create it...
-	$editorOptions = array(
-		'id' => 'message',
-		'value' => $context['message'],
-		'width' => '90%',
-		'labels' => array(
-			'post_button' => $txt['send_message'],
-		),
+	$context['postbox'] = new wedgeEditor(
+		array(
+			'id' => 'message',
+			'value' => $context['message'],
+			'width' => '90%',
+			'labels' => array(
+				'post_button' => $txt['send_message'],
+			),
+		)
 	);
-	create_control_richedit($editorOptions);
-
-	// ... and store the ID again...
-	$context['post_box_name'] = $editorOptions['id'];
 
 	// Check whether we need to show the code again.
 	$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
 		$verificationOptions = array(
 			'id' => 'pm',
 		);
@@ -1961,6 +1958,7 @@ function MessagePost2()
 
 	isAllowedTo('pm_send');
 	require_once($sourcedir . '/Subs-Auth.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	loadLanguage('PersonalMessage', '', false);
 
@@ -1989,18 +1987,8 @@ function MessagePost2()
 			fatal_lang_error('pm_too_many_per_hour', true, array($modSettings['pm_posts_per_hour']));
 	}
 
-	// If we came from WYSIWYG then turn it back into BBC regardless.
-	if (!empty($_POST['message_mode']) && isset($_POST['message']))
-	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$_POST['message'] = html_to_bbc($_POST['message']);
-
-		// We need to unhtml it now as it gets done shortly.
-		$_POST['message'] = un_htmlspecialchars($_POST['message']);
-
-		// We need this in case of errors etc.
-		$_REQUEST['message'] = $_POST['message'];
-	}
+	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
+	wedgeEditor::preparseWYSIWYG('message');
 
 	// Initialize the errors we're about to make.
 	$post_errors = array();
@@ -2118,7 +2106,7 @@ function MessagePost2()
 	{
 		// Preparse the message.
 		$message = $_REQUEST['message'];
-		preparsecode($message);
+		wedgeEditor::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
 		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($message, false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
@@ -2150,7 +2138,7 @@ function MessagePost2()
 		// Set everything up to be displayed.
 		$context['preview_subject'] = $smcFunc['htmlspecialchars']($_REQUEST['subject']);
 		$context['preview_message'] = $smcFunc['htmlspecialchars']($_REQUEST['message'], ENT_QUOTES);
-		preparsecode($context['preview_message'], true);
+		wedgeEditor::preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
 		$context['preview_message'] = parse_bbc($context['preview_message']);

@@ -213,6 +213,7 @@ function MoveTopic2()
 
 	checkSession();
 	require_once($sourcedir . '/Subs-Post.php');
+	require_once($sourcedir . '/ClassEditor.php');
 
 	// The destination board must be numeric.
 	$_POST['toboard'] = (int) $_POST['toboard'];
@@ -303,7 +304,7 @@ function MoveTopic2()
 			loadLanguage('index', $language);
 
 		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
-		preparsecode($_POST['reason']);
+		wedgeEditor::preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.
 		$_POST['reason'] = strtr($_POST['reason'], array(

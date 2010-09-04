@@ -99,6 +99,10 @@ function Post()
 
 	loadLanguage('Post');
 
+	// Needed for the editor and message icons.
+	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Class-Editor.php');
+
 	// You can't reply with a poll... hacker.
 	if (isset($_REQUEST['poll']) && !empty($topic) && !isset($_REQUEST['msg']))
 		unset($_REQUEST['poll']);
@@ -585,8 +589,8 @@ function Post()
 		{
 			// Set up the preview message and subject and censor them...
 			$context['preview_message'] = $form_message;
-			preparsecode($form_message, true);
-			preparsecode($context['preview_message']);
+			wedgeEditor::preparsecode($form_message, true);
+			wedgeEditor::preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
 			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
@@ -773,7 +777,7 @@ function Post()
 
 		// Get the stuff ready for the form.
 		$form_subject = $row['subject'];
-		$form_message = un_preparsecode($row['body']);
+		$form_message = wedgeEditor::un_preparsecode($row['body']);
 		censorText($form_message);
 		censorText($form_subject);
 
@@ -1115,26 +1119,21 @@ function Post()
 	$context['subject'] = addcslashes($form_subject, '"');
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 
-	// Needed for the editor and message icons.
-	require_once($sourcedir . '/Subs-Editor.php');
-
 	// Now create the editor.
-	$editorOptions = array(
-		'id' => 'message',
-		'value' => $context['message'],
-		'labels' => array(
-			'post_button' => $context['submit_label'],
-		),
-		// add height and width for the editor
-		'height' => '175px',
-		'width' => '100%',
-		// We do XML preview here.
-		'preview_type' => 2,
+	$context['postbox'] = new wedgeEditor(
+		array(
+			'id' => 'message',
+			'value' => $context['message'],
+			'labels' => array(
+				'post_button' => $context['submit_label'],
+			),
+			// add height and width for the editor
+			'height' => '175px',
+			'width' => '100%',
+			// We do XML preview here.
+			'preview_type' => 2,
+		)
 	);
-	create_control_richedit($editorOptions);
-
-	// Store the ID.
-	$context['post_box_name'] = $editorOptions['id'];
 
 	$context['attached'] = '';
 	$context['make_poll'] = isset($_REQUEST['poll']);
@@ -1231,19 +1230,12 @@ function Post2()
 	// No need!
 	$context['robot_no_index'] = true;
 
-	// If we came from WYSIWYG then turn it back into BBC regardless.
-	if (!empty($_REQUEST['message_mode']) && isset($_REQUEST['message']))
-	{
-		require_once($sourcedir . '/Subs-Editor.php');
+	// Things we need, to make us strong. We like being strong.
+	require_once($sourcedir . '/Subs-Editor.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
-		$_REQUEST['message'] = html_to_bbc($_REQUEST['message']);
-
-		// We need to unhtml it now as it gets done shortly.
-		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
-
-		// We need this for everything else.
-		$_POST['message'] = $_REQUEST['message'];
-	}
+	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
+	wedgeEditor::preparseWYSIWYG('message');
 
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
@@ -1529,7 +1521,7 @@ function Post2()
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
 			$user_info['name'] = $_POST['guestname'];
-		preparsecode($_POST['message']);
+		wedgeEditor::preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
 		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
@@ -2547,7 +2539,7 @@ function QuoteFast()
 	if (!isset($_REQUEST['xml']))
 		loadTemplate('Post');
 
-	include_once($sourcedir . '/Subs-Post.php');
+	include_once($sourcedir . '/Class-Editor.php');
 
 	$moderate_boards = boardsAllowedTo('moderate_board');
 
@@ -2582,7 +2574,7 @@ function QuoteFast()
 	if (!empty($can_view_post))
 	{
 		// Remove special formatting we don't want anymore.
-		$row['body'] = un_preparsecode($row['body']);
+		$row['body'] = wedgeEditor::un_preparsecode($row['body']);
 
 		// Censor the message!
 		censorText($row['body']);
@@ -2611,9 +2603,8 @@ function QuoteFast()
 		// Make the body HTML if need be.
 		if (!empty($_REQUEST['mode']))
 		{
-			require_once($sourcedir . '/Subs-Editor.php');
 			$row['body'] = strtr($row['body'], array('&lt;' => '#smlt#', '&gt;' => '#smgt#', '&amp;' => '#smamp#'));
-			$row['body'] = bbc_to_html($row['body']);
+			$row['body'] = wedgeEditor::bbc_to_html($row['body']);
 			$lb = '<br />';
 		}
 		else
@@ -2656,6 +2647,7 @@ function JavaScriptModify()
 
 	checkSession('get');
 	require_once($sourcedir . '/Subs-Post.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// Assume the first message if no message ID was given.
 	$request = $smcFunc['db_query']('', '
@@ -2738,7 +2730,7 @@ function JavaScriptModify()
 		{
 			$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
 
-			preparsecode($_POST['message']);
+			wedgeEditor::preparsecode($_POST['message']);
 
 			if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
 			{

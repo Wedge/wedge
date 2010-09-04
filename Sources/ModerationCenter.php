@@ -1864,7 +1864,7 @@ function ModifyWarningTemplate()
 		checkSession('post');
 
 		// To check the BBC is pretty good...
-		require_once($sourcedir . '/Subs-Post.php');
+		require_once($sourcedir . '/Class-Editor.php');
 
 		// Bit of cleaning!
 		$_POST['template_body'] = trim($_POST['template_body']);
@@ -1878,7 +1878,7 @@ function ModifyWarningTemplate()
 		$_POST['template_title'] = $smcFunc['htmlspecialchars']($_POST['template_title']);
 
 		// Clean up BBC.
-		preparsecode($_POST['template_body']);
+		wedgeEditor::preparsecode($_POST['template_body']);
 		// But put line breaks back!
 		$_POST['template_body'] = strtr($_POST['template_body'], array('<br />' => "\n"));
 

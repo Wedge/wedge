@@ -95,7 +95,7 @@ function template_main()
 	// End of the javascript, start the form and display the link tree.
 	echo '
 		// ]]></script>
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -380,19 +380,8 @@ function template_main()
 	}
 
 	// Show the actual posting area...
-	if ($context['show_bbc'])
-	{
-		echo '
-					<div id="bbcBox_message"></div>';
-	}
-
-	// What about smileys?
-	if (!empty($context['smileys']['postform']) || !empty($context['smileys']['popup']))
-		echo '
-					<div id="smileyBox_message"></div>';
-
 	echo '
-					', template_control_richedit($context['post_box_name'], 'smileyBox_message', 'bbcBox_message');
+					', $context['postbox']->outputEditor();
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))
@@ -515,7 +504,7 @@ function template_main()
 						', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
 					</p>
 					<p id="post_confirm_buttons" class="righttext">
-						', template_control_richedit_buttons($context['post_box_name']);
+						', $context['postbox']->outputButtons();
 
 	// Option to delete an event if user is editing one.
 	if ($context['make_event'] && !$context['event']['new'])
@@ -555,7 +544,7 @@ function template_main()
 	if ($context['browser']['is_firefox'])
 		echo '
 				// Firefox doesn\'t render <marquee> that have been put it using javascript
-				if (document.forms.postmodify.elements[', JavaScriptEscape($context['post_box_name']), '].value.indexOf(\'[move]\') != -1)
+				if (document.forms.postmodify.elements[', JavaScriptEscape($context['postbox']->id), '].value.indexOf(\'[move]\') != -1)
 				{
 					return submitThisOnce(document.forms.postmodify);
 				}';
@@ -571,7 +560,7 @@ function template_main()
 					}
 					// !!! Currently not sending poll options and option checkboxes.
 					var x = new Array();
-					var textFields = [\'subject\', ', JavaScriptEscape($context['post_box_name']), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
+					var textFields = [\'subject\', ', JavaScriptEscape($context['postbox']->id), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
 					var numericFields = [
 						\'board\', \'topic\', \'last_msg\',
 						\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
@@ -585,8 +574,8 @@ function template_main()
 						if (textFields[i] in document.forms.postmodify)
 						{
 							// Handle the WYSIWYG editor.
-							if (textFields[i] == ', JavaScriptEscape($context['post_box_name']), ' && ', JavaScriptEscape('oEditorHandle_' . $context['post_box_name']), ' in window && oEditorHandle_', $context['post_box_name'], '.bRichTextEnabled)
-								x[x.length] = \'message_mode=1&\' + textFields[i] + \'=\' + oEditorHandle_', $context['post_box_name'], '.getText(false).replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
+							if (textFields[i] == ', JavaScriptEscape($context['postbox']->id), ' && ', JavaScriptEscape('oEditorHandle_' . $context['postbox']->id), ' in window && oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled)
+								x[x.length] = \'message_mode=1&\' + textFields[i] + \'=\' + oEditorHandle_', $context['postbox']->id, '.getText(false).replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
 							else
 								x[x.length] = textFields[i] + \'=\' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
 						}
@@ -649,13 +638,13 @@ function template_main()
 						document.getElementById(\'caption_\' + captions[i].getAttribute(\'name\')).className = captions[i].getAttribute(\'class\');
 
 				if (errors.getElementsByTagName(\'post_error\').length == 1)
-					document.forms.postmodify.', $context['post_box_name'], '.style.border = \'1px solid red\';
-				else if (document.forms.postmodify.', $context['post_box_name'], '.style.borderColor == \'red\' || document.forms.postmodify.', $context['post_box_name'], '.style.borderColor == \'red red red red\')
+					document.forms.postmodify.', $context['postbox']->id, '.style.border = \'1px solid red\';
+				else if (document.forms.postmodify.', $context['postbox']->id, '.style.borderColor == \'red\' || document.forms.postmodify.', $context['postbox']->id, '.style.borderColor == \'red red red red\')
 				{
-					if (\'runtimeStyle\' in document.forms.postmodify.', $context['post_box_name'], ')
-						document.forms.postmodify.', $context['post_box_name'], '.style.borderColor = \'\';
+					if (\'runtimeStyle\' in document.forms.postmodify.', $context['postbox']->id, ')
+						document.forms.postmodify.', $context['postbox']->id, '.style.borderColor = \'\';
 					else
-						document.forms.postmodify.', $context['post_box_name'], '.style.border = null;
+						document.forms.postmodify.', $context['postbox']->id, '.style.border = null;
 				}
 
 				// Set the new last message id.
@@ -738,9 +727,9 @@ function template_main()
 			function insertQuoteFast(messageid)
 			{
 				if (window.XMLHttpRequest)
-					getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;pb=', $context['post_box_name'], ';mode=\' + (oEditorHandle_', $context['post_box_name'], '.bRichTextEnabled ? 1 : 0), onDocReceived);
+					getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;pb=', $context['postbox']->id, ';mode=\' + (oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled ? 1 : 0), onDocReceived);
 				else
-					reqWin(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';pb=', $context['post_box_name'], ';mode=\' + (oEditorHandle_', $context['post_box_name'], '.bRichTextEnabled ? 1 : 0), 240, 90);
+					reqWin(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';pb=', $context['postbox']->id, ';mode=\' + (oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled ? 1 : 0), 240, 90);
 				return true;
 			}
 			function onDocReceived(XMLDoc)
@@ -748,7 +737,7 @@ function template_main()
 				var text = \'\';
 				for (var i = 0, n = XMLDoc.getElementsByTagName(\'quote\')[0].childNodes.length; i < n; i++)
 					text += XMLDoc.getElementsByTagName(\'quote\')[0].childNodes[i].nodeValue;
-				oEditorHandle_', $context['post_box_name'], '.insertText(text, false, true);
+				oEditorHandle_', $context['postbox']->id, '.insertText(text, false, true);
 			}
 		// ]]></script>
 

@@ -277,7 +277,7 @@ function smf_main()
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
-		'jseditor' => array('Subs-Editor.php', 'EditorMain'),
+		'jseditor' => array('Class-Editor.php', array('wedgeEditor', 'EditorCallback')),
 		'jsmodify' => array('Post.php', 'JavaScriptModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),
 		'lock' => array('LockTopic.php', 'LockTopic'),

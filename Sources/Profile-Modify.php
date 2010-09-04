@@ -2751,7 +2751,7 @@ function profileValidateSignature(&$value)
 {
 	global $sourcedir, $modSettings, $smcFunc, $txt;
 
-	require_once($sourcedir . '/Subs-Post.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// Admins can do whatever they hell they want!
 	if (!allowedTo('admin_forum'))
@@ -2912,7 +2912,7 @@ function profileValidateSignature(&$value)
 		}
 	}
 
-	preparsecode($value);
+	wedgeEditor::preparsecode($value);
 	return true;
 }
 

@@ -126,7 +126,7 @@ function EditNews()
 	global $txt, $modSettings, $context, $sourcedir, $user_info;
 	global $smcFunc;
 
-	require_once($sourcedir . '/Subs-Post.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// The 'remove selected' button was pressed.
 	if (!empty($_POST['delete_selection']) && !empty($_POST['remove']))
@@ -156,7 +156,7 @@ function EditNews()
 			if (trim($news) == '')
 				unset($_POST['news'][$i]);
 			else
-				preparsecode($_POST['news'][$i]);
+				wedgeEditor::preparsecode($_POST['news'][$i]);
 		}
 
 		// Send the new news to the database.
@@ -170,7 +170,7 @@ function EditNews()
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
-			'unparsed' => $smcFunc['htmlspecialchars'](un_preparsecode($line)),
+			'unparsed' => $smcFunc['htmlspecialchars'](wedgeEditor::un_preparsecode($line)),
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
 		);
 
