@@ -232,9 +232,23 @@ function ModifyGeneralSettings($return_config = false)
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
-		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
-		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
+		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
+		'',
+		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
+		array('db_show_debug_who', $txt['db_show_debug_who'], 'db', 'select', array(
+			// !!! Hideous long format to cope with the lack of preparsing done by preparseServerSettingsContext and template expectations
+			'admin' => array('admin', $txt['db_show_debug_admin']),
+			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
+			'regular' => array('regular', $txt['db_show_debug_regular']),
+			'any' => array('any', $txt['db_show_debug_any']),
+		), 'db_show_debug_who'),
+		array('db_show_debug_who_log', $txt['db_show_debug_who_log'], 'db', 'select', array(
+			'admin' => array('admin', $txt['db_show_debug_admin']),
+			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
+			'regular' => array('regular', $txt['db_show_debug_regular']),
+			'any' => array('any', $txt['db_show_debug_any']),
+		), 'db_show_debug_who_log'),
 	);
 
 	if ($return_config)
@@ -2054,7 +2068,10 @@ function saveSettings(&$config_vars)
 			continue;
 
 		// Rewrite the definition a bit.
-		$new_settings[] = array($config_var[3], $config_var[0]);
+		if ($config_var[3] != 'select')
+			$new_settings[] = array($config_var[3], $config_var[0]);
+		else
+			$new_settings[] = array($config_var[3], $config_var[0], $config_var[4]);
 	}
 
 	// Save the new database-based settings, if any.

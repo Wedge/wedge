@@ -3631,6 +3631,7 @@ function template_footer()
  * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in wireless or the query viewer page.
  *
  * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
+ * - Check if the current user is on the list of people who can see the debug (and query debug) information, and clear information if not appropriate.
  * - Clean up a list of things that might not have been initialized this page, especially if heavily caching.
  * - Get the list of included files, and strip out the long paths to the board dir, replacing with a . for "current directory"; also collate the size of included files.
  * - Examine the DB query cache, and see if any warnings have been issued from queries.
@@ -3645,8 +3646,39 @@ function db_debug_junk()
 	global $context, $scripturl, $boarddir, $modSettings, $boarddir;
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits, $txt;
 
-	// Add to Settings.php if you want to show the debugging information.
-	if (!isset($db_show_debug) || $db_show_debug !== true || (isset($_GET['action']) && $_GET['action'] == 'viewquery') || WIRELESS)
+	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery
+	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || $_GET['action'] != 'viewquery') && !WIRELESS);
+	// Check groups
+	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
+		$show_debug &= $context['user']['is_admin'];
+	elseif ($modSettings['db_show_debug_who'] == 'mod')
+		$show_debug &= allowedTo('moderate_forum');
+	elseif ($modSettings['db_show_debug_who'] == 'regular')
+		$show_debug &= $context['user']['is_logged'];
+	else
+		$show_debug &= ($modSettings['db_show_debug_who'] == 'any');
+
+	// Now, who can see the query log? Need to have the ability to see any of this anyway.
+	$show_debug_query = $show_debug;
+	if (empty($modSettings['db_show_debug_who_log']) || $modSettings['db_show_debug_who_log'] == 'admin')
+		$show_debug_query &= $context['user']['is_admin'];
+	elseif ($modSettings['db_show_debug_who_log'] == 'mod')
+		$show_debug_query &= allowedTo('moderate_forum');
+	elseif ($modSettings['db_show_debug_who_log'] == 'regular')
+		$show_debug_query &= $context['user']['is_logged'];
+	else
+		$show_debug_query &= ($modSettings['db_show_debug_who_log'] == 'any');
+
+	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
+	if (!$show_debug_query)
+	{
+		if (isset($_SESSION['debug']))
+			unset ($_SESSION['debug']);
+		if (isset($db_cache))
+			unset ($db_cache);
+		$_SESSION['view_queries'] = 0;
+	}
+	if (!$show_debug)
 		return;
 
 	if (empty($_SESSION['view_queries']))
@@ -3711,8 +3743,13 @@ function db_debug_junk()
 	', $txt['debug_cache_hits'], $cache_count, ': ', sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)), ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_cache_info\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_cache_info" style="display: none;"><em>', implode('</em>, <em>', $entries), '</em></span>)<br />';
 	}
 
-	echo '
+	if ($show_debug_query)
+		echo '
 	<a href="', $scripturl, '?action=viewquery" target="_blank" class="new_win">', $warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings), '</a><br />
+	<br />';
+	else
+		echo '
+	', sprintf($txt['debug_queries_used'], (int) $db_count), '<br />
 	<br />';
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
@@ -3751,8 +3788,11 @@ function db_debug_junk()
 	<br />';
 		}
 
+	if ($show_debug_query)
+		echo '
+	<a href="' . $scripturl . '?action=viewquery;sa=hide">', $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'], '</a>';
+
 	echo '
-	<a href="' . $scripturl . '?action=viewquery;sa=hide">', $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'], '</a>
 </div></body></html>';
 
 	// Empty the language cache,
