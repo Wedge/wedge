@@ -3672,10 +3672,7 @@ function db_debug_junk()
 	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
 	if (!$show_debug_query)
 	{
-		if (isset($_SESSION['debug']))
-			unset ($_SESSION['debug']);
-		if (isset($db_cache))
-			unset ($db_cache);
+		unset($_SESSION['debug'], $db_cache);
 		$_SESSION['view_queries'] = 0;
 	}
 	if (!$show_debug)
