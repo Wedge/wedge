@@ -369,8 +369,8 @@ class wedgeEditor
 
 							case 'font-size':
 								// Sometimes people put decimals where decimals should not be.
-								if (preg_match('~(\d)+\.\d+(p[xt])~i', $style_value, $matches) === 1)
-									$style_value = $matches[1] . $matches[2];
+								if (preg_match('~(\d)+\.\d+(p[xt])~i', $style_value, $dec_matches) === 1)
+									$style_value = $dec_matches[1] . $dec_matches[2];
 
 								$curCloseTags .= '[/size]';
 								$replacement .= '[size=' . $style_value . ']';

@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10081 $.
+Changelog started January 1, 2004; Currently at $Revision: 10093 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -12,6 +12,16 @@ September 2010
  ! Removed classic directory (Themes/classic) [Bug 4376]
  ! Removed smflib (it is in tools repository now) (other/smflib)
  ! Removed tools (they are in tools repository now) (other/tools content)
+ ! A variable was overwritten for font-size style tag, but needed later for <a> tag preservation (Subs-Editor.php)
+ ! MySQL needs the autoincrement column defined as primary key (DbPackages-mysql.php) [Bug 4422]
+ ! Drop the sequence if any, along with the table in Postgresql (DbPackages-postgresql.php) [Bug 4421]
+ ! Improve 'who's online' behavior for a user who toggles WYSIWYG view (index.php) [Bug 4415]
+ ! Re-added a couple of flock() that rev 10000, 10002 had removed. fclose() does not unlock the file on all PHP versions. (Load.php, ManageMaintenance.php) [Bug 4330]
+ ! Avatars loaded from remote locations may have failed resizing in some cases (script.js) [Bug 3842]
+ ! Small improvement to be more mod-friendly, a useless variable usage could have caused issues with mods (Load.php) [Bug4445]
+ ! Added the optional (in 1.1 spec) assoc_type to OpenID parameters (Subs-OpenID.php) [Bug 4420]
+ ! Fixed calculating steps/substeps for log_actions changes (upgrade script) [Bug 4427]
+ 
  
 August 2010
 --------------------------------------------------------------------------------

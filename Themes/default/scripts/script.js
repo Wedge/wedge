@@ -639,23 +639,24 @@ function smf_avatarResize()
 			continue;
 
 		var tempAvatar = new Image();
-		tempAvatar.src = possibleAvatars[i].src;
-
-		if (smf_avatarMaxWidth != 0 && tempAvatar.width > smf_avatarMaxWidth)
-		{
-			possibleAvatars[i].height = (smf_avatarMaxWidth * tempAvatar.height) / tempAvatar.width;
-			possibleAvatars[i].width = smf_avatarMaxWidth;
-		}
-		else if (smf_avatarMaxHeight != 0 && tempAvatar.height > smf_avatarMaxHeight)
-		{
-			possibleAvatars[i].width = (smf_avatarMaxHeight * tempAvatar.width) / tempAvatar.height;
-			possibleAvatars[i].height = smf_avatarMaxHeight;
-		}
-		else
+		
+		tempAvatar.onload = function()
 		{
 			possibleAvatars[i].width = tempAvatar.width;
 			possibleAvatars[i].height = tempAvatar.height;
+
+			if (smf_avatarMaxWidth != 0 && tempAvatar.width > smf_avatarMaxWidth)
+			{
+				possibleAvatars[i].height = (smf_avatarMaxWidth * tempAvatar.height) / tempAvatar.width;
+				possibleAvatars[i].width = smf_avatarMaxWidth;
+			}
+			if (smf_avatarMaxHeight != 0 && tempAvatar.height > smf_avatarMaxHeight)
+			{
+				possibleAvatars[i].width = (smf_avatarMaxHeight * tempAvatar.width) / tempAvatar.height;
+				possibleAvatars[i].height = smf_avatarMaxHeight;
+			}
 		}
+		tempAvatar.src = possibleAvatars[i].src;
 	}
 
 	if (typeof(window_oldAvatarOnload) != 'undefined' && window_oldAvatarOnload)

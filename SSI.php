@@ -76,10 +76,6 @@ require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
 
-// Using an pre-PHP5 version?
-if (@version_compare(PHP_VERSION, '5') == -1)
-	require_once($sourcedir . '/Subs-Compat.php');
-
 // Create a variable to store some SMF specific functions in.
 $smcFunc = array();
 
@@ -111,7 +107,7 @@ if (isset($_REQUEST['context']))
 define('WIRELESS', false);
 
 // Gzip output? (because it must be boolean and true, this can't be hacked.)
-if (isset($ssi_gzip) && $ssi_gzip === true && @ini_get('zlib.output_compression') != '1' && @ini_get('output_handler') != 'ob_gzhandler' && @version_compare(PHP_VERSION, '4.2.0') != -1)
+if (isset($ssi_gzip) && $ssi_gzip === true && @ini_get('zlib.output_compression') != '1' && @ini_get('output_handler') != 'ob_gzhandler')
 	ob_start('ob_gzhandler');
 else
 	$modSettings['enableCompressedOutput'] = '0';
