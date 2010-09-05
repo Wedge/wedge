@@ -2433,10 +2433,6 @@ function loadSession()
 			header('Cache-Control: private');
 	}
 
-	// While PHP 4.1.x should use $_SESSION, it seems to need this to do it right.
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-		$HTTP_SESSION_VARS['php_412_bugfix'] = true;
-
 	// Set the randomly generated code.
 	if (!isset($_SESSION['session_var']))
 	{

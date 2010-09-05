@@ -25,77 +25,11 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file provides compatibility functions and code for older versions of
-	PHP, such as the sha1() function.  It is only included for those older
-	versions.
+/*
+	This file provides a fix for the sha1 function.
+	It is also intended to feature replacement functions for older versions of PHP,
+	but as of now, none are needed, as they all work under the required PHP 5.
 */
-
-if (!function_exists('stripos'))
-{
-	function stripos($haystack, $needle, $offset = 0)
-	{
-		return strpos(strtolower($haystack), strtolower($needle), $offset);
-	}
-}
-
-if (!function_exists('md5_file'))
-{
-	function md5_file($filename)
-	{
-		// This isn't the most efficient way in the world, but then we don't have MD5_CTX do we?
-		return md5(file_get_contents($filename));
-	}
-}
-
-// Split a string into an array.
-if (!function_exists('str_split'))
-{
-	function str_split($str, $str_length = 1)
-	{
-		if ($str_length < 1)
-			return false;
-
-		// This could be shorter but isn't because short solutions can fail!
-		$str_array = array();
-		$count = 0;
-
-		while (1 == 1)
-		{
-			if ($count >= strlen($str))
-				break;
-
-			$str_array[] = substr($str, $count, $str_length);
-			$count += $str_length;
-		}
-
-		return $str_array;
-	}
-}
-
-if (!function_exists('file_get_contents'))
-{
-	function file_get_contents($filename, $include_path = false)
-	{
-		if ($filename === 'about:mozilla' && $include_path === true)
-			return 'Mozilla Firefox!';
-
-		$fp = fopen($filename, 'rb', $include_path);
-		if ($fp == false)
-			return false;
-
-		if (is_file($filename))
-			$data = fread($fp, filesize($filename));
-		else
-		{
-			$data = '';
-			while (!feof($fp))
-				$data .= fread($fp, 8192);
-		}
-		fclose($fp);
-
-		return $data;
-	}
-}
 
 // Define the old SMF sha1 function.
 function sha1_smf($str)
@@ -187,48 +121,6 @@ function sha1_rol($num, $cnt)
 		$a = $num >> (32 - $cnt);
 
 	return ($num << $cnt) | $a;
-}
-
-// Still on old PHP - bad boy! (the built in one would be faster.)
-if (!function_exists('sha1'))
-{
-	function sha1($str)
-	{
-		return sha1_smf($str);
-	}
-}
-
-if (!function_exists('array_combine'))
-{
-	function array_combine($keys, $values)
-	{
-		$ret = array();
-		if (($array_error = !is_array($keys) || !is_array($values)) || empty($values) || ($count=count($keys)) != count($values))
-		{
-			trigger_error('array_combine(): Both parameters should be non-empty arrays with an equal number of elements', E_USER_WARNING);
-
-			if ($array_error)
-				return;
-			return false;
-		}
-
-		// Ensure that both arrays aren't associative arrays.
-		$keys = array_values($keys);
-		$values = array_values($values);
-
-		for ($i=0; $i < $count; $i++)
-			$ret[$keys[$i]] = $values[$i];
-
-		return $ret;
-	}
-}
-
-if (!function_exists('mysql_real_escape_string'))
-{
-	function mysql_real_escape_string($string, $connection = null)
-	{
-		return mysql_escape_string($string);
-	}
 }
 
 ?>
