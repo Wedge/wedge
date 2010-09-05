@@ -21,8 +21,7 @@ function template_new_group()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['membergroups_new_group'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -119,7 +118,6 @@ function template_new_group()
 						<input type="submit" value="', $txt['membergroups_add_group'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	if ($context['undefined_group'])
 	{
@@ -152,8 +150,7 @@ function template_edit_group()
 				<h3 class="catbg">', $txt['membergroups_edit_group'], ' - ', $context['group']['name'], '
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -304,7 +301,6 @@ function template_edit_group()
 						<input type="submit" name="delete" value="' . $txt['membergroups_delete'] . '" onclick="return confirm(\'' . $txt['membergroups_confirm_delete'] . '\');" class="button_submit" />' : '', '
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -371,8 +367,7 @@ function template_group_members()
 			<div class="cat_bar">
 				<h3 class="catbg">', $context['page_title'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -417,7 +412,6 @@ function template_group_members()
 	echo '
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 
 			<br />
@@ -503,15 +497,13 @@ function template_group_members()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['membergroups_members_add_title'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<strong>', $txt['membergroups_members_add_desc'], ':</strong>
 					<div id="toAddItemContainer"></div>
 					<input type="text" name="toAdd" id="toAdd" value="" class="input_text" />
 					<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	}
 
@@ -553,8 +545,7 @@ function template_group_request_reason()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['mc_groups_reason_title'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">';
 
@@ -575,7 +566,6 @@ function template_group_request_reason()
 					<input type="hidden" name="req_action" value="got_reason" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

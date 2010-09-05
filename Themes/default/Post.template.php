@@ -105,14 +105,12 @@ function template_main()
 						<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 					</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content">
 						<div class="post" id="preview_body">
 							', empty($context['preview_message']) ? '<br />' : $context['preview_message'], '
 						</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div><br />';
 
@@ -664,14 +662,14 @@ function template_main()
 					for (var i = 0; i < numNewPosts; i++)
 					{
 						new_replies[new_replies.length] = newPosts[i].getAttribute("id");
-						newPostsHTML += \'<div class="windowbg\' + (i % 2 == 0 ? \'2\' : \'\') + \' core_posts"><span class="topslice"><span></span></span><div class="content" id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>', $txt['posted_by'], ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/', $context['user']['language'], '/new.gif" alt="', $txt['preview_new'], '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';';
+						newPostsHTML += \'<div class="windowbg\' + (i % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div class="content" id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>', $txt['posted_by'], ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/', $context['user']['language'], '/new.gif" alt="', $txt['preview_new'], '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';';
 
 	if ($context['can_quote'])
 		echo '
 						newPostsHTML += \'<ul class="reset smalltext quickbuttons"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>',$txt['bbc_quote'],'</span><\' + \'/a></li></ul>\';';
 
 	echo '
-						newPostsHTML += \'<br class="clear" /><div class="list_posts smalltext">\' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + \'<\' + \'/div></div><span class="botslice"><span></span></span></div>\';
+						newPostsHTML += \'<br class="clear" /><div class="list_posts smalltext">\' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + \'<\' + \'/div></div></div>\';
 					}
 					setOuterHTML(document.getElementById(\'new_replies\'), newPostsHTML);
 				}
@@ -750,8 +748,7 @@ function template_main()
 		foreach ($context['previous_posts'] as $post)
 		{
 			echo '
-				<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts">
-				<span class="topslice"><span></span></span>
+			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div class="content" id="msg', $post['id'], '">
 					<div class="floatleft">
 						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
@@ -770,7 +767,6 @@ function template_main()
 					<br class="clear" />
 					<div class="list_posts smalltext">', $post['message'], '</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 		}
 
@@ -918,8 +914,7 @@ function template_announce()
 			<div class="information">
 				', $txt['announce_desc'], '
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<p>
 						', $txt['announce_this_topic'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
@@ -945,7 +940,6 @@ function template_announce()
 						<input type="hidden" name="goback" value="', $context['go_back'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -959,8 +953,7 @@ function template_announcement_send()
 	echo '
 	<div id="announcement">
 		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '" name="autoSubmit" id="autoSubmit">
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 					<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
@@ -974,7 +967,6 @@ function template_announcement_send()
 						<input type="hidden" name="membergroups" value="', $context['membergroups'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

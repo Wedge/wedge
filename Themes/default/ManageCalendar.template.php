@@ -41,8 +41,7 @@ function template_edit_holiday()
 			<div class="cat_bar">
 				<h3 class="catbg">', $context['page_title'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt class="small_caption">
@@ -98,7 +97,6 @@ function template_edit_holiday()
 	echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

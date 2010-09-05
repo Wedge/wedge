@@ -130,12 +130,10 @@ function template_credits()
 	{
 		if (isset($section['pretext']))
 		echo '
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $section['pretext'], '</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 		if (isset($section['title']))
@@ -145,8 +143,7 @@ function template_credits()
 		</div>';
 
 		echo '
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<dl>';
 
@@ -181,7 +178,6 @@ function template_credits()
 
 		echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -189,8 +185,7 @@ function template_credits()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['credits_copyright'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl>
 					<dt><strong>', $txt['credits_forum'], '</strong></dt>', '
@@ -214,7 +209,6 @@ function template_credits()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>';
 }

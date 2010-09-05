@@ -93,8 +93,7 @@ function template_permission_index()
 					</span>
 				</h3>
 			</div>
-			<div id="permissions_panel_advanced" class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div id="permissions_panel_advanced" class="windowbg wrc">
 				<div class="content">
 					<fieldset>
 						<legend>', $txt['permissions_with_selection'], '</legend>
@@ -179,7 +178,6 @@ function template_permission_index()
 						<input type="submit" value="', $txt['permissions_set_permissions'], '" onclick="return checkSubmit();" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 		// Javascript for the advanced stuff.
@@ -282,8 +280,7 @@ function template_by_board()
 
 		if (!empty($category['boards']))
 			echo '
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<ul class="perm_boards flow_hidden">';
 
@@ -325,7 +322,6 @@ function template_by_board()
 			echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -412,8 +408,7 @@ function template_edit_profiles()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['permissions_profile_new'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -441,7 +436,6 @@ function template_edit_profiles()
 						<input type="submit" name="create" value="', $txt['permissions_profile_new_create'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -498,13 +492,11 @@ function template_modify_group()
 	echo '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					', $txt['permissions_change_view'], ': ', ($context['view_type'] == 'simple' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*" />' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=simple">', $txt['permissions_view_simple'], '</a> |
 					', ($context['view_type'] == 'classic' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*" />' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=classic">', $txt['permissions_view_classic'], '</a>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<div class="flow_hidden">';
 
@@ -844,8 +836,7 @@ function template_modify_group_classic($type)
 	$disable_field = $context['profile']['can_modify'] ? '' : 'disabled="disabled" ';
 
 	echo '
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">';
 
 	foreach ($permission_type['columns'] as $column)
@@ -995,7 +986,6 @@ function template_modify_group_classic($type)
 	echo '
 				<br class="clear" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 }
 

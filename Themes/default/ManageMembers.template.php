@@ -15,8 +15,7 @@ function template_search_members()
 				</h3>
 			</div>
 			<input type="hidden" name="sa" value="query" />
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<div class="flow_hidden">
 						<div class="msearch_details floatleft">
@@ -147,7 +146,7 @@ function template_search_members()
 						</div>
 					</div>
 				</div>
-				<span class="botslice clear_right"><span></span></span>
+				<div class="clear_right"></div>
 			</div>
 			<br />
 			<div class="title_bar">
@@ -273,8 +272,7 @@ function template_admin_browse()
 				}
 			// ]]></script>
 
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -308,7 +306,6 @@ function template_admin_browse()
 					<input type="hidden" name="sa" value="approve" />', !empty($context['approve_list']['sort']['desc']) ? '
 					<input type="hidden" name="desc" value="1" />' : '', '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';

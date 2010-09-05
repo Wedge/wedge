@@ -38,8 +38,7 @@ function template_modify_subscription()
 			</div>
 			';
 	echo '
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -199,7 +198,6 @@ function template_modify_subscription()
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -217,15 +215,13 @@ function template_delete_subscription()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['paid_delete_subscription'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>', $txt['paid_mod_delete_warning'], '</p>
 
 					<input type="submit" name="delete_confirm" value="', $txt['paid_delete_subscription'], '" class="button_submit" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -275,8 +271,7 @@ function template_modify_user_subscription()
 					', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">';
 
@@ -373,7 +368,6 @@ function template_modify_user_subscription()
 					</fieldset>
 					<input type="submit" name="save_sub" value="', $txt['paid_settings_save'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -403,8 +397,7 @@ function template_modify_user_subscription()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['pending_payments_value'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<ul class="pending_payments">';
 
@@ -421,7 +414,6 @@ function template_modify_user_subscription()
 		echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -467,8 +459,7 @@ function template_user_subscription()
 			<div class="cat_bar">
 				<h3 class="catbg">', $subscription['name'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p><strong>', $subscription['name'], '</strong></p>
 					<p class="smalltext">', $subscription['desc'], '</p>';
@@ -509,7 +500,6 @@ function template_user_subscription()
 
 			echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 		}
 	}
@@ -578,8 +568,7 @@ function template_choose_payment()
 		<div class="information">
 			', $txt['paid_confirm_desc'], '
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="settings">
 					<dt>
@@ -596,7 +585,6 @@ function template_choose_payment()
 					</dd>
 				</dl>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	// Do all the gateway options.
@@ -606,8 +594,7 @@ function template_choose_payment()
 		<div class="cat_bar">
 			<h3 class="catbg">', $gateway['title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				', $gateway['desc'], '<br />
 					<form action="', $gateway['form'], '" method="post">';
@@ -626,7 +613,6 @@ function template_choose_payment()
 						<br /><input type="submit" value="', $gateway['submit'], '" class="button_submit" />
 					</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -645,14 +631,12 @@ function template_paid_done()
 		<div class="title_bar">
 			<h3 class="titlebg">', $txt['paid_done'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<p>', $txt['paid_done_desc'], '</p>
 				<br />
 				<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';

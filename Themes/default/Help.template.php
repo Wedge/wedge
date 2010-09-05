@@ -151,8 +151,7 @@ function template_manual_above()
 			<h3 class="catbg">', $txt['help'], ':&nbsp;', $context['manual_area_data']['label'], '</h3>
 		</div>
 		<div id="help_container">
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div id="helpmain">';
 }
 
@@ -163,7 +162,6 @@ function template_manual_below()
 
 	echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 }
@@ -664,8 +662,7 @@ function template_manual_topic_view()
 					<span id="top_subject">', $txt['manual_topic_heading'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="post_wrapper">
 					<div class="poster">
 						<h4>
@@ -720,7 +717,6 @@ function template_manual_topic_view()
 						<div class="signature">', $txt['manual_topic_signature'], '</div>
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<a id="lastPost"></a>
 		</div>
@@ -811,8 +807,7 @@ function template_manual_registration_screen()
 		<div class="title_bar">
 			<h4 class="titlebg">', $txt['manual_register_required_info'], '</h4>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<fieldset class="content">
 				<dl class="register_form">
 					<dt><strong><label for="smf_autov_username">', $txt['manual_register_username'], ':</label></strong></dt>
@@ -874,13 +869,11 @@ function template_manual_registration_screen()
 					</dd>
 				</dl>
 			</fieldset>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="title_bar">
 			<h4 class="titlebg">', $txt['manual_register_verification'], '</h4>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<fieldset class="content centertext">
 				<div class="verification_control">
 					<img src="', $scripturl, '?action=verificationcode;vid=register;rand=bb55ae4b180aee232039e6eca573db25" alt="', $txt['manual_register_type_letters'], '" id="verification_image_register" />
@@ -897,7 +890,6 @@ function template_manual_registration_screen()
 					</div>
 				</div>
 			</fieldset>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div id="confirm_buttons">
 			<input type="submit" name="regSubmit" value="', $txt['manual_register_register'], '" tabindex="11" class="button_submit" />
@@ -1094,8 +1086,7 @@ function template_manual_profile_info_summary()
 				</h3>
 			</div>
 			<div id="basicinfo">
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">
 						<div class="username"><h4>', $txt['manual_profile_summary_display_name'], ' <span class="position">', $txt['manual_topic_membergroup'], '</span></h4></div>
 						<img class="avatar" src="', $settings['default_images_url'], '/admin/smilies_and_messageicons.png" alt="" />
@@ -1116,12 +1107,10 @@ function template_manual_profile_info_summary()
 							<a href="#">', $txt['manual_entry_profile_info_stats'], '</a>
 						</p>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 			<div id="detailedinfo">
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">
 						<dl>
 							<dt>', $txt['manual_register_username'], ': </dt>
@@ -1154,7 +1143,6 @@ function template_manual_profile_info_summary()
 							', $txt['manual_topic_signature'], '
 						</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 			<div class="clear"></div>
@@ -1381,8 +1369,7 @@ function template_manual_profile_actions_subscriptions()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['manual_profile_subscribe_example'], '</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<p><strong>', $txt['manual_profile_subscribe_example'], '</strong></p>
 					<p class="smalltext">', $txt['manual_profile_subscribe_example_desc'], '</p>
@@ -1390,7 +1377,6 @@ function template_manual_profile_actions_subscriptions()
 					', $txt['manual_profile_subscribe_cost'], '<br />
 					<input type="submit" name="sub_id[1]" value="', $txt['manual_profile_subscribe_order'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>
 		<p>', $txt['manual_profile_subscribe_existing'], '</p>
@@ -1427,8 +1413,7 @@ function template_manual_profile_actions_delete()
 	echo '
 		<p>', $txt['manual_profile_delete_describe'], '</p>
 		<div class="help_sample">
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<div class="alert">', $txt['manual_profile_delete_sure'], '</div>
 					<div>
@@ -1437,7 +1422,6 @@ function template_manual_profile_actions_delete()
 						<input type="submit" value="', $txt['manual_profile_delete_yes'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 }

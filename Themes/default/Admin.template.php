@@ -54,12 +54,10 @@ function template_admin()
 						<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" /></a> ', $txt['live'], '</span>
 					</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content">
 						<div id="smfAnnouncements">', $txt['lfyi'], '</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>';
 
@@ -71,8 +69,7 @@ function template_admin()
 						<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
 					</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content">
 						<div id="version_details">
 							<strong>', $txt['support_versions'], ':</strong><br />
@@ -108,14 +105,12 @@ function template_admin()
 	echo '
 						</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 		</div>';
 
 	echo '
-		<div class="windowbg2 clear_right">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc clear_right">
 			<div class="content">
 				<ul id="quick_tasks" class="flow_hidden">';
 
@@ -130,7 +125,7 @@ function template_admin()
 	echo '
 				</ul>
 			</div>
-			<span class="botslice clear"><span></span></span>
+			<div class="clear"></div>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -179,14 +174,12 @@ function template_admin()
 							%title%
 						</h3>
 					</div>
-					<div class="windowbg">
-						<span class="topslice"><span></span></span>
+					<div class="windowbg wrc">
 						<div class="content">
 							<div id="update_message" class="smalltext">
 								%message%
 							</div>
 						</div>
-						<span class="botslice"><span></span></span>
 					</div>
 				'), ',
 				sUpdateNotificationLink: ', JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']), '
@@ -208,8 +201,7 @@ function template_manage_copyright()
 					', $txt['copyright_removal'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<span class="smalltext">', $txt['copyright_removal_desc'], '</span>
 					<dl class="settings">
@@ -224,7 +216,6 @@ function template_manage_copyright()
 						<input type="submit" value="', $txt['copyright_proceed'], '" class="button_submit" />
 					</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -246,8 +237,7 @@ function template_credits()
 				', $txt['support_title'], '
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<strong>', $txt['support_versions'], ':</strong><br />
 					', $txt['support_versions_forum'], ':
@@ -263,7 +253,6 @@ function template_credits()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	';
 
@@ -274,13 +263,11 @@ function template_credits()
 				', $txt['support_resources'], '
 			</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<p>', $txt['support_resources_p1'], '</p>
 				<p>', $txt['support_resources_p2'], '</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	// Display latest support questions from simplemachines.org.
@@ -290,12 +277,10 @@ function template_credits()
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '</span>
 			</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	// The most important part - the credits :P.
@@ -305,8 +290,7 @@ function template_credits()
 				', $txt['admin_credits'], '
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">';
 
 	foreach ($context['credits'] as $section)
@@ -340,7 +324,6 @@ function template_credits()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -645,8 +628,7 @@ function template_edit_censored()
 					', $txt['admin_censored_words'], '
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<p>', $txt['admin_censored_where'], '</p>';
 
@@ -686,7 +668,6 @@ function template_edit_censored()
 					</dl>
 					<input type="submit" name="save_censor" value="', $txt['save'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	// This table lets you test out your filters by typing in rude words and seeing what comes out.
@@ -696,15 +677,13 @@ function template_edit_censored()
 					', $txt['censor_test'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p class="centertext">
 						<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '" class="input_text" />
 						<input type="submit" value="', $txt['censor_test_save'], '" class="button_submit" />
 					</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -725,8 +704,7 @@ function template_not_done()
 				', $txt['not_done_title'], '
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				', $txt['not_done_reason'];
 
@@ -755,7 +733,6 @@ function template_not_done()
 					', $context['continue_post_data'], '
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />
@@ -843,7 +820,6 @@ function template_show_settings()
 				echo '
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 			}
 
@@ -875,8 +851,7 @@ function template_show_settings()
 		{
 			$is_open = true;
 			echo '
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">';
 		}
@@ -1017,7 +992,6 @@ function template_show_settings()
 	if ($is_open)
 		echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	echo '
@@ -1108,8 +1082,7 @@ function template_edit_profile_field()
 					', $context['page_title'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<fieldset>
 						<legend>', $txt['custom_edit_general'], '</legend>
@@ -1295,7 +1268,6 @@ function template_edit_profile_field()
 	echo '
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -1327,8 +1299,7 @@ function template_admin_search_results()
 				', $txt['admin_search_results'], '
 			</h3>
 		</div>
-	<div class="windowbg nopadding">
-		<span class="topslice"><span></span></span>
+	<div class="windowbg wrc nopadding">
 		<div class="content">
 			', sprintf($txt['admin_search_results_desc'], $context['search_term']);
 
@@ -1379,7 +1350,6 @@ function template_admin_search_results()
 
 	echo '
 		</div>
-		<span class="botslice"><span></span></span>
 	</div>
 	<br class="clear" />';
 }
@@ -1432,8 +1402,7 @@ function template_core_features()
 	foreach ($context['features'] as $id => $feature)
 	{
 		echo '
-			<div class="windowbg', $alternate ? '2' : '', '">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg', $alternate ? '2' : '', ' wrc">
 				<div class="content features">
 					<img class="features_image png_fix" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
 					<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
@@ -1448,7 +1417,7 @@ function template_core_features()
 						<label for="plain_feature_', $id, '_radio_off"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_off" value="0"', !$feature['enabled'] ? ' checked="checked"' : '', ' class="input_radio" />', $txt['core_settings_disabled'], '</label>
 					</div>
 				</div>
-				<span class="botslice clear_right"><span></span></span>
+				<div class="clear_right"></div>
 			</div>';
 
 		$alternate = !$alternate;
@@ -1489,8 +1458,7 @@ function template_add_language()
 					', $txt['add_language'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<fieldset>
 						<legend>', $txt['add_language_smf'], '</legend>
@@ -1509,7 +1477,6 @@ function template_add_language()
 						<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		';
 
@@ -1567,12 +1534,10 @@ function template_download_language()
 				', $txt['languages_download_complete'], '
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				', $context['install_complete'], '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -1595,8 +1560,7 @@ function template_download_language()
 					', $txt['languages_download'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>
 						', $txt['languages_download_note'], '
@@ -1605,7 +1569,6 @@ function template_download_language()
 						', $txt['languages_download_info'], '
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	// Show the main files.
@@ -1690,8 +1653,7 @@ function template_download_language()
 					', $txt['package_ftp_necessary'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>', $txt['package_ftp_why'],'</p>
 					<dl class="settings">
@@ -1725,7 +1687,6 @@ function template_download_language()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	}
 
@@ -1799,8 +1760,7 @@ function template_modify_language_entries()
 			<div class="information">
 				', $txt['edit_language_entries_primary'], '
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<fieldset>
 						<legend>', $context['primary_settings']['name'], '</legend>
@@ -1849,7 +1809,6 @@ function template_modify_language_entries()
 	echo '
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 
@@ -1889,8 +1848,7 @@ function template_modify_language_entries()
 	if (!empty($context['file_entries']))
 	{
 		echo '
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">';
 
@@ -1944,7 +1902,6 @@ function template_modify_language_entries()
 
 		echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	}
 	echo '
@@ -2062,8 +2019,7 @@ function template_repair_boards()
 				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'] , '
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">';
 
 	// Are we actually fixing them, or is this just a prompt?
@@ -2123,7 +2079,6 @@ function template_repair_boards()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';

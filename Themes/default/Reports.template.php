@@ -18,8 +18,7 @@ function template_report_type()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['generate_reports_type'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="generate_report">';
 
@@ -42,7 +41,6 @@ function template_report_type()
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

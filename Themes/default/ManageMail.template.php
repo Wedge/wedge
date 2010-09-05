@@ -10,8 +10,7 @@ function template_browse()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['mailqueue_stats'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="settings">
 					<dt><strong>', $txt['mailqueue_size'], '</strong></dt>
@@ -20,7 +19,6 @@ function template_browse()
 					<dd>', $context['oldest_mail'], '</dd>
 				</dl>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	template_show_list('mail_queue');

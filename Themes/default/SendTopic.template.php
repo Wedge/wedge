@@ -40,8 +40,7 @@ function template_main()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/email_sm.gif" alt="" />', $context['page_title'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<fieldset id="sender" class="send_topic">
 						<dl class="settings send_topic">
@@ -85,7 +84,6 @@ function template_main()
 						<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -106,8 +104,7 @@ function template_custom_email()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/email_sm.gif" alt="" />', $context['page_title'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings send_mail">
 						<dt>
@@ -175,7 +172,6 @@ function template_custom_email()
 						<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	foreach ($context['form_hidden_vars'] as $key => $value)
@@ -200,8 +196,7 @@ function template_report()
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['report_to_mod'], '</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content">';
 
 	if (!empty($context['post_errors']))
@@ -260,7 +255,6 @@ function template_report()
 							<input type="submit" name="submit" value="', $txt['rtm10'], '" style="margin-left: 1ex;" class="button_submit" />
 						</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>

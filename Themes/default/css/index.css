@@ -928,6 +928,27 @@ table.table_grid thead tr.catbg th
 
 /* Common styles used to add corners to divisions.
 ------------------------------------------------------- */
+
+/* This is for modern browsers... */
+.wrc
+{
+	margin-top: 2px;
+	padding: 11px 0;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	border: 1px solid rgba(128,128,128,.2);
+}
+/* Let's have a bit of fun, shall we? */
+li.wrc, form.li
+{
+	-webkit-box-shadow: 0 2px 8px #ccc;
+	-moz-box-shadow: 0 2px 8px #ccc;
+	box-shadow: 0 1px 5px rgba(128,128,128,.25);
+	border: 1px solid #ddd;
+}
+
+/* Old browsers suck. IE, will you let me go? */
 .windowbg span.topslice
 {
 	display: block;

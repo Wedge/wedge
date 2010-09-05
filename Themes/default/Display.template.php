@@ -20,8 +20,7 @@ function template_main()
 						<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" alt="" class="icon" /> ', $txt['poll'], '</span>
 					</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content" id="poll_options">
 						<h4 id="pollquestion">
 							', $context['poll']['question'], '
@@ -91,7 +90,6 @@ function template_main()
 
 		echo '
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 			<div id="pollmoderation">';
@@ -120,8 +118,7 @@ function template_main()
 				<div class="title_bar">
 					<h3 class="titlebg headerpadding">', $txt['calendar_linked_events'], '</h3>
 				</div>
-				<div class="windowbg">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc">
 					<div class="content">
 						<ul class="reset">';
 
@@ -134,7 +131,6 @@ function template_main()
 		echo '
 						</ul>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>';
 	}
@@ -212,8 +208,7 @@ function template_main()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', '">
-					<span class="topslice"><span></span></span>
+				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
@@ -604,7 +599,6 @@ function template_main()
 		echo '
 						</div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 				<hr class="post_separator" />';
 	}

@@ -188,6 +188,7 @@ function template_main()
 		</fieldset>';
 		}
 
+//	Deleted by the SMF team after they reverted a valid fix. Will need to reintroduce.
 //		echo '
 //		<div class="righttext padding">
 //			<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
@@ -300,8 +301,7 @@ function template_results()
 
 			echo '
 			<div class="search_results_posts">
-			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts">
-				<span class="topslice"><span></span></span>
+			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div class="content flow_auto">';
 
 			foreach ($topic['matches'] as $message)
@@ -358,7 +358,6 @@ function template_results()
 
 			echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 
@@ -440,8 +439,7 @@ function template_results()
 			{
 				echo '
 			<div class="search_results_posts">
-				<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts">
-					<span class="topslice"><span></span></span>
+				<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 					<div class="content">
 						<div class="counter">', $message['counter'], '</div>
 						<div class="topic_details">
@@ -477,7 +475,6 @@ function template_results()
 				echo '
 						<br class="clear" />
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>';
 			}

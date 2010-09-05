@@ -11,8 +11,7 @@ function template_modify_weights()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_weights'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt class="large_caption">
@@ -72,7 +71,6 @@ function template_modify_weights()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="submit" name="save" value="', $txt['search_weights_save'], '" class="button_submit" />
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -109,8 +107,7 @@ function template_select_search_method()
 			<div class="information">
 				<div class="smalltext" style="font-weight: normal;"><a href="', $scripturl, '?action=helpadmin;help=search_why_use_index" onclick="return reqWin(this.href);">', $txt['search_create_index_why'], '</a></div>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 
@@ -218,7 +215,7 @@ function template_select_search_method()
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					</div>
 				</div>
-				<span class="botslice clear"><span></span></span>
+				<div class="clear"></div>
 			</div>
 		</form>
 	</div>
@@ -235,8 +232,7 @@ function template_create_index()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_create_index'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -253,7 +249,6 @@ function template_create_index()
 					<input type="submit" name="save" value="', $txt['search_create_index_start'], '" class="button_submit" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 
 	</form>
@@ -270,8 +265,7 @@ function template_create_index_progress()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_create_index'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>
 						', $txt['search_create_index_not_ready'], '
@@ -281,7 +275,6 @@ function template_create_index_progress()
 					</p>
 					<input type="submit" name="b" value="', $txt['search_create_index_continue'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="step" value="', $context['step'], '" />
 			<input type="hidden" name="start" value="', $context['start'], '" />
@@ -318,15 +311,13 @@ function template_create_index_done()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['search_create_index'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['search_create_index_done'], '</p>
 				<p>
 					<strong><a href="', $scripturl, '?action=admin;area=managesearch;sa=method">', $txt['search_create_index_done_link'], '</a></strong>
 				</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -345,8 +336,7 @@ function template_spider_edit()
 			<div class="information">
 				', $txt['add_spider_desc'], '
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -374,7 +364,6 @@ function template_spider_edit()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -398,8 +387,7 @@ function template_show_spider_logs()
 			<h3 class="catbg">', $txt['spider_logs_delete'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>
 						', $txt['spider_logs_delete_older'], '
@@ -409,7 +397,6 @@ function template_show_spider_logs()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="submit" name="delete_entries" value="', $txt['spider_logs_delete_submit'], '" onclick="if (document.getElementById(\'older\').value &lt; 1 &amp;&amp; !confirm(\'' . addcslashes($txt['spider_logs_delete_confirm'], "'") . '\')) return false; return true;" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

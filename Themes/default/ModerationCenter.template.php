@@ -50,12 +50,10 @@ function template_latest_news()
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a> ', $txt['mc_latest_news'], '</span>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	// This requires a lot of javascript...
@@ -97,8 +95,7 @@ function template_group_requests_block()
 				<a href="', $scripturl, '?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content modbox">
 				<ul class="reset">';
 
@@ -118,7 +115,6 @@ function template_group_requests_block()
 		echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 }
 
@@ -133,8 +129,7 @@ function template_reported_posts_block()
 				<a href="', $scripturl, '?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content modbox">
 				<ul class="reset">';
 
@@ -154,7 +149,6 @@ function template_reported_posts_block()
 		echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 }
 
@@ -168,8 +162,7 @@ function template_watched_users()
 				<a href="', $scripturl, '?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content modbox">
 				<ul class="reset">';
 
@@ -189,7 +182,6 @@ function template_watched_users()
 		echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 }
 
@@ -203,8 +195,7 @@ function template_notes()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['mc_notes'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content modbox">';
 
 		if (!empty($context['notes']))
@@ -233,7 +224,6 @@ function template_notes()
 					</div>
 					<br class="clear" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';
@@ -263,8 +253,7 @@ function template_reported_posts()
 	foreach ($context['reports'] as $report)
 	{
 		echo '
-		<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', '">
-			<span class="topslice"><span></span></span>
+		<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
 			<div class="content">
 				<div>
 					<div class="floatleft">
@@ -291,19 +280,16 @@ function template_reported_posts()
 				<hr />
 				', $report['body'], '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
 	// Were none found?
 	if (empty($context['reports']))
 		echo '
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	echo '
@@ -340,12 +326,10 @@ function template_unapproved_posts()
 	// No posts?
 	if (empty($context['unapproved_items']))
 		echo '
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	else
 		echo '
@@ -363,8 +347,7 @@ function template_unapproved_posts()
 				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
 			</h3>
 		</div>
-		<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', '">
-			<span class="topslice"><span></span></span>
+		<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
 			<div class="content">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
@@ -382,7 +365,6 @@ function template_unapproved_posts()
 				</span>
 				<br class="clear" />
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -432,12 +414,10 @@ function template_unapproved_attachments()
 	// None awaiting?
 	if (empty($context['unapproved_items']))
 		echo '
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p class="centertext">', $txt['mc_unapproved_attachments_none_found'], '</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	else
 		echo '
@@ -536,12 +516,10 @@ function template_viewmodreport()
 					</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					', $context['report']['body'], '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />
 			<div class="cat_bar">
@@ -550,13 +528,11 @@ function template_viewmodreport()
 
 	foreach ($context['report']['comments'] as $comment)
 		echo '
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p class="smalltext">', sprintf($txt['mc_modreport_whoreported_data'], $comment['member']['link'] . (empty($comment['member']['id']) && !empty($comment['member']['ip']) ? ' (' . $comment['member']['ip'] . ')' : ''), $comment['time']), '</p>
 					<p>', $comment['message'], '</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	echo '
@@ -564,8 +540,7 @@ function template_viewmodreport()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['mc_modreport_mod_comments'], '</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">';
 
 	if (empty($context['report']['mod_comments']))
@@ -582,7 +557,6 @@ function template_viewmodreport()
 						<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />';
 
@@ -687,8 +661,7 @@ function template_moderation_settings()
 			<div class="information">
 				', $txt['mc_prefs_desc'], '
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -745,7 +718,6 @@ function template_moderation_settings()
 						<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -772,8 +744,7 @@ function template_show_notice()
 		<div class="titlet_bar">
 			<h3 class="titlebg">', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl>
 					<dt>
@@ -784,7 +755,6 @@ function template_show_notice()
 					</dd>
 				</dl>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</body>
 </html>';
@@ -805,8 +775,7 @@ function template_warn_template()
 			<div class="information">
 				', $txt['mc_warning_template_desc'], '
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -837,7 +806,6 @@ function template_warn_template()
 	echo '
 					<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>

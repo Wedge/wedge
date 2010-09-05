@@ -96,8 +96,7 @@ function template_email_members()
 			<div class="information">
 				', $txt['admin_news_select_recipients'], '
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -118,7 +117,6 @@ function template_email_members()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />
 
@@ -131,8 +129,7 @@ function template_email_members()
 				</h3>
 			</div>
 
-			<div class="windowbg2" id="advanced_settings_div" style="display: none;">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc" id="advanced_settings_div" style="display: none;">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -187,7 +184,6 @@ function template_email_members()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<div class="righttext">
 				<input type="submit" value="', $txt['admin_next'], '" class="button_submit" />
@@ -248,8 +244,7 @@ function template_email_members_compose()
 			<div class="information">
 				', $txt['email_variables'], '
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>
 						<input type="text" name="subject" size="60" value="', $context['default_subject'], '" class="input_text" />
@@ -266,7 +261,6 @@ function template_email_members_compose()
 						<input type="submit" value="', $txt['sendtopic_send'], '" class="button_submit" />
 					</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			<input type="hidden" name="email_force" value="', $context['email_force'], '" />
@@ -295,8 +289,7 @@ function template_email_members_send()
 					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a> ', $txt['admin_newsletters'], '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<p>
 						<strong>', $context['percentage_done'], '% ', $txt['email_done'], '</strong>
@@ -319,7 +312,6 @@ function template_email_members_send()
 
 	echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>

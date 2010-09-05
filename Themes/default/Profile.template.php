@@ -48,8 +48,7 @@ function template_summary()
 		</h3>
 	</div>
 	<div id="basicinfo">
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content flow_auto">
 				<div class="username"><h4>', $context['member']['name'], ' <span class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : $context['member']['post_group']), '</span></h4></div>
 				', $context['member']['avatar']['image'], '
@@ -103,12 +102,10 @@ function template_summary()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<div id="detailedinfo">
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<dl>';
 
@@ -310,7 +307,6 @@ function template_summary()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 <div class="clear"></div>
@@ -348,8 +344,7 @@ function template_showPosts()
 		{
 			echo '
 		<div class="topic">
-			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' core_posts">
-				<span class="topslice"><span></span></span>
+			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
 				<div class="content">
 					<div class="counter">', $post['counter'], '</div>
 					<div class="topic_details">
@@ -401,7 +396,6 @@ function template_showPosts()
 
 			echo '
 				<br class="clear" />
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 		}
@@ -659,8 +653,7 @@ function template_trackActivity()
 
 	// The last IP the user used.
 	echo '
-			<div id="tracking" class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div id="tracking" class="windowbg2 wrc">
 				<div class="content">
 					<dl class="noborder">
 						<dt>', $txt['most_recent_ip'], ':
@@ -697,7 +690,6 @@ function template_trackActivity()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		<br />';
 
@@ -716,12 +708,10 @@ function template_trackIP()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['trackIP'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<form action="', $context['base_url'], '" method="post" accept-charset="', $context['character_set'], '">
 				<div class="padding">', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="text" name="searchip" value="', $context['ip'], '" class="input_text" />&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '" class="button_submit" /></div>
 			</form>
-			<span class="botslice"><span></span></span>
 		</div>
 		<br />';
 
@@ -732,15 +722,13 @@ function template_trackIP()
 			<div class="title_bar">
 				<h3 class="titlebg">', $txt['whois_title'], ' ', $context['ip'], '</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="padding">';
 			foreach ($context['whois_servers'] as $server)
 				echo '
 					<a href="', $server['url'], '" target="_blank" class="new_win"', isset($context['auto_whois_server']) && $context['auto_whois_server']['name'] == $server['name'] ? ' style="font-weight: bold;"' : '', '>', $server['name'], '</a><br />';
 			echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		<br />';
 	}
@@ -814,15 +802,13 @@ function template_showPermissions()
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['showPermissions_restricted_boards'], '</h3>
 				</div>
-				<div class="windowbg smalltext">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg wrc smalltext">
 					<div class="content">', $txt['showPermissions_restricted_boards_desc'], ':<br />';
 				foreach ($context['no_access_boards'] as $no_access_board)
 					echo '
 						<a href="', $scripturl, '?board=', $no_access_board['id'], '.0">', $no_access_board['name'], '</a>', $no_access_board['is_last'] ? '' : ', ';
 				echo '
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>';
 		}
 
@@ -959,8 +945,7 @@ function template_statPanel()
 					</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl>
 						<dt>', $txt['statPanel_total_time_online'], ':</dt>
@@ -975,7 +960,6 @@ function template_statPanel()
 						<dd>', $context['num_votes'], ' ', $txt['statPanel_votes'], '</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 
@@ -987,8 +971,7 @@ function template_statPanel()
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_history.gif" alt="" class="icon" />', $txt['statPanel_activityTime'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">';
 
 	// If they haven't post at all, don't draw the graph.
@@ -1023,7 +1006,6 @@ function template_statPanel()
 	echo '
 					<span class="clear" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</div>';
 
@@ -1036,8 +1018,7 @@ function template_statPanel()
 						<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_replies.gif" alt="" class="icon" />', $txt['statPanel_topBoards'], '</span>
 					</h3>
 				</div>
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">';
 
 	if (empty($context['popular_boards']))
@@ -1067,7 +1048,6 @@ function template_statPanel()
 	}
 	echo '
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>';
 	echo '
@@ -1077,8 +1057,7 @@ function template_statPanel()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_replies.gif" alt="" class="icon" />', $txt['statPanel_topBoardsActivity'], '</span>
 					</h3>
 				</div>
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">';
 
 	if (empty($context['board_activity']))
@@ -1107,7 +1086,6 @@ function template_statPanel()
 	}
 	echo '
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 		</div>';
@@ -1148,8 +1126,7 @@ function template_edit_options()
 			<p class="windowbg description">', $context['page_desc'], '</p>';
 
 	echo '
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">';
 
 	// Any bits at the start?
@@ -1322,7 +1299,6 @@ function template_edit_options()
 						<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />
 		</form>';
@@ -1587,8 +1563,7 @@ function template_notification()
 				</h3>
 			</div>
 			<p class="windowbg description">', $txt['notification_info'], '</p>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<form action="', $scripturl, '?action=profile;area=notification;save" method="post" accept-charset="', $context['character_set'], '" id="notify_options" class="flow_hidden">';
 
@@ -1634,7 +1609,6 @@ function template_notification()
 						</div><br class="clear" />
 					</form>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />';
 
@@ -1827,8 +1801,7 @@ function template_ignoreboards()
 			</h3>
 		</div>
 		<p class="description">', $txt['ignoreboards_info'], '</p>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content flow_hidden">
 				<ul class="ignoreboards floatleft">';
 
@@ -1883,7 +1856,6 @@ function template_ignoreboards()
 
 	echo '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</form>
 	<br />';
@@ -1925,8 +1897,7 @@ function template_viewWarning()
 				</span>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span</span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl>
 					<dt>
@@ -1962,7 +1933,6 @@ function template_viewWarning()
 		echo '
 				</dl>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	template_show_list('view_warnings');
@@ -2117,8 +2087,7 @@ function template_issueWarning()
 		<p class="description">', $txt['profile_warning_desc'], '</p>';
 
 	echo '
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="settings">';
 
@@ -2218,7 +2187,6 @@ function template_issueWarning()
 					<input type="submit" name="save" value="', $context['user']['is_owner'] ? $txt['change_profile'] : $txt['profile_warning_issue'], '" class="button_submit" />
 				</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</form>';
 
@@ -2310,8 +2278,7 @@ function template_deleteAccount()
 		echo '
 			<p class="windowbg2 description">', $txt['deleteAccount_desc'], '</p>';
 	echo '
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">';
 
 	// If they are deleting their account AND the admin needs to approve it - give them another piece of info ;)
@@ -2364,7 +2331,6 @@ function template_deleteAccount()
 	}
 	echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />
 		</form>';
@@ -2870,8 +2836,7 @@ function template_authentication_method()
 				</h3>
 			</div>
 			<p class="windowbg description">', $txt['change_authentication'], '</p>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl>
 						<dt>
@@ -2927,7 +2892,6 @@ echo '
 						<input type="submit" value="', $txt['change_profile'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>';
 

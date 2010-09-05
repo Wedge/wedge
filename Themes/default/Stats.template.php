@@ -19,8 +19,7 @@ function template_main()
 		</div>
 		<div class="flow_hidden">
 			<div id="stats_left">
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content top_row">
 						<dl class="stats">
 							<dt>', $txt['total_members'], ':</dt>
@@ -47,12 +46,10 @@ function template_main()
 						</dl>
 						<div class="clear"></div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 			<div id="stats_right">
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content top_row">
 						<dl class="stats">
 							<dt>', $txt['average_members'], ':</dt>
@@ -79,7 +76,6 @@ function template_main()
 						</dl>
 						<div class="clear"></div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 		</div>
@@ -92,8 +88,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-					<div class="windowbg2">
-						<span class="topslice"><span></span></span>
+					<div class="windowbg2 wrc">
 						<div class="content">
 							<dl class="stats">';
 
@@ -120,7 +115,6 @@ function template_main()
 							</dl>
 							<div class="clear"></div>
 						</div>
-						<span class="botslice"><span></span></span>
 					</div>
 			</div>
 			<div id="top_boards">
@@ -131,8 +125,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-					<div class="windowbg2">
-						<span class="topslice"><span></span></span>
+					<div class="windowbg2 wrc">
 						<div class="content">
 							<dl class="stats">';
 
@@ -158,7 +151,6 @@ function template_main()
 							</dl>
 							<div class="clear"></div>
 						</div>
-						<span class="botslice"><span></span></span>
 					</div>
 			</div>
 		</div>
@@ -171,8 +163,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-					<div class="windowbg2">
-						<span class="topslice"><span></span></span>
+					<div class="windowbg2 wrc">
 						<div class="content">
 							<dl class="stats">';
 
@@ -197,7 +188,6 @@ function template_main()
 							</dl>
 							<div class="clear"></div>
 						</div>
-						<span class="botslice"><span></span></span>
 					</div>
 			</div>
 
@@ -209,8 +199,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">
 						<dl class="stats">';
 
@@ -235,7 +224,6 @@ function template_main()
 						</dl>
 						<div class="clear"></div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 		</div>
@@ -248,8 +236,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">
 						<dl class="stats">';
 
@@ -276,7 +263,6 @@ function template_main()
 						</dl>
 						<div class="clear"></div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 			<div id="most_online">
@@ -287,8 +273,7 @@ function template_main()
 						</span>
 					</h4>
 				</div>
-				<div class="windowbg2">
-					<span class="topslice"><span></span></span>
+				<div class="windowbg2 wrc">
 					<div class="content">
 						<dl class="stats">';
 
@@ -315,7 +300,6 @@ function template_main()
 						</dl>
 						<div class="clear"></div>
 					</div>
-					<span class="botslice"><span></span></span>
 				</div>
 			</div>
 		</div>

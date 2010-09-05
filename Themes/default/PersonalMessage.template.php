@@ -170,8 +170,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? 'windowbg' : 'windowbg2';
 
 			echo '
-	<div class="', $window_class, ' clear">
-		<span class="topslice"><span></span></span>
+	<div class="', $window_class, ' wrc clear">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -477,7 +476,6 @@ function template_folder()
 		</div>
 		<div class="moderatorbar">
 		</div>
-		<span class="botslice"><span></span></span>
 	</div>';
 		}
 
@@ -814,8 +812,7 @@ function template_search_results()
 					echo '
 				</h3>
 			</div>
-			<div class="windowbg', $alternate ? '2': '', '">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg', $alternate ? '2': '', ' wrc">
 				<div class="content">
 					', $message['body'], '
 					<p class="pm_reply righttext middletext">';
@@ -838,7 +835,6 @@ function template_search_results()
 				echo '
 					</p>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 		}
 		// Otherwise just a simple list!
@@ -865,12 +861,10 @@ function template_search_results()
 	// No results?
 	if (empty($context['personal_messages']))
 		echo '
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p class="centertext">', $txt['pm_search_none_found'], '</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	echo '
@@ -891,8 +885,7 @@ function template_send()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['pm_send_report'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">';
 				if (!empty($context['send_log']['sent']))
 					foreach ($context['send_log']['sent'] as $log_entry)
@@ -902,7 +895,6 @@ function template_send()
 						echo '<span class="error">', $log_entry, '</span><br />';
 				echo '
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<br />';
 	}
@@ -913,12 +905,10 @@ function template_send()
 		<div class="cat_bar">
 			<h3 class="catbg">', $context['preview_subject'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				', $context['preview_message'], '
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<br />';
 
@@ -1038,8 +1028,7 @@ function template_send()
 	<div class="cat_bar">
 		<h3 class="catbg">', $txt['subject'], ': ', $context['quoted_message']['subject'], '</h3>
 	</div>
-	<div class="windowbg2">
-		<span class="topslice"><span></span></span>
+	<div class="windowbg2 wrc">
 		<div class="content">
 			<div class="clear">
 				<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
@@ -1047,7 +1036,6 @@ function template_send()
 			</div><hr />
 			', $context['quoted_message']['body'], '
 		</div>
-		<span class="botslice"><span></span></span>
 	</div>';
 
 	echo '
@@ -1105,13 +1093,11 @@ function template_ask_delete()
 		<div class="cat_bar">
 			<h3 class="catbg">', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['delete_all_confirm'], '</p><br />
 				<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 }
 
@@ -1125,15 +1111,13 @@ function template_prune()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['pm_prune'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14" class="input_text" /> ', $txt['pm_prune_desc2'], '</p>
 				<div class="righttext">
 					<input type="submit" value="', $txt['delete'], '" class="button_submit" />
 				</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
@@ -1211,8 +1195,7 @@ function template_labels()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['pm_label_add_new'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="settings">
 					<dt>
@@ -1226,7 +1209,6 @@ function template_labels()
 					<input type="submit" name="add" value="', $txt['pm_label_add_new'], '" class="button_submit" />
 				</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form><br />';
@@ -1246,8 +1228,7 @@ function template_report_message()
 		<div class="description">
 			', $txt['pm_report_desc'], '
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="settings">';
 
@@ -1282,7 +1263,6 @@ function template_report_message()
 					<input type="submit" name="report" value="', $txt['pm_report_message'], '" class="button_submit" />
 				</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
@@ -1297,13 +1277,11 @@ function template_report_message_complete()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['pm_report_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['pm_report_done'], '</p>
 				<a href="', $scripturl, '?action=pm;l=', $context['current_label_id'], '">', $txt['pm_report_return'], '</a>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 }
 
@@ -1561,8 +1539,7 @@ function template_add_rule()
 		<div class="cat_bar">
 			<h3 class="catbg">', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<dl class="addrules">
 					<dt class="floatleft">
@@ -1673,7 +1650,6 @@ function template_add_rule()
 					<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">(', $txt['pm_rule_add_action'], ')</a>
 				</fieldset>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div><br class="clear" />
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['pm_rule_description'], '</h3>

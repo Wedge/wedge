@@ -18,8 +18,7 @@ function template_maintain_database()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_optimize_info'], '</p>
@@ -27,7 +26,6 @@ function template_maintain_database()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 
 		<div class="cat_bar">
@@ -36,8 +34,7 @@ function template_maintain_database()
 			</h3>
 		</div>
 
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_backup_info'], '</p>
@@ -48,7 +45,6 @@ function template_maintain_database()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 
 	// Show an option to convert to UTF-8 if we're not on UTF-8 yet.
@@ -58,8 +54,7 @@ function template_maintain_database()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['utf8_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['utf8_introduction'], '</p>
@@ -68,7 +63,6 @@ function template_maintain_database()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -79,8 +73,7 @@ function template_maintain_database()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['entity_convert_introduction'], '</p>
@@ -88,7 +81,6 @@ function template_maintain_database()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -115,8 +107,7 @@ function template_maintain_routine()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_version'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_version_info'], '</p>
@@ -124,13 +115,11 @@ function template_maintain_routine()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_errors'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_errors_info'], '</p>
@@ -138,13 +127,11 @@ function template_maintain_routine()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_recount'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_recount_info'], '</p>
@@ -152,13 +139,11 @@ function template_maintain_routine()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_logs'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_logs_info'], '</p>
@@ -166,13 +151,11 @@ function template_maintain_routine()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_cache'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['maintain_cache_info'], '</p>
@@ -180,7 +163,6 @@ function template_maintain_routine()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -253,8 +235,7 @@ function template_maintain_members()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_reattribute_posts'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="', $context['character_set'], '">
 					<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
@@ -288,7 +269,6 @@ function template_maintain_members()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">
@@ -297,8 +277,7 @@ function template_maintain_members()
 				</span>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="', $context['character_set'], '" id="membersForm">
 					<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
@@ -321,7 +300,6 @@ function template_maintain_members()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />
@@ -384,8 +362,7 @@ function template_maintain_topics()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_old'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content flow_auto">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="', $context['character_set'], '">';
 
@@ -447,13 +424,11 @@ function template_maintain_topics()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['move_topics_maintenance'], '</h3>
 		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="', $context['character_set'], '">
 					<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
@@ -497,7 +472,6 @@ function template_maintain_topics()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -513,8 +487,7 @@ function template_optimize()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>
 					', $txt['database_numb_tables'], '<br />
@@ -533,7 +506,6 @@ function template_optimize()
 				</p>
 				<p><a href="', $scripturl, '?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -548,8 +520,7 @@ function template_convert_utf8()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['utf8_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="', $context['character_set'], '">
 					<p>', $txt['utf8_introduction'], '</p>
@@ -573,7 +544,6 @@ function template_convert_utf8()
 					<input type="hidden" name="proceed" value="1" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -588,15 +558,13 @@ function template_convert_entities()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['entity_convert_introduction'], '</p>
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 					<input type="submit" value="', $txt['entity_convert_proceed'], '" class="button_submit" />
 				</form>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';

@@ -20,8 +20,7 @@ function template_main()
 			<div class="information">
 				', $txt['themeadmin_explain'], '
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -84,7 +83,6 @@ function template_main()
 						<input type="submit" name="submit" value="' . $txt['save'] . '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';
@@ -97,14 +95,12 @@ function template_main()
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '</span>
 			</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<div id="themeLatest">
 					', $txt['theme_latest_fetch'], '
 				</div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 		<br />';
 
@@ -120,8 +116,7 @@ function template_main()
 					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_install'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">';
 
@@ -159,7 +154,6 @@ function template_main()
 						<input type="submit" name="submit" value="', $txt['theme_install_go'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -224,8 +218,7 @@ function template_list_themes()
 			echo '
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings themes_list">
 						<dt>', $txt['themeadmin_list_theme_dir'], ':</dt>
@@ -236,7 +229,6 @@ function template_list_themes()
 						<dd>', $theme['images_url'], '</dd>
 					</ul>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	}
 
@@ -246,8 +238,7 @@ function template_list_themes()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['themeadmin_list_reset'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -266,7 +257,6 @@ function template_list_themes()
 					<input type="submit" name="submit" value="', $txt['themeadmin_list_reset_go'], '" class="button_submit" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 
 		</form>
@@ -298,8 +288,7 @@ function template_reset_list()
 		<div class="title_bar">
 			<h3 class="titlebg">', $theme['name'], '</h3>
 		</div>
-		<div class="windowbg', $alternate ? '' : '2','">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg', $alternate ? '' : '2',' wrc">
 			<div class="content">
 				<ul class="reset">
 					<li>
@@ -313,7 +302,6 @@ function template_reset_list()
 					</li>
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -336,8 +324,7 @@ function template_set_options()
 			<div class="information">
 				', $context['theme_options_reset'] ? $txt['themeadmin_reset_options_info'] : $txt['theme_options_defaults'], '
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<ul class="theme_options">';
 
@@ -395,7 +382,6 @@ function template_set_options()
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>
@@ -423,8 +409,7 @@ function template_set_settings()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_edit'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<ul class="reset">
 						<li>
@@ -435,7 +420,6 @@ function template_set_settings()
 						</li>
 					</ul>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	echo '
@@ -444,8 +428,7 @@ function template_set_settings()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_url_config'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -474,7 +457,6 @@ function template_set_settings()
 						</dd>
 					</dl>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 	// Do we allow theme variants?
@@ -486,8 +468,7 @@ function template_set_settings()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" align="top" /> ', $txt['theme_variants'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg2 wrc">
 				<div class="content">
 					<dl class="settings">
 						<dt>
@@ -513,7 +494,6 @@ function template_set_settings()
 					</dl>
 					<img src="', $context['theme_variants'][$context['default_variant']]['thumbnail'], '" id="variant_preview" alt="" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 	}
 
@@ -523,8 +503,7 @@ function template_set_settings()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_options'], '</span>
 				</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<dl class="settings flow_auto">';
 
@@ -605,7 +584,6 @@ function template_set_settings()
 						<input type="submit" name="submit" value="', $txt['save'], '" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -656,8 +634,7 @@ function template_pick()
 					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
 				</h3>
 			</div>
-			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', '">
-				<span class="topslice"><span></span></span>
+			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc">
 				<div class="flow_hidden content">
 					<div class="floatright"><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" alt="" class="padding" /></a></div>
 					<p>', $theme['description'], '</p>';
@@ -695,7 +672,6 @@ function template_pick()
 						</li>
 					</ul>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>';
 
 		if (!empty($theme['variants']))
@@ -746,8 +722,7 @@ function template_installed()
 		<div class="cat_bar">
 			<h3 class="catbg">', $context['page_title'], '</h3>
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<p>
 					<a href="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['installed_theme']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $context['installed_theme']['name'], '</a> ', $txt['theme_installed_message'], '
@@ -756,7 +731,6 @@ function template_installed()
 					<a href="', $scripturl, '?action=admin;area=theme;sa=admin;', $context['session_var'], '=', $context['session_id'], '">', $txt['back'], '</a>
 				</p>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -785,8 +759,7 @@ function template_edit_list()
 				<em>(' . $theme['version'] . ')</em>' : '', '
 			</h3>
 		</div>
-		<div class="windowbg', $alternate ? '' : '2','">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg', $alternate ? '' : '2', ' wrc">
 			<div class="content">
 				<ul class="reset">
 					<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $theme['can_edit_style'] ? '
@@ -794,7 +767,6 @@ function template_edit_list()
 					<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=copy">', $txt['themeadmin_edit_copy_template'], '</a></li>
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>';
 	}
 
@@ -815,8 +787,7 @@ function template_copy_template()
 		<div class="information">
 			', $txt['themeadmin_edit_copy_warning'], '
 		</div>
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg wrc">
 			<div class="content">
 				<ul class="theme_options">';
 
@@ -843,7 +814,6 @@ function template_copy_template()
 	echo '
 				</ul>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -1042,8 +1012,7 @@ function template_edit_style()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">';
 
 	if (!$context['allow_save'])
@@ -1057,7 +1026,6 @@ function template_edit_style()
 						<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);" class="button_submit" />
 					</div>
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 			<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1091,8 +1059,7 @@ function template_edit_template()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">';
 
 	if (!$context['allow_save'])
@@ -1111,7 +1078,6 @@ function template_edit_template()
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 		</form>
 	</div>';
@@ -1141,15 +1107,13 @@ function template_edit_file()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
-			<div class="windowbg">
-				<span class="topslice"><span></span></span>
+			<div class="windowbg wrc">
 				<div class="content">
 					<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br />
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled="disabled"', ' class="button_submit" />
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</div>
-				<span class="botslice"><span></span></span>
 			</div>
 
 		</form>
