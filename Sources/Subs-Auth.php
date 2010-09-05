@@ -200,21 +200,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	}
 }
 
-// PHP < 4.3.2 doesn't have this function
-if (!function_exists('session_regenerate_id'))
-{
-	function session_regenerate_id()
-	{
-		// Too late to change the session now.
-		if (headers_sent())
-			return false;
-
-		session_id(strtolower(md5(uniqid(mt_rand(), true))));
-		return true;
-	}
-
-}
-
 // Get the domain and path for the cookie...
 function url_parts($local, $global)
 {
