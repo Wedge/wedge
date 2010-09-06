@@ -506,7 +506,7 @@ function PackageGBrowse()
 		$packageSection++;
 	}
 
-	// Lets make sure we get a nice new spiffy clean $package to work with.  Otherwise we get PAIN!
+	// Let's make sure we get a nice new spiffy clean $package to work with. Otherwise we get PAIN!
 	unset($package);
 
 	foreach ($context['package_list'] as $ps_id => $packageSection)

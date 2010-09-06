@@ -396,7 +396,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		$cur_insert_len += $this_insert_len;
 	}
 
-	// If they are using SSI there is a good chance obExit will never be called.  So lets be nice and flush it for them.
+	// If they are using SSI there is a good chance obExit will never be called.  So let's be nice and flush it for them.
 	if (SMF === 'SSI')
 		return AddMailQueue(true);
 

@@ -870,7 +870,7 @@ function removeMessage($message, $decreasePostCount = true)
 				)
 			);
 
-			// Lets increase the num_replies, and the first/last message ID as appropriate.
+			// Let's increase the num_replies, and the first/last message ID as appropriate.
 			if (!empty($id_recycle_topic))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}topics
@@ -1128,7 +1128,7 @@ function RestoreTopic()
 
 	if (!empty($topics_to_restore))
 	{
-		// Lets get the data for these topics.
+		// Let's get the data for these topics.
 		$request = $smcFunc['db_query']('', '
 			SELECT t.id_topic, t.id_previous_board, t.id_board, t.id_first_msg, m.subject
 			FROM {db_prefix}topics AS t
@@ -1150,7 +1150,7 @@ function RestoreTopic()
 			// Ok we got here so me move them from here to there.
 			moveTopics($row['id_topic'], $row['id_previous_board']);
 
-			// Lets remove the recycled icon.
+			// Let's remove the recycled icon.
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}messages
 				SET icon = {string:icon}
@@ -1161,7 +1161,7 @@ function RestoreTopic()
 				)
 			);
 
-			// Lets see if the board that we are returning to has post count enabled.
+			// Let's see if the board that we are returning to has post count enabled.
 			$request2 = $smcFunc['db_query']('', '
 				SELECT count_posts
 				FROM {db_prefix}boards
@@ -1175,7 +1175,7 @@ function RestoreTopic()
 
 			if (empty($count_posts))
 			{
-				// Lets get the members that need their post count restored.
+				// Let's get the members that need their post count restored.
 				$request2 = $smcFunc['db_query']('', '
 					SELECT id_member, COUNT(id_msg) AS post_count
 					FROM {db_prefix}messages
@@ -1218,7 +1218,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 	if (!is_array($msgs))
 		$msgs = array($msgs);
 
-	// Lets make sure they are int.
+	// Let's make sure they are int.
 	foreach ($msgs as $key => $msg)
 		$msgs[$key] = (int) $msg;
 
@@ -1248,10 +1248,10 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 	list ($target_board, $target_first_msg, $target_replies, $target_unapproved_posts, $count_posts) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
-	// Lets see if the board that we are returning to has post count enabled.
+	// Let's see if the board that we are returning to has post count enabled.
 	if (empty($count_posts))
 	{
-		// Lets get the members that need their post count restored.
+		// Let's get the members that need their post count restored.
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}messages
@@ -1320,7 +1320,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			unapproved_posts = unapproved_posts + {int:diff_unapproved_posts}
 		WHERE id_board = {int:target_board}',
 		array(
-			'diff_replies' => $target_topic_data['num_replies'] - $target_replies, // Lets keep in mind that the first message in a topic counts towards num_replies in a board.
+			'diff_replies' => $target_topic_data['num_replies'] - $target_replies, // Let's keep in mind that the first message in a topic counts towards num_replies in a board.
 			'diff_unapproved_posts' => $target_topic_data['unapproved_posts'] - $target_unapproved_posts,
 			'target_board' => $target_board,
 		)
@@ -1403,7 +1403,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 				unapproved_posts = unapproved_posts + {int:diff_unapproved_posts}
 			WHERE id_board = {int:from_board}',
 			array(
-				'diff_replies' => $source_topic_data['num_replies'] - $from_replies, // Lets keep in mind that the first message in a topic counts towards num_replies in a board.
+				'diff_replies' => $source_topic_data['num_replies'] - $from_replies, // Let's keep in mind that the first message in a topic counts towards num_replies in a board.
 				'diff_unapproved_posts' => $source_topic_data['unapproved_posts'] - $from_unapproved_posts,
 				'from_board' => $from_board,
 			)

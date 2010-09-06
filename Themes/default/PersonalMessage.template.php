@@ -976,7 +976,7 @@ function template_send()
 					</dd>';
 
 	// The subject of the PM.
-	echo ' 
+	echo '
 					<dt class="clear_left">
 						<span', (isset($context['post_error']['no_subject']) ? ' class="error"' : ''), '>', $txt['subject'], ':</span>
 					</dt>

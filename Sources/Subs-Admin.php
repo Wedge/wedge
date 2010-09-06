@@ -74,7 +74,7 @@ function getServerVersions($checkFor)
 		$versions['gd'] = array('title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
 	}
 
-	// Now lets check for the Database.
+	// Now let's check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
 		db_extend();

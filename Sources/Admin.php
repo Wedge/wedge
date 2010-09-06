@@ -757,7 +757,7 @@ if (!(\'smfForum_sessionvar\' in window))
 ' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
 
 	$context['template_layers'] = array();
-	// Lets make sure we aren't going to output anything nasty.
+	// Let's make sure we aren't going to output anything nasty.
 	@ob_end_clean();
 	if (!empty($modSettings['enableCompressedOutput']))
 		@ob_start('ob_gzhandler');

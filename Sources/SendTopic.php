@@ -106,7 +106,7 @@ function SendTopic()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	// Can't send topic if its unapproved and using post moderation.
+	// Can't send topic if it's unapproved and using post moderation.
 	if ($modSettings['postmod_active'] && !$row['approved'])
 		fatal_lang_error('not_approved_topic', false);
 

@@ -512,7 +512,7 @@ function ModifyProfile($post_errors = array())
 				if (trim($_POST['oldpasswrd']) == '')
 					$post_errors[] = 'no_password';
 
-				// Since the password got modified due to all the $_POST cleaning, lets undo it so we can get the correct password
+				// Since the password got modified due to all the $_POST cleaning, let's undo it so we can get the correct password
 				$_POST['oldpasswrd'] = un_htmlspecialchars($_POST['oldpasswrd']);
 
 				// Does the integration want to check passwords?

@@ -397,7 +397,7 @@ function PackageInstallTest()
 
 			foreach ($mod_actions as $key => $mod_action)
 			{
-				// Lets get the last section of the file name.
+				// Let's get the last section of the file name.
 				if (isset($mod_action['filename']) && substr($mod_action['filename'], -13) != '.template.php')
 					$actual_filename = strtolower(substr(strrchr($mod_action['filename'], '/'), 1) . '||' . $action['filename']);
 				elseif (isset($mod_action['filename']) && preg_match('~([\w]*)/([\w]*)\.template\.php$~', $mod_action['filename'], $matches))
@@ -482,7 +482,7 @@ function PackageInstallTest()
 			// We need to loop again just to get the operations down correctly.
 			foreach ($mod_actions as $operation_key => $mod_action)
 			{
-				// Lets get the last section of the file name.
+				// Let's get the last section of the file name.
 				if (isset($mod_action['filename']) && substr($mod_action['filename'], -13) != '.template.php')
 					$actual_filename = strtolower(substr(strrchr($mod_action['filename'], '/'), 1) . '||' . $action['filename']);
 				elseif (isset($mod_action['filename']) && preg_match('~([\w]*)/([\w]*)\.template\.php$~', $mod_action['filename'], $matches))
@@ -1518,7 +1518,7 @@ function ViewOperations()
 	else
 		$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $_REQUEST['filename']), true, $reverse, $theme_paths);
 
-	// Ok lets get the content of the file.
+	// Ok let's get the content of the file.
 	$context['operations'] = array(
 		'search' => $smcFunc['htmlspecialchars']($mod_actions[$_REQUEST['operation_key']]['search_original'], ENT_QUOTES),
 		'replace' => $smcFunc['htmlspecialchars']($mod_actions[$_REQUEST['operation_key']]['replace_original'], ENT_QUOTES),

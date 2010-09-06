@@ -208,7 +208,7 @@ function UnapprovedPosts()
 	list ($context['total_unapproved_posts']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
-	// What about topics?  Normally we'd use the table alias t for topics but lets use m so we don't have to redo our approve query.
+	// What about topics? Normally we'd use the table alias t for topics but let's use m so we don't have to redo our approve query.
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(m.id_topic)
 		FROM {db_prefix}topics AS m

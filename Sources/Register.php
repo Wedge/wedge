@@ -456,7 +456,7 @@ function Register2($verifiedOpenID = false)
 			$reg_errors[] = vsprintf($txt['error_' . $error[0]], $error[1]);
 	}
 
-	// Lets check for other errors before trying to register the member.
+	// Let's check for other errors before trying to register the member.
 	if (!empty($reg_errors))
 	{
 		$_REQUEST['step'] = 2;

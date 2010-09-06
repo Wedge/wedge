@@ -242,7 +242,7 @@ function smf_openID_return()
 	if ($_GET['openid_mode'] != 'id_res')
 		fatal_lang_error('openid_not_resolved');
 
-	// SMF has this annoying habit of removing the + from the base64 encoding.  So lets put them back.
+	// SMF has this annoying habit of removing the + from the base64 encoding.  So let's put them back.
 	foreach (array('openid_assoc_handle', 'openid_invalidate_handle', 'openid_sig', 'sf') as $key)
 		if (isset($_GET[$key]))
 			$_GET[$key] = str_replace(' ', '+', $_GET[$key]);
@@ -428,7 +428,7 @@ function smf_openID_get_keys($regenerate)
 {
 	global $modSettings, $p, $g;
 
-	// Ok lets take the easy way out, are their any keys already defined for us? They are changed in the daily maintenance scheduled task.
+	// Ok let's take the easy way out, are there any keys already defined for us? They are changed in the daily maintenance scheduled task.
 	if (!empty($modSettings['dh_keys']) && !$regenerate)
 	{
 		// Sweeeet!
@@ -439,11 +439,11 @@ function smf_openID_get_keys($regenerate)
 		);
 	}
 
-	// Dang it, now I have to do math.  And it's not just ordinary math, its the evil big interger math.  This will take a few seconds.
+	// Dang it, now we have to do math. And it's not just ordinary math, it's the evil big integer math. This will take a few seconds.
 	$private = smf_openid_generate_private_key();
 	$public = bcpowmod($g, $private, $p);
 
-	// Now that we did all that work, lets save it so we don't have to keep doing it.
+	// Now that we did all that work, let's save it so we don't have to keep doing it.
 	$keys = array('dh_keys' => base64_encode($public) . "\n" . base64_encode($private));
 	updateSettings($keys);
 

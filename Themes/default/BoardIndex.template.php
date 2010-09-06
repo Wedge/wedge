@@ -84,7 +84,7 @@ function template_main()
 	and boards. (see below.) */
 	foreach ($context['categories'] as $category)
 	{
-		// If theres no parent boards we can see, avoid showing an empty category (unless its collapsed)
+		// If there are no parent boards we can see, avoid showing an empty category (unless it's collapsed)
 		if (empty($category['boards']) && !$category['is_collapsed'])
 			continue;
 

@@ -216,7 +216,7 @@ function cleanRequest()
 	// Make sure $board and $topic are numbers.
 	if (isset($_REQUEST['board']))
 	{
-		// Make sure its a string and not something else like an array
+		// Make sure it's a string and not something else like an array
 		$_REQUEST['board'] = (string) $_REQUEST['board'];
 
 		// If there's a slash in it, we've got a start value! (old, compatible links.)
@@ -242,7 +242,7 @@ function cleanRequest()
 	// We've got topic!
 	if (isset($_REQUEST['topic']))
 	{
-		// Make sure its a string and not something else like an array
+		// Make sure it's a string and not something else like an array
 		$_REQUEST['topic'] = (string) $_REQUEST['topic'];
 
 		// Slash means old, beta style, formatting.  That's okay though, the link should still work.

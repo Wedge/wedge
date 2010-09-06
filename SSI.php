@@ -1865,7 +1865,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	if (!is_array($attachment_ext))
 		$attachment_ext = array($attachment_ext);
 
-	// Lets build the query.
+	// Let's build the query.
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			att.id_attach, att.id_msg, att.filename, IFNULL(att.size, 0) AS filesize, att.downloads, mem.id_member,

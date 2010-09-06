@@ -61,7 +61,7 @@ function createWaveFile($word)
 	else
 		return false;
 
-	// File names are in lower case so lets make sure that we are only using a lower case string
+	// File names are in lower case so let's make sure that we are only using a lower case string
 	$word = strtolower($word);
 
 	// Loop through all letters of the word $word.

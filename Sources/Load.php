@@ -449,7 +449,7 @@ function loadUserSettings()
 	if (!empty($modSettings['userLanguage']) && (!empty($_GET['language']) || !empty($_SESSION['language'])))
 		$languages = getLanguages();
 
-	// Allow the user to change their language if its valid.
+	// Allow the user to change their language if it's valid.
 	if (!empty($modSettings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
 	{
 		$user_info['language'] = strtr($_GET['language'], './\\:', '____');
@@ -2051,10 +2051,10 @@ function getLanguages($use_cache = true, $favor_utf8 = true)
 {
 	global $context, $smcFunc, $settings, $modSettings;
 
-	// Either we don't use the cache, or its expired.
+	// Either we don't use the cache, or it's expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages' . ($favor_utf8 ? '' : '_all'), !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
 	{
-		// If we don't have our theme information yet, lets get it.
+		// If we don't have our theme information yet, let's get it.
 		if (empty($settings['default_theme_dir']))
 			loadTheme(0, false);
 
@@ -2103,7 +2103,7 @@ function getLanguages($use_cache = true, $favor_utf8 = true)
 					unset($context['languages'][$lang['filename']]);
 		}
 
-		// Lets cash in on this deal.
+		// Let's cash in on this deal.
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('known_languages' . ($favor_utf8 ? '' : '_all'), $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
@@ -2594,7 +2594,7 @@ function loadDatabase()
 	if (empty($db_connection))
 		$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('persist' => $db_persist, 'dont_select_db' => SMF == 'SSI'));
 
-	// Safe guard here, if there isn't a valid connection lets put a stop to it.
+	// Safe guard here, if there isn't a valid connection let's put a stop to it.
 	if (!$db_connection)
 		db_fatal_error();
 

@@ -1381,7 +1381,7 @@ function ThemeInstall()
 		$images_url = $boardurl . '/Themes/' . basename($theme_dir) . '/images';
 		$theme_dir = realpath($theme_dir);
 
-		// Lets get some data for the new theme.
+		// Let's get some data for the new theme.
 		$request = $smcFunc['db_query']('', '
 			SELECT variable, value
 			FROM {db_prefix}themes
@@ -1406,7 +1406,7 @@ function ThemeInstall()
 		}
 		$smcFunc['db_free_result']($request);
 
-		// Lets add a theme_info.xml to this theme.
+		// Let's add a theme_info.xml to this theme.
 		$xml_info = '<' . '?xml version="1.0"?' . '>
 <theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->

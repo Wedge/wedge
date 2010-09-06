@@ -337,7 +337,7 @@ function ModBlockNotes()
 	{
 		checkSession('get');
 
-		// Lets delete it.
+		// Let's delete it.
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment = {int:note}
@@ -399,7 +399,7 @@ function ModBlockNotes()
 			cache_put_data('moderator_notes', $moderator_notes, 240);
 	}
 
-	// Lets construct a page index.
+	// Let's construct a page index.
 	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
 	$context['start'] = $_GET['start'];
 

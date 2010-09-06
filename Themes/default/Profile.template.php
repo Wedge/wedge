@@ -448,7 +448,7 @@ function template_showPosts()
 			$alternate = !$alternate;
 		}
 
-	// No posts? Just end the table with a informative message.
+	// No posts? Just end the table with an informative message.
 	if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
 		echo '
 				<tr>
@@ -456,7 +456,7 @@ function template_showPosts()
 						', isset($context['attachments']) ? $txt['show_attachments_none'] : ($context['is_topics'] ? $txt['show_topics_none'] : $txt['show_posts_none']), '
 					</td>
 				</tr>';
-		
+
 		echo '
 			</tbody>
 		</table>';

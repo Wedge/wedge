@@ -66,7 +66,7 @@ function PrintTopic()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	// Lets "output" all that info.
+	// Let's "output" all that info.
 	loadTemplate('Printpage');
 	$context['template_layers'] = array('print');
 	$context['board_name'] = $board_info['name'];

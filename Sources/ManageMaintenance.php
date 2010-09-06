@@ -1515,7 +1515,7 @@ function cacheLanguage($template_name, $lang, $fatal, $theme_name)
 	// Assume it's not invalid!
 	$invalid_file_found = false;
 
-	// Lets assume we can cache the file and include it.
+	// Let's assume we can cache the file and include it.
 	$do_include = true;
 
 	// Make sure we have $settings - if not we're in trouble and need to find it!
@@ -1804,7 +1804,7 @@ function MaintainMassMoveTopics()
 	{
 		while ($context['start'] <= $total_topics)
 		{
-			// Lets get the topics.
+			// Let's get the topics.
 			$request = $smcFunc['db_query']('', '
 				SELECT id_topic
 				FROM {db_prefix}topics
@@ -1828,14 +1828,14 @@ function MaintainMassMoveTopics()
 				redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
 			}
 
-			// Lets move them.
+			// Let's move them.
 			require_once($sourcedir . '/MoveTopic.php');
 			moveTopics($topics, $id_board_to);
 
 			// We've done at least ten more topics.
 			$context['start'] += 10;
 
-			// Lets wait a while.
+			// Let's wait a while.
 			if (time() - $context['start_time'] > 3)
 			{
 				// What's the percent?

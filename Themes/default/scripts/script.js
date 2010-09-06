@@ -641,7 +641,7 @@ function smf_avatarResize()
 
 		tempAvatars[j] = new Image();
 		tempAvatars[j].avatar = possibleAvatars[i];
-		
+
 		tempAvatars[j].onload = function()
 		{
 			this.avatar.width = this.width;

@@ -99,7 +99,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if ($file == null)
 		$file = '';
 	else
-		// Window style slashes don't play well, lets convert them to the unix style.
+		// Windows-style slashes don't play well, let's convert them to Unix style.
 		$file = str_replace('\\', '/', $file);
 
 	if ($line == null)

@@ -2361,7 +2361,7 @@ function template_manual_pm_messages()
 		<li>', $txt['manual_pm_reload'], '</li>
 		<li>', $txt['manual_pm_sort_by'], '</li>
 		<li>', $txt['manual_pm_main_subject'], '</li>
-		<li>', $txt['manual_pm_delete_button'], '</li>		
+		<li>', $txt['manual_pm_delete_button'], '</li>
 		<li>', $txt['manual_pm_page_nos'], '</li>
 	</ul>
 	<h3 class="section" id="starting">', $txt['manual_pm_start_reply'], '</h3>

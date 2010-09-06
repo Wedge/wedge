@@ -227,7 +227,7 @@ function template_create_list_menu($list_menu, $direction = 'top')
 					// The name that you want to appear for the link.
 					'label' => $txt['name'],
 					// If we use tabs instead of buttons we highlight the current tab.
-					// Must use conditions to determine if its selected or not.
+					// Must use conditions to determine if it's selected or not.
 					'is_selected' => isset($_REQUEST['name']),
 				),
 			),

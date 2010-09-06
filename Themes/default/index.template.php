@@ -236,7 +236,7 @@ function template_body_above()
 		echo '
 			</div>
 			<div class="news normaltext">';
-			
+
 		if (!empty($context['allow_search']))
 		{
 			echo '
@@ -249,7 +249,7 @@ function template_body_above()
 			if (!empty($context['current_topic']))
 				echo '
 					<input type="hidden" name="topic" value="', $context['current_topic'], '" />';
-				// If we're on a certain board, limit it to this board ;).
+			// Or within current board?
 			elseif (!empty($context['current_board']))
 				echo '
 					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '" />';

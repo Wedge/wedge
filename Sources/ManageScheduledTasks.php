@@ -130,7 +130,7 @@ function ScheduledTasks()
 	// Want to run any of the tasks?
 	if (isset($_REQUEST['run']) && isset($_POST['run_task']))
 	{
-		// Lets figure out which ones they want to run.
+		// Let's figure out which ones they want to run.
 		$tasks = array();
 		foreach ($_POST['run_task'] as $task => $dummy)
 			$tasks[] = (int) $task;
@@ -146,7 +146,7 @@ function ScheduledTasks()
 			)
 		);
 
-		// Lets get it on!
+		// Let's get it on!
 		require_once($sourcedir . '/ScheduledTasks.php');
 		ignore_user_abort(true);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -425,7 +425,7 @@ function TaskLog()
 {
 	global $scripturl, $context, $txt, $smcFunc, $sourcedir;
 
-	// Lets load the language just incase we are outside the Scheduled area.
+	// Let's load the language just in case we are outside the Scheduled area.
 	loadLanguage('ManageScheduledTasks');
 
 	// Empty the log?

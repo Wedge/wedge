@@ -659,7 +659,7 @@ function QuickModeration()
 	// Check the session = get or post.
 	checkSession('request');
 
-	// Lets go straight to the restore area.
+	// Let's go straight to the restore area.
 	if (isset($_REQUEST['qaction']) && $_REQUEST['qaction'] == 'restore' && !empty($_REQUEST['topics']))
 		redirectexit('action=restoretopic;topics=' . implode(',', $_REQUEST['topics']) . ';' . $context['session_var'] . '=' . $context['session_id']);
 
@@ -1165,7 +1165,7 @@ function QuickModeration()
 	{
 		logAction($stickyCacheStatus[$topic] ? 'unsticky' : 'sticky', array('topic' => $topic, 'board' => $stickyCacheBoards[$topic]));
 		sendNotifications($topic, 'sticky');
-	} 
+	}
 
 	updateStats('topic');
 	updateStats('message');

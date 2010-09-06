@@ -979,7 +979,7 @@ class wedgeEditor
 
 		return $attribs;
 	}
-	
+
 	// This is an important yet frustrating function - it attempts to clean up illegal BBC caused by browsers like Opera which don't obey the rules!!!
 	public static function legalise_bbc($text)
 	{
