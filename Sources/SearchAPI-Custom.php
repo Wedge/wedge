@@ -194,9 +194,9 @@ class custom_search
 			}
 		}
 
-		$ignoreRequest = $smcFunc['db_search_query']('insert_into_log_messages_fulltext', ($smcFunc['db_support_ignore'] ? ( '
+		$ignoreRequest = $smcFunc['db_search_query']('', '
 			INSERT IGNORE INTO {db_prefix}' . $search_data['insert_into'] . '
-				(' . implode(', ', array_keys($query_select)) . ')') : '') . '
+				(' . implode(', ', array_keys($query_select)) . ')
 			SELECT ' . implode(', ', $query_select) . '
 			FROM {db_prefix}messages AS m' . (empty($query_inner_join) ? '' : '
 				INNER JOIN ' . implode('

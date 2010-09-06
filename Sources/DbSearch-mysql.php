@@ -41,7 +41,6 @@ function db_search_init()
 			'db_search_query' => 'smf_db_query',
 			'db_search_support' => 'smf_db_search_support',
 			'db_create_word_search' => 'smf_db_create_word_search',
-			'db_support_ignore' => true,
 		);
 }
 

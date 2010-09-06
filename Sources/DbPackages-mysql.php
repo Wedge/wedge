@@ -121,7 +121,6 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	// Log that we'll want to remove this on uninstall.
 	$db_package_log[] = array('remove_table', $table_name);
 
-	// Slightly easier on MySQL than the others...
 	$tables = $smcFunc['db_list_tables']();
 	if (in_array($full_table_name, $tables))
 	{
@@ -150,7 +149,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
 		list ($type, $size) = $smcFunc['db_calculate_type']($column['type'], $column['size']);
 
-		// Allow unsigned integers (mysql only)
+		// Allow unsigned integers
 		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column['unsigned']) ? 'unsigned ' : '';
 
 		if ($size !== null)
@@ -250,7 +249,7 @@ function smf_db_add_column($table_name, $column_info, $parameters = array(), $if
 	$column_info['size'] = isset($column_info['size']) && is_numeric($column_info['size']) ? $column_info['size'] : null;
 	list ($type, $size) = $smcFunc['db_calculate_type']($column_info['type'], $column_info['size']);
 
-	// Allow unsigned integers (mysql only)
+	// Allow unsigned integers
 	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)
@@ -334,7 +333,7 @@ function smf_db_change_column($table_name, $old_column, $column_info, $parameter
 
 	list ($type, $size) = $smcFunc['db_calculate_type']($column_info['type'], $column_info['size']);
 
-	// Allow for unsigned integers (mysql only)
+	// Allow for unsigned integers
 	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)

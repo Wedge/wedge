@@ -997,7 +997,7 @@ function PlushSearch2()
 			);
 
 			// Clear the previous cache of the final results cache.
-			$smcFunc['db_search_query']('delete_log_search_results', '
+			$smcFunc['db_search_query']('', '
 				DELETE FROM {db_prefix}log_search_results
 				WHERE id_search = {int:search_id}',
 				array(
@@ -1073,10 +1073,9 @@ function PlushSearch2()
 						}
 					}
 
-					$ignoreRequest = $smcFunc['db_search_query']('insert_log_search_results_subject',
-						($smcFunc['db_support_ignore'] ? '
+					$ignoreRequest = $smcFunc['db_search_query']('', '
 						INSERT IGNORE INTO {db_prefix}log_search_results
-							(id_search, id_topic, relevance, id_msg, num_matches)' : '') . '
+							(id_search, id_topic, relevance, id_msg, num_matches)
 						SELECT
 							{int:id_search},
 							t.id_topic,
@@ -1112,23 +1111,7 @@ function PlushSearch2()
 						))
 					);
 
-					// If the database doesn't support IGNORE to make this fast we need to do some tracking.
-					if (!$smcFunc['db_support_ignore'])
-					{
-						while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
-						{
-							// No duplicates!
-							if (isset($inserts[$row[1]]))
-								continue;
-
-							foreach ($row as $key => $value)
-								$inserts[$row[1]][] = (int) $row[$key];
-						}
-						$smcFunc['db_free_result']($ignoreRequest);
-						$numSubjectResults = count($inserts);
-					}
-					else
-						$numSubjectResults += $smcFunc['db_affected_rows']();
+					$numSubjectResults += $smcFunc['db_affected_rows']();
 
 					if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 						break;
@@ -1214,13 +1197,13 @@ function PlushSearch2()
 				{
 					$inserts = array();
 					// Create a temporary table to store some preliminary results in.
-					$smcFunc['db_search_query']('drop_tmp_log_search_topics', '
+					$smcFunc['db_search_query']('', '
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_topics',
 						array(
 							'db_error_skip' => true,
 						)
 					);
-					$createTemporary = $smcFunc['db_search_query']('create_tmp_log_search_topics', '
+					$createTemporary = $smcFunc['db_search_query']('', '
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_topics (
 							id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_topic)
@@ -1233,7 +1216,7 @@ function PlushSearch2()
 
 					// Clean up some previous cache.
 					if (!$createTemporary)
-						$smcFunc['db_search_query']('delete_log_search_topics', '
+						$smcFunc['db_search_query']('', '
 							DELETE FROM {db_prefix}log_search_topics
 							WHERE id_search = {int:search_id}',
 							array(
@@ -1327,9 +1310,9 @@ function PlushSearch2()
 						if (empty($subject_query['where']))
 							continue;
 
-						$ignoreRequest = $smcFunc['db_search_query']('insert_log_search_topics', ($smcFunc['db_support_ignore'] ? ( '
+						$ignoreRequest = $smcFunc['db_search_query']('', '
 							INSERT IGNORE INTO {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics
-								(' . ($createTemporary ? '' : 'id_search, ') . 'id_topic)') : '') . '
+								(' . ($createTemporary ? '' : 'id_search, ') . 'id_topic)
 							SELECT ' . ($createTemporary ? '' : $_SESSION['search_cache']['id_search'] . ', ') . 't.id_topic
 							FROM ' . $subject_query['from'] . (empty($subject_query['inner_join']) ? '' : '
 								INNER JOIN ' . implode('
@@ -1341,23 +1324,8 @@ function PlushSearch2()
 							LIMIT ' . ($modSettings['search_max_results'] - $numSubjectResults)),
 							$subject_query['params']
 						);
-						// Don't do INSERT IGNORE? Manually fix this up!
-						if (!$smcFunc['db_support_ignore'])
-						{
-							while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
-							{
-								$ind = $createTemporary ? 0 : 1;
-								// No duplicates!
-								if (isset($inserts[$row[$ind]]))
-									continue;
 
-								$inserts[$row[$ind]] = $row;
-							}
-							$smcFunc['db_free_result']($ignoreRequest);
-							$numSubjectResults = count($inserts);
-						}
-						else
-							$numSubjectResults += $smcFunc['db_affected_rows']();
+						$numSubjectResults += $smcFunc['db_affected_rows']();
 
 						if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 							break;
@@ -1388,14 +1356,14 @@ function PlushSearch2()
 				if ($searchAPI->supportsMethod('indexedWordQuery', $query_params))
 				{
 					$inserts = array();
-					$smcFunc['db_search_query']('drop_tmp_log_search_messages', '
+					$smcFunc['db_search_query']('', '
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_messages',
 						array(
 							'db_error_skip' => true,
 						)
 					);
 
-					$createTemporary = $smcFunc['db_search_query']('create_tmp_log_search_messages', '
+					$createTemporary = $smcFunc['db_search_query']('', '
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_messages (
 							id_msg int(10) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_msg)
@@ -1407,7 +1375,7 @@ function PlushSearch2()
 					) !== false;
 
 					if (!$createTemporary)
-						$smcFunc['db_search_query']('delete_log_search_messages', '
+						$smcFunc['db_search_query']('', '
 							DELETE FROM {db_prefix}log_search_messages
 							WHERE id_search = {int:id_search}',
 							array(
@@ -1442,21 +1410,7 @@ function PlushSearch2()
 
 							$ignoreRequest = $searchAPI->indexedWordQuery($words, $search_data);
 
-							if (!$smcFunc['db_support_ignore'])
-							{
-								while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
-								{
-									// No duplicates!
-									if (isset($inserts[$row[0]]))
-										continue;
-
-									$inserts[$row[0]] = $row;
-								}
-								$smcFunc['db_free_result']($ignoreRequest);
-								$indexedResults = count($inserts);
-							}
-							else
-								$indexedResults += $smcFunc['db_affected_rows']();
+							$indexedResults += $smcFunc['db_affected_rows']();
 
 							if (!empty($maxMessageResults) && $indexedResults >= $maxMessageResults)
 								break;
@@ -1551,9 +1505,9 @@ function PlushSearch2()
 					}
 					$main_query['select']['relevance'] = substr($relevance, 0, -3) . ') / ' . $new_weight_total . ' AS relevance';
 
-					$ignoreRequest = $smcFunc['db_search_query']('insert_log_search_results_no_index', ($smcFunc['db_support_ignore'] ? ( '
+					$ignoreRequest = $smcFunc['db_search_query']('', '
 						INSERT IGNORE INTO ' . '{db_prefix}log_search_results
-							(' . implode(', ', array_keys($main_query['select'])) . ')') : '') . '
+							(' . implode(', ', array_keys($main_query['select'])) . ')
 						SELECT
 							' . implode(',
 							', $main_query['select']) . '
@@ -1569,48 +1523,16 @@ function PlushSearch2()
 						$main_query['parameters']
 					);
 
-					// We love to handle non-good databases that don't support our ignore!
-					if (!$smcFunc['db_support_ignore'])
-					{
-						$inserts = array();
-						while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
-						{
-							// No duplicates!
-							if (isset($inserts[$row[2]]))
-								continue;
-
-							foreach ($row as $key => $value)
-								$inserts[$row[2]][] = (int) $row[$key];
-						}
-						$smcFunc['db_free_result']($ignoreRequest);
-
-						// Now put them in!
-						if (!empty($inserts))
-						{
-							$query_columns = array();
-							foreach ($main_query['select'] as $k => $v)
-								$query_columns[$k] = 'int';
-
-							$smcFunc['db_insert']('',
-								'{db_prefix}log_search_results',
-								$query_columns,
-								$inserts,
-								array('id_search', 'id_topic')
-							);
-						}
-						$_SESSION['search_cache']['num_results'] += count($inserts);
-					}
-					else
-						$_SESSION['search_cache']['num_results'] = $smcFunc['db_affected_rows']();
+					$_SESSION['search_cache']['num_results'] = $smcFunc['db_affected_rows']();
 				}
 
 				// Insert subject-only matches.
 				if ($_SESSION['search_cache']['num_results'] < $modSettings['search_max_results'] && $numSubjectResults !== 0)
 				{
 					$usedIDs = array_flip(empty($inserts) ? array() : array_keys($inserts));
-					$ignoreRequest = $smcFunc['db_search_query']('insert_log_search_results_sub_only', ($smcFunc['db_support_ignore'] ? ( '
+					$ignoreRequest = $smcFunc['db_search_query']('', '
 						INSERT IGNORE INTO {db_prefix}log_search_results
-							(id_search, id_topic, relevance, id_msg, num_matches)') : '') . '
+							(id_search, id_topic, relevance, id_msg, num_matches)
 						SELECT
 							{int:id_search},
 							t.id_topic,
@@ -1640,35 +1562,8 @@ function PlushSearch2()
 							'huge_topic_posts' => $humungousTopicPosts,
 						)
 					);
-					// Once again need to do the inserts if the database don't support ignore!
-					if (!$smcFunc['db_support_ignore'])
-					{
-						$inserts = array();
-						while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
-						{
-							// No duplicates!
-							if (isset($usedIDs[$row[1]]))
-								continue;
 
-							$usedIDs[$row[1]] = true;
-							$inserts[] = $row;
-						}
-						$smcFunc['db_free_result']($ignoreRequest);
-
-						// Now put them in!
-						if (!empty($inserts))
-						{
-							$smcFunc['db_insert']('',
-								'{db_prefix}log_search_results',
-								array('id_search' => 'int', 'id_topic' => 'int', 'relevance' => 'float', 'id_msg' => 'int', 'num_matches' => 'int'),
-								$inserts,
-								array('id_search', 'id_topic')
-							);
-						}
-						$_SESSION['search_cache']['num_results'] += count($inserts);
-					}
-					else
-						$_SESSION['search_cache']['num_results'] += $smcFunc['db_affected_rows']();
+					$_SESSION['search_cache']['num_results'] += $smcFunc['db_affected_rows']();
 				}
 				else
 					$_SESSION['search_cache']['num_results'] = 0;
