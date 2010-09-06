@@ -83,7 +83,8 @@ class wedgeEditor
 				prompt_text_email: \'' . addcslashes($txt['prompt_text_email'], "'") . '\',
 				prompt_text_ftp: \'' . addcslashes($txt['prompt_text_ftp'], "'") . '\',
 				prompt_text_url: \'' . addcslashes($txt['prompt_text_url'], "'") . '\',
-				prompt_text_img: \'' . addcslashes($txt['prompt_text_img'], "'") . '\'
+				prompt_text_img: \'' . addcslashes($txt['prompt_text_img'], "'") . '\',
+				prompt_text_desc: \'' . addcslashes($txt['prompt_text_desc'], "'") . '\'
 			}
 		// ]]></script>
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc3"></script>';

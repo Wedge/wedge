@@ -687,8 +687,34 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 		// In text this is easy...
 		if (!this.bRichTextEnabled)
 		{
+			// URL popup?
+			if (oButtonProperties.sCode == 'url')
+			{
+				// Ask them where to link to.
+				var sText = prompt(oEditorStrings['prompt_text_url'], 'http://');
+				if (!sText)
+					return;
+
+				var sDesc = prompt(oEditorStrings['prompt_text_desc']);
+				if (!sDesc || sDesc == '')
+					sDesc = sText;
+
+				var bbcode = '[url=' + sText + ']' + sDesc + '[/url]';
+				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+			}
+			// img popup?
+			else if (oButtonProperties.sCode == 'img')
+			{
+				// Ask them where to link to.
+				var sText = prompt(oEditorStrings['prompt_text_img'], 'http://');
+				if (!sText)
+					return;
+
+				var bbcode = '[img]' + sText + '[/img]';
+				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+			}
 			// Replace?
-			if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
+			else if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
 				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle)
 
 			// Surround!
