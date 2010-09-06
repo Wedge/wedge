@@ -361,7 +361,7 @@ function smf_db_table_sql($tableName)
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		// Make the CREATE for this column.
-		$schema_create .= ' ' . $row['Field'] . ' ' . $row['Type'] . ($row['Null'] != 'YES' ? ' NOT NULL' : '');
+		$schema_create .= ' `' . $row['Field'] . '` ' . $row['Type'] . ($row['Null'] != 'YES' ? ' NOT NULL' : '');
 
 		// Add a default...?
 		if (!empty($row['Default']) || $row['Null'] !== 'YES')
@@ -400,7 +400,7 @@ function smf_db_table_sql($tableName)
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		// IS this a primary key, unique index, or regular index?
-		$row['Key_name'] = $row['Key_name'] == 'PRIMARY' ? 'PRIMARY KEY' : (empty($row['Non_unique']) ? 'UNIQUE ' : ($row['Comment'] == 'FULLTEXT' || (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : 'KEY ')) . $row['Key_name'];
+		$row['Key_name'] = $row['Key_name'] == 'PRIMARY' ? 'PRIMARY KEY' : (empty($row['Non_unique']) ? 'UNIQUE ' : ($row['Comment'] == 'FULLTEXT' || (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : 'KEY ')) . '`' . $row['Key_name'] . '`';
 
 		// Is this the first column in the index?
 		if (empty($indexes[$row['Key_name']]))
@@ -408,9 +408,9 @@ function smf_db_table_sql($tableName)
 
 		// A sub part, like only indexing 15 characters of a varchar.
 		if (!empty($row['Sub_part']))
-			$indexes[$row['Key_name']][$row['Seq_in_index']] = $row['Column_name'] . '(' . $row['Sub_part'] . ')';
+			$indexes[$row['Key_name']][$row['Seq_in_index']] = '`' . $row['Column_name'] . '`(' . $row['Sub_part'] . ')';
 		else
-			$indexes[$row['Key_name']][$row['Seq_in_index']] = $row['Column_name'];
+			$indexes[$row['Key_name']][$row['Seq_in_index']] = '`' . $row['Column_name'] . '`';
 	}
 	$smcFunc['db_free_result']($result);
 

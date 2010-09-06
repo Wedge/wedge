@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10095 $.
+Changelog started January 1, 2004; Currently at $Revision: 10097 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -25,6 +25,7 @@ September 2010
  * Tweaked the attachments cleaning to allow single file removals (script.js, Post template) [Bug 3559]
  & Tweaked the language string accordingly (Post english)
  ! Chose a hopefully more portable fix for cleaning file input (script.js) [Bug 3780]
+ ! Cleanup - changing back all CRLF to LF (lots of files) [Bug 4439]
  
  
 August 2010
