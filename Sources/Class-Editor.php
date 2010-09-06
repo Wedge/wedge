@@ -65,9 +65,6 @@ class wedgeEditor
 			'custom_smileys_div' => !empty($editorOptions['custom_smileys_div']) ? $editorOptions['custom_smileys_div'] : '',
 		);
 
-		$this->LoadBBC();
-		$this->LoadSmileys();
-
 		// Stuff to do once per page only.
 		if (!self::$editorLoaded)
 		{
@@ -115,6 +112,9 @@ class wedgeEditor
 		// ]]></script>';
 			}
 		}
+
+		$this->LoadBBC();
+		$this->LoadSmileys();
 	}
 
 	public function __get($name)
