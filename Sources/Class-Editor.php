@@ -1813,7 +1813,7 @@ class wedgeEditor
 		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// The regular expression non breaking space has many versions.
-		$non_breaking_space = $context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}' : "\xC2\xA0") : '\xA0';
+		$non_breaking_space = $context['utf8'] ? '\x{A0}' : '\xA0';
 
 		// Only mess with stuff outside [code] tags.
 		for ($i = 0, $n = count($parts); $i < $n; $i++)

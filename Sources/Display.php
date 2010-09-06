@@ -1226,7 +1226,7 @@ function Download()
 
 	// Some defaults that we need.
 	$context['character_set'] = empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
+	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['no_last_modified'] = true;
 
 	// Make sure some attachment was requested!
@@ -1295,7 +1295,7 @@ function Download()
 
 	// This is done to clear any output that was made before now. (would use ob_clean(), but that's PHP 4.2.0+...)
 	ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']) && @version_compare(PHP_VERSION, '4.2.0') >= 0 && @filesize($filename) <= 4194304 && in_array($file_ext, array('txt', 'html', 'htm', 'js', 'doc', 'pdf', 'docx', 'rtf', 'css', 'php', 'log', 'xml', 'sql', 'c', 'java')))
+	if (!empty($modSettings['enableCompressedOutput']) && @filesize($filename) <= 4194304 && in_array($file_ext, array('txt', 'html', 'htm', 'js', 'doc', 'pdf', 'docx', 'rtf', 'css', 'php', 'log', 'xml', 'sql', 'c', 'java')))
 		@ob_start('ob_gzhandler');
 	else
 	{

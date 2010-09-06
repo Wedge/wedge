@@ -804,7 +804,7 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 				return "";');
 
 		// Convert all 'special' characters to HTML entities.
-		return array($charset, preg_replace('~([\x80-' . ($context['server']['complex_preg_chars'] ? '\x{10FFFF}' : "\xF7\xBF\xBF\xBF") . '])~eu', '$entityConvert(\'\1\')', $string), '7bit');
+		return array($charset, preg_replace('~([\x80-\x{10FFFF}])~eu', '$entityConvert(\'\1\')', $string), '7bit');
 	}
 
 	// We don't need to mess with the subject line if no special characters were in it..

@@ -87,15 +87,14 @@ function reloadSettings()
 			cache_put_data('modSettings', $modSettings, 90);
 	}
 
-	// UTF-8 in regular expressions is unsupported on PHP(win) versions < 4.2.3.
-	$utf8 = (empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
+	$utf8 = (empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8';
 
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
 	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e\', \'$smcFunc[\\\'entity_fix\\\'](\\\'\\2\\\')\', ', ')') : array('', '');
 
-	// Preg_replace can handle complex characters only for higher PHP versions.
-	$space_chars = $utf8 ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
+	// Preg_replace can handle complex characters.
+	$space_chars = $utf8 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
 
 	$smcFunc += array(
 		'entity_fix' => create_function('$string', '
@@ -1610,7 +1609,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'is_cgi' => isset($_SERVER['SERVER_SOFTWARE']) && strpos(php_sapi_name(), 'cgi') !== false,
 		'is_windows' => strpos(PHP_OS, 'WIN') === 0,
 		'iso_case_folding' => ord(strtolower(chr(138))) === 154,
-		'complex_preg_chars' => @version_compare(PHP_VERSION, '4.3.3') != -1,
 	);
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
@@ -1751,7 +1749,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Set the character set from the template.
 	$context['character_set'] = empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
+	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	$context['tabindex'] = 1;
@@ -2409,7 +2407,7 @@ function loadSession()
 		}
 
 		// Use database sessions? (they don't work in 4.1.x!)
-		if (!empty($modSettings['databaseSession_enable']) && @version_compare(PHP_VERSION, '4.2.0') != -1)
+		if (!empty($modSettings['databaseSession_enable']))
 		{
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
 			@ini_set('session.gc_probability', '1');
