@@ -235,22 +235,27 @@ function template_body_above()
 
 		echo '
 			</div>
-			<div class="news normaltext">
+			<div class="news normaltext">';
+			
+		if (!empty($context['allow_search']))
+		{
+			echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
 					<input type="text" name="search" value="" class="input_text" />&nbsp;
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
 					<input type="hidden" name="advanced" value="0" />';
 
-		// Search within current topic?
-		if (!empty($context['current_topic']))
-			echo '
+			// Search within current topic?
+			if (!empty($context['current_topic']))
+				echo '
 					<input type="hidden" name="topic" value="', $context['current_topic'], '" />';
-			// If we're on a certain board, limit it to this board ;).
-		elseif (!empty($context['current_board']))
-			echo '
+				// If we're on a certain board, limit it to this board ;).
+			elseif (!empty($context['current_board']))
+				echo '
 					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '" />';
 
-		echo '</form>';
+			echo '</form>';
+		}
 
 		// Show a random news item? (or you could pick one from news_lines...)
 		if (!empty($settings['enable_news']))
