@@ -3377,20 +3377,6 @@ function setupThemeContext($forceload = false)
 }
 
 /**
- * Provides a template for sources to output raw content without running through the theme handler normally.
- *
- * This expects $context['raw_data'] to contain the full marked up content of the page, ready to display.
- *
- * @todo Remove this function as no subsystem makes use of it.
- */
-function template_rawdata()
-{
-	global $context;
-
-	echo $context['raw_data'];
-}
-
-/**
  * Ensures content above the main page content is loaded, including HTTP page headers.
  *
  * Several things happen here.

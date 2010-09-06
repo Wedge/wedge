@@ -70,7 +70,6 @@ if (!defined('SMF'))
 	void OptimizeTables()
 		- optimizes all tables in the database and lists how much was saved.
 		- requires the admin_forum permission.
-		- uses the rawdata sub template (built in.)
 		- shows as the maintain_forum admin area.
 		- updates the optimize scheduled task such that the tables are not
 		  automatically optimized again too soon.

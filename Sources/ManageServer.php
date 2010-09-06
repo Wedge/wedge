@@ -38,7 +38,6 @@ if (!defined('SMF'))
 
 	void ModifyGeneralSettings()
 		- shows an interface for the settings in Settings.php to be changed.
-		- uses the rawdata sub template (not theme-able.)
 		- requires the admin_forum permission.
 		- uses the edit_settings administration area.
 		- contains the actual array of settings to show from Settings.php.
@@ -46,7 +45,6 @@ if (!defined('SMF'))
 
 	void ModifyDatabaseSettings()
 		- shows an interface for the settings in Settings.php to be changed.
-		- uses the rawdata sub template (not theme-able.)
 		- requires the admin_forum permission.
 		- uses the edit_settings administration area.
 		- contains the actual array of settings to show from Settings.php.

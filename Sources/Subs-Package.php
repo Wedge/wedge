@@ -150,8 +150,7 @@ if (!defined('SMF'))
 	// !!!
 
 	int package_put_contents(string filename, string data)
-		- writes data to a file, almost exactly like the file_put_contents()
-		  function.
+		- writes data to a file, almost exactly like the file_put_contents() function.
 		- uses FTP to create/chmod the file when necessary and available.
 		- uses text mode for text mode file extensions.
 		- returns the number of bytes written.

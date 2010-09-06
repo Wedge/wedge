@@ -31,7 +31,6 @@ if (!defined('SMF'))
 	void RepairBoards()
 		- finds or repairs errors in the database to fix possible problems.
 		- requires the admin_forum permission.
-		- uses the raw_data sub template.
 		- calls createSalvageArea() to create a new board, if necesary.
 		- accessed by ?action=admin;area=repairboards.
 
