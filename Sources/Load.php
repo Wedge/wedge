@@ -37,15 +37,12 @@ if (!defined('SMF'))
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
  * - Save the value in cache for next time.
- * - Determine whether UTF-8 in regular expressions is an option; this is a PHP 4 compatibility item.
  * - Declare the common code for $smcFunc, including the bytesafe string handling functions.
  * - Set the timezone (for PHP 5.1+)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
  * - Check if SMF_INTEGRATION_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
  * - Load any files specified in integrate_pre_include and run any functions specified in integrate_pre_load.
- *
- * @todo PHP 4 compatibility code removal
  */
 function reloadSettings()
 {
@@ -237,10 +234,11 @@ function loadUserSettings()
 	global $modSettings, $user_settings, $sourcedir, $smcFunc;
 	global $cookiename, $user_info, $language;
 
+	$id_member = 0;
+
 	// Check first the integration, then the cookie, and last the session.
 	if (count($integration_ids = call_integration_hook('integrate_verify_user')) > 0)
 	{
-		$id_member = 0;
 		foreach ($integration_ids as $integration_id)
 		{
 			$integration_id = (int) $integration_id;
@@ -252,12 +250,10 @@ function loadUserSettings()
 			}
 		}
 	}
-	else
-		$id_member = 0;
 
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
-		// Fix a security hole in PHP 4.3.9 and below...
+		// Fix a security hole in PHP 4.3.9 and below... @todo: Is this still needed in PHP5?
 		if (preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~i', $_COOKIE[$cookiename]) == 1)
 		{
 			list ($id_member, $password) = @unserialize($_COOKIE[$cookiename]);
@@ -2367,8 +2363,6 @@ function template_include($filename, $once = false)
  * - Check for people using invalid PHPSESSIDs
  * - Enable database-based sessions and override PHP's own handler.
  * - Set the session code randomly.
- *
- * @todo Remove PHP 4 compatibility code from here.
  */
 function loadSession()
 {
@@ -2406,7 +2400,7 @@ function loadSession()
 			$_POST[session_name()] = $session_id;
 		}
 
-		// Use database sessions? (they don't work in 4.1.x!)
+		// Use database sessions?
 		if (!empty($modSettings['databaseSession_enable']))
 		{
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');

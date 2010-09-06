@@ -692,7 +692,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 /**
  * Reconverts a number of the translations performed by {@link preparsecode()} with respect to HTML entity characters (e.g. angle brackets, quotes, apostrophes)
  *
- * This function effectively performs mostly as htmlspecialchars_decode(ENT_QUOTES) for the important characters, however this also works on PHP 4 as well as adding the apostrophe and non breaking spaces (and fixing a bug in PHP 4 in the process)
+ * This function effectively performs mostly as htmlspecialchars_decode(ENT_QUOTES) for the important characters, however it also adds the apostrophe and non-breaking spaces.
  *
  * @param string $string A string that has been converted through {@link preparsecode()} previously; this ensures the common HTML entities, non breaking spaces and apostrophes are not subject to double conversion or being over-escaped when submitted back to the editor component.
  * @return string The string, with the characters converted back.
@@ -2497,7 +2497,6 @@ function parsesmileys(&$message)
  *
  * @param string $code The original code, as from the bbcode parser.
  * @return string The string with HTML markup for formatting, and with custom handling of tabs in an attempt to preserve that formatting.
- * @todo Remove PHP < 4.2 compatibility code
  */
 function highlight_php_code($code)
 {
@@ -2507,18 +2506,7 @@ function highlight_php_code($code)
 	$code = un_htmlspecialchars(strtr($code, array('<br />' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
 
 	$oldlevel = error_reporting(0);
-
-	// It's easier in 4.2.x+.
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-	{
-		ob_start();
-		@highlight_string($code);
-		$buffer = str_replace(array("\n", "\r"), '', ob_get_contents());
-		ob_end_clean();
-	}
-	else
-		$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
-
+	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
 	error_reporting($oldlevel);
 
 	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
@@ -2857,13 +2845,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	{
 		// The theme author wants to use the STRICT doctype (only God knows why).
 		$temp = ob_get_contents();
-		if (function_exists('ob_clean'))
-			ob_clean();
-		else
-		{
-			ob_end_clean();
-			ob_start('ob_sessrewrite');
-		}
+		ob_clean();
 
 		echo strtr($temp, array(
 			'var smf_iso_case_folding' => 'var target_blank = \'_blank\'; var smf_iso_case_folding',
@@ -3708,13 +3690,7 @@ function db_debug_junk()
 
 	// Gotta have valid HTML ;).
 	$temp = ob_get_contents();
-	if (function_exists('ob_clean'))
-		ob_clean();
-	else
-	{
-		ob_end_clean();
-		ob_start('ob_sessrewrite');
-	}
+	ob_clean();
 
 	echo preg_replace('~</body>\s*</html>~', '', $temp), '
 <div class="smalltext" style="text-align: left; margin: 1ex;">
@@ -3951,10 +3927,6 @@ function host_from_ip($ip)
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
 	$t = microtime();
-
-	// If we can't access nslookup/host, PHP 4.1.x might just crash.
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-		$host = false;
 
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
@@ -4392,12 +4364,6 @@ function smf_seed_generator()
 	{
 		$modSettings['rand_seed'] = microtime() * 1000000;
 		updateSettings(array('rand_seed' => $modSettings['rand_seed']));
-	}
-
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-	{
-		$seed = ($modSettings['rand_seed'] + ((double) microtime() * 1000003)) & 0x7fffffff;
-		mt_srand($seed);
 	}
 
 	// Change the seed.

@@ -171,16 +171,11 @@ class xmlArray
 					return $array[$el];
 				else
 				{
-					if (function_exists('debug_backtrace'))
-					{
-						$trace = debug_backtrace();
-						$i = 0;
-						while ($i < count($trace) && isset($trace[$i]['class']) && $trace[$i]['class'] == get_class($this))
-							$i++;
-						$debug = ' from ' . $trace[$i - 1]['file'] . ' on line ' . $trace[$i - 1]['line'];
-					}
-					else
-						$debug = '';
+					$trace = debug_backtrace();
+					$i = 0;
+					while ($i < count($trace) && isset($trace[$i]['class']) && $trace[$i]['class'] == get_class($this))
+						$i++;
+					$debug = ' from ' . $trace[$i - 1]['file'] . ' on line ' . $trace[$i - 1]['line'];
 
 					// Cause an error.
 					if ($this->debug_level & E_NOTICE)
@@ -651,16 +646,11 @@ class xmlArray
 		// No results found...
 		if (empty($results))
 		{
-			if (function_exists('debug_backtrace'))
-			{
-				$trace = debug_backtrace();
-				$i = 0;
-				while ($i < count($trace) && isset($trace[$i]['class']) && $trace[$i]['class'] == get_class($this))
-					$i++;
-				$debug = ' from ' . $trace[$i - 1]['file'] . ' on line ' . $trace[$i - 1]['line'];
-			}
-			else
-				$debug = '';
+			$trace = debug_backtrace();
+			$i = 0;
+			while ($i < count($trace) && isset($trace[$i]['class']) && $trace[$i]['class'] == get_class($this))
+				$i++;
+			$debug = ' from ' . $trace[$i - 1]['file'] . ' on line ' . $trace[$i - 1]['line'];
 
 			// Cause an error.
 			if ($this->debug_level & E_NOTICE && !$no_error)
