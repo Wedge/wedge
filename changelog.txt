@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10093 $.
+Changelog started January 1, 2004; Currently at $Revision: 10095 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -21,6 +21,10 @@ September 2010
  ! Small improvement to be more mod-friendly, a useless variable usage could have caused issues with mods (Load.php) [Bug4445]
  ! Added the optional (in 1.1 spec) assoc_type to OpenID parameters (Subs-OpenID.php) [Bug 4420]
  ! Fixed calculating steps/substeps for log_actions changes (upgrade script) [Bug 4427]
+ ! Fixed avatars resized with javascript (script.js)
+ * Tweaked the attachments cleaning to allow single file removals (script.js, Post template) [Bug 3559]
+ & Tweaked the language string accordingly (Post english)
+ ! Chose a hopefully more portable fix for cleaning file input (script.js) [Bug 3780]
  
  
 August 2010

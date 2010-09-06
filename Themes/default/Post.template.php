@@ -438,24 +438,26 @@ function template_main()
 		echo '
 					<dl id="postAttachment2">
 						<dt>
-							', $txt['attach'], ': (<a href="javascript:void(0);" onclick="cleanFileInput(\'postAttachment2\');">', $txt['clean_attach'], '</a>)
+							', $txt['attach'], ':
 						</dt>
 						<dd class="smalltext">
-							<input type="file" size="60" name="attachment[]" class="input_file" />';
+							<input type="file" size="60" name="attachment[]" id="attachment1" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\'attachment1\');">', $txt['clean_attach'], '</a>)';
 
 		// Show more boxes only if they aren't approaching their limit.
 		if ($context['num_allowed_attachments'] > 1)
 			echo '
 							<script type="text/javascript"><!-- // --><![CDATA[
 								var allowed_attachments = ', $context['num_allowed_attachments'], ';
+								var current_attachment = 1;
 
 								function addAttachment()
 								{
 									allowed_attachments = allowed_attachments - 1;
+									current_attachment = current_attachment + 1;
 									if (allowed_attachments <= 0)
 										return alert("', $txt['more_attachments_error'], '");
 
-									setOuterHTML(document.getElementById("moreAttachments"), \'<dd class="smalltext"><input type="file" size="60" name="attachment[]" class="input_file" /><\' + \'/dd><dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">(', $txt['more_attachments'], ')<\' + \'/a><\' + \'/dd>\');
+									setOuterHTML(document.getElementById("moreAttachments"), \'<dd class="smalltext"><input type="file" size="60" name="attachment[]" id="attachment\' + current_attachment + \'" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\\\'attachment\' + current_attachment + \'\\\');">', $txt['clean_attach'], '</a>)\' + \'</dd><dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">(', $txt['more_attachments'], ')<\' + \'/a><\' + \'/dd>\');
 
 									return true;
 								}

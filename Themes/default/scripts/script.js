@@ -635,28 +635,30 @@ function smf_avatarResize()
 
 	for (var i = 0; i < possibleAvatars.length; i++)
 	{
+		var tempAvatars = [], j = 0;
 		if (possibleAvatars[i].className != 'avatar')
 			continue;
 
-		var tempAvatar = new Image();
+		tempAvatars[j] = new Image();
+		tempAvatars[j].avatar = possibleAvatars[i];
 		
-		tempAvatar.onload = function()
+		tempAvatars[j].onload = function()
 		{
-			possibleAvatars[i].width = tempAvatar.width;
-			possibleAvatars[i].height = tempAvatar.height;
-
-			if (smf_avatarMaxWidth != 0 && tempAvatar.width > smf_avatarMaxWidth)
+			this.avatar.width = this.width;
+			this.avatar.height = this.height;
+			if (smf_avatarMaxWidth != 0 && this.width > smf_avatarMaxWidth)
 			{
-				possibleAvatars[i].height = (smf_avatarMaxWidth * tempAvatar.height) / tempAvatar.width;
-				possibleAvatars[i].width = smf_avatarMaxWidth;
+				this.avatar.height = (smf_avatarMaxWidth * this.height) / this.width;
+				this.avatar.width = smf_avatarMaxWidth;
 			}
-			if (smf_avatarMaxHeight != 0 && tempAvatar.height > smf_avatarMaxHeight)
+			if (smf_avatarMaxHeight != 0 && this.avatar.height > smf_avatarMaxHeight)
 			{
-				possibleAvatars[i].width = (smf_avatarMaxHeight * tempAvatar.width) / tempAvatar.height;
-				possibleAvatars[i].height = smf_avatarMaxHeight;
+				this.avatar.width = (smf_avatarMaxHeight * this.avatar.width) / this.avatar.height;
+				this.avatar.height = smf_avatarMaxHeight;
 			}
 		}
-		tempAvatar.src = possibleAvatars[i].src;
+		tempAvatars[j].src = possibleAvatars[i].src;
+		j++;
 	}
 
 	if (typeof(window_oldAvatarOnload) != 'undefined' && window_oldAvatarOnload)
@@ -665,6 +667,7 @@ function smf_avatarResize()
 		window_oldAvatarOnload = null;
 	}
 }
+
 
 function hashLoginPassword(doForm, cur_session_id)
 {
@@ -1446,5 +1449,16 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 // A function used to clean the attachments on post page
 function cleanFileInput(idElement)
 {
-	document.getElementById(idElement).innerHTML = document.getElementById(idElement).innerHTML;
+	// Simpler solutions work in Opera, but not in Firefox and IE (except sometimes!)
+	// and apparently never on Safari...
+	if (is_opera)
+	{
+		document.getElementById(idElement).outerHTML = document.getElementById(idElement).outerHTML;
+	}
+	else
+	{
+		// What else can we do?
+		document.getElementById(idElement).type = 'input';
+		document.getElementById(idElement).type = 'file';
+	}
 }
