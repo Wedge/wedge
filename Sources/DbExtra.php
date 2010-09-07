@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* DbExtra-mysql.php                                                               *
+* DbExtra.php                                                                     *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *

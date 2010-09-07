@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* Subs-Db-mysql.php                                                               *
+* Subs-Database.php                                                               *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -95,7 +95,7 @@ function db_extend($type = 'extra')
 {
 	global $sourcedir;
 
-	require_once($sourcedir . '/Db' . ucfirst($type) . '-mysql.php');
+	require_once($sourcedir . '/Db' . ucfirst($type) . '.php');
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
 }

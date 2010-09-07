@@ -2584,7 +2584,7 @@ function loadDatabase()
 	global $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix;
 
 	// Load the file for the database.
-	require_once($sourcedir . '/Subs-Db-mysql.php');
+	require_once($sourcedir . '/Subs-Database.php');
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
