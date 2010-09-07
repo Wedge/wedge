@@ -696,10 +696,7 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 					return;
 
 				var sDesc = prompt(oEditorStrings['prompt_text_desc']);
-				if (!sDesc || sDesc == '')
-					sDesc = sText;
-
-				var bbcode = '[url=' + sText + ']' + sDesc + '[/url]';
+				var bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
 				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// img popup?

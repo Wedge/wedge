@@ -929,7 +929,7 @@ table.table_grid thead tr.catbg th
 /* Common styles used to add corners to divisions.
 ------------------------------------------------------- */
 
-/* This is for modern browsers... */
+/* "With rounded corners" class, for modern browsers... */
 .wrc
 {
 	margin-top: 2px;
