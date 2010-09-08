@@ -123,7 +123,7 @@ function template_wap_display()
 			), $message['body']), '<br>');
 
 		echo '
-		<p><u>', $message['member']['name'], '</u>:', (!$message['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '<br /></p>
+		<p><u>', $message['member']['name'], '</u> ', $txt['on'], ' ', $message['time'], ':', (!$message['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '<br /></p>
 		<p>', $message['body'], '<br /><br /></p>';
 	}
 
@@ -355,7 +355,7 @@ function template_imode_display()
 		echo '
 			<tr><td>', $message['first_new'] ? '
 				<a id="new"></a>' : '',
-				$context['wireless_moderate'] && $message['member']['id'] ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';imode">' . $message['member']['name'] . '</a>' : '<strong>' . $message['member']['name'] . '</strong>', ':
+				$context['wireless_moderate'] && $message['member']['id'] ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';imode">' . $message['member']['name'] . '</a>' : '<strong>' . $message['member']['name'] . '</strong>', ' ', $txt['on'], ' ', $message['time'], ':
 				', ((empty($context['wireless_more']) && $message['can_modify']) || !empty($context['wireless_moderate']) ? '[<a href="' . $scripturl . '?action=post;msg=' . $message['id'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';imode">' . $txt['wireless_display_edit'] . '</a>]' : ''), (!$message['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '<br />
 				', $message['body'], '
 			</td></tr>';
@@ -1010,7 +1010,7 @@ function template_wap2_display()
 		echo $message['first_new'] ? '
 		<a id="new"></a>' : '', '
 		<p class="windowbg', $alternate ? '' : '2', '">
-			', $context['wireless_moderate'] && $message['member']['id'] ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';wap2">' . $message['member']['name'] . '</a>' : '<strong>' . $message['member']['name'] . '</strong>', ':
+			', $context['wireless_moderate'] && $message['member']['id'] ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';wap2">' . $message['member']['name'] . '</a>' : '<strong>' . $message['member']['name'] . '</strong>', ' ', $txt['on'], ' ', $message['time'], ':
 			', ((empty($context['wireless_more']) && $message['can_modify']) || !empty($context['wireless_moderate']) ? '[<a href="' . $scripturl . '?action=post;msg=' . $message['id'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';wap2">' . $txt['wireless_display_edit'] . '</a>]' : ''), (!$message['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '<br />
 			', $message['body'], '
 		</p>';
