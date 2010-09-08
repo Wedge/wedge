@@ -614,7 +614,7 @@ div.pagesection div.floatright input
 }
 
 /* Colors for warnings */
-.warn_mute
+.warn_mute, .warn_ban
 {
 	color: red;
 }
