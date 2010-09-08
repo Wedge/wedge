@@ -2393,7 +2393,7 @@ class wedgeEditor
 								sType: \'select\',
 								sName: \'sel_size\',
 								oOptions: {
-									\'\': ', JavaScriptEscape($txt['font_size']), ',
+									\'0\': ', JavaScriptEscape($txt['font_size']), ',
 									\'1\': \'8pt\',
 									\'2\': \'10pt\',
 									\'3\': \'12pt\',
