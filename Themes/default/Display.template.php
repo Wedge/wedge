@@ -686,17 +686,15 @@ function template_main()
 
 			echo '
 							<div class="quickReplyContent">
-								<textarea cols="75" rows="7" style="', $context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%', '; height: 100px;" name="message" tabindex="', $context['tabindex']++, '"></textarea>
+								<div id="bbcBox_message" style="display:none;"></div>
+								<div id="smileyBox_message" style="display:none;"></div>
+								', $context['postbox']->outputEditor(), '
+							</div>
+							<div class="floatleft padding">
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit" style="display:none;" onclick="javascript:oQuickReply.switchMode();" />
 							</div>
 							<div class="righttext padding">
-								<input type="submit" name="post" value="', $txt['post'], '" onclick="return submitThisOnce(this);" accesskey="s" tabindex="', $context['tabindex']++, '" class="button_submit" />
-								<input type="submit" name="preview" value="', $txt['preview'], '" onclick="return submitThisOnce(this);" accesskey="p" tabindex="', $context['tabindex']++, '" class="button_submit" />';
-
-			if ($context['show_spellchecking'])
-				echo '
-								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'postmodify\', \'message\');" tabindex="', $context['tabindex']++, '" class="button_submit" />';
-
-			echo '
+								', $context['postbox']->outputButtons(), '
 							</div>
 						</form>
 					</div>
@@ -729,8 +727,13 @@ function template_main()
 						sImageId: "quickReplyExpand",
 						sImageCollapsed: "collapse.gif",
 						sImageExpanded: "expand.gif",
-						sJumpAnchor: "quickreply"
-					});';
+						sJumpAnchor: "quickreply",
+						sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
+						sSmileyDiv: "', (!empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup'])) ? 'smileyBox_message' : '', '",
+						sSwitchMode: "switch_mode",
+						bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
+					});
+					';
 
 	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
 		echo '

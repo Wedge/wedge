@@ -451,7 +451,8 @@ smc_Editor.prototype.updateEditorControls = function()
 	if (!this.bRichTextEnabled)
 	{
 		// Set none of the buttons active.
-		this.opt.oBBCBox.setActive([]);
+		if (this.opt.oBBCBox != null)
+			this.opt.oBBCBox.setActive([]);
 		return;
 	}
 

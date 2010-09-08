@@ -123,6 +123,7 @@ function QuickReply(oOptions)
 {
 	this.opt = oOptions;
 	this.bCollapsed = this.opt.bDefaultCollapsed;
+	document.getElementById(this.opt.sSwitchMode).style.display = '';
 }
 
 // When a user presses quote, put it in the quick reply box (if expanded).
@@ -143,11 +144,11 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 		if (window.XMLHttpRequest)
 		{
 			ajax_indicator(true);
-			getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
+			getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml;pb=message;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), this.onQuoteReceived);
 		}
 		// Or with a smart popup!
 		else
-			reqWin(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId, 240, 90);
+			reqWin(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';pb=message;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), 240, 90);
 
 		// Move the view to the quick reply box.
 		if (navigator.appName == 'Microsoft Internet Explorer')
@@ -167,7 +168,7 @@ QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 	for (var i = 0; i < oXMLDoc.getElementsByTagName('quote')[0].childNodes.length; i++)
 		sQuoteText += oXMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
 
-	replaceText(sQuoteText, document.forms.postmodify.message);
+	oEditorHandle_message.insertText(sQuoteText, false, true);
 
 	ajax_indicator(false);
 }
@@ -179,6 +180,19 @@ QuickReply.prototype.swap = function ()
 	document.getElementById(this.opt.sContainerId).style.display = this.bCollapsed ? '' : 'none';
 
 	this.bCollapsed = !this.bCollapsed;
+}
+
+// Switch from basic to more powerful editor
+QuickReply.prototype.switchMode = function ()
+{
+	if (this.opt.sBbcDiv != '')
+		document.getElementById(this.opt.sBbcDiv).style.display = '';
+	if (this.opt.sSmileyDiv != '')
+		document.getElementById(this.opt.sSmileyDiv).style.display = '';
+	if (this.opt.sBbcDiv != '' || this.opt.sSmileyDiv != '')
+	document.getElementById(this.opt.sSwitchMode).style.display = 'none';
+	if (this.bUsingWysiwyg)
+		oEditorHandle_message.toggleView(true);
 }
 
 // *** QuickModify object.
