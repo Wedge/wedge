@@ -6,13 +6,6 @@ function modify_topic(topic_id, first_msg_id)
 	if (!('XMLHttpRequest' in window))
 		return;
 
-	if ('opera' in window)
-	{
-		var oTest = new XMLHttpRequest();
-		if (!('setRequestHeader' in oTest))
-			return;
-	}
-
 	// Add backwards compatibility with old themes.
 	if (typeof(cur_session_var) == 'undefined')
 		cur_session_var = 'sesc';
@@ -219,18 +212,7 @@ function QuickModify(oOptions)
 // Determine whether the quick modify can actually be used.
 QuickModify.prototype.isXmlHttpCapable = function ()
 {
-	if (typeof(window.XMLHttpRequest) == 'undefined')
-		return false;
-
-	// Opera didn't always support POST requests. So test it first.
-	if ('opera' in window)
-	{
-		var oTest = new XMLHttpRequest();
-		if (!('setRequestHeader' in oTest))
-			return false;
-	}
-
-	return true;
+	return typeof(window.XMLHttpRequest) == 'undefined' ? false : true;
 }
 
 // Function called when a user presses the edit button.

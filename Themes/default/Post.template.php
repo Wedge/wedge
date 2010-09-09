@@ -377,8 +377,7 @@ function template_main()
 	}
 
 	// Show the actual posting area...
-	echo '
-					', $context['postbox']->outputEditor();
+	echo "\n\n", $context['postbox']->outputEditor(), "\n";
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))
@@ -549,13 +548,6 @@ function template_main()
 	echo '
 				if (window.XMLHttpRequest)
 				{
-					// Opera didn\'t support setRequestHeader() before 8.01.
-					if (\'opera\' in window)
-					{
-						var test = new XMLHttpRequest();
-						if (!(\'setRequestHeader\' in test))
-							return submitThisOnce(document.forms.postmodify);
-					}
 					// !!! Currently not sending poll options and option checkboxes.
 					var x = new Array();
 					var textFields = [\'subject\', ', JavaScriptEscape($context['postbox']->id), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
