@@ -1205,7 +1205,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'post_group_color' => $profile['post_group_color'],
 		'group_stars' => str_repeat('<img src="' . str_replace('$language', $context['user']['language'], isset($profile['stars'][1]) ? $settings['images_url'] . '/' . $profile['stars'][1] : '') . '" alt="*" />', empty($profile['stars'][0]) || empty($profile['stars'][1]) ? 0 : $profile['stars'][0]),
 		'warning' => $profile['warning'],
-		'warning_status' => empty($modSettings['warning_mute']) ? '' : ((isset($profile['is_activated']) && $profile['is_activated'] >= 10) ? 'ban' : ($modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
+		'warning_status' => empty($modSettings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
 	);
 
@@ -1316,8 +1316,6 @@ function detectBrowser()
 	$context['browser']['is_ie'] = $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'];
 	// Before IE8 we need to fix IE... lots!
 	$context['browser']['ie_standards_fix'] = !$context['browser']['is_ie8'];
-
-	$context['browser']['needs_size_fix'] = ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_opera6']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') === false;
 
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
@@ -1749,10 +1747,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	$context['tabindex'] = 1;
-
-	// Fix font size with HTML 4.01, etc.
-	if (isset($settings['doctype']))
-		$context['browser']['needs_size_fix'] |= $settings['doctype'] == 'html' && $context['browser']['is_ie6'];
 
 	// Compatibility.
 	if (!isset($settings['theme_version']))

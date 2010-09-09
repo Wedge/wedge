@@ -1299,7 +1299,7 @@ function template_admin_search_results()
 				', $txt['admin_search_results'], '
 			</h3>
 		</div>
-	<div class="windowbg wrc nopadding">
+	<div class="windowbg wrc">
 		<div class="content">
 			', sprintf($txt['admin_search_results_desc'], $context['search_term']);
 

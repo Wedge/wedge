@@ -57,9 +57,9 @@ ol.search_results li
 	overflow: hidden;
 	margin: 1em 0;
 }
-#admincenter .content
+#admincenter .wrc .content
 {
-	padding: 1em;
+	padding: 0 1em;
 }
 
 #live_news
@@ -146,11 +146,6 @@ h3.titlebg
 h3.titlebg form
 {
 	font-size: 80%;
-}
-.windowbg.nopadding
-{
-	margin: 0;
-	padding: 0;
 }
 .windowbg ol
 {
