@@ -112,16 +112,16 @@ function smc_Editor(oOptions)
 		'Comic Sans MS'
 	];
 	// Font maps (HTML => CSS size)
-	this.aFontSizes = [
-		0,
-		8,
-		10,
-		12,
-		14,
-		18,
-		24,
-		36
-	];
+	this.aFontSizes = {
+		s6: 6,
+		s8: 8,
+		s10: 10,
+		s12: 12,
+		s14: 14,
+		s18: 18,
+		s24: 24,
+		s36: 36
+	};
 	// Color maps! (hex => name)
 	this.oFontColors = {
 		black: '#000000',
@@ -757,41 +757,35 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 	// Changing font face?
 	if (oSelectProperties.sName == 'sel_face')
 	{
-		// Not in HTML mode?
 		if (!this.bRichTextEnabled)
 		{
 			sValue = sValue.replace(/"/, '');
 			surroundText('[font=' + sValue + ']', '[/font]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
-		else
+		else // WYSIWYG
 			this.smf_execCommand('fontname', false, sValue);
 	}
-
 	// Font size?
 	else if (oSelectProperties.sName == 'sel_size')
 	{
-		// Are we in boring mode?
 		if (!this.bRichTextEnabled)
 		{
 			surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
-
-		else
+		else // WYSIWYG
 			this.smf_execCommand('fontsize', false, sValue);
 	}
 	// Or color even?
 	else if (oSelectProperties.sName == 'sel_color')
 	{
-		// Are we in boring mode?
 		if (!this.bRichTextEnabled)
 		{
 			surroundText('[color=' + sValue + ']', '[/color]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
-
-		else
+		else // WYSIWYG
 			this.smf_execCommand('forecolor', false, sValue);
 	}
 
