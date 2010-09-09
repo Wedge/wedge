@@ -1094,15 +1094,15 @@ function Display()
 		$context['name'] = isset($_SESSION['guest_name']) ? $_SESSION['guest_name'] : '';
 		$context['email'] = isset($_SESSION['guest_email']) ? $_SESSION['guest_email'] : '';
 
-		require_once ($sourcedir . '/Class-Editor.php');
+		require_once($sourcedir . '/Class-Editor.php');
 		$context['postbox'] = new wedgeEditor(
 			array(
 				'id' => 'message',
 				'value' => '',
 				'labels' => array(
-					'post_button' => $context['submit_label'],
+					'post_button' => $txt['post'],
 				),
-				// add height and width for the editor
+				// Add height and width for the editor
 				'height' => '100px',
 				'width' => '100%',
 				'preview_type' => 1,
