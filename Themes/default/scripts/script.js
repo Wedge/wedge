@@ -11,7 +11,7 @@ var
 	is_opera10up = is_opera && (ua.indexOf('opera/9.8') != -1 || ua.indexOf('opera 9.8') != -1),
 	is_opera9 = is_opera && !is_opera10up && (ua.indexOf('opera/9') != -1 || ua.indexOf('opera 9') != -1),
 	is_opera95 = is_opera9 && ua.match(/opera[ \/]9\.[5-7]/),
-	is_opera105up = is_opera10up && ua.match(/[ \/]1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
+	is_opera105up = is_opera10up && !!ua.match(/[ \/]1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
 	is_opera10 = is_opera10up && !is_opera105up,
 	is_opera95up = is_opera95 || is_opera10up;
 
@@ -35,6 +35,9 @@ var
 	is_ie9 = is_ie && ua.indexOf('msie 9') != -1, is_ie9up = is_ie && !is_ie8down;
 
 var ajax_indicator_ele = null;
+
+if (is_ie && !('XMLHttpRequest' in window) && 'ActiveXObject' in window)
+	window.XMLHttpRequest = function () { return new ActiveXObject('MSXML2.XMLHTTP'); };
 
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
@@ -1387,24 +1390,24 @@ function cleanFileInput(idElement)
 function testStyle(sty)
 {
 	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
-	for (var i in stys) if (document.body.style[stys[i]] !== undefined) return true;
+	for (var i in stys) if (wedgerocks.style[stys[i]] !== undefined) return true;
 	return false;
 }
 
 function emulateRounded()
 {
-	var divs = document.getElementsByTagName("div");
+	var divs = document.querySelectorAll ? document.querySelectorAll('div.wrc, div.rrc') : document.getElementsByTagName('div');
 	for (var i = 0, n = divs.length; i < n; i++)
 	{
 		var div = divs[i], cls = div.className;
-		if (cls.indexOf(" wrc") > -1)
+		if (cls.indexOf(' wrc') > -1)
 		{
 			div.className = cls.replace(/ wrc/, "");
 			div.innerHTML = "<span class=\"topslice\"><span></span></span>" + div.innerHTML + "<span class=\"botslice\"><span></span></span>";
 		}
-		else if (cls.indexOf(" rrc") > -1)
+		else if (cls.indexOf(' rrc') > -1)
 		{
-			div.className = cls.replace(/ rrc/, "");
+			div.className = cls.replace(/ rrc/, '');
 			setOuterHTML(div, "<span class=\"upperframe\"><span></span></span>" + getOuterHTML(div) + "<span class=\"lowerframe\"><span></span></span>");
 		}
 	}
@@ -1412,13 +1415,14 @@ function emulateRounded()
 
 // Has your browser got the goods?
 var
+	wedgerocks = document.createElement('wedgerocks'),
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
 
-if (!can_borderradius)
+if (!can_borderradius || is_opera)
 {
 	if (document.addEventListener)
-		document.addEventListener("DOMContentLoaded", emulateRounded, false);
+		document.addEventListener('DOMContentLoaded', emulateRounded, false);
 	else // IE
 		addLoadEvent(emulateRounded);
 }
