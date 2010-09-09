@@ -1035,7 +1035,7 @@ li.wrc, form.li
 	border-right: 1px solid #7f7f7f;
 }
 
-/* Used for sections that need somewhat larger corners.
+/* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
 .roundframe
 {
@@ -1043,6 +1043,16 @@ li.wrc, form.li
 	background: #f5f5f5;
 	border-left: 1px solid #c5c5c5;
 	border-right: 1px solid #c5c5c5;
+}
+/* roundframe with rounded corners class, for modern browsers... */
+.rrc
+{
+	margin-top: 1px;
+	padding: 10px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	border: 1px solid rgba(128,128,128,.5);
 }
 .roundframe dl, .roundframe dt, .roundframe p
 {
@@ -1346,8 +1356,7 @@ ul#navigation li
 }
 #adm_submenus, #adm_submenus ul
 {
-	height: 3em;
-	overflow: auto;
+	min-height: 2.5em;
 }
 
 /* Styles for the general looks for the Curve theme.

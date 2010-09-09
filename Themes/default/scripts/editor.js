@@ -13,8 +13,7 @@ function smc_Editor(oOptions)
 
 	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
-	// This doesn't work on Opera as they cannot restore focus after clicking a BBC button.
-	this.bRichTextPossible = !this.opt.bRichEditOff && ((is_ie5up && !is_ie50) || is_ff || is_opera95up || is_safari || is_chrome) && !(is_iphone || is_android);
+	this.bRichTextPossible = !this.opt.bRichEditOff && ((is_ie && !is_ie50) || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
 	this.oFrameHandle = null;
 	this.oFrameDocument = null;

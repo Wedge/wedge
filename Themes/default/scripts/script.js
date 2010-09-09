@@ -2,55 +2,44 @@ var smf_formSubmitted = false;
 var lastKeepAliveCheck = new Date().getTime();
 var smf_editorArray = new Array();
 
-// Some very basic browser detection - from Mozilla's sniffer page.
+// Basic browser detection
 var ua = navigator.userAgent.toLowerCase();
 
-var is_opera = ua.indexOf('opera') != -1;
-var is_opera5 = ua.indexOf('opera/5') != -1 || ua.indexOf('opera 5') != -1;
-var is_opera6 = ua.indexOf('opera/6') != -1 || ua.indexOf('opera 6') != -1;
-var is_opera7 = ua.indexOf('opera/7') != -1 || ua.indexOf('opera 7') != -1;
-var is_opera8 = ua.indexOf('opera/8') != -1 || ua.indexOf('opera 8') != -1;
-var is_opera9 = ua.indexOf('opera/9') != -1 || ua.indexOf('opera 9') != -1;
-var is_opera95 = ua.indexOf('opera/9.5') != -1 || ua.indexOf('opera 9.5') != -1;
-var is_opera96 = ua.indexOf('opera/9.6') != -1 || ua.indexOf('opera 9.6') != -1;
-var is_opera10 = (ua.indexOf('opera/9.8') != -1 || ua.indexOf('opera 9.8') != -1 || ua.indexOf('opera/10.') != -1 || ua.indexOf('opera 10.') != -1) || ua.indexOf('version/10.') != -1;
-var is_opera95up = is_opera95 || is_opera96 || is_opera10;
+var
+	is_opera = ua.indexOf('opera') != -1,
+	is_opera5 = is_opera6 = is_opera7 = is_opera8 = false,
+	is_opera10up = is_opera && (ua.indexOf('opera/9.8') != -1 || ua.indexOf('opera 9.8') != -1),
+	is_opera9 = is_opera && !is_opera10up && (ua.indexOf('opera/9') != -1 || ua.indexOf('opera 9') != -1),
+	is_opera95 = is_opera9 && ua.match(/opera[ /]9\.[5-7]/),
+	is_opera105up = is_opera10up && ua.match(/1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
+	is_opera10 = is_opera10up && !is_opera105up,
+	is_opera95up = is_opera95 || is_opera10up;
 
-var is_ff = (ua.indexOf('firefox') != -1 || ua.indexOf('iceweasel') != -1 || ua.indexOf('icecat') != -1 || ua.indexOf('shiretoko') != -1 || ua.indexOf('minefield') != -1) && !is_opera;
-var is_gecko = ua.indexOf('gecko') != -1 && !is_opera;
+var
+	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera,
+	is_gecko = ua.indexOf('gecko') != -1 && !is_opera;
 
-var is_chrome = ua.indexOf('chrome') != -1;
-var is_safari = ua.indexOf('applewebkit') != -1 && !is_chrome;
-var is_webkit = ua.indexOf('applewebkit') != -1;
+var
+	is_chrome = ua.indexOf('chrome') != -1,
+	is_webkit = ua.indexOf('applewebkit') != -1,
+	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
+	is_android = is_webkit && ua.indexOf('android') != -1,
+	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 
-var is_ie = ua.indexOf('msie') != -1 && !is_opera;
-var is_ie5 = is_ie && ua.indexOf('msie 5') != -1;
-var is_ie50 = is_ie && ua.indexOf('msie 5.0') != -1;
-var is_ie55 = is_ie && ua.indexOf('msie 5.5') != -1;
-var is_ie5up = is_ie;
-var is_ie6 = is_ie && ua.indexOf('msie 6') != -1;
-var is_ie6up = is_ie5up && !is_ie55 && !is_ie5;
-var is_ie6down = is_ie6 || is_ie5;
-var is_ie7 = is_ie && ua.indexOf('msie 7') != -1;
-var is_ie7up = is_ie6up && !is_ie6;
-var is_ie7down = is_ie7 || is_ie6 || is_ie5;
-
-var is_ie8 = is_ie && ua.indexOf('msie 8') != -1;
-var is_ie8up = is_ie8 && !is_ie7down;
-
-var is_iphone = ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1;
-var is_android = ua.indexOf('android') != -1;
+var
+	is_ie = is_ie5up = ua.indexOf('msie') != -1 && !is_opera,
+	is_ie50 = is_ie && ua.indexOf('msie 5.0') != -1,
+	is_ie55 = is_ie && ua.indexOf('msie 5.5') != -1,
+	is_ie5 = is_ie50 || is_ie55, is_ie4 = false,
+	is_ie6 = is_ie && ua.indexOf('msie 6') != -1, is_ie6up = is_ie && !is_ie5,     is_ie6down = is_ie6 || is_ie5,
+	is_ie7 = is_ie && ua.indexOf('msie 7') != -1, is_ie7up = is_ie && !is_ie6down, is_ie7down = is_ie7 || is_ie6down,
+	is_ie8 = is_ie && ua.indexOf('msie 8') != -1, is_ie8up = is_ie && !is_ie7down, is_ie8down = is_ie8 || is_ie7down,
+	is_ie9 = is_ie && ua.indexOf('msie 9') != -1, is_ie9up = is_ie && !is_ie8down;
 
 var ajax_indicator_ele = null;
 
-// Define document.getElementById for Internet Explorer 4.
-if (!('getElementById' in document) && 'all' in document)
-	document.getElementById = function (sId) {
-		return document.all[sId];
-	}
-
-// Define XMLHttpRequest for IE 5 and above. (don't bother for IE 4 :/.... works in Opera 7.6 and Safari 1.2!)
-else if (!('XMLHttpRequest' in window) && 'ActiveXObject' in window)
+// Define XMLHttpRequest for IE 5 and above. Works in Opera 7.6 and Safari 1.2.
+if (!('XMLHttpRequest' in window) && 'ActiveXObject' in window)
 	window.XMLHttpRequest = function () {
 		return new ActiveXObject(is_ie5 ? 'Microsoft.XMLHTTP' : 'MSXML2.XMLHTTP');
 	};
@@ -729,7 +718,7 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 		replacement += '<a class="navPages" href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
 
 	if (oldLastPage > 0)
-		replacement += '<span style="font-weight: bold; cursor: ' + (is_ie && !is_ie6up ? 'hand' : 'pointer') + ';" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
+		replacement += '<span style="font-weight: bold; cursor: ' + (is_ie5 ? 'hand' : 'pointer') + ';" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
 
 	// Replace the dots by the new page links.
 	setInnerHTML(spanNode, replacement);
@@ -953,7 +942,7 @@ function ajax_indicator(turn_on)
 
 	if (ajax_indicator_ele != null)
 	{
-		if (navigator.appName == 'Microsoft Internet Explorer' && !is_ie7up)
+		if (is_ie && !is_ie7up)
 		{
 			ajax_indicator_ele.style.position = 'absolute';
 			ajax_indicator_ele.style.top = document.documentElement.scrollTop;
@@ -1399,14 +1388,14 @@ function smfSelectText(oCurElement, bActOnElement)
 	if (typeof(oCodeArea) != 'object' || oCodeArea == null)
 		return false;
 
-	// Start off with my favourite, internet explorer.
+	// Start off with IE
 	if ('createTextRange' in document.body)
 	{
 		var oCurRange = document.body.createTextRange();
 		oCurRange.moveToElementText(oCodeArea);
 		oCurRange.select();
 	}
-	// Firefox at el.
+	// Firefox et al.
 	else if (window.getSelection)
 	{
 		var oCurSelection = window.getSelection();
@@ -1457,4 +1446,44 @@ function cleanFileInput(idElement)
 		document.getElementById(idElement).type = 'input';
 		document.getElementById(idElement).type = 'file';
 	}
+}
+
+function testStyle(sty)
+{
+	// From Modernizr v1.5 (http://www.modernizr.com/license/), (c) 2009-2010 Faruk Ates
+	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
+	for (var i in stys) if (document.body.style[stys[i]] !== undefined) return true;
+	return false;
+}
+
+function emulateRounded()
+{
+	var divs = document.getElementsByTagName("div");
+	for (var i = 0, n = divs.length; i < n; i++)
+	{
+		var div = divs[i], cls = div.className;
+		if (cls.indexOf(" wrc") > -1)
+		{
+			div.className = cls.replace(/ wrc/, "");
+			div.innerHTML = "<span class=\"topslice\"><span></span></span>" + div.innerHTML + "<span class=\"botslice\"><span></span></span>";
+		}
+		else if (cls.indexOf(" rrc") > -1)
+		{
+			div.className = cls.replace(/ rrc/, "");
+			setOuterHTML(div, "<span class=\"upperframe\"><span></span></span>" + getOuterHTML(div) + "<span class=\"lowerframe\"><span></span></span>");
+		}
+	}
+}
+
+// Has your browser got the goods?
+var
+	can_borderradius = testStyle('borderRadius'),
+	can_boxshadow = testStyle('boxShadow');
+
+if (!can_borderradius)
+{
+	if (document.addEventListener)
+		document.addEventListener("DOMContentLoaded", emulateRounded, false);
+	else // IE
+		addLoadEvent(emulateRounded);
 }

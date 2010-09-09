@@ -325,31 +325,6 @@ function template_body_below()
 		</div>
 	</div></div>';
 
-	// This is temp code. It will end up in script.js when deemed stable enough.
-	// IE will actually run addLoadEvent(), but we need to add support for non-IE
-	// browsers that don't support border-radius. (Though it works fine either way.)
-	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		function ie_rounded()
-		{
-			if (!is_ie)
-				return;
-			var divs = document.getElementsByTagName("div");
-			for (var i = 0, n = divs.length; i < n; i++)
-			{
-				var div = divs[i];
-				if (div.className.indexOf(" wrc") == -1)
-					continue;
-				div.className = div.className.replace(/ wrc/, "");
-				div.innerHTML = "<span class=\"topslice\"><span></span></span>" + div.innerHTML + "<span class=\"botslice\"><span></span></span>";
-			}
-		}
-		if (document.addEventListener)
-			document.addEventListener("DOMContentLoaded", ie_rounded, false);
-		else
-			addLoadEvent(ie_rounded);
-	// ]]></script>';
-
 	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
 	echo '
 	<div id="footer_section"><div class="frame">
