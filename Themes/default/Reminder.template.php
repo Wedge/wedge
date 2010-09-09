@@ -12,8 +12,7 @@ function template_main()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p class="smalltext centertext">', $txt['password_reminder_desc'], '</p>
 				<dl>
 					<dt>', $txt['user_email'], ':</dt>
@@ -21,7 +20,6 @@ function template_main()
 				</dl>
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
@@ -38,8 +36,7 @@ function template_reminder_pick()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p><strong>', $txt['authentication_options'], ':</strong></p>
 				<p>
 					<input type="radio" name="reminder_type" id="reminder_type_email" value="email" checked="checked" class="input_radio" /></dt>
@@ -51,7 +48,6 @@ function template_reminder_pick()
 				</p>
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 		<input type="hidden" name="uid" value="', $context['current_member']['id'], '" />
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -84,8 +80,7 @@ function template_set_password()
 			<div class="cat_bar">
 				<h3 class="catbg">', $context['page_title'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<dl>
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
@@ -104,7 +99,6 @@ function template_set_password()
 				</dl>
 				<p class="align_center"><input type="submit" value="', $txt['save'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 		<input type="hidden" name="code" value="', $context['code'], '" />
 		<input type="hidden" name="u" value="', $context['memID'], '" />
@@ -134,8 +128,7 @@ function template_ask()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p class="smalltext">', $context['account_type'] == 'password' ? $txt['enter_new_password'] : $txt['openid_secret_reminder'], '</p>
 				<dl>
 					<dt>', $txt['secret_question'], ':</dt>
@@ -164,7 +157,6 @@ function template_ask()
 				</dl>
 				<p class="align_center"><input type="submit" value="', $txt['save'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 		<input type="hidden" name="uid" value="', $context['remind_user'], '" />
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />

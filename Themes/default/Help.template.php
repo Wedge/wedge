@@ -61,70 +61,62 @@ function template_find_members()
 	</head>
 	<body id="help_popup">
 		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '" class="padding description">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
-				<div class="innerframe">
-					<div class="cat_bar">
-						<h3 class="catbg">', $txt['find_members'], '</h3>
-					</div>
-					<div class="padding">
-						<strong>', $txt['find_username'], ':</strong><br />
-						<input type="text" name="search" id="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" style="margin-top: 4px; width: 96%;" class="input_text" /><br />
-						<span class="smalltext"><em>', $txt['find_wildcards'], '</em></span><br />';
+			<div class="roundframe rrc">
+				<div class="cat_bar">
+					<h3 class="catbg">', $txt['find_members'], '</h3>
+				</div>
+				<div class="padding">
+					<strong>', $txt['find_username'], ':</strong><br />
+					<input type="text" name="search" id="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" style="margin-top: 4px; width: 96%;" class="input_text" /><br />
+					<span class="smalltext"><em>', $txt['find_wildcards'], '</em></span><br />';
 
 	// Only offer to search for buddies if we have some!
 	if (!empty($context['show_buddies']))
 		echo '
-						<span class="smalltext"><label for="buddies"><input type="checkbox" class="input_check" name="buddies" id="buddies"', !empty($context['buddy_search']) ? ' checked="checked"' : '', ' /> ', $txt['find_buddies'], '</label></span><br />';
+					<span class="smalltext"><label for="buddies"><input type="checkbox" class="input_check" name="buddies" id="buddies"', !empty($context['buddy_search']) ? ' checked="checked"' : '', ' /> ', $txt['find_buddies'], '</label></span><br />';
 
 	echo '
-						<div class="padding righttext">
-							<input type="submit" value="', $txt['search'], '" class="button_submit" />
-							<input type="button" value="', $txt['find_close'], '" onclick="window.close();" class="button_submit" />
-						</div>
+					<div class="padding righttext">
+						<input type="submit" value="', $txt['search'], '" class="button_submit" />
+						<input type="button" value="', $txt['find_close'], '" onclick="window.close();" class="button_submit" />
 					</div>
 				</div>
 			</div>
-			<span class="lowerframe"><span></span></span>
 			<br />
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
-				<div class="innerframe">
-					<div class="cat_bar">
-						<h3 class="catbg">', $txt['find_results'], '</h3>
-					</div>';
+			<div class="roundframe rrc">
+				<div class="cat_bar">
+					<h3 class="catbg">', $txt['find_results'], '</h3>
+				</div>';
 
 	if (empty($context['results']))
 		echo '
-					<p class="error">', $txt['find_no_results'], '</p>';
+				<p class="error">', $txt['find_no_results'], '</p>';
 	else
 	{
 		echo '
-					<ul class="reset padding">';
+				<ul class="reset padding">';
 
 		$alternate = true;
 		foreach ($context['results'] as $result)
 		{
 			echo '
-						<li class="', $alternate ? 'windowbg2' : 'windowbg', '">
-							<a href="', $result['href'], '" target="_blank" class="new_win"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="', $txt['view_profile'], '" title="', $txt['view_profile'], '" /></a>
-							<a href="javascript:void(0);" onclick="addMember(this.innerHTML); return false;">', $result['name'], '</a>
-						</li>';
+					<li class="', $alternate ? 'windowbg2' : 'windowbg', '">
+						<a href="', $result['href'], '" target="_blank" class="new_win"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="', $txt['view_profile'], '" title="', $txt['view_profile'], '" /></a>
+						<a href="javascript:void(0);" onclick="addMember(this.innerHTML); return false;">', $result['name'], '</a>
+					</li>';
 
 			$alternate = !$alternate;
 		}
 
 		echo '
-					</ul>
-					<div class="pagesection">
-						', $txt['pages'], ': ', $context['page_index'], '
-					</div>';
+				</ul>
+				<div class="pagesection">
+					', $txt['pages'], ': ', $context['page_index'], '
+				</div>';
 	}
 
 	echo '
-				</div>
 			</div>
-			<span class="lowerframe"><span></span></span>
 			<input type="hidden" name="input" value="', $context['input_box_name'], '" />
 			<input type="hidden" name="delim" value="', $context['delimiter'], '" />
 			<input type="hidden" name="quote" value="', $context['quote_results'] ? '1' : '0', '" />
@@ -426,46 +418,42 @@ function template_manual_board_index()
 	</ul>
 	<p>', $txt['manual_board_index_info_center'], '</p>
 	<div class="help_sample">
-		<span class="upperframe"><span></span></span>
-		<div class="roundframe">
-			<div class="innerframe">
-				<div class="cat_bar">
-					<h3 class="catbg">
-					', sprintf($txt['info_center_title'], $context['forum_name']), '
-					</h3>
+		<div class="roundframe rrc">
+			<div class="cat_bar">
+				<h3 class="catbg">
+				', sprintf($txt['info_center_title'], $context['forum_name']), '
+				</h3>
+			</div>
+			<div id="upshrinkHeaderIC">
+				<div class="title_barIC">
+					<h4 class="titlebg">
+						<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
+						<span>', $txt['forum_stats'], '</span>
+					</h4>
 				</div>
-				<div id="upshrinkHeaderIC">
-					<div class="title_barIC">
-						<h4 class="titlebg">
-							<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
-							<span>', $txt['forum_stats'], '</span>
-						</h4>
-					</div>
-					<p>
-						', $txt['manual_board_index_stats_1'], '<br />
-						', $txt['manual_board_index_stats_2'], '<br />
-						<a href="#">', $txt['recent_view'], '</a><br />
-						<a href="#">', $txt['more_stats'], '</a>
-					</p>
-					<div class="title_barIC">
-						<h4 class="titlebg">
-							<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '" /></a>
-							<span>', $txt['online_users'], '</span>
-						</h4>
-					</div>
-					<p class="inline stats">
-						<a href="#">', $txt['manual_board_index_guests_users'], '</a>
-					</p>
-					<p class="inline smalltext">
-						<span class="smalltext">', sprintf($txt['users_active'], $modSettings['lastActive']), '</span>
-					</p>
-					<p class="last smalltext">
-						', $txt['manual_board_index_most_users'], '
-					</p>
+				<p>
+					', $txt['manual_board_index_stats_1'], '<br />
+					', $txt['manual_board_index_stats_2'], '<br />
+					<a href="#">', $txt['recent_view'], '</a><br />
+					<a href="#">', $txt['more_stats'], '</a>
+				</p>
+				<div class="title_barIC">
+					<h4 class="titlebg">
+						<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '" /></a>
+						<span>', $txt['online_users'], '</span>
+					</h4>
 				</div>
+				<p class="inline stats">
+					<a href="#">', $txt['manual_board_index_guests_users'], '</a>
+				</p>
+				<p class="inline smalltext">
+					<span class="smalltext">', sprintf($txt['users_active'], $modSettings['lastActive']), '</span>
+				</p>
+				<p class="last smalltext">
+					', $txt['manual_board_index_most_users'], '
+				</p>
 			</div>
 		</div>
-		<span class="lowerframe"><span></span></span>
 	</div>';
 }
 
@@ -793,6 +781,7 @@ function template_manual_when_how_register()
 }
 
 // The register help page.
+// @todo: what's with the random registration code hardcoded into this..?!
 function template_manual_registration_screen()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
@@ -913,8 +902,8 @@ function template_manual_activating_account()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
-			<p>', $txt['manual_activate_describe'], '</p>
-			<p>', $txt['manual_activate_error'], '</p>';
+		<p>', $txt['manual_activate_describe'], '</p>
+		<p>', $txt['manual_activate_error'], '</p>';
 }
 
 // Logging in and out page.
@@ -939,8 +928,7 @@ function template_manual_logging_in_out()
 				</h3>
 			</div>
 		</form>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<dl>
 					<dt>', $txt['manual_register_username'], ':</dt>
 					<dd><input type="text" name="user" size="20" value="" class="input_text" /></dd>
@@ -962,7 +950,6 @@ function template_manual_logging_in_out()
 				<p><input type="submit" value="Login" class="button_submit" /></p>
 				<div class="smalltext centertext"><a href="', $scripturl, '?action=reminder">', $txt['manual_loginout_forgot_password'], '</a></div>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</div>
 	<ul>
@@ -1018,8 +1005,7 @@ function template_manual_password_reminders()
 					', $txt['manual_reminders_auth'], '
 				</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p class="smalltext centertext">', $txt['manual_reminders_start'], '</p>
 				<dl>
 					<dt>', $txt['manual_reminders_user_email'], ':</dt>
@@ -1028,7 +1014,6 @@ function template_manual_password_reminders()
 				<div class="padding"><input type="submit" value="', $txt['manual_reminders_continue'], '" class="button_submit floatright" /></div>
 				<br class="clear" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</div>
 	<p>', $txt['manual_reminders_secret'], '</p>
@@ -1039,8 +1024,7 @@ function template_manual_password_reminders()
 					', $txt['manual_reminders_auth'], '
 				</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p class="smalltext">', $txt['manual_reminders_instruct'], '</p>
 				<dl>
 					<dt>', $txt['manual_reminders_secret_question'], ':</dt>
@@ -1065,7 +1049,6 @@ function template_manual_password_reminders()
 				<div class="padding"><input type="submit" value="', $txt['manual_reminders_save'], '" class="button_submit floatright" /></div>
 				<br class="clear" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</div>
 	<p>', $txt['manual_reminders_new_password'], '</p>';
@@ -1475,53 +1458,52 @@ function template_manual_posting_topics()
 	<h3 class="section" id="newtopic">', $txt['manual_posting_starting_topic'], '</h3>
 	<p>', $txt['manual_posting_starting_topic_desc_part1'], '<a href="', $scripturl, '?action=help;area=message_view">', $txt['manual_posting_starting_topic_desc_link_index_message'], '</a>', $txt['manual_posting_starting_topic_desc_part2'], '<a href="', $scripturl, '?action=help;area=posting_topics#standard">', $txt['manual_posting_starting_topic_desc_link_index_message_standard'], '</a>', $txt['manual_posting_starting_topic_desc_part3'], '</p>
 	<div class="help_sample">
-			<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '" style="margin: 0;">
-				<div class="navigate_section">
-					<ul>
-						<li>
-							<a href="', $scripturl, '?action=help;area=board_index"><span>', $context['forum_name'], '</span></a>&nbsp;&#187;
-						</li>
-						<li>
-							<a href="', $scripturl, '?action=help;area=board_index"><span>', $txt['manual_board_index_category_name'], '</span></a>&nbsp;&#187;
-						</li>
-						<li>
-							<a href="', $scripturl, '?action=help;area=message_index"><span>', $txt['manual_board_index_board_name'], '</span></a>&nbsp;&#187;
-						</li>
-						<li>
-							<a href="', $scripturl, '?action=help;area=message_index"><span><strong><em>', $txt['manual_posting_start_topic'], '</em></strong></span></a>
-						</li>
-					</ul>
-				</div>
-				<div class="cat_bar">
-					<h3 class="catbg">', $txt['manual_posting_start_topic'], '</h3>
-				</div>
-				<span class="clear upperframe"><span></span></span>
-				<div class="roundframe"><div class="innerframe">
-							<table border="0" cellpadding="3" width="100%" align="center">
-								<tr>
-									<td colspan="2" align="center"><a href="', $scripturl, '?action=help;area=posting_topics#standard">', $txt['manual_posting_std_options'], '&nbsp;', $txt['manual_posting_omit_clarity'], '</a></td>
-								</tr>
-								<tr>
-									<td align="right" width="22%"><strong>', $txt['manual_posting_subject'], ':</strong></td>
-									<td><input type="text" name="subject" size="75" maxlength="75" tabindex="', $context['tabindex']++, '" class="input_text" /></td>
-								</tr>
-								<tr>
-									<td valign="top" align="right"></td>
-									<td>
-									<textarea class="editor" name="message" rows="12" cols="76" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '"></textarea></td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center"><a href="', $scripturl, '?action=help;area=posting_topics#additional">', $txt['manual_posting_sec_additional_options'], '&nbsp;', $txt['manual_posting_omit_clarity'], '</a></td>
-								</tr>
-								<tr>
-									<td align="center" colspan="2"><span class="smalltext"><br />
-									', $context['browser']['is_firefox'] ? $txt['manual_posting_shortcuts_firefox'] : $txt['manual_posting_shortcuts'], '</span><br />
-									<input type="button" accesskey="s" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_posts'], '" class="button_submit" /> <input type="button" accesskey="p" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_preview'], '" class="button_submit" /></td>
-								</tr>
-							</table>
-				</div></div>
-				<span class="lowerframe"><span></span></span>
-			</form><br />
+		<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '" style="margin: 0;">
+			<div class="navigate_section">
+				<ul>
+					<li>
+						<a href="', $scripturl, '?action=help;area=board_index"><span>', $context['forum_name'], '</span></a>&nbsp;&#187;
+					</li>
+					<li>
+						<a href="', $scripturl, '?action=help;area=board_index"><span>', $txt['manual_board_index_category_name'], '</span></a>&nbsp;&#187;
+					</li>
+					<li>
+						<a href="', $scripturl, '?action=help;area=message_index"><span>', $txt['manual_board_index_board_name'], '</span></a>&nbsp;&#187;
+					</li>
+					<li>
+						<a href="', $scripturl, '?action=help;area=message_index"><span><strong><em>', $txt['manual_posting_start_topic'], '</em></strong></span></a>
+					</li>
+				</ul>
+			</div>
+			<div class="cat_bar">
+				<h3 class="catbg">', $txt['manual_posting_start_topic'], '</h3>
+			</div>
+			<div class="clear"></div>
+			<div class="roundframe rrc">
+				<table border="0" cellpadding="3" width="100%" align="center">
+					<tr>
+						<td colspan="2" align="center"><a href="', $scripturl, '?action=help;area=posting_topics#standard">', $txt['manual_posting_std_options'], '&nbsp;', $txt['manual_posting_omit_clarity'], '</a></td>
+					</tr>
+					<tr>
+						<td align="right" width="22%"><strong>', $txt['manual_posting_subject'], ':</strong></td>
+						<td><input type="text" name="subject" size="75" maxlength="75" tabindex="', $context['tabindex']++, '" class="input_text" /></td>
+					</tr>
+					<tr>
+						<td valign="top" align="right"></td>
+						<td>
+						<textarea class="editor" name="message" rows="12" cols="76" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center"><a href="', $scripturl, '?action=help;area=posting_topics#additional">', $txt['manual_posting_sec_additional_options'], '&nbsp;', $txt['manual_posting_omit_clarity'], '</a></td>
+					</tr>
+					<tr>
+						<td align="center" colspan="2"><span class="smalltext"><br />
+						', $context['browser']['is_firefox'] ? $txt['manual_posting_shortcuts_firefox'] : $txt['manual_posting_shortcuts'], '</span><br />
+						<input type="button" accesskey="s" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_posts'], '" class="button_submit" /> <input type="button" accesskey="p" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_preview'], '" class="button_submit" /></td>
+					</tr>
+				</table>
+			</div>
+		</form><br />
 	</div>
 	<ul>
 		<li>', $txt['manual_posting_nav_tree'], '</li>
@@ -1547,157 +1529,157 @@ function template_manual_posting_topics()
 	<p>', $txt['manual_posting_delete_desc'], '</p>
 	<h2 class="section" id="standard">', $txt['manual_posting_sec_posting_options'], '</h2>
 	<div class="help_sample">
-			<br />
-			<script type="text/javascript">
+		<br />
+		<script type="text/javascript">
 //<![CDATA[
-			function showimage()
-			{
-					document.images.icons.src = "', $settings['images_url'], '/post/" + document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value + ".gif";
-					document.images.icons.src ="', $settings['images_url'], '/post/" + document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value + ".gif";
-			}
-			var currentSwap = false;
-			function swapOptions()
-			{
-					document.getElementById("postMoreExpand").src = smf_images_url + "/" + (currentSwap ? "collapse.gif" : "expand.gif");
-					document.getElementById("postMoreExpand").alt = currentSwap ? "-" : "+";
-					document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
-					if (document.getElementById("postAttachment"))
-								document.getElementById("postAttachment").style.display = currentSwap ? "" : "none";
-					if (document.getElementById("postAttachment2"))
-								document.getElementById("postAttachment2").style.display = currentSwap ? "" : "none";
-					currentSwap = !currentSwap;
-			}
+		function showimage()
+		{
+			document.images.icons.src = "', $settings['images_url'], '/post/" + document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value + ".gif";
+			document.images.icons.src ="', $settings['images_url'], '/post/" + document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value + ".gif";
+		}
+		var currentSwap = false;
+		function swapOptions()
+		{
+			document.getElementById("postMoreExpand").src = smf_images_url + "/" + (currentSwap ? "collapse.gif" : "expand.gif");
+			document.getElementById("postMoreExpand").alt = currentSwap ? "-" : "+";
+			document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
+			if (document.getElementById("postAttachment"))
+						document.getElementById("postAttachment").style.display = currentSwap ? "" : "none";
+			if (document.getElementById("postAttachment2"))
+						document.getElementById("postAttachment2").style.display = currentSwap ? "" : "none";
+			currentSwap = !currentSwap;
+		}
 //]]>
-</script>
-			<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '" name="postmodify" style="margin: 0;" id="postmodify">
-				<span class="clear upperframe"><span></span></span>
-				<div class="roundframe"><div class="innerframe">
-							<table border="0" cellpadding="3" width="100%">
-								<tr>
-									<td align="right" width="16%"><strong>', $txt['manual_posting_msg_icon'], ':</strong></td>
-									<td><select name="icon" id="icon" onchange="showimage();">
-										<option value="xx" selected="selected">
-											', $txt['manual_posting_standard_icon'], '
-										</option>
-										<option value="thumbup">
-											', $txt['manual_posting_thumb_up_icon'], '
-										</option>
-										<option value="thumbdown">
-											', $txt['manual_posting_thumb_down_icon'], '
-										</option>
-										<option value="exclamation">
-											', $txt['manual_posting_exc_pt_icon'], '
-										</option>
-										<option value="question">
-											', $txt['manual_posting_q_mark_icon'], '
-										</option>
-										<option value="lamp">
-											', $txt['manual_posting_lamp_icon'], '
-										</option>
-										<option value="smiley">
-											', $txt['manual_posting_smiley_icon'], '
-										</option>
-										<option value="angry">
-											', $txt['manual_posting_angry_icon'], '
-										</option>
-										<option value="cheesy">
-											', $txt['manual_posting_cheesy_icon'], '
-										</option>
-										<option value="grin">
-											', $txt['manual_posting_grin_icon'], '
-										</option>
-										<option value="sad">
-											', $txt['manual_posting_sad_icon'], '
-										</option>
-										<option value="wink">
-											', $txt['manual_posting_wink_icon'], '
-										</option>
-									</select> <img src="', $settings['images_url'], '/post/xx.gif" name="icons" hspace="15" alt="" id="icons" /></td>
-								</tr>
-								<tr>
-									<td align="right"></td>
-									<td valign="middle">
-										<script type="text/javascript">
+		</script>
+		<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '" name="postmodify" style="margin: 0;" id="postmodify">
+			<div class="clear"></div>
+			<div class="roundframe rrc">
+				<table border="0" cellpadding="3" width="100%">
+					<tr>
+						<td align="right" width="16%"><strong>', $txt['manual_posting_msg_icon'], ':</strong></td>
+						<td><select name="icon" id="icon" onchange="showimage();">
+							<option value="xx" selected="selected">
+								', $txt['manual_posting_standard_icon'], '
+							</option>
+							<option value="thumbup">
+								', $txt['manual_posting_thumb_up_icon'], '
+							</option>
+							<option value="thumbdown">
+								', $txt['manual_posting_thumb_down_icon'], '
+							</option>
+							<option value="exclamation">
+								', $txt['manual_posting_exc_pt_icon'], '
+							</option>
+							<option value="question">
+								', $txt['manual_posting_q_mark_icon'], '
+							</option>
+							<option value="lamp">
+								', $txt['manual_posting_lamp_icon'], '
+							</option>
+							<option value="smiley">
+								', $txt['manual_posting_smiley_icon'], '
+							</option>
+							<option value="angry">
+								', $txt['manual_posting_angry_icon'], '
+							</option>
+							<option value="cheesy">
+								', $txt['manual_posting_cheesy_icon'], '
+							</option>
+							<option value="grin">
+								', $txt['manual_posting_grin_icon'], '
+							</option>
+							<option value="sad">
+								', $txt['manual_posting_sad_icon'], '
+							</option>
+							<option value="wink">
+								', $txt['manual_posting_wink_icon'], '
+							</option>
+						</select> <img src="', $settings['images_url'], '/post/xx.gif" name="icons" hspace="15" alt="" id="icons" /></td>
+					</tr>
+					<tr>
+						<td align="right"></td>
+						<td valign="middle">
+							<script type="text/javascript">
 //<![CDATA[
-										function bbc_highlight(something, mode)
-										{
-													something.style.backgroundImage = "url(" + smf_images_url + "/bbc/" + (mode ? "bbc_hoverbg.gif)" : "bbc_bg.gif)");
-										}
+								function bbc_highlight(something, mode)
+								{
+											something.style.backgroundImage = "url(" + smf_images_url + "/bbc/" + (mode ? "bbc_hoverbg.gif)" : "bbc_bg.gif)");
+								}
 //]]>
-</script>
-										<a href="javascript:void(0);" onclick="surroundText(\'[b]\', \'[/b]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/bold.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_bold_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[i]\', \'[/i]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/italicize.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_italicize_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[u]\', \'[/u]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/underline.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_underline_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[s]\', \'[/s]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/strike.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_strike_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[glow=red,2,300]\', \'[/glow]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/glow.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_glow_example'], '" /></a>
-										<a href="javascript:void(0);" onclick="surroundText(\'[shadow=red,left]\', \'[/shadow]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/shadow.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_shadow_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[move]\', \'[/move]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/move.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_move_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[pre]\', \'[/pre]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/pre.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_pre_example'], '" /></a>
-										<a href="javascript:void(0);" onclick="surroundText(\'[left]\', \'[/left]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/left.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_left_example'], '" /></a>
-										<a href="javascript:void(0);" onclick="surroundText(\'[center]\', \'[/center]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/center.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_center_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[right]\', \'[/right]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/right.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_right_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[hr]\', \'\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/hr.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_hr_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[size=10pt]\', \'[/size]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/size.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_size_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[font=Verdana]\', \'[/font]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/face.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_face_example'], '" /></a>
-										<select onchange="surroundText(\'[color=\'+this.options[this.selectedIndex].value+\']\', \'[/color]\', document.forms.postmodify.message); this.selectedIndex = 0;" style="margin-bottom: 1ex; margin-left: 2ex;">
-											<option value="" selected="selected">
-												', $txt['manual_posting_Change_Color'], '
-											</option>
-											<option value="Black">
-												', $txt['manual_posting_color_black'], '
-											</option>
-											<option value="Red">
-												', $txt['manual_posting_color_red'], '
-											</option>
-											<option value="Yellow">
-												', $txt['manual_posting_color_yellow'], '
-											</option>
-											<option value="Pink">
-												', $txt['manual_posting_color_pink'], '
-											</option>
-											<option value="Green">
-												', $txt['manual_posting_color_green'], '
-											</option>
-											<option value="Orange">
-												', $txt['manual_posting_color_orange'], '
-											</option>
-											<option value="Purple">
-												', $txt['manual_posting_color_purple'], '
-											</option>
-											<option value="Blue">
-												', $txt['manual_posting_color_blue'], '
-											</option>
-											<option value="Beige">
-												', $txt['manual_posting_color_beige'], '
-											</option>
-											<option value="Brown">
-												', $txt['manual_posting_color_brown'], '
-											</option>
-											<option value="Teal">
-												', $txt['manual_posting_color_teal'], '
-											</option>
-											<option value="Navy">
-												', $txt['manual_posting_color_navy'], '
-											</option>
-											<option value="Maroon">
-												', $txt['manual_posting_color_maroon'], '
-											</option>
-											<option value="LimeGreen">
-												', $txt['manual_posting_color_lime'], '
-											</option>
-										</select><br />
-										<a href="javascript:void(0);" onclick="surroundText(\'[flash=200,200]\', \'[/flash]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/flash.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_flash_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[img]\', \'[/img]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/img.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_img_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[url]\', \'[/url]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/url.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_url_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[email]\', \'[/email]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/email.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_email_example'], '" /></a>
-										<a href="javascript:void(0);" onclick="surroundText(\'[ftp]\', \'[/ftp]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/ftp.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_ftp_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[table]\', \'[/table]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/table.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_table_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[tr]\', \'[/tr]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/tr.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_tr_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[td]\', \'[/td]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/td.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_td_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[sup]\', \'[/sup]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/sup.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_sup_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[sub]\', \'[/sub]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/sub.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_sub_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[tt]\', \'[/tt]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/tele.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_tele_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" />
-										<a href="javascript:void(0);" onclick="surroundText(\'[code]\', \'[/code]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/code.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_code_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[quote]\', \'[/quote]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/quote.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_quote_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[list][li]\', \'[/li][li][/li][/list]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/list.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_list_example'], '" /></a>
-									</td>
-								</tr>
-								<tr>
-									<td align="right"></td>
-									<td valign="middle">
-										<a href="javascript:void(0);" onclick="replaceText(\' :)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/smiley.gif" align="bottom" alt="', $txt['manual_posting_smiley_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ;)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/wink.gif" align="bottom" alt="', $txt['manual_posting_wink_code'], '" /></a>
-										<a href="javascript:void(0);" onclick="replaceText(\' :D\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cheesy.gif" align="bottom" alt="', $txt['manual_posting_cheesy_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ;D\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/grin.gif" align="bottom" alt="', $txt['manual_posting_grin_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' &gt;:(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/angry.gif" align="bottom" alt="', $txt['manual_posting_angry_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/sad.gif" align="bottom" alt="', $txt['manual_posting_sad_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :o\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/shocked.gif" align="bottom" alt="', $txt['manual_posting_shocked_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' 8)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cool.gif" align="bottom" alt="', $txt['manual_posting_cool_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ???\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/huh.gif" align="bottom" alt="', $txt['manual_posting_huh_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ::)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/rolleyes.gif" align="bottom" alt="', $txt['manual_posting_rolleyes_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :P\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/tongue.gif" align="bottom" alt="', $txt['manual_posting_tongue_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-[\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/embarrassed.gif" align="bottom" alt="', $txt['manual_posting_embarrassed_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-X\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/lipsrsealed.gif" align="bottom" alt="', $txt['manual_posting_lipsrsealed_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-\\\\\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/undecided.gif" align="bottom" alt="', $txt['manual_posting_undecided_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-*\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/kiss.gif" align="bottom" alt="', $txt['manual_posting_kiss_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :\\\'(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cry.gif" align="bottom" alt="', $txt['manual_posting_cry_code'], '" /></a><br />
-									</td>
-								</tr>
-								<tr>
-									<td valign="top" align="right"></td>
-									<td>
-										<textarea class="editor" name="message" rows="12" cols="60" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '"></textarea>
-									</td>
-								</tr>
-							</table>
-				</div></div>
-				<span class="lowerframe"><span></span></span>
-			</form><br />
+							</script>
+							<a href="javascript:void(0);" onclick="surroundText(\'[b]\', \'[/b]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/bold.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_bold_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[i]\', \'[/i]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/italicize.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_italicize_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[u]\', \'[/u]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/underline.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_underline_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[s]\', \'[/s]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/strike.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_strike_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[glow=red,2,300]\', \'[/glow]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/glow.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_glow_example'], '" /></a>
+							<a href="javascript:void(0);" onclick="surroundText(\'[shadow=red,left]\', \'[/shadow]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/shadow.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_shadow_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[move]\', \'[/move]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/move.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_move_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[pre]\', \'[/pre]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/pre.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_pre_example'], '" /></a>
+							<a href="javascript:void(0);" onclick="surroundText(\'[left]\', \'[/left]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/left.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_left_example'], '" /></a>
+							<a href="javascript:void(0);" onclick="surroundText(\'[center]\', \'[/center]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/center.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_center_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[right]\', \'[/right]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/right.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_right_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[hr]\', \'\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/hr.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_hr_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[size=10pt]\', \'[/size]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/size.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_size_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[font=Verdana]\', \'[/font]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/face.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_face_example'], '" /></a>
+							<select onchange="surroundText(\'[color=\'+this.options[this.selectedIndex].value+\']\', \'[/color]\', document.forms.postmodify.message); this.selectedIndex = 0;" style="margin-bottom: 1ex; margin-left: 2ex;">
+								<option value="" selected="selected">
+									', $txt['manual_posting_Change_Color'], '
+								</option>
+								<option value="Black">
+									', $txt['manual_posting_color_black'], '
+								</option>
+								<option value="Red">
+									', $txt['manual_posting_color_red'], '
+								</option>
+								<option value="Yellow">
+									', $txt['manual_posting_color_yellow'], '
+								</option>
+								<option value="Pink">
+									', $txt['manual_posting_color_pink'], '
+								</option>
+								<option value="Green">
+									', $txt['manual_posting_color_green'], '
+								</option>
+								<option value="Orange">
+									', $txt['manual_posting_color_orange'], '
+								</option>
+								<option value="Purple">
+									', $txt['manual_posting_color_purple'], '
+								</option>
+								<option value="Blue">
+									', $txt['manual_posting_color_blue'], '
+								</option>
+								<option value="Beige">
+									', $txt['manual_posting_color_beige'], '
+								</option>
+								<option value="Brown">
+									', $txt['manual_posting_color_brown'], '
+								</option>
+								<option value="Teal">
+									', $txt['manual_posting_color_teal'], '
+								</option>
+								<option value="Navy">
+									', $txt['manual_posting_color_navy'], '
+								</option>
+								<option value="Maroon">
+									', $txt['manual_posting_color_maroon'], '
+								</option>
+								<option value="LimeGreen">
+									', $txt['manual_posting_color_lime'], '
+								</option>
+							</select><br />
+							<a href="javascript:void(0);" onclick="surroundText(\'[flash=200,200]\', \'[/flash]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/flash.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_flash_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[img]\', \'[/img]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/img.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_img_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[url]\', \'[/url]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/url.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_url_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[email]\', \'[/email]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/email.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_email_example'], '" /></a>
+							<a href="javascript:void(0);" onclick="surroundText(\'[ftp]\', \'[/ftp]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/ftp.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_ftp_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[table]\', \'[/table]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/table.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_table_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[tr]\', \'[/tr]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/tr.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_tr_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[td]\', \'[/td]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/td.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_td_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[sup]\', \'[/sup]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/sup.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_sup_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[sub]\', \'[/sub]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/sub.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_sub_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[tt]\', \'[/tt]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/tele.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_tele_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" />
+							<a href="javascript:void(0);" onclick="surroundText(\'[code]\', \'[/code]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/code.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_code_example'], '" /></a><a href="javascript:void(0);" onclick="surroundText(\'[quote]\', \'[/quote]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/quote.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_quote_example'], '" /></a><img src="', $settings['images_url'], '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" /><a href="javascript:void(0);" onclick="surroundText(\'[list][li]\', \'[/li][li][/li][/list]\', document.forms.postmodify.message);"><img onmouseover="bbc_highlight(this, true);" onmouseout="bbc_highlight(this, false);" src="', $settings['images_url'], '/bbc/list.gif" align="bottom" width="23" height="22" style="background-image: url(', $settings['images_url'], '/bbc/bbc_bg.gif); margin: 1px 2px 1px 1px;" alt="', $txt['manual_posting_list_example'], '" /></a>
+						</td>
+					</tr>
+					<tr>
+						<td align="right"></td>
+						<td valign="middle">
+							<a href="javascript:void(0);" onclick="replaceText(\' :)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/smiley.gif" align="bottom" alt="', $txt['manual_posting_smiley_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ;)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/wink.gif" align="bottom" alt="', $txt['manual_posting_wink_code'], '" /></a>
+							<a href="javascript:void(0);" onclick="replaceText(\' :D\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cheesy.gif" align="bottom" alt="', $txt['manual_posting_cheesy_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ;D\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/grin.gif" align="bottom" alt="', $txt['manual_posting_grin_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' &gt;:(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/angry.gif" align="bottom" alt="', $txt['manual_posting_angry_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/sad.gif" align="bottom" alt="', $txt['manual_posting_sad_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :o\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/shocked.gif" align="bottom" alt="', $txt['manual_posting_shocked_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' 8)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cool.gif" align="bottom" alt="', $txt['manual_posting_cool_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ???\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/huh.gif" align="bottom" alt="', $txt['manual_posting_huh_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' ::)\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/rolleyes.gif" align="bottom" alt="', $txt['manual_posting_rolleyes_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :P\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/tongue.gif" align="bottom" alt="', $txt['manual_posting_tongue_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-[\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/embarrassed.gif" align="bottom" alt="', $txt['manual_posting_embarrassed_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-X\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/lipsrsealed.gif" align="bottom" alt="', $txt['manual_posting_lipsrsealed_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-\\\\\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/undecided.gif" align="bottom" alt="', $txt['manual_posting_undecided_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :-*\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/kiss.gif" align="bottom" alt="', $txt['manual_posting_kiss_code'], '" /></a> <a href="javascript:void(0);" onclick="replaceText(\' :\\\'(\', document.forms.postmodify.message);"><img src="', $modSettings['smileys_url'], '/', $context['user']['smiley_set'], '/cry.gif" align="bottom" alt="', $txt['manual_posting_cry_code'], '" /></a><br />
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" align="right"></td>
+						<td>
+							<textarea class="editor" name="message" rows="12" cols="60" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</form>
+		<br />
 	</div>
 	<h3 class="section" id="messageicon">', $txt['manual_posting_sub_message_icon'], '</h3>
 	<p>', $txt['manual_posting_msg_icon_dropdown'], '</p>
@@ -1713,72 +1695,75 @@ function template_manual_posting_topics()
 	<h2 class="section" id="additional">', $txt['manual_posting_sec_additional_options'], '</h2>
 	<p>', $txt['manual_posting_sec_additional_options_desc'], '</p>
 	<div class="help_sample">
-			<br />
-			<script type="text/javascript">
+		<br />
+		<script type="text/javascript">
 //<![CDATA[
-			var currentSwap = false;
-			function swapOptions()
-			{
-						document.getElementById("postMoreExpand").src = smf_images_url + "/" + (currentSwap ? "collapse.gif" : "expand.gif");
-						document.getElementById("postMoreExpand").alt = currentSwap ? "-" : "+";
-						document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
-						if (document.getElementById("postAttachment"))
-								document.getElementById("postAttachment").style.display = currentSwap ? "" : "none";
-						if (document.getElementById("postAttachment2"))
-								document.getElementById("postAttachment2").style.display = currentSwap ? "" : "none";
-						currentSwap = !currentSwap;
-			}
+		var currentSwap = false;
+		function swapOptions()
+		{
+			document.getElementById("postMoreExpand").src = smf_images_url + "/" + (currentSwap ? "collapse.gif" : "expand.gif");
+			document.getElementById("postMoreExpand").alt = currentSwap ? "-" : "+";
+			document.getElementById("postMoreOptions").style.display = currentSwap ? "" : "none";
+			if (document.getElementById("postAttachment"))
+					document.getElementById("postAttachment").style.display = currentSwap ? "" : "none";
+			if (document.getElementById("postAttachment2"))
+					document.getElementById("postAttachment2").style.display = currentSwap ? "" : "none";
+			currentSwap = !currentSwap;
+		}
 //]]>
-</script>
-			<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '">
-				<table border="0" width="100%" align="center" cellspacing="1" cellpadding="3" class="bordercolor">
-					<tr>
-						<td class="windowbg">
-							<table border="0" cellpadding="3" width="100%">
-								<tr>
-									<td colspan="2" style="padding-left: 5ex;"><a href="javascript:swapOptions();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="postMoreExpand" name="postMoreExpand" /></a> <a href="javascript:swapOptions();" class="board"><strong>', $txt['manual_posting_sec_additional_options'], '...</strong></a></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td>
-										<div id="postMoreOptions">
-											<table width="80%" cellpadding="0" cellspacing="0" border="0">
-												<tr>
-													<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_notify'], '</td>
-												</tr>
-												<tr>
-													<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_return'], '</td>
-												</tr>
-												<tr>
-													<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_no_smiley'], '</td>
-												</tr>
-											</table>
-										</div>
-									</td>
-								</tr>
-								<tr id="post', $txt['manual_posting_attach'], 'ment2">
-									<td align="right" valign="top"><strong>', $txt['manual_posting_attach'], ':</strong></td>
-									<td class="smalltext"><input type="file" size="48" name="attachment[]" class="input_file" /><br />
-									<input type="file" size="48" name="attachment[]" class="input_file" /><br />
-									', $txt['manual_posting_allowed_types'], '<br />
-									', $txt['manual_posting_max_size'], '</td>
-								</tr>
-								<tr>
-									<td align="center" colspan="2">
-										<script type="text/javascript">
+		</script>
+		<form action="', $scripturl, '?action=help;area=posting_topics" method="post" accept-charset="', $context['character_set'], '">
+			<table border="0" width="100%" align="center" cellspacing="1" cellpadding="3" class="bordercolor">
+				<tr>
+					<td class="windowbg">
+						<table border="0" cellpadding="3" width="100%">
+							<tr>
+								<td colspan="2" style="padding-left: 5ex;"><a href="javascript:swapOptions();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="postMoreExpand" name="postMoreExpand" /></a> <a href="javascript:swapOptions();" class="board"><strong>', $txt['manual_posting_sec_additional_options'], '...</strong></a></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td>
+									<div id="postMoreOptions">
+										<table width="80%" cellpadding="0" cellspacing="0" border="0">
+											<tr>
+												<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_notify'], '</td>
+											</tr>
+											<tr>
+												<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_return'], '</td>
+											</tr>
+											<tr>
+												<td class="smalltext"><input type="checkbox" class="input_check" />&nbsp;', $txt['manual_posting_no_smiley'], '</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+							<tr id="post', $txt['manual_posting_attach'], 'ment2">
+								<td align="right" valign="top"><strong>', $txt['manual_posting_attach'], ':</strong></td>
+								<td class="smalltext"><input type="file" size="48" name="attachment[]" class="input_file" /><br />
+								<input type="file" size="48" name="attachment[]" class="input_file" /><br />
+								', $txt['manual_posting_allowed_types'], '<br />
+								', $txt['manual_posting_max_size'], '</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="2">
+									<script type="text/javascript">
 //<![CDATA[
-										swapOptions();
+									swapOptions();
 //]]>
-</script> <span class="smalltext"><br />
-										', $context['browser']['is_firefox'] ? $txt['manual_posting_shortcuts_firefox'] : $txt['manual_posting_shortcuts'], '</span><br />
-										<input type="button" accesskey="s" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_posts'], '" class="button_submit" /> <input type="button" accesskey="p" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_preview'], '" class="button_submit" />
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</form><br />
+									</script>
+									<span class="smalltext"><br />
+										', $context['browser']['is_firefox'] ? $txt['manual_posting_shortcuts_firefox'] : $txt['manual_posting_shortcuts'], '
+									</span><br />
+									<input type="button" accesskey="s" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_posts'], '" class="button_submit" /> <input type="button" accesskey="p" tabindex="', $context['tabindex']++, '" value="', $txt['manual_posting_preview'], '" class="button_submit" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<br />
 	</div>
 	<h3 class="section" id="notify">', $txt['manual_posting_sub_notify'], '</h3>
 	<p>', $txt['manual_posting_notify_desc'], '</p>
@@ -2281,78 +2266,79 @@ function template_manual_pm_messages()
 	<h2 class="section" id="interface">', $txt['manual_pm_sec_pm2'], '</h2>
 	<p>', $txt['manual_pm_pm_desc2_part1'], '<a href="', $scripturl, '?action=help;area=message_view">', $txt['manual_pm_pm_desc2_link_index_message'], '</a>', $txt['manual_pm_pm_desc2_part2'], '</p>
 	<div class="help_sample">
-			<script type="text/javascript">
+		<script type="text/javascript">
 //<![CDATA[
-			var currentSort = false;
-			function sortLastPM()
-			{
-					document.getElementById("sort-arrow").src = smf_images_url + "/" + (currentSort ? "sort_up.gif" : "sort_down.gif");
-					document.getElementById("sort-arrow").alt = "";
-					currentSort = !currentSort;
-			}
+		var currentSort = false;
+		function sortLastPM()
+		{
+				document.getElementById("sort-arrow").src = smf_images_url + "/" + (currentSort ? "sort_up.gif" : "sort_down.gif");
+				document.getElementById("sort-arrow").alt = "";
+				currentSort = !currentSort;
+		}
 //]]>
-</script>
-			<form action="', $scripturl, '?action=help;area=sending_pms" method="post" accept-charset="', $context['character_set'], '">
-				<table border="0" width="100%" cellspacing="0" cellpadding="0">
-					<tr>
-						<td colspan="2" style="padding: 0 0 6px 0;">
-							<span class="nav"><strong>&nbsp;<a href="', $scripturl, '?action=help;area=board_index" class="nav">', $txt['manual_pm_forum_name'], '</a>&nbsp;&#187;&nbsp;
-							<a href="', $scripturl, '?action=help;area=sending_pms#interface" class="nav">', $txt['manual_pm_personal_msgs'], '</a>&nbsp;&#187;&nbsp;
-							<a href="', $scripturl, '?action=help;area=sending_pms#interface" class="nav">', $txt['manual_pm_inbox'], '</a></strong></span>
-						</td>
-					</tr>
-					<tr>
-						<td width="125" valign="top">
-							<div style="width: 110px;">
-								<div class="cat_bar">
-									<h3 class="catbg">
-										', $txt['manual_pm_messages'], '
-									</h3>
-								</div>
-								<div class="windowbg2 smalltext" style="padding: 4px 6px 2ex 6px;">
-										', $txt['manual_pm_new_msg'], '<br />
-										<strong>', $txt['manual_pm_inbox'], '</strong><br />
-										', $txt['manual_pm_outbox'], '<br />
-								</div>
+		</script>
+		<form action="', $scripturl, '?action=help;area=sending_pms" method="post" accept-charset="', $context['character_set'], '">
+			<table border="0" width="100%" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="2" style="padding: 0 0 6px 0;">
+						<span class="nav"><strong>&nbsp;<a href="', $scripturl, '?action=help;area=board_index" class="nav">', $txt['manual_pm_forum_name'], '</a>&nbsp;&#187;&nbsp;
+						<a href="', $scripturl, '?action=help;area=sending_pms#interface" class="nav">', $txt['manual_pm_personal_msgs'], '</a>&nbsp;&#187;&nbsp;
+						<a href="', $scripturl, '?action=help;area=sending_pms#interface" class="nav">', $txt['manual_pm_inbox'], '</a></strong></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="125" valign="top">
+						<div style="width: 110px;">
+							<div class="cat_bar">
+								<h3 class="catbg">
+									', $txt['manual_pm_messages'], '
+								</h3>
 							</div>
-						</td>
-						<td valign="top">
-							<table cellpadding="0" cellspacing="0" border="0" width="100%" class="bordercolor" align="center">
-								<tr>
-									<td>
-										<table border="0" width="100%" cellspacing="1" class="table_grid bordercolor">
-											<thead>
-												<tr class="catbg">
-													<th class="first_th"><img src="', $settings['images_url'], '/im_switch.gif" alt="" title="" width="16" height="16" /></th>
-													<th class="lefttext" style="width: 32ex;"><a href="javascript:sortLastPM();">', $txt['manual_pm_date'], '&nbsp; <img id="sort-arrow" src="', $settings['images_url'], '/sort_up.gif" alt="" name="sort-arrow" /></a></th>
-													<th class="lefttext" width="46%"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_subject2'], '</a></th>
-													<th class="lefttext"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_from'], '</a></th>
-													<th class="last_th" align="center" width="24"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" /></th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr class="windowbg2">
-													<td align="center" width="2%"><img src="' . $settings['images_url'] . '/icons/pm_read.gif" style="margin-right: 4px;" alt="" /></td>
-													<td>', $txt['manual_pm_date_and_time'], '</td>
-													<td><a href="', $scripturl, '?action=help;area=sending_pms#interface" class="board">', $txt['manual_pm_subject'], '</a></td>
-													<td>', $txt['manual_pm_another_member'], '</td>
-													<td align="center"><input type="checkbox" class="input_check" /></td>
-												</tr>
-												<tr>
-													<td colspan="5" style="padding-top: 5px; height: 25px;">
-														<div class="floatleft"><strong>', $txt['manual_pm_pages'], ':</strong> [<strong>1</strong>]</div>
-														<div class="floatright">&nbsp;<input type="button" value="', $txt['manual_pm_delete_selected'], '" class="button_submit" /></div>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</td>
-								</tr>
-							</table><br />
-						</td>
-					</tr>
-				</table><br />
-			</form>
+							<div class="windowbg2 smalltext" style="padding: 4px 6px 2ex 6px;">
+									', $txt['manual_pm_new_msg'], '<br />
+									<strong>', $txt['manual_pm_inbox'], '</strong><br />
+									', $txt['manual_pm_outbox'], '<br />
+							</div>
+						</div>
+					</td>
+					<td valign="top">
+						<table cellpadding="0" cellspacing="0" border="0" width="100%" class="bordercolor" align="center">
+							<tr>
+								<td>
+									<table border="0" width="100%" cellspacing="1" class="table_grid bordercolor">
+										<thead>
+											<tr class="catbg">
+												<th class="first_th"><img src="', $settings['images_url'], '/im_switch.gif" alt="" title="" width="16" height="16" /></th>
+												<th class="lefttext" style="width: 32ex;"><a href="javascript:sortLastPM();">', $txt['manual_pm_date'], '&nbsp; <img id="sort-arrow" src="', $settings['images_url'], '/sort_up.gif" alt="" name="sort-arrow" /></a></th>
+												<th class="lefttext" width="46%"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_subject2'], '</a></th>
+												<th class="lefttext"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_from'], '</a></th>
+												<th class="last_th" align="center" width="24"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" /></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr class="windowbg2">
+												<td align="center" width="2%"><img src="' . $settings['images_url'] . '/icons/pm_read.gif" style="margin-right: 4px;" alt="" /></td>
+												<td>', $txt['manual_pm_date_and_time'], '</td>
+												<td><a href="', $scripturl, '?action=help;area=sending_pms#interface" class="board">', $txt['manual_pm_subject'], '</a></td>
+												<td>', $txt['manual_pm_another_member'], '</td>
+												<td align="center"><input type="checkbox" class="input_check" /></td>
+											</tr>
+											<tr>
+												<td colspan="5" style="padding-top: 5px; height: 25px;">
+													<div class="floatleft"><strong>', $txt['manual_pm_pages'], ':</strong> [<strong>1</strong>]</div>
+													<div class="floatright">&nbsp;<input type="button" value="', $txt['manual_pm_delete_selected'], '" class="button_submit" /></div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</table><br />
+					</td>
+				</tr>
+			</table>
+			<br />
+		</form>
 	</div>
 	<ul>
 		<li>', $txt['manual_pm_nav_tree'], '</li>
@@ -2429,8 +2415,7 @@ function template_manual_searching()
 				</h3>
 			</div>
 			<fieldset id="advanced_search">
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+				<div class="roundframe rrc">
 					<input type="hidden" name="advanced" value="1" />
 					<span class="enhanced">
 						<strong>', $txt['manual_searching_search_for'], ':</strong>
@@ -2472,11 +2457,9 @@ function template_manual_searching()
 						<dd>', $txt['manual_searching_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" class="input_text" />&nbsp;', $txt['manual_searching_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" class="input_text" /> ', $txt['manual_searching_days'], '</dd>
 					</dl>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</fieldset>
 			<fieldset>
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+				<div class="roundframe rrc">
 					<div class="title_bar">
 						<h4 class="titlebg">', $txt['manual_searching_choose'], '</h4>
 					</div>
@@ -2507,7 +2490,6 @@ function template_manual_searching()
 						<label for="check_all">', $txt['manual_searching_check_all'], '</label>
 					</div>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</fieldset>
 			<div><input type="submit" name="submit" value="', $txt['manual_searching_search'], '" class="button_submit" /></div>
 		</form>

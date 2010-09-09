@@ -528,15 +528,13 @@ function template_editBuddies()
 			<div class="title_bar">
 				<h3 class="titlebg">', $txt['buddy_add'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
-					<label for="new_buddy">
-						<strong>', $txt['who_member'], ':</strong>
-					</label>
-					<input type="text" name="new_buddy" id="new_buddy" size="25" class="input_text" />
-					<input type="submit" value="', $txt['buddy_add_button'], '" class="button_submit" />
+			<div class="roundframe rrc">
+				<label for="new_buddy">
+					<strong>', $txt['who_member'], ':</strong>
+				</label>
+				<input type="text" name="new_buddy" id="new_buddy" size="25" class="input_text" />
+				<input type="submit" value="', $txt['buddy_add_button'], '" class="button_submit" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</form>
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
@@ -614,15 +612,13 @@ function template_editIgnoreList()
 			<div class="title_bar">
 				<h3 class="titlebg">', $txt['ignore_add'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
-					<label for="new_buddy">
-						<strong>', $txt['who_member'], ':</strong>
-					</label>
-					<input type="text" name="new_ignore" id="new_ignore" size="25" class="input_text" />
-					<input type="submit" value="', $txt['ignore_add_button'], '" class="button_submit" />
+			<div class="roundframe rrc">
+				<label for="new_buddy">
+					<strong>', $txt['who_member'], ':</strong>
+				</label>
+				<input type="text" name="new_ignore" id="new_ignore" size="25" class="input_text" />
+				<input type="submit" value="', $txt['ignore_add_button'], '" class="button_submit" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</form>
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
@@ -1650,16 +1646,14 @@ function template_groupMembership()
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['request_group_membership'], '</h3>
 				</div>
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe"><div class="innerframe">
+				<div class="roundframe rrc">
 					', $txt['request_group_membership_desc'], ':
 					<textarea name="reason" rows="4" style="width: 95%"></textarea>
 					<div class="righttext">
 						<input type="hidden" name="gid" value="', $context['group_request']['id'], '" />
 						<input type="submit" name="req" value="', $txt['submit_request'], '" class="button_submit" />
 					</div>
-				</div></div>
-				<span class="lowerframe"><span></span></span>
+				</div>
 			</div>';
 	}
 	else

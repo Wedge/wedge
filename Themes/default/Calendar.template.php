@@ -121,8 +121,7 @@ function template_event_post()
 
 	echo '
 			<div class="windowbg">
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+				<div class="roundframe rrc">
 					<fieldset id="event_main">
 						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', '>', $txt['calendar_event_title'], '</span></legend>
 						<input type="text" name="evtitle" maxlength="70" size="70" value="', $context['event']['title'], '" class="input_text" />
@@ -229,7 +228,6 @@ function template_event_post()
 						<input type="hidden" name="eventid" value="', $context['event']['eventid'], '" />
 					</div>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</div>
 			</div>
 		</form>

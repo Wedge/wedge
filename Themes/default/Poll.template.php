@@ -47,8 +47,7 @@ function template_main()
 
 	echo '
 			<div>
-			<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+				<div class="roundframe rrc">
 					<input type="hidden" name="poll" value="', $context['poll']['id'], '" />
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>
@@ -135,7 +134,6 @@ function template_main()
 						<input type="submit" name="post" value="', $txt['save'], '" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />
 					</div>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</div>
 			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
 			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />

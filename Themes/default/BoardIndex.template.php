@@ -267,7 +267,7 @@ function template_info_center()
 	// Here's where the "Info Center" starts...
 	echo '
 	<div class="clear"></div>
-	<div class="roundframe rrc"><div class="innerframe">
+	<div class="roundframe rrc">
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<img class="icon" id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
@@ -459,7 +459,7 @@ function template_info_center()
 
 	echo '
 		</div>
-	</div></div>';
+	</div>';
 
 	// Info center collapse object.
 	echo '

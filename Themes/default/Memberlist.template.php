@@ -8,27 +8,28 @@ function template_main()
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
-			'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active'=> true),
-			'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=search'),
-		);
+		'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active'=> true),
+		'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=search'),
+	);
 
 	echo '
 	<div class="main_section" id="memberlist">
 		<div class="cat_bar">
 			<h4 class="catbg">
 				<span class="floatleft">', $txt['members_list'], '</span>';
-		if (!isset($context['old_search']))
-				echo '
-				<span class="floatright">', $context['letter_links'], '</span>';
+
+	if (!isset($context['old_search']))
 		echo '
+				<span class="floatright">', $context['letter_links'], '</span>';
+
+	echo '
 			</h4>
 		</div>
 		<div class="pagesection">
 			', template_button_strip($memberlist_buttons, 'right'), '
 			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
-		</div>';
+		</div>
 
-	echo '
 		<div id="mlist" class="tborder topic_table">
 			<table class="table_grid" cellspacing="0" width="100%">
 			<thead>
@@ -143,10 +144,10 @@ function template_main()
 			<div class="floatright">
 				<a href="', $scripturl, '?action=mlist;sa=search;search=', $context['old_search_value'], '">', $txt['mlist_search_again'], '</a>
 			</div>';
+
 	echo '
 		</div>
 	</div>';
-
 }
 
 // A page allowing people to search the member list.
@@ -156,9 +157,9 @@ function template_search()
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
-			'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=all'),
-			'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=search', 'active' => true),
-		);
+		'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=all'),
+		'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.gif', 'lang' => true, 'url' => $scripturl . '?action=mlist' . ';sa=search', 'active' => true),
+	);
 
 	// Start the submission form for the search!
 	echo '
@@ -172,10 +173,11 @@ function template_search()
 			<div class="pagesection">
 				', template_button_strip($memberlist_buttons, 'right'), '
 			</div>';
+
 	// Display the input boxes for the form.
-	echo '	<div id="memberlist_search" class="clear">
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+	echo '
+			<div id="memberlist_search" class="clear">
+				<div class="roundframe rrc">
 					<div id="mlist_search" class="flow_hidden">
 						<div id="search_term_input"><br />
 							<strong>', $txt['search_for'], ':</strong>
@@ -188,17 +190,17 @@ function template_search()
 	{
 		echo '
 							<label for="fields-', $id, '"><input type="checkbox" name="fields[]" id="fields-', $id, '" value="', $id, '" ', in_array($id, $context['search_defaults']) ? 'checked="checked"' : '', ' class="input_check" />', $title, '</label><br />';
-	// Half way through?
+		// Halfway through?
 		if (round(count($context['search_fields']) / 2) == ++$count)
 			echo '
 						</span>
 						<span class="floatleft">';
 	}
-		echo '
+
+	echo '
 						</span>
 					</div>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</div>
 		</div>
 	</form>';

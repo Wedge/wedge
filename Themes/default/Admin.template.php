@@ -30,20 +30,16 @@ function template_admin()
 	echo $txt['admin_center'], '
 			</h3>
 		</div>
-		<span class="upperframe"><span></span></span>
-		<div class="roundframe">
+		<div class="roundframe rrc">
 			<div id="welcome">
 				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
 				', sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']), '
 			</div>
-		</div>
-		<span class="lowerframe"><span></span></span>';
+		</div>';
 
 	// Is there an update available?
 	echo '
-		<div id="update_section"></div>';
-
-	echo '
+		<div id="update_section"></div>
 		<div id="admin_main_section">';
 
 	// Display the "live news" from simplemachines.org.

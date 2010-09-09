@@ -655,8 +655,7 @@ function template_search()
 	{
 		echo '
 		<fieldset id="simple_search">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<div id="search_term_input">
 					<strong>', $txt['pm_search_text'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="input_text" />
@@ -665,7 +664,6 @@ function template_search()
 				<a href="', $scripturl, '?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
 				<input type="hidden" name="advanced" value="0" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 	}
 
@@ -674,8 +672,7 @@ function template_search()
 	{
 		echo '
 		<fieldset id="advanced_search">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['pm_search_text'], ':</strong>
@@ -719,7 +716,6 @@ function template_search()
 			echo '
 				<br class="clear" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 
 		// Do we have some labels setup? If so offer to search by them!
@@ -727,8 +723,7 @@ function template_search()
 		{
 			echo '
 		<fieldset class="labels">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<div class="title_bar">
 					<h4 class="titlebg">
 						<span class="ie6_header floatleft"><a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a></span>
@@ -750,7 +745,6 @@ function template_search()
 					<input type="submit" name="submit" value="', $txt['pm_search_go'], '" class="button_submit floatright" />
 				</p><br class="clear" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 		}
 	}
@@ -923,8 +917,7 @@ function template_send()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">
 		<div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe"><br class="clear" />';
+			<div class="roundframe rrc"><br class="clear" />';
 
 	// If there were errors for sending the PM, show them.
 	if (!empty($context['post_error']['messages']))
@@ -1016,7 +1009,6 @@ function template_send()
 				<input type="hidden" name="l" value="', isset($context['current_label_id']) ? $context['current_label_id'] : -1, '" />
 				<br class="clear" />
 				</div>
-			<span class="lowerframe"><span></span></span>
 		</div>
 	</form>';
 

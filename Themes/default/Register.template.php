@@ -11,11 +11,9 @@ function template_registration_agreement()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['registration_agreement'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<p>', $context['agreement'], '</p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 			<div id="confirm_buttons">';
 
 	// Age restriction in effect?

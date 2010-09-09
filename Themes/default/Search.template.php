@@ -22,8 +22,7 @@ function template_main()
 	{
 		echo '
 		<fieldset id="simple_search">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<div id="search_term_input">
 					<strong>', $txt['search_for'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />
@@ -46,7 +45,6 @@ function template_main()
 				<a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>
 				<input type="hidden" name="advanced" value="0" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 	}
 
@@ -55,8 +53,7 @@ function template_main()
 	{
 		echo '
 		<fieldset id="advanced_search">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['search_for'], ':</strong>
@@ -121,15 +118,13 @@ function template_main()
 
 		echo '
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 
 		if (empty($context['search_params']['topic']))
 		{
 			echo '
 		<fieldset class="flow_hidden">
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<div class="title_bar">
 					<h4 class="titlebg">
 						<a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
@@ -184,7 +179,6 @@ function template_main()
 				</div>
 				<br class="clear" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</fieldset>';
 		}
 
@@ -235,8 +229,7 @@ function template_results()
 				', $txt['search_adjust_query'], '
 			</h3>
 		</div>
-		<span class="upperframe"><span></span></span>
-		<div class="roundframe">';
+		<div class="roundframe rrc">';
 
 		// Did they make any typos or mistakes, perhaps?
 		if (isset($context['did_you_mean']))
@@ -264,7 +257,6 @@ function template_results()
 		echo '
 			</form>
 		</div>
-		<span class="lowerframe"><span></span></span>
 	</div><br />';
 	}
 

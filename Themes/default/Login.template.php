@@ -16,8 +16,7 @@ function template_login()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
 				</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">';
+			<div class="roundframe rrc">';
 
 	// Did they make a mistake last time?
 	if (!empty($context['login_errors']))
@@ -63,7 +62,6 @@ function template_login()
 				<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
 				<input type="hidden" name="hash_passwrd" value="" />
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</div></form>';
 
 	// Focus on the correct input - username or password.
@@ -101,8 +99,7 @@ function template_kick_guest()
 					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '
 				</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<dl>
 					<dt>', $txt['username'], ':</dt>
 					<dd><input type="text" name="user" size="20" class="input_text" /></dd>
@@ -129,7 +126,6 @@ function template_kick_guest()
 				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
 				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 			<input type="hidden" name="hash_passwrd" value="" />
 		</div>
 	</form>';
@@ -161,8 +157,7 @@ function template_maintenance()
 		<div class="title_bar">
 			<h4 class="titlebg">', $txt['admin_login'], '</h4>
 		</div>
-		<span class="upperframe"><span></span></span>
-		<div class="roundframe">
+		<div class="roundframe rrc">
 			<dl>
 				<dt>', $txt['username'], ':</dt>
 				<dd><input type="text" name="user" size="20" class="input_text" /></dd>
@@ -175,7 +170,6 @@ function template_maintenance()
 			</dl>
 			<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
 		</div>
-		<span class="lowerframe"><span></span></span>
 		<input type="hidden" name="hash_passwrd" value="" />
 	</div>
 </form>';
@@ -197,8 +191,7 @@ function template_admin_login()
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
 			</h3>
 		</div>
-		<span class="upperframe"><span></span></span>
-		<div class="roundframe centertext">';
+		<div class="roundframe rrc centertext">';
 
 	if (!empty($context['incorrect_password']))
 		echo '
@@ -213,7 +206,6 @@ function template_admin_login()
 	// Make sure to output all the old post data.
 	echo $context['post_data'], '
 		</div>
-		<span class="lowerframe"><span></span></span>
 	</div>
 	<input type="hidden" name="admin_hash_pass" value="" />
 </form>';
@@ -236,8 +228,7 @@ function template_retry_activate()
 			<div class="title_bar">
 				<h3 class="titlebg">', $context['page_title'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">';
+			<div class="roundframe rrc">';
 
 	// You didn't even have an ID?
 	if (empty($context['member_id']))
@@ -252,7 +243,6 @@ function template_retry_activate()
 				</dl>
 				<p><input type="submit" value="', $txt['invalid_activation_submit'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</form>';
 }
 
@@ -267,8 +257,7 @@ function template_resend()
 			<div class="title_bar">
 				<h3 class="titlebg">', $context['page_title'], '</h3>
 			</div>
-			<span class="upperframe"><span></span></span>
-			<div class="roundframe">
+			<div class="roundframe rrc">
 				<dl>
 					<dt>', $txt['invalid_activation_username'], ':</dt>
 					<dd><input type="text" name="user" size="40" value="', $context['default_username'], '" class="input_text" /></dd>
@@ -292,7 +281,6 @@ function template_resend()
 	echo '
 				<p><input type="submit" value="', $txt['invalid_activation_resend'], '" class="button_submit" /></p>
 			</div>
-			<span class="lowerframe"><span></span></span>
 		</form>';
 }
 
