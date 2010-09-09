@@ -1265,10 +1265,9 @@ function loadMemberContext($user, $display_custom_fields = false)
  * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected, so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
  *
  * Current detection:
- * - Opera 6.x through 10.x, plus generic
+ * - Opera 9.x through 10.x, plus generic
  * - Webkit (render core for Safari, Chrome, Konqueror) (generic)
  * - Internet Explorer for Apple Mac (generic)
- * - WebTV (generic)
  * - Konqueror (generic)
  * - Firefox 1.x through 3.x (including 3.5 and 3.6, though simply as Firefox 3.x) plus generic
  * - iPhone/iPod (generic)
@@ -1276,7 +1275,7 @@ function loadMemberContext($user, $display_custom_fields = false)
  * - Chrome (generic)
  * - Safari (generic)
  * - Gecko engine (used in Firefox, Seamonkey, others) (generic)
- * - Internet Explorer 5.0, 5.5, 6, 7, 8 (plus generic)
+ * - Internet Explorer 6, 7, 8, 9 (plus generic)
  */
 function detectBrowser()
 {
@@ -1285,42 +1284,34 @@ function detectBrowser()
 	// The following determines the user agent (browser) as best it can.
 	$context['browser'] = array(
 		'is_opera' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false,
-		'is_opera6' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera 6') !== false,
-		'is_opera7' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera 7') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera/7') !== false,
-		'is_opera8' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera 8') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Opera/8') !== false,
 		'is_opera9' => preg_match('~Opera[ /]9(?!\\.[89])~', $_SERVER['HTTP_USER_AGENT']) === 1,
 		'is_opera10' => preg_match('~Opera[ /]10\\.~', $_SERVER['HTTP_USER_AGENT']) === 1 || (preg_match('~Opera[ /]9\\.[89]~', $_SERVER['HTTP_USER_AGENT']) === 1 && preg_match('~Version/1[0-9]\\.~', $_SERVER['HTTP_USER_AGENT']) === 1),
-		'is_webkit' => strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false,
-		'is_mac_ie' => strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') !== false,
-		'is_web_tv' => strpos($_SERVER['HTTP_USER_AGENT'], 'WebTV') !== false,
 		'is_konqueror' => strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false,
-		'is_firefox' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_firefox1' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_firefox2' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_firefox3' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Shiretoko|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_iphone' => strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false,
-		'is_android' => strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false,
 	);
 
-	$context['browser']['is_chrome'] = $context['browser']['is_webkit'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
-	$context['browser']['is_safari'] = !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;
-	$context['browser']['is_gecko'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false && !$context['browser']['is_webkit'] && !$context['browser']['is_konqueror'];
+	$context['browser']['is_webkit'] = $is_webkit = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false,
+	$context['browser']['is_chrome'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
+	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;
+	$context['browser']['is_iphone'] = $is_webkit && (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false),
+	$context['browser']['is_android'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false,
+	$context['browser']['is_gecko'] = !$is_webkit&& !$context['browser']['is_konqueror'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false;
 
-	// Internet Explorer 5 and 6 are often "emulated".
-	$context['browser']['is_ie8'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
-	$context['browser']['is_ie7'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7') !== false && !$context['browser']['is_ie8'];
-	$context['browser']['is_ie6'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false && !$context['browser']['is_ie8'] && !$context['browser']['is_ie7'];
-	$context['browser']['is_ie5.5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.5') !== false;
-	$context['browser']['is_ie5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.0') !== false;
+	$context['browser']['is_firefox'] = $is_moz = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko/') === 1; // Mozilla says "Gecko/date", not "like Gecko"
+	$context['browser']['is_firefox1'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
+	$context['browser']['is_firefox2'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
+	$context['browser']['is_firefox3'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
 
-	$context['browser']['is_ie'] = $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'];
-	// Before IE8 we need to fix IE... lots!
-	$context['browser']['ie_standards_fix'] = !$context['browser']['is_ie8'];
+	// Internet Explorer is often "emulated".
+	$context['browser']['is_ie'] = $is_ie = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false;
+	$context['browser']['is_ie6'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false;
+	$context['browser']['is_ie7'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7') !== false;
+	$context['browser']['is_ie8'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
+	$context['browser']['is_ie9'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 9') !== false;
 
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
 
-	// Robots shouldn't be logging in or registering.  So, they aren't a bot.  Better to be wrong than sorry (or people won't be able to log in!), anyway.
+	// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
 	if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || !$user_info['is_guest'])
 		$context['browser']['possibly_robot'] = false;
 }
@@ -2260,7 +2251,7 @@ function template_include($filename, $once = false)
 
 		<div style="margin: 0 20px;"><tt>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</tt></div>';
 
-			// I know, I know... this is VERY COMPLICATED.  Still, it's good.
+			// Yes, this is VERY complicated... Still, it's good.
 			if (preg_match('~ <strong>(\d+)</strong><br( /)?' . '>$~i', $error, $match) != 0)
 			{
 				$data = file($filename);
@@ -2268,9 +2259,7 @@ function template_include($filename, $once = false)
 				$data2 = preg_split('~\<br( /)?\>~', $data2);
 
 				// Fix the PHP code stuff...
-				if ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'])
-					$data2 = str_replace("\t", '<pre style="display: inline;">' . "\t" . '</pre>', $data2);
-				elseif (!$context['browser']['is_gecko'])
+				if (!$context['browser']['is_gecko'])
 					$data2 = str_replace("\t", '<span style="white-space: pre;">' . "\t" . '</span>', $data2);
 				else
 					$data2 = str_replace('<pre style="display: inline;">' . "\t" . '</pre>', "\t", $data2);

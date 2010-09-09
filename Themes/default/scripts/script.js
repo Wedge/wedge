@@ -24,40 +24,22 @@ var
 	is_webkit = ua.indexOf('applewebkit') != -1,
 	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1,
-	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
+	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android;
 
 var
-	is_ie = is_ie5up = ua.indexOf('msie') != -1 && !is_opera,
-	is_ie50 = is_ie && ua.indexOf('msie 5.0') != -1,
-	is_ie55 = is_ie && ua.indexOf('msie 5.5') != -1,
-	is_ie5 = is_ie && (is_ie50 || is_ie55), is_ie4 = false,
-	is_ie6 = is_ie && ua.indexOf('msie 6') != -1, is_ie6up = is_ie && !is_ie5,     is_ie6down = is_ie6 || is_ie5,
-	is_ie7 = is_ie && ua.indexOf('msie 7') != -1, is_ie7up = is_ie && !is_ie6down, is_ie7down = is_ie7 || is_ie6down,
+	is_ie4 = is_ie5 = is_ie50 = is_ie55 = false,
+	is_ie = is_ie5up = is_ie6up = ua.indexOf('msie') != -1 && !is_opera,
+	is_ie6 = is_ie6down = is_ie && ua.indexOf('msie 6') != -1,
+	is_ie7 = is_ie && ua.indexOf('msie 7') != -1, is_ie7up = is_ie && !is_ie6, is_ie7down = is_ie7 || is_ie6,
 	is_ie8 = is_ie && ua.indexOf('msie 8') != -1, is_ie8up = is_ie && !is_ie7down, is_ie8down = is_ie8 || is_ie7down,
 	is_ie9 = is_ie && ua.indexOf('msie 9') != -1, is_ie9up = is_ie && !is_ie8down;
 
 var ajax_indicator_ele = null;
 
-// Define XMLHttpRequest for IE 5 and above. Works in Opera 7.6 and Safari 1.2.
-if (!('XMLHttpRequest' in window) && 'ActiveXObject' in window)
-	window.XMLHttpRequest = function () {
-		return new ActiveXObject(is_ie5 ? 'Microsoft.XMLHTTP' : 'MSXML2.XMLHTTP');
-	};
-
-// Ensure the getElementsByTagName exists.
-if (!'getElementsByTagName' in document && 'all' in document)
-	document.getElementsByTagName = function (sName) {
-		return document.all.tags[sName];
-	}
-
-// Some older versions of Mozilla don't have this, for some reason.
-if (!('forms' in document))
-	document.forms = document.getElementsByTagName('form');
-
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
 {
-	if (!window.XMLHttpRequest)
+	if (!('XMLHttpRequest' in window))
 		return null;
 
 	var oMyDoc = new XMLHttpRequest();
@@ -70,19 +52,7 @@ function getXMLDocument(sUrl, funcCallback)
 				return;
 
 			if (oMyDoc.responseXML != null && oMyDoc.status == 200)
-			{
-				if (funcCallback.call)
-				{
-					funcCallback.call(oCaller, oMyDoc.responseXML);
-				}
-				// A primitive substitute for the call method to support IE 5.0.
-				else
-				{
-					oCaller.tmpMethod = funcCallback;
-					oCaller.tmpMethod(oMyDoc.responseXML);
-					delete oCaller.tmpMethod;
-				}
-			}
+				funcCallback.call(oCaller, oMyDoc.responseXML);
 		};
 	}
 	oMyDoc.open('GET', sUrl, bAsync);
@@ -105,10 +75,7 @@ function sendXMLDocument(sUrl, sContent, funcCallback)
 			if (oSendDoc.readyState != 4)
 				return;
 
-			if (oSendDoc.responseXML != null && oSendDoc.status == 200)
-				funcCallback.call(oCaller, oSendDoc.responseXML);
-			else
-				funcCallback.call(oCaller, false);
+			funcCallback.call(oCaller, oSendDoc.responseXML != null && oSendDoc.status == 200 ? oSendDoc.responseXML : false);
 		};
 	}
 	oSendDoc.open('POST', sUrl, true);
@@ -718,7 +685,7 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 		replacement += '<a class="navPages" href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
 
 	if (oldLastPage > 0)
-		replacement += '<span style="font-weight: bold; cursor: ' + (is_ie5 ? 'hand' : 'pointer') + ';" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
+		replacement += '<span style="font-weight: bold; cursor: pointer;" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
 
 	// Replace the dots by the new page links.
 	setInnerHTML(spanNode, replacement);
@@ -856,19 +823,11 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
-	{
-		this.tmpMethod = this.opt.funcOnBeforeCollapse;
-		this.tmpMethod();
-		delete this.tmpMethod;
-	}
+		this.opt.funcOnBeforeCollapse.call(this);
 
 	// Handle custom function hook before expand.
 	else if (!bInit && !bCollapse && 'funcOnBeforeExpand' in this.opt)
-	{
-		this.tmpMethod = this.opt.funcOnBeforeExpand;
-		this.tmpMethod();
-		delete this.tmpMethod;
-	}
+		this.opt.funcOnBeforeExpand.call(this);
 
 	// Loop through all the images that need to be toggled.
 	if ('aSwapImages' in this.opt)
@@ -1061,7 +1020,6 @@ JumpTo.prototype.showSelect = function ()
 // Fill the jump to box with entries. Method of the JumpTo class.
 JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 {
-	var bIE5x = !('implementation' in document);
 	var iIndexPointer = 0;
 
 	// Create an option that'll be above and below the category.
@@ -1070,19 +1028,13 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	oDashOption.disabled = 'disabled';
 	oDashOption.value = '';
 
-	// Reset the events and clear the list (IE5.x only).
-	if (bIE5x)
-	{
-		this.dropdownList.onmouseover = null;
-		this.dropdownList.remove(0);
-	}
 	if ('onbeforeactivate' in document)
 		this.dropdownList.onbeforeactivate = null;
 	else
 		this.dropdownList.onfocus = null;
 
 	// Create a document fragment that'll allowing inserting big parts at once.
-	var oListFragment = bIE5x ? this.dropdownList : document.createDocumentFragment();
+	var oListFragment = document.createDocumentFragment();
 
 	// Loop through all items to be added.
 	for (var i = 0, n = aBoardsAndCategories.length; i < n; i++)
@@ -1092,14 +1044,9 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
-			if (bIE5x)
-				iIndexPointer = this.dropdownList.options.length;
-			else
-			{
-				this.dropdownList.insertBefore(oListFragment, this.dropdownList.options[0]);
-				oListFragment = document.createDocumentFragment();
-				continue;
-			}
+			this.dropdownList.insertBefore(oListFragment, this.dropdownList.options[0]);
+			oListFragment = document.createDocumentFragment();
+			continue;
 		}
 
 		if (aBoardsAndCategories[i].isCategory)
@@ -1119,9 +1066,6 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 
 	// Add the remaining items after the currently selected item.
 	this.dropdownList.appendChild(oListFragment);
-
-	if (bIE5x)
-		this.dropdownList.options[iIndexPointer].selected = true;
 
 	// Internet Explorer needs this to keep the box dropped down.
 	this.dropdownList.style.width = 'auto';
@@ -1163,7 +1107,7 @@ IconList.prototype.initIcons = function ()
 {
 	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
 		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
-			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: ' + (is_ie5 ? 'hand' : 'pointer') + '; padding: 3px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0px 3px 0px') + ';" /></div>');
+			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0px 3px 0px') + ';" /></div>');
 }
 
 // Event for the mouse hovering over the original icon.
@@ -1185,7 +1129,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 		this.oContainerDiv = document.createElement('div');
 		this.oContainerDiv.id = 'iconList';
 		this.oContainerDiv.style.display = 'none';
-		this.oContainerDiv.style.cursor = is_ie5 ? 'hand' : 'pointer';
+		this.oContainerDiv.style.cursor = 'pointer';
 		this.oContainerDiv.style.position = 'absolute';
 		this.oContainerDiv.style.width = oDiv.offsetWidth + 'px';
 		this.oContainerDiv.style.background = this.opt.sContainerBackground;
@@ -1196,17 +1140,13 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
-		this.tmpMethod = getXMLDocument;
-		this.tmpMethod(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
-		delete this.tmpMethod;
+		getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
 
 		createEventListener(document.body);
 	}
 
 	// Set the position of the container.
 	var aPos = smf_itemPos(oDiv);
-	if (is_ie50)
-		aPos[1] += 4;
 
 	this.oContainerDiv.style.top = (aPos[1] + oDiv.offsetHeight) + 'px';
 	this.oContainerDiv.style.left = (aPos[0] - 1) + 'px';
@@ -1275,11 +1215,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 IconList.prototype.onWindowMouseDown = function ()
 {
 	for (var i = aIconLists.length - 1; i >= 0; i--)
-	{
-		aIconLists[i].funcParent.tmpMethod = aIconLists[i].collapseList;
-		aIconLists[i].funcParent.tmpMethod();
-		delete aIconLists[i].funcParent.tmpMethod;
-	}
+		aIconLists[i].collapseList.call(aIconLists[i].funcParent);
 }
 
 // Collapse the list of icons.

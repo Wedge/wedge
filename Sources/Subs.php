@@ -1024,9 +1024,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
 
 						// Older browsers are annoying, aren\'t they?
-						if ($context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
-							$data = str_replace("\t", "<pre style=\"display: inline;\">\t</pre>", $data);
-						elseif (!$context[\'browser\'][\'is_gecko\'])
+						if (!$context[\'browser\'][\'is_gecko\'])
 							$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
 						else
 							$data = str_replace("\t", "&nbsp;&nbsp;&nbsp;", $data);
@@ -1068,9 +1066,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
 
 						// Older browsers are annoying, aren\'t they?
-						if ($context[\'browser\'][\'is_ie5\'] || $context[\'browser\'][\'is_ie5.5\'])
-							$data[0] = str_replace("\t", "<pre style=\"display: inline;\">\t</pre>", $data[0]);
-						elseif (!$context[\'browser\'][\'is_gecko\'])
+						if (!$context[\'browser\'][\'is_gecko\'])
 							$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);
 						else
 							$data[0] = str_replace("\t", "&nbsp;&nbsp;&nbsp;", $data[0]);
@@ -1108,7 +1104,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'tag' => 'flash',
 				'type' => 'unparsed_commas_content',
 				'test' => '\d+,\d+\]',
-				'content' => ($context['browser']['is_ie'] && !$context['browser']['is_mac_ie'] ? '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$2" height="$3"><param name="movie" value="$1" /><param name="play" value="true" /><param name="loop" value="true" /><param name="quality" value="high" /><param name="AllowScriptAccess" value="never" /><embed src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed></object>' : '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed>'),
+				'content' => $context['browser']['is_ie'] ? '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$2" height="$3"><param name="movie" value="$1" /><param name="play" value="true" /><param name="loop" value="true" /><param name="quality" value="high" /><param name="AllowScriptAccess" value="never" /><embed src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed></object>' : '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed>',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					if (isset($disabled[\'url\']))
 						$tag[\'content\'] = \'$1\';
@@ -3311,8 +3307,6 @@ function setupThemeContext($forceload = false)
 		// If we've upgraded recently, go easy on the passwords.
 		if (!empty($modSettings['disableHashTime']) && ($modSettings['disableHashTime'] == 1 || time() < $modSettings['disableHashTime']))
 			$context['disable_login_hashing'] = true;
-		elseif ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'])
-			$context['disable_login_hashing'] = true;
 	}
 
 	// Setup the main menu items.
@@ -3335,7 +3329,7 @@ function setupThemeContext($forceload = false)
 		var smf_avatarMaxWidth = ' . (int) $modSettings['avatar_max_width_external'] . ';
 		var smf_avatarMaxHeight = ' . (int) $modSettings['avatar_max_height_external'] . ';';
 
-		if (!$context['browser']['is_ie'] && !$context['browser']['is_mac_ie'])
+		if (!$context['browser']['is_ie'])
 			$context['html_headers'] .= '
 	window.addEventListener("load", smf_avatarResize, false);';
 		else

@@ -13,7 +13,7 @@ function smc_Editor(oOptions)
 
 	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
-	this.bRichTextPossible = !this.opt.bRichEditOff && ((is_ie && !is_ie50) || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
+	this.bRichTextPossible = !this.opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
 	this.oFrameHandle = null;
 	this.oFrameDocument = null;
