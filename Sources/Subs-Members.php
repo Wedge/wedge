@@ -531,11 +531,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$reg_errors[] = array('done', sprintf($txt['valid_email_needed'], $smcFunc['htmlspecialchars']($regOptions['username'])));
 
 	if (!empty($regOptions['check_reserved_name']) && isReservedName($regOptions['username'], 0, false))
-	{
-		if ($regOptions['password'] == 'chocolate cake')
-			$reg_errors[] = array('done', 'Sorry, I don\'t take bribes... you\'ll need to come up with a different name.');
 		$reg_errors[] = array('done', '(' . htmlspecialchars($regOptions['username']) . ') ' . $txt['name_in_use']);
-	}
 
 	// Generate a validation code if it's supposed to be emailed.
 	$validation_code = '';
