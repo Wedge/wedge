@@ -10,8 +10,8 @@ var
 	is_opera5 = is_opera6 = is_opera7 = is_opera8 = false,
 	is_opera10up = is_opera && (ua.indexOf('opera/9.8') != -1 || ua.indexOf('opera 9.8') != -1),
 	is_opera9 = is_opera && !is_opera10up && (ua.indexOf('opera/9') != -1 || ua.indexOf('opera 9') != -1),
-	is_opera95 = is_opera9 && ua.match(/opera[ /]9\.[5-7]/),
-	is_opera105up = is_opera10up && ua.match(/1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
+	is_opera95 = is_opera9 && ua.match(/opera[ \/]9\.[5-7]/),
+	is_opera105up = is_opera10up && ua.match(/[ \/]1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
 	is_opera10 = is_opera10up && !is_opera105up,
 	is_opera95up = is_opera95 || is_opera10up;
 
@@ -30,7 +30,7 @@ var
 	is_ie = is_ie5up = ua.indexOf('msie') != -1 && !is_opera,
 	is_ie50 = is_ie && ua.indexOf('msie 5.0') != -1,
 	is_ie55 = is_ie && ua.indexOf('msie 5.5') != -1,
-	is_ie5 = is_ie50 || is_ie55, is_ie4 = false,
+	is_ie5 = is_ie && (is_ie50 || is_ie55), is_ie4 = false,
 	is_ie6 = is_ie && ua.indexOf('msie 6') != -1, is_ie6up = is_ie && !is_ie5,     is_ie6down = is_ie6 || is_ie5,
 	is_ie7 = is_ie && ua.indexOf('msie 7') != -1, is_ie7up = is_ie && !is_ie6down, is_ie7down = is_ie7 || is_ie6down,
 	is_ie8 = is_ie && ua.indexOf('msie 8') != -1, is_ie8up = is_ie && !is_ie7down, is_ie8down = is_ie8 || is_ie7down,
@@ -1163,7 +1163,7 @@ IconList.prototype.initIcons = function ()
 {
 	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
 		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
-			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: ' + (is_ie && !is_ie6up ? 'hand' : 'pointer') + '; padding: 3px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0px 3px 0px') + ';" /></div>');
+			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: ' + (is_ie5 ? 'hand' : 'pointer') + '; padding: 3px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0px 3px 0px') + ';" /></div>');
 }
 
 // Event for the mouse hovering over the original icon.
@@ -1185,7 +1185,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 		this.oContainerDiv = document.createElement('div');
 		this.oContainerDiv.id = 'iconList';
 		this.oContainerDiv.style.display = 'none';
-		this.oContainerDiv.style.cursor = is_ie && !is_ie6up ? 'hand' : 'pointer';
+		this.oContainerDiv.style.cursor = is_ie5 ? 'hand' : 'pointer';
 		this.oContainerDiv.style.position = 'absolute';
 		this.oContainerDiv.style.width = oDiv.offsetWidth + 'px';
 		this.oContainerDiv.style.background = this.opt.sContainerBackground;
@@ -1450,7 +1450,6 @@ function cleanFileInput(idElement)
 
 function testStyle(sty)
 {
-	// From Modernizr v1.5 (http://www.modernizr.com/license/), (c) 2009-2010 Faruk Ates
 	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
 	for (var i in stys) if (document.body.style[stys[i]] !== undefined) return true;
 	return false;
