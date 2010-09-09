@@ -1289,17 +1289,17 @@ function detectBrowser()
 		'is_konqueror' => strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false,
 	);
 
-	$context['browser']['is_webkit'] = $is_webkit = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false,
+	$context['browser']['is_webkit'] = $is_webkit = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false;
 	$context['browser']['is_chrome'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
 	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;
-	$context['browser']['is_iphone'] = $is_webkit && (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false),
-	$context['browser']['is_android'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false,
+	$context['browser']['is_iphone'] = $is_webkit && (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false);
+	$context['browser']['is_android'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false;
 	$context['browser']['is_gecko'] = !$is_webkit&& !$context['browser']['is_konqueror'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false;
 
 	$context['browser']['is_firefox'] = $is_moz = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko/') === 1; // Mozilla says "Gecko/date", not "like Gecko"
-	$context['browser']['is_firefox1'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-	$context['browser']['is_firefox2'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-	$context['browser']['is_firefox3'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
+	$context['browser']['is_firefox1'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
+	$context['browser']['is_firefox2'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
+	$context['browser']['is_firefox3'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
 
 	// Internet Explorer is often "emulated".
 	$context['browser']['is_ie'] = $is_ie = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false;
