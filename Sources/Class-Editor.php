@@ -77,7 +77,7 @@ class wedgeEditor
 			$context['html_headers'] .= '
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
-			var oEditorStrings= {
+			var oEditorStrings = {
 				wont_work: \'' . addcslashes($txt['rich_edit_wont_work'], "'") . '\',
 				func_disabled: \'' . addcslashes($txt['rich_edit_function_disabled'], "'") . '\',
 				prompt_text_email: \'' . addcslashes($txt['prompt_text_email'], "'") . '\',
@@ -1307,6 +1307,7 @@ class wedgeEditor
 							$parts[$i + 5] = '[' . implode('][', array_keys($inlineElements)) . ']' . $parts[$i + 5];
 						}
 					}
+
 					// Inline tag.
 					else
 					{

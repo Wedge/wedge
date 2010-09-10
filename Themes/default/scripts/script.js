@@ -325,7 +325,7 @@ function replaceText(text, oTextHandle)
 		if (oTextHandle.setSelectionRange)
 		{
 			oTextHandle.focus();
-			var goForward = is_opera ? text.match(/\n/g).length : 0;
+			var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
 			oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
 		}
 		oTextHandle.scrollTop = scrollPos;
@@ -469,10 +469,8 @@ function getOuterHTML(oNode)
 			sReturnValue += '<' + oNode.nodeName;
 
 			for (var i = 0; i < oNode.attributes.length; i++)
-			{
 				if (oNode.attributes[i].nodeValue != null)
 					sReturnValue += ' ' + oNode.attributes[i].nodeName + '="' + oNode.attributes[i].nodeValue + '"';
-			}
 
 			if (oNode.childNodes.length == 0 && in_array(oNode.nodeName.toLowerCase(), ['hr', 'input', 'img', 'link', 'meta', 'br']))
 				sReturnValue += ' />';
@@ -482,7 +480,7 @@ function getOuterHTML(oNode)
 
 		// 2 is an attribute.
 
-		// Just some text..
+		// Just some text...
 		case 3:
 			sReturnValue += oNode.nodeValue;
 		break;
@@ -492,7 +490,7 @@ function getOuterHTML(oNode)
 			sReturnValue += '<![CDATA' + '[' + oNode.nodeValue + ']' + ']>';
 		break;
 
-		// Entity reference..
+		// Entity reference...
 		case 5:
 			sReturnValue += '&' + oNode.nodeName + ';';
 		break;
@@ -1394,9 +1392,14 @@ function testStyle(sty)
 	return false;
 }
 
+function insertAfter(parEl, targEl, newEl)
+{
+	parEl.lastChild == targEl ? parEl.appendChild(newEl) : parEl.insertBefore(newEl, targEl.nextSibling);
+}
+
 function emulateRounded()
 {
-	var divs = document.querySelectorAll ? document.querySelectorAll('div.wrc, div.rrc') : document.getElementsByTagName('div');
+	var divs = document.querySelectorAll ? document.querySelectorAll("div.wrc, div.rrc") : document.getElementsByTagName("div"), upperFrame, lowerFrame;
 	for (var i = 0, n = divs.length; i < n; i++)
 	{
 		var div = divs[i], cls = div.className;
@@ -1407,8 +1410,16 @@ function emulateRounded()
 		}
 		else if (cls.indexOf(' rrc') > -1)
 		{
+			upperFrame = document.createElement("SPAN");
+			lowerFrame = document.createElement("SPAN");
+			upperFrame.className = "upperframe";
+			lowerFrame.className = "lowerframe";
+			upperFrame.innerHTML = "<span></span>";
+			lowerFrame.innerHTML = "<span></span>";
+
 			div.className = cls.replace(/ rrc/, '');
-			setOuterHTML(div, "<span class=\"upperframe\"><span></span></span>" + getOuterHTML(div) + "<span class=\"lowerframe\"><span></span></span>");
+			div.parentNode.insertBefore(upperFrame, div);
+			insertAfter(div.parentNode, div, lowerFrame);
 		}
 	}
 }
@@ -1419,7 +1430,7 @@ var
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
 
-if (!can_borderradius || is_opera)
+if (!can_borderradius)
 {
 	if (document.addEventListener)
 		document.addEventListener('DOMContentLoaded', emulateRounded, false);

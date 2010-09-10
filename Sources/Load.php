@@ -1266,8 +1266,7 @@ function loadMemberContext($user, $display_custom_fields = false)
  *
  * Current detection:
  * - Opera 9.x through 10.x, plus generic
- * - Webkit (render core for Safari, Chrome, Konqueror) (generic)
- * - Internet Explorer for Apple Mac (generic)
+ * - Webkit (render core for Safari, Chrome, Android...) (generic)
  * - Konqueror (generic)
  * - Firefox 1.x through 3.x (including 3.5 and 3.6, though simply as Firefox 3.x) plus generic
  * - iPhone/iPod (generic)
@@ -1282,13 +1281,12 @@ function detectBrowser()
 	global $context, $user_info;
 
 	// The following determines the user agent (browser) as best it can.
-	$context['browser'] = array(
-		'is_opera' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false,
-		'is_opera9' => preg_match('~Opera[ /]9(?!\\.[89])~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_opera10' => preg_match('~Opera[ /]10\\.~', $_SERVER['HTTP_USER_AGENT']) === 1 || (preg_match('~Opera[ /]9\\.[89]~', $_SERVER['HTTP_USER_AGENT']) === 1 && preg_match('~Version/1[0-9]\\.~', $_SERVER['HTTP_USER_AGENT']) === 1),
-		'is_konqueror' => strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false,
-	);
+	$context['browser'] = array();
+	$context['browser']['is_opera'] = $is_opera = strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false;
+	$context['browser']['is_opera9'] = $is_opera && preg_match('~Opera[ /]9(?!\\.[89])~', $_SERVER['HTTP_USER_AGENT']) === 1;
+	$context['browser']['is_opera10'] = $is_opera && preg_match('~Opera[ /]10\\.~', $_SERVER['HTTP_USER_AGENT']) === 1 || (preg_match('~Opera[ /]9\\.[89]~', $_SERVER['HTTP_USER_AGENT']) === 1 && preg_match('~Version/1[0-9]\\.~', $_SERVER['HTTP_USER_AGENT']) === 1);
 
+	$context['browser']['is_konqueror'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false;
 	$context['browser']['is_webkit'] = $is_webkit = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false;
 	$context['browser']['is_chrome'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
 	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;

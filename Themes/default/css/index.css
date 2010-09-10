@@ -2131,7 +2131,7 @@ ul.quickbuttons li.inline_mod_check
 
 #quickReplyOptions .roundframe
 {
-	padding: 0 10%;
+	padding: 0 8%;
 }
 #quickReplyOptions form textarea
 {
@@ -2152,11 +2152,11 @@ ul.quickbuttons li.inline_mod_check
 	display: none;
 }
 
-/* Styles for edit post section
+/* Styles for edit/new post section
 ---------------------------------------------------- */
 form#postmodify .roundframe
 {
-	padding: 0 12%;
+	padding: 10px 8%;
 }
 #post_header, .postbox
 {
