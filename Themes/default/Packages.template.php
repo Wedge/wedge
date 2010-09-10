@@ -574,7 +574,7 @@ function template_browse()
 			function smfSetLatestPackages()
 			{
 				if (typeof(window.smfLatestPackages) != "undefined")
-					setInnerHTML(document.getElementById("packagesLatest"), window.smfLatestPackages);
+					document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;
 
 				if (tempOldOnload)
 				tempOldOnload();
@@ -1451,7 +1451,7 @@ function template_control_chmod()
 			document.getElementById("ftp_error_div").style.backgroundColor = wasSuccess ? "green" : "red";
 			document.getElementById("ftp_error_innerdiv").style.backgroundColor = wasSuccess ? "#DBFDC7" : "#FDBDBD";
 
-			setInnerHTML(document.getElementById("ftp_error_message"), message);
+			document.getElementById("ftp_error_message").innerHTML = message;
 		}
 		generateFTPTest();
 	// ]]></script>';
@@ -1676,7 +1676,7 @@ function template_file_permissions()
 					var fileName = document.createTextNode(fileItems[i].firstChild.nodeValue);
 
 					// Start by wacking in the spaces.
-					setInnerHTML(curCol, repeatString("&nbsp;", curLevel));
+					curCol.innerHTML = repeatString("&nbsp;", curLevel);
 
 					// Create the actual text.
 					if (fileItems[i].getAttribute(\'folder\') == 1)
@@ -1707,7 +1707,7 @@ function template_file_permissions()
 
 					var writeSpan = document.createElement("span");
 					writeSpan.style.color = fileItems[i].getAttribute(\'writable\') ? "green" : "red";
-					setInnerHTML(writeSpan, fileItems[i].getAttribute(\'writable\') ? \'', $txt['package_file_perms_writable'], '\' : \'', $txt['package_file_perms_not_writable'], '\');
+					writeSpan.innerHTML = fileItems[i].getAttribute(\'writable\') ? \'', $txt['package_file_perms_writable'], '\' : \'', $txt['package_file_perms_not_writable'], '\';
 					curCol.appendChild(writeSpan);
 
 					if (fileItems[i].getAttribute(\'permissions\'))
@@ -1777,7 +1777,7 @@ function template_file_permissions()
 				curCol.className = "smalltext";
 				curCol.width = "40%";
 
-				setInnerHTML(curCol, repeatString("&nbsp;", curLevel));
+				curCol.innerHTML = repeatString("&nbsp;", curLevel);
 				curCol.appendChild(document.createTextNode(\'\\u00ab \'));
 				curCol.appendChild(linkData);
 				curCol.appendChild(document.createTextNode(\' \\u00bb\'));

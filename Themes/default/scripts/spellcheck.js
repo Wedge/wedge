@@ -181,11 +181,8 @@ function highlightWord()
 
 	// Rebuild the string with a span wrapped around the misspelled word
 	// so we can highlight it in the div the user is viewing the string in.
-	var divptr, newValue;
-	divptr = document.getElementById("spellview");
-
-	newValue = htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend);
-	setInnerHTML(divptr, newValue.replace(/_\|_/g, '<br />'));
+	var newValue = htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend);
+	document.getElementById("spellview").innerHTML = newValue.replace(/_\|_/g, '<br />');
 
 	// We could use scrollIntoView, but it's just not that great anyway.
 	var spellview_height = typeof(document.getElementById("spellview").currentStyle) != "undefined" ? parseInt(document.getElementById("spellview").currentStyle.height) : document.getElementById("spellview").offsetHeight;
@@ -218,9 +215,7 @@ function nextWord(ignoreall)
 	// Draw it and quit if there are no more misspelled words to evaluate.
 	if (misps.length <= wordindex)
 	{
-		var divptr;
-		divptr = document.getElementById("spellview");
-		setInnerHTML(divptr, htmlspecialchars(mispstr).replace(/_\|_/g, "<br />"));
+		document.getElementById("spellview").innerHTML = htmlspecialchars(mispstr).replace(/_\|_/g, "<br />");
 
 		while (document.forms.spellingForm.suggestions.options.length > 0)
 			document.forms.spellingForm.suggestions.options[0] = null;

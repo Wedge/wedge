@@ -183,7 +183,7 @@ function template_select()
 				for (i = 0; i < 2; i++)
 				{
 					pageIndex = XMLDoc.getElementsByTagName("pageIndex")[i];
-					setInnerHTML(document.getElementById("pageindex_" + pageIndex.getAttribute("section")), pageIndex.firstChild.nodeValue);
+					document.getElementById("pageindex_" + pageIndex.getAttribute("section")).innerHTML = pageIndex.firstChild.nodeValue;
 					start[i] = pageIndex.getAttribute("startFrom");
 				}
 				var numChanges = XMLDoc.getElementsByTagName("change").length;
@@ -219,7 +219,7 @@ function template_select()
 						newItem = document.createElement("LI");
 						newItem.id = curSection + "_" + curId;
 						var contents = "<div class=\\"content\\"><div class=\\"message_header\\"><a class=\\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (curSection == "selected" ? "up" : "down") + "\', " + curId + ");\\"><img src=\\"', $settings['images_url'], '/split_" + (curSection == "selected" ? "de" : "") + "select.gif\\" alt=\\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\\" /></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> ', $txt['by'], ' <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br /><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em></div><div class=\\"post\\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div></div>";
-						newItem.innerHTML = "<div class=\\"windowbg2" + (is_ie8down ? "\\"><span class=\\"topslice\\"><span></span></span>" + contents + "<span class=\\"botslice\\"><span></span></span>" : " wrc\\">" + contents) + "</div>";
+						newItem.innerHTML = "<div class=\\"windowbg2" + (can_borderradius ? "\\"><span class=\\"topslice\\"><span></span></span>" + contents + "<span class=\\"botslice\\"><span></span></span>" : " wrc\\">" + contents) + "</div>";
 
 						// So, where do we insert it?
 						if (typeof sInsertBeforeId == "string")

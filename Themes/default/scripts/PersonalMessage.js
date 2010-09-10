@@ -24,7 +24,7 @@ smf_PersonalMessageSend.prototype.init = function()
 		// Show the link to bet the BCC control back.
 		var oBccLinkContainer = document.getElementById(this.opt.sBccLinkContainerId);
 		oBccLinkContainer.style.display = '';
-		setInnerHTML(oBccLinkContainer, this.opt.sShowBccLinkTemplate);
+		oBccLinkContainer.innerHTML = this.opt.sShowBccLinkTemplate;
 
 		// Make the link show the BCC control.
 		var oBccLink = document.getElementById(this.opt.sBccLinkId);

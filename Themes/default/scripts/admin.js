@@ -61,7 +61,7 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 	for (var i = 0; i < window.smfAnnouncements.length; i++)
 		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
 
-	setInnerHTML(document.getElementById(this.opt.sAnnouncementContainerId), this.opt.sAnnouncementTemplate.replace('%content%', sMessages));
+	document.getElementById(this.opt.sAnnouncementContainerId).innerHTML = this.opt.sAnnouncementTemplate.replace('%content%', sMessages);
 }
 
 smf_AdminIndex.prototype.showCurrentVersion = function ()
@@ -72,11 +72,11 @@ smf_AdminIndex.prototype.showCurrentVersion = function ()
 	var oSmfVersionContainer = document.getElementById(this.opt.sSmfVersionContainerId);
 	var oYourVersionContainer = document.getElementById(this.opt.sYourVersionContainerId);
 
-	setInnerHTML(oSmfVersionContainer, window.smfVersion);
+	oSmfVersionContainer.innerHTML = window.smfVersion;
 
-	var sCurrentVersion = getInnerHTML(oYourVersionContainer);
+	var sCurrentVersion = oYourVersionContainer.innerHTML;
 	if (sCurrentVersion != window.smfVersion)
-		setInnerHTML(oYourVersionContainer, this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion));
+		oYourVersionContainer.innerHTML = this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion);
 }
 
 smf_AdminIndex.prototype.checkUpdateAvailable = function ()
@@ -90,7 +90,7 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 	var sTitle = 'smfUpdateTitle' in window ? window.smfUpdateTitle : this.opt.sUpdateNotificationDefaultTitle;
 	var sMessage = 'smfUpdateNotice' in window ? window.smfUpdateNotice : this.opt.sUpdateNotificationDefaultMessage;
 
-	setInnerHTML(oContainer, this.opt.sUpdateNotificationTemplate.replace('%title%', sTitle).replace('%message%', sMessage));
+	oContainer.innerHTML = this.opt.sUpdateNotificationTemplate.replace('%title%', sTitle).replace('%message%', sMessage);
 
 	// Parse in the package download URL if it exists in the string.
 	document.getElementById('update-link').href = this.opt.sUpdateNotificationLink.replace('%package%', window.smfUpdatePackage);
@@ -248,7 +248,7 @@ smf_ViewVersions.prototype.determineVersions = function ()
 		if (!document.getElementById('current' + sFilename))
 			continue;
 
-		var sYourVersion = getInnerHTML(document.getElementById('your' + sFilename));
+		var sYourVersion = document.getElementById('your' + sFilename).innerHTML;
 
 		var sCurVersionType;
 		for (var sVersionType in oLowVersion)
@@ -274,8 +274,8 @@ smf_ViewVersions.prototype.determineVersions = function ()
 		else if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
 			oLowVersion[sCurVersionType] = sYourVersion;
 
-		setInnerHTML(document.getElementById('current' + sFilename), smfVersions[sFilename]);
-		setInnerHTML(document.getElementById('your' + sFilename), sYourVersion);
+		document.getElementById('current' + sFilename).innerHTML = smfVersions[sFilename];
+		document.getElementById('your' + sFilename).innerHTML = sYourVersion;
 	}
 
 	if (!('smfLanguageVersions' in window))
@@ -288,10 +288,10 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			if (!document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]))
 				continue;
 
-			setInnerHTML(document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]), smfLanguageVersions[sFilename]);
+			document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]).innerHTML = smfLanguageVersions[sFilename];
 
-			sYourVersion = getInnerHTML(document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]));
-			setInnerHTML(document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]), sYourVersion);
+			sYourVersion = document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).innerHTML;
+			document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).innerHTML = sYourVersion;
 
 			if ((this.compareVersions(oHighYour.Languages, sYourVersion) || oHighYour.Languages == '??') && !oLowVersion.Languages)
 				oHighYour.Languages = sYourVersion;
@@ -306,27 +306,27 @@ smf_ViewVersions.prototype.determineVersions = function ()
 		}
 	}
 
-	setInnerHTML(document.getElementById('yourSources'), oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources);
-	setInnerHTML(document.getElementById('currentSources'), oHighCurrent.Sources);
+	document.getElementById('yourSources').innerHTML = oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources;
+	document.getElementById('currentSources').innerHTML = oHighCurrent.Sources;
 	if (oLowVersion.Sources)
 		document.getElementById('yourSources').style.color = 'red';
 
-	setInnerHTML(document.getElementById('yourDefault'), oLowVersion.Default ? oLowVersion.Default : oHighYour.Default);
-	setInnerHTML(document.getElementById('currentDefault'), oHighCurrent.Default);
+	document.getElementById('yourDefault').innerHTML = oLowVersion.Default ? oLowVersion.Default : oHighYour.Default;
+	document.getElementById('currentDefault').innerHTML = oHighCurrent.Default;
 	if (oLowVersion.Default)
 		document.getElementById('yourDefault').style.color = 'red';
 
 	if (document.getElementById('Templates'))
 	{
-		setInnerHTML(document.getElementById('yourTemplates'), oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates);
-		setInnerHTML(document.getElementById('currentTemplates'), oHighCurrent.Templates);
+		document.getElementById('yourTemplates').innerHTML = oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates;
+		document.getElementById('currentTemplates').innerHTML = oHighCurrent.Templates;
 
 		if (oLowVersion.Templates)
 			document.getElementById('yourTemplates').style.color = 'red';
 	}
 
-	setInnerHTML(document.getElementById('yourLanguages'), oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages);
-	setInnerHTML(document.getElementById('currentLanguages'), oHighCurrent.Languages);
+	document.getElementById('yourLanguages').innerHTML = oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages;
+	document.getElementById('currentLanguages').innerHTML = oHighCurrent.Languages;
 	if (oLowVersion.Languages)
 		document.getElementById('yourLanguages').style.color = 'red';
 }

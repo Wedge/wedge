@@ -124,7 +124,7 @@ smf_NewsFader.prototype.fade = function fade()
 	if (this.aFaderItems.length <= 1)
 		return;
 
-	// A fix for Internet Explorer 4: wait until the document is loaded so we can use setInnerHTML().
+	// Wait until the document is loaded so we can use innerHTML. (IE fix)
 	if ('readyState' in document && document.readyState != 'complete')
 	{
 		window.setTimeout(this.opt.sSelf + '.fade();', 20);
@@ -134,7 +134,7 @@ smf_NewsFader.prototype.fade = function fade()
 	// Starting out?  Set up the first item.
 	if (this.iFadeIndex == -1)
 	{
-		setInnerHTML(this.oFaderHandle, this.sItemTemplate.replace('%1$s', this.aFaderItems[0]));
+		this.oFaderHandle.innerHTML = this.sItemTemplate.replace('%1$s', this.aFaderItems[0]);
 		this.iFadeIndex = 1;
 
 		// In Mozilla, text jumps around from this when 1 or 0.5, etc...
@@ -157,7 +157,7 @@ smf_NewsFader.prototype.fade = function fade()
 		this.bFadeSwitch = !this.bFadeSwitch;
 
 		// Go to the next item, or first if we're out of items.
-		setInnerHTML(this.oFaderHandle, this.sItemTemplate.replace('%1$s', this.aFaderItems[this.iFadeIndex ++]));
+		this.oFaderHandle.innerHTML = this.sItemTemplate.replace('%1$s', this.aFaderItems[this.iFadeIndex ++]);
 		if (this.iFadeIndex >= this.aFaderItems.length)
 			this.iFadeIndex = 0;
 	}

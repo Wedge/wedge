@@ -178,7 +178,7 @@ function template_main()
 			function smfSetLatestThemes()
 			{
 				if (typeof(window.smfLatestThemes) != "undefined")
-					setInnerHTML(document.getElementById("themeLatest"), window.smfLatestThemes);
+					document.getElementById("themeLatest").innerHTML = window.smfLatestThemes;
 
 				if (tempOldOnload)
 					tempOldOnload();
@@ -950,7 +950,7 @@ function template_edit_style()
 						}';
 	else
 		echo '
-						setInnerHTML(frames["css_preview_box"].document.getElementById("css_preview_sheet"), document.forms.stylesheetForm.entire_file.value);';
+						frames["css_preview_box"].document.getElementById("css_preview_sheet").innerHTML = document.forms.stylesheetForm.entire_file.value;';
 	echo '
 					}
 					catch (e)

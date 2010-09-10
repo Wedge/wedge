@@ -98,7 +98,7 @@ function template_folder()
 			if (toAdd.length != 0)
 			{
 				theSelect.options[theSelect.options.length] = new Option("', $txt['pm_msg_label_apply'], '", "");
-				setInnerHTML(theSelect.options[theSelect.options.length - 1], "', $txt['pm_msg_label_apply'], '");
+				theSelect.options[theSelect.options.length - 1].innerHTML = "', $txt['pm_msg_label_apply'], '";
 				theSelect.options[theSelect.options.length - 1].disabled = true;
 
 				for (i in toAdd)
@@ -111,7 +111,7 @@ function template_folder()
 			if (toRemove.length != 0)
 			{
 				theSelect.options[theSelect.options.length] = new Option("', $txt['pm_msg_label_remove'], '", "");
-				setInnerHTML(theSelect.options[theSelect.options.length - 1], "', $txt['pm_msg_label_remove'], '");
+				theSelect.options[theSelect.options.length - 1].innerHTML = "', $txt['pm_msg_label_remove'], '";
 				theSelect.options[theSelect.options.length - 1].disabled = true;
 
 				for (i in toRemove)
@@ -1522,7 +1522,7 @@ function template_add_rule()
 				}
 
 				// Set the actual HTML!
-				setInnerHTML(document.getElementById("ruletext"), text);
+				document.getElementById("ruletext").innerHTML = text;
 			}
 	// ]]></script>';
 

@@ -38,7 +38,7 @@ function template_editsets()
 		function smfSetLatestSmileys()
 		{
 			if (typeof(window.smfLatestSmileys) != "undefined")
-				setInnerHTML(document.getElementById("smileysLatest"), window.smfLatestSmileys);';
+				document.getElementById("smileysLatest").innerHTML = window.smfLatestSmileys;';
 
 		if (!empty($context['selected_set']))
 			echo '

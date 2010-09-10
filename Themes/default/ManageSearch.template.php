@@ -82,14 +82,11 @@ function template_modify_weights()
 		{
 			var total = 0;
 			for (var i = 1; i <= 6; i++)
-			{
 				total += parseInt(document.getElementById(\'weight\' + i + \'_val\').value);
-			}
-			setInnerHTML(document.getElementById(\'weighttotal\'), total);
+
+			document.getElementById(\'weighttotal\').innerHTML = total;
 			for (var i = 1; i <= 6; i++)
-			{
-				setInnerHTML(document.getElementById(\'weight\' + i), (Math.round(1000 * parseInt(document.getElementById(\'weight\' + i + \'_val\').value) / total) / 10) + \'%\');
-			}
+				document.getElementById(\'weight\' + i).innerHTML = (Math.round(1000 * parseInt(document.getElementById(\'weight\' + i + \'_val\').value) / total) / 10) + \'%\';
 		}
 	// ]]></script>';
 }

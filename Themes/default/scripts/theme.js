@@ -55,7 +55,7 @@ function smf_addButton(sButtonStripId, bUseImage, oOptions)
 	// Add the button.
 	var oButtonStripList = oButtonStrip.getElementsByTagName('ul')[0];
 	var oNewButton = document.createElement('li');
-	setInnerHTML(oNewButton, '<a href="' + oOptions.sUrl + '" ' + ('sCustom' in oOptions ? oOptions.sCustom : '') + '><span class="last"' + ('sId' in oOptions ? ' id="' + oOptions.sId + '"': '') + '>' + oOptions.sText + '</span></a>');
+	oNewButton.innerHTML = '<a href="' + oOptions.sUrl + '" ' + ('sCustom' in oOptions ? oOptions.sCustom : '') + '><span class="last"' + ('sId' in oOptions ? ' id="' + oOptions.sId + '"': '') + '>' + oOptions.sText + '</span></a>';
 
 	oButtonStripList.appendChild(oNewButton);
 }

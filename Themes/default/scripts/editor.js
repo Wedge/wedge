@@ -169,7 +169,7 @@ smc_Editor.prototype.init = function()
 
 	// Ensure the currentText is set correctly depending on the mode.
 	if (this.sCurrentText == '' && !this.bRichTextEnabled)
-		this.sCurrentText = getInnerHTML(this.oTextHandle).php_unhtmlspecialchars();
+		this.sCurrentText = this.oTextHandle.innerHTML.php_unhtmlspecialchars();
 
 	// Only try to do this if rich text is supported.
 	if (this.bRichTextPossible)
@@ -575,7 +575,7 @@ smc_Editor.prototype.updateEditorControls = function()
 	this.opt.oBBCBox.setSelect('sel_color', sCurFontColor);
 
 	if (this.showDebug)
-		setInnerHTML(this.oBreadHandle, sTree);
+		this.oBreadHandle.innerHTML = sTree;
 }
 
 // Set the HTML content to be that of the text box - if we are in wysiwyg mode.
@@ -1406,12 +1406,12 @@ smc_SmileyBox.prototype.init = function ()
 	this.getSmileyRowsContent('postform');
 
 	// Inject the HTML.
-	setInnerHTML(document.getElementById(this.opt.sContainerDiv), this.opt.sSmileyBoxTemplate.easyReplace({
+	document.getElementById(this.opt.sContainerDiv).innerHTML = this.opt.sSmileyBoxTemplate.easyReplace({
 		smileyRows: this.oSmileyRowsContent.postform,
 		moreSmileys: this.opt.oSmileyLocations.popup.length == 0 ? '' : this.opt.sMoreSmileysTemplate.easyReplace({
 			moreSmileysId: this.opt.sUniqueId + '_addMoreSmileys'
 		})
-	}));
+	});
 
 	// Initialize the smileys.
 	this.initSmileys('postform', document);
@@ -1585,7 +1585,7 @@ smc_BBCButtonBox.prototype.init = function ()
 	}
 
 	var oBbcContainer = document.getElementById(this.opt.sContainerDiv);
-	setInnerHTML(oBbcContainer, sBbcContent);
+	oBbcContainer.innerHTML = sBbcContent;
 
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{

@@ -32,7 +32,7 @@ function onDocReceived_modify_topic(XMLDoc)
 	cur_msg_id = XMLDoc.getElementsByTagName("message")[0].getAttribute("id");
 
 	cur_subject_div = document.getElementById('msg_' + cur_msg_id.substr(4));
-	buff_subject = getInnerHTML(cur_subject_div);
+	buff_subject = cur_subject_div.innerHTML;
 
 	// Here we hide any other things they want hiding on edit.
 	set_hidden_topic_areas('none');
@@ -44,7 +44,7 @@ function onDocReceived_modify_topic(XMLDoc)
 
 function modify_topic_cancel()
 {
-	setInnerHTML(cur_subject_div, buff_subject);
+	cur_subject_div.innerHTML = buff_subject;
 	set_hidden_topic_areas('');
 
 	in_edit_mode = 0;
@@ -144,10 +144,7 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 			reqWin(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';pb=message;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), 240, 90);
 
 		// Move the view to the quick reply box.
-		if (navigator.appName == 'Microsoft Internet Explorer')
-			window.location.hash = this.opt.sJumpAnchor;
-		else
-			window.location.hash = '#' + this.opt.sJumpAnchor;
+		window.location.hash = (is_ie ? '' : '#') + this.opt.sJumpAnchor;
 
 		return false;
 	}
@@ -257,20 +254,20 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	for (var i = 0; i < XMLDoc.getElementsByTagName("message")[0].childNodes.length; i++)
 		sBodyText += XMLDoc.getElementsByTagName("message")[0].childNodes[i].nodeValue;
 	this.oCurMessageDiv = document.getElementById(this.sCurMessageId);
-	this.sMessageBuffer = getInnerHTML(this.oCurMessageDiv);
+	this.sMessageBuffer = this.oCurMessageDiv.innerHTML;
 
 	// We have to force the body to lose its dollar signs thanks to IE.
 	sBodyText = sBodyText.replace(/\$/g, '{&dollarfix;$}');
 
 	// Actually create the content, with a bodge for disappearing dollar signs.
-	setInnerHTML(this.oCurMessageDiv, this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$'));
+	this.oCurMessageDiv.innerHTML = this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	// Replace the subject part.
 	this.oCurSubjectDiv = document.getElementById('subject_' + this.sCurMessageId.substr(4));
-	this.sSubjectBuffer = getInnerHTML(this.oCurSubjectDiv);
+	this.sSubjectBuffer = this.oCurSubjectDiv.innerHTML;
 
 	sSubjectText = XMLDoc.getElementsByTagName('subject')[0].childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
-	setInnerHTML(this.oCurSubjectDiv, this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
+	this.oCurSubjectDiv.innerHTML = this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	return true;
 }
@@ -281,8 +278,8 @@ QuickModify.prototype.modifyCancel = function ()
 	// Roll back the HTML to its original state.
 	if (this.oCurMessageDiv)
 	{
-		setInnerHTML(this.oCurMessageDiv, this.sMessageBuffer);
-		setInnerHTML(this.oCurSubjectDiv, this.sSubjectBuffer);
+		this.oCurMessageDiv.innerHTML = this.sMessageBuffer;
+		this.oCurSubjectDiv.innerHTML = this.sSubjectBuffer;
 	}
 
 	// No longer in edit mode, that's right.
@@ -326,7 +323,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	{
 		// Mozilla will nicely tell us what's wrong.
 		if (XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
-			setInnerHTML(document.getElementById('error_box'), XMLDoc.firstChild.textContent);
+			document.getElementById('error_box').innerHTML = XMLDoc.firstChild.textContent;
 		else
 			this.modifyCancel();
 		return;
@@ -344,25 +341,25 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 			bodyText += body.childNodes[i].nodeValue;
 
 		this.sMessageBuffer = this.opt.sTemplateBodyNormal.replace(/%body%/, bodyText.replace(/\$/g, '{&dollarfix;$}')).replace(/\{&dollarfix;\$\}/g,'$');
-		setInnerHTML(this.oCurMessageDiv, this.sMessageBuffer);
+		this.oCurMessageDiv.innerHTML = this.sMessageBuffer;
 
 		// Show new subject.
 		var oSubject = message.getElementsByTagName('subject')[0];
 		var sSubjectText = oSubject.childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
 		this.sSubjectBuffer = this.opt.sTemplateSubjectNormal.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g,'$');
-		setInnerHTML(this.oCurSubjectDiv, this.sSubjectBuffer);
+		this.oCurSubjectDiv.innerHTML = this.sSubjectBuffer;
 
 		// If this is the first message, also update the topic subject.
 		if (oSubject.getAttribute('is_first') == '1')
-			setInnerHTML(document.getElementById('top_subject'), this.opt.sTemplateTopSubject.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
+			document.getElementById('top_subject').innerHTML = this.opt.sTemplateTopSubject.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
 
 		// Show this message as 'modified on x by y'.
 		if (this.opt.bShowModify)
-			setInnerHTML(document.getElementById('modified_' + this.sCurMessageId.substr(4)), message.getElementsByTagName('modified')[0].childNodes[0].nodeValue);
+			document.getElementById('modified_' + this.sCurMessageId.substr(4)).innerHTML = message.getElementsByTagName('modified')[0].childNodes[0].nodeValue;
 	}
 	else if (error)
 	{
-		setInnerHTML(document.getElementById('error_box'), error.childNodes[0].nodeValue);
+		document.getElementById('error_box').innerHTML = error.childNodes[0].nodeValue;
 		document.forms.quickModForm.message.style.border = error.getAttribute('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
 		document.forms.quickModForm.subject.style.border = error.getAttribute('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
 	}
@@ -442,13 +439,13 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	// Show the number of messages selected in the button.
 	if (this.opt.bCanRemove && !this.opt.bUseImageButton)
 	{
-		setInnerHTML(document.getElementById(this.opt.sSelf + '_remove_button'), this.opt.sRemoveButtonLabel + ' [' + this.iNumSelected + ']');
+		document.getElementById(this.opt.sSelf + '_remove_button').innerHTML = this.opt.sRemoveButtonLabel + ' [' + this.iNumSelected + ']';
 		document.getElementById(this.opt.sSelf + '_remove_button').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 
 	if (this.opt.bCanRestore && !this.opt.bUseImageButton)
 	{
-		setInnerHTML(document.getElementById(this.opt.sSelf + '_restore_button'), this.opt.sRestoreButtonLabel + ' [' + this.iNumSelected + ']');
+		document.getElementById(this.opt.sSelf + '_restore_button').innerHTML = this.opt.sRestoreButtonLabel + ' [' + this.iNumSelected + ']';
 		document.getElementById(this.opt.sSelf + '_restore_button').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 

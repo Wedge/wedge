@@ -191,7 +191,7 @@ function template_maintain_members()
 			var membersForm = document.getElementById(\'membersForm\');
 
 			document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif");
-			setInnerHTML(document.getElementById("membersText"), membersSwap ? "', $txt['maintain_members_choose'], '" : "', $txt['maintain_members_all'], '");
+			document.getElementById("membersText").innerHTML = membersSwap ? "', $txt['maintain_members_choose'], '" : "', $txt['maintain_members_all'], '";
 			document.getElementById("membersPanel").style.display = (membersSwap ? "block" : "none");
 
 			for (var i = 0; i < membersForm.length; i++)
@@ -341,7 +341,7 @@ function template_maintain_topics()
 
 				// Toggle icon
 				document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
-				setInnerHTML(document.getElementById("rotText"), rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
+				document.getElementById("rotText").innerHTML = rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ';
 
 				// Toggle panel
 				document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";

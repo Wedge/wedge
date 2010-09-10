@@ -2005,7 +2005,7 @@ function template_issueWarning()
 
 			size = barWidth * (percent/100);
 
-			setInnerHTML(document.getElementById(\'warning_text\'), percent + "%");
+			document.getElementById(\'warning_text\').innerHTML = percent + "%";
 			document.getElementById(\'warning_level\').value = percent;
 			document.getElementById(\'warning_progress\').style.width = size + "px";
 
@@ -2029,7 +2029,7 @@ function template_issueWarning()
 				effectText = "', $text, '";';
 
 	echo '
-			setInnerHTML(document.getElementById(\'cur_level_div\'), effectText);
+			document.getElementById(\'cur_level_div\').innerHTML = effectText;
 		}
 
 		// Disable notification boxes as required.
@@ -2534,7 +2534,7 @@ function template_profile_signature_modify()
 											currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
 										}
 
-										setInnerHTML(document.getElementById("signatureLeft"), maxLength - currentSignature.length);
+										document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
 									}
 
 									addLoadEvent(tick);
@@ -2739,7 +2739,7 @@ function template_profile_karma_modify()
 								<strong>', $modSettings['karmaLabel'], '</strong>
 							</dt>
 							<dd>
-								', $modSettings['karmaApplaudLabel'], ' <input type="text" name="karma_good" size="4" value="', $context['member']['karma']['good'], '" onchange="setInnerHTML(document.getElementById(\'karmaTotal\'), this.value - this.form.karma_bad.value);" style="margin-right: 2ex;" class="input_text" /> ', $modSettings['karmaSmiteLabel'], ' <input type="text" name="karma_bad" size="4" value="', $context['member']['karma']['bad'], '" onchange="this.form.karma_good.onchange();" class="input_text" /><br />
+								', $modSettings['karmaApplaudLabel'], ' <input type="text" name="karma_good" size="4" value="', $context['member']['karma']['good'], '" onchange="document.getElementById(\'karmaTotal\').innerHTML = this.value - this.form.karma_bad.value;" style="margin-right: 2ex;" class="input_text" /> ', $modSettings['karmaSmiteLabel'], ' <input type="text" name="karma_bad" size="4" value="', $context['member']['karma']['bad'], '" onchange="this.form.karma_good.onchange();" class="input_text" /><br />
 								(', $txt['total'], ': <span id="karmaTotal">', ($context['member']['karma']['good'] - $context['member']['karma']['bad']), '</span>)
 							</dd>';
 }

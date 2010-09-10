@@ -1,5 +1,5 @@
 /**************************************************************************************************
-  This file will *attempt* to make themes designed for older versions of SMF usable with SMF 2.0.
+  This file will *attempt* to make themes designed for older versions of SMF usable with SMF2/Wedge.
   Unfortunately, the end result will be far from perfect, in most cases. Therefore, we encourage
   theme designers to rebase their themes on either the default or core theme.
 **************************************************************************************************/
@@ -1567,7 +1567,7 @@ dl
 	font-weight: 100;
 	line-height: 105%;
 	white-space: pre-wrap; /* css-2.1 */
-	word-wrap: break-word; /* Internet Explorer 5.5+ */
+	word-wrap: break-word;
 	overflow: hidden;
 }
 #basicinfo h4 span.position

@@ -477,7 +477,7 @@ function getOuterHTML(oNode)
 			if (oNode.childNodes.length == 0 && in_array(oNode.nodeName.toLowerCase(), ['hr', 'input', 'img', 'link', 'meta', 'br']))
 				sReturnValue += ' />';
 			else
-				sReturnValue += '>' + getInnerHTML(oNode) + '</' + oNode.nodeName + '>';
+				sReturnValue += '>' + oNode.innerHTML + '</' + oNode.nodeName + '>';
 		break;
 
 		// 2 is an attribute.
@@ -691,7 +691,7 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 		replacement += '<span style="font-weight: bold; cursor: pointer;" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
 
 	// Replace the dots by the new page links.
-	setInnerHTML(spanNode, replacement);
+	spanNode.innerHTML = replacement;
 }
 
 function smc_preCacheImage(sSrc)
@@ -857,7 +857,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		{
 			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
 			if (typeof(oLink) == 'object' && oLink != null)
-				setInnerHTML(oLink, bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
+				oLink.innerHTML = bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded;
 		}
 	}
 
@@ -1016,7 +1016,7 @@ JumpTo.prototype.showSelect = function ()
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	setInnerHTML(document.getElementById(this.opt.sContainerId), this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select name="' + this.opt.sContainerId + '_select" id="' + this.opt.sContainerId + '_select" ' + ('implementation' in document ? '' : 'onmouseover="grabJumpToContent();" ') + ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board=' + this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />'));
+	document.getElementById(this.opt.sContainerId).innerHTML = this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select name="' + this.opt.sContainerId + '_select" id="' + this.opt.sContainerId + '_select" ' + ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board=' + this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />');
 	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
 }
 
@@ -1170,7 +1170,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 	for (var i = 0, n = icons.length; i < n; i++)
 		sItems += '<div onmouseover="' + this.opt.sBackReference + '.onItemHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onItemHover(this, false);" onmousedown="' + this.opt.sBackReference + '.onItemMouseDown(this, \'' + icons[i].getAttribute('value') + '\');" style="padding: 3px 0px 3px 0px; margin-left: auto; margin-right: auto; border: ' + this.opt.sItemBorder + '; background: ' + this.opt.sItemBackground + '"><img src="' + icons[i].getAttribute('url') + '" alt="' + icons[i].getAttribute('name') + '" title="' + icons[i].firstChild.nodeValue + '" /></div>';
 
-	setInnerHTML(this.oContainerDiv, sItems);
+	this.oContainerDiv.innerHTML = sItems;
 	this.oContainerDiv.style.display = 'block';
 	this.bListLoaded = true;
 
@@ -1208,7 +1208,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 		if (oMessage.getElementsByTagName('error').length == 0)
 		{
 			if (this.opt.bShowModify && oMessage.getElementsByTagName('modified').length != 0)
-				setInnerHTML(document.getElementById('modified_' + this.iCurMessageId), oMessage.getElementsByTagName('modified')[0].childNodes[0].nodeValue);
+				document.getElementById('modified_' + this.iCurMessageId).innerHTML = oMessage.getElementsByTagName('modified')[0].childNodes[0].nodeValue;
 			this.oClickedIcon.getElementsByTagName('img')[0].src = oDiv.getElementsByTagName('img')[0].src;
 		}
 	}

@@ -349,7 +349,7 @@ function template_credits()
 			function smfSetLatestSupport()
 			{
 				if (window.smfLatestSupport)
-					setInnerHTML(document.getElementById("latestSupport"), window.smfLatestSupport);
+					document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
 			}
 
 			function smfCurrentVersion()
@@ -361,12 +361,11 @@ function template_credits()
 
 				smfVer = document.getElementById("smfVersion");
 				yourVer = document.getElementById("yourVersion");
+				smfVer.innerHTML = window.smfVersion;
 
-				setInnerHTML(smfVer, window.smfVersion);
-
-				var currentVersion = getInnerHTML(yourVer);
+				var currentVersion = yourVer.innerHTML;
 				if (currentVersion != window.smfVersion)
-					setInnerHTML(yourVer, "<span class=\"alert\">" + currentVersion + "</span>");
+					yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
 			}';
 
 	// IE 4 is rather annoying, this wouldn't be necessary...

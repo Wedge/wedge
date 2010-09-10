@@ -579,8 +579,8 @@ function template_main()
 					sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=post2\' + (current_board ? \';board=\' + current_board : \'\') + (make_poll ? \';poll\' : \'\') + \';preview;xml\', x.join(\'&\'), onDocSent);
 
 					document.getElementById(\'preview_section\').style.display = \'\';
-					setInnerHTML(document.getElementById(\'preview_subject\'), txt_preview_title);
-					setInnerHTML(document.getElementById(\'preview_body\'), txt_preview_fetch);
+					document.getElementById(\'preview_subject\').innerHTML = txt_preview_title;
+					document.getElementById(\'preview_body\').innerHTML = txt_preview_fetch;
 
 					return false;
 				}
@@ -600,13 +600,13 @@ function template_main()
 
 				// Show the preview section.
 				var preview = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'preview\')[0];
-				setInnerHTML(document.getElementById(\'preview_subject\'), preview.getElementsByTagName(\'subject\')[0].firstChild.nodeValue);
+				document.getElementById(\'preview_subject\').innerHTML = preview.getElementsByTagName(\'subject\')[0].firstChild.nodeValue;
 
 				var bodyText = \'\';
 				for (var i = 0, n = preview.getElementsByTagName(\'body\')[0].childNodes.length; i < n; i++)
 					bodyText += preview.getElementsByTagName(\'body\')[0].childNodes[i].nodeValue;
 
-				setInnerHTML(document.getElementById(\'preview_body\'), bodyText);
+				document.getElementById(\'preview_body\').innerHTML = bodyText;
 				document.getElementById(\'preview_body\').className = \'post\';
 
 				// Show a list of errors (if any).
@@ -616,7 +616,7 @@ function template_main()
 					errorList[errorList.length] = errors.getElementsByTagName(\'error\')[i].firstChild.nodeValue;
 				document.getElementById(\'errors\').style.display = numErrors == 0 ? \'none\' : \'\';
 				document.getElementById(\'error_serious\').style.display = errors.getAttribute(\'serious\') == 1 ? \'\' : \'none\';
-				setInnerHTML(document.getElementById(\'error_list\'), numErrors == 0 ? \'\' : errorList.join(\'<br />\'));
+				document.getElementById(\'error_list\').innerHTML = numErrors == 0 ? \'\' : errorList.join(\'<br />\');
 
 				// Show a warning if the topic has been locked.
 				document.getElementById(\'lock_warning\').style.display = errors.getAttribute(\'topic_locked\') == 1 ? \'\' : \'none\';
@@ -875,7 +875,7 @@ function template_quotefast()
 			}
 			else if (\'innerText\' in stage)
 			{
-				setInnerHTML(stage, quote.replace(/\n/g, "_SMF-BREAK_").replace(/\t/g, "_SMF-TAB_").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+				stage.innerHTML = quote.replace(/\n/g, "_SMF-BREAK_").replace(/\t/g, "_SMF-TAB_").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 				quote = stage.innerText.replace(/_SMF-BREAK_/g, "\n").replace(/_SMF-TAB_/g, "\t");
 			}
 
