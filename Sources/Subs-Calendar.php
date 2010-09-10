@@ -122,7 +122,7 @@ function getBirthdayRange($low_date, $high_date)
 	$year_high = (int) substr($high_date, 0, 4);
 
 	// Collect all of the birthdays for this month.  I know, it's a painful query.
-	$result = $smcFunc['db_query']('birthday_array', '
+	$result = $smcFunc['db_query']('', '
 		SELECT id_member, real_name, YEAR(birthdate) AS birth_year, birthdate
 		FROM {db_prefix}members
 		WHERE YEAR(birthdate) != {string:year_one}

@@ -972,7 +972,7 @@ function BanEdit()
 
 				// Find some additional IP's used by this member.
 				$context['ban_suggestions']['message_ips'] = array();
-				$request = $smcFunc['db_query']('ban_suggest_message_ips', '
+				$request = $smcFunc['db_query']('', '
 					SELECT DISTINCT poster_ip
 					FROM {db_prefix}messages
 					WHERE id_member = {int:current_user}
@@ -988,7 +988,7 @@ function BanEdit()
 				$smcFunc['db_free_result']($request);
 
 				$context['ban_suggestions']['error_ips'] = array();
-				$request = $smcFunc['db_query']('ban_suggest_error_ips', '
+				$request = $smcFunc['db_query']('', '
 					SELECT DISTINCT ip
 					FROM {db_prefix}log_errors
 					WHERE id_member = {int:current_user}
@@ -1368,7 +1368,7 @@ function BanLog()
 
 		// 'Delete all entries' button was pressed.
 		if (!empty($_POST['removeAll']))
-			$smcFunc['db_query']('truncate_table', '
+			$smcFunc['db_query']('', '
 				TRUNCATE {db_prefix}log_banned',
 				array(
 				)

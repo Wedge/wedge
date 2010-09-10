@@ -2213,7 +2213,7 @@ function ignoreboards($memID)
 		fatal_lang_error('ignoreboards_disallowed', 'user');
 
 	// Find all the boards this user is allowed to see.
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db_query']('', '
 		SELECT b.id_cat, c.name AS cat_name, b.id_board, b.name, b.child_level,
 			' . (!empty($cur_profile['ignore_boards']) ? 'b.id_board IN ({array_int:ignore_boards})' : '0') . ' AS is_ignored
 		FROM {db_prefix}boards AS b

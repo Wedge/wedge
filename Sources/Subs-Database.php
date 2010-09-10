@@ -247,6 +247,13 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 		'',
 	);
 
+	// Just in case someone decides to forget the ghost parameter...?
+	if (!empty($identifier) && is_array($db_string))
+	{
+		$db_values = $db_string;
+		$db_string = $identifier;
+	}
+
 	// Decide which connection to use.
 	$connection = $connection == null ? $db_connection : $connection;
 

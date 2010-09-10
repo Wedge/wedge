@@ -1379,7 +1379,7 @@ function generateValidationCode()
 {
 	global $smcFunc, $modSettings;
 
-	$request = $smcFunc['db_query']('get_random_number', '
+	$request = $smcFunc['db_query']('', '
 		SELECT RAND()',
 		array(
 		)

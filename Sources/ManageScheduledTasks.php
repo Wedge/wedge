@@ -433,7 +433,7 @@ function TaskLog()
 	{
 		checkSession();
 
-		$smcFunc['db_query']('truncate_table', '
+		$smcFunc['db_query']('', '
 			TRUNCATE {db_prefix}log_scheduled_tasks',
 			array(
 			)

@@ -803,7 +803,7 @@ function Display()
 	}
 
 	// Get each post and poster in this topic.
-	$request = $smcFunc['db_query']('display_get_post_poster', '
+	$request = $smcFunc['db_query']('', '
 		SELECT id_msg, id_member, approved
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : (!empty($modSettings['db_mysql_group_by_fix']) ? '' : '
@@ -1300,7 +1300,7 @@ function Download()
 
 	// Update the download counter (unless it's a thumbnail).
 	if ($attachment_type != 3)
-		$smcFunc['db_query']('attach_download_increase', '
+		$smcFunc['db_query']('', '
 			UPDATE LOW_PRIORITY {db_prefix}attachments
 			SET downloads = downloads + 1
 			WHERE id_attach = {int:id_attach}',

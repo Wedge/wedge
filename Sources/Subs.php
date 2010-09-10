@@ -2606,7 +2606,7 @@ function writeLog($force = false)
 	{
 		if ($do_delete)
 		{
-			$smcFunc['db_query']('delete_log_online_interval', '
+			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}log_online
 				WHERE log_time < {int:log_time}
 					AND session != {string:session}',

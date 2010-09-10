@@ -1292,7 +1292,7 @@ function scheduled_fetchSMfiles()
 		}
 
 		// Save the file to the database.
-		$smcFunc['db_query']('substring', '
+		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}admin_info_files
 			SET data = SUBSTRING({string:file_data}, 1, 65534)
 			WHERE id_file = {int:id_file}',

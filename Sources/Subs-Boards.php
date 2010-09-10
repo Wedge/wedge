@@ -983,7 +983,7 @@ function reorderBoards()
 	}
 
 	// Sort the records of the boards table on the board_order value.
-	$smcFunc['db_query']('alter_table_boards', '
+	$smcFunc['db_query']('', '
 		ALTER TABLE {db_prefix}boards
 		ORDER BY board_order',
 		array(

@@ -453,7 +453,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	}
 	if (!empty($usernames))
 	{
-		$request = $smcFunc['db_query']('pm_find_username', '
+		$request = $smcFunc['db_query']('', '
 			SELECT id_member, member_name
 			FROM {db_prefix}members
 			WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name') . ' IN ({array_string:usernames})',

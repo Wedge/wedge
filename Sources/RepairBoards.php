@@ -1640,7 +1640,7 @@ function createSalvageArea()
 		$salvageBoardID = $smcFunc['db_insert_id']('{db_prefix}boards', 'id_board');
 	}
 
-	$smcFunc['db_query']('alter_table_boards', '
+	$smcFunc['db_query']('', '
 		ALTER TABLE {db_prefix}boards
 		ORDER BY board_order',
 		array(

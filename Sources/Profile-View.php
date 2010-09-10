@@ -720,7 +720,7 @@ function statPanel($memID)
 	$smcFunc['db_free_result']($result);
 
 	// Number polls voted in.
-	$result = $smcFunc['db_query']('distinct_poll_votes', '
+	$result = $smcFunc['db_query']('', '
 		SELECT COUNT(DISTINCT id_poll)
 		FROM {db_prefix}log_polls
 		WHERE id_member = {int:current_member}',
@@ -769,7 +769,7 @@ function statPanel($memID)
 	$smcFunc['db_free_result']($result);
 
 	// Now get the 10 boards this user has most often participated in.
-	$result = $smcFunc['db_query']('profile_board_stats', '
+	$result = $smcFunc['db_query']('', '
 		SELECT
 			b.id_board, MAX(b.name) AS name, b.num_posts, COUNT(*) AS message_count,
 			CASE WHEN COUNT(*) > MAX(b.num_posts) THEN 1 ELSE COUNT(*) / MAX(b.num_posts) END * 100 AS percentage
@@ -801,7 +801,7 @@ function statPanel($memID)
 		$smcFunc['db_free_result']($result);
 
 	// Posting activity by time.
-	$result = $smcFunc['db_query']('user_activity_by_time', '
+	$result = $smcFunc['db_query']('', '
 		SELECT
 			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
 			COUNT(*) AS post_count
@@ -1722,7 +1722,7 @@ function showPermissions($memID)
 	$curGroups[] = $user_profile[$memID]['id_post_group'];
 
 	// Load a list of boards for the jump box - except the defaults.
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db_query']('', '
 		SELECT b.id_board, b.name, b.id_profile, b.member_groups, IFNULL(mods.id_member, 0) AS is_mod
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})

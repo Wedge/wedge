@@ -1851,7 +1851,7 @@ function EditCustomProfiles()
 		}
 
 		// As there's currently no option to priorize certain fields over others, let's order them alphabetically.
-		$smcFunc['db_query']('alter_table_boards', '
+		$smcFunc['db_query']('', '
 			ALTER TABLE {db_prefix}custom_fields
 			ORDER BY field_name',
 			array(

@@ -386,7 +386,7 @@ function ModifySubscription()
 	{
 		checkSession();
 
-		$smcFunc['db_query']('delete_subscription', '
+		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}subscriptions
 			WHERE id_subscribe = {int:current_subscription}',
 			array(
@@ -481,7 +481,7 @@ function ModifySubscription()
 			list ($disableGroups) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
 
-			$smcFunc['db_query']('substring', '
+			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}subscriptions
 					SET name = SUBSTRING({string:name}, 1, 60), description = SUBSTRING({string:description}, 1, 255), active = {int:is_active},
 					length = SUBSTRING({string:length}, 1, 4), cost = {string:cost}' . ($disableGroups ? '' : ', id_group = {int:id_group},

@@ -241,7 +241,7 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db_query']('', '
 		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile,
 			c.name AS cat_name, IFNULL(par.name, {string:text_none}) AS parent_name, IFNULL(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b

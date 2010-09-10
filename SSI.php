@@ -318,7 +318,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 	global $modSettings, $smcFunc;
 
 	// Find all the posts. Newer ones will have higher IDs.
-	$request = $smcFunc['db_query']('substring', '
+	$request = $smcFunc['db_query']('', '
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg, m.id_board, b.name AS board_name,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
@@ -431,7 +431,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		$icon_sources[$icon] = 'images_url';
 
 	// Find all the posts in distinct topics.  Newer ones will have higher IDs.
-	$request = $smcFunc['db_query']('substring', '
+	$request = $smcFunc['db_query']('', '
 		SELECT
 			m.poster_time, ms.subject, m.id_topic, m.id_member, m.id_msg, b.id_board, b.name AS board_name, t.num_replies, t.num_views,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '

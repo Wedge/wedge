@@ -110,7 +110,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 	if (!$no_delete)
 	{
 		// Delete the already expired associations.
-		$smcFunc['db_query']('openid_delete_assoc_old', '
+		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}openid_assoc
 			WHERE expires <= {int:current_time}',
 			array(
@@ -120,7 +120,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 	}
 
 	// Get the association that has the longest lifetime from now.
-	$request = $smcFunc['db_query']('openid_select_assoc', '
+	$request = $smcFunc['db_query']('', '
 		SELECT server_url, handle, secret, issued, expires, assoc_type
 		FROM {db_prefix}openid_assoc
 		WHERE server_url = {string:server_url}' . ($handle === null ? '' : '
@@ -218,7 +218,7 @@ function smf_openID_removeAssociation($handle)
 {
 	global $smcFunc;
 
-	$smcFunc['db_query']('openid_remove_association', '
+	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}openid_assoc
 		WHERE handle = {string:handle}',
 		array(
@@ -391,7 +391,7 @@ function smf_openid_member_exists($url)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('openid_member_exists', '
+	$request = $smcFunc['db_query']('', '
 		SELECT mem.id_member, mem.member_name
 		FROM {db_prefix}members AS mem
 		WHERE mem.openid_uri = {string:openid_uri}',

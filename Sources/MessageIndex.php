@@ -372,7 +372,7 @@ function MessageIndex()
 		// For search engine effectiveness we'll link guests differently.
 		$context['pageindex_multiplier'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 
-		$result = $smcFunc['db_query']('substring', '
+		$result = $smcFunc['db_query']('', '
 			SELECT
 				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board,
 				' . ($user_info['is_guest'] ? '0' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from,

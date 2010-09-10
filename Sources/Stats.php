@@ -464,7 +464,7 @@ function DisplayStats()
 		$members = array(0 => 0);
 
 	// Topic poster top 10.
-	$members_result = $smcFunc['db_query']('top_topic_starters', '
+	$members_result = $smcFunc['db_query']('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:member_list})

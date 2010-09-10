@@ -1410,13 +1410,8 @@ function emulateRounded()
 		}
 		else if (cls.indexOf(' rrc') > -1)
 		{
-			upperFrame = document.createElement("SPAN");
-			lowerFrame = document.createElement("SPAN");
-			upperFrame.className = "upperframe";
-			lowerFrame.className = "lowerframe";
-			upperFrame.innerHTML = "<span></span>";
-			lowerFrame.innerHTML = "<span></span>";
-
+			upperFrame = document.createElement("SPAN"); upperFrame.className = "upperframe"; upperFrame.innerHTML = "<span></span>";
+			lowerFrame = document.createElement("SPAN"); lowerFrame.className = "lowerframe"; lowerFrame.innerHTML = "<span></span>";
 			div.className = cls.replace(/ rrc/, '');
 			div.parentNode.insertBefore(upperFrame, div);
 			insertAfter(div.parentNode, div, lowerFrame);

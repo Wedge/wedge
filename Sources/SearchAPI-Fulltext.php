@@ -82,7 +82,7 @@ class fulltext_search
 		global $smcFunc;
 
 		// Try to determine the minimum number of letters for a fulltext search.
-		$request = $smcFunc['db_search_query']('max_fulltext_length', '
+		$request = $smcFunc['db_search_query']('', '
 			SHOW VARIABLES
 			LIKE {string:fulltext_minimum_word_length}',
 			array(

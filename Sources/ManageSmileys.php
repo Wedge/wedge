@@ -1577,7 +1577,7 @@ function EditMessageIcons()
 		}
 
 		// Sort by order, so it is quicker :)
-		$smcFunc['db_query']('alter_table_icons', '
+		$smcFunc['db_query']('', '
 			ALTER TABLE {db_prefix}message_icons
 			ORDER BY icon_order',
 			array(
@@ -1742,7 +1742,7 @@ function sortSmileyTable()
 	$smcFunc['db_add_column']('{db_prefix}smileys', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
 
 	// Set the contents of this column.
-	$smcFunc['db_query']('set_smiley_order', '
+	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}smileys
 		SET temp_order = LENGTH(code)',
 		array(
@@ -1750,7 +1750,7 @@ function sortSmileyTable()
 	);
 
 	// Order the table by this column.
-	$smcFunc['db_query']('alter_table_smileys', '
+	$smcFunc['db_query']('', '
 		ALTER TABLE {db_prefix}smileys
 		ORDER BY temp_order DESC',
 		array(

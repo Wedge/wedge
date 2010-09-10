@@ -322,7 +322,7 @@ function EditSearchMethod()
 		$tables = $smcFunc['db_list_tables'](false, $db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
-			$smcFunc['db_search_query']('drop_words_table', '
+			$smcFunc['db_search_query']('', '
 				DROP TABLE {db_prefix}log_search_words',
 				array(
 				)
@@ -496,7 +496,7 @@ function CreateMessageIndex()
 			$tables = $smcFunc['db_list_tables'](false, $db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
-				$smcFunc['db_search_query']('drop_words_table', '
+				$smcFunc['db_search_query']('', '
 					DROP TABLE {db_prefix}log_search_words',
 					array(
 					)

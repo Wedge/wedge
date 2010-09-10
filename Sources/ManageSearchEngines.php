@@ -456,7 +456,7 @@ function SpiderCheck()
 
 	if (!isset($spider_data) || $spider_data === NULL)
 	{
-		$request = $smcFunc['db_query']('spider_check', '
+		$request = $smcFunc['db_query']('', '
 			SELECT id_spider, user_agent, ip_info
 			FROM {db_prefix}spiders',
 			array(
@@ -580,7 +580,7 @@ function consolidateSpiderStats()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('consolidate_spider_stats', '
+	$request = $smcFunc['db_query']('', '
 		SELECT id_spider, MAX(log_time) AS last_seen, COUNT(*) AS num_hits
 		FROM {db_prefix}log_spider_hits
 		WHERE processed = {int:not_processed}
@@ -1009,7 +1009,7 @@ function sortSpiderTable()
 	$smcFunc['db_add_column']('{db_prefix}spiders', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
 
 	// Set the contents of this column.
-	$smcFunc['db_query']('set_spider_order', '
+	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}spiders
 		SET temp_order = LENGTH(user_agent)',
 		array(
@@ -1017,7 +1017,7 @@ function sortSpiderTable()
 	);
 
 	// Order the table by this column.
-	$smcFunc['db_query']('alter_table_spiders', '
+	$smcFunc['db_query']('', '
 		ALTER TABLE {db_prefix}spiders
 		ORDER BY temp_order DESC',
 		array(

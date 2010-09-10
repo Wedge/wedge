@@ -96,7 +96,7 @@ function MoveTopic()
 	loadTemplate('MoveTopic');
 
 	// Get a list of boards this moderator can move to.
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db_query']('', '
 		SELECT b.id_board, b.name, b.child_level, c.name AS cat_name, c.id_cat
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
