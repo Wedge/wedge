@@ -2393,9 +2393,7 @@ function loadSession()
 		// Use cache setting sessions?
 		if (empty($modSettings['databaseSession_enable']) && !empty($modSettings['cache_enable']) && php_sapi_name() != 'cli')
 		{
-			if (function_exists('mmcache_set_session_handlers'))
-				mmcache_set_session_handlers();
-			elseif (function_exists('eaccelerator_set_session_handlers'))
+			if (function_exists('eaccelerator_set_session_handlers'))
 				eaccelerator_set_session_handlers();
 		}
 
@@ -2628,7 +2626,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  * This function supports the following cache methods:
  * - Memcache
  * - eAccelerator
- * - Turck MMcache
  * - Alternative PHP Cache
  * - Zend Platform/ZPS
  * - or a custom file cache
@@ -2677,17 +2674,6 @@ function cache_put_data($key, $value, $ttl = 120)
 			@eaccelerator_rm($key);
 		else
 			eaccelerator_put($key, $value, $ttl);
-	}
-	// Turck MMCache?
-	elseif (function_exists('mmcache_put'))
-	{
-		if (mt_rand(0, 10) == 1)
-			mmcache_gc();
-
-		if ($value === null)
-			@mmcache_rm($key);
-		else
-			mmcache_put($key, $value, $ttl);
 	}
 	// Alternative PHP Cache, ahoy!
 	elseif (function_exists('apc_store'))
@@ -2778,9 +2764,6 @@ function cache_get_data($key, $ttl = 120)
 	// Again, eAccelerator.
 	elseif (function_exists('eaccelerator_get'))
 		$value = eaccelerator_get($key);
-	// The older, but ever-stable, Turck MMCache...
-	elseif (function_exists('mmcache_get'))
-		$value = mmcache_get($key);
 	// This is the free APC from PECL.
 	elseif (function_exists('apc_fetch'))
 		$value = apc_fetch($key . 'smf');

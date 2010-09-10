@@ -404,8 +404,6 @@ function ModifyCacheSettings($return_config = false)
 	// Detect an optimizer?
 	if (function_exists('eaccelerator_put'))
 		$detected = 'eAccelerator';
-	elseif (function_exists('mmcache_put'))
-		$detected = 'MMCache';
 	elseif (function_exists('apc_store'))
 		$detected = 'APC';
 	elseif (function_exists('output_cache_put'))
