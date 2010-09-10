@@ -786,6 +786,35 @@ function permute($array)
 }
 
 /**
+ * Returns the given string, parsed for inline bbcode, i.e. a limited set of bbcode that can be safely parsed and shown in areas where the user doesn't want layout to be potentially broken, such as board descriptions or profile fields.
+ *
+ * Notes:
+ * - This is currently handled by passing an array to parse_bbc().
+ * - This should be written with performance in mind, i.e. use regular expressions for most tags.
+ *
+ * @param mixed $message The original text, transmitted to parse_bbc()
+ * @param mixed $smileys Whether smileys should be parsed too, transmitted to parse_bbc()
+ * @param string $cache_id If specified, a quasi-unique key for the item being parsed, transmitted to parse_bbc()
+ * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
+ * @return mixed See parse_bbc()
+ */
+function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list = true)
+{
+	return parse_bbc($message, $smileys, $cache_id, $short_list ?
+		array(
+			'i', 's', 'u',
+			'email', 'ftp', 'iurl', 'url',
+		) :
+		array(
+			'i', 's', 'u',
+			'email', 'ftp', 'iurl', 'url',
+			'abbr', 'acronym', 'me', 'nobbc', 'sub', 'sup', 'time',
+			'color', 'black', 'blue', 'green', 'red', 'white'
+		)
+	);
+}
+
+/**
  * Returns the given string, parsed for most forms of bbcode, according to the function parameters and general application state.
  *
  * Notes:
