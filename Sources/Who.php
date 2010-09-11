@@ -144,6 +144,12 @@ function Who()
 		$context['show_by'] = $_SESSION['who_online_filter'] = $_REQUEST['show'];
 		$conditions[] = $show_methods[$_REQUEST['show']];
 	}
+	// Perhaps they used the top one on the page
+	elseif (isset($_REQUEST['showtop']) && isset($show_methods[$_REQUEST['showtop']]))
+	{
+		$context['show_by'] = $_SESSION['who_online_filter'] = $_REQUEST['showtop'];
+		$conditions[] = $show_methods[$_REQUEST['showtop']];
+	}
 	// Perhaps we saved a filter earlier in the session?
 	elseif (isset($_SESSION['who_online_filter']))
 	{
