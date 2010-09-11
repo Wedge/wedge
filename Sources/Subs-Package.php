@@ -2794,7 +2794,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 	global $webmaster_email, $sourcedir;
 	static $keep_alive_dom = null, $keep_alive_fp = null;
 
-	preg_match('~^(http|ftp)(s)?://([^/:]+)(:(\d))?(.+)$~', $url, $match);
+	preg_match('~^(http|ftp)(s)?://([^/:]+)(:(\d+))?(.+)$~', $url, $match);
 
 	// An FTP url. We should try connecting and RETRieving it...
 	if (empty($match[1]))

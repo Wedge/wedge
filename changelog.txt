@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10098 $.
+Changelog started January 1, 2004; Currently at $Revision: 10100 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -27,6 +27,8 @@ September 2010
  ! Chose a hopefully more portable fix for cleaning file input (script.js) [Bug 3780]
  ! Cleanup - changing back all CRLF to LF (lots of files) [Bug 4439]
  ! Add attachments cleaning for IE as well, though it allows manually deleting the file input box (script.js)
+ ! fetch_web_data did not properly parse a port on urls (Subs-Package.php)[Bug 4454]
+ ! constructPageIndex didn't respect flexible start for compact pagination (Subs.php)
  
  
 August 2010
