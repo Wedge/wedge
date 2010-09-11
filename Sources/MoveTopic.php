@@ -213,7 +213,7 @@ function MoveTopic2()
 
 	checkSession();
 	require_once($sourcedir . '/Subs-Post.php');
-	require_once($sourcedir . '/ClassEditor.php');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	// The destination board must be numeric.
 	$_POST['toboard'] = (int) $_POST['toboard'];

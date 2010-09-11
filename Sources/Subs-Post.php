@@ -407,10 +407,11 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
 	global $scripturl, $txt, $user_info, $language;
-	global $modSettings, $smcFunc;
+	global $modSettings, $smcFunc, $sourcedir;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
+	require_once($sourcedir . '/Class-Editor.php');
 
 	$onBehalf = $from !== null;
 
@@ -433,7 +434,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// This is the one that will go in their inbox.
 	$htmlmessage = $smcFunc['htmlspecialchars']($message, ENT_QUOTES);
 	$htmlsubject = $smcFunc['htmlspecialchars']($subject);
-	preparsecode($htmlmessage);
+	wedgeEditor::preparsecode($htmlmessage);
 
 	// Integrated PMs
 	call_integration_hook('integrate_personal_message', array($recipients, $from['username'], $subject, $message));
