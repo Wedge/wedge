@@ -440,11 +440,20 @@ function MessageFolder()
 	global $messages_request, $user_info, $recipients, $options, $smcFunc, $memberContext, $user_settings;
 
 	// Changing view?
-	if (isset($_GET['view']))
+	if (isset($_REQUEST['view']))
 	{
-		$context['display_mode'] = $context['display_mode'] > 1 ? 0 : $context['display_mode'] + 1;
-		updateMemberData($user_info['id'], array('pm_prefs' => ($user_settings['pm_prefs'] & 252) | $context['display_mode']));
+		$_GET['view'] = (int) $_GET['view'];
+		if ($_GET['view'] >= 0 && $_GET['view'] <= 2) // 0 = all at once, 1 = one at a time, 2 = conversation mode
+		{
+			$context['display_mode'] = $_GET['view'];
+			updateMemberData($user_info['id'], array('pm_prefs' => ($user_settings['pm_prefs'] & 252) | $context['display_mode']));
+		}
 	}
+	$context['view_select_types'] = array(
+		0 => $txt['pm_display_mode_all'],
+		1 => $txt['pm_display_mode_one'] = 'One at a time',
+		2 => $txt['pm_display_mode_linked'] = 'As a conversation',
+	);
 
 	// Make sure the starting location is valid.
 	if (isset($_GET['start']) && $_GET['start'] != 'new')
