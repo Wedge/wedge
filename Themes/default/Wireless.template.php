@@ -402,7 +402,7 @@ function template_imode_post()
 			echo '
 				<tr><td>' . $txt['topic_locked_no_reply'] . '</td></tr>';
 
-	if (isset($context['name']) && isset($context['email']))
+	if (isset($context['name'], $context['email']))
 	{
 		echo '
 				<tr><td>', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) ? '<font color="#cc0000">' . $txt['username'] . '</font>' : $txt['username'], ':</td></tr>
@@ -1093,7 +1093,7 @@ function template_wap2_post()
 				' . $txt['topic_locked_no_reply'] . '
 			</p>';
 
-	if (isset($context['name']) && isset($context['email']))
+	if (isset($context['name'], $context['email']))
 	{
 		echo '
 			<p class="windowbg"', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) ? ' style="color: #ff0000"' : '', '>

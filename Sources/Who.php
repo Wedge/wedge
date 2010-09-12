@@ -114,7 +114,7 @@ function Who()
 	}
 
 	// Does the user prefer a different sort direction?
-	if (isset($_REQUEST['sort']) && isset($sort_methods[$_REQUEST['sort']]))
+	if (isset($_REQUEST['sort'], $sort_methods[$_REQUEST['sort']]))
 	{
 		$context['sort_by'] = $_SESSION['who_online_sort_by'] = $_REQUEST['sort'];
 		$sort_method = $sort_methods[$_REQUEST['sort']];
@@ -139,10 +139,10 @@ function Who()
 		$conditions[] = '(IFNULL(mem.show_online, 1) = 1)';
 
 	// Does the user wish to apply a filter?
-	if (isset($_REQUEST['show']) && isset($show_methods[$_REQUEST['show']]))
+	if (isset($_REQUEST['show'], $show_methods[$_REQUEST['show']]))
 	{
 		// There should be two inputs, show and showtop. If we're coming from JS, these will be the same. If not... make sure we use the right one!
-		if (isset($_REQUEST['btnTop']) && isset($_REQUEST['showtop']) && isset($show_methods[$_REQUEST['showtop']]))
+		if (isset($_REQUEST['btnTop'], $_REQUEST['showtop'], $show_methods[$_REQUEST['showtop']]))
 			$_REQUEST['show'] = $_REQUEST['showtop'];
 		$context['show_by'] = $_SESSION['who_online_filter'] = $_REQUEST['show'];
 		$conditions[] = $show_methods[$_REQUEST['show']];
@@ -332,7 +332,7 @@ function determineActions($urls, $preferred_prefix = false)
 			continue;
 
 		// If it's the admin or moderation center, and there is an area set, use that instead.
-		if (isset($actions['action']) && ($actions['action'] == 'admin' || $actions['action'] == 'moderate') && isset($actions['area']))
+		if (isset($actions['action'], $actions['area']) && ($actions['action'] == 'admin' || $actions['action'] == 'moderate'))
 			$actions['action'] = $actions['area'];
 
 		// Check if there was no action or the action is display.
@@ -392,7 +392,7 @@ function determineActions($urls, $preferred_prefix = false)
 				$board_ids[(int) $actions['board']][$k] = isset($actions['poll']) ? $txt['who_poll'] : $txt['who_post'];
 			}
 			// A subaction anyone can view... if the language string is there, show it.
-			elseif (isset($actions['sa']) && isset($txt['whoall_' . $actions['action'] . '_' . $actions['sa']]))
+			elseif (isset($actions['sa'], $txt['whoall_' . $actions['action'] . '_' . $actions['sa']]))
 				$data[$k] = $preferred_prefix && isset($txt[$preferred_prefix . $actions['action'] . '_' . $actions['sa']]) ? $txt[$preferred_prefix . $actions['action'] . '_' . $actions['sa']] : $txt['whoall_' . $actions['action'] . '_' . $actions['sa']];
 			// An action any old fellow can look at. (if ['whoall_' . $action] exists, we know everyone can see it.)
 			elseif (isset($txt['whoall_' . $actions['action']]))

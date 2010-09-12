@@ -1647,7 +1647,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// This saves time by doing our break long words checks here.
 	if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 	{
-		if ($context['browser']['is_gecko'] || $context['browser']['is_konqueror'])
+		if ($context['browser']['is_gecko'])
 			$breaker = '<span style="margin: 0 -0.5ex 0 0;"> </span>';
 		// Opera...
 		elseif ($context['browser']['is_opera'])

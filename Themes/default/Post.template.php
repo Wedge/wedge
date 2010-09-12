@@ -161,7 +161,7 @@ function template_main()
 					<dl id="post_header">';
 
 	// Guests have to put in their name and email...
-	if (isset($context['name']) && isset($context['email']))
+	if (isset($context['name'], $context['email']))
 	{
 		echo '
 						<dt>

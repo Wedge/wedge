@@ -403,7 +403,7 @@ function loadUserSettings()
 		else
 		{
 			$ci_user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || strpos($ci_user_agent, 'googlebot') !== false || strpos($ci_user_agent, 'slurp') !== false || strpos($ci_user_agent, 'crawl') !== false;
+			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || strpos($ci_user_agent, 'googlebot') !== false || strpos($ci_user_agent, 'slurp') !== false || strpos($ci_user_agent, 'msnbot') !== false || strpos($ci_user_agent, 'crawl') !== false;
 		}
 	}
 
@@ -1267,7 +1267,6 @@ function loadMemberContext($user, $display_custom_fields = false)
  * Current detection:
  * - Opera 9.x through 10.x, plus generic
  * - Webkit (render core for Safari, Chrome, Android...) (generic)
- * - Konqueror (generic)
  * - Firefox 1.x through 3.x (including 3.5 and 3.6, though simply as Firefox 3.x) plus generic
  * - iPhone/iPod (generic)
  * - Android (generic)
@@ -1281,30 +1280,27 @@ function detectBrowser()
 	global $context, $user_info;
 
 	// The following determines the user agent (browser) as best it can.
-	$context['browser'] = array();
-	$context['browser']['is_opera'] = $is_opera = strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false;
-	$context['browser']['is_opera9'] = $is_opera && preg_match('~Opera[ /]9(?!\\.[89])~', $_SERVER['HTTP_USER_AGENT']) === 1;
-	$context['browser']['is_opera10'] = $is_opera && preg_match('~Opera[ /]10\\.~', $_SERVER['HTTP_USER_AGENT']) === 1 || (preg_match('~Opera[ /]9\\.[89]~', $_SERVER['HTTP_USER_AGENT']) === 1 && preg_match('~Version/1[0-9]\\.~', $_SERVER['HTTP_USER_AGENT']) === 1);
+	$context['browser'] = array(
+		'ua' => $ua = $_SERVER['HTTP_USER_AGENT'],
+		'is_opera' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false
+	);
 
-	$context['browser']['is_konqueror'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false;
-	$context['browser']['is_webkit'] = $is_webkit = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false;
-	$context['browser']['is_chrome'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
-	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;
-	$context['browser']['is_iphone'] = $is_webkit && (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false);
-	$context['browser']['is_android'] = $is_webkit && strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false;
-	$context['browser']['is_gecko'] = !$is_webkit&& !$context['browser']['is_konqueror'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false;
+	// Detect Webkit and related
+	$context['browser']['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
+	$context['browser']['is_chrome'] = $is_webkit && strpos($ua, 'Chrome') !== false;
+	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($ua, 'Safari') !== false;
+	$context['browser']['is_iphone'] = $is_webkit && (strpos($ua, 'iPhone') !== false || strpos($ua, 'iPod') !== false);
+	$context['browser']['is_android'] = $is_webkit && strpos($ua, 'Android') !== false;
 
-	$context['browser']['is_firefox'] = $is_moz = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko/') === 1; // Mozilla says "Gecko/date", not "like Gecko"
-	$context['browser']['is_firefox1'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
-	$context['browser']['is_firefox2'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
-	$context['browser']['is_firefox3'] = $is_moz && preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1;
+	// Detect Firefox versions
+	$context['browser']['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
+	$context['browser']['is_firefox'] = strpos($ua, 'Gecko/') === 1;					// Firefox says "Gecko/20xx", not "like Gecko"
 
 	// Internet Explorer is often "emulated".
-	$context['browser']['is_ie'] = $is_ie = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false;
-	$context['browser']['is_ie6'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false;
-	$context['browser']['is_ie7'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7') !== false;
-	$context['browser']['is_ie8'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
-	$context['browser']['is_ie9'] = $is_ie && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 9') !== false;
+	$context['browser']['is_ie'] = $is_ie = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && strpos($ua, 'MSIE') !== false;
+	$is_ie ? preg_match('~MSIE (\d+)~', $ua, $ie_ver) : '';
+	for ($i = 6; $i <= 9; $i++)
+		$context['browser']['is_ie' . $i] = $is_ie && $ie_ver[1] == $i;
 
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);

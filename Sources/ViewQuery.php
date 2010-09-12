@@ -156,7 +156,7 @@ function ViewQuery()
 		if (!empty($query_data['f']) && !empty($query_data['l']))
 			echo sprintf($txt['debug_query_in_line'], $query_data['f'], $query_data['l']);
 
-		if (isset($query_data['s'], $query_data['t']) && isset($txt['debug_query_which_took_at']))
+		if (isset($query_data['s'], $query_data['t'], $txt['debug_query_which_took_at']))
 			echo sprintf($txt['debug_query_which_took_at'], round($query_data['t'], 8), round($query_data['s'], 8));
 		else
 			echo sprintf($txt['debug_query_which_took'], round($query_data['t'], 8));

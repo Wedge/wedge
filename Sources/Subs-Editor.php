@@ -367,7 +367,7 @@ function AutoSuggestHandler($checkRegistered = null)
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? unserialize(base64_decode($_REQUEST['search_param'])) : array();
 
-	if (isset($_REQUEST['suggest_type'], $_REQUEST['search']) && isset($searchTypes[$_REQUEST['suggest_type']]))
+	if (isset($_REQUEST['suggest_type'], $_REQUEST['search'], $searchTypes[$_REQUEST['suggest_type']]))
 	{
 		$function = 'AutoSuggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
 		$context['sub_template'] = 'generic_xml';

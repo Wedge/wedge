@@ -56,7 +56,7 @@ function createList($listOptions)
 		if (isset($_REQUEST[$request_var_sort], $listOptions['columns'][$_REQUEST[$request_var_sort]], $listOptions['columns'][$_REQUEST[$request_var_sort]]['sort']))
 			$list_context['sort'] = array(
 				'id' => $_REQUEST[$request_var_sort],
-				'desc' => isset($_REQUEST[$request_var_desc]) && isset($listOptions['columns'][$_REQUEST[$request_var_sort]]['sort']['reverse']),
+				'desc' => isset($_REQUEST[$request_var_desc], $listOptions['columns'][$_REQUEST[$request_var_sort]]['sort']['reverse']),
 			);
 		else
 			$list_context['sort'] = array(

@@ -1422,7 +1422,7 @@ function Download()
 
 	else
 	{
-		header('Content-Type: ' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? 'application/octetstream' : 'application/octet-stream'));
+		header('Content-Type: application/octet' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? '' : '-') . 'stream');
 		if (isset($_REQUEST['image']))
 			unset($_REQUEST['image']);
 	}
