@@ -1121,7 +1121,7 @@ function prepareDisplayContext($reset = false)
 	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $smcFunc;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
-	static $counter = null;
+	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
 
 	// If the query returned false, bail.
 	if ($messages_request == false)
@@ -1231,7 +1231,6 @@ function prepareDisplayContext($reset = false)
 	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
 
 	// 0. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
-	static $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
 	if ($can_pm === null)
 	{
 		$can_pm = allowedTo('pm_send');
@@ -1249,7 +1248,7 @@ function prepareDisplayContext($reset = false)
 		{
 			// Can't PM, email, add to buddy list
 			if ($profile_own)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profie']) . ']';
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profile']) . ']';
 			if (!empty($output['member']['website']['url']))
 				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
 			if ($profile_own)
@@ -1258,7 +1257,7 @@ function prepareDisplayContext($reset = false)
 		else
 		{
 			if ($profile_any)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profie']) . ']';
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profile']) . ']';
 			if ($can_pm)
 				$menu[] = '[' . JavaScriptEscape('?action=pm;sa=send;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['pm_menu_send']) . ']';
 			if (in_array($output['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))

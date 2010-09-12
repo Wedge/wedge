@@ -2308,7 +2308,7 @@ function template_manual_pm_messages()
 									<table border="0" width="100%" cellspacing="1" class="table_grid bordercolor">
 										<thead>
 											<tr class="catbg">
-												<th class="first_th"><img src="', $settings['images_url'], '/im_switch.gif" alt="" title="" width="16" height="16" /></th>
+												<th class="first_th"></th>
 												<th class="lefttext" style="width: 32ex;"><a href="javascript:sortLastPM();">', $txt['manual_pm_date'], '&nbsp; <img id="sort-arrow" src="', $settings['images_url'], '/sort_up.gif" alt="" name="sort-arrow" /></a></th>
 												<th class="lefttext" width="46%"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_subject2'], '</a></th>
 												<th class="lefttext"><a href="', $scripturl, '?action=help;area=sending_pms#interface">', $txt['manual_pm_from'], '</a></th>

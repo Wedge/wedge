@@ -864,7 +864,6 @@ function template_main()
 						user', $user, ': [' . implode(',', $linklist) . ']';
 		}
 
-
 		echo '
 					});';
 	}

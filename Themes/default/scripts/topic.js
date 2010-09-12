@@ -545,7 +545,5 @@ UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
 		div.style.top = (pos[1] + oLink.offsetHeight) + 'px';
 	}
 	else
-	{
 		menu_div.parentNode.removeChild(menu_div);
-	}
 }
