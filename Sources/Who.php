@@ -141,6 +141,9 @@ function Who()
 	// Does the user wish to apply a filter?
 	if (isset($_REQUEST['show']) && isset($show_methods[$_REQUEST['show']]))
 	{
+		// There should be two inputs, show and showtop. If we're coming from JS, these will be the same. If not... make sure we use the right one!
+		if (isset($_REQUEST['btnTop']) && isset($_REQUEST['showtop']) && isset($show_methods[$_REQUEST['showtop']]))
+			$_REQUEST['show'] = $_REQUEST['showtop'];
 		$context['show_by'] = $_SESSION['who_online_filter'] = $_REQUEST['show'];
 		$conditions[] = $show_methods[$_REQUEST['show']];
 	}
