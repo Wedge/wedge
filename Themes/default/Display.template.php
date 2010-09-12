@@ -223,7 +223,7 @@ function template_main()
 
 		// Show a link to the member's profile.
 		echo '
-								', $message['member']['link'], '
+								<a href="', $message['member']['href'], '" onclick="javascript:oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], '); return false;">', $message['member']['name'], '</a>
 							</h4>
 							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
 
@@ -845,6 +845,28 @@ function template_main()
 						]
 					});';
 		}
+	}
+
+	if (!empty($context['user_menu']))
+	{
+		echo '
+					var oUserMenu = new UserMenu({';
+
+		$menu_started = false;
+		foreach ($context['user_menu'] as $user => $linklist)
+		{
+			if (!$menu_started)
+				$menu_started = true;
+			else
+				echo ',';
+
+			echo '
+						user', $user, ': [' . implode(',', $linklist) . ']';
+		}
+
+
+		echo '
+					});';
 	}
 
 	echo '

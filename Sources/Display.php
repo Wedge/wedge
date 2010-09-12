@@ -523,6 +523,7 @@ function Display()
 	$context['is_very_hot'] = $topicinfo['num_replies'] >= $modSettings['hotTopicVeryPosts'];
 	$context['is_hot'] = $topicinfo['num_replies'] >= $modSettings['hotTopicPosts'];
 	$context['is_approved'] = $topicinfo['approved'];
+	$context['user_menu'] = array();
 
 	// We don't want to show the poll icon in the topic class here, so pretend it's not one.
 	$context['is_poll'] = false;
@@ -1228,6 +1229,53 @@ function prepareDisplayContext($reset = false)
 
 	// Is this user the message author?
 	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
+
+	// 0. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
+	static $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
+	if ($can_pm === null)
+	{
+		$can_pm = allowedTo('pm_send');
+		$profile_own = allowedTo('profile_view_own');
+		$profile_any = allowedTo('profile_view_any');
+		$buddy = allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']);
+	}
+
+	// Now, to business. Is it not a guest, and we haven't done this before?
+	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
+	{
+		// 1. Figure out that user's menu to the stack. It may be different if it's our menu.
+		$menu = array();
+		if ($output['is_message_author'])
+		{
+			// Can't PM, email, add to buddy list
+			if ($profile_own)
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profie']) . ']';
+			if (!empty($output['member']['website']['url']))
+				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
+			if ($profile_own)
+				$menu[] = '[' . JavaScriptEscape('?action=profile;area=showposts;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+		}
+		else
+		{
+			if ($profile_any)
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profie']) . ']';
+			if ($can_pm)
+				$menu[] = '[' . JavaScriptEscape('?action=pm;sa=send;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['pm_menu_send']) . ']';
+			if (in_array($output['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
+				$menu[] = '[' . JavaScriptEscape('?action=emailuser;sa=email;msg=' . $message['id_msg']) . ',' . JavaScriptEscape($txt['send_email']) . ']';
+			if (!empty($output['member']['website']['url']))
+				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
+			if ($profile_any)
+				$menu[] = '[' . JavaScriptEscape('?action=profile;area=showposts;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+			if ($buddy)
+				$menu[] = '[' . JavaScriptEscape('?action=buddy;u=' . $output['member']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']) . ',' . JavaScriptEscape($txt['usermenu_' . ($memberContext[$message['id_member']]['is_buddy'] ? 'removebuddy' : 'addbuddy')]) . ']';
+		}
+
+		// 2. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
+		// This first operation is probably the nastiest abuse going, mostly because it's dealing with a by-ref :S
+		if (!empty($menu))
+			$context['user_menu'][$output['member']['id']] = $menu;
+	}
 
 	if (empty($options['view_newest_first']))
 		$counter++;

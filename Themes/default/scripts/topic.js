@@ -513,3 +513,39 @@ function expandThumb(thumbID)
 	img.style.height = '';
 	return false;
 }
+
+// *** The UserMenu
+function UserMenu(oList)
+{
+	this.list = oList;
+}
+
+UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
+{
+	var menu_div = document.getElementById('userMenu' + iMsg);
+	if (menu_div == null)
+	{
+		var pos = smf_itemPos(oLink);
+		var div = document.createElement('div');
+		div.id = 'userMenu' + iMsg;
+		div.className = 'usermenu';
+		var sHTML = '';
+		var aLinkList = this.list['user' + iUserId];
+		for (var i = 0; i < aLinkList.length; i++)
+		{
+			if (aLinkList[i][0].charAt[0] == '?')
+				aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
+
+			sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0] + '">' + aLinkList[i][1] + '</a></div>';
+		}
+		div.innerHTML = sHTML;
+		document.body.appendChild(div);
+		div.style.display = 'block';
+		div.style.left = pos[0] + 'px';
+		div.style.top = (pos[1] + oLink.offsetHeight) + 'px';
+	}
+	else
+	{
+		menu_div.parentNode.removeChild(menu_div);
+	}
+}

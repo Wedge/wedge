@@ -564,6 +564,22 @@ div.pagesection div.floatright input
 	padding: 0.1em 0;
 }
 
+/* The user menu in the post display. */
+.usermenu
+{
+	position:absolute;
+	width:auto;
+	white-space:nowrap;
+	z-index:50;
+	padding:0;
+	border:1px solid #000000;
+}
+
+.usermenuitem
+{
+	padding:1px 3px;
+}
+
 /* All the signatures used in the forum.  If your forum users use Mozilla, Opera, or Safari, you might add max-height here ;). */
 .signature, .attachments
 {
