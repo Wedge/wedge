@@ -16,28 +16,28 @@ function template_permission_index()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=quick" method="post" accept-charset="', $context['character_set'], '" name="permissionForm" id="permissionForm">';
 
-		if (!empty($context['profile']))
-			echo '
+	if (!empty($context['profile']))
+		echo '
 			<div class="title_bar">
 				<h3 class="titlebg">', $txt['permissions_for_profile'], ': &quot;', $context['profile']['name'], '&quot;</h3>
 			</div>';
 
-		echo '
+	echo '
 			<table width="100%" class="table_grid">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th">', $txt['membergroups_name'], '</th>
 						<th width="10%" align="center" valign="middle">', $txt['membergroups_members_top'], '</th>';
 
-			if (empty($modSettings['permission_enable_deny']))
-				echo '
+	if (empty($modSettings['permission_enable_deny']))
+		echo '
 						<th width="16%" align="center">', $txt['membergroups_permissions'], '</th>';
-			else
-				echo '
+	else
+		echo '
 						<th width="8%" align="center">', $txt['permissions_allowed'], '</th>
 						<th width="8%" align="center">', $txt['permissions_denied'], '</th>';
 
-			echo '
+	echo '
 						<th width="10%" align="center" valign="middle">', $context['can_modify'] ? $txt['permissions_modify'] : $txt['permissions_view'], '</th>
 						<th class="last_th" width="4%" align="center" valign="middle">
 							', $context['can_modify'] ? '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \'group\');" />' : '', '
@@ -116,12 +116,11 @@ function template_permission_index()
 							<dd>
 								<select name="copy_from">
 									<option value="empty">(', $txt['permissions_select_membergroup'], ')</option>';
+
 		foreach ($context['groups'] as $group)
-		{
 			if ($group['id'] != 1)
 				echo '
 									<option value="', $group['id'], '">', $group['name'], '</option>';
-		}
 
 		echo '
 								</select>
@@ -139,6 +138,7 @@ function template_permission_index()
 							<dd>
 								<select name="permissions">
 									<option value="">(', $txt['permissions_select_permission'], ')</option>';
+
 		foreach ($context['permissions'] as $permissionType)
 		{
 			if ($permissionType['id'] == 'membergroup' && !empty($context['profile']))
@@ -559,15 +559,15 @@ function template_modify_group_simple($type)
 				<thead>
 					<tr class="catbg">
 						<th colspan="2" width="100%" align="left" class="first_th"></th>';
-				if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
-					echo '
+	if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
+		echo '
 						<th colspan="3" width="9" class="last_th">&nbsp;</th>';
-				else
-					echo '
+	else
+		echo '
 						<th>', $txt['permissions_option_on'], '</th>
 						<th>', $txt['permissions_option_off'], '</th>
 						<th class="last_th">', $txt['permissions_option_deny'], '</th>';
-					echo '
+	echo '
 					</tr>
 				</thead>
 				<tbody>';
@@ -619,7 +619,7 @@ function template_modify_group_simple($type)
 								<input type="radio" id="group_select_deny_', $id_group, '" name="group_select_', $id_group, '" value="deny" onclick="determineGroupState(\'', $id_group, '\', \'deny\');" style="display: none;" ', $disable_field, ' class="input_radio" />
 							</div>
 						</td>';
-					echo '
+				echo '
 					</tr>';
 			}
 		}
@@ -646,19 +646,19 @@ function template_modify_group_simple($type)
 						</td>
 						<td valign="top" width="100%" align="left" style="padding-bottom: 2px;">', $permission['name'], '</td>';
 
-					if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
-						echo '
+				if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
+					echo '
 						<td valign="top" style="padding-bottom: 2px;"><input type="checkbox" id="select_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked="checked"' : '', ' onclick="determineGroupState(\'', $id_group, '\');" value="on" class="input_check" ', $disable_field, '/></td>';
-					else
-						echo '
+				else
+					echo '
 						<td valign="top" width="10" style="padding-bottom: 2px;"><input type="radio" id="select_on_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked="checked"' : '', ' value="on" onclick="determineGroupState(\'', $id_group, '\');" class="input_radio" ', $disable_field, '/></td>
 						<td valign="top" width="10" style="padding-bottom: 2px;"><input type="radio" id="select_off_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'off' ? ' checked="checked"' : '', ' value="off" onclick="determineGroupState(\'', $id_group, '\');" class="input_radio" ', $disable_field, '/></td>
 						<td valign="top" width="10" style="padding-bottom: 2px;"><input type="radio" id="select_deny_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked="checked"' : '', ' value="deny" onclick="window.smf_usedDeny = true; determineGroupState(\'', $id_group, '\');" class="input_radio" ', $disable_field, '/></td>';
 
-					echo '
+				echo '
 					</tr>';
 			}
-				$alternate = !$alternate;
+			$alternate = !$alternate;
 		}
 
 		if (!$permissionGroup['hidden'] && $has_display_content)
@@ -758,8 +758,7 @@ function template_modify_group_simple($type)
 		// Force the display?
 		echo '
 			if (curState != \'fudged\')
-				toggleBreakdown(id_group, "none");';
-		echo '
+				toggleBreakdown(id_group, "none");
 		}';
 	}
 
@@ -799,15 +798,11 @@ function template_modify_group_simple($type)
 
 				$perm_ids = array();
 				$count = 0;
+				// Need this to determine what can be tweaked.
 				foreach ($permissionGroup['permissions'] as $permission)
-				{
 					if (!$permission['hidden'])
-					{
-						// Need this for knowing what can be tweaked.
 						$perm_ids[] = "'$permission[id]'";
-					}
-				}
-				// Declare this groups permissions into an array.
+				// Declare this group's permissions into an array.
 				if (!empty($perm_ids))
 					echo '
 			groupPermissions[\'', $id_group, '\'] = new Array(', count($perm_ids), ');';
@@ -817,7 +812,7 @@ function template_modify_group_simple($type)
 
 				// Show the group as required.
 				if ($has_display_content)
-				echo '
+					echo '
 			determineGroupState(\'', $id_group, '\');';
 			}
 		}
@@ -1132,11 +1127,11 @@ function template_postmod_permissions()
 					<tr>
 						<td width="40%" class="windowbg">
 							<span ', ($group['color'] ? 'style="color: ' . $group['color'] . '"' : ''), '>', $group['name'], '</span>';
-			if (!empty($group['children']))
-				echo '
+		if (!empty($group['children']))
+			echo '
 							<br /><span class="smalltext">', $txt['permissions_includes_inherited'], ': &quot;', implode('&quot;, &quot;', $group['children']), '&quot;</span>';
 
-			echo '
+		echo '
 						</td>
 						<td align="center" class="windowbg2"><input type="radio" name="new_topic[', $group['id'], ']" value="allow" ', $group['new_topic'] == 'allow' ? 'checked="checked"' : '', ' class="input_radio" /></td>
 						<td align="center" class="windowbg2"><input type="radio" name="new_topic[', $group['id'], ']" value="moderate" ', $group['new_topic'] == 'moderate' ? 'checked="checked"' : '', ' class="input_radio" /></td>
