@@ -401,10 +401,7 @@ function loadUserSettings()
 			$user_info['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
 		// If we haven't turned on proper spider hunts then have a guess!
 		else
-		{
-			$ci_user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || strpos($ci_user_agent, 'googlebot') !== false || strpos($ci_user_agent, 'slurp') !== false || strpos($ci_user_agent, 'msnbot') !== false || strpos($ci_user_agent, 'crawl') !== false;
-		}
+			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower($_SERVER['HTTP_USER_AGENT']));
 	}
 
 	// Set up the $user_info array.
@@ -1067,8 +1064,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
-	global $context, $modSettings, $board_info, $settings;
-	global $smcFunc;
+	global $context, $modSettings, $board_info, $settings, $smcFunc;
 	static $dataLoaded = array();
 
 	// If this person's data is already loaded, skip it.

@@ -1175,7 +1175,8 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['name'] = $message['poster_name'];
 		$memberContext[$message['id_member']]['id'] = 0;
 		$memberContext[$message['id_member']]['group'] = $txt['guest_title'];
-		$memberContext[$message['id_member']]['link'] = $message['poster_name'];
+		// Wedge supports showing guest posts, grouping them by e-mail address. Can restrict to current board: add ;only=$context['current_board']
+		$memberContext[$message['id_member']]['href'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . base64_encode($message['poster_name']);
 		$memberContext[$message['id_member']]['email'] = $message['poster_email'];
 		$memberContext[$message['id_member']]['show_email'] = showEmailAddress(true, 0);
 		$memberContext[$message['id_member']]['is_guest'] = true;

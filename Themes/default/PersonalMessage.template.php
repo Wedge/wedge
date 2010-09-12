@@ -102,10 +102,8 @@ function template_folder()
 				theSelect.options[theSelect.options.length - 1].disabled = true;
 
 				for (i in toAdd)
-				{
 					if (i != "length")
 						theSelect.options[theSelect.options.length] = new Option(toAdd[i], "add_" + i);
-				}
 			}
 
 			if (toRemove.length != 0)
@@ -115,10 +113,8 @@ function template_folder()
 				theSelect.options[theSelect.options.length - 1].disabled = true;
 
 				for (i in toRemove)
-				{
 					if (i != "length")
 						theSelect.options[theSelect.options.length] = new Option(toRemove[i], "rem_" + i);
-				}
 			}
 		}
 	// ]]></script>';
@@ -526,20 +522,24 @@ function template_subject_list()
 	<thead>
 		<tr class="catbg">
 			<th align="center" width="4%" class="first_th">
-				', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + document.getElementById(\'selPMView\').value;">';
-	foreach ($context['view_select_types'] as $display_mode => $display_desc)
-		echo '
-					<option value="', $display_mode, '"', ($context['display_mode'] == $display_mode ? ' selected="selected"' : ''), '>', $display_desc, '</option>';
-	echo '
-				</select>
 			</th>
 			<th class="lefttext" width="22%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
-			<th class="lefttext" width="46%">
-				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
+			<th>
+				<div class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + document.getElementById(\'selPMView\').value;">';
+
+	foreach ($context['view_select_types'] as $display_mode => $display_desc)
+		echo '
+					<option value="', $display_mode, '"', ($context['display_mode'] == $display_mode ? ' selected="selected"' : ''), '>', $display_desc, '</option>';
+
+	echo '
+				</select></div>
+				<div class="floatleft">
+					<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
+				</div>
 			</th>
-			<th class="lefttext">
+			<th class="lefttext" width="15%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
 			<th align="center" width="4%" class="last_th">
@@ -811,7 +811,7 @@ function template_search_results()
 					echo '
 				</h3>
 			</div>
-			<div class="windowbg', $alternate ? '2': '', ' wrc">
+			<div class="windowbg', $alternate ? '2' : '', ' wrc">
 				<div class="content">
 					', $message['body'], '
 					<p class="pm_reply righttext middletext">';
