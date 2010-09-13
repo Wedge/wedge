@@ -143,7 +143,7 @@ tr.titlebg th.last_th
 }
 .dropmenu li ul
 {
-	background: url(../images/theme/menu_gfx.png) 100% -100px no-repeat;
+	background: url(../images/theme/menu.png) 100% 0 no-repeat;
 }
 
 /* The dropdown menu toggle image */
