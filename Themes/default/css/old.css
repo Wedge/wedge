@@ -1,0 +1,236 @@
+
+/* Compatibility file for browsers not capable of showing rounded corners. */
+
+.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat -10px -340px;
+}
+.catbg, tr.catbg td, tr.catbg th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat -10px -240px;
+}
+.cat_bar h4, .cat_bar h3, .table_list tbody.header td.catbg
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
+}
+.title_bar h4, .title_bar h3
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
+}
+
+div.cat_bar
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -160px;
+}
+div.title_bar
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -200px;
+}
+
+
+#upshrinkHeaderIC .cat_bar h3
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
+}
+#upshrinkHeaderIC .title_bar
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -120px;
+}
+#upshrinkHeaderIC .title_bar h4
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -120px;
+}
+tr.catbg th.first_th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat 0 -240px;
+}
+tr.catbg th.last_th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat 100% -240px;
+}
+tr.titlebg th.first_th
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 0 -340px;
+}
+tr.titlebg th.last_th
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 100% -340px;
+}
+
+
+.windowbg span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -30px no-repeat;
+}
+.windowbg span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -30px no-repeat;
+	height: 11px;
+}
+.windowbg span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -40px no-repeat;
+	font-size: 5px;
+	line-height: 5px;
+	margin-bottom: 0.2em;
+}
+.windowbg span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -40px no-repeat;
+	height: 11px;
+}
+
+.windowbg2 span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -60px no-repeat;
+}
+.windowbg2 span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -60px no-repeat;
+	height: 11px;
+}
+.windowbg2 span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -71px no-repeat;
+	font-size: 5px;
+	line-height: 5px;
+	margin-bottom: 0.2em;
+}
+.windowbg2 span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -71px no-repeat;
+	height: 11px;
+}
+.approvebg span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 0 no-repeat;
+}
+.approvebg span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% 0 no-repeat;
+	height: 11px;
+}
+.approvebg span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -11px no-repeat;
+	margin-bottom: 0.2em;
+}
+.approvebg span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -11px no-repeat;
+	height: 11px;
+}
+span.upperframe
+{
+	padding: 0;
+	display: block;
+	background: url(../images/theme/main_block.png) 0 -90px no-repeat;
+	padding-left: 20px;
+}
+span.upperframe span
+{
+	padding: 0;
+	height: 12px;
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -90px no-repeat;
+}
+span.lowerframe
+{
+	padding: 0;
+	display: block;
+	background: url(../images/theme/main_block.png) 0 -102px no-repeat;
+	padding-left: 20px;
+}
+span.lowerframe span
+{
+	padding: 0;
+	height: 12px;
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -102px no-repeat;
+}
+
+/* Menu buttons */
+
+/* the active button */
+.dropmenu li a.active
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+.dropmenu li a.active span.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 0;
+}
+/* the hover effects */
+.dropmenu li a.firstlevel:hover, .dropmenu li:hover a.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -30px;
+}
+.dropmenu li a.firstlevel:hover span.firstlevel, .dropmenu li:hover a.firstlevel span.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -30px;
+}
+
+/* Button strips */
+
+.buttonlist ul li a
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -60px;
+}
+.buttonlist ul li a:hover span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+.buttonlist ul li a:hover
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 0;
+}
+.buttonlist ul li a span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -60px;
+}
+.buttonlist ul li a:hover span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+/* the active one */
+.buttonlist ul li a.active
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -30px;
+}
+.buttonlist ul li a.active span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -30px;
+}
+
+/* Now, get rid of .wrc and .rrc classes... */
+
+.wrc
+{
+	margin-top: 0;
+	padding: 0;
+	border: 1px solid #ddd;
+}
+.rrc
+{
+	margin-top: 0;
+	padding: 0 10px;
+	border-width: 0 1px;
+}

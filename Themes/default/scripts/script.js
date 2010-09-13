@@ -1399,20 +1399,27 @@ function insertAfter(parEl, targEl, newEl)
 
 function emulateRounded()
 {
+	// Import the old emulation stylesheet...
+	if (document.createStyleSheet)
+		document.createStyleSheet(smf_theme_url + '/css/old.css');
+	else
+	{
+		var old = document.createElement('link');
+		old.rel = 'stylesheet';
+		old.href = 'data:text/css,' + escape('@import url(' + smf_theme_url + '/css/old.css);');
+		document.getElementsByTagName('head')[0].appendChild(old);
+	}
+
 	var divs = document.querySelectorAll ? document.querySelectorAll("div.wrc, div.rrc") : document.getElementsByTagName("div"), upperFrame, lowerFrame;
 	for (var i = 0, n = divs.length; i < n; i++)
 	{
 		var div = divs[i], cls = div.className;
 		if (cls.indexOf(' wrc') > -1)
-		{
-			div.className = cls.replace(/ wrc/, "");
 			div.innerHTML = "<span class=\"topslice\"><span></span></span>" + div.innerHTML + "<span class=\"botslice\"><span></span></span>";
-		}
 		else if (cls.indexOf(' rrc') > -1)
 		{
 			upperFrame = document.createElement("SPAN"); upperFrame.className = "upperframe"; upperFrame.innerHTML = "<span></span>";
 			lowerFrame = document.createElement("SPAN"); lowerFrame.className = "lowerframe"; lowerFrame.innerHTML = "<span></span>";
-			div.className = cls.replace(/ rrc/, '');
 			div.parentNode.insertBefore(upperFrame, div);
 			insertAfter(div.parentNode, div, lowerFrame);
 		}
