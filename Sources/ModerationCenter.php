@@ -915,16 +915,16 @@ function ModReport()
 		'get_items' => array(
 			'function' => 'list_getModLogEntries',
 			'params' => array(
-				'lm.id_msg = {int:id_msg}',
-				array('id_msg' => $context['report']['message_id']),
+				'lm.id_topic = {int:id_topic}',
+				array('id_topic' => $context['report']['topic_id']),
 				1,
 			),
 		),
 		'get_count' => array(
 			'function' => 'list_getModLogEntryCount',
 			'params' => array(
-				'lm.id_msg = {int:id_msg}',
-				array('id_msg' => $context['report']['message_id']),
+				'lm.id_topic = {int:id_topic}',
+				array('id_topic' => $context['report']['topic_id']),
 				1,
 			),
 		),

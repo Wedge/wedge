@@ -127,8 +127,8 @@ function PackageServers()
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$context['servers'][] = array(
-			'name' => htmlspecialchars($row['name']),
-			'url' => htmlspecialchars($row['url']),
+			'name' => $row['name'],
+			'url' => $row['url'],
 			'id' => $row['id_server'],
 		);
 	}
@@ -736,6 +736,8 @@ function PackageServerAdd()
 	// If they put a slash on the end, get rid of it.
 	if (substr($_POST['serverurl'], -1) == '/')
 		$_POST['serverurl'] = substr($_POST['serverurl'], 0, -1);
+	$servername = $smcFunc['htmlspecialchars']($_POST['servername']);
+	$serverurl = $smcFunc['htmlspecialchars']($_POST['serverurl']);
 
 	$smcFunc['db_insert']('',
 		'{db_prefix}package_servers',
@@ -743,7 +745,7 @@ function PackageServerAdd()
 			'name' => 'string-255', 'url' => 'string-255',
 		),
 		array(
-			$_POST['servername'], $_POST['serverurl'],
+			$servername, $serverurl,
 		),
 		array('id_server')
 	);

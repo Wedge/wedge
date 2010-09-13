@@ -1614,17 +1614,6 @@ function loadAllPermissions($loadType = 'classic')
 			$bothGroups = array('own' => $own_group);
 			$bothGroups = array();
 
-/*
-			// For guests, just reset the array.
-			if (!isset($context['group']['id']) || !($context['group']['id'] == -1 && $any_group))
-				$bothGroups['own'] = $own_group;
-
-			if ($any_group)
-			{
-				$bothGroups['any'] = $any_group;
-
-			}
-*/
 			// For guests, just reset the array.
 			if (!isset($context['group']['id']) || !($context['group']['id'] == -1 && $any_group))
 				$bothGroups['own'] = $own_group;
@@ -2213,6 +2202,7 @@ function loadIllegalGuestPermissions()
 		'modify_replies',
 		'send_mail',
 		'approve_posts',
+		'moderate_board',
 	);
 }
 

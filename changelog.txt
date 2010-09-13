@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10100 $.
+Changelog started January 1, 2004; Currently at $Revision: 10105 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -29,7 +29,10 @@ September 2010
  ! Add attachments cleaning for IE as well, though it allows manually deleting the file input box (script.js)
  ! fetch_web_data did not properly parse a port on urls (Subs-Package.php)[Bug 4454]
  ! constructPageIndex didn't respect flexible start for compact pagination (Subs.php)
- 
+ ! Topic moderation logs were not listed on mod report details. (ModerationCenter.php) [Bug 4419]
+ ! Unoptimized query for topic participation query in unread topics. (Recent.php) [Bug 4457]
+ ! 'moderate_board' permission does not really make sense for guests (ManagePermissions.php) [Bug 4460]
+
  
 August 2010
 --------------------------------------------------------------------------------
