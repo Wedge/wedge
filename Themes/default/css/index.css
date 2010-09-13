@@ -116,7 +116,7 @@ input.input_check, input.input_radio
 	border: none;
 	background: none;
 }
-h3.catbg input.input_check
+.cat_bar h3 input.input_check
 {
 	margin: 9px 7px 0 7px;
 }
@@ -445,19 +445,17 @@ td.footnum a:target, a.fnotel:target { background-color: #ddeeff !important }
 	font-family: arial, helvetica, sans-serif;
 	font-size: 1.1em;
 	font-weight: bold;
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat -10px -340px;
 }
-.catbg, .catbg2, tr.catbg td, tr.catbg2 td, tr.catbg th, tr.catbg2 th
+.catbg, tr.catbg td, tr.catbg th
 {
 	color: #fff;
 	font-family: arial, helvetica, sans-serif;
 	font-size: 1.1em;
 	font-weight: bold;
-	background: #a8bace url(../images/theme/main_block.png) no-repeat -10px -240px;
 }
 
 /* adjust the table versions of headers */
-tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, tr.catbg2 th, td.catbg, td.catbg2
+tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, td.catbg
 {
 	padding: 0 6px;
 }
@@ -465,7 +463,7 @@ tr.titlebg th a:link, tr.titlebg th a:visited, tr.titlebg2 td a:link, tr.titlebg
 {
 	color: #222;
 }
-tr.catbg th a:link, tr.catbg th a:visited, tr.catbg2 td a:link, tr.catbg2 td a:visited
+tr.catbg th a:link, tr.catbg th a:visited
 {
 	color: #fff;
 }
@@ -768,95 +766,65 @@ dl.settings dt a img
 
 /* Styles for rounded headers.
 ------------------------------------------------------- */
-h3.catbg, h3.catbg2, h3.titlebg, h4.titlebg, h4.catbg
+.cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
 {
 	overflow: hidden;
 	height: 31px;
 	line-height: 32px;
-	font-size: 1.2em;
-	font-weight: bold;
+	font-family: Georgia;
+	font-size: 1.3em;
+	font-weight: normal;
+	font-style: italic;
 }
-h3.catbg a:link, h3.catbg a:visited, h4.catbg a:link, h4.catbg a:visited, h3.catbg, .table_list tbody.header td, .table_list tbody.header td a
+.cat_bar h3, .cat_bar h3 a:link, .cat_bar h3 a:visited, .cat_bar h4 a:link, .cat_bar h4 a:visited, .table_list tbody.header td, .table_list tbody.header td a
 {
 	color: #fff;
 }
-h3.catbg2 a, h3.catbg2
-{
-	color: #feb;
-}
-h3.catbg a:hover, h4.catbg a:hover, .table_list tbody.header td a:hover
+.cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover
 {
 	color: #fd9;
 	text-decoration: none;
 }
-h3.catbg2 a:hover
-{
-	color: #fff;
-	text-decoration: none;
-}
-h3.titlebg a, h3.titlebg, h4.titlebg, h4.titlebg a
+.title_bar h3, .title_bar h3 a, .title_bar h4, .title_bar h4 a
 {
 	color: #222;
 }
-h3.titlebg a:hover, h4.titlebg a:hover
+.title_bar h3 a:hover, .title_bar h4 a:hover
 {
 	color: #53616f;
 	text-decoration: none;
 }
-h3.catbg img.icon, h4.titlebg img.icon
+.cat_bar h3 img.icon, .title_bar h4 img.icon
 {
 	vertical-align: middle;
 	margin: -2px 5px 0 0;
 }
-h4.catbg a.toggle img
+.cat_bar h4 a.toggle img
 {
 	vertical-align: middle;
 	margin: -2px 5px 0 5px;
 }
-h4.catbg, h4.catbg2 , h3.catbg , h3.catbg2 , .table_list tbody.header td.catbg
+.cat_bar h4, .title_bar h4, .title_bar h3, .cat_bar h3, .table_list tbody.header td.catbg
 {
-	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
 	padding-right: 9px;
 }
-h4.titlebg, h3.titlebg
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
-	padding-right: 9px;
-}
-h4.titlebg img.icon
+.title_bar h4 img.icon
 {
 	float: left;
 	margin: 5px 8px 0 0;
 }
 div.cat_bar
 {
-	background: url(../images/theme/main_block.png) no-repeat 0 -160px;
+	height: 31px;
 	padding-left: 9px;
-	height: 32px;
 	overflow: hidden;
 }
 div.title_bar
 {
-	background: url(../images/theme/main_block.png) no-repeat 0 -200px;
 	padding-left: 9px;
 	overflow: hidden;
 }
-div.title_barIC
-{
-	background: url(../images/theme/main_block.png) no-repeat 0 -120px;
-	padding-left: 9px;
-	overflow: hidden;
-}
-/* rounded bars needs a different background here */
 
-#upshrinkHeaderIC h3.catbg, #upshrinkHeaderIC h3.catbg2
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
-}
-#upshrinkHeaderIC h4.titlebg
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -120px;
-}
 #upshrinkHeaderIC p.pminfo
 {
 	margin: 0;
@@ -886,22 +854,6 @@ table.table_list a.collapse
 {
 	height: 28px;
 	line-height: 28px;
-}
-tr.catbg th.first_th
-{
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 0 -240px;
-}
-tr.catbg th.last_th
-{
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 100% -240px;
-}
-tr.titlebg th.first_th
-{
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 0 -340px;
-}
-tr.titlebg th.last_th
-{
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 100% -340px;
 }
 .table_grid th.last_th input
 {
@@ -964,87 +916,6 @@ li.wrc, form.li
 	border: 1px solid #ddd;
 }
 
-/* Old browsers suck. IE, will you let me go? */
-.windowbg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -30px no-repeat;
-}
-.windowbg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -30px no-repeat;
-	height: 11px;
-}
-.windowbg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -40px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
-}
-.windowbg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -40px no-repeat;
-	height: 11px;
-}
-
-.windowbg2 span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -60px no-repeat;
-}
-.windowbg2 span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -60px no-repeat;
-	height: 11px;
-}
-.windowbg2 span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -71px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
-}
-.windowbg2 span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -71px no-repeat;
-	height: 11px;
-}
-.approvebg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 0 no-repeat;
-}
-.approvebg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% 0 no-repeat;
-	height: 11px;
-}
-.approvebg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -11px no-repeat;
-	margin-bottom: 0.2em;
-}
-.approvebg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -11px no-repeat;
-	height: 11px;
-}
 .postbg
 {
 	border-left: 1px solid #7f7f7f;
@@ -1077,34 +948,6 @@ li.wrc, form.li
 .roundframe p
 {
 	padding: 0.5em;
-}
-span.upperframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -90px no-repeat;
-	padding-left: 20px;
-}
-span.upperframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -90px no-repeat;
-}
-span.lowerframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -102px no-repeat;
-	padding-left: 20px;
-}
-span.lowerframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -102px no-repeat;
 }
 
 /* The main content area.
@@ -1201,7 +1044,7 @@ span.lowerframe span
 	width: 19.2em;
 	font-weight: normal;
 	border-bottom: 1px solid #999;
-	background: url(../images/theme/menu_gfx.png) 0 -100px no-repeat;
+	background: url(../images/theme/menu.png) no-repeat;
 	padding: 7px 0 0 0;
 }
 .dropmenu li li
@@ -1224,25 +1067,17 @@ span.lowerframe span
 /* the active button */
 .dropmenu li a.active
 {
-	background: url(../images/theme/menu_gfx.png) no-repeat 100% 0;
+	background: #fd9604;
 	color: #fff;
 	font-weight: bold;
-}
-.dropmenu li a.active span.firstlevel
-{
-	background: url(../images/theme/menu_gfx.png) no-repeat 0 0;
 }
 /* the hover effects */
 .dropmenu li a.firstlevel:hover, .dropmenu li:hover a.firstlevel
 {
-	background: url(../images/theme/menu_gfx.png) no-repeat 100% -30px;
+	background: #5a6c85;
 	color: #fff;
 	cursor: pointer;
 	text-decoration: none;
-}
-.dropmenu li a.firstlevel:hover span.firstlevel, .dropmenu li:hover a.firstlevel span.firstlevel
-{
-	background: url(../images/theme/menu_gfx.png) no-repeat 0 -30px;
 }
 /* the hover effects on level2 and 3 */
 .dropmenu li li a:hover, .dropmenu li li:hover>a
@@ -1297,12 +1132,13 @@ span.lowerframe span
 	list-style: none;
 	float: left;
 }
+/*	suggestion: use border: 1px solid rgba(128, 128, 128, .2); */
 .buttonlist ul li a
 {
 	display: block;
 	font-size: 0.8em;
 	color: #000;
-	background: url(../images/theme/menu_gfx.png) no-repeat 0 -60px;
+	background: #e8e8e8;
 	padding: 0;
 	margin-left: 12px;
 	text-transform: uppercase;
@@ -1310,13 +1146,13 @@ span.lowerframe span
 }
 .buttonlist ul li a:hover
 {
-	background: url(../images/theme/menu_gfx.png) no-repeat 0 0;
+	background: #fd9604;
 	color: #fff;
 	text-decoration: none;
 }
 .buttonlist ul li a span
 {
-	background: url(../images/theme/menu_gfx.png) no-repeat 100% -60px;
+	background: #e8e8e8;
 	display: block;
 	height: 24px;
 	line-height: 20px;
@@ -1324,20 +1160,12 @@ span.lowerframe span
 	position: relative;
 	right: -8px;
 }
-.buttonlist ul li a:hover span
-{
-	background: url(../images/theme/menu_gfx.png) no-repeat 100% 0;
-}
 /* the active one */
 .buttonlist ul li a.active
 {
-	background: url(../images/theme/menu_gfx.png) no-repeat 0 -30px;
+	background: #5a6c85;
 	color: #fff;
 	font-weight: bold;
-}
-.buttonlist ul li a.active span
-{
-	background: url(../images/theme/menu_gfx.png) no-repeat 100% -30px;
 }
 .buttonlist ul li a.active
 {
@@ -1928,7 +1756,7 @@ div#pollmoderation
 	float: left;
 	margin: 4px 0.5em 0 0;
 }
-#forumposts h3.catbg
+#forumposts .cat_bar h3
 {
 	margin-bottom: 3px;
 }
@@ -2147,7 +1975,8 @@ ul.quickbuttons li.inline_mod_check
 
 #quickReplyOptions .roundframe
 {
-	padding: 0 8%;
+	padding-left: 8%;
+	padding-right: 8%;
 }
 #quickReplyOptions form textarea
 {
@@ -2625,7 +2454,7 @@ dl.register_form dd
 }
 
 /* common for all admin sections */
-h3.titlebg img
+.title_bar h3 img
 {
 	vertical-align: middle;
 	margin-right: 0.5em;
@@ -2673,7 +2502,7 @@ tr.titlebg td
 	float: left;
 	padding-right: 10px;
 }
-.adm_section h4.titlebg
+.adm_section .title_bar h4
 {
 	font-size: 95%;
 	margin-bottom: 5px;
@@ -3244,7 +3073,7 @@ div#profile_success
 {
 	margin: 4px 0 -2px 0;
 }
-#statistics h3.catbg
+#statistics .cat_bar h3
 {
 	text-align: center;
 }
@@ -3402,7 +3231,7 @@ dl.addrules dt.floatleft
 {
 	height: 25px;
 }
-#month_grid h3.catbg
+#month_grid .cat_bar h3
 {
 	height: 25px;
 	line-height: 27px;
@@ -3416,7 +3245,7 @@ dl.addrules dt.floatleft
 	width: 100%;
 	padding-bottom: 4px;
 }
-#main_grid table h3.catbg
+#main_grid table .cat_bar h3
 {
 	text-align: center;
 	height: 29px;
@@ -3458,7 +3287,7 @@ dl.addrules dt.floatleft
 	width: 14%;
 	padding: 4px 0;
 }
-#main_grid table.weeklist h4.titlebg
+#main_grid table.weeklist .title_bar h4
 {
 	margin: 0 0 0 0;
 	height: 23px;
@@ -3650,4 +3479,286 @@ ul.basic_helplist
 	{
 		border: none;
 	}
+}
+
+
+
+
+
+
+
+
+
+/* light, no rounded corners */
+tr.titlebg th, tr.titlebg td, tr.titlebg2 td
+{
+	background: #e3e9ef;
+}
+/* darker, no rounded corners */
+tr.catbg td, tr.catbg th
+{
+	background: #a8bace;
+}
+/* darker, right */
+.table_list tbody.header td.catbg
+{
+	background: #b8cade;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+div.cat_bar, div.title_bar
+{
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+div.cat_bar
+{
+	background: url(../images/theme/catbg.png) repeat-x;
+}
+div.title_bar
+{
+	background: url(../images/theme/titlebg.png) repeat-x;
+}
+
+
+#upshrinkHeaderIC .cat_bar h3
+{
+	font-size: 1.1em;
+}
+#upshrinkHeaderIC .title_bar h4
+{
+	font-size: 1.1em;
+}
+tr.catbg th
+{
+	background: #a8bace url(../images/theme/catbg.png) repeat-x;
+}
+tr.titlebg th
+{
+	background: #e3e9ef url(../images/theme/titlebg.png) repeat-x;
+}
+
+
+
+/* --- */
+
+.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat -10px -340px;
+}
+.catbg, tr.catbg td, tr.catbg th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat -10px -240px;
+}
+.cat_bar h4, .cat_bar h3, .table_list tbody.header td.catbg
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
+}
+.title_bar h4, .title_bar h3
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
+}
+
+div.cat_bar
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -160px;
+}
+div.title_bar
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -200px;
+}
+div.title_barIC
+{
+	background: url(../images/theme/main_block.png) no-repeat 0 -120px;
+}
+
+
+#upshrinkHeaderIC .cat_bar h3
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
+}
+#upshrinkHeaderIC .title_bar h4
+{
+	background: url(../images/theme/main_block.png) no-repeat 100% -120px;
+}
+tr.catbg th.first_th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat 0 -240px;
+}
+tr.catbg th.last_th
+{
+	background: #a8bace url(../images/theme/main_block.png) no-repeat 100% -240px;
+}
+tr.titlebg th.first_th
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 0 -340px;
+}
+tr.titlebg th.last_th
+{
+	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 100% -340px;
+}
+
+
+.windowbg span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -30px no-repeat;
+}
+.windowbg span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -30px no-repeat;
+	height: 11px;
+}
+.windowbg span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -40px no-repeat;
+	font-size: 5px;
+	line-height: 5px;
+	margin-bottom: 0.2em;
+}
+.windowbg span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -40px no-repeat;
+	height: 11px;
+}
+
+.windowbg2 span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -60px no-repeat;
+}
+.windowbg2 span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -60px no-repeat;
+	height: 11px;
+}
+.windowbg2 span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -71px no-repeat;
+	font-size: 5px;
+	line-height: 5px;
+	margin-bottom: 0.2em;
+}
+.windowbg2 span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -71px no-repeat;
+	height: 11px;
+}
+.approvebg span.topslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 0 no-repeat;
+}
+.approvebg span.topslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% 0 no-repeat;
+	height: 11px;
+}
+.approvebg span.botslice
+{
+	display: block;
+	padding-left: 20px;
+	background: url(../images/theme/main_block.png) 0 -11px no-repeat;
+	margin-bottom: 0.2em;
+}
+.approvebg span.botslice span
+{
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -11px no-repeat;
+	height: 11px;
+}
+span.upperframe
+{
+	padding: 0;
+	display: block;
+	background: url(../images/theme/main_block.png) 0 -90px no-repeat;
+	padding-left: 20px;
+}
+span.upperframe span
+{
+	padding: 0;
+	height: 12px;
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -90px no-repeat;
+}
+span.lowerframe
+{
+	padding: 0;
+	display: block;
+	background: url(../images/theme/main_block.png) 0 -102px no-repeat;
+	padding-left: 20px;
+}
+span.lowerframe span
+{
+	padding: 0;
+	height: 12px;
+	display: block;
+	background: url(../images/theme/main_block.png) 100% -102px no-repeat;
+}
+
+/* --- */
+
+/* the active button */
+.dropmenu li a.active
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+.dropmenu li a.active span.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 0;
+}
+/* the hover effects */
+.dropmenu li a.firstlevel:hover, .dropmenu li:hover a.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -30px;
+}
+.dropmenu li a.firstlevel:hover span.firstlevel, .dropmenu li:hover a.firstlevel span.firstlevel
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -30px;
+}
+
+.buttonlist ul li a
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -60px;
+}
+.buttonlist ul li a:hover span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+.buttonlist ul li a:hover
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 0;
+}
+.buttonlist ul li a span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -60px;
+}
+.buttonlist ul li a:hover span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+}
+/* the active one */
+.buttonlist ul li a.active
+{
+	background: url(../images/theme/buttons.png) no-repeat 0 -30px;
+}
+.buttonlist ul li a.active span
+{
+	background: url(../images/theme/buttons.png) no-repeat 100% -30px;
 }

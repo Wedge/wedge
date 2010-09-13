@@ -10,7 +10,7 @@ function template_ask()
 		<form action="', $scripturl, '?action=splittopics;sa=execute;topic=', $context['current_topic'], '.0" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="at" value="', $context['message']['id'], '" />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['split'], '</h3>
+				<h3>', $txt['split'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -46,7 +46,7 @@ function template_main()
 	echo '
 	<div id="split_topic">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['split'], '</h3>
+			<h3>', $txt['split'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -76,7 +76,7 @@ function template_select()
 		<form action="', $scripturl, '?action=splittopics;sa=splitSelection;board=', $context['current_board'], '.0" method="post" accept-charset="', $context['character_set'], '">
 			<div id="not_selected" class="floatleft">
 				<div class="cat_bar">
-					<h3 class="catbg">', $txt['split'], ' - ', $txt['select_split_posts'], '</h3>
+					<h3>', $txt['split'], ' - ', $txt['select_split_posts'], '</h3>
 				</div>
 				<div class="information">
 					', $txt['please_select_split'], '
@@ -107,7 +107,7 @@ function template_select()
 			</div>
 			<div id="selected" class="floatright">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						', $txt['split_selected_posts'], ' (<a href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=reset;msg=0" onclick="return select(\'reset\', 0);">', $txt['split_reset_selection'], '</a>)
 					</h3>
 				</div>
@@ -242,7 +242,7 @@ function template_merge_done()
 	echo '
 		<div id="split_topics">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['merge'], '</h3>
+				<h3>', $txt['merge'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -269,7 +269,7 @@ function template_merge()
 	echo '
 		<div id="merge_topics">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['merge'], '</h3>
+				<h3>', $txt['merge'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['merge_desc'], '
@@ -325,7 +325,7 @@ function template_merge()
 				</div>
 			</div><br />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['target_topic'], '</h3>
+				<h3>', $txt['target_topic'], '</h3>
 			</div>
 			<div class="pagesection">
 				<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
@@ -362,7 +362,7 @@ function template_merge_extra_options()
 	<div id="merge_topics">
 		<form action="', $scripturl, '?action=mergetopics;sa=execute;" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['merge_topic_list'], '</h3>
+				<h3>', $txt['merge_topic_list'], '</h3>
 			</div>
 			<table width="100%" class="bordercolor table_grid">
 				<thead>

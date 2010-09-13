@@ -10,7 +10,7 @@ function template_main()
 	echo '
 	<div id="manage_boards">
 		<div class="title_bar">
-			<h3 class="titlebg">', $txt['boardsEdit'], '</h3>
+			<h3>', $txt['boardsEdit'], '</h3>
 		</div>';
 
 	if (!empty($context['move_board']))
@@ -34,7 +34,7 @@ function template_main()
 		// Link to modify the category.
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $category['name'], '</a> <a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $txt['catModify'], '</a>
 				</h3>
 			</div>';
@@ -107,8 +107,8 @@ function template_modify_category()
 		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '" />
 				<div class="cat_bar">
-					<h3 class="catbg">
-					', isset($context['category']['is_new']) ? $txt['mboards_new_cat_name'] : $txt['catEdit'], '
+					<h3>
+						', isset($context['category']['is_new']) ? $txt['mboards_new_cat_name'] : $txt['catEdit'], '
 					</h3>
 				</div>
 				<div class="windowbg wrc">
@@ -186,7 +186,7 @@ function template_confirm_category_delete()
 		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '" />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_cat'], '</h3>
+				<h3>', $txt['mboards_delete_cat'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -202,7 +202,7 @@ function template_confirm_category_delete()
 				</div>
 			</div>
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_what_do'], '</h3>
+				<h3>', $txt['mboards_delete_what_do'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -241,7 +241,7 @@ function template_modify_board()
 		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '" />
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', isset($context['board']['is_new']) ? $txt['mboards_new_board_name'] : $txt['boardsEdit'], '
 				</h3>
 			</div>
@@ -561,7 +561,7 @@ function template_confirm_board_delete()
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '" />
 
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_board'], '</h3>
+				<h3>', $txt['mboards_delete_board'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -577,7 +577,7 @@ function template_confirm_board_delete()
 				</div>
 			</div>
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_what_do'], '</h3>
+				<h3>', $txt['mboards_delete_what_do'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">

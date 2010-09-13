@@ -22,7 +22,7 @@ function template_show_list($list_id = null)
 	if (!empty($cur_list['title']))
 		echo '
 			<div class="title_bar clear_right">
-				<h3 class="titlebg">
+				<h3>
 					<span class="ie6_header floatleft">', $cur_list['title'], '</span>
 				</h3>
 			</div>';

@@ -84,17 +84,17 @@ dl.settings img
 /* Styles for rounded headers.
 ------------------------------------------------------- */
 
-h3.catbg img.icon, h4.titlebg img.icon
+.cat_bar h3 img.icon, .title_bar h4 img.icon
 {
 	vertical-align: middle;
 	margin: -2px 0 0 5px;
 }
-h4.titlebg, h3.titlebg
+.title_bar h3, .title_bar h4
 {
 	padding-right: 9px;
 	padding-left: 0;
 }
-h4.titlebg img.icon
+.title_bar h4 img.icon
 {
 	float: right;
 	margin: 5px 0 0 8px;
@@ -650,7 +650,7 @@ dl.register_form dt
 	margin-left: 1em;
 }
 /* common for all admin sections */
-h3.titlebg img
+.title_bar h3 img
 {
 	margin-left: 0.5em;
 }

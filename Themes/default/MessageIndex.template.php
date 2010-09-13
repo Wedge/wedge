@@ -19,7 +19,7 @@ function template_main()
 		echo '
 	<div class="tborder childboards" id="board_', $context['current_board'], '_childboards">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['parent_boards'], '</h3>
+			<h3>', $txt['parent_boards'], '</h3>
 		</div>
 		<div class="table_frame">
 			<table class="table_list">

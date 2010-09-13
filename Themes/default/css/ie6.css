@@ -3,23 +3,23 @@
 	width: 96%;
 	margin: 0 auto;
 }
-h3.catbg input.input_check
+.cat_bar h3 input.input_check
 {
 	margin: 0 4px;
 }
-h3.catbg img.icon, h4.titlebg img.icon
+.cat_bar h3 img.icon, .title_bar h4 img.icon
 {
 	margin: 1px 3px 0 0;
 }
-h3.catbg span.ie6_header, h4.catbg span.ie6_header, h3.titlebg span.ie6_header, h4.titlebg span.ie6_header
+.cat_bar h3 span.ie6_header, .cat_bar h4 span.ie6_header, .title_bar h3 span.ie6_header, .title_bar h4 span.ie6_header
 {
 	padding: 6px 0;
 }
-#statistics h4.titlebg span.ie6_header
+#statistics .title_bar h4 span.ie6_header
 {
 	padding: 0;
 }
-#statistics h4.titlebg span.ie6_header img.icon
+#statistics .title_bar h4 span.ie6_header img.icon
 {
 	padding: 5px 0;
 }
@@ -73,7 +73,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 
 /* overflow: hidden doesn't help in IE6. */
-h3.titlebg a, h3.titlebg, h4.titlebg, h4.titlebg a
+.title_bar h3 a, .title_bar h3, .title_bar h4, .title_bar h4 a
 {
 	display: inline-block;
 }
@@ -120,7 +120,7 @@ h3.titlebg a, h3.titlebg, h4.titlebg, h4.titlebg a
 	width: 1%;
 	white-space: nowrap;
 }
-#forumposts h3.catbg
+#forumposts .cat_bar h3
 {
 	clear: both;
 }

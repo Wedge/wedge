@@ -63,7 +63,7 @@ function template_find_members()
 		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '" class="padding description">
 			<div class="roundframe rrc">
 				<div class="cat_bar">
-					<h3 class="catbg">', $txt['find_members'], '</h3>
+					<h3>', $txt['find_members'], '</h3>
 				</div>
 				<div class="padding">
 					<strong>', $txt['find_username'], ':</strong><br />
@@ -85,7 +85,7 @@ function template_find_members()
 			<br />
 			<div class="roundframe rrc">
 				<div class="cat_bar">
-					<h3 class="catbg">', $txt['find_results'], '</h3>
+					<h3>', $txt['find_results'], '</h3>
 				</div>';
 
 	if (empty($context['results']))
@@ -140,7 +140,7 @@ function template_manual_above()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['help'], ':&nbsp;', $context['manual_area_data']['label'], '</h3>
+			<h3>', $txt['help'], ':&nbsp;', $context['manual_area_data']['label'], '</h3>
 		</div>
 		<div id="help_container">
 			<div class="windowbg2 wrc">
@@ -317,7 +317,7 @@ function template_manual_board_index()
 					<tr>
 						<td colspan="4">
 							<div class="cat_bar">
-								<h3 class="catbg">
+								<h3>
 									<a class="collapse" href="javascript:collapseExpandCategory();"><img src="', $settings['images_url'], '/collapse.gif" alt="-" id="collapseArrow" name="collapseArrow" /></a>
 									<a class="unreadlink" href="#">', $txt['view_unread_category'], '</a>
 									<a href="#">', $txt['manual_board_index_category_name'], '</a>
@@ -420,13 +420,13 @@ function template_manual_board_index()
 	<div class="help_sample">
 		<div class="roundframe rrc">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 				', sprintf($txt['info_center_title'], $context['forum_name']), '
 				</h3>
 			</div>
 			<div id="upshrinkHeaderIC">
-				<div class="title_barIC">
-					<h4 class="titlebg">
+				<div class="title_bar">
+					<h4>
 						<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
 						<span>', $txt['forum_stats'], '</span>
 					</h4>
@@ -437,8 +437,8 @@ function template_manual_board_index()
 					<a href="#">', $txt['recent_view'], '</a><br />
 					<a href="#">', $txt['more_stats'], '</a>
 				</p>
-				<div class="title_barIC">
-					<h4 class="titlebg">
+				<div class="title_bar">
+					<h4>
 						<a href="#"><img class="icon" src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '" /></a>
 						<span>', $txt['online_users'], '</span>
 					</h4>
@@ -644,7 +644,7 @@ function template_manual_topic_view()
 		</div>
 		<div id="forumposts">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<img src="', $settings['images_url'], '/topic/normal_post.gif" alt="" align="middle" />
 					<span id="author">', $txt['author'], '</span>
 					<span id="top_subject">', $txt['manual_topic_heading'], '</span>
@@ -791,10 +791,10 @@ function template_manual_registration_screen()
 	<p>', $txt['manual_register_agree'], '</p>
 	<div class="help_sample">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['manual_register_form'], '</h3>
+			<h3>', $txt['manual_register_form'], '</h3>
 		</div>
 		<div class="title_bar">
-			<h4 class="titlebg">', $txt['manual_register_required_info'], '</h4>
+			<h4>', $txt['manual_register_required_info'], '</h4>
 		</div>
 		<div class="windowbg2 wrc">
 			<fieldset class="content">
@@ -860,7 +860,7 @@ function template_manual_registration_screen()
 			</fieldset>
 		</div>
 		<div class="title_bar">
-			<h4 class="titlebg">', $txt['manual_register_verification'], '</h4>
+			<h4>', $txt['manual_register_verification'], '</h4>
 		</div>
 		<div class="windowbg2 wrc">
 			<fieldset class="content centertext">
@@ -923,7 +923,7 @@ function template_manual_logging_in_out()
 	<div class="help_sample">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['manual_loginout_login'], '</span>
 				</h3>
 			</div>
@@ -1001,7 +1001,7 @@ function template_manual_password_reminders()
 	<div class="help_sample">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['manual_reminders_auth'], '
 				</h3>
 			</div>
@@ -1020,7 +1020,7 @@ function template_manual_password_reminders()
 	<div class="help_sample">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['manual_reminders_auth'], '
 				</h3>
 			</div>
@@ -1064,7 +1064,7 @@ function template_manual_profile_info_summary()
 	<div class="help_sample">
 		<div id="profileview" class="flow_auto">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['manual_entry_profile_info_summary'], '</span>
 				</h3>
 			</div>
@@ -1350,7 +1350,7 @@ function template_manual_profile_actions_subscriptions()
 		<p>', $txt['manual_profile_subscribe_describe'], '</p>
 		<div class="help_sample">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['manual_profile_subscribe_example'], '</h3>
+				<h3>', $txt['manual_profile_subscribe_example'], '</h3>
 			</div>
 			<div class="windowbg2 wrc">
 				<div class="content">
@@ -1365,7 +1365,7 @@ function template_manual_profile_actions_subscriptions()
 		<p>', $txt['manual_profile_subscribe_existing'], '</p>
 		<div class="help_sample">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['manual_profile_subscribe_exist'], '</h3>
+				<h3>', $txt['manual_profile_subscribe_exist'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['manual_profile_subscribe_extend'], '
@@ -1476,7 +1476,7 @@ function template_manual_posting_topics()
 				</ul>
 			</div>
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['manual_posting_start_topic'], '</h3>
+				<h3>', $txt['manual_posting_start_topic'], '</h3>
 			</div>
 			<div class="clear"></div>
 			<div class="roundframe rrc">
@@ -2290,7 +2290,7 @@ function template_manual_pm_messages()
 					<td width="125" valign="top">
 						<div style="width: 110px;">
 							<div class="cat_bar">
-								<h3 class="catbg">
+								<h3>
 									', $txt['manual_pm_messages'], '
 								</h3>
 							</div>
@@ -2410,7 +2410,7 @@ function template_manual_searching()
 	<div class="help_sample">
 		<form id="searchform" action="', $scripturl, '?action=help;area=searching" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />' : '', $txt['manual_searching_search_param'], '
 				</h3>
 			</div>
@@ -2461,7 +2461,7 @@ function template_manual_searching()
 			<fieldset>
 				<div class="roundframe rrc">
 					<div class="title_bar">
-						<h4 class="titlebg">', $txt['manual_searching_choose'], '</h4>
+						<h4>', $txt['manual_searching_choose'], '</h4>
 					</div>
 					<div class="flow_auto" id="searchBoardsExpand">
 						<ul class="ignoreboards floatleft">

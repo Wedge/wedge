@@ -39,7 +39,7 @@ function template_edit_holiday()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managecalendar;sa=editholiday" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">

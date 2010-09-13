@@ -16,7 +16,7 @@ function template_maintain_database()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
+			<h3>', $txt['maintain_optimize'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -29,8 +29,8 @@ function template_maintain_database()
 		</div>
 
 		<div class="cat_bar">
-			<h3 class="catbg">
-			<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '</span>
+			<h3>
+				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '</span>
 			</h3>
 		</div>
 
@@ -52,7 +52,7 @@ function template_maintain_database()
 	{
 		echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['utf8_title'], '</h3>
+			<h3>', $txt['utf8_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -71,7 +71,7 @@ function template_maintain_database()
 	{
 		echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
+			<h3>', $txt['entity_convert_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -105,7 +105,7 @@ function template_maintain_routine()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_version'], '</h3>
+			<h3>', $txt['maintain_version'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -117,7 +117,7 @@ function template_maintain_routine()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_errors'], '</h3>
+			<h3>', $txt['maintain_errors'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
@@ -129,7 +129,7 @@ function template_maintain_routine()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_recount'], '</h3>
+			<h3>', $txt['maintain_recount'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -141,7 +141,7 @@ function template_maintain_routine()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_logs'], '</h3>
+			<h3>', $txt['maintain_logs'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
@@ -153,7 +153,7 @@ function template_maintain_routine()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_cache'], '</h3>
+			<h3>', $txt['maintain_cache'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -233,7 +233,7 @@ function template_maintain_members()
 	// ]]></script>
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_reattribute_posts'], '</h3>
+			<h3>', $txt['maintain_reattribute_posts'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
@@ -271,7 +271,7 @@ function template_maintain_members()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft">
 					<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
 				</span>
@@ -360,7 +360,7 @@ function template_maintain_topics()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_old'], '</h3>
+			<h3>', $txt['maintain_old'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content flow_auto">
@@ -426,7 +426,7 @@ function template_maintain_topics()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['move_topics_maintenance'], '</h3>
+			<h3>', $txt['move_topics_maintenance'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
@@ -485,7 +485,7 @@ function template_optimize()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
+			<h3>', $txt['maintain_optimize'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -518,7 +518,7 @@ function template_convert_utf8()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['utf8_title'], '</h3>
+			<h3>', $txt['utf8_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -556,7 +556,7 @@ function template_convert_entities()
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
+			<h3>', $txt['entity_convert_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">

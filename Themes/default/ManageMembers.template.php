@@ -9,7 +9,7 @@ function template_search_members()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="floatleft">', $txt['search_for'], '</span>
 					<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
 				</h3>
@@ -150,7 +150,7 @@ function template_search_members()
 			</div>
 			<br />
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['member_part_of_these_membergroups'], '</h3>
+				<h3>', $txt['member_part_of_these_membergroups'], '</h3>
 			</div>
 			<div class="flow_hidden">
 				<table width="49%" class="table_grid floatleft">
@@ -247,7 +247,7 @@ function template_admin_browse()
 		<br />
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="', $context['character_set'], '" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['admin_browse_outstanding'], '</h3>
+				<h3>', $txt['admin_browse_outstanding'], '</h3>
 			</div>
 			<script type="text/javascript"><!-- // --><![CDATA[
 				function onOutstandingSubmit()

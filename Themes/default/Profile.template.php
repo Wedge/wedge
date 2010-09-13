@@ -43,7 +43,7 @@ function template_summary()
 	echo '
 <div id="profileview" class="flow_auto">
 	<div class="cat_bar">
-		<h3 class="catbg">
+		<h3>
 			<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['summary'], '</span>
 		</h3>
 	</div>
@@ -320,7 +320,7 @@ function template_showPosts()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />
 					', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
 				</span>
@@ -475,7 +475,7 @@ function template_editBuddies()
 
 	echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['editBuddies'], '</span>
 			</h3>
 		</div>
@@ -526,7 +526,7 @@ function template_editBuddies()
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="', $context['character_set'], '">
 		<div class="tborder add_buddy">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['buddy_add'], '</h3>
+				<h3>', $txt['buddy_add'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<label for="new_buddy">
@@ -559,7 +559,7 @@ function template_editIgnoreList()
 
 	echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['editIgnoreList'], '</span>
 			</h3>
 		</div>
@@ -610,7 +610,7 @@ function template_editIgnoreList()
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="', $context['character_set'], '">
 		<div class="tborder add_buddy">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['ignore_add'], '</h3>
+				<h3>', $txt['ignore_add'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<label for="new_buddy">
@@ -644,7 +644,7 @@ function template_trackActivity()
 	// The first table shows IP information about the user.
 	echo '
 			<div class="title_bar">
-				<h3 class="titlebg"><strong>', $txt['view_ips_by'], ' ', $context['member']['name'], '</strong></h3>
+				<h3><strong>', $txt['view_ips_by'], ' ', $context['member']['name'], '</strong></h3>
 			</div>';
 
 	// The last IP the user used.
@@ -702,7 +702,7 @@ function template_trackIP()
 	// The first table in the template gives an input box to allow the admin to enter another IP to track.
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['trackIP'], '</h3>
+			<h3>', $txt['trackIP'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<form action="', $context['base_url'], '" method="post" accept-charset="', $context['character_set'], '">
@@ -716,7 +716,7 @@ function template_trackIP()
 	{
 		echo '
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['whois_title'], ' ', $context['ip'], '</h3>
+				<h3>', $txt['whois_title'], ' ', $context['ip'], '</h3>
 			</div>
 			<div class="windowbg2 wrc">
 				<div class="padding">';
@@ -732,7 +732,7 @@ function template_trackIP()
 	// The second table lists all the members who have been logged as using this IP address.
 	echo '
 		<div class="title_bar">
-			<h3 class="titlebg">', $txt['members_from_ip'], ' ', $context['ip'], '</h3>
+			<h3>', $txt['members_from_ip'], ' ', $context['ip'], '</h3>
 		</div>';
 	if (empty($context['ips']))
 		echo '
@@ -776,7 +776,7 @@ function template_showPermissions()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['showPermissions'], '</span>
 			</h3>
 		</div>';
@@ -796,7 +796,7 @@ function template_showPermissions()
 		{
 			echo '
 				<div class="cat_bar">
-					<h3 class="catbg">', $txt['showPermissions_restricted_boards'], '</h3>
+					<h3>', $txt['showPermissions_restricted_boards'], '</h3>
 				</div>
 				<div class="windowbg wrc smalltext">
 					<div class="content">', $txt['showPermissions_restricted_boards_desc'], ':<br />';
@@ -812,7 +812,7 @@ function template_showPermissions()
 		echo '
 				<div class="tborder">
 					<div class="cat_bar">
-						<h3 class="catbg">', $txt['showPermissions_general'], '</h3>
+						<h3>', $txt['showPermissions_general'], '</h3>
 					</div>';
 		if (!empty($context['member']['permissions']['general']))
 		{
@@ -860,7 +860,7 @@ function template_showPermissions()
 			<div class="tborder">
 				<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="', $context['character_set'], '">
 					<div class="cat_bar">
-						<h3 class="catbg"><span class="ie6_header floatleft">
+						<h3><span class="ie6_header floatleft">
 							<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
 							<select name="board" onchange="if (this.options[this.selectedIndex].value) this.form.submit();">
 								<option value="0"', $context['board'] == 0 ? ' selected="selected"' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
@@ -935,7 +935,7 @@ function template_statPanel()
 	<div id="profileview">
 		<div id="generalstats">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_info.gif" alt="" class="icon" />
 					', $txt['statPanel_generalStats'], ' - ', $context['member']['name'], '
 					</span>
@@ -963,8 +963,8 @@ function template_statPanel()
 	echo '
 		<div id="activitytime" class="flow_hidden">
 			<div class="cat_bar">
-				<h3 class="catbg">
-				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_history.gif" alt="" class="icon" />', $txt['statPanel_activityTime'], '</span>
+				<h3>
+					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_history.gif" alt="" class="icon" />', $txt['statPanel_activityTime'], '</span>
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -1010,7 +1010,7 @@ function template_statPanel()
 		<div class="flow_hidden">
 			<div id="popularposts">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_replies.gif" alt="" class="icon" />', $txt['statPanel_topBoards'], '</span>
 					</h3>
 				</div>
@@ -1049,8 +1049,8 @@ function template_statPanel()
 	echo '
 			<div id="popularactivity">
 				<div class="cat_bar">
-					<h3 class="catbg">
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_replies.gif" alt="" class="icon" />', $txt['statPanel_topBoardsActivity'], '</span>
+					<h3>
+						<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/stats_replies.gif" alt="" class="icon" />', $txt['statPanel_topBoardsActivity'], '</span>
 					</h3>
 				</div>
 				<div class="windowbg2 wrc">
@@ -1100,7 +1100,7 @@ function template_edit_options()
 	echo '
 		<form action="', (!empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'] . ';save'), '" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" enctype="multipart/form-data" onsubmit="return checkProfileSubmit();">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />';
 
 		// Don't say "Profile" if this isn't the profile...
@@ -1554,8 +1554,8 @@ function template_notification()
 	// The main containing header.
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
-				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['profile'], '</span>
+				<h3>
+					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['profile'], '</span>
 				</h3>
 			</div>
 			<p class="windowbg description">', $txt['notification_info'], '</p>
@@ -1625,7 +1625,7 @@ function template_groupMembership()
 	echo '
 		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['profile'], '</span>
 				</h3>
 			</div>
@@ -1644,7 +1644,7 @@ function template_groupMembership()
 		echo '
 			<div class="groupmembership">
 				<div class="cat_bar">
-					<h3 class="catbg">', $txt['request_group_membership'], '</h3>
+					<h3>', $txt['request_group_membership'], '</h3>
 				</div>
 				<div class="roundframe rrc">
 					', $txt['request_group_membership_desc'], ':
@@ -1790,7 +1790,7 @@ function template_ignoreboards()
 
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['profile'], '</span>
 			</h3>
 		</div>
@@ -1885,7 +1885,7 @@ function template_viewWarning()
 
 	echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />
 				', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
 				</span>
@@ -2069,7 +2069,7 @@ function template_issueWarning()
 	echo '
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />
 				', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
 				</span>
@@ -2187,7 +2187,7 @@ function template_issueWarning()
 	// Previous warnings?
 	echo '<br />
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['profile_warning_previous'], '
 			</h3>
 		</div>
@@ -2263,7 +2263,7 @@ function template_deleteAccount()
 	echo '
 		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['deleteAccount'], '</span>
 				</h3>
 			</div>';
@@ -2825,7 +2825,7 @@ function template_authentication_method()
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/register.js"></script>
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" enctype="multipart/form-data">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" class="icon" />', $txt['authentication'], '</span>
 				</h3>
 			</div>

@@ -9,7 +9,7 @@ function template_modify_weights()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_weights'], '</h3>
+				<h3>', $txt['search_weights'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -99,7 +99,7 @@ function template_select_search_method()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_method'], '</h3>
+				<h3>', $txt['search_method'], '</h3>
 			</div>
 			<div class="information">
 				<div class="smalltext" style="font-weight: normal;"><a href="', $scripturl, '?action=helpadmin;help=search_why_use_index" onclick="return reqWin(this.href);">', $txt['search_create_index_why'], '</a></div>
@@ -227,7 +227,7 @@ function template_create_index()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="', $context['character_set'], '" name="create_index">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_create_index'], '</h3>
+				<h3>', $txt['search_create_index'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -260,7 +260,7 @@ function template_create_index_progress()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_create_index'], '</h3>
+				<h3>', $txt['search_create_index'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -306,7 +306,7 @@ function template_create_index_done()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['search_create_index'], '</h3>
+			<h3>', $txt['search_create_index'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -328,7 +328,7 @@ function template_spider_edit()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['add_spider_desc'], '
@@ -381,7 +381,7 @@ function template_show_spider_logs()
 	echo '
 		<br />
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['spider_logs_delete'], '</h3>
+			<h3>', $txt['spider_logs_delete'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="windowbg wrc">

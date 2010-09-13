@@ -101,7 +101,7 @@ function template_main()
 	echo '
 			<div id="preview_section"', isset($context['preview_message']) ? '' : ' style="display: none;"', '>
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 					</h3>
 				</div>
@@ -121,7 +121,7 @@ function template_main()
 	// Start the main table.
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div>
 				<div class="roundframe rrc">', isset($context['current_topic']) ? '
@@ -733,7 +733,7 @@ function template_main()
 
 		<div id="recent" class="flow_hidden main_section">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['topic_summary'], '</h3>
+				<h3>', $txt['topic_summary'], '</h3>
 			</div>
 			<span id="new_replies"></span>';
 
@@ -901,7 +901,7 @@ function template_announce()
 	<div id="announcement">
 		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['announce_title'], '</h3>
+				<h3>', $txt['announce_title'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['announce_desc'], '

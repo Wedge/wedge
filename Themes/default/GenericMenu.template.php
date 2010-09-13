@@ -23,7 +23,7 @@ function template_generic_menu_sidebar_above()
 		echo '
 			<div class="adm_section">
 				<div class="cat_bar">
-					<h4 class="catbg">';
+					<h4>';
 
 			if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			{
@@ -217,7 +217,7 @@ function template_generic_menu_tabs(&$menu_context)
 
 	echo '
 	<div class="cat_bar">
-		<h3 class="catbg">';
+		<h3>';
 
 	// Exactly how many tabs do we have?
 	foreach ($context['tabs'] as $id => $tab)

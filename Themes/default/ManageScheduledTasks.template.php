@@ -26,7 +26,7 @@ function template_edit_scheduled_tasks()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=scheduledtasks;sa=taskedit;save;tid=', $context['task']['id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['scheduled_task_edit'], '</h3>
+				<h3>', $txt['scheduled_task_edit'], '</h3>
 			</div>
 			<div class="information">
 				<em>', sprintf($txt['scheduled_task_time_offset'], $context['server_time']), ' </em>

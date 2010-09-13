@@ -7,7 +7,7 @@ function template_main()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/email_sm.gif" alt="" class="icon" />', $txt['notify'], '</span>
 			</h3>
 		</div>
@@ -25,7 +25,7 @@ function template_notify_board()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/email_sm.gif" alt="" class="icon" />', $txt['notify'], '</span>
 			</h3>
 		</div>

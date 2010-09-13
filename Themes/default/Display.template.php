@@ -16,7 +16,7 @@ function template_main()
 		echo '
 			<div id="poll">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" alt="" class="icon" /> ', $txt['poll'], '</span>
 					</h3>
 				</div>
@@ -116,7 +116,7 @@ function template_main()
 		echo '
 			<div class="linked_events">
 				<div class="title_bar">
-					<h3 class="titlebg headerpadding">', $txt['calendar_linked_events'], '</h3>
+					<h3 class="headerpadding">', $txt['calendar_linked_events'], '</h3>
 				</div>
 				<div class="windowbg wrc">
 					<div class="content">
@@ -156,7 +156,7 @@ function template_main()
 	echo '
 			<div id="forumposts">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<img src="', $settings['images_url'], '/topic/', $context['class'], '.gif" align="bottom" alt="" />
 						<span id="author">', $txt['author'], '</span>
 						', $txt['topic'], ': ', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')
@@ -645,7 +645,7 @@ function template_main()
 			<a id="quickreply"></a>
 			<div class="tborder" id="quickreplybox">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span class="ie6_header floatleft"><a href="javascript:oQuickReply.swap();">
 							<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand" class="icon" />
 						</a>

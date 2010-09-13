@@ -9,7 +9,7 @@ function template_ban_edit()
 	<div id="manage_bans">
 
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $context['ban']['is_new'] ? $txt['ban_add_new'] : $txt['ban_edit'] . ' \'' . $context['ban']['name'] . '\'', '
 			</h3>
 		</div>';
@@ -272,7 +272,7 @@ function template_ban_edit_trigger()
 	<div id="manage_bans">
 		<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $context['ban_trigger']['is_new'] ? $txt['ban_add_trigger'] : $txt['ban_edit_trigger_title'], '
 				</h3>
 			</div>

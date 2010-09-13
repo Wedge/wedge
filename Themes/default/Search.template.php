@@ -8,7 +8,7 @@ function template_main()
 	echo '
 	<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '" name="searchform" id="searchform">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft">', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" class="icon" />' : ' ', $txt['set_parameters'], '</span>
 			</h3>
 		</div>';
@@ -126,7 +126,7 @@ function template_main()
 		<fieldset class="flow_hidden">
 			<div class="roundframe rrc">
 				<div class="title_bar">
-					<h4 class="titlebg">
+					<h4>
 						<a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 					</h4>
 				</div>
@@ -225,9 +225,7 @@ function template_results()
 		echo '
 	<div id="search_results">
 		<div class="cat_bar">
-			<h3 class="catbg">
-				', $txt['search_adjust_query'], '
-			</h3>
+			<h3>', $txt['search_adjust_query'], '</h3>
 		</div>
 		<div class="roundframe rrc">';
 
@@ -269,7 +267,7 @@ function template_results()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="floatright">';
 					if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
 					echo '
@@ -413,7 +411,7 @@ function template_results()
 	{
 		echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'],':&nbsp;',$context['search_params']['search'],'</span>
 			</h3>
 		</div>

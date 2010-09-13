@@ -11,7 +11,7 @@ function template_main()
 		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" value="0" name="options[theme_allow]" />
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" align="top" /></a>
 					', $txt['themeadmin_title'], '
 					</span>
@@ -91,7 +91,7 @@ function template_main()
 	echo '
 		<br />
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '</span>
 			</h3>
 		</div>
@@ -112,7 +112,7 @@ function template_main()
 		echo '
 		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="', $context['character_set'], '" enctype="multipart/form-data" onsubmit="return confirm(\'', $txt['theme_install_new_confirm'], '\');">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_install'], '</span>
 				</h3>
 			</div>
@@ -196,7 +196,7 @@ function template_list_themes()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['themeadmin_list_heading'], '</h3>
+			<h3>', $txt['themeadmin_list_heading'], '</h3>
 		</div>
 		<div class="information">
 			', $txt['themeadmin_list_tip'], '
@@ -207,7 +207,7 @@ function template_list_themes()
 	{
 		echo '
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					<span class="floatleft"><strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '</span>';
 
 			// You *cannot* delete the default theme. It's important!
@@ -236,7 +236,7 @@ function template_list_themes()
 
 		<form action="', $scripturl, '?action=admin;area=theme;', $context['session_var'], '=', $context['session_id'], ';sa=list" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['themeadmin_list_reset'], '</h3>
+				<h3>', $txt['themeadmin_list_reset'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -271,7 +271,7 @@ function template_reset_list()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['themeadmin_reset_title'], '</h3>
+			<h3>', $txt['themeadmin_reset_title'], '</h3>
 		</div>
 		<div class="information">
 			', $txt['themeadmin_reset_tip'], '
@@ -286,7 +286,7 @@ function template_reset_list()
 
 		echo '
 		<div class="title_bar">
-			<h3 class="titlebg">', $theme['name'], '</h3>
+			<h3>', $theme['name'], '</h3>
 		</div>
 		<div class="windowbg', $alternate ? '' : '2',' wrc">
 			<div class="content">
@@ -319,7 +319,7 @@ function template_set_options()
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '" />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['theme_options_title'], ' - ', $context['theme_settings']['name'], '</h3>
+				<h3>', $txt['theme_options_title'], ' - ', $context['theme_settings']['name'], '</h3>
 			</div>
 			<div class="information">
 				', $context['theme_options_reset'] ? $txt['themeadmin_reset_options_info'] : $txt['theme_options_defaults'], '
@@ -396,7 +396,7 @@ function template_set_settings()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a> ', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '</span>
 				</h3>
 			</div>';
@@ -405,7 +405,7 @@ function template_set_settings()
 	if ($context['theme_settings']['theme_id'] != 1)
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_edit'], '</span>
 				</h3>
 			</div>
@@ -424,7 +424,7 @@ function template_set_settings()
 
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_url_config'], '</span>
 				</h3>
 			</div>
@@ -464,7 +464,7 @@ function template_set_settings()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" align="top" /> ', $txt['theme_variants'], '</span>
 				</h3>
 			</div>
@@ -499,7 +499,7 @@ function template_set_settings()
 
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_options'], '</span>
 				</h3>
 			</div>
@@ -630,7 +630,7 @@ function template_pick()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
 				</h3>
 			</div>
@@ -720,7 +720,7 @@ function template_installed()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $context['page_title'], '</h3>
+			<h3>', $context['page_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -743,7 +743,7 @@ function template_edit_list()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['themeadmin_edit_title'], '</h3>
+			<h3>', $txt['themeadmin_edit_title'], '</h3>
 		</div>';
 
 	$alternate = false;
@@ -754,7 +754,7 @@ function template_edit_list()
 
 		echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $theme['name'], '</a>', !empty($theme['version']) ? '
 				<em>(' . $theme['version'] . ')</em>' : '', '
 			</h3>
@@ -782,7 +782,7 @@ function template_copy_template()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['themeadmin_edit_filename'], '</h3>
+			<h3>', $txt['themeadmin_edit_filename'], '</h3>
 		</div>
 		<div class="information">
 			', $txt['themeadmin_edit_copy_warning'], '
@@ -1010,7 +1010,7 @@ function template_edit_style()
 	echo '
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '" name="stylesheetForm" id="stylesheetForm">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
+				<h3>', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">';
@@ -1057,7 +1057,7 @@ function template_edit_template()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
+				<h3>', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">';
@@ -1105,7 +1105,7 @@ function template_edit_file()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
+				<h3>', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">

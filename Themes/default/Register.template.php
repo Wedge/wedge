@@ -9,7 +9,7 @@ function template_registration_agreement()
 	echo '
 		<form action="', $scripturl, '?action=register" method="post" accept-charset="', $context['character_set'], '" id="registration">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['registration_agreement'], '</h3>
+				<h3>', $txt['registration_agreement'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<p>', $context['agreement'], '</p>
@@ -114,10 +114,10 @@ function template_registration_form()
 	echo '
 		<form action="', $scripturl, '?action=register2" method="post" accept-charset="', $context['character_set'], '" name="registration" id="registration" onsubmit="return verifyAgree();">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['registration_form'], '</h3>
+				<h3>', $txt['registration_form'], '</h3>
 			</div>
 			<div class="title_bar">
-				<h4 class="titlebg">', $txt['required_info'], '</h4>
+				<h4>', $txt['required_info'], '</h4>
 			</div>
 			<div class="windowbg2 wrc">
 				<fieldset class="content">
@@ -206,7 +206,7 @@ function template_registration_form()
 	{
 		echo '
 			<div class="title_bar">
-				<h4 class="titlebg">', $txt['additional_information'], '</h4>
+				<h4>', $txt['additional_information'], '</h4>
 			</div>
 			<div class="windowbg2 wrc">
 				<fieldset class="content">
@@ -319,7 +319,7 @@ function template_registration_form()
 	{
 		echo '
 			<div class="title_bar">
-				<h4 class="titlebg">', $txt['verification'], '</h4>
+				<h4>', $txt['verification'], '</h4>
 			</div>
 			<div class="windowbg2 wrc">
 				<fieldset class="content centertext">
@@ -377,7 +377,7 @@ function template_after()
 	echo '
 		<div id="registration_success">
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['title'], '</h3>
+				<h3>', $context['title'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<p class="content">', $context['description'], '</p>
@@ -393,7 +393,7 @@ function template_coppa()
 	// Formulate a nice complicated message!
 	echo '
 			<div class="title_bar">
-				<h3 class="titlebg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="windowbg2 wrc">
 				<div class="content">
@@ -513,7 +513,7 @@ function template_admin_register()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['admin_browse_register_new'], '</h3>
+			<h3>', $txt['admin_browse_register_new'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="', $context['character_set'], '" name="postForm" id="postForm">
 			<script type="text/javascript"><!-- // --><![CDATA[
@@ -615,7 +615,7 @@ function template_edit_agreement()
 	// Just a big box to edit the text file ;).
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['registration_agreement'], '</h3>
+			<h3>', $txt['registration_agreement'], '</h3>
 		</div>';
 
 	// Warning for if the file isn't writable.
@@ -680,7 +680,7 @@ function template_edit_reserved_words()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['admin_reserved_set'], '</h3>
+			<h3>', $txt['admin_reserved_set'], '</h3>
 		</div>
 		<form id="registration_agreement" action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="', $context['character_set'], '">
 			<div class="windowbg2 wrc">

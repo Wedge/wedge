@@ -1,4 +1,4 @@
-h3.catbg input.input_check
+.cat_bar h3 input.input_check
 {
 	margin: 0 4px;
 }
@@ -75,7 +75,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 
 /* Overrides for the calendar template
 ------------------------------------------------- */
-#main_grid table.weeklist h4.titlebg
+#main_grid table.weeklist .title_bar h4
 {
 	margin: 2px 0 -4px 0;
 }

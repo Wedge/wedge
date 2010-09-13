@@ -10,7 +10,7 @@ function template_main()
 	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="', $context['character_set'], '">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
+				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<p class="smalltext centertext">', $txt['password_reminder_desc'], '</p>
@@ -34,7 +34,7 @@ function template_reminder_pick()
 	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="', $context['character_set'], '">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
+				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<p><strong>', $txt['authentication_options'], ':</strong></p>
@@ -62,7 +62,7 @@ function template_sent()
 		<br />
 		<div class="tborder login" id="reminder_sent">
 			<div class="cat_bar">
-				<h3 class="catbg">' . $context['page_title'] . '</h3>
+				<h3>' . $context['page_title'] . '</h3>
 			</div>
 			<p class="information">' . $context['description'] . '</p>
 		</div>';
@@ -78,7 +78,7 @@ function template_set_password()
 	<form action="', $scripturl, '?action=reminder;sa=setpassword2" name="reminder_form" id="reminder_form" method="post" accept-charset="', $context['character_set'], '">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<dl>
@@ -126,7 +126,7 @@ function template_ask()
 	<form action="', $scripturl, '?action=reminder;sa=secret2" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
 		<div class="tborder login">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['authentication_reminder'], '</h3>
+				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
 			<div class="roundframe rrc">
 				<p class="smalltext">', $context['account_type'] == 'password' ? $txt['enter_new_password'] : $txt['openid_secret_reminder'], '</p>

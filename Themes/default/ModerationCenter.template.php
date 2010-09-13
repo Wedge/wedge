@@ -9,7 +9,7 @@ function template_moderation_center()
 	echo '
 	<div id="modcenter">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['moderation_center'], '</h3>
+			<h3>', $txt['moderation_center'], '</h3>
 		</div>
 		<div class="information">
 			<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
@@ -46,7 +46,7 @@ function template_latest_news()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a> ', $txt['mc_latest_news'], '</span>
 			</h3>
 		</div>
@@ -91,7 +91,7 @@ function template_group_requests_block()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<a href="', $scripturl, '?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
 			</h3>
 		</div>
@@ -125,7 +125,7 @@ function template_reported_posts_block()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<a href="', $scripturl, '?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
 			</h3>
 		</div>
@@ -158,7 +158,7 @@ function template_watched_users()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<a href="', $scripturl, '?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
 			</h3>
 		</div>
@@ -193,7 +193,7 @@ function template_notes()
 	echo '
 		<form action="', $scripturl, '?action=moderate;area=index" method="post">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_notes'], '</h3>
+				<h3>', $txt['mc_notes'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content modbox">';
@@ -236,7 +236,7 @@ function template_reported_posts()
 	echo '
 	<form action="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
 			</h3>
 		</div>
@@ -316,7 +316,7 @@ function template_unapproved_posts()
 	<div id="modcenter">
 	<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['mc_unapproved_posts'], '</h3>
+			<h3>', $txt['mc_unapproved_posts'], '</h3>
 		</div>';
 
 	// Make up some buttons
@@ -341,7 +341,7 @@ function template_unapproved_posts()
 	{
 		echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="smalltext floatleft">', $item['counter'], '</span>
 				<span class="smalltext floatleft"><a href="', $scripturl, '#c', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
 				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
@@ -404,7 +404,7 @@ function template_unapproved_attachments()
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=attachmod;sa=attachments;start=', $context['start'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['mc_unapproved_attachments'], '</h3>
+				<h3>', $txt['mc_unapproved_attachments'], '</h3>
 			</div>';
 
 	// The ever popular approve button, with the massively unpopular delete.
@@ -494,12 +494,12 @@ function template_viewmodreport()
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=reports;report=', $context['report']['id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
 				</h3>
 			</div>
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					<span class="floatleft">
 						', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
 					</span>
@@ -523,7 +523,7 @@ function template_viewmodreport()
 			</div>
 			<br />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_modreport_whoreported_title'], '</h3>
+				<h3>', $txt['mc_modreport_whoreported_title'], '</h3>
 			</div>';
 
 	foreach ($context['report']['comments'] as $comment)
@@ -538,7 +538,7 @@ function template_viewmodreport()
 	echo '
 			<br />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_modreport_mod_comments'], '</h3>
+				<h3>', $txt['mc_modreport_mod_comments'], '</h3>
 			</div>
 			<div class="windowbg2 wrc">
 				<div class="content">';
@@ -568,7 +568,7 @@ function template_viewmodreport()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_modreport_modactions'], '</h3>
+				<h3>', $txt['mc_modreport_modactions'], '</h3>
 			</div>
 			<table width="100%" class="table_grid">
 				<thead>
@@ -656,7 +656,7 @@ function template_moderation_settings()
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_prefs_title'], '</h3>
+				<h3>', $txt['mc_prefs_title'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['mc_prefs_desc'], '
@@ -739,10 +739,10 @@ function template_show_notice()
 	</head>
 	<body>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['show_notice'], '</h3>
+			<h3>', $txt['show_notice'], '</h3>
 		</div>
 		<div class="title_bar">
-			<h3 class="titlebg">', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
+			<h3>', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -770,7 +770,7 @@ function template_warn_template()
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $context['page_title'], '</h3>
+				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['mc_warning_template_desc'], '

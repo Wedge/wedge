@@ -13,7 +13,7 @@ function template_pm_above()
 	if (!empty($context['limit_bar']))
 		echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<span class="floatleft">', $txt['pm_capacity'], ':</span>
 				<span class="floatleft capacity_bar">
 					<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em;"></span>
@@ -136,7 +136,7 @@ function template_folder()
 		if ($context['display_mode'] != 1)
 			echo '
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span id="author">', $txt['author'], '</span>
 						<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
 					</h3>
@@ -645,7 +645,7 @@ function template_search()
 	// ]]></script>
 	<form action="', $scripturl, '?action=pm;sa=search2" method="post" accept-charset="', $context['character_set'], '" name="searchform" id="searchform">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_search_title'], '</h3>
+			<h3>', $txt['pm_search_title'], '</h3>
 		</div>';
 
 	if (!empty($context['search_errors']))
@@ -730,7 +730,7 @@ function template_search()
 		<fieldset class="labels">
 			<div class="roundframe rrc">
 				<div class="title_bar">
-					<h4 class="titlebg">
+					<h4>
 						<span class="ie6_header floatleft"><a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a></span>
 					</h4>
 				</div>
@@ -764,7 +764,7 @@ function template_search_results()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_search_results'], '</h3>
+			<h3>', $txt['pm_search_results'], '</h3>
 		</div>
 		<div class="pagesection">
 			<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
@@ -792,13 +792,13 @@ function template_search_results()
 		{
 			echo '
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
 					<span class="floatleft">', $message['counter'], '&nbsp;&nbsp;<a href="', $message['href'], '">', $message['subject'], '</a></span>
 				</h3>
 			</div>
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
+				<h3>', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
 
 				// Show the recipients.
 				// !!! This doesn't deal with the sent item searching quite right for bcc.
@@ -882,7 +882,7 @@ function template_send()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['pm_send_report'], '</h3>
+				<h3>', $txt['pm_send_report'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">';
@@ -902,7 +902,7 @@ function template_send()
 	if (isset($context['preview_message']))
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $context['preview_subject'], '</h3>
+			<h3>', $context['preview_subject'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -914,7 +914,7 @@ function template_send()
 	// Main message editing box.
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '" />&nbsp;', $txt['new_message'], '</span>
 			</h3>
 		</div>';
@@ -1023,7 +1023,7 @@ function template_send()
 	<br />
 	<br />
 	<div class="cat_bar">
-		<h3 class="catbg">', $txt['subject'], ': ', $context['quoted_message']['subject'], '</h3>
+		<h3>', $txt['subject'], ': ', $context['quoted_message']['subject'], '</h3>
 	</div>
 	<div class="windowbg2 wrc">
 		<div class="content">
@@ -1088,7 +1088,7 @@ function template_ask_delete()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '</h3>
+			<h3>', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -1106,7 +1106,7 @@ function template_prune()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=prune" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['pm_prune_warning'], '\');">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_prune'], '</h3>
+			<h3>', $txt['pm_prune'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -1128,7 +1128,7 @@ function template_labels()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=manlabels" method="post" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_manage_labels'], '</h3>
+			<h3>', $txt['pm_manage_labels'], '</h3>
 		</div>
 		<div class="description">
 			', $txt['pm_labels_desc'], '
@@ -1190,7 +1190,7 @@ function template_labels()
 	</form>
 	<form action="', $scripturl, '?action=pm;sa=manlabels" method="post" accept-charset="', $context['character_set'], '" style="margin-top: 1ex;">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_label_add_new'], '</h3>
+			<h3>', $txt['pm_label_add_new'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -1220,7 +1220,7 @@ function template_report_message()
 	<form action="', $scripturl, '?action=pm;sa=report;l=', $context['current_label_id'], '" method="post" accept-charset="', $context['character_set'], '">
 		<input type="hidden" name="pmsg" value="', $context['pm_id'], '" />
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_report_title'], '</h3>
+			<h3>', $txt['pm_report_title'], '</h3>
 		</div>
 		<div class="description">
 			', $txt['pm_report_desc'], '
@@ -1272,7 +1272,7 @@ function template_report_message_complete()
 
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_report_title'], '</h3>
+			<h3>', $txt['pm_report_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -1290,7 +1290,7 @@ function template_rules()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=manrules" method="post" accept-charset="', $context['character_set'], '" name="manRules" id="manrules">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_manage_rules'], '</h3>
+			<h3>', $txt['pm_manage_rules'], '</h3>
 		</div>
 		<div class="description">
 			', $txt['pm_manage_rules_desc'], '
@@ -1534,7 +1534,7 @@ function template_add_rule()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=manrules;save;rid=', $context['rid'], '" method="post" accept-charset="', $context['character_set'], '" name="addrule" id="addrule" class="flow_hidden">
 		<div class="cat_bar">
-			<h3 class="catbg">', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '</h3>
+			<h3>', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -1649,7 +1649,7 @@ function template_add_rule()
 			</div>
 		</div><br class="clear" />
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['pm_rule_description'], '</h3>
+			<h3>', $txt['pm_rule_description'], '</h3>
 		</div>
 		<div class="information">
 			<div id="ruletext">', $txt['pm_rule_js_disabled'], '</div>

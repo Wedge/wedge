@@ -19,7 +19,7 @@ function template_permission_index()
 	if (!empty($context['profile']))
 		echo '
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['permissions_for_profile'], ': &quot;', $context['profile']['name'], '&quot;</h3>
+				<h3>', $txt['permissions_for_profile'], ': &quot;', $context['profile']['name'], '&quot;</h3>
 			</div>';
 
 	echo '
@@ -87,7 +87,7 @@ function template_permission_index()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					<span class="ie6_header floatleft">
 						<img src="', $settings['images_url'], '/', empty($context['show_advanced_options']) ? 'selected' : 'sort_down', '.gif" id="permissions_panel_toggle" alt="*" /> ', $txt['permissions_advanced_options'], '
 					</span>
@@ -253,13 +253,13 @@ function template_by_board()
 	echo '
 	<form id="admincenter" action="', $scripturl, '?action=admin;area=permissions;sa=board" method="post" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['permissions_boards'], '</h3>
+			<h3>', $txt['permissions_boards'], '</h3>
 		</div>
 		<div class="information">
 			', $txt['permissions_boards_desc'], '
 		</div>
 		<div class="title_bar">
-			<h3 id="board_permissions" class="titlebg flow_hidden">
+			<h3 id="board_permissions" class="flow_hidden">
 				<span class="perm_name floatleft">', $txt['board_name'], '</span>
 				<span class="perm_profile floatleft">', $txt['permission_profile'], '</span>
 			</h3>
@@ -275,7 +275,7 @@ function template_by_board()
 	{
 		echo '
 		<div class="cat_bar">
-			<h3 class="catbg"><strong>', $category['name'], '</strong></h3>
+			<h3><strong>', $category['name'], '</strong></h3>
 		</div>';
 
 		if (!empty($category['boards']))
@@ -351,7 +351,7 @@ function template_edit_profiles()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['permissions_profile_edit'], '</h3>
+				<h3>', $txt['permissions_profile_edit'], '</h3>
 			</div>
 
 			<table width="100%" class="table_grid">
@@ -406,7 +406,7 @@ function template_edit_profiles()
 		<br />
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['permissions_profile_new'], '</h3>
+				<h3>', $txt['permissions_profile_new'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -482,7 +482,7 @@ function template_modify_group()
 
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">';
+				<h3>';
 	if ($context['permission_type'] == 'board')
 		echo '
 				', $txt['permissions_local_for'], ' &quot;', $context['group']['name'], '&quot; ', $txt['permissions_on'], ' &quot;', $context['profile']['name'], '&quot;';
@@ -513,7 +513,7 @@ function template_modify_group()
 			</div>
 			<br />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['permissions_board'], '</h3>
+				<h3>', $txt['permissions_board'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['permissions_board_desc'], '
@@ -1062,7 +1062,7 @@ function template_postmod_permissions()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=postmod;', $context['session_var'], '=', $context['session_id'], '" method="post" name="postmodForm" id="postmodForm" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['permissions_post_moderation'], '</h3>
+				<h3>', $txt['permissions_post_moderation'], '</h3>
 			</div>';
 
 	// Got advanced permissions - if so warn!

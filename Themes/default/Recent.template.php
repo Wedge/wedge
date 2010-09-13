@@ -8,7 +8,7 @@ function template_main()
 	echo '
 	<div id="recent" class="main_section">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/post/xx.gif" alt="" class="icon" />', $txt['recent_posts'], '</span>
 			</h3>
 		</div>
@@ -229,7 +229,7 @@ function template_unread()
 	else
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg centertext">
+				<h3 class="centertext">
 					', $context['showing_all_topics'] ? $txt['msg_alert_none'] : $txt['unread_topics_visit_none'], '
 				</h3>
 			</div>';
@@ -406,7 +406,7 @@ function template_replies()
 	else
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg centertext">
+				<h3 class="centertext">
 					', $context['showing_all_topics'] ? $txt['msg_alert_none'] : $txt['unread_topics_visit_none'], '
 				</h3>
 			</div>';

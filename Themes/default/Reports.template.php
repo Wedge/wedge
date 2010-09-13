@@ -10,13 +10,13 @@ function template_report_type()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">', $txt['generate_reports'], '</h3>
+				<h3>', $txt['generate_reports'], '</h3>
 			</div>
 			<div class="information">
 				', $txt['generate_reports_desc'], '
 			</div>
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['generate_reports_type'], '</h3>
+				<h3>', $txt['generate_reports_type'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -61,7 +61,7 @@ function template_main()
 	echo '
 	<div id="admincenter">
 		<div class="title_bar">
-			<h3 class="titlebg">', $txt['results'], '</h3>
+			<h3>', $txt['results'], '</h3>
 		</div>
 		<div id="report_buttons">';
 

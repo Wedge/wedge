@@ -31,7 +31,7 @@ function template_browse()
 	echo '
 	<div id="manage_attachments">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['attachment_manager_browse_files'], '</h3>
+			<h3>', $txt['attachment_manager_browse_files'], '</h3>
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
@@ -55,7 +55,7 @@ function template_maintenance()
 	echo '
 	<div id="manage_attachments">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['attachment_stats'], '</h3>
+			<h3>', $txt['attachment_stats'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -68,7 +68,7 @@ function template_maintenance()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['attachment_integrity_check'], '</h3>
+			<h3>', $txt['attachment_integrity_check'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -79,7 +79,7 @@ function template_maintenance()
 			</div>
 		</div>
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['attachment_pruning'], '</h3>
+			<h3>', $txt['attachment_pruning'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -124,7 +124,7 @@ function template_attachment_repair()
 		echo '
 	<div id="manage_attachments">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['repair_attachments_complete'], '</h3>
+			<h3>', $txt['repair_attachments_complete'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -141,7 +141,7 @@ function template_attachment_repair()
 		echo '
 	<div id="manage_attachments">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['repair_attachments_complete'], '</h3>
+			<h3>', $txt['repair_attachments_complete'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -158,7 +158,7 @@ function template_attachment_repair()
 	<div id="manage_attachments">
 		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['repair_attachments'], '</h3>
+				<h3>', $txt['repair_attachments'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">

@@ -2309,8 +2309,7 @@ class wedgeEditor
 						<body id="help_popup">
 							<div class="padding windowbg">
 								<div class="cat_bar">
-									<h3 class="catbg">
-										' . $txt['more_smileys_pick'] . '
+									<h3>' . $txt['more_smileys_pick'] . '</h3>
 									</h3>
 								</div>
 								<div class="padding">

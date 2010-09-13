@@ -14,7 +14,7 @@ function template_editsets()
 	echo '
 		<br />
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['smiley_sets_latest'], '</h3>
+			<h3>', $txt['smiley_sets_latest'], '</h3>
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
@@ -64,7 +64,7 @@ function template_modifyset()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsets" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 				', $context['current_set']['is_new'] ? $txt['smiley_set_new'] : $txt['smiley_set_modify_existing'], '
 				</h3>
 			</div>';
@@ -149,7 +149,7 @@ function template_modifysmiley()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="', $context['character_set'], '" name="smileyForm" id="smileyForm">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['smiley_modify_existing'], '</h3>
+				<h3>', $txt['smiley_modify_existing'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -261,7 +261,7 @@ function template_addsmiley()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="', $context['character_set'], '" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['smileys_add_method'], '</h3>
+				<h3>', $txt['smileys_add_method'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -346,7 +346,7 @@ function template_addsmiley()
 			</div>
 			<br />
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['smiley_new'], '</h3>
+				<h3>', $txt['smiley_new'], '</h3>
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
@@ -410,7 +410,7 @@ function template_setorder()
 		echo '
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">', $location['title'], '</h3>
+				<h3>', $location['title'], '</h3>
 			</div>
 			<div class="information">
 				', $location['description'], '
@@ -467,7 +467,7 @@ function template_editicon()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $context['new_icon'] ? $txt['icons_new_icon'] : $txt['icons_edit_icon'], '
 				</h3>
 			</div>

@@ -19,7 +19,7 @@ function template_main()
 		echo '
 	<div id="newsfader">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" align="bottom" style="display: none;" />
 				', $txt['news'], '
 			</h3>
@@ -93,7 +93,7 @@ function template_main()
 				<tr>
 					<td colspan="4">
 						<div class="cat_bar">
-							<h3 class="catbg">';
+							<h3>';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
@@ -269,7 +269,7 @@ function template_info_center()
 	<div class="clear"></div>
 	<div class="roundframe rrc">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<img class="icon" id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
 				', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
 			</h3>
@@ -280,8 +280,8 @@ function template_info_center()
 	if (!empty($settings['number_recent_posts']))
 	{
 		echo '
-			<div class="title_barIC">
-				<h4 class="titlebg">
+			<div class="title_bar">
+				<h4>
 					<span class="ie6_header floatleft">
 						<a href="', $scripturl, '?action=recent"><img class="icon" src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '" /></a>
 						', $txt['recent_posts'], '
@@ -328,8 +328,8 @@ function template_info_center()
 	if ($context['show_calendar'])
 	{
 		echo '
-			<div class="title_barIC">
-				<h4 class="titlebg">
+			<div class="title_bar">
+				<h4>
 					<span class="ie6_header floatleft">
 						<a href="', $scripturl, '?action=calendar' . '"><img class="icon" src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
 						', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
@@ -373,8 +373,8 @@ function template_info_center()
 	if ($settings['show_stats_index'])
 	{
 		echo '
-			<div class="title_barIC">
-				<h4 class="titlebg">
+			<div class="title_bar">
+				<h4>
 					<span class="ie6_header floatleft">
 						<a href="', $scripturl, '?action=stats"><img class="icon" src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
 						', $txt['forum_stats'], '
@@ -391,8 +391,8 @@ function template_info_center()
 
 	// "Users online" - in order of activity.
 	echo '
-			<div class="title_barIC">
-				<h4 class="titlebg">
+			<div class="title_bar">
+				<h4>
 					<span class="ie6_header floatleft">
 						', $context['show_who'] ? '<a href="' . $scripturl . '?action=who' . '">' : '', '<img class="icon" src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
 						', $txt['online_users'], '
@@ -441,8 +441,8 @@ function template_info_center()
 	if ($context['user']['is_logged'] && !$settings['show_stats_index'])
 	{
 		echo '
-			<div class="title_barIC">
-				<h4 class="titlebg">
+			<div class="title_bar">
+				<h4>
 					<span class="ie6_header floatleft">
 						', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img class="icon" src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '" />', $context['allow_pm'] ? '</a>' : '', '
 						<span>', $txt['personal_message'], '</span>

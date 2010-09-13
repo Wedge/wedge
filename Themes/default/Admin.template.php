@@ -10,7 +10,7 @@ function template_admin()
 	echo '
 	<div id="admincenter">
 		<div class="title_bar">
-			<h3 class="titlebg">';
+			<h3>';
 
 	if ($context['user']['is_admin'])
 		echo '
@@ -46,7 +46,7 @@ function template_admin()
 	echo '
 			<div id="live_news" class="floatleft">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" /></a> ', $txt['live'], '</span>
 					</h3>
 				</div>
@@ -61,7 +61,7 @@ function template_admin()
 	echo '
 			<div id="supportVersionsTable" class="floatright">
 				<div class="cat_bar">
-					<h3 class="catbg">
+					<h3>
 						<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
 					</h3>
 				</div>
@@ -166,7 +166,7 @@ function template_admin()
 				sUpdateNotificationDefaultMessage: ', JavaScriptEscape($txt['update_message']), ',
 				sUpdateNotificationTemplate: ', JavaScriptEscape('
 					<div class="cat_bar">
-						<h3 id="update_title" class="catbg">
+						<h3 id="update_title">
 							%title%
 						</h3>
 					</div>
@@ -193,7 +193,7 @@ function template_manage_copyright()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=copyright" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['copyright_removal'], '
 				</h3>
 			</div>
@@ -229,7 +229,7 @@ function template_credits()
 
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['support_title'], '
 			</h3>
 		</div>
@@ -255,7 +255,7 @@ function template_credits()
 	// Point the admin to common support resources.
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['support_resources'], '
 			</h3>
 		</div>
@@ -269,7 +269,7 @@ function template_credits()
 	// Display latest support questions from simplemachines.org.
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '</span>
 			</h3>
 		</div>
@@ -282,7 +282,7 @@ function template_credits()
 	// The most important part - the credits :P.
 	echo '
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['admin_credits'], '
 			</h3>
 		</div>
@@ -387,7 +387,7 @@ function template_view_versions()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['admin_version_check'], '
 			</h3>
 		</div>
@@ -619,7 +619,7 @@ function template_edit_censored()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['admin_censored_words'], '
 				</h3>
 			</div>
@@ -668,7 +668,7 @@ function template_edit_censored()
 	// This table lets you test out your filters by typing in rude words and seeing what comes out.
 	echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['censor_test'], '
 				</h3>
 			</div>
@@ -695,7 +695,7 @@ function template_not_done()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['not_done_title'], '
 			</h3>
 		</div>
@@ -791,7 +791,7 @@ function template_show_settings()
 	if (isset($context['settings_title']))
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $context['settings_title'], '
 				</h3>
 			</div>';
@@ -823,7 +823,7 @@ function template_show_settings()
 			{
 				echo '
 					<div class="cat_bar">
-						<h3 class="', !empty($config_var['class']) ? $config_var['class'] : 'catbg', '"', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>
+						<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>
 							', ($config_var['help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this.href);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
 							', $config_var['label'], '
 						</h3>
@@ -1073,7 +1073,7 @@ function template_edit_profile_field()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $context['page_title'], '
 				</h3>
 			</div>
@@ -1283,7 +1283,7 @@ function template_admin_search_results()
 
 	echo '
 		<div class="title_bar">
-			<h3 class="titlebg">
+			<h3>
 				<div id="quick_search" class="floatright">
 					<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="', $context['character_set'], '" style="font-weight: normal; display: inline;">
 						<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
@@ -1376,7 +1376,7 @@ function template_core_features()
 	{
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['core_settings_welcome_msg'], '
 				</h3>
 			</div>
@@ -1388,7 +1388,7 @@ function template_core_features()
 	echo '
 		<form action="', $scripturl, '?action=admin;area=corefeatures;" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					', $txt['core_settings_title'], '
 				</h3>
 			</div>';
@@ -1449,7 +1449,7 @@ function template_add_language()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['add_language'], '
 				</h3>
 			</div>
@@ -1525,7 +1525,7 @@ function template_download_language()
 		echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $txt['languages_download_complete'], '
 			</h3>
 		</div>
@@ -1551,7 +1551,7 @@ function template_download_language()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['languages_download'], '
 				</h3>
 			</div>
@@ -1573,7 +1573,7 @@ function template_download_language()
 	echo '
 			<br />
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					', $txt['languages_download_theme_files'], '
 				</h3>
 			</div>
@@ -1644,7 +1644,7 @@ function template_download_language()
 
 		echo '
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['package_ftp_necessary'], '
 				</h3>
 			</div>
@@ -1739,7 +1739,7 @@ function template_modify_language_entries()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
-				<h3 class="catbg">
+				<h3>
 					', $txt['edit_languages'], '
 				</h3>
 			</div>';
@@ -1809,7 +1809,7 @@ function template_modify_language_entries()
 
 		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';entries" id="entry_form" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
-				<h3 class="titlebg">
+				<h3>
 					', $txt['edit_language_entries'], '
 				</h3>
 			</div>
@@ -2010,7 +2010,7 @@ function template_repair_boards()
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
-			<h3 class="catbg">',
+			<h3>',
 				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'] , '
 			</h3>
 		</div>

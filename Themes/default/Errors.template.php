@@ -15,7 +15,7 @@ function template_fatal_error()
 	echo '
 	<div id="fatal_error">
 		<div class="cat_bar">
-			<h3 class="catbg">
+			<h3>
 				', $context['error_title'], '
 			</h3>
 		</div>
@@ -39,7 +39,7 @@ function template_error_log()
 				var lastClicked = "";
 			// ]]></script>
 			<div class="title_bar clear_right">
-				<h3 class="titlebg">
+				<h3>
 					<span class="ie6_header floatleft">
 						<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a> ', $txt['errlog'], '
 					</span>
