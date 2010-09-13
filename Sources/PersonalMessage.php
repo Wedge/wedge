@@ -439,13 +439,13 @@ function MessageFolder()
 	global $txt, $scripturl, $modSettings, $context, $subjects_request;
 	global $messages_request, $user_info, $recipients, $options, $smcFunc, $memberContext, $user_settings;
 
-	// Changing view?
-	if (isset($_REQUEST['view']))
+	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
+	if (isset($_GET['view']))
 	{
-		$_GET['view'] = (int) $_GET['view'];
-		if ($_GET['view'] >= 0 && $_GET['view'] <= 2) // 0 = all at once, 1 = one at a time, 2 = conversation mode
+		$view = (int) $_GET['view'];
+		if ($view >= 0 && $view <= 2)
 		{
-			$context['display_mode'] = $_GET['view'];
+			$context['display_mode'] = $view;
 			updateMemberData($user_info['id'], array('pm_prefs' => ($user_settings['pm_prefs'] & 252) | $context['display_mode']));
 		}
 	}

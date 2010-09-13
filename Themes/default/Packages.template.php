@@ -712,7 +712,7 @@ function template_browse()
 	{
 		echo '
 		<br />
-		<div class="titlet_bar">
+		<div class="title_bar">
 			<h3 class="titlebg">' . $txt['language_package'] . '</h3>
 		</div>
 		<table class="table_grid" width="100%">
@@ -889,7 +889,7 @@ function template_servers()
 	if ($context['package_download_broken'])
 	{
 		echo '
-		<div class="cat_bar">
+		<div class="title_bar">
 			<h3 class="titlebg">', $txt['package_ftp_necessary'], '</h3>
 		</div>
 		<div class="windowbg wrc">
