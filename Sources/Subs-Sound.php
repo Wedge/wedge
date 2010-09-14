@@ -22,20 +22,23 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file carries the foundation of the non-visual (audible) CAPTCHA support.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file handles sound processing. In order to make sure the visual
-	verification is still accessible for all users, a sound clip is being addded
-	that reads the letters that are being shown.
-
-	void createWaveFile(string word)
-		- creates a wave file that spells the letters of 'word'.
-		- Tries the user's language first, and defaults to english.
-		- Returns false on failure.
-		- used by VerificationCode() (Register.php).
-*/
-
+/**
+ * Create a wave file that represents an audio version of an CAPTCHA string.
+ *
+ * Used by {@link VerificationCode()} in Register.php, this function attempts to process the CAPTCHA into a sound file spelling the letters of the CAPTCHA out. It attempts to use the user's language first, before defaulting back to English - it requires one wave file per letter in Themes/default/fonts/sound/ in the format of {letter}.{language}.wav.
+ *
+ * @param string $word The string containing the CAPTCHA.
+ * @return mixed Return false in the event of failure; if successful the audio data in wave format is output.
+ */
 function createWaveFile($word)
 {
 	global $settings, $user_info, $context;
