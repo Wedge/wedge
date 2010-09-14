@@ -22,7 +22,7 @@ if (is_ie || is_webkit || is_ff)
 // Toggles the element height and width styles of an image.
 function smc_toggleImageDimensions()
 {
-	var oImages = document.getElementsByTagName('IMG');
+	var oImage, oImages = document.querySelectorAll ? document.querySelectorAll('img.resized') : document.getElementsByTagName('IMG');
 	for (oImage in oImages)
 	{
 		// Not a resized image? Skip it.
@@ -66,8 +66,8 @@ var smf_addListItemHoverEvents = function()
 	var cssRule, newSelector;
 
 	// Add a rule for the list item hover event to every stylesheet.
-	for (var iStyleSheet = 0; iStyleSheet < document.styleSheets.length; iStyleSheet ++)
-		for (var iRule = 0; iRule < document.styleSheets[iStyleSheet].rules.length; iRule ++)
+	for (var iStyleSheet = 0; iStyleSheet < document.styleSheets.length; iStyleSheet++)
+		for (var iRule = 0; iRule < document.styleSheets[iStyleSheet].rules.length; iRule++)
 		{
 			oCssRule = document.styleSheets[iStyleSheet].rules[iRule];
 			if (oCssRule.selectorText.indexOf('LI:hover') != -1)
@@ -91,6 +91,44 @@ var smf_addListItemHoverEvents = function()
 	}
 }
 
+// If your browser doesn't support rounded corners, we can still emulate them.
+function emulateRounded()
+{
+	// Import the emulation stylesheet...
+	if (document.createStyleSheet)
+		document.createStyleSheet(smf_theme_url + '/css/old.css');
+	else
+	{
+		var old = document.createElement('LINK');
+		old.rel = 'stylesheet';
+		old.href = 'data:text/css,' + escape('@import url(' + smf_theme_url + '/css/old.css);');
+		document.getElementsByTagName('head')[0].appendChild(old);
+	}
+
+	var divs = document.querySelectorAll ? document.querySelectorAll('div.wrc, div.rrc') : document.getElementsByTagName('DIV'), upperFrame, lowerFrame, i;
+	for (i in divs)
+	{
+		var div = divs[i], cls = div.className;
+		if (cls.indexOf(' wrc') > -1)
+			div.innerHTML = '<span class="topslice"><span></span></span>' + div.innerHTML + '<span class="botslice"><span></span></span>';
+		else if (cls.indexOf(' rrc') > -1)
+		{
+			upperFrame = document.createElement('SPAN'); upperFrame.className = 'upperframe'; upperFrame.innerHTML = '<span></span>';
+			lowerFrame = document.createElement('SPAN'); lowerFrame.className = 'lowerframe'; lowerFrame.innerHTML = '<span></span>';
+			div.parentNode.insertBefore(upperFrame, div);
+			insertAfter(div.parentNode, div, lowerFrame);
+		}
+	}
+}
+
+if (!can_borderradius)
+{
+	if (document.addEventListener)
+		document.addEventListener('DOMContentLoaded', emulateRounded, false);
+	else // IE?
+		addLoadEvent(emulateRounded);
+}
+
 // Add hover events to list items if the browser requires it.
-if (is_ie7down && 'attachEvent' in window)
-	window.attachEvent('onload', smf_addListItemHoverEvents);
+if (is_ie7down)
+	addLoadEvent(smf_addListItemHoverEvents);

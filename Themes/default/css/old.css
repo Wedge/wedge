@@ -1,5 +1,8 @@
 
-/* Compatibility file for browsers not capable of showing rounded corners. */
+/*
+	Compatibility file for browsers not capable of showing rounded corners.
+	We will only deal with headers, menus and buttons here.
+*/
 
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
 {
@@ -58,115 +61,6 @@ tr.titlebg th.last_th
 }
 
 
-.windowbg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -30px no-repeat;
-}
-.windowbg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -30px no-repeat;
-	height: 11px;
-}
-.windowbg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -40px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
-}
-.windowbg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -40px no-repeat;
-	height: 11px;
-}
-
-.windowbg2 span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -60px no-repeat;
-}
-.windowbg2 span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -60px no-repeat;
-	height: 11px;
-}
-.windowbg2 span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -71px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
-}
-.windowbg2 span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -71px no-repeat;
-	height: 11px;
-}
-.approvebg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 0 no-repeat;
-}
-.approvebg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% 0 no-repeat;
-	height: 11px;
-}
-.approvebg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -11px no-repeat;
-	margin-bottom: 0.2em;
-}
-.approvebg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -11px no-repeat;
-	height: 11px;
-}
-span.upperframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -90px no-repeat;
-	padding-left: 20px;
-}
-span.upperframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -90px no-repeat;
-}
-span.lowerframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -102px no-repeat;
-	padding-left: 20px;
-}
-span.lowerframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -102px no-repeat;
-}
-
 /* Menu buttons */
 
 /* the active button */
@@ -224,9 +118,8 @@ span.lowerframe span
 
 .wrc
 {
-	margin-top: 0;
 	padding: 0;
-	border: 1px solid #ddd;
+	border-width: 0;
 }
 .rrc
 {
