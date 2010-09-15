@@ -22,28 +22,26 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides all of the error handling within the system.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file only takes care of two things - locking and stickying.
-
-	void LockTopic()
-		- locks a topic, toggles between locked/unlocked/admin locked.
-		- only admins can unlock topics locked by other admins.
-		- requires the lock_own or lock_any permission.
-		- logs the action to the moderator log.
-		- returns to the topic after it is done.
-		- accessed via ?action=lock.
-
-	void Sticky()
-		- stickies a topic - toggles between sticky and normal.
-		- requires the make_sticky permission.
-		- adds an entry to the moderator log.
-		- when done, sends the user back to the topic.
-		- accessed via ?action=sticky.
-*/
-
-// Locks a topic... either by way of a moderator or the topic starter.
+/**
+ * Handles a topic being locked from within the topic view, accessed via ?action=lock
+ *
+ * This function takes the current topic status and unlocks or locks it depending on the context.
+ * - If the user is locking, and they are allowed to 'lock any topics', assuming it is a moderator and thus a moderator lock (1) should be used. Otherwise check it is their topic and they are allowed to lock their own - in which case, a user lock (2) should be used.
+ * - If the user is unlocking, check whether it is a moderator lock (1) or user lock (2), and whether their permissions allow them to unlock the topic (unlock-any for moderator lock, unlock-own and their own topic and user lock only for user lock)
+ * - Session validation is done based on the URL containing the normal session identifiers.
+ * - The action will be logged in the moderation log (if enabled, see {@link logAction()}) - provided it is a moderator lock. Users locking their own topics (user locks) are not recorded.
+ * - Send notifications to relevant users.
+ * - Return to the topic once done (into moderation mode if in wireless viewing)
+ */
 function LockTopic()
 {
 	global $topic, $user_info, $sourcedir, $board, $smcFunc;
@@ -111,7 +109,17 @@ function LockTopic()
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . (WIRELESS ? ';moderate' : ''));
 }
 
-// Sticky a topic.  Can't be done by topic starters - that would be annoying!
+/**
+ * Handles the user request to sticky or unsticky a topic from within the topic itself. Called via ?action=sticky.
+ *
+ * This function takes the current topic status and reverts it; so sticky topics become unstickied, and vice versa.
+ * - It requires the make_sticky permission, which is not a any/own permission (so users cannot just, even accidentally, gain the power to sticky only their own topics)
+ * - It can be disabled from the admin panel (and this is stored in $modSettings['enableStickyTopics'])
+ * - Session validation is done based on the URL containing the normal session identifiers.
+ * - The action will be logged in the moderation log (if enabled, see {@link logAction()})
+ * - Send notifications to relevant users.
+ * - Return to the topic once done (into moderation mode if in wireless viewing)
+ */
 function Sticky()
 {
 	global $modSettings, $topic, $board, $sourcedir, $smcFunc;
