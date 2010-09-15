@@ -3515,11 +3515,11 @@ div.cat_bar, div.title_bar
 
 div.cat_bar
 {
-	background: url(../images/theme/catbg.png) repeat-x;
+	background: url(../images/theme/bars.png) 0 -150px repeat-x;
 }
 div.title_bar
 {
-	background: url(../images/theme/titlebg.png) repeat-x;
+	background: url(../images/theme/bars.png) 0 0 repeat-x;
 }
 
 
@@ -3533,11 +3533,11 @@ div.title_bar
 }
 tr.catbg th
 {
-	background: #a8bace url(../images/theme/catbg.png) repeat-x;
+	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
 }
 tr.titlebg th
 {
-	background: #e3e9ef url(../images/theme/titlebg.png) repeat-x;
+	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
 }
 
 /* Compatibility for mods using Curve-style corners...
