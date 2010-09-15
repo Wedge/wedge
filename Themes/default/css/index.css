@@ -1120,7 +1120,6 @@ form.wrc
 
 .buttonlist ul
 {
-	z-index: 100;
 	padding: 5px;
 	margin: 0 0.2em 0 0;
 }
@@ -1131,46 +1130,46 @@ form.wrc
 	list-style: none;
 	float: left;
 }
-/*	suggestion: use border: 1px solid rgba(128, 128, 128, .2); */
-.buttonlist ul li a
+.buttonlist a
 {
 	display: block;
+	height: 23px;
 	font-size: 0.8em;
 	color: #000;
-	background: #e8e8e8;
-	padding: 0;
-	margin-left: 12px;
 	text-transform: uppercase;
-	cursor: pointer;
+	text-decoration: none;
 }
-.buttonlist ul li a:hover
+.buttonlist a span
+{
+	border: 1px solid rgba(128, 128, 128, .2);
+	background: #e8e8e8;
+	display: block;
+	height: 17px;
+	line-height: 17px;
+	padding: 1px 7px 0 7px;
+	margin: 0 0 0 4px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.buttonlist a span.last
+{
+	margin-right: -8px;
+}
+.buttonlist a:hover span
 {
 	background: #fd9604;
 	color: #fff;
 	text-decoration: none;
 }
-.buttonlist ul li a span
-{
-	background: #e8e8e8;
-	display: block;
-	height: 24px;
-	line-height: 20px;
-	padding: 0 8px 0 0;
-	position: relative;
-	right: -8px;
-}
 /* the active one */
-.buttonlist ul li a.active
+.buttonlist a.active span
 {
 	background: #5a6c85;
 	color: #fff;
 	font-weight: bold;
 }
-.buttonlist ul li a.active
-{
-	font-weight: bold;
-}
-.buttonlist ul li a.active:hover
+.buttonlist a.active span:hover
 {
 	color: #ddf;
 }

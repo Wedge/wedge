@@ -84,32 +84,47 @@ tr.titlebg th.last_th
 
 /* Button strips */
 
-.buttonlist ul li a
+.buttonlist ul
+{
+	z-index: 100;
+}
+.buttonlist a
 {
 	background: url(../images/theme/buttons.png) no-repeat 0 -60px;
+	padding: 0;
+	margin-left: 12px;
+	cursor: pointer;
+	border: 0;
 }
-.buttonlist ul li a:hover span
+.buttonlist a span
 {
-	background: url(../images/theme/buttons.png) no-repeat 100% 0;
+	border: 0;
+	background: url(../images/theme/buttons.png) no-repeat 100% -60px;
+	height: 24px;
+	line-height: 20px;
+	padding: 0 8px 0 0;
+	position: relative;
+	right: -8px;
+	margin: 0;
 }
-.buttonlist ul li a:hover
+.buttonlist a span.last
+{
+	margin-right: 0;
+}
+.buttonlist a:hover
 {
 	background: url(../images/theme/buttons.png) no-repeat 0 0;
 }
-.buttonlist ul li a span
-{
-	background: url(../images/theme/buttons.png) no-repeat 100% -60px;
-}
-.buttonlist ul li a:hover span
+.buttonlist a:hover span
 {
 	background: url(../images/theme/buttons.png) no-repeat 100% 0;
 }
 /* the active one */
-.buttonlist ul li a.active
+.buttonlist a.active
 {
 	background: url(../images/theme/buttons.png) no-repeat 0 -30px;
 }
-.buttonlist ul li a.active span
+.buttonlist a.active span
 {
 	background: url(../images/theme/buttons.png) no-repeat 100% -30px;
 }
