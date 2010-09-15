@@ -170,7 +170,7 @@ function ReportsMain()
 	);
 
 	// Specific template? Use that instead of main!
-	if (isset($_REQUEST['st']) && isset($reportTemplates[$_REQUEST['st']]))
+	if (isset($_REQUEST['st'], $reportTemplates[$_REQUEST['st']]))
 	{
 		$context['sub_template'] = $_REQUEST['st'];
 

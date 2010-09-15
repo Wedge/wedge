@@ -62,7 +62,7 @@ function Groups()
 	);
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'index';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'index';
 
 	// Get the template stuff up and running.
 	loadLanguage('ManageMembers');
@@ -783,7 +783,7 @@ function GroupRequests()
 					$lastLng = $user_info['language'];
 					foreach ($email_details as $email)
 					{
-						$custom_reason = isset($_POST['groupreason']) && isset($_POST['groupreason'][$email['rid']]) ? $_POST['groupreason'][$email['rid']] : '';
+						$custom_reason = isset($_POST['groupreason'], $_POST['groupreason'][$email['rid']]) ? $_POST['groupreason'][$email['rid']] : '';
 
 						$replacements = array(
 							'USERNAME' => $email['member_name'],

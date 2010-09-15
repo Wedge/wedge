@@ -93,7 +93,7 @@ function ManageSearch()
 	);
 
 	// Default the sub-action to 'edit search settings'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'weights';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'weights';
 
 	$context['sub_action'] = $_REQUEST['sa'];
 
@@ -470,7 +470,7 @@ function CreateMessageIndex()
 	else
 	{
 		$context['index_settings'] = array(
-			'bytes_per_word' => isset($_REQUEST['bytes_per_word']) && isset($index_properties[$_REQUEST['bytes_per_word']]) ? (int) $_REQUEST['bytes_per_word'] : 2,
+			'bytes_per_word' => isset($_REQUEST['bytes_per_word'], $index_properties[$_REQUEST['bytes_per_word']]) ? (int) $_REQUEST['bytes_per_word'] : 2,
 		);
 		$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 		$context['step'] = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : 0;

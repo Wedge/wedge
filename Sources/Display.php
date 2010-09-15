@@ -891,7 +891,7 @@ function Display()
 		}
 
 		// Have we recently cached the number of new topics in this board, and it's still a lot?
-		if (isset($_REQUEST['topicseen']) && isset($_SESSION['topicseen_cache'][$board]) && $_SESSION['topicseen_cache'][$board] > 5)
+		if (isset($_REQUEST['topicseen'], $_SESSION['topicseen_cache'][$board]) && $_SESSION['topicseen_cache'][$board] > 5)
 			$_SESSION['topicseen_cache'][$board]--;
 		// Mark board as seen if this is the only new topic.
 		elseif (isset($_REQUEST['topicseen']))

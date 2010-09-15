@@ -138,7 +138,7 @@ function Memberlist()
 	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
 	foreach ($context['columns'] as $key => $column)
 	{
-		if (isset($context['disabled_fields'][$key]) || (isset($column['link_with']) && isset($context['disabled_fields'][$column['link_with']])))
+		if (isset($context['disabled_fields'][$key]) || isset($column['link_with'], $context['disabled_fields'][$column['link_with']]))
 		{
 			unset($context['columns'][$key]);
 			continue;
@@ -445,7 +445,7 @@ function MLSearch()
 	$smcFunc['db_free_result']($request);
 
 	// They're searching..
-	if (isset($_REQUEST['search']) && isset($_REQUEST['fields']))
+	if (isset($_REQUEST['search'], $_REQUEST['fields']))
 	{
 		$_POST['search'] = trim(isset($_GET['search']) ? $_GET['search'] : $_POST['search']);
 		$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];

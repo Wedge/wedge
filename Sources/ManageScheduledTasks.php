@@ -66,7 +66,7 @@ function ManageScheduledTasks()
 	);
 
 	// We need to find what's the action.
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$context['sub_action'] = $_REQUEST['sa'];
 	else
 		$context['sub_action'] = 'tasks';
@@ -101,7 +101,7 @@ function ScheduledTasks()
 	$context['page_title'] = $txt['maintain_tasks'];
 
 	// Saving changes?
-	if (isset($_REQUEST['save']) && isset($_POST['enable_task']))
+	if (isset($_REQUEST['save'], $_POST['enable_task']))
 	{
 		checkSession();
 
@@ -128,7 +128,7 @@ function ScheduledTasks()
 	}
 
 	// Want to run any of the tasks?
-	if (isset($_REQUEST['run']) && isset($_POST['run_task']))
+	if (isset($_REQUEST['run'], $_POST['run_task']))
 	{
 		// Let's figure out which ones they want to run.
 		$tasks = array();

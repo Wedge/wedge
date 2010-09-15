@@ -101,7 +101,7 @@ function Packages()
 	);
 
 	// Work out exactly who it is we are calling.
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$context['sub_action'] = $_REQUEST['sa'];
 	else
 		$context['sub_action'] = 'browse';
@@ -271,7 +271,7 @@ function PackageInstallTest()
 	{
 		foreach ($db_changes as $change)
 		{
-			if (isset($change[2]) && isset($txt['package_db_' . $change[0]]))
+			if (isset($change[2], $txt['package_db_' . $change[0]]))
 				$context['database_changes'][] = sprintf($txt['package_db_' . $change[0]], $change[1], $change[2]);
 			elseif (isset($txt['package_db_' . $change[0]]))
 				$context['database_changes'][] = sprintf($txt['package_db_' . $change[0]], $change[1]);
@@ -507,7 +507,7 @@ function PackageInstallTest()
 						);
 
 					// Themes are under the saved type.
-					if (isset($mod_action['is_custom']) && isset($context['theme_actions'][$mod_action['is_custom']]))
+					if (isset($mod_action['is_custom'], $context['theme_actions'][$mod_action['is_custom']]))
 						$context['theme_actions'][$mod_action['is_custom']]['actions'][$actual_filename]['operations'][] = array(
 							'type' => $txt['execute_modification'],
 							'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),

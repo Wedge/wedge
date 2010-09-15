@@ -79,7 +79,7 @@ function ManageSmileys()
 	);
 
 	// Default the sub-action to 'edit smiley settings'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'editsets';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'editsets';
 
 	$context['page_title'] = $txt['smileys_manage'];
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -572,7 +572,7 @@ function AddSmiley()
 		}
 
 		// Uploading just one smiley for all of them?
-		if (isset($_POST['sameall']) && isset($_FILES['uploadSmiley']['name']) && $_FILES['uploadSmiley']['name'] != '')
+		if (isset($_POST['sameall'], $_FILES['uploadSmiley']['name']) && $_FILES['uploadSmiley']['name'] != '')
 		{
 			if (!is_uploaded_file($_FILES['uploadSmiley']['tmp_name']) || (@ini_get('open_basedir') == '' && !file_exists($_FILES['uploadSmiley']['tmp_name'])))
 				fatal_lang_error('smileys_upload_error');

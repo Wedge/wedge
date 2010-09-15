@@ -83,8 +83,7 @@ function template_main()
 				echo '
 						<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
 						', $txt['in'], ' ', $board['last_post']['link'], '<br />
-						', $txt['on'], ' ', $board['last_post']['time'],'
-						</p>';
+						', $txt['on'], ' ', $board['last_post']['time'],'</p>';
 
 			echo '
 					</td>

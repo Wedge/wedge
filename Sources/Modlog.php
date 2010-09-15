@@ -112,7 +112,7 @@ function ViewModlog()
 	);
 
 	// Setup the direction stuff...
-	$context['order'] = isset($_REQUEST['sort']) && isset($sort_types[$_REQUEST['sort']]) ? $_REQUEST['sort'] : 'time';
+	$context['order'] = isset($_REQUEST['sort'], $sort_types[$_REQUEST['sort']]) ? $_REQUEST['sort'] : 'time';
 
 	// If we're coming from a search, get the variables.
 	if (!empty($_REQUEST['params']) && empty($_REQUEST['is_search']))
@@ -135,7 +135,7 @@ function ViewModlog()
 		$search_params_string = $search_params['string'];
 
 	if (isset($_REQUEST['search_type']) || empty($search_params['type']) || !isset($searchTypes[$search_params['type']]))
-		$search_params_type = isset($_REQUEST['search_type']) && isset($searchTypes[$_REQUEST['search_type']]) ? $_REQUEST['search_type'] : (isset($searchTypes[$context['order']]) ? $context['order'] : 'member');
+		$search_params_type = isset($_REQUEST['search_type'], $searchTypes[$_REQUEST['search_type']]) ? $_REQUEST['search_type'] : (isset($searchTypes[$context['order']]) ? $context['order'] : 'member');
 	else
 		$search_params_type = $search_params['type'];
 

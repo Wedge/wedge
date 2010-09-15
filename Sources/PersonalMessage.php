@@ -252,7 +252,7 @@ function MessageMain()
 	$context['currently_using_labels'] = count($context['labels']) > 1 ? 1 : 0;
 
 	// Some stuff for the labels...
-	$context['current_label_id'] = isset($_REQUEST['l']) && isset($context['labels'][(int) $_REQUEST['l']]) ? (int) $_REQUEST['l'] : -1;
+	$context['current_label_id'] = isset($_REQUEST['l'], $context['labels'][(int) $_REQUEST['l']]) ? (int) $_REQUEST['l'] : -1;
 	$context['current_label'] = &$context['labels'][(int) $context['current_label_id']]['name'];
 	$context['folder'] = !isset($_REQUEST['f']) || $_REQUEST['f'] != 'sent' ? 'inbox' : 'sent';
 
@@ -2321,7 +2321,7 @@ function MessageActionsApply()
 		// Copy the action from the single to PM to the others.
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			if (isset($pm_heads[$row['id_pm_head']]) && isset($_REQUEST['pm_actions'][$pm_heads[$row['id_pm_head']]]))
+			if (isset($pm_heads[$row['id_pm_head']], $_REQUEST['pm_actions'][$pm_heads[$row['id_pm_head']]]))
 				$_REQUEST['pm_actions'][$row['id_pm']] = $_REQUEST['pm_actions'][$pm_heads[$row['id_pm_head']]];
 		}
 		$smcFunc['db_free_result']($request);
@@ -3209,7 +3209,7 @@ function ManageRules()
 	// Editing a specific one?
 	if (isset($_GET['add']))
 	{
-		$context['rid'] = isset($_GET['rid']) && isset($context['rules'][$_GET['rid']])? (int) $_GET['rid'] : 0;
+		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
 		$context['sub_template'] = 'add_rule';
 
 		// Current rule information...
@@ -3250,7 +3250,7 @@ function ManageRules()
 	elseif (isset($_GET['save']))
 	{
 		checkSession('post');
-		$context['rid'] = isset($_GET['rid']) && isset($context['rules'][$_GET['rid']])? (int) $_GET['rid'] : 0;
+		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
 
 		// Name is easy!
 		$ruleName = $smcFunc['htmlspecialchars'](trim($_POST['rule_name']));

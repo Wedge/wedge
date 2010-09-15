@@ -76,7 +76,7 @@ function ManagePostSettings()
 	);
 
 	// Default the sub-action to 'view ban list'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('admin_forum') ? 'posts' : 'censor');
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('admin_forum') ? 'posts' : 'censor');
 
 	// Make sure you can do this.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);

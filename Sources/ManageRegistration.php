@@ -80,7 +80,7 @@ function RegCenter()
 	);
 
 	// Work out which to call...
-	$context['sub_action'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('moderate_forum') ? 'register' : 'settings');
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('moderate_forum') ? 'register' : 'settings');
 
 	// Must have sufficient permissions.
 	isAllowedTo($subActions[$context['sub_action']][1]);

@@ -71,7 +71,7 @@ function PackageGet()
 	);
 
 	// Now let's decide where we are taking this...
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$context['sub_action'] = $_REQUEST['sa'];
 	// We need to support possible old javascript links...
 	elseif (isset($_GET['pgdownload']))

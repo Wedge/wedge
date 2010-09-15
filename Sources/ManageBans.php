@@ -111,7 +111,7 @@ function Ban()
 	);
 
 	// Default the sub-action to 'view ban list'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'list';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'list';
 
 	$context['page_title'] = $txt['ban_title'];
 	$context['sub_action'] = $_REQUEST['sa'];

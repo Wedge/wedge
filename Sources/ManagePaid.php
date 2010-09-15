@@ -97,7 +97,7 @@ function ManagePaidSubscriptions()
 	);
 
 	// Default the sub-action to 'view subscriptions', but only if they have already set things up..
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_currency_symbol']) ? 'view' : 'settings');
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_currency_symbol']) ? 'view' : 'settings');
 
 	// Make sure you can do this.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
@@ -382,7 +382,7 @@ function ModifySubscription()
 	$context['page_title'] = $txt['paid_' . $context['action_type'] . '_subscription'];
 
 	// Delete it?
-	if (isset($_POST['delete_confirm']) && isset($_REQUEST['delete']))
+	if (isset($_POST['delete_confirm'], $_REQUEST['delete']))
 	{
 		checkSession();
 

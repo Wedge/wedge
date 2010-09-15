@@ -49,7 +49,7 @@ function SearchEngines()
 	);
 
 	// Ensure we have a valid subaction.
-	$context['sub_action'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'stats';
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'stats';
 
 	$context['page_title'] = $txt['search_engines'];
 
@@ -834,7 +834,7 @@ function SpiderStats()
 		}
 
 	// What are we currently viewing?
-	$current_date = isset($_REQUEST['new_date']) && isset($date_choices[$_REQUEST['new_date']]) ? $_REQUEST['new_date'] : $max_date;
+	$current_date = isset($_REQUEST['new_date'], $date_choices[$_REQUEST['new_date']]) ? $_REQUEST['new_date'] : $max_date;
 
 	// Prepare the HTML.
 	$date_select = '

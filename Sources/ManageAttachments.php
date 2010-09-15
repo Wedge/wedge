@@ -140,7 +140,7 @@ function ManageAttachments()
 	);
 
 	// Pick the correct sub-action.
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$context['sub_action'] = $_REQUEST['sa'];
 	else
 		$context['sub_action'] = 'browse';

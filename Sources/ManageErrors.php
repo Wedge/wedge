@@ -79,7 +79,7 @@ function ViewErrorLog()
 	);
 
 	// Set up the filtering...
-	if (isset($_GET['value'], $_GET['filter']) && isset($filters[$_GET['filter']]))
+	if (isset($_GET['value'], $_GET['filter'], $filters[$_GET['filter']]))
 		$filter = array(
 			'variable' => $_GET['filter'],
 			'value' => array(
@@ -311,7 +311,7 @@ function deleteErrors()
 			)
 		);
 	// Deleting all with a filter?
-	elseif (isset($_POST['delall']) && isset($filter))
+	elseif (isset($_POST['delall'], $filter))
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_errors
 			WHERE ' . $filter['variable'] . ' LIKE {string:filter}',

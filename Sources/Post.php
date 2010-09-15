@@ -2126,7 +2126,7 @@ function AnnounceTopic()
 	$context['page_title'] = $txt['announce_topic'];
 
 	// Call the function based on the sub-action.
-	$subActions[isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'selectgroup']();
+	$subActions[isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'selectgroup']();
 }
 
 // Allow a user to chose the membergroups to send the announcement to.
@@ -2798,7 +2798,7 @@ function JavaScriptModify()
 		}
 
 		// Changing the first subject updates other subjects to 'Re: new_subject'.
-		if (isset($_POST['subject']) && isset($_REQUEST['change_all_subjects']) && $row['id_first_msg'] == $row['id_msg'] && !empty($row['num_replies']) && (allowedTo('modify_any') || ($row['id_member_started'] == $user_info['id'] && allowedTo('modify_replies'))))
+		if (isset($_POST['subject'], $_REQUEST['change_all_subjects']) && $row['id_first_msg'] == $row['id_msg'] && !empty($row['num_replies']) && (allowedTo('modify_any') || ($row['id_member_started'] == $user_info['id'] && allowedTo('modify_replies'))))
 		{
 			// Get the proper (default language) response prefix first.
 			if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
@@ -2834,7 +2834,7 @@ function JavaScriptModify()
 	if (isset($_REQUEST['xml']))
 	{
 		$context['sub_template'] = 'modifydone';
-		if (empty($post_errors) && isset($msgOptions['subject']) && isset($msgOptions['body']))
+		if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))
 		{
 			$context['message'] = array(
 				'id' => $row['id_msg'],

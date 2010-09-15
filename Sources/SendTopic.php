@@ -242,7 +242,7 @@ function CustomEmail()
 	$context['can_view_receipient_email'] = $context['show_email_address'] == 'yes' || $context['show_email_address'] == 'yes_permission_override';
 
 	// Are we actually sending it?
-	if (isset($_POST['send']) && isset($_POST['email_body']))
+	if (isset($_POST['send'], $_POST['email_body']))
 	{
 		require_once($sourcedir . '/Subs-Post.php');
 

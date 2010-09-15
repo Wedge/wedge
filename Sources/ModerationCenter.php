@@ -302,7 +302,7 @@ function ModBlockNotes()
 	global $context, $smcFunc, $scripturl, $txt, $user_info;
 
 	// Are we saving a note?
-	if (isset($_POST['makenote']) && isset($_POST['new_note']))
+	if (isset($_POST['makenote'], $_POST['new_note']))
 	{
 		checkSession();
 
@@ -333,7 +333,7 @@ function ModBlockNotes()
 	}
 
 	// Bye... bye...
-	if (isset($_GET['notes']) && isset($_GET['delete']) && is_numeric($_GET['delete']))
+	if (isset($_GET['notes'], $_GET['delete']) && is_numeric($_GET['delete']))
 	{
 		checkSession('get');
 
@@ -374,7 +374,7 @@ function ModBlockNotes()
 	}
 
 	// Grab the current notes. We can only use the cache for the first page of notes.
-	$offset = isset($_GET['notes']) && isset($_GET['start']) ? $_GET['start'] : 0;
+	$offset = isset($_GET['notes'], $_GET['start']) ? $_GET['start'] : 0;
 	if ($offset != 0 || ($moderator_notes = cache_get_data('moderator_notes', 240)) === null)
 	{
 		$request = $smcFunc['db_query']('', '
@@ -581,7 +581,7 @@ function ReportedPosts()
 		updateSettings(array('last_mod_report_action' => time()));
 		recountOpenReports();
 	}
-	elseif (isset($_POST['close']) && isset($_POST['close_selected']))
+	elseif (isset($_POST['close'], $_POST['close_selected']))
 	{
 		checkSession('post');
 
@@ -1436,7 +1436,7 @@ function ViewWarnings()
 		'templates' => array('ViewWarningTemplates', 'issue_warning'),
 	);
 
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) && (empty($subActions[$_REQUEST['sa']][1]) || allowedTo($subActions[$_REQUEST['sa']]))? $_REQUEST['sa'] : 'log';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) && (empty($subActions[$_REQUEST['sa']][1]) || allowedTo($subActions[$_REQUEST['sa']]))? $_REQUEST['sa'] : 'log';
 
 	// Some of this stuff is overseas, so to speak.
 	loadTemplate('ModerationCenter');

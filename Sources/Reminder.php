@@ -67,8 +67,8 @@ function RemindMe()
 		'setpassword2' =>'setPassword2'
 	);
 
-	// Any subaction?  If none, fall through to the main template, which will ask for one.
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	// Any subaction? If none, fall through to the main template, which will ask for one.
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$subActions[$_REQUEST['sa']]();
 }
 

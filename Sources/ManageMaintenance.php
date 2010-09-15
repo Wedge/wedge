@@ -186,13 +186,13 @@ function ManageMaintenance()
 	);
 
 	// Yep, sub-action time!
-	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
+	if (isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		$subAction = $_REQUEST['sa'];
 	else
 		$subAction = 'routine';
 
 	// Doing something special?
-	if (isset($_REQUEST['activity']) && isset($subActions[$subAction]['activities'][$_REQUEST['activity']]))
+	if (isset($_REQUEST['activity'], $subActions[$subAction]['activities'][$_REQUEST['activity']]))
 		$activity = $_REQUEST['activity'];
 
 	// Set a few things.

@@ -3500,7 +3500,7 @@ function template_header()
 		}
 	}
 
-	if (isset($settings['use_default_images']) && $settings['use_default_images'] == 'defaults' && isset($settings['default_template']))
+	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
 	{
 		$settings['theme_url'] = $settings['default_theme_url'];
 		$settings['images_url'] = $settings['default_images_url'];
@@ -3591,7 +3591,7 @@ function template_footer()
 	$context['load_time'] = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
 	$context['load_queries'] = $db_count;
 
-	if (isset($settings['use_default_images']) && $settings['use_default_images'] == 'defaults' && isset($settings['default_template']))
+	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
 	{
 		$settings['theme_url'] = $settings['actual_theme_url'];
 		$settings['images_url'] = $settings['actual_images_url'];
@@ -3762,7 +3762,7 @@ function db_debug_junk()
 			if (!empty($qq['f']) && !empty($qq['l']))
 				echo sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
 
-			if (isset($qq['s'], $qq['t']) && isset($txt['debug_query_which_took_at']))
+			if (isset($qq['s'], $qq['t'], $txt['debug_query_which_took_at']))
 				echo sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br />';
 			elseif (isset($qq['t']))
 				echo sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br />';

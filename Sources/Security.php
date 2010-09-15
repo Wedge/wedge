@@ -758,7 +758,7 @@ function checkConfirm($action)
 {
 	global $modSettings;
 
-	if (isset($_GET['confirm']) && isset($_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['confirm_' . $action])
+	if (isset($_GET['confirm'], $_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['confirm_' . $action])
 		return true;
 
 	else

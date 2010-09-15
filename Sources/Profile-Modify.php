@@ -462,7 +462,7 @@ function loadProfileFields($force_reload = false)
 
 					// Maybe they are trying to change their password as well?
 					$resetPassword = true;
-					if (isset($_POST[\'passwrd1\']) && $_POST[\'passwrd1\'] != \'\' && isset($_POST[\'passwrd2\']) && $_POST[\'passwrd1\'] == $_POST[\'passwrd2\'] && validatePassword($_POST[\'passwrd1\'], $value, array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\'])) == null)
+					if (isset($_POST[\'passwrd1\'], $_POST[\'passwrd2\']) && $_POST[\'passwrd1\'] != \'\' && $_POST[\'passwrd1\'] == $_POST[\'passwrd2\'] && validatePassword($_POST[\'passwrd1\'], $value, array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\'])) == null)
 						$resetPassword = false;
 
 					// Do the reset... this will send them an email too.
@@ -1365,7 +1365,7 @@ function editBuddyIgnoreLists($memID)
 		'ignore' => array('editIgnoreList', $txt['editIgnoreList']),
 	);
 
-	$context['list_area'] = isset($_GET['sa']) && isset($subActions[$_GET['sa']]) ? $_GET['sa'] : 'buddies';
+	$context['list_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'buddies';
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
@@ -3027,7 +3027,7 @@ function groupMembership($memID)
 	// Can they manage groups?
 	$context['can_manage_membergroups'] = allowedTo('manage_membergroups');
 	$context['can_edit_primary'] = allowedTo('manage_membergroups');
-	$context['update_message'] = isset($_GET['msg']) && isset($txt['group_membership_msg_' . $_GET['msg']]) ? $txt['group_membership_msg_' . $_GET['msg']] : '';
+	$context['update_message'] = isset($_GET['msg'], $txt['group_membership_msg_' . $_GET['msg']]) ? $txt['group_membership_msg_' . $_GET['msg']] : '';
 
 	// Get all the groups this user is a member of.
 	$groups = explode(',', $curMember['additional_groups']);
@@ -3101,7 +3101,7 @@ function groupMembership($memID)
 	);
 
 	// In the special case that someone is requesting membership of a group, setup some special context vars.
-	if (isset($_REQUEST['request']) && isset($context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 1)
+	if (isset($_REQUEST['request'], $context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 1)
 		$context['group_request'] = $context['groups']['available'][(int) $_REQUEST['request']];
 }
 

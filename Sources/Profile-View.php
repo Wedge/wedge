@@ -621,7 +621,7 @@ function showAttachments($memID)
 		'subject' => 'm.subject',
 		'posted' => 'm.poster_time',
 	);
-	$context['sort_order'] = isset($_GET['sort']) && isset($sortTypes[$_GET['sort']]) ? $_GET['sort'] : 'posted';
+	$context['sort_order'] = isset($_GET['sort'], $sortTypes[$_GET['sort']]) ? $_GET['sort'] : 'posted';
 	$context['sort_direction'] = isset($_GET['asc']) ? 'up' : 'down';
 
 	$sort = $sortTypes[$context['sort_order']];
@@ -869,7 +869,7 @@ function tracking($memID)
 		'edits' => array('trackEdits', $txt['trackEdits']),
 	);
 
-	$context['tracking_area'] = isset($_GET['sa']) && isset($subActions[$_GET['sa']]) ? $_GET['sa'] : 'activity';
+	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'activity';
 
 	if (isset($types[$context['tracking_area']][1]))
 		require_once($sourcedir . '/' . $types[$context['tracking_area']][1]);

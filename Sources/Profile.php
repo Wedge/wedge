@@ -407,7 +407,7 @@ function ModifyProfile($post_errors = array())
 					fatal_lang_error('no_access', false);
 
 				// Are we saving data in a valid area?
-				if (isset($area['sc']) && isset($_REQUEST['save']))
+				if (isset($area['sc'], $_REQUEST['save']))
 				{
 					$security_checks['session'] = $area['sc'];
 					$context['completed_save'] = true;
@@ -693,7 +693,7 @@ function loadCustomFields($memID, $area = 'summary')
 		$value = $exists ? $user_profile[$memID]['options'][$row['col_name']] : '';
 
 		// If this was submitted already then make the value the posted version.
-		if (isset($_POST['customfield']) && isset($_POST['customfield'][$row['col_name']]))
+		if (isset($_POST['customfield'], $_POST['customfield'][$row['col_name']]))
 			$value = $smcFunc['htmlspecialchars']($_POST['customfield'][$row['col_name']]);
 
 		// HTML for the input form.

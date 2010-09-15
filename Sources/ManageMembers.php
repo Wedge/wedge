@@ -87,7 +87,7 @@ function ViewMembers()
 	);
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'all';
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'all';
 
 	// We know the sub action, now we know what you're allowed to do.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);

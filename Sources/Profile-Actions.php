@@ -50,7 +50,7 @@ function activateAccount($memID)
 
 	isAllowedTo('moderate_forum');
 
-	if (isset($_REQUEST['save']) && isset($user_profile[$memID]['is_activated']) && $user_profile[$memID]['is_activated'] != 1)
+	if (isset($_REQUEST['save'], $user_profile[$memID]['is_activated']) && $user_profile[$memID]['is_activated'] != 1)
 	{
 		// If we are approving the deletion of an account, we do something special ;)
 		if ($user_profile[$memID]['is_activated'] == 4)
@@ -674,7 +674,7 @@ function subscriptions($memID)
 		return;
 	}
 	// If this is confirmation then it's simpler...
-	if (isset($_GET['confirm']) && isset($_POST['sub_id']) && is_array($_POST['sub_id']))
+	if (isset($_GET['confirm'], $_POST['sub_id']) && is_array($_POST['sub_id']))
 	{
 		// Hopefully just one.
 		foreach ($_POST['sub_id'] as $k => $v)
@@ -687,7 +687,7 @@ function subscriptions($memID)
 		$context['sub'] = $context['subscriptions'][$ID_SUB];
 		$period = 'xx';
 		if ($context['sub']['flexible'])
-			$period = isset($_POST['cur'][$ID_SUB]) && isset($context['sub']['costs'][$_POST['cur'][$ID_SUB]]) ? $_POST['cur'][$ID_SUB] : 'xx';
+			$period = isset($_POST['cur'][$ID_SUB], $context['sub']['costs'][$_POST['cur'][$ID_SUB]]) ? $_POST['cur'][$ID_SUB] : 'xx';
 
 		// Check we have a valid cost.
 		if ($context['sub']['flexible'] && $period == 'xx')
