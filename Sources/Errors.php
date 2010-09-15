@@ -22,53 +22,24 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides all of the error handling within the system.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	The purpose of this file is... errors. (hard to guess, huh?)  It takes
-	care of logging, error messages, error handling, database errors, and
-	error log administration.  It does this with:
-
-	bool db_fatal_error(bool loadavg = false)
-		- loads Subs-Auth.php and calls show_db_error().
-		- this is used for database connection error handling.
-		- loadavg means this is a load average problem, not a database error.
-
-	string log_error(string error_message, string error_type = general,
-			string filename = none, int line = none)
-		- logs an error, if error logging is enabled.
-		- depends on the enableErrorLogging setting.
-		- filename and line should be __FILE__ and __LINE__, respectively.
-		- returns the error message. (ie. die(log_error($msg));)
-
-	void fatal_error(string error_message, mixed (bool or string) log = general)
-		- stops execution and displays an error message.
-		- logs the error message if log is missing or true.
-
-	void fatal_lang_error(string error_message_key, mixed (bool or string) log = general,
-			array sprintf = array())
-		- stops execution and displays an error message by key.
-		- uses the string with the error_message_key key.
-		- loads the Errors language file.
-		- applies the sprintf information if specified.
-		- the information is logged if log is true or missing.
-		- logs the error in the forum's default language while displaying the error
-		  message in the user's language
-
-	void error_handler(int error_level, string error_string, string filename,
-			int line)
-		- this is a standard PHP error handler replacement.
-		- dies with fatal_error() if the error_level matches with
-		  error_reporting.
-
-	void setup_fatal_error_context(string error_message)
-		- uses the fatal_error sub template of the Errors template - or the
-		  error sub template in the Wireless template.
-		- used by fatal_error() and fatal_lang_error()
-
-*/
-
-// Just wrap it so we don't take up time and space here in Errors.php.
+/**
+ * Outputs a fatal error message if the database connection is not present.
+ *
+ * Mostly a convenient placeholder for {@link show_db_error()}; this file is loaded every execution, while Subs-Auth.php is only loaded when necessary.
+ *
+ * @param bool $loadavg The error sometimes will be related to load average checking rather than a true database error, where if settings are such configured, the entire forum will be unavailable - and such checks attempt to avoid a database connection entirely.
+ * @return mixed The function indicates that it returns false, however execution should be suspended on resolution of this function.
+ * @todo Check that this function is never called where it could be the right half of an || expression and if so, remove it returning false (since execution should have suspended by then)
+ */
 function db_fatal_error($loadavg = false)
 {
 	global $sourcedir;
@@ -81,7 +52,16 @@ function db_fatal_error($loadavg = false)
 	return false;
 }
 
-// Log an error, if the option is on.
+/**
+ * Log an error in the error log (in the database), assuming error logging is on.
+ *
+ * Logging is disabled if $modSettings['enableErrorLogging'] is unset or 0.
+ *
+ * @param string $error_message The final error message (not, for example, a key in $txt) to be logged, prior to any entity encoding.
+ * @param mixed $error_type A string denoting the type of error being logged for the purposes of filtering: 'general', 'critical', 'database', 'undefined_vars', 'user', 'template', 'debug'. Alternatively can be specified as boolean false to override the error message being logged.
+ * @param mixed $file Specify the file path that the error occurred in. If not supplied, no attempt will be made to back-check (it is normally only supplied from the error-handler; workflow instanced errors do not generally record filename.
+ * @param mixed $line The line number an error occurred on. Like $file, this is only generally supplied by a PHP error; errors such as permissions or other application type errors do not have this logged.
+ */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
 	global $txt, $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error;
@@ -155,7 +135,16 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	return $error_message;
 }
 
-// An irrecoverable error.
+/**
+ * Output a fatal error message, without localization.
+ *
+ * There are times where the error call will be without language strings, or otherwise the error is non-localized (e.g. specific fatal error calls for debugging or other critical failures)
+ *
+ * This function will make a call to log the error, prior to handing control to the more generic {@link setup_fatal_error_context()}.
+ *
+ * @param string $error The error message to output.
+ * @param mixed $log The error category. See {@link log_error()} for more details (same specification)
+ */
 function fatal_error($error, $log = 'general')
 {
 	global $txt, $context, $modSettings;
@@ -168,7 +157,23 @@ function fatal_error($error, $log = 'general')
 	setup_fatal_error_context($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
 }
 
-// A fatal error with a message stored in the language file.
+/**
+ * Output a fatal error message, with localization.
+ *
+ * Any fatal error from the application (which includes modifications) should generally call this function.
+ *
+ * Several operations occur:
+ * - If the theme is not loaded (and it is not a fatal error, either here or recursively upwards), attempt to load it.
+ * - If the theme is still not loaded, exit and output what we do have, non localized. (Since without the theme we do not have language strings)
+ * - Load the language of the forum itself (rather than the user who triggered the error), then pass the error to {@link log_error()} if logging is turned on.
+ * - Reload the correct language if we have changed it in the previous step.
+ * - Call to ensure the error is appropriately logged with the who's online information.
+ * - Pass control over to {@link setup_fatal_error_context()} to manage the actual outputting of error.
+ *
+ * @param string $error The error message to output, specified as a key in $txt.
+ * @param mixed $log The error category. See {@link log_error()} for more details (same specification)
+ * @param array $sprintf An array of items to be format-printed into the string once located within $txt. For example, the message might use %1$s to indicate a relevant string; this value would be inserted into the array to be injected into the error message prior to saving to log.
+ */
 function fatal_lang_error($error, $log = 'general', $sprintf = array())
 {
 	global $txt, $language, $modSettings, $user_info, $context;
@@ -206,7 +211,17 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array())
 	setup_fatal_error_context($error_message);
 }
 
-// Handler for standard error messages.
+/**
+ * Handler for regular PHP errors.
+ *
+ * Elsewhere in workflow, this function is designated the error handler for the remainder of the page; this enables normal PHP errors (such as undefined variables) to be logged into the database rather than anything else.
+ *
+ * @param int $error_level The level of the current error as a constant, as per http://www.php.net/manual/en/errorfunc.constants.php
+ * @param string $error_string The raw error string, from PHP, which should be localized by the server's configuration.
+ * @param string $file The filename where the error occurred, which may be incorrect in the event of template eval.
+ * @param line $line The line number the error occurred on.
+ * @return mixed The function will be a void in the event of a non fatal error, or will terminate execution in the event of a fatal error.
+ */
 function error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $modSettings, $db_show_debug;
@@ -276,6 +291,20 @@ function error_handler($error_level, $error_string, $file, $line)
 		die('Hacking attempt...');
 }
 
+/**
+ * Prepare a fatal error for being displayed.
+ *
+ * - Attempt to prevent recursively trying to error
+ * - Check if the theme is loaded (e.g. from action=dlattach, where the theme is not normally loaded)
+ * - Set up general page details - no robots meta tag, the page title (based on the error message if possible, in $context['error_title'] if set)
+ * - Determine the appropriate template (either the normal fatal_error template, or the wireless template)
+ * - Check whether we are using SSI and if so whether SSI-specific fatal error handling is indicated.
+ * - Finally, pass control to {@link obExit()} to end execution.
+ *
+ * IMPORTANT: If you are creating a bridge to SMF or modifying this function, you MUST make ABSOLUTELY SURE that this function quits and DOES NOT RETURN TO NORMAL PROGRAM FLOW.  Otherwise, security error messages will not be shown, and your forum will be in a very easily hackable state.
+ *
+ * @param string $error_message The error message to be displayed.
+ */
 function setup_fatal_error_context($error_message)
 {
 	global $context, $txt, $ssi_on_error_method;
@@ -326,12 +355,6 @@ function setup_fatal_error_context($error_message)
 	// We want whatever for the header, and a footer. (footer includes sub template!)
 	obExit(null, true, false, true);
 
-	/* DO NOT IGNORE:
-		If you are creating a bridge to SMF or modifying this function, you MUST
-		make ABSOLUTELY SURE that this function quits and DOES NOT RETURN TO NORMAL
-		PROGRAM FLOW.  Otherwise, security error messages will not be shown, and
-		your forum will be in a very easily hackable state.
-	*/
 	trigger_error('Hacking attempt...', E_USER_ERROR);
 }
 
