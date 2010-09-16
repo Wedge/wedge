@@ -811,7 +811,7 @@ dl.settings dt a img
 .title_bar h4 img.icon
 {
 	float: left;
-	margin: 5px 8px 0 0;
+	margin: 7px 8px 0 0;
 }
 div.cat_bar
 {
@@ -1252,10 +1252,6 @@ h1.forumtitle
 	float: right;
 	line-height: 3em;
 }
-h3, h4
-{
-	padding-bottom: 3px;
-}
 /* the upshrink image needs some tweaking */
 img#upshrink
 {
@@ -1593,10 +1589,6 @@ img.new_posts
 	clear: both;
 }
 /* the page navigation area */
-#childboards h3
-{
-	padding-bottom: 0;
-}
 #childboards .table_list thead
 {
 	display: none;
@@ -1754,7 +1746,7 @@ div#pollmoderation
 	float: left;
 	margin: 4px 0.5em 0 0;
 }
-#forumposts .cat_bar h3
+#forumposts .cat_bar
 {
 	margin-bottom: 3px;
 }
@@ -1764,6 +1756,10 @@ p#whoisviewing
 	padding: 0.5em;
 }
 /* poster and postarea + moderation area underneath */
+.post_wrapper
+{
+	overflow: auto;
+}
 .poster
 {
 	float: left;
@@ -1783,7 +1779,7 @@ p#whoisviewing
 	clear: right;
 }
 /* poster details and list of items */
-.poster h4, .poster ul
+.poster ul
 {
 	padding: 0;
 	margin: 0 1em 0 1.5em;
@@ -2452,7 +2448,7 @@ dl.register_form dd
 }
 
 /* common for all admin sections */
-.title_bar h3 img
+.title_bar img
 {
 	vertical-align: middle;
 	margin-right: 0.5em;
@@ -2615,7 +2611,6 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td
 }
 .errorbox h3
 {
-	padding: 0;
 	margin: 0;
 	font-size: 1.1em;
 	text-decoration: underline;
@@ -3523,11 +3518,7 @@ div.title_bar
 }
 
 
-#upshrinkHeaderIC .cat_bar h3
-{
-	font-size: 1.1em;
-}
-#upshrinkHeaderIC .title_bar h4
+#upshrinkHeaderIC .cat_bar h3, #upshrinkHeaderIC .title_bar h4
 {
 	font-size: 1.1em;
 }
