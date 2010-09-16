@@ -22,24 +22,33 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides the primary view, and a minor action, for the board index; also known as the list of all boards, and the default initial of the forum.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	The single function this file contains is used to display the main
-	board index.  It uses just the following functions:
-
-	void BoardIndex()
-		- shows the board index.
-		- uses the BoardIndex template, and main sub template.
-		- may use the boardindex subtemplate for wireless support.
-		- updates the most online statistics.
-		- is accessed by ?action=boardindex.
-
-	void CollapseCategory()
-		// !!!
-*/
-
-// Show the board index!
+/**
+ * This prepares all the data necessary for the board index.
+ *
+ * Unlike most actions within the forum, this action is explicitly not listed within the action array in index.php, because it is the default action; if no known action, board or topic is specified, this function will be used.
+ *
+ * - Loads the boardindex template, or alternatively uses the wireless version (specific to each wireless mode)
+ * - Defines the canonical URL of the page to be the principle forum URL (as $scripturl) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, and no wrapaction caught by the theme, this action will be called)
+ * - Ordinarily, the board index page will be directed to be indexed, however this is turned off in the event that $_GET is non-empty.
+ * - The board list is then loaded from {@link getBoardIndex()} in Subs-BoardIndex.php.
+ * - The list of online members is then loaded from {@link getMembersOnlineStats()} in Subs-MembersOnline.php.
+ * - If showing the group key/membergroup legend, this will be loaded next. (Either from cache, or {@link cache_getMembergroupList()} in Subs-Membergroups.php)
+ * - If we are tracking statistics, see if we are at the point of 'most online' - achieved with {@link trackStatsUsersOnline()} in Subs-MembersOnline.php.
+ * - If the configuration asks for the last x latest posts, fetch them. (This is achieved from cache, or {@link cache_getLastPosts()} in Subs-Recent.php, and honors user preference of ignored boards)
+ * - Preset some flags for the template (whether to show a bar above the most recent posts), and whether to show the member bar; both in the information center.
+ * - Set up some general permissions checks for the template (i.e. whether to show some of the stats, whether to show the member list link)
+ * - If the calendar is enabled, load the events as directed by the options (holidays, birthdays, events, all based on number of days) - this is managed from cache, or {@link cache_getRecentEvents()} in Subs-Calendar.php.
+ * - Finally, set up the page title to include the board name with the localized ' - Index' string.
+ */
 function BoardIndex()
 {
 	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
@@ -126,7 +135,15 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 }
 
-// Collapse or expand a category
+/**
+ * Collapse or expand a category from the board index view.
+ *
+ * - Called via ?action=collapse
+ * - Checks session via both POST and GET.
+ * - Expects sa to be set in the request, to either expand/collapse/toggle as the operation, and c in the request to represent the individual category id.
+ * - Calls {@link collapseCategories()} in Subs-Categories.php to manage the changeover.
+ * - Redisplays the board index once complete.
+ */
 function CollapseCategory()
 {
 	global $user_info, $sourcedir, $context;

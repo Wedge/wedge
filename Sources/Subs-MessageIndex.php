@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file provides all of the error handling within the system.
+ * This file provides subsidiary functions for the message index view.
  *
  * @package wedge
  */

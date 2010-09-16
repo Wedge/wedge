@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file provides all of the error handling within the system.
+ * This file provides all of the handling for users changing each others' karma/reputation.
  *
  * @package wedge
  */

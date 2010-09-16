@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file provides all of the error handling within the system.
+ * This file provides all of the handling for the "printer friendly" view.
  *
  * @package wedge
  */

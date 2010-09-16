@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file provides all of the error handling within the system.
+ * This file provides the handling for locking and stickying topics from the main topic view.
  *
  * @package wedge
  */

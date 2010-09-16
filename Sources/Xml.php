@@ -22,15 +22,21 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides the handling for some of the AJAX operations, naming the very generic ones fired through action=xmlhttp.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file maintains all XML-based interaction (mainly XMLhttp).
-
-	void GetJumpTo()
-
-*/
-
+/**
+ * This function handles the initial interaction from action=xmlhttp, loading the template then directing process to the appropriate handler.
+ *
+ * @see GetJumpTo()
+ * @see ListMessageIcons()
+ */
 function XMLhttpMain()
 {
 	loadTemplate('Xml');
@@ -49,7 +55,14 @@ function XMLhttpMain()
 	$sub_actions[$_REQUEST['sa']]['function']();
 }
 
-// Get a list of boards and categories used for the jumpto dropdown.
+/**
+ * Produces the list of boards and categories for the jump-to dropdown.
+ *
+ * - Uses the {@link getBoardList()} function in Subs-MessageIndex.php.
+ * - Only displays boards the user has permissions to see (does not honor ignored boards preferences)
+ * - The current board (if there is a current board) is indicated, and so will be in the dataset returned via the template.
+ * - Passes control to the jump_to subtemplate in the main Xml template.
+ */
 function GetJumpTo()
 {
 	global $user_info, $context, $smcFunc, $sourcedir;
@@ -73,6 +86,13 @@ function GetJumpTo()
 	$context['sub_template'] = 'jump_to';
 }
 
+/**
+ * Produces a list of the message icons, used for the AJAX change-icon selector within the topic view.
+ *
+ * - Uses the {@link getMessageIcons()} function in Subs-Editor.php to achieve this.
+ * - Uses the current board (from $board) to ensure that the correct iconset is loaded, as icons can be per-board.
+ * - Passes control to the message_icons subtemplate in the main Xml template.
+ */
 function ListMessageIcons()
 {
 	global $context, $sourcedir, $board;
