@@ -22,22 +22,29 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides all of the error handling within the system.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file contains one humble function, which applauds or smites a user.
-
-	void ModifyKarma()
-		- gives or takes karma from a user.
-		- redirects back to the referrer afterward, whether by javascript or
-		  the passed parameters.
-		- requires the karma_edit permission, and that the user isn't a guest.
-		- depends on the karmaMode, karmaWaitTime, and karmaTimeRestrictAdmins
-		  settings.
-		- is accessed via ?action=modifykarma.
-*/
-
-// Modify a user's karma.
+/**
+ * Apply a change to a user's reputation, a.k.a. karma, as the result of an 'applaud' (give karma) or 'smite' (take karma)
+ *
+ * - Checks if karma is disabled, and exits if so ($modSettings['karmaMode'] is 0 or empty)
+ * - Checks it isn't a guest, and that the logged-in user has the permission to change karma.
+ * - Session check via session identifier in URL.
+ * - If the user isn't an admin, check they have sufficient posts to be able to change karma ($modSettings['karmaMinPosts'])
+ * - Check the user isn't trying to change their own (and fail it if they are)
+ * - Prune older items from the karma log (which sets whether you will be able to reapply karma or not), based on the number of hours in $modSettings['karmaWaitTime'].
+ * - Check if administrators are also restricted to the wait time ($modSettings['karmaTimeRestrictAdmins']) or if the current user is not a global moderator, check the time of last change and store it. (i.e. if we're restricting admins and the user's a global mod or above, or the user is non privileged, load the last time)
+ * - If they have not made a change within the wait log time (as above), log the change and update that user's karma.
+ * - If they have previously made a change (and as above, they should not be allowed, even as an admin), check what they're doing. If it's a repeat operation, block it. If it changes the value the other way (e.g. remove applaud and add smite), allow and apply it.
+ * - If we came from a topic, go back to the topic. Otherwise if we came from a PM, go back to that... otherwise we have no idea where you came from, so simply issue a small HTML page to the user that triggers a "back" in the history.
+ */
 function ModifyKarma()
 {
 	global $modSettings, $txt, $user_info, $topic, $smcFunc, $context;
