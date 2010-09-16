@@ -362,7 +362,7 @@ function template_group_members()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '') , ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=', $context['current_action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
@@ -382,7 +382,7 @@ function template_group_members()
 							<strong>' . $txt['membergroups_members_description'] . ':</strong>
 						</dt>
 						<dd>
-							', $context['group']['description'] ,'
+							', $context['group']['description'], '
 						</dd>';
 
 	echo '
@@ -390,7 +390,7 @@ function template_group_members()
 							<strong>', $txt['membergroups_members_top'], ':</strong>
 						</dt>
 						<dd>
-							', $context['total_members'] ,'
+							', $context['total_members'], '
 						</dd>';
 	// Any group moderators to show?
 	if (!empty($context['group']['moderators']))
@@ -404,7 +404,7 @@ function template_group_members()
 							<strong>', $txt['membergroups_members_group_moderators'], ':</strong>
 						</dt>
 						<dd>
-							', implode(', ', $moderators) ,'
+							', implode(', ', $moderators), '
 						</dd>';
 	}
 

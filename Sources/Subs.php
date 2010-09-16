@@ -673,12 +673,12 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	}
 	else
 	{
-		// Do-it-yourself time localization.  Fun.
+		// Do-it-yourself time localization. Fun.
 		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
 		if (strpos($str, '%p'))
-			$str = str_replace('%p', (strftime('%H', $time) < 12 ? 'am' : 'pm'), $str);
+			$str = str_replace('%p', strftime('%H', $time) < 12 ? 'am' : 'pm', $str);
 	}
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
@@ -802,11 +802,11 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 {
 	return parse_bbc($message, $smileys, $cache_id, $short_list ?
 		array(
-			'i', 's', 'u',
+			'b', 'i', 's', 'u',
 			'email', 'ftp', 'iurl', 'url',
 		) :
 		array(
-			'i', 's', 'u',
+			'b', 'i', 's', 'u',
 			'email', 'ftp', 'iurl', 'url',
 			'abbr', 'acronym', 'me', 'nobbc', 'sub', 'sup', 'time',
 			'color', 'black', 'blue', 'green', 'red', 'white'

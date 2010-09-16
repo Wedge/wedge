@@ -356,7 +356,7 @@ function PlushSearch2()
 		$temp_params = base64_decode(str_replace(array('-', '_', '.'), array('+', '/', '='), $_REQUEST['params']));
 		// Test for gzuncompress failing
 		$temp_params2 = @gzuncompress($temp_params);
-		$temp_params = explode('|"|', (!empty($temp_params2) ? $temp_params2 : $temp_params));
+		$temp_params = explode('|"|', !empty($temp_params2) ? $temp_params2 : $temp_params);
 
 		foreach ($temp_params as $i => $data)
 		{

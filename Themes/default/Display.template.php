@@ -806,7 +806,7 @@ function template_main()
 							sBoxBackground: "transparent",
 							sBoxBackgroundHover: "#ffffff",
 							iBoxBorderWidthHover: 1,
-							sBoxBorderColorHover: "#adadad" ,
+							sBoxBorderColorHover: "#adadad",
 							sContainerBackground: "#ffffff",
 							sContainerBorder: "1px solid #adadad",
 							sItemBorder: "1px solid #ffffff",

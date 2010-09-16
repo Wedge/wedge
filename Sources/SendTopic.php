@@ -521,7 +521,7 @@ function ReportToModerator2()
 				),
 				array(
 					$_POST['msg'], $message['id_topic'], $message['id_board'], $message['id_poster'], $message['real_name'],
-					$message['subject'], $message['body'] , time(), time(), 1, 0,
+					$message['subject'], $message['body'], time(), time(), 1, 0,
 				),
 				array('id_report')
 			);

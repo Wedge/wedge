@@ -598,7 +598,6 @@ function fix_serialized_columns()
 	updateSettings(array(
 		'memberlist_updated' => time(),
 	));
-
 }
 
 ?>

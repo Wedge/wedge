@@ -1460,7 +1460,7 @@ function ApproveAttach()
 	$is_approve = !isset($_GET['sa']) || $_GET['sa'] != 'reject' ? true : false;
 
 	$attachments = array();
-	// If we are approving all ID's in a message , get the ID's.
+	// If we are approving all ID's in a message, get the ID's.
 	if ($_GET['sa'] == 'all' && !empty($_GET['mid']))
 	{
 		$id_msg = (int) $_GET['mid'];

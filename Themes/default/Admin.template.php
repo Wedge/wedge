@@ -16,7 +16,7 @@ function template_admin()
 		echo '
 			<object id="quick_search">
 				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="', $context['character_set'], '" class="floatright">
-					<img src="', $settings['images_url'] , '/filter.gif" alt="" />
+					<img src="', $settings['images_url'], '/filter.gif" alt="" />
 					<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text" />
 					<select name="search_type">
 						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_internal'], '</option>
@@ -115,7 +115,7 @@ function template_admin()
 					<li>
 						', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image png_fix" /></a>' : '', '
 						<h5>', $task['link'], '</h5>
-						<span class="task">', $task['description'],'</span>
+						<span class="task">', $task['description'], '</span>
 					</li>';
 
 	echo '
@@ -1329,7 +1329,7 @@ function template_admin_search_results()
 			{
 				echo '
 				<li class="windowbg">
-					<a href="', $result['url'], '">', $result['name'], '</a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'] , ']';
+					<a href="', $result['url'], '">', $result['name'], '</a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 				if ($result['help'])
 					echo '
@@ -1650,7 +1650,7 @@ function template_download_language()
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">
-					<p>', $txt['package_ftp_why'],'</p>
+					<p>', $txt['package_ftp_why'], '</p>
 					<dl class="settings">
 						<dt
 							<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
@@ -2011,7 +2011,7 @@ function template_repair_boards()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>',
-				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'] , '
+				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">

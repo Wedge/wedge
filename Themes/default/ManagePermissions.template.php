@@ -292,7 +292,7 @@ function template_by_board()
 
 			echo '
 
-					<li class="flow_hidden' ,' windowbg', $alternate ? '' : '2','">
+					<li class="flow_hidden windowbg', $alternate ? '' : '2', '">
 						<span class="perm_board floatleft">
 							<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_var'], '=', $context['session_id'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
 						</span>

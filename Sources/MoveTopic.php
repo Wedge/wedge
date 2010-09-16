@@ -637,7 +637,7 @@ function moveTopics($topics, $toBoard)
 
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}messages
-		SET id_board = {int:id_board}' . ($isRecycleDest ? ',approved = {int:is_approved}' : '') . '
+		SET id_board = {int:id_board}' . ($isRecycleDest ? ', approved = {int:is_approved}' : '') . '
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'id_board' => $toBoard,

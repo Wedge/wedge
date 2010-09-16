@@ -789,7 +789,7 @@ function template_showPermissions()
 	else
 	{
 		echo '
-		<p class="description">',$txt['showPermissions_help'],'</p>
+		<p class="description">', $txt['showPermissions_help'], '</p>
 		<div id="permissions" class="flow_hidden">';
 
 		if (!empty($context['no_access_boards']))
@@ -837,7 +837,7 @@ function template_showPermissions()
 
 				if ($permission['is_denied'])
 					echo '
-									<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']),'</span>';
+									<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
 				else
 					echo '
 									', $txt['showPermissions_given'], ':&nbsp;', implode(', ', $permission['groups']['allowed']);

@@ -381,7 +381,7 @@ function template_modify_board()
 	if (empty($context['board']['is_recycle']) && !empty($context['board']['topics']))
 		echo '
 					<div class="information">
-						<strong>', $txt['mboards_redirect'],'</strong><br />
+						<strong>', $txt['mboards_redirect'], '</strong><br />
 						', $txt['mboards_redirect_disabled'], '
 					</div>';
 

@@ -964,7 +964,7 @@ function template_manual_logging_in_out()
 	<p>', $txt['manual_loginout_quick'], '</p>
 	<div class="help_sample">
 		<div class="user">
-			<div class="info">', $txt['manual_loginout_please'], ' <a href="', $scripturl, '?action=login">', $txt['manual_loginout_login_lower'], '</a> ', $txt['manual_loginout_or'],' <a href="', $scripturl, '?action=register">', $txt['manual_loginout_register'], '</a>.</div>
+			<div class="info">', $txt['manual_loginout_please'], ' <a href="', $scripturl, '?action=login">', $txt['manual_loginout_login_lower'], '</a> ', $txt['manual_loginout_or'], ' <a href="', $scripturl, '?action=register">', $txt['manual_loginout_register'], '</a>.</div>
 			<input type="text" name="user" size="10" class="input_text" />
 			<input type="password" name="passwrd" size="10" class="input_password" />
 			<select name="cookielength">

@@ -601,7 +601,7 @@ function template_set_settings()
 		foreach ($context['theme_variants'] as $key => $variant)
 		{
 			echo '
-			', $key, ': \'', $variant['thumbnail'], '\'', (count($context['theme_variants']) == $count ? '' : ',');
+			', $key, ': \'', $variant['thumbnail'], '\'', count($context['theme_variants']) == $count ? '' : ',';
 			$count++;
 		}
 
@@ -660,7 +660,7 @@ function template_pick()
 		echo '
 					<br />
 					<p>
-						<em class="smalltext">', $theme['num_users'], ' ', ($theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users']), '</em>
+						<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
 					</p>
 					<br />
 					<ul class="reset">
@@ -687,7 +687,7 @@ function template_pick()
 			foreach ($theme['variants'] as $key => $variant)
 			{
 				echo '
-				', $key, ': \'', $variant['thumbnail'], '\'', (count($theme['variants']) == $count ? '' : ',');
+				', $key, ': \'', $variant['thumbnail'], '\'', count($theme['variants']) == $count ? '' : ',';
 				$count++;
 			}
 
@@ -1070,7 +1070,7 @@ function template_edit_template()
 		echo '
 					<label for="on_line', $part['line'], '">', $txt['themeadmin_edit_on_line'], ' ', $part['line'], '</label>:<br />
 					<div class="centertext">
-						<textarea id="on_line', $part['line'] ,'" name="entire_file[]" cols="80" rows="', $part['lines'] > 14 ? '14' : $part['lines'], '" class="edit_file">', $part['data'], '</textarea>
+						<textarea id="on_line', $part['line'], '" name="entire_file[]" cols="80" rows="', $part['lines'] > 14 ? '14' : $part['lines'], '" class="edit_file">', $part['data'], '</textarea>
 					</div>';
 
 	echo '

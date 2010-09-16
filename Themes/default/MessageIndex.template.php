@@ -58,7 +58,7 @@ function template_main()
 
 			echo '
 
-						<p>', $board['description'] , '</p>';
+						<p>', $board['description'], '</p>';
 
 			// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
 			if (!empty($board['moderators']))
@@ -76,14 +76,14 @@ function template_main()
 					<td class="lastpost">';
 
 			/* The board's and children's 'last_post's have:
-			time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
-			link, href, subject, start (where they should go for the first unread post.),
-			and member. (which has id, name, link, href, username in it.) */
+			time, timestamp (a number that represents the time), id (of the post), topic (topic id),
+			link, href, subject, start (where they should go for the first unread post),
+			and member (which has id, name, link, href, username in it.) */
 			if (!empty($board['last_post']['id']))
 				echo '
-						<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
+						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
 						', $txt['in'], ' ', $board['last_post']['link'], '<br />
-						', $txt['on'], ' ', $board['last_post']['time'],'</p>';
+						', $txt['on'], ' ', $board['last_post']['time'], '</p>';
 
 			echo '
 					</td>

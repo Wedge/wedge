@@ -29,7 +29,7 @@ function template_generic_menu_sidebar_above()
 			{
 				echo '
 						<span class="ie6_header floatleft">
-							<a href="', $menu_context['toggle_url'], '">', $section['title'],'<img style="margin: 0 5px; vertical-align: middle;" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>
+							<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img style="margin: 0 5px; vertical-align: middle;" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>
 						</span>';
 			}
 
@@ -121,12 +121,12 @@ function template_generic_menu_dropdown_above()
 		if ($section['id'] == $menu_context['current_section'])
 		{
 			echo '
-			<li><a class="active firstlevel" href="#"><span class="firstlevel">', $section['title'] , '</span></a>
+			<li><a class="active firstlevel" href="#"><span class="firstlevel">', $section['title'], '</span></a>
 				<ul>';
 		}
 		else
 			echo '
-			<li><a class="firstlevel" href="#"><span class="firstlevel">', $section['title'] , '</span></a>
+			<li><a class="firstlevel" href="#"><span class="firstlevel">', $section['title'], '</span></a>
 				<ul>';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
@@ -138,7 +138,7 @@ function template_generic_menu_dropdown_above()
 				continue;
 
 			echo '
-					<li', (++$additional_items > 6) ? ' class="additional_items"' : '' ,'>';
+					<li', (++$additional_items > 6) ? ' class="additional_items"' : '', '>';
 
 			// Is this the current area, or just some area?
 			if ($i == $menu_context['current_area'])
@@ -168,7 +168,7 @@ function template_generic_menu_dropdown_above()
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
 
 					echo '
-							<li', (++$additional_items_sub > 6) ? ' class="additional_items"' : '' ,'>
+							<li', (++$additional_items_sub > 6) ? ' class="additional_items"' : '', '>
 								<a ', !empty($sub['selected']) ? 'class="active" ' : '', 'href="', $url, $menu_context['extra_parameters'], '"><span>', $sub['label'], '</span></a>
 							</li>';
 				}

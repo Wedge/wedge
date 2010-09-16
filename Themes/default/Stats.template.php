@@ -357,7 +357,7 @@ function template_main()
 			{
 				echo '
 				<tr class="windowbg2" valign="middle" id="tr_month_', $month['id'], '">
-					<th class="lefttext" width="25%" style="padding-', ($context['right_to_left'] ? 'right' : 'left'), ': 3ex;">
+					<th class="lefttext" width="25%" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': 3ex;">
 						<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" alt="" id="img_', $month['id'], '" /> <a id="m', $month['id'], '" href="', $month['href'], '" onclick="return doingExpandCollapse;">', $month['month'], ' ', $month['year'], '</a>
 					</th>
 					<th align="center" width="15%">', $month['new_topics'], '</th>
@@ -378,7 +378,7 @@ function template_main()
 					{
 						echo '
 				<tr class="windowbg2" valign="middle" align="left" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
-					<td class="lefttext" style="padding-', ($context['right_to_left'] ? 'right' : 'left'), ': 6ex;">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
+					<td class="lefttext" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': 6ex;">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
 					<td align="center">', $day['new_topics'], '</td>
 					<td align="center">', $day['new_posts'], '</td>
 					<td align="center">', $day['new_members'], '</td>

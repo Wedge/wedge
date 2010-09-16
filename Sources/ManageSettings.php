@@ -166,7 +166,7 @@ function ModifySecuritySettings()
 			'general' => array(
 			),
 			'spam' => array(
-				'description' => $txt['antispam_Settings_desc'] ,
+				'description' => $txt['antispam_Settings_desc'],
 			),
 			'moderation' => array(
 			),

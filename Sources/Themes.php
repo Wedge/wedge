@@ -195,7 +195,7 @@ function ThemeAdmin()
 		loadTemplate('Themes');
 
 		// Make our known themes a little easier to work with.
-		$knownThemes = !empty($modSettings['knownThemes']) ? explode(',',$modSettings['knownThemes']) : array();
+		$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : array();
 
 		// Load up all the themes.
 		$request = $smcFunc['db_query']('', '
@@ -1188,7 +1188,7 @@ function PickTheme()
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Figure out which theme it is they are REALLY using.
-		if (!empty($modSettings['knownThemes']) && !in_array($row['id_theme'], explode(',',$modSettings['knownThemes'])))
+		if (!empty($modSettings['knownThemes']) && !in_array($row['id_theme'], explode(',', $modSettings['knownThemes'])))
 			$row['id_theme'] = $guest_theme;
 		elseif (empty($modSettings['theme_allow']))
 			$row['id_theme'] = $guest_theme;

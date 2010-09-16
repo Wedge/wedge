@@ -189,7 +189,7 @@ function template_select_search_method()
 		echo '
 							<dt>
 								<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($modSettings['search_index']) && $modSettings['search_index'] == $api['setting_index'] ? ' checked="checked"' : '', ' class="input_radio" />
-								', $api['label'] ,'
+								', $api['label'], '
 							</dt>';
 
 	if ($api['desc'])

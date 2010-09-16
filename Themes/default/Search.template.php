@@ -274,7 +274,7 @@ function template_results()
 							<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" />';
 				echo '
 				</span>
-				<span class="ie6_header floatleft"><img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'],':&nbsp;',$context['search_params']['search'],'</span>
+				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '</span>
 			</h3>
 		</div>
 		<div class="pagesection">
@@ -300,7 +300,7 @@ function template_results()
 					<div class="topic_details floatleft" style="width: 94%">
 						<div class="counter">', $message['counter'], '</div>
 						<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.msg', $message['id'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
-						<span class="smalltext">&#171;&nbsp;',$txt['by'],'&nbsp;<strong>', $message['member']['link'], '</strong>&nbsp;',$txt['on'],'&nbsp;<em>', $message['time'], '</em>&nbsp;&#187;</span>
+						<span class="smalltext">&#171;&nbsp;', $txt['by'], '&nbsp;<strong>', $message['member']['link'], '</strong>&nbsp;', $txt['on'], '&nbsp;<em>', $message['time'], '</em>&nbsp;&#187;</span>
 					</div>';
 
 				if (!empty($options['display_quick_mod']))
@@ -367,7 +367,7 @@ function template_results()
 						<option value="">--------</option>', $context['can_remove'] ? '
 						<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 						<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
-						<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '',	$context['can_move'] ? '
+						<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
 						<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
 						<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', '
 						<option value="markread">', $txt['quick_mod_markread'], '</option>
@@ -412,7 +412,7 @@ function template_results()
 		echo '
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'],':&nbsp;',$context['search_params']['search'],'</span>
+				<span class="ie6_header floatleft"><img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '</span>
 			</h3>
 		</div>
 		<div class="pagesection">

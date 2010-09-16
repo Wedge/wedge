@@ -56,7 +56,7 @@ function template_main()
 			echo '
 								<span class="contact_info floatright">
 									', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['label'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '" align="bottom" />' : $member['online']['text'], $context['can_send_pm'] ? '</a>' : '', '
-									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'] , ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], '
+									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'], ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], '
 								</span>';
 		}
 
@@ -67,7 +67,7 @@ function template_main()
 
 		if (!empty($member['ip']))
 			echo '
-								(<a href="' . $scripturl . '?action=', ($member['is_guest'] ? 'trackip' : 'profile;area=tracking;sa=ip;u=' . $member['id']), ';searchip=' . $member['ip'] . '">' . $member['ip'] . '</a>)';
+								(<a href="' . $scripturl . '?action=', $member['is_guest'] ? 'trackip' : 'profile;area=tracking;sa=ip;u=' . $member['id'], ';searchip=' . $member['ip'] . '">' . $member['ip'] . '</a>)';
 
 		echo '
 							</td>

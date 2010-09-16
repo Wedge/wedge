@@ -649,7 +649,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'member_name' => $regOptions['username'],
 		'email_address' => $regOptions['email'],
 		'passwd' => sha1(strtolower($regOptions['username']) . $regOptions['password']),
-		'password_salt' => substr(md5(mt_rand()), 0, 4) ,
+		'password_salt' => substr(md5(mt_rand()), 0, 4),
 		'posts' => 0,
 		'date_registered' => time(),
 		'member_ip' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $user_info['ip'],
