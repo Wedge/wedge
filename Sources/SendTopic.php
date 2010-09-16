@@ -493,7 +493,7 @@ function ReportToModerator2()
 
 		// If we're just going to ignore these, then who gives a monkeys...
 		if (!empty($ignore))
-			redirectexit('board=' . $board . '.0');
+			redirectexit('topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg']);
 
 		// Already reported? My god, we could be dealing with a real rogue here...
 		if (!empty($id_report))
@@ -590,8 +590,8 @@ function ReportToModerator2()
 	// Keep track of when the mod reports get updated, that way we know when we need to look again.
 	updateSettings(array('last_mod_report_action' => time()));
 
-	// Back to the board! (you probably don't want to see the post anymore..)
-	redirectexit('board=' . $board . '.0;sent=done');
+	// Back to the post we reported!
+	redirectexit('reportsent;topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg']);
 }
 
 ?>

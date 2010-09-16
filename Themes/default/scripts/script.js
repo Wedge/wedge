@@ -1375,7 +1375,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 // A function used to clean the attachments on post page
 function cleanFileInput(idElement)
 {
-	if (is_opera || is_ie)
+	if (is_opera || is_ie || is_safari)
 		document.getElementById(idElement).outerHTML = document.getElementById(idElement).outerHTML;
 	else
 	{

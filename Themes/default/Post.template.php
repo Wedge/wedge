@@ -713,7 +713,75 @@ function template_main()
 	if (isset($context['previous_posts']) && count($context['previous_posts']) > 0)
 	{
 		echo '
+		<div id="recent" class="flow_hidden main_section">
+			<div class="cat_bar">
+				<h3>', $txt['topic_summary'], '</h3>
+			</div>
+			<span id="new_replies"></span>';
+
+		$ignored_posts = array();
+		foreach ($context['previous_posts'] as $post)
+		{
+			$ignoring = false;
+			if (!empty($post['is_ignored']))
+				$ignored_posts[] = $ignoring = $post['id'];
+
+			echo '
+			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
+				<div class="content" id="msg', $post['id'], '">
+					<div class="floatleft">
+						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
+						<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+					</div>';
+
+			if ($context['can_quote'])
+				echo '
+					<ul class="reset smalltext quickbuttons" id="msg_', $post['id'], '_quote">
+						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
+					</ul>';
+
+			echo '
+					<br class="clear" />';
+
+			if ($ignoring)
+				echo '
+					<div id="msg_', $post['id'], '_ignored_prompt" class="smalltext">
+						', $txt['ignoring_user'], '
+						<a href="#" id="msg_', $post['id'], '_ignored_link" style="display: none;">', $txt['show_ignore_user_post'], '</a>
+					</div>';
+
+			echo '
+					<div class="list_posts smalltext" id="msg_', $post['id'], '_body">', $post['message'], '</div>
+				</div>
+			</div>';
+		}
+
+		echo '
+		</div>
 		<script type="text/javascript"><!-- // --><![CDATA[
+			var aIgnoreToggles = new Array();';
+
+		foreach ($ignored_posts as $post_id)
+		{
+			echo '
+			aIgnoreToggles[', $post_id, '] = new smc_Toggle({
+				bToggleEnabled: true,
+				bCurrentlyCollapsed: true,
+				aSwappableContainers: [
+					\'msg_', $post_id, '_body\',
+					\'msg_', $post_id, '_quote\',
+				],
+				aSwapLinks: [
+					{
+						sId: \'msg_', $post_id, '_ignored_link\',
+						msgExpanded: \'\',
+						msgCollapsed: ', JavaScriptEscape($txt['show_ignore_user_post']), '
+					}
+				]
+			});';
+		}
+
+		echo '
 			function insertQuoteFast(messageid)
 			{
 				if (window.XMLHttpRequest)
@@ -729,41 +797,7 @@ function template_main()
 					text += XMLDoc.getElementsByTagName(\'quote\')[0].childNodes[i].nodeValue;
 				oEditorHandle_', $context['postbox']->id, '.insertText(text, false, true);
 			}
-		// ]]></script>
-
-		<div id="recent" class="flow_hidden main_section">
-			<div class="cat_bar">
-				<h3>', $txt['topic_summary'], '</h3>
-			</div>
-			<span id="new_replies"></span>';
-
-		foreach ($context['previous_posts'] as $post)
-		{
-			echo '
-			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
-				<div class="content" id="msg', $post['id'], '">
-					<div class="floatleft">
-						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
-						<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
-					</div>';
-
-			if ($context['can_quote'])
-			{
-				echo '
-					<ul class="reset smalltext quickbuttons">
-						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
-					</ul>';
-			}
-
-			echo '
-					<br class="clear" />
-					<div class="list_posts smalltext">', $post['message'], '</div>
-				</div>
-			</div>';
-		}
-
-		echo '
-		</div>';
+		// ]]></script>';
 	}
 }
 
@@ -882,7 +916,7 @@ function template_quotefast()
 			if (\'opera\' in window)
 				quote = quote.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, \'"\').replace(/&amp;/g, "&");
 
-			window.opener.oEditorHandle_', $context['post_box_name'], '.InsertText(quote);
+			window.opener.oEditorHandle_', $context['postbox']->id, '.InsertText(quote);
 
 			window.focus();
 			setTimeout("window.close();", 400);';

@@ -113,6 +113,7 @@ function template_post()
 			<time><![CDATA[', $post['time'], ']]></time>
 			<poster><![CDATA[', cleanXml($post['poster']), ']]></poster>
 			<message><![CDATA[', cleanXml($post['message']), ']]></message>
+			<is_ignored>', $post['is_ignored'] ? '1' : '0', '</is_ignored>
 		</post>';
 		echo '
 	</new_posts>';

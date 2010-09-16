@@ -5,6 +5,13 @@ function template_main()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
+	// Let them know, if their report was a success!
+	if ($context['report_sent'])
+		echo '
+			<div class="windowbg" id="profile_success">
+				', $txt['report_sent'], '
+			</div>';
+
 	// Show the anchor for the top and for the first message. If the first message is new, say so.
 	echo '
 			<a id="top"></a>

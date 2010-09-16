@@ -646,9 +646,6 @@ function MessageIndex()
 
 	// If there are children, but no topics and no ability to post topics...
 	$context['no_topic_listing'] = !empty($context['boards']) && empty($context['topics']) && !$context['can_post_new'];
-
-	// Did we report a topic to a moderator just now?
-	$context['report_sent'] = isset($_GET['sent']) && $_GET['sent'] == 'done';
 }
 
 // Allows for moderation from the message index.

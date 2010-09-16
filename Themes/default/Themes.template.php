@@ -601,7 +601,7 @@ function template_set_settings()
 		foreach ($context['theme_variants'] as $key => $variant)
 		{
 			echo '
-			', $key, ': \'', $variant['thumbnail'], '\'', count($context['theme_variants']) == $count ? '' : ',';
+			\'', $key, '\': \'', $variant['thumbnail'], '\'', count($context['theme_variants']) == $count ? '' : ',';
 			$count++;
 		}
 
@@ -646,10 +646,9 @@ function template_pick()
 					<select id="variant', $theme['id'], '" name="vrt[', $theme['id'], ']" onchange="changeVariant', $theme['id'], '(this.value);">';
 
 			foreach ($theme['variants'] as $key => $variant)
-			{
 				echo '
 						<option value="', $key, '" ', $theme['selected_variant'] == $key ? 'selected="selected"' : '', '>', $variant['label'], '</option>';
-			}
+
 			echo '
 					</select>
 					<noscript>
@@ -687,7 +686,7 @@ function template_pick()
 			foreach ($theme['variants'] as $key => $variant)
 			{
 				echo '
-				', $key, ': \'', $variant['thumbnail'], '\'', count($theme['variants']) == $count ? '' : ',';
+				\'', $key, '\': \'', $variant['thumbnail'], '\'', count($theme['variants']) == $count ? '' : ',';
 				$count++;
 			}
 
@@ -698,7 +697,7 @@ function template_pick()
 			{
 				document.getElementById(\'theme_thumb_', $theme['id'], '\').src = oThumbnails', $theme['id'], '[sVariant];
 				document.getElementById(\'theme_use_', $theme['id'], '\').href = sBaseUseUrl + \';vrt=\' + sVariant;
-				document.getElementById(\'theme_thumb_preview', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
+				document.getElementById(\'theme_thumb_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
 				document.getElementById(\'theme_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
 			}
 			// ]]></script>';

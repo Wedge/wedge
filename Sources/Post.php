@@ -1990,35 +1990,31 @@ function Post2()
 	}
 
 	// Marking read should be done even for editing messages....
-	if (!$user_info['is_guest'])
+	// Mark all the parents read, since you just posted and they will be unread.
+	if (!$user_info['is_guest'] && !empty($board_info['parent_boards']))
 	{
-		// Mark all the parents read.  (since you just posted and they will be unread.)
-		if (!empty($board_info['parent_boards']))
-		{
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}log_boards
-				SET id_msg = {int:id_msg}
-				WHERE id_member = {int:current_member}
-					AND id_board IN ({array_int:board_list})',
-				array(
-					'current_member' => $user_info['id'],
-					'board_list' => array_keys($board_info['parent_boards']),
-					'id_msg' => $modSettings['maxMsgID'],
-				)
-			);
-		}
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}log_boards
+			SET id_msg = {int:id_msg}
+			WHERE id_member = {int:current_member}
+				AND id_board IN ({array_int:board_list})',
+			array(
+				'current_member' => $user_info['id'],
+				'board_list' => array_keys($board_info['parent_boards']),
+				'id_msg' => $modSettings['maxMsgID'],
+			)
+		);
 	}
 
 	// Turn notification on or off.  (note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && allowedTo('mark_any_notify'))
 	{
-		if (allowedTo('mark_any_notify'))
-			$smcFunc['db_insert']('ignore',
-				'{db_prefix}log_notify',
-				array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'),
-				array($user_info['id'], $topic, 0),
-				array('id_member', 'id_topic', 'id_board')
-			);
+		$smcFunc['db_insert']('ignore',
+			'{db_prefix}log_notify',
+			array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'),
+			array($user_info['id'], $topic, 0),
+			array('id_member', 'id_topic', 'id_board')
+		);
 	}
 	elseif (!$newTopic)
 		$smcFunc['db_query']('', '
@@ -2478,7 +2474,7 @@ function notifyMembersBoard(&$topicData)
 // Get the topic for display purposes.
 function getTopic()
 {
-	global $topic, $modSettings, $context, $smcFunc, $counter;
+	global $topic, $modSettings, $context, $smcFunc, $counter, $options;
 
 	if (isset($_REQUEST['xml']))
 		$limit = '
@@ -2489,7 +2485,9 @@ function getTopic()
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
 	$request = $smcFunc['db_query']('', '
-		SELECT IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.smileys_enabled, m.id_msg
+		SELECT
+			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
+			m.body, m.smileys_enabled, m.id_msg, m.id_member
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (isset($_REQUEST['msg']) ? '
@@ -2519,6 +2517,7 @@ function getTopic()
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'is_new' => !empty($context['new_replies']),
+			'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']),
 		);
 
 		if (!empty($context['new_replies']))

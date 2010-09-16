@@ -2202,7 +2202,6 @@ function loadIllegalGuestPermissions()
 		'modify_replies',
 		'send_mail',
 		'approve_posts',
-		'moderate_board',
 	);
 }
 

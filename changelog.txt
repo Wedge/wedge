@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10105 $.
+Changelog started January 1, 2004; Currently at $Revision: 10119 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -32,8 +32,19 @@ September 2010
  ! Topic moderation logs were not listed on mod report details. (ModerationCenter.php) [Bug 4419]
  ! Unoptimized query for topic participation query in unread topics. (Recent.php) [Bug 4457]
  ! 'moderate_board' permission does not really make sense for guests (ManagePermissions.php) [Bug 4460]
+ * Avatars and other packages removals missed session vars (Package template) [Bug 4463]
+ ! Small cleanup and tweaks [Bug 4461]
+ ! Fix attachments boxes cleanup for Safari [Bug 4470]
+ * Variant selection was disregarded when previewing a theme. (Themes template) [Bug 4433]
+ * Redirect back to the post instead of board, after reporting a post. (Display.php, MessageIndex.php, SendTopic.php, Display template, MessageIndex template) [Bug 4452]
+ ! Adjusted the URL for the arin whois service to reflect its new location. (Profile-View.php) [Bug 4464]
+ * Incorrect label assignment in Reattribute User Posts section. (ManageMaintenance template) [Bug 4467]
+ ! Restoring moderate_board permission for guests. (ManagePermissions.php)
+ * Ignored members' posts were not hidden in topic summary. (Post.php, Post template, Xml template) [Bug 4466]
+ * Who's Online filters did not function correctly. (Who.php, Who template) [Bug 4462]
+ * Variant selection was broken with reserved variant names. (Themes template) [Bug 4435]
 
- 
+
 August 2010
 --------------------------------------------------------------------------------
  * The new replies template for preview JavaScript was using outdated post layout. (Post.template.php) [Bug 4387]

@@ -389,6 +389,9 @@ function Display()
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
 
+	// Did we report a post to a moderator just now?
+	$context['report_sent'] = isset($_GET['reportsent']);
+
 	// Let's get nosey, who is viewing this topic?
 	if (!empty($settings['display_who_viewing']))
 	{

@@ -5,12 +5,6 @@ function template_main()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	if ($context['report_sent'])
-		echo '
-	<div class="windowbg" id="profile_success">
-		', $txt['report_sent'], '
-	</div>';
-
 	echo '
 	<a id="top"></a>';
 
