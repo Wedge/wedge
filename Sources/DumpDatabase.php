@@ -22,23 +22,32 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides all of the error handling within the system.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*
-	This file has a single job - database backup.
-
-	void DumpDatabase2()
-		- writes all of the database to standard output.
-		- uses gzip compression if compress is set in the URL/post data.
-		- may possibly time out in some cases.
-		- the data dumped depends on whether "struct" and "data" are passed.
-		- requires an administrator and the session hash by post.
-		- is called from ManageMaintenance.php.
-
-*/
-
-// Dumps the database to a file.
+/**
+ * This function manages outputting the backup of the database.
+ *
+ * - Requires admin-forum permission (not explicitly a true administrator account.
+ * - User specifies what of the schema to back up, the structure, and/or the data. (Requires 'struct' and/or 'data' in $_REQUEST respectively)
+ * - Session check via form POST.
+ * - Extends the database library capabilities with the 'extra' set.
+ * - Attempt to extend the limits - time limit upgraded to 5 minutes, memory limit to 256 MB.
+ * - If the user has requested compression ('compress' in the POST variables), and GZ encoding is available, begin the appropriate output buffering (and clean the buffer)
+ * - Set the appropriate headers (depending on compression) for the file type.
+ * - Set the appropriate headers to ensure the content will be sent for download.
+ * - Issue the file header.
+ * - Step through the tables, output the structure if requested, then iterate through the table itself to output if requested - all to STDOUT (which will be gzipped if the appropriate settings and handler has been fired)
+ *
+ * @todo Should this function require a true admin account (i.e. $user_info['is_admin'] rather than allowedTo('admin_forum'))
+ * @todo Remove the call to $smcFunc['db_get_backup'], it's not applicable to MySQL.
+ */
 function DumpDatabase2()
 {
 	global $db_name, $scripturl, $context, $modSettings, $crlf, $smcFunc, $db_prefix;

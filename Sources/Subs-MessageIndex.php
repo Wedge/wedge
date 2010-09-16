@@ -22,10 +22,28 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
-/*
+/**
+ * This file provides all of the error handling within the system.
+ *
+ * @package wedge
+ */
 
-*/
-
+/**
+ * Returns a list of boards matching specific criteria.
+ *
+ * @param array $boardListOptions Parameters to control which boards' details are returned:
+ * - excluded_boards - an array of board ids that should not be included in the list (and return all others)
+ * - included_boards - an array of board ids to retrieve data from.
+ * - ignore_boards - set to true to honor the ignore-boards options of the present user.
+ * - use_permissions - set to true to honor the visibility permissions of the boards. (Does not apply if ignore_boards is used)
+ * - not_redirection - set to true to exclude redirection boards.
+ * - selected_board - an integer board id, representing a current/selected board (useful for the jump to code)
+ *
+ * @return array The principle array is a keyed array of categories, the key being the category id. Each category key consists of an array:
+ * - id - the category's id
+ * - name - the category's name
+ * - boards - an array containing the boards in the category. Unlike the categories parent array, the board arrays are indexed rather than keyed, and each of these arrays consists of: id (board id), name (board name), child_level (the level of nesting), selected (whether this is the selected board - see selected_board)
+ */
 function getBoardList($boardListOptions = array())
 {
 	global $smcFunc, $user_info;
