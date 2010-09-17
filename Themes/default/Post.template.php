@@ -646,6 +646,7 @@ function template_main()
 					document.getElementById(\'image_new_\' + new_replies[i]).style.display = \'none\';
 				new_replies = new Array();
 
+				var ignored_replies = new Array(), ignoring;
 				var newPosts = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'new_posts\')[0] ? XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'new_posts\')[0].getElementsByTagName(\'post\') : {length: 0};
 				var numNewPosts = newPosts.length;
 				if (numNewPosts != 0)
@@ -654,16 +655,49 @@ function template_main()
 					for (var i = 0; i < numNewPosts; i++)
 					{
 						new_replies[new_replies.length] = newPosts[i].getAttribute("id");
+
+						ignoring = false;
+						if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue)
+							ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
+
 						newPostsHTML += \'<div class="windowbg\' + (i % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div class="content" id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>', $txt['posted_by'], ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/', $context['user']['language'], '/new.gif" alt="', $txt['preview_new'], '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';';
 
 	if ($context['can_quote'])
 		echo '
-						newPostsHTML += \'<ul class="reset smalltext quickbuttons"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>', $txt['bbc_quote'], '</span><\' + \'/a></li></ul>\';';
+						newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>',$txt['bbc_quote'],'</span><\' + \'/a></li></ul>\';';
 
 	echo '
-						newPostsHTML += \'<br class="clear" /><div class="list_posts smalltext">\' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + \'<\' + \'/div></div></div>\';
+						newPostsHTML += \'<br class="clear" />\';
+
+						if (ignoring)
+							newPostsHTML += \'<div id="msg_\' + newPosts[i].getAttribute("id") + \'_ignored_prompt" class="smalltext">', $txt['ignoring_user'], '<a href="#" id="msg_\' + newPosts[i].getAttribute("id") + \'_ignored_link" style="display: none;">', $txt['show_ignore_user_post'], '</a></div>\';
+
+						newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + newPosts[i].getAttribute("id") + \'_body">\' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + \'<\' + \'/div></div></div>\';
 					}
 					setOuterHTML(document.getElementById(\'new_replies\'), newPostsHTML);
+				}
+
+				var numIgnoredReplies = ignored_replies.length;
+				if (numIgnoredReplies != 0)
+				{
+					for (var i = 0; i < numIgnoredReplies; i++)
+					{
+						aIgnoreToggles[ignored_replies[i]] = new smc_Toggle({
+							bToggleEnabled: true,
+							bCurrentlyCollapsed: true,
+							aSwappableContainers: [
+								\'msg_\' + ignored_replies[i] + \'_body\',
+								\'msg_\' + ignored_replies[i] + \'_quote\',
+							],
+							aSwapLinks: [
+								{
+									sId: \'msg_\' + ignored_replies[i] + \'_ignored_link\',
+									msgExpanded: \'\',
+									msgCollapsed: ', JavaScriptEscape($txt['show_ignore_user_post']), '
+								}
+							]
+						});
+					}
 				}
 
 				if (typeof(smf_codeFix) != \'undefined\')
