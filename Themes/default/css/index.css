@@ -934,7 +934,7 @@ form.wrc
 .rrc
 {
 	margin-top: 1px;
-	padding: 10px;
+	padding: 10px 10px 9px 10px;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
@@ -1011,22 +1011,22 @@ form.wrc
 .dropmenu a span
 {
 	display: block;
-	padding: 0 0 0 5px;
 	font-size: 0.9em;
 }
 /* the background's first level only */
 .dropmenu li a.firstlevel
 {
 	margin-right: 8px;
+	height: 19px;
 }
 .dropmenu li a.firstlevel span.firstlevel
 {
 	display: block;
 	position: relative;
-	left: -5px;
-	padding-left: 5px;
-	height: 22px;
-	line-height: 19px;
+	margin: 1px 0 0 -5px;
+	padding: 0 5px;
+	height: 19px;
+	line-height: 18px;
 }
 .dropmenu li
 {
@@ -1064,22 +1064,28 @@ form.wrc
 }
 
 /* the active button */
-.dropmenu li a.active
+.dropmenu li a.active span
 {
 	background: #fd9604;
 	color: #fff;
 	font-weight: bold;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 /* the hover effects */
-.dropmenu li a.firstlevel:hover, .dropmenu li:hover a.firstlevel
+.dropmenu li a.firstlevel:hover span, .dropmenu li:hover a.firstlevel span
 {
 	background: #5a6c85;
 	color: #fff;
 	cursor: pointer;
 	text-decoration: none;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
-/* the hover effects on level2 and 3 */
-.dropmenu li li a:hover, .dropmenu li li:hover>a
+/* the hover effects on levels 2 and 3 */
+.dropmenu li li a:hover span, .dropmenu li li:hover>a span
 {
 	background: #d4dbe4;
 	color: #000;
@@ -1207,12 +1213,12 @@ ul#navigation li
 /* the framing graphics */
 #header
 {
-	background: url(../images/theme/main_block.png) #fefefe no-repeat 0 -440px;
+	background: url(../images/theme/main_block.png) #fefefe no-repeat 0 -200px;
 	padding-left: 20px;
 }
 #header div.frame
 {
-	background: url(../images/theme/main_block.png) no-repeat 100% -440px;
+	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
 	display: block;
 	padding: 5px 20px 0 0;
 }
@@ -1359,7 +1365,7 @@ div#upper_section div.news form
 #footer_section
 {
 	text-align: center;
-	background: url(../images/theme/main_block.png) no-repeat 0 -1020px;
+	background: url(../images/theme/main_block.png) no-repeat 0 -580px;
 	padding-left: 20px;
 }
 #footer_section span.smalltext
@@ -1368,7 +1374,7 @@ div#upper_section div.news form
 }
 #footer_section div.frame
 {
-	background: url(../images/theme/main_block.png) no-repeat 100% -1020px;
+	background: url(../images/theme/main_block.png) no-repeat 100% -580px;
 	display: block;
 	padding: 60px 0 0 0;
 }
@@ -3618,7 +3624,7 @@ span.upperframe
 {
 	padding: 0;
 	display: block;
-	background: url(../images/theme/main_block.png) 0 -90px no-repeat;
+	background: url(../images/theme/main_block.png) 0 -89px no-repeat;
 	padding-left: 20px;
 }
 span.upperframe span
@@ -3626,7 +3632,7 @@ span.upperframe span
 	padding: 0;
 	height: 12px;
 	display: block;
-	background: url(../images/theme/main_block.png) 100% -90px no-repeat;
+	background: url(../images/theme/main_block.png) 100% -89px no-repeat;
 }
 span.lowerframe
 {

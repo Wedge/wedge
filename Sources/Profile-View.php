@@ -797,8 +797,7 @@ function statPanel($memID)
 			'total_posts' => $row['num_posts'],
 		);
 	}
-	if (!empty($result))
-		$smcFunc['db_free_result']($result);
+	$smcFunc['db_free_result']($result);
 
 	// Posting activity by time.
 	$result = $smcFunc['db_query']('', '
@@ -833,8 +832,7 @@ function statPanel($memID)
 			'is_last' => $row['hour'] == 23,
 		);
 	}
-	if (!empty($result))
-		$smcFunc['db_free_result']($result);
+	$smcFunc['db_free_result']($result);
 
 	if ($maxPosts > 0)
 		for ($hour = 0; $hour < 24; $hour++)

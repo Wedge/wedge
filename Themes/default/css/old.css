@@ -6,11 +6,11 @@
 
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
 {
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat -10px -340px;
+	background: #e3e9ef url(../images/theme/bars.png) repeat-x 0 0;
 }
 .catbg, tr.catbg td, tr.catbg th
 {
-	background: #a8bace url(../images/theme/main_block.png) no-repeat -10px -240px;
+	background: #a8bace url(../images/theme/bars.png) repeat-x 0 -150px;
 }
 .cat_bar h4, .cat_bar h3, .table_list tbody.header td.catbg
 {
@@ -18,7 +18,7 @@
 }
 .title_bar h4, .title_bar h3
 {
-	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
+	background: url(../images/theme/main_block.png) no-repeat 100% -120px;
 }
 
 div.cat_bar
@@ -27,43 +27,50 @@ div.cat_bar
 }
 div.title_bar
 {
-	background: url(../images/theme/main_block.png) no-repeat 0 -200px;
-}
-
-
-#upshrinkHeaderIC .cat_bar h3
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -160px;
-}
-#upshrinkHeaderIC .title_bar
-{
 	background: url(../images/theme/main_block.png) no-repeat 0 -120px;
 }
-#upshrinkHeaderIC .title_bar h4
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -120px;
-}
+
 tr.catbg th.first_th
 {
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 0 -240px;
+	background: #a8bace url(../images/theme/bars.png) repeat-x 0 -150px;
 }
 tr.catbg th.last_th
 {
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 100% -240px;
+	background: #a8bace url(../images/theme/bars.png) repeat-x 100% -150px;
 }
 tr.titlebg th.first_th
 {
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 0 -340px;
+	background: #e3e9ef url(../images/theme/bars.png) repeat-x 0 0;
 }
 tr.titlebg th.last_th
 {
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 100% -340px;
+	background: #e3e9ef url(../images/theme/bars.png) repeat-x 100% 0;
 }
 
 
 /* Menu buttons */
 
 /* the active button */
+.dropmenu a span
+{
+	padding: 0 0 0 5px;
+}
+.dropmenu li a.active span
+{
+	background: #fd9604;
+}
+.dropmenu li a.firstlevel
+{
+	height: 20px;
+}
+.dropmenu li a.firstlevel span.firstlevel
+{
+	left: -5px;
+	padding: 0 0 0 5px;
+	margin: 0;
+	height: 22px;
+	line-height: 19px;
+}
 .dropmenu li a.active
 {
 	background: url(../images/theme/buttons.png) no-repeat 100% 0;
@@ -141,4 +148,7 @@ tr.titlebg th.last_th
 	margin-top: 0;
 	padding: 0 10px;
 	border-width: 0 1px;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
 }
