@@ -1386,16 +1386,14 @@ function cleanFileInput(idElement)
 }
 
 /*
-Dropdown menus, Wedge style.
+Dropdown menus, Wedge style. You may reuse code by keeping the credits intact.
+© 2008-2010 René-Gilles Deberdt (http://wedgeo.com)
 
-Original author: Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
-Released under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
-
-Rewritten by: René-Gilles Deberdt (http://noisen.com)
-Copyright © 2004 Batiste Bieler, 2008-2010 René-Gilles Deberdt
+Uses portions under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
+Copyright © 2004 Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
 */
 
-var last_opened_submenu = '', baseId = 0;
+var baseId = 0, hoverable = false;
 var timeoutli = new Array();
 var ieshim = new Array();
 
@@ -1404,47 +1402,46 @@ function initMenu(menu)
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	var lis = menu.getElementsByTagName('li');
+	var h4s = menu.getElementsByTagName('h4');
+	for (var i = 0, j = h4s.length; i < j; i++)
+		if (h4s[i].innerHTML.indexOf('<a ') == -1)
+			h4s[i].innerHTML = '<a href="#" onclick="hoverable = true; showMe.call(this.parentNode.parentNode); hoverable = false; return false;">' + h4s[i].innerHTML + '</a>';
 
 	// Change the class name of the menu, for backwards compatibility with old browsers
 	menu.className = 'menu';
-	for (var i = baseId, j = lis.length + baseId; i < j; i++)
+	for (var i = 0, j = lis.length; i < j; i++)
 	{
 		// Is there a ul element ?
-		if (lis.item(i).getElementsByTagName('ul').length > 0)
+		if (lis[i].getElementsByTagName('ul').length > 0)
 		{
-			lis.item(i).setAttribute('id', 'li'+i);
+			lis[i].setAttribute('id', 'li' + baseId + i);
 			if (is_ie6)
 			{
-				addAnEvent(lis.item(i), 'keyup', showMe);
-				document.write('<iframe src="" id="shim' + i + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[i] = document.getElementById('shim' + i);
+				lis[i].onkeyup = showMe;
+				document.write('<iframe src="" id="shim' + baseId + i + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
+				ieshim[i] = document.getElementById('shim' + baseId + i);
 			}
-			addAnEvent(lis.item(i), 'mouseover', showMe);
-			addAnEvent(lis.item(i), 'mouseout', timeoutHide);
-			addAnEvent(lis.item(i), 'click', hideAllUls);
-			addAnEvent(lis.item(i), 'blur', timeoutHide);
-			addAnEvent(lis.item(i), 'focus', showMe);
+			lis[i].onmouseover = showMe;
+			lis[i].onmouseout = timeoutHide;
+			lis[i].onclick = hideAllUls;
+			lis[i].onblur = timeoutHide;
+			lis[i].onfocus = showMe;
 		}
 	}
-}
-
-function addAnEvent(target, eventName, functionName)
-{
-	if (target.addEventListener)
-		target.addEventListener(eventName, functionName, true); // true is important for Opera 7
-	else if (target.attachEvent)
-	{
-		target['e' + eventName + functionName] = functionName;
-		target[eventName + functionName] = function() { target['e' + eventName + functionName](window.event); }
-		target.attachEvent('on' + eventName, target[eventName + functionName]);
-	}
+	baseId += lis.length;
 }
 
 // Hide the first ul element of the current element
-function timeoutHide()
+function timeoutHide(e)
 {
-	timeoutli[this.id.substring(2)] = window.setTimeout('hideUlUnder("' + this.id + '")', 242);
-	last_opened_submenu = this.id;
+	if (!e) var e = window.event;
+	var targ = e.relatedTarget || e.toElement, insitu;
+	while (targ && !insitu)
+	{
+		insitu = targ.parentNode && targ.parentNode.id == 'menu';
+		targ = targ.parentNode;
+	}
+	insitu ? hideUlUnder(this.id) : timeoutli[this.id.substring(2)] = window.setTimeout('hideUlUnder("' + this.id + '")', 242);
 }
 
 // Hide the ul elements under the element identified by id
@@ -1455,6 +1452,9 @@ function hideUlUnder(id)
 	var h4s = eid.getElementsByTagName('h4');
 	if (h4s.length > 0)
 		h4s[0].className = '';
+	var as = eid.getElementsByTagName('a');
+	for (var i = 0, j = as.length; i < j; i++)
+		as[i].className = '';
 	showShim(false, id);
 }
 
@@ -1476,10 +1476,21 @@ function showShim(showsh, ieid, iemenu)
 }
 
 // Show the first ul element found under this element
-function showMe()
+function showMe(e)
 {
-	// Show the menu item
 	var showul = this.getElementsByTagName('ul')[0];
+	if (hoverable)
+	{
+		if (!e) var e = window.event;
+		e.cancelBubble = true;
+		if (e.stopPropagation) e.stopPropagation();
+		if (showul.style.visibility == 'visible')
+		{
+			hideUlUnder(this.id);
+			return;
+		}
+	}
+	// Show the menu item
 	showul.style.visibility = 'visible';
 
 	// If this is a submenu, show it next to the parent menu item
@@ -1498,18 +1509,11 @@ function showMe()
 			if (currentNode.nodeName == 'LI' && currentNode.parentNode.id != 'menu')
 				currentNode.getElementsByTagName('a')[0].className = 'linkOver';
 			currentNode = currentNode.parentNode;
+			if (currentNode.id == 'menu')
+				break;
 		}
 	}
-	if (last_opened_submenu != '')
-	{
-		// Needed to turn off highlighting when switching from a submenu-enabled menu item to a solo menu item
-		var eid = document.getElementById(this.id);
-		var as = eid.getElementsByTagName('a');
-		for (var i = 0, j = as.length; i < j; i++)
-			as.item(i).className = '';
-		last_opened_submenu = '';
-	}
-	eval('clearTimeout(timeoutli[' + this.id.substring(2) + ']);');
+	clearTimeout(timeoutli[this.id.substring(2)]);
 	hideAllOthersUls(this);
 }
 
@@ -1540,11 +1544,11 @@ function hideUlUnderLi(li)
 	{
 		var as = li.getElementsByTagName('a');
 		for (var i = 0, j = as.length; i < j; i++)
-			as.item(i).className = '';
+			as[i].className = '';
 	}
 	var uls = li.getElementsByTagName('ul');
 	for (var i = 0, j = uls.length; i < j; i++)
-		uls.item(i).style.visibility = 'hidden';
+		uls[i].style.visibility = 'hidden';
 }
 
 /* --------------------------------------------------------

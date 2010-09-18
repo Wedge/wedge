@@ -110,17 +110,22 @@ function template_generic_menu_dropdown_above()
 <ul id="menu" class="dmenu">';
 
 	if (!empty($menu_context['can_toggle_drop_down']))
-		echo '<li style="background: none !important"><a href="', $menu_context['toggle_url'], '" style="border: 0 !important"><img style="margin: 0 2px 0 2px;" src="' , $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /> <span></span></a></li>';
+		echo '
+	<li style="background: none !important"><a href="', $menu_context['toggle_url'], '" style="border: 0 !important"><img style="margin: 0 2px 0 2px;" src="' , $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /> <span></span></a></li>';
 
 	// Main areas first.
 	foreach ($menu_context['sections'] as $section)
 	{
 		if ($section['id'] == $menu_context['current_section'])
 		{
-			echo '<li class="chosen"><h4>', $section['title'] , '</h4><ul>';
+			echo '
+	<li class="chosen"><h4>', $section['title'] , '</h4>
+		<ul>';
 		}
 		else
-			echo '<li><h4>', $section['title'] , '</h4><ul>';
+			echo '
+	<li><h4>', $section['title'] , '</h4>
+		<ul>';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
 		foreach ($section['areas'] as $i => $area)
@@ -131,7 +136,8 @@ function template_generic_menu_dropdown_above()
 
 			if (empty($area['subsections']))
 			{
-				echo '<li>';
+				echo '
+			<li>';
 
 				// Is this the current area, or just some area?
 				if ($i == $menu_context['current_area'])
@@ -148,20 +154,24 @@ function template_generic_menu_dropdown_above()
 			}
 			else
 			{
-				echo '<li class="subsection">';
+				echo '
+			<li class="subsection">';
 
 				// Is this the current area, or just some area?
 				if ($i == $menu_context['current_area'])
 				{
-					echo '<a class="subsection" href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '"><strong>', $area['icon'], $area['label'], '</strong></a>';
+					echo '
+				<a class="subsection" href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '"><strong>', $area['icon'], $area['label'], '</strong></a>';
 
 					if (empty($context['tabs']))
 						$context['tabs'] = $area['subsections'];
 				}
 				else
-					echo '<a href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], '</a>';
+					echo '
+				<a href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], '</a>';
 
-				echo '<ul>';
+				echo '
+				<ul>';
 
 				foreach ($area['subsections'] as $sa => $sub)
 				{
@@ -170,16 +180,22 @@ function template_generic_menu_dropdown_above()
 
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
 
-					echo '<li><a href="', $url, $menu_context['extra_parameters'], '">', (!empty($sub['selected']) ? '<strong>' . $sub['label'] . '</strong>' : $sub['label']), '</a></li>';
+					echo '
+					<li><a href="', $url, $menu_context['extra_parameters'], '">', (!empty($sub['selected']) ? '<strong>' . $sub['label'] . '</strong>' : $sub['label']), '</a></li>';
 				}
 
-				echo '</ul></li>';
+				echo '
+				</ul>
+			</li>';
 			}
 		}
-		echo '</ul></li>';
+		echo '
+		</ul>
+	</li>';
 	}
 
-	echo '</ul>
+	echo '
+</ul>
 <script type="text/javascript"><!-- // --><![CDATA[
 	initMenu(document.getElementById("menu"));
 // ]]></script>';

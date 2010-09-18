@@ -228,18 +228,18 @@ function template_unread()
 	}
 	else
 		echo '
-			<div class="cat_bar">
-				<h3 class="centertext">
-					', $context['showing_all_topics'] ? $txt['msg_alert_none'] : $txt['unread_topics_visit_none'], '
-				</h3>
-			</div>';
+		<div class="cat_bar">
+			<h3 class="centertext">
+				', $context['showing_all_topics'] ? $txt['msg_alert_none'] : $txt['unread_topics_visit_none'], '
+			</h3>
+		</div>';
 
 	if ($showCheckboxes)
 		echo '
 		</form>';
 
 	echo '
-		<div class="description " id="topic_icons">
+		<div class="description" id="topic_icons">
 			<p class="smalltext floatleft">
 				', !empty($modSettings['enableParticipation']) ? '
 				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', '

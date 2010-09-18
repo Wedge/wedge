@@ -205,3 +205,4 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 {
 	border-bottom: 1px dotted white;
 }
+a.linkOver { background: #c8e2fb }

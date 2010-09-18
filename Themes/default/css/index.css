@@ -3484,12 +3484,16 @@ ul.basic_helplist
 }
 
 #menu h4 {
-	margin: 0;
 	padding: 7px 20px 3px 5px;
 	text-transform: uppercase;
 	font-weight: normal;
 	font-size: 0.85em;
 	background: transparent url(../images/submenu.gif) no-repeat 98% 50%;
+	margin: 0;
+}
+#menu h4 a {
+	border: 0;
+	padding: 0;
 }
 #menu ul {
 	background: url(../images/white-op85.png);
@@ -3538,22 +3542,22 @@ ul.basic_helplist
 	background: url(../images/subsection.gif) no-repeat 98% 50%;
 }
 #menu>li li:hover, a.linkOver {
-	background: #C8E2FB;
+	background: #c8e2fb;
 	color: black;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
 	-webkit-border-radius: 0 9px 9px 0;
 }
 #menu>li:hover, h4.linkOver {
+	background: #c8e2fb url(../images/submenu.gif) no-repeat 98% 50% !important;
+	color: black;
 	border-radius: 6px 6px 0 0;
 	-moz-border-radius: 6px 6px 0 0;
 	-webkit-border-radius: 6px 6px 0 0;
-	background: #C8E2FB url(../images/submenu.gif) no-repeat 98% 50% !important;
-	color: black
 }
 
 #menu li.subsection>a:hover, li.subsection>a.linkOver {
-	background: #C8E2FB url(../images/subsection.gif) no-repeat 98% 50% !important;
+	background: #c8e2fb url(../images/subsection.gif) no-repeat 98% 50% !important;
 }
 
 /* Styles for print media.
