@@ -1392,11 +1392,6 @@ function testStyle(sty)
 	return false;
 }
 
-function insertAfter(parEl, targEl, newEl)
-{
-	parEl.lastChild == targEl ? parEl.appendChild(newEl) : parEl.insertBefore(newEl, targEl.nextSibling);
-}
-
 // Has your browser got the goods?
 var
 	wedgerocks = document.createElement('wedgerocks'),

@@ -3567,7 +3567,13 @@ function theme_copyright($get_it = false)
 		<span class="smalltext" style="display: inline; visibility: visible; font-family: Verdana, Arial, sans-serif;">';
 
 	// If it's in the copyright, and we are outputting it... it's been found.
-	if (isset($modSettings['copyright_key']) && sha1($modSettings['copyright_key'] . 'banjo') == '1d01885ece7a9355bdeb22ed107f0ffa8c323026'){$found = true;}elseif (preg_match('~<a\shref="http://www.simplemachines.org/"[^<>]*>(SMF|Powered by SMF)~', $forum_copyright) && preg_match('~<a\shref="http://www.simplemachines.org/about/copyright.php"[^<>]*>SMF\s.{1,6}[\s\d,ndash\-&;]*Simple Machines LLC~', $forum_copyright)){$found = true; echo $forum_copyright;}
+	if (isset($modSettings['copyright_key']) && sha1($modSettings['copyright_key'] . 'banjo') == '1d01885ece7a9355bdeb22ed107f0ffa8c323026')
+		$found = true;
+	elseif (preg_match('~<a\shref="http://www.simplemachines.org/"[^<>]*>(SMF|Powered by SMF)~', $forum_copyright) && preg_match('~<a\shref="http://www.simplemachines.org/about/copyright.php"[^<>]*>SMF\s.{1,6}[\s\d,ndash\-&;]*Simple Machines LLC~', $forum_copyright))
+	{
+		$found = true;
+		echo $forum_copyright;
+	}
 
 	echo '
 		</span>';

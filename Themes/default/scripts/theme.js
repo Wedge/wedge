@@ -108,15 +108,16 @@ function emulateRounded()
 	var divs = document.querySelectorAll ? document.querySelectorAll('div.wrc, div.rrc') : document.getElementsByTagName('DIV'), upperFrame, lowerFrame, i;
 	for (i in divs)
 	{
-		var div = divs[i], cls = div.className;
+		var div = divs[i], cls = div.className ? div.className : '';
 		if (cls.indexOf(' wrc') > -1)
 			div.innerHTML = '<span class="topslice"><span></span></span>' + div.innerHTML + '<span class="botslice"><span></span></span>';
 		else if (cls.indexOf(' rrc') > -1)
 		{
 			upperFrame = document.createElement('SPAN'); upperFrame.className = 'upperframe'; upperFrame.innerHTML = '<span></span>';
 			lowerFrame = document.createElement('SPAN'); lowerFrame.className = 'lowerframe'; lowerFrame.innerHTML = '<span></span>';
-			div.parentNode.insertBefore(upperFrame, div);
-			insertAfter(div.parentNode, div, lowerFrame);
+			var par = div.parentNode;
+			par.insertBefore(upperFrame, div);
+			par.lastChild == div ? par.appendChild(lowerFrame) : par.insertBefore(lowerFrame, div.nextSibling);
 		}
 	}
 }
