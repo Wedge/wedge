@@ -3465,6 +3465,97 @@ ul.basic_helplist
 	clear: right;
 }
 
+/* New dropdown menu
+------------------------------------------------------- */
+
+#menu {
+	display: block;
+	margin: 0 0 0 10px;
+	padding: 0 5px;
+	clear: both;
+}
+
+#menu li a {
+	display: block;
+	text-decoration: none;
+	border-left: 4px solid #C8E2FB;
+	padding: 6px 8px;
+	margin: 0;
+}
+
+#menu h4 {
+	margin: 0;
+	padding: 7px 20px 3px 5px;
+	text-transform: uppercase;
+	font-weight: normal;
+	font-size: 0.85em;
+	background: transparent url(../images/submenu.gif) no-repeat 98% 50%;
+}
+#menu ul {
+	background: url(../images/white-op85.png);
+	background: rgba(255,248,240,.95);
+	position: absolute;
+	display: block;
+	border: 1px #666 solid;
+	padding: 0;
+	z-index: 42;
+	box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
+	-moz-box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
+	-webkit-box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
+	border-radius: 0 10px 10px 0;
+	-moz-border-radius: 0 10px 10px 0;
+	-webkit-border-radius: 0 10px 10px 0;
+}
+
+#menu li ul { visibility: hidden }
+
+#menu li li ul {
+	position: absolute;
+	margin-left: 200px;
+	margin-top: -24px;
+}
+
+#menu li {
+	list-style: none;
+	cursor: pointer;
+	height: auto;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+#menu li li {
+	display: block;
+	float: none;
+	white-space: nowrap;
+}
+
+#menu li li li { font-size: 0.95em }
+#menu li.chosen>a, #menu li.chosen>h4 { font-weight: bold }
+#menu li.subsection>a {
+	padding: 6px 24px 6px 8px;
+	background: url(../images/subsection.gif) no-repeat 98% 50%;
+}
+#menu>li li:hover, a.linkOver {
+	background: #C8E2FB;
+	color: black;
+	border-radius: 0 9px 9px 0;
+	-moz-border-radius: 0 9px 9px 0;
+	-webkit-border-radius: 0 9px 9px 0;
+}
+#menu>li:hover, h4.linkOver {
+	border-radius: 6px 6px 0 0;
+	-moz-border-radius: 6px 6px 0 0;
+	-webkit-border-radius: 6px 6px 0 0;
+	background: #C8E2FB url(../images/submenu.gif) no-repeat 98% 50% !important;
+	color: black
+}
+
+#menu li.subsection>a:hover, li.subsection>a.linkOver {
+	background: #C8E2FB url(../images/subsection.gif) no-repeat 98% 50% !important;
+}
+
 /* Styles for print media.
 ------------------------------------------------------- */
 @media print

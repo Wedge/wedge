@@ -188,3 +188,20 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	margin: 0 -2em;
 }
 #postmodify div.roundframe { margin-right: 0;}
+
+/* dropmenu hacks */
+
+.iefs
+{
+	display: none;
+	z-index: 9;
+	position: absolute;
+	left: 0;
+	top: 0;
+	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0);
+}
+
+#menu li
+{
+	border-bottom: 1px dotted white;
+}

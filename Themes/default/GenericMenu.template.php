@@ -98,8 +98,115 @@ function template_generic_menu_sidebar_below()
 	</div><br class="clear" />';
 }
 
-// This contains the html for the side bar of the admin center, which is used for all admin pages.
 function template_generic_menu_dropdown_above()
+{
+	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+
+	// Which menu are we rendering?
+	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 1;
+	$menu_context = &$context['menu_data_' . $context['cur_menu_id']];
+
+	echo '
+<ul id="menu" class="dmenu">';
+
+	if (!empty($menu_context['can_toggle_drop_down']))
+		echo '<li style="background: none !important"><a href="', $menu_context['toggle_url'], '" style="border: 0 !important"><img style="margin: 0 2px 0 2px;" src="' , $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /> <span></span></a></li>';
+
+	// Main areas first.
+	foreach ($menu_context['sections'] as $section)
+	{
+		if ($section['id'] == $menu_context['current_section'])
+		{
+			echo '<li class="chosen"><h4>', $section['title'] , '</h4><ul>';
+		}
+		else
+			echo '<li><h4>', $section['title'] , '</h4><ul>';
+
+		// For every area of this section show a link to that area (bold if it's currently selected.)
+		foreach ($section['areas'] as $i => $area)
+		{
+			// Not supposed to be printed?
+			if (empty($area['label']))
+				continue;
+
+			if (empty($area['subsections']))
+			{
+				echo '<li>';
+
+				// Is this the current area, or just some area?
+				if ($i == $menu_context['current_area'])
+				{
+					echo '<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '"><strong>', $area['icon'], $area['label'], '</strong></a>';
+
+					if (empty($context['tabs']))
+						$context['tabs'] = array();
+				}
+				else
+					echo '<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], '</a>';
+
+				echo '</li>';
+			}
+			else
+			{
+				echo '<li class="subsection">';
+
+				// Is this the current area, or just some area?
+				if ($i == $menu_context['current_area'])
+				{
+					echo '<a class="subsection" href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '"><strong>', $area['icon'], $area['label'], '</strong></a>';
+
+					if (empty($context['tabs']))
+						$context['tabs'] = $area['subsections'];
+				}
+				else
+					echo '<a href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], '</a>';
+
+				echo '<ul>';
+
+				foreach ($area['subsections'] as $sa => $sub)
+				{
+					if (!empty($sub['disabled']))
+						continue;
+
+					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
+
+					echo '<li><a href="', $url, $menu_context['extra_parameters'], '">', (!empty($sub['selected']) ? '<strong>' . $sub['label'] . '</strong>' : $sub['label']), '</a></li>';
+				}
+
+				echo '</ul></li>';
+			}
+		}
+		echo '</ul></li>';
+	}
+
+	echo '</ul>
+<script type="text/javascript"><!-- // --><![CDATA[
+	initMenu(document.getElementById("menu"));
+// ]]></script>';
+
+	// This is the main table - we need it so we can keep the content to the right of it.
+	echo '
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 0; clear: both; table-layout: fixed"><tr>
+	<td valign="top">';
+
+	// It's possible that some pages have their own tabs they wanna force...
+	if (!empty($context['tabs']))
+		template_generic_menu_tabs($menu_context);
+}
+
+// Part of the admin layer - used with admin_above to close the table started in it.
+function template_generic_menu_dropdown_below()
+{
+	global $context, $settings, $options;
+
+	echo '
+	</td>
+</tr></table>';
+}
+
+// This contains the html for the dropdown menu of the admin center, which is used for all admin pages.
+function template_generic_old_menu_dropdown_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
@@ -199,7 +306,7 @@ function template_generic_menu_dropdown_above()
 }
 
 // Part of the admin layer - used with admin_above to close the table started in it.
-function template_generic_menu_dropdown_below()
+function template_generic_old_menu_dropdown_below()
 {
 	global $context, $settings, $options;
 
