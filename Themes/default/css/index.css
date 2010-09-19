@@ -776,7 +776,7 @@ dl.settings dt a img
 	font-weight: normal;
 	font-style: italic;
 }
-.cat_bar h3, .cat_bar h3 a:link, .cat_bar h3 a:visited, .cat_bar h4 a:link, .cat_bar h4 a:visited, .table_list tbody.header td, .table_list tbody.header td a
+.cat_bar h3, .cat_bar h3 a, .cat_bar h4, .cat_bar h4 a, .table_list tbody.header td, .table_list tbody.header td a
 {
 	color: #fff;
 }
@@ -1251,7 +1251,7 @@ h1.forumtitle
 	float: left;
 }
 /* float these items to the right */
-#siteslogan, img#smflogo
+#siteslogan, img#wedgelogo
 {
 	margin: 0;
 	padding: 0;
@@ -1264,9 +1264,10 @@ img#upshrink
 	float: right;
 	margin: 1em;
 }
-/* ..so does the SMF logo */
-img#smflogo
+/* ..so does the Wedge logo */
+img#wedgelogo
 {
+	margin-top: .7em;
 	margin-left: 1em;
 }
 /* the upper_section, float the two each way */
@@ -1339,8 +1340,9 @@ div#upper_section div.news form
 /* The navigation list (i.e. linktree) */
 .navigate_section
 {
+	border-top: 1px solid #ccc;
 	padding: 0.5em;
-	margin: 1em 0 0 0;
+	margin: 0;
 }
 .navigate_section ul
 {
@@ -1348,7 +1350,6 @@ div#upper_section div.news form
 	margin: 0;
 	font-size: 0.9em;
 	padding: 1em 0 0.5em 0;
-	border-top: 1px solid #ccc;
 	overflow: hidden;
 	list-style: none;
 	clear: both;
@@ -3468,14 +3469,14 @@ ul.basic_helplist
 /* New dropdown menu
 ------------------------------------------------------- */
 
-#menu {
+.menu {
 	display: block;
 	margin: 0 0 0 10px;
 	padding: 0 5px;
 	clear: both;
 }
 
-#menu li a {
+.menu li a {
 	display: block;
 	text-decoration: none;
 	border-left: 4px solid #C8E2FB;
@@ -3483,7 +3484,7 @@ ul.basic_helplist
 	margin: 0;
 }
 
-#menu h4 {
+.menu h4 {
 	padding: 7px 20px 3px 5px;
 	text-transform: uppercase;
 	font-weight: normal;
@@ -3491,11 +3492,11 @@ ul.basic_helplist
 	background: transparent url(../images/submenu.gif) no-repeat 98% 50%;
 	margin: 0;
 }
-#menu h4 a {
+.menu h4 a {
 	border: 0;
 	padding: 0;
 }
-#menu ul {
+.menu ul {
 	background: url(../images/white-op85.png);
 	background: rgba(255,248,240,.95);
 	position: absolute;
@@ -3511,15 +3512,15 @@ ul.basic_helplist
 	-webkit-border-radius: 0 10px 10px 0;
 }
 
-#menu li ul { visibility: hidden }
+.menu li ul { visibility: hidden }
 
-#menu li li ul {
+.menu li li ul {
 	position: absolute;
 	margin-left: 200px;
 	margin-top: -24px;
 }
 
-#menu li {
+.menu li {
 	list-style: none;
 	cursor: pointer;
 	height: auto;
@@ -3529,26 +3530,26 @@ ul.basic_helplist
 	padding: 0;
 }
 
-#menu li li {
+.menu li li {
 	display: block;
 	float: none;
 	white-space: nowrap;
 }
 
-#menu li li li { font-size: 0.95em }
-#menu li.chosen>a, #menu li.chosen>h4 { font-weight: bold }
-#menu li.subsection>a {
+.menu li li li { font-size: 0.95em }
+.menu li.chosen > a, .menu li.chosen > h4 { font-weight: bold }
+.menu li.subsection > a {
 	padding: 6px 24px 6px 8px;
 	background: url(../images/subsection.gif) no-repeat 98% 50%;
 }
-#menu>li li:hover, a.linkOver {
+.menu > li li:hover, a.linkOver {
 	background: #c8e2fb;
 	color: black;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
 	-webkit-border-radius: 0 9px 9px 0;
 }
-#menu>li:hover, h4.linkOver {
+.menu > li:hover, h4.linkOver {
 	background: #c8e2fb url(../images/submenu.gif) no-repeat 98% 50% !important;
 	color: black;
 	border-radius: 6px 6px 0 0;
@@ -3556,7 +3557,7 @@ ul.basic_helplist
 	-webkit-border-radius: 6px 6px 0 0;
 }
 
-#menu li.subsection>a:hover, li.subsection>a.linkOver {
+.menu li.subsection > a:hover, li.subsection > a.linkOver {
 	background: #c8e2fb url(../images/subsection.gif) no-repeat 98% 50% !important;
 }
 

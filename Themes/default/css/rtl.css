@@ -194,7 +194,7 @@ h1.forumtitle
 	float: right;
 }
 /* float these items to the left */
-#siteslogan, img#smflogo
+#siteslogan, img#wedgelogo
 {
 	float: left;
 }
@@ -204,8 +204,9 @@ img#upshrink
 	float: left;
 }
 /* ..so does the SMF logo */
-img#smflogo
+img#wedgelogo
 {
+	margin-top: .7em;
 	margin-right: 1em;
 }
 #upper_section div.news

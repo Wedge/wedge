@@ -201,7 +201,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0);
 }
 
-#menu li
+.menu li
 {
 	border-bottom: 1px dotted white;
 }

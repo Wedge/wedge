@@ -107,7 +107,7 @@ function template_generic_menu_dropdown_above()
 	$menu_context = &$context['menu_data_' . $context['cur_menu_id']];
 
 	echo '
-<ul id="menu" class="dmenu">';
+<ul id="admin_menu" class="menu">';
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
@@ -197,7 +197,7 @@ function template_generic_menu_dropdown_above()
 	echo '
 </ul>
 <script type="text/javascript"><!-- // --><![CDATA[
-	initMenu(document.getElementById("menu"));
+	initMenu(document.getElementById("admin_menu"));
 // ]]></script>';
 
 	// This is the main table - we need it so we can keep the content to the right of it.

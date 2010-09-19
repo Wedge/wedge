@@ -1407,23 +1407,21 @@ function initMenu(menu)
 		if (h4s[i].innerHTML.indexOf('<a ') == -1)
 			h4s[i].innerHTML = '<a href="#" onclick="hoverable = true; showMe.call(this.parentNode.parentNode); hoverable = false; return false;">' + h4s[i].innerHTML + '</a>';
 
-	// Change the class name of the menu, for backwards compatibility with old browsers
-	menu.className = 'menu';
 	for (var i = 0, j = lis.length; i < j; i++)
 	{
 		// Is there a ul element ?
 		if (lis[i].getElementsByTagName('ul').length > 0)
 		{
-			lis[i].setAttribute('id', 'li' + baseId + i);
+			lis[i].setAttribute('id', 'li' + (baseId + i + 0));
 			if (is_ie6)
 			{
 				lis[i].onkeyup = showMe;
-				document.write('<iframe src="" id="shim' + baseId + i + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[i] = document.getElementById('shim' + baseId + i);
+				document.write('<iframe src="" id="shim' + (baseId + i + 0) + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
+				ieshim[i] = document.getElementById('shim' + (baseId + i + 0));
 			}
 			lis[i].onmouseover = showMe;
 			lis[i].onmouseout = timeoutHide;
-			lis[i].onclick = hideAllUls;
+			lis[i].onclick = function() { hideAllUls(menu); };
 			lis[i].onblur = timeoutHide;
 			lis[i].onfocus = showMe;
 		}
@@ -1438,7 +1436,7 @@ function timeoutHide(e)
 	var targ = e.relatedTarget || e.toElement, insitu;
 	while (targ && !insitu)
 	{
-		insitu = targ.parentNode && targ.parentNode.id == 'menu';
+		insitu = targ.parentNode && targ.parentNode.className == 'menu';
 		targ = targ.parentNode;
 	}
 	insitu ? hideUlUnder(this.id) : timeoutli[this.id.substring(2)] = window.setTimeout('hideUlUnder("' + this.id + '")', 242);
@@ -1494,7 +1492,7 @@ function showMe(e)
 	showul.style.visibility = 'visible';
 
 	// If this is a submenu, show it next to the parent menu item
-	showul.style.marginLeft = (this.parentNode.id == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
+	showul.style.marginLeft = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
 		showShim(true, this.id, showul);
@@ -1506,10 +1504,10 @@ function showMe(e)
 		var currentNode = this;
 		while (currentNode)
 		{
-			if (currentNode.nodeName == 'LI' && currentNode.parentNode.id != 'menu')
+			if (currentNode.nodeName == 'LI' && currentNode.parentNode.className != 'menu')
 				currentNode.getElementsByTagName('a')[0].className = 'linkOver';
 			currentNode = currentNode.parentNode;
-			if (currentNode.id == 'menu')
+			if (currentNode.className == 'menu')
 				break;
 		}
 	}
@@ -1526,12 +1524,11 @@ function hideAllOthersUls(currentLi)
 			hideUlUnderLi(lis.childNodes[i]);
 }
 
-function hideAllUls()
+function hideAllUls(menu)
 {
-	var lis = document.getElementById('menu');
-	for (var i = 0, len = lis.childNodes.length; i < len; i++)
-		if (lis.childNodes[i].nodeName == 'LI')
-			hideUlUnderLi(lis.childNodes[i]);
+	for (var i = 0, len = menu.childNodes.length; i < len; i++)
+		if (menu.childNodes[i].nodeName == 'LI')
+			hideUlUnderLi(menu.childNodes[i]);
 }
 
 // Hide all ul's in the li element

@@ -168,9 +168,8 @@ function template_body_above()
 
 	// the upshrink image, right-floated
 	echo '
-			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />';
-	echo '
-			', empty($settings['site_slogan']) ? '<img id="smflogo" src="' . $settings['images_url'] . '/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum" />' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
+			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
+			', empty($settings['site_slogan']) ? '<img id="wedgelogo" src="' . $settings['images_url'] . '/wedgelogo.png" alt="Wedge" title="Wedge" />' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
 			<div class="user">';
@@ -399,7 +398,7 @@ function theme_linktree($force_show = false)
 }
 
 // Show the menu up top. Something like [home] [help] [profile] [logout]...
-function template_menu()
+function template_old_menu()
 {
 	global $context, $settings, $options, $scripturl, $txt;
 
@@ -457,6 +456,112 @@ function template_menu()
 	echo '
 			</ul>
 		</div>';
+}
+
+// Show the menu up top. Something like [home] [help] [profile] [logout]...
+function template_menu()
+{
+	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	static $menu_number = 0;
+
+	// Which menu are we rendering?
+	$menu_context = &$context['menu_buttons'];
+	$extra = !empty($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '';
+
+	echo '
+		<ul id="amen', $menu_number ? '_' . $menu_number : '', '" class="menu">';
+
+	if (!empty($menu_context['can_toggle_drop_down']))
+		echo '
+			<li style="background: none !important"><a href="', $menu_context['toggle_url'], '" style="border: 0 !important"><img style="margin: 0 2px 0 2px;" src="' , $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /> <span></span></a></li>';
+
+	// Main areas first.
+	foreach ($menu_context as $id => $section)
+	{
+		echo '
+			<li', $section['active_button'] ? ' class="chosen"' : '', '><h4><a href="', $section['href'], '">', $section['title'] , '</a></h4>';
+
+		if (empty($section['sub_buttons']))
+		{
+			echo '</li>';
+			continue;
+		}
+
+		echo '
+				<ul>';
+
+		// For every area of this section show a link to that area (bold if it's currently selected.)
+		foreach ($section['sub_buttons'] as $i => $area)
+		{
+			// Not supposed to be printed?
+			if (empty($area['title']))
+				continue;
+
+			if (empty($area['sub_buttons']))
+			{
+				echo '
+					<li>';
+
+				// Is this the current area, or just some area?
+/*				if ($i == $menu_context['current_area'])
+				{
+					echo '<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $extra, '"><strong>', $area['icon'], $area['label'], '</strong></a>';
+
+					if (empty($context['tabs']))
+						$context['tabs'] = array();
+				}
+				else */
+				echo '<a href="', (isset($area['href']) ? $area['href'] : $menu_context['base_url'] . ';area=' . $i), $extra, '">', !empty($area['icon']) ? $area['icon'] : '', $area['title'], '</a>';
+
+				echo '</li>';
+			}
+			else
+			{
+				echo '
+					<li class="subsection">';
+
+				// Is this the current area, or just some area?
+/*				if ($i == $menu_context['current_area'])
+				{
+					echo '
+						<a class="subsection" href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $extra, '"><strong>', $area['icon'], $area['label'], '</strong></a>';
+
+					if (empty($context['tabs']))
+						$context['tabs'] = $area['subsections'];
+				}
+				else */
+				echo '
+						<a href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $extra, '">', $area['icon'], $area['label'], '</a>';
+
+				echo '
+						<ul>';
+
+				foreach ($area['sub_buttons'] as $sa => $sub)
+				{
+					if (!empty($sub['disabled']))
+						continue;
+
+					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
+
+					echo '<li><a href="', $url, $extra, '">', (!empty($sub['selected']) ? '<strong>' . $sub['label'] . '</strong>' : $sub['label']), '</a></li>';
+				}
+
+				echo '
+						</ul>
+					</li>';
+			}
+		}
+		echo '
+				</ul>
+			</li>';
+	}
+
+	echo '
+		</ul>
+		<script type="text/javascript"><!-- // --><![CDATA[
+			initMenu(document.getElementById("amen', $menu_number ? '_' . $menu_number : '', '"));
+		// ]]></script>';
+	++$menu_number;
 }
 
 // Generate a strip of buttons.
