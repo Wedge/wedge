@@ -1393,7 +1393,7 @@ Uses portions under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
 Copyright © 2004 Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
 */
 
-var baseId = 0, hoverable = false;
+var baseId = 0, hoverable = 0;
 var timeoutli = new Array();
 var ieshim = new Array();
 
@@ -1405,19 +1405,19 @@ function initMenu(menu)
 	var h4s = menu.getElementsByTagName('h4');
 	for (var i = 0, j = h4s.length; i < j; i++)
 		if (h4s[i].innerHTML.indexOf('<a ') == -1)
-			h4s[i].innerHTML = '<a href="#" onclick="hoverable = true; showMe.call(this.parentNode.parentNode); hoverable = false; return false;">' + h4s[i].innerHTML + '</a>';
+			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; showMe.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
 
 	for (var i = 0, j = lis.length; i < j; i++)
 	{
-		// Is there a ul element ?
 		if (lis[i].getElementsByTagName('ul').length > 0)
 		{
-			lis[i].setAttribute('id', 'li' + (baseId + i + 0));
+			var k = baseId + i;
+			lis[i].setAttribute('id', 'li' + k);
 			if (is_ie6)
 			{
 				lis[i].onkeyup = showMe;
-				document.write('<iframe src="" id="shim' + (baseId + i + 0) + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[i] = document.getElementById('shim' + (baseId + i + 0));
+				document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
+				ieshim[i] = document.getElementById('shim' + k);
 			}
 			lis[i].onmouseover = showMe;
 			lis[i].onmouseout = timeoutHide;
@@ -1433,7 +1433,7 @@ function initMenu(menu)
 function timeoutHide(e)
 {
 	if (!e) var e = window.event;
-	var targ = e.relatedTarget || e.toElement, insitu;
+	var insitu, targ = e.relatedTarget || e.toElement;
 	while (targ && !insitu)
 	{
 		insitu = targ.parentNode && targ.parentNode.className == 'menu';
@@ -1488,10 +1488,7 @@ function showMe(e)
 			return;
 		}
 	}
-	// Show the menu item
 	showul.style.visibility = 'visible';
-
-	// If this is a submenu, show it next to the parent menu item
 	showul.style.marginLeft = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)

@@ -981,133 +981,6 @@ form.wrc
 	color: #eee;
 }
 
-/* Styles for the standard dropdown menus.
-------------------------------------------------------- */
-#main_menu
-{
-	padding: 0 0 0 0.5em;
-	float: left;
-	margin: 0;
-	width: 98%;
-}
-
-.dropmenu, .dropmenu ul
-{
-	list-style: none;
-	line-height: 1em;
-	padding: 0;
-	margin: 0;
-}
-.dropmenu
-{
-	padding: 0 0.5em;
-}
-.dropmenu a
-{
-	display: block;
-	color: #000;
-	text-decoration: none;
-}
-.dropmenu a span
-{
-	display: block;
-	font-size: 0.9em;
-}
-/* the background's first level only */
-.dropmenu li a.firstlevel
-{
-	margin-right: 8px;
-	height: 19px;
-}
-.dropmenu li a.firstlevel span.firstlevel
-{
-	display: block;
-	position: relative;
-	margin: 1px 0 0 -5px;
-	padding: 0 5px;
-	height: 19px;
-	line-height: 18px;
-}
-.dropmenu li
-{
-	float: left;
-	padding: 0;
-	margin: 0;
-	position: relative;
-}
-.dropmenu li ul
-{
-	z-index: 90;
-	display: none;
-	position: absolute;
-	width: 19.2em;
-	font-weight: normal;
-	border-bottom: 1px solid #999;
-	background: url(../images/theme/menu.png) no-repeat;
-	padding: 7px 0 0 0;
-}
-.dropmenu li li
-{
-	width: 19em;
-	margin: 0;
-	border-left: 1px solid #999;
-	border-right: 1px solid #999;
-}
-.dropmenu li li a span
-{
-	display: block;
-	padding: 8px;
-}
-.dropmenu li ul ul
-{
-	margin: -1.8em 0 0 13em;
-}
-
-/* the active button */
-.dropmenu li a.active span
-{
-	background: #fd9604;
-	color: #fff;
-	font-weight: bold;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-/* the hover effects */
-.dropmenu li a.firstlevel:hover span, .dropmenu li:hover a.firstlevel span
-{
-	background: #5a6c85;
-	color: #fff;
-	cursor: pointer;
-	text-decoration: none;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-/* the hover effects on levels 2 and 3 */
-.dropmenu li li a:hover span, .dropmenu li li:hover>a span
-{
-	background: #d4dbe4;
-	color: #000;
-	text-decoration: none;
-}
-.dropmenu li:hover ul ul, .dropmenu li:hover ul ul ul
-{
-	top: -999em;
-}
-.dropmenu li li:hover ul
-{
-	top: auto;
-}
-.dropmenu li:hover ul
-{
-	display: block;
-}
-.dropmenu li li.additional_items
-{
-	background-color: #fff;
-}
-
 /* The dropdown menu toggle image */
 #menu_toggle
 {
@@ -1196,15 +1069,6 @@ ul#navigation li
 	float: none;
 	font-size: 0.95em;
 	display: inline;
-}
-
-#adm_submenus
-{
-	padding-left: 2em;
-}
-#adm_submenus, #adm_submenus ul
-{
-	min-height: 2.5em;
 }
 
 /* Styles for the general looks for the Curve theme.
@@ -1340,9 +1204,8 @@ div#upper_section div.news form
 /* The navigation list (i.e. linktree) */
 .navigate_section
 {
-	border-top: 1px solid #ccc;
 	padding: 0.5em;
-	margin: 0;
+	margin: 1em 0 0 0;
 }
 .navigate_section ul
 {
@@ -1350,6 +1213,7 @@ div#upper_section div.news form
 	margin: 0;
 	font-size: 0.9em;
 	padding: 1em 0 0.5em 0;
+	border-top: 1px solid #ccc;
 	overflow: hidden;
 	list-style: none;
 	clear: both;
@@ -2465,16 +2329,7 @@ tr.titlebg td
 {
 	padding-left: 0.7em;
 }
-#admin_menu
-{
-	min-height: 2em;
-	padding-left: 0;
-}
-#admin_content
-{
-	clear: left;
-	padding-top: 0.5em;
-}
+
 /* Custom profile fields like to play with us some times. */
 #admin_content .custom_field
 {
@@ -3466,6 +3321,166 @@ ul.basic_helplist
 	clear: right;
 }
 
+/* Styles for print media.
+------------------------------------------------------- */
+@media print
+{
+	#headerarea
+	{
+		display: none;
+	}
+
+	.tborder
+	{
+		border: none;
+	}
+}
+
+/* Styles for the standard dropdown menus.
+------------------------------------------------------- */
+#main_menu
+{
+	padding: 0 0 0 0.5em;
+	float: left;
+	margin: 0;
+	width: 98%;
+}
+
+.dropmenu, .dropmenu ul
+{
+	list-style: none;
+	line-height: 1em;
+	padding: 0;
+	margin: 0;
+}
+.dropmenu
+{
+	padding: 0 0.5em;
+}
+.dropmenu a
+{
+	display: block;
+	color: #000;
+	text-decoration: none;
+}
+.dropmenu a span
+{
+	display: block;
+	font-size: 0.9em;
+}
+/* the background's first level only */
+.dropmenu li a.firstlevel
+{
+	margin-right: 8px;
+	height: 19px;
+}
+.dropmenu li a.firstlevel span.firstlevel
+{
+	display: block;
+	position: relative;
+	margin: 1px 0 0 -5px;
+	padding: 0 5px;
+	height: 19px;
+	line-height: 18px;
+}
+.dropmenu li
+{
+	float: left;
+	padding: 0;
+	margin: 0;
+	position: relative;
+}
+.dropmenu li ul
+{
+	z-index: 90;
+	display: none;
+	position: absolute;
+	width: 19.2em;
+	font-weight: normal;
+	border-bottom: 1px solid #999;
+	background: url(../images/theme/menu.png) no-repeat;
+	padding: 7px 0 0 0;
+}
+.dropmenu li li
+{
+	width: 19em;
+	margin: 0;
+	border-left: 1px solid #999;
+	border-right: 1px solid #999;
+}
+.dropmenu li li a span
+{
+	display: block;
+	padding: 8px;
+}
+.dropmenu li ul ul
+{
+	margin: -1.8em 0 0 13em;
+}
+
+/* the active button */
+.dropmenu li a.active span
+{
+	background: #fd9604;
+	color: #fff;
+	font-weight: bold;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+/* the hover effects */
+.dropmenu li a.firstlevel:hover span, .dropmenu li:hover a.firstlevel span
+{
+	background: #5a6c85;
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+/* the hover effects on levels 2 and 3 */
+.dropmenu li li a:hover span, .dropmenu li li:hover>a span
+{
+	background: #d4dbe4;
+	color: #000;
+	text-decoration: none;
+}
+.dropmenu li:hover ul ul, .dropmenu li:hover ul ul ul
+{
+	top: -999em;
+}
+.dropmenu li li:hover ul
+{
+	top: auto;
+}
+.dropmenu li:hover ul
+{
+	display: block;
+}
+.dropmenu li li.additional_items
+{
+	background-color: #fff;
+}
+#adm_submenus
+{
+	padding-left: 2em;
+}
+#adm_submenus, #adm_submenus ul
+{
+	min-height: 2.5em;
+}
+#admin_menu
+{
+	min-height: 2em;
+	padding-left: 0;
+}
+#admin_content
+{
+	clear: left;
+	padding-top: 0.5em;
+}
+
 /* New dropdown menu
 ------------------------------------------------------- */
 
@@ -3485,12 +3500,11 @@ ul.basic_helplist
 }
 
 .menu h4 {
-	padding: 7px 20px 3px 5px;
-	text-transform: uppercase;
+	padding: 3px 20px 3px 5px;
 	font-weight: normal;
-	font-size: 0.85em;
-	background: transparent url(../images/submenu.gif) no-repeat 98% 50%;
-	margin: 0;
+	background: url(../images/menu.gif) no-repeat 98% 2px;
+	margin-bottom: 2px;
+	margin-right: 2px;
 }
 .menu h4 a {
 	border: 0;
@@ -3501,7 +3515,7 @@ ul.basic_helplist
 	background: rgba(255,248,240,.95);
 	position: absolute;
 	display: block;
-	border: 1px #666 solid;
+	border: 1px solid #666;
 	padding: 0;
 	z-index: 42;
 	box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
@@ -3537,10 +3551,16 @@ ul.basic_helplist
 }
 
 .menu li li li { font-size: 0.95em }
-.menu li.chosen > a, .menu li.chosen > h4 { font-weight: bold }
+.menu li.chosen > h4 {
+	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px !important;
+	font-weight: bold;
+}
+li.chosen h4 a {
+	color: white;
+}
 .menu li.subsection > a {
 	padding: 6px 24px 6px 8px;
-	background: url(../images/subsection.gif) no-repeat 98% 50%;
+	background: url(../images/menu.gif) no-repeat 98% -46px;
 }
 .menu > li li:hover, a.linkOver {
 	background: #c8e2fb;
@@ -3549,33 +3569,20 @@ ul.basic_helplist
 	-moz-border-radius: 0 9px 9px 0;
 	-webkit-border-radius: 0 9px 9px 0;
 }
-.menu > li:hover, h4.linkOver {
-	background: #c8e2fb url(../images/submenu.gif) no-repeat 98% 50% !important;
+.menu h4:hover, h4.linkOver {
+	background: #c8e2fb url(../images/menu.gif) no-repeat 98% 2px !important;
 	color: black;
-	border-radius: 6px 6px 0 0;
-	-moz-border-radius: 6px 6px 0 0;
-	-webkit-border-radius: 6px 6px 0 0;
 }
 
 .menu li.subsection > a:hover, li.subsection > a.linkOver {
-	background: #c8e2fb url(../images/subsection.gif) no-repeat 98% 50% !important;
+	background: #c8e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
 }
 
-/* Styles for print media.
-------------------------------------------------------- */
-@media print
-{
-	#headerarea
-	{
-		display: none;
-	}
-
-	.tborder
-	{
-		border: none;
-	}
+.menu > li > a, .menu h4 {
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 }
-
 
 
 
