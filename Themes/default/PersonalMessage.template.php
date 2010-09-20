@@ -204,7 +204,11 @@ function template_folder()
 				// Show avatars, images, etc.?
 				if (!empty($settings['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
 					echo '
-				<li class="avatar" style="overflow: auto;">', $message['member']['avatar']['image'], '</li>';
+				<li class="avatar">
+					<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], '">
+						', $message['member']['avatar']['image'], '
+					</a>
+				</li>';
 
 				// Show how many posts they have made.
 				if (!isset($context['disabled_fields']['posts']))

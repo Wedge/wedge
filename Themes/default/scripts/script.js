@@ -1483,10 +1483,7 @@ function showMe(e)
 		e.cancelBubble = true;
 		if (e.stopPropagation) e.stopPropagation();
 		if (showul.style.visibility == 'visible')
-		{
-			hideUlUnder(this.id);
-			return;
-		}
+			return hideUlUnder(this.id);
 	}
 	showul.style.visibility = 'visible';
 	showul.style.marginLeft = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';

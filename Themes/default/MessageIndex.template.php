@@ -116,7 +116,7 @@ function template_main()
 
 	if (!empty($options['show_board_desc']) && $context['description'] != '')
 		echo '
-	<p class="description">', $context['description'], '</p>';
+	<p class="description_board">', $context['description'], '</p>';
 
 	// Create the button set...
 	$normal_buttons = array(

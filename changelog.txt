@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10119 $.
+Changelog started January 1, 2004; Currently at $Revision: 10121 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -80,6 +80,8 @@ August 2010
  ! Fixed migration of a buddy lists setting (upgrade scripts for MySQL and SQlite)
  ! Fixed a couple of issues with the RSS feeds optimization (News.php) [Bug 4428]
  ! More fixes to use internationalized substr/strlen (more files) [Bug 3738]
+ * Fixed a few minor bugs (index.css, PersonalMessage.template, Display.template, Sendtopic.template, MessageIndex.template) [Bug 4411,4434,4446,4471]
+ * Yet another attempted fix for that damned IE8 cursor bug (GenericControls.template.php) [Bug 3354] 
 
 July 2010
 --------------------------------------------------------------------------------

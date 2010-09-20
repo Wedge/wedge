@@ -257,7 +257,7 @@ function template_main()
 			// Show avatars, images, etc.?
 			if (!empty($settings['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
 				echo '
-								<li class="avatar" style="overflow: auto;">
+								<li class="avatar">
 									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], '">
 										', $message['member']['avatar']['image'], '
 									</a>

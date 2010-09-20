@@ -2245,9 +2245,9 @@ class wedgeEditor
 		<div>
 			<div style="width: 98.8%;">
 				<div>
-					<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $this->rows, '" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '" style="', $context['browser']['is_ie8'] ? 'max-width: ' . $this->width . '; min-width: ' . $this->width : 'width: ' . $this->width, '; height: ', $this->height, ';', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? 'border: 1px solid red;' : '', '">', $this->value, '</textarea>
+					<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, ';', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? ' border: 1px solid red;' : '', '">', $this->value, '</textarea>
 				</div>
-				<div id="', $this->id, '_resizer" style="display: none; ', $context['browser']['is_ie8'] ? 'max-width: ' . $this->width . '; min-width: ' . $this->width : 'width: ' . $this->width, '; padding: 0 2px;" class="richedit_resize"></div>
+				<div id="', $this->id, '_resizer" style="display: none; width: ', $this->width, '; padding: 0 2px;" class="richedit_resize"></div>
 			</div>
 		</div>
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />
