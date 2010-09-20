@@ -22,75 +22,70 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file handles the posting interface and all of the sanitization on new posts, as well as subsidiary activities for posting such as editing.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	The job of this file is to handle everything related to posting replies,
-	new topics, quotes, and modifications to existing posts.  It also handles
-	quoting posts by way of javascript.
-
-	void Post()
-		- handles showing the post screen, loading the post to be modified, and
-		  loading any post quoted.
-		- additionally handles previews of posts.
-		- uses the Post template and language file, main sub template.
-		- allows wireless access using the protocol_post sub template.
-		- requires different permissions depending on the actions, but most
-		  notably post_new, post_reply_own, and post_reply_any.
-		- shows options for the editing and posting of calendar events and
-		  attachments, as well as the posting of polls.
-		- accessed from ?action=post.
-
-	void Post2()
-		- actually posts or saves the message composed with Post().
-		- requires various permissions depending on the action.
-		- handles attachment, post, and calendar saving.
-		- sends off notifications, and allows for announcements and moderation.
-		- accessed from ?action=post2.
-
-	void AnnounceTopic()
-		- handle the announce topic function (action=announce).
-		- checks the topic announcement permissions and loads the announcement
-		  template.
-		- requires the announce_topic permission.
-		- uses the ManageMembers template and Post language file.
-		- call the right function based on the sub-action.
-
-	void AnnouncementSelectMembergroup()
-		- lets the user select the membergroups that will receive the topic
-		  announcement.
-
-	void AnnouncementSend()
-		- splits the members to be sent a topic announcement into chunks.
-		- composes notification messages in all languages needed.
-		- does the actual sending of the topic announcements in chunks.
-		- calculates a rough estimate of the percentage items sent.
-
-	void notifyMembersBoard(notifyData)
-		- notifies members who have requested notification for new topics
-		  posted on a board of said posts.
-		- receives data on the topics to send out notifications to by the passed in array.
-		- only sends notifications to those who can *currently* see the topic
-		  (it doesn't matter if they could when they requested notification.)
-		- loads the Post language file multiple times for each language if the
-		  userLanguage setting is set.
-
-	void getTopic()
-		- gets a summary of the most recent posts in a topic.
-		- depends on the topicSummaryPosts setting.
-		- if you are editing a post, only shows posts previous to that post.
-
-	void QuoteFast()
-		- loads a post an inserts it into the current editing text box.
-		- uses the Post language file.
-		- uses special (sadly browser dependent) javascript to parse entities
-		  for internationalization reasons.
-		- accessed with ?action=quotefast.
-
-	void JavaScriptModify()
-		// !!!
-*/
-
+/**
+ * Handles showing the post screen, loading a post to be modified (or quoted), as well as previews and display of errors. Additionally, new polls or calendar events too.
+ *
+ * Requested primarily from ?action=post, however will be called from ?action=post2 internally in the event of errors or non-inline preview (e.g. from quick reply)
+ *
+ * - Loads the Post language file, and the editor components.
+ * - If this is a reply, there shouldn't be a poll attached, so remove it.
+ * - Tell robots not to index.
+ * - Validate that we're posting in a board (and not just to the calendar)
+ * - We may be handling inline previews via XML, so prepare for that.
+ * - If we don't have a topic id but just a message id, find the topic id if available (if not, assume it's a new message)
+ * - Check things we can check if we have an existing topic (and grab them): whether it's locked, stickied, notifications on it, whether there's a poll, some message ids and the subject.
+ * - If there's already a poll, disallow adding another.
+ * - If this is a guest trying to post, check whether they can, and if not throw them at a log-in screen.
+ * - If this is a reply, check whether the permissions allow such (own/any/replies, whether it will require approval), and details like whether it is/can be locked/sticky.
+ * - Perform other checks, such as whether we can receive notifications, whether it can be announced.
+ * - If the topic is locked and you do not have moderate_board, you cannot post. (Need to unlock first otherwise.)
+ * - Are polls enabled and user trying to post a poll? Check permissions in that case (e.g. coming from add poll button) and if all allowed, set up the default empty choices, plus grab anything that's in $_POST (e.g. coming from Post2()) or use blank defaults.
+ * - Are calendar events enabled, and this is an event? See if we can get anything from $_REQUEST, otherwise use blank defaults, and check permissions. If the user is trying to edit an event but can't, redirect them to the calendar handler {@link CalendarPost()}. Otherwise grab the event's information... or otherwise it's a new event, in which case set up everything as defaults (today's date, all things empty, if not otherwise from $_POST) and check it's all feasible. Lastly, grab a list of boards the linked topic could be in. And get the last day of the month so we can sanitize that too.
+ * - If we have a topic and no message, we're replying. Time to check two things: one, that there's been no replies since we started writing (and if there was, check whether the user cares from $options['no_new_reply_warning']) and log that as a warning if they do care; two, whether this topic is older than the 'default old' topics without a reply, typically 120 days.
+ * - Work out what the response prefix would be (the Re: in front of replies), in the default forum language, and cache it.
+ * - Work out whether we have post content to work with (or an error) - if not, set up the subject, message and icon as defaults. Otherwise... if there's no error thus far but we have content, check for no subject, no message, over-long message, if it's a guest attempt to make some sense of guest name and email (like in Post2()), if it's a poll check for a question - but note that the user was actually attempting to preview if they came here without any actual errors previously known about.
+ * - Check on approval status from any previous form.
+ * - Sanitize subject (custom htmlspecialchars, replace all CR, LR and TAB with empty string), sanitize body with custom htmlspecialchars.
+ * - Shorten subject if it's too long.
+ * - Trim subject of whitespace, if empty, log this as an error to be displayed.
+ * - If there are any errors, process them into a form that we can display (i.e. go from short error codes to full codes, and if it's the long_message error, make sure we substitute in the actual max length)
+ * - If there is a poll, grab its question if available (or use blank), grab the choices if available (and sanitize, or use empty array).
+ * - If a guest, set up all the variables we might need with guest name and email, and sanitize everything with htmlspecialchars.
+ * - If the user selected preview (non inline) or they're previewing from XML, get everything together to provide that - so grab the message, preparse it, parse for bbcode and smileys as appropriate, censor it.
+ * - If using XML, ensure that any inadvertant CDATA closures are protected adequately.
+ * - Set up a few more variables for later (based on $_REQUEST, or using defaults if not available) - whether to use smileys, whether to receive notifications, the post icon, the post form destination, the label of the submit button (whether save or post depending on edit vs new)
+ * - Are we previewing an edit (or there's an edit)? If so, get the original message, check the edit time (and disallow if we're using a limit on edit time and it's over the limit), get all the attachments from the message, check permissions for modifying posts, and deal with any changes of names.
+ * - Lastly (for if we came here with post content, or an error), release the nonce for submitting the form once, since the form wasn't actually submitted.
+ * - Next up, we're actually editing a message (as opposed to previewing an edit in progress), so get the message and any attachments. Again, check permissions, this time also get any modified-by details.
+ * - Prepare the message for editing, e.g. un-preparse the code, apply censoring, set up typical values for the form (e.g. whether using smileys) and set the form destination again.
+ * - Lastly, we're posting a new post - provide all the defaults. Additionally, if they're quoting a post (and not inline requesting it), get that, including permission checking, censoring, stripping the HTML bbcode if not applicable, adding the reply prefix, removing any nested quotes, and adding the quote header.
+ * - If there's a reply without a quote, get the original subject, censor it and prepend the response prefix if it isn't already there for some reason. (Of course, if this is a new topic, just set default subject and body)
+ * - If allowed to post attachments: kick off by setting up storing the details in the session (in the event of an error from attachments, we get to keep them in session to avoid having the user reupload them). Figure out the attachment directory, and load any attachments we already have (if this is an edit). This allows us to check the file size (based on the data being in session and having access to the temporary uploaded files). Proceed to remove anything the user selected (e.g. we've come back here because of too many files or something and doing a preview), then out of what's left, check the usual things (file too big, too many files etc.)
+ * - Are there more replies than we thought there were? If so, flag that to the user.
+ * - Is this topic over the threshold of being old? If so, flag that to the user.
+ * - Set the page title and link tree depending on what we're doing.
+ * - If using wireless, rewrite the last link tree item to point to the full post page instead.
+ * - If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments - so deal with that.
+ * - Instance the editor component.
+ * - Get all the possible icons in this board, and prepare them ready for the template.
+ * - All the relevant posts to display after the editor box (i.e. the last replies, or the last posts before your currently-editing post)
+ * - Set up whether they can see the additional options including attachments (and the details of any such restrictions)
+ * - Set up CAPTCHA if appropriate (and also add error if they came from quick reply without said CAPTCHA)
+ * - Last bits: set up whether WYSIWYG is available, set the nonce so we can't submit twice normally, and load the normal or wireless template as appropriate.
+ *
+ * @todo Why is the response prefix cached? Is it really that much effort to determine... what... 4 friggin' bytes? Would be better in $modSettings in that case.
+ * @todo Is it possible to force something through approval if you edit the form manually?
+ * @todo Censoring appears to be done out of sequence if previewing compared to parsing. Issue? Non-issue?
+ */
 function Post()
 {
 	global $txt, $scripturl, $topic, $modSettings, $board;
@@ -1216,6 +1211,59 @@ function Post()
 		loadTemplate('Post');
 }
 
+/**
+ * Handles all the receipts of message posting, including calendar events, attachments and polls.
+ *
+ * Accessed via ?action=post2 (be it from the main reply page with all the goodies or the quick reply page)
+ *
+ * - If nothing is specified, return the user to the right posting place (either to the topic if specified, or to the board if not) so they can post a new message.
+ * - Tell bots not to index.
+ * - Load the relevant editor components.
+ * - If we've come from WYSIWYG, process it back to BBC.
+ * - Are we previewing? (i.e. hit the preview button from quick reply) Push the user to the main post action instead where it will be dealt with.
+ * - Check the user hasn't submitted twice.
+ * - Check the session from the form - however don't fail fatally if it mismatches, just add it to the list of errors we may be accumulating.
+ * - Check whether a CAPTCHA was requested, and add to the error list if necessary.
+ * - Load Subs-Post for the post subfunctions, and the Post language file.
+ * - Is this a new topic? If not, grab all the topic's details. Die if we can't obtain them (not a permissions check, simply an existence one)
+ * - Are we replying to a topic? Check it's not locked (if it is, require moderate_board to post without unlock), check there aren't multiple polls, then check permissions including approvals, and check whether the lock and/or sticky status is changing.
+ * - Otherwise, we're doing a new topic, so... override any listed message id, check permissions including approvals, sort out sticky/lock status.
+ * - Or, actually, are we doing a message edit? If so, get all the details of the message that will enable us to do things like permission checks (is it our own, etc), deal with locked/sticky. Also is it that we can approve it through editing?
+ * - Is it a guest doing this? If so, check whether the name and email we've requested could be valid (e.g. not over-long, valid email address, not a banned email address)
+ * - Check the message and subject exist and aren't empty (and the message isn't too long)
+ * - Assuming we have a message, use our custom htmlspecialchars on it, preparse it for BBC compliance and safety, and see if there's still a message after we strip all the tags (except images) from it.
+ * - If we're posting a calendar event (and everything's on for that), check there's a title there too.
+ * - Is there a poll (and polls are on)? Check we're either doing a new topic+poll or adding one to an existing topic (and not via edit post). Validate permissions (either new or can-add-to-(my/any)-posts), check there's a subject and answers (and validate using the recursive HTML trim option, pruning empty ones, erroring if less than 2 choices left)
+ * - If the user is a guest, validate the name isn't reserved, otherwise store the member's name+email ready.
+ * - OK, at this point, we're done with checking stuff. If there are errors now, throw it over to {@link Post()} to display, and advise that we're previewing in the process.
+ * - If this is a new post (rather than an edit) check the flood log.
+ * - Attempt to set the time limit to 5 minutes for this post, and disable user-abort from the cancel button.
+ * - Sanitize the subject with our custom htmlspecialchars, and convert CR, LF and TAB to empty strings.
+ * - Sanitize the guest posting name and email with htmlspecialchars.
+ * - Shorten the subject if necessary.
+ * - If this is a poll, sanitize: the number of options, the expiry time if set, plus other options such as whether users can change vote or whether guests can vote. Lastly sanitize all the question and answers through recursively stepping through the array from $_POST.
+ * - If this is an edit, see if the user is attempting to remove attachments. (If so, they need the ability to post them to be able to remove them, or at least be able to post unapproved attachments) Assuming permission is granted, check the ones they did not tick, and pass that to {@link removeAttachments()} to deal with.
+ * - Are there new attachments? Check what's been submitted there, validate about coming from the session or quick reply, and also check the session - in the case of there being an error and bounced back to the main post code, the details of attachments are preserved in the session. Check permissions to post new (unapproved or otherwise) attachments, and also grab details of any current attachments to this post if it's an edit - we need to be able to see if we step over any limits. Proceed to check the limits: number per post, max size total per post. Then proceed to call the attachment handler, which can return any one of several errors (file too big, file fails extension check, attach directory full etc) - if an error is hit, ensure the nonce is unset for the form so we could go back and edit.
+ * - Is this a poll? If so, insert the question details, followed by all the possible answers into the DB.
+ * - Collate the main arrays of details, $msgOptions, $topicOptions and $posterOptions.
+ * - If this is an edit, divert to {@link modifyPost()} otherwise head to {@link createPost()} to create the new post (and topic if appropriate).
+ * - If this is an event being linked to the calendar, manage that too.
+ * - If this is a new event being posted, validate the contents, check permissions, delete it if that's what the request said to do, update if necessary (including the master cache value)
+ * - Mark this board read, and all its hierarchical parents, for the person making the edit.
+ * - If the user asks to be notified on the topic's replies, add them to the notification list (assuming they have permission)
+ * - If this isn't a new topic, remove them from the notification log because we don't need to tell them about this post they just dealt with.
+ * - If the action carried out here was a modify not done by the post's owner, log it in the moderation log.
+ * - If we've locked this post through reply or edit, and it's not a user lock, log that.
+ * - If we've stickied it through reply or edit, log that.
+ * - If the new post would be approved (either automatically or as a result of this action): on new topic, send notification to everyone who wants notifications on this board. Otherwise, send it to everyone if the topic is approved, or just the topic starter if they want it.
+ * - Now, where next? If they're going back to the topic, mark the board as read.
+ * - If there's no topics in the board, empty the cache.
+ * - If we hit the announce option, redirect to the announce-topic stuff.
+ * - If we hit 'move this topic', well, go to that.
+ * - If we have a message (i.e. we came from a message via the modify button) and we're going back to topic, go back to that message.
+ * - If we're just going back to the topic, go to the end of it (which is our new post)
+ * - Otherwise just go back to the board.
+ */
 function Post2()
 {
 	global $board, $topic, $txt, $modSettings, $sourcedir, $context;
@@ -2099,7 +2147,15 @@ function Post2()
 		redirectexit('board=' . $board . '.0');
 }
 
-// General function for topic announcements.
+/**
+ * The initial handler for announcements, called from the post page (if Announce this topic is set), amongst other places.
+ *
+ * - Checks the user has the basic permission to announce topics (announce_topic).
+ * - Also forces them to revalidate session with a further password entry.
+ * - If the topic does not exist in the URL, exit with error.
+ * - The Post language and template will also be loaded at this point.
+ * - Otherwise, divert control to {@link AnnounceSelectMembergroup()} or {@link AnnouncementSend()} depending on specified subaction.
+ */
 function AnnounceTopic()
 {
 	global $context, $txt, $topic;
@@ -2125,7 +2181,16 @@ function AnnounceTopic()
 	$subActions[isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'selectgroup']();
 }
 
-// Allow a user to chose the membergroups to send the announcement to.
+/**
+ * When sending an announcement of a new topic, this function manages collecting the usergroups to send that announcement to.
+ *
+ * - Starts by collating the groups that have access to the current board.
+ * - Includes regular members separately as they have no strict membergroup.
+ * - Collates the number of people in each group that has access to the board.
+ * - Then collates the names of those groups.
+ * - Collects, then censors, the topic name.
+ * - Saves details such as 'go back to topic', before passing control onwards to template generation.
+ */
 function AnnouncementSelectMembergroup()
 {
 	global $txt, $context, $topic, $board, $board_info, $smcFunc;
@@ -2200,7 +2265,20 @@ function AnnouncementSelectMembergroup()
 	$context['sub_template'] = 'announce';
 }
 
-// Send the announcement in chunks.
+/**
+ * Handles sending announcements in chunks rather than pushing what could be a very, very large number of emails - or database rows - at once.
+ *
+ * - Session check via $_REQUEST.
+ * - The chunks are blocks of 50 if not using the mail queue, or 500 if using it.
+ * - Get the groups as set up by AnnouncementSelectMembergroup (or otherwise passed between requests) and validate that all the groups requested do have access to the board where the announcement was made.
+ * - Fail with error if there are no groups, or none valid, selected.
+ * - Load the message (and its subject), censor it, then parse the message (without smileys), replacing certain tags with line breaks, stripping the rest, and removing HTML special characters.
+ * - Load the email addresses of the current batch of announcements.
+ * - If all done, head on to the move dialog, or back to the topic or board, depending on user options.
+ * - For each email we're going to send: check if we have loaded the language - if not, load the right language file, then the email templates for that language. Then add this recipient to the list for their language.
+ * - Then send out emails by language, having replaced the text into the email template, low priority.
+ * - Update the sender with an approximate percentage of completion, and make sure we have the right language loaded for the user when we tell them.
+ */
 function AnnouncementSend()
 {
 	global $topic, $board, $board_info, $context, $modSettings;
@@ -2322,7 +2400,20 @@ function AnnouncementSend()
 		loadLanguage('Post');
 }
 
-// Notify members of a new post.
+/**
+ * Handle notifications sent when a user has requested them on a board (i.e. all new posts in that board)
+ *
+ * - Check whether we have received a single topic or array of topics; if a single topic, convert it to an array.
+ * - Step through the topic data provided, censoring the subject and body for each new item to deal with, then parse the messages (without smileys), replacing certain tags with line breaks, stripping the rest, and removing HTML special characters.
+ * - Divide the messages by board.
+ * - Add the messages to the digest table, so we have a list of what to send out later.
+ * - Find the members who have notifications on these boards.
+ * - For each email we're going to send: check if we have loaded the language - if not, load the right language file, then the email templates for that language. Then add this recipient to the list for their language.
+ * - Then send out emails by language, having replaced the text into the email template, low priority.
+ * - Update the list of notifications to say we have sent the relevant notifications out to the relevant people (and tracking the ids so we don't send them any more than they need)
+ * 
+ * @param array &$topicData Notionally an array of topics (indexed), with each topic entry being an array of 'board' (board id), 'topic' (topic id), 'msg' (message id), 'subject', 'body', 'poster' (poster's user id), 'name' (poster's name). Sometimes only a single topic will be passed, which will be just the subarray described here.
+ */
 function notifyMembersBoard(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
@@ -2471,7 +2562,14 @@ function notifyMembersBoard(&$topicData)
 	);
 }
 
-// Get the topic for display purposes.
+/**
+ * This function gets the most recent posts, including new replies, for the post view.
+ *
+ * - If calling from an XML view, the number of replies is simply the new ones, otherwise it attempts to get the number specified as the amount of posts to return in $modSettings['topicSummaryPosts'].
+ * - Note that if getting posts for an edit request, only the posts prior to the one being edited are considered.
+ * - The posts are censored, BBC processed, and stored in an array within $context.
+ * - The number of new replies is known from processing elsewhere in Post(), so it simply has to count the number of posts back to know which ones are new (e.g. 4 new replies, the 4 newest get 'new' flags set)
+ */
 function getTopic()
 {
 	global $topic, $modSettings, $context, $smcFunc, $counter, $options;
@@ -2526,6 +2624,19 @@ function getTopic()
 	$smcFunc['db_free_result']($request);
 }
 
+/**
+ * This function manages new posts being added to the current editing text box.
+ *
+ * Accessed via action=quotefast, this function is used from the main topic area (for quick reply), the replies part of the main reply area to get a previous post, and have it quoted correctly, to be inserted into the editor box - or it can be invoked for the Quick Modify system to return the original message.
+ *
+ * - This function can be called in two ways, one using XMLHttpRequest (which wil contain ;xml in the URL) for an inline insert, the second is the legacy method using a pop-up window to load the post quote into, and to be inserted back into the actual post editor. (This is what ;pb in the URL is for.)
+ * - Loads the Post language file, and additionally if invoked through non-XML, it will load the Post template too.
+ * - Identifies the boards the current user can moderate through (to ensure all the right boards are available), then loads the post details from the database.
+ * - The post is un'preparsecode'd so that it is editor-safe, then censored, and finally line breaks fixed.
+ * - Prepares the content for the XML (or not XML, necessarily) returns through $context.
+ * - Strips nested quotes if that is what was requested.
+ * - Lastly, convert the post to HTML if using the WYSIWYG editor.
+ */
 function QuoteFast()
 {
 	global $modSettings, $user_info, $txt, $settings, $context;
@@ -2632,6 +2743,24 @@ function QuoteFast()
 		);
 }
 
+/**
+ * This function handles the inline editor functionality.
+ *
+ * - Session check via URL.
+ * - Checks that there is a topic specified, and if not, exit.
+ * - Load the relevant message or die fatally if the message could not be accessed (or doesn't exist)
+ * - Check we have permission to modify the message (if locked, validate we have ability to override with moderation, otherwise check if it is our own post, and whether we can modify anyone's or simply our own, whether we can modify replies or not, and whether we are within a given time-window for editing)
+ * - Flag whether we are editing our own or someone else's message, for mod-log purposes.
+ * - Sanitize the incoming title (check not empty, and if so: replace CR, LF or TAB with empty string and custom htmlspecialchars replacement, then truncate to 100 characters)
+ * - Sanitize the incoming message (check not empty, check not over-long, custom htmlspecialchars, preparsecode, check that if the tags except img are removed that there is some content)
+ * - Handle the message locking and sticky status.
+ * - If no errors from the above, prepare the array triplet (msg/topic/poster Options) and pass to {@link modifyPost()} noting that the post is modified on subject/message/icon changing.
+ * - If there are no errors and we edited something in the message, prepare the newly edited message for return, i.e. build an array with everything needed to make the post, parsed for BBC, and return via XML.
+ * - If there were no errors but we only changed the icon or subject, return only those details.
+ * - Otherwise there were some errors - so get ready to return those too (including loading the relevant language file, and do any preprocessing on the strings, e.g. the long_message one)
+ *
+ * - @todo Remove icon being logged as an edit - there is no reason to flag it as edited if only the icon has changed.
+ */
 function JavaScriptModify()
 {
 	global $sourcedir, $modSettings, $board, $topic, $txt;
