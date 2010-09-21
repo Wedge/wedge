@@ -1205,6 +1205,15 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
 	);
 
+	// Has this user been banned? Should we remove their avatar too?
+	if (!empty($modSettings['avatar_banned_hide']) && $memberContext[$user]['is_banned'])
+		$memberContext[$user]['avatar'] = array(
+			'name' => '',
+			'image' => '',
+			'href' => '',
+			'url' => '',
+		);
+
 	// First do a quick run through to make sure there is something to be shown.
 	$memberContext[$user]['has_messenger'] = false;
 	foreach (array('icq', 'msn', 'aim', 'yim') as $messenger)

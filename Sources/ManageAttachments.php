@@ -268,6 +268,8 @@ function ManageAvatarSettings($return_config = false)
 			array('select', 'custom_avatar_enabled', array($txt['option_attachment_dir'], $txt['option_specified_dir']), 'onchange' => 'fUpdateStatus();'),
 			array('text', 'custom_avatar_dir', 40, 'subtext' => $txt['custom_avatar_dir_desc'], 'invalid' => !$context['valid_custom_avatar_dir']),
 			array('text', 'custom_avatar_url', 40),
+		array('title', 'avatar_defaults'),
+			array('check', 'avatar_banned_hide'),
 	);
 
 	if ($return_config)
