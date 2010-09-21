@@ -47,7 +47,7 @@ function template_main()
 
 	echo '
 			<div>
-				<div class="roundframe rrc">
+				<div class="roundframe">
 					<input type="hidden" name="poll" value="', $context['poll']['id'], '" />
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>

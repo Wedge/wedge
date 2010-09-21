@@ -61,7 +61,7 @@ function template_find_members()
 	</head>
 	<body id="help_popup">
 		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '" class="padding description">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div class="cat_bar">
 					<h3>', $txt['find_members'], '</h3>
 				</div>
@@ -83,7 +83,7 @@ function template_find_members()
 				</div>
 			</div>
 			<br />
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div class="cat_bar">
 					<h3>', $txt['find_results'], '</h3>
 				</div>';

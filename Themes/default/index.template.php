@@ -397,170 +397,55 @@ function theme_linktree($force_show = false)
 }
 
 // Show the menu up top. Something like [home] [profile] [logout]...
-function template_old_menu()
+function template_menu()
 {
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<div id="main_menu">
-			<ul class="dropmenu" id="menu_nav">';
+		<ul id="main_menu" class="menu">';
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
 		echo '
-				<li id="button_', $act, '">
-					<a class="', $button['active_button'] ? 'active ' : '', 'firstlevel" href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>
-						<span class="', isset($button['is_last']) ? 'last ' : '', 'firstlevel">', $button['title'], '</span>
-					</a>';
+			<li id="button_', $act, '"', $button['active_button'] ? ' class="chosen"' : '', '>
+				<h4><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
+
 		if (!empty($button['sub_buttons']))
 		{
 			echo '
-					<ul>';
+				<ul>';
 
 			foreach ($button['sub_buttons'] as $childbutton)
 			{
 				echo '
-						<li>
-							<a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>
-								<span', isset($childbutton['is_last']) ? ' class="last"' : '', '>', $childbutton['title'], !empty($childbutton['sub_buttons']) ? '...' : '', '</span>
-							</a>';
-				// 3rd level menus :)
+					<li>
+						<a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
+
+				// 3rd level menus
 				if (!empty($childbutton['sub_buttons']))
 				{
 					echo '
-							<ul>';
-
-					foreach ($childbutton['sub_buttons'] as $grandchildbutton)
-						echo '
-								<li>
-									<a href="', $grandchildbutton['href'], '"', isset($grandchildbutton['target']) ? ' target="' . $grandchildbutton['target'] . '"' : '', '>
-										<span', isset($grandchildbutton['is_last']) ? ' class="last"' : '', '>', $grandchildbutton['title'], '</span>
-									</a>
-								</li>';
-
-					echo '
-							</ul>';
-				}
-
-				echo '
-						</li>';
-			}
-				echo '
-					</ul>';
-		}
-		echo '
-				</li>';
-	}
-
-	echo '
-			</ul>
-		</div>';
-}
-
-// Show the menu up top. Something like [home] [help] [profile] [logout]...
-function template_menu()
-{
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
-	static $menu_number = 0;
-
-	// Which menu are we rendering?
-	$menu_context = &$context['menu_buttons'];
-	$extra = !empty($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '';
-
-	echo '
-		<ul id="amen', $menu_number ? '_' . $menu_number : '', '" class="menu">';
-
-	if (!empty($menu_context['can_toggle_drop_down']))
-		echo '
-			<li style="background: none !important"><a href="', $menu_context['toggle_url'], '" style="border: 0 !important"><img style="margin: 0 2px 0 2px;" src="' , $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /> <span></span></a></li>';
-
-	// Main areas first.
-	foreach ($menu_context as $id => $section)
-	{
-		echo '
-			<li', $section['active_button'] ? ' class="chosen"' : '', '><h4><a href="', $section['href'], '">', $section['title'] , '</a></h4>';
-
-		if (empty($section['sub_buttons']))
-		{
-			echo '</li>';
-			continue;
-		}
-
-		echo '
-				<ul>';
-
-		// For every area of this section show a link to that area (bold if it's currently selected.)
-		foreach ($section['sub_buttons'] as $i => $area)
-		{
-			// Not supposed to be printed?
-			if (empty($area['title']))
-				continue;
-
-			if (empty($area['sub_buttons']))
-			{
-				echo '
-					<li>';
-
-				// Is this the current area, or just some area?
-/*				if ($i == $menu_context['current_area'])
-				{
-					echo '<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $extra, '"><strong>', $area['icon'], $area['label'], '</strong></a>';
-
-					if (empty($context['tabs']))
-						$context['tabs'] = array();
-				}
-				else */
-				echo '<a href="', (isset($area['href']) ? $area['href'] : $menu_context['base_url'] . ';area=' . $i), $extra, '">', !empty($area['icon']) ? $area['icon'] : '', $area['title'], '</a>';
-
-				echo '</li>';
-			}
-			else
-			{
-				echo '
-					<li class="subsection">';
-
-				// Is this the current area, or just some area?
-/*				if ($i == $menu_context['current_area'])
-				{
-					echo '
-						<a class="subsection" href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $extra, '"><strong>', $area['icon'], $area['label'], '</strong></a>';
-
-					if (empty($context['tabs']))
-						$context['tabs'] = $area['subsections'];
-				}
-				else */
-				echo '
-						<a href="', (isset($area['url']) ? $area['url'] : $scripturl . '?action=' . $menu_context['current_action'] . ';area=' . $i), $extra, '">', $area['icon'], $area['label'], '</a>';
-
-				echo '
 						<ul>';
 
-				foreach ($area['sub_buttons'] as $sa => $sub)
-				{
-					if (!empty($sub['disabled']))
-						continue;
+					foreach ($childbutton['sub_buttons'] as $grandchildbutton)
+						echo '<li><a href="', $grandchildbutton['href'], '"', isset($grandchildbutton['target']) ? ' target="' . $grandchildbutton['target'] . '"' : '', '>', $grandchildbutton['title'], '</a></li>';
 
-					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
-
-					echo '<li><a href="', $url, $extra, '">', (!empty($sub['selected']) ? '<strong>' . $sub['label'] . '</strong>' : $sub['label']), '</a></li>';
+					echo '</ul>';
 				}
-
 				echo '
-						</ul>
 					</li>';
 			}
+			echo '
+				</ul>';
 		}
 		echo '
-				</ul>
 			</li>';
 	}
-
 	echo '
 		</ul>
 		<script type="text/javascript"><!-- // --><![CDATA[
-			initMenu(document.getElementById("amen', $menu_number ? '_' . $menu_number : '', '"));
+			initMenu(document.getElementById("main_menu"));
 		// ]]></script>';
-	++$menu_number;
 }
 
 // Generate a strip of buttons.

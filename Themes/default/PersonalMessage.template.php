@@ -664,7 +664,7 @@ function template_search()
 	{
 		echo '
 		<fieldset id="simple_search">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div id="search_term_input">
 					<strong>', $txt['pm_search_text'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="input_text" />
@@ -681,7 +681,7 @@ function template_search()
 	{
 		echo '
 		<fieldset id="advanced_search">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['pm_search_text'], ':</strong>
@@ -732,7 +732,7 @@ function template_search()
 		{
 			echo '
 		<fieldset class="labels">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div class="title_bar">
 					<h4>
 						<span class="ie6_header floatleft"><a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a></span>
@@ -926,7 +926,7 @@ function template_send()
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">
 		<div>
-			<div class="roundframe rrc"><br class="clear" />';
+			<div class="roundframe"><br class="clear" />';
 
 	// If there were errors for sending the PM, show them.
 	if (!empty($context['post_error']['messages']))

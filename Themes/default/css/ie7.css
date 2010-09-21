@@ -3,18 +3,6 @@
 	margin: 0 4px;
 }
 
-/* The dropdown menus
-------------------------------------------------------- */
-/* the dropmenu - RTL tweak */
-.dropmenu li ul
-{
-	margin: 0 -50px 0 0;
-}
-/* the hover effects */
-.dropmenu li.iehover
-{
-	z-index: 120;
-}
 /* the tabled definition lists */
 dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.options dd, .login dd
 {

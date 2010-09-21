@@ -177,7 +177,7 @@ function template_search()
 	// Display the input boxes for the form.
 	echo '
 			<div id="memberlist_search" class="clear">
-				<div class="roundframe rrc">
+				<div class="roundframe">
 					<div id="mlist_search" class="flow_hidden">
 						<div id="search_term_input"><br />
 							<strong>', $txt['search_for'], ':</strong>

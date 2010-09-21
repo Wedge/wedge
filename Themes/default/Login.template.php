@@ -16,7 +16,7 @@ function template_login()
 					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
 				</h3>
 			</div>
-			<div class="roundframe rrc">';
+			<div class="roundframe">';
 
 	// Did they make a mistake last time?
 	if (!empty($context['login_errors']))
@@ -99,7 +99,7 @@ function template_kick_guest()
 					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '
 				</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<dl>
 					<dt>', $txt['username'], ':</dt>
 					<dd><input type="text" name="user" size="20" class="input_text" /></dd>
@@ -157,7 +157,7 @@ function template_maintenance()
 		<div class="title_bar">
 			<h4>', $txt['admin_login'], '</h4>
 		</div>
-		<div class="roundframe rrc">
+		<div class="roundframe">
 			<dl>
 				<dt>', $txt['username'], ':</dt>
 				<dd><input type="text" name="user" size="20" class="input_text" /></dd>
@@ -191,7 +191,7 @@ function template_admin_login()
 				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
 			</h3>
 		</div>
-		<div class="roundframe rrc centertext">';
+		<div class="roundframe centertext">';
 
 	if (!empty($context['incorrect_password']))
 		echo '
@@ -228,7 +228,7 @@ function template_retry_activate()
 			<div class="title_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
-			<div class="roundframe rrc">';
+			<div class="roundframe">';
 
 	// You didn't even have an ID?
 	if (empty($context['member_id']))
@@ -257,7 +257,7 @@ function template_resend()
 			<div class="title_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<dl>
 					<dt>', $txt['invalid_activation_username'], ':</dt>
 					<dd><input type="text" name="user" size="40" value="', $context['default_username'], '" class="input_text" /></dd>

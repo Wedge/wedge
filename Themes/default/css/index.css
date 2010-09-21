@@ -1,3 +1,212 @@
+/* Set a fontsize that will look the same in all browsers. */
+body
+{
+/*	background: #fff8f1 url(../images/theme/menu.png) repeat-x; */
+	background: #faefe6 url(../images/theme/grad700.png) repeat-x;
+	font: 78%/130% "Verdana", "Arial", "Helvetica", sans-serif;
+	padding: 15px 0;
+	margin: 0;
+}
+
+body > div
+{
+	margin: auto;
+	width: 95%;
+	max-width: 1200px;
+}
+
+/* the framing graphics */
+#header
+{
+	background: #faf8f6 url(../images/theme/grad350.png) 0 bottom repeat-x;
+	padding-left: 20px;
+	border: 1px solid #999;
+	border-bottom: 0;
+	border-radius: 12px 12px 0 0;
+	-moz-border-radius: 12px 12px 0 0;
+	-webkit-border-radius: 12px 12px 0 0;
+}
+#header div.frame
+{
+	display: block;
+	padding: 5px 20px 0 0;
+}
+/* the content section */
+#content_section
+{
+	border: 1px solid #999;
+	border-width: 0 1px;
+	background: #faf8f6;
+	padding-left: 20px;
+}
+#content_section div.frame
+{
+	display: block;
+	padding: 0 20px 20px 0;
+}
+#main_content_section
+{
+	width: 100%;
+	min-height: 200px;
+}
+
+/* the main title, always stay at 45 pixels in height! */
+h1.forumtitle
+{
+	line-height: 45px;
+	font-size: 1.8em;
+	font-family: Geneva, verdana, sans-serif;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+/* float these items to the right */
+#siteslogan, img#wedgelogo
+{
+	margin: 0;
+	padding: 0;
+	float: right;
+	line-height: 3em;
+}
+/* the upshrink image needs some tweaking */
+img#upshrink
+{
+	float: right;
+	margin: 1em;
+}
+/* ..so does the Wedge logo */
+img#wedgelogo
+{
+	margin-top: .7em;
+	margin-left: 1em;
+}
+/* the upper_section, float the two each way */
+#upper_section
+{
+	padding: 5px;
+	margin-bottom: 1.5em;
+}
+#upper_section ul li.greeting
+{
+	font-size: 1.3em;
+	font-weight: bold;
+	line-height: 1.5em;
+}
+#upper_section div.news
+{
+	width: 50%;
+	float: right;
+	text-align: right;
+}
+#guest_form
+{
+	overflow: hidden;
+}
+#guest_form .info
+{
+	padding: 4px 0 ;
+}
+div#upper_section div.user
+{
+	width: 50%;
+	float: left;
+	overflow: auto;
+}
+div#upper_section div.user p
+{
+	float: left;
+	margin: 0 1em 1em 0;
+	padding: 0;
+}
+div#upper_section div.user ul
+{
+	margin: 0;
+	padding-left: 10px;
+}
+div#upper_section div.user ul li
+{
+	margin-bottom: 2px;
+}
+div#upper_section div.news p
+{
+	display: inline;
+}
+div#upper_section div.news form
+{
+	padding-bottom: 10px;
+}
+/* clearing the floats */
+#top_section
+{
+	min-height: 65px;
+	overflow: hidden;
+	margin-bottom: 3px;
+}
+#upper_section
+{
+	overflow: hidden;
+}
+
+/* The navigation list (i.e. linktree) */
+.navigate_section
+{
+	padding: 0.5em;
+	margin: 1em 0 0 0;
+}
+.navigate_section ul
+{
+	display: block;
+	margin: 0;
+	font-size: 0.9em;
+	padding: 1em 0 0.5em 0;
+	border-top: 1px solid #ccc;
+	overflow: hidden;
+	list-style: none;
+	clear: both;
+	width: 100%;
+}
+.navigate_section ul li
+{
+	float: left;
+	padding: 0 0.5em 0 0;
+	font-size: 0.95em;
+}
+
+/* The footer wih copyright links etc. */
+#footer_section
+{
+	text-align: center;
+	padding-left: 20px;
+	background: #f4f2f3;
+	border: 1px solid #999;
+	border-top: 1px solid #ccc;
+	border-radius: 0 0 12px 12px;
+	-moz-border-radius: 0 0 12px 12px;
+	-webkit-border-radius: 0 0 12px 12px;
+}
+#footer_section span.smalltext
+{
+	font-size: 100%;
+}
+#footer_section div.frame
+{
+	display: block;
+	padding: 15px 0 0 0;
+}
+#footer_section ul li, #footer_section p
+{
+	font-size: 0.8em;
+}
+#footer_section ul li
+{
+	display: inline;
+	padding-right: 5px;
+}
+#footer_section ul li.copyright
+{
+	display: block;
+}
+
 /* Styles for the general looks for the Curve theme.
 ------------------------------------------------------- */
 
@@ -16,15 +225,6 @@ a:hover
 table
 {
 	empty-cells: show;
-}
-
-/* Set a fontsize that will look the same in all browsers. */
-body
-{
-	background: #E9EEF2 url(../images/theme/backdrop.png) repeat-x;
-	font: 78%/130% "Verdana", "Arial", "Helvetica", sans-serif;
-	margin: 0 auto;
-	padding: 15px 5%;
 }
 
 /* Help popups require a different styling of the body element. */
@@ -929,20 +1129,14 @@ form.wrc
 ----------------------------------------------------------- */
 .roundframe
 {
-	padding: 0 10px;
-	background: #f5f5f5;
-	border-left: 1px solid #c5c5c5;
-	border-right: 1px solid #c5c5c5;
-}
-/* roundframe with rounded corners class, for modern browsers... */
-.rrc
-{
 	margin-top: 1px;
 	padding: 10px 10px 9px 10px;
+	background: #f5f5f5;
+	border: 1px solid #c5c5c5;
+	border: 1px solid rgba(128,128,128,.5);
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
-	border: 1px solid rgba(128,128,128,.5);
 }
 .roundframe dl, .roundframe dt, .roundframe p
 {
@@ -1075,191 +1269,8 @@ ul#navigation li
 	display: inline;
 }
 
-/* Styles for the general looks for the Curve theme.
+/* More general styling.
 ------------------------------------------------------- */
-
-/* the framing graphics */
-#header
-{
-	background: url(../images/theme/main_block.png) #fefefe no-repeat 0 -200px;
-	padding-left: 20px;
-}
-#header div.frame
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -200px;
-	display: block;
-	padding: 5px 20px 0 0;
-}
-/* the content section */
-#content_section
-{
-	background: #FFFFFF url(../images/theme/frame_repeat.png) repeat-y top left;
-	padding-left: 20px;
-}
-#content_section div.frame
-{
-	background: url(../images/theme/frame_repeat.png) repeat-y top right;
-	display: block;
-	padding: 0 20px 0 0;
-}
-#main_content_section
-{
-	width: 100%;
-	min-height: 200px;
-}
-
-/* the main title, always stay at 45 pixels in height! */
-h1.forumtitle
-{
-	line-height: 45px;
-	font-size: 1.8em;
-	font-family: Geneva, verdana, sans-serif;
-	margin: 0;
-	padding: 0;
-	float: left;
-}
-/* float these items to the right */
-#siteslogan, img#wedgelogo
-{
-	margin: 0;
-	padding: 0;
-	float: right;
-	line-height: 3em;
-}
-/* the upshrink image needs some tweaking */
-img#upshrink
-{
-	float: right;
-	margin: 1em;
-}
-/* ..so does the Wedge logo */
-img#wedgelogo
-{
-	margin-top: .7em;
-	margin-left: 1em;
-}
-/* the upper_section, float the two each way */
-#upper_section
-{
-	padding: 5px;
-	margin-bottom: 1.5em;
-}
-#upper_section ul li.greeting
-{
-	font-size: 1.3em;
-	font-weight: bold;
-	line-height: 1.5em;
-}
-#upper_section div.news
-{
-	width: 50%;
-	float: right;
-	text-align: right;
-}
-#guest_form
-{
-	overflow: hidden;
-}
-#guest_form .info
-{
-	padding: 4px 0 ;
-}
-div#upper_section div.user
-{
-	width: 50%;
-	float: left;
-	overflow: auto;
-}
-div#upper_section div.user p
-{
-	float: left;
-	margin: 0 1em 1em 0;
-	padding: 0;
-}
-div#upper_section div.user ul
-{
-	margin: 0;
-	padding-left: 10px;
-}
-div#upper_section div.user ul li
-{
-	margin-bottom: 2px;
-}
-div#upper_section div.news p
-{
-	display: inline;
-}
-div#upper_section div.news form
-{
-	padding-bottom: 10px;
-}
-/* clearing the floats */
-#top_section
-{
-	min-height: 65px;
-	overflow: hidden;
-	margin-bottom: 3px;
-}
-#upper_section
-{
-	overflow: hidden;
-}
-
-/* The navigation list (i.e. linktree) */
-.navigate_section
-{
-	padding: 0.5em;
-	margin: 1em 0 0 0;
-}
-.navigate_section ul
-{
-	display: block;
-	margin: 0;
-	font-size: 0.9em;
-	padding: 1em 0 0.5em 0;
-	border-top: 1px solid #ccc;
-	overflow: hidden;
-	list-style: none;
-	clear: both;
-	width: 100%;
-}
-.navigate_section ul li
-{
-	float: left;
-	padding: 0 0.5em 0 0;
-	font-size: 0.95em;
-}
-
-/* The footer wih copyright links etc. */
-#footer_section
-{
-	text-align: center;
-	background: url(../images/theme/main_block.png) no-repeat 0 -580px;
-	padding-left: 20px;
-}
-#footer_section span.smalltext
-{
-	font-size: 100%;
-}
-#footer_section div.frame
-{
-	background: url(../images/theme/main_block.png) no-repeat 100% -580px;
-	display: block;
-	padding: 60px 0 0 0;
-}
-#footer_section ul li, #footer_section p
-{
-	font-size: 0.8em;
-}
-#footer_section ul li
-{
-	display: inline;
-	padding-right: 5px;
-}
-#footer_section ul li.copyright
-{
-	display: block;
-}
 select.qaction, input.qaction
 {
 	font-size: 0.85em;
@@ -1850,7 +1861,7 @@ ul.quickbuttons li.inline_mod_check
 
 /* The quick-reply area. Horizontal alignments go a bit wonky in IE6 and IE7 but is it really worth worrying about? */
 
-#quickReplyOptions .roundframe
+#quickReplyOptions .roundframe, form#postmodify .roundframe
 {
 	padding-left: 8%;
 	padding-right: 8%;
@@ -1876,10 +1887,6 @@ ul.quickbuttons li.inline_mod_check
 
 /* Styles for edit/new post section
 ---------------------------------------------------- */
-form#postmodify .roundframe
-{
-	padding: 10px 8%;
-}
 #post_header, .postbox
 {
 	padding: 0.5em;
@@ -1987,7 +1994,7 @@ ul.post_options li
 ---------------------------------------------------- */
 #post_event .roundframe
 {
-	padding: 0 12%;
+	padding: 10px 12%;
 }
 #post_event fieldset
 {
@@ -3350,163 +3357,25 @@ ul.basic_helplist
 
 /* Styles for the standard dropdown menus.
 ------------------------------------------------------- */
-#main_menu
-{
+.menu {
+	min-height: 2em;
+	display: block;
+	margin: 0 0 0 10px;
+	padding: 0;
+	clear: both;
+}
+#main_menu {
+	min-height: 0;
 	padding: 0 0 0 0.5em;
 	float: left;
 	margin: 0;
 	width: 98%;
 }
 
-.dropmenu, .dropmenu ul
-{
-	list-style: none;
-	line-height: 1em;
-	padding: 0;
-	margin: 0;
-}
-.dropmenu
-{
-	padding: 0 0.5em;
-}
-.dropmenu a
-{
-	display: block;
-	color: #000;
-	text-decoration: none;
-}
-.dropmenu a span
-{
-	display: block;
-	font-size: 0.9em;
-}
-/* the background's first level only */
-.dropmenu li a.firstlevel
-{
-	margin-right: 8px;
-	height: 19px;
-}
-.dropmenu li a.firstlevel span.firstlevel
-{
-	display: block;
-	position: relative;
-	margin: 1px 0 0 -5px;
-	padding: 0 5px;
-	height: 19px;
-	line-height: 18px;
-}
-.dropmenu li
-{
-	float: left;
-	padding: 0;
-	margin: 0;
-	position: relative;
-}
-.dropmenu li ul
-{
-	z-index: 90;
-	display: none;
-	position: absolute;
-	width: 19.2em;
-	font-weight: normal;
-	border-bottom: 1px solid #999;
-	background: url(../images/theme/menu.png) no-repeat;
-	padding: 7px 0 0 0;
-}
-.dropmenu li li
-{
-	width: 19em;
-	margin: 0;
-	border-left: 1px solid #999;
-	border-right: 1px solid #999;
-}
-.dropmenu li li a span
-{
-	display: block;
-	padding: 8px;
-}
-.dropmenu li ul ul
-{
-	margin: -1.8em 0 0 13em;
-}
-
-/* the active button */
-.dropmenu li a.active span
-{
-	background: #fd9604;
-	color: #fff;
-	font-weight: bold;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-/* the hover effects */
-.dropmenu li a.firstlevel:hover span, .dropmenu li:hover a.firstlevel span
-{
-	background: #5a6c85;
-	color: #fff;
-	cursor: pointer;
-	text-decoration: none;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-/* the hover effects on levels 2 and 3 */
-.dropmenu li li a:hover span, .dropmenu li li:hover>a span
-{
-	background: #d4dbe4;
-	color: #000;
-	text-decoration: none;
-}
-.dropmenu li:hover ul ul, .dropmenu li:hover ul ul ul
-{
-	top: -999em;
-}
-.dropmenu li li:hover ul
-{
-	top: auto;
-}
-.dropmenu li:hover ul
-{
-	display: block;
-}
-.dropmenu li li.additional_items
-{
-	background-color: #fff;
-}
-#adm_submenus
-{
-	padding-left: 2em;
-}
-#adm_submenus, #adm_submenus ul
-{
-	min-height: 2.5em;
-}
-#admin_menu
-{
-	min-height: 2em;
-	padding-left: 0;
-}
-#admin_content
-{
-	clear: left;
-	padding-top: 0.5em;
-}
-
-/* New dropdown menu
-------------------------------------------------------- */
-
-.menu {
-	display: block;
-	margin: 0 0 0 10px;
-	padding: 0 5px;
-	clear: both;
-}
-
 .menu li a {
 	display: block;
 	text-decoration: none;
-	border-left: 4px solid #c8e2fb;
+	border-left: 4px solid #fbe2c8; /* #c8e2fb */
 	padding: 6px 8px;
 	margin: 0;
 }
@@ -3523,17 +3392,16 @@ ul.basic_helplist
 	padding: 0;
 }
 .menu ul {
-/*	background: url(../images/white-op85.png);
-	background: rgba(255,248,240,.95); */
-	background: url(../images/theme/menu.png) 0 -10px;
+	background: rgba(255, 248, 240, .95);
+	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
 	position: absolute;
 	display: block;
 	border: 1px solid #666;
 	padding: 0;
 	z-index: 42;
-	box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
-	-moz-box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
-	-webkit-box-shadow: 2px 2px 12px 0 rgba(128, 128, 128, .3);
+	box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	-moz-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	-webkit-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
 	border-radius: 0 10px 10px 0;
 	-moz-border-radius: 0 10px 10px 0;
 	-webkit-border-radius: 0 10px 10px 0;
@@ -3568,6 +3436,9 @@ ul.basic_helplist
 	background: #c8e2fb url(../images/menu.gif) no-repeat 98% 2px;
 	color: black;
 }
+li.active > a {
+	font-weight: bold;
+}
 .menu li.chosen h4 {
 	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
@@ -3597,8 +3468,20 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 	-webkit-border-radius: 6px;
 }
 
-#amen li.chosen h4 {
+#main_menu li.chosen h4, #adm_submenus li.chosen h4 {
 	background-color: #fd9604 !important;
+}
+#adm_submenus {
+	padding-left: 1em;
+	min-height: 2.5em;
+}
+#adm_submenus h4 {
+	background-image: none;
+	padding-right: 6px;
+}
+#admin_content {
+	clear: left;
+	padding-top: 0.5em;
 }
 
 
@@ -3608,162 +3491,52 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 
 
 /* light, no rounded corners */
-tr.titlebg th, tr.titlebg td, tr.titlebg2 td
-{
+tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
 	background: #e3e9ef;
 }
 /* darker, no rounded corners */
-tr.catbg td, tr.catbg th
-{
+tr.catbg td, tr.catbg th {
 	background: #a8bace;
 }
 /* darker, right */
-.table_list tbody.header td.catbg
-{
+.table_list tbody.header td.catbg {
 	background: #b8cade;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 
-div.cat_bar, div.title_bar
-{
+div.cat_bar, div.title_bar {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 
-div.cat_bar
-{
-	background: url(../images/theme/bars.png) 0 -150px repeat-x;
-}
-div.title_bar
-{
-	background: url(../images/theme/bars.png) 0 0 repeat-x;
-}
-
-
-#upshrinkHeaderIC .cat_bar h3, #upshrinkHeaderIC .title_bar h4
-{
-	font-size: 1.1em;
-}
-tr.catbg th
-{
+div.cat_bar {
 	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
 }
-tr.titlebg th
-{
+div.title_bar {
 	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
 }
 
-/* Compatibility for mods using Curve-style corners...
------------------------------------------------------------ */
 
-.windowbg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -30px no-repeat;
+#upshrinkHeaderIC .cat_bar h3, #upshrinkHeaderIC .title_bar h4 {
+	font-size: 1.1em;
 }
-.windowbg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -30px no-repeat;
-	height: 11px;
+tr.catbg th {
+	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
 }
-.windowbg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -40px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
+tr.titlebg th {
+	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
 }
-.windowbg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -40px no-repeat;
-	height: 11px;
+table.table_grid { border-collapse: separate } /* Fixing an Opera and Firefox issue... May not be worth it. */
+th.first_th {
+	border-radius: 8px 0 0 0;
+	-moz-border-radius: 8px 0 0 0;
+	-webkit-border-radius: 8px 0 0 0;
 }
-
-.windowbg2 span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -60px no-repeat;
-}
-.windowbg2 span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -60px no-repeat;
-	height: 11px;
-}
-.windowbg2 span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -71px no-repeat;
-	font-size: 5px;
-	line-height: 5px;
-	margin-bottom: 0.2em;
-}
-.windowbg2 span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -71px no-repeat;
-	height: 11px;
-}
-.approvebg span.topslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 0 no-repeat;
-}
-.approvebg span.topslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% 0 no-repeat;
-	height: 11px;
-}
-.approvebg span.botslice
-{
-	display: block;
-	padding-left: 20px;
-	background: url(../images/theme/main_block.png) 0 -11px no-repeat;
-	margin-bottom: 0.2em;
-}
-.approvebg span.botslice span
-{
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -11px no-repeat;
-	height: 11px;
-}
-span.upperframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -89px no-repeat;
-	padding-left: 20px;
-}
-span.upperframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -89px no-repeat;
-}
-span.lowerframe
-{
-	padding: 0;
-	display: block;
-	background: url(../images/theme/main_block.png) 0 -102px no-repeat;
-	padding-left: 20px;
-}
-span.lowerframe span
-{
-	padding: 0;
-	height: 12px;
-	display: block;
-	background: url(../images/theme/main_block.png) 100% -102px no-repeat;
+th.last_th {
+	border-radius: 0 8px 0 0;
+	-moz-border-radius: 0 8px 0 0;
+	-webkit-border-radius: 0 8px 0 0;
 }

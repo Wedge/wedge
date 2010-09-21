@@ -528,7 +528,7 @@ function template_editBuddies()
 			<div class="title_bar">
 				<h3>', $txt['buddy_add'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<label for="new_buddy">
 					<strong>', $txt['who_member'], ':</strong>
 				</label>
@@ -612,7 +612,7 @@ function template_editIgnoreList()
 			<div class="title_bar">
 				<h3>', $txt['ignore_add'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<label for="new_buddy">
 					<strong>', $txt['who_member'], ':</strong>
 				</label>
@@ -1646,7 +1646,7 @@ function template_groupMembership()
 				<div class="cat_bar">
 					<h3>', $txt['request_group_membership'], '</h3>
 				</div>
-				<div class="roundframe rrc">
+				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
 					<textarea name="reason" rows="4" style="width: 95%"></textarea>
 					<div class="righttext">

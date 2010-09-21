@@ -1,3 +1,7 @@
+body, .menu ul
+{
+	background-image: none;
+}
 .codeheader, code.bbc_code
 {
 	width: 96%;
@@ -26,21 +30,9 @@
 /* The dropdown menus
 ------------------------------------------------------- */
 
-.dropmenu li
-{
-	width: 1px;
-}
-.dropmenu li a span
-{
-	white-space: nowrap;
-}
-.dropmenu li a:hover
+.menu a:hover
 {
 	text-decoration: none;
-}
-.dropmenu li.iehover
-{
-	z-index: 120;
 }
 
 /* the page section */
@@ -201,8 +193,21 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0);
 }
 
+.menu {
+	width: 90%;
+}
 .menu li
 {
 	border-bottom: 1px dotted white;
 }
 a.linkOver { background: #c8e2fb }
+
+#header
+{
+	background-image: none;
+}
+#header, #content_section, #footer_section
+{
+	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
+	margin: auto;
+}

@@ -11,7 +11,7 @@ function template_registration_agreement()
 			<div class="cat_bar">
 				<h3>', $txt['registration_agreement'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<p>', $context['agreement'], '</p>
 			</div>
 			<div id="confirm_buttons">';

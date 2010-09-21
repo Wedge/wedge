@@ -12,7 +12,7 @@ function template_main()
 			<div class="cat_bar">
 				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<p class="smalltext centertext">', $txt['password_reminder_desc'], '</p>
 				<dl>
 					<dt>', $txt['user_email'], ':</dt>
@@ -36,7 +36,7 @@ function template_reminder_pick()
 			<div class="cat_bar">
 				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<p><strong>', $txt['authentication_options'], ':</strong></p>
 				<p>
 					<input type="radio" name="reminder_type" id="reminder_type_email" value="email" checked="checked" class="input_radio" /></dt>
@@ -80,7 +80,7 @@ function template_set_password()
 			<div class="cat_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<dl>
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
@@ -128,7 +128,7 @@ function template_ask()
 			<div class="cat_bar">
 				<h3>', $txt['authentication_reminder'], '</h3>
 			</div>
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<p class="smalltext">', $context['account_type'] == 'password' ? $txt['enter_new_password'] : $txt['openid_secret_reminder'], '</p>
 				<dl>
 					<dt>', $txt['secret_question'], ':</dt>

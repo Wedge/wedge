@@ -124,7 +124,7 @@ function template_main()
 				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div>
-				<div class="roundframe rrc">', isset($context['current_topic']) ? '
+				<div class="roundframe">', isset($context['current_topic']) ? '
 					<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />' : '';
 
 	// If an error occurred, explain what happened.

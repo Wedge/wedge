@@ -22,7 +22,7 @@ function template_main()
 	{
 		echo '
 		<fieldset id="simple_search">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div id="search_term_input">
 					<strong>', $txt['search_for'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />
@@ -53,7 +53,7 @@ function template_main()
 	{
 		echo '
 		<fieldset id="advanced_search">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['search_for'], ':</strong>
@@ -124,7 +124,7 @@ function template_main()
 		{
 			echo '
 		<fieldset class="flow_hidden">
-			<div class="roundframe rrc">
+			<div class="roundframe">
 				<div class="title_bar">
 					<h4>
 						<a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
@@ -227,7 +227,7 @@ function template_results()
 		<div class="cat_bar">
 			<h3>', $txt['search_adjust_query'], '</h3>
 		</div>
-		<div class="roundframe rrc">';
+		<div class="roundframe">';
 
 		// Did they make any typos or mistakes, perhaps?
 		if (isset($context['did_you_mean']))
