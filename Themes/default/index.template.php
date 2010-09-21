@@ -95,7 +95,6 @@ function template_html_above()
 
 	// Show all the relative links, such as help, search, contents, and the like.
 	echo '
-	<link rel="help" href="', $scripturl, '?action=help" />
 	<link rel="search" href="', $scripturl, '?action=search" />
 	<link rel="contents" href="', $scripturl, '" />';
 
@@ -397,7 +396,7 @@ function theme_linktree($force_show = false)
 	$shown_linktree = true;
 }
 
-// Show the menu up top. Something like [home] [help] [profile] [logout]...
+// Show the menu up top. Something like [home] [profile] [logout]...
 function template_old_menu()
 {
 	global $context, $settings, $options, $scripturl, $txt;

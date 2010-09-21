@@ -223,7 +223,7 @@ function smf_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'help', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
 	{
 		require_once($sourcedir . '/Subs-Auth.php');
 		return 'KickGuest';
@@ -269,7 +269,6 @@ function smf_main()
 		'emailuser' => array('SendTopic.php', 'EmailUser'),
 		'findmember' => array('Subs-Auth.php', 'JSMembers'),
 		'groups' => array('Groups.php', 'Groups'),
-		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
 		'jseditor' => array('Class-Editor.php', array('wedgeEditor', 'EditorCallback')),
