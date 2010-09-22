@@ -73,13 +73,19 @@ function template_html_above()
 	// Show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<head>
+<head>';
+
+	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
+	echo '
+	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css?rc3" />';
+
+	echo '
 	<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '', '
 	<title>', $context['page_title_html_safe'], '</title>';
 
-	// Please don't index these Mr Robot.
+	// Please don't index these Mr Robotto.
 	if (!empty($context['robot_no_index']))
 		echo '
 	<meta name="robots" content="noindex" />';
@@ -89,11 +95,7 @@ function template_html_above()
 		echo '
 	<link rel="canonical" href="', $context['canonical_url'], '" />';
 
-	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
-	echo '
-	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css?rc3" />';
-
-	// Show all the relative links, such as help, search, contents, and the like.
+	// Show all the relative links, such as search, contents, and the like.
 	echo '
 	<link rel="search" href="', $scripturl, '?action=search" />
 	<link rel="contents" href="', $scripturl, '" />';

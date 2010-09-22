@@ -194,36 +194,36 @@ h1.forumtitle
 	float: right;
 }
 /* float these items to the left */
-#siteslogan, img#wedgelogo
+#siteslogan, #wedgelogo
 {
 	float: left;
 }
 /* the upshrink image needs some tweaking */
-img#upshrink
+#upshrink
 {
 	float: left;
 }
 /* ..so does the SMF logo */
-img#wedgelogo
+#wedgelogo
 {
 	margin-top: .7em;
 	margin-right: 1em;
 }
-#upper_section div.news
+#upper_section .news
 {
 	float: left;
 	text-align: left;
 }
-div#upper_section div.user
+#upper_section .user
 {
 	float: right;
 }
-div#upper_section div.user p
+#upper_section .user p
 {
 	float: right;
 	margin: 0 0 1em 1em;
 }
-div#upper_section div.user ul
+#upper_section .user ul
 {
 	padding-left: 0;
 	padding-right: 10px;
@@ -258,15 +258,15 @@ div#upper_section div.user ul
 	padding: 0 6px 0 0;
 }
 
-dl#ic_recentposts dt
+#ic_recentposts dt
 {
 	float: right;
 }
-dl#ic_recentposts dd
+#ic_recentposts dd
 {
 	text-align: left;
 }
-form#ic_login ul li
+#ic_login ul li
 {
 	float: right;
 	width: 20%;
@@ -277,7 +277,7 @@ form#ic_login ul li
 {
 	text-align: left;
 }
-img#upshrink_ic, img#newsupshrink
+#upshrink_ic, #newsupshrink
 {
 	float: right;
 	margin: 10px 0 0 5px;
@@ -309,7 +309,7 @@ img#upshrink_ic, img#newsupshrink
 	float: left;
 }
 
-h4#pollquestion
+#pollquestion
 {
 	padding: 0.5em 2em 0.5em 0;
 }
@@ -348,7 +348,7 @@ span.percent
 }
 
 /* author and topic information */
-#forumposts h3 span#author
+#forumposts #author
 {
 	float: right;
 	margin: 0 0 0 7.7em;
@@ -591,15 +591,15 @@ ul.post_options li
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
-#personal_messages h3 span#author, #personal_messages h3 span#topic_title
+#personal_messages #author, #personal_messages #topic_title
 {
 	float: right;
 }
-#personal_messages h3 span#author
+#personal_messages #author
 {
 	margin: 0 0.5em 0 0;
 }
-#personal_messages h3 span#topic_title
+#personal_messages #topic_title
 {
 	margin: 0 9em 0 0;
 }
@@ -659,7 +659,7 @@ tr.titlebg td
 {
 	padding-right: 0.7em;
 }
-#admin_menu
+#amen
 {
 	padding-right: 0;
 }
@@ -669,17 +669,17 @@ tr.titlebg td
 }
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
-#left_admsection
+#left_section
 {
 	float: right;
 	padding-right: 0;
 	padding-left: 10px;
 }
-.left_admmenu li
+.left_menu li
 {
 	padding: 0 0.5em 0 0;
 }
-#main_admsection
+#main_section
 {
 	margin-right: 172px;
 	margin-left: 0;
@@ -747,19 +747,19 @@ tr.titlebg td
 	float: right;
 }
 
-#main_admsection #basicinfo h4
+#main_section #basicinfo h4
 {
 	float: right;
 }
-#main_admsection #basicinfo img.avatar
+#main_section #basicinfo img.avatar
 {
 	float: left;
 }
-#main_admsection #basicinfo ul
+#main_section #basicinfo ul
 {
 	clear: right;
 }
-#main_admsection #basicinfo span#userstatus
+#main_section #userstatus
 {
 	clear: right;
 }
@@ -934,11 +934,11 @@ dl.stats dd
 	text-align: right;
 }
 /* Boards picker */
-#searchform fieldset div#searchBoardsExpand ul
+#searchBoardsExpand ul
 {
 	margin: 0 1em 0 0;
 }
-#searchform fieldset div#searchBoardsExpand li
+#searchBoardsExpand li
 {
 	float: right;
 }
@@ -952,25 +952,7 @@ dl.stats dd
 	padding: 5px 0 0 1em;
 }
 
-/* Styles for the help section.
-------------------------------------------------- */
-#helpmain h3.section
-{
-	padding: 0 0.5em 0.5em 0;
-}
-/* put back the bullets please */
-#helpmain ul
-{
-	margin: 0 2em 1em 0;
-	padding-left: 0;
-	padding-right: 1em;
-}
-#helpmain #messageindex
-{
-	clear: left;
-}
-
-/* Styles for the admincenter (reverse admin.css).
+/* Styles for the admincenter (reverse admin.css)
 ------------------------------------------------- */
 #quick_search
 {

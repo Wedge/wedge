@@ -61,7 +61,7 @@ h1.forumtitle
 	float: left;
 }
 /* float these items to the right */
-#siteslogan, img#wedgelogo
+#siteslogan, #wedgelogo
 {
 	margin: 0;
 	padding: 0;
@@ -69,13 +69,13 @@ h1.forumtitle
 	line-height: 3em;
 }
 /* the upshrink image needs some tweaking */
-img#upshrink
+#upshrink
 {
 	float: right;
 	margin: 1em;
 }
 /* ..so does the Wedge logo */
-img#wedgelogo
+#wedgelogo
 {
 	margin-top: .7em;
 	margin-left: 1em;
@@ -92,7 +92,7 @@ img#wedgelogo
 	font-weight: bold;
 	line-height: 1.5em;
 }
-#upper_section div.news
+#upper_section .news
 {
 	width: 50%;
 	float: right;
@@ -106,32 +106,32 @@ img#wedgelogo
 {
 	padding: 4px 0 ;
 }
-div#upper_section div.user
+#upper_section .user
 {
 	width: 50%;
 	float: left;
 	overflow: auto;
 }
-div#upper_section div.user p
+#upper_section .user p
 {
 	float: left;
 	margin: 0 1em 1em 0;
 	padding: 0;
 }
-div#upper_section div.user ul
+#upper_section .user ul
 {
 	margin: 0;
 	padding-left: 10px;
 }
-div#upper_section div.user ul li
+#upper_section .user ul li
 {
 	margin-bottom: 2px;
 }
-div#upper_section div.news p
+#upper_section .news p
 {
 	display: inline;
 }
-div#upper_section div.news form
+#upper_section .news form
 {
 	padding-bottom: 10px;
 }
@@ -227,8 +227,8 @@ table
 	empty-cells: show;
 }
 
-/* Help popups require a different styling of the body element. */
-body#help_popup
+/* Help popups' body */
+#help_popup
 {
 	padding: 1em;
 }
@@ -239,8 +239,8 @@ body, td, th, tr
 	color: #444;
 }
 
-/* This division wraps the entire forum when a forum width is set. */
-div#wrapper
+/* Wraps the entire forum when a forum width is set. */
+#wrapper
 {
 	margin: 0 auto;
 }
@@ -378,6 +378,137 @@ em
 {
 	text-decoration: underline;
 }
+
+
+/* Styles for the dropdown menus.
+------------------------------------------------------- */
+.menu {
+	min-height: 2em;
+	display: block;
+	margin: 0 0 0 10px;
+	padding: 0;
+	clear: both;
+}
+#main_menu {
+	min-height: 0;
+	padding: 0 0 0 0.5em;
+	float: left;
+	margin: 0;
+	width: 98%;
+}
+
+.menu li a {
+	display: block;
+	text-decoration: none;
+	border-left: 4px solid #fbe2c8; /* #c8e2fb */
+	padding: 6px 8px;
+	margin: 0;
+}
+
+.menu h4 {
+	padding: 3px 20px 3px 5px;
+	font-weight: normal;
+	background: url(../images/menu.gif) no-repeat 98% 2px;
+	margin-bottom: 2px;
+	margin-right: 2px;
+}
+.menu h4 a {
+	border: 0;
+	padding: 0;
+}
+.menu ul {
+	background: rgba(255, 248, 240, .95);
+	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
+	position: absolute;
+	display: block;
+	border: 1px solid #666;
+	padding: 0;
+	z-index: 42;
+	box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	-moz-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	-webkit-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	border-radius: 0 10px 10px 0;
+	-moz-border-radius: 0 10px 10px 0;
+	-webkit-border-radius: 0 10px 10px 0;
+}
+
+.menu li ul { visibility: hidden }
+
+.menu li li ul {
+	position: absolute;
+	margin-left: 200px;
+	margin-top: -24px;
+}
+
+.menu li {
+	list-style: none;
+	cursor: pointer;
+	height: auto;
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+.menu li li {
+	display: block;
+	float: none;
+	white-space: nowrap;
+}
+
+.menu li li li { font-size: 0.95em }
+.menu h4:hover, h4.linkOver {
+	background: #c8e2fb url(../images/menu.gif) no-repeat 98% 2px;
+	color: black;
+}
+li.active > a {
+	font-weight: bold;
+}
+.menu li.chosen h4 {
+	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
+	font-weight: bold;
+}
+.menu li.chosen h4 a {
+	color: white;
+}
+li.subsection > a {
+	padding: 6px 24px 6px 8px;
+	background: url(../images/menu.gif) no-repeat 98% -46px;
+}
+.menu > li li:hover, a.linkOver {
+	background: #c8e2fb;
+	color: black;
+	border-radius: 0 9px 9px 0;
+	-moz-border-radius: 0 9px 9px 0;
+	-webkit-border-radius: 0 9px 9px 0;
+}
+
+li.subsection > a:hover, li.subsection > a.linkOver {
+	background: #c8e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
+}
+
+.menu > li > a, .menu h4 {
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+}
+
+#main_menu li.chosen h4, #adm_submenus li.chosen h4 {
+	background-color: #fd9604 !important;
+}
+#adm_submenus {
+	padding-left: 1em;
+	min-height: 2.5em;
+}
+#adm_submenus h4 {
+	background-image: none;
+	padding-right: 6px;
+}
+#admin_content {
+	clear: left;
+	padding-top: 0.5em;
+}
+
 
 /* Common classes to easy styling.
 ------------------------------------------------------- */
@@ -1034,7 +1165,7 @@ div.title_bar
 	margin: 0;
 	padding: 0.5em;
 }
-img#upshrink_ic, img#newsupshrink
+#upshrink_ic, #newsupshrink
 {
 	float: right;
 	margin: 10px 5px 0 0;
@@ -1256,13 +1387,13 @@ form.wrc
 }
 
 /* the navigation list */
-ul#navigation
+#navigation
 {
 	margin: 0;
 	font-size: 0.9em;
 	padding: 1em 0.4em;
 }
-ul#navigation li
+#navigation li
 {
 	float: none;
 	font-size: 0.95em;
@@ -1397,17 +1528,17 @@ p.moderators
 {
 	margin-top: 4px;
 }
-dl#ic_recentposts
+#ic_recentposts
 {
 	margin: 0 0 0.5em 0;
 	padding: 0.5em;
 	line-height: 1.3em;
 }
-dl#ic_recentposts dt
+#ic_recentposts dt
 {
 	float: left;
 }
-dl#ic_recentposts dd
+#ic_recentposts dd
 {
 	text-align: right;
 }
@@ -1433,12 +1564,12 @@ dl#ic_recentposts dd
 	font-size: 1.1em;
 	padding-top: 8px;
 }
-form#ic_login
+#ic_login
 {
 	padding: 0.5em;
 	height: 2em;
 }
-form#ic_login ul li
+#ic_login ul li
 {
 	margin: 0;
 	padding: 0;
@@ -1446,7 +1577,7 @@ form#ic_login ul li
 	width: 20%;
 	text-align: center;
 }
-form#ic_login ul li label
+#ic_login ul li label
 {
 	display: block;
 }
@@ -1546,7 +1677,7 @@ img.new_posts
 {
 	padding: 0 1em;
 }
-h4#pollquestion
+#pollquestion
 {
 	padding: 0 0 0.5em 2em;
 }
@@ -1613,7 +1744,7 @@ h4#pollquestion
 	padding: 0 0.5em 0.5em 0.5em;
 }
 
-div#pollmoderation
+#pollmoderation
 {
 	margin: 0;
 	padding: 0;
@@ -1626,7 +1757,7 @@ div#pollmoderation
 	clear: both;
 }
 /* author and topic information */
-#forumposts h3 span#author
+#forumposts #author
 {
 	float: left;
 	margin: 0 7.7em 0 0;
@@ -1640,7 +1771,7 @@ div#pollmoderation
 {
 	margin-bottom: 3px;
 }
-p#whoisviewing
+#whoisviewing
 {
 	margin: 0;
 	padding: 0.5em;
@@ -1838,10 +1969,6 @@ ul.quickbuttons li.inline_mod_check
 {
 	margin: 1em 0 0 0;
 }
-#forumposts span.botslice
-{
-	clear: both;
-}
 .attachments hr
 {
 	clear: both;
@@ -1861,7 +1988,7 @@ ul.quickbuttons li.inline_mod_check
 
 /* The quick-reply area. Horizontal alignments go a bit wonky in IE6 and IE7 but is it really worth worrying about? */
 
-#quickReplyOptions .roundframe, form#postmodify .roundframe
+#quickReplyOptions .roundframe, #postmodify .roundframe
 {
 	padding-left: 8%;
 	padding-right: 8%;
@@ -2175,7 +2302,7 @@ dl.send_mail dd
 /* Styles for the split topic section.
 ---------------------------------------------------- */
 
-div#selected, div#not_selected
+#selected, #not_selected
 {
 	width: 49%;
 }
@@ -2365,13 +2492,13 @@ tr.titlebg td
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
-.left_admmenu, .left_admmenu ul, .left_admmenu li
+.left_menu, .left_menu ul, .left_menu li
 {
 	padding: 0;
 	margin: 0;
 	list-style: none;
 }
-#left_admsection
+#left_section
 {
 	width: 160px;
 	float: left;
@@ -2387,15 +2514,15 @@ tr.titlebg td
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 5px;
 }
-.left_admmenu li
+.left_menu li
 {
 	padding: 0 0 0 0.5em;
 }
-.left_admmenu
+.left_menu
 {
 	margin-bottom: 0.5em;
 }
-#main_admsection
+#main_section
 {
 	margin-left: 172px;
 }
@@ -2525,7 +2652,7 @@ dl
 	width: 20%;
 	float: left;
 }
-#basicinfo .windowbg .content
+#basicinfo .content
 {
 	padding-left: 20px;
 }
@@ -2565,12 +2692,12 @@ dl
 	margin-right: 5px;
 	height: 20px;
 }
-#basicinfo span#userstatus
+#userstatus
 {
 	display: block;
 	clear: both;
 }
-#basicinfo span#userstatus img
+#userstatus img
 {
 	vertical-align: middle;
 }
@@ -2625,58 +2752,54 @@ dl
 	float: left;
 }
 
-#main_admsection #basicinfo, #main_admsection #detailedinfo
+#main_section #basicinfo, #main_section #detailedinfo
 {
 	width: 100%;
 }
-#main_admsection #basicinfo h4
+#main_section #basicinfo h4
 {
 	float: left;
 	width: 35%;
 }
-#main_admsection #basicinfo img.avatar
+#main_section #basicinfo img.avatar
 {
 	float: right;
 	vertical-align: top;
 }
-#main_admsection #basicinfo ul
+#main_section #basicinfo ul
 {
 	clear: left;
 }
-#main_admsection #basicinfo span#userstatus
+#main_section #userstatus
 {
 	clear: left;
 }
-#main_admsection #basicinfo p#infolinks
+#main_section #infolinks
 {
 	display: none;
 	clear: both;
 }
-#main_admsection #basicinfo .botslice
-{
-	clear: both;
-}
 
 /* Simple feedback messages */
-div#profile_error, div#profile_success
+#profile_error, #profile_success
 {
 	margin: 0 0 1em 0;
 	padding: 1em 2em;
 	border: 1px solid;
 }
-div#profile_error
+#profile_error
 {
 	border-color: red;
 	color: red;
 	background: #fee;
 }
 
-div#profile_error span
+#profile_error span
 {
 	text-decoration: underline;
 }
 
-div#profile_success
+#profile_success
 {
 	border-color: green;
 	color: green;
@@ -3016,15 +3139,15 @@ dl.stats dd
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
-#personal_messages h3 span#author, #personal_messages h3 span#topic_title
+#personal_messages #author, #personal_messages #topic_title
 {
 	float: left;
 }
-#personal_messages h3 span#author
+#personal_messages #author
 {
 	margin: 0 0 0 0.5em;
 }
-#personal_messages h3 span#topic_title
+#personal_messages #topic_title
 {
 	margin: 0 0 0 9em;
 }
@@ -3234,7 +3357,7 @@ span.hidelink
 	padding: 0;
 	border: none;
 }
-#advanced_search dl#search_options
+#advanced_search #search_options
 {
 	margin: 0 auto;
 	width: 600px;
@@ -3277,69 +3400,6 @@ span.hidelink
 	padding: 5px 1em 0 0;
 }
 
-/* Styles for the help section.
-------------------------------------------------- */
-
-#help_container
-{
-	margin: 4px 0 0 0;
-	padding: 0 0 8px 0;
-}
-#helpmain
-{
-	padding: 0 1em;
-}
-
-/* Samples should be easily distinguishable. */
-#helpmain .help_sample
-{
-	border: 1px solid #99a;
-	background: #fff;
-	padding: 1em;
-	overflow: auto;
-	margin-bottom: 1em;
-}
-#helpmain .help_sample .navigate_section
-{
-	margin: 0;
-}
-#helpmain .help_sample .navigate_section ul
-{
-	padding-top: 0;
-	border: none;
-}
-
-/* We need some air between the lines */
-#helpmain p
-{
-	margin: 0 0 1.5em 0;
-	line-height: 1.5em;
-}
-#helpmain ol
-{
-	font-weight: bold;
-	list-style-type: disc;
-	margin-bottom: 1em;
-	margin-top: 1em;
-	line-height: 1.5em;
-}
-#helpmain ol.la
-{
-	font-weight: normal;
-	list-style-type: circle;
-	margin: 0.5em 0 1em 0;
-	padding-left: 1.5em;
-}
-ul.basic_helplist
-{
-	padding: 0.8em 1.5em;
-	line-height: 1.5em;
-}
-#helpmain #messageindex
-{
-	clear: right;
-}
-
 /* Styles for print media.
 ------------------------------------------------------- */
 @media print
@@ -3354,136 +3414,6 @@ ul.basic_helplist
 		border: none;
 	}
 }
-
-/* Styles for the standard dropdown menus.
-------------------------------------------------------- */
-.menu {
-	min-height: 2em;
-	display: block;
-	margin: 0 0 0 10px;
-	padding: 0;
-	clear: both;
-}
-#main_menu {
-	min-height: 0;
-	padding: 0 0 0 0.5em;
-	float: left;
-	margin: 0;
-	width: 98%;
-}
-
-.menu li a {
-	display: block;
-	text-decoration: none;
-	border-left: 4px solid #fbe2c8; /* #c8e2fb */
-	padding: 6px 8px;
-	margin: 0;
-}
-
-.menu h4 {
-	padding: 3px 20px 3px 5px;
-	font-weight: normal;
-	background: url(../images/menu.gif) no-repeat 98% 2px;
-	margin-bottom: 2px;
-	margin-right: 2px;
-}
-.menu h4 a {
-	border: 0;
-	padding: 0;
-}
-.menu ul {
-	background: rgba(255, 248, 240, .95);
-	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
-	position: absolute;
-	display: block;
-	border: 1px solid #666;
-	padding: 0;
-	z-index: 42;
-	box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
-	-moz-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
-	-webkit-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
-	border-radius: 0 10px 10px 0;
-	-moz-border-radius: 0 10px 10px 0;
-	-webkit-border-radius: 0 10px 10px 0;
-}
-
-.menu li ul { visibility: hidden }
-
-.menu li li ul {
-	position: absolute;
-	margin-left: 200px;
-	margin-top: -24px;
-}
-
-.menu li {
-	list-style: none;
-	cursor: pointer;
-	height: auto;
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-}
-
-.menu li li {
-	display: block;
-	float: none;
-	white-space: nowrap;
-}
-
-.menu li li li { font-size: 0.95em }
-.menu h4:hover, h4.linkOver {
-	background: #c8e2fb url(../images/menu.gif) no-repeat 98% 2px;
-	color: black;
-}
-li.active > a {
-	font-weight: bold;
-}
-.menu li.chosen h4 {
-	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
-	font-weight: bold;
-}
-.menu li.chosen h4 a {
-	color: white;
-}
-li.subsection > a {
-	padding: 6px 24px 6px 8px;
-	background: url(../images/menu.gif) no-repeat 98% -46px;
-}
-.menu > li li:hover, a.linkOver {
-	background: #c8e2fb;
-	color: black;
-	border-radius: 0 9px 9px 0;
-	-moz-border-radius: 0 9px 9px 0;
-	-webkit-border-radius: 0 9px 9px 0;
-}
-
-li.subsection > a:hover, li.subsection > a.linkOver {
-	background: #c8e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
-}
-
-.menu > li > a, .menu h4 {
-	border-radius: 6px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-}
-
-#main_menu li.chosen h4, #adm_submenus li.chosen h4 {
-	background-color: #fd9604 !important;
-}
-#adm_submenus {
-	padding-left: 1em;
-	min-height: 2.5em;
-}
-#adm_submenus h4 {
-	background-image: none;
-	padding-right: 6px;
-}
-#admin_content {
-	clear: left;
-	padding-top: 0.5em;
-}
-
 
 
 

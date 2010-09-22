@@ -135,11 +135,11 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 
 /* Overrides for the admin template
 ------------------------------------------------------- */
-#main_admsection
+#main_section
 {
 	height: 655px;
 }
-#main_admsection table
+#main_section table
 {
 	width: 99%;
 }

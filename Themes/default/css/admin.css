@@ -231,7 +231,7 @@ ul.packages li
 	border: none !important;
 	list-style-type: none;
 }
-code#find_code, code#replace_code
+#find_code, #replace_code
 {
 	display: block;
 	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
@@ -331,7 +331,7 @@ pre.file_content
 	vertical-align: middle;
 	padding-bottom: 3px;
 }
-#manage_boards li#recycle_board
+#manage_boards #recycle_board
 {
 	background-color: #dee;
 }
@@ -624,8 +624,7 @@ h3.grid_header
 {
 	margin: 0 0 0 1ex;
 }
-#admincenter span.botslice, #manage_boards span.botslice, #manage_maintenance span.botslice, #manage_mail span.botslice,
-#admincenter div.wrc, #manage_boards div.wrc, #manage_maintenance div.wrc, #manage_mail div.wrc
+#admincenter .wrc, #manage_boards .wrc, #manage_maintenance .wrc, #manage_mail .wrc
 {
 	margin-bottom: 4px;
 }

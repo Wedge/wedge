@@ -120,13 +120,15 @@ function template_folder()
 	// ]]></script>';
 
 	echo '
+
 <form class="flow_hidden" action="', $scripturl, '?action=pm;sa=pmactions;', $context['display_mode'] == 2 ? 'conversation;' : '', 'f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '" method="post" accept-charset="', $context['character_set'], '" name="pmFolder">';
 
 	// If we are not in single display mode show the subjects on the top!
 	if ($context['display_mode'] != 1)
 	{
 		template_subject_list();
-		echo '<div class="clear_right"><br /></div>';
+		echo '
+	<div class="clear_right"><br /></div>';
 	}
 
 	// Got some messages to display?
@@ -135,12 +137,12 @@ function template_folder()
 		// Show the helpful titlebar - generally.
 		if ($context['display_mode'] != 1)
 			echo '
-				<div class="cat_bar">
-					<h3>
-						<span id="author">', $txt['author'], '</span>
-						<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
-					</h3>
-				</div>';
+	<div class="cat_bar">
+		<h3>
+			<span id="author">', $txt['author'], '</span>
+			<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
+		</h3>
+	</div>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.
 		if ($context['display_mode'] == 2)
@@ -153,12 +155,12 @@ function template_folder()
 
 			// Show the conversation buttons.
 			echo '
-					<div class="pagesection">';
+	<div class="pagesection">';
 
 			template_button_strip($conversation_buttons, 'right');
 
 			echo '
-					</div>';
+	</div>';
 		}
 
 		while ($message = $context['get_pmessage']('message'))
@@ -804,15 +806,15 @@ function template_search_results()
 			<div class="cat_bar">
 				<h3>', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
 
-				// Show the recipients.
-				// !!! This doesn't deal with the sent item searching quite right for bcc.
-				if (!empty($message['recipients']['to']))
-					echo implode(', ', $message['recipients']['to']);
-				// Otherwise, we're just going to say "some people"...
-				elseif ($context['folder'] != 'sent')
-					echo '(', $txt['pm_undisclosed_recipients'], ')';
+			// Show the recipients.
+			// !!! This doesn't deal with the sent item searching quite right for bcc.
+			if (!empty($message['recipients']['to']))
+				echo implode(', ', $message['recipients']['to']);
+			// Otherwise, we're just going to say "some people"...
+			elseif ($context['folder'] != 'sent')
+				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
-					echo '
+			echo '
 				</h3>
 			</div>
 			<div class="windowbg', $alternate ? '2' : '', ' wrc">
@@ -820,22 +822,22 @@ function template_search_results()
 					', $message['body'], '
 					<p class="pm_reply righttext middletext">';
 
-				if ($context['can_send_pm'])
-				{
-					$quote_button = create_button('quote.gif', 'reply_quote', 'reply_quote', 'align="middle"');
-					$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'align="middle"');
-					// You can only reply if they are not a guest...
-					if (!$message['member']['is_guest'])
-						echo '
+			if ($context['can_send_pm'])
+			{
+				$quote_button = create_button('quote.gif', 'reply_quote', 'reply_quote', 'align="middle"');
+				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'align="middle"');
+				// You can only reply if they are not a guest...
+				if (!$message['member']['is_guest'])
+					echo '
 								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
 								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
-					// This is for "forwarding" - even if the member is gone.
-					else
-						echo '
+				// This is for "forwarding" - even if the member is gone.
+				else
+					echo '
 								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
-				}
+			}
 
-				echo '
+			echo '
 					</p>
 				</div>
 			</div>';
@@ -890,13 +892,13 @@ function template_send()
 			</div>
 			<div class="windowbg wrc">
 				<div class="content">';
-				if (!empty($context['send_log']['sent']))
-					foreach ($context['send_log']['sent'] as $log_entry)
-						echo '<span class="error">', $log_entry, '</span><br />';
-				if (!empty($context['send_log']['failed']))
-					foreach ($context['send_log']['failed'] as $log_entry)
-						echo '<span class="error">', $log_entry, '</span><br />';
-				echo '
+		if (!empty($context['send_log']['sent']))
+			foreach ($context['send_log']['sent'] as $log_entry)
+				echo '<span class="error">', $log_entry, '</span><br />';
+		if (!empty($context['send_log']['failed']))
+			foreach ($context['send_log']['failed'] as $log_entry)
+				echo '<span class="error">', $log_entry, '</span><br />';
+		echo '
 				</div>
 			</div>
 			<br />';
@@ -1167,7 +1169,7 @@ function template_labels()
 			if ($label['id'] == -1)
 				continue;
 
-				echo '
+			echo '
 			<tr class="', $alternate ? 'windowbg2' : 'windowbg', '">
 				<td>
 					<input type="text" name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30" class="input_text" />
