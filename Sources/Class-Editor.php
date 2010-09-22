@@ -62,7 +62,7 @@ class wedgeEditor
 			'preview_type' => isset($editorOptions['preview_type']) ? (int) $editorOptions['preview_type'] : 1,
 			'labels' => !empty($editorOptions['labels']) ? $editorOptions['labels'] : array(),
 			'custom_bbc_div' => !empty($editorOptions['custom_bbc_div']) ? $editorOptions['custom_bbc_div'] : '',
-			'custom_smileys_div' => !empty($editorOptions['custom_smileys_div']) ? $editorOptions['custom_smileys_div'] : '',
+			'custom_smiley_div' => !empty($editorOptions['custom_smiley_div']) ? $editorOptions['custom_smiley_div'] : '',
 		);
 
 		// Stuff to do once per page only.
@@ -2228,16 +2228,16 @@ class wedgeEditor
 	{
 		global $context, $settings, $options, $txt, $modSettings, $scripturl;
 
-		$smileycontainer = empty($this->custom_smiley_div) ? ('smileyBox_' . $this->id) : $this->custom_smiley_div;
-		$bbccontainer = empty($this->custom_bbc_div) ? ('bbcBox_' . $this->id) : $this->custom_bbc_div;
+		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? ('smileyBox_' . $this->id) : $this->editorOptions['custom_smiley_div'];
+		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? ('bbcBox_' . $this->id) : $this->editorOptions['custom_bbc_div'];
 
 		// Output the bbc area
-		if ($this->show_bbc && empty($this->custom_bbc_div))
+		if ($this->show_bbc && empty($this->editorOptions['custom_bbc_div']))
 			echo '
 		<div id="bbcBox_', $this->id, '"></div>';
 
 		// What about smileys?
-		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && empty($this->custom_smileys_div))
+		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && empty($this->editorOptions['custom_smiley_div']))
 			echo '
 		<div id="smileyBox_', $this->id, '"></div>';
 
