@@ -419,7 +419,7 @@ function template_group_members()
 			</div>
 			<br />
 			<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>

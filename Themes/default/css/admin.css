@@ -1,6 +1,10 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 
+#quick_search form img
+{
+	margin-top: 2px;
+}
 #quick_search form
 {
 	padding: 7px;
@@ -138,9 +142,8 @@ hr.hrcolor
 {
 	margin: 10px 0;
 }
-.title_bar h3
+.title_bar
 {
-	padding: 0;
 	margin: 0 0 3px 0;
 }
 .title_bar h3 form

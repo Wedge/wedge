@@ -40,12 +40,10 @@ function template_error_log()
 			// ]]></script>
 			<div class="title_bar clear_right">
 				<h3>
-					<span class="ie6_header floatleft">
-						<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a> ', $txt['errlog'], '
-					</span>
+					<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['errlog'], '
 				</h3>
 			</div>
-			<table border="0" cellspacing="1" class="table_grid" id="error_log">
+			<table cellspacing="1" class="table_grid" id="error_log">
 				<tr>
 					<td colspan="3" class="windowbg">
 						&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':';
@@ -172,7 +170,7 @@ function template_show_file()
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
 	</head>
 	<body>
-		<table border="0" cellpadding="0" cellspacing="3">';
+		<table cellpadding="0" cellspacing="3">';
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
 		$line_num = $index+$context['file_data']['min'];

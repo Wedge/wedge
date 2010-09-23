@@ -1,4 +1,4 @@
-body, .menu ul
+body, .menu ul, #main_menu, #footer_section
 {
 	background-image: none;
 }
@@ -11,22 +11,7 @@ body, .menu ul
 {
 	margin: 0 4px;
 }
-.cat_bar h3 img.icon, .title_bar h4 img.icon
-{
-	margin: 1px 3px 0 0;
-}
-.cat_bar h3 span.ie6_header, .cat_bar h4 span.ie6_header, .title_bar h3 span.ie6_header, .title_bar h4 span.ie6_header
-{
-	padding: 6px 0;
-}
-#statistics .title_bar h4 span.ie6_header
-{
-	padding: 0;
-}
-#statistics .title_bar h4 span.ie6_header img.icon
-{
-	padding: 5px 0;
-}
+
 /* The dropdown menus
 ------------------------------------------------------- */
 

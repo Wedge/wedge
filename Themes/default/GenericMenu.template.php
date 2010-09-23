@@ -1,7 +1,7 @@
 <?php
 // Version: 2.0 RC3; GenericMenu
 
-// This contains the html for the side bar of the admin center, which is used for all admin pages.
+// This contains the html for the generic sidebar.
 function template_generic_menu_sidebar_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
@@ -21,16 +21,14 @@ function template_generic_menu_sidebar_above()
 	{
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
-			<div class="adm_section">
+			<div class="side_section">
 				<div class="cat_bar">
 					<h4>';
 
 			if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			{
 				echo '
-						<span class="ie6_header floatleft">
-							<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img style="margin: 0 5px; vertical-align: middle;" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>
-						</span>';
+						<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>';
 			}
 
 			else
@@ -78,7 +76,7 @@ function template_generic_menu_sidebar_above()
 		$firstSection = false;
 	}
 
-	// This is where the actual "main content" area for the admin section starts.
+	// This is where the actual "main content" area starts.
 	echo '
 		</div>
 		<div id="main_section">';
@@ -98,7 +96,7 @@ function template_generic_menu_sidebar_below()
 	</div><br class="clear" />';
 }
 
-// This contains the html for the dropdown menu of the admin center, which is used for all admin pages.
+// This contains the html for the generic dropdown menu.
 function template_generic_menu_dropdown_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
@@ -109,7 +107,7 @@ function template_generic_menu_dropdown_above()
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
-	<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="*" /></a>';
+	<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="!" class="floatright" /></a>';
 
 	echo '
 <ul id="amen', $mid > 1 ? '_' . ($mid-1) : '', '" class="menu">';
@@ -179,14 +177,14 @@ function template_generic_menu_dropdown_above()
 
 	// This is the main table - we need it so we can keep the content to the right of it.
 	echo '
-<div id="admin_content">';
+<div id="context">';
 
 	// It's possible that some pages have their own tabs they wanna force...
 	if (!empty($context['tabs']))
 		template_generic_menu_tabs($menu_context);
 }
 
-// Part of the admin layer - used with admin_above to close the table started in it.
+// Part of the template layer - only used to close the earlier div.
 function template_generic_menu_dropdown_below()
 {
 	global $context, $settings, $options;
@@ -223,10 +221,10 @@ function template_generic_menu_tabs(&$menu_context)
 		elseif (!isset($tab_context['tabs'][$id]['label']))
 			$tab_context['tabs'][$id]['label'] = $tab['label'];
 
-		// Has a custom URL defined in the main admin structure?
+		// Has a custom URL been defined in the main structure?
 		if (isset($tab['url']) && !isset($tab_context['tabs'][$id]['url']))
 			$tab_context['tabs'][$id]['url'] = $tab['url'];
-		// Any additional paramaters for the url?
+		// Any additional parameters for the URL?
 		if (isset($tab['add_params']) && !isset($tab_context['tabs'][$id]['add_params']))
 			$tab_context['tabs'][$id]['add_params'] = $tab['add_params'];
 		// Has it been deemed selected?
@@ -250,17 +248,11 @@ function template_generic_menu_tabs(&$menu_context)
 
 	// Show a help item?
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
-	{
 		echo '
-		<span class="ie6_header floatleft">
-			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a>', $tab_context['title'], '
-		</span>';
-	}
+			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $tab_context['title'];
 	else
-	{
 		echo '
 			', $tab_context['title'];
-	}
 
 	echo '
 		</h3>
@@ -274,9 +266,9 @@ function template_generic_menu_tabs(&$menu_context)
 		', !empty($selected_tab['description']) ? $selected_tab['description'] : $tab_context['description'], '
 	</p>';
 
-		// The admin tabs.
+		// The tabs.
 		echo '
-	<ul id="adm_submenus" class="menu">';
+	<ul class="menu" id="context_menus">';
 
 		// Print out all the items in this tab.
 		foreach ($tab_context['tabs'] as $sa => $tab)

@@ -23,7 +23,7 @@ function template_permission_index()
 			</div>';
 
 	echo '
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th">', $txt['membergroups_name'], '</th>
@@ -88,9 +88,7 @@ function template_permission_index()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft">
-						<img src="', $settings['images_url'], '/', empty($context['show_advanced_options']) ? 'selected' : 'sort_down', '.gif" id="permissions_panel_toggle" alt="*" /> ', $txt['permissions_advanced_options'], '
-					</span>
+					<img src="', $settings['images_url'], '/', empty($context['show_advanced_options']) ? 'selected' : 'sort_down', '.gif" id="permissions_panel_toggle" alt="*" /> ', $txt['permissions_advanced_options'], '
 				</h3>
 			</div>
 			<div id="permissions_panel_advanced" class="windowbg wrc">
@@ -354,7 +352,7 @@ function template_edit_profiles()
 				<h3>', $txt['permissions_profile_edit'], '</h3>
 			</div>
 
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th">', $txt['permissions_profile_name'], '</th>
@@ -555,7 +553,7 @@ function template_modify_group_simple($type)
 	$disable_field = $context['profile']['can_modify'] ? '' : 'disabled="disabled" ';
 
 	echo '
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th colspan="2" width="100%" align="left" class="first_th"></th>';
@@ -837,7 +835,7 @@ function template_modify_group_classic($type)
 	foreach ($permission_type['columns'] as $column)
 	{
 		echo '
-						<table width="49%" class="table_grid perm_classic floatleft">';
+						<table width="49%" class="table_grid perm_classic floatleft" cellspacing="0">';
 
 		foreach ($column as $permissionGroup)
 		{
@@ -1084,7 +1082,7 @@ function template_postmod_permissions()
 					</select>
 					<input type="submit" value="', $txt['go'], '" class="button_submit" />
 			</div>
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th"></th>

@@ -12,9 +12,7 @@ function template_main()
 		</div>
 		<div class="title_bar">
 			<h4>
-				<span class="ie6_header floatleft">
-					<img src="', $settings['images_url'], '/stats_info.gif" class="icon" alt="" /> ', $txt['general_stats'], '
-				</span>
+				<img src="', $settings['images_url'], '/stats_info.gif" alt="" />', $txt['general_stats'], '
 			</h4>
 		</div>
 		<div class="flow_hidden">
@@ -83,120 +81,112 @@ function template_main()
 			<div id="top_posters">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_posters.gif" class="icon" alt="" /> ', $txt['top_posters'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_posters.gif" alt="" />', $txt['top_posters'], '
 					</h4>
 				</div>
-					<div class="windowbg2 wrc">
-						<div class="content">
-							<dl class="stats">';
+				<div class="windowbg2 wrc">
+					<div class="content">
+						<dl class="stats">';
 
 	foreach ($context['top_posters'] as $poster)
 	{
 		echo '
-								<dt>
-									', $poster['link'], '
-								</dt>
-								<dd class="statsbar">';
+							<dt>
+								', $poster['link'], '
+							</dt>
+							<dd class="statsbar">';
 
 		if (!empty($poster['post_percent']))
 			echo '
-									<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
-										<div style="width: ', $poster['post_percent'], 'px;"></div>
-									</div>';
+								<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
+									<div style="width: ', $poster['post_percent'], 'px;"></div>
+								</div>';
 
 		echo '
-									<span class="righttext">', $poster['num_posts'], '</span>
-								</dd>';
+								<span class="righttext">', $poster['num_posts'], '</span>
+							</dd>';
 	}
 
 	echo '
-							</dl>
-							<div class="clear"></div>
-						</div>
+						</dl>
+						<div class="clear"></div>
 					</div>
+				</div>
 			</div>
 			<div id="top_boards">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_board.gif" class="icon" alt="" /> ', $txt['top_boards'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_board.gif" alt="" />', $txt['top_boards'], '
 					</h4>
 				</div>
-					<div class="windowbg2 wrc">
-						<div class="content">
-							<dl class="stats">';
+				<div class="windowbg2 wrc">
+					<div class="content">
+						<dl class="stats">';
 
 	foreach ($context['top_boards'] as $board)
 	{
 		echo '
-								<dt>
-									', $board['link'], '
-								</dt>
-								<dd class="statsbar">';
+							<dt>
+								', $board['link'], '
+							</dt>
+							<dd class="statsbar">';
 
 		if (!empty($board['post_percent']))
 			echo '
-									<div class="bar" style="width: ', $board['post_percent'] + 4, 'px;">
-										<div style="width: ', $board['post_percent'], 'px;"></div>
-									</div>';
+								<div class="bar" style="width: ', $board['post_percent'] + 4, 'px;">
+									<div style="width: ', $board['post_percent'], 'px;"></div>
+								</div>';
 		echo '
-									<span class="righttext">', $board['num_posts'], '</span>
-								</dd>';
+								<span class="righttext">', $board['num_posts'], '</span>
+							</dd>';
 	}
 
 	echo '
-							</dl>
-							<div class="clear"></div>
-						</div>
+						</dl>
+						<div class="clear"></div>
 					</div>
+				</div>
 			</div>
 		</div>
 		<div class="flow_hidden">
 			<div id="top_topics_replies">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_replies.gif" class="icon" alt="" /> ', $txt['top_topics_replies'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['top_topics_replies'], '
 					</h4>
 				</div>
-					<div class="windowbg2 wrc">
-						<div class="content">
-							<dl class="stats">';
+				<div class="windowbg2 wrc">
+					<div class="content">
+						<dl class="stats">';
 
 	foreach ($context['top_topics_replies'] as $topic)
 	{
 		echo '
-								<dt>
-									', $topic['link'], '
-								</dt>
-								<dd class="statsbar">';
+							<dt>
+								', $topic['link'], '
+							</dt>
+							<dd class="statsbar">';
 		if (!empty($topic['post_percent']))
 			echo '
-									<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
-										<div style="width: ', $topic['post_percent'], 'px;"></div>
-									</div>';
+								<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
+									<div style="width: ', $topic['post_percent'], 'px;"></div>
+								</div>';
 
 		echo '
-									<span class="righttext">' . $topic['num_replies'] . '</span>
-								</dd>';
+								<span class="righttext">' . $topic['num_replies'] . '</span>
+							</dd>';
 	}
 	echo '
-							</dl>
-							<div class="clear"></div>
-						</div>
+						</dl>
+						<div class="clear"></div>
 					</div>
+				</div>
 			</div>
 
 			<div id="top_topics_views">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_views.gif" class="icon" alt="" /> ', $txt['top_topics_views'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_views.gif" alt="" />', $txt['top_topics_views'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -231,9 +221,7 @@ function template_main()
 			<div id="top_topics_starter">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_replies.gif" class="icon" alt="" /> ', $txt['top_starters'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['top_starters'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -268,9 +256,7 @@ function template_main()
 			<div id="most_online">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft">
-							<img src="', $settings['images_url'], '/stats_views.gif" class="icon" alt="" /> ', $txt['most_time_online'], '
-						</span>
+						<img src="', $settings['images_url'], '/stats_views.gif" alt="" />', $txt['most_time_online'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -307,16 +293,14 @@ function template_main()
 		<div class="flow_hidden">
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft">
-						<img src="', $settings['images_url'], '/stats_history.gif" class="icon" alt="" /> ', $txt['forum_history'], '
-					</span>
+					<img src="', $settings['images_url'], '/stats_history.gif" alt="" />', $txt['forum_history'], '
 				</h3>
 			</div>';
 
 	if (!empty($context['yearly']))
 	{
 		echo '
-		<table border="0" width="100%" cellspacing="0" cellpadding="4" class="table_grid" id="stats">
+		<table width="100%" class="table_grid" cellspacing="0" cellpadding="4" id="stats">
 			<thead>
 				<tr class="titlebg" valign="middle" align="center">
 					<th class="first_th lefttext" width="25%">', $txt['yearly_summary'], '</th>

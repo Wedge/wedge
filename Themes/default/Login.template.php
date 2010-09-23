@@ -13,7 +13,7 @@ function template_login()
 		<div class="tborder login">
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
+					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">';
@@ -96,7 +96,7 @@ function template_kick_guest()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '
+					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">
@@ -188,7 +188,7 @@ function template_admin_login()
 	<div class="tborder login" id="admin_login">
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" class="icon" /> ', $txt['login'], '</span>
+				<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
 			</h3>
 		</div>
 		<div class="roundframe centertext">';

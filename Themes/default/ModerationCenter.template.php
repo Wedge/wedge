@@ -47,7 +47,7 @@ function template_latest_news()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a> ', $txt['mc_latest_news'], '</span>
+				<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">
@@ -424,7 +424,7 @@ function template_unapproved_attachments()
 			<div class="pagesection">
 				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
 			</div>
-			<table class="table_grid" width="100%">
+			<table width="100%" class="table_grid" cellspacing="0">
 			<thead>
 				<tr class="catbg">
 					<th>', $txt['mc_unapproved_attach_name'], '</th>
@@ -500,9 +500,6 @@ function template_viewmodreport()
 			</div>
 			<div class="title_bar">
 				<h3>
-					<span class="floatleft">
-						', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
-					</span>
 					<span class="floatright">';
 
 		// Make the buttons.
@@ -514,6 +511,7 @@ function template_viewmodreport()
 						<a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(\'' . $txt['mc_reportedp_ignore_confirm'] . '\');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a>
 						<a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
 					</span>
+					', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -570,7 +568,7 @@ function template_viewmodreport()
 			<div class="cat_bar">
 				<h3>', $txt['mc_modreport_modactions'], '</h3>
 			</div>
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th>', $txt['modlog_action'], '</th>

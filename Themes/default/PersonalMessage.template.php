@@ -524,7 +524,7 @@ function template_subject_list()
 	global $context, $options, $settings, $modSettings, $txt, $scripturl;
 
 	echo '
-	<table width="100%" class="table_grid">
+	<table width="100%" class="table_grid" cellspacing="0">
 	<thead>
 		<tr class="catbg">
 			<th align="center" width="4%" class="first_th">
@@ -737,7 +737,7 @@ function template_search()
 			<div class="roundframe">
 				<div class="title_bar">
 					<h4>
-						<span class="ie6_header floatleft"><a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a></span>
+						<a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" alt="" /></a> <a href="javascript:void(0);" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
 					</h4>
 				</div>
 				<ul id="searchLabelsExpand" class="reset" ', $context['check_all'] ? 'style="display: none;"' : '', '>';
@@ -779,7 +779,7 @@ function template_search_results()
 	// complete results ?
 	if (empty($context['search_params']['show_complete']) && !empty($context['personal_messages']))
 		echo '
-	<table width="100%" class="table_grid">
+	<table width="100%" class="table_grid" cellspacing="0">
 	<thead>
 		<tr class="catbg">
 			<th class="lefttext first_th" width="30%">', $txt['date'], '</th>
@@ -887,11 +887,11 @@ function template_send()
 	if (!empty($context['send_log']))
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>', $txt['pm_send_report'], '</h3>
-			</div>
-			<div class="windowbg wrc">
-				<div class="content">';
+	<div class="cat_bar">
+		<h3>', $txt['pm_send_report'], '</h3>
+	</div>
+	<div class="windowbg wrc">
+		<div class="content">';
 		if (!empty($context['send_log']['sent']))
 			foreach ($context['send_log']['sent'] as $log_entry)
 				echo '<span class="error">', $log_entry, '</span><br />';
@@ -899,31 +899,31 @@ function template_send()
 			foreach ($context['send_log']['failed'] as $log_entry)
 				echo '<span class="error">', $log_entry, '</span><br />';
 		echo '
-				</div>
-			</div>
-			<br />';
+		</div>
+	</div>
+	<br />';
 	}
 
 	// Show the preview of the personal message.
 	if (isset($context['preview_message']))
-	echo '
-		<div class="cat_bar">
-			<h3>', $context['preview_subject'], '</h3>
+		echo '
+	<div class="cat_bar">
+		<h3>', $context['preview_subject'], '</h3>
+	</div>
+	<div class="windowbg wrc">
+		<div class="content">
+			', $context['preview_message'], '
 		</div>
-		<div class="windowbg wrc">
-			<div class="content">
-				', $context['preview_message'], '
-			</div>
-		</div>
-		<br />';
+	</div>
+	<br />';
 
 	// Main message editing box.
 	echo '
-		<div class="cat_bar">
-			<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '" />&nbsp;', $txt['new_message'], '</span>
-			</h3>
-		</div>';
+	<div class="cat_bar">
+		<h3>
+			<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '" />&nbsp;', $txt['new_message'], '
+		</h3>
+	</div>';
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">
@@ -1042,49 +1042,46 @@ function template_send()
 	</div>';
 
 	echo '
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/PersonalMessage.js?rc3"></script>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var oPersonalMessageSend = new smf_PersonalMessageSend({
-				sSelf: \'oPersonalMessageSend\',
-				sSessionId: \'', $context['session_id'], '\',
-				sSessionVar: \'', $context['session_var'], '\',
-				sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
-				sToControlId: \'to_control\',
-				aToRecipients: [';
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/PersonalMessage.js?rc3"></script>
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+	<script type="text/javascript"><!-- // --><![CDATA[
+		var oPersonalMessageSend = new smf_PersonalMessageSend({
+			sSelf: \'oPersonalMessageSend\',
+			sSessionId: \'', $context['session_id'], '\',
+			sSessionVar: \'', $context['session_var'], '\',
+			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sToControlId: \'to_control\',
+			aToRecipients: [';
 	foreach ($context['recipients']['to'] as $i => $member)
 		echo '
-					{
-						sItemId: ', JavaScriptEscape($member['id']), ',
-						sItemName: ', JavaScriptEscape($member['name']), '
-					}', $i == count($context['recipients']['to']) - 1 ? '' : ',';
+				{
+					sItemId: ', JavaScriptEscape($member['id']), ',
+					sItemName: ', JavaScriptEscape($member['name']), '
+				}', $i == count($context['recipients']['to']) - 1 ? '' : ',';
 
 	echo '
-				],
-				aBccRecipients: [';
+			],
+			aBccRecipients: [';
 	foreach ($context['recipients']['bcc'] as $i => $member)
 		echo '
-					{
-						sItemId: ', JavaScriptEscape($member['id']), ',
-						sItemName: ', JavaScriptEscape($member['name']), '
-					}', $i == count($context['recipients']['bcc']) - 1 ? '' : ',';
+				{
+					sItemId: ', JavaScriptEscape($member['id']), ',
+					sItemName: ', JavaScriptEscape($member['name']), '
+				}', $i == count($context['recipients']['bcc']) - 1 ? '' : ',';
 
 	echo '
-				],
-				sBccControlId: \'bcc_control\',
-				sBccDivId: \'bcc_div\',
-				sBccDivId2: \'bcc_div2\',
-				sBccLinkId: \'bcc_link\',
-				sBccLinkContainerId: \'bcc_link_container\',
-				bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
-				sShowBccLinkTemplate: ', JavaScriptEscape('
-					<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this.href);">(?)</a>'
-				), '
-			});
-		';
-
-	echo '
-		// ]]></script>';
+			],
+			sBccControlId: \'bcc_control\',
+			sBccDivId: \'bcc_div\',
+			sBccDivId2: \'bcc_div2\',
+			sBccLinkId: \'bcc_link\',
+			sBccLinkContainerId: \'bcc_link_container\',
+			bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
+			sShowBccLinkTemplate: ', JavaScriptEscape('
+				<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this.href);">(?)</a>'
+			), '
+		});
+	// ]]></script>';
 }
 
 // This template asks the user whether they wish to empty out their folder/messages.
@@ -1139,7 +1136,7 @@ function template_labels()
 		<div class="description">
 			', $txt['pm_labels_desc'], '
 		</div>
-		<table width="100%" class="table_grid">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th class="lefttext first_th">
@@ -1301,7 +1298,7 @@ function template_rules()
 		<div class="description">
 			', $txt['pm_manage_rules_desc'], '
 		</div>
-		<table width="100%" class="table_grid">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th class="lefttext first_th">

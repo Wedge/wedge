@@ -12,9 +12,8 @@ function template_main()
 			<input type="hidden" value="0" name="options[theme_allow]" />
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" align="top" /></a>
+					<a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
 					', $txt['themeadmin_title'], '
-					</span>
 				</h3>
 			</div>
 			<div class="information">
@@ -92,7 +91,7 @@ function template_main()
 		<br />
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '</span>
+				<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">
@@ -113,7 +112,7 @@ function template_main()
 		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="', $context['character_set'], '" enctype="multipart/form-data" onsubmit="return confirm(\'', $txt['theme_install_new_confirm'], '\');">
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_install'], '</span>
+					<a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_install'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -207,8 +206,7 @@ function template_list_themes()
 	{
 		echo '
 			<div class="title_bar">
-				<h3>
-					<span class="floatleft"><strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '</span>';
+				<h3>';
 
 			// You *cannot* delete the default theme. It's important!
 			if ($theme['id'] != 1)
@@ -216,6 +214,7 @@ function template_list_themes()
 					<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(\'', $txt['theme_remove_confirm'], '\');"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '" /></a></span>';
 
 			echo '
+					<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -397,7 +396,7 @@ function template_set_settings()
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar">
 				<h3>
-					<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="icon" /></a> ', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '</span>
+					<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
 				</h3>
 			</div>';
 
@@ -406,7 +405,7 @@ function template_set_settings()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_edit'], '</span>
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_edit'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -425,7 +424,7 @@ function template_set_settings()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_url_config'], '</span>
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_url_config'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -465,7 +464,7 @@ function template_set_settings()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" align="top" /> ', $txt['theme_variants'], '</span>
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" align="top" /> ', $txt['theme_variants'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -500,7 +499,7 @@ function template_set_settings()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="icon" /> ', $txt['theme_options'], '</span>
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_options'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -824,7 +823,7 @@ function template_edit_browse()
 
 	echo '
 	<div id="admincenter">
-		<table width="100%" class="table_grid tborder">
+		<table width="100%" class="table_grid tborder" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th class="lefttext first_th" scope="col" width="50%">', $txt['themeadmin_edit_filename'], '</th>

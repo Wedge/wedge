@@ -84,7 +84,6 @@ h1.forumtitle
 #upper_section
 {
 	padding: 5px;
-	margin-bottom: 1.5em;
 }
 #upper_section ul li.greeting
 {
@@ -104,7 +103,7 @@ h1.forumtitle
 }
 #guest_form .info
 {
-	padding: 4px 0 ;
+	padding: 4px 0;
 }
 #upper_section .user
 {
@@ -135,12 +134,11 @@ h1.forumtitle
 {
 	padding-bottom: 10px;
 }
-/* clearing the floats */
 #top_section
 {
-	min-height: 65px;
 	overflow: hidden;
-	margin-bottom: 3px;
+	margin: 0 -20px 6px -20px;
+	padding: 6px 20px 10px 20px;
 }
 #upper_section
 {
@@ -158,8 +156,7 @@ h1.forumtitle
 	display: block;
 	margin: 0;
 	font-size: 0.9em;
-	padding: 1em 0 0.5em 0;
-	border-top: 1px solid #ccc;
+	padding: 0.5em 0;
 	overflow: hidden;
 	list-style: none;
 	clear: both;
@@ -177,7 +174,7 @@ h1.forumtitle
 {
 	text-align: center;
 	padding-left: 20px;
-	background: #f4f2f3;
+	background: #f4f2f3 url(../images/theme/grad250.png) 0 -180px repeat-x;
 	border: 1px solid #999;
 	border-top: 1px solid #ccc;
 	border-radius: 0 0 12px 12px;
@@ -318,7 +315,7 @@ input.input_check, input.input_radio
 }
 .cat_bar h3 input.input_check
 {
-	margin: 9px 7px 0 7px;
+	margin: 5px -3px 0 7px;
 }
 
 /* Give disabled text input elements a different background color. */
@@ -385,16 +382,17 @@ em
 .menu {
 	min-height: 2em;
 	display: block;
-	margin: 0 0 0 10px;
-	padding: 0;
-	clear: both;
+	margin: 0;
+	padding: 5px 5px 2px 5px !important;
+	clear: left;
 }
 #main_menu {
 	min-height: 0;
-	padding: 0 0 0 0.5em;
 	float: left;
-	margin: 0;
-	width: 98%;
+	width: 99.8%;
+	background: url(../images/theme/grad250.png) 0 -150px repeat-x;
+	border: 1px dotted black;
+	border-width: 1px 0;
 }
 
 .menu li a {
@@ -493,18 +491,25 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 	-webkit-border-radius: 6px;
 }
 
-#main_menu li.chosen h4, #adm_submenus li.chosen h4 {
+#main_menu h4:hover, #main_menu h4.linkOver {
+	background: #5a6c85 url(../images/menu.gif) no-repeat 98% -28px;
+}
+#main_menu h4:hover a, #main_menu h4.linkOver a {
+	color: white;
+}
+#main_menu li.chosen h4, #context_menus li.chosen h4 {
 	background-color: #fd9604 !important;
 }
-#adm_submenus {
+#context_menus {
 	padding-left: 1em;
 	min-height: 2.5em;
+	clear: none;
 }
-#adm_submenus h4 {
+#context_menus h4 {
 	background-image: none;
 	padding-right: 6px;
 }
-#admin_content {
+#context {
 	clear: left;
 	padding-top: 0.5em;
 }
@@ -1101,11 +1106,24 @@ dl.settings dt a img
 
 /* Styles for rounded headers.
 ------------------------------------------------------- */
+.cat_bar, .title_bar
+{
+	max-height: 150px;
+	padding: 6px 9px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.cat_bar {
+	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
+}
+.title_bar {
+	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
+}
+
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
 {
-	overflow: hidden;
-	height: 31px;
-	line-height: 32px;
+	line-height: 20px;
 	font-family: Georgia;
 	font-size: 1.3em;
 	font-weight: normal;
@@ -1129,35 +1147,24 @@ dl.settings dt a img
 	color: #53616f;
 	text-decoration: none;
 }
-.cat_bar h3 img.icon, .title_bar h4 img.icon
+.cat_bar img, .title_bar img
 {
+	float: left;
 	vertical-align: middle;
-	margin: -2px 5px 0 0;
+	margin-right: 0.5em;
+	margin-top: 2px;
 }
-.cat_bar h4 a.toggle img
+.cat_bar h4 img, .title_bar h4 img
 {
-	vertical-align: middle;
-	margin: -2px 5px 0 5px;
+	margin-top: 1px;
+}
+.cat_bar img[alt="+"], .cat_bar img[alt="!"]
+{
+	margin-top: 4px;
 }
 .cat_bar h4, .title_bar h4, .title_bar h3, .cat_bar h3, .table_list tbody.header td.catbg
 {
 	padding-right: 9px;
-}
-.title_bar h4 img.icon
-{
-	float: left;
-	margin: 7px 8px 0 0;
-}
-div.cat_bar
-{
-	height: 31px;
-	padding-left: 9px;
-	overflow: hidden;
-}
-div.title_bar
-{
-	padding-left: 9px;
-	overflow: hidden;
 }
 
 #upshrinkHeaderIC p.pminfo
@@ -1165,10 +1172,10 @@ div.title_bar
 	margin: 0;
 	padding: 0.5em;
 }
-#upshrink_ic, #newsupshrink
+#upshrink_ic
 {
 	float: right;
-	margin: 10px 5px 0 0;
+	margin: 4px -5px 0 0;
 }
 table.table_list a.unreadlink, table.table_list a.collapse
 {
@@ -1176,7 +1183,7 @@ table.table_list a.unreadlink, table.table_list a.collapse
 }
 table.table_list a.collapse
 {
-	margin: 10px 5px 0 1em;
+	margin: 4px -5px 0 1em;
 }
 
 /* The half-round header bars for some tables. */
@@ -1202,7 +1209,7 @@ table.table_list a.collapse
 /* a general table class */
 table.table_grid
 {
-	border-collapse: collapse;
+	border-collapse: separate;
 	margin-top: 0.1em;
 }
 table.table_grid td
@@ -1313,7 +1320,6 @@ form.wrc
 /* The dropdown menu toggle image */
 #menu_toggle
 {
-	float: right;
 	margin-right: 10px;
 	padding-top: 3px;
 }
@@ -1606,10 +1612,6 @@ img.new_posts
 	clear: both;
 }
 /* the page navigation area */
-.childboards
-{
-	margin-bottom: 0.2em;
-}
 #childboards .table_list thead
 {
 	display: none;
@@ -1761,11 +1763,6 @@ img.new_posts
 {
 	float: left;
 	margin: 0 7.7em 0 0;
-}
-#forumposts h3 img
-{
-	float: left;
-	margin: 4px 0.5em 0 0;
 }
 #forumposts .cat_bar
 {
@@ -2464,20 +2461,13 @@ dl.register_form dd
 	margin-right: 1em;
 }
 
-/* common for all admin sections */
-.title_bar img
-{
-	vertical-align: middle;
-	margin-right: 0.5em;
-	margin-top: -1px;
-}
 tr.titlebg td
 {
 	padding-left: 0.7em;
 }
 
 /* Custom profile fields like to play with us some times. */
-#admin_content .custom_field
+#context .custom_field
 {
 	margin-bottom: 15px;
 }
@@ -2504,14 +2494,13 @@ tr.titlebg td
 	float: left;
 	padding-right: 10px;
 }
-.adm_section .title_bar h4
+.side_section .title_bar h4
 {
 	font-size: 95%;
 	margin-bottom: 5px;
 }
-#adm_container
+#main_container
 {
-	border-bottom: 1px solid #ccc;
 	margin-bottom: 5px;
 }
 .left_menu li
@@ -2649,6 +2638,7 @@ dl
 /* The basic user info on the left */
 #basicinfo
 {
+	margin-top: 10px;
 	width: 20%;
 	float: left;
 }
@@ -2658,6 +2648,7 @@ dl
 }
 #detailedinfo
 {
+	margin-top: 10px;
 	width: 79.5%;
 	float: right;
 }
@@ -2750,6 +2741,7 @@ dl
 #avatar_server_stored div
 {
 	float: left;
+	padding: 0 3px;
 }
 
 #main_section #basicinfo, #main_section #detailedinfo
@@ -3066,9 +3058,9 @@ dl
 {
 	padding: 0.5em 0;
 }
-#statistics div.title_bar
+#statistics .title_bar
 {
-	margin: 4px 0 -2px 0;
+	margin: 4px 0;
 }
 #statistics .cat_bar h3
 {
@@ -3436,20 +3428,6 @@ tr.catbg td, tr.catbg th {
 	border-radius: 5px;
 }
 
-div.cat_bar, div.title_bar {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-
-div.cat_bar {
-	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
-}
-div.title_bar {
-	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
-}
-
-
 #upshrinkHeaderIC .cat_bar h3, #upshrinkHeaderIC .title_bar h4 {
 	font-size: 1.1em;
 }
@@ -3459,7 +3437,6 @@ tr.catbg th {
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
 }
-table.table_grid { border-collapse: separate } /* Fixing an Opera and Firefox issue... May not be worth it. */
 th.first_th {
 	border-radius: 8px 0 0 0;
 	-moz-border-radius: 8px 0 0 0;

@@ -9,12 +9,11 @@ function template_admin()
 	// Welcome message for the admin.
 	echo '
 	<div id="admincenter">
-		<div class="title_bar">
-			<h3>';
+		<div class="title_bar">';
 
 	if ($context['user']['is_admin'])
 		echo '
-			<object id="quick_search">
+			<h3 id="quick_search">
 				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="', $context['character_set'], '" class="floatright">
 					<img src="', $settings['images_url'], '/filter.gif" alt="" />
 					<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text" />
@@ -24,10 +23,13 @@ function template_admin()
 						<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_online'], '</option>
 					</select>
 					<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit" />
-				</form>
-			</object>';
+				</form>';
+	else
+		echo '
+			<h3>';
 
-	echo $txt['admin_center'], '
+	echo '
+				', $txt['admin_center'], '
 			</h3>
 		</div>
 		<div class="roundframe">
@@ -47,7 +49,7 @@ function template_admin()
 			<div id="live_news" class="floatleft">
 				<div class="cat_bar">
 					<h3>
-						<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" /></a> ', $txt['live'], '</span>
+						<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
 					</h3>
 				</div>
 				<div class="windowbg wrc">
@@ -113,7 +115,7 @@ function template_admin()
 	foreach ($context['quick_admin_tasks'] as $task)
 		echo '
 					<li>
-						', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image png_fix" /></a>' : '', '
+						', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image" /></a>' : '', '
 						<h5>', $task['link'], '</h5>
 						<span class="task">', $task['description'], '</span>
 					</li>';
@@ -270,7 +272,7 @@ function template_credits()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '</span>
+				<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -392,7 +394,7 @@ function template_view_versions()
 			</h3>
 		</div>
 		<div class="information">', $txt['version_check_desc'], '</div>
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg" align="left">
 						<th class="first_th" scope="col" width="50%">
@@ -438,7 +440,7 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table id="Sources" width="100%" class="table_grid">
+			<table id="Sources" width="100%" class="table_grid" cellspacing="0">
 			<tbody>';
 
 	// Loop through every source file displaying its version - using javascript.
@@ -461,7 +463,7 @@ function template_view_versions()
 			</tbody>
 			</table>
 
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<tbody>
 					<tr>
 						<td class="windowbg" width="50%">
@@ -477,7 +479,7 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table id="Default" width="100%" class="table_grid">
+			<table id="Default" width="100%" class="table_grid" cellspacing="0">
 				<tbody>';
 
 	foreach ($context['default_template_versions'] as $filename => $version)
@@ -499,7 +501,7 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<tbody>
 					<tr>
 						<td class="windowbg" width="50%">
@@ -515,7 +517,7 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table id="Languages" width="100%" class="table_grid">
+			<table id="Languages" width="100%" class="table_grid" cellspacing="0">
 				<tbody>';
 
 	foreach ($context['default_language_versions'] as $language => $files)
@@ -543,7 +545,7 @@ function template_view_versions()
 	if (!empty($context['template_versions']))
 	{
 		echo '
-			<table width="100%" class="table_grid">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<tbody>
 					<tr>
 						<td class="windowbg" width="50%">
@@ -559,7 +561,7 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table id="Templates" width="100%" class="table_grid">
+			<table id="Templates" width="100%" class="table_grid" cellspacing="0">
 				<tbody>';
 
 		foreach ($context['template_versions'] as $filename => $version)
@@ -892,8 +894,7 @@ function template_show_settings()
 						</dt>';
 
 				echo '
-						<dd', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>',
-							$config_var['preinput'];
+						<dd', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>', $config_var['preinput'];
 
 				// Show a check box.
 				if ($config_var['type'] == 'check')
@@ -951,9 +952,9 @@ function template_show_settings()
 					echo '
 							<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
 
-				echo isset($config_var['postinput']) ? '
-							' . $config_var['postinput'] : '',
-						'</dd>';
+				echo !empty($config_var['postinput']) ? '
+							' . $config_var['postinput'] : '', '
+						</dd>';
 			}
 		}
 
@@ -1399,7 +1400,7 @@ function template_core_features()
 		echo '
 			<div class="windowbg', $alternate ? '2' : '', ' wrc">
 				<div class="content features">
-					<img class="features_image png_fix" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
+					<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
 					<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
 						<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
 							<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '" /><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" id="switch_', $id, '" style="margin-top: 1.3em;" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" />
@@ -1481,7 +1482,7 @@ function template_add_language()
 		echo '
 			<div class="information">', $txt['add_language_smf_found'], '</div>
 
-				<table class="table_grid" cellspacing="0" width="100%">
+				<table width="100%" class="table_grid" cellspacing="0">
 					<thead>
 						<tr class="catbg">
 							<th class="first_th" scope="col">', $txt['name'], '</th>
@@ -1577,7 +1578,7 @@ function template_download_language()
 					', $txt['languages_download_theme_files'], '
 				</h3>
 			</div>
-			<table class="table_grid" cellspacing="0" width="100%">
+			<table width="100%" class="table_grid" cellspacing="0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th" scope="col">

@@ -99,7 +99,7 @@ function template_view_package()
 		echo '
 					', $txt['perform_actions'], '
 			</div>
-			<table class="table_grid" width="100%">
+			<table width="100%" class="table_grid" cellspacing="0">
 			<thead>
 				<tr class="catbg">
 					<th scope="col" width="20"></th>
@@ -188,7 +188,7 @@ function template_view_package()
 				<div class="information">
 					', $txt['package_other_themes_desc'], '
 				</div>
-				<table class="table_grid" width="100%">';
+				<table width="100%" class="table_grid" cellspacing="0">';
 
 			// Loop through each theme and display it's name, and then it's details.
 			foreach ($context['theme_actions'] as $id => $theme)
@@ -498,7 +498,7 @@ function template_view_installed()
 	else
 	{
 		echo '
-		<table class="table_grid" width="100%">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th scope="col" width="32"></th>
@@ -542,7 +542,7 @@ function template_browse()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this.href);" class="help"><img class="icon" src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a> ', $txt['packages_latest'], '</span>
+				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>', $txt['packages_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -600,7 +600,7 @@ function template_browse()
 			<h3>', $txt['modification_package'], '</h3>
 		</div>
 
-		<table class="table_grid" width="100%">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th class="first_th" width="32"></th>
@@ -659,7 +659,7 @@ function template_browse()
 		<div class="title_bar">
 			<h3>', $txt['avatar_package'], '</h3>
 		</div>
-		<table class="table_grid" width="100%">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th width="32"></th>
@@ -715,7 +715,7 @@ function template_browse()
 		<div class="title_bar">
 			<h3>' . $txt['language_package'] . '</h3>
 		</div>
-		<table class="table_grid" width="100%">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th width="32"></th>
@@ -771,7 +771,7 @@ function template_browse()
 		<div class="title_bar">
 			<h3>' . $txt['unknown_package'] . '</h3>
 		</div>
-		<table class="table_grid" width="100%">
+		<table width="100%" class="table_grid" cellspacing="0">
 		<thead>
 			<tr class="catbg">
 				<th width="32"></th>
@@ -1812,47 +1812,48 @@ function template_file_permissions()
 	<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
 		<div class="title_bar">
 			<h3>
-				<span class="floatleft">', $txt['package_file_perms'], '</span><span class="fperm floatright">', $txt['package_file_perms_new_status'], '</span>
+				<span class="fperm floatright">', $txt['package_file_perms_new_status'], '</span>
+				', $txt['package_file_perms'], '
 			</h3>
 		</div>
-		<table width="100%" class="table_grid">
-			<thead>
-				<tr class="catbg">
-					<th class="first_th lefttext" width="30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
-					<th width="30%" class="lefttext">', $txt['package_file_perms_status'], '</th>
-					<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
-					<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
-					<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
-					<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
-					<th class="last_th" align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
-				</tr>
-			</thead>';
+		<table width="100%" class="table_grid" cellspacing="0">
+		<thead>
+			<tr class="catbg">
+				<th class="first_th lefttext" width="30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
+				<th width="30%" class="lefttext">', $txt['package_file_perms_status'], '</th>
+				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
+				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
+				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
+				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
+				<th class="last_th" align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
+			</tr>
+		</thead>';
 
 	foreach ($context['file_tree'] as $name => $dir)
 	{
 		echo '
-			<tbody>
-				<tr class="windowbg2">
-					<td width="30%"><strong>';
+		<tbody>
+			<tr class="windowbg2">
+				<td width="30%"><strong>';
 
 				if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 					echo '
-						<img src="', $settings['default_images_url'], '/board.gif" alt="*" />';
+					<img src="', $settings['default_images_url'], '/board.gif" alt="*" />';
 
 				echo '
-						', $name, '
-					</strong></td>
-					<td width="30%">
-						<span style="color: ', ($dir['perms']['chmod'] ? 'green' : 'red'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
-						', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
-					</td>
-					<td align="center" class="perm_read" width="8%"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
-					<td align="center" class="perm_write" width="8%"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
-					<td align="center" class="perm_execute" width="8%"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
-					<td align="center" class="perm_custom" width="8%"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
-					<td align="center" class="perm_nochange" width="8%"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
-				</tr>
-			</tbody>';
+					', $name, '
+				</strong></td>
+				<td width="30%">
+					<span style="color: ', ($dir['perms']['chmod'] ? 'green' : 'red'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
+					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
+				</td>
+				<td align="center" class="perm_read" width="8%"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
+				<td align="center" class="perm_write" width="8%"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
+				<td align="center" class="perm_execute" width="8%"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
+				<td align="center" class="perm_custom" width="8%"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
+				<td align="center" class="perm_nochange" width="8%"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+			</tr>
+		</tbody>';
 
 		if (!empty($dir['contents']))
 			template_permission_show_contents($name, $dir['contents'], 1);
@@ -1932,8 +1933,8 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 			{
 				$drawn_div = true;
 				echo '
-			</table>
-			<table border="0" width="100%" class="table_grid" id="', $js_ident, '">';
+		</table>
+		<table width="100%" class="table_grid" cellspacing="0" id="', $js_ident, '">';
 			}
 
 			$cur_ident = preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident . '/' . $name);
@@ -1973,12 +1974,12 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 	// We have more files to show?
 	if ($has_more)
 		echo '
-	<tr class="windowbg" id="content_', $js_ident, '_more">
-		<td class="smalltext" width="40%">' . str_repeat('&nbsp;', $level * 5), '
-			&#171; <a href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident) . ';fileoffset=', ($context['file_offset'] + $context['file_limit']), ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident) . '">', $txt['package_file_perms_more_files'], '</a> &#187;
-		</td>
-		<td colspan="6"></td>
-	</tr>';
+			<tr class="windowbg" id="content_', $js_ident, '_more">
+				<td class="smalltext" width="40%">' . str_repeat('&nbsp;', $level * 5), '
+					&#171; <a href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident) . ';fileoffset=', ($context['file_offset'] + $context['file_limit']), ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident) . '">', $txt['package_file_perms_more_files'], '</a> &#187;
+				</td>
+				<td colspan="6"></td>
+			</tr>';
 
 	if ($drawn_div)
 	{
@@ -1995,7 +1996,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 		</table><script type="text/javascript"><!-- // --><![CDATA[
 			expandFolder(\'', $js_ident, '\', \'\');
 		// ]]></script>
-		<table border="0" width="100%" class="table_grid">
+		<table width="100%" class="table_grid" cellspacing="0">
 			<tr style="display: none;"><td></td></tr>';
 	}
 }

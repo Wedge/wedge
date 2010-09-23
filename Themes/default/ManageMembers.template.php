@@ -10,8 +10,8 @@ function template_search_members()
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="', $context['character_set'], '">
 			<div class="cat_bar">
 				<h3>
-					<span class="floatleft">', $txt['search_for'], '</span>
 					<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
+					', $txt['search_for'], '
 				</h3>
 			</div>
 			<input type="hidden" name="sa" value="query" />
@@ -153,7 +153,7 @@ function template_search_members()
 				<h3>', $txt['member_part_of_these_membergroups'], '</h3>
 			</div>
 			<div class="flow_hidden">
-				<table width="49%" class="table_grid floatleft">
+				<table width="49%" class="table_grid floatleft" cellspacing="0">
 					<thead>
 						<tr class="catbg">
 							<th scope="col">', $txt['membergroups'], '</th>
@@ -190,7 +190,7 @@ function template_search_members()
 					</tbody>
 				</table>
 
-				<table width="49%" class="table_grid floatright">
+				<table width="49%" class="table_grid floatright" cellspacing="0">
 					<thead>
 						<tr class="catbg">
 							<th scope="col" colspan="2">

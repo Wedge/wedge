@@ -9,7 +9,7 @@ function template_main()
 	<div id="recent" class="main_section">
 		<div class="cat_bar">
 			<h3>
-				<span class="ie6_header floatleft"><img src="', $settings['images_url'], '/post/xx.gif" alt="" class="icon" />', $txt['recent_posts'], '</span>
+				<img src="', $settings['images_url'], '/post/xx.gif" alt="" />', $txt['recent_posts'], '
 			</h3>
 		</div>
 		<div class="pagesection">

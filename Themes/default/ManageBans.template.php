@@ -169,7 +169,7 @@ function template_ban_edit()
 		echo '
 			<br />
 			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="', $context['character_set'], '" style="padding: 0px;margin: 0px;" onsubmit="return confirm(\'', $txt['ban_remove_selected_triggers_confirm'], '\');">
-				<table class="table_grid" width="100%">
+				<table width="100%" class="table_grid" cellspacing="0">
 					<thead>
 						<tr class="catbg">
 							<th width="65%" align="left">', $txt['ban_banned_entity'], '</td>
