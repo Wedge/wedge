@@ -22,74 +22,35 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file handles functions that manage the query string, and incoming sanitation thereof, amongst other things.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file does a lot of important stuff.  Mainly, this means it handles
-	the query string, request variables, and session management.  It contains
-	the following functions:
-
-	void cleanRequest()
-		- cleans the request variables (ENV, GET, POST, COOKIE, SERVER) and
-		  makes sure the query string was parsed correctly.
-		- handles the URLs passed by the queryless URLs option.
-		- makes sure, regardless of php.ini, everything has slashes.
-		- sets up $board, $topic, and $scripturl and $_REQUEST['start'].
-		- determines, or rather tries to determine, the client's IP.
-
-	array escapestring__recursive(array var)
-		- returns the var, as an array or string, with escapes as required.
-		- importantly escapes all keys and values!
-		- calls itself recursively if necessary.
-
-	array htmlspecialchars__recursive(array var)
-		- adds entities (&quot;, &lt;, &gt;) to the array or string var.
-		- importantly, does not effect keys, only values.
-		- calls itself recursively if necessary.
-
-	array urldecode__recursive(array var)
-		- takes off url encoding (%20, etc.) from the array or string var.
-		- importantly, does it to keys too!
-		- calls itself recursively if there are any sub arrays.
-
-	array unescapestring__recursive(array var)
-		- unescapes, recursively, from the array or string var.
-		- effects both keys and values of arrays.
-		- calls itself recursively to handle arrays of arrays.
-
-	array stripslashes__recursive(array var)
-		- removes slashes, recursively, from the array or string var.
-		- effects both keys and values of arrays.
-		- calls itself recursively to handle arrays of arrays.
-
-	array htmltrim__recursive(array var)
-		- trims a string or an the var array using html characters as well.
-		- does not effect keys, only values.
-		- may call itself recursively if needed.
-
-	array validate_unicode__recursive(array var)
-		- makes sure a string only contains character which are allowed in
-		  XML/XHTML (not 0-8, 11, 12, and 14-31.)
-		- tries to handle UTF-8 properly, and shouldn't negatively affect
-		  character sets like ISO-8859-1.
-		- does not effect keys, only changes values.
-		- may call itself recursively if necessary.
-
-	string cleanXml(string var)
-		- removes invalid XML characters to assure the input string being
-		  parsed properly.
-
-	string ob_sessrewrite(string buffer)
-		- rewrites the URLs outputted to have the session ID, if the user
-		  is not accepting cookies and is using a standard web browser.
-		- handles rewriting URLs for the queryless URLs option.
-		- can be turned off entirely by setting $scripturl to an empty
-		  string, ''. (It wouldn't work well like that anyway.)
-		- because of bugs in certain builds of PHP, does not function in
-		  versions lower than 4.3.0 - please upgrade if this hurts you.
-*/
-
-// Clean the request variables - add html entities to GET and slashes if magic_quotes_gpc is Off.
+/**
+ * Cleans all of the environment variables going into this request.
+ *
+ * By the time we're done, everything should have slashes (regardless of php.ini).
+ *
+ * - Defines $scripturl (as $boardurl . '/index.php')
+ * - Identifies which function to run to handle magic_quotes.
+ * - Removes $HTTP_POST_* if set.
+ * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
+ * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
+ * - Ensure we have the current querystring, and that it's valid.
+ * - Check if the server is using ; as the separator, and parse the URL if not.
+ * - Attempts to parse queryless URLs
+ * - Cleans input strings dependent on magic_quotes settings.
+ * - Process everything in $_GET to ensure it all has entities.
+ * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
+ * - Check if $topic and $board are set and push them into the global space.
+ * - Check for other stuff in $_REQUEST like a start, or action and deal with the types appropriately.
+ * - Try to get the requester's IP address and make sure we have a USER-AGENT and we have the requested URI.
+ */
 function cleanRequest()
 {
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
@@ -342,7 +303,14 @@ function cleanRequest()
 		$_SERVER['REMOTE_ADDR'] = '';
 }
 
-// Adds slashes to the array/variable.  Uses two underscores to guard against overloading.
+/**
+ * Given an array, this function ensures every key and value is escaped for database purposes.
+ *
+ * This function traverses an array - including nested arrays as appropriate (calling itself recursively as necessary), and runs every array value through the string escaper as used by the database library (typically mysql_real_escape_string()). Uses two underscores to guard against overloading.
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string escaped, otherwise traverse the array and calls itself on each element of the array (and calls the DB escape string on the array keys) - typically the contents will be non-array, so will be escaped, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose entire key/value pair set has been escaped; as a recursive function some calls will only be returning strings back to itself.
+ */
 function escapestring__recursive($var)
 {
 	global $smcFunc;
@@ -360,7 +328,16 @@ function escapestring__recursive($var)
 	return $new_var;
 }
 
-// Adds html entities to the array/variable.  Uses two underscores to guard against overloading.
+/**
+ * Given an array, this function ensures that every value has all HTML special characters converted to entities.
+ *
+ * - Uses two underscores to guard against overloading.
+ * - Unlike most of the other __recursive sanitation functions, this function only applies to array values, not to keys.
+ * - Attempts to use the UTF-8-ified function if available (for dealing with other special entities)
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string having entity-converted, otherwise traverse the array and calls itself on each element of the array - typically the contents will be non-array, so will be converted, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose value set will have had HTML control characters converted to entities; as a recursive function some calls will only be returning strings back to itself.
+ */
 function htmlspecialchars__recursive($var, $level = 0)
 {
 	global $smcFunc;
@@ -375,7 +352,14 @@ function htmlspecialchars__recursive($var, $level = 0)
 	return $var;
 }
 
-// Removes url stuff from the array/variable.  Uses two underscores to guard against overloading.
+/**
+ * Given an array, this function ensures that every key and value has all %xx URL encoding converted to its regular characters.
+ *
+ * Uses two underscores to guard against overloading.
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string without %xx URL encoding, otherwise traverse the array and calls itself on each element of the array (and decodes any %xx URL encoding in the array keys) - typically the contents will be non-array, so will be slash-stripped, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose entire key/value pair set have had %xx URL encoding decoded; as a recursive function some calls will only be returning strings back to itself.
+ */
 function urldecode__recursive($var, $level = 0)
 {
 	if (!is_array($var))
@@ -390,7 +374,15 @@ function urldecode__recursive($var, $level = 0)
 
 	return $new_var;
 }
-// Unescapes any array or variable.  Two underscores for the normal reason.
+
+/**
+ * Given an array, this function ensures every value is unescaped for database purposes - counterpart to {@link escapestring__recursive()}
+ *
+ * This function traverses an array - including nested arrays as appropriate (calling itself recursively as necessary), and runs every array value through the string un-escaper as used by the database library (custom function to strip the escaping). Uses two underscores to guard against overloading.
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string unescaped, otherwise traverse the array and calls itself on each element of the array (and calls the DB unescape string on the array keys) - typically the contents will be non-array, so will be unescaped, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose entire key/value pair set has been unescaped; as a recursive function some calls will only be returning strings back to itself.
+ */
 function unescapestring__recursive($var)
 {
 	global $smcFunc;
@@ -408,7 +400,14 @@ function unescapestring__recursive($var)
 	return $new_var;
 }
 
-// Remove slashes recursively...
+/**
+ * Given an array, this function ensures that every key and value has all backslashes removed.
+ *
+ * Uses two underscores to guard against overloading.
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string without slashes, otherwise traverse the array and calls itself on each element of the array (and removes the slashes on the array keys) - typically the contents will be non-array, so will be slash-stripped, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose entire key/value pair set have had slashes removed; as a recursive function some calls will only be returning strings back to itself.
+ */
 function stripslashes__recursive($var, $level = 0)
 {
 	if (!is_array($var))
@@ -424,12 +423,21 @@ function stripslashes__recursive($var, $level = 0)
 	return $new_var;
 }
 
-// Trim a string including the HTML space, character 160.
+/**
+ * Given an array, this function ensures that every value will have had whitespace removed from either end.
+ *
+ * - Uses two underscores to guard against overloading.
+ * - Unlike most of the other __recursive sanitation functions, this function only applies to array values, not to keys.
+ * - Attempts to use the UTF-8-ified function if available (for dealing with other special entities)
+ * - Remove spaces (32), tabs (9), returns (13, 10, and 11), nulls (0), and hard spaces. (160)
+ *
+ * @param mixed $var Either an array or string; if a string, simply return the string having entity-converted, otherwise traverse the array and calls itself on each element of the array - typically the contents will be non-array, so will be converted, and the routine will bubble back up through the recursive layers.
+ * @return mixed The effective return is a string or array whose value set will have had HTML control characters converted to entities; as a recursive function some calls will only be returning strings back to itself.
+ */
 function htmltrim__recursive($var, $level = 0)
 {
 	global $smcFunc;
 
-	// Remove spaces (32), tabs (9), returns (13, 10, and 11), nulls (0), and hard spaces. (160)
 	if (!is_array($var))
 		return isset($smcFunc) ? $smcFunc['htmltrim']($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
 
@@ -440,7 +448,17 @@ function htmltrim__recursive($var, $level = 0)
 	return $var;
 }
 
-// !!!
+/**
+ * Validates that a given array contains values that are valid Unicode strings, suitable for XML/XHTML use.
+ *
+ * - Attempts to handle UTF-8 primarily, however should not damage an ISO encoded string.
+ * - Non-printable control characters (ASCII 0-8, 11-12, 14-31) are removed; in all other cases the array is stepped through in variable sized-segments depending on multi-byte character width (which is why simply stripping the aforementioned characters cannot be done - they may form parts of valid multi-byte characters)
+ * - May call itself recursively to process all the values in a nested array.
+ * - Uses two underscores to guard against overloading.
+ *
+ * @param mixed $var A string or array of values; if a string, it will be processed to remove non-printable characters, otherwise if an array it will call itself through array_map().
+ * @return mixed Interim results may be sanitized strings, the overall result is a parsed array whose values are all stripped of those characters.
+ */
 function validate_unicode__recursive($var)
 {
 	if (is_array($var))
@@ -476,7 +494,14 @@ function validate_unicode__recursive($var)
 	return $var;
 }
 
-// Clean up the XML to make sure it doesn't contain invalid characters.
+/**
+ * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
+ *
+ * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
+ *
+ * @param string $string A string of potential output.
+ * @return string The sanitized string.
+ */
 function cleanXml($string)
 {
 	global $context;
@@ -485,6 +510,16 @@ function cleanXml($string)
 	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19' . ($context['utf8'] ? '\x{D800}-\x{DFFF}\x{FFFE}\x{FFFF}]~u' : ']~'), '', $string);
 }
 
+/**
+ * Sanitize strings that might be passed through to Javascript.
+ *
+ * Multiple instances of scripts will need to be adjusted through the codebase if passed to Javascript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
+ *
+ * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl.
+ *
+ * @param string $string A string whose contents to be quoted.
+ * @return string A transformed string with contents suitably single quoted for use in Javascript.
+ */
 function JavaScriptEscape($string)
 {
 	global $scripturl;
@@ -502,7 +537,16 @@ function JavaScriptEscape($string)
 	)) . '\'';
 }
 
-// Rewrite URLs to include the session ID.
+/**
+ * Rewrites URLs in the page to include the session ID if the user is using a normal browser and is not accepting cookies.
+ *
+ * - If $scripturl is empty, or no session id (e.g. SSI), exit.
+ * - If ?debug has been specified previously, re-inject it back into the page's canonical reference.
+ * - If queryless URLs mode is on, proceed to rewrite links, from index.php?topic=1.0 to index.php/topic,1.0.html style, and include the session ID as appropriate.
+ *
+ * @param string $buffer The contents of the output buffer thus far. Managed by PHP during the relevant ob_*() calls.
+ * @return string The modified buffer.
+ */
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context;
@@ -512,7 +556,6 @@ function ob_sessrewrite($buffer)
 		return $buffer;
 
 	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
-	// !!! smflib
 	if (empty($_COOKIE) && SID != '' && empty($context['browser']['possibly_robot']))
 		$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
 	// Debugging templates, are we?
