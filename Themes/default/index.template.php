@@ -79,6 +79,17 @@ function template_html_above()
 	echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css?rc3" />';
 
+	// Some browsers need an extra stylesheet due to bugs/compatibility issues.
+	foreach (array('ie7', 'ie6', 'webkit') as $cssfix)
+		if ($context['browser']['is_' . $cssfix])
+			echo '
+	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
+
+	// RTL languages require an additional stylesheet.
+	if ($context['right_to_left'])
+		echo '
+	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/rtl.css" />';
+
 	echo '
 	<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
@@ -115,17 +126,6 @@ function template_html_above()
 	if (!empty($context['current_board']))
 		echo '
 	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0" />';
-
-	// Some browsers need an extra stylesheet due to bugs/compatibility issues.
-	foreach (array('ie7', 'ie6', 'webkit') as $cssfix)
-		if ($context['browser']['is_' . $cssfix])
-			echo '
-	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
-
-	// RTL languages require an additional stylesheet.
-	if ($context['right_to_left'])
-		echo '
-	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/rtl.css" />';
 
 	echo '
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>

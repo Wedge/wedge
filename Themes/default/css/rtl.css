@@ -100,23 +100,17 @@ table.table_list a.unreadlink, table.table_list a.collapse
 }
 table.table_list a.collapse
 {
-	margin: 10px 1em 0 5px;
+	margin: 0 0.5em 0 -5px;
 }
-.table_grid th.first_th, tr.catbg th.first_th
-{
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 100% -240px;
+th.first_th {
+	border-radius: 0 8px 0 0;
+	-moz-border-radius: 0 8px 0 0;
+	-webkit-border-radius: 0 8px 0 0;
 }
-.table_grid th.last_th, tr.catbg th.last_th
-{
-	background: #a8bace url(../images/theme/main_block.png) no-repeat 0 -240px;
-}
-tr.titlebg th.first_th
-{
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 100% -340px;
-}
-tr.titlebg th.last_th
-{
-	background: #e3e9ef url(../images/theme/main_block.png) no-repeat 0 -340px;
+th.last_th {
+	border-radius: 8px 0 0 0;
+	-moz-border-radius: 8px 0 0 0;
+	-webkit-border-radius: 8px 0 0 0;
 }
 
 /* Styles for the standard dropdown menus.
@@ -126,18 +120,6 @@ tr.titlebg th.last_th
 	padding: 0 0 0 0.5em;
 	float: right;
 	text-align: right;
-}
-.dropmenu li
-{
-	float: right;
-}
-.dropmenu li ul ul
-{
-	right: 15em;
-}
-.dropmenu li ul
-{
-	background: url(../images/theme/menu.png) 100% 0 no-repeat;
 }
 
 /* The dropdown menu toggle image */
@@ -152,6 +134,11 @@ tr.titlebg th.last_th
 {
 	position: relative;
 	left: 0;
+}
+
+.menu {
+	float: right;
+	clear: right;
 }
 
 /* Styles for the standard button lists.
@@ -271,10 +258,10 @@ h1.forumtitle
 {
 	text-align: left;
 }
-#upshrink_ic, #newsupshrink
+#upshrink_ic
 {
-	float: right;
-	margin: 10px 0 0 5px;
+	float: left;
+	margin: 4px 0 0 4px;
 }
 
 /* Styles for the message (topic) index.
@@ -350,7 +337,7 @@ span.percent
 #forumposts h3 img
 {
 	float: right;
-	margin: 4px 0 0 0.5em;
+	margin: 0 0 0 0.5em;
 }
 /* poster and postarea + moderation area underneath */
 .poster
@@ -1050,4 +1037,28 @@ span.search_weight
 ul.moderation_notes li
 {
 	padding: 4px 4px 4px 0;
+}
+
+/* Various Wedge fixes */
+.cat_bar img, .title_bar img
+{
+	float: right;
+	margin-left: 0.5em;
+	margin-right: 0;
+}
+.menu li {
+	float: right;
+}
+.menu li a {
+	border-width: 0 4px 0 0;
+}
+.menu ul {
+	border-radius: 10px 0 0 10px;
+	-moz-border-radius: 10px 0 0 10px;
+	-webkit-border-radius: 10px 0 0 10px;
+}
+.menu > li li:hover, a.linkOver {
+	border-radius: 9px 0 0 9px;
+	-moz-border-radius: 9px 0 0 9px;
+	-webkit-border-radius: 9px 0 0 9px;
 }

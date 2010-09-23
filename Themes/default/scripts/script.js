@@ -1393,7 +1393,7 @@ Uses portions under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
 Copyright © 2004 Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
 */
 
-var baseId = 0, hoverable = 0;
+var baseId = 0, hoverable = 0, rtl = document.dir && document.dir == 'rtl';
 var timeoutli = new Array();
 var ieshim = new Array();
 
@@ -1486,7 +1486,7 @@ function showMe(e)
 			return hideUlUnder(this.id);
 	}
 	showul.style.visibility = 'visible';
-	showul.style.marginLeft = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
+	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
 		showShim(true, this.id, showul);

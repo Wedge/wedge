@@ -398,7 +398,8 @@ em
 .menu li a {
 	display: block;
 	text-decoration: none;
-	border-left: 4px solid #fbe2c8; /* #c8e2fb */
+	border: 4px solid #fbe2c8; /* #c8e2fb */
+	border-width: 0 0 0 4px;
 	padding: 6px 8px;
 	margin: 0;
 }
@@ -1158,9 +1159,13 @@ dl.settings dt a img
 {
 	margin-top: 1px;
 }
-.cat_bar img[alt="+"], .cat_bar img[alt="!"]
+.cat_bar img[alt="+"], .cat_bar img[alt="-"]
 {
 	margin-top: 4px;
+}
+img[alt="!"]
+{
+	margin-top: 8px;
 }
 .cat_bar h4, .title_bar h4, .title_bar h3, .cat_bar h3, .table_list tbody.header td.catbg
 {
@@ -1183,7 +1188,7 @@ table.table_list a.unreadlink, table.table_list a.collapse
 }
 table.table_list a.collapse
 {
-	margin: 4px -5px 0 1em;
+	margin: 0 -12px 0 0.8em;
 }
 
 /* The half-round header bars for some tables. */
