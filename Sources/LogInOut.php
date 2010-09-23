@@ -59,10 +59,10 @@ if (!defined('SMF'))
 		- returns the HMAC MD5 of data with key.
 
 	string phpBB3_password_check(string passwd, string passwd_hash)
-		- Custom encryption for phpBB3 based passwords.
+		- custom encryption for phpBB3 based passwords.
 
 	void validatePasswordFlood(id_member, password_flood_value = false, was_correct = false)
-		// !!!
+		- this function helps protect against brute force attacks on a member's password.
 */
 
 // Ask them for their login information.

@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10121 $.
+Changelog started January 1, 2004; Currently at $Revision: 10125 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -43,6 +43,7 @@ September 2010
  * Ignored members' posts were not hidden in topic summary. (Post.php, Post template, Xml template) [Bug 4466]
  * Who's Online filters did not function correctly. (Who.php, Who template) [Bug 4462]
  * Variant selection was broken with reserved variant names. (Themes template) [Bug 4435]
+ ! Cleanups and documentation fixes (many files)
 
 
 August 2010

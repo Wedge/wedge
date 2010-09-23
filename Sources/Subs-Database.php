@@ -27,7 +27,8 @@ if (!defined('SMF'))
 
 /*	This file has all the main functions in it that relate to the database.
 
-	// !!!
+	smf_db_initiate() maps the implementations in this file (smf_db_function_name)
+	to the $smcFunc['db_function_name'] variable.
 
 */
 

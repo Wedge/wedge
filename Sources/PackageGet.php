@@ -263,10 +263,6 @@ function PackageGBrowse()
 	else
 		fatal_lang_error('couldnt_connect', false);
 
-	// In safe mode or on lycos?  Try this URL. (includes package-list for informational purposes ;).)
-	//if (@ini_get('safe_mode'))
-	//	redirectexit($url . '/index.php?package-list&language=' . $context['user']['language'] . '&ref=' . $boardurl);
-
 	// Attempt to connect.  If unsuccessful... try the URL.
 	if (!isset($_GET['package']) || file_exists($_GET['package']))
 		$_GET['package'] = $url . '/packages.xml?language=' . $context['user']['language'];
@@ -736,8 +732,10 @@ function PackageServerAdd()
 	// If they put a slash on the end, get rid of it.
 	if (substr($_POST['serverurl'], -1) == '/')
 		$_POST['serverurl'] = substr($_POST['serverurl'], 0, -1);
-	$servername = $smcFunc['htmlspecialchars']($_POST['servername']);
-	$serverurl = $smcFunc['htmlspecialchars']($_POST['serverurl']);
+	$servername = trim($smcFunc['htmlspecialchars']($_POST['servername']));
+	$serverurl = trim($smcFunc['htmlspecialchars']($_POST['serverurl']));
+	if (strpos($serverurl, "http://") !== 0 || strpos($serverurl, "https://") !== 0)
+		$serverurl = "http://" . $serverurl;
 
 	$smcFunc['db_insert']('',
 		'{db_prefix}package_servers',

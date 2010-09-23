@@ -63,10 +63,10 @@ if (!defined('SMF'))
 		  max_image_height settings.
 
 	int approved_attach_sort(array a, array b)
-		// !!!
+		- a sort function for putting unapproved attachments first.
 
 	void QuickInTopicModeration()
-		// !!!
+		- in-topic quick moderation.
 
 */
 

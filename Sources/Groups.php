@@ -42,10 +42,18 @@ if (!defined('SMF'))
 		- redirects to itself.
 
 	int list_getGroupRequestCount(string where)
-		// !!!
+		- callback function for createList()
+		- returns the count of group requests
 
 	array list_getGroupRequests(int start, int items_per_page, string sort, string where)
-		// !!!
+		- callback function for createList()
+		- returns an array of group requests
+		- each group request has:
+			'id'
+			'member_link'
+			'group_link'
+			'reason'
+			'time_submitted'
 
 */
 

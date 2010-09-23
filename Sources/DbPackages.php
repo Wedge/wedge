@@ -97,7 +97,6 @@ function db_packages_init()
 }
 
 // Create a table.
-//!!! Add/remove indexes too?
 function smf_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'update', $error = 'fatal')
 {
 	global $reservedTables, $smcFunc, $db_package_log, $db_prefix;

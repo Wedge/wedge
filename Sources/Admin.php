@@ -246,7 +246,7 @@ function AdminMain()
 					'subsections' => array(
 						'posts' => array($txt['manageposts_settings'], 'admin_forum'),
 						'bbc' => array($txt['manageposts_bbc_settings'], 'admin_forum'),
-						'censor' => array($txt['admin_censored_words'], 'moderate_forum'),
+						'censor' => array($txt['admin_censored_words'], 'admin_forum'),
 						'topics' => array($txt['manageposts_topic_settings'], 'admin_forum'),
 					),
 				),

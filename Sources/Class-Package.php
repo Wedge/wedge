@@ -288,7 +288,7 @@ class xmlArray
 		{
 			$path = $this->path($path);
 
-			// The path was not found!!!
+			// The path was not found
 			if ($path === false)
 				return false;
 
@@ -312,7 +312,7 @@ class xmlArray
 		{
 			$path = $this->path($path);
 
-			// The path was not found!!!
+			// The path was not found
 			if ($path === false)
 				return false;
 

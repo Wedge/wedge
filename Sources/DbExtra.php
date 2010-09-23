@@ -27,13 +27,31 @@ if (!defined('SMF'))
 
 /*	This file contains rarely used extended database functionality.
 
-	// !!!
+	void db_extra_init()
+		- add this file's functions to the $smcFunc array.
+
+	resource smf_db_backup_table($table, $backup_table)
+		- backup $table to $backup_table.
+		- returns the request handle to the table creation query
+
+	string function smf_db_get_version()
+		- get the version number.
 
 	string db_insert_sql(string table_name)
 		- gets all the necessary INSERTs for the table named table_name.
 		- goes in 250 row segments.
 		- returns the query to insert the data back in.
 		- returns an empty string if the table was empty.
+
+	array smf_db_list_tables($db = false, $filter = false)
+		- lists all tables in the database
+		- could be filtered according to $filter
+		- returns an array of table names. (strings)
+
+	float smf_db_optimize_table($table)
+		- optimize a table
+		- $table - the table to be optimized
+		- returns how much it was gained
 
 	string db_table_sql(string table_name)
 		- dumps the CREATE for the specified table. (by table_name.)
