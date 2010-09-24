@@ -1109,8 +1109,8 @@ dl.settings dt a img
 ------------------------------------------------------- */
 .cat_bar, .title_bar
 {
-	max-height: 150px;
 	padding: 6px 9px;
+	overflow: auto;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3156,7 +3156,7 @@ dl.stats dd
 {
 	background: #f0f4f7;
 	display: block;
-	margin: 0.5em 0 0 1em;
+	margin: 0.2em 0 0 1em;
 	height: 1em;
 	border: 1px solid #adadad;
 	width: 10em;
