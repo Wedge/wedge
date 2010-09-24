@@ -397,7 +397,7 @@ em
 .menu li a {
 	display: block;
 	text-decoration: none;
-	border: 4px solid #fbe2c8; /* #c8e2fb */
+	border: 4px solid #fbe2c8;
 	border-width: 0 0 0 4px;
 	padding: 6px 8px;
 	margin: 0;
@@ -415,16 +415,16 @@ em
 	padding: 0;
 }
 .menu ul {
-	background: rgba(255, 248, 240, .95);
+	background: rgba(255,248,240, .95);
 	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
 	position: absolute;
 	display: block;
 	border: 1px solid #666;
 	padding: 0;
 	z-index: 42;
-	box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
-	-moz-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
-	-webkit-box-shadow: 2px 2px 5px 0 rgba(128, 128, 128, .3);
+	box-shadow: 2px 2px 5px 0 rgba(128,128,128, .3);
+	-moz-box-shadow: 2px 2px 5px 0 rgba(128,128,128, .3);
+	-webkit-box-shadow: 2px 2px 5px 0 rgba(128,128,128, .3);
 	border-radius: 0 10px 10px 0;
 	-moz-border-radius: 0 10px 10px 0;
 	-webkit-border-radius: 0 10px 10px 0;
@@ -474,7 +474,7 @@ li.subsection > a {
 	background: url(../images/menu.gif) no-repeat 98% -46px;
 }
 .menu > li li:hover, a.linkOver {
-	background: #c8e2fb;
+	background: #d0e2fb;
 	color: black;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
@@ -482,7 +482,7 @@ li.subsection > a {
 }
 
 li.subsection > a:hover, li.subsection > a.linkOver {
-	background: #c8e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
+	background: #d0e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
 }
 
 .menu > li > a, .menu h4 {
@@ -617,25 +617,27 @@ ul.reset, ul.reset li
 /* A quote, perhaps from another post. */
 blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote
 {
-	font-size: x-small;
+	font-size: 90%;
 	color: #000;
 	line-height: 1.4em;
 	background: url(../images/theme/quote.png) 0.1em 0.1em no-repeat;
-	border-top: 2px solid #99A;
-	border-bottom: 2px solid #99A;
-	padding: 1.1em 1.4em;
-	margin: 0.1em 0 0.3em 0;
+	border: 1px dotted #99A;
+	padding: 1.2em 2.2em;
+	margin: 0.1em 0 0.5em 0;
 	overflow: auto;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 }
 
 /* Alterate blockquote stylings */
 blockquote.bbc_standard_quote
 {
-	background-color: #d7daec;
+	background-color: #e7eafc;
 }
 blockquote.bbc_alternate_quote
 {
-	background-color: #e7eafc;
+	background-color: #daddef;
 }
 
 /* A code block - maybe PHP ;). */
@@ -659,7 +661,7 @@ code.bbc_code
 .codeheader, .quoteheader
 {
 	color: #666;
-	font-size: x-small;
+	font-size: 90%;
 	font-weight: bold;
 	padding: 0 0.3em;
 }
@@ -1108,7 +1110,7 @@ dl.settings dt a img
 ------------------------------------------------------- */
 .cat_bar, .title_bar
 {
-	padding: 6px 9px;
+	padding: 5px 8px;
 	overflow: auto;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -1116,9 +1118,11 @@ dl.settings dt a img
 }
 .cat_bar {
 	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
+	border: 1px solid rgba(92,92,92, .5);
 }
 .title_bar {
-	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+	background: #e3e9ef url(../images/theme/grad40.png) 0 -20px repeat-x;
+	border: 1px solid rgba(128,128,128, .3);
 }
 
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
@@ -1156,7 +1160,7 @@ dl.settings dt a img
 }
 .cat_bar h4 img, .title_bar h4 img
 {
-	margin-top: 1px;
+	margin-top: 2px;
 }
 .cat_bar img[alt="+"], .cat_bar img[alt="-"]
 {
@@ -1251,14 +1255,14 @@ table.table_grid thead tr.catbg th
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
-	border: 1px solid rgba(128,128,128,.2);
+	border: 1px solid rgba(128,128,128, .2);
 }
 /* Let's have a bit of fun, shall we? */
 form.wrc
 {
 	-webkit-box-shadow: 0 2px 8px #ccc;
 	-moz-box-shadow: 0 2px 8px #ccc;
-	box-shadow: 0 1px 5px rgba(128,128,128,.25);
+	box-shadow: 0 1px 5px rgba(128,128,128, .25);
 }
 
 .postbg
@@ -1275,7 +1279,7 @@ form.wrc
 	padding: 10px 10px 9px 10px;
 	background: #f5f5f5;
 	border: 1px solid #c5c5c5;
-	border: 1px solid rgba(128,128,128,.5);
+	border: 1px solid rgba(128,128,128, .3);
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
@@ -1359,7 +1363,7 @@ form.wrc
 }
 .buttonlist a span
 {
-	border: 1px solid rgba(128, 128, 128, .2);
+	border: 1px solid rgba(128,128,128, .2);
 	background: #e8e8e8;
 	display: block;
 	height: 17px;
@@ -2498,9 +2502,8 @@ tr.titlebg td
 	float: left;
 	padding-right: 10px;
 }
-.side_section .title_bar h4
+.side_section .title_bar
 {
-	font-size: 95%;
 	margin-bottom: 5px;
 }
 #main_container

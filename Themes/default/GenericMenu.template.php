@@ -22,7 +22,7 @@ function template_generic_menu_sidebar_above()
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
 			<div class="side_section">
-				<div class="cat_bar">
+				<div class="title_bar">
 					<h4>';
 
 			if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
