@@ -546,46 +546,41 @@ function template_main()
 					return submitThisOnce(document.forms.postmodify);
 				}';
 	echo '
-				if (window.XMLHttpRequest)
-				{
-					// !!! Currently not sending poll options and option checkboxes.
-					var x = new Array();
-					var textFields = [\'subject\', ', JavaScriptEscape($context['postbox']->id), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
-					var numericFields = [
-						\'board\', \'topic\', \'last_msg\',
-						\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
-						\'poll_max_votes\', \'poll_expire\', \'poll_change_vote\', \'poll_hide\'
-					];
-					var checkboxFields = [
-						\'ns\'
-					];
+				// !!! Currently not sending poll options and option checkboxes.
+				var x = new Array();
+				var textFields = [\'subject\', ', JavaScriptEscape($context['postbox']->id), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
+				var numericFields = [
+					\'board\', \'topic\', \'last_msg\',
+					\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
+					\'poll_max_votes\', \'poll_expire\', \'poll_change_vote\', \'poll_hide\'
+				];
+				var checkboxFields = [
+					\'ns\'
+				];
 
-					for (var i = 0, n = textFields.length; i < n; i++)
-						if (textFields[i] in document.forms.postmodify)
-						{
-							// Handle the WYSIWYG editor.
-							if (textFields[i] == ', JavaScriptEscape($context['postbox']->id), ' && ', JavaScriptEscape('oEditorHandle_' . $context['postbox']->id), ' in window && oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled)
-								x[x.length] = \'message_mode=1&\' + textFields[i] + \'=\' + oEditorHandle_', $context['postbox']->id, '.getText(false).replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
-							else
-								x[x.length] = textFields[i] + \'=\' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
-						}
-					for (var i = 0, n = numericFields.length; i < n; i++)
-						if (numericFields[i] in document.forms.postmodify && \'value\' in document.forms.postmodify[numericFields[i]])
-							x[x.length] = numericFields[i] + \'=\' + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
-					for (var i = 0, n = checkboxFields.length; i < n; i++)
-						if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
-							x[x.length] = checkboxFields[i] + \'=\' + document.forms.postmodify.elements[checkboxFields[i]].value;
+				for (var i = 0, n = textFields.length; i < n; i++)
+					if (textFields[i] in document.forms.postmodify)
+					{
+						// Handle the WYSIWYG editor.
+						if (textFields[i] == ', JavaScriptEscape($context['postbox']->id), ' && ', JavaScriptEscape('oEditorHandle_' . $context['postbox']->id), ' in window && oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled)
+							x[x.length] = \'message_mode=1&\' + textFields[i] + \'=\' + oEditorHandle_', $context['postbox']->id, '.getText(false).replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
+						else
+							x[x.length] = textFields[i] + \'=\' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
+					}
+				for (var i = 0, n = numericFields.length; i < n; i++)
+					if (numericFields[i] in document.forms.postmodify && \'value\' in document.forms.postmodify[numericFields[i]])
+						x[x.length] = numericFields[i] + \'=\' + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
+				for (var i = 0, n = checkboxFields.length; i < n; i++)
+					if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
+						x[x.length] = checkboxFields[i] + \'=\' + document.forms.postmodify.elements[checkboxFields[i]].value;
 
-					sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=post2\' + (current_board ? \';board=\' + current_board : \'\') + (make_poll ? \';poll\' : \'\') + \';preview;xml\', x.join(\'&\'), onDocSent);
+				sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=post2\' + (current_board ? \';board=\' + current_board : \'\') + (make_poll ? \';poll\' : \'\') + \';preview;xml\', x.join(\'&\'), onDocSent);
 
-					document.getElementById(\'preview_section\').style.display = \'\';
-					document.getElementById(\'preview_subject\').innerHTML = txt_preview_title;
-					document.getElementById(\'preview_body\').innerHTML = txt_preview_fetch;
+				document.getElementById(\'preview_section\').style.display = \'\';
+				document.getElementById(\'preview_subject\').innerHTML = txt_preview_title;
+				document.getElementById(\'preview_body\').innerHTML = txt_preview_fetch;
 
-					return false;
-				}
-				else
-					return submitThisOnce(document.forms.postmodify);
+				return false;
 			}
 			function onDocSent(XMLDoc)
 			{
@@ -818,10 +813,7 @@ function template_main()
 		echo '
 			function insertQuoteFast(messageid)
 			{
-				if (window.XMLHttpRequest)
-					getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;pb=', $context['postbox']->id, ';mode=\' + (oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled ? 1 : 0), onDocReceived);
-				else
-					reqWin(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';pb=', $context['postbox']->id, ';mode=\' + (oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled ? 1 : 0), 240, 90);
+				getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;mode=\' + (oEditorHandle_', $context['postbox']->id, '.bRichTextEnabled ? 1 : 0), onDocReceived);
 				return true;
 			}
 			function onDocReceived(XMLDoc)
@@ -906,57 +898,6 @@ function template_spellcheck()
 				<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);" class="button_submit" />
 			</div>
 		</form>
-	</body>
-</html>';
-}
-
-function template_quotefast()
-{
-	global $context, $settings, $options, $txt;
-
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
-		<title>', $txt['retrieving_quote'], '</title>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js"></script>
-	</head>
-	<body>
-		', $txt['retrieving_quote'], '
-		<div id="temporary_posting_area" style="display: none;"></div>
-		<script type="text/javascript"><!-- // --><![CDATA[';
-
-	if ($context['close_window'])
-		echo '
-			window.close();';
-	else
-	{
-		// Lucky for us, Internet Explorer has an "innerText" feature which basically converts entities <--> text. Use it if possible ;).
-		echo '
-			var quote = \'', $context['quote']['text'], '\';
-			var stage = \'createElement\' in document ? document.createElement("DIV") : document.getElementById("temporary_posting_area");
-
-			if (\'DOMParser\' in window && !(\'opera\' in window))
-			{
-				var xmldoc = new DOMParser().parseFromString("<temp>" + \'', $context['quote']['mozilla'], '\'.replace(/\n/g, "_SMF-BREAK_").replace(/\t/g, "_SMF-TAB_") + "</temp>", "text/xml");
-				quote = xmldoc.childNodes[0].textContent.replace(/_SMF-BREAK_/g, "\n").replace(/_SMF-TAB_/g, "\t");
-			}
-			else if (\'innerText\' in stage)
-			{
-				stage.innerHTML = quote.replace(/\n/g, "_SMF-BREAK_").replace(/\t/g, "_SMF-TAB_").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-				quote = stage.innerText.replace(/_SMF-BREAK_/g, "\n").replace(/_SMF-TAB_/g, "\t");
-			}
-
-			if (\'opera\' in window)
-				quote = quote.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, \'"\').replace(/&amp;/g, "&");
-
-			window.opener.oEditorHandle_', $context['postbox']->id, '.InsertText(quote);
-
-			window.focus();
-			setTimeout("window.close();", 400);';
-	}
-	echo '
-		// ]]></script>
 	</body>
 </html>';
 }

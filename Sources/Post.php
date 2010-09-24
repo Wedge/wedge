@@ -2629,11 +2629,11 @@ function getTopic()
  *
  * Accessed via action=quotefast, this function is used from the main topic area (for quick reply), the replies part of the main reply area to get a previous post, and have it quoted correctly, to be inserted into the editor box - or it can be invoked for the Quick Modify system to return the original message.
  *
- * - This function can be called in two ways, one using XMLHttpRequest (which wil contain ;xml in the URL) for an inline insert, the second is the legacy method using a pop-up window to load the post quote into, and to be inserted back into the actual post editor. (This is what ;pb in the URL is for.)
- * - Loads the Post language file, and additionally if invoked through non-XML, it will load the Post template too.
+ * - This function is called using XMLHttpRequest for an inline insert into the actual post editor.
+ * - Loads the Post language file
  * - Identifies the boards the current user can moderate through (to ensure all the right boards are available), then loads the post details from the database.
- * - The post is un'preparsecode'd so that it is editor-safe, then censored, and finally line breaks fixed.
- * - Prepares the content for the XML (or not XML, necessarily) returns through $context.
+ * - The post is passed through un_preparsecode so that it is editor-safe, then censored, and finally line breaks are fixed.
+ * - Prepares the content for the XML, returns through $context.
  * - Strips nested quotes if that is what was requested.
  * - Lastly, convert the post to HTML if using the WYSIWYG editor.
  */
@@ -2643,15 +2643,8 @@ function QuoteFast()
 	global $sourcedir, $smcFunc;
 
 	loadLanguage('Post');
-	if (!isset($_REQUEST['xml']))
-		loadTemplate('Post');
-
 	include_once($sourcedir . '/Class-Editor.php');
-
 	$moderate_boards = boardsAllowedTo('moderate_board');
-
-	// Where we going if we need to?
-	$context['post_box_name'] = isset($_GET['pb']) ? $_GET['pb'] : '';
 
 	$request = $smcFunc['db_query']('', '
 		SELECT IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.id_topic, m.subject,
@@ -2670,7 +2663,6 @@ function QuoteFast()
 			'not_locked' => 0,
 		)
 	);
-	$context['close_window'] = $smcFunc['db_num_rows']($request) == 0;
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
@@ -2719,10 +2711,7 @@ function QuoteFast()
 
 		// Add a quote string on the front and end.
 		$context['quote']['xml'] = '[quote author=' . $row['poster_name'] . ' link=msg=' . (int) $_REQUEST['quote'] . ' date=' . $row['poster_time'] . ']' . $lb . $row['body'] . $lb . '[/quote]';
-		$context['quote']['text'] = strtr(un_htmlspecialchars($context['quote']['xml']), array('\'' => '\\\'', '\\' => '\\\\', "\n" => '\\n', '</script>' => '</\' + \'script>'));
 		$context['quote']['xml'] = strtr($context['quote']['xml'], array('&nbsp;' => '&#160;', '<' => '&lt;', '>' => '&gt;'));
-
-		$context['quote']['mozilla'] = strtr($smcFunc['htmlspecialchars']($context['quote']['text']), array('&quot;' => '"'));
 	}
 	// !!! Needs a nicer interface.
 	// In case our message has been removed in the meantime.

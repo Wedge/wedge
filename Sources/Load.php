@@ -1615,7 +1615,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'findmember',
 		'helpadmin',
 		'printpage',
-		'quotefast',
 		'spellcheck',
 	);
 
