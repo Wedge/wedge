@@ -719,7 +719,7 @@ function template_main()
 				<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
 				<script type="text/javascript"><!-- // --><![CDATA[';
 
-	if (!empty($options['display_quick_reply']))
+	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 		echo '
 					var oQuickReply = new QuickReply({
 						bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
