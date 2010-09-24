@@ -1,7 +1,6 @@
 /* Set a fontsize that will look the same in all browsers. */
 body
 {
-/*	background: #fff8f1 url(../images/theme/menu.png) repeat-x; */
 	background: #faefe6 url(../images/theme/grad700.png) repeat-x;
 	font: 78%/130% "Verdana", "Arial", "Helvetica", sans-serif;
 	padding: 15px 0;
@@ -1116,10 +1115,10 @@ dl.settings dt a img
 	border-radius: 5px;
 }
 .cat_bar {
-	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
+	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
 }
 .title_bar {
-	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
+	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
@@ -3437,10 +3436,10 @@ tr.catbg td, tr.catbg th {
 	font-size: 1.1em;
 }
 tr.catbg th {
-	background: #a8bace url(../images/theme/bars.png) 0 -150px repeat-x;
+	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
 }
 tr.titlebg th {
-	background: #e3e9ef url(../images/theme/bars.png) 0 0 repeat-x;
+	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 th.first_th {
 	border-radius: 8px 0 0 0;

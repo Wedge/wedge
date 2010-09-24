@@ -152,7 +152,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 
 /* Overrides for the admin section of the register template
-------------------------------------------------------- */
+----------------------------------------------------------- */
 #registration_agreement
 {
 	width: 99.5%;
@@ -166,7 +166,8 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 #postmodify div.roundframe { margin-right: 0;}
 
-/* dropmenu hacks */
+/* Misc hacks
+------------- */
 
 .iefs
 {
@@ -195,4 +196,10 @@ a.linkOver { background: #c8e2fb }
 {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
 	margin: auto;
+}
+.cat_bar h3 a {
+	color: white !important;
+}
+#forumposts .wrc {
+	width: 100%;
 }
