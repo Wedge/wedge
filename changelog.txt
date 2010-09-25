@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10125 $.
+Changelog started January 1, 2004; Currently at $Revision: 10141 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -44,20 +44,34 @@ September 2010
  * Who's Online filters did not function correctly. (Who.php, Who template) [Bug 4462]
  * Variant selection was broken with reserved variant names. (Themes template) [Bug 4435]
  ! Cleanups and documentation fixes (many files)
+ * Fixed a few minor bugs (index.css, PersonalMessage template, Display template, Sendtopic template, MessageIndex template) [Bug 4411,4434,4446,4471]
+ * Yet another attempted fix for IE8 cursor bug (GenericControls template) [Bug 3354]
+ * Minor typos and glitches (ProfileModify.php, ModerationCenter template, Packages template) [Bug 4436,4476]
+ ! The check on package server URL for http:// prefix failed. (PackageGet.php)
+ ! Incorrect parameter given for checkImageContents() on avatar uploads. (Profile-Modify.php)
+ ! Members with moderate_forum permission can no longer access Manage Posts admin area. (Admin.php)
+ * All new replies added via JavaScript were marked as ignored. (Post template)
+ * Fixed secret question page, and overflow error in admin menus (index.css) [Bug 4405]
+ ! index.php in avatars directories was caught in a loop (avatars/*/index.php)
+ + Adding a file to avoid browsing in Themes/core/languages (index.php)
+ ! Tables should be created with SMF's charset and collation (DbPackages-mysql.php)
+ ! Installing as UTF8 should make all tables UTF8 (install script for MySQL)
+ ! Fixing potential usage of international characters in attachments filenames (Subs.php)
+ ! smf_table_structure() should be consistent for Postgres as well as MySQL (thanks feline!) (DbPackages-postgresql.php) [Bug 4425]
 
 
 August 2010
 --------------------------------------------------------------------------------
- * The new replies template for preview JavaScript was using outdated post layout. (Post.template.php) [Bug 4387]
- * "new" images for new replies inserted by JavaScript were not removed once the post is no longer unread. (Post.template.php) [Bug 4397]
+ * The new replies template for preview JavaScript was using outdated post layout. (Post template) [Bug 4387]
+ * "new" images for new replies inserted by JavaScript were not removed once the post is no longer unread. (Post template) [Bug 4397]
  ! PM ignore settings were ignored. (Subs-Post.php) [Bug 4401]
  ! File counts for attachment directories were counted wrongfully. (ManageAttachments.php) [Bug 4381]
  ! Unnecessary logouts following password conversion. (LogInOut.php) [Bug 4365]
  ! Missing sub template caused premature termination of the script instead of displaying error. (Errors.php, Subs.php) [Bug 4402]
  ! Approvals by quick moderation were not logged properly. (MessageIndex.php)
- * Got the last of th smalltext in (MessageIndex.template.php)
- * Applied "fix" to (Stats.template.php) [Bug 4403]
- * Fixed submit button bug in (PersonalMessage.template.php)
+ * Got the last of th smalltext in (MessageIndex template)
+ * Applied "fix" to (Stats template) [Bug 4403]
+ * Fixed submit button bug in (PersonalMessage template)
  ! It was possible to use custom e-mail functionality even when e-mail address was not found. (SendTopic.php)
  * E-mail icon was displayed for guests who did not have e-mail address information. (Display template, PersonalMessage template) [Bug 4362]
  & Incorrect last login date for recent watched members who never logged in. (ModerationCenter.php, ModerationCenter template, ModerationCenter language) [Bug 4406]
@@ -81,9 +95,8 @@ August 2010
  ! Fixed migration of a buddy lists setting (upgrade scripts for MySQL and SQlite)
  ! Fixed a couple of issues with the RSS feeds optimization (News.php) [Bug 4428]
  ! More fixes to use internationalized substr/strlen (more files) [Bug 3738]
- * Fixed a few minor bugs (index.css, PersonalMessage.template, Display.template, Sendtopic.template, MessageIndex.template) [Bug 4411,4434,4446,4471]
- * Yet another attempted fix for that damned IE8 cursor bug (GenericControls.template.php) [Bug 3354] 
 
+ 
 July 2010
 --------------------------------------------------------------------------------
  ! Incorrect password was passed to integrate_reset_pass hook when password was changed. (Profile.php) [Bug 3986]

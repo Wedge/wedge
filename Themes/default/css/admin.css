@@ -7,7 +7,7 @@
 }
 #quick_search form
 {
-	padding: 7px;
+	padding-top: 2px;
 	line-height: 0.9em;
 }
 #quick_search input, #quick_search select

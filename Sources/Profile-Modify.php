@@ -2669,7 +2669,7 @@ function profileSaveAvatarData(&$value)
 			{
 				// Now try to find an infection.
 				require_once($sourcedir . '/Subs-Graphics.php');
-				if (!checkImageContents($_FILES['attachment']['tmp_name'], $modSettings['avatar_paranoid']))
+				if (!checkImageContents($_FILES['attachment']['tmp_name'], !empty($modSettings['avatar_paranoid'])))
 				{
 					// It's bad. Try to re-encode the contents?
 					if (empty($modSettings['avatar_reencode']) || (!reencodeImage($_FILES['attachment']['tmp_name'], $sizes[2])))

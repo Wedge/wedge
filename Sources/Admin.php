@@ -241,13 +241,13 @@ function AdminMain()
 					'label' => $txt['manageposts'],
 					'file' => 'ManagePosts.php',
 					'function' => 'ManagePostSettings',
-					'permission' => array('admin_forum', 'moderate_forum'),
+					'permission' => array('admin_forum'),
 					'icon' => 'posts.gif',
 					'subsections' => array(
-						'posts' => array($txt['manageposts_settings'], 'admin_forum'),
-						'bbc' => array($txt['manageposts_bbc_settings'], 'admin_forum'),
-						'censor' => array($txt['admin_censored_words'], 'admin_forum'),
-						'topics' => array($txt['manageposts_topic_settings'], 'admin_forum'),
+						'posts' => array($txt['manageposts_settings']),
+						'bbc' => array($txt['manageposts_bbc_settings']),
+						'censor' => array($txt['admin_censored_words']),
+						'topics' => array($txt['manageposts_topic_settings']),
 					),
 				),
 				'managecalendar' => array(

@@ -374,14 +374,14 @@ function theme_linktree($force_show = false)
 		return;
 
 	echo '
-	<div class="navigate_section">
-		<ul>';
+		<div class="navigate_section">
+			<ul>';
 
 	// Each tree item has a URL and name. Some may have extra_before and extra_after.
 	foreach ($context['linktree'] as $link_num => $tree)
 	{
 		echo '
-			<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
+				<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
 
 		// Show something before the link?
 		if (isset($tree['extra_before']))
@@ -389,7 +389,7 @@ function theme_linktree($force_show = false)
 
 		// Show the link, including a URL if it should have one.
 		echo $settings['linktree_link'] && isset($tree['url']) ? '
-				<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
+					<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
 
 		// Show something after the link...?
 		if (isset($tree['extra_after']))
@@ -400,11 +400,11 @@ function theme_linktree($force_show = false)
 			echo ' &#187;';
 
 		echo '
-			</li>';
+				</li>';
 	}
 	echo '
-		</ul>
-	</div>';
+			</ul>
+		</div>';
 
 	$shown_linktree = true;
 }
@@ -431,8 +431,7 @@ function template_menu()
 			foreach ($button['sub_buttons'] as $childbutton)
 			{
 				echo '
-					<li>
-						<a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
+					<li><a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
 
 				// 3rd level menus
 				if (!empty($childbutton['sub_buttons']))
@@ -445,8 +444,7 @@ function template_menu()
 
 					echo '</ul>';
 				}
-				echo '
-					</li>';
+				echo '</li>';
 			}
 			echo '
 				</ul>';

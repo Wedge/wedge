@@ -732,10 +732,14 @@ function PackageServerAdd()
 	// If they put a slash on the end, get rid of it.
 	if (substr($_POST['serverurl'], -1) == '/')
 		$_POST['serverurl'] = substr($_POST['serverurl'], 0, -1);
+
+	// Are they both nice and clean?
 	$servername = trim($smcFunc['htmlspecialchars']($_POST['servername']));
 	$serverurl = trim($smcFunc['htmlspecialchars']($_POST['serverurl']));
-	if (strpos($serverurl, "http://") !== 0 || strpos($serverurl, "https://") !== 0)
-		$serverurl = "http://" . $serverurl;
+
+	// Make sure the URL has the correct prefix.
+	if (strpos($serverurl, 'http://') !== 0 && strpos($serverurl, 'https://') !== 0)
+		$serverurl = 'http://' . $serverurl;
 
 	$smcFunc['db_insert']('',
 		'{db_prefix}package_servers',

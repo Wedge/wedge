@@ -164,7 +164,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	padding-left: 0;
 	margin: 0 -2em;
 }
-#postmodify div.roundframe { margin-right: 0;}
+#postmodify div.roundframe { margin-right: 0 }
 
 /* Misc hacks
 ------------- */
