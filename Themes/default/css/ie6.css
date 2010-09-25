@@ -203,3 +203,7 @@ a.linkOver { background: #c8e2fb }
 #forumposts .wrc {
 	width: 100%;
 }
+.wrc, .roundframe {
+	position: relative;
+	z-index: 999;
+}

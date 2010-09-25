@@ -74,3 +74,8 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 {
 	clear:both !important;
 }
+
+.wrc, .roundframe {
+	position: relative;
+	z-index: 10;
+}

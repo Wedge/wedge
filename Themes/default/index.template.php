@@ -80,10 +80,17 @@ function template_html_above()
 	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css?rc3" />';
 
 	// Some browsers need an extra stylesheet due to bugs/compatibility issues.
-	foreach (array('ie7', 'ie6', 'webkit') as $cssfix)
+	foreach (array('ie8', 'ie7', 'ie6', 'webkit') as $cssfix)
 		if ($context['browser']['is_' . $cssfix])
+		{
 			echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
+			if ($context['browser']['is_ie'])
+				echo '
+	<style>
+		.wrc, .roundframe { behavior: url(', $settings['default_theme_url'], '/css/ie-css3.htc);
+	</style>';
+		}
 
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])

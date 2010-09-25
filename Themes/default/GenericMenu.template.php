@@ -26,16 +26,11 @@ function template_generic_menu_sidebar_above()
 					<h4>';
 
 			if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
-			{
 				echo '
 						<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>';
-			}
-
 			else
-			{
 				echo '
 						', $section['title'];
-			}
 
 			echo '
 					</h4>
@@ -295,10 +290,8 @@ function template_generic_menu_tabs(&$menu_context)
 				continue;
 
 			if (!empty($tab['is_selected']))
-			{
 				echo '
 		<img src="', $settings['images_url'], '/selected.gif" alt="*" /> <strong><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], '">', $tab['label'], '</a></strong>';
-			}
 			else
 				echo '
 		<a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], '">', $tab['label'], '</a>';
