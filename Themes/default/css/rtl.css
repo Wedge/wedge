@@ -935,6 +935,9 @@ dl.stats dd
 
 /* Styles for the admincenter (reverse admin.css)
 ------------------------------------------------- */
+#admincenter {
+	clear: right;
+}
 #quick_search
 {
 	margin-left: 5px;
