@@ -88,7 +88,7 @@ function template_html_above()
 			if ($context['browser']['is_ie'])
 				echo '
 	<style>
-		.wrc, .roundframe { behavior: url(', $settings['default_theme_url'], '/css/ie-css3.htc);
+		.roundframe, .wrc { position: relative; z-index: 10; behavior: url(', $settings['default_theme_url'], '/css/css3.htc); }
 	</style>';
 		}
 
@@ -136,7 +136,11 @@ function template_html_above()
 
 	echo '
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
-	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>
+	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>', $context['browser']['is_ie6'] ? '
+	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>
+	<script>
+		DD_belatedPNG.fix(\'div,#wedgelogo\');
+	</script>' : '', '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		var smf_theme_url = "', $settings['theme_url'], '";
 		var smf_default_theme_url = "', $settings['default_theme_url'], '";
@@ -166,8 +170,8 @@ function template_body_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	echo !empty($settings['forum_width']) ? '
-<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
+	echo '
+<div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
 		<div id="top_section">
 			<h1 class="forumtitle">
@@ -349,7 +353,7 @@ function template_body_below()
 
 	echo '
 	</div></div>', !empty($settings['forum_width']) ? '
-</div>' : '';
+</div>' : '</div>';
 }
 
 function template_html_below()

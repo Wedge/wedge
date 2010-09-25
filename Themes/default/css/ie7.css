@@ -72,10 +72,9 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 ------------------------------------------------------- */
 #postmodify dl #pm_to, #postmodify dl #bcc_div2, #postmodify dl #pm_subject
 {
-	clear:both !important;
+	clear: both !important;
 }
 
-.wrc, .roundframe {
-	position: relative;
-	z-index: 10;
+.cat_bar, .title_bar {
+	overflow: hidden;
 }

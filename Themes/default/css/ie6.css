@@ -1,4 +1,4 @@
-body, .menu ul, #main_menu, #footer_section
+.menu ul, #main_menu
 {
 	background-image: none;
 }
@@ -188,10 +188,6 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 a.linkOver { background: #c8e2fb }
 
-#header
-{
-	background-image: none;
-}
 #header, #content_section, #footer_section
 {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
@@ -200,10 +196,6 @@ a.linkOver { background: #c8e2fb }
 .cat_bar h3 a {
 	color: white !important;
 }
-#forumposts .wrc {
-	width: 100%;
-}
-.wrc, .roundframe {
-	position: relative;
-	z-index: 999;
+.wrc {
+	zoom: 1;
 }

@@ -1,13 +1,18 @@
 /* Set a fontsize that will look the same in all browsers. */
 body
 {
-	background: #faefe6 url(../images/theme/grad700.png) repeat-x;
+	background: #faefe6;
 	font: 78%/130% "Verdana", "Arial", "Helvetica", sans-serif;
-	padding: 15px 0;
 	margin: 0;
+	padding: 0;
 }
 
-body > div
+#wedge
+{
+	background: url(../images/theme/grad700.png) repeat-x;
+	padding: 15px 0;
+}
+#wedge > div
 {
 	margin: auto;
 	width: 95%;
@@ -3053,8 +3058,9 @@ dl
 	width: 100%;
 	float: left;
 }
-/*Issue a warning*/
-#warn_body{
+/* Issue a warning */
+#warn_body
+{
 	width: 80%;
 	font-size: 0.9em;
 }
