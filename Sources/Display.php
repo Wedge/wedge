@@ -1266,7 +1266,7 @@ function prepareDisplayContext($reset = false)
 			if ($can_pm)
 				$menu[] = '[' . JavaScriptEscape('?action=pm;sa=send;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['pm_menu_send']) . ']';
 			if (in_array($output['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
-				$menu[] = '[' . JavaScriptEscape('?action=emailuser;sa=email;msg=' . $message['id_msg']) . ',' . JavaScriptEscape($txt['send_email']) . ']';
+				$menu[] = '[' . JavaScriptEscape('?action=emailuser;sa=email;msg=%msg%') . ',' . JavaScriptEscape($txt['send_email']) . ']';
 			if (!empty($output['member']['website']['url']))
 				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
 			if ($profile_any)

@@ -529,7 +529,7 @@ UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
 			if (aLinkList[i][0].charAt[0] == '?')
 				aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
 
-			sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0] + '">' + aLinkList[i][1] + '</a></div>';
+			sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
 		}
 		div.innerHTML = sHTML;
 		document.body.appendChild(div);
