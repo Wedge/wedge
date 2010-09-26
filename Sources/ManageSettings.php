@@ -293,6 +293,23 @@ function ModifyCoreFeatures($return_config = false)
 		'rg' => array(
 			'url' => 'action=admin;area=reports',
 		),
+		// Search engines
+		'sp' => array(
+			'url' => 'action=admin;area=sengines',
+			'settings' => array(
+				'spider_mode' => 1,
+			),
+			'setting_callback' => create_function('$value', '
+				// Turn off the spider group if disabling.
+				if (!$value)
+					return array(\'spider_group\' => 0, \'show_spider_online\' => 0);
+			'),
+			'on_save' => create_function('', '
+				global $sourcedir, $modSettings;
+				require_once($sourcedir . \'/ManageSearchEngines.php\');
+				recacheSpiderNames();
+			'),
+		),
 		// w = warning.
 		'w' => array(
 			'url' => 'action=admin;area=securitysettings;sa=moderation',
@@ -321,23 +338,6 @@ function ModifyCoreFeatures($return_config = false)
 
 				$returnSettings[\'warning_settings\'] = $warning_settings;
 				return $returnSettings;
-			'),
-		),
-		// Search engines
-		'sp' => array(
-			'url' => 'action=admin;area=sengines',
-			'settings' => array(
-				'spider_mode' => 1,
-			),
-			'setting_callback' => create_function('$value', '
-				// Turn off the spider group if disabling.
-				if (!$value)
-					return array(\'spider_group\' => 0, \'show_spider_online\' => 0);
-			'),
-			'on_save' => create_function('', '
-				global $sourcedir, $modSettings;
-				require_once($sourcedir . \'/ManageSearchEngines.php\');
-				recacheSpiderNames();
 			'),
 		),
 	);
