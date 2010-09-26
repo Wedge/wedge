@@ -121,7 +121,7 @@ function template_unread()
 				<table class="table_grid" cellspacing="0">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th" width="8%" colspan="2">&nbsp;</th>
+							<th scope="col" class="first_th" width="4%">&nbsp;</th>
 							<th scope="col">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
@@ -151,23 +151,26 @@ function template_unread()
 		foreach ($context['topics'] as $topic)
 		{
 			// Calculate the color class of the topic.
-			$color_class = '';
-			if (strpos($topic['class'], 'sticky') !== false)
+			if ($topic['is_sticky'] && $topic['is_locked'])
+				$color_class = 'stickybg locked_sticky';
+			// Sticky topics should get a different color, too.
+			elseif ($topic['is_sticky'])
 				$color_class = 'stickybg';
-			if (strpos($topic['class'], 'locked') !== false)
-				$color_class .= 'lockedbg';
+			// Locked topics get special treatment as well.
+			elseif ($topic['is_locked'])
+				$color_class = 'lockedbg';
+			// Last, but not least: regular topics.
+			else
+				$color_class = 'windowbg';
 
 			$color_class2 = !empty($color_class) ? $color_class . '2' : '';
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon1 windowbg">
-								<img src="', $settings['images_url'], '/topic/', $topic['class'], '.gif" alt="" />
-							</td>
 							<td class="', $color_class, ' icon2 windowbg">
 								<img src="', $topic['first_post']['icon_url'], '" alt="" />
 							</td>
-							<td class="subject ', $color_class2, ' windowbg2">
+							<td class="subject ', $color_class2, $topic['is_posted_in'] ? '_my' : '', ' windowbg2">
 								<div>
 									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><img src="', $settings['lang_images_url'], '/new.gif" alt="', $txt['new'], '" /></a>
@@ -305,7 +308,7 @@ function template_replies()
 				<table class="table_grid" cellspacing="0">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th" width="8%" colspan="2">&nbsp;</th>
+							<th scope="col" class="first_th" width="4%">&nbsp;</th>
 							<th scope="col">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
@@ -345,9 +348,6 @@ function template_replies()
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon1 windowbg">
-								<img src="', $settings['images_url'], '/topic/', $topic['class'], '.gif" alt="" />
-							</td>
 							<td class="', $color_class, ' icon2 windowbg">
 								<img src="', $topic['first_post']['icon_url'], '" alt="" />
 							</td>
