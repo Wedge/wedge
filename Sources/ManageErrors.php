@@ -329,13 +329,34 @@ function deleteErrors()
 				'error_list' => array_unique($_POST['delete']),
 			)
 		);
+		updateErrorCount();
 
 		// Go back to where we were.
 		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
 	}
 
+	updateErrorCount();
+
 	// Back to the error log!
 	redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+}
+
+function updateErrorCount()
+{
+	global $smcFunc, $modSettings;
+
+	$request = $smcFunc['db_query']('', '
+		SELECT COUNT(id_error) AS errors
+		FROM {db_prefix}log_errors',
+		array()
+	);
+
+	list ($count) = $smcFunc['db_fetch_row']($request);
+	updateSettings(
+		array(
+			'app_error_count' => $count,
+		)
+	);
 }
 
 function ViewFile()

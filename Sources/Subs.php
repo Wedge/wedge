@@ -2774,7 +2774,7 @@ function redirectexit($setLocation = '', $refresh = false)
  *
  * @param mixed $header Whether to issue the header templates or not (often including the main menu). Normally this will be the case, because normally you will require standard templating (i.e pass null, or true here when calling from elsewhere in the app), or false if you require raw content output.
  * @param mixed $do_footer Nominally this follows $header, with one important difference. Whereas with $header, null means to have headers, with $do_footer, null means to inherit from $header. So to have headers, a null/null combination is usually desirable (as index.php does), or to have raw output, simply pass $header as false and omit this parameter.
- * @param bool $from_index If this function is being called in the normal process of execution, this will be true, which enables thie function to return so it can be called again later (so the header can be issued, followed by normal processing, followed by the footer, which is all driven by this function). Normally there will be no need to change this because when calling from elsewhere, execution is intended to end.
+ * @param bool $from_index If this function is being called in the normal process of execution, this will be true, which enables this function to return so it can be called again later (so the header can be issued, followed by normal processing, followed by the footer, which is all driven by this function). Normally there will be no need to change this because when calling from elsewhere, execution is intended to end.
  * @param boom $from_fatal_error If obExit is being called in resolution of a fatal error, this must be set. It is used in ensuring obExit cascades correctly for header/footer when a fatal error has been encountered. Note that the error handler itself should attend to this (and thus, should be called instead of invoking this with an error message)
  */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
@@ -2882,7 +2882,17 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index || WIRELESS)
-		exit;
+		{
+			if (!isset($modSettings['app_error_count']))
+				$modSettings['app_error_count'] = 0;
+			if (!empty($context['app_error_count']))
+				updateSettings(
+					array(
+						'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
+					)
+				);
+			exit;
+		}
 }
 
 /**
@@ -4091,6 +4101,8 @@ function setupMenuContext()
 
 	$cacheTime = $modSettings['lastActive'] * 60;
 
+	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? ' (<strong>' . $modSettings['app_error_count'] . '</strong>)' : '') : '';
+
 	// All the buttons we can possible want and then some, try pulling the final list of buttons from cache first.
 	if (($menu_buttons = cache_get_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
 	{
@@ -4112,7 +4124,7 @@ function setupMenuContext()
 				),
 			),
 			'admin' => array(
-				'title' => $txt['admin'],
+				'title' => $txt['admin'] . $error_count,
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
 				'sub_buttons' => array(
@@ -4127,7 +4139,7 @@ function setupMenuContext()
 						'show' => allowedTo('admin_forum'),
 					),
 					'errorlog' => array(
-						'title' => $txt['errlog'],
+						'title' => $txt['errlog'] . $error_count,
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
 						'show' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
 					),

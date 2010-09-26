@@ -78,7 +78,9 @@ loadDatabase();
 reloadSettings();
 // Clean the request variables, add slashes, etc.
 cleanRequest();
-$context = array();
+$context = array(
+	'app_error_count' => 0,
+);
 broadCheckRequest();
 
 // Seed the random generator.
@@ -160,6 +162,16 @@ call_user_func(smf_main());
 
 // Call obExit specially; we're coming from the main area ;).
 obExit(null, null, true);
+
+// Since we're not leaving obExit the special route, we need to make sure we update the error count.
+if (!isset($modSettings['app_error_count']))
+	$modSettings['app_error_count'] = 0;
+if (!empty($context['app_error_count']))
+	updateSettings(
+		array(
+			'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
+		)
+	);
 
 // The main controlling function.
 function smf_main()

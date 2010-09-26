@@ -64,7 +64,7 @@ function db_fatal_error($loadavg = false)
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error;
+	global $txt, $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error, $context;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
@@ -129,6 +129,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 			array('id_error')
 		);
 		$last_error = $error_info;
+
+		$context['app_error_count']++;
 	}
 
 	// Return the message to make things simpler.
