@@ -220,13 +220,6 @@ function ModifyCoreFeatures($return_config = false)
 		save_callback	- Function called on save, takes state as parameter.
 	*/
 	$core_features = array(
-		// cd = calendar.
-		'cd' => array(
-			'url' => 'action=admin;area=managecalendar',
-			'settings' => array(
-				'cal_enabled' => 1,
-			),
-		),
 		// cp = custom profile fields.
 		'cp' => array(
 			'url' => 'action=admin;area=featuresettings;sa=profile',
@@ -249,6 +242,13 @@ function ModifyCoreFeatures($return_config = false)
 				else
 					return array();
 			'),
+		),
+		// cd = calendar.
+		'cd' => array(
+			'url' => 'action=admin;area=managecalendar',
+			'settings' => array(
+				'cal_enabled' => 1,
+			),
 		),
 		// k = karma.
 		'k' => array(
