@@ -631,7 +631,7 @@ function loadProfileFields($force_reload = false)
 		'signature' => array(
 			'type' => 'callback',
 			'callback_func' => 'signature_modify',
-			'permission' => 'profile_extra',
+			'permission' => 'profile_signature',
 			'enabled' => substr($modSettings['signature_settings'], 0, 1) == 1,
 			'preload' => 'profileLoadSignatureData',
 			'input_validate' => 'profileValidateSignature',
@@ -741,7 +741,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['website_title'],
 			'subtext' => $txt['include_website_url'],
 			'size' => 50,
-			'permission' => 'profile_extra',
+			'permission' => 'profile_website',
 			'link_with' => 'website',
 		),
 		'website_url' => array(
@@ -749,7 +749,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['website_url'],
 			'subtext' => $txt['complete_url'],
 			'size' => 50,
-			'permission' => 'profile_extra',
+			'permission' => 'profile_website',
 			// Fix the URL...
 			'input_validate' => create_function('&$value', '
 
