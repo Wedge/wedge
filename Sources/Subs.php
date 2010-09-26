@@ -3198,35 +3198,6 @@ function url_image_size($url)
 }
 
 /**
- * Determines the CSS class that the topic indicator will be comprised of.
- *
- * The composite icon for a topic indicates its activity level, whether it is a poll or post, whether it is locked and/or sticky. All of these factors are added into the class to form the composite icon.
- *
- * @param array &$topic_context The array within $context, either the full or partial array depending on whether it is called about a single topic (Display) or each topic (MessageIndex, Recent, Search), passed by reference so the actual array element can be updated correctly without passing an identifier to $context and subsequently pulling that into scope.
- */
-function determineTopicClass(&$topic_context)
-{
-	// Set topic class depending on locked status and number of replies.
-	if ($topic_context['is_very_hot'])
-		$topic_context['class'] = 'veryhot';
-	elseif ($topic_context['is_hot'])
-		$topic_context['class'] = 'hot';
-	else
-		$topic_context['class'] = 'normal';
-
-	$topic_context['class'] .= $topic_context['is_poll'] ? '_poll' : '_post';
-
-	if ($topic_context['is_locked'])
-		$topic_context['class'] .= '_locked';
-
-	if ($topic_context['is_sticky'])
-		$topic_context['class'] .= '_sticky';
-
-	// This is so old themes will still work.
-	$topic_context['extended_class'] = &$topic_context['class'];
-}
-
-/**
  * Begin to prepare $context for the theme.
  *
  * Several operations are performed:

@@ -350,8 +350,6 @@ $txtChanges = array(
 		315 => 'forgot_your_password',
 		450 => 'icon_rolleyes',
 		451 => 'icon_tongue',
-		454 => 'hot_topics',
-		455 => 'very_hot_topics',
 		526 => 'icon_embarrassed',
 		527 => 'icon_lips',
 		528 => 'icon_undecided',
@@ -1131,8 +1129,6 @@ function fixTemplateFile($filename, $test = false)
 	$changes = array(
 		'~([^\(])\$txt\[\'users_active\'\]~' => '$1sprintf($txt[\'users_active\'], $modSettings[\'lastActive\'])',
 		'~([^\(])\$txt\[\'welcome_guest\'\]~' => '$1sprintf($txt[\'welcome_guest\'], $txt[\'guest_title\'])',
-		'~([^\(])\$txt\[\'hot_topics\'\]~' => '$1sprintf($txt[\'hot_topics\'], $modSettings[\'hotTopicPosts\'])',
-		'~([^\(])\$txt\[\'very_hot_topics\'\]~' => '$1sprintf($txt[\'very_hot_topics\'], $modSettings[\'hotTopicVeryPosts\'])',
 		'~([^\(])\$txt\[\'info_center_title\'\]~' => '$1sprintf($txt[\'info_center_title\'], $context[\'forum_name\'])',
 		'~([^\(])\$txt\[\'login_with_forum\'\]~' => '$1sprintf($txt[\'login_with_forum\'], $context[\'forum_name\'])',
 	);

@@ -1280,8 +1280,6 @@ function UnreadTopics()
 			'is_sticky' => !empty($modSettings['enableStickyTopics']) && !empty($row['is_sticky']),
 			'is_locked' => !empty($row['locked']),
 			'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
-			'is_hot' => $row['num_replies'] >= $modSettings['hotTopicPosts'],
-			'is_very_hot' => $row['num_replies'] >= $modSettings['hotTopicVeryPosts'],
 			'is_posted_in' => false,
 			'icon' => $row['first_icon'],
 			'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
@@ -1296,8 +1294,6 @@ function UnreadTopics()
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
 			)
 		);
-
-		determineTopicClass($context['topics'][$row['id_topic']]);
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1318,10 +1314,7 @@ function UnreadTopics()
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
-			{
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
-				$context['topics'][$row['id_topic']]['class'] = 'my_' . $context['topics'][$row['id_topic']]['class'];
-			}
 		}
 		$smcFunc['db_free_result']($result);
 	}

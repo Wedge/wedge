@@ -164,7 +164,6 @@ function template_main()
 			<div id="forumposts">
 				<div class="cat_bar">
 					<h3>
-						<img src="', $settings['images_url'], '/topic/', $context['class'], '.gif" alt="" />
 						<span id="author">', $txt['author'], '</span>
 						', $txt['topic'], ': ', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')
 					</h3>

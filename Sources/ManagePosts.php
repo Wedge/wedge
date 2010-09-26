@@ -340,10 +340,6 @@ function ModifyTopicSettings($return_config = false)
 			array('int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']),
 			array('int', 'defaultMaxMessages', 'postinput' => $txt['manageposts_posts']),
 		'',
-			// Hot topics (etc)...
-			array('int', 'hotTopicPosts', 'postinput' => $txt['manageposts_posts']),
-			array('int', 'hotTopicVeryPosts', 'postinput' => $txt['manageposts_posts']),
-		'',
 			// All, next/prev...
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),

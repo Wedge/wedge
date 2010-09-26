@@ -1866,8 +1866,6 @@ function prepareSearchContext($reset = false)
 		'is_sticky' => !empty($modSettings['enableStickyTopics']) && !empty($message['is_sticky']),
 		'is_locked' => !empty($message['locked']),
 		'is_poll' => $modSettings['pollMode'] == '1' && $message['id_poll'] > 0,
-		'is_hot' => $message['num_replies'] >= $modSettings['hotTopicPosts'],
-		'is_very_hot' => $message['num_replies'] >= $modSettings['hotTopicVeryPosts'],
 		'posted_in' => !empty($participants[$message['id_topic']]),
 		'views' => $message['num_views'],
 		'replies' => $message['num_replies'],
@@ -1919,10 +1917,6 @@ function prepareSearchContext($reset = false)
 			'link' => '<a href="' . $scripturl . '#c' . $message['id_cat'] . '">' . $message['cat_name'] . '</a>'
 		)
 	));
-	determineTopicClass($output);
-
-	if ($output['posted_in'])
-		$output['class'] = 'my_' . $output['class'];
 
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
