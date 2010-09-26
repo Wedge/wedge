@@ -4391,7 +4391,6 @@ function smf_seed_generator()
  *
  * Bots invariably occupy IP ranges; this allows us to specify netblocks to exclude that are more in line with the sorts of behavior we will be checking for.
  *
- *
  * @param string $ip A regular IP address in dotted notation (127.0.0.1)
  * @param mixed $cidr_block A single IP in netblock format as a string, or an array of similar (e.g. 10.0.0.0/8)
  * @return bool Whether the individual CIDR netblock matched or not (can be recursive)
@@ -4400,19 +4399,18 @@ function match_cidr($ip, $cidr_block)
 {
 	if (is_array($cidr_block))
 	{
-		foreach ($cidr_block as $cidr) {
+		foreach ($cidr_block as $cidr)
 			if (match_cidr($addr, $cidrlet))
 				return true;
-		}
 	}
 	else
 	{
 		if (strpos($cidr_block, '/') === false)
 			$cidr_block .= '/32';
 
-		list($cidr_ip, $mask) = explode('/', $cidr);
-		$mask = pow(2,32) - pow(2, (32 - $mask));
-		return ((ip2long($ip) & $mask) === (ip2long($cidr_ip) & $mask));
+		list ($cidr_ip, $mask) = explode('/', $cidr);
+		$mask = pow(2,32) - pow(2, 32 - $mask);
+		return (ip2long($ip) & $mask) === (ip2long($cidr_ip) & $mask);
 	}
 	return false;
 }

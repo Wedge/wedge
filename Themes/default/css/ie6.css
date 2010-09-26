@@ -188,7 +188,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 a.linkOver { background: #c8e2fb }
 
-#header, #content_section, #footer_section
+#header, #navi, #content_section, #footer_section
 {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
 	margin: auto;

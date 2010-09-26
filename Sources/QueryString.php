@@ -649,17 +649,13 @@ function broadCheckRequest()
 
 	if (!empty($context['http_headers']['User-Agent']))
 		foreach ($whitelist['user-agent'] as $item)
-		{
 			if ($context['http_headers']['User-Agent'] === $item)
 				return define('WEDGE_WHITELIST', 1);
-		}
 
 	if (!empty($_GET['action']))
 		foreach ($whitelist['action'] as $item)
-		{
 			if ($_GET['action'] === $item)
 				return define('WEDGE_WHITELIST', 1);
-		}
 
 	// So they didn't get whitelisted, eh? Well, are they blacklisted?
 }

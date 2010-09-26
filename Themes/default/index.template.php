@@ -80,17 +80,15 @@ function template_html_above()
 	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css?rc3" />';
 
 	// Some browsers need an extra stylesheet due to bugs/compatibility issues.
-	foreach (array('ie8', 'ie7', 'ie6', 'webkit') as $cssfix)
+	foreach (array('ie7', 'ie6', 'webkit') as $cssfix)
 		if ($context['browser']['is_' . $cssfix])
-		{
 			echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
-			if ($context['browser']['is_ie'])
-				echo '
+	if ($context['browser']['is_ie'])
+		echo '
 	<style>
 		.roundframe, .wrc { position: relative; z-index: 10; behavior: url(', $settings['default_theme_url'], '/css/css3.htc); }
 	</style>';
-		}
 
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])
@@ -137,10 +135,7 @@ function template_html_above()
 	echo '
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
 	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>', $context['browser']['is_ie6'] ? '
-	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>
-	<script>
-		DD_belatedPNG.fix(\'div,#wedgelogo\');
-	</script>' : '', '
+	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>' : '', '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		var smf_theme_url = "', $settings['theme_url'], '";
 		var smf_default_theme_url = "', $settings['default_theme_url'], '";
@@ -155,7 +150,8 @@ function template_html_above()
 		}
 		addLoadEvent(fPmPopup);' : '', '
 		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
+		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
+		DD_belatedPNG.fix(\'div,#wedgelogo\');' : '', '
 	// ]]></script>';
 
 	// Output any remaining HTML headers. (from mods, maybe?)
@@ -310,20 +306,21 @@ function template_body_above()
 			});
 		// ]]></script>';
 
-	// Show the menu here, according to the menu sub template.
-	template_menu();
+	echo '
+	</div></div>';
 
 	echo '
-		<br class="clear" />';
+	<div id="navi">';
+
+	// Show the menu here, according to the menu sub template.
+	template_menu();
 
 	// Show the navigation tree.
 	theme_linktree();
 
-	echo '
-	</div></div>';
-
 	// The main content should go here.
 	echo '
+	</div>
 	<div id="content_section"><div class="frame">
 		<div id="main_content_section">';
 }
@@ -388,8 +385,7 @@ function theme_linktree($force_show = false)
 			echo $tree['extra_before'];
 
 		// Show the link, including a URL if it should have one.
-		echo $settings['linktree_link'] && isset($tree['url']) ? '
-					<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
+		echo $settings['linktree_link'] && isset($tree['url']) ? '<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
 
 		// Show something after the link...?
 		if (isset($tree['extra_after']))
@@ -399,8 +395,7 @@ function theme_linktree($force_show = false)
 		if ($link_num != count($context['linktree']) - 1)
 			echo ' &#187;';
 
-		echo '
-				</li>';
+		echo '</li>';
 	}
 	echo '
 			</ul>

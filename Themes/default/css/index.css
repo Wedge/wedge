@@ -22,8 +22,7 @@ body
 /* the framing graphics */
 #header
 {
-	background: #faf8f6 url(../images/theme/grad350.png) 0 bottom repeat-x;
-	padding-left: 20px;
+	background: #faf8f6 url(../images/theme/grad250.png) 0 -50px repeat-x;
 	border: 1px solid #999;
 	border-bottom: 0;
 	border-radius: 12px 12px 0 0;
@@ -33,20 +32,19 @@ body
 #header div.frame
 {
 	display: block;
-	padding: 5px 20px 0 0;
+	padding: 5px 20px 0 20px;
 }
 /* the content section */
-#content_section
+#navi, #content_section
 {
 	border: 1px solid #999;
 	border-width: 0 1px;
 	background: #faf8f6;
-	padding-left: 20px;
 }
 #content_section div.frame
 {
 	display: block;
-	padding: 0 20px 20px 0;
+	padding: 0 20px 20px 20px;
 }
 #main_content_section
 {
@@ -152,7 +150,8 @@ h1.forumtitle
 /* The navigation list (i.e. linktree) */
 .navigate_section
 {
-	padding: 0.5em;
+	clear: both;
+	padding: 0.5em 20px;
 	margin: 1em 0 0 0;
 }
 .navigate_section ul
@@ -177,7 +176,6 @@ h1.forumtitle
 #footer_section
 {
 	text-align: center;
-	padding-left: 20px;
 	background: #f4f2f3 url(../images/theme/grad250.png) 0 -180px repeat-x;
 	border: 1px solid #999;
 	border-top: 1px solid #ccc;
@@ -192,7 +190,7 @@ h1.forumtitle
 #footer_section div.frame
 {
 	display: block;
-	padding: 15px 0 0 0;
+	padding: 15px 20px;
 }
 #footer_section ul li, #footer_section p
 {
@@ -393,7 +391,7 @@ em
 #main_menu {
 	min-height: 0;
 	float: left;
-	width: 99.8%;
+	width: 99.9%;
 	background: url(../images/theme/grad250.png) 0 -150px repeat-x;
 	border: 1px dotted black;
 	border-width: 1px 0;
