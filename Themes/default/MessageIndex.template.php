@@ -234,7 +234,7 @@ function template_main()
 
 			echo '
 				<tr>
-					<td class="icon2 ', $color_class, '">
+					<td class="icon ', $color_class, '">
 						<img src="', $topic['first_post']['icon_url'], '" alt="" />
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? '_my' : '', '">

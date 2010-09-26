@@ -2543,7 +2543,7 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td
 {
 	width: 100%;
 }
-.topic_table .icon1, .topic_table .icon2, .topic_table .stats
+.topic_table .icon, .topic_table .stats
 {
 	text-align: center;
 }

@@ -167,7 +167,7 @@ function template_unread()
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon2 windowbg">
+							<td class="', $color_class, ' icon windowbg">
 								<img src="', $topic['first_post']['icon_url'], '" alt="" />
 							</td>
 							<td class="subject ', $color_class2, $topic['is_posted_in'] ? '_my' : '', ' windowbg2">
@@ -351,7 +351,7 @@ function template_replies()
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon2 windowbg">
+							<td class="', $color_class, ' icon windowbg">
 								<img src="', $topic['first_post']['icon_url'], '" alt="" />
 							</td>
 							<td class="subject ', $color_class2, ' windowbg2">
