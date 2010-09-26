@@ -191,7 +191,7 @@ function template_report()
 
 	echo '
 	<div id="report_topic">
-		<form action="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0" method="post" accept-charset="', $context['character_set'], '">
 			<input type="hidden" name="msg" value="' . $context['message_id'] . '" />
 				<div class="cat_bar">
 					<h3>', $txt['report_to_mod'], '</h3>

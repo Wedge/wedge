@@ -358,7 +358,6 @@ function ReportToModerator()
 	$context['email_address'] = !isset($_POST['email']) ? '' : trim($_POST['email']);
 
 	// This is here so that the user could, in theory, be redirected back to the topic.
-	$context['start'] = $_REQUEST['start'];
 	$context['message_id'] = $_REQUEST['msg'];
 
 	$context['page_title'] = $txt['report_to_mod'];

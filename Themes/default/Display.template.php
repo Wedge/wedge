@@ -545,7 +545,7 @@ function template_main()
 		// Maybe they want to report this post to the moderator(s)?
 		if ($context['can_report_moderator'])
 			echo '
-								<a href="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.', $message['counter'], ';msg=', $message['id'], '">', $txt['report_to_mod'], '</a> &nbsp;';
+								<a href="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0;msg=', $message['id'], '">', $txt['report_to_mod'], '</a> &nbsp;';
 
 		// Can we issue a warning because of this post?  Remember, we can't give guests warnings.
 		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])

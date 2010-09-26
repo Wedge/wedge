@@ -1265,14 +1265,14 @@ function prepareDisplayContext($reset = false)
 				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profile']) . ']';
 			if ($can_pm)
 				$menu[] = '[' . JavaScriptEscape('?action=pm;sa=send;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['pm_menu_send']) . ']';
-			if (in_array($output['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
-				$menu[] = '[' . JavaScriptEscape('?action=emailuser;sa=email;msg=%msg%') . ',' . JavaScriptEscape($txt['send_email']) . ']';
 			if (!empty($output['member']['website']['url']))
 				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
 			if ($profile_any)
 				$menu[] = '[' . JavaScriptEscape('?action=profile;area=showposts;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
 			if ($buddy)
 				$menu[] = '[' . JavaScriptEscape('?action=buddy;u=' . $output['member']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']) . ',' . JavaScriptEscape($txt['usermenu_' . ($memberContext[$message['id_member']]['is_buddy'] ? 'removebuddy' : 'addbuddy')]) . ']';
+			if ($context['can_report_moderator'])
+				$menu[] = '[' . JavaScriptEscape('?action=reporttm;topic=' . $context['current_topic'] . '.0;msg=%msg%') . ',' . JavaScriptEscape($txt['report_to_mod']) . ']';
 		}
 
 		// 2. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
