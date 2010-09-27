@@ -664,7 +664,13 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 {
 	// In text mode we just add it in as we always did.
 	if (!this.bRichTextEnabled)
-		this.insertText(' ' + oSmileyProperties.sCode);
+	{
+		var smileytext = oSmileyProperties.sCode;
+		if ('selectionStart' in this.oTextHandle && this.oTextHandle.selectionStart > 0 && this.oTextHandle.value.substr(this.oTextHandle.selectionStart - 1, 1) != ' ')
+			smileytext = ' ' + smileytext;
+
+		this.insertText(smileytext);
+	}
 
 	// Otherwise we need to do a whole image...
 	else
