@@ -1332,7 +1332,6 @@ function detectBrowser()
  * - Ensure the forum name is the first item in the link tree.
  * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
  * - Initialize the theme by calling the init subtemplate.
- * - Load the compatibility style sheet if it seems necessary.
  * - Load any theme specific language files.
  * - Prepare variables in the case of theme variants being available.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
@@ -1672,10 +1671,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Initialize the theme.
 	loadSubTemplate('init', 'ignore');
 
-	// Load the compatibility stylesheet if the theme hasn't been updated for 2.0 RC2 (yet).
-	if (isset($settings['theme_version']) && (version_compare($settings['theme_version'], '2.0 RC2', '<') || strpos($settings['theme_version'], '2.0 Beta') !== false))
-		loadTemplate(false, 'compat');
-
 	// Guests may still need a name.
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
 		$context['user']['name'] = $txt['guest_title'];
@@ -1712,10 +1707,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['theme_variant_url'] = $context['theme_variant'] . '/';
 	}
 
-	// Let's be compatible with old themes!
-	if (!function_exists('template_html_above') && in_array('html', $context['template_layers']))
-		$context['template_layers'] = array('main');
-
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
 		$user_info['time_format'] = $txt['time_format'];
@@ -1736,10 +1727,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	$context['tabindex'] = 1;
-
-	// Compatibility.
-	if (!isset($settings['theme_version']))
-		$modSettings['memberCount'] = $modSettings['totalMembers'];
 
 	// This allows us to change the way things look for the admin.
 	$context['admin_features'] = isset($modSettings['admin_features']) ? explode(',', $modSettings['admin_features']) : array('cd,cp,k,w,rg,ml,pm');
@@ -1835,10 +1822,6 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 
 	if ($loaded)
 	{
-		// For compatibility reasons, if this is the index template without new functions, include compatible stuff.
-		if (substr($template_name, 0, 5) == 'index' && !function_exists('template_button_strip'))
-			loadTemplate('Compat');
-
 		if ($db_show_debug === true)
 			$context['debug']['templates'][] = $template_name . ' (' . basename($template_dir) . ')';
 

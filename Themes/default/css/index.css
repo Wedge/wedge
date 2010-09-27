@@ -19,7 +19,6 @@ body
 	max-width: 1200px;
 }
 
-/* the framing graphics */
 #header
 {
 	background: #faf8f6 url(../images/theme/grad250.png) 0 -50px repeat-x;
@@ -422,7 +421,6 @@ em
 	padding: 0;
 }
 .menu ul {
-	background: rgba(255,248,240, .95);
 	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
 	position: absolute;
 	display: block;
@@ -1009,6 +1007,9 @@ a.moderation_link, a.moderation_link:visited
 	border: 1px solid #bbb;
 	background: #f5f5f0;
 	margin: 0.2em 1px 1em 1px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }
 .description_board
 {
@@ -1030,11 +1031,7 @@ a.moderation_link, a.moderation_link:visited
 	padding: 1em;
 	margin: 0;
 }
-p.para2
-{
-	padding: 1em 0 3.5em 0;
-	margin: 0;
-}
+
 /* AJAX notification bar
 ------------------------------------------------------- */
 #ajax_in_progress
@@ -1777,7 +1774,7 @@ img.new_posts
 #forumposts #author
 {
 	float: left;
-	margin: 0 7.7em 0 20px;
+	margin: 0 7.7em 0 10px;
 }
 #forumposts .cat_bar
 {
@@ -2559,6 +2556,10 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td
 {
 	margin: 0;
 }
+#topic_icons .floatleft
+{
+	padding: 0 10px 0 0;
+}
 .topic_table table thead
 {
 	border-bottom: 1px solid #fff;
@@ -2883,7 +2884,7 @@ dl
 }
 .activity_stats li div.bar div
 {
-	background: #6294CE;
+	background: #6294ce;
 }
 .activity_stats li div.bar span
 {

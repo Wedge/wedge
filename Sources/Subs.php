@@ -2882,17 +2882,17 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index || WIRELESS)
-		{
-			if (!isset($modSettings['app_error_count']))
-				$modSettings['app_error_count'] = 0;
-			if (!empty($context['app_error_count']))
-				updateSettings(
-					array(
-						'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
-					)
-				);
-			exit;
-		}
+	{
+		if (!isset($modSettings['app_error_count']))
+			$modSettings['app_error_count'] = 0;
+		if (!empty($context['app_error_count']))
+			updateSettings(
+				array(
+					'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
+				)
+			);
+		exit;
+	}
 }
 
 /**

@@ -37,11 +37,6 @@ function template_init()
 		if this is 'never' or isn't set at all, images from the default theme will not be used. */
 	$settings['use_default_images'] = 'never';
 
-	/* What document type definition is being used? (for font size and other issues.)
-		'xhtml' for an XHTML 1.0 document type definition.
-		'html' for an HTML 4.01 document type definition. */
-	$settings['doctype'] = 'xhtml';
-
 	/* The version this template/theme is for.
 		This should probably be the version of SMF it was created for. */
 	$settings['theme_version'] = '2.0 RC3';
@@ -51,9 +46,6 @@ function template_init()
 
 	/* Use plain buttons - as opposed to text buttons? */
 	$settings['use_buttons'] = true;
-
-	/* Show sticky and lock status separate from topic icons? */
-	$settings['separate_sticky_lock'] = true;
 
 	/* Does this theme use the strict doctype? */
 	$settings['strict_doctype'] = false;

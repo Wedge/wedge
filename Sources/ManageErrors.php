@@ -334,7 +334,6 @@ function deleteErrors()
 		// Go back to where we were.
 		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
 	}
-
 	updateErrorCount();
 
 	// Back to the error log!

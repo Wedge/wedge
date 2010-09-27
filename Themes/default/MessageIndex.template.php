@@ -134,8 +134,8 @@ function template_main()
 	{
 		echo '
 	<div class="pagesection">
-		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
-		', template_button_strip($normal_buttons, 'right'), '
+		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] .
+		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', template_button_strip($normal_buttons, 'right'), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -352,8 +352,7 @@ function template_main()
 	</form>';
 
 		echo '
-	<div class="pagesection">
-		', template_button_strip($normal_buttons, 'right'), '
+	<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
@@ -369,13 +368,12 @@ function template_main()
 	if (!$context['no_topic_listing'])
 		echo '
 			<p class="floatleft smalltext">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" align="middle" /> ' . $txt['locked_topic'] . '<br />' . ($modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" align="middle" /> ' . $txt['sticky_topic'] . '<br />' : ''), '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" align="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" align="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
 			</p>
-			<p class="smalltext">
-				', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', ($modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" align="middle" /> ' . $txt['poll'] : '') . '
+			<p class="smalltext">', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" align="middle" /> ' . $txt['poll'] : '', '
 			</p>';
 
 	echo '
@@ -400,7 +398,7 @@ function template_main()
 
 	// Javascript for inline editing.
 	echo '
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
+<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/topic.js"></script>
 <script type="text/javascript"><!-- // --><![CDATA[
 
 	// Hide certain bits during topic edit.
@@ -432,7 +430,7 @@ function template_main()
 	function modify_topic_show_edit(subject)
 	{
 		// Just template the subject.
-		cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%;" maxlength="80" onkeypress="modify_topic_keypress(event)" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
+		cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event)" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
 	}
 
 	// And the reverse for hiding it.
