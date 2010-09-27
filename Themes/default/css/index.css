@@ -390,11 +390,15 @@ em
 }
 #main_menu {
 	min-height: 0;
+	padding: 5px 0 2px 0 !important;
 	float: left;
-	width: 99.9%;
+	width: 100%;
 	background: url(../images/theme/grad250.png) 0 -150px repeat-x;
 	border: 1px dotted black;
 	border-width: 1px 0;
+}
+#main_menu > li:first-child {
+	padding-left: 10px !important;
 }
 
 .menu li a {

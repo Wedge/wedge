@@ -199,3 +199,6 @@ a.linkOver { background: #c8e2fb }
 .wrc {
 	zoom: 1;
 }
+#button_home {
+	padding-left: 10px !important;
+}
