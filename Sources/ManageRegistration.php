@@ -22,48 +22,24 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides the handling for Admin / Members / Registration, which encompasses all the available options to alter registration and its behaviors.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file helps the administrator setting registration settings and policy
-	as well as allow the administrator to register new members themselves.
-
-	void RegCenter()
-		- entrance point for the registration center.
-		- accessed by ?action=admin;area=regcenter.
-		- requires either the moderate_forum or the admin_forum permission.
-		- loads the Login language file and the Register template.
-		- calls the right function based on the subaction.
-
-	void AdminRegister()
-		- a function to register a new member from the admin center.
-		- accessed by ?action=admin;area=regcenter;sa=register
-		- requires the moderate_forum permission.
-		- uses the admin_register sub template of the Register template.
-		- allows assigning a primary group to the member being registered.
-
-	void EditAgreement()
-		- allows the administrator to edit the registration agreement, and
-		  choose whether it should be shown or not.
-		- accessed by ?action=admin;area=regcenter;sa=agreement.
-		- uses the Admin template and the edit_agreement sub template.
-		- requires the admin_forum permission.
-		- uses the edit_agreement administration area.
-		- writes and saves the agreement to the agreement.txt file.
-
-	void SetReserve()
-		- set the names under which users are not allowed to register.
-		- accessed by ?action=admin;area=regcenter;sa=reservednames.
-		- requires the admin_forum permission.
-		- uses the reserved_words sub template of the Register template.
-
-	void ModifyRegistrationSettings()
-		- set general registration settings and Coppa compliance settings.
-		- accessed by ?action=admin;area=regcenter;sa=settings.
-		- requires the admin_forum permission.
-*/
-
-// Main handling function for the admin approval center
+/**
+ * This file begins processing for the registration center, all actions via ?action=admin;area=regcenter are routed through this function first.
+ *
+ * - Each subaction available in the registration center is listed here, including its permission requirements (mostly admin_forum, register new user requires only moderate_forum)
+ * - The Login language file and Register templates are loaded here as multiple uses of their resources are made.
+ * - Transfers to the appropriate function elsewhere in this file.
+ *
+ * @todo Remove the handling for sa=browse (which is now contained within action=admin;area=viewmembers as this is only from old templates.
+ */
 function RegCenter()
 {
 	global $modSettings, $context, $txt, $scripturl;
@@ -114,7 +90,14 @@ function RegCenter()
 	$subActions[$context['sub_action']][0]();
 }
 
-// This function allows the admin to register a new member by hand.
+/**
+ * Handles manual registration of users by the administrator.
+ *
+ * - Accessed by ?action=admin;area=regcenter;sa=register
+ * - Unlike most of the administration panel, this option merely requires moderate_forum rather than admin_forum permission.
+ * - Uses the admin_register sub template within the Register template.
+ * - Also allows the administrator to set the primary group for the user, and whether to email them of the new details, and/or whether to make them confirm receipt of the email notification (as per Email Activation)
+ */
 function AdminRegister()
 {
 	global $txt, $context, $sourcedir, $scripturl, $smcFunc;
@@ -187,7 +170,15 @@ function AdminRegister()
 		$context['member_groups'] = array();
 }
 
-// I hereby agree not to be a lazy bum.
+/**
+ * Display and save the registration agreement to be shown to users.
+ *
+ * - Allows the administrator to disable it, and/or provide editing facilities.
+ * - Accessed by ?action=admin;area=regcenter;sa=agreement
+ * - Calls upon the edit_agreement sub template of the Admin template.
+ * - Requires the admin_forum permission.
+ * - If multiple languages are provided, it will attempt to edit agreement.language.txt in the top level board directory, or failing that, agreement.txt.
+ */
 function EditAgreement()
 {
 	global $txt, $boarddir, $context, $modSettings, $smcFunc, $settings;
@@ -235,7 +226,15 @@ function EditAgreement()
 	$context['page_title'] = $txt['registration_agreement'];
 }
 
-// Set reserved names/words....
+/**
+ * Display (and save) the options for usernames that are not allowed within the forum registration (and that users cannot change to later)
+ *
+ * - Accessed via ?action=admin;area=regcenter;sa=reservednames (within the registration center in the admin panel)
+ * - Unlike most of the smaller admin functions, this relies on its own template (reserved_words sub template of Register template), to manage the large textarea that forms the entry point for reserved names.
+ * - Provides access to the options: reserved words to be checked as whole words (as opposed to matching anywhere), matching case too, and whether it is set on username and/or display name.
+ * - It should be noted that the method used to display the textarea's contents (i.e. one name per line) is the way it is internally stored too; it is important to note there is no XSS protection here (intentionally)
+ * - Requires admin_forum permission.
+ */
 function SetReserve()
 {
 	global $txt, $context, $modSettings;
@@ -269,7 +268,15 @@ function SetReserve()
 	$context['page_title'] = $txt['admin_reserved_set'];
 }
 
-// This function handles registration settings, and provides a few pretty stats too while it's at it.
+/**
+ * Allows the admin to modify some generation registration settings, such as the method of account creation (instant, member email confirmation, admin approval per account, disabled), whether OpenID is enabled, sending emails on registration and so on.
+ *
+ * - COPPA compliance settings are managed here too.
+ * - Accessed by ?action=admin;area=regcenter;sa=settings.
+ * - Requires admin_forum permission.
+ * - Uses the standard settings template.
+ * - Adds some Javascript to the page to hide the COPPA options if COPPA is not in effect.
+ */
 function ModifyRegistrationSettings($return_config = false)
 {
 	global $txt, $context, $scripturl, $modSettings, $sourcedir;
