@@ -79,9 +79,9 @@ function template_unread()
 	echo '
 	<div id="recent" class="main_content">';
 
-	$showCheckboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
+	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
 
-	if ($showCheckboxes)
+	if ($show_checkboxes)
 		echo '
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="', $context['character_set'], '" name="quickModForm" id="quickModForm" style="margin: 0;">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -95,7 +95,7 @@ function template_unread()
 			'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($showCheckboxes)
+		if ($show_checkboxes)
 			$mark_read['markselectread'] = array(
 				'text' => 'quick_mod_markread',
 				'image' => 'markselectedread.gif',
@@ -130,7 +130,7 @@ function template_unread()
 							</th>';
 
 		// Show a "select all" box for quick moderation?
-		if ($showCheckboxes)
+		if ($show_checkboxes)
 			echo '
 							<th scope="col" width="22%">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
@@ -192,7 +192,7 @@ function template_unread()
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
-			if ($showCheckboxes)
+			if ($show_checkboxes)
 				echo '
 							<td class="windowbg2" valign="middle" align="center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
@@ -207,7 +207,7 @@ function template_unread()
 		if (empty($settings['use_tabs']) && !empty($mark_read))
 			echo '
 						<tr class="catbg">
-							<td colspan="', $showCheckboxes ? '6' : '5', '" align="right">
+							<td colspan="', $show_checkboxes ? '6' : '5', '" align="right">
 								', template_button_strip($mark_read, 'top'), '
 							</td>
 						</tr>';
@@ -237,7 +237,7 @@ function template_unread()
 			</h3>
 		</div>';
 
-	if ($showCheckboxes)
+	if ($show_checkboxes)
 		echo '
 		</form>';
 
@@ -262,9 +262,9 @@ function template_replies()
 	echo '
 	<div id="recent">';
 
-	$showCheckboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
+	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
 
-	if ($showCheckboxes)
+	if ($show_checkboxes)
 		echo '
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="', $context['character_set'], '" name="quickModForm" id="quickModForm" style="margin: 0;">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -278,7 +278,7 @@ function template_replies()
 			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($showCheckboxes)
+		if ($show_checkboxes)
 			$mark_read['markselectread'] = array(
 				'text' => 'quick_mod_markread',
 				'image' => 'markselectedread.gif',
@@ -313,7 +313,7 @@ function template_replies()
 							</th>';
 
 		// Show a "select all" box for quick moderation?
-		if ($showCheckboxes)
+		if ($show_checkboxes)
 				echo '
 							<th scope="col" width="22%">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
@@ -375,7 +375,7 @@ function template_replies()
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
-			if ($showCheckboxes)
+			if ($show_checkboxes)
 				echo '
 							<td class="windowbg2" valign="middle" align="center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
@@ -387,7 +387,7 @@ function template_replies()
 		if (empty($settings['use_tabs']) && !empty($mark_read))
 			echo '
 						<tr class="catbg">
-							<td colspan="', $showCheckboxes ? '6' : '5', '" align="right">
+							<td colspan="', $show_checkboxes ? '6' : '5', '" align="right">
 								', template_button_strip($mark_read, 'top'), '
 							</td>
 						</tr>';
@@ -413,7 +413,7 @@ function template_replies()
 				</h3>
 			</div>';
 
-	if ($showCheckboxes)
+	if ($show_checkboxes)
 		echo '
 		</form>';
 

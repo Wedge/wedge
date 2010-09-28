@@ -260,8 +260,10 @@ function template_results()
 
 	if ($context['compact'])
 	{
-		// Quick moderation set to checkboxes? Oh, how fun :/.
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
+		// Quick moderation set to checkboxes? Oh, how fun... :/
+		$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']);
+
+		if ($show_checkboxes)
 			echo '
 	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="', $context['character_set'], '" name="topicForm">';
 
@@ -303,11 +305,9 @@ function template_results()
 					echo '
 					<div class="floatright">';
 
-					if ($options['display_quick_mod'] == 1)
-					{
+					if ($show_checkboxes)
 						echo '
 						<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />';
-					}
 					else
 					{
 						if ($topic['quick_mod']['remove'])
@@ -353,7 +353,7 @@ function template_results()
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		if ($show_checkboxes)
 		{
 			echo '
 			<div class="middletext titlebg2" style="padding: 4px;">
@@ -392,14 +392,10 @@ function template_results()
 					<input type="submit" style="font-size: 0.8em;" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' &amp;&amp; confirm(\'', $txt['quickmod_confirm'], '\');" class="button_submit" />
 				</div>
 				<br class="clear" />
-			</div>';
-		}
-
-
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-			echo !empty($context['topics']) ? '
-			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />' : '', '
+			</div>
+			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
 		</form>';
+		}
 	}
 	else
 	{
