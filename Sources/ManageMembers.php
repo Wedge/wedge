@@ -321,6 +321,10 @@ function ViewMemberlist()
 			'++' => '>'
 		);
 
+		// Can they see all IP addresses? If not, they shouldn't see any.
+		if (!allowedTo('view_ip_address_any'))
+			unset($params['ip']);
+
 		// !!! Validate a little more.
 
 		// Loop through every field of the form.
@@ -634,9 +638,13 @@ function ViewMemberlist()
 		),
 	);
 
+	// Can they see all IP addresses? If not, they shouldn't see any.
+	if (!allowedTo('view_ip_address_any'))
+		unset($listOptions['columns']['ip']);
+
 	// Without not enough permissions, don't show 'delete members' checkboxes.
 	if (!allowedTo('profile_remove_any'))
-		unset($listOptions['cols']['check'], $listOptions['form'], $listOptions['additional_rows']);
+		unset($listOptions['columns']['check'], $listOptions['form'], $listOptions['additional_rows']);
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -1030,6 +1038,9 @@ function MembersAwaitingActivation()
 			'style' => 'text-align: left;',
 		);
 
+	// Can they see all IP addresses? If not, they shouldn't see any.
+	if (!allowedTo('view_ip_address_any'))
+		unset($listOptions['columns']['ip']);
 	// Now that we have all the options, create the list.
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);

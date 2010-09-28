@@ -117,7 +117,7 @@ function template_search_members()
 									<strong>', $txt['ip_address'], ':</strong>
 								</dt>
 								<dd>
-									<input type="text" name="ip" value="" class="input_text" />
+									<input type="text" name="ip" value=""', allowedTo('view_ip_address_any') ? '' : ' disabled="disabled"', ' class="input_text" />
 								</dd>
 								<dt class="righttext">
 									<strong>', $txt['messenger_address'], ':</strong>

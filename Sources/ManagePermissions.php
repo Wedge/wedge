@@ -1494,6 +1494,7 @@ function loadAllPermissions($loadType = 'classic')
 			'manage_permissions' => array(false, 'member_admin', 'administrate'),
 			'manage_bans' => array(false, 'member_admin', 'administrate'),
 			'send_mail' => array(false, 'member_admin', 'administrate'),
+			'view_ip_address' => array(true, 'member_admin', 'administrate', 'administrate'),
 			'issue_warning' => array(false, 'member_admin', 'moderate_general'),
 			'profile_view' => array(true, 'profile', 'view_basic_info', 'view_basic_info'),
 			'profile_identity' => array(true, 'profile', 'edit_profile', 'moderate_general'),

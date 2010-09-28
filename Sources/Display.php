@@ -1223,7 +1223,7 @@ function prepareDisplayContext($reset = false)
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member'] == $user_info['id'] && !empty($user_info['id'])),
+		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty($user_info['id']) && $message['id_member'] == $user_info['id'] && allowedTo('view_ip_address_own')),
 	);
 
 	// Is this user the message author?

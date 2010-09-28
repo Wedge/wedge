@@ -135,7 +135,7 @@ function summary($memID)
 		);
 	}
 
-	if (allowedTo('moderate_forum'))
+	if (allowedTo('view_ip_address_any') || (allowedTo('view_ip_address_own') && $context['user']['is_owner']))
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
 		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($modSettings['disableHostnameLookup']))
