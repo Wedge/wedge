@@ -588,20 +588,12 @@ function get_http_headers()
 {
 	if (is_callable('apache_request_headers'))
 		return apache_request_headers();
-	else
-	{
-		$headers = array();
-		foreach ($_SERVER as $key => $value)
-			if (strpos($key, 'HTTP_') === 0)
-			{
-				$temp = preg_split('/(\W)/', str_replace('_', '-', substr($key, 5)), PREG_SPLIT_DELIM_CAPTURE);
-				foreach ($temp as $k => $v)
-					$temp[$k] = ucfirst($v);
-				$headers[implode('', $temp)] = $value;
-			}
 
-		return $headers;
-	}
+	$headers = array();
+	foreach ($_SERVER as $key => $value)
+		if (strpos($key, 'HTTP_') === 0)
+			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+	return $headers;
 }
 
 /**

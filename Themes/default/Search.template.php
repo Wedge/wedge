@@ -396,11 +396,10 @@ function template_results()
 		}
 
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
-			echo '
-			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
+			echo !empty($context['topics']) ? '
+			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />' : '', '
 		</form>';
-
 	}
 	else
 	{
