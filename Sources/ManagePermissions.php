@@ -1149,6 +1149,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'profile_upload_avatar',
 		'profile_remote_avatar',
 		'profile_remove_own',
+		'view_ip_address_own',
 	));
 	$groupLevels['board']['standard'] = array_merge($groupLevels['board']['restrict'], array(
 		'poll_vote',
@@ -1195,6 +1196,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'admin_forum',
 		'manage_permissions',
 		'edit_news',
+		'view_ip_address_any',
 		'calendar_edit_any',
 		'profile_identity_any',
 		'profile_extra_any',
@@ -2201,6 +2203,8 @@ function loadIllegalGuestPermissions()
 		'manage_attachments',
 		'manage_smileys',
 		'edit_news',
+		'view_ip_address_own',
+		'view_ip_address_any',
 		'access_mod_center',
 		'moderate_forum',
 		'issue_warning',
