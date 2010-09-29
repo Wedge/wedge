@@ -134,7 +134,7 @@ function template_admin()
 		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
 		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>';
 
-	// This sets the announcements and current versions themselves ;).
+	// This sets the announcements and current versions themselves ;)
 	echo '
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[

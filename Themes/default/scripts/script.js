@@ -432,6 +432,17 @@ function submitThisOnce(oControl)
 	return !smf_formSubmitted;
 }
 
+// !!! Remove once admin_info_files is updated.
+function setInnerHTML(oElement, sToValue)
+{
+	oElement.innerHTML = sToValue;
+}
+
+function getInnerHTML(oElement)
+{
+	return oElement.innerHTML;
+}
+
 // Set the "outer" HTML of an element.
 function setOuterHTML(oElement, sToValue)
 {

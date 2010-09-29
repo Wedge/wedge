@@ -79,7 +79,7 @@ function template_html_above()
 	if ($context['browser']['is_ie'])
 		echo '
 	<style>
-		.roundframe, .wrc { position: relative; z-index: 10; behavior: url(', $settings['default_theme_url'], '/css/css3.htc); }
+		#header, #footer_section, .title_bar, .cat_bar, .roundframe, .wrc { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
 	</style>';
 
 	// RTL languages require an additional stylesheet.
@@ -143,7 +143,7 @@ function template_html_above()
 		addLoadEvent(fPmPopup);' : '', '
 		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
 		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
-		DD_belatedPNG.fix(\'div,#wedgelogo\');' : '', '
+		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
 	// ]]></script>';
 
 	// Output any remaining HTML headers. (from mods, maybe?)
@@ -402,7 +402,7 @@ function template_menu()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<ul id="main_menu" class="menu">';
+		<div id="menu_container"><ul id="main_menu" class="menu">';
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
@@ -440,7 +440,7 @@ function template_menu()
 			</li>';
 	}
 	echo '
-		</ul>
+		</ul></div>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			initMenu(document.getElementById("main_menu"));
 		// ]]></script>';

@@ -27,7 +27,7 @@
 }
 #top_section
 {
-	height: 65px;
+	height: 1%;
 }
 
 /* the tabled definition lists */
@@ -181,7 +181,18 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 {
 	border-bottom: 1px dotted white;
 }
-.menu ul a:hover, a.linkOver { background: #c8e2fb }
+#context_menus h4 {
+	padding: 0;
+}
+#context_menus a {
+	padding: 3px 5px;
+}
+#context_menus a:hover, .menu ul a:hover, a.linkOver {
+	background: #c8e2fb
+}
+#context_menus li.chosen a:hover {
+	background: none;
+}
 
 #header, #navi, #content_section, #footer_section
 {
@@ -196,4 +207,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 #button_home {
 	padding-left: 10px !important;
+}
+#admin_main_section {
+	width: 100%;
 }

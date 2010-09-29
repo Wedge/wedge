@@ -3445,17 +3445,8 @@ span.hidelink
 
 
 
-/* light, no rounded corners */
-tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
-	background: #e3e9ef;
-}
-/* darker, no rounded corners */
-tr.catbg td, tr.catbg th {
-	background: #a8bace;
-}
-/* darker, right */
 .table_list tbody.header td.catbg {
-	background: #b8cade;
+	background-color: #b8cade;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3469,6 +3460,12 @@ tr.catbg th {
 }
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+}
+tr.catbg td {
+	background-color: #a8bace;
+}
+tr.titlebg td, tr.titlebg2 td {
+	background-color: #e3e9ef;
 }
 th.first_th {
 	border-radius: 8px 0 0 0;
