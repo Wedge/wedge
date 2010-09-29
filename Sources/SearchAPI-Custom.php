@@ -102,7 +102,7 @@ class custom_search
 	// Do we have to do some work with the words we are searching for to prepare them?
 	public function prepareIndexes($word, &$wordsSearch, &$wordsExclude, $isExcluded)
 	{
-		global $modSettings;
+		global $modSettings, $smcFunc;
 
 		$subwords = text2words($word, $this->min_word_length, true);
 

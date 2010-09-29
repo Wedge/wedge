@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10141 $.
+Changelog started January 1, 2004; Currently at $Revision: 10144 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -58,7 +58,11 @@ September 2010
  ! Installing as UTF8 should make all tables UTF8 (install script for MySQL)
  ! Fixing potential usage of international characters in attachments filenames (Subs.php)
  ! smf_table_structure() should be consistent for Postgres as well as MySQL (thanks feline!) (DbPackages-postgresql.php) [Bug 4425]
-
+ ! Fixed missing global $smcFunc in prepareIndexes function (SearchAPI-Custom.php)
+ ! $smcFunc['db_list_indexes'] was broken for SQLite. (DbPackages-sqlite.php)
+ - remove getOuterHTML(), outdated javascript function (script.js) [Bug 4284]
+ 
+ 
 
 August 2010
 --------------------------------------------------------------------------------

@@ -597,21 +597,21 @@ function template_choose_payment()
 		<div class="windowbg wrc">
 			<div class="content">
 				', $gateway['desc'], '<br />
-					<form action="', $gateway['form'], '" method="post">';
+				<form action="', $gateway['form'], '" method="post">';
 
 		if (!empty($gateway['javascript']))
 			echo '
-						<script type="text/javascript"><!-- // --><![CDATA[
-							', $gateway['javascript'], '
-						// ]]></script>';
+					<script type="text/javascript"><!-- // --><![CDATA[
+						', $gateway['javascript'], '
+					// ]]></script>';
 
 		foreach ($gateway['hidden'] as $name => $value)
 			echo '
-						<input type="hidden" id="', $gateway['id'], '_', $name, '" name="', $name, '" value="', $value, '" />';
+					<input type="hidden" id="', $gateway['id'], '_', $name, '" name="', $name, '" value="', $value, '" />';
 
 		echo '
-						<br /><input type="submit" value="', $gateway['submit'], '" class="button_submit" />
-					</form>
+					<br /><input type="submit" value="', $gateway['submit'], '" class="button_submit" />
+				</form>
 			</div>
 		</div>';
 	}

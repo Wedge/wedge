@@ -25,11 +25,6 @@
 {
 	overflow: auto;
 }
-/* the user section needs some attention */
-#main_menu
-{
-	width: 98%;
-}
 #top_section
 {
 	height: 65px;
@@ -186,7 +181,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 {
 	border-bottom: 1px dotted white;
 }
-a.linkOver { background: #c8e2fb }
+.menu ul a:hover, a.linkOver { background: #c8e2fb }
 
 #header, #navi, #content_section, #footer_section
 {

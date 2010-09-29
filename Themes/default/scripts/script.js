@@ -415,6 +415,7 @@ function submitonce(theform)
 	for (var i = 0; i < smf_editorArray.length; i++)
 		smf_editorArray[i].doSubmit();
 }
+
 function submitThisOnce(oControl)
 {
 	// Hateful, hateful fix for Safari 1.3 beta.
@@ -431,17 +432,6 @@ function submitThisOnce(oControl)
 	return !smf_formSubmitted;
 }
 
-// Deprecated, as innerHTML is supported everywhere.
-function setInnerHTML(oElement, sToValue)
-{
-	oElement.innerHTML = sToValue;
-}
-
-function getInnerHTML(oElement)
-{
-	return oElement.innerHTML;
-}
-
 // Set the "outer" HTML of an element.
 function setOuterHTML(oElement, sToValue)
 {
@@ -453,57 +443,6 @@ function setOuterHTML(oElement, sToValue)
 		range.setStartBefore(oElement);
 		oElement.parentNode.replaceChild(range.createContextualFragment(sToValue), oElement);
 	}
-}
-
-function getOuterHTML(oNode)
-{
-	if ('outerHTML' in oNode)
-		return oNode.outerHTML;
-
-	var sReturnValue = '';
-
-	switch (oNode.nodeType)
-	{
-		// An element.
-		case 1:
-			sReturnValue += '<' + oNode.nodeName;
-
-			for (var i = 0; i < oNode.attributes.length; i++)
-				if (oNode.attributes[i].nodeValue != null)
-					sReturnValue += ' ' + oNode.attributes[i].nodeName + '="' + oNode.attributes[i].nodeValue + '"';
-
-			if (oNode.childNodes.length == 0 && in_array(oNode.nodeName.toLowerCase(), ['hr', 'input', 'img', 'link', 'meta', 'br']))
-				sReturnValue += ' />';
-			else
-				sReturnValue += '>' + oNode.innerHTML + '</' + oNode.nodeName + '>';
-		break;
-
-		// 2 is an attribute.
-
-		// Just some text...
-		case 3:
-			sReturnValue += oNode.nodeValue;
-		break;
-
-		// A CDATA section.
-		case 4:
-			sReturnValue += '<![CDATA' + '[' + oNode.nodeValue + ']' + ']>';
-		break;
-
-		// Entity reference...
-		case 5:
-			sReturnValue += '&' + oNode.nodeName + ';';
-		break;
-
-		// 6 is an actual entity, 7 is a PI.
-
-		// Comment.
-		case 8:
-			sReturnValue += '<!--' + oNode.nodeValue + '-->';
-		break;
-	}
-
-	return sReturnValue;
 }
 
 // Checks for variable in theArray.
