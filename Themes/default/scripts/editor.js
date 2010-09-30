@@ -647,9 +647,7 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 			}
 		}
 		else
-		{
 			replaceText(sText, this.oTextHandle);
-		}
 	}
 }
 
@@ -665,8 +663,16 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 	// In text mode we just add it in as we always did.
 	if (!this.bRichTextEnabled)
 	{
-		var smileytext = oSmileyProperties.sCode;
-		if ('selectionStart' in this.oTextHandle && this.oTextHandle.selectionStart > 0 && this.oTextHandle.value.substr(this.oTextHandle.selectionStart - 1, 1) != ' ')
+		var handle = this.oTextHandle, smileytext = oSmileyProperties.sCode;
+		if ('createTextRange' in handle)
+		{
+			var sel = 'caretPos' in handle ? handle.caretPos.duplicate() : null;
+			if (sel != null)
+				sel.moveStart('character', -1);
+			if (sel == null || (sel.text.charAt(0) != ' ' && sel.text.charAt(0) != ''))
+				smileytext = ' ' + smileytext;
+		}
+		else if ('selectionStart' in handle && handle.selectionStart > 0 && handle.value.charAt(handle.selectionStart - 1) != ' ')
 			smileytext = ' ' + smileytext;
 
 		this.insertText(smileytext);
