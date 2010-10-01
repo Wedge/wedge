@@ -1322,19 +1322,6 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	}
 }
 
-// A function used to clean the attachments on post page
-function cleanFileInput(idElement)
-{
-	if (is_opera || is_ie || is_safari)
-		document.getElementById(idElement).outerHTML = document.getElementById(idElement).outerHTML;
-	else
-	{
-		// What else can we do?
-		document.getElementById(idElement).type = 'input';
-		document.getElementById(idElement).type = 'file';
-	}
-}
-
 /*
 Dropdown menus, Wedge style. You may reuse code by keeping the credits intact.
 © 2008-2010 René-Gilles Deberdt (http://wedgeo.com)

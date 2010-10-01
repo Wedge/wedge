@@ -424,7 +424,7 @@ function template_main()
 		foreach ($context['current_attachments'] as $attachment)
 			echo '
 						<dd class="smalltext">
-							<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
+							<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="javascript:oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
 						</dd>';
 		echo '
 					</dl>';
@@ -439,31 +439,9 @@ function template_main()
 							', $txt['attach'], ':
 						</dt>
 						<dd class="smalltext">
-							<input type="file" size="60" name="attachment[]" id="attachment1" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\'attachment1\');">', $txt['clean_attach'], '</a>)';
-
-		// Show more boxes only if they aren't approaching their limit.
-		if ($context['num_allowed_attachments'] > 1)
-			echo '
-							<script type="text/javascript"><!-- // --><![CDATA[
-								var allowed_attachments = ', $context['num_allowed_attachments'], ';
-								var current_attachment = 1;
-
-								function addAttachment()
-								{
-									allowed_attachments = allowed_attachments - 1;
-									current_attachment = current_attachment + 1;
-									if (allowed_attachments <= 0)
-										return alert("', $txt['more_attachments_error'], '");
-
-									setOuterHTML(document.getElementById("moreAttachments"), \'<dd class="smalltext"><input type="file" size="60" name="attachment[]" id="attachment\' + current_attachment + \'" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\\\'attachment\' + current_attachment + \'\\\');">', $txt['clean_attach'], '</a>)\' + \'</dd><dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">(', $txt['more_attachments'], ')<\' + \'/a><\' + \'/dd>\');
-
-									return true;
-								}
-							// ]]></script>
+							<input type="file" size="60" name="attachment[]" id="attachment1" class="input_file" />
+							<div id="attachments_container"></div>
 						</dd>
-						<dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">(', $txt['more_attachments'], ')</a></dd>';
-
-		echo '
 						<dd class="smalltext">';
 
 		// Show some useful information such as allowed extensions, maximum size and amount of attachments allowed.
@@ -481,7 +459,30 @@ function template_main()
 
 		echo '
 						</dd>
-					</dl>';
+					</dl>
+					<script type="text/javascript"><!-- // --><![CDATA[
+						var oAttach = new wedgeAttachSelect({
+							file_item: "attachment1",
+							file_container: "attachments_container",
+							max: ', $context['max_allowed_attachments'], ',
+							message_txt_delete: ', JavaScriptEscape($txt['remove']);
+
+		// This is purely setting it up to be displayed in a JSON friendly fashion without having a JSON function handy.
+		// Included here since it seemed almost more related to display than logic.
+		if (!empty($modSettings['attachmentExtensions']) && !empty($modSettings['attachmentCheckExtensions']))
+		{
+			$ext = explode(',', $modSettings['attachmentExtensions']);
+			foreach ($ext as $k => $v)
+				$ext[$k] = JavaScriptEscape($v);
+
+			echo ',
+							message_ext_error: ', JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])), ',
+							attachment_ext: [', implode(',', $ext), ']';
+		}
+
+		echo '
+	});
+					// ]]></script>';
 	}
 
 	// Is visual verification enabled?

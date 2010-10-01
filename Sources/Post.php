@@ -74,7 +74,6 @@ if (!defined('SMF'))
  * - Is this topic over the threshold of being old? If so, flag that to the user.
  * - Set the page title and link tree depending on what we're doing.
  * - If using wireless, rewrite the last link tree item to point to the full post page instead.
- * - If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments - so deal with that.
  * - Instance the editor component.
  * - Get all the possible icons in this board, and prepare them ready for the template.
  * - All the relevant posts to display after the editor box (i.e. the last replies, or the last posts before your currently-editing post)
@@ -1105,10 +1104,10 @@ function Post()
 	if (WIRELESS)
 		$context['linktree'][count($context['linktree']) - 1]['url'] = $scripturl . '?action=post;' . (!empty($topic) ? 'topic=' . $topic : 'board=' . $board) . '.' . $_REQUEST['start'] . (isset($_REQUEST['msg']) ? ';msg=' . (int) $_REQUEST['msg'] . ';' . $context['session_var'] . '=' . $context['session_id'] : '');
 
-	// If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments.
+	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.
 	// !!! This won't work if you're posting an event.
-	$context['num_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : min($modSettings['attachmentNumPerPostLimit'] - count($context['current_attachments']) + (isset($deleted_attachments) ? $deleted_attachments : 0), $modSettings['attachmentNumPerPostLimit']);
-	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments'))) && $context['num_allowed_attachments'] > 0;
+	$context['max_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : $modSettings['attachmentNumPerPostLimit'];
+	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments'))) && $context['max_allowed_attachments'] > 0;
 	$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
 
 	$context['subject'] = addcslashes($form_subject, '"');

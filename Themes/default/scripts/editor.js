@@ -1756,3 +1756,122 @@ smc_BBCButtonBox.prototype.setSelect = function (sSelectName, sValue)
 		}
 	}
 }
+
+/* Attachment selector, based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
+* The code below is modified under the MIT licence, http://the-stickman.com/using-code-from-this-site-ie-licence/ not reproduced here for
+* convenience of users using this software (as this is an active downloaded file) */
+function wedgeAttachSelect(oOptions)
+{
+	wedgeAttachSelect.prototype.opts = oOptions;
+	wedgeAttachSelect.prototype.count = 0;
+	wedgeAttachSelect.prototype.attachId = 0;
+	wedgeAttachSelect.prototype.max = (oOptions.max) ? oOptions.max : -1;
+	wedgeAttachSelect.prototype.addElement(document.getElementById(wedgeAttachSelect.prototype.opts.file_item));
+};
+
+wedgeAttachSelect.prototype.addElement = function (element)
+{
+	// Make sure it's a file input element, ignore it if not
+	if (element.tagName == 'INPUT' && element.type == 'file')
+	{
+		element.id = 'file_' + this.attachId++;
+		element.name = 'attachment[]';
+		element.multi_selector = this;
+		element.onchange = function()
+		{
+			if (element.value == '')
+				return;
+
+			// Check if it's a valid extension (if we're checking such things)
+			if (!wedgeAttachSelect.prototype.checkExtension(element.value))
+			{
+				alert(wedgeAttachSelect.prototype.opts.message_ext_error_final);
+				element.value = '';
+				return;
+			}
+
+			var new_element = document.createElement('input');
+			new_element.type = 'file';
+			new_element.className = 'input_file';
+			new_element.setAttribute('size', '60');
+
+			// Add new element, update everything
+			this.parentNode.insertBefore(new_element, document.getElementById(wedgeAttachSelect.prototype.opts.file_container));
+			this.multi_selector.addElement(new_element);
+			this.multi_selector.addListRow(this);
+
+			// Hide this: we can't use display:none because Safari doesn't like it
+			this.style.position = 'absolute';
+			this.style.left = '-1000px';
+		};
+
+		this.count++;
+		this.current_element = element;
+		this.checkActive();
+	}
+};
+
+wedgeAttachSelect.prototype.checkExtension = function (filename)
+{
+	if (!wedgeAttachSelect.prototype.opts.attachment_ext)
+		return true; // we're not checking
+
+	var dot = filename.lastIndexOf(".");
+	if (!filename || filename.length == 0 || dot == -1)
+	{
+		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace(' ({ext})', '');
+		return false; // pfft, didn't specify anything, or no extension
+	}
+
+	var ext = (filename.substr(dot + 1, filename.length)).toLowerCase();
+	var arr = this.opts.attachment_ext;
+	var func = Array.prototype.indexOf ?
+		function(arr, obj) { return arr.indexOf(obj) !== -1; } :
+		function(arr, obj) {
+			for(var i = -1, j = arr.length; ++i < j;)
+				if(arr[i] === obj) return true;
+			return false;
+    };
+	var value = func(arr, ext);
+	if (!value)
+		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace('{ext}', ext);
+
+	return value;
+}
+
+wedgeAttachSelect.prototype.addListRow = function (element)
+{
+	var new_row = document.createElement('div');
+	var new_row_button = document.createElement('input');
+	new_row_button.type = 'button';
+	new_row_button.value = this.opts.message_txt_delete;
+	new_row_button.className = 'button_submit';
+	new_row.element = element;
+
+	new_row_button.onclick = function ()
+	{
+		// Remove element from form
+		this.parentNode.element.parentNode.removeChild(this.parentNode.element);
+		this.parentNode.parentNode.removeChild(this.parentNode);
+		this.parentNode.element.multi_selector.count--;
+		wedgeAttachSelect.prototype.checkActive();
+		return false;
+	};
+
+	new_row.innerHTML = element.value + '&nbsp; &nbsp;';
+	new_row.appendChild(new_row_button);
+	document.getElementById(this.opts.file_container).appendChild(new_row);
+};
+
+wedgeAttachSelect.prototype.checkActive = function()
+{
+	var elements = document.getElementsByTagName('input');
+	var session_attach = 0;
+	for (i in elements)
+	{
+		if (elements[i] && elements[i].type == 'checkbox' && elements[i].name == 'attach_del[]' && elements[i].checked == true)
+			session_attach++;
+	}
+
+	this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
+}
