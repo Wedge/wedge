@@ -80,7 +80,7 @@ function template_html_above()
 	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
 		echo '
 	<style>
-		#header, #footer, .title_bar, .cat_bar', $context['browser']['is_ie6'] ? '' : ',.wrc, .roundframe, .buttonlist a', ' { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
+		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
 	</style>';
 
 	// RTL languages require an additional stylesheet.
