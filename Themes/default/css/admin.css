@@ -144,7 +144,7 @@ hr.hrcolor
 }
 .title_bar
 {
-	margin: 0 0 3px 0;
+	margin-bottom: 3px;
 }
 .title_bar h3 form
 {

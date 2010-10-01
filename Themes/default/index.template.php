@@ -76,10 +76,11 @@ function template_html_above()
 		if ($context['browser']['is_' . $cssfix])
 			echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
-	if ($context['browser']['is_ie'])
+
+	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
 		echo '
 	<style>
-		#header, #footer_section, .title_bar, .cat_bar, .roundframe, .wrc { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
+		#header, #footer, .title_bar, .cat_bar', $context['browser']['is_ie6'] ? '' : ',.wrc, .roundframe, .buttonlist a', ' { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
 	</style>';
 
 	// RTL languages require an additional stylesheet.
@@ -327,7 +328,7 @@ function template_body_below()
 
 	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
 	echo '
-	<div id="footer_section"><div class="frame">
+	<div id="footer"><div class="frame">
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
 			<li><a id="button_xhtml" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_xhtml'], '"><span>', $txt['xhtml'], '</span></a></li>
@@ -460,7 +461,7 @@ function template_button_strip($button_strip, $direction = 'top', $strip_options
 	{
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
-				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '><span>' . $txt[$value['text']] . '</span></a></li>';
+				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
 	}
 
 	// No buttons? No button strip either.
@@ -468,7 +469,7 @@ function template_button_strip($button_strip, $direction = 'top', $strip_options
 		return;
 
 	// Make the last one, as easy as possible.
-	$buttons[count($buttons) - 1] = str_replace('<span>', '<span class="last">', $buttons[count($buttons) - 1]);
+	$buttons[count($buttons) - 1] = str_replace('class="button_strip_', 'class="last button_strip_', $buttons[count($buttons) - 1]);
 
 	echo '
 		<div class="buttonlist', !empty($direction) ? ' float' . $direction : '', '"', (empty($buttons) ? ' style="display: none;"' : ''), (!empty($strip_options['id']) ? ' id="' . $strip_options['id'] . '"': ''), '>

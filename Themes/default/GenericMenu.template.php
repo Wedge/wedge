@@ -112,7 +112,7 @@ function template_generic_menu_dropdown_above()
 	{
 		echo '
 	<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
-		<h4>', $section['title'], '</h4></a>', !empty($section['areas']) ? '
+		<h4>', $section['title'], '</h4>', !empty($section['areas']) ? '
 		<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)

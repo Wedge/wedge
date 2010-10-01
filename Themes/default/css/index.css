@@ -172,7 +172,7 @@ h1.forumtitle
 }
 
 /* The footer wih copyright links etc. */
-#footer_section
+#footer
 {
 	text-align: center;
 	background: #f4f2f3 url(../images/theme/grad250.png) 0 -180px repeat-x;
@@ -182,25 +182,25 @@ h1.forumtitle
 	-moz-border-radius: 0 0 12px 12px;
 	-webkit-border-radius: 0 0 12px 12px;
 }
-#footer_section span.smalltext
+#footer span.smalltext
 {
 	font-size: 100%;
 }
-#footer_section div.frame
+#footer div.frame
 {
 	display: block;
 	padding: 15px 20px;
 }
-#footer_section ul li, #footer_section p
+#footer ul li, #footer p
 {
 	font-size: 0.8em;
 }
-#footer_section ul li
+#footer ul li
 {
 	display: inline;
 	padding-right: 5px;
 }
-#footer_section ul li.copyright
+#footer ul li.copyright
 {
 	display: block;
 }
@@ -1122,10 +1122,12 @@ dl.settings dt a img
 }
 .cat_bar {
 	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
+	border: 1px solid #999;
 	border: 1px solid rgba(92,92,92, .5);
 }
 .title_bar {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -20px repeat-x;
+	border: 1px solid #ddd;
 	border: 1px solid rgba(128,128,128, .3);
 }
 
@@ -1259,6 +1261,7 @@ table.table_grid thead tr.catbg th
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
+	border: 1px solid #ddd;
 	border: 1px solid rgba(128,128,128, .2);
 }
 /* Let's have a bit of fun, shall we? */
@@ -1344,6 +1347,10 @@ form.wrc
 /* Styles for the standard button lists.
 ------------------------------------------------------- */
 
+.buttonlist
+{
+	margin-right: -8px;
+}
 .buttonlist ul
 {
 	padding: 5px;
@@ -1359,17 +1366,13 @@ form.wrc
 .buttonlist a
 {
 	display: block;
-	height: 23px;
-	font-size: 0.8em;
-	color: #000;
 	text-transform: uppercase;
 	text-decoration: none;
-}
-.buttonlist a span
-{
+	font-size: 0.8em;
+	color: #000;
+	border: 1px solid #ccc;
 	border: 1px solid rgba(128,128,128, .2);
 	background: #e8e8e8;
-	display: block;
 	height: 17px;
 	line-height: 17px;
 	padding: 1px 7px 0 7px;
@@ -1378,24 +1381,18 @@ form.wrc
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
-.buttonlist a span.last
-{
-	margin-right: -8px;
-}
-.buttonlist a:hover span
+.buttonlist a:hover
 {
 	background: #fd9604;
 	color: #fff;
-	text-decoration: none;
 }
-/* the active one */
-.buttonlist a.active span
+.buttonlist a.active
 {
-	background: #5a6c85;
+	background: #5a6c85 !important;
 	color: #fff;
 	font-weight: bold;
 }
-.buttonlist a.active span:hover
+.buttonlist a.active:hover
 {
 	color: #ddf;
 }

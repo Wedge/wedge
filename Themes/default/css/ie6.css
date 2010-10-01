@@ -87,10 +87,15 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 {
 	clear: both;
 }
-.buttonlist ul li
+.buttonlist a
 {
+	text-decoration: none;
 	width: 1%;
 	white-space: nowrap;
+}
+.buttonlist a:hover
+{
+	text-decoration: none;
 }
 #forumposts .cat_bar h3
 {
@@ -194,7 +199,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	background: none;
 }
 
-#header, #navi, #content_section, #footer_section
+#header, #navi, #content_section, #footer
 {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
 	margin: auto;
