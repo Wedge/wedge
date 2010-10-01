@@ -77,7 +77,7 @@ function template_html_above()
 			echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
 
-	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
+	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
 		echo '
 	<style>
 		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }

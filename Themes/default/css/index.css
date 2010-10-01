@@ -785,16 +785,16 @@ td.footnum a:target, a.fnotel:target { background-color: #ddeeff !important }
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
 {
 	color: #222;
-	font-family: arial, helvetica, sans-serif;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia, arial, helvetica, sans-serif;
 	font-size: 1.1em;
-	font-weight: bold;
+	font-weight: normal;
 }
 .catbg, tr.catbg td, tr.catbg th
 {
-	color: #fff;
-	font-family: arial, helvetica, sans-serif;
+	color: #666;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia, arial, helvetica, sans-serif;
 	font-size: 1.1em;
-	font-weight: bold;
+	font-weight: normal;
 }
 
 /* adjust the table versions of headers */
@@ -808,7 +808,7 @@ tr.titlebg th a:link, tr.titlebg th a:visited, tr.titlebg2 td a:link, tr.titlebg
 }
 tr.catbg th a:link, tr.catbg th a:visited
 {
-	color: #fff;
+	color: #666;
 }
 .catbg select
 {
@@ -1120,10 +1120,11 @@ dl.settings dt a img
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
+/* Also try #c8eeca, #b8cade, #f2efea */
 .cat_bar {
-	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
-	border: 1px solid #999;
-	border: 1px solid rgba(92,92,92, .5);
+	background: #cadcee url(../images/theme/grad40.png) 0 -20px repeat-x;
+	border: 1px solid #e0e0e0;
+	border: 1px solid rgba(160,160,160, .5);
 }
 .title_bar {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -20px repeat-x;
@@ -1134,18 +1135,22 @@ dl.settings dt a img
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
 {
 	line-height: 20px;
-	font-family: Georgia;
-	font-size: 1.3em;
-	font-weight: normal;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia;
+	font-size: 1.2em;
 	font-style: italic;
+	font-weight: normal;
+}
+.cat_bar h3, .cat_bar h4
+{
+	font-weight: bold;
 }
 .cat_bar h3, .cat_bar h3 a, .cat_bar h4, .cat_bar h4 a, .table_list tbody.header td, .table_list tbody.header td a
 {
-	color: #fff;
+	color: #666;
 }
 .cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover
 {
-	color: #fd9;
+	color: #000;
 	text-decoration: none;
 }
 .title_bar h3, .title_bar h3 a, .title_bar h4, .title_bar h4 a
@@ -1883,22 +1888,23 @@ ul.quickbuttons
 	clear: right;
 	float: right;
 	text-align: right;
-	font-family: arial, sans-serif;
-	font-weight: bold;
-	font-size: 0.85em;
+	font-family: "Trebuchet MS", arial, sans-serif;
+	text-transform: uppercase;
+	font-weight: normal;
+	font-size: 0.95em;
+	line-height: 22px;
 }
 ul.quickbuttons li
 {
 	float: left;
 	display: inline;
-	margin: 0 0 0 11px;
+	margin: 0 0 0 10px;
 }
 ul.quickbuttons li a
 {
-	padding: 0 0 0 20px;
+	padding: 0 0 0 22px;
 	display: block;
 	height: 20px;
-	line-height: 18px;
 	float: left;
 }
 ul.quickbuttons a:hover
@@ -3443,7 +3449,7 @@ span.hidelink
 
 
 .table_list tbody.header td.catbg {
-	background-color: #b8cade;
+	background-color: #c8daee;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3453,13 +3459,16 @@ span.hidelink
 	font-size: 1.1em;
 }
 tr.catbg th {
-	background: #a8bace url(../images/theme/grad40.png) 0 -5px repeat-x;
+	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+}
+tr.catbg th a {
+	font-weight: 600;
 }
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg td {
-	background-color: #a8bace;
+	background-color: #c8daee;
 }
 tr.titlebg td, tr.titlebg2 td {
 	background-color: #e3e9ef;
