@@ -785,14 +785,14 @@ td.footnum a:target, a.fnotel:target { background-color: #ddeeff !important }
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td
 {
 	color: #222;
-	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia, arial, helvetica, sans-serif;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 	font-size: 1.1em;
 	font-weight: normal;
 }
 .catbg, tr.catbg td, tr.catbg th
 {
 	color: #666;
-	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia, arial, helvetica, sans-serif;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 	font-size: 1.1em;
 	font-weight: normal;
 }
@@ -1122,7 +1122,7 @@ dl.settings dt a img
 }
 /* Also try #c8eeca, #b8cade, #f2efea */
 .cat_bar {
-	background: #cadcee url(../images/theme/grad40.png) 0 -20px repeat-x;
+	background: #ddeee0 url(../images/theme/grad40.png) 0 -20px repeat-x;
 	border: 1px solid #e0e0e0;
 	border: 1px solid rgba(160,160,160, .5);
 }
@@ -1135,14 +1135,14 @@ dl.settings dt a img
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4
 {
 	line-height: 20px;
-	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Georgia;
+	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 	font-size: 1.2em;
-	font-style: italic;
 	font-weight: normal;
+	font-style: italic;
 }
 .cat_bar h3, .cat_bar h4
 {
-	font-weight: bold;
+	font-weight: 700;
 }
 .cat_bar h3, .cat_bar h3 a, .cat_bar h4, .cat_bar h4 a, .table_list tbody.header td, .table_list tbody.header td a
 {
@@ -3120,6 +3120,10 @@ dl
 	float: right;
 	width: 49.5%;
 }
+#stats
+{
+	margin-top: 5px;
+}
 dl.stats
 {
 	clear: both;
@@ -3449,7 +3453,7 @@ span.hidelink
 
 
 .table_list tbody.header td.catbg {
-	background-color: #c8daee;
+	background-color: #ddeee0;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3459,16 +3463,16 @@ span.hidelink
 	font-size: 1.1em;
 }
 tr.catbg th {
-	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+	background: #ddeee0 url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg th a {
-	font-weight: 600;
+	font-weight: bold;
 }
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg td {
-	background-color: #c8daee;
+	background-color: #ddeee0;
 }
 tr.titlebg td, tr.titlebg2 td {
 	background-color: #e3e9ef;

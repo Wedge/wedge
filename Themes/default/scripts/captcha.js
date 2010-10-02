@@ -1,4 +1,4 @@
-// This file contains javascript associated with the captcha visual verification stuffs.
+// This file contains javascript associated with the captcha visual verification stuff.
 
 function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 {
@@ -38,19 +38,15 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 
 		// Quick and dirty way of converting decimal to hex
 		var hexstr = "0123456789abcdef";
-		for(var i=0; i < 32; i++)
+		for (var i = 0; i < 32; i++)
 			new_url = new_url + hexstr.substr(Math.floor(Math.random() * 16), 1);
 
 		if (useLibrary && document.getElementById("verification_image" + uniqueID))
-		{
 			document.getElementById("verification_image" + uniqueID).src = new_url;
-		}
 		else if (document.getElementById("verification_image" + uniqueID))
-		{
 			for (i = 1; i <= letterCount; i++)
 				if (document.getElementById("verification_image" + uniqueID + "_" + i))
 					document.getElementById("verification_image" + uniqueID + "_" + i).src = new_url + ";letter=" + i;
-		}
 
 		return false;
 	}
@@ -62,6 +58,7 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 			ev = window.event;
 
 		popupFailed = reqWin(imageURL + ";sound", 400, 120);
+
 		// Don't follow the link if the popup worked, which it would have done!
 		if (!popupFailed)
 		{

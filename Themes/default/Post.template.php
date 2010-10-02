@@ -481,7 +481,7 @@ function template_main()
 		}
 
 		echo '
-	});
+						});
 					// ]]></script>';
 	}
 
