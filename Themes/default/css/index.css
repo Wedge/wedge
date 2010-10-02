@@ -1120,9 +1120,9 @@ dl.settings dt a img
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
-/* Also try #c8eeca, #b8cade, #f2efea */
+/* Also try #c8eeca, #b8cade, #f2efea, a8ceba/-5px */
 .cat_bar {
-	background: #ddeee0 url(../images/theme/grad40.png) 0 -20px repeat-x;
+	background: #e5eee0 url(../images/theme/grad40.png) 0 -20px repeat-x;
 	border: 1px solid #e0e0e0;
 	border: 1px solid rgba(160,160,160, .5);
 }
@@ -1142,15 +1142,15 @@ dl.settings dt a img
 }
 .cat_bar h3, .cat_bar h4
 {
-	font-weight: 700;
+	letter-spacing: 1px;
 }
 .cat_bar h3, .cat_bar h3 a, .cat_bar h4, .cat_bar h4 a, .table_list tbody.header td, .table_list tbody.header td a
 {
-	color: #666;
+	color: #000;
 }
 .cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover
 {
-	color: #000;
+	color: #963;
 	text-decoration: none;
 }
 .title_bar h3, .title_bar h3 a, .title_bar h4, .title_bar h4 a
@@ -3453,7 +3453,7 @@ span.hidelink
 
 
 .table_list tbody.header td.catbg {
-	background-color: #ddeee0;
+	background-color: #e5eee0;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3463,16 +3463,13 @@ span.hidelink
 	font-size: 1.1em;
 }
 tr.catbg th {
-	background: #ddeee0 url(../images/theme/grad40.png) 0 -18px repeat-x;
-}
-tr.catbg th a {
-	font-weight: bold;
+	background: #e5eee0 url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg td {
-	background-color: #ddeee0;
+	background-color: #e5eee0;
 }
 tr.titlebg td, tr.titlebg2 td {
 	background-color: #e3e9ef;
