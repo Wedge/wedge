@@ -1011,7 +1011,7 @@ function template_wap2_display()
 		<a id="new"></a>' : '', '
 		<p class="windowbg', $alternate ? '' : '2', '">
 			', $context['wireless_moderate'] && $message['member']['id'] ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';wap2">' . $message['member']['name'] . '</a>' : '<strong>' . $message['member']['name'] . '</strong>',
-			' ', $txt['on'], ' ', $message['time'], ':', (empty($context['wireless_more']) && $message['can_modify']) || !empty($context['wireless_moderate']) ? '
+			' <small>', $txt['on'], ' ', $message['time'], '</small>:', (empty($context['wireless_more']) && $message['can_modify']) || !empty($context['wireless_moderate']) ? '
 			[<a href="' . $scripturl . '?action=post;msg=' . $message['id'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';wap2">' . $txt['wireless_display_edit'] . '</a>]' : '', !$message['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '<br />
 			', $message['body'], '
 		</p>';
