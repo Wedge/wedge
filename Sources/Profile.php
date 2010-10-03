@@ -480,7 +480,7 @@ function ModifyProfile($post_errors = array())
 	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
 
 	// If we're in wireless then we have a cut down template...
-	if (WIRELESS && $context['sub_template'] == 'summary' && WIRELESS_PROTOCOL != 'wap')
+	if (WIRELESS && $context['sub_template'] == 'summary')
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_profile';
 
 	// These will get populated soon!

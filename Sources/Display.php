@@ -31,7 +31,7 @@ if (!defined('SMF'))
 
 	void Display()
 		- loads the posts in a topic up so they can be displayed.
-		- supports wireless, using wap/wap2/imode and the Wireless templates.
+		- supports wireless, using wap2 and the Wireless templates.
 		- uses the main sub template of the Display template.
 		- requires a topic, and can go to the previous or next topic from it.
 		- jumps to the correct post depending on a number/time/IS_MSG passed.
@@ -1079,7 +1079,7 @@ function Display()
 	$context['can_restore_msg'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
 	// Wireless shows a "more" if you can do anything special.
-	if (WIRELESS && WIRELESS_PROTOCOL != 'wap')
+	if (WIRELESS)
 	{
 		$context['wireless_more'] = $context['can_sticky'] || $context['can_lock'] || allowedTo('modify_any');
 		$context['wireless_moderate'] = isset($_GET['moderate']) ? ';moderate' : '';

@@ -36,7 +36,7 @@ if (!defined('SMF'))
  *
  * Unlike most actions within the forum, this action is explicitly not listed within the action array in index.php, because it is the default action; if no known action, board or topic is specified, this function will be used.
  *
- * - Loads the boardindex template, or alternatively uses the wireless version (specific to each wireless mode)
+ * - Loads the boardindex template, or alternatively uses the wireless version
  * - Defines the canonical URL of the page to be the principle forum URL (as $scripturl) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, and no wrapaction caught by the theme, this action will be called)
  * - Ordinarily, the board index page will be directed to be indexed, however this is turned off in the event that $_GET is non-empty.
  * - The board list is then loaded from {@link getBoardIndex()} in Subs-BoardIndex.php.

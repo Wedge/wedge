@@ -1013,7 +1013,7 @@ function BanEdit()
 	loadLanguage('Errors');
 
 	// If we're in wireless mode remove the admin template layer and use a special template.
-	if (WIRELESS && WIRELESS_PROTOCOL != 'wap')
+	if (WIRELESS)
 	{
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_ban_edit';
 		foreach ($context['template_layers'] as $k => $v)

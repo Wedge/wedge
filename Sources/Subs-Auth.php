@@ -88,7 +88,7 @@ if (!defined('SMF'))
 		- called by index.php?action=findmember.
 		- is used as a popup for searching members.
 		- uses sub template find_members of the Help template.
-		- also used to add members for PM's sent using wap2/imode protocol.
+		- also used to add members for PM's sent using wap2 protocol.
 
 	void RequestMembers()
 		- used by javascript to find members matching the request.

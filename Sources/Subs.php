@@ -2766,7 +2766,7 @@ function redirectexit($setLocation = '', $refresh = false)
  * - A call will be put in to work on the mail queue.
  * - Make sure the page title is sanitised.
  * - Begin the session ID injecting output buffer.
- * - If in a debug or XML mode or WAP, post-process the page to ensure it is valid Unicode with a further output buffer.
+ * - If in a debug or XML mode, post-process the page to ensure it is valid Unicode with a further output buffer.
  * - Ensure any integration-hooked buffers are called.
  * - Display the header if correct to display then main page content, then the contents of $context['include_after_template'], followed by footer if correct to display, and lastly by debug data if enabled and available.
  * - Store the user agent string from the browser for security comparisons next page load.
@@ -2811,7 +2811,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		ob_start('ob_sessrewrite');
 
 		// Just in case we have anything bad already in there...
-		if ((isset($_REQUEST['debug']) || isset($_REQUEST['xml']) || (WIRELESS && WIRELESS_PROTOCOL == 'wap')) && in_array($txt['lang_locale'], array('UTF-8', 'ISO-8859-1')))
+		if ((isset($_REQUEST['debug']) || isset($_REQUEST['xml'])) && in_array($txt['lang_locale'], array('UTF-8', 'ISO-8859-1')))
 			ob_start('validate_unicode__recursive');
 
 		if (!empty($settings['output_buffers']) && is_string($settings['output_buffers']))

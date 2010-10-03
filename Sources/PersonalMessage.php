@@ -123,9 +123,7 @@ function MessageMain()
 
 	loadLanguage('PersonalMessage');
 
-	if (WIRELESS && WIRELESS_PROTOCOL == 'wap')
-		fatal_lang_error('wireless_error_notyet', false);
-	elseif (WIRELESS)
+	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_pm';
 	else
 		loadTemplate('PersonalMessage');
