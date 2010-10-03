@@ -1669,8 +1669,8 @@ function createAttachment(&$attachmentOptions)
 	{
 		// Make sure the directory isn't full.
 		$dirSize = 0;
-		$dir = @opendir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
-		while ($file = readdir($dir))
+		$dir = @scandir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
+		foreach ($dir as $file)
 		{
 			if ($file == '.' || $file == '..')
 				continue;

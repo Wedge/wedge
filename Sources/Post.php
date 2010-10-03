@@ -1018,8 +1018,8 @@ function Post()
 				{
 					// Make sure the directory isn't full.
 					$dirSize = 0;
-					$dir = @opendir($current_attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
-					while ($file = readdir($dir))
+					$dir = @scandir($current_attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
+					foreach ($dir as $file)
 					{
 						if ($file == '.' || $file == '..')
 							continue;
@@ -1034,7 +1034,6 @@ function Post()
 
 						$dirSize += filesize($current_attach_dir . '/' . $file);
 					}
-					closedir($dir);
 
 					// Too big!  Maybe you could zip it or something...
 					if ($_FILES['attachment']['size'][$n] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)

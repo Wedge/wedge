@@ -1753,9 +1753,9 @@ function loadPaymentGateways()
 	global $sourcedir;
 
 	$gateways = array();
-	if ($dh = opendir($sourcedir))
+	if ($dh = scandir($sourcedir))
 	{
-		while (($file = readdir($dh)) !== false)
+		foreach ($dh as $file)
 		{
 			if (is_file($sourcedir . '/' . $file) && preg_match('~Subscriptions-([A-Za-z\d]+)\.php~', $file, $matches))
 			{
@@ -1780,7 +1780,6 @@ function loadPaymentGateways()
 			}
 		}
 	}
-	closedir($dh);
 
 	return $gateways;
 }

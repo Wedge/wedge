@@ -1311,10 +1311,10 @@ function PackageBrowse()
 	if (!@is_writable($boarddir . '/Packages'))
 		create_chmod_control(array($boarddir . '/Packages'), array('destination_url' => $scripturl . '?action=admin;area=packages', 'crash_on_error' => true));
 
-	if ($dir = @opendir($boarddir . '/Packages'))
+	if ($dir = @scandir($boarddir . '/Packages'))
 	{
 		$dirs = array();
-		while ($package = readdir($dir))
+		foreach ($dir as $package)
 		{
 			if ($package == '.' || $package == '..' || $package == 'temp' || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/package-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
 				continue;
@@ -1415,7 +1415,6 @@ function PackageBrowse()
 			else
 				$context['available_other'][] = $packageInfo;
 		}
-		closedir($dir);
 	}
 }
 
@@ -1869,8 +1868,8 @@ function fetchPerms__recursive($path, &$data, $level)
 		'folders' => array(),
 	);
 
-	$dh = opendir($path);
-	while ($entry = readdir($dh))
+	$dh = scandir($path);
+	foreach ($dh as $entry)
 	{
 		// Some kind of file?
 		if (!is_dir($path . '/' . $entry))
@@ -1909,7 +1908,6 @@ function fetchPerms__recursive($path, &$data, $level)
 			// Otherwise we stop here.
 		}
 	}
-	closedir($dh);
 
 	// Nothing to see here?
 	if (!$save_data)
@@ -2123,8 +2121,8 @@ function PackagePermissionsAction()
 				global $context;
 
 				$count = 0;
-				$dh = @opendir($dir);
-				while ($entry = readdir($dh))
+				$dh = @scandir($dir);
+				foreach ($dh as $entry)
 				{
 					if ($entry != '.' && $entry != '..' && is_dir($dir . '/' . $entry))
 					{
@@ -2133,7 +2131,6 @@ function PackagePermissionsAction()
 						$count += count_directories__recursive($dir . '/' . $entry);
 					}
 				}
-				closedir($dh);
 
 				return $count;
 			}
@@ -2179,10 +2176,10 @@ function PackagePermissionsAction()
 		foreach ($context['directory_list'] as $path => $dummy)
 		{
 			// Do the contents of the directory first.
-			$dh = @opendir($path);
+			$dh = @scandir($path);
 			$file_count = 0;
 			$dont_chmod = false;
-			while ($entry = readdir($dh))
+			foreach ($dh as $entry)
 			{
 				$file_count++;
 				// Actually process this file?
@@ -2200,7 +2197,6 @@ function PackagePermissionsAction()
 					$context['file_offset'] = $file_count;
 				}
 			}
-			closedir($dh);
 
 			// If this is set it means we timed out half way through.
 			if ($dont_chmod)

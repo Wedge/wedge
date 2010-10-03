@@ -623,8 +623,8 @@ function MaintainFiles()
 	$attachmentDirSize = 0;
 	foreach ($attach_dirs as $id => $attach_dir)
 	{
-		$dir = @opendir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
-		while ($file = readdir($dir))
+		$dir = @scandir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
+		foreach ($dir as $file)
 		{
 			if ($file == '.' || $file == '..')
 				continue;
@@ -641,7 +641,6 @@ function MaintainFiles()
 			if (empty($modSettings['currentAttachmentUploadDir']) || $modSettings['currentAttachmentUploadDir'] == $id)
 				$attachmentDirSize += filesize($attach_dir . '/' . $file);
 		}
-		closedir($dir);
 	}
 	// Divide it into kilobytes.
 	$attachmentDirSize /= 1024;

@@ -4068,13 +4068,12 @@ function clean_cache($type = '')
 	if (!is_dir($cachedir))
 		return;
 
-	$dh = opendir($cachedir);
-	while ($file = readdir($dh))
+	$dh = scandir($cachedir);
+	foreach ($dh as $file)
 	{
 		if ($file != '.' && $file != '..' && $file != 'index.php' && $file != '.htaccess' && (!$type || substr($file, 0, strlen($type)) == $type))
 			@unlink($cachedir . '/' . $file);
 	}
-	closedir($dh);
 }
 
 /**

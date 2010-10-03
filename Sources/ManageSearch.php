@@ -674,9 +674,9 @@ function loadSearchAPIs()
 	global $sourcedir, $txt;
 
 	$apis = array();
-	if ($dh = opendir($sourcedir))
+	if ($dh = scandir($sourcedir))
 	{
-		while (($file = readdir($dh)) !== false)
+		foreach ($dh as $file)
 		{
 			if (!is_dir($file) && preg_match('~SearchAPI-([A-Za-z\d_]+)\.php~', $file, $matches))
 			{
@@ -708,7 +708,6 @@ function loadSearchAPIs()
 			}
 		}
 	}
-	closedir($dh);
 
 	return $apis;
 }

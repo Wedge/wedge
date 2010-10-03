@@ -1658,11 +1658,11 @@ function copytree($source, $destination)
 	if (!is_writable($destination))
 		mktree($destination, 0777);
 
-	$current_dir = opendir($source);
-	if ($current_dir == false)
+	$current_dir = scandir($source);
+	if (empty($current_dir))
 		return;
 
-	while ($entryname = readdir($current_dir))
+	foreach ($current_dir as $entryname)
 	{
 		if (in_array($entryname, array('.', '..')))
 			continue;
@@ -1687,8 +1687,6 @@ function copytree($source, $destination)
 		else
 			copy($source . '/' . $entryname, $destination . '/' . $entryname);
 	}
-
-	closedir($current_dir);
 }
 
 function listtree($path, $sub_path = '')

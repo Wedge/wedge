@@ -684,9 +684,9 @@ function PackageUpload()
 		fatal_lang_error('package_upload_error_broken', false, $txt[$context['package']]);
 	}
 	// Is it already uploaded, maybe?
-	elseif ($dir = @opendir($boarddir . '/Packages'))
+	elseif ($dir = @scandir($boarddir . '/Packages'))
 	{
-		while ($package = readdir($dir))
+		foreach ($dir as $package)
 		{
 			if ($package == '.' || $package == '..' || $package == 'temp' || $package == $packageName || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/package-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
 				continue;
@@ -702,7 +702,6 @@ function PackageUpload()
 				fatal_lang_error('package_upload_error_exists');
 			}
 		}
-		closedir($dir);
 	}
 
 	if ($context['package']['type'] == 'modification')
