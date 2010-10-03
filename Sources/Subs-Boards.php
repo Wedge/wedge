@@ -653,6 +653,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['redirect'] = $boardOptions['redirect'];
 	}
 
+	if (isset($boardOptions['redirect_newtab']))
+	{
+		$boardUpdates[] = 'redirect_newtab = {int:redirect_newtab}';
+		$boardUpdateParameters['redirect_newtab'] = (int) $boardOptions['redirect_newtab'];
+	}
+
 	if (isset($boardOptions['num_posts']))
 	{
 		$boardUpdates[] = 'num_posts = {int:num_posts}';
@@ -1038,7 +1044,7 @@ function getBoardTree()
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,
 			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.override_theme, b.id_profile, b.redirect,
-			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
+			b.redirect_newtab, b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)
 		ORDER BY c.cat_order, b.child_level, b.board_order',
@@ -1088,6 +1094,7 @@ function getBoardTree()
 				'override_theme' => $row['override_theme'],
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
+				'redirect_newtab' => $row['redirect_newtab'],
 				'prev_board' => $prevBoard
 			);
 			$prevBoard = $row['id_board'];

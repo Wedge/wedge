@@ -24,7 +24,7 @@ function template_main()
 			echo '
 				<tr id="board_', $board['id'], '" class="windowbg2">
 					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
 
 			// If the board or children is new, show an indicator.
 			if ($board['new'] || $board['children_new'])
@@ -43,7 +43,7 @@ function template_main()
 						</a>
 					</td>
 					<td class="info">
-						<a class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
 
 			// Has it outstanding posts for approval?
 			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))

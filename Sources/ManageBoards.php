@@ -417,6 +417,7 @@ function EditBoard()
 			'profile' => 1,
 			'override_theme' => 0,
 			'redirect' => '',
+			'redirect_newtab' => 0,
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
 		);
@@ -629,6 +630,8 @@ function EditBoard2()
 
 		// Are they doing redirection?
 		$boardOptions['redirect'] = !empty($_POST['redirect_enable']) && isset($_POST['redirect_address']) && trim($_POST['redirect_address']) != '' ? trim($_POST['redirect_address']) : '';
+		// If they are, do they want it in a new tab?
+		$boardOptions['redirect_newtab'] = $boardOptions['redirect'] && isset($_POST['redirect_newtab']);
 
 		// Profiles...
 		$boardOptions['profile'] = $_POST['profile'];
