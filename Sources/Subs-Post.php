@@ -1685,7 +1685,6 @@ function createAttachment(&$attachmentOptions)
 
 			$dirSize += filesize($attach_dir . '/' . $file);
 		}
-		closedir($dir);
 
 		// Too big!  Maybe you could zip it or something...
 		if ($attachmentOptions['size'] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
