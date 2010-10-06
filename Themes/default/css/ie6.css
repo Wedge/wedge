@@ -205,7 +205,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	margin: auto;
 }
 .cat_bar h3 a {
-	color: white !important;
+	color: black !important;
 }
 .wrc {
 	zoom: 1;
