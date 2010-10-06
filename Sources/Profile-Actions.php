@@ -78,7 +78,7 @@ function activateAccount($memID)
 	redirectexit('action=profile;u=' . $memID . ';area=summary');
 }
 
-// Issue/manage a users warning status.
+// Issue/manage a user's warning status.
 function issueWarning($memID)
 {
 	global $txt, $scripturl, $modSettings, $user_info, $mbname;

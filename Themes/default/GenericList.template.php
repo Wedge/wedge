@@ -205,24 +205,24 @@ function template_create_list_menu($list_menu, $direction = 'top')
 	/**
 		// This is use if you want your generic lists to have tabs.
 		$cur_list['list_menu'] = array(
-			// This is the style to use.  Tabs or Buttons (Text 1 | Text 2).
-			// By default tabs are selected if not set.
-			// The main difference between tabs and buttons is that tabs get highlighted if selected.
-			// If style is set to buttons and use tabs is diabled then we change the style to old styled tabs.
+			// This is the style to use. Tabs or Buttons (Text 1 | Text 2).
+			// By default tabs, are selected if not set.
+			// The main difference between tabs and buttons is that tabs get highlighted when selected.
+			// If style is set to buttons and use tabs is disabled, then we change the style to old-style tabs.
 			'style' => 'tabs',
-			// The posisiton of the tabs/buttons.  Left or Right.  By default is set to left.
+			// The position of the tabs/buttons. Left or Right. Set to left by default.
 			'position' => 'left',
-			// This is used by the old styled menu.  We *need* to know the total number of columns to span.
+			// This is used by the old styled menu. We *need* to know the total number of columns to span.
 			'columns' => 0,
 			// This gives you the option to show tabs only at the top, bottom or both.
 			// By default they are just shown at the top.
 			'show_on' => 'top',
-			// Links.  This is the core of the array.  It has all the info that we need.
+			// Links. This is the core of the array. It has all the info that we need.
 			'links' => array(
 				'name' => array(
-					// This will tell use were to go when they click it.
+					// This will tell users where to go when they click it.
 					'href' => $scripturl . '?action=theaction',
-					// The name that you want to appear for the link.
+					// The actual name that shows up for the link.
 					'label' => $txt['name'],
 					// If we use tabs instead of buttons we highlight the current tab.
 					// Must use conditions to determine if it's selected or not.

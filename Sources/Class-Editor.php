@@ -1838,18 +1838,16 @@ class wedgeEditor
 
 					// We should edit them out, or else if an admin edits the message they will get shown...
 					else
-					{
 						while (strpos($parts[$i], '[html]') !== false)
 							$parts[$i] = preg_replace('~\[[/]?html\]~i', '', $parts[$i]);
-					}
 				}
 
 				// Let's look at the time tags...
 				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($modSettings[\'time_offset\'] + $user_info[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
 
 				// Change the color specific tags to [color=the color].
-				$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);  // First do the opening tags.
-				$parts[$i] = preg_replace('~\[/(black|blue|green|red|white)\]~', '[/color]', $parts[$i]);   // And now do the closing tags
+				$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);		// First do the opening tags.
+				$parts[$i] = preg_replace('~\[/(?:black|blue|green|red|white)\]~', '[/color]', $parts[$i]);		// And now do the closing tags
 
 				// Make sure all tags are lowercase.
 				$parts[$i] = preg_replace('~\[([/]?)(list|li|table|tr|td)((\s[^\]]+)*)\]~ie', '\'[$1\' . strtolower(\'$2\') . \'$3]\'', $parts[$i]);

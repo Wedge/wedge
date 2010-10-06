@@ -523,13 +523,11 @@ window.setTimeout('smf_sessionKeepAlive();', 1200000);
 // Set a theme option through javascript.
 function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
 {
-	// Compatibility.
-	if (cur_session_id == null)
+	if (!cur_session_id)
 		cur_session_id = smf_session_id;
-	if (typeof(cur_session_var) == 'undefined')
+	if (!cur_session_var)
 		cur_session_var = 'sesc';
-
-	if (additional_vars == null)
+	if (!additional_vars)
 		additional_vars = '';
 
 	var tempImage = new Image();
@@ -568,7 +566,7 @@ function smf_avatarResize()
 		j++;
 	}
 
-	if (typeof(window_oldAvatarOnload) != 'undefined' && window_oldAvatarOnload)
+	if (window_oldAvatarOnload)
 	{
 		window_oldAvatarOnload();
 		window_oldAvatarOnload = null;
@@ -578,10 +576,8 @@ function smf_avatarResize()
 
 function hashLoginPassword(doForm, cur_session_id)
 {
-	// Compatibility.
-	if (cur_session_id == null)
+	if (!cur_session_id)
 		cur_session_id = smf_session_id;
-
 	if (typeof(hex_sha1) == 'undefined')
 		return;
 	// Are they using an email address?
@@ -595,18 +591,13 @@ function hashLoginPassword(doForm, cur_session_id)
 	doForm.hash_passwrd.value = hex_sha1(hex_sha1(doForm.user.value.php_to8bit().php_strtolower() + doForm.passwrd.value.php_to8bit()) + cur_session_id);
 
 	// It looks nicer to fill it with asterisks, but Firefox will try to save that.
-	if (is_ff != -1)
-		doForm.passwrd.value = '';
-	else
-		doForm.passwrd.value = doForm.passwrd.value.replace(/./g, '*');
+	doForm.passwrd.value = is_ff != -1 ? '' : doForm.passwrd.value = doForm.passwrd.value.replace(/./g, '*');
 }
 
 function hashAdminPassword(doForm, username, cur_session_id)
 {
-	// Compatibility.
-	if (cur_session_id == null)
+	if (!cur_session_id)
 		cur_session_id = smf_session_id;
-
 	if (typeof(hex_sha1) == 'undefined')
 		return;
 
@@ -770,7 +761,7 @@ smc_Toggle.prototype.init = function ()
 smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 {
 	// Default bInit to false.
-	bInit = typeof(bInit) == 'undefined' ? false : true;
+	bInit = bInit ? true : false;
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
@@ -840,24 +831,20 @@ smc_Toggle.prototype.toggle = function()
 
 function ajax_indicator(turn_on)
 {
-	if (ajax_indicator_ele == null)
+	if (!ajax_indicator_ele)
 	{
 		ajax_indicator_ele = document.getElementById('ajax_in_progress');
-
-		if (ajax_indicator_ele == null && typeof(ajax_notification_text) != null)
-		{
+		if (!ajax_indicator_ele && ajax_notification_text !== null)
 			create_ajax_indicator_ele();
-		}
 	}
 
-	if (ajax_indicator_ele != null)
+	if (ajax_indicator_ele)
 	{
-		if (is_ie && !is_ie7up)
+		if (is_ie6)
 		{
 			ajax_indicator_ele.style.position = 'absolute';
 			ajax_indicator_ele.style.top = document.documentElement.scrollTop;
 		}
-
 		ajax_indicator_ele.style.display = turn_on ? 'block' : 'none';
 	}
 }
@@ -876,7 +863,7 @@ function create_ajax_indicator_ele()
 	var cancel_img = document.createElement('img');
 	cancel_img.src = smf_images_url + '/icons/quick_remove.gif';
 
-	if (typeof(ajax_notification_cancel_text) != 'undefined')
+	if (ajax_notification_cancel_text)
 	{
 		cancel_img.alt = ajax_notification_cancel_text;
 		cancel_img.title = ajax_notification_cancel_text;
@@ -886,10 +873,10 @@ function create_ajax_indicator_ele()
 	cancel_link.appendChild(cancel_img);
 	ajax_indicator_ele.appendChild(cancel_link);
 
-	// Set the text.  (Note:  You MUST append here and not overwrite.)
+	// Set the text. (Note: you MUST append here and not overwrite.)
 	ajax_indicator_ele.innerHTML += ajax_notification_text;
 
-	// Finally attach the element to the body.
+	// Finally, attach the element to the body.
 	document.body.appendChild(ajax_indicator_ele);
 }
 
@@ -1397,17 +1384,16 @@ function hideUlUnder(id)
 function showShim(showsh, ieid, iemenu)
 {
 	iem = ieid.substring(2);
-	if (typeof(ieshim[iem]) != 'undefined')
+	if (!(ieshim[iem]))
+		return;
+	if (showsh)
 	{
-		if (showsh)
-		{
-			ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
-			ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
-			ieshim[iem].style.width = iemenu.offsetWidth + 'px';
-			ieshim[iem].style.height = iemenu.offsetHeight + 'px';
-		}
-		ieshim[iem].style.display = showsh ? 'block' : 'none';
+		ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
+		ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
+		ieshim[iem].style.width = iemenu.offsetWidth + 'px';
+		ieshim[iem].style.height = iemenu.offsetHeight + 'px';
 	}
+	ieshim[iem].style.display = showsh ? 'block' : 'none';
 }
 
 // Show the first ul element found under this element

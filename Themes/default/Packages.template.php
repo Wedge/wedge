@@ -1500,7 +1500,7 @@ function template_view_operations()
 		<div class="padding windowbg">
 			<div class="cat_bar">
 				<h3>
-				', $txt['operation_find'], '<a href="javascript:void(0);" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+					', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
 				</h3>
 			</div>
 			<div class="padding">
@@ -1508,7 +1508,7 @@ function template_view_operations()
 			</div>
 			<div class="cat_bar">
 				<h3 class="topmargin">
-				', $txt[$operation_text], '<a href="javascript:void(0);" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+					', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
 				</h3>
 			</div>
 			<div class="padding">

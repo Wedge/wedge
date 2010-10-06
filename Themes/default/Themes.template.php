@@ -39,7 +39,7 @@ function template_main()
 
 		echo '
 							</div>
-							<a href="javascript:void(0);" onclick="document.getElementById(\'known_themes_list\').style.display=\'block\'; document.getElementById(\'known_themes_link\').style.display = \'none\'; return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
+							<a href="#" onclick="document.getElementById(\'known_themes_list\').style.display=\'block\'; document.getElementById(\'known_themes_link\').style.display = \'none\'; return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
 							<script type="text/javascript"><!-- // --><![CDATA[
 								document.getElementById("known_themes_list").style.display = "none";
 								document.getElementById("known_themes_link").style.display = "";
