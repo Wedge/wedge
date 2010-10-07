@@ -1311,10 +1311,9 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 
 /*
 Dropdown menus, Wedge style. You may reuse code by keeping the credits intact.
-© 2008-2010 René-Gilles Deberdt (http://wedgeo.com)
-
-Uses portions under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
-Copyright © 2004 Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
+© 2008-2010 René-Gilles Deberdt (http://wedgeo.com), based on original code
+© 2004 by Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
+Released under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
 */
 
 var baseId = 0, hoverable = 0, rtl = document.dir && document.dir == 'rtl';

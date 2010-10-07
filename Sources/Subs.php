@@ -537,7 +537,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 		// Show the ... after the first page.  (1 >...< 6 7 [8] 9 10 ... 15)
 		if ($start > $num_per_page * ($PageContiguous + 1))
-			$pageindex .= '<span style="font-weight: bold;" onclick="' . htmlspecialchars('expandPages(this, ' . JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . ', ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');') . '" onmouseover="this.style.cursor=\'pointer\';"> ... </span>';
+			$pageindex .= '<span style="font-weight: bold;" onclick="' . htmlspecialchars('expandPages(this, ' . JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . ', ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');') . '" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 
 		// Show the pages before the current one. (1 ... >6 7< [8] 9 10 ... 15)
 		for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
@@ -564,7 +564,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 		// Show the '...' part near the end. (1 ... 6 7 [8] 9 10 >...< 15)
 		if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
-			$pageindex .= '<span style="font-weight: bold;" onclick="expandPages(this, \'' . ($flexible_start ? strtr($base_url, array('\'' => '\\\'')) : strtr($base_url, array('%' => '%%', '\'' => '\\\'')) . ';start=%1$d') . '\', ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');" onmouseover="this.style.cursor=\'pointer\';"> ... </span>';
+			$pageindex .= '<span style="font-weight: bold;" onclick="expandPages(this, \'' . ($flexible_start ? strtr($base_url, array('\'' => '\\\'')) : strtr($base_url, array('%' => '%%', '\'' => '\\\'')) . ';start=%1$d') . '\', ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 
 		// Show the last number in the list. (1 ... 6 7 [8] 9 10 ... >15<)
 		if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
@@ -687,6 +687,22 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 	// Format any other characters..
 	return strftime($str, $time);
+}
+
+/**
+ * Format a time, and add "on" if not "today" or "yesterday"
+ *
+ * @param int $log_time See timeformat()
+ * @param mixed $show_today See timeformat()
+ * @param mixed $offset_type See timeformat()
+ *
+ * @return string Same as timeformat(), except that "on" will be shown before numeric dates.
+ */
+function on_timeformat($log_time, $show_today = true, $offset_type = false)
+{
+	global $txt;
+	$ret = timeformat($log_time, $show_today, $offset_type);
+	return is_numeric($ret[0]) ? $txt['on'] . ' ' . $ret : $ret;
 }
 
 /**
@@ -1346,14 +1362,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'parameters' => array(
 					'author' => array('match' => '(.{1,192}?)', 'quoted' => true),
 				),
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ': {author}</div><blockquote>',
+				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' {author}</div><blockquote>',
 				'after' => '</blockquote><div class="quotefooter"></div>',
 				'block_level' => true,
 			),
 			array(
 				'tag' => 'quote',
 				'type' => 'parsed_equals',
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ': $1</div><blockquote>',
+				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' $1</div><blockquote>',
 				'after' => '</blockquote><div class="quotefooter"></div>',
 				'quoted' => 'optional',
 				// Don't allow everything to be embedded with the author name.
@@ -1365,9 +1381,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'parameters' => array(
 					'author' => array('match' => '([^<>]{1,192}?)'),
 					'link' => array('match' => '(topic=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|action=profile;u=\d+|msg=\d+)'),
-					'date' => array('match' => '(\d+)', 'validate' => 'timeformat'),
+					'date' => array('match' => '(\d+)', 'validate' => 'on_timeformat'),
 				),
-				'before' => '<div class="quoteheader"><a href="' . $scripturl . '?{link}">' . $txt['quote_from'] . ': {author} ' . $txt['search_on'] . ' {date}</a></div><blockquote>',
+				'before' => '<div class="quoteheader"><a href="' . $scripturl . '?{link}">' . $txt['quote_from'] . ' {author} ' . $txt['search_on'] . ' {date}</a></div><blockquote>',
 				'after' => '</blockquote><div class="quotefooter"></div>',
 				'block_level' => true,
 			),
@@ -1376,7 +1392,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'parameters' => array(
 					'author' => array('match' => '(.{1,192}?)'),
 				),
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ': {author}</div><blockquote>',
+				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' {author}</div><blockquote>',
 				'after' => '</blockquote><div class="quotefooter"></div>',
 				'block_level' => true,
 			),
@@ -4114,7 +4130,6 @@ function setupMenuContext()
 				'sub_buttons' => array(
 				),
 				'is_last' => $context['right_to_left'],
-				// 'target' => '_blank',
 			),
 			'search' => array(
 				'title' => $txt['search'],
