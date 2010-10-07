@@ -57,7 +57,13 @@ function BoardIndex()
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_boardindex';
 	else
+	{
 		loadTemplate('BoardIndex');
+		$context['sub_template'] = array(
+			'boardindex',
+			'info_center',
+		);
+	}
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;

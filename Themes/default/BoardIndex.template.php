@@ -1,7 +1,7 @@
 <?php
 // Version: 2.0 RC3; BoardIndex
 
-function template_main()
+function template_boardindex()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
@@ -256,8 +256,6 @@ function template_main()
 		</ul>
 	</div>';
 	}
-
-	template_info_center();
 }
 
 function template_info_center()

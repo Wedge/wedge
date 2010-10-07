@@ -2857,8 +2857,15 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		if (WIRELESS && !isset($context['sub_template']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		// Just show the footer, then.
-		loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		// First up, did we get a main subtemplate list? Or did we only get a single template to play with, that we need to make into a list?
+		if (empty($context['sub_template']))
+			$context['sub_template'] = array('main');
+
+		if (!is_array($context['sub_template']))
+			$context['sub_template'] = array($context['sub_template']);
+
+		foreach ($context['sub_template'] as $template)
+			loadSubTemplate($template);
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
