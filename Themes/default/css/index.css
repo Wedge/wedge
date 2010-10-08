@@ -165,11 +165,11 @@ h1.forumtitle a {
 	padding: 15px 20px;
 }
 #footer ul li, #footer p {
-	font-size: 0.8em;
+	font-size: 0.9em;
 }
 #footer ul li {
 	display: inline;
-	padding-right: 5px;
+	padding: 0 2px;
 }
 #footer ul li.copyright {
 	display: block;
@@ -477,6 +477,7 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 	padding: 0;
 	display: inline;
 	margin: 2px 0 0 2px;
+	background-repeat: no-repeat;
 }
 
 

@@ -1340,7 +1340,7 @@ function initMenu(menu)
 			{
 				lis[i].onkeyup = showMe;
 				document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[i] = document.getElementById('shim' + k);
+				ieshim[k] = document.getElementById('shim' + k);
 			}
 			lis[i].onmouseover = showMe;
 			lis[i].onmouseout = timeoutHide;
@@ -1376,7 +1376,8 @@ function hideUlUnder(id)
 	var as = eid.getElementsByTagName('a');
 	for (var i = 0, j = as.length; i < j; i++)
 		as[i].className = '';
-	showShim(false, id);
+	if (is_ie6)
+		showShim(false, id);
 }
 
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.

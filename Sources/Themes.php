@@ -468,7 +468,6 @@ function SetThemeOptions()
 		foreach ($_POST['default_options'] as $opt => $val)
 		{
 			$old_settings[] = $opt;
-
 			$setValues[] = array(-1, 1, $opt, is_array($val) ? implode(',', $val) : $val);
 		}
 
@@ -844,10 +843,8 @@ function SetThemeSettings()
 	$context['page_title'] = $txt['theme_settings'];
 
 	foreach ($settings as $setting => $dummy)
-	{
 		if (!in_array($setting, array('theme_url', 'theme_dir', 'images_url', 'template_dirs')))
 			$settings[$setting] = htmlspecialchars__recursive($settings[$setting]);
-	}
 
 	$context['settings'] = $context['theme_settings'];
 	$context['theme_settings'] = $settings;
@@ -915,10 +912,8 @@ function RemoveTheme()
 
 	$known = explode(',', $modSettings['knownThemes']);
 	for ($i = 0, $n = count($known); $i < $n; $i++)
-	{
 		if ($known[$i] == $_GET['th'])
 			unset($known[$i]);
-	}
 
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}themes
@@ -1060,7 +1055,6 @@ function PickTheme()
 		elseif ($_REQUEST['u'] == '-1')
 		{
 			updateSettings(array('theme_guests' => (int) $_GET['th']));
-
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
 		}
 		// Change a specific member's theme.
@@ -1482,10 +1476,8 @@ function ThemeInstall()
 				'based_on' => 'based-on',
 			);
 			foreach ($xml_elements as $var => $name)
-			{
 				if (preg_match('~<' . $name . '>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</' . $name . '>~', $theme_info, $match) == 1)
 					$install_info[$var] = $match[1];
-			}
 
 			if (preg_match('~<images>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</images>~', $theme_info, $match) == 1)
 			{
@@ -2075,38 +2067,30 @@ function CopyTemplate()
 
 	$dir = dir($settings['default_theme_dir']);
 	while ($entry = $dir->read())
-	{
 		if (substr($entry, -13) == '.template.php')
 			$templates[] = substr($entry, 0, -13);
-	}
 	$dir->close();
 
 	$dir = dir($settings['default_theme_dir'] . '/languages');
 	while ($entry = $dir->read())
-	{
 		if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches))
 			$lang_files[] = $matches[1];
-	}
 	$dir->close();
 
 	if (!empty($base_theme_dir))
 	{
 		$dir = dir($base_theme_dir);
 		while ($entry = $dir->read())
-		{
 			if (substr($entry, -13) == '.template.php' && !in_array(substr($entry, 0, -13), $templates))
 				$templates[] = substr($entry, 0, -13);
-		}
 		$dir->close();
 
 		if (file_exists($base_theme_dir . '/languages'))
 		{
 			$dir = dir($base_theme_dir . '/languages');
 			while ($entry = $dir->read())
-			{
 				if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches) && !in_array($matches[1], $lang_files))
 					$lang_files[] = $matches[1];
-			}
 			$dir->close();
 		}
 	}

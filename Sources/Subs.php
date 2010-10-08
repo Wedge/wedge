@@ -3517,12 +3517,7 @@ function template_header()
  * Attempts to ensure the copyright is actually displayed.
  *
  * Several steps occur in the attempt to prevent copyright removal.
- * - On a 1/3 chance, remove comments temporarily from the buffer - and if there's an unterminated comment, terminate it.
- * - If a comment has been inserted into the copyright statement (presumably the copyright is commented out), uncomment it.
- * - If a div has been inserted into the copyright statement (typically with a different style), strip the style.
- * - If the version has been removed, or isn't present (e.g. SSI) or we are explicitly checking copyright, load this file and get the version from it.
- * - Inject the version number into the copyright statement.
- * - If we don't have the right key (or a key at all), output the copyright and mark it as found for later.
+ * If we don't have the right key (or a key at all), output the copyright and mark it as found for later.
  *
  * This function should not appear in any public function database due to @ignore.
  *
@@ -3535,53 +3530,29 @@ function theme_copyright($get_it = false)
 	global $forum_copyright, $context, $boardurl, $forum_version, $txt, $modSettings;
 	static $found = false;
 
-	// DO NOT MODIFY THIS FUNCTION.  DO NOT REMOVE YOUR COPYRIGHT.
+	// DO NOT MODIFY THIS FUNCTION. DO NOT REMOVE YOUR COPYRIGHT.
 	// DOING SO VOIDS YOUR LICENSE AND IS ILLEGAL.
 
 	// Meaning, this is the footer checking in..
 	if ($get_it === true)
 		return $found;
 
-	// Naughty, naughty.
-	if (mt_rand(0, 2) == 1)
-	{
-		$temporary = preg_replace('~<!--.+?-->~s', '', ob_get_contents());
-		if (strpos($temporary, '<!--') !== false)
-			echo '-->';
-	}
-
-	// Fool me once, shame on me. Fool me twice, shame on you.
-	if (strpos($forum_copyright, '<!--') !== false)
-		$forum_copyright = preg_replace('~<!--(.+?)-->~is', '$1', $forum_copyright);
-	if (strpos($forum_copyright, '<div') !== false)
-		$forum_copyright = preg_replace('~<div[^>]+>(.+?)(?:</div>)?~is', '$1', $forum_copyright);
-
-	// For SSI and other things, detect the version.
-	if (!isset($forum_version) || strpos($forum_version, 'SMF') === false || isset($_GET['checkcopyright']))
-	{
-		$data = substr(file_get_contents(__FILE__), 0, 4096);
-		if (preg_match('~\*\s*Software\s+Version:\s+(SMF\s+.+?)[\s]{2}~i', $data, $match) == 0)
-			$match = array('', 'SMF');
-		$forum_copyright = sprintf($forum_copyright, $match[1]);
-	}
-	// Put in the version...
-	else
-		$forum_copyright = sprintf($forum_copyright, $forum_version);
-
-	echo '
-		<span class="smalltext" style="display: inline; visibility: visible; font-family: Verdana, Arial, sans-serif;">';
+	// For SSI and other things, skip the version number.
+	if (empty($forum_version))
+		$forum_version = 'Wedge';
+	$forum_copyright = sprintf($forum_copyright, $forum_version);
 
 	// If it's in the copyright, and we are outputting it... it's been found.
 	if (isset($modSettings['copyright_key']) && sha1($modSettings['copyright_key'] . 'banjo') == '1d01885ece7a9355bdeb22ed107f0ffa8c323026')
 		$found = true;
-	elseif (preg_match('~<a\shref="http://www.simplemachines.org/"[^<>]*>(SMF|Powered by SMF)~', $forum_copyright) && preg_match('~<a\shref="http://www.simplemachines.org/about/copyright.php"[^<>]*>SMF\s.{1,6}[\s\d,ndash\-&;]*Simple Machines LLC~', $forum_copyright))
+	elseif (preg_match('~<a\shref="http://www.wedgeo.org/"[^<>]*>Wedge~', $forum_copyright))
 	{
 		$found = true;
-		echo $forum_copyright;
+		echo '
+		<span class="smalltext" style="display: inline; visibility: visible; font-family: Verdana, Arial, sans-serif;">', $forum_copyright, '</span>';
 	}
-
-	echo '
-		</span>';
+	else
+		echo $forum_copyright;
 }
 
 /**

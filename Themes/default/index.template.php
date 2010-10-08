@@ -331,9 +331,11 @@ function template_body_below()
 	<div id="footer"><div class="frame">
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
-			<li><a id="button_xhtml" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_xhtml'], '"><span>', $txt['xhtml'], '</span></a></li>
-			', !empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) ? '<li><a id="button_rss" href="' . $scripturl . '?action=.xml;type=rss" class="new_win"><span>' . $txt['rss'] . '</span></a></li>' : '', '
-			<li class="last"><a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
+			<li><a id="site_credits" href="', $scripturl, '?action=credits"><span>', $txt['site_credits'], '</span></a></li>
+			| <li><a id="button_xhtml" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_xhtml'], '"><span>', $txt['xhtml'], '</span></a></li>',
+			!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) ? '
+			| <li><a id="button_rss" href="' . $scripturl . '?action=.xml;type=rss" class="new_win"><span>' . $txt['rss'] . '</span></a></li>' : '', '
+			| <li class="last"><a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
 		</ul>';
 
 	// Show the load time?
@@ -407,12 +409,10 @@ function template_menu()
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
-		$wid = empty($button['sprite']) || $context['browser']['is_ie6'] ? 0 : $button['sprite'][1] - $button['sprite'][0];
+		$wid = empty($button['sprite']) ? 0 : $button['sprite'][1] - $button['sprite'][0];
 		$mh4 = $wid ? ' style="margin-left: ' . ($wid + 6) . 'px"' : '';
-		$ic = empty($button['icon']) || $context['browser']['is_ie6'] ? '' : '
-				<div class="icon" style="width: ' . $wid . 'px; background: url(' . $settings['images_url'] . '/icons/' . $button['icon'] . ') -' . $button['sprite'][0] . 'px 0">' . ($context['browser']['is_ie7'] ? '
-					<img src="' . $settings['images_url'] . '/blank.gif" alt="" width="' . $wid . '" height="16" />
-				' : '&nbsp;') . '</div>';
+		$ic = empty($button['icon']) ? '' : '
+				<div class="icon" style="width: ' . $wid . 'px; background: url(' . $settings['images_url'] . '/icons/' . $button['icon'] . ') -' . $button['sprite'][0] . 'px 0">&nbsp;</div>';
 
 		echo '
 			<li id="button_', $act, '"', $button['active_button'] ? ' class="chosen"' : '', '>', $ic, '
