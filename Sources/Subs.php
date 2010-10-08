@@ -4135,7 +4135,7 @@ function setupMenuContext()
 				'href' => $scripturl,
 				'show' => true,
 				'icon' => 'sprite.png',
-				'sprite' => array(171,185),
+				'sprite' => array(64,80),
 				'sub_buttons' => array(
 				),
 				'is_last' => $context['right_to_left'],
@@ -4146,7 +4146,7 @@ function setupMenuContext()
 				'href' => !empty($board_info['id']) ? $scripturl . '?board=' . $board_info['id'] . '.0' : '',
 				'show' => !empty($board_info['id']),
 				'icon' => 'sprite.png',
-				'sprite' => array(171,185), // !!! Change icon
+				'sprite' => array(64,80), // !!! Change icon
 				'sub_buttons' => array(
 				),
 			),
@@ -4155,7 +4155,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=search',
 				'show' => $context['allow_search'],
 				'icon' => 'sprite.png',
-				'sprite' => array(31,45),
+				'sprite' => array(112,128),
 				'sub_buttons' => array(
 					'search' => array(
 						'title' => $txt['search_simple'],
@@ -4175,7 +4175,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
 				'icon' => 'sprite.png',
-				'sprite' => array(45,59),
+				'sprite' => array(32,48),
 				'sub_buttons' => array(
 					'featuresettings' => array(
 						'title' => $txt['modSettings_title'],
@@ -4205,7 +4205,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=moderate',
 				'show' => $context['allow_moderation_center'],
 				'icon' => 'sprite.png',
-				'sprite' => array(59,74),
+				'sprite' => array(48,64),
 				'sub_buttons' => array(
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
@@ -4235,7 +4235,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=profile',
 				'show' => $context['allow_edit_profile'],
 				'icon' => 'sprite.png',
-				'sprite' => array(93,109),
+				'sprite' => array(0,16),
 				'sub_buttons' => array(
 					'summary' => array(
 						'title' => $txt['summary'],
@@ -4260,7 +4260,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'icon' => 'sprite.png',
-				'sprite' => array(109,116),
+				'sprite' => !$user_info['is_guest'] && $context['user']['unread_messages'] > 0 ? array(96,112) : array(80,96),
 				'sub_buttons' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
@@ -4299,7 +4299,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=mlist',
 				'show' => $context['allow_memberlist'],
 				'icon' => 'sprite.png',
-				'sprite' => array(74,93),
+				'sprite' => array(16,32),
 				'sub_buttons' => array(
 					'mlist_view' => array(
 						'title' => $txt['mlist_menu_view'],
@@ -4318,6 +4318,8 @@ function setupMenuContext()
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
+				'icon' => 'sprite.png',
+				'sprite' => array(144,160),
 				'sub_buttons' => array(
 				),
 			),
@@ -4334,7 +4336,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
 				'icon' => 'sprite.png',
-				'sprite' => array(156,171),
+				'sprite' => array(128,144),
 				'sub_buttons' => array(
 				),
 				'is_last' => !$context['right_to_left'],

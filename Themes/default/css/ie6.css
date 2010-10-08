@@ -1,6 +1,9 @@
-.menu ul, #main_menu
+.menu ul, #menu_container
 {
 	background-image: none;
+}
+#menu_container {
+	height: 1%;
 }
 .codeheader, code.bbc_code
 {
