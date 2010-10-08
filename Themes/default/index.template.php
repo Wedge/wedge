@@ -405,11 +405,19 @@ function template_menu()
 	echo '
 		<div id="menu_container"><ul id="main_menu" class="menu">';
 
+	$is_under_ie8 = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
+		$wid = empty($button['sprite']) ? 0 : $button['sprite'][1] - $button['sprite'][0];
+		$mh4 = $wid ? ' style="margin-left: ' . ($wid + 6) . 'px"' : '';
+		$ic = empty($button['icon']) ? '' : '
+			<div class="icon" style="width: ' . $wid . 'px; background: url(' . $settings['images_url'] . '/icons/' . $button['icon'] . ') -' . $button['sprite'][0] . 'px 0">' . ($is_under_ie8 ? '
+				<img src="' . $settings['images_url'] . '/blank.gif" alt="" width="' . $wid . '" height="15" />
+			' : '&nbsp;') . '</div>';
+
 		echo '
-			<li id="button_', $act, '"', $button['active_button'] ? ' class="chosen"' : '', '>
-				<h4><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
+			<li id="button_', $act, '"', $button['active_button'] ? ' class="chosen"' : '', '>', $ic, '
+				<h4', $mh4, '><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
 
 		if (!empty($button['sub_buttons']))
 		{

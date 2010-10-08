@@ -461,8 +461,10 @@ em
 
 .menu li li li { font-size: 0.95em }
 .menu h4:hover, h4.linkOver {
-	background: #c8e2fb url(../images/menu.gif) no-repeat 98% 2px;
+	background: url(../images/menu.gif) no-repeat 98% 2px;
 	color: black;
+	background-color: #c8e2fb;
+	background-color: rgba(128, 128, 128, .15);
 }
 li.active > a {
 	font-weight: bold;
@@ -479,7 +481,6 @@ li.subsection > a {
 	background: url(../images/menu.gif) no-repeat 98% -46px;
 }
 .menu > li li:hover, a.linkOver {
-	background: #d0e2fb;
 	color: black;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
@@ -487,7 +488,12 @@ li.subsection > a {
 }
 
 li.subsection > a:hover, li.subsection > a.linkOver {
-	background: #d0e2fb url(../images/menu.gif) no-repeat 98% -46px !important;
+	background: url(../images/menu.gif) no-repeat 98% -46px !important;
+}
+
+.menu > li li:hover, a.linkOver, li.subsection > a:hover, li.subsection > a.linkOver {
+	background-color: #c8e2fb;
+	background-color: rgba(128, 128, 128, .15);
 }
 
 .menu > li > a, .menu h4 {
@@ -517,6 +523,15 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 #context {
 	clear: left;
 	padding-top: 0.5em;
+}
+
+.menu .icon
+{
+	float: left;
+	height: 15px;
+	padding: 0;
+	display: inline;
+	margin: 3px 0 0 2px;
 }
 
 
