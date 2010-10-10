@@ -348,7 +348,7 @@ em {
 }
 
 #menu_container {
-	background: url(../images/theme/grad250.png) 0 -150px repeat-x;
+	background: url(../images/theme/grad250.png) 0 -180px repeat-x;
 	border: 1px dotted black;
 	border-width: 1px 0;
 	overflow: hidden;
@@ -375,6 +375,7 @@ em {
 	border: 0;
 	padding: 0;
 }
+
 .menu ul {
 	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
 	position: absolute;
@@ -391,13 +392,11 @@ em {
 }
 
 .menu li ul { visibility: hidden }
-
 .menu li li ul {
 	position: absolute;
 	margin-left: 200px;
 	margin-top: -24px;
 }
-
 .menu li {
 	list-style: none;
 	cursor: pointer;
@@ -407,21 +406,17 @@ em {
 	margin: 0;
 	padding: 0;
 }
-
 .menu li li {
 	display: block;
 	float: none;
 	white-space: nowrap;
 }
-
 .menu li li li { font-size: 0.95em }
+
 .menu h4:hover, h4.linkOver {
 	background: #fbe2c8 url(../images/menu.gif) no-repeat 98% 2px;
 	background-color: rgba(128, 128, 128, .15);
 	color: black;
-}
-li.active > a {
-	font-weight: bold;
 }
 .menu li.chosen h4 {
 	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
@@ -429,6 +424,9 @@ li.active > a {
 }
 .menu li.chosen h4 a {
 	color: white;
+}
+li.active > a {
+	font-weight: bold;
 }
 li.subsection > a {
 	padding: 6px 24px 6px 8px;
@@ -456,14 +454,14 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 	-webkit-border-radius: 6px;
 }
 
-#main_menu h4:hover, #main_menu h4.linkOver {
+#main_menu li.chosen h4, #context_menus li.chosen h4 {
+	background-color: #fd9604;
+}
+#main_menu li h4:hover, #main_menu li h4.linkOver {
 	background: #5a6c85 url(../images/menu.gif) no-repeat 98% -28px;
 }
 #main_menu h4:hover a, #main_menu h4.linkOver a {
 	color: white;
-}
-#main_menu li.chosen h4, #context_menus li.chosen h4 {
-	background-color: #fd9604 !important;
 }
 #context_menus {
 	padding-left: 1em;
@@ -479,15 +477,66 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 	padding-top: 0.5em;
 }
 
-.menu .icon {
+li.nodrop h4, #main_menu li.nodrop h4 {
+	background-image: none;
+	padding-right: 6px;
+}
+
+.m_home, .m_board, .m_search, .m_admin, .m_moderate, .m_profile,
+.m_pm, .m_pm_unread, .m_calendar, .m_mlist, .m_login, .m_register, .m_logout {
 	float: left;
+	width: 16px;
 	height: 16px;
 	padding: 0;
 	display: inline;
 	margin: 2px 0 0 2px;
 	background-repeat: no-repeat;
+	background-image: url(../images/icons/sprite.png);
 }
 
+.m_home {
+	background-position: -64px 0;
+}
+.m_board {
+	background-position: -64px 0;
+}
+.m_search {
+	background-position: -112px 0;
+}
+.m_admin {
+	background-position: -32px 0;
+}
+.m_moderate {
+	background-position: -48px 0;
+}
+.m_profile {
+	background-position: 0 0;
+}
+.m_pm {
+	background-position: -80px 0;
+}
+.m_pm_unread {
+	background-position: -96px 0;
+}
+.m_calendar {
+	background-position: -176px 0;
+	width: 14px;
+}
+.m_mlist {
+	background-position: -17px 0;
+	width: 14px;
+}
+.m_login {
+	background-position: -144px 0;
+	width: 15px;
+}
+.m_register {
+	background-position: -160px 0;
+}
+.m_logout {
+	background-position: -128px 0;
+	width: 15px;
+}
 
 /* Common classes to easy styling.
 ------------------------------------------------------- */

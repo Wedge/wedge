@@ -77,19 +77,19 @@ function template_html_above()
 			echo '
 	<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/', $cssfix, '.css" />';
 
+	// RTL languages require an additional stylesheet.
+	if ($context['right_to_left'])
+		echo '
+	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/rtl.css" />';
+
 	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
 		echo '
 	<style>
 		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $settings['default_theme_url'], '/css/PIE.htc); }
 	</style>';
 
-	// RTL languages require an additional stylesheet.
-	if ($context['right_to_left'])
-		echo '
-	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/rtl.css" />';
-
 	echo '
-	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">
 	<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '', '
@@ -410,13 +410,13 @@ function template_menu()
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
-		$wid = empty($button['sprite']) ? 0 : $button['sprite'][1] - $button['sprite'][0];
-		$mh4 = $wid ? ' style="margin-left: ' . ($wid + 6) . 'px"' : '';
-		$ic = empty($button['icon']) ? '' : '
-				<div class="icon" style="width: ' . $wid . 'px; background: url(' . $settings['images_url'] . '/icons/' . $button['icon'] . ') -' . $button['sprite'][0] . 'px 0">&nbsp;</div>';
+		$mh4 = empty($button['padding']) ? '' : ' style="margin-left: ' . ($button['padding'] + 6) . 'px"';
+		$class = ($button['active_button'] ? ' chosen' : '') . (empty($button['sub_buttons']) ? ' nodrop' : '');
+		$ic = !$mh4 ? '' : '
+				<div class="m_' . $act . '">&nbsp;</div>';
 
 		echo '
-			<li id="button_', $act, '"', $button['active_button'] ? ' class="chosen"' : '', '>', $ic, '
+			<li id="button_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
 				<h4', $mh4, '><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
 
 		if (!empty($button['sub_buttons']))
