@@ -1,8 +1,17 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10144 $.
+Changelog started January 1, 2004; Currently at $Revision: 10150 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
+
+October 2010
+--------------------------------------------------------------------------------
+ * Missing icon in profile/ignore boards. Markup/css to allow large content above the linktree (Profile.template.php, index.template.php, index.css)
+ * Minor cleaning up in admin. Better highlighting of search results. Defined new_win class. Better description for post options (Admin.template.php, admin.css, index.css, Post.english.php)
+ * Fixed post-breaking bug in IE6 and IE7. Removed $context['right_to_left'] from two templates. (ie6.css, ie7.css, index.css, rtl.css, Display.template.php, Memberlist.template.php)
+ * Fixed board selection in profile and help. Cleaned up stats markup. (Profile.template.php, Help.template.php, Stats.template.php, index.css, rtl.css)
+
+
 September 2010
 --------------------------------------------------------------------------------
  ! Source files should be UTF-8 encoded. (convert.php, Subs.php)
@@ -63,7 +72,6 @@ September 2010
  - remove getOuterHTML(), outdated javascript function (script.js) [Bug 4284]
  
  
-
 August 2010
 --------------------------------------------------------------------------------
  * The new replies template for preview JavaScript was using outdated post layout. (Post template) [Bug 4387]

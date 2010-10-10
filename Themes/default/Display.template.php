@@ -636,7 +636,7 @@ function template_main()
 
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
-			<div class="plainbox" style="text-align: ', !$context['right_to_left'] ? 'right' : 'left', ';" id="display_jump_to">&nbsp;</div>';
+			<div class="plainbox" id="display_jump_to">&nbsp;</div>';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{

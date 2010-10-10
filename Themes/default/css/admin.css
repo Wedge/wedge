@@ -9,9 +9,6 @@
 {
 	padding-top: 2px;
 	line-height: 0.9em;
-}
-#quick_search input, #quick_search select
-{
 	font-size: 0.8em !important;
 }
 
@@ -22,7 +19,8 @@ ol.search_results
 }
 ol.search_results li
 {
-	padding-top: 5px;
+	padding-top: 1em;
+	border-bottom: 1px solid #ccc;
 }
 
 /* Styles for the core features screen.

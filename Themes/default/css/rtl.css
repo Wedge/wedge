@@ -331,7 +331,6 @@ span.percent
 /* author and topic information */
 #forumposts #author
 {
-	float: right;
 	margin: 0 0 0 7.7em;
 }
 #forumposts h3 img
@@ -471,6 +470,12 @@ ul.quickbuttons li.inline_mod_check
 {
 	margin: 0 0.2em 0 0;
 	padding: 0 1em 0 0;
+}
+
+/* The jump to box */
+#display_jump_to
+{
+	text-align: left;
 }
 
 /* Styles for edit post section
@@ -873,6 +878,10 @@ dl.stats dd
 {
 	right: -6px;
 	padding: 0 0 0 6px;
+}
+tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day
+{
+	text-align: right;
 }
 
 /* Styles for the calendar section.

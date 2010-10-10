@@ -4250,7 +4250,8 @@ function setupMenuContext()
 				'title' => $txt['calendar'],
 				'href' => $scripturl . '?action=calendar',
 				'show' => $context['allow_calendar'],
-				'icon' => 'atb_calendar.gif',
+				'icon' => 'sprite.png',
+				'sprite' => array(176,190),
 				'sub_buttons' => array(
 					'view' => array(
 						'title' => $txt['calendar_menu'],
@@ -4270,7 +4271,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=mlist',
 				'show' => $context['allow_memberlist'],
 				'icon' => 'sprite.png',
-				'sprite' => array(16,32),
+				'sprite' => array(17,31),
 				'sub_buttons' => array(
 					'mlist_view' => array(
 						'title' => $txt['mlist_menu_view'],
@@ -4290,7 +4291,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
 				'icon' => 'sprite.png',
-				'sprite' => array(144,160),
+				'sprite' => array(144,159),
 				'sub_buttons' => array(
 				),
 			),
@@ -4298,6 +4299,8 @@ function setupMenuContext()
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
 				'show' => $user_info['is_guest'],
+				'icon' => 'sprite.png',
+				'sprite' => array(160,176),
 				'sub_buttons' => array(
 				),
 				'is_last' => !$context['right_to_left'],
@@ -4307,7 +4310,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
 				'icon' => 'sprite.png',
-				'sprite' => array(128,144),
+				'sprite' => array(128,143),
 				'sub_buttons' => array(
 				),
 				'is_last' => !$context['right_to_left'],

@@ -321,18 +321,18 @@ function template_main()
 		foreach ($context['yearly'] as $id => $year)
 		{
 			echo '
-					<tr class="windowbg2" valign="middle" id="year_', $id, '">
+					<tr class="windowbg2" valign="middle" align="center" id="year_', $id, '">
 						<th class="lefttext" width="25%">
 							<img id="year_img_', $id, '" src="', $settings['images_url'], '/collapse.gif" alt="*" /> <a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
 						</th>
-						<th align="center" width="15%">', $year['new_topics'], '</th>
-						<th align="center" width="15%">', $year['new_posts'], '</th>
-						<th align="center" width="15%">', $year['new_members'], '</th>
-						<th align="center" width="15%">', $year['most_members_online'], '</th>';
+						<th width="15%">', $year['new_topics'], '</th>
+						<th width="15%">', $year['new_posts'], '</th>
+						<th width="15%">', $year['new_members'], '</th>
+						<th width="15%">', $year['most_members_online'], '</th>';
 
 			if (!empty($modSettings['hitStats']))
 				echo '
-						<th align="center">', $year['hits'], '</th>';
+						<th>', $year['hits'], '</th>';
 
 			echo '
 					</tr>';
@@ -340,8 +340,8 @@ function template_main()
 			foreach ($year['months'] as $month)
 			{
 				echo '
-					<tr class="windowbg2" valign="middle" id="tr_month_', $month['id'], '">
-						<th class="lefttext" width="25%" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': 3ex;">
+					<tr class="windowbg2" valign="middle" align="center" id="tr_month_', $month['id'], '">
+						<th class="stats_month">
 							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" alt="" id="img_', $month['id'], '" /> <a id="m', $month['id'], '" href="', $month['href'], '" onclick="return doingExpandCollapse;">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th align="center" width="15%">', $month['new_topics'], '</th>
@@ -361,12 +361,12 @@ function template_main()
 					foreach ($month['days'] as $day)
 					{
 						echo '
-					<tr class="windowbg2" valign="middle" align="left" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
-						<td class="lefttext" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': 6ex;">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
-						<td align="center">', $day['new_topics'], '</td>
-						<td align="center">', $day['new_posts'], '</td>
-						<td align="center">', $day['new_members'], '</td>
-						<td align="center">', $day['most_members_online'], '</td>';
+					<tr class="windowbg2" valign="middle" align="center" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
+						<td class="stats_day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
+						<td>', $day['new_topics'], '</td>
+						<td>', $day['new_posts'], '</td>
+						<td>', $day['new_members'], '</td>
+						<td>', $day['most_members_online'], '</td>';
 
 						if (!empty($modSettings['hitStats']))
 							echo '

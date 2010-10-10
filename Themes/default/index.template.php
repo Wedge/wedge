@@ -147,7 +147,7 @@ function template_html_above()
 		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
 	// ]]></script>';
 
-	// Output any remaining HTML headers. (from mods, maybe?)
+	// Output any remaining HTML headers. (From mods, maybe?)
 	echo $context['html_headers'];
 
 	echo '

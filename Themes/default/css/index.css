@@ -187,6 +187,15 @@ a:hover {
 	text-decoration: underline;
 }
 
+/* Links that open in a new window. */
+a.new_win:link, a.new_win:visited {
+	color: #679;
+	text-decoration: none;
+}
+a.new_win:hover {
+	text-decoration: underline;
+}
+
 /* Tables should show empty cells. */
 table {
 	empty-cells: show;
@@ -407,10 +416,9 @@ em {
 
 .menu li li li { font-size: 0.95em }
 .menu h4:hover, h4.linkOver {
-	background: url(../images/menu.gif) no-repeat 98% 2px;
-	color: black;
-	background-color: #c8e2fb;
+	background: #fbe2c8 url(../images/menu.gif) no-repeat 98% 2px;
 	background-color: rgba(128, 128, 128, .15);
+	color: black;
 }
 li.active > a {
 	font-weight: bold;
@@ -438,7 +446,7 @@ li.subsection > a:hover, li.subsection > a.linkOver {
 }
 
 .menu > li li:hover, a.linkOver, li.subsection > a:hover, li.subsection > a.linkOver {
-	background-color: #c8e2fb;
+	background-color: #fbe2c8;
 	background-color: rgba(128, 128, 128, .15);
 }
 
@@ -657,14 +665,14 @@ code.bbc_code {
 
 /* Highlighted text - such as search results. */
 .highlight {
-	background-color: #ff0;
+	background-color: #ffd0a0;
 	font-weight: bold;
 	color: #000 !important;
 }
 
 /* A more discreet highlight color, for selected membergroups etc. */
 .highlight2 {
-	background-color: #D1E1EF;
+	background-color: #d1e1ef;
 	color: #000 !important;
 }
 
@@ -1535,7 +1543,6 @@ img.new_posts {
 }
 /* author and topic information */
 #forumposts #author {
-	float: left;
 	margin: 0 7.7em 0 10px;
 }
 #forumposts .cat_bar {
@@ -1729,6 +1736,7 @@ ul.quickbuttons li.inline_mod_check {
 	clear: both;
 	padding: 5px;
 	margin-top: 2px;
+	text-align: right;
 }
 
 /* Separator of posts. More useful in the print stylesheet. */
@@ -2675,6 +2683,15 @@ dl.stats dd {
 	padding: 0 4px 0 0;
 	background: url(../images/bar_stats.png) no-repeat 100%;
 	height: 16px;
+}
+tr th.stats_month {
+	width: 25%;
+	padding: 0 1.5em;
+	text-align: left;
+}
+tr td.stats_day {
+	padding: 0 3em;
+	text-align: left;
 }
 
 /* Styles for the personal messages section.

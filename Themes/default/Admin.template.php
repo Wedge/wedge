@@ -1320,7 +1320,7 @@ function template_admin_search_results()
 						<br /><span class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
 						<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a> /</span>
 					</p>
-					<p class="quote">
+					<p class="double_height">
 						', $result['messages'][0]['body'], '
 					</p>
 				</li>';
@@ -1330,11 +1330,11 @@ function template_admin_search_results()
 			{
 				echo '
 				<li class="windowbg">
-					<a href="', $result['url'], '">', $result['name'], '</a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
+					<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 				if ($result['help'])
 					echo '
-					<br /><span class="smalltext">', $result['help'], '</span>';
+					<p class="double_height">', $result['help'], '</p>';
 
 				echo '
 				</li>';
