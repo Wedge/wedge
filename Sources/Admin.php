@@ -147,7 +147,6 @@ function AdminMain()
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
 						'layout' => array($txt['mods_cat_layout']),
-						'karma' => array($txt['karma'], 'enabled' => in_array('k', $context['admin_features'])),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),
 					),
@@ -864,7 +863,6 @@ function AdminSearchInternal()
 		array('ModifyCoreFeatures', 'area=corefeatures'),
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
-		array('ModifyKarmaSettings', 'area=featuresettings;sa=karma'),
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyGeneralSecuritySettings', 'area=securitysettings;sa=general'),
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),

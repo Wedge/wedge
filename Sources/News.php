@@ -957,12 +957,6 @@ function getXmlProfile($xml_format)
 		if ($profile['group'] != '')
 			$data['position'] = cdata_parse($profile['group']);
 
-		if (!empty($modSettings['karmaMode']))
-			$data['karma'] = array(
-				'good' => $profile['karma']['good'],
-				'bad' => $profile['karma']['bad']
-			);
-
 		if (in_array($profile['show_email'], array('yes', 'yes_permission_override')))
 			$data['email'] = $profile['email'];
 

@@ -49,9 +49,6 @@ if (!defined('SMF'))
 	void ModifyLayoutSettings()
 		// !!!
 
-	void ModifyKarmaSettings()
-		// !!!
-
 	void ModifyModerationSettings()
 		// !!!
 
@@ -109,7 +106,6 @@ function ModifyFeatureSettings()
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
 		'layout' => 'ModifyLayoutSettings',
-		'karma' => 'ModifyKarmaSettings',
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
@@ -126,8 +122,6 @@ function ModifyFeatureSettings()
 			'basic' => array(
 			),
 			'layout' => array(
-			),
-			'karma' => array(
 			),
 			'sig' => array(
 				'description' => $txt['signature_settings_desc'],
@@ -248,13 +242,6 @@ function ModifyCoreFeatures($return_config = false)
 			'url' => 'action=admin;area=managecalendar',
 			'settings' => array(
 				'cal_enabled' => 1,
-			),
-		),
-		// k = karma.
-		'k' => array(
-			'url' => 'action=admin;area=featuresettings;sa=karma',
-			'settings' => array(
-				'karmaMode' => 2,
 			),
 		),
 		// ml = moderation log.
@@ -590,43 +577,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
 	$context['settings_title'] = $txt['mods_cat_layout'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-function ModifyKarmaSettings($return_config = false)
-{
-	global $txt, $scripturl, $context, $settings, $sc;
-
-	$config_vars = array(
-			// Karma - On or off?
-			array('select', 'karmaMode', explode('|', $txt['karma_options'])),
-		'',
-			// Who can do it.... and who is restricted by time limits?
-			array('int', 'karmaMinPosts'),
-			array('float', 'karmaWaitTime'),
-			array('check', 'karmaTimeRestrictAdmins'),
-		'',
-			// What does it look like?  [smite]?
-			array('text', 'karmaLabel'),
-			array('text', 'karmaApplaudLabel'),
-			array('text', 'karmaSmiteLabel'),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		saveDBSettings($config_vars);
-		redirectexit('action=admin;area=featuresettings;sa=karma');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=karma';
-	$context['settings_title'] = $txt['karma'];
 
 	prepareDBSettingContext($config_vars);
 }

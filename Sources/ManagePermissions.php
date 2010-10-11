@@ -1138,7 +1138,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	// Standard - ie. members.  They can do anything Restrictive can.
 	$groupLevels['global']['standard'] = array_merge($groupLevels['global']['restrict'], array(
 		'view_mlist',
-		'karma_edit',
 		'pm_read',
 		'pm_send',
 		'profile_view_any',
@@ -1479,7 +1478,6 @@ function loadAllPermissions($loadType = 'classic')
 			'view_mlist' => array(false, 'general', 'view_basic_info'),
 			'who_view' => array(false, 'general', 'view_basic_info'),
 			'search_posts' => array(false, 'general', 'view_basic_info'),
-			'karma_edit' => array(false, 'general', 'moderate_general'),
 			'pm_read' => array(false, 'pm', 'use_pm_system'),
 			'pm_send' => array(false, 'pm', 'use_pm_system'),
 			'calendar_view' => array(false, 'calendar', 'view_basic_info'),
@@ -2182,7 +2180,6 @@ function loadIllegalGuestPermissions()
 
 	$context['non_guest_permissions'] = array(
 		'delete_replies',
-		'karma_edit',
 		'poll_add_own',
 		'pm_read',
 		'pm_send',
