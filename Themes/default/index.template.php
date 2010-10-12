@@ -314,8 +314,8 @@ function template_body_above()
 	// The main content should go here.
 	echo '
 	</div>
-	<div id="content_section"><div class="frame">
-		<div id="main_content_section">';
+	<div id="content"><div class="frame">
+		<div id="main_content">';
 }
 
 function template_body_below()

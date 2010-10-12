@@ -1890,8 +1890,8 @@ class wedgeEditor
 					// Now, find any [list]s or [/li]s followed by [li].
 					'~\[(list(?: [^\]]*?)?|/li)\]([\s\x{A0}]*)\[li\]~su' => '[$1]$2[_li_]',
 					// Allow for sub lists.
-					'~\[/li\]([\s\x{A0}]*)\[list\]su~' => '[_/li_]$1[list]',
-					'~\[/list\]([\s\x{A0}]*)\[li\]su~' => '[/list]$1[_li_]',
+					'~\[/li\]([\s\x{A0}]*)\[list\]~su' => '[_/li_]$1[list]',
+					'~\[/list\]([\s\x{A0}]*)\[li\]~su' => '[/list]$1[_li_]',
 					// Any remaining [li]s weren't inside a [list].
 					'~\[li\]~' => '[list][li]',
 					// Any remaining [/li]s weren't before a [/list].
