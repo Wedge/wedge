@@ -174,9 +174,8 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	background: none;
 }
 
-#header, #navi, #content_section, #footer {
+#header, #navi, #content, #footer {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');
-	margin: auto;
 }
 .cat_bar h3 a {
 	color: black !important;

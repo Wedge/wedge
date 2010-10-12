@@ -41,12 +41,12 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	float: none;
 	word-wrap: break-word;
 }
-#content_section #forumposts div.cat_bar
+#content #forumposts div.cat_bar
 {
 	margin-top: 8px;
 	clear: both;
 }
-#content_section .pagesection
+#content .pagesection
 {
 	height: 1%;
 }

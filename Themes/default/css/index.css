@@ -10,7 +10,7 @@ body {
 	background: url(../images/theme/grad700.png) repeat-x;
 	padding: 15px 0;
 }
-#wedge > div {
+#header, #navi, #content, #footer {
 	margin: auto;
 	width: 95%;
 	max-width: 1200px;
@@ -29,16 +29,16 @@ body {
 	padding: 5px 20px 0 20px;
 }
 /* the content section */
-#navi, #content_section {
+#navi, #content {
 	border: 1px solid #999;
 	border-width: 0 1px;
 	background: #faf8f6;
 }
-#content_section div.frame {
+#content div.frame {
 	display: block;
 	padding: 0 20px 20px 20px;
 }
-#main_content_section {
+#main_content {
 	width: 100%;
 	min-height: 200px;
 }
