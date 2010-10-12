@@ -2818,7 +2818,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		ob_start('ob_sessrewrite');
 
 		// Just in case we have anything bad already in there...
-		if ((isset($_REQUEST['debug']) || isset($_REQUEST['xml'])) && in_array($txt['lang_locale'], array('UTF-8', 'ISO-8859-1')))
+		if (isset($_REQUEST['debug']) || isset($_REQUEST['xml']))
 			ob_start('validate_unicode__recursive');
 
 		if (!empty($settings['output_buffers']) && is_string($settings['output_buffers']))

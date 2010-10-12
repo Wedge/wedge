@@ -1428,7 +1428,7 @@ function ModifyLanguage()
 		foreach ($entries as $entryKey => $entryValue)
 		{
 			// Ignore some things we set separately.
-			$ignore_files = array('lang_character_set', 'lang_locale', 'lang_dictionary', 'lang_spelling', 'lang_rtl');
+			$ignore_files = array('lang_locale', 'lang_dictionary', 'lang_spelling', 'lang_rtl');
 			if (in_array($entryKey, $ignore_files))
 				continue;
 
