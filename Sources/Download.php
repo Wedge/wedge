@@ -202,13 +202,7 @@ function Download()
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
 	// Different browsers like different standards...
-	if ($context['browser']['is_firefox'])
-		header('Content-Disposition: ' . $disposition . '; filename*="UTF-8\'\'' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename) . '"');
-
-	elseif ($context['browser']['is_opera'])
-		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename) . '"');
-
-	elseif ($context['browser']['is_ie'])
+	if ($context['browser']['is_ie'])
 		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
 
 	else

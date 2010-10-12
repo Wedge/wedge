@@ -785,7 +785,7 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 				return "";');
 
 		// Convert all 'special' characters to HTML entities.
-		return array($charset, preg_replace('~([\x80-\x{10FFFF}])~eu', '$entityConvert(\'\1\')', $string), '7bit');
+		return array('UTF-8', preg_replace('~([\x80-\x{10FFFF}])~eu', '$entityConvert(\'\1\')', $string), '7bit');
 	}
 
 	// We don't need to mess with the subject line if no special characters were in it..
@@ -796,17 +796,17 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 
 		// Show the characterset and the transfer-encoding for header strings.
 		if ($with_charset)
-			$string = '=?' . $charset . '?B?' . $string . '?=';
+			$string = '=?UTF-8?B?' . $string . '?=';
 
 		// Break it up in lines (mail body).
 		else
 			$string = chunk_split($string, 76, $line_break);
 
-		return array($charset, $string, 'base64');
+		return array('UTF-8', $string, 'base64');
 	}
 
 	else
-		return array($charset, $string, '7bit');
+		return array('UTF-8', $string, '7bit');
 }
 
 // Send an email via SMTP.
