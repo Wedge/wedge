@@ -997,10 +997,7 @@ function template_show_settings()
 	<br class="clear" />';
 
 	if (!empty($context['settings_post_javascript']))
-		echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
-	', $context['settings_post_javascript'], '
-	// ]]></script>';
+		echo $context['settings_post_javascript'];
 
 	if (!empty($context['settings_insert_below']))
 		echo $context['settings_insert_below'];

@@ -796,11 +796,13 @@ function ModifySpamSettings($return_config = false)
 
 	// Some javascript for CAPTCHA.
 	$context['settings_post_javascript'] = '
-	function refreshImages()
-	{
-		var imageType = document.getElementById(\'visual_verification_type\').value;
-		document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
-	}';
+	<script type="text/javascript"><!-- // --><![CDATA[
+		function refreshImages()
+		{
+			var imageType = document.getElementById(\'visual_verification_type\').value;
+			document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
+		}
+	// ]]></script>';
 
 	// Show the image itself.
 	$config_vars['vv']['postinput'] = '<br /><img src="' . $context['verification_image_href'] . ';type=' . (empty($modSettings['visual_verification_type']) ? 0 : $modSettings['visual_verification_type']) . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image" /><br />';

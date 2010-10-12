@@ -46,9 +46,7 @@ $time_start = microtime();
 ob_start();
 
 // Do some cleaning, just in case.
-foreach (array('cachedir') as $variable)
-	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
+unset($GLOBALS['cachedir']);
 
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');

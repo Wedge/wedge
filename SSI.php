@@ -42,9 +42,7 @@ if (function_exists('set_magic_quotes_runtime'))
 $time_start = microtime();
 
 // Just being safe...
-foreach (array('cachedir') as $variable)
-	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
+unset($GLOBALS['cachedir']);
 
 // Get the forum's settings for database and file paths.
 require_once(dirname(__FILE__) . '/Settings.php');
