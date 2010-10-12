@@ -1000,14 +1000,6 @@ function ModifyLanguages()
 					'),
 				),
 			),
-			'character_set' => array(
-				'header' => array(
-					'value' => $txt['languages_character_set'],
-				),
-				'data' => array(
-					'db_htmlsafe' => 'char_set',
-				),
-			),
 			'count' => array(
 				'header' => array(
 					'value' => $txt['languages_users'],
@@ -1107,10 +1099,9 @@ function list_getLanguages()
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
-			'char_set' => $txt['lang_character_set'],
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' ', '-utf8' => ''))),
+			'name' => $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
@@ -1978,7 +1969,7 @@ function saveSettings(&$config_vars)
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))
-		$_POST['cookiename'] = preg_replace('~[,;\s\.$]+~' . ($context['utf8'] ? 'u' : ''), '', $_POST['cookiename']);
+		$_POST['cookiename'] = preg_replace('~[,;\s\.$]+~u', '', $_POST['cookiename']);
 
 	// Fix the forum's URL if necessary.
 	if (isset($_POST['boardurl']))

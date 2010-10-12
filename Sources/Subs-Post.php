@@ -736,11 +736,9 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 }
 
 // Prepare text strings for sending as email body or header.
-function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $line_break = "\r\n", $custom_charset = null)
+function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $line_break = "\r\n")
 {
 	global $context;
-
-	$charset = $custom_charset !== null ? $custom_charset : $context['character_set'];
 
 	// This is the fun part....
 	if (preg_match_all('~&#(\d{3,8});~', $string, $matches) !== 0 && !$hotmail_fix)
@@ -757,14 +755,6 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 			$string = preg_replace('~&#(\d{3,8});~e', 'chr(\'$1\')', $string);
 		else
 		{
-			// Try to convert the string to UTF-8.
-			if (!$context['utf8'] && function_exists('iconv'))
-			{
-				$newstring = @iconv($context['character_set'], 'UTF-8', $string);
-				if ($newstring)
-					$string = $newstring;
-			}
-
 			$fixchar = create_function('$n', '
 				if ($n < 128)
 					return chr($n);
@@ -776,22 +766,12 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
 
 			$string = preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $string);
-
-			// Unicode, baby.
-			$charset = 'UTF-8';
 		}
 	}
 
 	// Convert all special characters to HTML entities...just for Hotmail :-\
-	if ($hotmail_fix && ($context['utf8'] || function_exists('iconv') || $context['character_set'] === 'ISO-8859-1'))
+	if ($hotmail_fix)
 	{
-		if (!$context['utf8'] && function_exists('iconv'))
-		{
-			$newstring = @iconv($context['character_set'], 'UTF-8', $string);
-			if ($newstring)
-				$string = $newstring;
-		}
-
 		$entityConvert = create_function('$c', '
 			if (strlen($c) === 1 && ord($c[0]) <= 0x7F)
 				return $c;
@@ -996,7 +976,7 @@ function SpellCheck()
 	pspell_new('en');
 
 	// Next, the dictionary in question may not exist. So, we try it... but...
-	$pspell_link = pspell_new($txt['lang_dictionary'], $txt['lang_spelling'], '', strtr($context['character_set'], array('iso-' => 'iso', 'ISO-' => 'iso')), PSPELL_FAST | PSPELL_RUN_TOGETHER);
+	$pspell_link = pspell_new($txt['lang_dictionary'], $txt['lang_spelling'], '', 'utf-8', PSPELL_FAST | PSPELL_RUN_TOGETHER);
 
 	// Most people don't have anything but English installed... So we use English as a last resort.
 	if (!$pspell_link)

@@ -99,7 +99,7 @@ function db_packages_init()
 // Create a table.
 function smf_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'update', $error = 'fatal')
 {
-	global $reservedTables, $smcFunc, $db_package_log, $db_prefix, $db_character_set;
+	global $reservedTables, $smcFunc, $db_package_log, $db_prefix;
 	static $no_engine_support = null;
 
 	// We check for engine support this way to save time repeatedly performing this check.
@@ -179,8 +179,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		$table_query = substr($table_query, 0, -1);
 
 	$table_query .= ') ' . ($no_engine_support ? 'TYPE' : 'ENGINE') . '=MyISAM';
-	if (!empty($db_character_set) && $db_character_set == 'utf8')
-		$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+	$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci';
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,

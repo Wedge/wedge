@@ -24,7 +24,7 @@ function template_edit_scheduled_tasks()
 	// Starts off with general maintenance procedures.
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=scheduledtasks;sa=taskedit;save;tid=', $context['task']['id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=scheduledtasks;sa=taskedit;save;tid=', $context['task']['id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['scheduled_task_edit'], '</h3>
 			</div>

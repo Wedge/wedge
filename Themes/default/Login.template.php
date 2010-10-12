@@ -9,7 +9,7 @@ function template_login()
 	echo '
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 
-		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="', $context['character_set'], '" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
 			<div class="cat_bar">
 				<h3>
@@ -79,7 +79,7 @@ function template_kick_guest()
 	// This isn't that much... just like normal login but with a message at the top.
 	echo '
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
-	<form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
 			<div class="cat_bar">
 				<h3>', $txt['warning'], '</h3>
@@ -145,7 +145,7 @@ function template_maintenance()
 	// Display the administrator's message at the top.
 	echo '
 <script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
-<form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="tborder login" id="maintenance_mode">
 		<div class="cat_bar">
 			<h3>', $context['title'], '</h3>
@@ -184,7 +184,7 @@ function template_admin_login()
 	echo '
 <script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 
-<form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="', $context['character_set'], '" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
+<form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
 	<div class="tborder login" id="admin_login">
 		<div class="cat_bar">
 			<h3>
@@ -224,7 +224,7 @@ function template_retry_activate()
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
 			<div class="title_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
@@ -253,7 +253,7 @@ function template_resend()
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="UTF-8">
 			<div class="title_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>

@@ -2262,14 +2262,10 @@ function profileLoadLanguages()
 	// Get our languages!
 	getLanguages(true, false);
 
-	// Setup our languages.
+	// Setup our languages. There's no funny business, we only have one set of language files per language these days.
 	foreach ($context['languages'] as $lang)
-	{
-		if ($context['character_set'] == 'UTF-8' && substr($lang['filename'], -5) === '-utf8')
-			$context['profile_languages'][$lang['filename']] = strtr($lang['name'], array('-utf8' => ''));
-		elseif ($context['character_set'] != 'UTF-8' && substr($lang['filename'], -5) !== '-utf8')
-			$context['profile_languages'][$lang['filename']] = $lang['name'];
-	}
+		$context['profile_languages'][$lang['filename']] = $lang['name'];
+
 	ksort($context['profile_languages']);
 
 	// Return whether we should proceed with this.

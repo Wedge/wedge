@@ -20,7 +20,7 @@ function template_maintain_database()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_optimize_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -36,7 +36,7 @@ function template_maintain_database()
 
 		<div class="windowbg2 wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_backup_info'], '</p>
 					<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked &amp;&amp; !document.getElementById(\'data\').checked;" class="input_check" checked="checked" /> ', $txt['maintain_backup_struct'], '</label><br />
 					<label for="data"><input type="checkbox" name="data" id="data" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked &amp;&amp; !document.getElementById(\'data\').checked;" checked="checked" class="input_check" /> ', $txt['maintain_backup_data'], '</label><br />
@@ -46,43 +46,6 @@ function template_maintain_database()
 				</form>
 			</div>
 		</div>';
-
-	// Show an option to convert to UTF-8 if we're not on UTF-8 yet.
-	if ($context['convert_utf8'])
-	{
-		echo '
-		<div class="cat_bar">
-			<h3>', $txt['utf8_title'], '</h3>
-		</div>
-		<div class="windowbg wrc">
-			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="', $context['character_set'], '">
-					<p>', $txt['utf8_introduction'], '</p>
-					', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? '<p class="error">' . $txt['utf8_cannot_convert_fulltext'] . '</p>' : '', '
-					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" ', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? 'disabled="disabled"' : '', '/></span>
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				</form>
-			</div>
-		</div>';
-	}
-
-	// We might want to convert entities if we're on UTF-8.
-	if ($context['convert_entities'])
-	{
-		echo '
-		<div class="cat_bar">
-			<h3>', $txt['entity_convert_title'], '</h3>
-		</div>
-		<div class="windowbg wrc">
-			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities" method="post" accept-charset="', $context['character_set'], '">
-					<p>', $txt['entity_convert_introduction'], '</p>
-					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				</form>
-			</div>
-		</div>';
-	}
 
 	echo '
 	</div>
@@ -109,7 +72,7 @@ function template_maintain_routine()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_version_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -121,7 +84,7 @@ function template_maintain_routine()
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_errors_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -133,7 +96,7 @@ function template_maintain_routine()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_recount_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -145,7 +108,7 @@ function template_maintain_routine()
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_logs_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -157,7 +120,7 @@ function template_maintain_routine()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 					<p>', $txt['maintain_cache_info'], '</p>
 					<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -237,7 +200,7 @@ function template_maintain_members()
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
 					<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
 					<dl class="settings">
 						<dt>
@@ -277,7 +240,7 @@ function template_maintain_members()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="', $context['character_set'], '" id="membersForm">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 					<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
 					<select name="del_type">
 						<option value="activated" selected="selected">', $txt['maintain_members_activated'], '</option>
@@ -362,7 +325,7 @@ function template_maintain_topics()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content flow_auto">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="', $context['character_set'], '">';
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
 
 	// The otherwise hidden "choose which boards to prune".
 	echo '
@@ -428,7 +391,7 @@ function template_maintain_topics()
 		</div>
 		<div class="windowbg2 wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 					<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
 					<select name="id_board_from" id="id_board_from">
 						<option disabled="disabled">(', $txt['move_topics_select_board'], ')</option>';
@@ -520,7 +483,7 @@ function template_convert_utf8()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
 					<p>', $txt['utf8_introduction'], '</p>
 					<div>', $txt['utf8_warning'], '</div>
 
@@ -559,7 +522,7 @@ function template_convert_entities()
 		<div class="windowbg wrc">
 			<div class="content">
 				<p>', $txt['entity_convert_introduction'], '</p>
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 					<input type="submit" value="', $txt['entity_convert_proceed'], '" class="button_submit" />
 				</form>
 			</div>

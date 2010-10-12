@@ -696,7 +696,7 @@ function scheduled_daily_digest()
 		loadLanguage('EmailTemplates', $lang);
 		$langtxt[$lang] = array(
 			'subject' => $txt['digest_subject_' . ($is_weekly ? 'weekly' : 'daily')],
-			'char_set' => $txt['lang_character_set'],
+			'char_set' => 'UTF-8',
 			'intro' => sprintf($txt['digest_intro_' . ($is_weekly ? 'weekly' : 'daily')], $mbname),
 			'new_topics' => $txt['digest_new_topics'],
 			'topic_lines' => $txt['digest_new_topics_line'],
@@ -719,9 +719,6 @@ function scheduled_daily_digest()
 	$emails = array();
 	foreach ($members as $mid => $member)
 	{
-		// Right character set!
-		$context['character_set'] = empty($modSettings['global_character_set']) ? $langtxt[$lang]['char_set'] : $modSettings['global_character_set'];
-
 		// Do the start stuff!
 		$email = array(
 			'subject' => $mbname . ' - ' . $langtxt[$lang]['subject'],

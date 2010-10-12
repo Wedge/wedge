@@ -213,18 +213,10 @@ function ManageMaintenance()
 }
 
 // Supporting function for the database maintenance area.
+// !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
-	global $context, $db_character_set, $modSettings, $smcFunc, $txt;
-
-	// Show some conversion options?
-	$context['convert_utf8'] = (!isset($db_character_set) || $db_character_set !== 'utf8' || empty($modSettings['global_character_set']) || $modSettings['global_character_set'] !== 'UTF-8') && version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']())) <= 0;
-	$context['convert_entities'] = isset($db_character_set, $modSettings['global_character_set']) && $db_character_set === 'utf8' && $modSettings['global_character_set'] === 'UTF-8';
-
-	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		$context['maintenance_finished'] = $txt['utf8_title'];
-	if (isset($_GET['done']) && $_GET['done'] == 'convertentities')
-		$context['maintenance_finished'] = $txt['entity_convert_title'];
+	global $context, $modSettings, $smcFunc, $txt;
 }
 
 // Supporting function for the routine maintenance area.
@@ -361,10 +353,11 @@ function MaintainEmptyUnimportantLogs()
 	$context['maintenance_finished'] = $txt['maintain_logs'];
 }
 
+// !!! This entire function is going to be deprecated. Leaving it here for now as it will become the foundation of the convertor later.
 // Convert both data and database tables to UTF-8 character set.
 function ConvertUtf8()
 {
-	global $scripturl, $context, $txt, $language, $db_character_set;
+	global $scripturl, $context, $txt, $language;
 	global $modSettings, $user_info, $sourcedir, $smcFunc, $db_prefix;
 
 	// Show me your badge!
@@ -711,6 +704,7 @@ function ConvertUtf8()
 	redirectexit('action=admin;area=maintain;done=convertutf8');
 }
 
+// !!! This entire function is going to be deprecated. Leaving it here for now as it will form part of the convertor later.
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {

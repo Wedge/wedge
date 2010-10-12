@@ -6,7 +6,7 @@ function template_wap2_above()
 {
 	global $context, $settings, $options, $user_info;
 
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?', '>
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>

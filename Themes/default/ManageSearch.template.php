@@ -7,7 +7,7 @@ function template_modify_weights()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['search_weights'], '</h3>
 			</div>
@@ -97,7 +97,7 @@ function template_select_search_method()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['search_method'], '</h3>
 			</div>
@@ -225,7 +225,7 @@ function template_create_index()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="', $context['character_set'], '" name="create_index">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
 			<div class="cat_bar">
 				<h3>', $txt['search_create_index'], '</h3>
 			</div>
@@ -258,7 +258,7 @@ function template_create_index_progress()
 	global $context, $settings, $options, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['search_create_index'], '</h3>
 			</div>
@@ -326,7 +326,7 @@ function template_spider_edit()
 	global $context, $settings, $options, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $context['page_title'], '</h3>
 			</div>
@@ -383,7 +383,7 @@ function template_show_spider_logs()
 		<div class="cat_bar">
 			<h3>', $txt['spider_logs_delete'], '</h3>
 		</div>
-		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<div class="content">
 					<p>

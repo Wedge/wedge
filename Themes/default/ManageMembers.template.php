@@ -7,7 +7,7 @@ function template_search_members()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>
 					<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
@@ -245,7 +245,7 @@ function template_admin_browse()
 	{
 		echo '
 		<br />
-		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="', $context['character_set'], '" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
+		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
 			<div class="cat_bar">
 				<h3>', $txt['admin_browse_outstanding'], '</h3>
 			</div>

@@ -1289,8 +1289,6 @@ function Download()
 	global $txt, $modSettings, $user_info, $scripturl, $context, $sourcedir, $topic, $smcFunc;
 
 	// Some defaults that we need.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['no_last_modified'] = true;
 
 	// Make sure some attachment was requested!
@@ -1366,7 +1364,7 @@ function Download()
 		loadLanguage('Errors');
 
 		header('HTTP/1.0 404 ' . $txt['attachment_not_found']);
-		header('Content-Type: text/plain; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: text/plain; charset=UTF-8');
 
 		// We need to die like this *before* we send any anti-caching headers as below.
 		die('404 - ' . $txt['attachment_not_found']);
@@ -1425,8 +1423,7 @@ function Download()
 			unset($_REQUEST['image']);
 	}
 
-	// Convert the file to UTF-8, cuz most browsers dig that.
-	$utf8name = !$context['utf8'] && function_exists('iconv') ? iconv($context['character_set'], 'UTF-8', $real_filename) : (!$context['utf8'] && function_exists('mb_convert_encoding') ? mb_convert_encoding($real_filename, 'UTF-8', $context['character_set']) : $real_filename);
+	// Set up sending the file with its headers. The filename should be in UTF-8 but of course, browsers don't always expect that...
 	$fixchar = create_function('$n', '
 		if ($n < 32)
 			return \'\';
@@ -1443,16 +1440,16 @@ function Download()
 
 	// Different browsers like different standards...
 	if ($context['browser']['is_firefox'])
-		header('Content-Disposition: ' . $disposition . '; filename*="UTF-8\'\'' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $utf8name) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename*="UTF-8\'\'' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename) . '"');
 
 	elseif ($context['browser']['is_opera'])
-		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $utf8name) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename) . '"');
 
 	elseif ($context['browser']['is_ie'])
-		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $utf8name)) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
 
 	else
-		header('Content-Disposition: ' . $disposition . '; filename="' . $utf8name . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
 	if (!isset($_REQUEST['image']) && in_array($file_ext, array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))

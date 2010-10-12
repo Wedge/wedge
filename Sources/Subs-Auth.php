@@ -587,8 +587,8 @@ function RequestMembers()
 	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
 
-	if (function_exists('iconv'))
-		header('Content-Type: text/plain; charset=UTF-8');
+	// Guaranteed to be UTF-8 so let's advise that.
+	header('Content-Type: text/plain; charset=UTF-8');
 
 	$request = $smcFunc['db_query']('', '
 		SELECT real_name
@@ -604,13 +604,7 @@ function RequestMembers()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if (function_exists('iconv'))
-		{
-			$utf8 = iconv($txt['lang_character_set'], 'UTF-8', $row['real_name']);
-			if ($utf8)
-				$row['real_name'] = $utf8;
-		}
-
+		// Note that this is already UTF-8 since it's stored that way.
 		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
 
 		if (preg_match('~&#\d+;~', $row['real_name']) != 0)

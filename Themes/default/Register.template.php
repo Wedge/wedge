@@ -7,7 +7,7 @@ function template_registration_agreement()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-		<form action="', $scripturl, '?action=register" method="post" accept-charset="', $context['character_set'], '" id="registration">
+		<form action="', $scripturl, '?action=register" method="post" accept-charset="UTF-8" id="registration">
 			<div class="cat_bar">
 				<h3>', $txt['registration_agreement'], '</h3>
 			</div>
@@ -112,7 +112,7 @@ function template_registration_form()
 	}
 
 	echo '
-		<form action="', $scripturl, '?action=register2" method="post" accept-charset="', $context['character_set'], '" name="registration" id="registration" onsubmit="return verifyAgree();">
+		<form action="', $scripturl, '?action=register2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
 			<div class="cat_bar">
 				<h3>', $txt['registration_form'], '</h3>
 			</div>
@@ -473,7 +473,7 @@ function template_verification_sound()
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>', $context['page_title'], '</title>
 		<meta name="robots" content="noindex" />
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
@@ -515,7 +515,7 @@ function template_admin_register()
 		<div class="cat_bar">
 			<h3>', $txt['admin_browse_register_new'], '</h3>
 		</div>
-		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="', $context['character_set'], '" name="postForm" id="postForm">
+		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
 			<script type="text/javascript"><!-- // --><![CDATA[
 				function onCheckChange()
 				{
@@ -632,7 +632,7 @@ function template_edit_agreement()
 	{
 		echo '
 				<div class="information">
-					<form action="', $scripturl, '?action=admin;area=regcenter" id="change_reg" method="post" accept-charset="', $context['character_set'], '" style="display: inline;">
+					<form action="', $scripturl, '?action=admin;area=regcenter" id="change_reg" method="post" accept-charset="UTF-8" style="display: inline;">
 						<strong>', $txt['admin_agreement_select_language'], ':</strong>&nbsp;
 						<select name="agree_lang" onchange="document.getElementById(\'change_reg\').submit();" tabindex="', $context['tabindex']++, '">';
 
@@ -652,7 +652,7 @@ function template_edit_agreement()
 	}
 
 	echo '
-				<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="', $context['character_set'], '">';
+				<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8">';
 
 	// Show the actual agreement in an oversized text box.
 	echo '
@@ -682,7 +682,7 @@ function template_edit_reserved_words()
 		<div class="cat_bar">
 			<h3>', $txt['admin_reserved_set'], '</h3>
 		</div>
-		<form id="registration_agreement" action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="', $context['character_set'], '">
+		<form id="registration_agreement" action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8">
 			<div class="windowbg2 wrc">
 				<div class="content">
 					<h4>', $txt['admin_reserved_line'], '</h4>

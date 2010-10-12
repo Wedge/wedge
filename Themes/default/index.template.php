@@ -90,7 +90,7 @@ function template_html_above()
 
 	echo '
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">
-	<meta http-equiv="Content-Type" content="text/html; charset=', $context['character_set'], '" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '', '
 	<title>', $context['page_title_html_safe'], '</title>';
@@ -136,7 +136,7 @@ function template_html_above()
 		var smf_images_url = "', $settings['images_url'], '";
 		var smf_scripturl = "', $scripturl, '";
 		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
-		var smf_charset = "', $context['character_set'], '";', $context['show_pm_popup'] ? '
+		var smf_charset = "UTF-8";', $context['show_pm_popup'] ? '
 		var fPmPopup = function ()
 		{
 			if (confirm("' . $txt['show_personal_messages'] . '"))
@@ -211,7 +211,7 @@ function template_body_above()
 		{
 			echo '
 				<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
-				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 					<div class="info">', $txt['login_or_register'], '</div>
 					<input type="text" name="user" size="10" class="input_text" />
 					<input type="password" name="passwrd" size="10" class="input_password" />
@@ -241,7 +241,7 @@ function template_body_above()
 		if (!empty($context['allow_search']))
 		{
 			echo '
-				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 					<input type="text" name="search" value="" class="input_text" />&nbsp;
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
 					<input type="hidden" name="advanced" value="0" />';

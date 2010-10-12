@@ -72,7 +72,7 @@ function template_maintenance()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 					<p>', $txt['attachment_integrity_check_desc'], '</p>
 					<input type="submit" name="submit" value="', $txt['attachment_check_now'], '" class="button_submit" />
 				</form>
@@ -83,7 +83,7 @@ function template_maintenance()
 		</div>
 		<div class="windowbg wrc">
 			<div class="content">
-				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
+				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
 					', $txt['attachment_remove_old'], ' <input type="text" name="age" value="25" size="4" class="input_text" /> ', $txt['days_word'], '<br />
 					', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40" class="input_text" /><br />
 					<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
@@ -92,7 +92,7 @@ function template_maintenance()
 					<input type="hidden" name="sa" value="byAge" />
 				</form>
 				<hr />
-				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
+				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
 					', $txt['attachment_remove_size'], ' <input type="text" name="size" id="size" value="100" size="4" class="input_text" /> ', $txt['kilobyte'], '<br />
 					', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40" class="input_text" /><br />
 					<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
@@ -101,7 +101,7 @@ function template_maintenance()
 					<input type="hidden" name="sa" value="bySize" />
 				</form>
 				<hr />
-				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
+				<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
 					', $txt['attachment_manager_avatars_older'], ' <input type="text" name="age" value="45" size="4" class="input_text" /> ', $txt['days_word'], '<br />
 					<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
 					<input type="hidden" name="type" value="avatars" />
@@ -156,7 +156,7 @@ function template_attachment_repair()
 	{
 		echo '
 	<div id="manage_attachments">
-		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['repair_attachments'], '</h3>
 			</div>

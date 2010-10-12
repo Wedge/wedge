@@ -98,7 +98,7 @@ class wedgeEditor
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))
 					$context['insert_after_template'] .= '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="' . $context['character_set'] . '" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
+		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
 			<input type="hidden" name="spellstring" value="" />
 		</form>';
 
@@ -1814,9 +1814,6 @@ class wedgeEditor
 		// Now that we've fixed all the code tags, let's fix the img and url tags...
 		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		// The regular expression non breaking space has many versions.
-		$non_breaking_space = $context['utf8'] ? '\x{A0}' : '\xA0';
-
 		// Only mess with stuff outside [code] tags.
 		for ($i = 0, $n = count($parts); $i < $n; $i++)
 		{
@@ -1861,25 +1858,25 @@ class wedgeEditor
 
 				$mistake_fixes = array(
 					// Find [table]s not followed by [tr].
-					'~\[table\](?![\s' . $non_breaking_space . ']*\[tr\])~s' . ($context['utf8'] ? 'u' : '') => '[table][tr]',
+					'~\[table\](?![\s\x{A0}]*\[tr\])~su' => '[table][tr]',
 					// Find [tr]s not followed by [td].
-					'~\[tr\](?![\s' . $non_breaking_space . ']*\[td\])~s' . ($context['utf8'] ? 'u' : '') => '[tr][td]',
+					'~\[tr\](?![\s\x{A0}]*\[td\])~su' => '[tr][td]',
 					// Find [/td]s not followed by something valid.
-					'~\[/td\](?![\s' . $non_breaking_space . ']*(?:\[td\]|\[/tr\]|\[/table\]))~s' . ($context['utf8'] ? 'u' : '') => '[/td][/tr]',
+					'~\[/td\](?![\s\x{A0}]*(?:\[td\]|\[/tr\]|\[/table\]))~su' => '[/td][/tr]',
 					// Find [/tr]s not followed by something valid.
-					'~\[/tr\](?![\s' . $non_breaking_space . ']*(?:\[tr\]|\[/table\]))~s' . ($context['utf8'] ? 'u' : '') => '[/tr][/table]',
+					'~\[/tr\](?![\s\x{A0}]*(?:\[tr\]|\[/table\]))~su' => '[/tr][/table]',
 					// Find [/td]s incorrectly followed by [/table].
-					'~\[/td\][\s' . $non_breaking_space . ']*\[/table\]~s' . ($context['utf8'] ? 'u' : '') => '[/td][/tr][/table]',
+					'~\[/td\][\s\x{A0}]*\[/table\]~su' => '[/td][/tr][/table]',
 					// Find [table]s, [tr]s, and [/td]s (possibly correctly) followed by [td].
-					'~\[(table|tr|/td)\]([\s' . $non_breaking_space . ']*)\[td\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_td_]',
+					'~\[(table|tr|/td)\]([\s\x{A0}]*)\[td\]~su' => '[$1]$2[_td_]',
 					// Now, any [td]s left should have a [tr] before them.
 					'~\[td\]~s' => '[tr][td]',
 					// Look for [tr]s which are correctly placed.
-					'~\[(table|/tr)\]([\s' . $non_breaking_space . ']*)\[tr\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_tr_]',
+					'~\[(table|/tr)\]([\s\x{A0}]*)\[tr\]~su' => '[$1]$2[_tr_]',
 					// Any remaining [tr]s should have a [table] before them.
 					'~\[tr\]~s' => '[table][tr]',
 					// Look for [/td]s followed by [/tr].
-					'~\[/td\]([\s' . $non_breaking_space . ']*)\[/tr\]~s' . ($context['utf8'] ? 'u' : '') => '[/td]$1[_/tr_]',
+					'~\[/td\]([\s\x{A0}]*)\[/tr\]~su' => '[/td]$1[_/tr_]',
 					// Any remaining [/tr]s should have a [/td].
 					'~\[/tr\]~s' => '[/td][/tr]',
 					// Look for properly opened [li]s which aren't closed.
@@ -1887,14 +1884,14 @@ class wedgeEditor
 					'~\[li\]([^\[\]]+?)\[/list\]~s' => '[_li_]$1[_/li_][/list]',
 					'~\[li\]([^\[\]]+?)$~s' => '[li]$1[/li]',
 					// Lists - find correctly closed items/lists.
-					'~\[/li\]([\s' . $non_breaking_space . ']*)\[/list\]~s' . ($context['utf8'] ? 'u' : '') => '[_/li_]$1[/list]',
+					'~\[/li\]([\s\x{A0}]*)\[/list\]~su' => '[_/li_]$1[/list]',
 					// Find list items closed and then opened.
-					'~\[/li\]([\s' . $non_breaking_space . ']*)\[li\]~s' . ($context['utf8'] ? 'u' : '') => '[_/li_]$1[_li_]',
+					'~\[/li\]([\s\x{A0}]*)\[li\]~su' => '[_/li_]$1[_li_]',
 					// Now, find any [list]s or [/li]s followed by [li].
-					'~\[(list(?: [^\]]*?)?|/li)\]([\s' . $non_breaking_space . ']*)\[li\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_li_]',
+					'~\[(list(?: [^\]]*?)?|/li)\]([\s\x{A0}]*)\[li\]~su' => '[$1]$2[_li_]',
 					// Allow for sub lists.
-					'~\[/li\]([\s' . $non_breaking_space . ']*)\[list\]~' => '[_/li_]$1[list]',
-					'~\[/list\]([\s' . $non_breaking_space . ']*)\[li\]~' => '[/list]$1[_li_]',
+					'~\[/li\]([\s\x{A0}]*)\[list\]~' => '[_/li_]$1[list]',
+					'~\[/list\]([\s\x{A0}]*)\[li\]~' => '[/list]$1[_li_]',
 					// Any remaining [li]s weren't inside a [list].
 					'~\[li\]~' => '[list][li]',
 					// Any remaining [/li]s weren't before a [/list].
@@ -1965,9 +1962,9 @@ class wedgeEditor
 
 		// Put it back together!
 		if (!$previewing)
-			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\n" => '<br />', $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
+			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\n" => '<br />', "\xC2\xA0" => '&nbsp;'));
 		else
-			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
+			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;'));
 
 		// Now let's quickly clean up things that will slow our parser (which are common in posted code.)
 		$message = strtr($message, array('[]' => '&#91;]', '[&#039;' => '&#91;&#039;'));
