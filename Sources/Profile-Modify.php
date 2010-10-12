@@ -2260,7 +2260,7 @@ function profileLoadLanguages()
 	$context['profile_languages'] = array();
 
 	// Get our languages!
-	getLanguages(true, false);
+	getLanguages();
 
 	// Setup our languages. There's no funny business, we only have one set of language files per language these days.
 	foreach ($context['languages'] as $lang)
