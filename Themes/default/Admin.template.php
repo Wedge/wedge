@@ -997,7 +997,9 @@ function template_show_settings()
 	<br class="clear" />';
 
 	if (!empty($context['settings_post_javascript']))
-		echo $context['settings_post_javascript'];
+		echo '
+	<script type="text/javascript"><!-- // --><![CDATA[', $context['settings_post_javascript'], '
+	// ]]></script>';
 
 	if (!empty($context['settings_insert_below']))
 		echo $context['settings_insert_below'];
@@ -1990,8 +1992,7 @@ function template_callback_question_answer_list()
 			placeHolder.parentNode.insertBefore(newDT, placeHolder);
 			placeHolder.parentNode.insertBefore(newDD, placeHolder);
 		}
-		document.getElementById(\'add_more_link_div\').style.display = \'\';
-	';
+		document.getElementById(\'add_more_link_div\').style.display = \'\';';
 }
 
 // Repairing boards.

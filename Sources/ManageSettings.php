@@ -796,13 +796,11 @@ function ModifySpamSettings($return_config = false)
 
 	// Some javascript for CAPTCHA.
 	$context['settings_post_javascript'] = '
-	<script type="text/javascript"><!-- // --><![CDATA[
 		function refreshImages()
 		{
 			var imageType = document.getElementById(\'visual_verification_type\').value;
 			document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
-		}
-	// ]]></script>';
+		}';
 
 	// Show the image itself.
 	$config_vars['vv']['postinput'] = '<br /><img src="' . $context['verification_image_href'] . ';type=' . (empty($modSettings['visual_verification_type']) ? 0 : $modSettings['visual_verification_type']) . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image" /><br />';
@@ -857,7 +855,8 @@ function ModifySignatureSettings($return_config = false)
 	$context['sub_template'] = 'show_settings';
 
 	// Disable the max smileys option if we don't allow smileys at all!
-	$context['settings_post_javascript'] = 'document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;';
+	$context['settings_post_javascript'] = '
+		document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;';
 
 	// Load all the signature settings.
 	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
