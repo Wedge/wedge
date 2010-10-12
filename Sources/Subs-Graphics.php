@@ -1022,37 +1022,4 @@ function showCodeImage($code)
 	die();
 }
 
-// Create a letter for the visual verification code.
-function showLetterImage($letter)
-{
-	global $settings;
-
-	if (!is_dir($settings['default_theme_dir'] . '/fonts'))
-		return false;
-
-	// Get a list of the available font directories.
-	$font_dir = dir($settings['default_theme_dir'] . '/fonts');
-	$font_list = array();
-	while ($entry = $font_dir->read())
-		if ($entry[0] !== '.' && is_dir($settings['default_theme_dir'] . '/fonts/' . $entry) && file_exists($settings['default_theme_dir'] . '/fonts/' . $entry . '.gdf'))
-			$font_list[] = $entry;
-
-	if (empty($font_list))
-		return false;
-
-	// Pick a random font.
-	$random_font = $font_list[array_rand($font_list)];
-
-	// Check if the given letter exists.
-	if (!file_exists($settings['default_theme_dir'] . '/fonts/' . $random_font . '/' . $letter . '.gif'))
-		return false;
-
-	// Include it!
-	header('Content-type: image/gif');
-	include($settings['default_theme_dir'] . '/fonts/' . $random_font . '/' . $letter . '.gif');
-
-	// Nothing more to come.
-	die();
-}
-
 ?>

@@ -142,8 +142,6 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$context['html_headers'] .= '
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/captcha.js"></script>';
 
-		$context['use_graphic_library'] = in_array('gd', get_loaded_extensions());
-
 		// Skip I, J, L, O, Q, S and Z.
 		$context['standard_captcha_range'] = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
 	}
@@ -169,7 +167,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'] && !WIRELESS)
 		$context['insert_after_template'] .= '
 			<script type="text/javascript"><!-- // --><![CDATA[
-				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", ' . ($context['use_graphic_library'] ? 1 : 0) . ');
+				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", 1);
 			// ]]></script>';
 
 	// Is there actually going to be anything?
