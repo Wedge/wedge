@@ -262,7 +262,7 @@ function smf_main()
 		'credits' => array('Who.php', 'Credits'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'display' => array('Display.php', 'Display'),
-		'dlattach' => array('Display.php', 'Download'),
+		'dlattach' => array('Download.php', 'Download'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
 		'editpoll2' => array('Poll.php', 'EditPoll2'),
 		'emailuser' => array('SendTopic.php', 'EmailUser'),
