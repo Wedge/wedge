@@ -135,8 +135,7 @@ function template_html_above()
 		var smf_default_theme_url = "', $settings['default_theme_url'], '";
 		var smf_images_url = "', $settings['images_url'], '";
 		var smf_scripturl = "', $scripturl, '";
-		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
-		var smf_charset = "UTF-8";', $context['show_pm_popup'] ? '
+		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
 		var fPmPopup = function ()
 		{
 			if (confirm("' . $txt['show_personal_messages'] . '"))
