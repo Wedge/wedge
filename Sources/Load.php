@@ -1993,20 +1993,18 @@ function getBoardParents($id_parent)
 	return $boards;
 }
 
-// Attempt to reload our languages.
 /**
- * Attempt to (re)load the list of known language packs, and removing non UTF-8 language packs if using UTF-8.
+ * Attempt to (re)load the list of known language packs.
  *
  * @param bool $use_cache Whether to cache the results of searching the language folders for index.{language}.php files.
- * @param bool $favor_utf8 Whether to lean towards UTF-8 if applicable.
  * @return array Returns an array, one element per known language pack, with: name (capitalized name of language pack), selected (bool whether this is the current language), filename (the raw language code, e.g. english_british-utf8), location (full system path to the index.{language}.php file) - this is all part of $context['languages'] too.
  */
-function getLanguages($use_cache = true, $favor_utf8 = true)
+function getLanguages($use_cache = true)
 {
 	global $context, $smcFunc, $settings, $modSettings;
 
 	// Either we don't use the cache, or it's expired.
-	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages' . ($favor_utf8 ? '' : '_all'), !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
+	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
 	{
 		// If we don't have our theme information yet, let's get it.
 		if (empty($settings['default_theme_dir']))
@@ -2049,17 +2047,9 @@ function getLanguages($use_cache = true, $favor_utf8 = true)
 			$dir->close();
 		}
 
-		// Favoring UTF8? Then prevent us from selecting non-UTF8 versions.
-		if ($favor_utf8)
-		{
-			foreach ($context['languages'] as $lang)
-				if (substr($lang['filename'], strlen($lang['filename']) - 5, 5) != '-utf8' && isset($context['languages'][$lang['filename'] . '-utf8']))
-					unset($context['languages'][$lang['filename']]);
-		}
-
 		// Let's cash in on this deal.
 		if (!empty($modSettings['cache_enable']))
-			cache_put_data('known_languages' . ($favor_utf8 ? '' : '_all'), $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+			cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
 
 	return $context['languages'];

@@ -705,7 +705,7 @@ function DownloadLanguage()
 		}
 
 		// I love PHP files, that's why I'm a developer and not an artistic type spending my time drinking absinth and living a life of sin...
-		if ($extension == 'php' && preg_match('~\w+\.\w+(?:-utf8)?\.php~', $filename))
+		if ($extension == 'php' && preg_match('~\w+\.\w+?\.php~', $filename))
 		{
 			$context_data += array(
 				'version' => '??',
@@ -1158,7 +1158,7 @@ function ModifyLanguageSettings($return_config = false)
 	// Get our languages. No cache and use utf8.
 	getLanguages(false, false);
 	foreach ($context['languages'] as $lang)
-		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], strtr($lang['name'], array('-utf8' => ' (UTF-8)')));
+		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], $lang['name']);
 
 	// Saving settings?
 	if (isset($_REQUEST['save']))
@@ -1339,7 +1339,6 @@ function ModifyLanguage()
 		$current_data = implode('', file($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
 		// These are the replacements. old => new
 		$replace_array = array(
-			'~\$txt\[\'lang_character_set\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_character_set\'] = \'' . addslashes($_POST['character_set']) . '\';',
 			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . addslashes($_POST['locale']) . '\';',
 			'~\$txt\[\'lang_dictionary\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_dictionary\'] = \'' . addslashes($_POST['dictionary']) . '\';',
 			'~\$txt\[\'lang_spelling\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_spelling\'] = \'' . addslashes($_POST['spelling']) . '\';',
@@ -1360,7 +1359,6 @@ function ModifyLanguage()
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
 		'name' => $smcFunc['ucwords'](strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
-		'character_set' => $txt['lang_character_set'],
 		'locale' => $txt['lang_locale'],
 		'dictionary' => $txt['lang_dictionary'],
 		'spelling' => $txt['lang_spelling'],
