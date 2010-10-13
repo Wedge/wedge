@@ -695,7 +695,7 @@ function ConvertUtf8()
 
 	// Store it in Settings.php too because it's needed before db connection.
 	require_once($sourcedir . '/Subs-Admin.php');
-	updateSettingsFile(array('db_character_set' => '\'utf8\''));
+	updateSettingsFile(array('db_character_set' => 'utf8'));
 
 	// The conversion might have messed up some serialized strings. Fix them!
 	require_once($sourcedir . '/Subs-Charset.php');
