@@ -2156,7 +2156,7 @@ function Post2()
  * - For each email we're going to send: check if we have loaded the language - if not, load the right language file, then the email templates for that language. Then add this recipient to the list for their language.
  * - Then send out emails by language, having replaced the text into the email template, low priority.
  * - Update the list of notifications to say we have sent the relevant notifications out to the relevant people (and tracking the ids so we don't send them any more than they need)
- * 
+ *
  * @param array &$topicData Notionally an array of topics (indexed), with each topic entry being an array of 'board' (board id), 'topic' (topic id), 'msg' (message id), 'subject', 'body', 'poster' (poster's user id), 'name' (poster's name). Sometimes only a single topic will be passed, which will be just the subarray described here.
  */
 function notifyMembersBoard(&$topicData)

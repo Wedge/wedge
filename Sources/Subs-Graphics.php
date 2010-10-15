@@ -737,11 +737,7 @@ function showCodeImage($code)
 
 			if (!empty($can_do_ttf))
 			{
-				// GD2 handles font size differently.
-				if ($fontSizeRandom)
-					$font_size = mt_rand(17, 19);
-				else
-					$font_size = 18;
+				$font_size = $fontSizeRandom ? mt_rand(17, 19) : 18;
 
 				// Work out the sizes - also fix the character width cause TTF not quite so wide!
 				$font_x = $fontHorSpace == 'minus' && $cur_x > 0 ? $cur_x - 3 : $cur_x + 5;

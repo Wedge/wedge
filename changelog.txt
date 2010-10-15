@@ -70,8 +70,8 @@ September 2010
  ! Fixed missing global $smcFunc in prepareIndexes function (SearchAPI-Custom.php)
  ! $smcFunc['db_list_indexes'] was broken for SQLite. (DbPackages-sqlite.php)
  - remove getOuterHTML(), outdated javascript function (script.js) [Bug 4284]
- 
- 
+
+
 August 2010
 --------------------------------------------------------------------------------
  * The new replies template for preview JavaScript was using outdated post layout. (Post template) [Bug 4387]
@@ -108,7 +108,7 @@ August 2010
  ! Fixed a couple of issues with the RSS feeds optimization (News.php) [Bug 4428]
  ! More fixes to use internationalized substr/strlen (more files) [Bug 3738]
 
- 
+
 July 2010
 --------------------------------------------------------------------------------
  ! Incorrect password was passed to integrate_reset_pass hook when password was changed. (Profile.php) [Bug 3986]
