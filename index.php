@@ -251,7 +251,7 @@ function smf_main()
 	$actionArray = array(
 		'activate' => array('Register.php', 'Activate'),
 		'admin' => array('Admin.php', 'AdminMain'),
-		'announce' => array('Post.php', 'AnnounceTopic'),
+		'announce' => array('Announce.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'calendar' => array('Calendar.php', 'CalendarMain'),
