@@ -38,7 +38,6 @@ if (!defined('SMF'))
 		- downloads file from url and stores it locally for avatar use
 		  by id_member.
 		- supports GIF, JPG, PNG, BMP and WBMP formats.
-		- detects if GD2 is available.
 		- uses resizeImageFile() to resize to max_width by max_height,
 		  and saves the result to a file.
 		- updates the database info for the member's avatar.
@@ -61,11 +60,6 @@ if (!defined('SMF'))
 		- if extensiveCheck is true, searches for asp/php short tags as well.
 		- returns true on success, false on failure.
 
-	bool checkGD()
-		- sets a global $gd2 variable needed by some functions to determine
-		  whetehr the GD2 library is present.
-		- returns whether or not GD1 is available.
-
 	void resizeImageFile(string source, string destination,
 			int max_width, int max_height, int preferred_format = 0)
 		- resizes an image from a remote location or a local file.
@@ -79,7 +73,6 @@ if (!defined('SMF'))
 			int preferred_format)
 		- resizes src_img proportionally to fit within max_width and
 		  max_height limits if it is too large.
-		- if GD2 is present, it'll use it to achieve better quality.
 		- saves the new image to destination_filename.
 		- saves as preferred_format if possible, default is jpeg.
 
@@ -288,27 +281,9 @@ function checkImageContents($fileName, $extensiveCheck = false)
 	return true;
 }
 
-function checkGD()
-{
-	global $gd2;
-
-	// Check to see if GD is installed and what version.
-	if (($extensionFunctions = get_extension_funcs('gd')) === false)
-		return false;
-
-	// Also determine if GD2 is installed and store it in a global.
-	$gd2 = in_array('imagecreatetruecolor', $extensionFunctions) && function_exists('imagecreatetruecolor');
-
-	return true;
-}
-
 function resizeImageFile($source, $destination, $max_width, $max_height, $preferred_format = 0)
 {
 	global $sourcedir;
-
-	// Nothing to do without GD
-	if (!checkGD())
-		return false;
 
 	static $default_formats = array(
 		'1' => 'gif',
@@ -369,11 +344,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 
 function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $max_height, $force_resize = false, $preferred_format = 0)
 {
-	global $gd2, $modSettings;
-
-	// Without GD, no image resizing at all.
-	if (!checkGD())
-		return false;
+	global $modSettings;
 
 	$success = false;
 
@@ -394,27 +365,17 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 		// Don't bother resizing if it's already smaller...
 		if (!empty($dst_width) && !empty($dst_height) && ($dst_width < $src_width || $dst_height < $src_height || $force_resize))
 		{
-			// (make a true color image, because it just looks better for resizing.)
-			if ($gd2)
+			$dst_img = imagecreatetruecolor($dst_width, $dst_height);
+
+			// Deal nicely with a PNG - because we can.
+			if ((!empty($preferred_format)) && ($preferred_format == 3))
 			{
-				$dst_img = imagecreatetruecolor($dst_width, $dst_height);
-
-				// Deal nicely with a PNG - because we can.
-				if ((!empty($preferred_format)) && ($preferred_format == 3))
-				{
-					imagealphablending($dst_img, false);
-					if (function_exists('imagesavealpha'))
-						imagesavealpha($dst_img, true);
-				}
+				imagealphablending($dst_img, false);
+				if (function_exists('imagesavealpha'))
+					imagesavealpha($dst_img, true);
 			}
-			else
-				$dst_img = imagecreate($dst_width, $dst_height);
 
-			// Resize it!
-			if ($gd2)
-				imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
-			else
-				imagecopyresamplebicubic($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
+			imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
 		}
 		else
 			$dst_img = $src_img;
@@ -438,59 +399,10 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 	return $success;
 }
 
-function imagecopyresamplebicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h)
-{
-	$palsize = imagecolorstotal($src_img);
-	for ($i = 0; $i < $palsize; $i++)
-	{
-		$colors = imagecolorsforindex($src_img, $i);
-		imagecolorallocate($dst_img, $colors['red'], $colors['green'], $colors['blue']);
-	}
-
-	$scaleX = ($src_w - 1) / $dst_w;
-	$scaleY = ($src_h - 1) / $dst_h;
-
-	$scaleX2 = (int) $scaleX / 2;
-	$scaleY2 = (int) $scaleY / 2;
-
-	for ($j = $src_y; $j < $dst_h; $j++)
-	{
-		$sY = (int) $j * $scaleY;
-		$y13 = $sY + $scaleY2;
-
-		for ($i = $src_x; $i < $dst_w; $i++)
-		{
-			$sX = (int) $i * $scaleX;
-			$x34 = $sX + $scaleX2;
-
-			$color1 = imagecolorsforindex($src_img, imagecolorat($src_img, $sX, $y13));
-			$color2 = imagecolorsforindex($src_img, imagecolorat($src_img, $sX, $sY));
-			$color3 = imagecolorsforindex($src_img, imagecolorat($src_img, $x34, $y13));
-			$color4 = imagecolorsforindex($src_img, imagecolorat($src_img, $x34, $sY));
-
-			$red = ($color1['red'] + $color2['red'] + $color3['red'] + $color4['red']) / 4;
-			$green = ($color1['green'] + $color2['green'] + $color3['green'] + $color4['green']) / 4;
-			$blue = ($color1['blue'] + $color2['blue'] + $color3['blue'] + $color4['blue']) / 4;
-
-			$color = imagecolorresolve($dst_img, $red, $green, $blue);
-			if ($color == -1)
-			{
-				if ($palsize++ < 256)
-					imagecolorallocate($dst_img, $red, $green, $blue);
-				$color = imagecolorclosest($dst_img, $red, $green, $blue);
-			}
-
-			imagesetpixel($dst_img, $i + $dst_x - $src_x, $j + $dst_y - $src_y, $color);
-		}
-	}
-}
-
 if (!function_exists('imagecreatefrombmp'))
 {
 	function imagecreatefrombmp($filename)
 	{
-		global $gd2;
-
 		$fp = fopen($filename, 'rb');
 
 		$errors = error_reporting(0);
@@ -501,10 +413,7 @@ if (!function_exists('imagecreatefrombmp'))
 		if ($header['type'] != 0x4D42)
 			false;
 
-		if ($gd2)
-			$dst_img = imagecreatetruecolor($info['width'], $info['height']);
-		else
-			$dst_img = imagecreate($info['width'], $info['height']);
+		$dst_img = imagecreatetruecolor($info['width'], $info['height']);
 
 		$palette_size = $header['offset'] - 54;
 		$info['ncolor'] = $palette_size / 4;
@@ -681,11 +590,6 @@ function showCodeImage($code)
 	// Give the image a border?
 	$hasBorder = $simpleBGColor;
 
-	// Is this GD2? Needed for pixel size.
-	$testGD = get_extension_funcs('gd');
-	$gd2 = in_array('imagecreatetruecolor', $testGD) && function_exists('imagecreatetruecolor');
-	unset($testGD);
-
 	// The amount of pixels inbetween characters.
 	$character_spacing = 1;
 
@@ -767,7 +671,7 @@ function showCodeImage($code)
 	}
 
 	// Create an image.
-	$code_image = $gd2 ? imagecreatetruecolor($total_width, $max_height) : imagecreate($total_width, $max_height);
+	$code_image = imagecreatetruecolor($total_width, $max_height);
 
 	// Draw the background.
 	$bg_color = imagecolorallocate($code_image, $background_color[0], $background_color[1], $background_color[2]);
@@ -840,9 +744,9 @@ function showCodeImage($code)
 			{
 				// GD2 handles font size differently.
 				if ($fontSizeRandom)
-					$font_size = $gd2 ? mt_rand(17, 19) : mt_rand(18, 25);
+					$font_size = mt_rand(17, 19);
 				else
-					$font_size = $gd2 ? 18 : 24;
+					$font_size = 18;
 
 				// Work out the sizes - also fix the character width cause TTF not quite so wide!
 				$font_x = $fontHorSpace == 'minus' && $cur_x > 0 ? $cur_x - 3 : $cur_x + 5;
@@ -875,7 +779,7 @@ function showCodeImage($code)
 				// Rotating the characters a little...
 				if (function_exists('imagerotate'))
 				{
-					$char_image = $gd2 ? imagecreatetruecolor($character['width'], $character['height']) : imagecreate($character['width'], $character['height']);
+					$char_image = imagecreatetruecolor($character['width'], $character['height']);
 					$char_bgcolor = imagecolorallocate($char_image, $background_color[0], $background_color[1], $background_color[2]);
 					imagefilledrectangle($char_image, 0, 0, $character['width'] - 1, $character['height'] - 1, $char_bgcolor);
 					imagechar($char_image, $loaded_fonts[$character['font']], 0, 0, $character['id'], imagecolorallocate($char_image, $char_fg_color[0], $char_fg_color[1], $char_fg_color[2]));
