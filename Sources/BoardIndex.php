@@ -59,9 +59,19 @@ function BoardIndex()
 	else
 	{
 		loadTemplate('BoardIndex');
+		loadTemplate('BoardIndexInfoCenter');
 		$context['sub_template'] = array(
+			'boardindex_ministats',
+			'boardindex_newsfader',
 			'boardindex',
-			'info_center',
+			'boardindex_below',
+			'info_center_begin',
+			'info_center_recentposts',
+			'info_center_calendar',
+			'info_center_statistics',
+			'info_center_usersonline',
+			'info_center_personalmsg',
+			'info_center_end',
 		);
 	}
 
@@ -139,6 +149,40 @@ function BoardIndex()
 		$context['show_calendar'] = false;
 
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
+
+	// Also add the collapse object to the page for the info center.
+	if (empty($context['insert_after_template']))
+		$context['insert_after_template'] = '';
+
+	$context['insert_after_template'] .= '
+	<script type="text/javascript"><!-- // --><![CDATA[
+		var oInfoCenterToggle = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: ' . (empty($options['collapse_header_ic']) ? 'false' : 'true') . ',
+			aSwappableContainers: [
+				\'upshrinkHeaderIC\'
+			],
+			aSwapImages: [
+				{
+					sId: \'upshrink_ic\',
+					srcExpanded: smf_images_url + \'/collapse.gif\',
+					altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ',
+					srcCollapsed: smf_images_url + \'/expand.gif\',
+					altCollapsed: ' . JavaScriptEscape($txt['upshrink_description']) . '
+				}
+			],
+			oThemeOptions: {
+				bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ',
+				sOptionName: \'collapse_header_ic\',
+				sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
+				sSessionId: ' . JavaScriptEscape($context['session_id']) . '
+			},
+			oCookieOptions: {
+				bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',
+				sCookieName: \'upshrinkIC\'
+			}
+		});
+	// ]]></script>';
 }
 
 /**
