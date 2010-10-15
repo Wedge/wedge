@@ -39,8 +39,6 @@ if (!defined('SMF'))
 		  by id_member.
 		- supports GIF, JPG, PNG, BMP and WBMP formats.
 		- detects if GD2 is available.
-		- if GIF support isn't present in GD, handles GIFs with gif_loadFile()
-		  and gif_outputAsPng().
 		- uses resizeImageFile() to resize to max_width by max_height,
 		  and saves the result to a file.
 		- updates the database info for the member's avatar.
@@ -90,15 +88,6 @@ if (!defined('SMF'))
 			int dest_h, int src_w, int src_h)
 		- used when imagecopyresample() is not available.
 
-	resource gif_loadFile(string filename, int animation_index)
-		- loads a gif file with the Yamasoft GIF utility class.
-		- returns a new GD image.
-
-	bool gif_outputAsPng(resource gif, string destination_filename,
-			int bgColor = -1)
-		- writes a gif file to disk as a png file.
-		- returns whether it was successful or not.
-
 	bool imagecreatefrombmp(string filename)
 		- is set only if it doesn't already exist (for forwards compatiblity.)
 		- only supports uncompressed bitmaps.
@@ -109,14 +98,9 @@ if (!defined('SMF'))
 		- show an image containing the visual verification code for registration.
 		- requires the GD extension.
 		- uses a random font for each letter from default_theme_dir/fonts.
-		- outputs a gif or a png (depending on whether gif ix supported).
+		- outputs a gif or a png (depending on whether gif is supported).
 		- returns false if something goes wrong.
 
-	bool showLetterImage(string letter)
-		- show a letter for the visual verification code.
-		- alternative function for showCodeImage() in case GD is missing.
-		- includes an image from a random sub directory of
-		  default_theme_dir/fonts.
 */
 
 function downloadAvatar($url, $memID, $max_width, $max_height)
@@ -368,14 +352,6 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 	// We can't get to the file.
 	else
 		$sizes = array(-1, -1, -1);
-
-	// Gif? That might mean trouble if gif support is not available.
-	if ($sizes[2] == 1 && !function_exists('imagecreatefromgif') && function_exists('imagecreatefrompng'))
-	{
-		// Download it to the temporary file... use the special gif library... and save as png.
-		if ($img = @gif_loadFile($destination) && gif_outputAsPng($img, $destination))
-			$sizes[2] = 3;
-	}
 
 	// A known and supported format?
 	if (isset($default_formats[$sizes[2]]) && function_exists('imagecreatefrom' . $default_formats[$sizes[2]]))
@@ -660,38 +636,6 @@ if (!function_exists('imagecreatefrombmp'))
 
 		return $dst_img;
 	}
-}
-
-function gif_loadFile($lpszFileName, $iIndex = 0)
-{
-	global $sourcedir;
-	// The classes needed are in this file.
-	require_once($sourcedir . '/Class-Graphics.php');
-	$gif = new gif_file();
-
-	if (!$gif->loadFile($lpszFileName, $iIndex))
-		return false;
-
-	return $gif;
-}
-
-function gif_outputAsPng($gif, $lpszFileName, $background_color = -1)
-{
-	if (!isset($gif) || @get_class($gif) != 'cgif' || !$gif->loaded || $lpszFileName == '')
-		return false;
-
-	$fd = $gif->get_png_data($background_color);
-	if (strlen($fd) <= 0)
-		return false;
-
-	if (!($fh = @fopen($lpszFileName, 'wb')))
-		return false;
-
-	@fwrite($fh, $fd, strlen($fd));
-	@fflush($fh);
-	@fclose($fh);
-
-	return true;
 }
 
 // Create the image for the visual verification code.
