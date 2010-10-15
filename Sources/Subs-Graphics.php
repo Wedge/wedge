@@ -76,11 +76,6 @@ if (!defined('SMF'))
 		- saves the new image to destination_filename.
 		- saves as preferred_format if possible, default is jpeg.
 
-	void imagecopyresamplebicubic(resource dest_img, resource src_img,
-			int dest_x, int dest_y, int src_x, int src_y, int dest_w,
-			int dest_h, int src_w, int src_h)
-		- used when imagecopyresample() is not available.
-
 	bool imagecreatefrombmp(string filename)
 		- is set only if it doesn't already exist (for forwards compatiblity.)
 		- only supports uncompressed bitmaps.

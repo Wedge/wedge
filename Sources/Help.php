@@ -22,22 +22,23 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file provides the handling of the help popups.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has the important job of taking care of help messages.
-
-	void ShowAdminHelp()
-		- shows a popup for administrative or user help.
-		- uses the help parameter to decide what string to display and where
-		  to get the string from. ($helptxt or $txt?)
-		- loads the ManagePermissions language file if the help starts with
-		  permissionhelp.
-		- uses the Help template, popup sub template, no layers.
-		- accessed via ?action=helpadmin;help=??.
-*/
-
-// Show some of the more detailed help to give the admin an idea...
+/**
+ * Handles provision of pop-ups for administrator or user help.
+ *
+ * - Accessed via ?action=helpadmin;help=xyz and subsequently $_GET['help'] is used as the identifier of the help to display.
+ * - Identifies where a help string may be located (normally the Help language file, but if the string starts with permissionhelp, it also loads the permissions strings)
+ * - steps through whether to use $helptxt (for administrative help strings as $txt[$_GET['help']] will be the option description), $txt (for permissions) or if not found, simply uses the provided string.
+ * - Uses the Help template, popup subtemplate, removing all layers.
+ */
 function ShowAdminHelp()
 {
 	global $txt, $helptxt, $context, $scripturl;
