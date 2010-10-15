@@ -1101,7 +1101,7 @@ function list_getLanguages()
 			'count' => 0,
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' '))),
+			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
