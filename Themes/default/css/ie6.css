@@ -143,9 +143,14 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 #postmodify div.roundframe { margin-right: 0 }
 
+/* Overrides for the recent posts template
+------------------------------------------------------- */
+.list_posts {
+	word-wrap: break-word;
+}
+
 /* Misc hacks
 ------------- */
-
 .iefs {
 	display: none;
 	z-index: 9;

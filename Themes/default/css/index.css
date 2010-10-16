@@ -185,6 +185,7 @@ a:link, a:visited {
 }
 a:hover {
 	text-decoration: underline;
+	cursor: pointer;
 }
 
 /* Links that open in a new window. */
@@ -717,6 +718,7 @@ code.bbc_code {
 	background-color: #ffd0a0;
 	font-weight: bold;
 	color: #000 !important;
+	padding: 0 2px 1px 2px;
 }
 
 /* A more discreet highlight color, for selected membergroups etc. */
@@ -1067,7 +1069,8 @@ dl.settings dt a img {
 .cat_bar h3, .cat_bar h4 {
 	letter-spacing: 1px;
 }
-.cat_bar h3, .cat_bar h3 a, .cat_bar h4, .cat_bar h4 a, .table_list tbody.header td, .table_list tbody.header td a {
+.cat_bar h3, .cat_bar h4, .table_list tbody.header td,
+.cat_bar h3 a, .cat_bar h4 a, .table_list tbody.header td a {
 	color: #000;
 }
 .cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover {
@@ -1682,11 +1685,8 @@ ul.quickbuttons {
 	clear: right;
 	float: right;
 	text-align: right;
-	font-family: "Trebuchet MS", arial, sans-serif;
+	font: normal 0.95em/22px "Trebuchet MS", arial, sans-serif;
 	text-transform: uppercase;
-	font-weight: normal;
-	font-size: 0.95em;
-	line-height: 22px;
 }
 ul.quickbuttons li {
 	float: left;
@@ -1784,7 +1784,7 @@ ul.quickbuttons li.inline_mod_check {
 #display_jump_to {
 	clear: both;
 	padding: 5px;
-	margin-top: 2px;
+	margin-top: 5px;
 	text-align: right;
 }
 
@@ -2558,6 +2558,7 @@ dl {
 	border-top: 2px solid #b3b3bf;
 	padding-top: 12px;
 	margin-top: 6px;
+	overflow: auto;
 }
 
 .core_posts {

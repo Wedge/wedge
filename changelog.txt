@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10150 $.
+Changelog started January 1, 2004; Currently at $Revision: 10171 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -10,6 +10,18 @@ October 2010
  * Minor cleaning up in admin. Better highlighting of search results. Defined new_win class. Better description for post options (Admin.template.php, admin.css, index.css, Post.english.php)
  * Fixed post-breaking bug in IE6 and IE7. Removed $context['right_to_left'] from two templates. (ie6.css, ie7.css, index.css, rtl.css, Display.template.php, Memberlist.template.php)
  * Fixed board selection in profile and help. Cleaned up stats markup. (Profile.template.php, Help.template.php, Stats.template.php, index.css, rtl.css)
+ * Editors without BBC buttons caused JavaScript errors. (editor.js) [Bug 4475]
+ * New replies added by JavaScript did not get correct backgrounds. (Post template) [Bug 4474]
+ ! Nested move BBC tags caused trouble for some browsers. (Subs.php)
+ ! Added default forum_width of 90% to install and upgrade files (install.sql, upgrade_2-0.sql)
+ ! Removed side padding from body (relying solely on forum_width setting now). (index.css)
+ ! Sorted cell borders for message index child boards table. (index.css, rtl.css) [Bug 4490]
+ * Added alt text fallback for quick edit icon. Changed quickbuttons font declaration to shorthand notation. (Display.template.php, index.css)
+ ! CSS colour fallback for buttonlists, minor css tweaks. (index.css, rtl.css, ie6.css, ie7.css, menu_gfx.png)
+ ! CSS colour fallback for catbg and titlebg. Extra bar for catbg inside roundframe. Removed excess main_block height. (index.css, main_block.png)
+ * Fixed code for icons in some areas. Removed unnecessary ie6_header span from GenericList. Removed old commented out code. (GenericList.template.php, GenericMenu.template.php, Profile.template.php, Profile-Modify.php, Profile-View.php) [Bug 4489]
+ ! Height fix for RTE with Opera. (editor.js) [Bug 4500]
+ + Add the option to enable/disable test mode for payment gateways to the user interface. Thanks Nibogo! (ManagePaid.php) [Bug 4503]
 
 
 September 2010
@@ -749,7 +761,7 @@ November 2009
  ! Buddy list used wrong permission check. (Profile.php)
  ! Store the selected filter for the Who's Online page in the session, so it may be applied again if the user revisits the page later. (Who.php)
  ! Remove the index on the hits column of the log_activity table, as it's a waste of cycles. (install SQL files, upgrade SQL files) [Bug 3960]
- ! Added three new smileys sets to the package, replacing the old ones. (Smileys/default/*, Smileys/aaron/*, Smileys/akyhne/*)
+ ! Added new smileys sets to the package, replacing the old ones. (Smileys/default/*, Smileys/aaron/*)
  * Updated Curve's post icons to reflect the new default smiley set. (Themes/default/images/post/*)
  ! Hide the View Results button for polls when it is no longer possible to vote. (Display.php)
  ! Include the compatibility stylesheets for themes designed for 2.0 Beta, too. (Load.php)

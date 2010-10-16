@@ -1,80 +1,76 @@
-.cat_bar h3 input.input_check
-{
+.cat_bar h3 input.input_check {
 	margin: 0 4px;
 }
 
 /* the tabled definition lists */
-dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.options dd, .login dd
-{
+dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.options dd, .login dd {
 	float: none !important;
 	width: auto;
 }
 /* generic lists header */
 /* Side paddings must NOT be defined here.*/
-.table_grid thead th
-{
+.table_grid thead th {
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
 }
 
 /* Overrides for the messageindex template
 ------------------------------------------------------- */
-#messageindex table
-{
+#messageindex table {
 	margin-top: 5px;
 }
-#messageindex table th
-{
+#messageindex table th {
 	border-bottom: 1px solid #fff;
 }
-#topic_icons .description
-{
+#topic_icons .description {
 	padding: 2em 1em 1em 1em;
 	overflow: auto;
 }
 
 /* Overrides for the display template
 ------------------------------------------------------- */
-.post
-{
+.post {
 	padding-top: 1em;
 	float: none;
 	word-wrap: break-word;
 }
-#content #forumposts div.cat_bar
-{
+#content #forumposts div.cat_bar {
 	margin-top: 8px;
 	clear: both;
 }
-#content .pagesection
-{
+#content .pagesection {
 	height: 1%;
 }
-.signature
-{
+.signature {
 	padding: 0 0 0.8em 0;
 }
 
 /* Overrides for the profile template
 ------------------------------------------------------- */
-#basicinfo h4
-{
+#basicinfo h4 {
 	word-wrap: break-word;
 }
 
 /* Overrides for the calendar template
 ------------------------------------------------- */
-#main_grid table.weeklist .title_bar h4
-{
+#main_grid table.weeklist .title_bar h4 {
 	margin: 2px 0 -4px 0;
 }
 
 /* Overrides for the personal messages template
 ------------------------------------------------------- */
-#postmodify dl #pm_to, #postmodify dl #bcc_div2, #postmodify dl #pm_subject
-{
+#postmodify dl #pm_to, #postmodify dl #bcc_div2, #postmodify dl #pm_subject {
 	clear: both !important;
 }
+
+/* Overrides for the recent posts template
+------------------------------------------------------- */
+.list_posts {
+	word-wrap: break-word;
+}
+
+/* Misc hacks
+------------------------------------------------------- */
 
 .cat_bar, .title_bar {
 	overflow: hidden;

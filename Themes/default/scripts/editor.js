@@ -299,9 +299,11 @@ smc_Editor.prototype.init = function()
 				this.oFrameDocument.body.style.color = 'black';
 				this.oFrameDocument.body.style.backgroundColor = 'white';
 				this.oFrameDocument.body.style.fontSize = '78%';
-				this.oFrameDocument.body.style.fontFamily = '"Verdana", "Arial", "Helvetica", "sans-serif"';
+				this.oFrameDocument.body.style.fontFamily = 'Verdana, Arial, Helvetica, sans-serif';
 				this.oFrameDocument.body.style.border = 'none';
 				this.oFrameHandle.style.border = '1px solid #808080';
+				if (is_opera)
+					this.oFrameDocument.body.style.height = '99%';
 			}
 		}
 
@@ -450,7 +452,7 @@ smc_Editor.prototype.updateEditorControls = function()
 	if (!this.bRichTextEnabled)
 	{
 		// Set none of the buttons active.
-		if (this.opt.oBBCBox != null)
+		if (this.opt.oBBCBox)
 			this.opt.oBBCBox.setActive([]);
 		return;
 	}

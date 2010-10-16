@@ -239,15 +239,17 @@ function template_generic_menu_tabs(&$menu_context)
 			$tab_context['tabs'][$sa]['is_selected'] = true;
 		}
 
-	// Show a help item?
+	// Show an icon and/or a help item?
+	if (!empty($selected_tab['icon']) || !empty($tab_context['icon']))
+		echo '
+			<img src="', $settings['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '" alt="" />';
+
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '
-			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $tab_context['title'];
-	else
-		echo '
-			', $tab_context['title'];
+			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>';
 
 	echo '
+			', $tab_context['title'], '
 		</h3>
 	</div>';
 

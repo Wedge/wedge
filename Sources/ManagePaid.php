@@ -141,6 +141,7 @@ function ModifySubscriptionSettings($return_config = false)
 			'dummy_currency' => array('select', 'paid_currency', array('usd' => $txt['usd'], 'eur' => $txt['eur'], 'gbp' => $txt['gbp'], 'other' => $txt['other']), 'javascript' => 'onchange="toggleOther();"'),
 			array('text', 'paid_currency_code', 'subtext' => $txt['paid_currency_code_desc'], 'size' => 5, 'force_div_id' => 'custom_currency_code_div'),
 			array('text', 'paid_currency_symbol', 'subtext' => $txt['paid_currency_symbol_desc'], 'size' => 8, 'force_div_id' => 'custom_currency_symbol_div'),
+			array('check', 'paidsubs_test', 'subtext' => $txt['paidsubs_test_desc']),
 	);
 
 	// Now load all the other gateway settings.

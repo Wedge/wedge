@@ -2319,33 +2319,7 @@ function template_deleteAccount()
 function template_profile_save()
 {
 	global $context, $settings, $options, $txt;
-// Commenting this out for now... I don't believe it's really used at all since the ignore boards
-// template is the only one that calls this that I can think of... will most likely delete if it causes no issues
-/*	// Are there any custom profile fields - if so print them!
-	if (!empty($context['custom_fields']))
-	{
-		echo '
-						<dd></dd>
-					</dl>
-					<hr width="100%" size="1" class="hrcolor" />
-					<dl>';
 
-		foreach ($context['custom_fields'] as $field)
-		{
-			echo '
-						<dt>
-							<strong>', $field['name'], ': </strong><br />
-							<span class="smalltext">', $field['desc'], '</span>
-						</dt>
-						<dd>
-							', $field['input_html'], '
-						</dd>';
-		}
-
-		echo '
-					</dl>';
-	}
-*/
 	echo '
 
 					<hr width="100%" size="1" class="hrcolor" />';
