@@ -15,30 +15,28 @@ function template_announce()
 				', $txt['announce_desc'], '
 			</div>
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<p>
-						', $txt['announce_this_topic'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
-					</p>
-					<ul class="reset">';
+				<p>
+					', $txt['announce_this_topic'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
+				</p>
+				<ul class="reset">';
 
 	foreach ($context['groups'] as $group)
 		echo '
-						<li>
-							<label for="who_', $group['id'], '"><input type="checkbox" name="who[', $group['id'], ']" id="who_', $group['id'], '" value="', $group['id'], '" checked="checked" class="input_check" /> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em>
-						</li>';
+					<li>
+						<label for="who_', $group['id'], '"><input type="checkbox" name="who[', $group['id'], ']" id="who_', $group['id'], '" value="', $group['id'], '" checked="checked" class="input_check" /> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em>
+					</li>';
 
 	echo '
-						<li>
-							<label for="checkall"><input type="checkbox" id="checkall" class="input_check" onclick="invertAll(this, this.form);" checked="checked" /> <em>', $txt['check_all'], '</em></label>
-						</li>
-					</ul>
-					<div id="confirm_buttons">
-						<input type="submit" value="', $txt['post'], '" class="button_submit" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="hidden" name="topic" value="', $context['current_topic'], '" />
-						<input type="hidden" name="move" value="', $context['move'], '" />
-						<input type="hidden" name="goback" value="', $context['go_back'], '" />
-					</div>
+					<li>
+						<label for="checkall"><input type="checkbox" id="checkall" class="input_check" onclick="invertAll(this, this.form);" checked="checked" /> <em>', $txt['check_all'], '</em></label>
+					</li>
+				</ul>
+				<div id="confirm_buttons">
+					<input type="submit" value="', $txt['post'], '" class="button_submit" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="topic" value="', $context['current_topic'], '" />
+					<input type="hidden" name="move" value="', $context['move'], '" />
+					<input type="hidden" name="goback" value="', $context['go_back'], '" />
 				</div>
 			</div>
 		</form>
@@ -55,18 +53,16 @@ function template_announcement_send()
 	<div id="announcement">
 		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
-					<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
-					<div id="confirm_buttons">
-						<input type="submit" name="b" value="', $txt['announce_continue'], '" class="button_submit" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="hidden" name="topic" value="', $context['current_topic'], '" />
-						<input type="hidden" name="move" value="', $context['move'], '" />
-						<input type="hidden" name="goback" value="', $context['go_back'], '" />
-						<input type="hidden" name="start" value="', $context['start'], '" />
-						<input type="hidden" name="membergroups" value="', $context['membergroups'], '" />
-					</div>
+				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
+				<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
+				<div id="confirm_buttons">
+					<input type="submit" name="b" value="', $txt['announce_continue'], '" class="button_submit" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="topic" value="', $context['current_topic'], '" />
+					<input type="hidden" name="move" value="', $context['move'], '" />
+					<input type="hidden" name="goback" value="', $context['go_back'], '" />
+					<input type="hidden" name="start" value="', $context['start'], '" />
+					<input type="hidden" name="membergroups" value="', $context['membergroups'], '" />
 				</div>
 			</div>
 		</form>

@@ -7,7 +7,7 @@ function template_boardindex()
 
 	echo '
 	<div id="boardindex_table">
-		<table class="table_list">';
+		<table id="board_list" class="table_list">';
 
 	/* Each category in categories is made up of:
 	id, href, link, name, is_collapsed (is it collapsed?), can_collapse (is it okay if it is?),
@@ -42,7 +42,7 @@ function template_boardindex()
 					</td>
 				</tr>
 			</tbody>
-			<tbody class="content" id="category_', $category['id'], '_boards">';
+			<tbody id="category_', $category['id'], '_boards">';
 
 		// Assuming the category hasn't been collapsed...
 		if (!$category['is_collapsed'])

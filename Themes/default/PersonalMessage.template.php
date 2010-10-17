@@ -168,7 +168,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? 'windowbg' : 'windowbg2';
 
 			echo '
-	<div class="', $window_class, ' wrc clear">
+	<div class="', $window_class, ' wrc pm">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -380,8 +380,8 @@ function template_folder()
 			</div>
 			<div class="post">
 				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
-				<div class="smalltext reportlinks">
-					', (!empty($modSettings['enableReportPM']) && $context['folder'] != 'sent' ? '<div class="righttext"><a href="' . $scripturl . '?action=pm;sa=report;l=' . $context['current_label_id'] . ';pmsg=' . $message['id'] . '">' . $txt['pm_report_to_admin'] . '</a></div>' : '');
+				<div class="smalltext reportlinks">', (!empty($modSettings['enableReportPM']) && $context['folder'] != 'sent' ? '
+					<div class="righttext"><a href="' . $scripturl . '?action=pm;sa=report;l=' . $context['current_label_id'] . ';pmsg=' . $message['id'] . '">' . $txt['pm_report_to_admin'] . '</a></div>' : '');
 
 			echo '
 				</div>';
@@ -560,7 +560,7 @@ function template_subject_list()
 			foreach ($message['labels'] as $label)
 			{
 				echo $first ? '' : ',', '
-				"', $label['id'], '": "', $label['name'], '"';
+					"', $label['id'], '": "', $label['name'], '"';
 				$first = false;
 			}
 		}
@@ -574,7 +574,7 @@ function template_subject_list()
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
 			<td align="center" width="4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if (document.getElementById(\'deletedisplay', $message['id'], '\')) document.getElementById(\'deletedisplay', $message['id'], '\').checked = this.checked;" class="input_check" /></td>
 		</tr>';
-			$next_alternate = !$next_alternate;
+		$next_alternate = !$next_alternate;
 	}
 
 	echo '
@@ -594,7 +594,7 @@ function template_subject_list()
 					<option value="" disabled="disabled">---------------</option>';
 
 			echo '
-									<option value="" disabled="disabled">', $txt['pm_msg_label_apply'], ':</option>';
+					<option value="" disabled="disabled">', $txt['pm_msg_label_apply'], ':</option>';
 			foreach ($context['labels'] as $label)
 				if ($label['id'] != $context['current_label_id'])
 					echo '
@@ -709,7 +709,7 @@ function template_search()
 		if (!$context['currently_using_labels'])
 			echo '
 				<input type="submit" name="submit" value="', $txt['pm_search_go'], '" class="button_submit floatright" />';
-			echo '
+		echo '
 				<br class="clear" />
 			</div>
 		</fieldset>';
@@ -803,9 +803,8 @@ function template_search_results()
 				</h3>
 			</div>
 			<div class="windowbg', $alternate ? '2' : '', ' wrc">
-				<div class="content">
-					', $message['body'], '
-					<p class="pm_reply righttext middletext">';
+				', $message['body'], '
+				<p class="pm_reply righttext middletext">';
 
 			if ($context['can_send_pm'])
 			{
@@ -814,17 +813,16 @@ function template_search_results()
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])
 					echo '
-								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
-								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
+					<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
+					<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-								<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
+					<a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
 			}
 
 			echo '
-					</p>
-				</div>
+				</p>
 			</div>';
 		}
 		// Otherwise just a simple list!
@@ -852,9 +850,7 @@ function template_search_results()
 	if (empty($context['personal_messages']))
 		echo '
 		<div class="windowbg wrc">
-			<div class="content">
-				<p class="centertext">', $txt['pm_search_none_found'], '</p>
-			</div>
+			<p class="centertext">', $txt['pm_search_none_found'], '</p>
 		</div>';
 
 	echo '
@@ -875,16 +871,18 @@ function template_send()
 	<div class="cat_bar">
 		<h3>', $txt['pm_send_report'], '</h3>
 	</div>
-	<div class="windowbg wrc">
-		<div class="content">';
+	<div class="windowbg wrc">';
+
 		if (!empty($context['send_log']['sent']))
 			foreach ($context['send_log']['sent'] as $log_entry)
-				echo '<span class="error">', $log_entry, '</span><br />';
+				echo '
+		<span class="error">', $log_entry, '</span><br />';
 		if (!empty($context['send_log']['failed']))
 			foreach ($context['send_log']['failed'] as $log_entry)
-				echo '<span class="error">', $log_entry, '</span><br />';
+				echo '
+		<span class="error">', $log_entry, '</span><br />';
+
 		echo '
-		</div>
 	</div>
 	<br />';
 	}
@@ -896,9 +894,7 @@ function template_send()
 		<h3>', $context['preview_subject'], '</h3>
 	</div>
 	<div class="windowbg wrc">
-		<div class="content">
-			', $context['preview_message'], '
-		</div>
+		', $context['preview_message'], '
 	</div>
 	<br />';
 
@@ -912,118 +908,111 @@ function template_send()
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">
-		<div>
-			<div class="roundframe"><br class="clear" />';
+		<div class="roundframe clear">';
 
 	// If there were errors for sending the PM, show them.
 	if (!empty($context['post_error']['messages']))
 	{
 		echo '
-				<div class="errorbox">
-					<strong>', $txt['error_while_submitting'], '</strong>
-					<ul>';
+			<div class="errorbox">
+				<strong>', $txt['error_while_submitting'], '</strong>
+				<ul>';
 
 		foreach ($context['post_error']['messages'] as $error)
 			echo '
-						<li class="error">', $error, '</li>';
+					<li class="error">', $error, '</li>';
 
 		echo '
-					</ul>
-				</div>';
+				</ul>
+			</div>';
 	}
 
 	echo '
-				<dl id="post_header">';
+			<dl id="post_header">';
 
 	// To and bcc. Include a button to search for members.
 	echo '
-					<dt>
-						<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_to']) ? ' class="error"' : ''), '>', $txt['pm_to'], ':</span>
-					</dt>';
+				<dt>
+					<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_to']) ? ' class="error"' : ''), '>', $txt['pm_to'], ':</span>
+				</dt>';
 
 	// Autosuggest will be added by the JavaScript later on.
 	echo '
-					<dd id="pm_to" class="clear_right">
-						<div id="to_item_list_container"></div>
-						<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />';
+				<dd id="pm_to" class="clear_right">
+					<div id="to_item_list_container"></div>
+					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />';
 
 	// A link to add BCC, only visible with JavaScript enabled.
 	echo '
-						<span class="smalltext" id="bcc_link_container" style="display: none;"></span>';
+					<span class="smalltext" id="bcc_link_container" style="display: none;"></span>';
 
 	echo '
-					</dd>';
+				</dd>';
 
 	// This BCC row will be hidden by default if JavaScript is enabled.
 	echo '
-					<dt class="clear_left" id="bcc_div">
-						<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
-					</dt>
-					<dd id="bcc_div2">
-						<div id="bcc_item_list_container"></div>
-						<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />
-					</dd>';
+				<dt class="clear_left" id="bcc_div">
+					<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
+				</dt>
+				<dd id="bcc_div2">
+					<div id="bcc_item_list_container"></div>
+					<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />
+				</dd>';
 
 	// The subject of the PM.
 	echo '
-					<dt class="clear_left">
-						<span', (isset($context['post_error']['no_subject']) ? ' class="error"' : ''), '>', $txt['subject'], ':</span>
-					</dt>
-					<dd id="pm_subject">
-						<input type="text" name="subject" value="', $context['subject'], '" tabindex="', $context['tabindex']++, '" size="60" maxlength="60" />
-					</dd>
-				</dl><hr class="clear" />';
+				<dt class="clear_left">
+					<span', (isset($context['post_error']['no_subject']) ? ' class="error"' : ''), '>', $txt['subject'], ':</span>
+				</dt>
+				<dd id="pm_subject">
+					<input type="text" name="subject" value="', $context['subject'], '" tabindex="', $context['tabindex']++, '" size="60" maxlength="60" />
+				</dd>
+			</dl>
+			<hr class="clear" />';
 
 	// Show BBC buttons, smileys and textbox.
 	echo '
-				', $context['postbox']->outputEditor();
+			', $context['postbox']->outputEditor();
 
 	// Require an image to be typed to save spamming?
 	if ($context['require_verification'])
-	{
 		echo '
-				<div class="post_verification">
-					<strong>', $txt['pm_visual_verification_label'], ':</strong>
-					', template_control_verification($context['visual_verification_id'], 'all'), '
-				</div>';
-	}
+			<div class="post_verification">
+				<strong>', $txt['pm_visual_verification_label'], ':</strong>
+				', template_control_verification($context['visual_verification_id'], 'all'), '
+			</div>';
 
 	// Send, Preview, spellcheck buttons.
 	echo '
-				<p><label for="outbox"><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_save_outbox'], '</label></p>
-				<p id="shortcuts" class="smalltext">
-					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
-				</p>
-				<p id="post_confirm_strip" class="righttext">
-					', $context['postbox']->outputButtons(), '
-				</p>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
-				<input type="hidden" name="replied_to" value="', !empty($context['quoted_message']['id']) ? $context['quoted_message']['id'] : 0, '" />
-				<input type="hidden" name="pm_head" value="', !empty($context['quoted_message']['pm_head']) ? $context['quoted_message']['pm_head'] : 0, '" />
-				<input type="hidden" name="f" value="', isset($context['folder']) ? $context['folder'] : '', '" />
-				<input type="hidden" name="l" value="', isset($context['current_label_id']) ? $context['current_label_id'] : -1, '" />
-				<br class="clear" />
-				</div>
+			<p><label for="outbox"><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_save_outbox'], '</label></p>
+			<p id="shortcuts" class="smalltext">
+				', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
+			</p>
+			<p id="post_confirm_strip" class="righttext">
+				', $context['postbox']->outputButtons(), '
+			</p>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
+			<input type="hidden" name="replied_to" value="', !empty($context['quoted_message']['id']) ? $context['quoted_message']['id'] : 0, '" />
+			<input type="hidden" name="pm_head" value="', !empty($context['quoted_message']['pm_head']) ? $context['quoted_message']['pm_head'] : 0, '" />
+			<input type="hidden" name="f" value="', isset($context['folder']) ? $context['folder'] : '', '" />
+			<input type="hidden" name="l" value="', isset($context['current_label_id']) ? $context['current_label_id'] : -1, '" />
+			<br class="clear" />
 		</div>
 	</form>';
 
 	// Show the message you're replying to.
 	if ($context['reply'])
 		echo '
-	<br />
-	<br />
+	<br /><br />
 	<div class="cat_bar">
 		<h3>', $txt['subject'], ': ', $context['quoted_message']['subject'], '</h3>
 	</div>
-	<div class="windowbg2 wrc">
-		<div class="content">
-			<div class="clear">
-				<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
-				<b>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</b>
-			</div><hr />
-			', $context['quoted_message']['body'], '
-		</div>
+	<div class="windowbg2 wrc clear">
+		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
+		<b>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</b>
+		<hr />
+		', $context['quoted_message']['body'], '
 	</div>';
 
 	echo '
@@ -1037,22 +1026,26 @@ function template_send()
 			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
 			sToControlId: \'to_control\',
 			aToRecipients: [';
+
+	$j = count($context['recipients']['to']) - 1;
 	foreach ($context['recipients']['to'] as $i => $member)
 		echo '
 				{
 					sItemId: ', JavaScriptEscape($member['id']), ',
 					sItemName: ', JavaScriptEscape($member['name']), '
-				}', $i == count($context['recipients']['to']) - 1 ? '' : ',';
+				}', $i == $j ? '' : ',';
 
 	echo '
 			],
 			aBccRecipients: [';
+
+	$j = count($context['recipients']['bcc']) - 1;
 	foreach ($context['recipients']['bcc'] as $i => $member)
 		echo '
 				{
 					sItemId: ', JavaScriptEscape($member['id']), ',
 					sItemName: ', JavaScriptEscape($member['name']), '
-				}', $i == count($context['recipients']['bcc']) - 1 ? '' : ',';
+				}', $i == $j ? '' : ',';
 
 	echo '
 			],
@@ -1079,10 +1072,8 @@ function template_ask_delete()
 			<h3>', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<p>', $txt['delete_all_confirm'], '</p><br />
-				<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
-			</div>
+			<p>', $txt['delete_all_confirm'], '</p><br />
+			<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
 		</div>';
 }
 
@@ -1097,11 +1088,9 @@ function template_prune()
 			<h3>', $txt['pm_prune'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14" class="input_text" /> ', $txt['pm_prune_desc2'], '</p>
-				<div class="righttext">
-					<input type="submit" value="', $txt['delete'], '" class="button_submit" />
-				</div>
+			<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14" class="input_text" /> ', $txt['pm_prune_desc2'], '</p>
+			<div class="righttext">
+				<input type="submit" value="', $txt['delete'], '" class="button_submit" />
 			</div>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1138,6 +1127,7 @@ function template_labels()
 			</tr>
 		</thead>
 		<tbody>';
+
 	if (count($context['labels']) < 2)
 		echo '
 			<tr class="windowbg2">
@@ -1181,18 +1171,16 @@ function template_labels()
 			<h3>', $txt['pm_label_add_new'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl class="settings">
-					<dt>
-						<strong><label for="add_label">', $txt['pm_label_name'], '</label>:</strong>
-					</dt>
-					<dd>
-						<input type="text" id="add_label" name="label" value="" size="30" maxlength="30" class="input_text" />
-					</dd>
-				</dl>
-				<div class="righttext">
-					<input type="submit" name="add" value="', $txt['pm_label_add_new'], '" class="button_submit" />
-				</div>
+			<dl class="settings">
+				<dt>
+					<strong><label for="add_label">', $txt['pm_label_name'], '</label>:</strong>
+				</dt>
+				<dd>
+					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30" class="input_text" />
+				</dd>
+			</dl>
+			<div class="righttext">
+				<input type="submit" name="add" value="', $txt['pm_label_add_new'], '" class="button_submit" />
 			</div>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1214,39 +1202,37 @@ function template_report_message()
 			', $txt['pm_report_desc'], '
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl class="settings">';
+			<dl class="settings">';
 
 	// If there is more than one admin on the forum, allow the user to choose the one they want to direct to.
 	// !!! Why?
 	if ($context['admin_count'] > 1)
 	{
 		echo '
-					<dt>
-						<strong>', $txt['pm_report_admins'], ':</strong>
-					</dt>
-					<dd>
-						<select name="ID_ADMIN">
-							<option value="0">', $txt['pm_report_all_admins'], '</option>';
+				<dt>
+					<strong>', $txt['pm_report_admins'], ':</strong>
+				</dt>
+				<dd>
+					<select name="id_admin">
+						<option value="0">', $txt['pm_report_all_admins'], '</option>';
 		foreach ($context['admins'] as $id => $name)
 			echo '
-							<option value="', $id, '">', $name, '</option>';
+						<option value="', $id, '">', $name, '</option>';
 		echo '
-						</select>
-					</dd>';
+					</select>
+				</dd>';
 	}
 
 	echo '
-					<dt>
-						<strong>', $txt['pm_report_reason'], ':</strong>
-					</dt>
-					<dd>
-						<textarea name="reason" rows="4" cols="70" style="width: 80%;"></textarea>
-					</dd>
-				</dl>
-				<div class="righttext">
-					<input type="submit" name="report" value="', $txt['pm_report_message'], '" class="button_submit" />
-				</div>
+				<dt>
+					<strong>', $txt['pm_report_reason'], ':</strong>
+				</dt>
+				<dd>
+					<textarea name="reason" rows="4" cols="70" style="width: 80%;"></textarea>
+				</dd>
+			</dl>
+			<div class="righttext">
+				<input type="submit" name="report" value="', $txt['pm_report_message'], '" class="button_submit" />
 			</div>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1263,10 +1249,8 @@ function template_report_message_complete()
 			<h3>', $txt['pm_report_title'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<p>', $txt['pm_report_done'], '</p>
-				<a href="', $scripturl, '?action=pm;l=', $context['current_label_id'], '">', $txt['pm_report_return'], '</a>
-			</div>
+			<p>', $txt['pm_report_done'], '</p>
+			<a href="', $scripturl, '?action=pm;l=', $context['current_label_id'], '">', $txt['pm_report_return'], '</a>
 		</div>';
 }
 
@@ -1352,171 +1336,171 @@ function template_add_rule()
 
 	echo '
 	<script type="text/javascript"><!-- // --><![CDATA[
-			var criteriaNum = 0;
-			var actionNum = 0;
-			var groups = new Array()
-			var labels = new Array()';
+		var criteriaNum = 0;
+		var actionNum = 0;
+		var groups = new Array()
+		var labels = new Array()';
 
 	foreach ($context['groups'] as $id => $title)
 		echo '
-			groups[', $id, '] = "', addslashes($title), '";';
+		groups[', $id, '] = "', addslashes($title), '";';
 
 	foreach ($context['labels'] as $label)
 		if ($label['id'] != -1)
 			echo '
-			labels[', ($label['id'] + 1), '] = "', addslashes($label['name']), '";';
+		labels[', ($label['id'] + 1), '] = "', addslashes($label['name']), '";';
 
 	echo '
-			function addCriteriaOption()
+		function addCriteriaOption()
+		{
+			if (criteriaNum == 0)
 			{
-				if (criteriaNum == 0)
-				{
-					for (var i = 0; i < document.forms.addrule.elements.length; i++)
-						if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
-							criteriaNum++;
-				}
-				criteriaNum++
+				for (var i = 0; i < document.forms.addrule.elements.length; i++)
+					if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+						criteriaNum++;
+			}
+			criteriaNum++
 
-				setOuterHTML(document.getElementById("criteriaAddHere"), \'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>';
+			setOuterHTML(document.getElementById("criteriaAddHere"), \'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>';
 
 	foreach ($context['groups'] as $id => $group)
 		echo '<option value="', $id, '">', strtr($group, array("'" => "\'")), '<\' + \'/option>';
 
 	echo '<\' + \'/select><\' + \'/span><span id="criteriaAddHere"><\' + \'/span>\');
-			}
+		}
 
-			function addActionOption()
+		function addActionOption()
+		{
+			if (actionNum == 0)
 			{
-				if (actionNum == 0)
-				{
-					for (var i = 0; i < document.forms.addrule.elements.length; i++)
-						if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
-							actionNum++;
-				}
-				actionNum++
+				for (var i = 0; i < document.forms.addrule.elements.length; i++)
+					if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
+						actionNum++;
+			}
+			actionNum++
 
-				setOuterHTML(document.getElementById("actionAddHere"), \'<br /><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>';
+			setOuterHTML(document.getElementById("actionAddHere"), \'<br /><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>';
 
 	foreach ($context['labels'] as $label)
 		if ($label['id'] != -1)
 			echo '<option value="', ($label['id'] + 1), '">', addslashes($label['name']), '<\' + \'/option>';
 
 	echo '<\' + \'/select><\' + \'/span><span id="actionAddHere"><\' + \'/span>\');
-			}
+		}
 
-			function updateRuleDef(optNum)
+		function updateRuleDef(optNum)
+		{
+			if (document.getElementById("ruletype" + optNum).value == "gid")
 			{
-				if (document.getElementById("ruletype" + optNum).value == "gid")
-				{
-					document.getElementById("defdiv" + optNum).style.display = "none";
-					document.getElementById("defseldiv" + optNum).style.display = "";
-				}
-				else if (document.getElementById("ruletype" + optNum).value == "bud" || document.getElementById("ruletype" + optNum).value == "")
-				{
-					document.getElementById("defdiv" + optNum).style.display = "none";
-					document.getElementById("defseldiv" + optNum).style.display = "none";
-				}
-				else
-				{
-					document.getElementById("defdiv" + optNum).style.display = "";
-					document.getElementById("defseldiv" + optNum).style.display = "none";
-				}
+				document.getElementById("defdiv" + optNum).style.display = "none";
+				document.getElementById("defseldiv" + optNum).style.display = "";
 			}
-
-			function updateActionDef(optNum)
+			else if (document.getElementById("ruletype" + optNum).value == "bud" || document.getElementById("ruletype" + optNum).value == "")
 			{
-				if (document.getElementById("acttype" + optNum).value == "lab")
-				{
-					document.getElementById("labdiv" + optNum).style.display = "";
-				}
-				else
-				{
-					document.getElementById("labdiv" + optNum).style.display = "none";
-				}
+				document.getElementById("defdiv" + optNum).style.display = "none";
+				document.getElementById("defseldiv" + optNum).style.display = "none";
 			}
-
-			// Rebuild the rule description!
-			function rebuildRuleDesc()
+			else
 			{
-				// Start with nothing.
-				var text = "";
-				var joinText = "";
-				var actionText = "";
-				var hadBuddy = false;
-				var foundCriteria = false;
-				var foundAction = false;
-				var curNum, curVal, curDef;
+				document.getElementById("defdiv" + optNum).style.display = "";
+				document.getElementById("defseldiv" + optNum).style.display = "none";
+			}
+		}
 
-				for (var i = 0; i < document.forms.addrule.elements.length; i++)
+		function updateActionDef(optNum)
+		{
+			if (document.getElementById("acttype" + optNum).value == "lab")
+			{
+				document.getElementById("labdiv" + optNum).style.display = "";
+			}
+			else
+			{
+				document.getElementById("labdiv" + optNum).style.display = "none";
+			}
+		}
+
+		// Rebuild the rule description!
+		function rebuildRuleDesc()
+		{
+			// Start with nothing.
+			var text = "";
+			var joinText = "";
+			var actionText = "";
+			var hadBuddy = false;
+			var foundCriteria = false;
+			var foundAction = false;
+			var curNum, curVal, curDef;
+
+			for (var i = 0; i < document.forms.addrule.elements.length; i++)
+			{
+				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
 				{
-					if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+					if (foundCriteria)
+						joinText = document.getElementById("logic").value == \'and\' ? ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ' : ', JavaScriptEscape(' ' . $txt['pm_readable_or'] . ' '), ';
+					else
+						joinText = \'\';
+					foundCriteria = true;
+
+					curNum = document.forms.addrule.elements[i].id.match(/\d+/);
+					curVal = document.forms.addrule.elements[i].value;
+					if (curVal == "gid")
+						curDef = document.getElementById("ruledefgroup" + curNum).value.php_htmlspecialchars();
+					else if (curVal != "bud")
+						curDef = document.getElementById("ruledef" + curNum).value.php_htmlspecialchars();
+					else
+						curDef = "";
+
+					// What type of test is this?
+					if (curVal == "mid" && curDef)
+						text += joinText + ', JavaScriptEscape($txt['pm_readable_member']), '.replace("{MEMBER}", curDef);
+					else if (curVal == "gid" && curDef && groups[curDef])
+						text += joinText + ', JavaScriptEscape($txt['pm_readable_group']), '.replace("{GROUP}", groups[curDef]);
+					else if (curVal == "sub" && curDef)
+						text += joinText + ', JavaScriptEscape($txt['pm_readable_subject']), '.replace("{SUBJECT}", curDef);
+					else if (curVal == "msg" && curDef)
+						text += joinText + ', JavaScriptEscape($txt['pm_readable_body']), '.replace("{BODY}", curDef);
+					else if (curVal == "bud" && !hadBuddy)
 					{
-						if (foundCriteria)
-							joinText = document.getElementById("logic").value == \'and\' ? ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ' : ', JavaScriptEscape(' ' . $txt['pm_readable_or'] . ' '), ';
-						else
-							joinText = \'\';
-						foundCriteria = true;
-
-						curNum = document.forms.addrule.elements[i].id.match(/\d+/);
-						curVal = document.forms.addrule.elements[i].value;
-						if (curVal == "gid")
-							curDef = document.getElementById("ruledefgroup" + curNum).value.php_htmlspecialchars();
-						else if (curVal != "bud")
-							curDef = document.getElementById("ruledef" + curNum).value.php_htmlspecialchars();
-						else
-							curDef = "";
-
-						// What type of test is this?
-						if (curVal == "mid" && curDef)
-							text += joinText + ', JavaScriptEscape($txt['pm_readable_member']), '.replace("{MEMBER}", curDef);
-						else if (curVal == "gid" && curDef && groups[curDef])
-							text += joinText + ', JavaScriptEscape($txt['pm_readable_group']), '.replace("{GROUP}", groups[curDef]);
-						else if (curVal == "sub" && curDef)
-							text += joinText + ', JavaScriptEscape($txt['pm_readable_subject']), '.replace("{SUBJECT}", curDef);
-						else if (curVal == "msg" && curDef)
-							text += joinText + ', JavaScriptEscape($txt['pm_readable_body']), '.replace("{BODY}", curDef);
-						else if (curVal == "bud" && !hadBuddy)
-						{
-							text += joinText + ', JavaScriptEscape($txt['pm_readable_buddy']), ';
-							hadBuddy = true;
-						}
-					}
-					if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
-					{
-						if (foundAction)
-							joinText = ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ';
-						else
-							joinText = "";
-						foundAction = true;
-
-						curNum = document.forms.addrule.elements[i].id.match(/\d+/);
-						curVal = document.forms.addrule.elements[i].value;
-						if (curVal == "lab")
-							curDef = document.getElementById("labdef" + curNum).value.php_htmlspecialchars();
-						else
-							curDef = "";
-
-						// Now pick the actions.
-						if (curVal == "lab" && curDef && labels[curDef])
-							actionText += joinText + ', JavaScriptEscape($txt['pm_readable_label']), '.replace("{LABEL}", labels[curDef]);
-						else if (curVal == "del")
-							actionText += joinText + ', JavaScriptEscape($txt['pm_readable_delete']), ';
+						text += joinText + ', JavaScriptEscape($txt['pm_readable_buddy']), ';
+						hadBuddy = true;
 					}
 				}
-
-				// If still nothing make it default!
-				if (text == "" || !foundCriteria)
-					text = "', $txt['pm_rule_not_defined'], '";
-				else
+				if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
 				{
-					if (actionText != "")
-						text += ', JavaScriptEscape(' ' . $txt['pm_readable_then'] . ' '), ' + actionText;
-					text = ', JavaScriptEscape($txt['pm_readable_start']), ' + text + ', JavaScriptEscape($txt['pm_readable_end']), ';
-				}
+					if (foundAction)
+						joinText = ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ';
+					else
+						joinText = "";
+					foundAction = true;
 
-				// Set the actual HTML!
-				document.getElementById("ruletext").innerHTML = text;
+					curNum = document.forms.addrule.elements[i].id.match(/\d+/);
+					curVal = document.forms.addrule.elements[i].value;
+					if (curVal == "lab")
+						curDef = document.getElementById("labdef" + curNum).value.php_htmlspecialchars();
+					else
+						curDef = "";
+
+					// Now pick the actions.
+					if (curVal == "lab" && curDef && labels[curDef])
+						actionText += joinText + ', JavaScriptEscape($txt['pm_readable_label']), '.replace("{LABEL}", labels[curDef]);
+					else if (curVal == "del")
+						actionText += joinText + ', JavaScriptEscape($txt['pm_readable_delete']), ';
+				}
 			}
+
+			// If still nothing make it default!
+			if (text == "" || !foundCriteria)
+				text = "', $txt['pm_rule_not_defined'], '";
+			else
+			{
+				if (actionText != "")
+					text += ', JavaScriptEscape(' ' . $txt['pm_readable_then'] . ' '), ' + actionText;
+				text = ', JavaScriptEscape($txt['pm_readable_start']), ' + text + ', JavaScriptEscape($txt['pm_readable_end']), ';
+			}
+
+			// Set the actual HTML!
+			document.getElementById("ruletext").innerHTML = text;
+		}
 	// ]]></script>';
 
 	echo '
@@ -1525,23 +1509,22 @@ function template_add_rule()
 			<h3>', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl class="addrules">
-					<dt class="floatleft">
-						<strong>', $txt['pm_rule_name'], ':</strong><br />
-						<span class="smalltext">', $txt['pm_rule_name_desc'], '</span>
-					</dt>
-					<dd class="floatleft">
-						<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50" class="input_text" />
-					</dd>
-				</dl>
-				<fieldset>
-					<legend>', $txt['pm_rule_criteria'], '</legend>';
+			<dl class="addrules">
+				<dt class="floatleft">
+					<strong>', $txt['pm_rule_name'], ':</strong><br />
+					<span class="smalltext">', $txt['pm_rule_name_desc'], '</span>
+				</dt>
+				<dd class="floatleft">
+					<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50" class="input_text" />
+				</dd>
+			</dl>
+			<fieldset>
+				<legend>', $txt['pm_rule_criteria'], '</legend>';
 
 	// Add a dummy criteria to allow expansion for none js users.
 	$context['rule']['criteria'][] = array('t' => '', 'v' => '');
 
-	// For each criteria print it out.
+	// Print each criteria.
 	$isFirst = true;
 	foreach ($context['rule']['criteria'] as $k => $criteria)
 	{
@@ -1551,27 +1534,27 @@ function template_add_rule()
 			echo '<br />';
 
 		echo '
-					<select name="ruletype[', $k, ']" id="ruletype', $k, '" onchange="updateRuleDef(', $k, '); rebuildRuleDesc();">
-						<option value="">', $txt['pm_rule_criteria_pick'], ':</option>
-						<option value="mid" ', $criteria['t'] == 'mid' ? 'selected="selected"' : '', '>', $txt['pm_rule_mid'], '</option>
-						<option value="gid" ', $criteria['t'] == 'gid' ? 'selected="selected"' : '', '>', $txt['pm_rule_gid'], '</option>
-						<option value="sub" ', $criteria['t'] == 'sub' ? 'selected="selected"' : '', '>', $txt['pm_rule_sub'], '</option>
-						<option value="msg" ', $criteria['t'] == 'msg' ? 'selected="selected"' : '', '>', $txt['pm_rule_msg'], '</option>
-						<option value="bud" ', $criteria['t'] == 'bud' ? 'selected="selected"' : '', '>', $txt['pm_rule_bud'], '</option>
-					</select>
-					<span id="defdiv', $k, '" ', !in_array($criteria['t'], array('gid', 'bud')) ? '' : 'style="display: none;"', '>
-						<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '" class="input_text" />
-					</span>
-					<span id="defseldiv', $k, '" ', $criteria['t'] == 'gid' ? '' : 'style="display: none;"', '>
-						<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">
-							<option value="">', $txt['pm_rule_sel_group'], '</option>';
+				<select name="ruletype[', $k, ']" id="ruletype', $k, '" onchange="updateRuleDef(', $k, '); rebuildRuleDesc();">
+					<option value="">', $txt['pm_rule_criteria_pick'], ':</option>
+					<option value="mid" ', $criteria['t'] == 'mid' ? 'selected="selected"' : '', '>', $txt['pm_rule_mid'], '</option>
+					<option value="gid" ', $criteria['t'] == 'gid' ? 'selected="selected"' : '', '>', $txt['pm_rule_gid'], '</option>
+					<option value="sub" ', $criteria['t'] == 'sub' ? 'selected="selected"' : '', '>', $txt['pm_rule_sub'], '</option>
+					<option value="msg" ', $criteria['t'] == 'msg' ? 'selected="selected"' : '', '>', $txt['pm_rule_msg'], '</option>
+					<option value="bud" ', $criteria['t'] == 'bud' ? 'selected="selected"' : '', '>', $txt['pm_rule_bud'], '</option>
+				</select>
+				<span id="defdiv', $k, '" ', !in_array($criteria['t'], array('gid', 'bud')) ? '' : 'style="display: none;"', '>
+					<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '" class="input_text" />
+				</span>
+				<span id="defseldiv', $k, '" ', $criteria['t'] == 'gid' ? '' : 'style="display: none;"', '>
+					<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">
+						<option value="">', $txt['pm_rule_sel_group'], '</option>';
 
 		foreach ($context['groups'] as $id => $group)
 			echo '
-							<option value="', $id, '" ', $criteria['t'] == 'gid' && $criteria['v'] == $id ? 'selected="selected"' : '', '>', $group, '</option>';
+						<option value="', $id, '" ', $criteria['t'] == 'gid' && $criteria['v'] == $id ? 'selected="selected"' : '', '>', $group, '</option>';
 		echo '
-						</select>
-					</span>';
+					</select>
+				</span>';
 
 		// If this is the dummy we add a means to hide for non js users.
 		if ($isFirst)
@@ -1581,17 +1564,17 @@ function template_add_rule()
 	}
 
 	echo '
-					<span id="criteriaAddHere"></span><br />
-					<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" style="display: none;">(', $txt['pm_rule_criteria_add'], ')</a>
-					<br /><br />
-					', $txt['pm_rule_logic'], ':
-					<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
-						<option value="and" ', $context['rule']['logic'] == 'and' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_and'], '</option>
-						<option value="or" ', $context['rule']['logic'] == 'or' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_or'], '</option>
-					</select>
-				</fieldset>
-				<fieldset>
-					<legend>', $txt['pm_rule_actions'], '</legend>';
+				<span id="criteriaAddHere"></span><br />
+				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" style="display: none;">(', $txt['pm_rule_criteria_add'], ')</a>
+				<br /><br />
+				', $txt['pm_rule_logic'], ':
+				<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
+					<option value="and" ', $context['rule']['logic'] == 'and' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_and'], '</option>
+					<option value="or" ', $context['rule']['logic'] == 'or' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_or'], '</option>
+				</select>
+			</fieldset>
+			<fieldset>
+				<legend>', $txt['pm_rule_actions'], '</legend>';
 
 	// As with criteria - add a dummy action for "expansion".
 	$context['rule']['actions'][] = array('t' => '', 'v' => '');
@@ -1606,36 +1589,36 @@ function template_add_rule()
 			echo '<br />';
 
 		echo '
-					<select name="acttype[', $k, ']" id="acttype', $k, '" onchange="updateActionDef(', $k, '); rebuildRuleDesc();">
-						<option value="">', $txt['pm_rule_sel_action'], ':</option>
-						<option value="lab" ', $action['t'] == 'lab' ? 'selected="selected"' : '', '>', $txt['pm_rule_label'], '</option>
-						<option value="del" ', $action['t'] == 'del' ? 'selected="selected"' : '', '>', $txt['pm_rule_delete'], '</option>
-					</select>
-					<span id="labdiv', $k, '">
-						<select name="labdef[', $k, ']" id="labdef', $k, '" onchange="rebuildRuleDesc();">
-							<option value="">', $txt['pm_rule_sel_label'], '</option>';
+				<select name="acttype[', $k, ']" id="acttype', $k, '" onchange="updateActionDef(', $k, '); rebuildRuleDesc();">
+					<option value="">', $txt['pm_rule_sel_action'], ':</option>
+					<option value="lab" ', $action['t'] == 'lab' ? 'selected="selected"' : '', '>', $txt['pm_rule_label'], '</option>
+					<option value="del" ', $action['t'] == 'del' ? 'selected="selected"' : '', '>', $txt['pm_rule_delete'], '</option>
+				</select>
+				<span id="labdiv', $k, '">
+					<select name="labdef[', $k, ']" id="labdef', $k, '" onchange="rebuildRuleDesc();">
+						<option value="">', $txt['pm_rule_sel_label'], '</option>';
+
 		foreach ($context['labels'] as $label)
 			if ($label['id'] != -1)
 				echo '
-							<option value="', ($label['id'] + 1), '" ', $action['t'] == 'lab' && $action['v'] == $label['id'] ? 'selected="selected"' : '', '>', $label['name'], '</option>';
+						<option value="', ($label['id'] + 1), '" ', $action['t'] == 'lab' && $action['v'] == $label['id'] ? 'selected="selected"' : '', '>', $label['name'], '</option>';
 
 		echo '
-						</select>
-					</span>';
+					</select>
+				</span>';
 
 		if ($isFirst)
 			$isFirst = false;
 		elseif ($action['t'] == '')
-			echo '
-				</div>';
+			echo '</div>';
 	}
 
 	echo '
-					<span id="actionAddHere"></span><br />
-					<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">(', $txt['pm_rule_add_action'], ')</a>
-				</fieldset>
-			</div>
-		</div><br class="clear" />
+				<span id="actionAddHere"></span><br />
+				<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">(', $txt['pm_rule_add_action'], ')</a>
+			</fieldset>
+		</div>
+		<br class="clear" />
 		<div class="cat_bar">
 			<h3>', $txt['pm_rule_description'], '</h3>
 		</div>
@@ -1649,32 +1632,32 @@ function template_add_rule()
 	</form>';
 
 	// Now setup all the bits!
-		echo '
+	echo '
 	<script type="text/javascript"><!-- // --><![CDATA[';
 
 	foreach ($context['rule']['criteria'] as $k => $c)
 		echo '
-			updateRuleDef(', $k, ');';
+		updateRuleDef(', $k, ');';
 
 	foreach ($context['rule']['actions'] as $k => $c)
 		echo '
-			updateActionDef(', $k, ');';
+		updateActionDef(', $k, ');';
 
 	echo '
-			rebuildRuleDesc();';
+		rebuildRuleDesc();';
 
 	// If this isn't a new rule and we have JS enabled remove the JS compatibility stuff.
 	if ($context['rid'])
 		echo '
-			document.getElementById("removeonjs1").style.display = "none";
-			document.getElementById("removeonjs2").style.display = "none";';
+		document.getElementById("removeonjs1").style.display = "none";
+		document.getElementById("removeonjs2").style.display = "none";';
 
 	echo '
-			document.getElementById("addonjs1").style.display = "";
-			document.getElementById("addonjs2").style.display = "";';
+		document.getElementById("addonjs1").style.display = "";
+		document.getElementById("addonjs2").style.display = "";';
 
 	echo '
-		// ]]></script>';
+	// ]]></script>';
 }
 
 ?>

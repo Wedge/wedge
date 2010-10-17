@@ -11,14 +11,12 @@ function template_browse()
 			<h3>', $txt['mailqueue_stats'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl class="settings">
-					<dt><strong>', $txt['mailqueue_size'], '</strong></dt>
-					<dd>', $context['mail_queue_size'], '</dd>
-					<dt><strong>', $txt['mailqueue_oldest'], '</strong></dt>
-					<dd>', $context['oldest_mail'], '</dd>
-				</dl>
-			</div>
+			<dl class="settings">
+				<dt><strong>', $txt['mailqueue_size'], '</strong></dt>
+				<dd>', $context['mail_queue_size'], '</dd>
+				<dt><strong>', $txt['mailqueue_oldest'], '</strong></dt>
+				<dd>', $context['oldest_mail'], '</dd>
+			</dl>
 		</div>';
 
 	template_show_list('mail_queue');

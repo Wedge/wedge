@@ -53,9 +53,7 @@ function template_admin()
 					</h3>
 				</div>
 				<div class="windowbg wrc">
-					<div class="content">
-						<div id="smfAnnouncements">', $txt['lfyi'], '</div>
-					</div>
+					<div id="smfAnnouncements">', $txt['lfyi'], '</div>
 				</div>
 			</div>';
 
@@ -68,40 +66,38 @@ function template_admin()
 					</h3>
 				</div>
 				<div class="windowbg wrc">
-					<div class="content">
-						<div id="version_details">
-							<strong>', $txt['support_versions'], ':</strong><br />
-							', $txt['support_versions_forum'], ':
-							<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em><br />
-							', $txt['support_versions_current'], ':
-							<em id="smfVersion" style="white-space: nowrap;">??</em><br />
-							', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />';
+					<div id="version_details">
+						<strong>', $txt['support_versions'], ':</strong><br />
+						', $txt['support_versions_forum'], ':
+						<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em><br />
+						', $txt['support_versions_current'], ':
+						<em id="smfVersion" style="white-space: nowrap;">??</em><br />
+						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />';
 
 	// Have they paid to remove copyright?
 	if (!empty($context['copyright_expires']))
 	{
 		echo '
-							<br />', sprintf($txt['copyright_ends_in'], $context['copyright_expires']);
+						<br />', sprintf($txt['copyright_ends_in'], $context['copyright_expires']);
 
 		if ($context['copyright_expires'] < 30)
 			echo '
-							<div class="alert">', sprintf($txt['copyright_click_renew'], $context['copyright_key']), '</div>';
+						<div class="alert">', sprintf($txt['copyright_click_renew'], $context['copyright_key']), '</div>';
 
 		echo '<br />';
 	}
 
 	// Display all the members who can administrate the forum.
 	echo '
-							<br />
-							<strong>', $txt['administrators'], ':</strong>
-							', implode(', ', $context['administrators']);
+						<br />
+						<strong>', $txt['administrators'], ':</strong>
+						', implode(', ', $context['administrators']);
 	// If we have lots of admins... don't show them all.
 	if (!empty($context['more_admins_link']))
 		echo '
-							(', $context['more_admins_link'], ')';
+						(', $context['more_admins_link'], ')';
 
 	echo '
-						</div>
 					</div>
 				</div>
 			</div>
@@ -109,20 +105,18 @@ function template_admin()
 
 	echo '
 		<div class="windowbg2 wrc clear_right">
-			<div class="content">
-				<ul id="quick_tasks" class="flow_hidden">';
+			<ul id="quick_tasks" class="flow_hidden">';
 
 	foreach ($context['quick_admin_tasks'] as $task)
 		echo '
-					<li>
-						', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image" /></a>' : '', '
-						<h5>', $task['link'], '</h5>
-						<span class="task">', $task['description'], '</span>
-					</li>';
+				<li>
+					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image" /></a>' : '', '
+					<h5>', $task['link'], '</h5>
+					<span class="task">', $task['description'], '</span>
+				</li>';
 
 	echo '
-				</ul>
-			</div>
+			</ul>
 			<div class="clear"></div>
 		</div>
 	</div>
@@ -173,13 +167,10 @@ function template_admin()
 						</h3>
 					</div>
 					<div class="windowbg wrc">
-						<div class="content">
-							<div id="update_message" class="smalltext">
-								%message%
-							</div>
+						<div id="update_message" class="smalltext">
+							%message%
 						</div>
-					</div>
-				'), ',
+					</div>'), ',
 				sUpdateNotificationLink: ', JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']), '
 
 			});
@@ -200,20 +191,18 @@ function template_manage_copyright()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<span class="smalltext">', $txt['copyright_removal_desc'], '</span>
-					<dl class="settings">
-						<dt>
-							<strong>', $txt['copyright_code'], ':</strong>
-						</dt>
-						<dd>
-							<input type="text" name="copy_code" value="" class="input_text" />
-						</dd>
-					</dl>
-					<p>
-						<input type="submit" value="', $txt['copyright_proceed'], '" class="button_submit" />
-					</p>
-				</div>
+				<span class="smalltext">', $txt['copyright_removal_desc'], '</span>
+				<dl class="settings">
+					<dt>
+						<strong>', $txt['copyright_code'], ':</strong>
+					</dt>
+					<dd>
+						<input type="text" name="copy_code" value="" class="input_text" />
+					</dd>
+				</dl>
+				<p>
+					<input type="submit" value="', $txt['copyright_proceed'], '" class="button_submit" />
+				</p>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -236,23 +225,20 @@ function template_credits()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<strong>', $txt['support_versions'], ':</strong><br />
-					', $txt['support_versions_forum'], ':
-				<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />
-					', $txt['support_versions_current'], ':
-				<em id="smfVersion" style="white-space: nowrap;">??</em><br />';
+			<strong>', $txt['support_versions'], ':</strong><br />
+				', $txt['support_versions_forum'], ':
+			<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />
+				', $txt['support_versions_current'], ':
+			<em id="smfVersion" style="white-space: nowrap;">??</em><br />';
 
 	// Display all the variables we have server information for.
 	foreach ($context['current_versions'] as $version)
 		echo '
-					', $version['title'], ':
-				<em>', $version['version'], '</em><br />';
+			', $version['title'], ':
+			<em>', $version['version'], '</em><br />';
 
 	echo '
-			</div>
-		</div>
-	';
+		</div>';
 
 	// Point the admin to common support resources.
 	echo '
@@ -262,10 +248,8 @@ function template_credits()
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
-			<div class="content">
-				<p>', $txt['support_resources_p1'], '</p>
-				<p>', $txt['support_resources_p2'], '</p>
-			</div>
+			<p>', $txt['support_resources_p1'], '</p>
+			<p>', $txt['support_resources_p2'], '</p>
 		</div>';
 
 	// Display latest support questions from simplemachines.org.
@@ -276,9 +260,7 @@ function template_credits()
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
-			<div class="content">
-				<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
-			</div>
+			<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
 		</div>';
 
 	// The most important part - the credits :P.
@@ -288,40 +270,38 @@ function template_credits()
 				', $txt['admin_credits'], '
 			</h3>
 		</div>
-		<div class="windowbg wrc">
-			<div class="content">';
+		<div class="windowbg wrc">';
 
 	foreach ($context['credits'] as $section)
 	{
 		if (isset($section['pretext']))
 			echo '
-				<p>', $section['pretext'], '</p>';
+			<p>', $section['pretext'], '</p>';
 
 		echo '
-				<dl>';
+			<dl>';
 
 		foreach ($section['groups'] as $group)
 		{
 			if (isset($group['title']))
 				echo '
-					<dt>
-						<strong>', $group['title'], ':</strong>
-					</dt>';
+				<dt>
+					<strong>', $group['title'], ':</strong>
+				</dt>';
 
 			echo '
-					<dd>', implode(', ', $group['members']), '</dd>';
+				<dd>', implode(', ', $group['members']), '</dd>';
 		}
 
 		echo '
-				</dl>';
+			</dl>';
 
 		if (isset($section['posttext']))
 			echo '
-				<p>', $section['posttext'], '</p>';
+			<p>', $section['posttext'], '</p>';
 	}
 
 	echo '
-			</div>
 		</div>
 	</div>
 	<br class="clear" />';
@@ -626,45 +606,43 @@ function template_edit_censored()
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<p>', $txt['admin_censored_where'], '</p>';
+				<p>', $txt['admin_censored_where'], '</p>';
 
 	// Show text boxes for censoring [bad   ] => [good  ].
 	foreach ($context['censored_words'] as $vulgar => $proper)
 		echo '
-					<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" value="', $vulgar, '" size="20" /> => <input type="text" name="censor_proper[]" value="', $proper, '" size="20" /></div>';
+				<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" value="', $vulgar, '" size="20" /> => <input type="text" name="censor_proper[]" value="', $proper, '" size="20" /></div>';
 
 	// Now provide a way to censor more words.
 	echo '
-					<noscript>
-						<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /></div>
-					</noscript>
-					<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#;" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>
-					<script type="text/javascript"><!-- // --><![CDATA[
-						document.getElementById("moreCensoredWords_link").style.display = "";
+				<noscript>
+					<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /></div>
+				</noscript>
+				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#;" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>
+				<script type="text/javascript"><!-- // --><![CDATA[
+					document.getElementById("moreCensoredWords_link").style.display = "";
 
-						function addNewWord()
-						{
-							setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
-						}
-					// ]]></script>
-					<hr width="100%" size="1" class="hrcolor" />
-					<dl class="settings">
-						<dt>
-							<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
-						</dt>
-						<dd>
-							<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"', empty($modSettings['censorWholeWord']) ? '' : ' checked="checked"', ' class="input_check" />
-						</dd>
-						<dt>
-							<strong><label for="censorIgnoreCase_check">', $txt['censor_case'], ':</label></strong>
-						</dt>
-						<dd>
-							<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($modSettings['censorIgnoreCase']) ? '' : ' checked="checked"', ' class="input_check" />
-						</dd>
-					</dl>
-					<input type="submit" name="save_censor" value="', $txt['save'], '" class="button_submit" />
-				</div>
+					function addNewWord()
+					{
+						setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
+					}
+				// ]]></script>
+				<hr width="100%" size="1" class="hrcolor" />
+				<dl class="settings">
+					<dt>
+						<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"', empty($modSettings['censorWholeWord']) ? '' : ' checked="checked"', ' class="input_check" />
+					</dd>
+					<dt>
+						<strong><label for="censorIgnoreCase_check">', $txt['censor_case'], ':</label></strong>
+					</dt>
+					<dd>
+						<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($modSettings['censorIgnoreCase']) ? '' : ' checked="checked"', ' class="input_check" />
+					</dd>
+				</dl>
+				<input type="submit" name="save_censor" value="', $txt['save'], '" class="button_submit" />
 			</div>';
 
 	// This table lets you test out your filters by typing in rude words and seeing what comes out.
@@ -675,12 +653,10 @@ function template_edit_censored()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<p class="centertext">
-						<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '" class="input_text" />
-						<input type="submit" value="', $txt['censor_test_save'], '" class="button_submit" />
-					</p>
-				</div>
+				<p class="centertext">
+					<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '" class="input_text" />
+					<input type="submit" value="', $txt['censor_test_save'], '" class="button_submit" />
+				</p>
 			</div>
 
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -702,34 +678,32 @@ function template_not_done()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				', $txt['not_done_reason'];
+			', $txt['not_done_reason'];
 
 	if (!empty($context['continue_percent']))
 		echo '
-				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
-					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['continue_percent'], '%</div>
-						<div style="width: ', $context['continue_percent'], '%; height: 12pt; z-index: 1; background-color: red;">&nbsp;</div>
-					</div>
-				</div>';
+			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
+				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
+					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['continue_percent'], '%</div>
+					<div style="width: ', $context['continue_percent'], '%; height: 12pt; z-index: 1; background-color: red;">&nbsp;</div>
+				</div>
+			</div>';
 
 	if (!empty($context['substep_enabled']))
 		echo '
-				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
-					<span class="smalltext">', $context['substep_title'], '</span>
-					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['substep_continue_percent'], '%</div>
-						<div style="width: ', $context['substep_continue_percent'], '%; height: 12pt; z-index: 1; background-color: blue;">&nbsp;</div>
-					</div>
-				</div>';
+			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
+				<span class="smalltext">', $context['substep_title'], '</span>
+				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
+					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['substep_continue_percent'], '%</div>
+					<div style="width: ', $context['substep_continue_percent'], '%; height: 12pt; z-index: 1; background-color: blue;">&nbsp;</div>
+				</div>
+			</div>';
 
 	echo '
-				<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-					<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', $txt['not_done_continue'], '" class="button_submit" /></div>
-					', $context['continue_post_data'], '
-				</form>
-			</div>
+			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
+				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', $txt['not_done_continue'], '" class="button_submit" /></div>
+				', $context['continue_post_data'], '
+			</form>
 		</div>
 	</div>
 	<br class="clear" />
@@ -849,8 +823,7 @@ function template_show_settings()
 			$is_open = true;
 			echo '
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<dl class="settings">';
+				<dl class="settings">';
 		}
 
 		// Hang about? Are you pulling my leg - a callback?!
@@ -868,15 +841,15 @@ function template_show_settings()
 			if (in_array($config_var['type'], array('message', 'warning')))
 			{
 				echo '
-						<dd', $config_var['type'] == 'warning' ? ' class="alert"' : '', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>
-							', $config_var['label'], '
-						</dd>';
+					<dd', $config_var['type'] == 'warning' ? ' class="alert"' : '', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>
+						', $config_var['label'], '
+					</dd>';
 			}
 			// Otherwise it's an input box of some kind.
 			else
 			{
 				echo '
-						<dt', is_array($config_var) && !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>';
+					<dt', is_array($config_var) && !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>';
 
 				// Some quick helpers...
 				$javascript = $config_var['javascript'];
@@ -886,40 +859,40 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-							<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
-						</dt>';
+						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+					</dt>';
 				else
 					echo '
-							<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
-						</dt>';
+						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+					</dt>';
 
 				echo '
-						<dd', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>', $config_var['preinput'];
+					<dd', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>', $config_var['preinput'];
 
 				// Show a check box.
 				if ($config_var['type'] == 'check')
 					echo '
-							<input type="checkbox"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
+						<input type="checkbox"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
 				// Escape (via htmlspecialchars.) the text box.
 				elseif ($config_var['type'] == 'password')
 					echo '
-							<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;" class="input_password" /><br />
-							<input type="password" disabled="disabled" id="', $config_var['name'], '" name="', $config_var['name'], '[1]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_password" />';
+						<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;" class="input_password" /><br />
+						<input type="password" disabled="disabled" id="', $config_var['name'], '" name="', $config_var['name'], '[1]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_password" />';
 				// Show a selection box.
 				elseif ($config_var['type'] == 'select')
 				{
 					echo '
-							<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, (!empty($config_var['multiple']) ? ' multiple="multiple"' : ''), '>';
+						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, (!empty($config_var['multiple']) ? ' multiple="multiple"' : ''), '>';
 					foreach ($config_var['data'] as $option)
 						echo '
-								<option value="', $option[0], '"', (($option[0] == $config_var['value'] || (!empty($config_var['multiple']) && in_array($option[0], $config_var['value']))) ? ' selected="selected"' : ''), '>', $option[1], '</option>';
+							<option value="', $option[0], '"', (($option[0] == $config_var['value'] || (!empty($config_var['multiple']) && in_array($option[0], $config_var['value']))) ? ' selected="selected"' : ''), '>', $option[1], '</option>';
 					echo '
-							</select>';
+						</select>';
 				}
 				// Text area?
 				elseif ($config_var['type'] == 'large_text')
 					echo '
-							<textarea rows="', ($config_var['size'] ? $config_var['size'] : 4), '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
+						<textarea rows="', ($config_var['size'] ? $config_var['size'] : 4), '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
 				// Permission group?
 				elseif ($config_var['type'] == 'permissions')
 					theme_inline_permissions($config_var['name']);
@@ -927,71 +900,70 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'bbc')
 				{
 					echo '
-							<fieldset id="', $config_var['name'], '">
-								<legend>', $txt['bbcTagsToUse_select'], '</legend>
-									<ul class="reset">';
+						<fieldset id="', $config_var['name'], '">
+							<legend>', $txt['bbcTagsToUse_select'], '</legend>
+							<ul class="reset">';
 
 					foreach ($context['bbc_columns'] as $bbcColumn)
 					{
 						foreach ($bbcColumn as $bbcTag)
 							echo '
-										<li class="list_bbc floatleft">
-											<input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked="checked"' : '', ' class="input_check" /> <label for="tag_', $config_var['name'], '_', $bbcTag['tag'], '">', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this.href);">?</a>)' : '', '
-										</li>';
+								<li class="list_bbc floatleft">
+									<input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked="checked"' : '', ' class="input_check" /> <label for="tag_', $config_var['name'], '_', $bbcTag['tag'], '">', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this.href);">?</a>)' : '', '
+								</li>';
 					}
-					echo '			</ul>
-								<input type="checkbox" id="select_all" onclick="invertAll(this, this.form, \'', $config_var['name'], '_enabledTags\');"', $context['bbc_sections'][$config_var['name']]['all_selected'] ? ' checked="checked"' : '', ' class="input_check" /> <label for="select_all"><em>', $txt['bbcTagsToUse_select_all'], '</em></label>
-							</fieldset>';
+					echo '
+							</ul>
+							<input type="checkbox" id="select_all" onclick="invertAll(this, this.form, \'', $config_var['name'], '_enabledTags\');"', $context['bbc_sections'][$config_var['name']]['all_selected'] ? ' checked="checked"' : '', ' class="input_check" /> <label for="select_all"><em>', $txt['bbcTagsToUse_select_all'], '</em></label>
+						</fieldset>';
 				}
 				// A simple message?
 				elseif ($config_var['type'] == 'var_message')
 					echo '
-							<div', !empty($config_var['name']) ? ' id="' . $config_var['name'] . '"' : '', '>', $config_var['var_message'], '</div>';
+						<div', !empty($config_var['name']) ? ' id="' . $config_var['name'] . '"' : '', '>', $config_var['var_message'], '</div>';
 				// Assume it must be a text box.
 				else
 					echo '
-							<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
+						<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
 
 				echo !empty($config_var['postinput']) ? '
 							' . $config_var['postinput'] : '', '
-						</dd>';
+					</dd>';
 			}
 		}
-
 		else
 		{
 			// Just show a separator.
 			if ($config_var == '')
 				echo '
-					</dl>
-					<hr class="hrcolor" />
-					<dl class="settings">';
+				</dl>
+				<hr class="hrcolor" />
+				<dl class="settings">';
 			else
 				echo '
-						<dd>
-							<strong>' . $config_var . '</strong>
-						</dd>';
+					<dd>
+						<strong>' . $config_var . '</strong>
+					</dd>';
 		}
 	}
 
 	if ($is_open)
 		echo '
-					</dl>';
+				</dl>';
 
 	if (empty($context['settings_save_dont_show']))
 		echo '
-					<hr class="hrcolor" />
-					<div class="righttext">
-						<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled="disabled"' : ''), (!empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : ''), ' class="button_submit" />
-					</div>';
+				<hr class="hrcolor" />
+				<div class="righttext">
+					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled="disabled"' : ''), (!empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : ''), ' class="button_submit" />
+				</div>';
 
 	if ($is_open)
 		echo '
-				</div>
 			</div>';
 
 	echo '
-		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
 	<br class="clear" />';
@@ -1078,190 +1050,187 @@ function template_edit_profile_field()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<fieldset>
-						<legend>', $txt['custom_edit_general'], '</legend>
+				<fieldset>
+					<legend>', $txt['custom_edit_general'], '</legend>
 
-						<dl class="settings">
-							<dt>
-								<strong>', $txt['custom_edit_name'], ':</strong>
-							</dt>
-							<dd>
-								<input type="text" name="field_name" value="', $context['field']['name'], '" size="20" maxlength="40" class="input_text" />
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_desc'], ':</strong>
-							</dt>
-							<dd>
-								<textarea name="field_desc" rows="3" cols="40">', $context['field']['desc'], '</textarea>
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_profile'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_profile_desc'], '</span>
-							</dt>
-							<dd>
-								<select name="profile_area">
-									<option value="none"', $context['field']['profile_area'] == 'none' ? ' selected="selected"' : '', '>', $txt['custom_edit_profile_none'], '</option>
-									<option value="account"', $context['field']['profile_area'] == 'account' ? ' selected="selected"' : '', '>', $txt['account'], '</option>
-									<option value="forumprofile"', $context['field']['profile_area'] == 'forumprofile' ? ' selected="selected"' : '', '>', $txt['forumprofile'], '</option>
-									<option value="theme"', $context['field']['profile_area'] == 'theme' ? ' selected="selected"' : '', '>', $txt['theme'], '</option>
-								</select>
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_registration'], ':</strong>
-							</dt>
-							<dd>
-								<select name="reg" id="reg">
-									<option value="0"', $context['field']['reg'] == 0 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_disable'], '</option>
-									<option value="1"', $context['field']['reg'] == 1 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_allow'], '</option>
-									<option value="2"', $context['field']['reg'] == 2 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_require'], '</option>
-								</select>
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_display'], ':</strong>
-							</dt>
-							<dd>
-								<input type="checkbox" name="display" id="display"', $context['field']['display'] ? ' checked="checked"' : '', ' class="input_check" />
-							</dd>
+					<dl class="settings">
+						<dt>
+							<strong>', $txt['custom_edit_name'], ':</strong>
+						</dt>
+						<dd>
+							<input type="text" name="field_name" value="', $context['field']['name'], '" size="20" maxlength="40" class="input_text" />
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_desc'], ':</strong>
+						</dt>
+						<dd>
+							<textarea name="field_desc" rows="3" cols="40">', $context['field']['desc'], '</textarea>
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_profile'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_profile_desc'], '</span>
+						</dt>
+						<dd>
+							<select name="profile_area">
+								<option value="none"', $context['field']['profile_area'] == 'none' ? ' selected="selected"' : '', '>', $txt['custom_edit_profile_none'], '</option>
+								<option value="account"', $context['field']['profile_area'] == 'account' ? ' selected="selected"' : '', '>', $txt['account'], '</option>
+								<option value="forumprofile"', $context['field']['profile_area'] == 'forumprofile' ? ' selected="selected"' : '', '>', $txt['forumprofile'], '</option>
+								<option value="theme"', $context['field']['profile_area'] == 'theme' ? ' selected="selected"' : '', '>', $txt['theme'], '</option>
+							</select>
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_registration'], ':</strong>
+						</dt>
+						<dd>
+							<select name="reg" id="reg">
+								<option value="0"', $context['field']['reg'] == 0 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_disable'], '</option>
+								<option value="1"', $context['field']['reg'] == 1 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_allow'], '</option>
+								<option value="2"', $context['field']['reg'] == 2 ? ' selected="selected"' : '', '>', $txt['custom_edit_registration_require'], '</option>
+							</select>
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_display'], ':</strong>
+						</dt>
+						<dd>
+							<input type="checkbox" name="display" id="display"', $context['field']['display'] ? ' checked="checked"' : '', ' class="input_check" />
+						</dd>
 
-							<dt>
-								<strong>', $txt['custom_edit_placement'], ':</strong>
-							</dt>
-							<dd>
-								<select name="placement" id="placement">
-									<option value="0"', $context['field']['placement'] == '0' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_standard'], '</option>
-									<option value="1"', $context['field']['placement'] == '1' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_withicons'], '</option>
-									<option value="2"', $context['field']['placement'] == '2' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_abovesignature'], '</option>
-								</select>
-							</dd>
-							<dt>
-								<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
-								<strong>', $txt['custom_edit_enclose'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_enclose_desc'], '</span>
-							</dt>
-							<dd>
-								<textarea name="enclose" rows="10" cols="50">', @$context['field']['enclose'], '</textarea>
-							</dd>
-						</dl>
-					</fieldset>
-					<fieldset>
-						<legend>', $txt['custom_edit_input'], '</legend>
-						<dl class="settings">
-							<dt>
-								<strong>', $txt['custom_edit_picktype'], ':</strong>
-							</dt>
-							<dd>
-								<select name="field_type" id="field_type" onchange="updateInputBoxes();">
-									<option value="text"', $context['field']['type'] == 'text' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_text'], '</option>
-									<option value="textarea"', $context['field']['type'] == 'textarea' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_textarea'], '</option>
-									<option value="select"', $context['field']['type'] == 'select' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_select'], '</option>
-									<option value="radio"', $context['field']['type'] == 'radio' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_radio'], '</option>
-									<option value="check"', $context['field']['type'] == 'check' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_check'], '</option>
-								</select>
-							</dd>
-							<dt id="max_length_dt">
-								<strong>', $txt['custom_edit_max_length'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_max_length_desc'], '</span>
-							</dt>
-							<dd id="max_length_dd">
-								<input type="text" name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6" class="input_text" />
-							</dd>
-							<dt id="dimension_dt">
-								<strong>', $txt['custom_edit_dimension'], ':</strong>
-							</dt>
-							<dd id="dimension_dd">
-								<strong>', $txt['custom_edit_dimension_row'], ':</strong> <input type="text" name="rows" value="', $context['field']['rows'], '" size="5" maxlength="3" class="input_text" />
-								<strong>', $txt['custom_edit_dimension_col'], ':</strong> <input type="text" name="cols" value="', $context['field']['cols'], '" size="5" maxlength="3" class="input_text" />
-							</dd>
-							<dt id="bbc_dt">
-								<strong>', $txt['custom_edit_bbc'], '</strong>
-							</dt>
-							<dd id="bbc_dd">
-								<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked="checked"' : '', ' class="input_check" />
-							</dd>
-							<dt id="options_dt">
-								<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
-								<strong>', $txt['custom_edit_options'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_options_desc'], '</span>
-							</dt>
-							<dd id="options_dd">
-								<div>';
+						<dt>
+							<strong>', $txt['custom_edit_placement'], ':</strong>
+						</dt>
+						<dd>
+							<select name="placement" id="placement">
+								<option value="0"', $context['field']['placement'] == '0' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_standard'], '</option>
+								<option value="1"', $context['field']['placement'] == '1' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_withicons'], '</option>
+								<option value="2"', $context['field']['placement'] == '2' ? ' selected="selected"' : '', '>', $txt['custom_edit_placement_abovesignature'], '</option>
+							</select>
+						</dd>
+						<dt>
+							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<strong>', $txt['custom_edit_enclose'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_enclose_desc'], '</span>
+						</dt>
+						<dd>
+							<textarea name="enclose" rows="10" cols="50">', @$context['field']['enclose'], '</textarea>
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend>', $txt['custom_edit_input'], '</legend>
+					<dl class="settings">
+						<dt>
+							<strong>', $txt['custom_edit_picktype'], ':</strong>
+						</dt>
+						<dd>
+							<select name="field_type" id="field_type" onchange="updateInputBoxes();">
+								<option value="text"', $context['field']['type'] == 'text' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_text'], '</option>
+								<option value="textarea"', $context['field']['type'] == 'textarea' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_textarea'], '</option>
+								<option value="select"', $context['field']['type'] == 'select' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_select'], '</option>
+								<option value="radio"', $context['field']['type'] == 'radio' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_radio'], '</option>
+								<option value="check"', $context['field']['type'] == 'check' ? ' selected="selected"' : '', '>', $txt['custom_profile_type_check'], '</option>
+							</select>
+						</dd>
+						<dt id="max_length_dt">
+							<strong>', $txt['custom_edit_max_length'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_max_length_desc'], '</span>
+						</dt>
+						<dd id="max_length_dd">
+							<input type="text" name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6" class="input_text" />
+						</dd>
+						<dt id="dimension_dt">
+							<strong>', $txt['custom_edit_dimension'], ':</strong>
+						</dt>
+						<dd id="dimension_dd">
+							<strong>', $txt['custom_edit_dimension_row'], ':</strong> <input type="text" name="rows" value="', $context['field']['rows'], '" size="5" maxlength="3" class="input_text" />
+							<strong>', $txt['custom_edit_dimension_col'], ':</strong> <input type="text" name="cols" value="', $context['field']['cols'], '" size="5" maxlength="3" class="input_text" />
+						</dd>
+						<dt id="bbc_dt">
+							<strong>', $txt['custom_edit_bbc'], '</strong>
+						</dt>
+						<dd id="bbc_dd">
+							<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked="checked"' : '', ' class="input_check" />
+						</dd>
+						<dt id="options_dt">
+							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
+							<strong>', $txt['custom_edit_options'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_options_desc'], '</span>
+						</dt>
+						<dd id="options_dd">
+							<div>';
 
 	foreach ($context['field']['options'] as $k => $option)
-	{
 		echo '
 								', $k == 0 ? '' : '<br />', '<input type="radio" name="default_select" value="', $k, '"', $context['field']['default_select'] == $option ? ' checked="checked"' : '', ' class="input_radio" /><input type="text" name="select_option[', $k, ']" value="', $option, '" class="input_text" />';
-	}
+
 	echo '
 								<span id="addopt"></span>
 								[<a href="" onclick="addOption(); return false;">', $txt['custom_edit_options_more'], '</a>]
-								</div>
-							</dd>
-							<dt id="default_dt">
-								<strong>', $txt['custom_edit_default'], ':</strong>
-							</dt>
-							<dd id="default_dd">
-								<input type="checkbox" name="default_check"', $context['field']['default_check'] ? ' checked="checked"' : '', ' class="input_check" />
-							</dd>
-						</dl>
-					</fieldset>
-					<fieldset>
-						<legend>', $txt['custom_edit_advanced'], '</legend>
-						<dl class="settings">
-							<dt id="mask_dt">
-								<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
-								<strong>', $txt['custom_edit_mask'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_mask_desc'], '</span>
-							</dt>
-							<dd>
-								<select name="mask" id="mask" onchange="updateInputBoxes();">
-									<option value="nohtml"', $context['field']['mask'] == 'nohtml' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_nohtml'], '</option>
-									<option value="email"', $context['field']['mask'] == 'email' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_email'], '</option>
-									<option value="number"', $context['field']['mask'] == 'number' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_number'], '</option>
-									<option value="regex"', substr($context['field']['mask'], 0, 5) == 'regex' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_regex'], '</option>
-								</select>
-								<br />
-								<span id="regex_div">
-									<input type="text" name="regex" value="', $context['field']['regex'], '" size="30" class="input_text" />
-								</span>
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_privacy'], ':</strong>
-								<span class="smalltext">', $txt['custom_edit_privacy_desc'], '</span>
-							</dt>
-							<dd>
-								<select name="private" id="private" onchange="updateInputBoxes();" style="width: 100%">
-									<option value="0"', $context['field']['private'] == 0 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_all'], '</option>
-									<option value="1"', $context['field']['private'] == 1 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_see'], '</option>
-									<option value="2"', $context['field']['private'] == 2 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_owner'], '</option>
-									<option value="3"', $context['field']['private'] == 3 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_none'], '</option>
-								</select>
-							</dd>
-							<dt id="can_search_dt">
-								<strong>', $txt['custom_edit_can_search'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_can_search_desc'], '</span>
-							</dt>
-							<dd id="can_search_dd">
-								<input type="checkbox" name="can_search"', $context['field']['can_search'] ? ' checked="checked"' : '', ' class="input_check" />
-							</dd>
-							<dt>
-								<strong>', $txt['custom_edit_active'], ':</strong><br />
-								<span class="smalltext">', $txt['custom_edit_active_desc'], '</span>
-							</dt>
-							<dd>
-								<input type="checkbox" name="active"', $context['field']['active'] ? ' checked="checked"' : '', ' class="input_check" />
-							</dd>
-						</dl>
-					</fieldset>
-					<div class="righttext">
-						<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />';
+							</div>
+						</dd>
+						<dt id="default_dt">
+							<strong>', $txt['custom_edit_default'], ':</strong>
+						</dt>
+						<dd id="default_dd">
+							<input type="checkbox" name="default_check"', $context['field']['default_check'] ? ' checked="checked"' : '', ' class="input_check" />
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend>', $txt['custom_edit_advanced'], '</legend>
+					<dl class="settings">
+						<dt id="mask_dt">
+							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<strong>', $txt['custom_edit_mask'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_mask_desc'], '</span>
+						</dt>
+						<dd>
+							<select name="mask" id="mask" onchange="updateInputBoxes();">
+								<option value="nohtml"', $context['field']['mask'] == 'nohtml' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_nohtml'], '</option>
+								<option value="email"', $context['field']['mask'] == 'email' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_email'], '</option>
+								<option value="number"', $context['field']['mask'] == 'number' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_number'], '</option>
+								<option value="regex"', substr($context['field']['mask'], 0, 5) == 'regex' ? ' selected="selected"' : '', '>', $txt['custom_edit_mask_regex'], '</option>
+							</select>
+							<br />
+							<span id="regex_div">
+								<input type="text" name="regex" value="', $context['field']['regex'], '" size="30" class="input_text" />
+							</span>
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_privacy'], ':</strong>
+							<span class="smalltext">', $txt['custom_edit_privacy_desc'], '</span>
+						</dt>
+						<dd>
+							<select name="private" id="private" onchange="updateInputBoxes();" style="width: 100%">
+								<option value="0"', $context['field']['private'] == 0 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_all'], '</option>
+								<option value="1"', $context['field']['private'] == 1 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_see'], '</option>
+								<option value="2"', $context['field']['private'] == 2 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_owner'], '</option>
+								<option value="3"', $context['field']['private'] == 3 ? ' selected="selected"' : '', '>', $txt['custom_edit_privacy_none'], '</option>
+							</select>
+						</dd>
+						<dt id="can_search_dt">
+							<strong>', $txt['custom_edit_can_search'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_can_search_desc'], '</span>
+						</dt>
+						<dd id="can_search_dd">
+							<input type="checkbox" name="can_search"', $context['field']['can_search'] ? ' checked="checked"' : '', ' class="input_check" />
+						</dd>
+						<dt>
+							<strong>', $txt['custom_edit_active'], ':</strong><br />
+							<span class="smalltext">', $txt['custom_edit_active_desc'], '</span>
+						</dt>
+						<dd>
+							<input type="checkbox" name="active"', $context['field']['active'] ? ' checked="checked"' : '', ' class="input_check" />
+						</dd>
+					</dl>
+				</fieldset>
+				<div class="righttext">
+					<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />';
 
 	if ($context['fid'])
 		echo '
-						<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(\'', $txt['custom_edit_delete_sure'], '\');" class="button_submit" />';
+					<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(\'', $txt['custom_edit_delete_sure'], '\');" class="button_submit" />';
 
 	echo '
-					</div>
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1282,69 +1251,67 @@ function template_admin_search_results()
 	global $context, $txt, $settings, $options, $scripturl;
 
 	echo '
-		<div class="title_bar">
-			<h3>
-				<div id="quick_search" class="floatright">
-					<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;">
-						<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
-						<input type="hidden" name="search_type" value="', $context['search_type'], '" />
-						<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
-					</form>
-				</div>
-				', $txt['admin_search_results'], '
-			</h3>
-		</div>
+	<div class="title_bar">
+		<h3>
+			<div id="quick_search" class="floatright">
+				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;">
+					<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
+					<input type="hidden" name="search_type" value="', $context['search_type'], '" />
+					<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
+				</form>
+			</div>
+			', $txt['admin_search_results'], '
+		</h3>
+	</div>
+
 	<div class="windowbg wrc">
-		<div class="content">
-			', sprintf($txt['admin_search_results_desc'], $context['search_term']);
+		', sprintf($txt['admin_search_results_desc'], $context['search_term']);
 
 	if (empty($context['search_results']))
-	{
 		echo '
-			<p class="centertext"><strong>', $txt['admin_search_results_none'], '</strong></p>';
-	}
+		<p class="centertext"><strong>', $txt['admin_search_results_none'], '</strong></p>';
+
 	else
 	{
 		echo '
-			<ol class="search_results">';
+		<ol class="search_results">';
 		foreach ($context['search_results'] as $result)
 		{
 			// Is it a result from the online manual?
 			if ($context['search_type'] == 'online')
 			{
 				echo '
-				<li>
-					<p>
-						<a href="', $context['doc_scripturl'], '?topic=', $result['topic_id'], '.0" target="_blank" class="new_win"><strong>', $result['messages'][0]['subject'], '</strong></a>
-						<br /><span class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
-						<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a> /</span>
-					</p>
-					<p class="double_height">
-						', $result['messages'][0]['body'], '
-					</p>
-				</li>';
+			<li>
+				<p>
+					<a href="', $context['doc_scripturl'], '?topic=', $result['topic_id'], '.0" target="_blank" class="new_win"><strong>', $result['messages'][0]['subject'], '</strong></a>
+					<br /><span class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
+					<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a> /</span>
+				</p>
+				<p class="double_height">
+					', $result['messages'][0]['body'], '
+				</p>
+			</li>';
 			}
 			// Otherwise it's... not!
 			else
 			{
 				echo '
-				<li class="windowbg">
-					<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
+			<li class="windowbg">
+				<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 				if ($result['help'])
 					echo '
-					<p class="double_height">', $result['help'], '</p>';
+				<p class="double_height">', $result['help'], '</p>';
 
 				echo '
-				</li>';
+			</li>';
 			}
 		}
 		echo '
-			</ol>';
+		</ol>';
 	}
 
 	echo '
-		</div>
 	</div>
 	<br class="clear" />';
 }
@@ -1398,7 +1365,7 @@ function template_core_features()
 	{
 		echo '
 			<div class="windowbg', $alternate ? '2' : '', ' wrc">
-				<div class="content features">
+				<div class="features">
 					<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
 					<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
 						<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
@@ -1454,26 +1421,22 @@ function template_add_language()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<fieldset>
-						<legend>', $txt['add_language_smf'], '</legend>
-						<label class="smalltext">', $txt['add_language_smf_browse'], '</label>
-						<input type="text" name="smf_add" size="40" value="', !empty($context['smf_search_term']) ? $context['smf_search_term'] : '', '" class="input_text" />';
+				<fieldset>
+					<legend>', $txt['add_language_smf'], '</legend>
+					<label class="smalltext">', $txt['add_language_smf_browse'], '</label>
+					<input type="text" name="smf_add" size="40" value="', !empty($context['smf_search_term']) ? $context['smf_search_term'] : '', '" class="input_text" />';
 
 	if (!empty($context['smf_error']))
 		echo '
-						<div class="smalltext error">', $txt['add_language_error_' . $context['smf_error']], '</div>';
+					<div class="smalltext error">', $txt['add_language_error_' . $context['smf_error']], '</div>';
 
 	echo '
-
-					</fieldset>
-					<div class="righttext">
-						', $context['browser']['is_ie'] ? '<input type="text" name="ie_fix" style="display: none;" class="input_text" /> ' : '', '
-						<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="button_submit" />
-					</div>
+				</fieldset>
+				<div class="righttext">
+					', $context['browser']['is_ie'] ? '<input type="text" name="ie_fix" style="display: none;" class="input_text" /> ' : '', '
+					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="button_submit" />
 				</div>
-			</div>
-		';
+			</div>';
 
 	// Had some results?
 	if (!empty($context['smf_languages']))
@@ -1481,31 +1444,31 @@ function template_add_language()
 		echo '
 			<div class="information">', $txt['add_language_smf_found'], '</div>
 
-				<table width="100%" class="table_grid" cellspacing="0">
-					<thead>
-						<tr class="catbg">
-							<th class="first_th" scope="col">', $txt['name'], '</th>
-							<th scope="col">', $txt['add_language_smf_desc'], '</th>
-							<th scope="col">', $txt['add_language_smf_version'], '</th>
-							<th scope="col">', $txt['add_language_smf_utf8'], '</th>
-							<th class="first_th" scope="col">', $txt['add_language_smf_install'], '</th>
-						</tr>
-					</thead>
-					<tbody>';
+			<table width="100%" class="table_grid" cellspacing="0">
+				<thead>
+					<tr class="catbg">
+						<th class="first_th" scope="col">', $txt['name'], '</th>
+						<th scope="col">', $txt['add_language_smf_desc'], '</th>
+						<th scope="col">', $txt['add_language_smf_version'], '</th>
+						<th scope="col">', $txt['add_language_smf_utf8'], '</th>
+						<th class="first_th" scope="col">', $txt['add_language_smf_install'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
 
 		foreach ($context['smf_languages'] as $language)
 			echo '
-						<tr class="windowbg2">
-							<td align="left">', $language['name'], '</td>
-							<td align="left">', $language['description'], '</td>
-							<td align="left">', $language['version'], '</td>
-							<td align="center">', $language['utf8'] ? $txt['yes'] : $txt['no'], '</td>
-							<td align="left"><a href="', $language['link'], '">', $txt['add_language_smf_install'], '</a></td>
-						</tr>';
+					<tr class="windowbg2">
+						<td align="left">', $language['name'], '</td>
+						<td align="left">', $language['description'], '</td>
+						<td align="left">', $language['version'], '</td>
+						<td align="center">', $language['utf8'] ? $txt['yes'] : $txt['no'], '</td>
+						<td align="left"><a href="', $language['link'], '">', $txt['add_language_smf_install'], '</a></td>
+					</tr>';
 
 		echo '
-					</tbody>
-					</table>';
+				</tbody>
+			</table>';
 	}
 
 	echo '
@@ -1530,9 +1493,7 @@ function template_download_language()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				', $context['install_complete'], '
-			</div>
+			', $context['install_complete'], '
 		</div>
 	</div>
 	<br class="clear" />';
@@ -1556,13 +1517,11 @@ function template_download_language()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<p>
-						', $txt['languages_download_note'], '
-					</p>
-					<div class="smalltext">
-						', $txt['languages_download_info'], '
-					</div>
+				<p>
+					', $txt['languages_download_note'], '
+				</p>
+				<div class="smalltext">
+					', $txt['languages_download_info'], '
 				</div>
 			</div>';
 
@@ -1649,39 +1608,37 @@ function template_download_language()
 				</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<p>', $txt['package_ftp_why'], '</p>
-					<dl class="settings">
-						<dt
-							<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
-						</dt>
-						<dd>
-							<div class="floatright" style="margin-right: 1px;"><label for="ftp_port" style="padding-top: 2px; padding-right: 2ex;">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'), '" class="input_text" /></div>
-							<input type="text" size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'), '" style="width: 70%;" class="input_text" />
-						</dd>
+				<p>', $txt['package_ftp_why'], '</p>
+				<dl class="settings">
+					<dt
+						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
+					</dt>
+					<dd>
+						<div class="floatright" style="margin-right: 1px;"><label for="ftp_port" style="padding-top: 2px; padding-right: 2ex;">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'), '" class="input_text" /></div>
+						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'), '" style="width: 70%;" class="input_text" />
+					</dd>
 
-						<dt>
-							<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" size="50" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''), '" style="width: 99%;" class="input_text" />
-						</dd>
+					<dt>
+						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
+					</dt>
+					<dd>
+						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''), '" style="width: 99%;" class="input_text" />
+					</dd>
 
-						<dt>
-							<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
-						</dt>
-						<dd>
-							<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" class="input_text" />
-						</dd>
+					<dt>
+						<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
+					</dt>
+					<dd>
+						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" class="input_text" />
+					</dd>
 
-						<dt>
-							<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%;" class="input_text" />
-						</dd>
-					</dl>
-				</div>
+					<dt>
+						<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
+					</dt>
+					<dd>
+						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%;" class="input_text" />
+					</dd>
+				</dl>
 			</div>';
 	}
 
@@ -1756,47 +1713,45 @@ function template_modify_language_entries()
 				', $txt['edit_language_entries_primary'], '
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<fieldset>
-						<legend>', $context['primary_settings']['name'], '</legend>
-					<dl class="settings">
-						<dt>
-							', $txt['languages_locale'], ':
-						</dt>
-						<dd>
-							<input type="text" name="locale" size="20" value="', $context['primary_settings']['locale'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
-						</dd>
-						<dt>
-							', $txt['languages_dictionary'], ':
-						</dt>
-						<dd>
-							<input type="text" name="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
-						</dd>
-						<dt>
-							', $txt['languages_spelling'], ':
-						</dt>
-						<dd>
-							<input type="text" name="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
-						</dd>
-						<dt>
-							', $txt['languages_rtl'], ':
-						</dt>
-						<dd>
-							<input type="checkbox" name="rtl"', $context['primary_settings']['rtl'] ? ' checked="checked"' : '', ' class="input_check"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' />
-						</dd>
-					</dl>
-					</fieldset>
-					<div class="righttext">
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' class="button_submit" />';
+				<fieldset>
+					<legend>', $context['primary_settings']['name'], '</legend>
+				<dl class="settings">
+					<dt>
+						', $txt['languages_locale'], ':
+					</dt>
+					<dd>
+						<input type="text" name="locale" size="20" value="', $context['primary_settings']['locale'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
+					</dd>
+					<dt>
+						', $txt['languages_dictionary'], ':
+					</dt>
+					<dd>
+						<input type="text" name="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
+					</dd>
+					<dt>
+						', $txt['languages_spelling'], ':
+					</dt>
+					<dd>
+						<input type="text" name="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' class="input_text" />
+					</dd>
+					<dt>
+						', $txt['languages_rtl'], ':
+					</dt>
+					<dd>
+						<input type="checkbox" name="rtl"', $context['primary_settings']['rtl'] ? ' checked="checked"' : '', ' class="input_check"', (empty($context['file_entries']) ? '' : ' disabled="disabled"'), ' />
+					</dd>
+				</dl>
+				</fieldset>
+				<div class="righttext">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' class="button_submit" />';
 
 	// English can't be deleted.
 	if ($context['lang_id'] != 'english')
 		echo '
-						<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' onclick="confirm(\'', $txt['languages_delete_confirm'], '\');" class="button_submit" />';
+					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' onclick="confirm(\'', $txt['languages_delete_confirm'], '\');" class="button_submit" />';
 
 	echo '
-					</div>
 				</div>
 			</div>
 		</form>
@@ -1838,8 +1793,7 @@ function template_modify_language_entries()
 	{
 		echo '
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<dl class="settings">';
+				<dl class="settings">';
 
 		$cached = array();
 		foreach ($context['file_entries'] as $entry)
@@ -1852,45 +1806,43 @@ function template_modify_language_entries()
 			}
 
 			echo '
-						<dt>
-							<span class="smalltext">', $cached['key'], '</span>
-						</dt>
-						<dd>
-							<span class="smalltext">', $entry['key'], '</span>
-						</dd>
-						<dt>
-							<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
-							<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="width: 96%;">', $cached['value'], '</textarea>
-						</dt>
-						<dd>
-							<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '" />
-							<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="width: 96%;">', $entry['value'], '</textarea>
-						</dd>';
+					<dt>
+						<span class="smalltext">', $cached['key'], '</span>
+					</dt>
+					<dd>
+						<span class="smalltext">', $entry['key'], '</span>
+					</dd>
+					<dt>
+						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="width: 96%;">', $cached['value'], '</textarea>
+					</dt>
+					<dd>
+						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '" />
+						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="width: 96%;">', $entry['value'], '</textarea>
+					</dd>';
 			$cached = array();
 		}
 
 		// Odd number?
 		if (!empty($cached))
 			echo '
-
-						<dt>
-							<span class="smalltext">', $cached['key'], '</span>
-						</dt>
-						<dd>
-						</dd>
-						<dt>
-							<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
-							<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="width: 96%;">', $cached['value'], '</textarea>
-						</dt>
-						<dd>
-						</dd>';
-
-		echo '
-					</dl>
-					<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled="disabled"' : '', ' class="button_submit" />';
+					<dt>
+						<span class="smalltext">', $cached['key'], '</span>
+					</dt>
+					<dd>
+					</dd>
+					<dt>
+						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="width: 96%;">', $cached['value'], '</textarea>
+					</dt>
+					<dd>
+					</dd>';
 
 		echo '
-				</div>
+				</dl>
+				<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled="disabled"' : '', ' class="button_submit" />';
+
+		echo '
 			</div>';
 	}
 	echo '
@@ -2007,8 +1959,7 @@ function template_repair_boards()
 				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
 			</h3>
 		</div>
-		<div class="windowbg wrc">
-			<div class="content">';
+		<div class="windowbg wrc">';
 
 	// Are we actually fixing them, or is this just a prompt?
 	if ($context['error_search'])

@@ -18,7 +18,7 @@ function template_main()
 		<div class="flow_hidden">
 			<div id="stats_left">
 				<div class="windowbg2 wrc">
-					<div class="content top_row">
+					<div class="top_row">
 						<dl class="stats">
 							<dt>', $txt['total_members'], ':</dt>
 							<dd>', $context['show_member_list'] ? '<a href="' . $scripturl . '?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
@@ -48,7 +48,7 @@ function template_main()
 			</div>
 			<div id="stats_right">
 				<div class="windowbg2 wrc">
-					<div class="content top_row">
+					<div class="top_row">
 						<dl class="stats">
 							<dt>', $txt['average_members'], ':</dt>
 							<dd>', $context['average_members'], '</dd>
@@ -85,32 +85,30 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_posters'] as $poster)
 	{
 		echo '
-							<dt>
-								', $poster['link'], '
-							</dt>
-							<dd class="statsbar">';
+						<dt>
+							', $poster['link'], '
+						</dt>
+						<dd class="statsbar">';
 
 		if (!empty($poster['post_percent']))
 			echo '
-								<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
-									<div style="width: ', $poster['post_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
+								<div style="width: ', $poster['post_percent'], 'px;"></div>
+							</div>';
 
 		echo '
-								<span class="righttext">', $poster['num_posts'], '</span>
-							</dd>';
+							<span class="righttext">', $poster['num_posts'], '</span>
+						</dd>';
 	}
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 			<div id="top_boards">
@@ -120,31 +118,29 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_boards'] as $board)
 	{
 		echo '
-							<dt>
-								', $board['link'], '
-							</dt>
-							<dd class="statsbar">';
+						<dt>
+							', $board['link'], '
+						</dt>
+						<dd class="statsbar">';
 
 		if (!empty($board['post_percent']))
 			echo '
-								<div class="bar" style="width: ', $board['post_percent'] + 4, 'px;">
-									<div style="width: ', $board['post_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $board['post_percent'] + 4, 'px;">
+								<div style="width: ', $board['post_percent'], 'px;"></div>
+							</div>';
 		echo '
-								<span class="righttext">', $board['num_posts'], '</span>
-							</dd>';
+							<span class="righttext">', $board['num_posts'], '</span>
+						</dd>';
 	}
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 		</div>
@@ -156,30 +152,29 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_topics_replies'] as $topic)
 	{
 		echo '
-							<dt>
-								', $topic['link'], '
-							</dt>
-							<dd class="statsbar">';
+						<dt>
+							', $topic['link'], '
+						</dt>
+						<dd class="statsbar">';
+
 		if (!empty($topic['post_percent']))
 			echo '
-								<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
-									<div style="width: ', $topic['post_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
+								<div style="width: ', $topic['post_percent'], 'px;"></div>
+							</div>';
 
 		echo '
-								<span class="righttext">' . $topic['num_replies'] . '</span>
-							</dd>';
+							<span class="righttext">' . $topic['num_replies'] . '</span>
+						</dd>';
 	}
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 
@@ -190,30 +185,28 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_topics_views'] as $topic)
 	{
 		echo '
-							<dt>', $topic['link'], '</dt>
-							<dd class="statsbar">';
+						<dt>', $topic['link'], '</dt>
+						<dd class="statsbar">';
 
 		if (!empty($topic['post_percent']))
 			echo '
-								<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
-									<div style="width: ', $topic['post_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
+								<div style="width: ', $topic['post_percent'], 'px;"></div>
+							</div>';
 
 		echo '
-								<span class="righttext">' . $topic['num_views'] . '</span>
-							</dd>';
+							<span class="righttext">' . $topic['num_views'] . '</span>
+						</dd>';
 	}
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 		</div>
@@ -225,32 +218,30 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_starters'] as $poster)
 	{
 		echo '
-							<dt>
-								', $poster['link'], '
-							</dt>
-							<dd class="statsbar">';
+						<dt>
+							', $poster['link'], '
+						</dt>
+						<dd class="statsbar">';
 
 		if (!empty($poster['post_percent']))
 			echo '
-								<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
-									<div style="width: ', $poster['post_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
+								<div style="width: ', $poster['post_percent'], 'px;"></div>
+							</div>';
 
 		echo '
-								<span class="righttext">', $poster['num_topics'], '</span>
-							</dd>';
+							<span class="righttext">', $poster['num_topics'], '</span>
+						</dd>';
 	}
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 			<div id="most_online">
@@ -260,32 +251,30 @@ function template_main()
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
-					<div class="content">
-						<dl class="stats">';
+					<dl class="stats">';
 
 	foreach ($context['top_time_online'] as $poster)
 	{
 		echo '
-							<dt>
-								', $poster['link'], '
-							</dt>
-							<dd class="statsbar">';
+						<dt>
+							', $poster['link'], '
+						</dt>
+						<dd class="statsbar">';
 
 		if (!empty($poster['time_percent']))
 			echo '
-								<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px;">
-									<div style="width: ', $poster['time_percent'], 'px;"></div>
-								</div>';
+							<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px;">
+								<div style="width: ', $poster['time_percent'], 'px;"></div>
+							</div>';
 
 		echo '
-								<span>', $poster['time_online'], '</span>
-							</dd>';
+							<span>', $poster['time_online'], '</span>
+						</dd>';
 	}
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
+					</dl>
+					<div class="clear"></div>
 				</div>
 			</div>
 		</div>

@@ -261,11 +261,12 @@ function surroundText(text1, text2, oTextHandle)
 
 		if (oTextHandle.setSelectionRange)
 		{
-			var goForward = is_opera ? text1.match(/\n/g).length : 0, goForwardAll = is_opera ? (text1 + text2).match(/\n/g).length : 0;
+			var t1 = is_opera ? text1.match(/\n/g) : '', t2 = is_opera ? text2.match(/\n/g) : '';
+			var goForward1 = t1 ? t1.length : 0, goForward2 = t2 ? t2.length : 0;
 			if (selection.length == 0)
-				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward, newCursorPos + text1.length + goForward);
+				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
 			else
-				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForwardAll);
+				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
 			oTextHandle.focus();
 		}
 		oTextHandle.scrollTop = scrollPos;

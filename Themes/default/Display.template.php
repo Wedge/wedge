@@ -28,8 +28,8 @@ function template_main()
 					</h3>
 				</div>
 				<div class="windowbg wrc">
-					<div class="content" id="poll_options">
-						<h4 id="pollquestion">
+					<div id="poll_options">
+						<h4 id="poll_question">
 							', $context['poll']['question'], '
 						</h4>';
 
@@ -99,7 +99,7 @@ function template_main()
 					</div>
 				</div>
 			</div>
-			<div id="pollmoderation">';
+			<div id="poll_moderation">';
 
 		// Build the poll moderation button array.
 		$poll_buttons = array(
@@ -126,18 +126,16 @@ function template_main()
 					<h3 class="headerpadding">', $txt['calendar_linked_events'], '</h3>
 				</div>
 				<div class="windowbg wrc">
-					<div class="content">
-						<ul class="reset">';
+					<ul class="reset">';
 
 		foreach ($context['linked_calendar_events'] as $event)
 			echo '
-							<li>
-								', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="" title="' . $txt['modify'] . '" class="edit_event" /></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
-							</li>';
+						<li>
+							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="" title="' . $txt['modify'] . '" class="edit_event" /></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
+						</li>';
 
 		echo '
-						</ul>
-					</div>
+					</ul>
 				</div>
 			</div>';
 	}

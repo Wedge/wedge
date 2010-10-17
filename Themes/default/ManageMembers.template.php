@@ -16,134 +16,132 @@ function template_search_members()
 			</div>
 			<input type="hidden" name="sa" value="query" />
 			<div class="windowbg wrc">
-				<div class="content">
-					<div class="flow_hidden">
-						<div class="msearch_details floatleft">
-							<dl class="settings right">
-								<dt class="righttext">
-									<strong>', $txt['member_id'], ':</strong>
-									<select name="types[mem_id]">
-										<option value="--">&lt;</option>
-										<option value="-">&lt;=</option>
-										<option value="=" selected="selected">=</option>
-										<option value="+">&gt;=</option>
-										<option value="++">&gt;</option>
-									</select>
-								</dt>
-								<dd>
-									<input type="text" name="mem_id" value="" size="6" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['age'], ':</strong>
-									<select name="types[age]">
-										<option value="--">&lt;</option>
-										<option value="-">&lt;=</option>
-										<option value="=" selected="selected">=</option>
-										<option value="+">&gt;=</option>
-										<option value="++">&gt;</option>
-									</select>
-								</dt>
-								<dd>
-									<input type="text" name="age" value="" size="6" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['member_postcount'], ':</strong>
-									<select name="types[posts]">
-										<option value="--">&lt;</option>
-										<option value="-">&lt;=</option>
-										<option value="=" selected="selected">=</option>
-										<option value="+">&gt;=</option>
-										<option value="++">&gt;</option>
-									</select>
-								</dt>
-								<dd>
-									<input type="text" name="posts" value="" size="6" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['date_registered'], ':</strong>
-									<select name="types[reg_date]">
-										<option value="--">&lt;</option>
-										<option value="-">&lt;=</option>
-										<option value="=" selected="selected">=</option>
-										<option value="+">&gt;=</option>
-										<option value="++">&gt;</option>
-									</select>
-								</dt>
-								<dd>
-									<input type="text" name="reg_date" value="" size="10" class="input_text" /><span class="smalltext">', $txt['date_format'], '</span>
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['viewmembers_online'], ':</strong>
-									<select name="types[last_online]">
-										<option value="--">&lt;</option>
-										<option value="-">&lt;=</option>
-										<option value="=" selected="selected">=</option>
-										<option value="+">&gt;=</option>
-										<option value="++">&gt;</option>
-									</select>
-								</dt>
-								<dd>
-									<input type="text" name="last_online" value="" size="10" class="input_text" /><span class="smalltext">', $txt['date_format'], '</span>
-								</dd>
-							</dl>
-						</div>
-						<div class="msearch_details floatright">
-							<dl class="settings right">
-								<dt class="righttext">
-									<strong>', $txt['username'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="membername" value="" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['email_address'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="email" value="" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['website'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="website" value="" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['location'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="location" value="" class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['ip_address'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="ip" value=""', allowedTo('view_ip_address_any') ? '' : ' disabled="disabled"', ' class="input_text" />
-								</dd>
-								<dt class="righttext">
-									<strong>', $txt['messenger_address'], ':</strong>
-								</dt>
-								<dd>
-									<input type="text" name="messenger" value="" class="input_text" />
-								</dd>
-							</dl>
-						</div>
+				<div class="flow_hidden">
+					<div class="msearch_details floatleft">
+						<dl class="settings right">
+							<dt class="righttext">
+								<strong>', $txt['member_id'], ':</strong>
+								<select name="types[mem_id]">
+									<option value="--">&lt;</option>
+									<option value="-">&lt;=</option>
+									<option value="=" selected="selected">=</option>
+									<option value="+">&gt;=</option>
+									<option value="++">&gt;</option>
+								</select>
+							</dt>
+							<dd>
+								<input type="text" name="mem_id" value="" size="6" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['age'], ':</strong>
+								<select name="types[age]">
+									<option value="--">&lt;</option>
+									<option value="-">&lt;=</option>
+									<option value="=" selected="selected">=</option>
+									<option value="+">&gt;=</option>
+									<option value="++">&gt;</option>
+								</select>
+							</dt>
+							<dd>
+								<input type="text" name="age" value="" size="6" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['member_postcount'], ':</strong>
+								<select name="types[posts]">
+									<option value="--">&lt;</option>
+									<option value="-">&lt;=</option>
+									<option value="=" selected="selected">=</option>
+									<option value="+">&gt;=</option>
+									<option value="++">&gt;</option>
+								</select>
+							</dt>
+							<dd>
+								<input type="text" name="posts" value="" size="6" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['date_registered'], ':</strong>
+								<select name="types[reg_date]">
+									<option value="--">&lt;</option>
+									<option value="-">&lt;=</option>
+									<option value="=" selected="selected">=</option>
+									<option value="+">&gt;=</option>
+									<option value="++">&gt;</option>
+								</select>
+							</dt>
+							<dd>
+								<input type="text" name="reg_date" value="" size="10" class="input_text" /><span class="smalltext">', $txt['date_format'], '</span>
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['viewmembers_online'], ':</strong>
+								<select name="types[last_online]">
+									<option value="--">&lt;</option>
+									<option value="-">&lt;=</option>
+									<option value="=" selected="selected">=</option>
+									<option value="+">&gt;=</option>
+									<option value="++">&gt;</option>
+								</select>
+							</dt>
+							<dd>
+								<input type="text" name="last_online" value="" size="10" class="input_text" /><span class="smalltext">', $txt['date_format'], '</span>
+							</dd>
+						</dl>
 					</div>
-					<div class="flow_hidden">
-						<div class="msearch_details floatleft">
-							<fieldset>
-								<legend>', $txt['gender'], '</legend>
-								<label for="gender-0"><input type="checkbox" name="gender[]" value="0" id="gender-0" checked="checked" class="input_check" /> ', $txt['undefined_gender'], '</label>&nbsp;&nbsp;
-								<label for="gender-1"><input type="checkbox" name="gender[]" value="1" id="gender-1" checked="checked" class="input_check" /> ', $txt['male'], '</label>&nbsp;&nbsp;
-								<label for="gender-2"><input type="checkbox" name="gender[]" value="2" id="gender-2" checked="checked" class="input_check" /> ', $txt['female'], '</label>
-							</fieldset>
-						</div>
-						<div class="msearch_details floatright">
-							<fieldset>
-								<legend>', $txt['activation_status'], '</legend>
-								<label for="activated-0"><input type="checkbox" name="activated[]" value="1" id="activated-0" checked="checked" class="input_check" /> ', $txt['activated'], '</label>&nbsp;&nbsp;
-								<label for="activated-1"><input type="checkbox" name="activated[]" value="0" id="activated-1" checked="checked" class="input_check" /> ', $txt['not_activated'], '</label>
-							</fieldset>
-						</div>
+					<div class="msearch_details floatright">
+						<dl class="settings right">
+							<dt class="righttext">
+								<strong>', $txt['username'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="membername" value="" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['email_address'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="email" value="" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['website'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="website" value="" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['location'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="location" value="" class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['ip_address'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="ip" value=""', allowedTo('view_ip_address_any') ? '' : ' disabled="disabled"', ' class="input_text" />
+							</dd>
+							<dt class="righttext">
+								<strong>', $txt['messenger_address'], ':</strong>
+							</dt>
+							<dd>
+								<input type="text" name="messenger" value="" class="input_text" />
+							</dd>
+						</dl>
+					</div>
+				</div>
+				<div class="flow_hidden">
+					<div class="msearch_details floatleft">
+						<fieldset>
+							<legend>', $txt['gender'], '</legend>
+							<label for="gender-0"><input type="checkbox" name="gender[]" value="0" id="gender-0" checked="checked" class="input_check" /> ', $txt['undefined_gender'], '</label>&nbsp;&nbsp;
+							<label for="gender-1"><input type="checkbox" name="gender[]" value="1" id="gender-1" checked="checked" class="input_check" /> ', $txt['male'], '</label>&nbsp;&nbsp;
+							<label for="gender-2"><input type="checkbox" name="gender[]" value="2" id="gender-2" checked="checked" class="input_check" /> ', $txt['female'], '</label>
+						</fieldset>
+					</div>
+					<div class="msearch_details floatright">
+						<fieldset>
+							<legend>', $txt['activation_status'], '</legend>
+							<label for="activated-0"><input type="checkbox" name="activated[]" value="1" id="activated-0" checked="checked" class="input_check" /> ', $txt['activated'], '</label>&nbsp;&nbsp;
+							<label for="activated-1"><input type="checkbox" name="activated[]" value="0" id="activated-1" checked="checked" class="input_check" /> ', $txt['not_activated'], '</label>
+						</fieldset>
 					</div>
 				</div>
 				<div class="clear_right"></div>
@@ -273,39 +271,37 @@ function template_admin_browse()
 			// ]]></script>
 
 			<div class="windowbg wrc">
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							', $txt['admin_browse_outstanding_days_1'], ':
-						</dt>
-						<dd>
-							<input type="text" name="time_passed" value="14" maxlength="4" size="3" class="input_text" /> ', $txt['admin_browse_outstanding_days_2'], '.
-						</dd>
-						<dt>
-							', $txt['admin_browse_outstanding_perform'], ':
-						</dt>
-						<dd>
-							<select name="todo">
-								', $context['browse_type'] == 'activate' ? '
-								<option value="ok">' . $txt['admin_browse_w_activate'] . '</option>' : '', '
-								<option value="okemail">', $context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate'], ' ', $txt['admin_browse_w_email'], '</option>', $context['browse_type'] == 'activate' ? '' : '
-								<option value="require_activation">' . $txt['admin_browse_w_approve_require_activate'] . '</option>', '
-								<option value="reject">', $txt['admin_browse_w_reject'], '</option>
-								<option value="rejectemail">', $txt['admin_browse_w_reject'], ' ', $txt['admin_browse_w_email'], '</option>
-								<option value="delete">', $txt['admin_browse_w_delete'], '</option>
-								<option value="deleteemail">', $txt['admin_browse_w_delete'], ' ', $txt['admin_browse_w_email'], '</option>', $context['browse_type'] == 'activate' ? '
-								<option value="remind">' . $txt['admin_browse_w_remind'] . '</option>' : '', '
-							</select>
-						</dd>
-					</dl>
-					<input type="submit" value="', $txt['admin_browse_outstanding_go'], '" class="button_submit" />
-					<input type="hidden" name="type" value="', $context['browse_type'], '" />
-					<input type="hidden" name="sort" value="', $context['approve_list']['sort']['id'], '" />
-					<input type="hidden" name="start" value="', $context['approve_list']['start'], '" />
-					<input type="hidden" name="orig_filter" value="', $context['current_filter'], '" />
-					<input type="hidden" name="sa" value="approve" />', !empty($context['approve_list']['sort']['desc']) ? '
-					<input type="hidden" name="desc" value="1" />' : '', '
-				</div>
+				<dl class="settings">
+					<dt>
+						', $txt['admin_browse_outstanding_days_1'], ':
+					</dt>
+					<dd>
+						<input type="text" name="time_passed" value="14" maxlength="4" size="3" class="input_text" /> ', $txt['admin_browse_outstanding_days_2'], '.
+					</dd>
+					<dt>
+						', $txt['admin_browse_outstanding_perform'], ':
+					</dt>
+					<dd>
+						<select name="todo">
+							', $context['browse_type'] == 'activate' ? '
+							<option value="ok">' . $txt['admin_browse_w_activate'] . '</option>' : '', '
+							<option value="okemail">', $context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate'], ' ', $txt['admin_browse_w_email'], '</option>', $context['browse_type'] == 'activate' ? '' : '
+							<option value="require_activation">' . $txt['admin_browse_w_approve_require_activate'] . '</option>', '
+							<option value="reject">', $txt['admin_browse_w_reject'], '</option>
+							<option value="rejectemail">', $txt['admin_browse_w_reject'], ' ', $txt['admin_browse_w_email'], '</option>
+							<option value="delete">', $txt['admin_browse_w_delete'], '</option>
+							<option value="deleteemail">', $txt['admin_browse_w_delete'], ' ', $txt['admin_browse_w_email'], '</option>', $context['browse_type'] == 'activate' ? '
+							<option value="remind">' . $txt['admin_browse_w_remind'] . '</option>' : '', '
+						</select>
+					</dd>
+				</dl>
+				<input type="submit" value="', $txt['admin_browse_outstanding_go'], '" class="button_submit" />
+				<input type="hidden" name="type" value="', $context['browse_type'], '" />
+				<input type="hidden" name="sort" value="', $context['approve_list']['sort']['id'], '" />
+				<input type="hidden" name="start" value="', $context['approve_list']['start'], '" />
+				<input type="hidden" name="orig_filter" value="', $context['current_filter'], '" />
+				<input type="hidden" name="sa" value="approve" />', !empty($context['approve_list']['sort']['desc']) ? '
+				<input type="hidden" name="desc" value="1" />' : '', '
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';

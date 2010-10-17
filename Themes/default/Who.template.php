@@ -131,9 +131,7 @@ function template_credits()
 		if (isset($section['pretext']))
 		echo '
 		<div class="windowbg wrc">
-			<div class="content">
-				<p>', $section['pretext'], '</p>
-			</div>
+			<p>', $section['pretext'], '</p>
 		</div>';
 
 		if (isset($section['title']))
@@ -144,17 +142,16 @@ function template_credits()
 
 		echo '
 		<div class="windowbg2 wrc">
-			<div class="content">
-				<dl>';
+			<dl>';
 
 		foreach ($section['groups'] as $group)
 		{
 			if (isset($group['title']))
 				echo '
-					<dt>
-						<strong>', $group['title'], '</strong>
-					</dt>
-					<dd>';
+				<dt>
+					<strong>', $group['title'], '</strong>
+				</dt>
+				<dd>';
 
 			// Try to make this read nicely.
 			if (count($group['members']) <= 2)
@@ -166,18 +163,17 @@ function template_credits()
 			}
 
 			echo '
-					</dd>';
+				</dd>';
 		}
 
 		echo '
-				</dl>';
+			</dl>';
 
 		if (isset($section['posttext']))
 			echo '
-				<p class="posttext">', $section['posttext'], '</p>';
+			<p class="posttext">', $section['posttext'], '</p>';
 
 		echo '
-			</div>
 		</div>';
 	}
 
@@ -186,29 +182,27 @@ function template_credits()
 			<h3>', $txt['credits_copyright'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl>
-					<dt><strong>', $txt['credits_forum'], '</strong></dt>', '
-					<dd>', $context['copyrights']['smf'];
+			<dl>
+				<dt><strong>', $txt['credits_forum'], '</strong></dt>', '
+				<dd>', $context['copyrights']['smf'];
 
 	if (!empty($context['copyright_removal_validate']))
 		echo '<br />', $context['copyright_removal_validate'];
 
 	echo '
-					</dd>
-				</dl>';
+				</dd>
+			</dl>';
 
 	if (!empty($context['copyrights']['mods']))
 	{
 		echo '
-				<dl>
-					<dt><strong>', $txt['credits_modifications'], '</strong></dt>
-					<dd>', implode('</dd><dd>', $context['copyrights']['mods']), '</dd>
-				</dl>';
+			<dl>
+				<dt><strong>', $txt['credits_modifications'], '</strong></dt>
+				<dd>', implode('</dd><dd>', $context['copyrights']['mods']), '</dd>
+			</dl>';
 	}
 
 	echo '
-			</div>
 		</div>
 	</div>';
 }

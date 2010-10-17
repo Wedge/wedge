@@ -716,15 +716,15 @@ tr.titlebg td
 	margin-right: 0;
 	margin-left: 5px;
 }
-#detailedinfo div.content dl, #tracking div.content dl
+#detailedinfo dl, #tracking dl
 {
 	clear: left;
 }
-#detailedinfo div.content dt, #tracking div.content dt
+#detailedinfo dt, #tracking dt
 {
 	float: right;
 }
-#detailedinfo div.content dd, #tracking div.content dd
+#detailedinfo dd, #tracking dd
 {
 	float: right;
 }
@@ -751,11 +751,11 @@ tr.titlebg td
 }
 
 /* Profile statistics */
-#generalstats div.content dt
+#generalstats dt
 {
 	float: right;
 }
-#generalstats div.content dd
+#generalstats dd
 {
 	float: right;
 }
@@ -788,11 +788,11 @@ tr.titlebg td
 	float: left;
 }
 
-#popularposts div.content dt, #popularactivity div.content dt
+#popularposts dt, #popularactivity dt
 {
 	float: right;
 }
-#popularposts div.content dd, #popularactivity div.content dd
+#popularposts dd, #popularactivity dd
 {
 	float: right;
 }
@@ -965,7 +965,7 @@ tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day
 	padding: 1em 0.5em 0.5em 0;
 }
 /* admin home */
-#live_news div.content dl
+#live_news dl
 {
 	padding: 0.5em 0.5em 0 0;
 }

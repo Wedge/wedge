@@ -289,7 +289,7 @@ function template_results()
 			echo '
 			<div class="search_results_posts">
 			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
-				<div class="content flow_auto">';
+				<div class="flow_auto">';
 
 			foreach ($topic['matches'] as $message)
 			{
@@ -418,45 +418,44 @@ function template_results()
 			foreach ($topic['matches'] as $message)
 			{
 				echo '
-			<div class="search_results_posts">
-				<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
-					<div class="content">
-						<div class="counter">', $message['counter'], '</div>
-						<div class="topic_details">
-							<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.', $message['start'], ';topicseen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
-							<span class="smalltext">&#171;&nbsp;', $txt['message'], ' ', $txt['by'], ' <strong>', $message['member']['link'], ' </strong>', $txt['on'], '&nbsp;<em>', $message['time'], '</em>&nbsp;&#187;</span>
-						</div>
-						<div class="list_posts">', $message['body_highlighted'], '</div>';
+		<div class="search_results_posts">
+			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
+				<div class="counter">', $message['counter'], '</div>
+				<div class="topic_details">
+					<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.', $message['start'], ';topicseen#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
+					<span class="smalltext">&#171;&nbsp;', $txt['message'], ' ', $txt['by'], ' <strong>', $message['member']['link'], ' </strong>', $txt['on'], '&nbsp;<em>', $message['time'], '</em>&nbsp;&#187;</span>
+				</div>
+				<div class="list_posts">', $message['body_highlighted'], '</div>';
 
 				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '
-						<div class="quickbuttons_wrap">
-							<ul class="reset smalltext quickbuttons">';
+				<div class="quickbuttons_wrap">
+					<ul class="reset smalltext quickbuttons">';
 
 				// If they *can* reply?
 				if ($topic['can_reply'])
 					echo '
-								<li class="reply_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['reply'], '</a></li>';
+						<li class="reply_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['reply'], '</a></li>';
 
 				// If they *can* quote?
 				if ($topic['can_quote'])
 					echo '
-								<li class="quote_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'] . ';quote=' . $message['id'] . '">', $txt['quote'], '</a></li>';
+						<li class="quote_button"><a href="', $scripturl . '?action=post;topic=' . $topic['id'] . '.' . $message['start'] . ';quote=' . $message['id'] . '">', $txt['quote'], '</a></li>';
 
 				// Can we request notification of topics?
 				if ($topic['can_mark_notify'])
 					echo '
-								<li class="notify_button"><a href="', $scripturl . '?action=notify;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['notify'], '</a></li>';
+						<li class="notify_button"><a href="', $scripturl . '?action=notify;topic=' . $topic['id'] . '.' . $message['start'], '">', $txt['notify'], '</a></li>';
 
 				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '
-							</ul>
-						</div>';
+					</ul>
+				</div>';
+
 				echo '
-						<br class="clear" />
-					</div>
-				</div>
-			</div>';
+				<br class="clear" />
+			</div>
+		</div>';
 			}
 		}
 

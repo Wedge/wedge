@@ -1049,7 +1049,7 @@ dl.settings dt a img {
 }
 /* Also try #c8eeca, #b8cade, #f2efea, a8ceba/-5px */
 .cat_bar {
-	background: #e5eee0 url(../images/theme/grad40.png) 0 -20px repeat-x;
+	background: #e5eee5 url(../images/theme/grad40.png) 0 -20px repeat-x;
 	border: 1px solid #e0e0e0;
 	border: 1px solid rgba(160,160,160, .5);
 }
@@ -1165,7 +1165,7 @@ table.table_grid thead tr.catbg th {
 /* "With rounded corners" class, for modern browsers... */
 .wrc {
 	margin-top: 2px;
-	padding: 11px 0;
+	padding: 0.9em 1.2em;
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
@@ -1205,12 +1205,7 @@ form.wrc {
 
 /* The main content area.
 ------------------------------------------------------- */
-.content {
-	padding: 0.5em 1.2em;
-	margin: 0;
-	border: none;
-}
-.content p {
+.wrc p {
 	margin: 0 0 0.5em 0;
 }
 
@@ -1326,33 +1321,33 @@ table.table_list td, table.table_list th {
 table.table_list tbody.header td {
 	padding: 0;
 }
-table.table_list tbody.content td.stats {
-	font-size: 90%;
-	width: 15%;
-	text-align: center;
-}
-table.table_list tbody.content td.lastpost {
-	line-height: 1.3em;
-	font-size: 85%;
-	width: 24%;
-}
-table.table_list tbody.content td.icon {
-	text-align: center;
-	width: 6%;
-}
 
 /* Styles for the board index.
 ------------------------------------------------- */
 
 /* the board title! */
-.table_list tbody.content td.info a.subject {
+#board_list td.info a.subject {
 	font-weight: bold;
 	font-size: 110%;
 	color: #d97b33;
 }
-.table_list tbody.content td.children {
+#board_list td.children {
 	color: #555;
 	font-size: 85%;
+}
+#board_list td.stats {
+	font-size: 90%;
+	width: 15%;
+	text-align: center;
+}
+#board_list td.lastpost {
+	line-height: 1.3em;
+	font-size: 85%;
+	width: 24%;
+}
+#board_list td.icon {
+	text-align: center;
+	width: 6%;
 }
 p.moderators {
 	font-size: 0.8em;
@@ -1510,6 +1505,7 @@ img.new_posts {
 #moderationbuttons {
 	overflow: hidden;
 }
+
 /* Events */
 .linked_events {
 	padding: 1em 0;
@@ -1518,14 +1514,12 @@ img.new_posts {
 	margin: 0 1em;
 	vertical-align: middle;
 }
+
 /* Poll question */
 #poll {
 	overflow: hidden;
 }
-#poll .content {
-	padding: 0 1em;
-}
-#pollquestion {
+#poll_question {
 	padding: 0 0 0.5em 2em;
 }
 
@@ -1583,17 +1577,18 @@ img.new_posts {
 	padding: 0 0.5em 0.5em 0.5em;
 }
 
-#pollmoderation {
+#poll_moderation {
 	margin: 0;
 	padding: 0;
 	overflow: auto;
 }
 
-/* onto the posts */
+/* Onto the posts */
 #forumposts {
 	clear: both;
 }
-/* author and topic information */
+
+/* Author and topic information */
 #forumposts #author {
 	margin: 0 7.7em 0 10px;
 }
@@ -1604,9 +1599,11 @@ img.new_posts {
 	margin: 0;
 	padding: 0.5em;
 }
-/* poster and postarea + moderation area underneath */
+
+/* Poster and postarea + moderation area underneath */
 .post_wrapper {
 	overflow: auto;
+	margin: 0 -1.2em;
 }
 .poster {
 	float: left;
@@ -1622,7 +1619,8 @@ img.new_posts {
 .moderatorbar {
 	clear: right;
 }
-/* poster details and list of items */
+
+/* Poster details and list of items */
 .poster ul {
 	padding: 0;
 	margin: 0 1em 0 1.5em;
@@ -2325,9 +2323,6 @@ dl {
 	width: 20%;
 	float: left;
 }
-#basicinfo .content {
-	padding-left: 20px;
-}
 #detailedinfo {
 	margin-top: 10px;
 	width: 79.5%;
@@ -2366,14 +2361,14 @@ dl {
 #userstatus img {
 	vertical-align: middle;
 }
-#detailedinfo div.content dl, #tracking div.content dl {
+#detailedinfo dl, #tracking dl {
 	clear: right;
 	overflow: auto;
 	margin: 0 0 18px 0;
 	padding: 0 0 15px 0;
 	border-bottom: 1px #ccc solid;
 }
-#detailedinfo div.content dt, #tracking div.content dt {
+#detailedinfo dt, #tracking dt {
 	width: 35%;
 	float: left;
 	margin: 0 0 3px 0;
@@ -2381,16 +2376,16 @@ dl {
 	font-weight: bold;
 	clear: both;
 }
-#detailedinfo div.content dd, #tracking div.content dd {
+#detailedinfo dd, #tracking dd {
 	width: 65%;
 	float: left;
 	margin: 0 0 3px 0;
 	padding: 0;
 }
-#detailedinfo div.content dl.noborder {
+#detailedinfo dl.noborder {
 	border-bottom: 0;
 }
-#detailedinfo div.content dt.clear {
+#detailedinfo dt.clear {
 	width: 100%;
 }
 .signature, .custom_fields_above_signature {
@@ -2454,7 +2449,7 @@ dl {
 }
 
 /* Profile statistics */
-#generalstats div.content dt {
+#generalstats dt {
 	width: 50%;
 	float: left;
 	margin: 0 0 3px 0;
@@ -2462,7 +2457,7 @@ dl {
 	font-weight: bold;
 	clear: both;
 }
-#generalstats div.content dd {
+#generalstats dd {
 	width: 50%;
 	float: left;
 	margin: 0 0 3px 0;
@@ -2516,7 +2511,7 @@ dl {
 	float: right;
 }
 
-#popularposts div.content dt, #popularactivity div.content dt {
+#popularposts dt, #popularactivity dt {
 	width: 65%;
 	float: left;
 	margin: 0 0 3px 0;
@@ -2524,7 +2519,7 @@ dl {
 	font-weight: bold;
 	clear: both;
 }
-#popularposts div.content dd, #popularactivity div.content dd {
+#popularposts dd, #popularactivity dd {
 	width: 35%;
 	float: left;
 	margin: 0 0 3px 0;
@@ -2581,7 +2576,7 @@ dl {
 	margin-right: 1em;
 }
 
-#tracking div.content dl {
+#tracking dl {
 	border-bottom: 0;
 	margin: 0;
 	padding: 0;
@@ -2679,10 +2674,10 @@ dl {
 #statistics .cat_bar h3 {
 	text-align: center;
 }
-#statistics div.content {
+#statistics dl {
 	min-height: 210px;
 }
-#statistics div.top_row {
+#statistics div.top_row dl {
 	min-height: 150px;
 }
 #stats_left, #top_posters, #top_topics_replies, #top_topics_starter {
@@ -2746,6 +2741,12 @@ tr td.stats_day {
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
+
+#personal_messages .pm {
+	overflow: auto;
+	clear: both;
+	padding: 0.9em 0;
+}
 
 #personal_messages #author, #personal_messages #topic_title {
 	float: left;

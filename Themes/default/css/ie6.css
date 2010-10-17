@@ -94,7 +94,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 
 /* Styles for the statistics center.
 ------------------------------------------------- */
-#statistics div.content {
+#statistics div.wrc {
 	height: 210px;
 	overflow: hidden;
 }

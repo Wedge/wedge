@@ -3090,11 +3090,11 @@ function ReportMessage()
 			SELECT id_member, real_name, lngfile
 			FROM {db_prefix}members
 			WHERE (id_group = {int:admin_id} OR FIND_IN_SET({int:admin_id}, additional_groups) != 0)
-				' . (empty($_POST['ID_ADMIN']) ? '' : 'AND id_member = {int:specific_admin}') . '
+				' . (empty($_POST['id_admin']) ? '' : 'AND id_member = {int:specific_admin}') . '
 			ORDER BY lngfile',
 			array(
 				'admin_id' => 1,
-				'specific_admin' => isset($_POST['ID_ADMIN']) ? (int) $_POST['ID_ADMIN'] : 0,
+				'specific_admin' => isset($_POST['id_admin']) ? (int) $_POST['id_admin'] : 0,
 			)
 		);
 

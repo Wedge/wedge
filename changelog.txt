@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10171 $.
+Changelog started January 1, 2004; Currently at $Revision: 10177 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -22,6 +22,7 @@ October 2010
  * Fixed code for icons in some areas. Removed unnecessary ie6_header span from GenericList. Removed old commented out code. (GenericList.template.php, GenericMenu.template.php, Profile.template.php, Profile-Modify.php, Profile-View.php) [Bug 4489]
  ! Height fix for RTE with Opera. (editor.js) [Bug 4500]
  + Add the option to enable/disable test mode for payment gateways to the user interface. Thanks Nibogo! (ManagePaid.php) [Bug 4503]
+ ! Small cleanups. (several files) [Bug 4505]
 
 
 September 2010

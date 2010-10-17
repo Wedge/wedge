@@ -51,9 +51,7 @@ function template_latest_news()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
-			</div>
+			<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
 		</div>';
 
 	// This requires a lot of javascript...
@@ -70,14 +68,12 @@ function template_latest_news()
 				sAnnouncementTemplate: ', JavaScriptEscape('
 					<dl>
 						%content%
-					</dl>
-				'), ',
+					</dl>'), ',
 				sAnnouncementMessageTemplate: ', JavaScriptEscape('
 					<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
 					<dd>
 						%message%
-					</dd>
-				'), ',
+					</dd>'), ',
 				sAnnouncementContainerId: \'smfAnnouncements\'
 			});
 		// ]]></script>';
@@ -96,7 +92,7 @@ function template_group_requests_block()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content modbox">
+			<div class="modbox">
 				<ul class="reset">';
 
 		foreach ($context['group_requests'] as $request)
@@ -130,7 +126,7 @@ function template_reported_posts_block()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content modbox">
+			<div class="modbox">
 				<ul class="reset">';
 
 		foreach ($context['reported_posts'] as $report)
@@ -163,7 +159,7 @@ function template_watched_users()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content modbox">
+			<div class="modbox">
 				<ul class="reset">';
 
 		foreach ($context['watched_users'] as $user)
@@ -196,7 +192,7 @@ function template_notes()
 				<h3>', $txt['mc_notes'], '</h3>
 			</div>
 			<div class="windowbg wrc">
-				<div class="content modbox">';
+				<div class="modbox">';
 
 		if (!empty($context['notes']))
 		{
@@ -254,20 +250,18 @@ function template_reported_posts()
 	{
 		echo '
 		<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
-			<div class="content">
-				<div>
-					<div class="floatleft">
-						<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
-					</div>
-					<div class="floatright">
-						<a href="', $report['report_href'], '">', $details_button, '</a>
-						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(\'' . $txt['mc_reportedp_ignore_confirm'] . '\');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
-						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
-						', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check" />' : '', '
-					</div>
-				</div><br />
-				<div class="smalltext">
-					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br />';
+			<div>
+				<div class="floatright">
+					<a href="', $report['report_href'], '">', $details_button, '</a>
+					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(\'' . $txt['mc_reportedp_ignore_confirm'] . '\');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
+					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
+					', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check" />' : '', '
+				</div>
+				<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
+			</div>
+			<br />
+			<div class="smalltext">
+				&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br />';
 
 		// Prepare the comments...
 		$comments = array();
@@ -275,11 +269,10 @@ function template_reported_posts()
 			$comments[$comment['member']['id']] = $comment['member']['link'];
 
 		echo '
-					&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
-				</div>
-				<hr />
-				', $report['body'], '
+				&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
 			</div>
+			<hr />
+			', $report['body'], '
 		</div>';
 	}
 
@@ -287,9 +280,7 @@ function template_reported_posts()
 	if (empty($context['reports']))
 		echo '
 		<div class="windowbg2 wrc">
-			<div class="content">
-				<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
-			</div>
+			<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
 		</div>';
 
 	echo '
@@ -327,9 +318,7 @@ function template_unapproved_posts()
 	if (empty($context['unapproved_items']))
 		echo '
 		<div class="windowbg2 wrc">
-			<div class="content">
-				<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
-			</div>
+			<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
 		</div>';
 	else
 		echo '
@@ -348,23 +337,21 @@ function template_unapproved_posts()
 			</h3>
 		</div>
 		<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
-			<div class="content">
-				<div class="post">', $item['body'], '</div>
-				<span class="floatright">
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';approve=', $item['id'], '">', $approve_button, '</a>';
+			<div class="post">', $item['body'], '</div>
+			<span class="floatright">
+				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';approve=', $item['id'], '">', $approve_button, '</a>';
 
 			if ($item['can_delete'])
 				echo '
-					', $context['menu_separator'], '
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
+				', $context['menu_separator'], '
+				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
 
 			echo '
-					<input type="checkbox" name="item[]" value="', $item['id'], '" checked="checked" class="input_check" /> ';
+				<input type="checkbox" name="item[]" value="', $item['id'], '" checked="checked" class="input_check" /> ';
 
 			echo '
-				</span>
-				<br class="clear" />
-			</div>
+			</span>
+			<br class="clear" />
 		</div>';
 	}
 
@@ -415,9 +402,7 @@ function template_unapproved_attachments()
 	if (empty($context['unapproved_items']))
 		echo '
 			<div class="windowbg wrc">
-				<div class="content">
-					<p class="centertext">', $txt['mc_unapproved_attachments_none_found'], '</p>
-				</div>
+				<p class="centertext">', $txt['mc_unapproved_attachments_none_found'], '</p>
 			</div>';
 	else
 		echo '
@@ -515,9 +500,7 @@ function template_viewmodreport()
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
-				<div class="content">
-					', $context['report']['body'], '
-				</div>
+				', $context['report']['body'], '
 			</div>
 			<br />
 			<div class="cat_bar">
@@ -527,10 +510,8 @@ function template_viewmodreport()
 	foreach ($context['report']['comments'] as $comment)
 		echo '
 			<div class="windowbg wrc">
-				<div class="content">
-					<p class="smalltext">', sprintf($txt['mc_modreport_whoreported_data'], $comment['member']['link'] . (empty($comment['member']['id']) && !empty($comment['member']['ip']) ? ' (' . $comment['member']['ip'] . ')' : ''), $comment['time']), '</p>
-					<p>', $comment['message'], '</p>
-				</div>
+				<p class="smalltext">', sprintf($txt['mc_modreport_whoreported_data'], $comment['member']['link'] . (empty($comment['member']['id']) && !empty($comment['member']['ip']) ? ' (' . $comment['member']['ip'] . ')' : ''), $comment['time']), '</p>
+				<p>', $comment['message'], '</p>
 			</div>';
 
 	echo '
@@ -538,22 +519,20 @@ function template_viewmodreport()
 			<div class="cat_bar">
 				<h3>', $txt['mc_modreport_mod_comments'], '</h3>
 			</div>
-			<div class="windowbg2 wrc">
-				<div class="content">';
+			<div class="windowbg2 wrc">';
 
 	if (empty($context['report']['mod_comments']))
 		echo '
-					<p class="centertext">', $txt['mc_modreport_no_mod_comment'], '</p>';
+				<p class="centertext">', $txt['mc_modreport_no_mod_comment'], '</p>';
 
 	foreach ($context['report']['mod_comments'] as $comment)
-		echo
-					'<p>', $comment['member']['link'], ': ', $comment['message'], ' <em class="smalltext">(', $comment['time'], ')</em></p>';
+		echo '
+				<p>', $comment['member']['link'], ': ', $comment['message'], ' <em class="smalltext">(', $comment['time'], ')</em></p>';
 
 	echo '
-					<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
-					<div>
-						<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="button_submit" />
-					</div>
+				<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
+				<div>
+					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="button_submit" />
 				</div>
 			</div>
 			<br />';
@@ -660,61 +639,57 @@ function template_moderation_settings()
 				', $txt['mc_prefs_desc'], '
 			</div>
 			<div class="windowbg2 wrc">
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<strong>', $txt['mc_prefs_homepage'], ':</strong>
-						</dt>
-						<dd>';
+				<dl class="settings">
+					<dt>
+						<strong>', $txt['mc_prefs_homepage'], ':</strong>
+					</dt>
+					<dd>';
 
 	foreach ($context['homepage_blocks'] as $k => $v)
 		echo '
-							<label for="mod_homepage_', $k, '"><input type="checkbox" id="mod_homepage_', $k, '" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked="checked"' : '', ' class="input_check" /> ', $v, '</label><br />';
+						<label for="mod_homepage_', $k, '"><input type="checkbox" id="mod_homepage_', $k, '" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked="checked"' : '', ' class="input_check" /> ', $v, '</label><br />';
 
 	echo '
-						</dd>';
+					</dd>';
 
 	// If they can moderate boards they have more options!
 	if ($context['can_moderate_boards'])
 	{
 		echo '
-						<dt>
-							<strong><label for="mod_show_reports">', $txt['mc_prefs_show_reports'], '</label>:</strong>
-						</dt>
-						<dd>
-							<input type="checkbox" id="mod_show_reports" name="mod_show_reports" ', $context['mod_settings']['show_reports'] ? 'checked="checked"' : '', ' class="input_check" />
-						</dd>
-						<dt>
-							<strong><label for="mod_notify_report">', $txt['mc_prefs_notify_report'], '</label>:</strong>
-						</dt>
-						<dd>
-							<select id="mod_notify_report" name="mod_notify_report">
-								<option value="0" ', $context['mod_settings']['notify_report'] == 0 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_never'], '</option>
-								<option value="1" ', $context['mod_settings']['notify_report'] == 1 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_moderator'], '</option>
-								<option value="2" ', $context['mod_settings']['notify_report'] == 2 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_always'], '</option>
-							</select>
-						</dd>';
-
+					<dt>
+						<strong><label for="mod_show_reports">', $txt['mc_prefs_show_reports'], '</label>:</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" id="mod_show_reports" name="mod_show_reports" ', $context['mod_settings']['show_reports'] ? 'checked="checked"' : '', ' class="input_check" />
+					</dd>
+					<dt>
+						<strong><label for="mod_notify_report">', $txt['mc_prefs_notify_report'], '</label>:</strong>
+					</dt>
+					<dd>
+						<select id="mod_notify_report" name="mod_notify_report">
+							<option value="0" ', $context['mod_settings']['notify_report'] == 0 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_never'], '</option>
+							<option value="1" ', $context['mod_settings']['notify_report'] == 1 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_moderator'], '</option>
+							<option value="2" ', $context['mod_settings']['notify_report'] == 2 ? 'selected="selected"' : '', '>', $txt['mc_prefs_notify_report_always'], '</option>
+						</select>
+					</dd>';
 	}
 
 	if ($context['can_moderate_approvals'])
 	{
 		echo '
-
-						<dt>
-							<strong><label for="mod_notify_approval">', $txt['mc_prefs_notify_approval'], '</label>:</strong>
-						</dt>
-						<dd>
-							<input type="checkbox" id="mod_notify_approval" name="mod_notify_approval" ', $context['mod_settings']['notify_approval'] ? 'checked="checked"' : '', ' class="input_check" />
-						</dd>';
+					<dt>
+						<strong><label for="mod_notify_approval">', $txt['mc_prefs_notify_approval'], '</label>:</strong>
+					</dt>
+					<dd>
+						<input type="checkbox" id="mod_notify_approval" name="mod_notify_approval" ', $context['mod_settings']['notify_approval'] ? 'checked="checked"' : '', ' class="input_check" />
+					</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="righttext">
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />
-					</div>
+				</dl>
+				<div class="righttext">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />
 				</div>
 			</div>
 		</form>
@@ -743,16 +718,14 @@ function template_show_notice()
 			<h3>', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<div class="content">
-				<dl>
-					<dt>
-						<strong>', $txt['show_notice_text'], ':</strong>
-					</dt>
-					<dd>
-						', $context['notice_body'], '
-					</dd>
-				</dl>
-			</div>
+			<dl>
+				<dt>
+					<strong>', $txt['show_notice_text'], ':</strong>
+				</dt>
+				<dd>
+					', $context['notice_body'], '
+				</dd>
+			</dl>
 		</div>
 	</body>
 </html>';
@@ -774,36 +747,34 @@ function template_warn_template()
 				', $txt['mc_warning_template_desc'], '
 			</div>
 			<div class="windowbg wrc">
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<strong><label for="template_title">', $txt['mc_warning_template_title'], '</label>:</strong>
-						</dt>
-						<dd>
-							<input type="text" id="template_title" name="template_title" value="', $context['template_data']['title'], '" size="30" class="input_text" />
-						</dd>
-						<dt>
-							<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong><br />
-							<span class="smalltext">', $txt['mc_warning_template_body_desc'], '</span>
-						</dt>
-						<dd>
-							<textarea id="template_body" name="template_body" rows="10" cols="45" class="smalltext">', $context['template_data']['body'], '</textarea>
-						</dd>
-					</dl>';
+				<dl class="settings">
+					<dt>
+						<strong><label for="template_title">', $txt['mc_warning_template_title'], '</label>:</strong>
+					</dt>
+					<dd>
+						<input type="text" id="template_title" name="template_title" value="', $context['template_data']['title'], '" size="30" class="input_text" />
+					</dd>
+					<dt>
+						<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong><br />
+						<span class="smalltext">', $txt['mc_warning_template_body_desc'], '</span>
+					</dt>
+					<dd>
+						<textarea id="template_body" name="template_body" rows="10" cols="45" class="smalltext">', $context['template_data']['body'], '</textarea>
+					</dd>
+				</dl>';
 
 	if ($context['template_data']['can_edit_personal'])
 		echo '
-					<input type="checkbox" name="make_personal" id="make_personal" ', $context['template_data']['personal'] ? 'checked="checked"' : '', ' class="input_check" />
-						<label for="make_personal">
-							<strong>', $txt['mc_warning_template_personal'], '</strong>
-						</label>
-						<br />
-						<span class="smalltext">', $txt['mc_warning_template_personal_desc'], '</span>
-						<br />';
+				<input type="checkbox" name="make_personal" id="make_personal" ', $context['template_data']['personal'] ? 'checked="checked"' : '', ' class="input_check" />
+					<label for="make_personal">
+						<strong>', $txt['mc_warning_template_personal'], '</strong>
+					</label>
+					<br />
+					<span class="smalltext">', $txt['mc_warning_template_personal_desc'], '</span>
+					<br />';
 
 	echo '
-					<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
-				</div>
+				<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
