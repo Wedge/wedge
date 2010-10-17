@@ -74,7 +74,7 @@ class wedgeEditor
 			loadTemplate(false, $context['browser']['is_ie'] ? 'editor_ie' : 'editor'); // we don't need any templates; this class does it. But we do need CSS.
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
-			$context['html_headers'] .= '
+			$context['header'] .= '
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 			var oEditorStrings = {
@@ -92,7 +92,7 @@ class wedgeEditor
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
-				$context['html_headers'] .= '
+				$context['header'] .= '
 		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
 
 				// Some hidden information is needed in order to make the spell checking work.
@@ -103,7 +103,7 @@ class wedgeEditor
 		</form>';
 
 				// Also make sure that spell check works with rich edit.
-				$context['html_headers'] .= '
+				$context['header'] .= '
 		<script type="text/javascript"><!-- // --><![CDATA[
 		function spellCheckDone()
 		{

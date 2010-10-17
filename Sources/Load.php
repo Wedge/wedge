@@ -1317,7 +1317,7 @@ function detectBrowser()
  * - Identify if the user has come to the board from the wrong place (e.g. a www in the URL that shouldn't be there) so it can be fixed.
  * - Push common details into $context['user'] for the current user.
  * - Identify what smiley set should be used.
- * - Initialize $context['html_headers'] for later use, as well as some $settings paths, some global $context values, $txt initially.
+ * - Initialize $context['header'] and $context['footer'] for later use, as well as some $settings paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
  * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
@@ -1556,8 +1556,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['user']['smiley_set'] = $user_info['smiley_set'];
 
 	// Some basic information...
-	if (!isset($context['html_headers']))
-		$context['html_headers'] = '';
+	if (!isset($context['header']))
+		$context['header'] = '';
+	if (!isset($context['footer']))
+		$context['footer'] = '';
 
 	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];
@@ -1738,7 +1740,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$type = empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time() ? 'task' : 'mailq';
 			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
 
-			$context['html_headers'] .= '
+			$context['header'] .= '
 	<script type="text/javascript">
 		function smfAutoTask()
 		{
@@ -1780,13 +1782,13 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 		foreach ($style_sheets as $sheet)
 		{
 			// Prevent the style sheet from being included twice.
-			if (strpos($context['html_headers'], 'id="' . $sheet . '_css"') !== false)
+			if (strpos($context['header'], 'id="' . $sheet . '_css"') !== false)
 				continue;
 
 			$sheet_path = file_exists($settings['theme_dir']. '/css/' . $sheet . '.css') ? 'theme_url' : (file_exists($settings['default_theme_dir']. '/css/' . $sheet . '.css') ? 'default_theme_url' : '');
 			if ($sheet_path)
 			{
-				$context['html_headers'] .= "\n\t" . '<link rel="stylesheet" type="text/css" id="' . $sheet . '_css" href="' . $settings[$sheet_path] . '/css/' . $sheet . '.css" />';
+				$context['header'] .= "\n\t" . '<link rel="stylesheet" type="text/css" id="' . $sheet . '_css" href="' . $settings[$sheet_path] . '/css/' . $sheet . '.css" />';
 				if ($db_show_debug === true)
 					$context['debug']['sheets'][] = $sheet . ' (' . basename($settings[$sheet_path]) . ')';
 			}

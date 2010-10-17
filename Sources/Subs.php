@@ -3349,21 +3349,21 @@ function setupThemeContext($forceload = false)
 	// Resize avatars the fancy, but non-GD requiring way.
 	if ($modSettings['avatar_action_too_large'] == 'option_js_resize' && (!empty($modSettings['avatar_max_width_external']) || !empty($modSettings['avatar_max_height_external'])))
 	{
-		$context['html_headers'] .= '
+		$context['header'] .= '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		var smf_avatarMaxWidth = ' . (int) $modSettings['avatar_max_width_external'] . ';
 		var smf_avatarMaxHeight = ' . (int) $modSettings['avatar_max_height_external'] . ';';
 
 		if (!$context['browser']['is_ie'])
-			$context['html_headers'] .= '
+			$context['header'] .= '
 	window.addEventListener("load", smf_avatarResize, false);';
 		else
-			$context['html_headers'] .= '
+			$context['header'] .= '
 	var window_oldAvatarOnload = window.onload;
 	window.onload = smf_avatarResize;';
 
 		// !!! Move this over to script.js?
-		$context['html_headers'] .= '
+		$context['header'] .= '
 	// ]]></script>';
 	}
 
@@ -3382,7 +3382,7 @@ function setupThemeContext($forceload = false)
 	);
 
 	if (empty($settings['theme_version']))
-		$context['html_headers'] .= '
+		$context['header'] .= '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		var smf_scripturl = "' . $scripturl . '";
 	// ]]></script>';

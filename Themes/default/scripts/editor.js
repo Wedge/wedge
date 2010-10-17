@@ -649,10 +649,99 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 			}
 		}
 		else
-			replaceText(sText, this.oTextHandle);
+			this.replaceText(sText);
 	}
 }
 
+// Replaces the currently selected text with the passed text.
+smc_Editor.prototype.replaceText = function(text)
+{
+	var oTextHandle = this.oTextHandle;
+
+	// Attempt to create a text range (IE).
+	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
+	{
+		var caretPos = oTextHandle.caretPos;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;
+		caretPos.select();
+	}
+	// Mozilla text range replace.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
+		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
+		var scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			oTextHandle.focus();
+			var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
+			oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put it on the end.
+	else
+	{
+		oTextHandle.value += text;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
+
+// Surrounds the selected text with text1 and text2.
+smc_Editor.prototype.surroundText = function(text1, text2)
+{
+	var oTextHandle = this.oTextHandle;
+
+	// Can a text range be created?
+	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
+	{
+		var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
+
+		if (temp_length == 0)
+		{
+			caretPos.moveStart('character', -text2.length);
+			caretPos.moveEnd('character', -text2.length);
+			caretPos.select();
+		}
+		else
+			oTextHandle.focus(caretPos);
+	}
+	// Mozilla text range wrap.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
+		var selection = oTextHandle.value.substr(oTextHandle.selectionStart, oTextHandle.selectionEnd - oTextHandle.selectionStart);
+		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
+		var newCursorPos = oTextHandle.selectionStart;
+		var scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text1 + selection + text2 + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			var t1 = is_opera ? text1.match(/\n/g) : '', t2 = is_opera ? text2.match(/\n/g) : '';
+			var goForward1 = t1 ? t1.length : 0, goForward2 = t2 ? t2.length : 0;
+			if (selection.length == 0)
+				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
+			else
+				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
+			oTextHandle.focus();
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put them on the end, then.
+	else
+	{
+		oTextHandle.value += text1 + text2;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
 
 // Special handler for WYSIWYG.
 smc_Editor.prototype.smf_execCommand = function(sCommand, bUi, sValue)
@@ -711,7 +800,7 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 
 				var sDesc = prompt(oEditorStrings['prompt_text_desc']);
 				var bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
-				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+				this.replaceText(bbcode.replace(/\\n/g, '\n'));
 			}
 			// img popup?
 			else if (oButtonProperties.sCode == 'img')
@@ -722,15 +811,15 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 					return;
 
 				var bbcode = '[img]' + sText + '[/img]';
-				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+				this.replaceText(bbcode.replace(/\\n/g, '\n'));
 			}
 			// Replace?
 			else if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
-				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle)
+				this.replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'));
 
 			// Surround!
 			else
-				surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'), this.oTextHandle)
+				this.surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'));
 		}
 		else
 		{
@@ -774,7 +863,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 		if (!this.bRichTextEnabled)
 		{
 			sValue = sValue.replace(/"/, '');
-			surroundText('[font=' + sValue + ']', '[/font]', this.oTextHandle);
+			this.surroundText('[font=' + sValue + ']', '[/font]');
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -785,7 +874,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 	{
 		if (!this.bRichTextEnabled)
 		{
-			surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]', this.oTextHandle);
+			this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -796,7 +885,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 	{
 		if (!this.bRichTextEnabled)
 		{
-			surroundText('[color=' + sValue + ']', '[/color]', this.oTextHandle);
+			this.surroundText('[color=' + sValue + ']', '[/color]');
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -1000,7 +1089,7 @@ smc_Editor.prototype.removeFormatting = function()
 		// Then just anything that looks like BBC.
 		sCurrentText = sCurrentText.replace(RegExp("\\[/?[A-Za-z]+\\]", "g"), '');
 
-		replaceText(sCurrentText, this.oTextHandle);
+		this.replaceText(sCurrentText);
 	}
 }
 

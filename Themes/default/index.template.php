@@ -147,8 +147,8 @@ function template_html_above()
 		echo '
 	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0" />';
 
-	// Output any remaining HTML headers. (From mods, maybe?)
-	echo $context['html_headers'];
+	// Output any remaining HTML headers. (Mods may easily add code here.)
+	echo $context['header'];
 
 	echo '
 </head>
@@ -351,6 +351,9 @@ function template_body_below()
 function template_html_below()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+
+	// Output any postponed code. (Usually for Javascript added by mods.)
+	echo $context['footer'];
 
 	echo '
 </body></html>';
