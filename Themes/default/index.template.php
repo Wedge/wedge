@@ -89,11 +89,32 @@ function template_html_above()
 	</style>';
 
 	echo '
+	<title>', $context['page_title_html_safe'], '</title>
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
+	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>', $context['browser']['is_ie6'] ? '
+	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>' : '', '
+	<script type="text/javascript"><!-- // --><![CDATA[
+		var smf_theme_url = "', $settings['theme_url'], '";
+		var smf_default_theme_url = "', $settings['default_theme_url'], '";
+		var smf_images_url = "', $settings['images_url'], '";
+		var smf_scripturl = "', $scripturl, '";
+		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
+		var fPmPopup = function ()
+		{
+			if (confirm("' . $txt['show_personal_messages'] . '"))
+				window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
+		}
+		addLoadEvent(fPmPopup);' : '', '
+		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
+		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
+		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
+	// ]]></script>';
+
+	echo '
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
-	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '', '
-	<title>', $context['page_title_html_safe'], '</title>';
+	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '';
 
 	// Please don't index these Mr Robotto.
 	if (!empty($context['robot_no_index']))
@@ -125,27 +146,6 @@ function template_html_above()
 	if (!empty($context['current_board']))
 		echo '
 	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0" />';
-
-	echo '
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
-	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>', $context['browser']['is_ie6'] ? '
-	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>' : '', '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		var smf_theme_url = "', $settings['theme_url'], '";
-		var smf_default_theme_url = "', $settings['default_theme_url'], '";
-		var smf_images_url = "', $settings['images_url'], '";
-		var smf_scripturl = "', $scripturl, '";
-		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
-		var fPmPopup = function ()
-		{
-			if (confirm("' . $txt['show_personal_messages'] . '"))
-				window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
-		}
-		addLoadEvent(fPmPopup);' : '', '
-		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
-		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
-	// ]]></script>';
 
 	// Output any remaining HTML headers. (From mods, maybe?)
 	echo $context['html_headers'];

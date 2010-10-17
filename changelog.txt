@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10177 $.
+Changelog started January 1, 2004; Currently at $Revision: 10185 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -23,6 +23,16 @@ October 2010
  ! Height fix for RTE with Opera. (editor.js) [Bug 4500]
  + Add the option to enable/disable test mode for payment gateways to the user interface. Thanks Nibogo! (ManagePaid.php) [Bug 4503]
  ! Small cleanups. (several files) [Bug 4505]
+ ! Oops, yet some more formatting cleanup! Nao in action :). And other pedantic stuff. (several files) [Bug 4505]
+ ! Supported database versions. (install, upgrade and convert scripts)
+ ! Updated a couple of latest* files to their last version.
+ * Moved CSS and JavaScript to top. (index template) [Bug 4468]
+ ! Fixed an undefined variable in some cases (Subs.php)
+ ! Some actions were unnecessarily logged. (index.php) [Bug 4465]
+ & Who's Online language strings were missing for some actions. (Who.php, Who language file) [Bug 4465]
+ ! Removed obsolete scripts and functions: FixTemplate.php and related functions in Themes.php. [Bug 4495]
+ ! Moved YabbSE theme converter code to external Tools. [Bug 4495]
+ ! FixLanguage.php removed, I say! :) [Bug 4495]
 
 
 September 2010

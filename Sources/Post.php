@@ -156,7 +156,7 @@ function Post()
 				'current_topic' => $topic,
 			)
 		);
-		list ($locked, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $ID_MEMBER_POSTER, $id_first_msg, $first_subject, $lastPostTime) = $smcFunc['db_fetch_row']($request);
+		list ($locked, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
 		// If this topic already has a poll, they sure can't add another.
@@ -170,7 +170,7 @@ function Post()
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
-			if ($ID_MEMBER_POSTER != $user_info['id'])
+			if ($id_member_poster != $user_info['id'])
 			{
 				if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
 					$context['becomes_approved'] = false;
@@ -188,7 +188,7 @@ function Post()
 		else
 			$context['becomes_approved'] = true;
 
-		$context['can_lock'] = allowedTo('lock_any') || ($user_info['id'] == $ID_MEMBER_POSTER && allowedTo('lock_own'));
+		$context['can_lock'] = allowedTo('lock_any') || ($user_info['id'] == $id_member_poster && allowedTo('lock_own'));
 		$context['can_sticky'] = allowedTo('make_sticky') && !empty($modSettings['enableStickyTopics']);
 
 		$context['notify'] = !empty($context['notify']);
@@ -240,7 +240,7 @@ function Post()
 		if (empty($topic))
 			isAllowedTo('poll_post');
 		// This is an old topic - but it is yours!  Can you add to it?
-		elseif ($user_info['id'] == $ID_MEMBER_POSTER && !allowedTo('poll_add_any'))
+		elseif ($user_info['id'] == $id_member_poster && !allowedTo('poll_add_any'))
 			isAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
 		else
@@ -289,7 +289,7 @@ function Post()
 		if (!$context['event']['new'] && !isset($_REQUEST['subject']))
 		{
 			// If the user doesn't have permission to edit the post in this topic, redirect them.
-			if ((empty($ID_MEMBER_POSTER) || $ID_MEMBER_POSTER != $user_info['id'] || !allowedTo('modify_own')) && !allowedTo('modify_any'))
+			if ((empty($id_member_poster) || $id_member_poster != $user_info['id'] || !allowedTo('modify_own')) && !allowedTo('modify_any'))
 			{
 				require_once($sourcedir . '/Calendar.php');
 				return CalendarPost();

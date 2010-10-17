@@ -119,26 +119,26 @@ if (!defined('SMF'))
 
 	Here's a quick explanation of how to add a new item:
 
-	 * A text input box.  For textual values.
+	* A text input box.  For textual values.
 	ie.	array('text', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
 
-	 * A text input box.  For numerical values.
+	* A text input box.  For numerical values.
 	ie.	array('int', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
 
-	 * A text input box.  For floating point values.
+	* A text input box.  For floating point values.
 	ie.	array('float', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
 
-	 * A large text input box. Used for textual values spanning multiple lines.
+	* A large text input box. Used for textual values spanning multiple lines.
 	ie.	array('large_text', 'nameInModSettingsAndSQL', 'OptionalNumberOfRows'),
 
-	 * A check box.  Either one or zero. (boolean)
+	* A check box.  Either one or zero. (boolean)
 	ie.	array('check', 'nameInModSettingsAndSQL'),
 
-	 * A selection box.  Used for the selection of something from a list.
+	* A selection box.  Used for the selection of something from a list.
 	ie.	array('select', 'nameInModSettingsAndSQL', array('valueForSQL' => $txt['displayedValue'])),
 	Note that just saying array('first', 'second') will put 0 in the SQL for 'first'.
 
-	 * A password input box. Used for passwords, no less!
+	* A password input box. Used for passwords, no less!
 	ie.	array('password', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
 
 	* A permission - for picking groups who have a permission.

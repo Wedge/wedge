@@ -192,8 +192,8 @@ function smf_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option or XML feed.
-	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('dlattach', 'jseditor', 'jsoption', '.xml', 'xmlhttp', 'verificationcode')))
+	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
+	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('dlattach', 'findmember', 'jseditor', 'jsoption', 'requestmembers', 'smstats', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile')))
 	{
 		// Log this user as online.
 		writeLog();
