@@ -3421,12 +3421,26 @@ function template_header()
 
 	$checked_securityFiles = false;
 	$showed_banned = false;
+	$showed_behav_error = false;
 	foreach ($context['template_layers'] as $layer)
 	{
 		loadSubTemplate($layer . '_above', true);
 
 		// May seem contrived, but this is done in case the body and main layer aren't there...
-		if (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+		// Was there a security error for the admin?
+		if (in_array($layer, array('main', 'body')) && $context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
+		{
+			$showed_behav_error = true;
+			loadLanguage('Security');
+
+			echo '
+			<div class="errorbox">
+				<p class="alert">!!</p>
+				<h3>', $txt['behavior_admin'], '</h3>
+				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
+			</div>';
+		}
+		elseif (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
 			$checked_securityFiles = true;
 			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -3951,6 +3965,26 @@ function host_from_ip($ip)
 }
 
 /**
+ * Compares a given IP address and a domain to validate that the IP address belongs to that domain.
+ *
+ * Given an IP address, look up the associated fully-qualified domain, validate the supplied domain contains the FQDN, then request a list of IPs that belong to that domain to validate they tie up. (It is a method to validate that an IP address belongs to a given parent domain)
+ *
+ * @param string $ip An IPv4 dotted-format IP address.
+ * @param string $domain A top level domain name to validate relationship to IP address (e.g. domain.com)
+ * @return bool Whether the IP address could be validated as being related to that domain.
+ * @todo DNS failure causes a general failure in this check. Fix this!
+ */
+function test_ip_host($ip, $domain)
+{
+	$host = host_from_ip($ip);
+	$host_result = strpos(strrev($host), strrev($domain));
+	if ($host_result === false || $host_result > 0)
+		return false; // either the (reversed) FQDN didn't match the (reversed) supplied parent domain, or it didn't match at the end of the name
+	$addrs = gethostbynamel($host);
+	return in_array($ip, $addrs);
+}
+
+/**
  * Breaks a string up into word-units, primarily for the purposes of searching and related code.
  *
  * This function is used surprisingly often, not only for the actual business of searching, but also maintaining custom indexes on the text too.
@@ -4398,7 +4432,7 @@ function match_cidr($ip, $cidr_block)
 		if (strpos($cidr_block, '/') === false)
 			$cidr_block .= '/32';
 
-		list ($cidr_ip, $mask) = explode('/', $cidr);
+		list ($cidr_ip, $mask) = explode('/', $cidr_block);
 		$mask = pow(2,32) - pow(2, 32 - $mask);
 		return (ip2long($ip) & $mask) === (ip2long($cidr_ip) & $mask);
 	}

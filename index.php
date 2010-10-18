@@ -79,7 +79,6 @@ cleanRequest();
 $context = array(
 	'app_error_count' => 0,
 );
-broadCheckRequest();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
@@ -171,6 +170,9 @@ function smf_main()
 
 	// Load the user's cookie (or set as guest) and load their settings.
 	loadUserSettings();
+
+	// Check the request for anything hinky.
+	checkUserBehavior();
 
 	// Load the current board's information.
 	loadBoard();

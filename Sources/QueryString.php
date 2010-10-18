@@ -241,6 +241,13 @@ function cleanRequest()
 	elseif (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['REMOTE_ADDR']) === 0)
 		$_SERVER['REMOTE_ADDR'] = 'unknown';
 
+	// If they're coming through CloudFlare, the REMOTE_ADDR will be CloudFlare's, and a different value is sent by CloudFlare, so use that instead.
+	if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']))
+	{
+		$_SERVER['HTTP_CF_IP'] = $_SERVER['REMOTE_ADDR'];
+		$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+	}
+
 	// Try to calculate their most likely IP for those people behind proxies (And the like).
 	$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 
@@ -548,62 +555,6 @@ function get_http_headers()
 		if (strpos($key, 'HTTP_') === 0)
 			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
 	return $headers;
-}
-
-/**
- * Attempt to validate the request against defined white- and black-lists.
- *
- * Part of the anti-spam measures include whitelist and blacklist items to be screened against. This is where such are processed.
- *
- * - If this request matches the whitelist, WEDGE_WHITELIST will be defined, and control will return to index.php.
- * - If this request matches neither whitelist nor blacklist (i.e. possibly valid rather than known either way), control is simply returned to index.php
- * - If this request fails against the blacklist (through a match), execution will be suspended.
- * - Assuming control is returned to index.php, $context['http_headers'] will contain the HTTP headers we have.
- */
-function broadCheckRequest()
-{
-	global $context, $modSettings;
-
-	$context['http_headers'] = get_http_headers();
-
-	// Some administrators may wish to whitelist specific IPs (like their own), specific user-agents or specific actions from being processed.
-	// Use with caution. A spurious whitelist match will override any other measure.
-	$whitelist = array(
-		'ip' => array(
-			'10.0.0.0/8',
-			'172.16.0.0/12',
-			'192.168.0.0/16',
-		),
-		'user-agent' => array(
-		),
-		'action' => array(
-		),
-	);
-
-	if (!empty($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != 'unknown')
-		foreach ($whitelist['ip'] as $item)
-		{
-			if (strpos($item, '/') === false)
-			{
-				if ($_SERVER['REMOTE_ADDR'] === $item)
-					return define('WEDGE_WHITELIST', 1);
-			}
-			// This is intentional. We only want to end up here if the URL contains a /, rather than if it contains a / or it doesn't but didn't match the user.
-			elseif (match_cidr($_SERVER['REMOTE_ADDR'], $item))
-				return define('WEDGE_WHITELIST', 1);
-		}
-
-	if (!empty($context['http_headers']['User-Agent']))
-		foreach ($whitelist['user-agent'] as $item)
-			if ($context['http_headers']['User-Agent'] === $item)
-				return define('WEDGE_WHITELIST', 1);
-
-	if (!empty($_GET['action']))
-		foreach ($whitelist['action'] as $item)
-			if ($_GET['action'] === $item)
-				return define('WEDGE_WHITELIST', 1);
-
-	// So they didn't get whitelisted, eh? Well, are they blacklisted?
 }
 
 ?>

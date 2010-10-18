@@ -984,4 +984,505 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 	return (!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']) || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!$user_info['is_guest'] && $user_info['id'] == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : (!empty($modSettings['make_email_viewable']) ? 'yes' : 'no_through_forum')));
 }
 
+/**
+ * Attempt to validate the request against defined white- and black-lists.
+ *
+ * Part of the anti-spam measures include whitelist and blacklist items to be screened against. This is where such are processed.
+ *
+ * @return mixed Returns true if whitelisted, or not confirmed as spammer in any way; false if matching any rules but the current user is an administrator (so they receive an alternate warning), otherwise execution will be suspended and the request directed to an appropriate error page.
+ */
+function checkUserBehavior()
+{
+	global $context, $modSettings, $user_info, $smcFunc, $txt, $webmaster_email;
+
+	$context['http_headers'] = get_http_headers();
+
+	// Some administrators may wish to whitelist specific IPs (like their own), specific user-agents or specific actions from being processed.
+	// Use with caution. A spurious whitelist match will override any other measure.
+	$whitelist = array(
+		'ip' => array(
+			'10.0.0.0/8',
+			'172.16.0.0/12',
+			'192.168.0.0/16',
+		),
+		'user-agent' => array(
+		),
+		'action' => array(
+		),
+	);
+
+	if (!empty($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] != 'unknown')
+		foreach ($whitelist['ip'] as $item)
+		{
+			if (strpos($item, '/') === false)
+			{
+				if ($_SERVER['REMOTE_ADDR'] === $item)
+					return true;
+			}
+			// This is intentional. We only want to end up here if the URL contains a /, rather than if it contains a / or it doesn't but didn't match the user.
+			elseif (match_cidr($_SERVER['REMOTE_ADDR'], $item))
+				return true;
+		}
+
+	if (!empty($context['http_headers']['User-Agent']))
+		foreach ($whitelist['user-agent'] as $item)
+			if ($context['http_headers']['User-Agent'] === $item)
+				return true;
+
+	if (!empty($_GET['action']))
+		foreach ($whitelist['action'] as $item)
+			if ($_GET['action'] === $item)
+				return true;
+
+	// So they didn't get whitelisted, eh? Well, are they blacklisted?
+	$context['behavior_error'] = '';
+
+	if (checkUserRequest_blacklist() || checkUserRequest_request() || checkUserRequest_useragent() || checkUserRequest_post())
+	{
+		if ($user_info['is_admin'])
+			return false;
+		else
+		{
+			list ($error, $error_blocks) = userBehaviorResponse();
+			header('HTTP/1.1 ' . $error . ' Wedge Defenses');
+			header('Status: ' . $error . ' Wedge Defenses');
+
+			// OK, let's start up enough of Wedge to display this error nicely.
+			$context['linktree'] = array();
+			loadPermissions();
+			loadTheme();
+
+			// Process the headers into a nice string then log the intrusion.
+			$headers = '';
+			$entity = '';
+
+			foreach ($context['http_headers'] as $k => $v)
+				if ($k != 'User-Agent')
+					$headers .= ($headers != '' ? '<br />' : '') . htmlspecialchars($k . '=' . $v);
+
+			$entity = htmlspecialchars(implode("\n", $_POST));
+			foreach ($_POST as $k => $v)
+				$entity .= ($entity != '' ? '<br />' : '') . htmlspecialchars($k . '=' . $v);
+
+			$smcFunc['db_insert']('insert',
+				'{db_prefix}log_intrusion',
+				array(
+					'id_member' => 'int', 'error_type' => 'string', 'ip' => 'string', 'event_time' => 'int', 'http_method' => 'string',
+					'request_uri' => 'string', 'protocol' => 'string', 'user_agent' => 'string', 'headers' => 'string', 'request_entity' => 'string',
+				),
+				array(
+					$user_info['id'], substr($context['behavior_error'], 6), $_SERVER['REMOTE_ADDR'], time(), $_SERVER['REQUEST_METHOD'],
+					$_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
+				),
+				array('id_event')
+			);
+			$error_id = $smcFunc['db_insert_id']('{db_prefix}log_intrusion', 'id_event');
+
+			// Set the page up
+			loadTemplate('Errors');
+			loadLanguage('Security');
+
+			// Figure out what we're going to tell the user
+			$context['sub_template'] = 'fatal_error';
+			$context['no_back_link'] = true;
+			$context['robot_no_index'] = true;
+			$context['page_title'] = $txt['http_error'] . ' ' . $error;
+			$context['error_title'] = $txt['behav_' . $error];
+			$context['error_message'] = $txt['behavior_header'] . '<br /><br />' . $txt[$context['behavior_error'] . '_desc'];
+			foreach ($error_blocks as $block)
+				$context['error_message'] .= '<br /><br />' . $txt[$block];
+			$context['error_message'] .= '<br /><br />' . $txt['behavior_footer'];
+
+			$context['error_message'] = str_replace('{email_address}', str_replace("@", "+REMOVEME@REMOVEME.", $webmaster_email), $context['error_message']);
+			$context['error_message'] = str_replace('{incident}', '#' . $error_id, $context['error_message']);
+
+			// And we're done. Spit out header if appropriate, footer+subtemplate.htmlspecialchars(str_replace("@", "+nospam@nospam.", bb2_email()))
+			obExit(null, true, false, true);
+		}
+	}
+	else
+		return true;
+}
+
+/**
+ * Checks the blacklist for known user agents that have undesirable behaviors.
+ *
+ * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ *
+ * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
+ */
+function checkUserRequest_blacklist()
+{
+	global $context;
+
+	// If the user agent begins with any of these, fail it.
+	$rules = array(
+		'begins_with' => array(
+			// harvesters
+			'autoemailspider',
+			'CherryPicker',
+			'Digger',
+			'ecollector',
+			'EmailCollector',
+			'Email Siphon',
+			'EmailSiphon',
+			'ISC Systems iRc',
+			'Microsoft URL',
+			'Missigua',
+			'Mozilla/4.0+(',
+			'OmniExplorer',
+			'psycheclone',
+			'Super Happy Fun ',
+			'user',
+			'User Agent: ',
+			'User-Agent: ',
+			// exploit attempts
+			'<sc',
+			'core-project/',
+			'Internet Explorer',
+			'Winnie Poh',
+			// malicious
+			'Diamond',
+			'MJ12bot/v1.0.8',
+			'Mozilla ',
+			'Mozilla/2',
+			'MSIE',
+			'Wordpress',
+			'"',
+			// supplied by honeypot
+			'blogsearchbot-martin',
+			'Mozilla/4.0(',
+			// spammers
+			'8484 Boston Project',
+			'adwords',
+			'grub crawler',
+			'HttpProxy',
+			'Jakarta Commons',
+			'Java 1.',
+			'Java/1.',
+			'libwww-perl',
+			'LWP',
+			'Movable Type',
+			'NutchCVS',
+			'Nutscrape/',
+			'PussyCat ',
+			'PycURL',
+			'TrackBack/',
+			'WebSite-X Suite',
+		),
+		'contains' => array(
+			// harvesters
+			'Email Extractor',
+			'unspecified.mail',
+			'User-agent: ',
+			'WebaltBot',
+			'Windows XP 5',
+			'WISEbot',
+			'WISEnutbot',
+			'\\)',
+			// bad bots
+			"\r",
+			'grub-client',
+			'hanzoweb',
+			'MSIE 7.0;  Windows NT 5.2',
+			'Turing Machine',
+			// spammers
+			'; Widows ',
+			'a href=',
+			'compatible ; MSIE',
+			'compatible-',
+			'DTS Agent',
+			'Gecko/25',
+			'Indy Library',
+			'Murzillo compatible',
+			'.NET CLR 1)',
+			'POE-Component-Client',
+			'Windows NT 4.0;)',
+			'Windows NT 5.0;)',
+			'Windows NT 5.1;)',
+			'WordPress/4.01',
+			'Xedant Human Emulator',
+		),
+		'contains_regex' => array(
+			// spammers
+			'/^[A-Z]{10}$/',
+			'/[bcdfghjklmnpqrstvwxz ]{8,}/',
+		),
+	);
+
+	foreach ($rules['begins_with'] as $test)
+		if (strpos($context['http_headers']['User-Agent'], $test) === 0)
+			return $context['behavior_error'] = 'behav_blacklist';
+
+	foreach ($rules['contains'] as $test)
+		if (strpos($context['http_headers']['User-Agent'], $test) !== false)
+			return $context['behavior_error'] = 'behav_blacklist';
+
+	foreach ($rules['contains_regex'] as $test)
+		if (preg_match($test, $context['http_headers']['User-Agent']))
+			return $context['behavior_error'] = 'behav_blacklist';
+
+	return false;
+}
+
+/**
+ * Checks the request headers for known issues with respect to invalid HTTP or known spammer behavior.
+ *
+ * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ *
+ * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
+ */
+function checkUserRequest_request()
+{
+	global $context, $modSettings;
+
+	// Is this from CloudFlare? (requires hostname lookups enabled)
+	if (isset($context['http_headers']['Cf-Connecting-Ip']) && empty($modSettings['disableHostnameLookup']))
+	{
+		// Remember, we did some work on this back in QueryString.php, so $_SERVER['HTTP_CF_IP'] should exist and be the value for CloudFlare. Let's see if it is.
+		if (!test_ip_host($_SERVER['HTTP_CF_IP'], 'cloudflare.com'))
+			return $context['behavior_error'] = 'behav_not_cloudflare';
+	}
+
+	// Should never see the Expect header. It's generally a weird proxy setup.
+	if (isset($context['http_headers']['Expect']) && stripos($context['http_headers']['Expect'], '100-continue') !== false)
+		return $context['behavior_error'] = 'behav_expect_header';
+
+	// If it's a POST, there should be a user agent specified.
+	if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($context['http_headers']['User-Agent']))
+		return $context['behavior_error'] = 'behav_no_ua_in_post';
+
+	// Content-Range denotes the size of content being *sent* not requested...
+	if (isset($context['http_headers']['Content-Range']))
+		return $context['behavior_error'] = 'behav_content_range';
+
+	// Referer is an optional header. If it's given it must be non-blank. Additionally all legit agents should be sending absolute URIs even though the spec says relative ones are fine.
+	if (isset($context['http_headers']['Referer']))
+	{
+		if (empty($context['http_headers']['Referer']))
+			return $context['behavior_error'] = 'behav_empty_refer';
+		elseif (strpos($context['http_headers']['Referer'], '://') === false)
+			return $context['behavior_error'] = 'behav_invalid_refer';
+	}
+
+	// Check for oddities in the Connection header. Various bad things happen here; mostly stupid bots.
+	if (isset($context['html_headers']['Connection']))
+	{
+		// Can't have both Connection: keep-alive and Connection: close, or more than one of either at a time. No being greedy.
+		$ka = preg_match_all('~\bkeep-alive\b~i', $context['html_headers']['Connection']);
+		$c = preg_match_all('~\bclose\b~i', $context['html_headers']['Connection']);
+		if (($ka > 0 && $c > 0) || $ka > 1 || $c > 1)
+			return $context['behavior_error'] = 'behav_alive_close';
+
+		// Does Keep-Alive conform to spec?
+		if (stripos($context['html_headers']['Connection'], 'Keep-Alive: ') !== false)
+			return $context['behavior_error'] = 'behav_wrong_keep_alive';
+	}
+
+	// Check for weirdness in the requested URI
+	if (!empty($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '#') !== false || strpos($_SERVER['REQUEST_URI'], ';DECLARE%20@') !== false))
+		return $context['behavior_error'] = 'behav_rogue_chars';
+
+	// Should not use lowercase 'via' header (only known if on Apache). Clearswift does, though they shouldn't.
+	if (isset($context['html_headers']['via']) && strpos($context['html_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
+		return $context['behavior_error'] = 'behav_invalid_via';
+
+	// A known referrer spammer
+	if (isset($context['http_headers']['Via']) && (stripos($context['http_headers']['Via'], "pinappleproxy") !== false || stripos($context['http_headers']['Via'], "PCNETSERVER") !== false || stripos($context['http_headers']['Via'], "Invisiware") !== false))
+		return $context['behavior_error'] = 'behav_banned_via_proxy';
+
+	// Known spambot headers
+	if (isset($context['http_headers']['X-Aaaaaaaaaaaa']) || isset($context['http_headers']['X-Aaaaaaaaaa']))
+		return $context['behavior_error'] = 'behav_banned_xaa_proxy';
+
+	// Are we in compliance with RFC 2965 sections 3.3.5 and 9.1? Specifically, bots wanting new-style cookies should send Cookie2 as a header.
+	// Apparently this does not work on the first edition Kindle, but really... though it's not a forum platform, it's not like it's hard to override.
+	if (isset($context['http_headers']['Cookie']) && strpos($context['http_headers']['Cookie'], '$Version=0') !== false && !isset($context['http_headers']['Cookie2']) && strpos($context['http_headers']['User-Agent'], "Kindle/") === false)
+		return $context['behavior_error'] = 'behav_bot_rfc2965';
+
+	// OK, are we doing the big scary strict tests? If not, bail. Some of these tests will fail on weird things like some corporate proxy servers so we don't do them by default.
+	if (empty($modSettings['performStrictBehavior']))
+		return false;
+
+	// Proxy-Connection isn't a real header.
+	if (isset($context['http_headers']['Proxy-Connection']))
+		return $context['behavior_error'] = 'behav_proxy_connection';
+
+	// Connections claiming HTTP/1.1 should not use HTTP/1.0 caching instructions
+	if ($_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.1' && isset($context['http_headers']['Pragma']) && strpos($context['http_headers']['Pragma'], "no-cache") !== false && !isset($context['http_headers']['Cache-Control']))
+		return $context['behavior_error'] = 'behav_pragma';
+
+	// RFC 2616 14.39 states that if TE is specified as a header, Connection: TE must also be specified.
+	// Microsoft ISA Server 2004 does not play nicely however this is a minor case for us.
+	if (isset($context['http_headers']['Te']) && !preg_match('~\bTE\b~', $context['http_headers']['Connection']))
+		return $context['behavior_error'] = 'behav_te_error';
+
+	// When specified, Range should exist and not begin with a 0 for requesting (since it's requesting a follow-on partial dataset)
+	// whois.sc is broken by this. So are Facebook, LiveJournal and MovableType (for which exceptions have been made, for FB and OpenID in particular)
+	if (isset($context['http_headers']['Range']) && strpos($context['http_headers']['Range'], "=0-") !== false && (strpos($context['http_headers']['User-Agent'], "MovableType") !== 0 && strpos($context['http_headers']['User-Agent'], "URI::Fetch") !== 0 && strpos($context['http_headers']['User-Agent'], "php-openid/") !== 0 && strpos($context['http_headers']['User-Agent'], "facebookexternalhit") !== 0))
+		return $context['behavior_error'] = 'behav_invalid_range';
+
+	return false;
+}
+
+/**
+ * Performs acceptance checks that are based primarily on the user agent for the current request.
+ *
+ * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ *
+ * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
+ */
+function checkUserRequest_useragent()
+{
+	global $context, $modSettings;
+
+	// For most browsers, there's only one test to do, to make sure they send an Accept header. Naughty bots pretending to be these folks don't normally.
+	if (preg_match('~Opera|Lynx|Safari~', $context['http_headers']['User-Agent']))
+	{
+		if (!isset($context['http_headers']['Accept']))
+			return $context['behavior_error'] = 'behav_no_accept';
+	}
+	// Ah, Internet Explorer. We already got rid of Opera, which sometimes sends MSIE in the headers.
+	elseif (strpos($context['http_headers']['User-Agent'], '; MSIE') !== false)
+	{
+		// Silly bots think IE sends "Windows XP" or similar in the 'what browser we're using' area. Except it doesn't.
+		if (strpos($context['http_headers']['User-Agent'], 'Windows ME') !== false || strpos($context['http_headers']['User-Agent'], 'Windows XP') !== false || strpos($context['http_headers']['User-Agent'], 'Windows 2000') !== false || strpos($context['http_headers']['User-Agent'], 'Win32') !== false)
+			return $context['behavior_error'] = 'behav_invalid_win';
+		// Connection: TE again. IE doesn't use it, Akamai and IE for WinCE does.
+		elseif (!isset($context['http_headers']['Akamai-Origin-Hop']) && strpos($context['http_headers']['User-Agent'], 'IEMobile') === false && @preg_match('/\bTE\b/i', $context['http_headers']['Connection']))
+			return $context['behavior_error'] = 'behav_te_not_msie';
+	}
+	// Some browsers are just special however. Konqueror is on the surface, straightforward, but there's a Yahoo dev project that isn't a real browser but calls itself Konqueror, so we have to do the normal browser test but exclude if it's this.
+	elseif (stripos($context['http_headers']['User-Agent'], 'Konqueror') !== false)
+	{
+		if (!isset($context['http_headers']['Accept']) && (stripos($context['http_headers']['User-Agent'], 'YahooSeeker/CafeKelsa') === false || match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19') === false))
+			return $context['behavior_error'] = 'behav_no_accept';
+	}
+	// Is it claiming to be MSN's bot? (requires hostname lookups enabled)
+	elseif ((stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false) && empty($modSettings['disableHostnameLookup']))
+	{
+		if (!test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com'))
+			return $context['behavior_error'] = 'behav_not_msnbot';
+	}
+	// Is it claiming to be Googlebot, even? (requires hostname lookups enabled)
+	elseif ((stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Wireless') !== false) && empty($modSettings['disableHostnameLookup']))
+	{
+		if (!test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com'))
+			return $context['behavior_error'] = 'behav_not_googlebot';
+	}
+	// OK, so presumably this is some kind of Mozilla derivative? (No guarantee it's actually Firefox, mind. All main browsers cite Mozilla. :/)
+	elseif (stripos($context['http_headers']['User-Agent'], 'Mozilla') === 0)
+	{
+		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we except it for now.
+		if (strpos($context['http_headers']['User-Agent'], "Google Desktop") === false && strpos($context['http_headers']['User-Agent'], "PLAYSTATION 3") === false && !isset($context['http_headers']['Accept']))
+			return $context['behavior_error'] = 'behav_no_accept';
+	}
+
+	return false;
+}
+
+/**
+ * Performs acceptance checks that are based primarily on the details of the request if it is a POST request.
+ *
+ * Detection data courtesy of Bad Behavior (http://www.bad-behavior.ioerror.us/)
+ *
+ * @return mixed Returns false if valid, returns the id of the error (and stores it in $context['behavior_error']) if an error condition was hit.
+ */
+function checkUserRequest_post()
+{
+	global $context, $modSettings;
+
+	if ($_SERVER['SERVER_PROTOCOL'] != 'POST')
+		return false;
+
+	// Catch a few completely broken spambots
+	foreach ($_POST as $key => $value) {
+		if (strpos($key, "	document.write") !== false)
+			return $context['behavior_error'] = 'behav_rogue_chars';
+	}
+
+	// What about forms? Any form posting into our forum should really be inside our forum. Providing an option to disable (hidden for now)
+	if (empty($modSettings['allow_external_forms']) && isset($context['http_headers']['Referer']) && stripos($context['http_headers']['Referer'], $context['http_headers']['Host']) === false)
+		return $context['behavior_error'] = 'behav_offsite_form';
+
+	return false;
+}
+
+/**
+ * Identifies the HTTP error code and message components to send to the user.
+ *
+ * @return array Indexed array: [0] = HTTP error code, [1] = the error code blocks other than the error message itself to display
+ */
+function userBehaviorResponse()
+{
+	global $context;
+	$error_blocks = array();
+
+	// Send an appropriate HTTP error, hopefully they'll get the hint. Which one, though?
+	switch ($context['behavior_error'])
+	{
+		case 'behav_pragma':
+		case 'behav_empty_refer':
+		case 'behav_invalid_refer':
+		case 'behav_invalid_range':
+		case 'behav_te_error':
+		case 'behav_alive_close':
+		case 'behav_wrong_keep_alive':
+		case 'behav_proxy_connection':
+			$error = 400;
+			break;
+		case 'behav_pomme':
+			$error = 0x29A;
+			break;
+		case 'behav_expect_header':
+			$error = 417;
+			break;
+		default:
+			$error = 403;
+	}
+
+	// Now, what chunks of info to give the user? Not all errors get an extra chunk of info.
+	switch ($context['behavior_error'])
+	{
+		case 'behav_expect_header':
+		case 'behav_wrong_keep_alive':
+		case 'behav_rogue_chars':
+			$error_blocks = array('behavior_malware');
+			break;
+		case 'behav_te_not_msie':
+		case 'behav_not_msnbot':
+		case 'behav_not_googlebot':
+			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_privacy');
+			break;
+		case 'behav_no_ua_in_post':
+		case 'behav_invalid_win':
+		case 'behav_blacklist':
+		case 'behav_not_cloudflare':
+			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware');
+			break;
+		case 'behav_pragma':
+		case 'behav_empty_refer':
+		case 'behav_invalid_refer':
+		case 'behav_proxy_connection':
+		case 'behav_banned_via_proxy':
+		case 'behav_banned_xaa_proxy':
+		case 'behav_alive_close':
+		case 'behav_no_accept':
+		case 'behav_content_range':
+		case 'behav_invalid_via':
+			$error_blocks = array('behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware');
+			break;
+		case 'behav_offsite_form':
+			$error_blocks = array('behavior_misconfigured_privacy', 'behavior_malware');
+			break;
+		case 'behav_te_error':
+			$error_blocks = array('behavior_misconfigured_proxy', 'behavior_misconfigured_privacy', 'behavior_malware', 'behavior_opera_bug');
+			break;
+		case 'behav_invalid_range':
+			$error_blocks = array('behavior_malware', 'behavior_chrome_bug');
+			break;
+	}
+
+	return array($error, $error_blocks);
+}
 ?>
