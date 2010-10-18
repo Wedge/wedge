@@ -97,7 +97,7 @@ class wedgeEditor
 
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))
-					$context['insert_after_template'] .= '
+					$context['footer'] .= '
 		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
 			<input type="hidden" name="spellstring" value="" />
 		</form>';

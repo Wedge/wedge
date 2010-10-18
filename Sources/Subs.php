@@ -2858,17 +2858,13 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		foreach ($context['sub_template'] as $template)
 			loadSubTemplate($template);
 
-		// Anything special to put out?
-		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
-			echo $context['insert_after_template'];
-
 		// Just so we don't get caught in an endless loop of errors from the footer...
 		if (!$footer_done)
 		{
 			$footer_done = true;
 			template_footer();
 
-			// (since this is just debugging... it's okay that it's after </html>.)
+			// Since this is just debugging... it's okay that it's after </html>.
 			if (!isset($_REQUEST['xml']))
 				db_debug_junk();
 		}

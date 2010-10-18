@@ -2,6 +2,7 @@
 	background-image: none;
 }
 #menu_container {
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0');
 	height: 1%;
 }
 .codeheader, code.bbc_code {

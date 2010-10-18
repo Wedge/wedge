@@ -165,7 +165,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	// Add javascript for the object.
 	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'] && !WIRELESS)
-		$context['insert_after_template'] .= '
+		$context['footer'] .= '
 			<script type="text/javascript"><!-- // --><![CDATA[
 				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", 1);
 			// ]]></script>';

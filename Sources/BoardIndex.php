@@ -150,11 +150,7 @@ function BoardIndex()
 
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
-	// Also add the collapse object to the page for the info center.
-	if (empty($context['insert_after_template']))
-		$context['insert_after_template'] = '';
-
-	$context['insert_after_template'] .= '
+	$context['footer'] .= '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		var oInfoCenterToggle = new smc_Toggle({
 			bToggleEnabled: true,

@@ -1430,7 +1430,7 @@ function template_control_chmod()
 	// ]]></script>';
 
 	// Make sure the button gets generated last.
-	$context['insert_after_template'] .= '
+	$context['footer'] .= '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		generateFTPTest();
 	// ]]></script>';
