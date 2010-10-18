@@ -185,14 +185,6 @@ function reqWin(desktopURL, alternateWidth, alternateHeight, noScrollbars)
 	return false;
 }
 
-// Remember the current position.
-function storeCaret(oTextHandle)
-{
-	// Only bother if it will be useful.
-	if ('createTextRange' in oTextHandle)
-		oTextHandle.caretPos = document.selection.createRange().duplicate();
-}
-
 // Checks if the passed input's value is nothing.
 function isEmptyText(theField)
 {

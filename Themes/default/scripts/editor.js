@@ -1,4 +1,12 @@
-// *** smc_Editor class.
+
+/*
+	The post editor.
+	Features:
+		- A plain text post editor
+		- A WYSINTA post editor
+		  (What you see is nice. Try again.)
+*/
+
 function smc_Editor(oOptions)
 {
 	this.opt = oOptions;
@@ -598,15 +606,11 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 	{
 		if (this.bRichTextEnabled)
 		{
-			// This includes a work around for FF to get the cursor to show!
 			this.oFrameDocument.body.innerHTML = sText;
 
-			// If FF trick the cursor into coming back!
+			// If FF, trick the cursor into coming back!
 			if (is_ff)
 			{
-				// For some entirely unknown reason FF3 Beta 2 requires this.
-				this.oFrameDocument.body.contentEditable = false;
-
 				this.oFrameDocument.designMode = 'off';
 				this.oFrameDocument.designMode = 'on';
 			}
@@ -649,97 +653,7 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 			}
 		}
 		else
-			this.replaceText(sText);
-	}
-}
-
-// Replaces the currently selected text with the passed text.
-smc_Editor.prototype.replaceText = function(text)
-{
-	var oTextHandle = this.oTextHandle;
-
-	// Attempt to create a text range (IE).
-	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
-	{
-		var caretPos = oTextHandle.caretPos;
-
-		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;
-		caretPos.select();
-	}
-	// Mozilla text range replace.
-	else if ('selectionStart' in oTextHandle)
-	{
-		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
-		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
-		var scrollPos = oTextHandle.scrollTop;
-
-		oTextHandle.value = begin + text + end;
-
-		if (oTextHandle.setSelectionRange)
-		{
-			oTextHandle.focus();
-			var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
-			oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
-		}
-		oTextHandle.scrollTop = scrollPos;
-	}
-	// Just put it on the end.
-	else
-	{
-		oTextHandle.value += text;
-		oTextHandle.focus(oTextHandle.value.length - 1);
-	}
-}
-
-// Surrounds the selected text with text1 and text2.
-smc_Editor.prototype.surroundText = function(text1, text2)
-{
-	var oTextHandle = this.oTextHandle;
-
-	// Can a text range be created?
-	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
-	{
-		var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
-
-		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
-
-		if (temp_length == 0)
-		{
-			caretPos.moveStart('character', -text2.length);
-			caretPos.moveEnd('character', -text2.length);
-			caretPos.select();
-		}
-		else
-			oTextHandle.focus(caretPos);
-	}
-	// Mozilla text range wrap.
-	else if ('selectionStart' in oTextHandle)
-	{
-		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
-		var selection = oTextHandle.value.substr(oTextHandle.selectionStart, oTextHandle.selectionEnd - oTextHandle.selectionStart);
-		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
-		var newCursorPos = oTextHandle.selectionStart;
-		var scrollPos = oTextHandle.scrollTop;
-
-		oTextHandle.value = begin + text1 + selection + text2 + end;
-
-		if (oTextHandle.setSelectionRange)
-		{
-			var t1 = is_opera ? text1.match(/\n/g) : '', t2 = is_opera ? text2.match(/\n/g) : '';
-			var goForward1 = t1 ? t1.length : 0, goForward2 = t2 ? t2.length : 0;
-			if (selection.length == 0)
-				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
-			else
-				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
-			oTextHandle.focus();
-		}
-		oTextHandle.scrollTop = scrollPos;
-	}
-	// Just put them on the end, then.
-	else
-	{
-		oTextHandle.value += text1 + text2;
-		oTextHandle.focus(oTextHandle.value.length - 1);
+			replaceText(sText, this.oTextHandle);
 	}
 }
 
@@ -800,7 +714,7 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 
 				var sDesc = prompt(oEditorStrings['prompt_text_desc']);
 				var bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
-				this.replaceText(bbcode.replace(/\\n/g, '\n'));
+				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// img popup?
 			else if (oButtonProperties.sCode == 'img')
@@ -811,15 +725,15 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 					return;
 
 				var bbcode = '[img]' + sText + '[/img]';
-				this.replaceText(bbcode.replace(/\\n/g, '\n'));
+				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// Replace?
 			else if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
-				this.replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'));
+				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle)
 
 			// Surround!
 			else
-				this.surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'));
+				surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'), this.oTextHandle)
 		}
 		else
 		{
@@ -863,7 +777,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 		if (!this.bRichTextEnabled)
 		{
 			sValue = sValue.replace(/"/, '');
-			this.surroundText('[font=' + sValue + ']', '[/font]');
+			surroundText('[font=' + sValue + ']', '[/font]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -874,7 +788,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 	{
 		if (!this.bRichTextEnabled)
 		{
-			this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
+			surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -885,7 +799,7 @@ smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 	{
 		if (!this.bRichTextEnabled)
 		{
-			this.surroundText('[color=' + sValue + ']', '[/color]');
+			surroundText('[color=' + sValue + ']', '[/color]', this.oTextHandle);
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
@@ -1089,7 +1003,7 @@ smc_Editor.prototype.removeFormatting = function()
 		// Then just anything that looks like BBC.
 		sCurrentText = sCurrentText.replace(RegExp("\\[/?[A-Za-z]+\\]", "g"), '');
 
-		this.replaceText(sCurrentText);
+		replaceText(sCurrentText, this.oTextHandle);
 	}
 }
 
@@ -1494,7 +1408,110 @@ smc_Editor.prototype.endResize = function (oEvent)
 	return false;
 }
 
-// *** smc_SmileyBox class.
+/*
+	Helper functions.
+	Can safely be called by mods.
+*/
+
+// Remember the current position.
+function storeCaret(oTextHandle)
+{
+	// Only bother if it will be useful.
+	if ('createTextRange' in oTextHandle)
+		oTextHandle.caretPos = document.selection.createRange().duplicate();
+}
+
+// Replaces the currently selected text with the passed text.
+function replaceText(text, oTextHandle)
+{
+	// Attempt to create a text range (IE).
+	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
+	{
+		var caretPos = oTextHandle.caretPos;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;
+		caretPos.select();
+	}
+	// Mozilla text range replace.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
+		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
+		var scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			oTextHandle.focus();
+			var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
+			oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put it on the end.
+	else
+	{
+		oTextHandle.value += text;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
+
+// Surrounds the selected text with text1 and text2.
+function surroundText(text1, text2, oTextHandle)
+{
+	// Can a text range be created?
+	if ('caretPos' in oTextHandle && 'createTextRange' in oTextHandle)
+	{
+		var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
+
+		if (temp_length == 0)
+		{
+			caretPos.moveStart('character', -text2.length);
+			caretPos.moveEnd('character', -text2.length);
+			caretPos.select();
+		}
+		else
+			oTextHandle.focus(caretPos);
+	}
+	// Mozilla text range wrap.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
+		var selection = oTextHandle.value.substr(oTextHandle.selectionStart, oTextHandle.selectionEnd - oTextHandle.selectionStart);
+		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
+		var newCursorPos = oTextHandle.selectionStart;
+		var scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text1 + selection + text2 + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			var t1 = is_opera ? text1.match(/\n/g) : '', t2 = is_opera ? text2.match(/\n/g) : '';
+			var goForward1 = t1 ? t1.length : 0, goForward2 = t2 ? t2.length : 0;
+			if (selection.length == 0)
+				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
+			else
+				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
+			oTextHandle.focus();
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put them on the end, then.
+	else
+	{
+		oTextHandle.value += text1 + text2;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
+
+/*
+	A smiley is worth
+	a thousands words.
+*/
+
 function smc_SmileyBox(oOptions)
 {
 	this.opt = oOptions;
@@ -1628,8 +1645,12 @@ smc_SmileyBox.prototype.handleShowMoreSmileys = function ()
 	}
 }
 
+/*
+	The BBC button box.
+	Press 1 for Doctor Who,
+	and 2 for Red Dwarf.
+*/
 
-// *** smc_BBCButtonBox class.
 function smc_BBCButtonBox(oOptions)
 {
 	this.opt = oOptions;
@@ -1848,9 +1869,12 @@ smc_BBCButtonBox.prototype.setSelect = function (sSelectName, sValue)
 	}
 }
 
-/* Attachment selector, based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
-* The code below is modified under the MIT licence, http://the-stickman.com/using-code-from-this-site-ie-licence/ not reproduced here for
-* convenience of users using this software (as this is an active downloaded file) */
+/*
+	Attachment selector, based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
+	The code below is modified under the MIT licence, http://the-stickman.com/using-code-from-this-site-ie-licence/ not reproduced here for
+	convenience of users using this software (as this is an active downloaded file)
+*/
+
 function wedgeAttachSelect(oOptions)
 {
 	wedgeAttachSelect.prototype.opts = oOptions;
@@ -1858,7 +1882,7 @@ function wedgeAttachSelect(oOptions)
 	wedgeAttachSelect.prototype.attachId = 0;
 	wedgeAttachSelect.prototype.max = (oOptions.max) ? oOptions.max : -1;
 	wedgeAttachSelect.prototype.addElement(document.getElementById(wedgeAttachSelect.prototype.opts.file_item));
-};
+}
 
 wedgeAttachSelect.prototype.addElement = function (element)
 {
@@ -1900,7 +1924,7 @@ wedgeAttachSelect.prototype.addElement = function (element)
 		this.current_element = element;
 		this.checkActive();
 	}
-};
+}
 
 wedgeAttachSelect.prototype.checkExtension = function (filename)
 {
@@ -1952,7 +1976,7 @@ wedgeAttachSelect.prototype.addListRow = function (element)
 	new_row.innerHTML = element.value + '&nbsp; &nbsp;';
 	new_row.appendChild(new_row_button);
 	document.getElementById(this.opts.file_container).appendChild(new_row);
-};
+}
 
 wedgeAttachSelect.prototype.checkActive = function()
 {
