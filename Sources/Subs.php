@@ -4424,7 +4424,7 @@ function match_cidr($ip, $cidr_block)
 	if (is_array($cidr_block))
 	{
 		foreach ($cidr_block as $cidr)
-			if (match_cidr($addr, $cidrlet))
+			if (match_cidr($ip, $cidr))
 				return true;
 	}
 	else
