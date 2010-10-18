@@ -63,11 +63,6 @@ function smf_db_search_support($search_type)
 function smf_db_create_word_search($size)
 {
 	global $smcFunc;
-	static $no_engine_support = null;
-
-	// We check for engine support this way to save time repeatedly performing this check.
-	if (is_null($no_engine_support))
-		$no_engine_support = version_compare('4', $smcFunc['db_get_version']()) > 0;
 
 	if ($size == 'small')
 		$size = 'smallint(5)';
@@ -81,12 +76,10 @@ function smf_db_create_word_search($size)
 			id_word {raw:size} unsigned NOT NULL default {string:string_zero},
 			id_msg int(10) unsigned NOT NULL default {string:string_zero},
 			PRIMARY KEY (id_word, id_msg)
-		) {raw:engine_type}=InnoDB',
+		) ENGINE=InnoDB',
 		array(
 			'string_zero' => '0',
 			'size' => $size,
-			// MySQL users below v4 can't use engine.
-			'engine_type' => $no_engine_support ? 'TYPE' : 'ENGINE',
 		)
 	);
 }

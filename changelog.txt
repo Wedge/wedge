@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10185 $.
+Changelog started January 1, 2004; Currently at $Revision: 10187 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -30,9 +30,13 @@ October 2010
  ! Fixed an undefined variable in some cases (Subs.php)
  ! Some actions were unnecessarily logged. (index.php) [Bug 4465]
  & Who's Online language strings were missing for some actions. (Who.php, Who language file) [Bug 4465]
- ! Removed obsolete scripts and functions: FixTemplate.php and related functions in Themes.php. [Bug 4495]
+ ! Removed obsolete scripts and functions: FixLanguage.php and related functions in Themes.php. [Bug 4495]
  ! Moved YabbSE theme converter code to external Tools. [Bug 4495]
  ! FixLanguage.php removed, I say! :) [Bug 4495]
+ ! UTF8 fixes. Thank you, Nao! (Subs.php, Subs-Post.php) [Bug 4498]
+ ! One more slight change, in supported versions. (install, upgrade, convert scripts)
+ ! Now MySQL versions support ENGINE, so simplify some things. (several files)
+ ! Escaping potential identifiers used as column names (DbExtra-mysql.php, DbExtra-postgresql.php) [Bug 4261]
 
 
 September 2010

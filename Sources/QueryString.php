@@ -449,52 +449,6 @@ function htmltrim__recursive($var, $level = 0)
 }
 
 /**
- * Validates that a given array contains values that are valid Unicode strings, suitable for XML/XHTML use.
- *
- * - Attempts to handle UTF-8 primarily, however should not damage an ISO encoded string.
- * - Non-printable control characters (ASCII 0-8, 11-12, 14-31) are removed; in all other cases the array is stepped through in variable sized-segments depending on multi-byte character width (which is why simply stripping the aforementioned characters cannot be done - they may form parts of valid multi-byte characters)
- * - May call itself recursively to process all the values in a nested array.
- * - Uses two underscores to guard against overloading.
- *
- * @param mixed $var A string or array of values; if a string, it will be processed to remove non-printable characters, otherwise if an array it will call itself through array_map().
- * @return mixed Interim results may be sanitized strings, the overall result is a parsed array whose values are all stripped of those characters.
- */
-function validate_unicode__recursive($var)
-{
-	if (is_array($var))
-		return array_map('validate_unicode__recursive', $var);
-
-	$cleanup = array_merge(range(0, 8), range(11, 12), range(14, 31));
-
-	// Assuming unicode for now - won't really hurt if we're wrong.
-	for ($i = 0; $i < strlen($var); $i++)
-	{
-		$c = ord($var{$i});
-		if (in_array($c, $cleanup))
-		{
-			$var = substr($var, 0, $i) . substr($var, $i + 1);
-			$i--;
-			continue;
-		}
-
-		if ($c < 192)
-			continue;
-		elseif ($c < 224)
-			$i++;
-		elseif ($c < 240)
-			$i += 2;
-		elseif ($c < 248)
-			$i += 3;
-		elseif ($c < 252)
-			$i += 4;
-		elseif ($c < 254)
-			$i += 5;
-	}
-
-	return $var;
-}
-
-/**
  * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
  *
  * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
