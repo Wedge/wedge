@@ -392,7 +392,20 @@ em {
 	-webkit-border-radius: 0 10px 10px 0;
 }
 
-.menu li ul { visibility: hidden }
+.menu li ul {
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	-o-transition: opacity 0.3s ease;
+	-moz-transition: opacity 0.3s ease;
+	-webkit-transition: opacity 0.3s ease;
+}
+.menu > li > ul {
+	transition: opacity 0.15s ease;
+	-o-transition: opacity 0.15s ease;
+	-moz-transition: opacity 0.15s ease;
+	-webkit-transition: opacity 0.15s ease;
+}
 .menu li li ul {
 	position: absolute;
 	margin-left: 200px;

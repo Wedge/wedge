@@ -165,9 +165,6 @@ function ManageAttachmentSettings($return_config = false)
 
 	$context['valid_upload_dir'] = is_dir($modSettings['attachmentUploadDir']) && is_writable($modSettings['attachmentUploadDir']);
 
-	// Perform a test to see if the GD module is installed.
-	$testGD = get_extension_funcs('gd');
-
 	$config_vars = array(
 		array('title', 'attachment_manager_settings'),
 			// Are attachments enabled?
@@ -186,7 +183,6 @@ function ManageAttachmentSettings($return_config = false)
 			array('text', 'attachmentNumPerPostLimit', 6),
 		'',
 			// Image settings.
-			array('warning', empty($testGD) ? 'attachment_gd_warning' : ''),
 			array('check', 'attachment_image_reencode'),
 		'',
 			array('warning', 'attachment_image_paranoid_warning'),
@@ -226,16 +222,12 @@ function ManageAvatarSettings($return_config = false)
 {
 	global $txt, $context, $modSettings, $sourcedir, $scripturl;
 
-	// Perform a test to see if the GD module is installed.
-	$testGD = get_extension_funcs('gd');
-
 	$context['valid_avatar_dir'] = is_dir($modSettings['avatar_directory']);
 	$context['valid_custom_avatar_dir'] = empty($modSettings['custom_avatar_enabled']) || (!empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']));
 
 	$config_vars = array(
 		// Server stored avatars!
 		array('title', 'avatar_server_stored'),
-			array('warning', empty($testGD) ? 'avatar_gd_warning' : ''),
 			array('permissions', 'profile_server_avatar', 0, $txt['avatar_server_stored_groups']),
 			array('text', 'avatar_directory', 40, 'invalid' => !$context['valid_avatar_dir']),
 			array('text', 'avatar_url', 40),

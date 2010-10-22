@@ -789,7 +789,7 @@ function VerificationCode()
 		obExit();
 	}
 
-	// If we have GD, try the nice code.
+	// Try the nice code using GD.
 	elseif (empty($_REQUEST['format']))
 	{
 		require_once($sourcedir . '/Subs-Graphics.php');

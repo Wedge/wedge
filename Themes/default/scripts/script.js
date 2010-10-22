@@ -1125,6 +1125,7 @@ function initMenu(menu)
 {
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
+	menu.style.opacity = 1;
 	var lis = menu.getElementsByTagName('li');
 	var h4s = menu.getElementsByTagName('h4');
 	for (var i = 0, j = h4s.length; i < j; i++)
@@ -1169,8 +1170,9 @@ function timeoutHide(e)
 // Hide the ul elements under the element identified by id
 function hideUlUnder(id)
 {
-	var eid = document.getElementById(id);
-	eid.getElementsByTagName('ul')[0].style.visibility = 'hidden';
+	var eid = document.getElementById(id), eids = eid.getElementsByTagName('ul')[0];
+	eids.style.visibility = 'hidden';
+	eids.style.opacity = 0;
 	var h4s = eid.getElementsByTagName('h4');
 	if (h4s.length > 0)
 		h4s[0].className = '';
@@ -1210,6 +1212,7 @@ function showMe(e)
 			return hideUlUnder(this.id);
 	}
 	showul.style.visibility = 'visible';
+	showul.style.opacity = 1;
 	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
@@ -1263,7 +1266,10 @@ function hideUlUnderLi(li)
 	}
 	var uls = li.getElementsByTagName('ul');
 	for (var i = 0, j = uls.length; i < j; i++)
+	{
 		uls[i].style.visibility = 'hidden';
+		uls[i].style.opacity = 0;
+	}
 }
 
 /* --------------------------------------------------------
