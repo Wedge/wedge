@@ -143,12 +143,14 @@ function template_main()
 	// Build the normal button array.
 	$normal_buttons = array(
 		'reply' => array('test' => 'can_reply', 'text' => 'reply', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true),
-		'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'image' => 'add_poll.gif', 'lang' => true, 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'custom' => 'onclick="return confirm(\'' . ($context['is_marked_notify'] ? $txt['notification_disable_topic'] : $txt['notification_enable_topic']) . '\');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'image' => 'markunread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'image' => 'sendtopic.gif', 'lang' => true, 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
 		'print' => array('text' => 'print', 'image' => 'print.gif', 'lang' => true, 'custom' => 'rel="new_win nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
 	);
+
+	// Allow adding new buttons easily.
+	call_integration_hook('integrate_display_buttons', array(&$normal_buttons));
 
 	// Show the page index... "Pages: [1]".
 	echo '
@@ -227,7 +229,7 @@ function template_main()
 
 		// Show a link to the member's profile.
 		echo '
-								<a href="', $message['member']['href'], '" onclick="javascript:oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], '); return false;">', $message['member']['name'], '</a>
+								<a href="', $message['member']['href'], '" onclick="javascript:oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], '); return false;" onmousedown="return false;">', $message['member']['name'], '</a>
 							</h4>
 							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
 
@@ -303,11 +305,11 @@ function template_main()
 			if ($message['member']['has_messenger'] && $message['member']['can_view_profile'])
 				echo '
 								<li class="im_icons">
-									<ul>
-										', !empty($message['member']['icq']['link']) ? '<li>' . $message['member']['icq']['link'] . '</li>' : '', '
-										', !empty($message['member']['msn']['link']) ? '<li>' . $message['member']['msn']['link'] . '</li>' : '', '
-										', !empty($message['member']['aim']['link']) ? '<li>' . $message['member']['aim']['link'] . '</li>' : '', '
-										', !empty($message['member']['yim']['link']) ? '<li>' . $message['member']['yim']['link'] . '</li>' : '', '
+									<ul>', !empty($message['member']['icq']['link']) ? '
+										<li>' . $message['member']['icq']['link'] . '</li>' : '', !empty($message['member']['msn']['link']) ? '
+										<li>' . $message['member']['msn']['link'] . '</li>' : '', !empty($message['member']['aim']['link']) ? '
+										<li>' . $message['member']['aim']['link'] . '</li>' : '', !empty($message['member']['yim']['link']) ? '
+										<li>' . $message['member']['yim']['link'] . '</li>' : '', '
 									</ul>
 								</li>';
 
@@ -394,6 +396,11 @@ function template_main()
 		if ($message['can_approve'] || $context['can_reply'] || $message['can_modify'] || $message['can_remove'] || $context['can_split'] || $context['can_restore_msg'])
 			echo '
 								<ul class="reset smalltext quickbuttons">';
+
+		// !!! @todo: Don't allow this for the first comment of a blog post?
+		if ($message['can_mergeposts'])
+			echo '
+									<li class="mergepost_button"><a href="', $scripturl, '?action=mergeposts;pid=', $message['id'], ';msgid=', $message['last_post_id'], ';topic=', $context['current_topic'], '">', $txt['merge_double'], '</a></li>';
 
 		// Maybe we can approve it, maybe we should?
 		if ($message['can_approve'])
@@ -529,7 +536,7 @@ function template_main()
 		// Show "« Last Edit: Time by Person »" if this post was edited.
 		if ($settings['show_modify'] && !empty($message['modified']['name']))
 			echo '
-								&#171; <em>', $txt['last_edit'], ': ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;';
+								&#171; <em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;';
 
 		echo '
 							</div>
@@ -607,11 +614,15 @@ function template_main()
 		'sticky' => array('test' => 'can_sticky', 'text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'image' => 'admin_sticky.gif', 'lang' => true, 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'merge' => array('test' => 'can_merge', 'text' => 'merge', 'image' => 'merge.gif', 'lang' => true, 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
 		'calendar' => array('test' => 'calendar_post', 'text' => 'calendar_link', 'image' => 'linktocal.gif', 'lang' => true, 'url' => $scripturl . '?action=post;calendar;msg=' . $context['topic_first_message'] . ';topic=' . $context['current_topic'] . '.0'),
+		'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'image' => 'add_poll.gif', 'lang' => true, 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 	);
 
-	// Restore topic. eh?  No monkey business.
+	// Restore topic. Eh? No monkey business.
 	if ($context['can_restore_topic'])
 		$mod_buttons[] = array('text' => 'restore_topic', 'image' => '', 'lang' => true, 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+
+	// Allow adding new mod buttons easily.
+	call_integration_hook('integrate_mod_buttons', array(&$mod_buttons));
 
 	echo '
 			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'bottom', array('id' => 'moderationbuttons_strip')), '</div>';

@@ -1076,7 +1076,7 @@ function checkUserBehavior()
 				),
 				array('id_event')
 			);
-			$error_id = $smcFunc['db_insert_id']('{db_prefix}log_intrusion', 'id_event');
+			$error_id = $smcFunc['db_insert_id']();
 
 			// Set the page up
 			loadTemplate('Errors');

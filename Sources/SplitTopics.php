@@ -530,9 +530,6 @@ function SplitSelectionExecute()
 	if (!isset($_POST['subname']) || $_POST['subname'] == '')
 		$_POST['subname'] = $txt['new_topic'];
 
-	// The old topic's ID is the current one.
-	$split1_ID_TOPIC = $topic;
-
 	// You must've selected some messages!  Can't split out none!
 	if (empty($_SESSION['split_selection'][$topic]))
 		fatal_lang_error('no_posts_selected', false);
@@ -543,12 +540,12 @@ function SplitSelectionExecute()
 }
 
 // Split a topic in two topics.
-function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
+function splitTopic($split1_id_topic, $split_messages, $new_subject)
 {
 	global $user_info, $topic, $board, $modSettings, $smcFunc, $txt;
 
 	// Nothing to split?
-	if (empty($splitMessages))
+	if (empty($split_messages))
 		fatal_lang_error('no_posts_selected', false);
 
 	// Get some board info.
@@ -558,7 +555,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		WHERE id_topic = {int:id_topic}
 		LIMIT 1',
 		array(
-			'id_topic' => $split1_ID_TOPIC,
+			'id_topic' => $split1_id_topic,
 		)
 	);
 	list ($id_board, $split1_approved) = $smcFunc['db_fetch_row']($request);
@@ -576,8 +573,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		ORDER BY m.approved DESC
 		LIMIT 2',
 		array(
-			'id_topic' => $split1_ID_TOPIC,
-			'no_msg_list' => $splitMessages,
+			'id_topic' => $split1_id_topic,
+			'no_msg_list' => $split_messages,
 		)
 	);
 	// You can't select ALL the messages!
@@ -595,7 +592,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		if ($row['approved'])
 		{
 			$split1_replies = $row['message_count'] - 1;
-			$split1_unapprovedposts = 0;
+			$split1_unapproved_posts = 0;
 		}
 		else
 		{
@@ -605,12 +602,12 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			elseif (!$split1_approved)
 				$split1_replies++;
 
-			$split1_unapprovedposts = $row['message_count'];
+			$split1_unapproved_posts = $row['message_count'];
 		}
 	}
 	$smcFunc['db_free_result']($request);
-	$split1_firstMem = getMsgMemberID($split1_first_msg);
-	$split1_lastMem = getMsgMemberID($split1_last_msg);
+	$split1_first_mem = getMsgMemberID($split1_first_msg);
+	$split1_last_mem = getMsgMemberID($split1_last_msg);
 
 	// Find the first and last in the list. (new topic)
 	$request = $smcFunc['db_query']('', '
@@ -622,8 +619,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		ORDER BY approved DESC
 		LIMIT 2',
 		array(
-			'msg_list' => $splitMessages,
-			'id_topic' => $split1_ID_TOPIC,
+			'msg_list' => $split_messages,
+			'id_topic' => $split1_id_topic,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -639,7 +636,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		{
 			$split2_approved = true;
 			$split2_replies = $row['message_count'] - 1;
-			$split2_unapprovedposts = 0;
+			$split2_unapproved_posts = 0;
 		}
 		else
 		{
@@ -653,15 +650,15 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			elseif (!$split2_approved)
 				$split2_replies++;
 
-			$split2_unapprovedposts = $row['message_count'];
+			$split2_unapproved_posts = $row['message_count'];
 		}
 	}
 	$smcFunc['db_free_result']($request);
-	$split2_firstMem = getMsgMemberID($split2_first_msg);
-	$split2_lastMem = getMsgMemberID($split2_last_msg);
+	$split2_first_mem = getMsgMemberID($split2_first_msg);
+	$split2_last_mem = getMsgMemberID($split2_last_msg);
 
 	// No database changes yet, so let's double check to see if everything makes at least a little sense.
-	if ($split1_first_msg <= 0 || $split1_last_msg <= 0 || $split2_first_msg <= 0 || $split2_last_msg <= 0 || $split1_replies < 0 || $split2_replies < 0 || $split1_unapprovedposts < 0 || $split2_unapprovedposts < 0 || !isset($split1_approved) || !isset($split2_approved))
+	if ($split1_first_msg <= 0 || $split1_last_msg <= 0 || $split2_first_msg <= 0 || $split2_last_msg <= 0 || $split1_replies < 0 || $split2_replies < 0 || $split1_unapproved_posts < 0 || $split2_unapproved_posts < 0 || !isset($split1_approved) || !isset($split2_approved))
 		fatal_lang_error('cant_find_messages');
 
 	// You cannot split off the first message of a topic.
@@ -683,13 +680,13 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 				'is_sticky' => 'int',
 			),
 			array(
-				(int) $id_board, $split2_firstMem, $split2_lastMem, 0,
-				0, $split2_replies, $split2_unapprovedposts, (int) $split2_approved, 0,
+				(int) $id_board, $split2_first_mem, $split2_last_mem, 0,
+				0, $split2_replies, $split2_unapproved_posts, (int) $split2_approved, 0,
 			),
 			array('id_topic')
 		);
-	$split2_ID_TOPIC = $smcFunc['db_insert_id']('{db_prefix}topics', 'id_topic');
-	if ($split2_ID_TOPIC <= 0)
+	$split2_id_topic = $smcFunc['db_insert_id']();
+	if ($split2_id_topic <= 0)
 		fatal_lang_error('cant_insert_topic');
 
 	// Move the messages over to the other topic.
@@ -707,8 +704,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 				subject = CASE WHEN id_msg = {int:split_first_msg} THEN {string:new_subject} ELSE {string:new_subject_replies} END
 			WHERE id_msg IN ({array_int:split_msgs})',
 			array(
-				'split_msgs' => $splitMessages,
-				'id_topic' => $split2_ID_TOPIC,
+				'split_msgs' => $split_messages,
+				'id_topic' => $split2_id_topic,
 				'new_subject' => $new_subject,
 				'split_first_msg' => $split2_first_msg,
 				'new_subject_replies' => $txt['response_prefix'] . $new_subject,
@@ -716,7 +713,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		);
 
 		// Cache the new topics subject... we can do it now as all the subjects are the same!
-		updateStats('subject', $split2_ID_TOPIC, $new_subject);
+		updateStats('subject', $split2_id_topic, $new_subject);
 	}
 
 	// Any associated reported posts better follow...
@@ -725,8 +722,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		SET id_topic = {int:id_topic}
 		WHERE id_msg IN ({array_int:split_msgs})',
 		array(
-			'split_msgs' => $splitMessages,
-			'id_topic' => $split2_ID_TOPIC,
+			'split_msgs' => $split_messages,
+			'id_topic' => $split2_id_topic,
 		)
 	);
 
@@ -745,10 +742,10 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			'num_replies' => $split1_replies,
 			'id_first_msg' => $split1_first_msg,
 			'id_last_msg' => $split1_last_msg,
-			'id_member_started' => $split1_firstMem,
-			'id_member_updated' => $split1_lastMem,
-			'unapproved_posts' => $split1_unapprovedposts,
-			'id_topic' => $split1_ID_TOPIC,
+			'id_member_started' => $split1_first_mem,
+			'id_member_updated' => $split1_last_mem,
+			'unapproved_posts' => $split1_unapproved_posts,
+			'id_topic' => $split1_id_topic,
 		)
 	);
 
@@ -762,7 +759,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		array(
 			'id_first_msg' => $split2_first_msg,
 			'id_last_msg' => $split2_last_msg,
-			'id_topic' => $split2_ID_TOPIC,
+			'id_topic' => $split2_id_topic,
 		)
 	);
 
@@ -776,7 +773,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			array(
 				'approved' => 0,
 				'id_msg' => $split2_first_msg,
-				'id_topic' => $split2_ID_TOPIC,
+				'id_topic' => $split2_id_topic,
 			)
 		);
 
@@ -799,14 +796,14 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		FROM {db_prefix}log_topics
 		WHERE id_topic = {int:id_topic}',
 		array(
-			'id_topic' => (int) $split1_ID_TOPIC,
+			'id_topic' => (int) $split1_id_topic,
 		)
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		$replaceEntries = array();
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$replaceEntries[] = array($row['id_member'], $split2_ID_TOPIC, $row['id_msg']);
+			$replaceEntries[] = array($row['id_member'], $split2_id_topic, $row['id_msg']);
 
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}log_topics',
@@ -822,13 +819,13 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	updateStats('topic');
 	updateLastMessages($id_board);
 
-	logAction('split', array('topic' => $split1_ID_TOPIC, 'new_topic' => $split2_ID_TOPIC, 'board' => $id_board));
+	logAction('split', array('topic' => $split1_id_topic, 'new_topic' => $split2_id_topic, 'board' => $id_board));
 
 	// Notify people that this topic has been split?
-	sendNotifications($split1_ID_TOPIC, 'split');
+	sendNotifications($split1_id_topic, 'split');
 
 	// Return the ID of the newly created topic.
-	return $split2_ID_TOPIC;
+	return $split2_id_topic;
 }
 
 // Merge two topics into one topic... useful if they have the same basic subject.
@@ -1304,6 +1301,22 @@ function MergeExecute($topics = array())
 
 	$smcFunc['db_free_result']($request);
 
+	if (!empty($modSettings['pretty_enable_cache']))
+	{
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}pretty_topic_urls
+			WHERE id_topic IN ({array_int:deleted_topics})',
+			array(
+				'deleted_topics' => $deleted_topics,
+			)
+		);
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}pretty_urls_cache
+			WHERE (url_id LIKE "%' . implode('%") OR (url_id LIKE "%', $deleted_topics) . '%")',
+			array()
+		);
+	}
+
 	// Assign the first topic ID to be the merged topic.
 	$id_topic = min($topics);
 
@@ -1585,6 +1598,197 @@ function MergeDone()
 
 	$context['page_title'] = $txt['merge'];
 	$context['sub_template'] = 'merge_done';
+}
+
+function MergePosts($error_report = true)
+{
+	global $modSettings, $user_info, $txt, $settings, $user_info, $smcFunc;
+
+	loadLanguage('Errors');
+	if (!is_bool($error_report))
+		$error_report = true;
+
+	if (empty($_REQUEST['msgid']) || !is_numeric($_REQUEST['msgid']) || $_REQUEST['msgid'] < 1 || empty($_REQUEST['pid']) || !is_numeric($_REQUEST['pid']) || $_REQUEST['pid'] < 1 || empty($_REQUEST['topic']) || !is_numeric($_REQUEST['topic']) || $_REQUEST['topic'] < 1)
+		if ($error_report)
+			fatal_error($txt['merge_error_noid'], false);
+		else
+			return;
+
+	$topic = $_REQUEST['topic'];
+	$msg_id = min($_REQUEST['msgid'], $_REQUEST['pid']);
+	$qc = $_REQUEST['msgid'] == $_REQUEST['pid'];
+
+	// Can the user actually merge posts?
+	$request = $smcFunc['db_query']('', '
+		SELECT
+			m.id_msg, m.id_member, m.body, b.count_posts, m.id_board,
+			t.id_first_msg, m.subject, m.poster_time, m.poster_email, m.poster_name
+		FROM
+			({db_prefix}messages AS m, {db_prefix}boards AS b, {db_prefix}topics AS t)
+		WHERE
+			m.id_topic = {int:id_topic}
+			AND id_msg ' . ($qc ? '<' : '>') . '= {int:id_msg}
+			AND b.id_board = m.id_board
+			AND t.id_topic = m.id_topic
+		ORDER BY id_msg' . ($qc ? ' DESC' : '') . '
+		LIMIT 2',
+		array(
+			'id_topic' => $topic,
+			'id_msg' => $msg_id,
+		)
+	);
+
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+		$msn[] = array(
+			'id_member' => $row['id_member'],
+			'common_id' => empty($row['id_member']) ? (empty($row['poster_email']) ? $row['poster_name'] : $row['poster_email']) : $row['id_member'],
+			'subject' => $row['subject'],
+			'body' => $row['body'],
+			'id_msg' => $row['id_msg'],
+			'count_posts' => $row['count_posts'],
+			'id_board' => $row['id_board'],
+			'id_first_msg' => $row['id_first_msg'],
+			'timestamp' => $row['poster_time'],
+		);
+	$smcFunc['db_free_result']($request);
+
+	// Reverse the order
+	if ($qc)
+	{
+		$msn = array(
+			'0' => $msn['1'],
+			'1' => $msn['0'],
+		);
+
+		// Automatic merge time
+		if (!empty($modSettings['merge_post_auto_time']) && $modSettings['merge_post_auto_time'] > 0 && ($msn['1']['timestamp'] - $msn['0']['timestamp']) > $modSettings['merge_post_auto_time'])
+			return;
+	}
+
+	if (((!empty($msn['0']['id_member']) && !empty($msn['1']['id_member'])) || $user_info['id'] == 1) && $msn['0']['id_board'] == $msn['1']['id_board'])
+	{
+		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == $user_info['id'])))
+		{
+			// Let's merge it and use a separator
+			if (!empty($modSettings['merge_post_custom_separator']))
+			{
+				if (empty($modSettings['merge_post_separator']))
+					$modSettings['merge_post_separator'] = '[br]';
+				else
+				{
+					$modSettings['merge_post_separator'] = $smcFunc['htmlspecialchars']($modSettings['merge_post_separator'], ENT_QUOTES);
+					$date = '[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]';
+					$modSettings['merge_post_separator'] = str_replace('$date', $date, $modSettings['merge_post_separator']);
+				}
+				$newbody = $msn['0']['body'] . $modSettings['merge_post_separator'] . $msn['1']['body'];
+			}
+			else
+				$newbody = $msn['0']['body'] . (empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_old_time_add']) ?
+							'<br />[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]' : '') . '<br />' : '<br />') . $msn['1']['body'];
+
+			$memberid = $msn['0']['id_member'];
+			$postcount = $msn['0']['count_posts'];
+			$oldpostid = $msn['0']['id_msg'];
+			$newpostid = $msn['1']['id_msg'];
+			$idboard = $msn['0']['id_board'];
+			$newpostlength = (empty($modSettings['merge_post_ignore_length']) && $modSettings['max_messageLength'] > 0) ? strlen(un_htmlspecialchars($newbody)) : 0;
+			$oldsubject = '';
+			$replacefirstid = '';
+
+			// First check the length of the post, if the limit is reached don't merge it! Also, the Automatic Merge will not work!
+			if (empty($modSetting['merge_post_ignore_length']) && $modSettings['max_messageLength'] < $newpostlength)
+				if ($error_report)
+					fatal_error($txt['merge_error_length'], false);
+				else
+					return;
+
+			// Removing the first message in the topic?
+			if ($oldpostid == $msn['0']['id_first_msg'])
+			{
+				$replacefirstid = ', id_first_msg = ' . (int) $newpostid;
+
+				// Keep the first post's title as topic title.
+				$msn['0']['subject'] = str_replace("'", "&#039;", $msn['0']['subject']);
+				$oldsubject = ', subject = {string:subject}';
+			}
+
+			// Uhh the old post can have attachments
+			// If SQL finds some attachments, it should replace them with the new id
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}attachments
+				SET id_msg = {int:new}
+				WHERE id_msg = {int:old}',
+				array(
+					'new' => $newpostid,
+					'old' => $oldpostid
+				)
+			);
+
+			// Fix some statistics stuff
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}topics
+				SET num_replies = num_replies - 1' . $replacefirstid . '
+				WHERE id_topic = {int:id_topic}
+				LIMIT 1',
+				array(
+					'id_topic' => $topic
+				)
+			);
+
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}boards
+				SET num_posts = num_posts - 1
+				WHERE id_board = {int:id_board}
+				LIMIT 1',
+				array(
+					'id_board' => $idboard
+				)
+			);
+
+			// If the poster was registered and the board this message was on incremented
+			// the member's posts when it was posted, decrease his or her post count.
+			if (!empty($memberid) && empty($postcount))
+				updateMemberData($memberid, array('posts' => '-'));
+
+			// Merge the post
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}messages
+				SET body = {string:newbody}' . $oldsubject . '
+				WHERE id_msg = {int:id_msg}
+				LIMIT 1',
+				array(
+					'newbody' => $newbody,
+					'id_msg' => $newpostid,
+					'subject' => $msn['0']['subject']
+				)
+			);
+
+			// Remove the old message!
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}messages
+				WHERE id_msg = {int:id_msg}
+				LIMIT 1',
+				array(
+					'id_msg' => $oldpostid
+				)
+			);
+
+			// Now go back to the topic
+			if ($error_report)
+				redirectexit('topic=' . $topic . '.msg' . $newpostid . '#msg' . $newpostid);
+			else
+				return;
+		}
+		else
+			if ($error_report)
+				fatal_error($txt['merge_error_dbpo'], false);
+			else
+				return;
+	}
+	elseif ($error_report)
+		fatal_error($txt['merge_error_notf'], false);
+	else
+		return;
 }
 
 ?>

@@ -147,13 +147,32 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			DELETE FROM {db_prefix}log_search_subjects
 			WHERE id_topic = {int:id_topic}',
 			array(
-				'id_topic' => (int) $parameter1,
+				'id_topic' => $parameter1,
 			)
 		);
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}pretty_topic_urls
+			WHERE id_topic = {int:id_topic}',
+			array(
+				'id_topic' => $parameter1,
+			)
+		);
+		if ($modSettings['pretty_enable_cache'] && is_numeric($parameter1) && $parameter1 > 0)
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}pretty_urls_cache
+				WHERE url_id LIKE {string:topic_search}',
+				array(
+					'topic_search' => '%topic=' . $parameter1 . '%',
+				)
+			);
 
 		// Insert the new subject.
 		if ($parameter2 !== null)
 		{
+			if (!function_exists('pretty_generate_url'))
+				include('Subs-PrettyUrls.php');
+			pretty_update_topic($parameter2, $parameter1);
+
 			$parameter1 = (int) $parameter1;
 			$parameter2 = text2words($parameter2);
 
@@ -1317,6 +1336,17 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'disabled_after' => '<br />',
 			),
 			array(
+				'tag' => 'mergedate',
+				'type' => 'unparsed_content',
+				'content' => '<div class="mergedate">' . $txt['search_date_posted'] . ' $1</div>',
+				'validate' => create_function('&$tag, &$data, $disabled', 'if (is_numeric($data)) $data = timeformat($data);'),
+			),
+			array(
+				'tag' => 'more',
+				'type' => 'closed',
+				'content' => '',
+			),
+			array(
 				'tag' => 'move',
 				'before' => '<marquee>',
 				'after' => '</marquee>',
@@ -1549,6 +1579,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'after' => '</span>',
 			),
 		);
+
+		// Let mods add new BBC without hassle.
+		call_integration_hook('integrate_bbc_codes', array(&$codes));
 
 		// This is mainly for the bbc manager, so it's easy to add tags above.  Custom BBC should be added above this line.
 		if ($message === false)
@@ -2188,6 +2221,25 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . substr($message, $pos1);
 			$pos += strlen($tag['before']) - 1 + 2;
 		}
+		// Trim the urls
+		elseif (($tag['type'] == 'unparsed_content' && $tag['tag'] == 'url'))
+		{
+			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, 3) . ']', $pos1);
+			if ($pos2 === false)
+				continue;
+
+			$data = substr($message, $pos1, $pos2 - $pos1);
+
+			if (!empty($tag['block_level']) && substr($data, 0, 6) == '<br />')
+				$data = substr($data, 6);
+
+			if (isset($tag['validate']))
+				$tag['validate']($tag, $data, $disabled);
+
+			$code = strtr($tag['content'], array('$1' => $data, '$2' => trim_url($data)));
+			$message = substr($message, 0, $pos) . $code . substr($message, $pos2 + 6);
+			$pos += strlen($code) - 1;
+		}
 		// Don't parse the content, just skip it.
 		elseif ($tag['type'] == 'unparsed_content')
 		{
@@ -2252,9 +2304,20 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// A closed tag, with no content or value.
 		elseif ($tag['type'] == 'closed')
 		{
-			$pos2 = strpos($message, ']', $pos);
-			$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
-			$pos += strlen($tag['content']) - 1 + 2;
+			if ($tag['tag'] == 'more' && !empty($context['current_board']) && empty($context['current_topic']))
+			{
+				$lent = strlen($message) - $pos;
+				$message = rtrim(substr($message, 0, $pos));
+				while (substr($message, -6) === '<br />')
+					$message = substr($message, 0, -6);
+				$message .= ' <span style="font-style: italic; color: grey">(Reste ' . $lent . ' caractères)</span>';
+			}
+			else
+			{
+				$pos2 = strpos($message, ']', $pos);
+				$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
+				$pos += strlen($tag['content']) - 1 + 2;
+			}
 		}
 		// This one is sorta ugly... :/.  Unfortunately, it's needed for flash.
 		elseif ($tag['type'] == 'unparsed_commas_content')
@@ -2699,16 +2762,15 @@ function writeLog($force = false)
  * This often marks the end of general processing, since ultimately it diverts execution to {@link obExit()} which means a closedown of processing, buffers and final output. Things to note:
  * - A call is made before continuing to ensure that the mail queue is processed.
  * - Session IDs (where applicable, e.g. for those without cookies) are added in if needed.
- * - The URL is also rewritten to support queryless URLs depending on server configuration.
  * - The redirect integration hook is called, just before the actual redirect, in case the integration wishes to alter where redirection occurs.
  * - The source of redirection is noted in the session when in debug mode.
  *
  * @param string $setLocation The string representing the URL. If an internal (into the forum) link, this should be in the form of action=whatever (i.e. without the full domain and path to index.php, or the ?). Note this can be an external URL too.
  * @param bool $refresh Whether to use a Refresh HTTP header or whether to use Location (default).
  */
-function redirectexit($setLocation = '', $refresh = false)
+function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 {
-	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache;
+	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache, $sourcedir;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
@@ -2739,16 +2801,29 @@ function redirectexit($setLocation = '', $refresh = false)
 	elseif (isset($_GET['debug']))
 		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
 
-	if (!empty($modSettings['queryless_urls']) && (empty($context['server']['is_cgi']) || @ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && (!empty($context['server']['is_apache']) || !empty($context['server']['is_lighttpd'])))
+	//	Redirections should be prettified too
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
-		if (defined('SID') && SID != '')
-			$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$/e', "\$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2?' . SID", $setLocation);
-		else
-			$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$/e', "\$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2'", $setLocation);
+		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation), 'url_id' => 'setLocation'));
+		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
+		foreach ($filter_callbacks as $callback)
+		{
+			$pretty_url = call_user_func($callback, $url);
+			if (isset($pretty_url[0]['replacement']))
+				break;
+		}
+		if (isset($pretty_url[0]['replacement']))
+			$setLocation = $pretty_url[0]['replacement'];
+		$setLocation = str_replace(chr(18), '\'', $setLocation);
+		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|(&amp)?;#|=#~', '~\?$|(&amp)?;$|#$|=$~'), array(';', '?', '#', ''), $setLocation);
 	}
 
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh));
+
+	if ($permanent)
+		header('HTTP/1.1 301 Moved Permanently');
 
 	// We send a Refresh header only in special cases because Location looks better. (and is quicker...)
 	if ($refresh && !WIRELESS)
@@ -3006,7 +3081,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 		array('id_action')
 	);
 
-	return $smcFunc['db_insert_id']('{db_prefix}log_actions', 'id_action');
+	return $smcFunc['db_insert_id']();
 }
 
 /**
@@ -4038,6 +4113,32 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 }
 
 /**
+ * Shorten URLs
+ *
+ * This feature was shamelessly inspired by a mod by JayBachatero, which should have been made a core feature long ago. Thanks, man!
+ *
+ * @param string $ur URL that should be shortened, in case it's longer than $modSettings['urlLength']
+ * @return string The resulting string.
+ */
+function trim_url($ur)
+{
+	global $modSettings, $smcFunc;
+
+	$modSettings['urlLength'] = isset($modSettings['urlLength']) ? $modSettings['urlLength'] : 50;
+	if (empty($modSettings['urlLength']))
+		return $ur;
+
+	$url = html_entity_decode($ur, ENT_QUOTES);
+
+	// Check the length of the url
+	if ($smcFunc['strlen']($url) <= $modSettings['urlLength'])
+		return $ur;
+
+	$break = $modSettings['urlLength'] / 2;
+	return htmlentities(preg_replace('/&[^&;]*$/', '', substr($url, 0, $break)) . '&hellip;' . preg_replace('/^\d+;/', '', substr($url, -$break)));
+}
+
+/**
  * Create a 'button', comprised of an icon and a text string, subject to theme settings.
  *
  * This function first looks to see if the theme specifies its own button system, and if it does not (or, $force_use is true), this function manages the button generation.
@@ -4358,6 +4459,9 @@ function setupMenuContext()
 			cache_put_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_buttons, $cacheTime);
 	}
 
+	// Allow editing menu buttons easily.
+	call_integration_hook('integrate_menu_buttons', array(&$menu_buttons));
+
 	$context['menu_buttons'] = $menu_buttons;
 
 	// Logging out requires the session id in the url.
@@ -4433,7 +4537,7 @@ function match_cidr($ip, $cidr_block)
 			$cidr_block .= '/32';
 
 		list ($cidr_ip, $mask) = explode('/', $cidr_block);
-		$mask = pow(2,32) - pow(2, 32 - $mask);
+		$mask = pow(2, 32) - pow(2, 32 - $mask);
 		return (ip2long($ip) & $mask) === (ip2long($cidr_ip) & $mask);
 	}
 	return false;

@@ -74,11 +74,15 @@ loadDatabase();
 
 // Load the settings from the settings table, and perform operations like optimizing.
 reloadSettings();
-// Clean the request variables, add slashes, etc.
-cleanRequest();
+
+// Unserialize the array of pretty board URLs
 $context = array(
+	'pretty' => array('db_count' => 0),
 	'app_error_count' => 0,
 );
+
+// Clean the request variables, add slashes, etc.
+cleanRequest();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
@@ -170,6 +174,22 @@ function smf_main()
 
 	// Load the user's cookie (or set as guest) and load their settings.
 	loadUserSettings();
+
+	// Get rid of ?PHPSESSID for robots.
+	if ($user_info['possibly_robot'] && strpos($user_info['url'], 'PHPSESSID=') !== false)
+	{
+		$correcturl = preg_replace('/([\?&]PHPSESSID=[^&]*)/', '', $user_info['url']);
+		$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
+		$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
+		$correcturl = preg_replace('/&$|\?$/', '', $correcturl);
+
+		if ($correcturl != $user_info['url'])
+		{
+			header('HTTP/1.1 301 Moved Permanently');
+			header('Location: ' . $correcturl);
+			exit();
+		}
+	}
 
 	// Check the request for anything hinky.
 	checkUserBehavior();
@@ -279,6 +299,7 @@ function smf_main()
 		'login2' => array('LogInOut.php', 'Login2'),
 		'logout' => array('LogInOut.php', 'Logout'),
 		'markasread' => array('Subs-Boards.php', 'MarkRead'),
+		'mergeposts' => array('SplitTopics.php', 'MergePosts'),
 		'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
 		'mlist' => array('Memberlist.php', 'Memberlist'),
 		'moderate' => array('ModerationCenter.php', 'ModerationMain'),
@@ -327,6 +348,9 @@ function smf_main()
 		'.xml' => array('News.php', 'ShowXmlFeed'),
 		'xmlhttp' => array('Xml.php', 'XMLhttpMain'),
 	);
+
+	// Allow modifying $actionArray easily.
+	call_integration_hook('integrate_actions', array(&$actionArray));
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))

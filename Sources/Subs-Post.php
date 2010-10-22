@@ -663,7 +663,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		),
 		array('id_pm')
 	);
-	$id_pm = $smcFunc['db_insert_id']('{db_prefix}personal_messages', 'id_pm');
+	$id_pm = $smcFunc['db_insert_id']();
 
 	// Add the recipients.
 	if (!empty($id_pm))
@@ -1240,7 +1240,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $txt, $modSettings, $smcFunc, $context;
+	global $user_info, $txt, $modSettings, $smcFunc, $context, $sourcedir;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1331,7 +1331,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		),
 		array('id_msg')
 	);
-	$msgOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}messages', 'id_msg');
+	$msgOptions['id'] = $smcFunc['db_insert_id']();
 
 	// Something went wrong creating the message...
 	if (empty($msgOptions['id']))
@@ -1366,7 +1366,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			),
 			array('id_topic')
 		);
-		$topicOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}topics', 'id_topic');
+		$topicOptions['id'] = $smcFunc['db_insert_id']();
 
 		// The topic couldn't be created for some reason.
 		if (empty($topicOptions['id']))
@@ -1428,6 +1428,16 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 		// One new post has been added today.
 		trackStats(array('posts' => '+'));
+
+		// Merging a double post...
+		if (!empty($modSettings['merge_post_auto']) && !($user_info['is_admin'] && empty($modSettings['merge_post_admin_double_post'])))
+		{
+			$_REQUEST['msgid'] = $msgOptions['id'];
+			$_REQUEST['pid'] = $msgOptions['id'];
+			$_REQUEST['topic'] = $topicOptions['id'];
+			include($sourcedir . '/SplitTopics.php');
+			MergePosts(false);
+		}
 	}
 
 	// Creating is modifying...in a way.
@@ -1729,7 +1739,7 @@ function createAttachment(&$attachmentOptions)
 		),
 		array('id_attach')
 	);
-	$attachmentOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}attachments', 'id_attach');
+	$attachmentOptions['id'] = $smcFunc['db_insert_id']();
 
 	if (empty($attachmentOptions['id']))
 		return false;
@@ -1872,7 +1882,7 @@ function createAttachment(&$attachmentOptions)
 				),
 				array('id_attach')
 			);
-			$attachmentOptions['thumb'] = $smcFunc['db_insert_id']('{db_prefix}attachments', 'id_attach');
+			$attachmentOptions['thumb'] = $smcFunc['db_insert_id']();
 
 			if (!empty($attachmentOptions['thumb']))
 			{
@@ -1952,18 +1962,6 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		$update_parameters['var_' . $var] = $val;
 	}
 
-	// Nothing to do?
-	if (empty($messages_columns))
-		return true;
-
-	// Change the post.
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}messages
-		SET ' . implode(', ', $messages_columns) . '
-		WHERE id_msg = {int:id_msg}',
-		$update_parameters
-	);
-
 	// Lock and or sticky the post.
 	if ($topicOptions['sticky_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
 	{
@@ -1982,6 +1980,18 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			)
 		);
 	}
+
+	// Nothing to do?
+	if (empty($messages_columns))
+		return true;
+
+	// Change the post.
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}messages
+		SET ' . implode(', ', $messages_columns) . '
+		WHERE id_msg = {int:id_msg}',
+		$update_parameters
+	);
 
 	// Mark the edited post as read.
 	if (!empty($topicOptions['mark_as_read']) && !$user_info['is_guest'])

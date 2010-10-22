@@ -366,7 +366,7 @@ em {
 }
 
 .menu h4 {
-	padding: 3px 20px 3px 5px;
+	padding: 3px 19px 3px 6px;
 	font-weight: normal;
 	background: url(../images/menu.gif) no-repeat 98% 2px;
 	margin-bottom: 2px;
@@ -950,6 +950,9 @@ a.moderation_link, a.moderation_link:visited {
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
+}
+.description {
+	overflow: hidden;
 }
 .description_board {
 	margin-top: 0;
@@ -1700,6 +1703,9 @@ ul.quickbuttons li a {
 ul.quickbuttons a:hover {
 	color: #a70;
 }
+ul.quickbuttons li.mergepost_button {
+	background: url(../images/buttons/mergeposts.gif) no-repeat 0 2px;
+}
 ul.quickbuttons li.quote_button {
 	background: url(../images/theme/quickbuttons.png) no-repeat 0 0;
 }
@@ -2056,6 +2062,17 @@ fieldset.merge_options {
 }
 .custom_subject {
 	margin: 0.5em 0;
+}
+
+/* And for merging double posts, maybe...? */
+
+.mergedate {
+	font-size: 10px;
+	text-align: right;
+	color: gray;
+	padding: 5px 0 0 0;
+	margin: 0;
+	border-bottom: 1px dashed #999;
 }
 
 /* Styles for the login areas.

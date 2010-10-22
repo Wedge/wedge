@@ -60,19 +60,20 @@ function RemoveTopic2()
 		redirectexit();
 
 	$request = $smcFunc['db_query']('', '
-		SELECT t.id_member_started, ms.subject, t.approved
+		SELECT t.id_member_started, ms.subject, t.approved, b.wedge_type
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
 		array(
 			'current_topic' => $topic,
 		)
 	);
-	list ($starter, $subject, $approved) = $smcFunc['db_fetch_row']($request);
+	list ($starter, $subject, $approved, $b_type) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
-	if ($starter == $user_info['id'] && !allowedTo('remove_any'))
+	if ($starter == $user_info['id'] && !allowedTo('remove_any') && ($b_type == 'forum' || $user_info['is_mod']))
 		isAllowedTo('remove_own');
 	else
 		isAllowedTo('remove_any');
@@ -531,6 +532,21 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		)
 	);
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}pretty_topic_urls
+		WHERE id_topic IN ({array_int:topics})',
+		array(
+			'topics' => $topics,
+		)
+	);
+	if (!empty($modSettings['pretty_enable_cache']))
+	{
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}pretty_urls_cache
+			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
+			array(),
+		);
+	}
 
 	// Update the totals...
 	updateStats('message');
@@ -801,7 +817,7 @@ function removeMessage($message, $decreasePostCount = true)
 			);
 
 		// Capture the ID of the new topic...
-		$topicID = empty($id_recycle_topic) ? $smcFunc['db_insert_id']('{db_prefix}topics', 'id_topic') : $id_recycle_topic;
+		$topicID = empty($id_recycle_topic) ? $smcFunc['db_insert_id']() : $id_recycle_topic;
 
 		// If the topic creation went successful, move the message.
 		if ($topicID > 0)

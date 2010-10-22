@@ -207,6 +207,9 @@ function isEmptyText(theField)
 // Only allow form submission ONCE.
 function submitonce(theform)
 {
+	// Oh no. Firefox behavior ugly-ugly fix.
+	if (is_ff)
+		return;
 	smf_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
@@ -230,7 +233,7 @@ function submitThisOnce(oControl)
 	return !smf_formSubmitted;
 }
 
-// !!! Remove once admin_info_files is updated.
+// !!! @todo: Remove once admin_info_files is updated.
 function setInnerHTML(oElement, sToValue)
 {
 	oElement.innerHTML = sToValue;

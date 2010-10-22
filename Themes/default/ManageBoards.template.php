@@ -225,7 +225,7 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info;
 
 	// The main table header.
 	echo '
@@ -265,8 +265,8 @@ function template_modify_board()
 					</dt>
 					<dd>';
 
-	// The first select box gives the user the option to position it before, after or as a child of another board.
-	echo '
+		// The first select box gives the user the option to position it before, after or as a child of another board.
+		echo '
 						<select id="order" name="placement" onchange="this.form.board_order.disabled = this.options[this.selectedIndex].value == \'\';">
 							', !isset($context['board']['is_new']) ? '<option value="">(' . $txt['mboards_unchanged'] . ')</option>' : '', '
 							<option value="after">' . $txt['mboards_order_after'] . '...</option>
@@ -274,35 +274,60 @@ function template_modify_board()
 							<option value="before">' . $txt['mboards_order_before'] . '...</option>
 						</select>';
 
-	// The second select box lists all the boards in the category.
-	echo '
+		// The second select box lists all the boards in the category.
+		echo '
 						<select id="board_order" name="board_order" ', isset($context['board']['is_new']) ? '' : 'disabled="disabled"', '>
 							', !isset($context['board']['is_new']) ? '<option value="">(' . $txt['mboards_unchanged'] . ')</option>' : '';
 
-	foreach ($context['board_order'] as $order)
-		echo '
+		foreach ($context['board_order'] as $order)
+			echo '
 							<option', $order['selected'] ? ' selected="selected"' : '', ' value="', $order['id'], '">', $order['name'], '</option>';
 
-	echo '
+		echo '
 						</select>
 					</dd>';
 	}
 
-	// Options for board name and description.
 	echo '
+				</dl>
+				<hr />
+				<dl class="settings">
 					<dt>
 						<strong>', $txt['full_name'], ':</strong><br />
 						<span class="smalltext">', $txt['name_on_display'], '</span>
 					</dt>
 					<dd>
 						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30" class="input_text" />
+					</dd>';
+
+	$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
+	if (isset($context['board']['url']))
+		preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $context['board']['url'], $m);
+
+	// Options for board name and description.
+	echo '
+					<dt>
+						<strong>', $txt['pretty']['url'], ':</strong>
+						<p class="smalltext">', $txt['pretty']['url_desc'], '</p>
+					</dt>
+					<dd style="white-space: nowrap">';
+
+	echo '
+						<select dir="rtl" name="pretty_url_dom">';
+
+	foreach ($context['board']['subdomains'] as $subdo)
+		echo !empty($subdo) ? '
+							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected="selected"' : '') . '>' . $subdo . '</option>' : '';
+
+	echo '
+						</select>/<input type="text" maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25" />
 					</dd>
 					<dt>
 						<strong>', $txt['mboards_description'], ':</strong><br />
 						<span class="smalltext">', $txt['mboards_description_desc'], '</span>
 					</dt>
 					<dd>
-						<textarea name="desc" rows="3" cols="35" style="width: 99%">', $context['board']['description'], '</textarea>
+						<textarea name="desc" rows="6" cols="60" style="width: 99%">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong><br />

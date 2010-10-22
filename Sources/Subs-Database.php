@@ -116,6 +116,9 @@ function smf_db_replacement__callback($matches)
 	if ($matches[1] === 'db_prefix')
 		return $db_prefix;
 
+	if ($matches[1] === 'query_see_topic')
+		return $user_info['query_see_topic'];
+
 	if ($matches[1] === 'query_see_board')
 		return $user_info['query_see_board'];
 
@@ -357,8 +360,8 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 			$fail = true;
 		elseif (strpos($clean, 'benchmark') !== false && preg_match('~(^|[^a-z])benchmark($|[^[a-z])~s', $clean) != 0)
 			$fail = true;
-		// Sub selects?  We don't use those either.
-		elseif (preg_match('~\([^)]*?select~s', $clean) != 0)
+		// Sub selects?  We don't use those either, except in one case.
+		elseif (preg_match('~\([^)]*?select(?! f\.friend_id)~s', $clean) != 0)
 			$fail = true;
 
 		if (!empty($fail) && function_exists('log_error'))
@@ -386,13 +389,10 @@ function smf_db_affected_rows($connection = null)
 	return mysql_affected_rows($connection == null ? $db_connection : $connection);
 }
 
-function smf_db_insert_id($table, $field = null, $connection = null)
+function smf_db_insert_id($connection = null)
 {
-	global $db_connection, $db_prefix;
+	global $db_connection;
 
-	$table = str_replace('{db_prefix}', $db_prefix, $table);
-
-	// MySQL doesn't need the table or field information.
 	return mysql_insert_id($connection == null ? $db_connection : $connection);
 }
 

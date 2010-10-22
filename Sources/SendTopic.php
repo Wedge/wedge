@@ -524,7 +524,7 @@ function ReportToModerator2()
 				),
 				array('id_report')
 			);
-			$id_report = $smcFunc['db_insert_id']('{db_prefix}log_reported', 'id_report');
+			$id_report = $smcFunc['db_insert_id']();
 		}
 
 		// Now just add our report...

@@ -54,9 +54,9 @@ class wedgeEditor
 			'rich_active' => empty($modSettings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
 			'disable_smiley_box' => !empty($editorOptions['disable_smiley_box']),
 			'columns' => isset($editorOptions['columns']) ? $editorOptions['columns'] : 60,
-			'rows' => isset($editorOptions['rows']) ? $editorOptions['rows'] : 12,
+			'rows' => isset($editorOptions['rows']) ? $editorOptions['rows'] : 15,
 			'width' => isset($editorOptions['width']) ? $editorOptions['width'] : '70%',
-			'height' => isset($editorOptions['height']) ? $editorOptions['height'] : '150px',
+			'height' => isset($editorOptions['height']) ? $editorOptions['height'] : '200px',
 			'form' => isset($editorOptions['form']) ? $editorOptions['form'] : 'postmodify',
 			'bbc_level' => !empty($editorOptions['bbc_level']) ? $editorOptions['bbc_level'] : 'full',
 			'preview_type' => isset($editorOptions['preview_type']) ? (int) $editorOptions['preview_type'] : 1,
@@ -445,6 +445,7 @@ class wedgeEditor
 			@apache_reset_timeout();
 
 		// Let's pull out any legacy alignments.
+		// !!! @todo: After the <, add this if [bareimg] is implemented: (?!(?:bare)?img)
 		while (preg_match('~<([A-Za-z]+)\s+[^<>]*?(align="*(left|center|right)"*)[^<>]*?(/?)>~i', $text, $matches) === 1)
 		{
 			// Find the position in the text of this tag over again.
@@ -776,6 +777,8 @@ class wedgeEditor
 					$params .= ' ' . $attrib . '=' . (int) $value;
 				elseif ($attrib == 'alt' && trim($value) != '')
 					$params .= ' alt=' . trim($value);
+				elseif ($attrib == 'align' && trim($value) != '')
+					$params .= ' align=' . trim($value);
 				elseif ($attrib == 'src')
 					$src = trim($value);
 			}
@@ -1087,7 +1090,7 @@ class wedgeEditor
 		$new_text_offset = 0;
 
 		// These keep track of where we are!
-		if (count($parts = preg_split(sprintf('~(\\[)(/?)(%1$s)((?:[\\s=][^\\]\\[]*)?\\])~', implode('|', array_keys($valid_tags))), $text, -1, PREG_SPLIT_DELIM_CAPTURE)) > 1)
+		if (count($parts = preg_split(sprintf('~(\\[)(/?)(%1$s)((?:[\\s=].*?)?\\])~', implode('|', array_keys($valid_tags))), $text, -1, PREG_SPLIT_DELIM_CAPTURE)) > 1)
 		{
 			// Start with just text.
 			$isTag = false;
@@ -1570,6 +1573,9 @@ class wedgeEditor
 				'description' => $txt['horizontal_rule']
 			),
 		);
+
+		// Allow mods to modify BBC buttons.
+		call_integration_hook('integrate_bbc_buttons', array(&$context['bbc_tags']));
 
 		// Show the toggle?
 		if (empty($modSettings['disable_wysiwyg']))
@@ -2188,8 +2194,6 @@ class wedgeEditor
 				$replaces[$matches[0][$k]] = '[' . $this_tag . '=' . $replace . ']' . (empty($matches[4][$k]) ? '' : $matches[3][$k] . '[/' . $this_close . ']');
 			elseif ($hasEqualSign)
 				$replaces['[' . $matches[1][$k] . '=' . $matches[2][$k] . ']'] = '[' . $this_tag . '=' . $replace . ']';
-			elseif ($embeddedUrl)
-				$replaces['[' . $matches[1][$k] . ']' . $matches[2][$k] . '[/' . $matches[3][$k] . ']'] = '[' . $this_tag . '=' . $replace . ']' . $matches[2][$k] . '[/' . $this_close . ']';
 			else
 				$replaces['[' . $matches[1][$k] . ']' . $matches[2][$k] . '[/' . $matches[3][$k] . ']'] = '[' . $this_tag . ']' . $replace . '[/' . $this_close . ']';
 		}
@@ -2389,13 +2393,13 @@ class wedgeEditor
 							sName: \'sel_size\',
 							oOptions: {
 								\'\': ', JavaScriptEscape($txt['font_size']), ',
-								\'s6\': \'6pt\',
-								\'s8\': \'8pt\',
-								\'s10\': \'10pt\',
-								\'s12\': \'12pt\',
-								\'s14\': \'14pt\',
-								\'s18\': \'18pt\',
-								\'s24\': \'24pt\'
+								\'1\': \'6pt\',
+								\'2\': \'8pt\',
+								\'3\': \'10pt\',
+								\'4\': \'12pt\',
+								\'5\': \'14pt\',
+								\'6\': \'18pt\',
+								\'7\': \'24pt\'
 							}
 						}';
 

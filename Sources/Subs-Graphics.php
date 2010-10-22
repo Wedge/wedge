@@ -119,7 +119,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 		),
 		array('id_attach')
 	);
-	$attachID = $smcFunc['db_insert_id']('{db_prefix}attachments', 'id_attach');
+	$attachID = $smcFunc['db_insert_id']();
 	// Retain this globally in case the script wants it.
 	$modSettings['new_avatar_data'] = array(
 		'id' => $attachID,

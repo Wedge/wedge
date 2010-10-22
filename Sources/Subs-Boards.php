@@ -482,7 +482,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $sourcedir, $cat_tree, $boards, $boardList, $modSettings, $smcFunc;
+	global $sourcedir, $cat_tree, $boards, $boardList, $modSettings, $smcFunc, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -747,6 +747,72 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['move_to']))
 		reorderBoards();
 
+	//	Update the pretty board URLs
+	if (isset($boardOptions['pretty_url']) || isset($boardOptions['pretty_url_dom']))
+	{
+		$dom = isset($boardOptions['pretty_url_dom']) ? strtolower($boardOptions['pretty_url_dom']) : '';
+		$dom = preg_match('~(?:[a-z0-9-]+\.)?[^\.]+\.\w{2,4}~', $dom) ? $dom : 'noisen.com'; // !!! Fix hardcoded string.
+		$purl = isset($boardOptions['pretty_url']) ? strtolower($boardOptions['pretty_url']) : '';
+
+		//	Get ex-name...
+		$result = $smcFunc['db_query']('', '
+			SELECT url, id_cat
+			FROM {db_prefix}boards
+			WHERE id_board = {int:id_board}', array(
+				'id_board' => $board_id
+			));
+
+		list ($ex_name, $id_owner) = $smcFunc['db_fetch_row']($result);
+		$smcFunc['db_free_result']($result);
+		preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $ex_name, $m);
+		if (empty($m[2]))
+			$m[2] = 'noisen.com';
+
+		require_once($sourcedir . '/Subs-PrettyUrls.php');
+
+		// Everything was empty? Generate a default name
+		if (empty($purl) && $dom == 'noisen.com')
+			$purl = $boardOptions['board_name'];
+
+// !!! @todo: Analyze this.
+//		if (strpos($boardOptions['pretty_url'], '.noisen.com') !== false)
+//			$boardOptions['pretty_url'] = substr($context['board']['url'], 0, strpos($context['board']['url'], '.noisen.com'));
+
+		// Generate a new one
+		$pretty_url = pretty_generate_url($purl, false, true);
+		$new_name = $dom . ($pretty_url != '' ? '/' . $pretty_url : '');
+
+		// Can't be a number
+		if (is_numeric($pretty_url))
+			// Add suffix '-bboard_id' to the pretty url
+			$new_name .= ($pretty_url != '' ? '-b' : 'b') . $board_id;
+
+		// Can't be already in use
+		if (is_already_taken($new_name, $board_id, $id_owner))
+			fatal_lang_error('pretty_duplicateboard', false);
+
+		// Save to the database
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}boards
+			SET url = {string:url}, urllen = {int:len}
+			WHERE id_board = {int:id_board}', array(
+				'url' => $new_name,
+				'id_board' => $board_id,
+				'len' => strlen($new_name)
+			));
+
+		// Mass-replace board name in cache
+		if (!empty($ex_name))
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}pretty_urls_cache
+				WHERE replacement LIKE \'http://' . $ex_name . '%\'');
+
+		// Count that query!
+		$context['pretty']['db_count']++;
+	}
+
+	clean_cache('data');
+
 	if (empty($boardOptions['dont_log']))
 		logAction('edit_board', array('board' => $board_id), 'admin');
 }
@@ -781,18 +847,21 @@ function createBoard($boardOptions)
 		'{db_prefix}boards',
 		array(
 			'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
-			'member_groups' => 'string', 'redirect' => 'string',
+			'member_groups' => 'string', 'redirect' => 'string', 'url' => 'string', 'urllen' => 'int'
 		),
 		array(
 			$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
-			'-1,0', '',
+			'-1,0', '', 'dummy' . rand(100000, 999999), 11
 		),
 		array('id_board')
 	);
-	$board_id = $smcFunc['db_insert_id']('{db_prefix}boards', 'id_board');
+	$board_id = $smcFunc['db_insert_id']();
 
 	if (empty($board_id))
 		return 0;
+
+	if (!isset($boardOptions['pretty_url']))
+		$boardOptions['pretty_url'] = $boardOptions['board_name'];
 
 	// Change the board according to the given specifications.
 	modifyBoard($board_id, $boardOptions);
@@ -827,6 +896,9 @@ function createBoard($boardOptions)
 			);
 		}
 	}
+
+	// Clean the data cache.
+	clean_cache('data');
 
 	// Created it.
 	logAction('add_board', array('board' => $board_id), 'admin');
@@ -957,6 +1029,9 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	// Plus reset the cache to stop people getting odd results.
 	updateSettings(array('settings_updated' => time()));
 
+	// Clean the cache as well.
+	clean_cache('data');
+
 	// Let's do some serious logging.
 	foreach ($boards_to_remove as $id_board)
 		logAction('delete_board', array('boardname' => $boards[$id_board]['name']), 'admin');
@@ -1035,21 +1110,24 @@ function fixChildren($parent, $newLevel, $newParent)
 }
 
 // Load a lot of useful information regarding the boards and categories.
-function getBoardTree()
+// Restrict to their own boards anyone who's not an admin
+function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt, $modSettings, $smcFunc;
+	global $cat_tree, $boards, $boardList, $txt, $modSettings, $smcFunc, $user_info;
+
+	$restriction = $user_info['is_admin'] || !$restrict ? '' : '
+				AND b.id_owner = ' . (int) $user_info['id'];
 
 	// Getting all the board and category information you'd ever wanted.
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,
+			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
 			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.override_theme, b.id_profile, b.redirect,
 			b.redirect_newtab, b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
-			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)
+			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
 		ORDER BY c.cat_order, b.child_level, b.board_order',
-		array(
-		)
+		array()
 	);
 	$cat_tree = array();
 	$boards = array();
@@ -1084,6 +1162,7 @@ function getBoardTree()
 				'parent' => $row['id_parent'],
 				'level' => $row['child_level'],
 				'order' => $row['board_order'],
+				'url' => $row['url'],
 				'name' => $row['board_name'],
 				'member_groups' => explode(',', $row['member_groups']),
 				'description' => $row['description'],
@@ -1115,7 +1194,7 @@ function getBoardTree()
 				if (!isset($boards[$row['id_parent']]['tree']))
 					fatal_lang_error('no_valid_parent', false, array($row['board_name']));
 
-				// Wrong childlevel...we can silently fix this...
+				// Wrong child level...
 				if ($boards[$row['id_parent']]['tree']['node']['level'] != $row['child_level'] - 1)
 					$smcFunc['db_query']('', '
 						UPDATE {db_prefix}boards

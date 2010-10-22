@@ -72,6 +72,15 @@ function Display()
 	if (empty($topic))
 		fatal_lang_error('no_board', false);
 
+	// 301 redirects on old-school queries like "?topic=242.0"
+	// !!! Should we just be taking the original HTTP var and redirect to it?
+	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($modSettings['pretty_enable_filters']))
+	{
+		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['prev_next']) ? ';prev_next=' . $_REQUEST['prev_next'] : '') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
+		header('HTTP/1.1 301 Moved Permanently');
+		redirectexit($url, false);
+	}
+
 	// Load the proper template and/or sub template.
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_display';
@@ -791,6 +800,41 @@ function Display()
 		$firstIndex = $limit - 1;
 	}
 
+	// Find out if there is a double post...
+	$context['last_user_id'] = 0;
+	$context['last_msg_id'] = 0;
+
+	if ($_REQUEST['start'] != 0 && $context['messages_per_page'] != -1)
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member, id_msg, body, poster_email
+			FROM {db_prefix}messages
+			WHERE id_topic = {int:id_topic}
+			ORDER BY id_msg
+			LIMIT {int:postbefore}, 1',
+			array(
+				'id_topic' => $topic,
+				'postbefore' => $_REQUEST['start'] - 1,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			if (!empty($row['id_member']))
+				$context['last_user_id'] = $row['id_member'];
+			// If you're the admin, you can merge guest posts
+			elseif ($user_info['is_admin'])
+				$context['last_user_id'] = $row['poster_email'];
+			if (!empty($row['id_msg']))
+				$context['last_msg_id']  = $row['id_msg'];
+			if (!empty($row['body']))
+				$context['last_post_length'] = strlen(un_htmlspecialchars($row['body']));
+			else
+				$context['last_post_length'] = 0;
+		}
+	}
+	else
+		$context['last_post_length'] = 0;
+
 	// Get each post and poster in this topic.
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg, id_member, approved
@@ -1059,6 +1103,8 @@ function Display()
 	$context['can_reply'] |= $context['can_reply_unapproved'];
 	$context['can_quote'] = $context['can_reply'] && (empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC'])));
 	$context['can_mark_unread'] = !$user_info['is_guest'] && $settings['show_mark_read'];
+	// Prevent robots from accessing the Post template
+	$context['can_reply'] &= empty($context['possibly_robot']);
 
 	$context['can_send_topic'] = (!$modSettings['postmod_active'] || $topicinfo['approved']) && allowedTo('send_topic');
 
@@ -1183,6 +1229,28 @@ function prepareDisplayContext($reset = false)
 	censorText($message['body']);
 	censorText($message['subject']);
 
+	$merge_max_limit_length = true;
+
+	// Avoid having too large a post if we do any merger.
+	if (empty($modSettings['merge_post_ignore_length']) && $modSettings['max_messageLength'] > 0)
+	{
+		// Calculating the length...
+		if (!isset($context['correct_post_length']))
+			$context['correct_post_length'] = $smcFunc['strlen'](empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
+				'<br />[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br />' : '<br />');
+
+		$context['current_post_length'] = $smcFunc['strlen'](un_htmlspecialchars($message['body']));
+		if (!isset($context['last_post_length']))
+		{
+			$context['last_post_length'] = 0;
+			$merge_safe = false;
+		}
+		else
+			$merge_safe = ($context['current_post_length'] + $context['last_post_length'] + $context['correct_post_length']) < $modSettings['max_messageLength'];
+	}
+	else 
+		$context['current_post_length'] = 0;
+
 	// Run BBC interpreter on the message.
 	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 
@@ -1215,10 +1283,22 @@ function prepareDisplayContext($reset = false)
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty($user_info['id']) && $message['id_member'] == $user_info['id'] && allowedTo('view_ip_address_own')),
+		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'])),
+		'last_post_id' => $context['last_msg_id'],
 	);
+
+	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 
 	// Is this user the message author?
 	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
+
+	if (!empty($message['id_member']))
+		$context['last_user_id'] = $message['id_member'];
+	// If you're the admin, you can merge guest posts
+	elseif ($user_info['is_admin'])
+		$context['last_user_id'] = $message['poster_email'];
+	$context['last_msg_id'] = $message['id_msg'];
+	$context['last_post_length'] = $context['current_post_length'];
 
 	// 0. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
 	if ($can_pm === null)
@@ -1362,7 +1442,7 @@ function loadAttachmentContext($id_msg)
 							array('id_attach')
 						);
 						$old_id_thumb = $attachment['id_thumb'];
-						$attachment['id_thumb'] = $smcFunc['db_insert_id']('{db_prefix}attachments', 'id_attach');
+						$attachment['id_thumb'] = $smcFunc['db_insert_id']();
 						if (!empty($attachment['id_thumb']))
 						{
 							$smcFunc['db_query']('', '

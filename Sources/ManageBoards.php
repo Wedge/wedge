@@ -374,16 +374,31 @@ function EditCategory2()
 // Modify a specific board...
 function EditBoard()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $sourcedir, $smcFunc, $modSettings;
+	global $txt, $context, $cat_tree, $boards, $boardList, $sourcedir, $smcFunc, $modSettings, $user_info;
 
 	loadTemplate('ManageBoards');
 	require_once($sourcedir . '/Subs-Boards.php');
-	getBoardTree();
+	getBoardTree(true);
 
 	// For editing the profile we'll need this.
 	loadLanguage('ManagePermissions');
 	require_once($sourcedir . '/ManagePermissions.php');
 	loadPermissionProfiles();
+
+	// Load available subdomains
+	$request = $smcFunc['db_query']('', '
+		SELECT url
+		FROM {db_prefix}boards
+		WHERE id_owner = {int:user_id}',
+		array('user_id' => (int) $user_info['id'])
+	);
+	$subdomains = array(0 => $_SERVER['HTTP_HOST']);
+	while ($row = $smcFunc['db_fetch_row']($request))
+		$subdomains[] = ($subdo = substr($row[0], 0, strpos($row[0], '/'))) ? $subdo : $row[0];
+	$smcFunc['db_free_result']($request);
+	// !!! @todo: Should we allow users to create boards using their profile URL as root?
+	//	$subdomains[] = 'my.' . $_SERVER['HTTP_HOST'] . '/' . $user_info['username'];
+	$subdomains = array_unique($subdomains);
 
 	// id_board must be a number....
 	$_REQUEST['boardid'] = isset($_REQUEST['boardid']) ? (int) $_REQUEST['boardid'] : 0;
@@ -418,6 +433,7 @@ function EditBoard()
 			'override_theme' => 0,
 			'redirect' => '',
 			'redirect_newtab' => 0,
+			'url' => $_SERVER['HTTP_HOST'] . '/' . 'enter-a-name',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
 		);
@@ -432,6 +448,7 @@ function EditBoard()
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
+	$context['board']['subdomains'] = $subdomains;
 
 	// As we may have come from the permissions screen keep track of where we should go on save.
 	$context['redirect_location'] = isset($_GET['rid']) && $_GET['rid'] == 'permissions' ? 'permissions' : 'boards';
@@ -617,6 +634,8 @@ function EditBoard2()
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['board_name']);
 		$boardOptions['board_description'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['desc']);
+		$boardOptions['pretty_url'] = $_POST['pretty_url'];
+		$boardOptions['pretty_url_dom'] = $_POST['pretty_url_dom'];
 
 		$boardOptions['moderator_string'] = $_POST['moderators'];
 

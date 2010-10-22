@@ -1296,7 +1296,7 @@ function template_admin_search_results()
 			else
 			{
 				echo '
-			<li class="windowbg">
+			<li>
 				<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
 				if ($result['help'])
@@ -2043,6 +2043,87 @@ function template_repair_boards()
 		}
 	// ]]></script>';
 	}
+}
+
+//	Pretty URLs chrome
+function template_pretty_urls()
+{
+	global $context, $scripturl, $txt;
+
+	if (!empty($context['pretty']['chrome']['menu']))
+	{
+		echo '
+	<div class="cat_bar">
+		<h3>', $txt['pretty_urls'], '</h3>
+	</div>
+	<div class="windowbg wrc">
+		<ul>';
+
+		// Sub-actions
+		foreach ($context['pretty']['chrome']['menu'] as $id => $item)
+			echo '
+			<li><a href="', $item['href'], '" class="', $id, '" title="', $item['title'], '"></a></li>';
+
+		echo '
+		</ul>
+	</div>';
+	}
+
+	if (!empty($context['reset_output']))
+		echo '
+	<div class="information">
+		' . $context['reset_output'] . '
+	</div>';
+
+	echo '
+	<div class="cat_bar">
+		<h4>', $txt['pretty_settings'], '</h4>
+	</div>
+	<div class="windowbg2 wrc">
+		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
+			<fieldset>
+				<input type="checkbox" name="pretty_enable" id="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked="checked"' : ''), ' />
+				<label for="pretty_enable">', $txt['pretty_enable'], '</label>
+				<br />
+				<input type="checkbox" name="pretty_cache" id="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked="checked"' : ''), ' />
+				<label for="pretty_cache">', $txt['pretty_cache'], '</label>
+			</fieldset>';
+
+	//	Display the filters
+	if (!empty($context['pretty']['filters']))
+	{
+		echo '
+			<fieldset>
+				<legend>', $txt['pretty_filters'], '</legend>';
+
+		foreach ($context['pretty']['filters'] as $filter)
+			echo '
+				<div>
+					<input type="checkbox" name="pretty_filter_', $filter['id'], '" id="pretty_filter_', $filter['id'], '"', ($filter['enabled'] ? ' checked="checked"' : ''), ' />
+					<label for="pretty_filter_', $filter['id'], '">', $txt['pretty_filter_' . $filter['id']], '</label>
+				</div>';
+
+		echo '
+			</fieldset>';
+	}
+
+	echo '
+			<input type="submit" value="', $txt['pretty_save'], '">
+		</form>
+	</div>
+
+	<div class="cat_bar">
+		<h4>', $txt['pretty_maintenance'], '</h4>
+	</div>
+	<div class="windowbg wrc">
+		<form id="pretty_maintain_reset" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;reset" method="post" accept-charset="UTF-8">
+			<input type="submit" value="', $txt['pretty_reset'], '">
+		</form>
+
+		<form id="pretty_maintain_refill" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;refill" method="post" accept-charset="UTF-8">
+			<input type="submit" value="', $txt['pretty_refill'], '" style="margin-top: 10px">
+		</form>
+	</div>';
 }
 
 ?>

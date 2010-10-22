@@ -223,7 +223,7 @@ function reloadSettings()
  * - Check whether the user is attempting to flood the login with requests, and deal with it as appropriate.
  * - Assuming the member is correct, check and update the last-visit information if appropriate.
  * - Ensure the user groups are sanitised; or if not a logged in user, perform 'is this a spider' checks.
- * - Populate $user_info with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level and user groups)
+ * - Populate $user_info with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
  * - Establish board access rights based as an SQL clause (based on user groups) in $user_info['query_see_boards'], and a subset of this to include ignore boards preferences into $user_info['query_wanna_see_boards'].
  */
 function loadUserSettings()
@@ -434,6 +434,15 @@ function loadUserSettings()
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
 	);
+
+	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
+	$user_info['host'] = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
+	$user_info['server'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $user_info['host'];
+
+	// Also contains the query string.
+	// Do not print this without sanitizing first!
+	$user_info['url'] = $user_info['server'] . $_SERVER['REQUEST_URI'];
+
 	$user_info['groups'] = array_unique($user_info['groups']);
 	// Make sure that the last item in the ignore boards array is valid.  If the list was too long it could have an ending comma that could cause problems.
 	if (!empty($user_info['ignoreboards']) && empty($user_info['ignoreboards'][$tmp = count($user_info['ignoreboards']) - 1]))
@@ -471,7 +480,7 @@ function loadUserSettings()
 }
 
 /**
- * Validate whether we are dealing with a board, and whether the current user has acces to that board.
+ * Validate whether we are dealing with a board, and whether the current user has access to that board.
  *
  * - Initialize the link tree (and later, populating it).
  * - If only an individual msg is specified in the URL, identify the topic it belongs to, and redirect to that topic normally. (Assuming it exists; if not throw a fatal error that topic does not exist)
@@ -559,20 +568,24 @@ function loadBoard()
 	{
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups,
-				b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
+				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
+				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
+				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.member_name AS owner_name, mco.buddy_list AS friends,
 				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = {raw:board_link})
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
+				LEFT JOIN {db_prefix}members AS mco ON (mco.id_member = b.id_owner)
+				LEFT JOIN {db_prefix}board_members AS bm ON b.id_board = bm.id_board AND b.id_owner = {int:id_member}
 			WHERE b.id_board = {raw:board_link}',
 			array(
 				'current_topic' => $topic,
 				'board_link' => empty($topic) ? $smcFunc['db_quote']('{int:current_board}', array('current_board' => $board)) : 't.id_board',
+				'id_member' => $user_info['id'],
 			)
 		);
 		// If there aren't any, skip.
@@ -584,16 +597,20 @@ function loadBoard()
 			if (!empty($row['id_board']))
 				$board = $row['id_board'];
 
-			// Basic operating information. (globals... :/)
+			// Basic operating information. (Globals... :-/)
 			$board_info = array(
 				'id' => $board,
-				'moderators' => array(),
+				'owner_id' => $row['id_owner'],
+				'owner_name' => $row['owner_name'],
+				'moderators' => array($row['id_owner']),
 				'cat' => array(
 					'id' => $row['id_cat'],
 					'name' => $row['cname']
 				),
 				'name' => $row['bname'],
 				'description' => $row['description'],
+				'url' => $row['url'],
+				'num_posts' => $row['num_posts'],
 				'num_topics' => $row['num_topics'],
 				'unapproved_topics' => $row['unapproved_topics'],
 				'unapproved_posts' => $row['unapproved_posts'],
@@ -608,7 +625,25 @@ function loadBoard()
 				'posts_count' => empty($row['count_posts']),
 				'cur_topic_approved' => empty($topic) || $row['approved'],
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
+				'allowed_member' => $row['allowed'],
+				'banned_member' => $row['banned'],
+				'friends' => $row['friends'],
 			);
+
+			// Load privacy settings.
+			if ($row['member_groups'] === '0')
+				$board_info['privacy'] = 'members';
+			elseif ($row['member_groups'] === '-1,0')
+				$board_info['privacy'] = 'everyone';
+			elseif ($row['member_groups'] === 'friends')
+				$board_info['privacy'] = 'friends';
+			elseif ($row['member_groups'] === '')
+			{
+				$board_info['privacy'] = 'justme';
+				$row['member_groups'] = '';
+			}
+			else
+				$board_info['privacy'] = 'everyone';
 
 			// Load the membergroups allowed, and check permissions.
 			$board_info['groups'] = $row['member_groups'] == '' ? array() : explode(',', $row['member_groups']);
@@ -676,8 +711,18 @@ function loadBoard()
 		// Now check if the user is a moderator.
 		$user_info['is_mod'] = isset($board_info['moderators'][$user_info['id']]);
 
-		if (count(array_intersect($user_info['groups'], $board_info['groups'])) == 0 && !$user_info['is_admin'])
+		if ($board_info['banned_member'] && !$board_info['allowed_member'])
 			$board_info['error'] = 'access';
+
+		if (count(array_intersect($user_info['groups'], $board_info['groups'])) == 0 && !$user_info['is_admin'])
+			if (!$user_info['is_mod'] && ($user_info['id'] != $board_info['owner_id']))
+				if ($board_info['privacy'] == 'friends' && !in_array($user_info['id'], explode(',', $board_info['friends'])))
+					$board_info['error'] = 'access';
+
+		$owner = urlencode(utf8_encode($board_info['owner_name']));
+		// Stupid mod_rewrite bug!
+		if (strpos($owner, '%2B') !== false)
+			$owner = urlencode(str_replace('+', ' ', $owner));
 
 		// Build up the linktree.
 		$context['linktree'] = array_merge(
@@ -1942,51 +1987,58 @@ function getBoardParents($id_parent)
 {
 	global $scripturl, $smcFunc;
 
-	$boards = array();
-
-	// Loop while the parent is non-zero.
-	while ($id_parent != 0)
+	// First check if we have this cached already.
+	if (($boards = cache_get_data('board_parents-' . $id_parent, 480)) === null)
 	{
-		$result = $smcFunc['db_query']('', '
-			SELECT
-				b.id_parent, b.name, {int:board_parent} AS id_board, IFNULL(mem.id_member, 0) AS id_moderator,
-				mem.real_name, b.child_level
-			FROM {db_prefix}boards AS b
-				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
-				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
-			WHERE b.id_board = {int:board_parent}',
-			array(
-				'board_parent' => $id_parent,
-			)
-		);
-		// In the EXTREMELY unlikely event this happens, give an error message.
-		if ($smcFunc['db_num_rows']($result) == 0)
-			fatal_lang_error('parent_not_found', 'critical');
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		$boards = array();
+		$original_parent = $id_parent;
+
+		// Loop while the parent is non-zero.
+		while ($id_parent != 0)
 		{
-			if (!isset($boards[$row['id_board']]))
+			$result = $smcFunc['db_query']('', '
+				SELECT
+					b.id_parent, b.name, {int:board_parent} AS id_board, IFNULL(mem.id_member, 0) AS id_moderator,
+					mem.real_name, b.child_level
+				FROM {db_prefix}boards AS b
+					LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
+					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
+				WHERE b.id_board = {int:board_parent}',
+				array(
+					'board_parent' => $id_parent,
+				)
+			);
+			// In the EXTREMELY unlikely event this happens, give an error message.
+			if ($smcFunc['db_num_rows']($result) == 0)
+				fatal_lang_error('parent_not_found', 'critical');
+			while ($row = $smcFunc['db_fetch_assoc']($result))
 			{
-				$id_parent = $row['id_parent'];
-				$boards[$row['id_board']] = array(
-					'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
-					'name' => $row['name'],
-					'level' => $row['child_level'],
-					'moderators' => array()
-				);
-			}
-			// If a moderator exists for this board, add that moderator for all children too.
-			if (!empty($row['id_moderator']))
-				foreach ($boards as $id => $dummy)
+				if (!isset($boards[$row['id_board']]))
 				{
-					$boards[$id]['moderators'][$row['id_moderator']] = array(
-						'id' => $row['id_moderator'],
-						'name' => $row['real_name'],
-						'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
+					$id_parent = $row['id_parent'];
+					$boards[$row['id_board']] = array(
+						'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
+						'name' => $row['name'],
+						'level' => $row['child_level'],
+						'moderators' => array()
 					);
 				}
+				// If a moderator exists for this board, add that moderator for all children too.
+				if (!empty($row['id_moderator']))
+					foreach ($boards as $id => $dummy)
+					{
+						$boards[$id]['moderators'][$row['id_moderator']] = array(
+							'id' => $row['id_moderator'],
+							'name' => $row['real_name'],
+							'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
+							'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
+						);
+					}
+			}
+			$smcFunc['db_free_result']($result);
 		}
-		$smcFunc['db_free_result']($result);
+
+		cache_put_data('board_parents-' . $original_parent, $boards, 480);
 	}
 
 	return $boards;

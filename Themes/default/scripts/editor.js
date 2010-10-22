@@ -3,8 +3,7 @@
 	The post editor.
 	Features:
 		- A plain text post editor
-		- A WYSINTA post editor
-		  (What you see is nice. Try again.)
+		- A WYSIWTF (What you see is WTF) post editor
 */
 
 function smc_Editor(oOptions)
@@ -120,16 +119,16 @@ function smc_Editor(oOptions)
 		'Comic Sans MS'
 	];
 	// Font maps (HTML => CSS size)
-	this.aFontSizes = {
-		s6: 6,
-		s8: 8,
-		s10: 10,
-		s12: 12,
-		s14: 14,
-		s18: 18,
-		s24: 24,
-		s36: 36
-	};
+	this.aFontSizes = [
+		0,
+		6,
+		8,
+		10,
+		12,
+		14,
+		18,
+		24
+	];
 	// Color maps! (hex => name)
 	this.oFontColors = {
 		black: '#000000',
@@ -1691,8 +1690,15 @@ smc_BBCButtonBox.prototype.init = function ()
 
 				case 'select':
 					var sOptions = '';
+
+					// Fighting javascript's idea of order in a for loop... :P
+					if ('' in oCurButton.oOptions)
+						sOptions = '<option value="">' + oCurButton.oOptions[''].php_htmlspecialchars() + '</option>';
 					for (var sSelectValue in oCurButton.oOptions)
-						sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + oCurButton.oOptions[sSelectValue].php_htmlspecialchars() + '</option>';
+						// we've been through this before
+						if (sSelectValue != '')
+							sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + oCurButton.oOptions[sSelectValue].php_htmlspecialchars() + '</option>';
+
 					sRowContent += this.opt.sSelectTemplate.easyReplace({
 						selectName: oCurButton.sName,
 						selectId: this.opt.sUniqueId.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),

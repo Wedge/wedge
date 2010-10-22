@@ -43,7 +43,6 @@ if (!defined('SMF'))
  * - Aborts if someone is trying to use numeric keys (e.g. index.php?1=2) in $_POST, $_GET or $_FILES and dumps them if found in $_COOKIE.
  * - Ensure we have the current querystring, and that it's valid.
  * - Check if the server is using ; as the separator, and parse the URL if not.
- * - Attempts to parse queryless URLs
  * - Cleans input strings dependent on magic_quotes settings.
  * - Process everything in $_GET to ensure it all has entities.
  * - Rebuild $_REQUEST to be $_POST and $_GET only (never $_COOKIE)
@@ -53,10 +52,21 @@ if (!defined('SMF'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context, $pretty_request, $pretty_board;
 
 	// Makes it easier to refer to things this way.
-	$scripturl = $boardurl . '/index.php';
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
+		// !!! WIP
+/*		if (strpos($boardurl, '.noisen.com') !== false)
+			$boardurl = 'http://noisen.com';
+		elseif (strpos($boardurl, '.geeld.org') !== false)
+			$boardurl = 'http://geeld.org'; */
+		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+	}
+	else
+		$scripturl = $boardurl . '/index.php';
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
@@ -157,6 +167,68 @@ function cleanRequest()
 		}
 	}
 
+	// !!! Authorize URLs like noisen.com:80
+	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
+	$pretty_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
+	$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
+	$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
+
+	$query = $smcFunc['db_query']('', '
+		SELECT id_board, url
+		FROM {db_prefix}boards AS b
+		WHERE urllen >= {int:len}
+		AND url = SUBSTRING({string:url}, 1, urllen)
+		ORDER BY urllen DESC LIMIT 1',
+		array(
+			'url' => rtrim($pretty_request, '/'),
+			'len' => ($len = strpos($pretty_request, '/')) !== false ? $len : strlen($pretty_request),
+		)
+	);
+	if ($smcFunc['db_num_rows']($query) == 0)
+		$board = 0;
+	else
+		$pretty_board = $smcFunc['db_fetch_assoc']($query);
+	$smcFunc['db_free_result']($query);
+
+	// The happy place where boards are identified.
+	if (isset($pretty_board))
+	{
+		$_GET['pretty'] = '';
+		$_GET['board'] = $board = $pretty_board['id_board'];
+		$_SERVER['HTTP_HOST'] = $pretty_board['url'];
+		$_SERVER['REQUEST_URI'] = str_replace($pretty_board['url'], '', $pretty_request);
+
+		// Are we in a pretty topic? If yes, retrieve its ID.
+		if (!isset($_GET['topic']) && preg_match('~^/(\d+)~', $_SERVER['REQUEST_URI'], $m))
+			$_GET['topic'] = $m[1];
+	}
+	elseif ($hh == 'my')
+	{
+		if (empty($_GET['user']))
+			unset($_GET['user']);
+		else
+			$_GET['user'] = rtrim($_GET['user'], '/');
+	}
+	elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
+	{
+	}
+	elseif (!empty($_GET['noi']))
+	{
+		$_GET['pretty'] = '';
+		$_GET['board'] = $_SERVER['HTTP_HOST'] = 'noisen.com/' . rtrim($_GET['noi'], '/'); // !!! Harcoded URLs.
+	}
+	elseif ($hh != 'noisen.com') // !!! WIP
+	{
+		$_GET['pretty'] = '';
+		$_GET['board'] = $_SERVER['HTTP_HOST'];
+	}
+/*	elseif (!empty($_GET['tag']))
+	{
+		$_GET['pretty'] = '';
+		$_GET['board'] = 18;
+		$_GET['allboards'] = 1;
+	}*/
+
 	// If magic quotes is on we have some work...
 	if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
 	{
@@ -180,14 +252,29 @@ function cleanRequest()
 		// Make sure it's a string and not something else like an array
 		$_REQUEST['board'] = (string) $_REQUEST['board'];
 
-		// If there's a slash in it, we've got a start value! (old, compatible links.)
-		if (strpos($_REQUEST['board'], '/') !== false)
+		// If there's a slash in it, we've got a start value!
+		if (strpos($_REQUEST['board'], '/') !== false && strpos($_REQUEST['board'], $_SERVER['HTTP_HOST']) === false)
 			list ($_REQUEST['board'], $_REQUEST['start']) = explode('/', $_REQUEST['board']);
 		// Same idea, but dots.  This is the currently used format - ?board=1.0...
 		elseif (strpos($_REQUEST['board'], '.') !== false)
-			list ($_REQUEST['board'], $_REQUEST['start']) = explode('.', $_REQUEST['board']);
+		{
+			list ($reqboard, $reqstart) = explode('.', $_REQUEST['board']);
+			if (is_numeric($reqboard) && is_numeric($reqstart))
+			{
+				$_REQUEST['board'] = $reqboard;
+				$_REQUEST['start'] = $reqstart;
+			}
+		}
 		// Now make absolutely sure it's a number.
-		$board = (int) $_REQUEST['board'];
+		// Check for pretty board URLs too, and possibly redirect if oldschool queries were used.
+		if (is_numeric($_REQUEST['board']))
+		{
+			$board = (int) $_REQUEST['board'];
+			if (!isset($_REQUEST['pretty']))
+				$context['pretty']['oldschoolquery'] = true;
+		}
+		else
+			$board = 0;
 
 		// This is for "Who's Online" because it might come via POST - and it should be an int here.
 		$_GET['board'] = $board;
@@ -213,13 +300,47 @@ function cleanRequest()
 		elseif (strpos($_REQUEST['topic'], '.') !== false)
 			list ($_REQUEST['topic'], $_REQUEST['start']) = explode('.', $_REQUEST['topic']);
 
-		$topic = (int) $_REQUEST['topic'];
+		// Check for pretty topic URLs, and possibly redirect if oldschool queries were used.
+		if (is_numeric($_REQUEST['topic']))
+		{
+			$topic = (int) $_REQUEST['topic'];
+			if (!isset($_REQUEST['pretty']))
+				$context['pretty']['oldschoolquery'] = true;
+		}
+		else
+		{
+			$_REQUEST['topic'] = str_replace(array('&#039;', '&#39;', '\\'), array(chr(18), chr(18), ''), $_REQUEST['topic']);
+			$_REQUEST['topic'] = preg_replace('`([\x80-\xff])`e', 'sprintf(\'%%%x\', ord(\'$1\'))', $_REQUEST['topic']);
+			// Are we feeling lucky?
+			$query = $smcFunc['db_query']('', '
+				SELECT p.id_topic, t.id_board
+				FROM {db_prefix}pretty_topic_urls AS p
+				INNER JOIN {db_prefix}topics AS t ON p.id_topic = t.id_topic
+				INNER JOIN {db_prefix}boards AS b ON b.id_board = t.id_board
+				WHERE p.pretty_url = {string:pretty}
+				AND b.url = {string:url}
+				LIMIT 1', array(
+					'pretty' => $_REQUEST['topic'],
+					'url' => $_SERVER['HTTP_HOST']
+				));
+			// No? No topic?!
+			if ($smcFunc['db_num_rows']($query) == 0)
+				$topic = 0;
+			else
+				list ($topic, $board) = $smcFunc['db_fetch_row']($query);
+			$smcFunc['db_free_result']($query);
+
+			// That query should be counted separately
+			$context['pretty']['db_count']++;
+		}
 
 		// Now make sure the online log gets the right number.
 		$_GET['topic'] = $topic;
 	}
 	else
 		$topic = 0;
+
+	unset($_REQUEST['pretty'], $_GET['pretty']);
 
 	// There should be a $_REQUEST['start'], some at least.  If you need to default to other than 0, use $_GET['start'].
 	if (empty($_REQUEST['start']) || $_REQUEST['start'] < 0)
@@ -295,10 +416,8 @@ function cleanRequest()
 	// Make sure we know the URL of the current request.
 	if (empty($_SERVER['REQUEST_URI']))
 		$_SERVER['REQUEST_URL'] = $scripturl . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
-	elseif (preg_match('~^([^/]+//[^/]+)~', $scripturl, $match) == 1)
-		$_SERVER['REQUEST_URL'] = $match[1] . $_SERVER['REQUEST_URI'];
 	else
-		$_SERVER['REQUEST_URL'] = $_SERVER['REQUEST_URI'];
+		$_SERVER['REQUEST_URL'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	// And make sure HTTP_USER_AGENT is set.
 	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
@@ -456,6 +575,26 @@ function htmltrim__recursive($var, $level = 0)
 }
 
 /**
+ * Collects the headers for this page request.
+ *
+ * - Uses apache_request_headers() if running on Apache as a CGI module (recommended).
+ * - If this is not available, $_SERVER will be examined for HTTP_ variables which should translate to headers. (This process works on PHP-CLI, IIS and lighttpd at least)
+ *
+ * @return array A key/value pair of the HTTP headers for this request.
+ */
+function get_http_headers()
+{
+	if (is_callable('apache_request_headers'))
+		return apache_request_headers();
+
+	$headers = array();
+	foreach ($_SERVER as $key => $value)
+		if (strpos($key, 'HTTP_') === 0)
+			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+	return $headers;
+}
+
+/**
  * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
  *
  * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
@@ -503,14 +642,16 @@ function JavaScriptEscape($string)
  *
  * - If $scripturl is empty, or no session id (e.g. SSI), exit.
  * - If ?debug has been specified previously, re-inject it back into the page's canonical reference.
- * - If queryless URLs mode is on, proceed to rewrite links, from index.php?topic=1.0 to index.php/topic,1.0.html style, and include the session ID as appropriate.
+ * - We also do our Pretty URLs voodoo here...
  *
  * @param string $buffer The contents of the output buffer thus far. Managed by PHP during the relevant ob_*() calls.
  * @return string The modified buffer.
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $modSettings, $user_info, $context;
+	global $scripturl, $modSettings, $user_info, $context, $db_prefix;
+	global $sourcedir, $txt, $time_start, $db_count, $db_show_debug, $smcFunc, $cached_urls, $use_cache;
+	static $second_time_debugging = false;
 
 	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
 	if ($scripturl == '' || !defined('SID'))
@@ -523,38 +664,186 @@ function ob_sessrewrite($buffer)
 	elseif (isset($_GET['debug']))
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
 
-	// This should work even in 4.2.x, just not CGI without cgi.fix_pathinfo.
-	if (!empty($modSettings['queryless_urls']) && (!$context['server']['is_cgi'] || @ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && ($context['server']['is_apache'] || $context['server']['is_lighttpd']))
+	// Rewrite the buffer with Pretty URLs!
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
-		// Let's do something special for session ids!
-		if (defined('SID') && SID != '')
-			$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);
-		else
-			$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
+		if (!empty($db_show_debug) && !$second_time_debugging && !WIRELESS && substr($buffer, 0, 5) != '<?xml')
+		{
+			// We're debugging, so ob_sessrewrite will be called again. Don't replace URLs this time.
+			$second_time_debugging = true;
+			return $buffer;
+		}
+
+//		$insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
+		$insideurl = preg_quote($scripturl, '~');
+		$use_cache = !empty($modSettings['pretty_enable_cache']);
+
+		// Remove the script tags now
+		$context['pretty']['scriptID'] = 0;
+		$context['pretty']['scripts'] = array();
+		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
+
+		// Find all URLs in the buffer
+		$context['pretty']['search_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)[\"\']'.$insideurl.'([^\"\'#]*?[?;&](board|topic|action)=[^\"\'#]+)~';
+		$urls_query = array();
+		$uncached_urls = array();
+		foreach ($context['pretty']['search_patterns'] as $pattern)
+		{
+			preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
+			foreach ($matches[2] as $match)
+			{
+				// Rip out everything that shouldn't be cached
+				if ($use_cache)
+					$match = preg_replace(array('~^[\"\']|PHPSESSID=[^&;]+|s(es)?c=[^;]+~', '~\"~', '~;+|=;~', '~\?;|\?&amp;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $match);
+				else
+					$match = preg_replace(array('~^[\"\']~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $match);
+				$url_id = $match;
+				$urls_query[] = $url_id;
+				$uncached_urls[$match] = array(
+					'url' => $match,
+					'url_id' => $url_id
+				);
+			}
+		}
+
+		// Proceed only if there are actually URLs in the page
+		if (count($urls_query) != 0)
+		{
+			$urls_query = array_keys(array_flip($urls_query));
+			// Retrieve cached URLs
+			$cached_urls = array();
+
+			if ($use_cache)
+			{
+				$query = $smcFunc['db_query']('', '
+					SELECT url_id, replacement
+					FROM {db_prefix}pretty_urls_cache
+					WHERE url_id IN ({array_string:urls})
+						AND log_time > ' . (int) (time() - 86400),
+					array(
+						'urls' => $urls_query
+					)
+				);
+				while ($row = $smcFunc['db_fetch_assoc']($query))
+				{
+					$cached_urls[$row['url_id']] = $row['replacement'];
+					unset($uncached_urls[$row['url_id']]);
+				}
+				$smcFunc['db_free_result']($query);
+			}
+
+			// If there are any uncached URLs, process them
+			if (count($uncached_urls) != 0)
+			{
+				// Run each filter callback function on each URL
+				if (!function_exists('pretty_urls_topic_filter'))
+					require($sourcedir . '/PrettyUrls-Filters.php');
+				$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
+				foreach ($filter_callbacks as $callback)
+				{
+					$uncached_urls = call_user_func($callback, $uncached_urls);
+					if ($db_show_debug && isset($_REQUEST['watch']))
+						$buffer .= '<pre>' . obsafe_print_r($uncached_urls, true, true) . '</pre><br /><br />';
+				}
+
+				// Fill the cached URLs array
+				$cache_data = array();
+				foreach ($uncached_urls as $url_id => $url)
+				{
+					if (!isset($url['replacement']))
+						$url['replacement'] = $url['url'];
+					$url['replacement'] = str_replace(chr(18), "'", $url['replacement']);
+					$url['replacement'] = preg_replace(array('~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('%22', ';', '?', ''), $url['replacement']);
+					$cached_urls[$url_id] = $url['replacement'];
+					if ($use_cache)
+						if (strlen($url_id) < 256)
+							$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
+				}
+
+				// Cache these URLs in the database (use mysql_query to avoid some issues.)
+				if (count($cache_data) > 0)
+					mysql_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
+			}
+
+			// Put the URLs back into the buffer
+			$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)[\"\']'.$insideurl.'([^\"\'#]*?[?;&](board|topic|action)=([^\"]+\"|[^\']+\'))~';
+			foreach ($context['pretty']['replace_patterns'] as $pattern)
+				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
+		}
+
+		// Restore the script tags
+		if ($context['pretty']['scriptID'] > 0)
+			$buffer = preg_replace_callback('~' . chr(20) . '([0-9]+)' . chr(20) . '~', 'pretty_scripts_restore', $buffer);
 	}
 
+	// Update the load times
+	$pattern = '~<span class="smalltext">' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '</span>~';
+	if ($user_info['is_admin'] && preg_match($pattern, $buffer, $matches))
+	{
+		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+		$timeDiff = round($newTime - (float) $matches[1], 3);
+		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
+		// Remove the link if you like, I won't enforce it like others do
+		$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<a href="http://code.google.com/p/prettyurls/">Pretty URLs</a> adds ' . $timeDiff . 's, ' . $queriesDiff . 'q)</span>';
+		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
+ 	}
+ 
 	// Return the changed buffer.
 	return $buffer;
 }
 
-/**
- * Collects the headers for this page request.
- *
- * - Uses apache_request_headers() if running on Apache as a CGI module (recommended).
- * - If this is not available, $_SERVER will be examined for HTTP_ variables which should translate to headers. (This process works on PHP-CLI, IIS and lighttpd at least)
- *
- * @return array A key/value pair of the HTTP headers for this request.
- */
-function get_http_headers()
+// Remove and save script tags
+function pretty_scripts_remove($match)
 {
-	if (is_callable('apache_request_headers'))
-		return apache_request_headers();
+	global $context;
 
-	$headers = array();
-	foreach ($_SERVER as $key => $value)
-		if (strpos($key, 'HTTP_') === 0)
-			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
-	return $headers;
+	$context['pretty']['scriptID']++;
+	$context['pretty']['scripts'][$context['pretty']['scriptID']] = $match[0];
+	return chr(20) . $context['pretty']['scriptID'] . chr(20);
+}
+
+// A callback function to replace the buffer's URLs with their cached URLs
+function pretty_buffer_callback($matches)
+{
+	global $cached_urls, $scripturl, $use_cache;
+
+	// Is this URL part of a feed?
+	$isFeed = strpos($matches[1], '>') === false ? '"' : '';
+
+	// Remove those annoying quotes
+	$matches[2] = preg_replace('~^[\"\']|[\"\']$~', '', $matches[2]);
+
+	// Store the parts of the URL that won't be cached so they can be inserted later
+	if ($use_cache)
+	{
+		preg_match('~PHPSESSID=[^;#&]+~', $matches[2], $PHPSESSID);
+		preg_match('~s(es)?c=[^;#]+~', $matches[2], $sesc);
+		preg_match('~#.*~', $matches[2], $fragment);
+		$url_id = preg_replace(array('~PHPSESSID=[^;#]+|s(es)?c=[^;#]+|#.*$~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $matches[2]);
+	}
+	else
+	{
+		preg_match('~#.*~', $matches[2], $fragment);
+		// Rip out everything that won't have been cached
+		$url_id = preg_replace(array('~#.*$~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $matches[2]);
+	}
+
+	// Stitch everything back together, clean it up and return
+	$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
+	$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . (isset($PHPSESSID[0]) ? $PHPSESSID[0] : '') . ';' . (isset($sesc[0]) ? $sesc[0] : '') . (isset($fragment[0]) ? $fragment[0] : '');
+	$replacement = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|(&amp)?;#|=#~', '~\?$|(&amp)?;$|#$|=$~'), array(';', '?', '#', ''), $replacement);
+
+	if (empty($replacement) || $replacement[0] == '?')
+		$replacement = $scripturl . $replacement;
+	return $matches[1] . $isFeed . $replacement . $isFeed;
+}
+
+// Put the script tags back
+function pretty_scripts_restore($match)
+{
+	global $context;
+
+	return $context['pretty']['scripts'][(int) $match[1]];
 }
 
 ?>

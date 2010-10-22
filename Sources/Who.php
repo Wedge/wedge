@@ -240,7 +240,8 @@ function Who()
 		foreach (unserialize($modSettings['spider_name_cache']) as $id => $name)
 			$spiderContext[$id] = array(
 				'id' => 0,
-				'name' => $name,
+				// Spiders get their own Noisen style.
+				'name' => '<i style="color: green">' . $name . '</i>',
 				'group' => $txt['spiders'],
 				'href' => '',
 				'link' => $name,
@@ -469,7 +470,7 @@ function determineActions($urls, $preferred_prefix = false)
 	if (!empty($topic_ids))
 	{
 		$result = $smcFunc['db_query']('', '
-			SELECT t.id_topic, m.subject
+			SELECT t.id_topic, m.subject, b.url, b.name
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -487,7 +488,7 @@ function determineActions($urls, $preferred_prefix = false)
 		{
 			// Show the topic's subject for each of the actions.
 			foreach ($topic_ids[$row['id_topic']] as $k => $session_text)
-				$data[$k] = sprintf($session_text, $row['id_topic'], censorText($row['subject']));
+				$data[$k] = sprintf($session_text, $row['id_topic'], censorText($row['subject'])) . ' (<a href="http://' . $row['url'] . '">' . $row['name'] . '</a>)';
 		}
 		$smcFunc['db_free_result']($result);
 	}
@@ -560,7 +561,7 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'<b>Nao</b> (Ren&eacute;-Gilles Deberdt)',
+						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
 						'<b>Arantor</b> (Peter Spicer)',
 					),
 				),
@@ -568,7 +569,7 @@ function Credits($in_admin = false)
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
 						'<b>Arantor</b> (Peter Spicer)',
-						'<b>Nao</b> (Ren&eacute;-Gilles Deberdt)',
+						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
 					),
 				),
 			),
@@ -579,7 +580,7 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'Cathy &quot;Amacythe&quot; Bailey',
+						'Amacythe',
 						'Derek Schwab',
 						'Jeremy &quot;SleePy&quot; Darwood',
 						'Justin &quot;metallica48423&quot; O\'Leary',
@@ -589,38 +590,45 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
-						'Hendrik Jan &quot;Compuart&quot; Visser',
+						'Norv',
 						'A&auml;ron van Geffen',
 						'Antechinus',
 						'Bjoern &quot;Bloc&quot; Kristiansen',
+						'Hendrik Jan &quot;Compuart&quot; Visser',
 						'Juan &quot;JayBachatero&quot; Hernandez',
-						'Karl &quot;regularexpression&quot; Benson',
-						'Marcus &quot;Nas&quot; Forsberg',
+						'Karl &quot;RegularExpression&quot; Benson',
 						$user_info['is_admin'] ? 'Matt &quot;Grudge&quot; Wolf' : 'Grudge',
 						'Michael &quot;Thantos&quot; Miller',
-						'Norv',
-						'Ren&eacute;-Gilles &quot;Nao&quot; Deberdt',
-						'[SiNaN]',
+						'Sinan &quot;&#12471;&#12490;&#12531;&quot; &Ccedil;evik',
 						'Theodore &quot;Orstio&quot; Hildebrandt',
 						'Thorsten &quot;TE&quot; Eurich',
 						'winrules',
 					),
 				),
 				array(
+					'title' => $txt['credits_groups_consultants'],
+					'members' => array(
+						'Ren&eacute;-Gilles &quot;Nao &#23578;&quot; Deberdt',
+					),
+				),
+				array(
 					'title' => $txt['credits_groups_support'],
 					'members' => array(
-						'Tyrsson',
+						'JimM',
 						'Ben Scott',
 						'Bigguy',
+						'bluedevil',
+						'capady',
+						'Chas Large',
 						'Duncan85',
 						'Eliana Tamerin',
 						'Fiery',
-						'greyknight17',
+						'(F.L.A.M.E.R)',
+						'gbsothere',
 						'Harro',
 						'Huw',
 						'Jan-Olof &quot;Owdy&quot; Eriksson',
 						'Jeremy &quot;jerm&quot; Strike',
-						'JimM',
 						'Kat',
 						'Kays',
 						'Kevin &quot;greyknight17&quot; Hou',
@@ -634,7 +642,6 @@ function Credits($in_admin = false)
 						'Piro &quot;Sarge&quot; Dhima',
 						'Rumbaar',
 						'Pitti',
-						'Ralph &quot;[n3rve]&quot; Otowo',
 						'RedOne',
 						'xenovanis',
 					),
@@ -645,36 +652,38 @@ function Credits($in_admin = false)
 						'Matt &quot;SlammedDime&quot; Zuba',
 						'&#12487;&#12451;&#12531;1031',
 						'Brad &quot;IchBin&trade;&quot; Grow',
+						'Brannon &quot;B&quot; Hall',
 						'Bryan &quot;Runic&quot; Deakin',
 						'Bulakbol',
 						'Colin &quot;Shadow82x&quot; Blaber',
 						'Daniel15',
 						'Eren Yasarkurt',
 						'Gary M. Gadsdon',
-						'groundup',
 						'Jason &quot;JBlaze&quot; Clemons',
 						'Jerry',
 						'Jonathan &quot;vbgamer45&quot; Valentin',
 						'Killer Possum',
 						'Kirby',
 						'Marcus &quot;Nas&quot; Forsberg',
+						'Nibogo',
 						'Niko',
 						'Peter &quot;Arantor&quot; Spicer',
-						'Sinan &quot;Blue Dream&quot; &Ccedil;evik',
 						'snork13',
 						'Steven &quot;Fustrate&quot; Hoffman',
+						'Tyrsson',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_docs'],
 					'members' => array(
-						'Brannon &quot;B&quot; Hall',
+						'groundup',
 						'Daniel Diehl',
 						'Dannii Willis',
 						'Graeme Spence',
 						'Jack &quot;akabugeyes&quot; Thorsen',
 						'Jade Elizabeth Trainor',
 						'Peter Duggan',
+						'snow',
 					),
 				),
 				array(
@@ -682,6 +691,7 @@ function Credits($in_admin = false)
 					'members' => array(
 						'Michael &quot;Oldiesmann&quot; Eshom',
 						'CoreISP',
+						'Ralph &quot;[n3rve]&quot; Otowo',
 						'rickC',
 						'Tony Reid',
 					),
@@ -689,9 +699,9 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_internationalizers'],
 					'members' => array(
-						'akyhne',
 						'GravuTrad',
 						'Relyana',
+						'akyhne',
 					),
 				),
 			),
@@ -715,15 +725,15 @@ function Credits($in_admin = false)
 		'posttext' => $txt['credits_anyone'],
 		'groups' => array(
 			array(
-				'title' => $txt['credits_groups_translators'],
-				'members' => array(
-					$txt['credits_translators_message'],
-				),
-			),
-			array(
 				'title' => $txt['credits_groups_beta'],
 				'members' => array(
 					$txt['credits_beta_message'],
+				),
+			),
+			array(
+				'title' => $txt['credits_groups_translators'],
+				'members' => array(
+					$txt['credits_translators_message'],
 				),
 			),
 			array(

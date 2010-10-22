@@ -764,7 +764,7 @@ function EditPoll2()
 		);
 
 		// Set the poll ID.
-		$bcinfo['id_poll'] = $smcFunc['db_insert_id']('{db_prefix}polls', 'id_poll');
+		$bcinfo['id_poll'] = $smcFunc['db_insert_id']();
 
 		// Link the poll to the topic
 		$smcFunc['db_query']('', '

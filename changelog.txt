@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10187 $.
+Changelog started January 1, 2004; Currently at $Revision: 10205 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -37,6 +37,24 @@ October 2010
  ! One more slight change, in supported versions. (install, upgrade, convert scripts)
  ! Now MySQL versions support ENGINE, so simplify some things. (several files)
  ! Escaping potential identifiers used as column names (DbExtra-mysql.php, DbExtra-postgresql.php) [Bug 4261]
+ * Clean attachment function didn't work properly on Chrome. (script.js) [Bug 4508]
+ ! Incorrect usage of $smcFunc['db_insert_id'] function. (Subs-Calendar.php) [Bug 4509]
+ ! Offer one last warning for admins enabling test mode for paid subscriptions. (ManagePaid.php) [Bug 4503]
+ & Add a new language entry for the change above. (ManagePaid language file) [Bug 4503]
+ ! Removed no longer used validate_unicode__recursive function. (QueryString.php) [Bug 4498]
+ * Install script stylesheet required its own width setting. (install.css)
+ * Some lists were not alternated in Subscriptions Profile area. (ManagePaid template) [Bug 4502]
+ ! getBoardParents() function results were not cached. (Load.php, Subs-Boards.php) [Bug 4487]
+ * Adding in some new integration hooks. (index.php, Admin.php, Profile.php, Subs-Editor.php, Subs.php, Display template, MessageIndex template)
+ ! Updated credits with recent changes. (Who.php)
+ ! Ensure forum_width setting for Postgres and SQLite (upgrade scripts) [Bug 4496]
+ ! A few more updates to credits. (Who.php)
+ & Adding a new group to credits to reflect the recent changes in the structure. (Who.english.php)
+ ! One more little credits update. (Who.php)
+ * Incorrect background image for Core theme last active buttonlist buttons on IE6. (index template, index.css) [Bug 4472]
+ ! Brackets in username caused trailing quote to be lost on WYSIWYG toggle. (Subs-Editor.php) [Bug 4316]
+ ! Ugly fix for Firefox resetting form content. (script.js) [Bug 4346]
+ ! Browsers' javascript has sometimes odd ideas about expected order. :P (editor.js) [Bug 4453]
 
 
 September 2010

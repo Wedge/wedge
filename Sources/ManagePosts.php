@@ -73,6 +73,7 @@ function ManagePostSettings()
 		'bbc' => array('ModifyBBCSettings', 'admin_forum'),
 		'censor' => array('SetCensor', 'moderate_forum'),
 		'topics' => array('ModifyTopicSettings', 'admin_forum'),
+		'merge' => array('ModifyMergeSettings', 'admin_forum'),
 	);
 
 	// Default the sub-action to 'view ban list'.
@@ -100,6 +101,9 @@ function ManagePostSettings()
 			),
 			'topics' => array(
 				'description' => $txt['manageposts_topic_settings_description'],
+			),
+			'merge' => array(
+				// !!! @todo: Add description
 			),
 		),
 	);
@@ -203,6 +207,7 @@ function ModifyPostSettings($return_config = false)
 			array('int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']),
 			array('int', 'fixLongWords', 'subtext' => $txt['fixLongWords_zero'] . ' <span class="alert">' . $txt['fixLongWords_warning'] . '</span>', 'postinput' => $txt['manageposts_characters']),
 			array('int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']),
+			array('int', 'urlLength'),
 		'',
 			// Posting time limits...
 			array('int', 'spamWaitTime', 'postinput' => $txt['manageposts_seconds']),
@@ -226,6 +231,7 @@ function ModifyPostSettings($return_config = false)
 		checkSession();
 
 		// If we're changing the message length let's check the column is big enough.
+		// !!! @todo: Delete? Is it not already done in Wedge...?
 		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'])
 		{
 			db_extend('packages');
@@ -371,6 +377,47 @@ function ModifyTopicSettings($return_config = false)
 	$context['settings_title'] = $txt['manageposts_topic_settings'];
 
 	// Prepare the settings...
+	prepareDBSettingContext($config_vars);
+}
+
+function ModifyMergeSettings($return_config = false)
+{
+	global $txt, $scripturl, $context, $settings, $sc;
+
+	$config_vars = array(
+			// Automatic merge options
+			array('check', 'merge_post_auto'),
+			array('int', 'merge_post_auto_time'),
+		'',
+			// Admins can make double posts
+			array('check', 'merge_post_admin_double_post'),
+		'',
+			// Merging options
+			array('check', 'merge_post_old_time_add'),
+			array('check', 'merge_post_no_sep'),
+			array('check', 'merge_post_custom_separator'),
+			array('large_text', 'merge_post_separator', 5),
+		'',
+			array('check', 'merge_post_ignore_length'),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+		writeLog();
+
+		redirectexit('action=admin;area=modsettings;sa=MergePosts');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=merge';
+	$context['settings_title'] = $txt['merge_doublepost'];
+
 	prepareDBSettingContext($config_vars);
 }
 

@@ -766,7 +766,7 @@ function BanEdit()
 				),
 				array('id_ban_group')
 			);
-			$_REQUEST['bg'] = $smcFunc['db_insert_id']('{db_prefix}ban_groups', 'id_ban_group');
+			$_REQUEST['bg'] = $smcFunc['db_insert_id']();
 
 			// Now that the ban group is added, add some triggers as well.
 			if (!empty($ban_triggers) && !empty($_REQUEST['bg']))

@@ -376,22 +376,6 @@ function ShowXmlFeed()
 	obExit(false);
 }
 
-function fix_possible_url($val)
-{
-	global $modSettings, $context, $scripturl;
-
-	if (substr($val, 0, strlen($scripturl)) != $scripturl)
-		return $val;
-
-	call_integration_hook('integrate_fix_url', array(&$val));
-
-	if (empty($modSettings['queryless_urls']) || ($context['server']['is_cgi'] && @ini_get('cgi.fix_pathinfo') == 0 && @get_cfg_var('cgi.fix_pathinfo') == 0) || (!$context['server']['is_apache'] && !$context['server']['is_lighttpd']))
-		return $val;
-
-	$val = preg_replace('/^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+)(#[^"]*)?$/e', '\'\' . $scripturl . \'/\' . strtr(\'$1\', \'&;=\', \'//,\') . \'.html$2\'', $val);
-	return $val;
-}
-
 function cdata_parse($data, $ns = '')
 {
 	global $smcFunc, $cdata_override;
@@ -482,7 +466,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		// Grr, I hate kludges... almost worth doing it properly, here, but not quite.
 		if ($xml_format == 'atom' && $key == 'link')
 		{
-			echo '<link rel="alternate" type="text/html" href="', fix_possible_url($val), '" />';
+			echo '<link rel="alternate" type="text/html" href="', $val, '" />';
 			continue;
 		}
 
@@ -494,7 +478,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 			// Beginning tag.
 			if ($xml_format == 'rdf' && $key == 'item' && isset($val['link']))
 			{
-				echo '<', $key, ' rdf:about="', fix_possible_url($val['link']), '">';
+				echo '<', $key, ' rdf:about="', $val['link'], '">';
 				echo "\n", str_repeat("\t", $i + 1);
 				echo '<dc:format>text/html</dc:format>';
 			}
@@ -511,10 +495,10 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 			}
 			// A string with returns in it.... show this as a multiline element.
 			elseif (strpos($val, "\n") !== false || strpos($val, '<br />') !== false)
-				echo "\n", fix_possible_url($val), "\n", str_repeat("\t", $i), '</', $key, '>';
+				echo "\n", $val, "\n", str_repeat("\t", $i), '</', $key, '>';
 			// A simple string.
 			else
-				echo fix_possible_url($val), '</', $key, '>';
+				echo $val, '</', $key, '>';
 		}
 	}
 }

@@ -149,6 +149,7 @@ function AdminMain()
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),
+						'pretty' => array($txt['pretty_urls']),
 					),
 				),
 				'securitysettings' => array(
@@ -247,6 +248,7 @@ function AdminMain()
 						'bbc' => array($txt['manageposts_bbc_settings']),
 						'censor' => array($txt['admin_censored_words']),
 						'topics' => array($txt['manageposts_topic_settings']),
+						'merge' => array($txt['manageposts_merge']),
 					),
 				),
 				'managecalendar' => array(
@@ -465,6 +467,9 @@ function AdminMain()
 			),
 		),
 	);
+
+	// Let them modify admin areas easily.
+	call_integration_hook('integrate_admin_areas', array(&$admin_areas));
 
 	// Make sure the administrator has a valid session...
 	validateSession();

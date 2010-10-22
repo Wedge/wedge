@@ -72,7 +72,9 @@ if (!defined('SMF'))
 
 	void disablePostModeration()
 		// !!!
-// !!!
+
+	void ModifyPrettyURLs()
+		- Admin area for Pretty URLs
 */
 
 // This just avoids some repetition.
@@ -109,6 +111,7 @@ function ModifyFeatureSettings()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
+		'pretty' => 'ModifyPrettyURLs',
 	);
 
 	loadGeneralSettingParameters($subActions, 'basic');
@@ -128,6 +131,9 @@ function ModifyFeatureSettings()
 			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
+			),
+			'pretty' => array(
+				'description' => $txt['pretty_urls_desc'],
 			),
 		),
 	);
@@ -433,8 +439,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'titlesEnable'),
 			array('text', 'default_personal_text'),
 		'',
-			// SEO stuff
-			array('check', 'queryless_urls'),
 			array('text', 'meta_keywords', 'size' => 50),
 		'',
 			// Number formatting, timezones.
@@ -1979,6 +1983,86 @@ function ModifyGeneralModSettings($return_config = false)
 
 	// This line is to help mod authors do a search/add after if you want to add something here. Keyword: RED INK IS FOR TEACHERS AND THOSE WHO LIKE PAIN!
 	prepareDBSettingContext($config_vars);
+}
+
+/*
+	Pretty URLs - custom version for Wedge.
+	Distributed under the New BSD license.
+	See PrettyUrls-Filters.php for more details.
+*/
+
+// Shell for all the Pretty URL interfaces
+function ModifyPrettyURLs()
+{
+	global $context, $modSettings, $settings, $sourcedir, $txt, $smcFunc;
+
+	$context['sub_template'] = 'pretty_urls';
+	$context['page_title'] = $txt['admin_pretty_urls'];
+
+	// Core settings
+	$context['pretty']['settings']['core'] = array(
+		array(
+			'id' => 'pretty_enable_filters',
+			'label' => $txt['pretty_enable'],
+			'type' => 'text',
+			'value' => !empty($modSettings['pretty_enable_filters']) ? $modSettings['pretty_enable_filters'] : '',
+		),
+		array(
+			'id' => 'pretty_enable_cache',
+			'label' => $txt['pretty_cache'],
+			'type' => 'text',
+			'value' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : '',
+		),
+	);
+
+	// Load the filters data
+	$context['pretty']['filters'] = !empty($modSettings['pretty_filters']) ? unserialize($modSettings['pretty_filters']) : array();
+
+	// Are we resetting now?
+	if (isset($_REQUEST['reset']))
+	{
+		require_once($sourcedir . '/Subs-PrettyUrls.php');
+		$output = install_pretty_urls();
+		$context['reset_output'] = $output . $txt['pretty_went_right'];
+	}
+
+	// Are we repopulating now?
+	elseif (isset($_REQUEST['refill']))
+	{
+		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		$output = pretty_synchronise_topic_urls();
+		$context['reset_output'] = $output . $txt['pretty_converted'];
+	}
+
+	// Are we saving settings now?
+	elseif (isset($_REQUEST['save']))
+	{
+		foreach ($context['pretty']['filters'] as $filter)
+			$context['pretty']['filters'][$filter['id']]['enabled'] = isset($_POST['pretty_filter_' . $filter['id']]) ? 1 : 0;
+
+		$pretty_settings = array(
+			'pretty_enable_filters' => isset($_POST['pretty_enable']) ? $_POST['pretty_enable'] : 0,
+			'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
+			'pretty_filters' => serialize($context['pretty']['filters']),
+		);
+		updateSettings($pretty_settings);
+
+		if (isset($_REQUEST['pretty_cache']))
+			$smcFunc['db_query']('', '
+				TRUNCATE {db_prefix}pretty_urls_cache',
+				array()
+			);
+
+		// Update the filters too
+		require_once($sourcedir . '/Subs-PrettyUrls.php');
+		pretty_update_filters();
+
+		redirectexit('action=admin;area=featuresettings;sa=pretty');
+	}
+
+	// Load the settings up
+	$context['pretty']['settings']['enable'] = !empty($modSettings['pretty_enable_filters']) ? $modSettings['pretty_enable_filters'] : 0;
+	$context['pretty']['settings']['cache'] = !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : 0;
 }
 
 ?>

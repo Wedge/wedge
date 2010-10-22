@@ -191,7 +191,7 @@ function issueWarning($memID)
 					),
 					array('id_notice')
 				);
-				$id_notice = $smcFunc['db_insert_id']('{db_prefix}log_member_notices', 'id_notice');
+				$id_notice = $smcFunc['db_insert_id']();
 			}
 		}
 

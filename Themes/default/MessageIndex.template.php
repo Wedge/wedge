@@ -63,9 +63,8 @@ function template_main()
 			echo '
 					</td>
 					<td class="stats windowbg">
-						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br />
-						', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
-						</p>
+						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'],
+						$board['is_redirect'] ? '' : '<br />' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
 					</td>
 					<td class="lastpost">';
 
@@ -75,9 +74,9 @@ function template_main()
 			and member (which has id, name, link, href, username in it.) */
 			if (!empty($board['last_post']['id']))
 				echo '
-						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
-						', $txt['in'], ' ', $board['last_post']['link'], '<br />
-						', $txt['on'], ' ', $board['last_post']['time'], '</p>';
+						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '
+						<br />', $txt['in'], ' ', $board['last_post']['link'], '
+						<br />', $txt['on'], ' ', $board['last_post']['time'], '</p>';
 
 			echo '
 					</td>
@@ -129,6 +128,9 @@ function template_main()
 	// They can only mark read if they are logged in and it's enabled!
 	if (!$context['user']['is_logged'] || !$settings['show_mark_read'])
 		unset($normal_buttons['markread']);
+
+	// Allow adding new buttons easily.
+	call_integration_hook('integrate_messageindex_buttons', array(&$normal_buttons));
 
 	if (!$context['no_topic_listing'])
 	{
@@ -255,13 +257,12 @@ function template_main()
 					</td>
 					<td class="stats ', $color_class, '">
 						', $topic['replies'], ' ', $txt['replies'], '
-						<br />
-						', $topic['views'], ' ', $txt['views'], '
+						<br />', $topic['views'], ' ', $txt['views'], '
 					</td>
 					<td class="lastpost ', $alternate_class, '">
 						<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" /></a>
-						', $topic['last_post']['time'], '<br />
-						', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+						', $topic['last_post']['time'], '
+						<br />', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 					</td>';
 
 			// Show the quick moderation options?
@@ -393,55 +394,54 @@ function template_main()
 						sGoButtonLabel: "', $txt['quick_mod_go'], '"
 					});
 			// ]]></script>
-			<br class="clear" />
 		</div>
 	</div>';
 
 	// Javascript for inline editing.
 	echo '
-<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/topic.js"></script>
-<script type="text/javascript"><!-- // --><![CDATA[
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/topic.js"></script>
+	<script type="text/javascript"><!-- // --><![CDATA[
 
-	// Hide certain bits during topic edit.
-	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
+		// Hide certain bits during topic edit.
+		hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
 
-	// Use it to detect when we\'ve stopped editing.
-	document.onclick = modify_topic_click;
+		// Use it to detect when we\'ve stopped editing.
+		document.onclick = modify_topic_click;
 
-	var mouse_on_div;
-	function modify_topic_click()
-	{
-		if (in_edit_mode == 1 && mouse_on_div == 0)
-			modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
-	}
-
-	function modify_topic_keypress(oEvent)
-	{
-		if (typeof(oEvent.keyCode) != "undefined" && oEvent.keyCode == 13)
+		var mouse_on_div;
+		function modify_topic_click()
 		{
-			modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
-			if (typeof(oEvent.preventDefault) == "undefined")
-				oEvent.returnValue = false;
-			else
-				oEvent.preventDefault();
+			if (in_edit_mode == 1 && mouse_on_div == 0)
+				modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
 		}
-	}
 
-	// For templating, shown when an inline edit is made.
-	function modify_topic_show_edit(subject)
-	{
-		// Just template the subject.
-		cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event)" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
-	}
+		function modify_topic_keypress(oEvent)
+		{
+			if (typeof(oEvent.keyCode) != "undefined" && oEvent.keyCode == 13)
+			{
+				modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
+				if (typeof(oEvent.preventDefault) == "undefined")
+					oEvent.returnValue = false;
+				else
+					oEvent.preventDefault();
+			}
+		}
 
-	// And the reverse for hiding it.
-	function modify_topic_hide_edit(subject)
-	{
-		// Re-template the subject!
-		cur_subject_div.innerHTML = \'<a href="', $scripturl, '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
-	}
+		// For templating, shown when an inline edit is made.
+		function modify_topic_show_edit(subject)
+		{
+			// Just template the subject.
+			cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event)" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
+		}
 
-// ]]></script>';
+		// And the reverse for hiding it.
+		function modify_topic_hide_edit(subject)
+		{
+			// Re-template the subject!
+			cur_subject_div.innerHTML = \'<a href="', $scripturl, '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
+		}
+
+	// ]]></script>';
 }
 
 ?>
