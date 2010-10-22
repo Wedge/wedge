@@ -157,7 +157,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				'id_topic' => $parameter1,
 			)
 		);
-		if ($modSettings['pretty_enable_cache'] && is_numeric($parameter1) && $parameter1 > 0)
+		if (!empty($modSettings['pretty_enable_cache']) && is_numeric($parameter1) && $parameter1 > 0)
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}pretty_urls_cache
 				WHERE url_id LIKE {string:topic_search}',

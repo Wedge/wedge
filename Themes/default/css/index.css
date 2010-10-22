@@ -3013,7 +3013,7 @@ span.hidelink {
 
 
 .table_list tbody.header td.catbg {
-	background-color: #e5eee0;
+	background-color: #e5eee5;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -3023,13 +3023,13 @@ span.hidelink {
 	font-size: 1.1em;
 }
 tr.catbg th {
-	background: #e5eee0 url(../images/theme/grad40.png) 0 -18px repeat-x;
+	background: #e5eee5 url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.titlebg th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg td {
-	background-color: #e5eee0;
+	background-color: #e5eee5;
 }
 tr.titlebg td, tr.titlebg2 td {
 	background-color: #e3e9ef;

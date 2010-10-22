@@ -404,6 +404,13 @@ function ModifyMergeSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
+	// We'll want this for our easy save.
+	require_once($sourcedir . '/ManageServer.php');
+
+	// Setup the template.
+	$context['page_title'] = $txt['merge_post_header'];
+	$context['sub_template'] = 'show_settings';
+
 	// Saving?
 	if (isset($_GET['save']))
 	{
@@ -412,7 +419,7 @@ function ModifyMergeSettings($return_config = false)
 		saveDBSettings($config_vars);
 		writeLog();
 
-		redirectexit('action=admin;area=modsettings;sa=MergePosts');
+		redirectexit('action=admin;area=postsettings;sa=merge');
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=merge';

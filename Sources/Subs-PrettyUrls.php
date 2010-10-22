@@ -215,7 +215,8 @@ function pretty_update_topic($subject, $topic_id)
 		));
 
 	// Count those queries!
-	$context['pretty']['db_count']++;
+	if (isset($context))
+		$context['pretty']['db_count']++;
 }
 
 // - Add URL value to boards table if not already there
