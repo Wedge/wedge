@@ -2037,7 +2037,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 						'type' => 'replace',
 						'filename' => $working_file,
 						'search' => $actual_operation['searches'][$i]['preg_search'],
-						'replace' =>  $actual_operation['searches'][$i]['preg_replace'],
+						'replace' => $actual_operation['searches'][$i]['preg_replace'],
 						'search_original' => $actual_operation['searches'][$i]['search'],
 						'replace_original' => $actual_operation['searches'][$i]['add'],
 						'position' => $search['position'],

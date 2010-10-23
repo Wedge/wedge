@@ -446,7 +446,7 @@ function SplitSelectTopics()
 	{
 		// Get the messages and stick them into an array.
 		$request = $smcFunc['db_query']('', '
-			SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name,  m.poster_time, m.body, m.id_msg, m.smileys_enabled
+			SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS real_name, m.poster_time, m.body, m.id_msg, m.smileys_enabled
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.id_topic = {int:current_topic}

@@ -107,7 +107,7 @@ function template_boardindex()
 				and member. (which has id, name, link, href, username in it.) */
 				if (!empty($board['last_post']['id']))
 					echo '
-						<p><strong>', $txt['last_post'], '</strong>  ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
+						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
 						', $txt['in'], ' ', $board['last_post']['link'], '<br />
 						', $txt['on'], ' ', $board['last_post']['time'], '
 						</p>';

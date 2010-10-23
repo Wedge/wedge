@@ -35,7 +35,7 @@ function template_error_log()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="if (lastClicked == \'remove_all\' &amp;&amp; !confirm(\'', $txt['sure_about_errorlog_remove'], '\')) return false; else return true;">
+		<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="if (lastClicked == \'remove_all\') if (!confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ')) return false; return true;">
 			<script type="text/javascript"><!-- // --><![CDATA[
 				var lastClicked = "";
 			// ]]></script>

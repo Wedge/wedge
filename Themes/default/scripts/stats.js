@@ -121,7 +121,7 @@ smf_StatsCenter.prototype.init = function ()
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sMonthLinkIdPrefix +  sMonthId,
+						sId: this.opt.sMonthLinkIdPrefix + sMonthId,
 						msgExpanded: sLinkText,
 						msgCollapsed: sLinkText
 					}

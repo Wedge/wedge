@@ -59,7 +59,7 @@ function spellCheck(formName, fieldName)
 	// Pass the data to a form...
 	spellform.spellstring.value = aWords.join('\n');
 
-	//  and go!
+	// and go!
 	spellform.submit();
 
 	return true;

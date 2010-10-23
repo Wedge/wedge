@@ -1047,12 +1047,22 @@ dl.settings {
 	padding: 0;
 }
 dl.settings dt {
-	width: 48%;
+	width: 47%;
 	float: left;
 	margin: 0 0 10px 0;
 	padding: 0;
 	clear: both;
 }
+dl.settings dt .smalltext {
+	font-style: italic;
+	color: #888;
+}
+/* help icons */
+dl.settings dt a img {
+	position: relative;
+	top: 2px;
+}
+
 dl.settings dt.settings_title {
 	width: 100%;
 	float: none;
@@ -1069,18 +1079,13 @@ dl.settings dt.windowbg {
 	clear: both;
 }
 dl.settings dd {
-	width: 48%;
+	width: 47%;
 	float: left;
 	margin: 0 0 3px 0;
 	padding: 0;
 }
 dl.settings img {
 	margin: 0 10px 0 0;
-}
-/* help icons */
-dl.settings dt a img {
-	position: relative;
-	top: 2px;
 }
 
 /* Styles for rounded headers.
@@ -1199,7 +1204,7 @@ table.table_grid thead tr.catbg th {
 }
 
 /* table_grid styles for Profile > Show Permissions. */
-#permissions table.table_grid  td {
+#permissions table.table_grid td {
 	padding: 0.4em 0.8em;
 	cursor: default;
 }

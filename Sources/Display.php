@@ -825,7 +825,7 @@ function Display()
 			elseif ($user_info['is_admin'])
 				$context['last_user_id'] = $row['poster_email'];
 			if (!empty($row['id_msg']))
-				$context['last_msg_id']  = $row['id_msg'];
+				$context['last_msg_id'] = $row['id_msg'];
 			if (!empty($row['body']))
 				$context['last_post_length'] = strlen(un_htmlspecialchars($row['body']));
 			else
