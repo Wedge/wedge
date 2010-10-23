@@ -1673,7 +1673,9 @@ smc_BBCButtonBox.prototype.init = function ()
 					{
 						sRowContent += this.opt.sButtonTemplate.easyReplace({
 							buttonId: this.opt.sUniqueId.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
-							buttonSrc: oCurButton.sImage.php_htmlspecialchars(),
+							buttonSrc: (oCurButton.sImage ? oCurButton.sImage : this.opt.sSprite).php_htmlspecialchars(),
+							posX: oCurButton.sPos ? oCurButton.sPos[0] : 0,
+							posY: oCurButton.sPos ? oCurButton.sPos[1] + 2 : 2,
 							buttonDescription: oCurButton.sDescription.php_htmlspecialchars()
 						});
 
@@ -1730,8 +1732,11 @@ smc_BBCButtonBox.prototype.init = function ()
 
 					oCurControl.oImg = document.getElementById(this.opt.sUniqueId.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
 					oCurControl.oImg.style.cursor = 'pointer';
-					if ('sButtonBackgroundImage' in this.opt)
-						oCurControl.oImg.style.backgroundImage = 'url(' + this.opt.sButtonBackgroundImage + ')';
+					if ('sButtonBackgroundPos' in this.opt)
+					{
+						oCurControl.oImg.style.background = 'url(' + this.opt.sSprite + ') no-repeat';
+						oCurControl.oImg.style.backgroundPosition = '-' + this.opt.sButtonBackgroundPos[0] + 'px -' + this.opt.sButtonBackgroundPos[1] + 'px';
+					}
 
 					oCurControl.oImg.instanceRef = this;
 					oCurControl.oImg.onmouseover = function () {
@@ -1775,18 +1780,18 @@ smc_BBCButtonBox.prototype.handleButtonMouseOut = function (oButtonImg)
 
 smc_BBCButtonBox.prototype.updateButtonStatus = function (oButtonImg)
 {
-	var sNewURL = '';
-	if (oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundImageHover' in this.opt)
-		sNewURL = 'url(' + this.opt.sActiveButtonBackgroundImageHover + ')';
-	else if (!oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundImage' in this.opt)
-		sNewURL = 'url(' + this.opt.sActiveButtonBackgroundImage + ')';
-	else if (oButtonImg.bHover && 'sButtonBackgroundImageHover' in this.opt)
-		sNewURL = 'url(' + this.opt.sButtonBackgroundImageHover + ')';
-	else if ('sButtonBackgroundImage' in this.opt)
-		sNewURL = 'url(' + this.opt.sButtonBackgroundImage + ')';
+	var sNewPos = 0;
+	if (oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPosHover' in this.opt)
+		sNewPos = this.opt.sActiveButtonBackgroundPosHover;
+	else if (!oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPos' in this.opt)
+		sNewPos = this.opt.sActiveButtonBackgroundPos;
+	else if (oButtonImg.bHover && 'sButtonBackgroundPosHover' in this.opt)
+		sNewPos = this.opt.sButtonBackgroundPosHover;
+	else if ('sButtonBackgroundPos' in this.opt)
+		sNewPos = this.opt.sButtonBackgroundPos;
 
-	if (oButtonImg.style.backgroundImage != sNewURL)
-		oButtonImg.style.backgroundImage = sNewURL;
+	if (oButtonImg.style.backgroundPosition != sNewPos && sNewPos)
+		oButtonImg.style.backgroundPosition = '-' + sNewPos[0] + 'px -' + sNewPos[1] + 'px';
 }
 
 smc_BBCButtonBox.prototype.handleButtonClick = function (oButtonImg)

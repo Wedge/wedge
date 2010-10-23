@@ -1493,6 +1493,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				),
 			),
 			array(
+				'tag' => 'spoiler',
+				'before' => '<div class="spoiler"><div class="spoilerhint"><input type="button" value="' . $txt['spoiler'] . '" '
+					. 'onclick="n = this.parentNode.parentNode.lastChild.style; n.display = n.display == \'none\' ? \'block\' : \'none\'; return false;" />'
+					. $txt['click_for_spoiler'] . '</div><div class="spoiled" style="display: none">',
+				'after' => '</div></div>',
+				'block_level' => true,
+			),
+			array(
 				'tag' => 'sub',
 				'before' => '<sub>',
 				'after' => '</sub>',
@@ -4118,7 +4126,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  * This feature was shamelessly inspired by a mod by JayBachatero, which should have been made a core feature long ago. Thanks, man!
  *
  * @param string $ur URL that should be shortened, in case it's longer than $modSettings['urlLength']
- * @return string The resulting string.
+ * @return string The resulting string
  */
 function trim_url($ur)
 {

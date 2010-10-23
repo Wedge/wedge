@@ -1381,32 +1381,35 @@ class wedgeEditor
 		if ($this->bbc !== null)
 			return;
 
-		// The below array makes it dead easy to add images to this control. Add it to the array and everything else is done for you!
+		// The array below makes it dead easy to add images to this control.
+		// Add a button to the array through the integration hook, and everything else is done for you!
+		// 'image' can hold a full button URL, or the position within the default bbcode sprite (sprite.png)
+		// The first column is taken by the button backgrounds; array(5, 1) means "6th button, 2nd row".
 		$this->bbc = array();
 		$this->bbc[] = array(
 			array(
-				'image' => 'bold',
+				'image' => array(5, 1),
 				'code' => 'b',
 				'before' => '[b]',
 				'after' => '[/b]',
 				'description' => $txt['bold'],
 			),
 			array(
-				'image' => 'italicize',
+				'image' => array(1, 1),
 				'code' => 'i',
 				'before' => '[i]',
 				'after' => '[/i]',
 				'description' => $txt['italic'],
 			),
 			array(
-				'image' => 'underline',
+				'image' => array(4, 1),
 				'code' => 'u',
 				'before' => '[u]',
 				'after' => '[/u]',
 				'description' => $txt['underline']
 			),
 			array(
-				'image' => 'strike',
+				'image' => array(2, 1),
 				'code' => 's',
 				'before' => '[s]',
 				'after' => '[/s]',
@@ -1414,28 +1417,28 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => 'pre',
+				'image' => array(9, 1),
 				'code' => 'pre',
 				'before' => '[pre]',
 				'after' => '[/pre]',
 				'description' => $txt['preformatted']
 			),
 			array(
-				'image' => 'left',
+				'image' => array(6, 1),
 				'code' => 'left',
 				'before' => '[left]',
 				'after' => '[/left]',
 				'description' => $txt['left_align']
 			),
 			array(
-				'image' => 'center',
+				'image' => array(7, 1),
 				'code' => 'center',
 				'before' => '[center]',
 				'after' => '[/center]',
 				'description' => $txt['center']
 			),
 			array(
-				'image' => 'right',
+				'image' => array(8, 1),
 				'code' => 'right',
 				'before' => '[right]',
 				'after' => '[/right]',
@@ -1444,35 +1447,35 @@ class wedgeEditor
 		);
 		$this->bbc[] = array(
 			array(
-				'image' => 'flash',
+				'image' => array(13, 1),
 				'code' => 'flash',
 				'before' => '[flash=200,200]',
 				'after' => '[/flash]',
 				'description' => $txt['flash']
 			),
 			array(
-				'image' => 'img',
+				'image' => array(2, 0),
 				'code' => 'img',
 				'before' => '[img]',
 				'after' => '[/img]',
 				'description' => $txt['image']
 			),
 			array(
-				'image' => 'url',
+				'image' => array(14, 0),
 				'code' => 'url',
 				'before' => '[url]',
 				'after' => '[/url]',
 				'description' => $txt['hyperlink']
 			),
 			array(
-				'image' => 'email',
+				'image' => array(3, 0),
 				'code' => 'email',
 				'before' => '[email]',
 				'after' => '[/email]',
 				'description' => $txt['insert_email']
 			),
 			array(
-				'image' => 'ftp',
+				'image' => array(13, 0),
 				'code' => 'ftp',
 				'before' => '[ftp]',
 				'after' => '[/ftp]',
@@ -1480,21 +1483,21 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => 'glow',
+				'image' => array(7, 0),
 				'code' => 'glow',
 				'before' => '[glow=red,2,300]',
 				'after' => '[/glow]',
 				'description' => $txt['glow']
 			),
 			array(
-				'image' => 'shadow',
+				'image' => array(1, 0),
 				'code' => 'shadow',
 				'before' => '[shadow=red,left]',
 				'after' => '[/shadow]',
 				'description' => $txt['shadow']
 			),
 			array(
-				'image' => 'move',
+				'image' => array(11, 0),
 				'code' => 'move',
 				'before' => '[move]',
 				'after' => '[/move]',
@@ -1502,28 +1505,28 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => 'nb',
+				'image' => array(0, 1),
 				'code' => 'nb',
 				'before' => '[nb]',
 				'after' => '[/nb]',
 				'description' => $txt['footnote']
 			),
 			array(
-				'image' => 'sup',
+				'image' => array(8, 0),
 				'code' => 'sup',
 				'before' => '[sup]',
 				'after' => '[/sup]',
 				'description' => $txt['superscript']
 			),
 			array(
-				'image' => 'sub',
+				'image' => array(9, 0),
 				'code' => 'sub',
 				'before' => '[sub]',
 				'after' => '[/sub]',
 				'description' => $txt['subscript']
 			),
 			array(
-				'image' => 'tele',
+				'image' => array(10, 0),
 				'code' => 'tt',
 				'before' => '[tt]',
 				'after' => '[/tt]',
@@ -1531,21 +1534,28 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => 'table',
+				'image' => array(4, 0),
 				'code' => 'table',
 				'before' => '[table]\n[tr]\n[td]',
 				'after' => '[/td]\n[/tr]\n[/table]',
 				'description' => $txt['table']
 			),
 			array(
-				'image' => 'code',
+				'image' => array(3, 1),
 				'code' => 'code',
 				'before' => '[code]',
 				'after' => '[/code]',
 				'description' => $txt['bbc_code']
 			),
 			array(
-				'image' => 'quote',
+				'image' => array(0, 0),
+				'code' => 'spoiler',
+				'before' => '[spoiler]',
+				'after' => '[/spoiler]',
+				'description' => $txt['bbc_spoiler']
+			),
+			array(
+				'image' => array(14, 1),
 				'code' => 'quote',
 				'before' => '[quote]',
 				'after' => '[/quote]',
@@ -1553,21 +1563,21 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => 'list',
+				'image' => array(11, 1),
 				'code' => 'list',
 				'before' => '[list]\n[li]',
 				'after' => '[/li]\n[li][/li]\n[/list]',
 				'description' => $txt['list_unordered']
 			),
 			array(
-				'image' => 'orderlist',
+				'image' => array(10, 1),
 				'code' => 'orderlist',
 				'before' => '[list type=decimal]\n[li]',
 				'after' => '[/li]\n[li][/li]\n[/list]',
 				'description' => $txt['list_ordered']
 			),
 			array(
-				'image' => 'hr',
+				'image' => array(12, 0),
 				'code' => 'hr',
 				'before' => '[hr]',
 				'description' => $txt['horizontal_rule']
@@ -1582,13 +1592,13 @@ class wedgeEditor
 		{
 			$this->bbc[count($this->bbc) - 1][] = array();
 			$this->bbc[count($this->bbc) - 1][] = array(
-				'image' => 'unformat',
+				'image' => array(6, 0),
 				'code' => 'unformat',
 				'before' => '',
 				'description' => $txt['unformat_text'],
 			);
 			$this->bbc[count($this->bbc) - 1][] = array(
-				'image' => 'toggle',
+				'image' => array(5, 0),
 				'code' => 'toggle',
 				'before' => '',
 				'description' => $txt['toggle_view'],
@@ -2005,7 +2015,7 @@ class wedgeEditor
 	{
 		global $modSettings;
 
-		// WARNING: Editing the below can cause large security holes in your forum.
+		// WARNING: Editing what follows can cause large security holes in your forum.
 		// Edit only if you are sure you know what you are doing.
 
 		$fixArray = array(
@@ -2331,6 +2341,7 @@ class wedgeEditor
 				sContainerDiv: ', JavaScriptEscape($bbccontainer), ',
 				sButtonClickHandler: ', JavaScriptEscape('oEditorHandle_' . $this->id . '.handleButtonClick'), ',
 				sSelectChangeHandler: ', JavaScriptEscape('oEditorHandle_' . $this->id . '.handleSelectChange'), ',
+				sSprite: ', JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png'), ',
 				aButtonRows: [';
 
 			// Here loop through the array, printing the images/rows/separators!
@@ -2345,8 +2356,9 @@ class wedgeEditor
 						echo '
 						{
 							sType: \'button\',
-							bEnabled: ', empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false', ',
-							sImage: ', JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif'), ',
+							bEnabled: ', empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false', ',', !is_array($tag['image']) ? '
+							sImage: ' . JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') : '
+							sPos: [' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . ']', ',
 							sCode: ', JavaScriptEscape($tag['code']), ',
 							sBefore: ', JavaScriptEscape($tag['before']), ',
 							sAfter: ', isset($tag['after']) ? JavaScriptEscape($tag['after']) : 'null', ',
@@ -2435,16 +2447,16 @@ class wedgeEditor
 			echo '
 				],
 				sButtonTemplate: ', JavaScriptEscape('
-					<img id="%buttonId%" src="%buttonSrc%" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" />
+					<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>
 				'), ',
-				sButtonBackgroundImage: ', JavaScriptEscape($settings['images_url'] . '/bbc/bbc_bg.gif'), ',
-				sButtonBackgroundImageHover: ', JavaScriptEscape($settings['images_url'] . '/bbc/bbc_hoverbg.gif'), ',
-				sActiveButtonBackgroundImage: ', JavaScriptEscape($settings['images_url'] . '/bbc/bbc_hoverbg.gif'), ',
+				sButtonBackgroundPos: [0, 22],
+				sButtonBackgroundPosHover: [0, 0],
+				sActiveButtonBackgroundPos: [0, 0],
 				sDividerTemplate: ', JavaScriptEscape('
-					<img src="' . $settings['images_url'] . '/bbc/divider.gif" alt="|" style="margin: 0 3px 0 3px;" />
+					<div class="bbc_divider"></div>
 				'), ',
 				sSelectTemplate: ', JavaScriptEscape('
-					<select name="%selectName%" id="%selectId%" style="margin-bottom: 1ex; font-size: x-small;">
+					<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt;">
 						%selectOptions%
 					</select>
 				'), ',
