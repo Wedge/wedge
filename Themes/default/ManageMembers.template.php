@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; ManageMembers
+// Version: 2.0 RC4; ManageMembers
 
 function template_search_members()
 {

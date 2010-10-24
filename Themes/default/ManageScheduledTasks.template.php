@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; ManageScheduledTasks
+// Version: 2.0 RC4; ManageScheduledTasks
 
 // Template for listing all scheduled tasks.
 function template_view_scheduled_tasks()

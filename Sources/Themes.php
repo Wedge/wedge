@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -950,9 +950,6 @@ function RemoveTheme()
 		updateSettings(array('theme_guests' => '1', 'knownThemes' => $known));
 	else
 		updateSettings(array('knownThemes' => $known));
-
-	// Remove any cached language files to keep space minimum!
-	clean_cache('lang');
 
 	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
 }

@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; Register
+// Version: 2.0 RC4; Register
 
 // Before showing users a registration form, show them the registration agreement.
 function template_registration_agreement()

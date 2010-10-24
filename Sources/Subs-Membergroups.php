@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -80,7 +80,26 @@ function deleteMembergroups($groups)
 	}
 
 	// Some groups are protected (guests, administrators, moderators, newbies).
-	$groups = array_diff($groups, array(-1, 0, 1, 3, 4));
+	$protected_groups = array(-1, 0, 1, 3, 4);
+
+	// There maybe some others as well.
+	if (!allowedTo('admin_forum'))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE group_type = {int:is_protected}',
+			array(
+				'is_protected' => 1,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$protected_groups[] = $row['id_group'];
+		$smcFunc['db_free_result']($request);
+	}
+
+	// Make sure they don't delete protected groups!
+	$groups = array_diff($groups, array_unique($protected_groups));
 	if (empty($groups))
 		return false;
 
@@ -318,9 +337,25 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	// Now get rid of those groups.
 	$groups = array_diff($groups, $implicitGroups);
 
-	// If you're not an admin yourself, you can't de-admin others.
+	// Don't forget the protected groups.
 	if (!allowedTo('admin_forum'))
-		$groups = array_diff($groups, array(1));
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE group_type = {int:is_protected}',
+			array(
+				'is_protected' => 1,
+			)
+		);
+		$protected_groups = array(1);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$protected_groups[] = $row['id_group'];
+		$smcFunc['db_free_result']($request);
+
+		// If you're not an admin yourself, you can't touch protected groups!
+		$groups = array_diff($groups, array_unique($protected_groups));
+	}
 
 	// Only continue if there are still groups and members left.
 	if (empty($groups) || empty($members))
@@ -472,9 +507,29 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	if (in_array($group, $implicitGroups) || empty($members))
 		return false;
 
-	// Only admins can add admins.
-	if ($group == 1 && !allowedTo('admin_forum'))
+	// Only admins can add admins...
+	if (!allowedTo('admin_forum') && $group == 1)
 		return false;
+	// ... and assign protected groups!
+	elseif (!allowedTo('admin_forum'))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT group_type
+			FROM {db_prefix}membergroups
+			WHERE id_group = {int:current_group}
+			LIMIT {int:limit}',
+			array(
+				'current_group' => $group,
+				'limit' => 1,
+			)
+		);
+		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+
+		// Is it protected?
+		if ($is_protected == 1)
+			return false;
+	}
 
 	// Do the actual updates.
 	if ($type == 'only_additional')
@@ -624,9 +679,11 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, min_posts, online_color, stars, 0 AS num_members
 		FROM {db_prefix}membergroups
-		WHERE min_posts ' . ($membergroup_type === 'post_count' ? '!=' : '=') . ' -1
+		WHERE min_posts ' . ($membergroup_type === 'post_count' ? '!=' : '=') . ' -1' . (allowedTo('admin_forum') ? '' : '
+			AND group_type != {int:is_protected}') . '
 		ORDER BY {raw:sort}',
 		array(
+			'is_protected' => 1,
 			'sort' => $sort,
 		)
 	);

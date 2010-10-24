@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -99,9 +99,6 @@ if (!defined('SMF'))
 		- uses the view_versions admin area.
 		- loads the view_versions sub template (in the Admin template.)
 		- accessed through ?action=admin;area=maintain;sa=routine;activity=version.
-
-	bool cacheLanguage(string template_name, string language, bool fatal, string theme_name)
-		// !!!
 
 	void MaintainReattributePosts()
 		// !!!
@@ -1473,129 +1470,6 @@ function VersionDetail()
 
 	$context['sub_template'] = 'view_versions';
 	$context['page_title'] = $txt['admin_version_check'];
-}
-
-// This function caches the relevant language files, and if the cache doesn't work includes them with eval.
-function cacheLanguage($template_name, $lang, $fatal, $theme_name)
-{
-	global $language, $settings, $txt, $modSettings;
-	global $sourcedir, $cachedir, $smcFunc;
-
-	// Is the file writable?
-	$can_write = !empty($modSettings['cache_enable']) && is_writable($cachedir) ? 1 : 0;
-
-	// Assume it's not invalid!
-	$invalid_file_found = false;
-
-	// Let's assume we can cache the file and include it.
-	$do_include = true;
-
-	// Make sure we have $settings - if not we're in trouble and need to find it!
-	if (empty($settings['default_theme_dir']))
-	{
-		require_once($sourcedir . '/ScheduledTasks.php');
-		loadEssentialThemeData();
-	}
-
-	// Open the file to write to.
-	if ($can_write)
-	{
-		$fh = fopen($cachedir . '/lang_' . $template_name . '_' . $lang . '_' . $theme_name . '.php', 'w');
-		if ($fh)
-		{
-			set_file_buffer($fh, 0);
-			flock($fh, LOCK_EX);
-			fwrite($fh, '<' . '?php' . "\n");
-		}
-	}
-
-	// For each file open it up and write it out!
-	foreach (explode('+', $template_name) as $template)
-	{
-		// Obviously, the current theme is most important to check.
-		$attempts = array(
-			array($settings['theme_dir'], $template, $lang, $settings['theme_url']),
-			array($settings['theme_dir'], $template, $language, $settings['theme_url']),
-		);
-
-		// Do we have a base theme to worry about?
-		if (isset($settings['base_theme_dir']))
-		{
-			$attempts[] = array($settings['base_theme_dir'], $template, $lang, $settings['base_theme_url']);
-			$attempts[] = array($settings['base_theme_dir'], $template, $language, $settings['base_theme_url']);
-		}
-
-		// Fall back on the default theme if necessary.
-		$attempts[] = array($settings['default_theme_dir'], $template, $lang, $settings['default_theme_url']);
-		$attempts[] = array($settings['default_theme_dir'], $template, $language, $settings['default_theme_url']);
-
-		// Fall back on the English language if none of the preferred languages can be found.
-		if (!in_array('english', array($lang, $language)))
-		{
-			$attempts[] = array($settings['theme_dir'], $template, 'english', $settings['theme_url']);
-			$attempts[] = array($settings['default_theme_dir'], $template, 'english', $settings['default_theme_url']);
-		}
-
-		// Try to find the language file.
-		$found = false;
-		foreach ($attempts as $k => $file)
-		{
-			if (file_exists($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php'))
-			{
-				// Are we caching?
-				if ($can_write && $fh)
-				{
-					foreach (file($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php') as $line)
-					{
-						if (substr($line, 0, 2) != '?' . '>' && substr($line, 0, 2) != '<' . '?')
-						{
-							// Some common variables get parsed in...
-							$line = preg_replace('~\{NL\}~', '\\\\n', $line);
-							fwrite($fh, $line);
-						}
-					}
-				}
-				// If the cache directory is not writable, we're having a bad day.
-				else
-					$do_include = false;
-
-				// Include it for fun.
-				require($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php');
-
-				// Note that we found it.
-				$found = true;
-
-				break;
-			}
-		}
-
-		// That couldn't be found!  Log the error, but *try* to continue normally.
-		if (!$found)
-		{
-			$invalid_file_found = true;
-
-			if ($fatal)
-			{
-				log_error(sprintf($txt['theme_language_error'], $template_name . '.' . $lang, 'template'));
-				break;
-			}
-		}
-		else
-			unset($language_url);
-	}
-
-	if ($can_write && $fh)
-	{
-		fwrite($fh, '?' . '>');
-		flock($fh, LOCK_UN);
-		fclose($fh);
-
-		// If we couldn't find the file don't cache it!
-		if ($invalid_file_found)
-			@unlink($cachedir . '/lang_' . $template_name . '_' . $lang . '_' . $theme_name . '.php');
-	}
-
-	return $do_include;
 }
 
 // Removing old posts doesn't take much as we really pass through.

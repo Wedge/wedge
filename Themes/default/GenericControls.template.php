@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; GenericControls
+// Version: 2.0 RC4; GenericControls
 
 // What's this, verification?!
 function template_control_verification($verify_id, $display_type = 'all', $reset = false)

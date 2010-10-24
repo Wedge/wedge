@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10205 $.
+Changelog started January 1, 2004; Currently at $Revision: 10242 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -55,7 +55,21 @@ October 2010
  ! Brackets in username caused trailing quote to be lost on WYSIWYG toggle. (Subs-Editor.php) [Bug 4316]
  ! Ugly fix for Firefox resetting form content. (script.js) [Bug 4346]
  ! Browsers' javascript has sometimes odd ideas about expected order. :P (editor.js) [Bug 4453]
-
+ ! Reverting 10207 for Subs.php. Should be included only if it can be properly tested.
+ ! Fixed webkit unexpected behavior when setting font styles (thank you Nibogo!) (editor.js) [Bug 4511]
+ ! Allow nested [size] tags - we do allow them anyway, just not in all combinations (Subs.php)
+ ! censor area should only be available to admins - reported by more, including KinG-InFeT.
+ ! Package servers URLs and names properly cleaned for all circumstances - reported by KinG-InFeT.
+ & Adapt a language string to the changes in SMF meta keywords. (Help.english.php) [Bug 4515]
+ & Notify about PostgreSQL of older and newer versions not supported in the same database. (install language file) [Bug 4214]
+ ! Language files are no longer cached. (Load.php, ManageMaintenance.php, ManageServer.php, Subs.php, Themes.php)
+ & Remove the note about caching from all language files. (many files)
+ ! Load English version of language files as a fallback for missing language strings. (Load.php) [Bug 2743]
+ * Added a new group type, protected, for too powerful groups to be managed only by true admins. (Groups.php, ManageMembergroups.php, Profile-Modify.php, Subs-Membergroups.php, ManageMembergroups template, Profile template) [Bug 3528]
+ & Added the new group type language string for the change above. (ManageMembers language file) [Bug 3528]
+ ! Make sure Administrator group type is set to protected on install and upgrade. (install_2-0_*.sql, upgrade_2-0_*.sql)
+ ! Making sure eol-style is on all files on other directory as well. (might have been missed) (/other files)
+ ! Making sure eol-style is set on all our converters as well. (/other/converters ASCII files)
 
 September 2010
 --------------------------------------------------------------------------------

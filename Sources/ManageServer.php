@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -633,7 +633,6 @@ function DownloadLanguage()
 			package_flush_cache();
 			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], $scripturl . '?action=admin;area=languages');
 
-			clean_cache('lang');
 			return;
 		}
 	}
@@ -1551,10 +1550,7 @@ function ModifyLanguage()
 
 	// If we saved, redirect.
 	if ($madeSave)
-	{
-		clean_cache('lang');
 		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
-	}
 }
 
 // This function could be two functions - either way it cleans language entries to/from display.

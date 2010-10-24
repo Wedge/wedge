@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -616,6 +616,7 @@ function Credits($in_admin = false)
 					'members' => array(
 						'JimM',
 						'Ben Scott',
+						'Adish &quot;(F.L.A.M.E.R)&quot; Patel',
 						'Bigguy',
 						'bluedevil',
 						'capady',
@@ -623,13 +624,12 @@ function Credits($in_admin = false)
 						'Duncan85',
 						'Eliana Tamerin',
 						'Fiery',
-						'(F.L.A.M.E.R)',
 						'gbsothere',
 						'Harro',
 						'Huw',
 						'Jan-Olof &quot;Owdy&quot; Eriksson',
 						'Jeremy &quot;jerm&quot; Strike',
-						'Kat',
+						'K@',
 						'Kays',
 						'Kevin &quot;greyknight17&quot; Hou',
 						'KGIII',
@@ -651,6 +651,7 @@ function Credits($in_admin = false)
 					'members' => array(
 						'Matt &quot;SlammedDime&quot; Zuba',
 						'&#12487;&#12451;&#12531;1031',
+						'Arantor',
 						'Brad &quot;IchBin&trade;&quot; Grow',
 						'Brannon &quot;B&quot; Hall',
 						'Bryan &quot;Runic&quot; Deakin',
@@ -667,7 +668,6 @@ function Credits($in_admin = false)
 						'Marcus &quot;Nas&quot; Forsberg',
 						'Nibogo',
 						'Niko',
-						'Peter &quot;Arantor&quot; Spicer',
 						'snork13',
 						'Steven &quot;Fustrate&quot; Hoffman',
 						'Tyrsson',

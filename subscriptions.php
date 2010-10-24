@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -23,11 +23,11 @@
 **********************************************************************************/
 
 /*
-	This file is the file which all subscription gateways should call when a payment has been
-	received - it sorts out the user status.
+	This file is the file which all subscription gateways should call
+	when a payment has been received - it sorts out the user status.
 
 	void generateSubscriptionError()
-		//!!!
+	// log the error for posterity
 */
 
 // Start things rolling by getting SMF alive...
@@ -60,7 +60,9 @@ if (!empty($modSettings['paid_email_to']))
 			'id' => 0,
 		);
 
-// We need to see whether we can find the correct payment gateway, we'll going to go through all our gateway scripts and find out if they are happy with what we have.
+// We need to see whether we can find the correct payment gateway,
+// we'll going to go through all our gateway scripts and find out
+// if they are happy with what we have.
 $txnType = '';
 $gatewayHandles = loadPaymentGateways();
 foreach ($gatewayHandles as $gateway)
@@ -139,7 +141,8 @@ $smcFunc['db_free_result']($request);
 // Is this a refund etc?
 if ($gatewayClass->isRefund())
 {
-	// If the end time subtracted by current time, is not greater than the duration (ie length of subscription), then we close it.
+	// If the end time subtracted by current time, is not greater
+	// than the duration (i.e. length of subscription), then we close it.
 	if ($subscription_info['end_time'] - time() < $subscription_info['length'])
 	{
 		// Delete user subscription.
@@ -197,7 +200,8 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 		$real_details = @unserialize($subscription_info['pending_details']);
 		if (empty($real_details))
 			generateSubscriptionError(sprintf($txt['paid_count_not_find_outstanding_payment'], $member_id, $subscription_id));
-		// Now we just try to find anything pending. We don't really care which it is as security happens later.
+		// Now we just try to find anything pending.
+		// We don't really care which it is as security happens later.
 		foreach ($real_details as $id => $detail)
 		{
 			unset($real_details[$id]);

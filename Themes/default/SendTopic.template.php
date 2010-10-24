@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; SendTopic
+// Version: 2.0 RC4; SendTopic
 
 //------------------------------------------------------------------------------
 /*	This template contains two humble sub templates - main. Its job is pretty

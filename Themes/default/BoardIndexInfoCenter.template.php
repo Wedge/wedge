@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; BoardIndexInfoCenter
+// Version: 2.0 RC4; BoardIndexInfoCenter
 
 function template_info_center_begin()
 {

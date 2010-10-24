@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; index
+// Version: 2.0 RC4; index
 
 /*	This template is, perhaps, the most important template in the theme. It
 	contains the main template layer that displays the header and footer of
@@ -39,7 +39,7 @@ function template_init()
 
 	/* The version this template/theme is for.
 		This should probably be the version of SMF it was created for. */
-	$settings['theme_version'] = '2.0 RC3';
+	$settings['theme_version'] = '2.0 RC4';
 
 	/* Set a setting that tells the theme that it can render the tabs. */
 	$settings['use_tabs'] = true;
@@ -177,40 +177,40 @@ function template_body_above()
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
 			<div class="user">';
 
-		// If the user is logged in, display stuff like their name, new messages, etc.
-		if ($context['user']['is_logged'])
-		{
-			if (!empty($context['user']['avatar']))
-				echo '
-				<p class="avatar">', $context['user']['avatar']['image'], '</p>';
+	// If the user is logged in, display stuff like their name, new messages, etc.
+	if ($context['user']['is_logged'])
+	{
+		if (!empty($context['user']['avatar']))
 			echo '
+				<p class="avatar">', $context['user']['avatar']['image'], '</p>';
+		echo '
 				<ul class="reset">
 					<li class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></li>
 					<li><a href="', $scripturl, '?action=unread">', $txt['unread_since_visit'], '</a></li>
 					<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 
-			// Is the forum in maintenance mode?
-			if ($context['in_maintenance'] && $context['user']['is_admin'])
-				echo '
+		// Is the forum in maintenance mode?
+		if ($context['in_maintenance'] && $context['user']['is_admin'])
+			echo '
 					<li class="notice">', $txt['maintain_mode_on'], '</li>';
 
-			// Are there any members waiting for approval?
-			if (!empty($context['unapproved_members']))
-				echo '
+		// Are there any members waiting for approval?
+		if (!empty($context['unapproved_members']))
+			echo '
 					<li>', $context['unapproved_members'] == 1 ? $txt['approve_thereis'] : $txt['approve_thereare'], ' <a href="', $scripturl, '?action=admin;area=viewmembers;sa=browse;type=approve">', $context['unapproved_members'] == 1 ? $txt['approve_member'] : $context['unapproved_members'] . ' ' . $txt['approve_members'], '</a> ', $txt['approve_members_waiting'], '</li>';
 
-			if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
-				echo '
+		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
+			echo '
 					<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
 
-			echo '
+		echo '
 					<li>', $context['current_time'], '</li>
 				</ul>';
-		}
-		// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
-		elseif (!empty($context['show_login_bar']))
-		{
-			echo '
+	}
+	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
+	elseif (!empty($context['show_login_bar']))
+	{
+		echo '
 				<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 					<div class="info">', $txt['login_or_register'], '</div>
@@ -226,46 +226,46 @@ function template_body_above()
 					<input type="submit" value="', $txt['login'], '" class="button_submit" /><br />
 					<div class="info">', $txt['quick_login_dec'], '</div>';
 
-			if (!empty($modSettings['enableOpenID']))
-				echo '
+		if (!empty($modSettings['enableOpenID']))
+			echo '
 					<br /><input type="text" name="openid_identifier" id="openid_url" size="25" class="input_text openid_login" />';
 
-			echo '
+		echo '
 					<input type="hidden" name="hash_passwrd" value="" />
 				</form>';
-		}
+	}
 
-		echo '
+	echo '
 			</div>
 			<div class="news normaltext">';
 
-		if (!empty($context['allow_search']))
-		{
-			echo '
+	if (!empty($context['allow_search']))
+	{
+		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 					<input type="text" name="search" value="" class="input_text" />&nbsp;
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
 					<input type="hidden" name="advanced" value="0" />';
 
-			// Search within current topic?
-			if (!empty($context['current_topic']))
-				echo '
+		// Search within current topic?
+		if (!empty($context['current_topic']))
+			echo '
 					<input type="hidden" name="topic" value="', $context['current_topic'], '" />';
-			// Or within current board?
-			elseif (!empty($context['current_board']))
-				echo '
+		// Or within current board?
+		elseif (!empty($context['current_board']))
+			echo '
 					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '" />';
 
-			echo '</form>';
-		}
+		echo '</form>';
+	}
 
-		// Show a random news item? (or you could pick one from news_lines...)
-		if (!empty($settings['enable_news']))
-			echo '
+	// Show a random news item? (or you could pick one from news_lines...)
+	if (!empty($settings['enable_news']))
+		echo '
 				<h2>', $txt['news'], ': </h2>
 				<p>', $context['random_news_line'], '</p>';
 
-		echo '
+	echo '
 			</div>
 		</div>
 		<br class="clear" />';

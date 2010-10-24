@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC3; Profile
+// Version: 2.0 RC4; Profile
 
 // Template for the profile side bar - goes before any other profile template.
 function template_profile_above()
@@ -1701,8 +1701,19 @@ function template_groupMembership()
 						<td>
 							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '<br /><span class="smalltext">' . $group['desc'] . '</span>' : ''), '
 						</td>
-						<td width="15%" class="lefttext">
-							', $group['type'] == 2 ? '<a href="' . $scripturl . '?action=profile;save;u=' . $context['id_member'] . ';area=groupmembership;' . $context['session_var'] . '=' . $context['session_id'] . ';gid=' . $group['id'] . '">' . $txt['join_group'] . '</a>' : ($group['pending'] ? $txt['approval_pending'] : '<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=groupmembership;request=' . $group['id'] . '">' . $txt['request_group'] . '</a>'), '
+						<td width="15%" class="lefttext">';
+
+				if ($group['type'] == 3)
+					echo '
+							<a href="', $scripturl, '?action=profile;save;u=', $context['id_member'], ';area=groupmembership;', $context['session_var'], '=', $context['session_id'], ';gid=', $group['id'], '">', $txt['join_group'], '</a>';
+				elseif ($group['type'] == 2 && $group['pending'])
+					echo '
+							', $txt['approval_pending'];
+				elseif ($group['type'] == 2)
+					echo '
+							<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=groupmembership;request=', $group['id'], '">', $txt['request_group'], '</a>';
+
+				echo '
 						</td>
 					</tr>';
 				$alternate = !$alternate;

@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -362,7 +362,7 @@ function AddMembergroup()
 		checkSession();
 
 		$postCountBasedGroup = isset($_POST['min_posts']) && (!isset($_POST['postgroup_based']) || !empty($_POST['postgroup_based']));
-		$_POST['group_type'] = isset($_POST['group_type']) && $_POST['group_type'] >= 0 && $_POST['group_type'] <= 2 ? (int) $_POST['group_type'] : 0;
+		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 
 		// !!! Check for members with same name too?
 
@@ -523,7 +523,7 @@ function AddMembergroup()
 			);
 
 		// If this is joinable then set it to show group membership in people's profiles.
-		if (empty($modSettings['show_group_membership']) && $_POST['group_type'] > 0)
+		if (empty($modSettings['show_group_membership']) && $_POST['group_type'] > 1)
 			updateSettings(array('show_group_membership' => 1));
 
 		// Rebuild the group cache.
@@ -543,6 +543,7 @@ function AddMembergroup()
 	$context['sub_template'] = 'new_group';
 	$context['post_group'] = isset($_REQUEST['postgroup']);
 	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']);
+	$context['allow_protected'] = allowedTo('admin_forum');
 
 	$result = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
@@ -600,10 +601,30 @@ function EditMembergroup()
 {
 	global $context, $txt, $sourcedir, $modSettings, $smcFunc;
 
+	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
+
 	// Make sure this group is editable.
-	if (empty($_REQUEST['group']) || (int) $_REQUEST['group'] < 1)
+	if (!empty($_REQUEST['group']))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE id_group = {int:current_group}' . (allowedTo('admin_forum') ? '' : '
+				AND group_type != {int:is_protected}') . '
+			LIMIT {int:limit}',
+			array(
+				'current_group' => $_REQUEST['group'],
+				'is_protected' => 1,
+				'limit' => 1,
+			)
+		);
+		list ($_REQUEST['group']) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+	}
+
+	// Now, do we have a valid id?
+	if (empty($_REQUEST['group']))
 		fatal_lang_error('membergroup_does_not_exist', false);
-	$_REQUEST['group'] = (int) $_REQUEST['group'];
 
 	// The delete this membergroup button was pressed.
 	if (isset($_POST['delete']))
@@ -626,7 +647,7 @@ function EditMembergroup()
 		$_POST['min_posts'] = isset($_POST['min_posts'], $_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
 		$_POST['stars'] = (empty($_POST['star_count']) || $_POST['star_count'] < 0) ? '' : min((int) $_POST['star_count'], 99) . '#' . $_POST['star_image'];
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
-		$_POST['group_type'] = isset($_POST['group_type']) && $_POST['group_type'] >= 0 && $_POST['group_type'] <= 2 ? (int) $_POST['group_type'] : 0;
+		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
 		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 ? (int) $_POST['group_inherit'] : -2;
 
@@ -767,9 +788,9 @@ function EditMembergroup()
 			$request = $smcFunc['db_query']('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}membergroups
-				WHERE group_type != {int:regular_type}',
+				WHERE group_type > {int:non_joinable}',
 				array(
-					'regular_type' => 0,
+					'non_joinable' => 1,
 				)
 			);
 			list ($have_joinable) = $smcFunc['db_fetch_row']($request);
@@ -917,6 +938,7 @@ function EditMembergroup()
 		'inherited_from' => $row['id_parent'],
 		'allow_post_group' => $_REQUEST['group'] == 2 || $_REQUEST['group'] > 4,
 		'allow_delete' => $_REQUEST['group'] == 2 || $_REQUEST['group'] > 4,
+		'allow_protected' => allowedTo('admin_forum'),
 	);
 
 	// Get any moderators for this group

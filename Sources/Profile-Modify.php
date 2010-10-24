@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -2294,11 +2294,13 @@ function profileLoadGroups()
 		SELECT group_name, id_group, hidden
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}
+			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
+			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
 			'moderator_group' => 3,
 			'min_posts' => -1,
+			'is_protected' => 1,
 			'newbie_group' => 4,
 		)
 	);
@@ -2426,8 +2428,27 @@ function profileSaveGroups(&$value)
 {
 	global $profile_vars, $old_profile, $context, $smcFunc, $cur_profile;
 
-	// The account page allows the change of your id_group - but not to admin!.
-	if (allowedTo('admin_forum') || ((int) $value != 1 && $old_profile['id_group'] != 1))
+	// Do we need to protect some groups?
+	if (!allowedTo('admin_forum'))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE group_type = {int:is_protected}',
+			array(
+				'is_protected' => 1,
+			)
+		);
+		$protected_groups = array(1);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$protected_groups[] = $row['id_group'];
+		$smcFunc['db_free_result']($request);
+
+		$protected_groups = array_unique($protected_groups);
+	}
+
+	// The account page allows the change of your id_group - but not to a protected group!
+	if (empty($protected_groups) || count(array_intersect(array((int) $value, $old_profile['id_group']), $protected_groups)) == 0)
 		$value = (int) $value;
 	// ... otherwise it's the old group sir.
 	else
@@ -2436,29 +2457,33 @@ function profileSaveGroups(&$value)
 	// Find the additional membergroups (if any)
 	if (isset($_POST['additional_groups']) && is_array($_POST['additional_groups']))
 	{
-		foreach ($_POST['additional_groups'] as $i => $group_id)
+		$additional_groups = array();
+		foreach ($_POST['additional_groups'] as $group_id)
 		{
-			if ((int) $group_id == 0 || (!allowedTo('admin_forum') && (int) $group_id == 1))
-				unset($_POST['additional_groups'][$i], $_POST['additional_groups'][$i]);
-			else
-				$_POST['additional_groups'][$i] = (int) $group_id;
+			$group_id = (int) $group_id;
+			if (!empty($group_id) && (empty($protected_groups) || !in_array($group_id, $protected_groups)))
+				$additional_groups[] = $group_id;
 		}
 
-		// Put admin back in there if you don't have permission to take it away.
-		if (!allowedTo('admin_forum') && in_array(1, explode(',', $old_profile['additional_groups'])))
-			$_POST['additional_groups'][] = 1;
-
-		if (implode(',', $_POST['additional_groups']) !== $old_profile['additional_groups'])
+		// Put the protected groups back in there if you don't have permission to take them away.
+		$old_additional_groups = explode(',', $old_profile['additional_groups']);
+		foreach ($old_additional_groups as $group_id)
 		{
-			$profile_vars['additional_groups'] = implode(',', $_POST['additional_groups']);
-			$cur_profile['additional_groups'] = implode(',', $_POST['additional_groups']);
+			if (!empty($protected_groups) && in_array($group_id, $protected_groups))
+				$additional_groups[] = $group_id;
+		}
+
+		if (implode(',', $additional_groups) !== $old_profile['additional_groups'])
+		{
+			$profile_vars['additional_groups'] = implode(',', $additional_groups);
+			$cur_profile['additional_groups'] = implode(',', $additional_groups);
 		}
 	}
 
 	// Too often, people remove delete their own account, or something.
 	if (in_array(1, explode(',', $old_profile['additional_groups'])) || $old_profile['id_group'] == 1)
 	{
-		$stillAdmin = $value == 1 || (isset($_POST['additional_groups']) && in_array(1, $_POST['additional_groups']));
+		$stillAdmin = $value == 1 || (isset($additional_groups) && in_array(1, $additional_groups));
 
 		// If they would no longer be an admin, look for any other...
 		if (!$stillAdmin)
@@ -2996,7 +3021,8 @@ function groupMembership($memID)
 
 	// Can they manage groups?
 	$context['can_manage_membergroups'] = allowedTo('manage_membergroups');
-	$context['can_edit_primary'] = allowedTo('manage_membergroups');
+	$context['can_manage_protected'] = allowedTo('admin_forum');
+	$context['can_edit_primary'] = $context['can_manage_protected'];
 	$context['update_message'] = isset($_GET['msg'], $txt['group_membership_msg_' . $_GET['msg']]) ? $txt['group_membership_msg_' . $_GET['msg']] : '';
 
 	// Get all the groups this user is a member of.
@@ -3024,7 +3050,7 @@ function groupMembership($memID)
 		array(
 			'group_list' => $groups,
 			'selected_member' => $memID,
-			'nonjoin_group_id' => 0,
+			'nonjoin_group_id' => 1,
 			'min_posts' => -1,
 			'moderator_group' => 3,
 		)
@@ -3037,11 +3063,11 @@ function groupMembership($memID)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Can they edit their primary group?
-		if (($row['id_group'] == $context['primary_group'] && $row['group_type'] != 0) || ($row['hidden'] != 2 && $context['primary_group'] == 0 && in_array($row['id_group'], $groups)))
+		if (($row['id_group'] == $context['primary_group'] && $row['group_type'] > 1) || ($row['hidden'] != 2 && $context['primary_group'] == 0 && in_array($row['id_group'], $groups)))
 			$context['can_edit_primary'] = true;
 
-		// If they can't manage groups, and it's not publically joinable or already assigned, they can't see it.
-		if (!$context['can_manage_membergroups'] && $row['group_type'] == 0 && $row['id_group'] != $context['primary_group'])
+		// If they can't manage (protected) groups, and it's not publically joinable or already assigned, they can't see it.
+		if (((!$context['can_manage_protected'] && $row['group_type'] == 1) || (!$context['can_manage_membergroups'] && $row['group_type'] == 0)) && $row['id_group'] != $context['primary_group'])
 			continue;
 
 		$context['groups'][in_array($row['id_group'], $groups) ? 'member' : 'available'][$row['id_group']] = array(
@@ -3054,7 +3080,7 @@ function groupMembership($memID)
 			'is_primary' => $row['id_group'] == $context['primary_group'],
 			'can_be_primary' => $row['hidden'] != 2,
 			// Anything more than this needs to be done through account settings for security.
-			'can_leave' => $row['id_group'] != 1 && $row['group_type'] != 0 ? true : false,
+			'can_leave' => $row['id_group'] != 1 && $row['group_type'] > 1 ? true : false,
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -3070,8 +3096,12 @@ function groupMembership($memID)
 		'can_leave' => 0,
 	);
 
+	// No changing primary one unless you have enough groups!
+	if (count($context['groups']['member']) < 2)
+		$context['can_edit_primary'] = false;
+
 	// In the special case that someone is requesting membership of a group, setup some special context vars.
-	if (isset($_REQUEST['request'], $context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 1)
+	if (isset($_REQUEST['request'], $context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 2)
 		$context['group_request'] = $context['groups']['available'][(int) $_REQUEST['request']];
 }
 
@@ -3090,6 +3120,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 
 	$old_profile = &$user_profile[$memID];
 	$context['can_manage_membergroups'] = allowedTo('manage_membergroups');
+	$context['can_manage_protected'] = allowedTo('admin_forum');
 
 	// By default the new primary is the old one.
 	$newPrimary = $old_profile['id_group'];
@@ -3104,6 +3135,25 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	// Sanity check!!
 	if ($group_id == 1)
 		isAllowedTo('admin_forum');
+	// Protected groups too!
+	else
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT group_type
+			FROM {db_prefix}membergroups
+			WHERE id_group = {int:current_group}
+			LIMIT {int:limit}',
+			array(
+				'current_group' => $group_id,
+				'limit' => 1,
+			)
+		);
+		list ($is_protected) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+
+		if ($is_protected == 1)
+			isAllowedTo('admin_forum');
+	}
 
 	// What ever we are doing, we need to determine if changing primary is possible!
 	$request = $smcFunc['db_query']('', '
@@ -3124,12 +3174,12 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			$group_name = $row['group_name'];
 
 			// Does the group type match what we're doing - are we trying to request a non-requestable group?
-			if ($changeType == 'request' && $row['group_type'] != 1)
+			if ($changeType == 'request' && $row['group_type'] != 2)
 				fatal_lang_error('no_access', false);
 			// What about leaving a requestable group we are not a member of?
-			elseif ($changeType == 'free' && $row['group_type'] == 1 && $old_profile['id_group'] != $row['id_group'] && !isset($addGroups[$row['id_group']]))
+			elseif ($changeType == 'free' && $row['group_type'] == 2 && $old_profile['id_group'] != $row['id_group'] && !isset($addGroups[$row['id_group']]))
 				fatal_lang_error('no_access', false);
-			elseif ($changeType == 'free' && $row['group_type'] != 2 && $row['group_type'] != 1)
+			elseif ($changeType == 'free' && $row['group_type'] != 3 && $row['group_type'] != 2)
 				fatal_lang_error('no_access', false);
 
 			// We can't change the primary group if this is hidden!
@@ -3138,7 +3188,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		}
 
 		// If this is their old primary, can we change it?
-		if ($row['id_group'] == $old_profile['id_group'] && ($row['group_type'] != 0 || $context['can_manage_membergroups']) && $canChangePrimary !== false)
+		if ($row['id_group'] == $old_profile['id_group'] && ($row['group_type'] > 1 || $context['can_manage_membergroups']) && $canChangePrimary !== false)
 			$canChangePrimary = 1;
 
 		// If we are not doing a force primary move, don't do it automatically if current primary is not 0.
@@ -3146,7 +3196,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			$canChangePrimary = false;
 
 		// If this is the one we are acting on, can we even act?
-		if (!$context['can_manage_membergroups'] && $row['group_type'] == 0)
+		if ((!$context['can_manage_protected'] && $row['group_type'] == 1) || (!$context['can_manage_membergroups'] && $row['group_type'] == 0))
 			$canChangePrimary = false;
 	}
 	$smcFunc['db_free_result']($request);

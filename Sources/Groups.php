@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC3                                         *
+* Software Version:           SMF 2.0 RC4                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -111,12 +111,14 @@ function GroupList()
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
 		WHERE mg.min_posts = {int:min_posts}
-			AND mg.id_group != {int:mod_group}
+			AND mg.id_group != {int:mod_group}' . (allowedTo('admin_forum') ? '' : '
+			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
 			'current_member' => $user_info['id'],
 			'min_posts' => -1,
 			'mod_group' => 3,
+			'is_protected' => 1,
 		)
 	);
 	// This is where we store our groups.
@@ -267,12 +269,14 @@ function list_getGroups($start, $items_per_page, $sort)
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
 		WHERE mg.min_posts = {int:min_posts}
-			AND mg.id_group != {int:mod_group}
+			AND mg.id_group != {int:mod_group}' . (allowedTo('admin_forum') ? '' : '
+			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
 			'current_member' => $user_info['id'],
 			'min_posts' => -1,
 			'mod_group' => 3,
+			'is_protected' => 1,
 		)
 	);
 	// Start collecting the data.
@@ -371,10 +375,12 @@ function list_getGroupCount()
 		SELECT COUNT(id_group) AS group_count
 		FROM {db_prefix}membergroups
 		WHERE mg.min_posts = {int:min_posts}
-			AND mg.id_group != {int:mod_group}',
+			AND mg.id_group != {int:mod_group}' . (allowedTo('admin_forum') ? '' : '
+			AND mg.group_type != {int:is_protected}'),
 		array(
 			'min_posts' => -1,
 			'mod_group' => 3,
+			'is_protected' => 1,
 		)
 	);
 	list ($group_count) = $smcFunc['db_fetch_row']($request);
@@ -399,11 +405,13 @@ function MembergroupMembers()
 		SELECT id_group AS id, group_name AS name, CASE WHEN min_posts = {int:min_posts} THEN 1 ELSE 0 END AS assignable, hidden, online_color,
 			stars, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group
 		FROM {db_prefix}membergroups
-		WHERE id_group = {int:id_group}
+		WHERE id_group = {int:id_group}' . (allowedTo('admin_forum') ? '' : '
+			AND group_type != {int:is_protected}') . '
 		LIMIT 1',
 		array(
 			'min_posts' => -1,
 			'id_group' => $_REQUEST['group'],
+			'is_protected' => 1,
 		)
 	);
 	// Doesn't exist?
