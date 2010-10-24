@@ -147,7 +147,7 @@ function template_view_package()
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
 								<td width="0"></td>
-								<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this.href, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+								<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
 								<td width="30" class="smalltext">', $operation_num, '.</td>
 								<td width="23%" class="smalltext">', $txt[$operation_text], '</td>
 								<td width="50%" class="smalltext">', $operation['action'], '</td>
@@ -240,7 +240,7 @@ function template_view_package()
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
 									<td width="0"></td>
-									<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this.href, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+									<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
 									<td width="30" class="smalltext">', $operation_num, '.</td>
 									<td width="23%" class="smalltext">', $txt[$operation_text], '</td>
 									<td width="50%" class="smalltext">', $operation['action'], '</td>
@@ -530,7 +530,7 @@ function template_browse()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>', $txt['packages_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>', $txt['packages_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -1846,7 +1846,7 @@ function template_file_permissions()
 						<label for="method_individual"><strong>', $txt['package_file_perms_apply'], '</strong></label>
 					</dt>
 					<dd>
-						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5" class="input_text" />&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this.href);" class="help">(?)</a></em>
+						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5" class="input_text" />&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this);" class="help">(?)</a></em>
 					</dd>
 					<dt>
 						<input type="radio" name="method" value="predefined" id="method_predefined" class="input_radio" />

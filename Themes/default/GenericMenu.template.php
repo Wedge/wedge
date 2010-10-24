@@ -246,7 +246,7 @@ function template_generic_menu_tabs(&$menu_context)
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '
-			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>';
+			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>';
 
 	echo '
 			', $tab_context['title'], '

@@ -353,7 +353,7 @@ function BrowseFiles()
 
 						// Show a popup on click if it\'s a picture and we know its dimensions.
 						if (!empty($rowData[\'width\']) && !empty($rowData[\'height\']))
-							$link .= sprintf(\' onclick="return reqWin(this.href\' . ($rowData[\'attachment_type\'] == 1 ? \'\' : \' + \\\';image\\\'\') . \', %1$d, %2$d, true);"\', $rowData[\'width\'] + 20, $rowData[\'height\'] + 20);
+							$link .= sprintf(\' onclick="return reqWin(this\' . ($rowData[\'attachment_type\'] == 1 ? \'\' : \'.href + \\\';image\\\'\') . \', %1$d, %2$d, true);"\', $rowData[\'width\'] + 20, $rowData[\'height\'] + 20);
 
 						$link .= sprintf(\'>%1$s</a>\', preg_replace(\'~&amp;#(\\\\d{1,7}|x[0-9a-fA-F]{1,6});~\', \'&#\\\\1;\', htmlspecialchars($rowData[\'filename\'])));
 

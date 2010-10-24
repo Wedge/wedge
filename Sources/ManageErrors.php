@@ -174,7 +174,7 @@ function ViewErrorLog()
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this.href, 600, 400, false);">' . $row['file'] . '</a>' : $row['file'],
+				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 600, 400, false);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}

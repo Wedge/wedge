@@ -1056,7 +1056,7 @@ function template_send()
 			sBccLinkContainerId: \'bcc_link_container\',
 			bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
 			sShowBccLinkTemplate: ', JavaScriptEscape('
-				<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this.href);">(?)</a>'
+				<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a>'
 			), '
 		});
 	// ]]></script>';

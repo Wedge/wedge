@@ -168,8 +168,9 @@ String.prototype.easyReplace = function (oReplacements)
 
 
 // Open a new window.
-function reqWin(desktopURL, alternateWidth, alternateHeight, noScrollbars)
+function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
+	var desktopURL = typeof(from) == 'object' && from.href ? from.href : from, addToEnd = '';
 	if ((alternateWidth && self.screen.availWidth * 0.8 < alternateWidth) || (alternateHeight && self.screen.availHeight * 0.8 < alternateHeight))
 	{
 		noScrollbars = false;
@@ -179,7 +180,17 @@ function reqWin(desktopURL, alternateWidth, alternateHeight, noScrollbars)
 	else
 		noScrollbars = typeof(noScrollbars) == 'boolean' && noScrollbars == true;
 
-	window.open(desktopURL, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no');
+	if (typeof(from) == 'object')
+	{
+		var aPos = smf_itemPos(from), hOrig = document.getElementsByTagName('html')[0];
+		if (hOrig.scrollTop)
+		{
+			aPos[0] -= hOrig.scrollLeft;
+			aPos[1] -= hOrig.scrollTop - 30;
+		}
+		addToEnd = ',left=' + aPos[0] + ',top=' + aPos[1];
+	}
+	window.open(desktopURL, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no' + addToEnd);
 
 	// Return false so the click won't follow the link ;).
 	return false;

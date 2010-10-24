@@ -41,7 +41,7 @@ function template_error_log()
 			// ]]></script>
 			<div class="title_bar clear_right">
 				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['errlog'], '
+					<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['errlog'], '
 				</h3>
 			</div>
 			<table cellspacing="1" class="table_grid" id="error_log">

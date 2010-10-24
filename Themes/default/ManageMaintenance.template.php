@@ -28,7 +28,7 @@ function template_maintain_database()
 
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '
+				<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '
 			</h3>
 		</div>
 
@@ -219,7 +219,7 @@ function template_maintain_members()
 		</div>
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
+				<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">

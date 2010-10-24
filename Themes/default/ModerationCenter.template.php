@@ -47,7 +47,7 @@ function template_latest_news()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
+				<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">

@@ -49,7 +49,7 @@ function template_admin()
 			<div id="live_news" class="floatleft">
 				<div class="cat_bar">
 					<h3>
-						<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
+						<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
 					</h3>
 				</div>
 				<div class="windowbg wrc">
@@ -256,7 +256,7 @@ function template_credits()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -800,7 +800,7 @@ function template_show_settings()
 				echo '
 					<div class="cat_bar">
 						<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>
-							', ($config_var['help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this.href);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
+							', ($config_var['help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
 							', $config_var['label'], '
 						</h3>
 					</div>';
@@ -859,7 +859,7 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 				else
 					echo '
@@ -909,7 +909,7 @@ function template_show_settings()
 						foreach ($bbcColumn as $bbcTag)
 							echo '
 								<li class="list_bbc floatleft">
-									<input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked="checked"' : '', ' class="input_check" /> <label for="tag_', $config_var['name'], '_', $bbcTag['tag'], '">', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this.href);">?</a>)' : '', '
+									<input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked="checked"' : '', ' class="input_check" /> <label for="tag_', $config_var['name'], '_', $bbcTag['tag'], '">', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this);">?</a>)' : '', '
 								</li>';
 					}
 					echo '
@@ -1106,7 +1106,7 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt>
-							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong><br />
 							<span class="smalltext">', $txt['custom_edit_enclose_desc'], '</span>
 						</dt>
@@ -1151,7 +1151,7 @@ function template_edit_profile_field()
 							<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked="checked"' : '', ' class="input_check" />
 						</dd>
 						<dt id="options_dt">
-							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
+							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
 							<strong>', $txt['custom_edit_options'], ':</strong><br />
 							<span class="smalltext">', $txt['custom_edit_options_desc'], '</span>
 						</dt>
@@ -1179,7 +1179,7 @@ function template_edit_profile_field()
 					<legend>', $txt['custom_edit_advanced'], '</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong><br />
 							<span class="smalltext">', $txt['custom_edit_mask_desc'], '</span>
 						</dt>
