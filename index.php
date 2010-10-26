@@ -64,7 +64,7 @@ require_once($sourcedir . '/Security.php');
 
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
-	db_fatal_error();
+	show_db_error();
 
 // Create a variable to store some SMF specific functions in.
 $smcFunc = array();

@@ -32,23 +32,6 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * Outputs a fatal error message if the database connection is not present.
- *
- * Mostly an alias to {@link show_db_error()}.
- *
- * @param bool $loadavg The error sometimes will be related to load average checking rather than a true database error, where if settings are such configured, the entire forum will be unavailable - and such checks attempt to avoid a database connection entirely.
- * @return mixed The function indicates that it returns false, however execution should be suspended on resolution of this function.
- * @todo Check that this function is never called where it could be the right half of an || expression and if so, remove it returning false (since execution should have suspended by then)
- */
-function db_fatal_error($loadavg = false)
-{
-	show_db_error($loadavg);
-
-	// Since we use "or db_fatal_error();" this is needed...
-	return false;
-}
-
-/**
  * Log an error in the error log (in the database), assuming error logging is on.
  *
  * Logging is disabled if $modSettings['enableErrorLogging'] is unset or 0.

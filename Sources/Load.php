@@ -66,7 +66,7 @@ function reloadSettings()
 		);
 		$modSettings = array();
 		if (!$request)
-			db_fatal_error();
+			show_db_error();
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db_free_result']($request);
@@ -182,7 +182,7 @@ function reloadSettings()
 		}
 
 		if (!empty($modSettings['loadavg_forum']) && !empty($modSettings['load_average']) && $modSettings['load_average'] >= $modSettings['loadavg_forum'])
-			db_fatal_error(true);
+			show_db_error(true);
 	}
 
 	// Is post moderation alive and well?
@@ -2619,7 +2619,7 @@ function loadDatabase()
 
 	// Safe guard here, if there isn't a valid connection let's put a stop to it.
 	if (!$db_connection)
-		db_fatal_error();
+		show_db_error();
 
 	// If in SSI mode fix up the prefix.
 	if (SMF == 'SSI')
