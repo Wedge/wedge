@@ -193,14 +193,44 @@ function cleanRequest()
 	// The happy place where boards are identified.
 	if (isset($pretty_board))
 	{
-		$_GET['pretty'] = '';
 		$_GET['board'] = $board = $pretty_board['id_board'];
 		$_SERVER['HTTP_HOST'] = $pretty_board['url'];
-		$_SERVER['REQUEST_URI'] = str_replace($pretty_board['url'], '', $pretty_request);
+		$_SERVER['REQUEST_URI'] = $ru = str_replace($pretty_board['url'], '', $pretty_request);
 
-		// Are we in a pretty topic? If yes, retrieve its ID.
-		if (!isset($_GET['topic']) && preg_match('~^/(\d+)~', $_SERVER['REQUEST_URI'], $m))
+		// We will now be analyzing the request URI to find our topic ID and various options...
+
+		if (isset($_GET['topic']))
+		{
+			// Skip!
+		}
+		// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
+		elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))
+		{
+			$_GET['mois'] = str_replace('/', '', $m[1]);
+			$_GET['start'] = empty($m[2]) ? 0 : $m[2];
+			$_GET['pretty'] = 1;
+		}
+		// URL: /1234/topic/new/?something or /1234/topic/2/?something (get topic ID 1234, named 'topic')
+		elseif (preg_match('~^/(\d+)/(?:[^/]+)/(\d+|msg\d+|from\d+|new)?~u', $ru, $m))
+		{
 			$_GET['topic'] = $m[1];
+			$_GET['start'] = empty($m[2]) ? 0 : $m[2];
+			$_GET['pretty'] = 1;
+		}
+		// URL: /cat/hello/?something or /tag/me/p15/ (get all topics from category 'hello', or page 2 of all topics with tag 'me')
+		elseif (preg_match('~^/(cat|tag)/([^/]+)(?:/p(\d+))?~u', $ru, $m))
+		{
+			$_GET[$m[1]] = $m[2];
+			$_GET['start'] = empty($m[3]) ? 0 : $m[3];
+			$_GET['pretty'] = 1;
+		}
+		// URL: /p15/ (board index, page 2)
+		elseif (preg_match('~^/p(\d+)~', $ru, $m))
+		{
+			$_GET[$m[1]] = $m[2];
+			$_GET['start'] = empty($m[3]) ? 0 : $m[3];
+			$_GET['pretty'] = 1;
+		}
 	}
 	elseif ($hh == 'my')
 	{
@@ -212,24 +242,13 @@ function cleanRequest()
 	elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
 	{
 	}
-	elseif (!empty($_GET['noi']))
-	{
-		$_GET['pretty'] = '';
-		$_GET['board'] = $_SERVER['HTTP_HOST'] = 'noisen.com/' . rtrim($_GET['noi'], '/'); // !!! Harcoded URLs.
-	}
 	elseif ($hh != 'noisen.com') // !!! WIP
 	{
 		$_GET['pretty'] = '';
 		$_GET['board'] = $_SERVER['HTTP_HOST'];
 	}
-/*	elseif (!empty($_GET['tag']))
-	{
-		$_GET['pretty'] = '';
-		$_GET['board'] = 18;
-		$_GET['allboards'] = 1;
-	}*/
 
-	// If magic quotes is on we have some work...
+	// If magic quotes are on, we have some work to do...
 	if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
 	{
 		$_ENV = $removeMagicQuoteFunction($_ENV);

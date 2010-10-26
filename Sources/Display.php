@@ -271,7 +271,7 @@ function Display()
 			}
 			else
 			{
-				// Find the earliest unread message in the topic. (the use of topics here is just for both tables.)
+				// Find the earliest unread message in the topic. The use of topics here is just for both tables.
 				$request = $smcFunc['db_query']('', '
 					SELECT IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from
 					FROM {db_prefix}topics AS t
