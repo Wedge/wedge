@@ -1447,7 +1447,7 @@ class wedgeEditor
 		);
 		$this->bbc[] = array(
 			array(
-				'image' => array(13, 1),
+				'image' => array(12, 1),
 				'code' => 'flash',
 				'before' => '[flash=200,200]',
 				'after' => '[/flash]',
@@ -1461,7 +1461,7 @@ class wedgeEditor
 				'description' => $txt['image']
 			),
 			array(
-				'image' => array(14, 0),
+				'image' => array(13, 0),
 				'code' => 'url',
 				'before' => '[url]',
 				'after' => '[/url]',
@@ -1475,7 +1475,7 @@ class wedgeEditor
 				'description' => $txt['insert_email']
 			),
 			array(
-				'image' => array(13, 0),
+				'image' => array(12, 0),
 				'code' => 'ftp',
 				'before' => '[ftp]',
 				'after' => '[/ftp]',
@@ -1555,7 +1555,7 @@ class wedgeEditor
 				'description' => $txt['bbc_spoiler']
 			),
 			array(
-				'image' => array(14, 1),
+				'image' => array(13, 1),
 				'code' => 'quote',
 				'before' => '[quote]',
 				'after' => '[/quote]',
@@ -1577,7 +1577,7 @@ class wedgeEditor
 				'description' => $txt['list_ordered']
 			),
 			array(
-				'image' => array(12, 0),
+				'image' => array(14, 0),
 				'code' => 'hr',
 				'before' => '[hr]',
 				'description' => $txt['horizontal_rule']

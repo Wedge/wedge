@@ -23,10 +23,11 @@
 {
 	height: 5px;
 	font-size: 0;
-	background: #eeeeee url(../images/bbc/resize-handle.gif) no-repeat 50% 1px;
-	border: 1px solid #dddddd;
+	background: #eee url(../images/bbc/resize-handle.gif) no-repeat 50% 1px;
+	border: 1px solid #ddd;
 	border-top-width: 0;
 	cursor: s-resize;
+	padding: 0 !important;
 }
 .rich_editor a img
 {

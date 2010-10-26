@@ -368,7 +368,7 @@ smc_Editor.prototype.init = function()
 	// Show the resizer.
 	if (document.getElementById(this.opt.sUniqueId + '_resizer') && (!is_opera || is_opera95up) && !(is_chrome && !this.bRichTextEnabled))
 	{
-		// Currently nothing is being resized...I assume!
+		// Currently nothing is being resized... I assume!
 		window.smf_oCurrentResizeEditor = null;
 
 		this.oResizerElement = document.getElementById(this.opt.sUniqueId + '_resizer');
