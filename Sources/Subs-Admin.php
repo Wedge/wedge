@@ -57,6 +57,11 @@ if (!defined('SMF'))
 		- loads all users who are admins or have the admin forum permission.
 		- uses the email template and replacements passed in the parameters.
 		- sends them an email.
+
+	bool updateLastDatabaseError()
+		- attempts to use the backup file first, to store the last database error
+		- and only update Settings.php if the first was successful.
+
 */
 
 function getServerVersions($checkFor)
@@ -247,7 +252,10 @@ function getFileVersions(&$versionOptions)
 // Update the Settings.php file.
 function updateSettingsFile($config_vars)
 {
-	global $boarddir;
+	global $boarddir, $cachedir;
+
+	// When was Settings.php last changed?
+	$last_settings_change = filemtime($boarddir . '/Settings.php');
 
 	// Load the file.  Break it up based on \r or \n, and then clean out extra characters.
 	$settingsArray = trim(file_get_contents($boarddir . '/Settings.php'));
@@ -323,18 +331,50 @@ function updateSettingsFile($config_vars)
 	if (count($settingsArray) < 12)
 		return;
 
-	// Blank out the file - done to fix a oddity with some servers.
-	$fp = @fopen($boarddir . '/Settings.php', 'w');
+	// Try to avoid a few pitfalls:
+	// like a possible race condition,
+	// or a failure to write at low diskspace
 
-	// Is it even writable, though?
-	if ($fp)
+	// Check before you act: if cache is enabled, we can do a simple test
+	// Can we even write things on this filesystem?
+	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
+		$cachedir = $boarddir . '/cache';
+	$test_fp = @fopen($cachedir . '/settings_update.tmp', "w+");
+	if ($test_fp)
 	{
-		fclose($fp);
+		fclose($test_fp);
 
-		$fp = fopen($boarddir . '/Settings.php', 'r+');
-		foreach ($settingsArray as $line)
-			fwrite($fp, strtr($line, "\r", ''));
-		fclose($fp);
+		$test_fp = @fopen($cachedir . '/settings_update.tmp', 'r+');
+		$written_bytes = fwrite($test_fp, "test");
+		fclose($test_fp);
+		@unlink($cachedir . '/settings_update.tmp');
+
+		if ($written_bytes !== strlen("test"))
+		{
+			// Oops. Low disk space, perhaps. Don't mess with Settings.php then.
+			// No means no. :P
+			return;
+		}
+	}
+
+	// Protect me from what I want! :P
+	clearstatcache();
+	if (filemtime($boarddir . '/Settings.php') === $last_settings_change)
+	{
+		// You asked for it...
+		// Blank out the file - done to fix a oddity with some servers.
+		$fp = @fopen($boarddir . '/Settings.php', 'w');
+
+		// Is it even writable, though?
+		if ($fp)
+		{
+			fclose($fp);
+
+			$fp = fopen($boarddir . '/Settings.php', 'r+');
+			foreach ($settingsArray as $line)
+				fwrite($fp, strtr($line, "\r", ''));
+			fclose($fp);
+		}
 	}
 }
 
@@ -446,6 +486,74 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 			// Send off the email.
 			sendmail($recipient['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 1);
 		}
+}
+
+function updateLastDatabaseError()
+{
+	global $boarddir;
+
+	// Find out this way if we can even write things on this filesystem.
+	// In addition, store things first in the backup file
+
+	$last_settings_change = @filemtime($boarddir . '/Settings.php');
+
+	// Make sure the backup file is there...
+	$file = $boarddir . '/Settings_bak.php';
+	if ((!file_exists($file) || filesize($file) == 0) && !copy($boarddir . '/Settings.php', $file))
+			return false;
+
+	// ...and writable!
+	if (!is_writable($file))
+	{
+		chmod($file, 0755);
+		if (!is_writable($file))
+		{
+			chmod($file, 0775);
+			if (!is_writable($file))
+			{
+				chmod($file, 0777);
+				if (!is_writable($file))
+						return false;
+			}
+		}
+	}
+
+	// Put the new timestamp.
+	$data = file_get_contents($file);
+	$data = preg_replace('~\$db_last_error = \d+;~', '$db_last_error = ' . time() . ';', $data);
+
+	// Open the backup file for writing
+	if ($fp = @fopen($file, 'w'))
+	{
+		// Reset the file buffer.
+		set_file_buffer($fp, 0);
+
+		// Update the file.
+		$t = flock($fp, LOCK_EX);
+		$bytes = fwrite($fp, $data);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+
+		// Was it a success?
+		// ...only relevant if we're still dealing with the same good ole' settings file.
+		clearstatcache();
+		if (($bytes == strlen($data)) && (filemtime($boarddir . '/Settings.php') === $last_settings_change))
+		{
+			// This is our new Settings file...
+			// At least this one is an atomic operation
+			@copy($file, $boarddir . '/Settings.php');
+			return true;
+		}
+		else
+		{
+			// Oops. Someone might have been faster
+			// or we have no more disk space left, troubles, troubles...
+			// Copy the file back and run for your life!
+			@copy($boarddir . '/Settings.php', $file);
+		}
+	}
+
+	return false;
 }
 
 ?>

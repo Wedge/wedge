@@ -34,7 +34,7 @@ if (!defined('SMF'))
 /**
  * Outputs a fatal error message if the database connection is not present.
  *
- * Mostly a convenient placeholder for {@link show_db_error()}; this file is loaded every execution, while Subs-Auth.php is only loaded when necessary.
+ * Mostly an alias to {@link show_db_error()}.
  *
  * @param bool $loadavg The error sometimes will be related to load average checking rather than a true database error, where if settings are such configured, the entire forum will be unavailable - and such checks attempt to avoid a database connection entirely.
  * @return mixed The function indicates that it returns false, however execution should be suspended on resolution of this function.
@@ -42,10 +42,6 @@ if (!defined('SMF'))
  */
 function db_fatal_error($loadavg = false)
 {
-	global $sourcedir;
-
-	// Just load the other file and run it.
-	require_once($sourcedir . '/Subs-Auth.php');
 	show_db_error($loadavg);
 
 	// Since we use "or db_fatal_error();" this is needed...
@@ -358,6 +354,92 @@ function setup_fatal_error_context($error_message)
 	obExit(null, true, false, true);
 
 	trigger_error('Hacking attempt...', E_USER_ERROR);
+}
+
+/**
+ * Shows an error message for the connection problems, and stops further execution of the script.
+ *
+ * Used only if there's no way to connect to the database or the load averages are too high to do so.
+ *
+ * @param bool $loadavg If set to true, this is a load average problem, not a database error.
+ */
+function show_db_error($loadavg = false)
+{
+	global $sourcedir, $mbname, $maintenance, $mtitle, $mmessage, $modSettings;
+	global $db_connection, $webmaster_email, $db_last_error, $db_error_send, $smcFunc;
+
+	// Don't cache this page!
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+	header('Cache-Control: no-cache');
+
+	// Send the right error codes.
+	header('HTTP/1.1 503 Service Temporarily Unavailable');
+	header('Status: 503 Service Temporarily Unavailable');
+	header('Retry-After: 3600');
+
+	if ($loadavg == false)
+	{
+		// For our purposes, we're gonna want this on if at all possible.
+		$modSettings['cache_enable'] = '1';
+		if (($temp = cache_get_data('db_last_error', 600)) !== null)
+			$db_last_error = max($db_last_error, $temp);
+
+		if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
+		{
+			require_once($sourcedir . '/Subs-Admin.php');
+
+			// Avoid writing to the Settings.php file if at all possible; use shared memory instead.
+			cache_put_data('db_last_error', time(), 600);
+			if (($temp = cache_get_data('db_last_error', 600)) == null)
+				updateLastDatabaseError();
+
+			// Language files aren't loaded yet :(.
+			$db_error = @$smcFunc['db_error']($db_connection);
+			@mail($webmaster_email, $mbname . ': SMF Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\nMySQL reported:\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that SMF could not connect to the database, contact your host if this continues.');
+		}
+	}
+
+	if (!empty($maintenance))
+		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta name="robots" content="noindex" />
+		<title>', $mtitle, '</title>
+	</head>
+	<body>
+		<h3>', $mtitle, '</h3>
+		', $mmessage, '
+	</body>
+</html>';
+	// If this is a load average problem, display an appropriate message (but we still don't have language files!)
+	elseif ($loadavg)
+		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta name="robots" content="noindex" />
+		<title>Temporarily Unavailable</title>
+	</head>
+	<body>
+		<h3>Temporarily Unavailable</h3>
+		Due to high stress on the server the forum is temporarily unavailable.  Please try again later.
+	</body>
+</html>';
+	// What to do?  Language files haven't and can't be loaded yet...
+	else
+		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta name="robots" content="noindex" />
+		<title>Connection Problems</title>
+	</head>
+	<body>
+		<h3>Connection Problems</h3>
+		Sorry, SMF was unable to connect to the database.  This may be caused by the server being busy.  Please try again later.
+	</body>
+</html>';
+
+	die;
 }
 
 /**

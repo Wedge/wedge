@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10246 $.
+Changelog started January 1, 2004; Currently at $Revision: 10247 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -71,6 +71,7 @@ October 2010
  ! Making sure eol-style is on all files on other directory as well. (might have been missed) (/other files)
  ! Making sure eol-style is set on all our converters as well. (/other/converters ASCII files)
  ! Fix for windows check (ManageServer.php)
+ ! A safer handling of the database last error and generally writing Settings.php () [Bug 4222]
 
 September 2010
 --------------------------------------------------------------------------------
