@@ -429,7 +429,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 	$disabled = true;
 	$context['settings_message'] = $txt['loadavg_disabled_conf'];
 
-	if (strpos(PHP_OS, 'WIN') === 0)
+	if (strpos(strtolower(PHP_OS), 'win') === 0)
 		$context['settings_message'] = $txt['loadavg_disabled_windows'];
 	else
 	{

@@ -382,7 +382,7 @@ function ModifyTopicSettings($return_config = false)
 
 function ModifyMergeSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $sc;
+	global $txt, $scripturl, $context, $settings, $sc, $sourcedir;
 
 	$config_vars = array(
 			// Automatic merge options
@@ -423,7 +423,7 @@ function ModifyMergeSettings($return_config = false)
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=merge';
-	$context['settings_title'] = $txt['merge_doublepost'];
+	$context['settings_title'] = $txt['merge_post_header'];
 
 	prepareDBSettingContext($config_vars);
 }
