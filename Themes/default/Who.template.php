@@ -119,7 +119,7 @@ function template_credits()
 {
 	global $context, $txt;
 
-	// The most important part - the credits :P.
+	// The most important part - the credits :P
 	echo '
 	<div class="main_section" id="credits">
 		<div class="cat_bar">
@@ -146,6 +146,9 @@ function template_credits()
 
 		foreach ($section['groups'] as $group)
 		{
+			if (empty($group['members']))
+				continue;
+
 			if (isset($group['title']))
 				echo '
 				<dt>

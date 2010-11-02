@@ -404,7 +404,7 @@ function scheduled_daily_maintenance()
 	global $smcFunc, $modSettings, $sourcedir;
 
 	// First clean out the data cache.
-	clean_cache('data');
+	clean_cache();
 
 	// If warning decrement is enabled and we have people who have not had a new warning in 24 hours, lower their warning level.
 	list (,, $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);

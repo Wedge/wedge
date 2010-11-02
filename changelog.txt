@@ -1,5 +1,5 @@
 Changes go downward, months go upward.  Please scroll to the bottom for a legend.
-Changelog started January 1, 2004; Currently at $Revision: 10247 $.
+Changelog started January 1, 2004; Currently at $Revision: 10258 $.
 
 SMF 2.0                                                                      ???
 ================================================================================
@@ -72,6 +72,16 @@ October 2010
  ! Making sure eol-style is set on all our converters as well. (/other/converters ASCII files)
  ! Fix for windows check (ManageServer.php)
  ! A safer handling of the database last error and generally writing Settings.php () [Bug 4222]
+ ! Last minute: boards incorrectly retrieved (Subs-Boards.php, Load.php)
+ ! Last minute: an incorrect warning (Profile-Actions.php)
+ ! Last minute: adding SMF favicon. (favicon.ico)
+ * Validation errors due to a typo in themes list (Themes template) [Bug 4505]
+ ! On some versions of Opera the cursor wasn't displayed in WYSIWYG editor (thanks TE) [Bug 4521]
+ ! Clean the entire cache on the disk, if any, during scheduled maintenance (ScheduledTasks.php)
+ ! Small addition to clean_cache() documentation (Subs.php)
+ ! Manage Posts area should only check for admin_forum permission. (ManagePosts.php) [Bug 4520]
+ * Undefined index in Subs.php for Core theme (Display template)
+
 
 September 2010
 --------------------------------------------------------------------------------

@@ -607,9 +607,12 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 		{
 			this.oFrameDocument.body.innerHTML = sText;
 
-			// If FF, trick the cursor into coming back!
-			if (is_ff)
+			// Trick the cursor into coming back!
+			if (is_ff || is_opera)
 			{
+				// For some obscure reason, FF3 Beta 2 and some
+				// Opera versions may require this.
+				this.oFrameDocument.body.contentEditable = false;
 				this.oFrameDocument.designMode = 'off';
 				this.oFrameDocument.designMode = 'on';
 			}

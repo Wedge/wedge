@@ -303,9 +303,6 @@ function issueWarning($memID)
 		$context['warning_for_message'] = 0;
 		$context['warned_message_subject'] = '';
 	}
-	else
-		// Warnings done as part of moderation should be logged.
-		logAction('warning', array('message' => $context['warning_for_message'], 'subject' => $context['warned_message_subject'], 'member' => $memID));
 
 	// Any custom templates?
 	$context['notification_templates'] = array();

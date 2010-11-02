@@ -1463,8 +1463,7 @@ function template_view_operations()
 	<head>
 		<title>', $txt['operation_title'], '</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/admin.css" />
+		<link rel="stylesheet" type="text/css" href="', wedge_buildCSS('index+admin'), '" />
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
 	</head>

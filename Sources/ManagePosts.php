@@ -37,7 +37,7 @@ if (!defined('SMF'))
 
 	void SetCensor()
 		- shows an interface to set and test word censoring.
-		- requires the moderate_forum permission.
+		- requires the admin_forum permission.
 		- uses the Admin template and the edit_censored sub template.
 		- tests the censored word if one was posted.
 		- uses the censor_vulgar, censor_proper, censorWholeWord, and
@@ -68,19 +68,19 @@ function ManagePostSettings()
 {
 	global $context, $txt, $scripturl;
 
+	// Make sure you can be here.
+	isAllowedTo('admin_forum');
+
 	$subActions = array(
-		'posts' => array('ModifyPostSettings', 'admin_forum'),
-		'bbc' => array('ModifyBBCSettings', 'admin_forum'),
-		'censor' => array('SetCensor', 'moderate_forum'),
-		'topics' => array('ModifyTopicSettings', 'admin_forum'),
-		'merge' => array('ModifyMergeSettings', 'admin_forum'),
+		'posts' => 'ModifyPostSettings',
+		'bbc' => 'ModifyBBCSettings',
+		'censor' => 'SetCensor',
+		'topics' => 'ModifyTopicSettings',
+		'merge' => 'ModifyMergeSettings',
 	);
 
-	// Default the sub-action to 'view ban list'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('admin_forum') ? 'posts' : 'censor');
-
-	// Make sure you can do this.
-	isAllowedTo($subActions[$_REQUEST['sa']][1]);
+	// Default the sub-action to 'posts'.
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'posts';
 
 	$context['page_title'] = $txt['manageposts_title'];
 
@@ -109,7 +109,7 @@ function ManagePostSettings()
 	);
 
 	// Call the right function for this sub-acton.
-	$subActions[$_REQUEST['sa']][0]();
+	$subActions[$_REQUEST['sa']]();
 }
 
 // Set the censored words.

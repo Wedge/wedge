@@ -218,9 +218,6 @@ function isEmptyText(theField)
 // Only allow form submission ONCE.
 function submitonce(theform)
 {
-	// Oh no. Firefox behavior ugly-ugly fix.
-	if (is_ff)
-		return;
 	smf_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
@@ -1121,12 +1118,15 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	}
 }
 
-/*
-Dropdown menus, Wedge style. You may reuse code by keeping the credits intact.
-© 2008-2010 René-Gilles Deberdt (http://wedgeo.com), based on original code
-© 2004 by Batiste Bieler (http://dosimple.ch/articles/Menus-dynamiques/)
-Released under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
-*/
+/**
+ *
+ * Dropdown menus, Wedge style, released under the Wedge license.
+ * © 2008-2010 René-Gilles Deberdt (http://wedgeo.com)
+ *
+ * Uses portions © 2004 by Batiste Bieler (http://dosimple.ch/), released
+ * under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
+ *
+ */
 
 var baseId = 0, hoverable = 0, rtl = document.dir && document.dir == 'rtl';
 var timeoutli = new Array();
