@@ -554,7 +554,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		else
 			$pageindex = '';
 
-		// Show the ... after the first page.  (1 >...< 6 7 [8] 9 10 ... 15)
+		// Show the ... after the first page. (1 >...< 6 7 [8] 9 10 ... 15)
 		if ($start > $num_per_page * ($PageContiguous + 1))
 			$pageindex .= '<span style="font-weight: bold;" onclick="' . htmlspecialchars('expandPages(this, ' . JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . ', ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');') . '" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 
@@ -875,7 +875,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if ($message === '')
 		return '';
 
-	// Never show smileys for wireless clients.  More bytes, can't see it anyway :P.
+	// Never show smileys for wireless clients. More bytes, can't see it anyway :P.
 	if (WIRELESS)
 		$smileys = false;
 	elseif ($smileys !== null && ($smileys == '1' || $smileys == '0'))
@@ -925,7 +925,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				- unparsed_equals_content: [tag=...]unparsed content[/tag]
 
 			parameters: an optional array of parameters, for the form
-			  [tag abc=123]content[/tag].  The array is an associative array
+			  [tag abc=123]content[/tag]. The array is an associative array
 			  where the keys are the parameter names, and the values are an
 			  array which may contain the following:
 				- match: a regular expression to validate and match the value.
@@ -941,47 +941,47 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 			content: only available for unparsed_content, closed,
 			  unparsed_commas_content, and unparsed_equals_content.
-			  $1 is replaced with the content of the tag.  Parameters
-			  are replaced in the form {param}.  For unparsed_commas_content,
+			  $1 is replaced with the content of the tag. Parameters
+			  are replaced in the form {param}. For unparsed_commas_content,
 			  $2, $3, ..., $n are replaced.
 
 			before: only when content is not used, to go before any
-			  content.  For unparsed_equals, $1 is replaced with the value.
+			  content. For unparsed_equals, $1 is replaced with the value.
 			  For unparsed_commas, $1, $2, ..., $n are replaced.
 
 			after: similar to before in every way, except that it is used
 			  when the tag is closed.
 
 			disabled_content: used in place of content when the tag is
-			  disabled.  For closed, default is '', otherwise it is '$1' if
+			  disabled. For closed, default is '', otherwise it is '$1' if
 			  block_level is false, '<div>$1</div>' elsewise.
 
-			disabled_before: used in place of before when disabled.  Defaults
+			disabled_before: used in place of before when disabled. Defaults
 			  to '<div>' if block_level, '' if not.
 
-			disabled_after: used in place of after when disabled.  Defaults
+			disabled_after: used in place of after when disabled. Defaults
 			  to '</div>' if block_level, '' if not.
 
 			block_level: set to true the tag is a "block level" tag, similar
-			  to HTML.  Block level tags cannot be nested inside tags that are
+			  to HTML. Block level tags cannot be nested inside tags that are
 			  not block level, and will not be implicitly closed as easily.
 			  One break following a block level tag may also be removed.
 
 			trim: if set, and 'inside' whitespace after the begin tag will be
-			  removed.  If set to 'outside', whitespace after the end tag will
+			  removed. If set to 'outside', whitespace after the end tag will
 			  meet the same fate.
 
 			validate: except when type is missing or 'closed', a callback to
-			  validate the data as $data.  Depending on the tag's type, $data
+			  validate the data as $data. Depending on the tag's type, $data
 			  may be a string or an array of strings (corresponding to the
 			  replacement.)
 
 			quoted: when type is 'unparsed_equals' or 'parsed_equals' only,
 			  may be not set, 'optional', or 'required' corresponding to if
-			  the content may be quoted.  This allows the parser to read
+			  the content may be quoted. This allows the parser to read
 			  [tag="abc]def[esdf]"] properly.
 
-			require_parents: an array of tag names, or not set.  If set, the
+			require_parents: an array of tag names, or not set. If set, the
 			  enclosing tag *must* be one of the listed tags, or parsing won't
 			  occur.
 
@@ -1590,7 +1590,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// Let mods add new BBC without hassle.
 		call_integration_hook('integrate_bbc_codes', array(&$codes));
 
-		// This is mainly for the bbc manager, so it's easy to add tags above.  Custom BBC should be added above this line.
+		// This is mainly for the bbc manager, so it's easy to add tags above. Custom BBC should be added above this line.
 		if ($message === false)
 		{
 			if (isset($temp_bbc))
@@ -1865,14 +1865,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			{
 				$message = substr($message, 0, $last_pos) . $data . substr($message, $pos);
 
-				// Since we changed it, look again in case we added or removed a tag.  But we don't want to skip any.
+				// Since we changed it, look again in case we added or removed a tag. But we don't want to skip any.
 				$old_pos = strlen($data) + $last_pos;
 				$pos = strpos($message, '[', $last_pos);
 				$pos = $pos === false ? $old_pos : min($pos, $old_pos);
 			}
 		}
 
-		// Are we there yet?  Are we there yet?
+		// Are we there yet? Are we there yet?
 		if ($pos >= strlen($message) - 1)
 			break;
 
@@ -2117,7 +2117,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				);
 				$code = '<ul class="bbc_list">';
 			}
-			// We're in a list item already: another itemcode?  Close it first.
+			// We're in a list item already: another itemcode? Close it first.
 			elseif ($inside['tag'] == 'li')
 			{
 				array_pop($open_tags);
@@ -2140,7 +2140,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos + 3);
 			$pos += strlen($code) - 1 + 2;
 
-			// Next, find the next break (if any.)  If there's more itemcode after it, keep it going - otherwise close!
+			// Next, find the next break (if any.) If there's more itemcode after it, keep it going - otherwise close!
 			$pos2 = strpos($message, '<br />', $pos);
 			$pos3 = strpos($message, '[/', $pos);
 			if ($pos2 !== false && ($pos2 <= $pos3 || $pos3 === false))
@@ -2161,7 +2161,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			continue;
 		}
 
-		// Implicitly close lists and tables if something other than what's required is in them.  This is needed for itemcode.
+		// Implicitly close lists and tables if something other than what's required is in them. This is needed for itemcode.
 		if ($tag === null && $inside !== null && !empty($inside['require_children']))
 		{
 			array_pop($open_tags);
@@ -2170,7 +2170,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$pos += strlen($inside['after']) - 1 + 2;
 		}
 
-		// No tag?  Keep looking, then.  Silly people using brackets without actual tags.
+		// No tag? Keep looking, then. Silly people using brackets without actual tags.
 		if ($tag === null)
 			continue;
 
@@ -2326,7 +2326,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$pos += strlen($tag['content']) - 1 + 2;
 			}
 		}
-		// This one is sorta ugly... :/.  Unfortunately, it's needed for flash.
+		// This one is sorta ugly... :/ Unfortunately, it's needed for flash.
 		elseif ($tag['type'] == 'unparsed_commas_content')
 		{
 			$pos2 = strpos($message, ']', $pos1);
@@ -3200,7 +3200,7 @@ function spamProtection($error_type)
 	// If affected is 0 or 2, it was there already.
 	if ($smcFunc['db_affected_rows']() != 1)
 	{
-		// Spammer!  You only have to wait a *few* seconds!
+		// Spammer! You only have to wait a *few* seconds!
 		fatal_lang_error($error_type . 'WaitTime_broken', false, array($timeLimit));
 		return true;
 	}
@@ -3251,7 +3251,7 @@ function url_image_size($url)
 		$temp = 0;
 		$fp = @fsockopen($match[1], 80, $temp, $temp, 0.5);
 
-		// Successful?  Continue...
+		// Successful? Continue...
 		if ($fp != false)
 		{
 			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
@@ -3315,8 +3315,8 @@ function setupThemeContext($forceload = false)
 	global $user_settings, $smcFunc;
 	static $loaded = false;
 
-	// Under SSI this function can be called more then once.  That can cause some problems.
-	//   So only run the function once unless we are forced to run it again.
+	// Under SSI this function can be called more then once. That can cause some problems.
+	// So only run the function once unless we are forced to run it again.
 	if ($loaded && !$forceload)
 		return;
 
@@ -3469,6 +3469,57 @@ function setupThemeContext($forceload = false)
 }
 
 /**
+ * Create a compact CSS file that concatenates and compresses a list of existing CSS files, also fixing relative paths.
+ *
+ * @param string $filename Path of the file to create
+ * @param array $css List of all CSS files to concatenate
+ * @param string $target Determine where we're saving the file: default theme, or custom theme?
+ * @return int Returns the current timestamp, for use in caching
+ */
+function wedge_cache_css($filename, $css, $target)
+{
+	global $settings, $wedge_base_dir;
+
+	$final = '';
+	$discard_dir = strlen($settings[$target . 'dir']) + 1;
+	foreach ($css as $file)
+	{
+		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
+		$add = file_get_contents($file);
+		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([:;,{}\s])\s*~'), array('', '$1'), $add);
+		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
+		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', '}', "\t"), array("\n", "\n", '}', "}\n", ' '), $add);
+		$final .= $add;
+	}
+	$dest = $settings[$target . 'dir'] . '/css/cache';
+	if (!file_exists($dest))
+		mkdir($dest);
+	if (function_exists('gzencode'))
+		$final = gzencode($final, 9);
+	file_put_contents($dest . '/' . $filename . '.css' . (function_exists('gzencode') ? '.gz' : ''), $final);
+	return time();
+}
+
+/**
+ * Fix relative URLs in cached CSS files. This function is called back by a preg_replace_callback call in {@link wedge_cache_css()}.
+ *
+ * @param string $str The actual CSS contents
+ * @return string Updated CSS contents with fixed URLs
+ */
+function wedge_fix_relative_css($matches)
+{
+	global $wedge_base_dir;
+
+	// Example: css/Styling/Styling2/../sprite.png or css/Styling/../../images/hello.png
+	$fix = $wedge_base_dir . $matches[1];
+	while (strpos($fix, '../') !== false && strpos($fix, 'css/') === 0)
+		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
+	// At this point, we now have css/Styling/sprite.png or images/hello.png
+	// We just need to fix this to be accessed from css/cache/
+	return strpos($fix, 'css/') !== 0 ? 'url(../../' . $fix . ')' : 'url(../' . substr($fix, 4) . ')';
+}
+
+/**
  * Ensures content above the main page content is loaded, including HTTP page headers.
  *
  * Several things happen here.
@@ -3482,7 +3533,7 @@ function setupThemeContext($forceload = false)
  */
 function template_header()
 {
-	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
+	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir, $db_show_debug, $board_info;
 
 	setupThemeContext();
 
@@ -3498,6 +3549,35 @@ function template_header()
 		elseif (!isset($_REQUEST['xml']) && !WIRELESS)
 			header('Content-Type: text/html; charset=UTF-8');
 	}
+
+	// Mix CSS files together!
+	$css = array();
+	$latest_date = 0;
+	foreach ($context['css_folders'] as $folder)
+	{
+		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'default_theme_' : 'theme_';
+		foreach ($context['css_generic_files'] as $file)
+		{
+			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
+			if (file_exists($add))
+			{
+				$css[] = $add;
+				if ($db_show_debug === true)
+					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+				$latest_date = max($latest_date, filemtime($add));
+			}
+		}
+	}
+	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
+	$ext = function_exists('gzencode') ? '.css.gz' : '.css';
+	unset($context['css_generic_files'][0]);
+	if (!empty($context['css_generic_files']))
+		$id .= '-' . implode('-', $context['css_generic_files']);
+	$final_file = $settings[$target . 'dir'] . '/css/cache/' . $id . $ext;
+	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
+		$filetime = wedge_cache_css($id, $css, $target);
+
+	$context['css'] = $settings[$target . 'url'] . '/css/cache/' . $id . $ext . '?' . $filetime;
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
@@ -3646,7 +3726,7 @@ function template_footer()
 {
 	global $context, $settings, $modSettings, $time_start, $db_count;
 
-	// Show the load time?  (only makes sense for the footer.)
+	// Show the load time? (only makes sense for the footer.)
 	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
 	$context['load_time'] = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
 	$context['load_queries'] = $db_count;
@@ -3664,14 +3744,14 @@ function template_footer()
 	// Do not remove hard-coded text - it's in here so users cannot change the text easily. (as if it were in language file)
 	if (!theme_copyright(true) && !empty($context['template_layers']) && SMF !== 'SSI' && !WIRELESS)
 	{
-		// DO NOT MODIFY THIS SECTION.  DO NOT REMOVE YOUR COPYRIGHT.
+		// DO NOT MODIFY THIS SECTION. DO NOT REMOVE YOUR COPYRIGHT.
 		// DOING SO VOIDS YOUR LICENSE AND IS ILLEGAL.
 
 		echo '
 			<div style="text-align: center !important; display: block !important; visibility: visible !important; font-size: large !important; font-weight: bold; color: black !important; background-color: white !important;">
 				Sorry, the copyright must be in the template.<br />
 				Please notify this forum\'s administrator that this site is missing the copyright message for <a href="http://www.simplemachines.org/" style="color: black !important; font-size: large !important;">SMF</a> so they can rectify the situation. Display of copyright is a <a href="http://www.simplemachines.org/about/license.php" style="color: red;">legal requirement</a>. For more information on this please visit the <a href="http://www.simplemachines.org">Simple Machines</a> website.', empty($context['user']['is_admin']) ? '' : '<br />
-				Not sure why this message is appearing?  <a href="http://www.simplemachines.org/redirect/index.php?copyright_error">Take a look at some common causes.</a>', '
+				Not sure why this message is appearing? <a href="http://www.simplemachines.org/redirect/index.php?copyright_error">Take a look at some common causes.</a>', '
 			</div>';
 
 		log_error('Copyright removed!!');
@@ -4174,7 +4254,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 /**
  * Cleans some or all of the files stored in the file cache.
  *
- * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically either 'data' or 'lang', to prune 'data_*.php' and 'lang_*.php' files respectively.
+ * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically 'data', to prune 'data_*.php' files.
  */
 function clean_cache($type = '')
 {

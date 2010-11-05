@@ -54,7 +54,7 @@ function cleanRequest()
 {
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context, $pretty_request, $pretty_board;
 
-	// Makes it easier to refer to things this way.
+/*	// Makes it easier to refer to things this way.
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
@@ -63,10 +63,10 @@ function cleanRequest()
 			$boardurl = 'http://noisen.com';
 		elseif (strpos($boardurl, '.geeld.org') !== false)
 			$boardurl = 'http://geeld.org'; */
-		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+/*		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 	}
-	else
-		$scripturl = $boardurl . '/index.php';
+	else */
+	$scripturl = $boardurl . '/index.php';
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';

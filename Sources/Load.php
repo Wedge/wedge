@@ -545,7 +545,10 @@ function loadBoard()
 	// Load this board only if it is specified.
 	if (empty($board) && empty($topic))
 	{
-		$board_info = array('moderators' => array());
+		$board_info = array(
+			'moderators' => array(),
+			'styling' => 'css',
+		);
 		return;
 	}
 
@@ -571,8 +574,8 @@ function loadBoard()
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
-				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
-				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.member_name AS owner_name, mco.buddy_list AS friends,
+				b.styling, b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
+				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends,
 				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
@@ -602,7 +605,14 @@ function loadBoard()
 				'id' => $board,
 				'owner_id' => $row['id_owner'],
 				'owner_name' => $row['owner_name'],
-				'moderators' => array($row['id_owner']),
+				'moderators' => array(
+					$row['id_owner'] => array(
+						'id' => $row['id_owner'],
+						'name' => $row['owner_name'],
+						'href' => $scripturl . '?action=profile;u=' . $row['id_owner'],
+						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_owner'] . '">' . $row['owner_name'] . '</a>'
+					),
+				),
 				'cat' => array(
 					'id' => $row['id_cat'],
 					'name' => $row['cname']
@@ -618,6 +628,7 @@ function loadBoard()
 				'parent_boards' => getBoardParents($row['id_parent']),
 				'parent' => $row['id_parent'],
 				'child_level' => $row['child_level'],
+				'styling' => $row['styling'],
 				'theme' => $row['id_theme'],
 				'override_theme' => !empty($row['override_theme']),
 				'profile' => $row['id_profile'],
@@ -650,7 +661,7 @@ function loadBoard()
 
 			do
 			{
-				if (!empty($row['id_moderator']))
+				if (!empty($row['id_moderator']) && $row['id_moderator'] != $row['id_owner'])
 					$board_info['moderators'][$row['id_moderator']] = array(
 						'id' => $row['id_moderator'],
 						'name' => $row['real_name'],
@@ -695,7 +706,8 @@ function loadBoard()
 			// Otherwise the topic is invalid, there are no moderators, etc.
 			$board_info = array(
 				'moderators' => array(),
-				'error' => 'exist'
+				'styling' => 'css',
+				'error' => 'exist',
 			);
 			$topic = null;
 			$board = 0;
@@ -718,11 +730,6 @@ function loadBoard()
 			if (!$user_info['is_mod'] && ($user_info['id'] != $board_info['owner_id']))
 				if ($board_info['privacy'] == 'friends' && !in_array($user_info['id'], explode(',', $board_info['friends'])))
 					$board_info['error'] = 'access';
-
-		$owner = urlencode(utf8_encode($board_info['owner_name']));
-		// Stupid mod_rewrite bug!
-		if (strpos($owner, '%2B') !== false)
-			$owner = urlencode(str_replace('+', ' ', $owner));
 
 		// Build up the linktree.
 		$context['linktree'] = array_merge(
@@ -1342,6 +1349,17 @@ function detectBrowser()
 	for ($i = 6; $i <= 9; $i++)
 		$context['browser']['is_ie' . $i] = $is_ie && $ie_ver[1] == $i;
 
+	// Store our browser name...
+	$context['browser']['agent'] = '';
+	foreach (array('opera', 'webkit', 'chrome', 'safari', 'iphone', 'android', 'gecko', 'firefox', 'ie6', 'ie7', 'ie8', 'ie9') as $browser)
+	{
+		if ($context['browser']['is_' . $browser])
+		{
+			$context['browser']['agent'] = $browser;
+			break;
+		}
+	}
+
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
 
@@ -1509,7 +1527,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	if (isset($detected_url) && $detected_url != $boardurl)
 	{
-		// Try #1 - check if it's in a list of alias addresses.
+		// Try #1 - check if it's in a list of alias addresses
 		if (!empty($modSettings['forum_alias_urls']))
 		{
 			$aliases = explode(',', $modSettings['forum_alias_urls']);
@@ -1525,7 +1543,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
 		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && SMF != 'SSI')
 		{
-			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;).
+			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;)
 			if (empty($_GET))
 				redirectexit('wwwRedirect');
 			else
@@ -1544,10 +1562,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// Okay, #4 - perhaps it's an IP address?  We're gonna want to use that one, then. (assuming it's the IP or something...)
 		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d\.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
-			// Caching is good ;).
+			// Caching is good ;)
 			$oldurl = $boardurl;
 
-			// Fix $boardurl and $scripturl.
+			// Fix $boardurl and $scripturl
 			$boardurl = $detected_url;
 			$scripturl = strtr($scripturl, array($oldurl => $boardurl));
 			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($oldurl => $boardurl));
@@ -1560,11 +1578,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$settings['default_images_url'] = strtr($settings['default_images_url'], array($oldurl => $boardurl));
 			$settings['actual_images_url'] = strtr($settings['actual_images_url'], array($oldurl => $boardurl));
 
-			// And just a few mod settings :).
+			// And just a few mod settings :)
 			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], array($oldurl => $boardurl));
 			$modSettings['avatar_url'] = strtr($modSettings['avatar_url'], array($oldurl => $boardurl));
 
-			// Clean up after loadBoard().
+			// Clean up after loadBoard()
 			if (isset($board_info['moderators']))
 			{
 				foreach ($board_info['moderators'] as $k => $dummy)
@@ -1577,7 +1595,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 				$context['linktree'][$k]['url'] = strtr($dummy['url'], array($oldurl => $boardurl));
 		}
 	}
-	// Set up the contextual user array.
+	// Set up the contextual user array
 	$context['user'] = array(
 		'id' => $user_info['id'],
 		'is_logged' => !$user_info['is_guest'],
@@ -1596,7 +1614,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif ($context['user']['is_guest'] && !empty($txt['guest_title']))
 		$context['user']['name'] = $txt['guest_title'];
 
-	// Determine the current smiley set.
+	// Determine the current smiley set
 	$user_info['smiley_set'] = (!in_array($user_info['smiley_set'], explode(',', $modSettings['smiley_sets_known'])) && $user_info['smiley_set'] != 'none') || empty($modSettings['smiley_sets_enable']) ? (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default']) : $user_info['smiley_set'];
 	$context['user']['smiley_set'] = $user_info['smiley_set'];
 
@@ -1617,7 +1635,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (isset($modSettings['load_average']))
 		$context['load_average'] = $modSettings['load_average'];
 
-	// Set some permission related settings.
+	// Set some permission related settings
 	$context['show_login_bar'] = $user_info['is_guest'] && !empty($modSettings['enableVBStyleLogin']);
 
 	// This determines the server... not used in many places, except for login fixing.
@@ -1633,10 +1651,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
-	// Detect the browser. This is separated out because it's also used in attachment downloads
+	// Detect the browser. This is separated out because it's also used in attachment downloads.
 	detectBrowser();
 
-	// Set the top level linktree up.
+	// Set the top level linktree up
 	array_unshift($context['linktree'], array(
 		'url' => $scripturl,
 		'name' => $context['forum_name_html_safe']
@@ -1651,7 +1669,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'spellcheck',
 	);
 
-	// Wireless mode?  Load up the wireless stuff.
+	// Wireless mode? Load up the wireless stuff.
 	if (WIRELESS)
 	{
 		$context['template_layers'] = array(WIRELESS_PROTOCOL);
@@ -1665,7 +1683,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadTemplate('Xml');
 		$context['template_layers'] = array();
 	}
-	// These actions don't require the index template at all.
+	// These actions don't require the index template at all
 	elseif (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
 		loadLanguage('index+Modifications');
@@ -1694,10 +1712,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$context['template_layers'] = array('html', 'body');
 	}
 
-	// Initialize the theme.
+	// Initialize the theme
 	loadSubTemplate('init', 'ignore');
 
-	// Guests may still need a name.
+	// Guests may still need a name
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
 		$context['user']['name'] = $txt['guest_title'];
 
@@ -1741,6 +1759,29 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Set the character set from the template.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
+
+	// Time to determine our CSS list...
+
+	// First, load our requested CSS variant folder.
+	$folders = isset($board_info, $board_info['styling']) ? explode('/', $board_info['styling']) : array('css');
+	$context['css_folders'] = array();
+	$current_folder = $folders[0] == 'css' ? '' : '/css';
+	foreach ($folders as $folder)
+	{
+		$current_folder .= '/' . $folder;
+		$context['css_folders'][] = substr($current_folder, 1);
+	}
+
+	// Then, we need a list of generic CSS files.
+	$context['css_generic_files'] = array('index');
+
+	// Add any potential browser-based fixes.
+	if (!empty($context['browser']['agent']))
+		$context['css_generic_files'][] = $context['browser']['agent'];
+
+	// RTL languages require an additional stylesheet.
+	if ($context['right_to_left'])
+		$context['css_generic_files'][] = 'rtl';
 
 	$context['tabindex'] = 1;
 
@@ -1803,22 +1844,10 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 	if (!empty($style_sheets))
 	{
 		if (!is_array($style_sheets))
-			$style_sheets = array($style_sheets);
+			$style_sheets = (array) $style_sheets;
 
 		foreach ($style_sheets as $sheet)
-		{
-			// Prevent the style sheet from being included twice.
-			if (strpos($context['header'], 'id="' . $sheet . '_css"') !== false)
-				continue;
-
-			$sheet_path = file_exists($settings['theme_dir']. '/css/' . $sheet . '.css') ? 'theme_url' : (file_exists($settings['default_theme_dir']. '/css/' . $sheet . '.css') ? 'default_theme_url' : '');
-			if ($sheet_path)
-			{
-				$context['header'] .= "\n\t" . '<link rel="stylesheet" type="text/css" id="' . $sheet . '_css" href="' . $settings[$sheet_path] . '/css/' . $sheet . '.css" />';
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $sheet . ' (' . basename($settings[$sheet_path]) . ')';
-			}
-		}
+			$context['css_generic_files'][] = $sheet;
 	}
 
 	// No template to load?
@@ -2021,58 +2050,51 @@ function getBoardParents($id_parent)
 {
 	global $scripturl, $smcFunc;
 
-	// First check if we have this cached already.
-	if (($boards = cache_get_data('board_parents-' . $id_parent, 480)) === null)
-	{
-		$boards = array();
-		$original_parent = $id_parent;
+	$boards = array();
 
-		// Loop while the parent is non-zero.
-		while ($id_parent != 0)
+	// Loop while the parent is non-zero.
+	while ($id_parent != 0)
+	{
+		$result = $smcFunc['db_query']('', '
+			SELECT
+				b.id_parent, b.name, {int:board_parent} AS id_board, IFNULL(mem.id_member, 0) AS id_moderator,
+				mem.real_name, b.child_level
+			FROM {db_prefix}boards AS b
+				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
+			WHERE b.id_board = {int:board_parent}',
+			array(
+				'board_parent' => $id_parent,
+			)
+		);
+		// In the EXTREMELY unlikely event this happens, give an error message.
+		if ($smcFunc['db_num_rows']($result) == 0)
+			fatal_lang_error('parent_not_found', 'critical');
+		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
-			$result = $smcFunc['db_query']('', '
-				SELECT
-					b.id_parent, b.name, {int:board_parent} AS id_board, IFNULL(mem.id_member, 0) AS id_moderator,
-					mem.real_name, b.child_level
-				FROM {db_prefix}boards AS b
-					LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
-					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
-				WHERE b.id_board = {int:board_parent}',
-				array(
-					'board_parent' => $id_parent,
-				)
-			);
-			// In the EXTREMELY unlikely event this happens, give an error message.
-			if ($smcFunc['db_num_rows']($result) == 0)
-				fatal_lang_error('parent_not_found', 'critical');
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			if (!isset($boards[$row['id_board']]))
 			{
-				if (!isset($boards[$row['id_board']]))
+				$id_parent = $row['id_parent'];
+				$boards[$row['id_board']] = array(
+					'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
+					'name' => $row['name'],
+					'level' => $row['child_level'],
+					'moderators' => array()
+				);
+			}
+			// If a moderator exists for this board, add that moderator for all children too.
+			if (!empty($row['id_moderator']))
+				foreach ($boards as $id => $dummy)
 				{
-					$id_parent = $row['id_parent'];
-					$boards[$row['id_board']] = array(
-						'url' => $scripturl . '?board=' . $row['id_board'] . '.0',
-						'name' => $row['name'],
-						'level' => $row['child_level'],
-						'moderators' => array()
+					$boards[$id]['moderators'][$row['id_moderator']] = array(
+						'id' => $row['id_moderator'],
+						'name' => $row['real_name'],
+						'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
+						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 					);
 				}
-				// If a moderator exists for this board, add that moderator for all children too.
-				if (!empty($row['id_moderator']))
-					foreach ($boards as $id => $dummy)
-					{
-						$boards[$id]['moderators'][$row['id_moderator']] = array(
-							'id' => $row['id_moderator'],
-							'name' => $row['real_name'],
-							'href' => $scripturl . '?action=profile;u=' . $row['id_moderator'],
-							'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
-						);
-					}
-			}
-			$smcFunc['db_free_result']($result);
 		}
-
-		cache_put_data('board_parents-' . $original_parent, $boards, 480);
+		$smcFunc['db_free_result']($result);
 	}
 
 	return $boards;

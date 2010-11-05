@@ -1,3 +1,26 @@
+
+/**
+ *
+ * This is the base CSS file for the default theme.
+ *
+ * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
+ * index.css, admin.css, editor.css, editor_ie.css, rtl.css
+ *
+ * As well as browser-specific stylesheets. If you need to add a browser hack, just create one of these files into your folder:
+ * opera.css, webkit.css, chrome.css, safari.css, iphone.css, android.css, gecko.css, firefox.css, ie6.css, ie7.css, ie8.css, ie9.css
+ *
+ * These files should be theme-agnostic, and thus are not skinnable per se:
+ * install.css, report.css, wireless.css
+ * @todo: Consider wireless.css as an alternative index.css and allow overriding it in subfolders?
+ *
+ * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
+ * CSS cached files are put inside the /css/cache/ folder, so any relative URLs should be set according to that.
+ * For instance, accessing /images is done through ../../images, rather than ../images.
+ * If you have a file called sprite.png in your custom "css/Hello/World" css folder,
+ * link to url(../Hello/World/sprite.png) rather than url(sprite.png).
+ *
+ */
+
 /* Set a fontsize that will look the same in all browsers. */
 body {
 	background: #faefe6;
@@ -177,11 +200,12 @@ h1.forumtitle a {
 ------------------------------------------------------- */
 
 /* Normal, standard links. */
-a:link, a:visited {
+a {
 	color: #346;
 	text-decoration: none;
 }
 a:hover {
+	color: #568;
 	text-decoration: underline;
 	cursor: pointer;
 }
@@ -809,10 +833,10 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, td.catbg {
 	padding: 0 6px;
 }
-tr.titlebg th a:link, tr.titlebg th a:visited, tr.titlebg2 td a:link, tr.titlebg2 td a:visited {
+tr.titlebg th a, tr.titlebg2 td a {
 	color: #222;
 }
-tr.catbg th a:link, tr.catbg th a:visited {
+tr.catbg th a {
 	color: #666;
 }
 .catbg select {
@@ -1742,8 +1766,15 @@ ul.quickbuttons li a {
 ul.quickbuttons a:hover {
 	color: #a70;
 }
+
+/**
+ * This is where you can change the reply/edit/delete etc. icons for your posts.
+ * You can either modify the quickbuttons.png sprite file, or simply use another file
+ * and set its coordinates to 0 0.
+ */
+
 ul.quickbuttons li.mergepost_button {
-	background: url(../images/buttons/mergeposts.gif) no-repeat 0 2px;
+	background: url(../images/theme/quickbuttons.png) no-repeat 2px -242px;
 }
 ul.quickbuttons li.quote_button {
 	background: url(../images/theme/quickbuttons.png) no-repeat 0 0;

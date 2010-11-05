@@ -467,8 +467,12 @@ function template_modify_board()
 								<option value="0"', $context['board']['theme'] == 0 ? ' selected="selected"' : '', '>', $txt['mboards_theme_default'], '</option>';
 
 	foreach ($context['themes'] as $theme)
+	{
 		echo '
-								<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+								<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == 'css' ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+		if (!empty($theme['stylings']))
+			wedge_show_stylings($theme, $theme['stylings'], 1);
+	}
 
 	echo '
 							</select>
@@ -574,6 +578,19 @@ function template_modify_board()
 		}
 		refreshOptions();
 	// ]]></script>';
+}
+
+function wedge_show_stylings(&$theme, &$style, $level)
+{
+	global $context;
+
+	foreach ($style as $sty)
+	{
+		echo '
+								<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == $sty['dir'] ? ' selected="selected"' : '', '>', str_repeat('&nbsp;', $level*2), $sty['name'], '</option>';
+		if (!empty($sty['stylings']))
+			wedge_show_stylings($theme, $sty['stylings'], $level + 1);
+	}
 }
 
 // A template used when a user is deleting a board with child boards in it - to see what they want to do with them.

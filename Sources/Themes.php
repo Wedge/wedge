@@ -780,7 +780,7 @@ function SetThemeSettings()
 	{
 		$file_contents = implode('', file($settings['theme_dir'] . '/index.template.php'));
 		if (preg_match('~\$settings\[\'theme_variants\'\]\s*=(.+?);~', $file_contents, $matches))
-				eval('global $settings;' . $matches[0]);
+			eval('global $settings;' . $matches[0]);
 	}
 
 	// Submitting!
