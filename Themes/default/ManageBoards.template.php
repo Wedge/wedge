@@ -300,28 +300,31 @@ function template_modify_board()
 						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30" class="input_text" />
 					</dd>';
 
-	$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
-	if (isset($context['board']['url']))
-		preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $context['board']['url'], $m);
+	if (!empty($modSettings['pretty_enable']))
+	{
+		$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
+		if (isset($context['board']['url']))
+			preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $context['board']['url'], $m);
 
-	// Options for board name and description.
-	echo '
+		// Options for board name and description.
+		echo '
 					<dt>
 						<strong>', $txt['pretty']['url'], ':</strong>
 						<p class="smalltext">', $txt['pretty']['url_desc'], '</p>
 					</dt>
-					<dd style="white-space: nowrap">';
-
-	echo '
+					<dd style="white-space: nowrap">
 						<select dir="rtl" name="pretty_url_dom">';
 
-	foreach ($context['board']['subdomains'] as $subdo)
-		echo !empty($subdo) ? '
+		foreach ($context['board']['subdomains'] as $subdo)
+			echo !empty($subdo) ? '
 							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected="selected"' : '') . '>' . $subdo . '</option>' : '';
 
-	echo '
+		echo '
 						</select>/<input type="text" maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25" />
-					</dd>
+					</dd>';
+	}
+
+	echo '
 					<dt>
 						<strong>', $txt['mboards_description'], ':</strong><br />
 						<span class="smalltext">', $txt['mboards_description_desc'], '</span>

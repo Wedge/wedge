@@ -167,7 +167,7 @@ function cleanRequest()
 		}
 	}
 
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($modSettings['pretty_enable']))
 	{
 		// !!! Authorize URLs like noisen.com:80
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
@@ -684,7 +684,7 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
 
 	// Rewrite the buffer with Pretty URLs!
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($modSettings['pretty_enable']) && !empty($modSettings['pretty_enable_filters']))
 	{
 		if (!empty($db_show_debug) && !$second_time_debugging && !WIRELESS && substr($buffer, 0, 5) != '<?xml')
 		{
