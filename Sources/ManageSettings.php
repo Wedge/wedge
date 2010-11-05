@@ -2040,12 +2040,13 @@ function ModifyPrettyURLs()
 		foreach ($context['pretty']['filters'] as $filter)
 			$context['pretty']['filters'][$filter['id']]['enabled'] = isset($_POST['pretty_filter_' . $filter['id']]) ? 1 : 0;
 
-		$pretty_settings = array(
-			'pretty_enable_filters' => isset($_POST['pretty_enable']) ? $_POST['pretty_enable'] : 0,
-			'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
-			'pretty_filters' => serialize($context['pretty']['filters']),
+		updateSettings(
+			array(
+				'pretty_enable_filters' => isset($_POST['pretty_enable']) ? $_POST['pretty_enable'] : false,
+				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
+				'pretty_filters' => serialize($context['pretty']['filters']),
+			)
 		);
-		updateSettings($pretty_settings);
 
 		if (isset($_REQUEST['pretty_cache']))
 			$smcFunc['db_query']('', '

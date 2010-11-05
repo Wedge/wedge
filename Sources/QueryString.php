@@ -167,32 +167,32 @@ function cleanRequest()
 		}
 	}
 
-	// !!! Authorize URLs like noisen.com:80
-	//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
-	$pretty_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
-	$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
-	$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
-
-	$query = $smcFunc['db_query']('', '
-		SELECT id_board, url
-		FROM {db_prefix}boards AS b
-		WHERE urllen >= {int:len}
-		AND url = SUBSTRING({string:url}, 1, urllen)
-		ORDER BY urllen DESC LIMIT 1',
-		array(
-			'url' => rtrim($pretty_request, '/'),
-			'len' => ($len = strpos($pretty_request, '/')) !== false ? $len : strlen($pretty_request),
-		)
-	);
-	if ($smcFunc['db_num_rows']($query) == 0)
-		$board = 0;
-	else
-		$pretty_board = $smcFunc['db_fetch_assoc']($query);
-	$smcFunc['db_free_result']($query);
-
-	// The happy place where boards are identified.
-	if (isset($pretty_board))
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
+		// !!! Authorize URLs like noisen.com:80
+		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
+		$pretty_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
+		$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
+		$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
+
+		$query = $smcFunc['db_query']('', '
+			SELECT id_board, url
+			FROM {db_prefix}boards AS b
+			WHERE urllen >= {int:len}
+			AND url = SUBSTRING({string:url}, 1, urllen)
+			ORDER BY urllen DESC LIMIT 1',
+			array(
+				'url' => rtrim($pretty_request, '/'),
+				'len' => ($len = strpos($pretty_request, '/')) !== false ? $len : strlen($pretty_request),
+			)
+		);
+		if ($smcFunc['db_num_rows']($query) == 0)
+			$board = 0;
+		else
+			$pretty_board = $smcFunc['db_fetch_assoc']($query);
+		$smcFunc['db_free_result']($query);
+
+		// The happy place where boards are identified.
 		$_GET['board'] = $board = $pretty_board['id_board'];
 		$_SERVER['HTTP_HOST'] = $pretty_board['url'];
 		$_SERVER['REQUEST_URI'] = $ru = str_replace($pretty_board['url'], '', $pretty_request);
@@ -231,21 +231,21 @@ function cleanRequest()
 			$_GET['start'] = empty($m[3]) ? 0 : $m[3];
 			$_GET['pretty'] = 1;
 		}
-	}
-	elseif ($hh == 'my')
-	{
-		if (empty($_GET['user']))
-			unset($_GET['user']);
-		else
-			$_GET['user'] = rtrim($_GET['user'], '/');
-	}
-	elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
-	{
-	}
-	elseif ($hh != 'noisen.com') // !!! WIP
-	{
-		$_GET['pretty'] = '';
-		$_GET['board'] = $_SERVER['HTTP_HOST'];
+		elseif ($hh == 'my')
+		{
+			if (empty($_GET['user']))
+				unset($_GET['user']);
+			else
+				$_GET['user'] = rtrim($_GET['user'], '/');
+		}
+		elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
+		{
+		}
+		elseif ($hh != 'noisen.com') // !!! WIP
+		{
+			$_GET['pretty'] = '';
+			$_GET['board'] = $_SERVER['HTTP_HOST'];
+		}
 	}
 
 	// If magic quotes are on, we have some work to do...

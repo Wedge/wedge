@@ -2045,7 +2045,7 @@ function template_repair_boards()
 	}
 }
 
-//	Pretty URLs chrome
+// Pretty URLs
 function template_pretty_urls()
 {
 	global $context, $scripturl, $txt;
@@ -2089,7 +2089,7 @@ function template_pretty_urls()
 				<label for="pretty_cache">', $txt['pretty_cache'], '</label>
 			</fieldset>';
 
-	//	Display the filters
+	// Display the filters
 	if (!empty($context['pretty']['filters']))
 	{
 		echo '
@@ -2108,7 +2108,7 @@ function template_pretty_urls()
 	}
 
 	echo '
-			<input type="submit" value="', $txt['pretty_save'], '">
+			<input type="submit" name="save" value="', $txt['pretty_save'], '">
 		</form>
 	</div>
 
