@@ -167,6 +167,12 @@ h1.forumtitle a {
 	padding: 0 .5em 0 0;
 	font-size: .95em;
 }
+.linktree {
+	display: inline-block;
+	width: 15px;
+	height: 10px;
+	background: url(../images/menu.gif) no-repeat 5px -54px;
+}
 
 /* The footer wih copyright links etc. */
 #footer {
@@ -352,7 +358,6 @@ em {
 .underline {
 	text-decoration: underline;
 }
-
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */

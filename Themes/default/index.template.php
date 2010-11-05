@@ -382,7 +382,7 @@ function theme_linktree($force_show = false)
 
 		// Don't show a separator for the last one.
 		if ($link_num != count($context['linktree']) - 1)
-			echo ' &#187;';
+			echo ' <span class="linktree"></span>';
 
 		echo '</li>';
 	}
