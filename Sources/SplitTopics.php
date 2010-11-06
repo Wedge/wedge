@@ -101,7 +101,7 @@ if (!defined('SMF'))
 		- the merge options screen:
 			- shows topics to be merged and allows to set some merge options.
 			- is accessed by ?action=mergetopics;sa=options.and can also
-			  internally be called by QuickModeration() (Subs-Boards.php).
+			  internally be called by QuickModeration().
 			- uses 'merge_extra_options' sub template of the SplitTopics
 			  template.
 		- the actual merge:

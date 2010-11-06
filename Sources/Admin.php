@@ -529,7 +529,7 @@ function AdminHome()
 	}
 
 	// Load the credits stuff.
-	require_once($sourcedir . '/Who.php');
+	require_once($sourcedir . '/Credits.php');
 	Credits(true);
 
 	// Fill in the blanks in the support resources paragraphs.
