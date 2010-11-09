@@ -3478,7 +3478,7 @@ function setupThemeContext($forceload = false)
  */
 function wedge_cache_css($filename, $css, $target)
 {
-	global $settings, $wedge_base_dir;
+	global $settings, $modSettings, $wedge_base_dir;
 
 	$final = '';
 	$discard_dir = strlen($settings[$target . 'dir']) + 1;
@@ -3494,9 +3494,10 @@ function wedge_cache_css($filename, $css, $target)
 	$dest = $settings[$target . 'dir'] . '/css/cache';
 	if (!file_exists($dest))
 		mkdir($dest);
-	if (function_exists('gzencode'))
+	$gzip = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode');
+	if ($gzip)
 		$final = gzencode($final, 9);
-	file_put_contents($dest . '/' . $filename . '.css' . (function_exists('gzencode') ? '.gz' : ''), $final);
+	file_put_contents($dest . '/' . $filename . '.css' . ($gzip ? '.gz' : ''), $final);
 	return time();
 }
 
@@ -3569,7 +3570,7 @@ function template_header()
 		}
 	}
 	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
-	$ext = function_exists('gzencode') ? '.css.gz' : '.css';
+	$ext = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode') ? '.css.gz' : '.css';
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
@@ -3686,31 +3687,22 @@ function template_header()
 function theme_copyright($get_it = false)
 {
 	global $forum_copyright, $context, $boardurl, $forum_version, $txt, $modSettings;
-	static $found = false;
 
 	// DO NOT MODIFY THIS FUNCTION. DO NOT REMOVE YOUR COPYRIGHT.
 	// DOING SO VOIDS YOUR LICENSE AND IS ILLEGAL.
 
 	// Meaning, this is the footer checking in..
 	if ($get_it === true)
-		return $found;
+		return true;
 
 	// For SSI and other things, skip the version number.
 	if (empty($forum_version))
 		$forum_version = 'Wedge';
 	$forum_copyright = sprintf($forum_copyright, $forum_version);
 
-	// If it's in the copyright, and we are outputting it... it's been found.
 	if (isset($modSettings['copyright_key']) && sha1($modSettings['copyright_key'] . 'banjo') == '1d01885ece7a9355bdeb22ed107f0ffa8c323026')
-		$found = true;
-	elseif (preg_match('~<a\shref="http://www.wedgeo.org/"[^<>]*>Wedge~', $forum_copyright))
-	{
-		$found = true;
-		echo '
-		<span class="smalltext" style="display: inline; visibility: visible; font-family: Verdana, Arial, sans-serif;">', $forum_copyright, '</span>';
-	}
-	else
-		echo $forum_copyright;
+		return;
+	echo $forum_copyright;
 }
 
 /**
