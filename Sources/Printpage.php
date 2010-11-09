@@ -42,7 +42,7 @@ if (!defined('SMF'))
  * - Unlike the regular topic view, which includes pagination and a callback system to save memory, this function does neither, calling all the posts in a single query and building an array of every possible post at once. For very long topics this can cause memory issues.
  * - {@link parse_bbc()} is invoked with the 'print' parameter in place of the smileys option.
  */
-function PrintTopic()
+function PrintPage()
 {
 	global $topic, $txt, $scripturl, $context, $user_info;
 	global $board_info, $smcFunc, $modSettings;

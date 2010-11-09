@@ -25,10 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file contains those functions specific to the editing box and is
-	generally used for WYSIWYG type functionality. Doing all this is the
-	following:
-
+/*	
 	void theme_postbox(string message)
 		- for compatibility - passes right through to the template_control_richedit function.
 
@@ -43,11 +40,6 @@ if (!defined('SMF'))
 	- the board_id is needed for the custom message icons (which can be set for
 	  each board individually).
 
-	void AutoSuggestHandler(string checkRegistered = null)
-		// !!!
-
-	void AutoSuggest_Search_Member()
-		// !!!
 */
 
 function getMessageIcons($board_id)
@@ -343,77 +335,6 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	// Say that everything went well chaps.
 	return true;
-}
-
-// This keeps track of all registered handling functions for auto suggest functionality and passes execution to them.
-function AutoSuggestHandler($checkRegistered = null)
-{
-	global $context;
-
-	// These are all registered types.
-	$searchTypes = array(
-		'member' => 'Member',
-	);
-
-	// If we're just checking the callback function is registered return true or false.
-	if ($checkRegistered != null)
-		return isset($searchTypes[$checkRegistered]) && function_exists('AutoSuggest_Search_' . $checkRegistered);
-
-	checkSession('get');
-	loadTemplate('Xml');
-
-	// Any parameters?
-	$context['search_param'] = isset($_REQUEST['search_param']) ? unserialize(base64_decode($_REQUEST['search_param'])) : array();
-
-	if (isset($_REQUEST['suggest_type'], $_REQUEST['search'], $searchTypes[$_REQUEST['suggest_type']]))
-	{
-		$function = 'AutoSuggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
-		$context['sub_template'] = 'generic_xml';
-		$context['xml_data'] = $function();
-	}
-}
-
-// Search for a member - by real_name or member_name by default.
-function AutoSuggest_Search_Member()
-{
-	global $user_info, $txt, $smcFunc, $context;
-
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search'])) . '*';
-	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
-
-	// Find the member.
-	$request = $smcFunc['db_query']('', '
-		SELECT id_member, real_name
-		FROM {db_prefix}members
-		WHERE real_name LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
-			AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
-		array(
-			'buddy_list' => $user_info['buddies'],
-			'search' => $_REQUEST['search'],
-		)
-	);
-	$xml_data = array(
-		'items' => array(
-			'identifier' => 'item',
-			'children' => array(),
-		),
-	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
-
-		$xml_data['items']['children'][] = array(
-			'attributes' => array(
-				'id' => $row['id_member'],
-			),
-			'value' => $row['real_name'],
-		);
-	}
-	$smcFunc['db_free_result']($request);
-
-	return $xml_data;
 }
 
 ?>

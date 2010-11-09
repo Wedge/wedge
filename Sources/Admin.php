@@ -53,9 +53,6 @@ if (!defined('SMF'))
 	void AdminSearchMember()
 		// !!
 
-	void DisplayAdminFile()
-		// !!
-
 */
 
 // The main admin handling function.
@@ -723,54 +720,6 @@ function ManageCopyright()
 
 	$context['sub_template'] = 'manage_copyright';
 	$context['page_title'] = $txt['copyright_removal'];
-}
-
-// Get one of the admin information files from Simple Machines.
-function DisplayAdminFile()
-{
-	global $context, $modSettings, $smcFunc;
-
-	@ini_set('memory_limit', '32M');
-
-	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))
-		fatal_lang_error('no_access', false);
-
-	$request = $smcFunc['db_query']('', '
-		SELECT data, filetype
-		FROM {db_prefix}admin_info_files
-		WHERE filename = {string:current_filename}
-		LIMIT 1',
-		array(
-			'current_filename' => $_REQUEST['filename'],
-		)
-	);
-
-	if ($smcFunc['db_num_rows']($request) == 0)
-		fatal_lang_error('admin_file_not_found', true, array($_REQUEST['filename']));
-
-	list ($file_data, $filetype) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	// !!! Temp.
-	// Figure out if sesc is still being used.
-	if (strpos($file_data, ';sesc=') !== false)
-		$file_data = '
-if (!(\'smfForum_sessionvar\' in window))
-	window.smfForum_sessionvar = \'sesc\';
-' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
-
-	$context['template_layers'] = array();
-	// Let's make sure we aren't going to output anything nasty.
-	@ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']))
-		@ob_start('ob_gzhandler');
-	else
-		@ob_start();
-
-	// Make sure they know what type of file we are.
-	header('Content-Type: ' . $filetype);
-	echo $file_data;
-	obExit(false);
 }
 
 // This allocates out all the search stuff.

@@ -28,7 +28,7 @@ if (!defined('SMF'))
 /*	This function has only one job: providing a display for forum statistics.
 	As such, it has only one function:
 
-	void DisplayStats()
+	void Stats()
 		- gets all the statistics in order and puts them in.
 		- uses the Stats template and language file. (and main sub template.)
 		- requires the view_stats permission.
@@ -38,16 +38,10 @@ if (!defined('SMF'))
 		- called by DisplayStats().
 		- loads the statistics on a daily basis in $context.
 
-	void SMStats()
-		- called by simplemachines.org.
-		- only returns anything if stats was enabled during installation.
-		- can also be accessed by the admin, to show what stats sm.org collects.
-		- does not return any data directly to sm.org, instead starts a new request for security.
-
 */
 
 // Display some useful/interesting board statistics.
-function DisplayStats()
+function Stats()
 {
 	global $txt, $scripturl, $modSettings, $user_info, $context, $smcFunc;
 
@@ -673,80 +667,6 @@ function getDailyStats($condition_string, $condition_parameters = array())
 			'hits' => comma_format($row_days['hits'])
 		);
 	$smcFunc['db_free_result']($days_result);
-}
-
-// This is the function which returns stats to simplemachines.org IF enabled!
-// See http://www.simplemachines.org/about/stats.php for more info.
-function SMStats()
-{
-	global $modSettings, $user_info, $forum_version, $sourcedir;
-
-	// First, is it disabled?
-	if (empty($modSettings['allow_sm_stats']))
-		die();
-
-	// Are we saying who we are, and are we right? (OR an admin)
-	if (!$user_info['is_admin'] && (!isset($_GET['sid']) || $_GET['sid'] != $modSettings['allow_sm_stats']))
-		die();
-
-	// Verify the referer...
-	if (!$user_info['is_admin'] && (!isset($_SERVER['HTTP_REFERER']) || md5($_SERVER['HTTP_REFERER']) != '746cb59a1a0d5cf4bd240e5a67c73085'))
-		die();
-
-	// Get some server versions.
-	require_once($sourcedir . '/Subs-Admin.php');
-	$checkFor = array(
-		'php',
-		'db_server',
-	);
-	$serverVersions = getServerVersions($checkFor);
-
-	// Get the actual stats.
-	$stats_to_send = array(
-		'UID' => $modSettings['allow_sm_stats'],
-		'time_added' => time(),
-		'members' => $modSettings['totalMembers'],
-		'messages' => $modSettings['totalMessages'],
-		'topics' => $modSettings['totalTopics'],
-		'boards' => 0,
-		'php_version' => $serverVersions['php']['version'],
-		'database_type' => strtolower($serverVersions['db_server']['title']),
-		'database_version' => $serverVersions['db_server']['version'],
-		'smf_version' => $forum_version,
-		'smfd_version' => $modSettings['smfVersion'],
-	);
-
-	// Encode all the data, for security.
-	foreach ($stats_to_send as $k => $v)
-		$stats_to_send[$k] = urlencode($k) . '=' . urlencode($v);
-
-	// Turn this into the query string!
-	$stats_to_send = implode('&', $stats_to_send);
-
-	// If we're an admin, just plonk them out.
-	if ($user_info['is_admin'])
-		echo $stats_to_send;
-	else
-	{
-		// Connect to the collection script.
-		$fp = @fsockopen('www.simplemachines.org', 80, $errno, $errstr);
-		if ($fp)
-		{
-			$length = strlen($stats_to_send);
-
-			$out = 'POST /smf/stats/collect_stats.php HTTP/1.1' . "\r\n";
-			$out .= 'Host: www.simplemachines.org' . "\r\n";
-			$out .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
-			$out .= 'Content-Length: ' . $length . "\r\n\r\n";
-			$out .= $stats_to_send . "\r\n";
-			$out .= 'Connection: Close' . "\r\n\r\n";
-			fwrite($fp, $out);
-			fclose($fp);
-		}
-	}
-
-	// Die.
-	die('OK');
 }
 
 ?>

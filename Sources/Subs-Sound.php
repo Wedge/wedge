@@ -34,7 +34,7 @@ if (!defined('SMF'))
 /**
  * Create a wave file that represents an audio version of an CAPTCHA string.
  *
- * Used by {@link VerificationCode()} in Register.php, this function attempts to process the CAPTCHA into a sound file spelling the letters of the CAPTCHA out. It attempts to use the user's language first, before defaulting back to English - it requires one wave file per letter in Themes/default/fonts/sound/ in the format of {letter}.{language}.wav.
+ * Used by {@link VerificationCode()} in VerificationCode.php, this function attempts to process the CAPTCHA into a sound file spelling the letters of the CAPTCHA out. It attempts to use the user's language first, before defaulting back to English - it requires one wave file per letter in Themes/default/fonts/sound/ in the format of {letter}.{language}.wav.
  *
  * @param string $word The string containing the CAPTCHA.
  * @return mixed Return false in the event of failure; if successful the audio data in wave format is output.
