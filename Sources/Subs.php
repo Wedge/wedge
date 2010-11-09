@@ -3476,7 +3476,7 @@ function setupThemeContext($forceload = false)
  * @param string $target Determine where we're saving the file: default theme, or custom theme?
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_css($filename, $css, $target)
+function wedge_cache_css($filename, $css, $target, $gzip = false)
 {
 	global $settings, $modSettings, $wedge_base_dir;
 
@@ -3494,7 +3494,6 @@ function wedge_cache_css($filename, $css, $target)
 	$dest = $settings[$target . 'dir'] . '/css/cache';
 	if (!file_exists($dest))
 		mkdir($dest);
-	$gzip = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode');
 	if ($gzip)
 		$final = gzencode($final, 9);
 	file_put_contents($dest . '/' . $filename . '.css' . ($gzip ? '.gz' : ''), $final);
@@ -3570,13 +3569,15 @@ function template_header()
 		}
 	}
 	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
-	$ext = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode') ? '.css.gz' : '.css';
+
+	$can_gzip = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? '.css.gz' : '.css';
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
 	$final_file = $settings[$target . 'dir'] . '/css/cache/' . $id . $ext;
 	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
-		$filetime = wedge_cache_css($id, $css, $target);
+		$filetime = wedge_cache_css($id, $css, $target, $can_gzip);
 
 	$context['css'] = $settings[$target . 'url'] . '/css/cache/' . $id . $ext . '?' . $filetime;
 
