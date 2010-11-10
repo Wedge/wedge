@@ -1031,7 +1031,7 @@ a.moderation_link, a.moderation_link:visited {
 	margin: .2em 1px 1em;
 }
 .information p {
-	padding: 1em;
+	padding: 1em 1em 0;
 	margin: 0;
 }
 

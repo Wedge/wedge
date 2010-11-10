@@ -300,7 +300,7 @@ function template_modify_board()
 						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30" class="input_text" />
 					</dd>';
 
-	if (!empty($modSettings['pretty_enable']))
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
 		if (isset($context['board']['url']))

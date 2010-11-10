@@ -1,3 +1,7 @@
+// This file is under the SMF license.
+// All code changes compared to SMF 2.0 are protected by
+// the Wedge license, http://wedgeforum.com/license/
+
 var smf_formSubmitted = false;
 var lastKeepAliveCheck = new Date().getTime();
 var smf_editorArray = new Array();
@@ -17,7 +21,7 @@ var
 
 var
 	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera,
-	is_gecko = ua.indexOf('gecko') != -1 && !is_opera;
+	is_gecko = !is_opera && ua.indexOf('gecko') != -1;
 
 var
 	is_chrome = ua.indexOf('chrome') != -1,
@@ -182,12 +186,11 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 
 	if (typeof(from) == 'object')
 	{
-		var aPos = smf_itemPos(from), hOrig = document.getElementsByTagName('html')[0];
-		if (hOrig.scrollTop)
-		{
-			aPos[0] -= hOrig.scrollLeft;
-			aPos[1] -= hOrig.scrollTop - 30;
-		}
+		// !!! This is kinda pointless... Safari doesn't play nice here, and basically all browsers handle this differently. Do an iframe instead!
+		var aPos = smf_itemPos(from), hOrig = document.documentElement.scrollTop ? document.documentElement : document.body,
+			hScreenX = window.screenX ? window.screenX : window.screenLeft, hScreenY = window.screenY ? window.screenY : window.screenTop;
+		aPos[0] += hScreenX - hOrig.scrollLeft;
+		aPos[1] += hScreenY - hOrig.scrollTop;
 		addToEnd = ',left=' + aPos[0] + ',top=' + aPos[1];
 	}
 	window.open(desktopURL, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no' + addToEnd);
@@ -652,7 +655,7 @@ function ajax_indicator(turn_on)
 		if (is_ie6)
 		{
 			ajax_indicator_ele.style.position = 'absolute';
-			ajax_indicator_ele.style.top = document.documentElement.scrollTop;
+			ajax_indicator_ele.style.top = (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop;
 		}
 		ajax_indicator_ele.style.display = turn_on ? 'block' : 'none';
 	}
@@ -987,8 +990,8 @@ function smf_mousePose(oEvent)
 	}
 	else if (oEvent.clientX)
 	{
-		x = oEvent.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
-		y = oEvent.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
+		x = oEvent.clientX + (document.documentElement.scrollLeft ? document.documentElement : document.body).scrollLeft;
+		y = oEvent.clientY + (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop;
 	}
 
 	return [x, y];
@@ -1120,8 +1123,9 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 
 /**
  *
- * Dropdown menus, Wedge style, released under the Wedge license.
- * © 2008-2010 René-Gilles Deberdt (http://wedgeo.com)
+ * Dropdown menus, Wedge style.
+ * © 2008-2010 René-Gilles Deberdt (http://wedgeforum.com)
+ * Released under the Wedge license, http://wedgeforum.com/license/
  *
  * Uses portions © 2004 by Batiste Bieler (http://dosimple.ch/), released
  * under the LGPL license (http://www.gnu.org/licenses/lgpl.html)

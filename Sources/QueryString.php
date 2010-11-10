@@ -167,7 +167,7 @@ function cleanRequest()
 		}
 	}
 
-	if (!empty($modSettings['pretty_enable']))
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		// !!! Authorize URLs like noisen.com:80
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
@@ -187,65 +187,67 @@ function cleanRequest()
 			)
 		);
 		if ($smcFunc['db_num_rows']($query) == 0)
-			$board = 0;
+			$_GET['board'] = $board = 0;
 		else
+		{
 			$pretty_board = $smcFunc['db_fetch_assoc']($query);
+
+			// The happy place where boards are identified.
+			$_GET['board'] = $board = $pretty_board['id_board'];
+			$_SERVER['HTTP_HOST'] = $pretty_board['url'];
+			$_SERVER['REQUEST_URI'] = $ru = str_replace($pretty_board['url'], '', $pretty_request);
+
+			// We will now be analyzing the request URI to find our topic ID and various options...
+
+			if (isset($_GET['topic']))
+			{
+				// Skip!
+			}
+			// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
+			elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))
+			{
+				$_GET['mois'] = str_replace('/', '', $m[1]);
+				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
+				$_GET['pretty'] = 1;
+			}
+			// URL: /1234/topic/new/?something or /1234/topic/2/?something (get topic ID 1234, named 'topic')
+			elseif (preg_match('~^/(\d+)/(?:[^/]+)/(\d+|msg\d+|from\d+|new)?~u', $ru, $m))
+			{
+				$_GET['topic'] = $m[1];
+				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
+				$_GET['pretty'] = 1;
+			}
+			// URL: /cat/hello/?something or /tag/me/p15/ (get all topics from category 'hello', or page 2 of all topics with tag 'me')
+			elseif (preg_match('~^/(cat|tag)/([^/]+)(?:/p(\d+))?~u', $ru, $m))
+			{
+				$_GET[$m[1]] = $m[2];
+				$_GET['start'] = empty($m[3]) ? 0 : $m[3];
+				$_GET['pretty'] = 1;
+			}
+			// URL: /p15/ (board index, page 2)
+			elseif (preg_match('~^/p(\d+)~', $ru, $m))
+			{
+				$_GET[$m[1]] = $m[2];
+				$_GET['start'] = empty($m[3]) ? 0 : $m[3];
+				$_GET['pretty'] = 1;
+			}
+			elseif ($hh == 'my')
+			{
+				if (empty($_GET['user']))
+					unset($_GET['user']);
+				else
+					$_GET['user'] = rtrim($_GET['user'], '/');
+			}
+			elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
+			{
+			}
+			elseif ($hh != 'noisen.com') // !!! WIP
+			{
+				$_GET['pretty'] = '';
+				$_GET['board'] = $_SERVER['HTTP_HOST'];
+			}
+		}
 		$smcFunc['db_free_result']($query);
-
-		// The happy place where boards are identified.
-		$_GET['board'] = $board = $pretty_board['id_board'];
-		$_SERVER['HTTP_HOST'] = $pretty_board['url'];
-		$_SERVER['REQUEST_URI'] = $ru = str_replace($pretty_board['url'], '', $pretty_request);
-
-		// We will now be analyzing the request URI to find our topic ID and various options...
-
-		if (isset($_GET['topic']))
-		{
-			// Skip!
-		}
-		// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
-		elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))
-		{
-			$_GET['mois'] = str_replace('/', '', $m[1]);
-			$_GET['start'] = empty($m[2]) ? 0 : $m[2];
-			$_GET['pretty'] = 1;
-		}
-		// URL: /1234/topic/new/?something or /1234/topic/2/?something (get topic ID 1234, named 'topic')
-		elseif (preg_match('~^/(\d+)/(?:[^/]+)/(\d+|msg\d+|from\d+|new)?~u', $ru, $m))
-		{
-			$_GET['topic'] = $m[1];
-			$_GET['start'] = empty($m[2]) ? 0 : $m[2];
-			$_GET['pretty'] = 1;
-		}
-		// URL: /cat/hello/?something or /tag/me/p15/ (get all topics from category 'hello', or page 2 of all topics with tag 'me')
-		elseif (preg_match('~^/(cat|tag)/([^/]+)(?:/p(\d+))?~u', $ru, $m))
-		{
-			$_GET[$m[1]] = $m[2];
-			$_GET['start'] = empty($m[3]) ? 0 : $m[3];
-			$_GET['pretty'] = 1;
-		}
-		// URL: /p15/ (board index, page 2)
-		elseif (preg_match('~^/p(\d+)~', $ru, $m))
-		{
-			$_GET[$m[1]] = $m[2];
-			$_GET['start'] = empty($m[3]) ? 0 : $m[3];
-			$_GET['pretty'] = 1;
-		}
-		elseif ($hh == 'my')
-		{
-			if (empty($_GET['user']))
-				unset($_GET['user']);
-			else
-				$_GET['user'] = rtrim($_GET['user'], '/');
-		}
-		elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
-		{
-		}
-		elseif ($hh != 'noisen.com') // !!! WIP
-		{
-			$_GET['pretty'] = '';
-			$_GET['board'] = $_SERVER['HTTP_HOST'];
-		}
 	}
 
 	// If magic quotes are on, we have some work to do...
@@ -684,7 +686,7 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
 
 	// Rewrite the buffer with Pretty URLs!
-	if (!empty($modSettings['pretty_enable']) && !empty($modSettings['pretty_enable_filters']))
+	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
 	{
 		if (!empty($db_show_debug) && !$second_time_debugging && !WIRELESS && substr($buffer, 0, 5) != '<?xml')
 		{

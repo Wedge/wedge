@@ -2072,7 +2072,7 @@ function template_pretty_urls()
 	if (!empty($context['reset_output']))
 		echo '
 	<div class="information">
-		' . $context['reset_output'] . '
+		', $context['reset_output'], '
 	</div>';
 
 	echo '
