@@ -145,9 +145,20 @@ if (isset($_GET['openid_restore_post']) && !empty($_SESSION['openid']['saved_dat
 }
 
 // What function shall we execute? (done like this for memory's sake.)
-call_user_func(smf_main());
+$function = smf_main();
 
-// Call obExit specially; we're coming from the main area ;).
+// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
+if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'jsoption', 'requestmembers', '.xml', 'xmlhttp')) || !defined('WEDGE_NO_LOG'))
+{
+	// Log this user as online.
+	writeLog();
+
+	// Track forum statistics and hits...?
+	if (!empty($modSettings['hitStats']))
+		trackStats(array('hits' => '+'));
+}
+// After all this time... after everything we saw, after everything we lost... I have only one thing to say to you... bye!
+$function();
 obExit(null, null, true);
 
 // Since we're not leaving obExit the special route, we need to make sure we update the error count.
@@ -214,17 +225,6 @@ function smf_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('dlattach', 'findmember', 'jseditor', 'jsoption', 'requestmembers', 'smstats', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile')))
-	{
-		// Log this user as online.
-		writeLog();
-
-		// Track forum statistics and hits...?
-		if (!empty($modSettings['hitStats']))
-			trackStats(array('hits' => '+'));
-	}
-
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
@@ -272,7 +272,7 @@ function smf_main()
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = array(
 		'activate' => array('Activate.php', 'Activate'),
-		'admin' => array('Admin.php', 'AdminMain'),
+		'admin' => array('Admin.php', 'Admin'),
 		'announce' => array('Announce.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
@@ -282,7 +282,7 @@ function smf_main()
 		'credits' => array('Credits.php', 'Credits'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'display' => array('Display.php', 'Display'),
-		'dlattach' => array('Download.php', 'Download'),
+		'dlattach' => array('Dlattach.php', 'Dlattach'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
 		'editpoll2' => array('Poll.php', 'EditPoll2'),
 		'emailuser' => array('SendTopic.php', 'EmailUser'),
@@ -291,7 +291,7 @@ function smf_main()
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
 		'jseditor' => array('Class-Editor.php', array('wedgeEditor', 'EditorCallback')),
-		'jsmodify' => array('Post.php', 'JavaScriptModify'),
+		'jsmodify' => array('JSModify.php', 'JSModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),
 		'lock' => array('LockTopic.php', 'LockTopic'),
 		'lockvoting' => array('Poll.php', 'LockVoting'),
@@ -340,7 +340,6 @@ function smf_main()
 		'unread' => array('Unread.php', 'Unread'),
 		'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
 		'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
-		'viewprofile' => array('Profile.php', 'ModifyProfile'),
 		'vote' => array('Poll.php', 'Vote'),
 		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
 		'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),

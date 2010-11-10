@@ -25,6 +25,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /*	Deals with showing the CAPTCHA.
 
 	void VerificationCode()

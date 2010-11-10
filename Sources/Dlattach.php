@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* Download.php                                                                    *
+* Dlattach.php                                                                    *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -25,6 +25,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /*	This file controls attachment display.  It
 	does so with the following function:
 
@@ -40,7 +42,7 @@ if (!defined('SMF'))
 */
 
 // Download an attachment.
-function Download()
+function Dlattach()
 {
 	global $txt, $modSettings, $user_info, $scripturl, $context, $sourcedir, $topic, $smcFunc;
 

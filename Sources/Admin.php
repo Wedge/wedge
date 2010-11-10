@@ -27,7 +27,7 @@ if (!defined('SMF'))
 
 /*	This file, unpredictable as this might be, handles basic administration.
 
-	void AdminMain()
+	void Admin()
 		- initialises all the basic context required for the admin center.
 		- passes execution onto the relevant admin section.
 		- if the passed section is not found it shows the admin home page.
@@ -56,7 +56,7 @@ if (!defined('SMF'))
 */
 
 // The main admin handling function.
-function AdminMain()
+function Admin()
 {
 	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $sourcedir, $options, $smcFunc;
 

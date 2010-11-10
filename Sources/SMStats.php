@@ -25,6 +25,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /*	Getting stats for simplemachines.org's periodic requests.
 
 	void SMStats()

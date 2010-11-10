@@ -25,6 +25,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /*	This file deals with outputting cached files from home.
 
 	void ViewSMFile()

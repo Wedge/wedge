@@ -25,6 +25,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /*	This file is concerned with viewing queries, and is used for debugging.
 	It contains only one function:
 
