@@ -273,7 +273,7 @@ function setPassword2()
 	// User validated.  Update the database!
 	updateMemberData($_POST['u'], array('validation_code' => '', 'passwd' => sha1(strtolower($username) . $_POST['passwrd1'])));
 
-	call_integration_hook('integrate_reset_pass', array($username, $username, $_POST['passwrd1']));
+	call_hook('reset_pass', array($username, $username, $_POST['passwrd1']));
 
 	loadTemplate('Login');
 	$context += array(
@@ -336,7 +336,7 @@ function SecretAnswer2()
 
 	checkSession();
 
-	// Hacker?  How did you get this far without an email or username?
+	// Hacker? How did you get this far without an email or username?
 	if (empty($_REQUEST['uid']))
 		fatal_lang_error('username_no_exist', false);
 
@@ -392,7 +392,7 @@ function SecretAnswer2()
 	// Alright, so long as 'yer sure.
 	updateMemberData($row['id_member'], array('passwd' => sha1(strtolower($row['member_name']) . $_POST['passwrd1'])));
 
-	call_integration_hook('integrate_reset_pass', array($row['member_name'], $row['member_name'], $_POST['passwrd1']));
+	call_hook('reset_pass', array($row['member_name'], $row['member_name'], $_POST['passwrd1']));
 
 	// Tell them it went fine.
 	loadTemplate('Login');

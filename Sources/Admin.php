@@ -466,7 +466,7 @@ function Admin()
 	);
 
 	// Let them modify admin areas easily.
-	call_integration_hook('integrate_admin_areas', array(&$admin_areas));
+	call_hook('admin_areas', array(&$admin_areas));
 
 	// Make sure the administrator has a valid session...
 	validateSession();

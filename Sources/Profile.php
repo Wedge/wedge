@@ -340,8 +340,8 @@ function ModifyProfile($post_errors = array())
 		),
 	);
 
-	// Let them modify profile areas easily.
-	call_integration_hook('integrate_profile_areas', array(&$profile_areas));
+	// Let modders modify profile areas easily.
+	call_hook('profile_areas', array(&$profile_areas));
 
 	// Do some cleaning ready for the menu function.
 	$context['password_areas'] = array();
@@ -518,8 +518,8 @@ function ModifyProfile($post_errors = array())
 				// Since the password got modified due to all the $_POST cleaning, let's undo it so we can get the correct password
 				$_POST['oldpasswrd'] = un_htmlspecialchars($_POST['oldpasswrd']);
 
-				// Does the integration want to check passwords?
-				$good_password = in_array(true, call_integration_hook('integrate_verify_password', array($cur_profile['member_name'], $_POST['oldpasswrd'], false)), true);
+				// Does a hook want to check passwords?
+				$good_password = in_array(true, call_hook('verify_password', array($cur_profile['member_name'], $_POST['oldpasswrd'], false)), true);
 
 				// Bad password!!!
 				if (!$good_password && $user_info['passwd'] != sha1(strtolower($cur_profile['member_name']) . $_POST['oldpasswrd']))
@@ -580,9 +580,9 @@ function ModifyProfile($post_errors = array())
 		}
 		elseif (!empty($profile_vars))
 		{
-			// If we've changed the password, notify any integration that may be listening in.
+			// If we've changed the password, notify any hook that may be listening in.
 			if (isset($profile_vars['passwd']))
-				call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']));
+				call_hook('reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']));
 
 			updateMemberData($memID, $profile_vars);
 

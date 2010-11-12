@@ -250,8 +250,8 @@ function error_handler($error_level, $error_string, $file, $line)
 
 	$message = log_error($error_level . ': ' . $error_string, $error_type, $file, $line);
 
-	// Let's give integrations a chance to ouput a bit differently
-	call_integration_hook('integrate_output_error', array($message, $error_type, $error_level, $file, $line));
+	// Let's give integrations a chance to output a bit differently
+	call_hook('output_error', array(&$message, $error_type, $error_level, $file, $line));
 
 	// Dying on these errors only causes MORE problems (blank pages!)
 	if ($file == 'Unknown')

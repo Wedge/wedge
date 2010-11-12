@@ -301,10 +301,10 @@ function updateMemberData($members, $data)
 		$parameters['member'] = $members;
 	}
 
-	if (!empty($modSettings['integrate_change_member_data']))
+	if (!empty($modSettings['hooks']['change_member_data']))
 	{
 		// Only a few member variables are really interesting for integration.
-		$integration_vars = array(
+		$hook_vars = array(
 			'member_name',
 			'real_name',
 			'email_address',
@@ -320,9 +320,9 @@ function updateMemberData($members, $data)
 			'avatar',
 			'lngfile',
 		);
-		$vars_to_integrate = array_intersect($integration_vars, array_keys($data));
+		$vars_to_integrate = array_intersect($hook_vars, array_keys($data));
 
-		// Only proceed if there are any variables left to call the integration function.
+		// Only proceed if there are any variables left to call the hook.
 		if (count($vars_to_integrate) != 0)
 		{
 			// Fetch a list of member_names if necessary
@@ -344,7 +344,7 @@ function updateMemberData($members, $data)
 
 			if (!empty($member_names))
 				foreach ($vars_to_integrate as $var)
-					call_integration_hook('integrate_change_member_data', array($member_names, $var, $data[$var]));
+					call_hook('change_member_data', array($member_names, $var, &$data[$var]));
 		}
 	}
 
@@ -1587,8 +1587,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			),
 		);
 
-		// Let mods add new BBC without hassle.
-		call_integration_hook('integrate_bbc_codes', array(&$codes));
+		// Let modders add new BBC without hassle.
+		call_hook('bbc_codes', array(&$codes));
 
 		// This is mainly for the bbc manager, so it's easy to add tags above. Custom BBC should be added above this line.
 		if ($message === false)
@@ -2827,7 +2827,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	}
 
 	// Maybe integrations want to change where we are heading?
-	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh));
+	call_hook('redirect', array(&$setLocation, &$refresh));
 
 	if ($permanent)
 		header('HTTP/1.1 301 Moved Permanently');
@@ -2906,8 +2906,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		else
 			$buffers = array();
 
-		if (isset($modSettings['integrate_buffer']))
-			$buffers = array_merge(explode(',', $modSettings['integrate_buffer']), $buffers);
+		if (isset($modSettings['hooks']['buffer']))
+			$buffers = array_merge($modSettings['hooks']['buffer'], $buffers);
 
 		if (!empty($buffers))
 			foreach ($buffers as $buffer_function)
@@ -2966,7 +2966,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 
 	// Hand off the output to the portal, etc. we're integrated with.
-	call_integration_hook('integrate_exit', array($do_footer && !WIRELESS));
+	call_hook('exit', array($do_footer && !WIRELESS));
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index || WIRELESS)
@@ -4536,7 +4536,8 @@ function setupMenuContext()
 	}
 
 	// Allow editing menu buttons easily.
-	call_integration_hook('integrate_menu_buttons', array(&$menu_buttons));
+	// Use PHP's array_splice to add entries at a specific position.
+	call_hook('menu_buttons', array(&$menu_buttons));
 
 	$context['menu_buttons'] = $menu_buttons;
 
@@ -4622,26 +4623,25 @@ function match_cidr($ip, $cidr_block)
 /**
  * Calls a given integration hook at the related point in the code.
  *
- * Each of the integration hooks is a parameter within $modSettings, which states a list of functions to call at relevant points in the code, such as integrate_login which is run during login (to facilitate login into an integrated application)
+ * Each of the hooks is an array of functions within $modSettings['hooks'], to be called at relevant points in the code, such as $modSettings['hooks']['login'] which is run during login (to facilitate login into an integrated application.)
  *
- * The contents of the $modSettings value is a comma separated list of function names to be called at the relevant point. These are either procedural functions or static class methods (classname::method).
+ * The contents of the $modSettings['hooks'] value is a comma separated list of function names to be called at the relevant point. These are either procedural functions or static class methods (classname::method).
  *
- * @param string $hook The name of the hook as given in $modSettings, e.g. integrate_login, integrate_buffer
+ * @param string $hook The name of the hook as given in $modSettings, e.g. login, buffer, reset_pass
  * @param array $parameters Parameters to be passed to the hooked functions. The list of parameters each method is exposed to is dependent on the calling code (e.g. the hook for 'new topic is posted' passes different parameters to the 'final buffer' hook), and parameters passed by reference will be passed to hook functions as such.
  * @return array An array of results, one element per hooked function. This will be solely dependent on the hooked function.
  */
-function call_integration_hook($hook, $parameters = array())
+function call_hook($hook, $parameters = array())
 {
 	global $modSettings;
 
-	$results = array();
-	if (empty($modSettings[$hook]))
-		return $results;
+	if (empty($modSettings['hooks'][$hook]))
+		return array();
 
-	$functions = explode(',', $modSettings[$hook]);
+	$results = array();
 
 	// Loop through each function.
-	foreach ($functions as $function)
+	foreach ($modSettings['hooks'][$hook] as $function)
 	{
 		$function = trim($function);
 		$call = strpos($function, '::') !== false ? explode('::', $function) : $function;
@@ -4663,23 +4663,24 @@ function call_integration_hook($hook, $parameters = array())
  * @param string $function The name of the function whose name should be added to the named hook.
  * @param bool $permanent Whether the named function will be added to the hook registry permanently (default) or simply for the current page load only.
  */
-function add_integration_function($hook, $function, $permanent = true)
+function add_hook($hook, $function, $permanent = true)
 {
 	global $modSettings;
 
-	$functions = empty($modSettings[$hook]) ? array() : explode(',', $modSettings[$hook]);
+	$functions = empty($modSettings['hooks'][$hook]) ? array() : (array) $modSettings['hooks'][$hook];
 
 	// Do nothing, if it's already there.
 	if (in_array($function, $functions))
 		return;
 
-	$functions[] = $function;
-
 	// Add it!
-	if ($permanent)
-		updateSettings(array($hook => implode(',', $functions)));
-	else
-		$modSettings[$hook] = implode(',', $functions);
+	$modSettings['hooks'][$hook] = array_merge($functions, $function);
+	if (!$permanent)
+		return;
+
+	$hooks = $modSettings['hooks'];
+	updateSettings(array('hooks' => serialize($hooks)));
+	$modSettings['hooks'] = $hooks;
 }
 
 /**
@@ -4691,20 +4692,22 @@ function add_integration_function($hook, $function, $permanent = true)
  * @param string $function The name of the function whose name should be removed from the named hook.
  * @todo Modify the function to return true on success and false on fail.
  */
-function remove_integration_function($hook, $function)
+function remove_hook($hook, $function)
 {
 	global $modSettings;
 
-	$functions = empty($modSettings[$hook]) ? array() : explode(',', $modSettings[$hook]);
+	$functions = empty($modSettings['hooks'][$hook]) ? array() : (array) $modSettings['hooks'][$hook];
 
 	// You can only remove it's available.
 	if (!in_array($function, $functions))
 		return;
 
-	$functions = array_diff($functions, array($function));
+	$modSettings['hooks'][$hook] = array_diff($functions, array($function));
 
 	// Now officially, it's no longer a part of our family...
-	updateSettings(array($hook => implode(',', $functions)));
+	$hooks = $modSettings['hooks'];
+	updateSettings(array('hooks' => serialize($hooks)));
+	$modSettings['hooks'] = $hooks;
 }
 
 ?>

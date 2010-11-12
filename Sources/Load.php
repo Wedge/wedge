@@ -41,8 +41,8 @@ if (!defined('SMF'))
  * - Set the timezone (for PHP 5.1+)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
- * - Check if SMF_INTEGRATION_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
- * - Load any files specified in integrate_pre_include and run any functions specified in integrate_pre_load.
+ * - Check if SMF_HOOK_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
+ * - Load any files specified in the file preloader ($modSettings['hooks']['pre_include']), and run any functions specified in the pre_load hook.
  */
 function reloadSettings()
 {
@@ -78,6 +78,7 @@ function reloadSettings()
 			$modSettings['defaultMaxMessages'] = 15;
 		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
 			$modSettings['defaultMaxMembers'] = 30;
+		$modSettings['hooks'] = empty($modSettings['hooks']) ? array() : unserialize($modSettings['hooks']);
 
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('modSettings', $modSettings, 90);
@@ -188,28 +189,19 @@ function reloadSettings()
 	// Is post moderation alive and well?
 	$modSettings['postmod_active'] = isset($modSettings['admin_features']) ? in_array('pm', explode(',', $modSettings['admin_features'])) : true;
 
-	// Integration is cool.
-	if (defined('SMF_INTEGRATION_SETTINGS'))
-	{
-		$integration_settings = unserialize(SMF_INTEGRATION_SETTINGS);
-		foreach ($integration_settings as $hook => $function)
-			add_integration_function($hook, $function, false);
-	}
+	// Gotta love hooks. What? I said hooks, not hookers.
+	if (defined('WEDGE_HOOK_SETTINGS'))
+		foreach (unserialize(WEDGE_HOOK_SETTINGS) as $hook => $function)
+			add_hook($hook, $function, false);
 
-	// Any files to pre include?
-	if (!empty($modSettings['integrate_pre_include']))
-	{
-		$pre_includes = explode(',', $modSettings['integrate_pre_include']);
-		foreach ($pre_includes as $include)
-		{
-			$include = strtr(trim($include), array('$boarddir' => $boarddir));
-			if (file_exists($include))
+	// Any files to pre-include?
+	if (!empty($modSettings['hooks']['pre_include']))
+		foreach ($modSettings['hooks']['pre_include'] as $include)
+			if (file_exists($include = strtr(trim($include), array('$boarddir' => $boarddir))))
 				require_once($include);
-		}
-	}
 
 	// Call pre load integration functions.
-	call_integration_hook('integrate_pre_load');
+	call_hook('pre_load');
 }
 
 /**
@@ -234,14 +226,14 @@ function loadUserSettings()
 	$id_member = 0;
 
 	// Check first the integration, then the cookie, and last the session.
-	if (count($integration_ids = call_integration_hook('integrate_verify_user')) > 0)
+	if (count($hook_ids = call_hook('verify_user')) > 0)
 	{
-		foreach ($integration_ids as $integration_id)
+		foreach ($hook_ids as $hook_id)
 		{
-			$integration_id = (int) $integration_id;
-			if ($integration_id > 0)
+			$hook_id = (int) $hook_id;
+			if ($hook_id > 0)
 			{
-				$id_member = $integration_id;
+				$id_member = $hook_id;
 				$already_verified = true;
 				break;
 			}
@@ -1368,9 +1360,8 @@ function detectBrowser()
 		$context['browser']['possibly_robot'] = false;
 }
 
-// Load a theme, by ID.
 /**
- * Load all the details of a theme.
+ * Load all the details of a theme, given its ID.
  *
  * - Identify the theme to be loaded, from parameter or an external source: theme parameter in the URL, previously theme parameter in the URL and now in session, the user's preference, a board specific theme, and lastly the forum's default theme.
  * - Validate that the supplied theme is a valid id and that permission to use such theme (e.g. admin allows users to choose own theme, etc) is available.
@@ -1819,8 +1810,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// Call load theme integration functions.
-	call_integration_hook('integrate_load_theme');
+	// Call load theme hook.
+	call_hook('load_theme');
 
 	// We are ready to go.
 	$context['theme_loaded'] = true;
@@ -1934,9 +1925,9 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 	}
 }
 
-// Load a language file.  Tries the current and default themes as well as the user and global languages.
 /**
  * Attempt to load a language file.
+ * Tries the current and default themes as well as the user and global languages.
  *
  * If full debugging is enabled, loads of language files will be logged too.
  *
@@ -2037,8 +2028,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	return $lang;
 }
 
-// Get all parent boards (requires first parent as parameter)
 /**
+ * Get all parent boards (requires first parent as parameter)
  * From a given board, iterate up through the board hierarchy to find all of the parents back to forum root.
  *
  * Upon iterating up through the board hierarchy, the board's URL, name, depth and list of moderators will be provided upon return.

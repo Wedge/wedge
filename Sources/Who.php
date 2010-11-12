@@ -354,13 +354,13 @@ function determineActions($urls, $preferred_prefix = false)
 			{
 				$data[$k] = $txt['who_index'];
 				// ...or maybe it's just integrated into another system...
-				if (count($integrate_actions = call_integration_hook('integrate_whos_online', array($actions))) > 0)
+				if (count($hook_actions = call_hook('whos_online', array($actions))) > 0)
 				{
-					foreach ($integrate_actions as $integrate_action)
+					foreach ($hook_actions as $hook_action)
 					{
-						if (!empty($integrate_action))
+						if (!empty($hook_action))
 						{
-							$data[$k] = $integrate_action;
+							$data[$k] = $hook_action;
 							break;
 						}
 					}

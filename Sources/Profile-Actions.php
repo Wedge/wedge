@@ -61,7 +61,7 @@ function activateAccount($memID)
 		}
 
 		// Let the integrations know of the activation.
-		call_integration_hook('integrate_activate', array($user_profile[$memID]['member_name']));
+		call_hook('activate', array($user_profile[$memID]['member_name']));
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.
 		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 10 ? 11 : 1, 'validation_code' => ''));

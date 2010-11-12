@@ -1585,7 +1585,9 @@ class wedgeEditor
 		);
 
 		// Allow mods to modify BBC buttons.
-		call_integration_hook('integrate_bbc_buttons', array(&$context['bbc_tags']));
+		// Read the PHP docs on array_splice() to
+		// position a button in a specific place
+		call_hook('bbc_buttons', array(&$context['bbc_tags']));
 
 		// Show the toggle?
 		if (empty($modSettings['disable_wysiwyg']))

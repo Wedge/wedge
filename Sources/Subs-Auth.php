@@ -583,7 +583,7 @@ function resetPassword($memID, $username = null)
 	else
 		updateMemberData($memID, array('passwd' => $newPassword_sha1));
 
-	call_integration_hook('integrate_reset_pass', array($old_user, $user, $newPassword));
+	call_hook('reset_pass', array($old_user, $user, $newPassword));
 
 	$replacements = array(
 		'USERNAME' => $user,

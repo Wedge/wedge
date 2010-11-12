@@ -218,7 +218,7 @@ function Login2()
 	}
 
 	// Are we using any sort of integration to validate the login?
-	if (in_array('retry', call_integration_hook('integrate_validate_login', array($_REQUEST['user'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
+	if (in_array('retry', call_hook('validate_login', array($_REQUEST['user'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
 	{
 		$context['login_errors'] = array($txt['login_hash_error']);
 		$context['disable_login_hashing'] = true;
@@ -480,7 +480,7 @@ function DoLogin()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	// Call login integration functions.
-	call_integration_hook('integrate_login', array($user_settings['member_name'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime']));
+	call_hook('login', array($user_settings['member_name'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime']));
 
 	// Get ready to set the cookie...
 	$username = $user_settings['member_name'];
@@ -570,8 +570,8 @@ function Logout($internal = false, $redirect = true)
 	// Just ensure they aren't a guest!
 	if (!$user_info['is_guest'])
 	{
-		// Pass the logout information to integrations.
-		call_integration_hook('integrate_logout', array($user_settings['member_name']));
+		// Pass the logout information to hooks.
+		call_hook('logout', array($user_settings['member_name']));
 
 		// If you log out, you aren't online anymore :P.
 		$smcFunc['db_query']('', '

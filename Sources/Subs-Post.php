@@ -210,7 +210,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$headers .= 'X-Mailer: SMF' . $line_break;
 
 	// Pass this to the integration before we start modifying the output -- it'll make it easier later.
-	if (in_array(false, call_integration_hook('integrate_outgoing_email', array(&$subject, &$message, &$headers)), true))
+	if (in_array(false, call_hook('outgoing_email', array(&$subject, &$message, &$headers)), true))
 		return false;
 
 	// Save the original message...
@@ -431,7 +431,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	wedgeEditor::preparsecode($htmlmessage);
 
 	// Integrated PMs
-	call_integration_hook('integrate_personal_message', array($recipients, $from['username'], $subject, $message));
+	call_hook('personal_message', array(&$recipients, &$from['username'], &$subject, &$message));
 
 	// Get a list of usernames and convert them to IDs.
 	$usernames = array();
@@ -1311,7 +1311,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
 
 		// What if we want to export new topics out to a CMS?
-		call_integration_hook('integrate_create_topic', array($msgOptions, $topicOptions, $posterOptions));
+		call_hook('create_topic', array(&$msgOptions, &$topicOptions, &$posterOptions));
 	}
 	// The topic already exists, it only needs a little updating.
 	else

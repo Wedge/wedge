@@ -157,7 +157,7 @@ function Activate()
 	}
 
 	// Let the integration know that they've been activated!
-	call_integration_hook('integrate_activate', array($row['member_name']));
+	call_hook('activate', array($row['member_name']));
 
 	// Validation complete - update the database!
 	updateMemberData($row['id_member'], array('is_activated' => 1, 'validation_code' => ''));
