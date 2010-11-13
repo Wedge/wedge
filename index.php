@@ -33,7 +33,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'Wedge 1.0 Alpha';
+$forum_version = 'SMF 2.0 RC4 (Wedge 0.1)';
 
 // Get everything started up...
 define('SMF', 1);

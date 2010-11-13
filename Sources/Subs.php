@@ -466,7 +466,7 @@ function updateSettings($changeArray, $update = false, $debug = false)
 		// Don't bother if it's already like that ;).
 		if (isset($modSettings[$variable]) && $modSettings[$variable] == $value)
 			continue;
-		// If the variable isn't set, but would only be set to nothing'ness, then don't bother setting it.
+		// If the variable isn't set, but would only be set to nothingness, then don't bother setting it.
 		elseif (!isset($modSettings[$variable]) && empty($value))
 			continue;
 
@@ -4661,26 +4661,28 @@ function call_hook($hook, $parameters = array())
  *
  * @param string $hook The name of the hook that has zero or more functions attached, that the function will be added to.
  * @param string $function The name of the function whose name should be added to the named hook.
- * @param bool $permanent Whether the named function will be added to the hook registry permanently (default) or simply for the current page load only.
+ * @param bool $register Whether the named function will be added to the hook registry permanently (default), or simply for the current page load only.
  */
-function add_hook($hook, $function, $permanent = true)
+function add_hook($hook, $function, $register = true)
 {
 	global $modSettings;
 
-	$functions = empty($modSettings['hooks'][$hook]) ? array() : (array) $modSettings['hooks'][$hook];
-
-	// Do nothing, if it's already there.
-	if (in_array($function, $functions))
+	// Do nothing if it's already there, except if we're
+	// asking for registration and it isn't registered yet.
+	if ((!$register || in_array($function, $modSettings['registered_hooks'][$hook])) && ($in_hook = in_array($function, $modSettings['hooks'][$hook])))
 		return;
 
 	// Add it!
-	$modSettings['hooks'][$hook] = array_merge($functions, $function);
-	if (!$permanent)
+	if (!$in_hook)
+		$modSettings['hooks'][$hook][] = $function;
+	if (!$register)
 		return;
 
-	$hooks = $modSettings['hooks'];
-	updateSettings(array('hooks' => serialize($hooks)));
-	$modSettings['hooks'] = $hooks;
+	// Add to the permanent registered list.
+	$modSettings['registered_hooks'][$hook][] = $function;
+	$hooks = $modSettings['registered_hooks'];
+	updateSettings(array('registered_hooks' => serialize($hooks)));
+	$modSettings['registered_hooks'] = $hooks;
 }
 
 /**
@@ -4696,18 +4698,20 @@ function remove_hook($hook, $function)
 {
 	global $modSettings;
 
-	$functions = empty($modSettings['hooks'][$hook]) ? array() : (array) $modSettings['hooks'][$hook];
-
 	// You can only remove it's available.
-	if (!in_array($function, $functions))
+	if (empty($modSettings['hooks'][$hook]) || !in_array($function, $modSettings['hooks'][$hook]))
 		return;
 
-	$modSettings['hooks'][$hook] = array_diff($functions, array($function));
+	$modSettings['hooks'][$hook] = array_diff($modSettings['hooks'][$hook], (array) $function);
 
-	// Now officially, it's no longer a part of our family...
-	$hooks = $modSettings['hooks'];
-	updateSettings(array('hooks' => serialize($hooks)));
-	$modSettings['hooks'] = $hooks;
+	if (empty($modSettings['registered_hooks'][$hook]) || !in_array($function, $modSettings['registered_hooks'][$hook]))
+		return;
+
+	// Also remove it from the registered hooks.
+	$modSettings['registered_hooks'][$hook] = array_diff($modSettings['registered_hooks'][$hook], (array) $function);
+	$hooks = $modSettings['registered_hooks'];
+	updateSettings(array('registered_hooks' => serialize($hooks)));
+	$modSettings['registered_hooks'] = $hooks;
 }
 
 ?>

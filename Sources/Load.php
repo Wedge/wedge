@@ -78,7 +78,8 @@ function reloadSettings()
 			$modSettings['defaultMaxMessages'] = 15;
 		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
 			$modSettings['defaultMaxMembers'] = 30;
-		$modSettings['hooks'] = empty($modSettings['hooks']) ? array() : unserialize($modSettings['hooks']);
+		$modSettings['registered_hooks'] = empty($modSettings['registered_hooks']) ? array() : unserialize($modSettings['registered_hooks']);
+		$modSettings['hooks'] = $modSettings['registered_hooks'];
 
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('modSettings', $modSettings, 90);

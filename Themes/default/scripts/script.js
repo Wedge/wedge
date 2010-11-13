@@ -122,7 +122,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 	});
 }
 
-// Simulate PHP's strtolower (in SOME cases PHP uses ISO-8859-1 case folding).
+// Simulate PHP's strtolower (in SOME cases, PHP uses ISO-8859-1 case folding.)
 String.prototype.php_strtolower = function ()
 {
 	return typeof(smf_iso_case_folding) == 'boolean' && smf_iso_case_folding == true ? this.php_strtr(
@@ -170,11 +170,12 @@ String.prototype.easyReplace = function (oReplacements)
 	return sResult;
 }
 
+var helpFrame = null;
 
 // Open a new window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
-	var desktopURL = typeof(from) == 'object' && from.href ? from.href : from, addToEnd = '';
+	var desktopURL = typeof(from) == 'object' && from.href ? from.href : from;
 	if ((alternateWidth && self.screen.availWidth * 0.8 < alternateWidth) || (alternateHeight && self.screen.availHeight * 0.8 < alternateHeight))
 	{
 		noScrollbars = false;
@@ -184,18 +185,34 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	else
 		noScrollbars = typeof(noScrollbars) == 'boolean' && noScrollbars == true;
 
-	if (typeof(from) == 'object')
-	{
-		// !!! This is kinda pointless... Safari doesn't play nice here, and basically all browsers handle this differently. Do an iframe instead!
-		var aPos = smf_itemPos(from), hOrig = document.documentElement.scrollTop ? document.documentElement : document.body,
-			hScreenX = window.screenX ? window.screenX : window.screenLeft, hScreenY = window.screenY ? window.screenY : window.screenTop;
-		aPos[0] += hScreenX - hOrig.scrollLeft;
-		aPos[1] += hScreenY - hOrig.scrollTop;
-		addToEnd = ',left=' + aPos[0] + ',top=' + aPos[1];
-	}
-	window.open(desktopURL, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no' + addToEnd);
+	var aPos = typeof(from) == 'object' ? smf_itemPos(from) : [10, 10];
 
-	// Return false so the click won't follow the link ;).
+	if (helpFrame != null)
+	{
+		var previousTarget = helpFrame.src;
+		document.body.removeChild(helpFrame);
+		helpFrame = null;
+		if (previousTarget == desktopURL)
+			return false;
+	}
+
+	helpFrame = document.createElement('iframe');
+	helpFrame.src = desktopURL;
+	helpFrame.id = 'helpFrame';
+	with (helpFrame.style)
+	{
+		if (noScrollbars)
+			overflow = 'hidden';
+		position = 'absolute';
+		width = (alternateWidth ? alternateWidth : 480) + 'px';
+		height = (alternateHeight ? alternateHeight : 220) + 'px';
+		left = (aPos[0] + 15) + 'px';
+		top = (aPos[1] + 15) + 'px';
+		border = '1px solid #999';
+	}
+	document.body.appendChild(helpFrame);
+
+	// Return false so the click won't follow the link ;)
 	return false;
 }
 
@@ -877,15 +894,18 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	{
 		// Create a container div.
 		this.oContainerDiv = document.createElement('div');
-		this.oContainerDiv.id = 'iconList';
-		this.oContainerDiv.style.display = 'none';
-		this.oContainerDiv.style.cursor = 'pointer';
-		this.oContainerDiv.style.position = 'absolute';
-		this.oContainerDiv.style.width = oDiv.offsetWidth + 'px';
-		this.oContainerDiv.style.background = this.opt.sContainerBackground;
-		this.oContainerDiv.style.border = this.opt.sContainerBorder;
-		this.oContainerDiv.style.padding = '1px';
-		this.oContainerDiv.style.textAlign = 'center';
+		with (this.oContainerDiv)
+		{
+			id = 'iconList';
+			style.display = 'none';
+			style.cursor = 'pointer';
+			style.position = 'absolute';
+			style.width = oDiv.offsetWidth + 'px';
+			style.background = this.opt.sContainerBackground;
+			style.border = this.opt.sContainerBorder;
+			style.padding = '1px';
+			style.textAlign = 'center';
+		}
 		document.body.appendChild(this.oContainerDiv);
 
 		// Start to fetch its contents.
@@ -946,9 +966,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 	if (this.iCurMessageId != 0)
 	{
 		ajax_indicator(true);
-		this.tmpMethod = getXMLDocument;
-		var oXMLDoc = this.tmpMethod(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
-		delete this.tmpMethod;
+		var oXMLDoc = getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
 		ajax_indicator(false);
 
 		var oMessage = oXMLDoc.responseXML.getElementsByTagName('smf')[0].getElementsByTagName('message')[0];
