@@ -3535,7 +3535,8 @@ function template_header()
 {
 	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir, $db_show_debug, $board_info;
 
-	setupThemeContext();
+	if (!isset($_REQUEST['xml']))
+		setupThemeContext();
 
 	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
 	if (empty($context['no_last_modified']))

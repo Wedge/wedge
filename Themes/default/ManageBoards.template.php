@@ -587,12 +587,16 @@ function wedge_show_stylings(&$theme, &$style, $level)
 {
 	global $context;
 
+	$last = count($style);
+	$current = 1;
 	foreach ($style as $sty)
 	{
+		$intro = '&nbsp;' . str_repeat('|&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9493;' : '&#9500;') . '&mdash; ';
 		echo '
-								<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == $sty['dir'] ? ' selected="selected"' : '', '>', str_repeat('&nbsp;', $level*2), $sty['name'], '</option>';
+								<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == $sty['dir'] ? ' selected="selected"' : '', '>', $intro, $sty['name'], '</option>';
 		if (!empty($sty['stylings']))
 			wedge_show_stylings($theme, $sty['stylings'], $level + 1);
+		$current++;
 	}
 }
 
