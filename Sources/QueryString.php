@@ -201,7 +201,7 @@ function cleanRequest()
 
 			if (isset($_GET['topic']))
 			{
-				// Skip!
+				// If we've got a topic ID, we can recover the board ID easily!
 			}
 			// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
 			elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))
@@ -240,12 +240,11 @@ function cleanRequest()
 			}
 			elseif ($hh == 'media' || $hh == 'admin' || $hh == 'pm')
 			{
+				// !!! WIP (supporting gallery, admin and pm areas.)
 			}
-			elseif ($hh != 'noisen.com') // !!! WIP
-			{
-				$_GET['pretty'] = '';
-				$_GET['board'] = $_SERVER['HTTP_HOST'];
-			}
+
+			// Plug-ins may want to play with their own URL system.
+			call_hook('determine_location', array($pretty_board));
 		}
 		$smcFunc['db_free_result']($query);
 	}

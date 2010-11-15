@@ -156,11 +156,6 @@ function Credits($in_admin = false)
 					'Unknown W. &quot;[Unknown]&quot; Brackets',
 				),
 			),
-			array(
-				'title' => $txt['credits_groups_orignal_pm'],
-				'members' => array(
-				),
-			),
 		),
 	);
 
@@ -181,15 +176,23 @@ function Credits($in_admin = false)
 
 	$context['copyrights'] = array(
 		'smf' => sprintf($forum_copyright, $forum_version),
-
-		/* Modification Authors:  You may add a copyright statement to this array for your mods.
-			Copyright statements should be in the form of a value only without a array key.  I.E.:
-				'Some Mod by Thantos &copy; 2010',
-				$txt['some_mod_copyright'],
-		*/
 		'mods' => array(
 		),
 	);
+
+	/*
+		To Add-on Authors:
+		You may add a copyright statement to this array for your add-ons.
+		Do NOT edit the file, it would be messy. Simply call an add_hook('place_credit', 'my_function')
+		where my_function will simply add your copyright to $context['copyrights']['mods'].
+		You may also add credits at the end of the $context['credits'] array, following the same structure.
+
+		Copyright statements should be in the form of a value only without a array key, i.e.:
+			'Some Mod by WedgeBox &copy; 2010',
+			$txt['some_mod_copyright'],
+	*/
+
+	call_hook('place_credit');
 
 	if (!$in_admin)
 	{
