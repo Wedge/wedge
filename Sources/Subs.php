@@ -3491,7 +3491,7 @@ function wedge_cache_css($filename, $css, $target, $gzip = false)
 		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', '}', "\t"), array("\n", "\n", '}', "}\n", ' '), $add);
 		$final .= $add;
 	}
-	$dest = $settings[$target . 'dir'] . '/css/cache';
+	$dest = $settings[$target . 'dir'] . '/cache';
 	if (!file_exists($dest))
 		mkdir($dest);
 	if ($gzip)
@@ -3515,8 +3515,7 @@ function wedge_fix_relative_css($matches)
 	while (strpos($fix, '../') !== false && strpos($fix, 'css/') === 0)
 		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
 	// At this point, we now have css/Styling/sprite.png or images/hello.png
-	// We just need to fix this to be accessed from css/cache/
-	return strpos($fix, 'css/') !== 0 ? 'url(../../' . $fix . ')' : 'url(../' . substr($fix, 4) . ')';
+	return 'url(../' . $fix . ')';
 }
 
 /**
@@ -3576,11 +3575,11 @@ function template_header()
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
-	$final_file = $settings[$target . 'dir'] . '/css/cache/' . $id . $ext;
+	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
 	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
 		$filetime = wedge_cache_css($id, $css, $target, $can_gzip);
 
-	$context['css'] = $settings[$target . 'url'] . '/css/cache/' . $id . $ext . '?' . $filetime;
+	$context['css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 

@@ -593,7 +593,7 @@ function wedge_show_stylings(&$theme, &$style, $level)
 	{
 		$intro = '&nbsp;' . str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
 		echo '
-								<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == $sty['dir'] ? ' selected="selected"' : '', '>', $intro, $sty['name'], '</option>';
+								<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == $sty['dir'] ? ' selected="selected"' : '', '>', $intro, $sty['name'], '&nbsp;</option>';
 		if (!empty($sty['stylings']))
 			wedge_show_stylings($theme, $sty['stylings'], $level + 1);
 		$current++;
