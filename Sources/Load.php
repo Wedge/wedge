@@ -1704,6 +1704,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$context['template_layers'] = array('html', 'body');
 	}
 
+	// Initialize our JS files to cache right before we run template_init().
+	$context['javascript_files'] = array('scripts/script.js');
+
 	// Initialize the theme
 	loadSubTemplate('init', 'ignore');
 
@@ -1834,13 +1837,7 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 
 	// Do any style sheets first, cause we're easy with those.
 	if (!empty($style_sheets))
-	{
-		if (!is_array($style_sheets))
-			$style_sheets = (array) $style_sheets;
-
-		foreach ($style_sheets as $sheet)
-			$context['css_generic_files'][] = $sheet;
-	}
+		wedge_add_css($style_sheets);
 
 	// No template to load?
 	if ($template_name === false)

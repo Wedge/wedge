@@ -3469,11 +3469,44 @@ function setupThemeContext($forceload = false)
 }
 
 /**
+ * Add a generic CSS file to the list of files loaded on this page, in the form of "admin" (no folder, no extension.)
+ *
+ * @param array $style_sheets List of CSS files to add to $context['css_generic_files']
+ */
+function wedge_add_css($style_sheets)
+{
+	global $context;
+
+	if (!is_array($style_sheets))
+		$style_sheets = (array) $style_sheets;
+
+	foreach ($style_sheets as $sheet)
+		$context['css_generic_files'][] = $sheet;
+}
+
+/**
+ * Add a Javascript file to the list of files loaded on this page, in the form of "scripts/script.js".
+ *
+ * @param array $scripts List of JS file paths to add to $context['javascript_files']
+ */
+function wedge_add_js($scripts)
+{
+	global $context;
+
+	if (!is_array($scripts))
+		$scripts = (array) $scripts;
+
+	foreach ($scripts as $jscript)
+		$context['javascript_files'][] = $sheet;
+}
+
+/**
  * Create a compact CSS file that concatenates and compresses a list of existing CSS files, also fixing relative paths.
  *
  * @param string $filename Path of the file to create
  * @param array $css List of all CSS files to concatenate
  * @param string $target Determine where we're saving the file: default theme, or custom theme?
+ * @param bool $gzip Should we gzip the resulting file?
  * @return int Returns the current timestamp, for use in caching
  */
 function wedge_cache_css($filename, $css, $target, $gzip = false)
@@ -3486,7 +3519,7 @@ function wedge_cache_css($filename, $css, $target, $gzip = false)
 	{
 		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
 		$add = file_get_contents($file);
-		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([:;,{}\s])\s*~'), array('', '$1'), $add);
+		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}\s])\s*~'), array('', '$1'), $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', '}', "\t"), array("\n", "\n", '}', "}\n", ' '), $add);
 		$final .= $add;
@@ -3497,6 +3530,52 @@ function wedge_cache_css($filename, $css, $target, $gzip = false)
 	if ($gzip)
 		$final = gzencode($final, 9);
 	file_put_contents($dest . '/' . $filename . '.css' . ($gzip ? '.gz' : ''), $final);
+	return time();
+}
+
+/**
+ * Create a compact JS file that concatenates and compresses a list of existing JS files.
+ *
+ * @param string $filename Path of the file to create
+ * @param array $js List of all JS files to concatenate
+ * @param string $target Determine where we're saving the file: default theme, or custom theme?
+ * @param bool $gzip Should we gzip the resulting file?
+ * @return int Returns the current timestamp, for use in caching
+ */
+function wedge_cache_js($filename, $js, $target, $gzip = false)
+{
+	global $settings, $modSettings, $wedge_base_dir, $sourcedir, $wedge_quotes;
+
+	$final = '';
+	$dir = $settings[$target . 'dir'] . '/';
+
+	// Delete all duplicates.
+	$js = array_flip(array_unique(array_flip($js)));
+	foreach ($js as $file)
+		$final .= file_get_contents($dir . $file);
+	$tricky_one = '~(?<!\\\\)(?:replace\(.*?(?<!\\\\)\)|\'.*?(?<!\\\\)\'|".*?(?<!\\\\)"|/\*.*?\*/|//.*?(?=[\r\n]))~s';
+	preg_match_all($tricky_one, $final, $wedge_quotes);
+	$final = preg_replace($tricky_one, '{wedge_quotes}', $final);
+//	$final = preg_replace('~\s*([,;:{\[\]<>\(\)|&=!+-])\s*~', '$1', $final);
+//	$final = str_replace(array("\r", "\t"), array("\n", ' '), $final);
+//	$final = preg_replace(array('~ +~', "~\n+ *~"), array(' ', "\n"), $final);
+	$final = preg_replace_callback('~{wedge_quotes}~', 'wedge_restore_quotes', $final);
+	$final = preg_replace("~\n+ *~", "\n", $final);
+
+/*	require_once($sourcedir . '/Class-Minify.php');
+
+	// Call the minify process. If we're saving in gzip, best have the script
+	// unpacked. Otherwise, use the compression mechanism.
+	$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
+	$final = $packer->pack(); */
+
+	$dest = $settings[$target . 'dir'] . '/cache';
+	if (!file_exists($dest))
+		mkdir($dest);
+	if ($gzip)
+		$final = gzencode($final, 9);
+	file_put_contents($dest . '/' . $filename . '.js' . ($gzip ? '.gz' : ''), $final);
+
 	return time();
 }
 
@@ -3516,6 +3595,22 @@ function wedge_fix_relative_css($matches)
 		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
 	// At this point, we now have css/Styling/sprite.png or images/hello.png
 	return 'url(../' . $fix . ')';
+}
+
+/**
+ * Restore protected quotes in strings, and remove comments in the process.
+ *
+ * @param string $match A portion to restore
+ * @return string Restore contents
+ */
+function wedge_restore_quotes($match)
+{
+	global $wedge_quotes;
+	static $in_pos = 0;
+
+	if ($wedge_quotes[0][$in_pos][0] == '/')
+		$wedge_quotes[0][$in_pos] = '';
+	return $wedge_quotes[0][$in_pos++];
 }
 
 /**
@@ -3555,7 +3650,7 @@ function template_header()
 	$latest_date = 0;
 	foreach ($context['css_folders'] as $folder)
 	{
-		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'default_theme_' : 'theme_';
+		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		foreach ($context['css_generic_files'] as $file)
 		{
 			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
@@ -3570,7 +3665,7 @@ function template_header()
 	}
 	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
 
-	$can_gzip = !empty($modSettings['enableCompressedCSS']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? '.css.gz' : '.css';
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
@@ -3579,7 +3674,31 @@ function template_header()
 	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
 		$filetime = wedge_cache_css($id, $css, $target, $can_gzip);
 
-	$context['css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
+	$context['cached_css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
+
+	// And now, mix JS files together!
+	$js = array();
+	$latest_date = 0;
+	foreach ($context['javascript_files'] as $file)
+	{
+		$target = file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
+		if (!$target)
+			continue;
+
+		// Unlike CSS files, we're requiring the ".js" extension
+		// to be used... Please don't look at me like that.
+		$add = $settings[$target . 'dir'] . '/' . $file;
+		$js[] = $add;
+		$latest_date = max($latest_date, filemtime($add));
+	}
+	$id = md5(implode(',', $context['javascript_files']));
+	$ext = $can_gzip ? '.js.gz' : '.js';
+
+	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
+	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
+		$filetime = wedge_cache_js($id, $context['javascript_files'], $target, $can_gzip);
+
+	$context['cached_js'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 

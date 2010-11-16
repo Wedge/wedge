@@ -31,6 +31,16 @@ function template_init()
 {
 	global $context, $settings, $options, $txt;
 
+	// Add the theme-specific Javascript files to our cache list.
+	if (!empty($context['javascript_files']))
+	{
+		$context['javascript_files'][] = 'scripts/theme.js';
+		if ($context['user']['is_guest'] && !empty($context['show_login_bar']))
+			$context['javascript_files'][] = 'scripts/sha1.js';
+		if ($context['browser']['is_ie6'])
+			$context['javascript_files'][] = 'scripts/pngfix.js';
+	}
+
 	/* Use images from default theme when using templates from the default theme?
 		if this is 'always', images from the default theme will be used.
 		if this is 'defaults', images from the default theme will only be used with default templates.
@@ -65,11 +75,12 @@ function template_html_above()
 	// Show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+<!-- Powered by Wedge, © WedgeBox 2010 - http://wedgeforum.com -->
 <head>';
 
 	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
 	echo '
-	<link rel="stylesheet" type="text/css" href="', $context['css'], '" />';
+	<link rel="stylesheet" type="text/css" href="', $context['cached_css'], '" />';
 
 	$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
 
@@ -81,27 +92,6 @@ function template_html_above()
 
 	echo '
 	<title>', $context['page_title_html_safe'], '</title>
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
-	<script type="text/javascript" src="', $settings['theme_url'], '/scripts/theme.js?rc3"></script>', $context['browser']['is_ie6'] ? '
-	<script type="text/javascript" src="' . $settings['theme_url'] . '/scripts/pngfix.js"></script>' : '', '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		var smf_theme_url = "', $settings['theme_url'], '";
-		var smf_default_theme_url = "', $settings['default_theme_url'], '";
-		var smf_images_url = "', $settings['images_url'], '";
-		var smf_scripturl = "', $scripturl, '";
-		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
-		var fPmPopup = function ()
-		{
-			if (confirm("' . $txt['show_personal_messages'] . '"))
-				window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
-		}
-		addLoadEvent(fPmPopup);' : '', '
-		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
-		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
-	// ]]></script>';
-
-	echo '
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
@@ -200,7 +190,6 @@ function template_body_above()
 	elseif (!empty($context['show_login_bar']))
 	{
 		echo '
-				<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 					<div class="info">', $txt['login_or_register'], '</div>
 					<input type="text" name="user" size="10" class="input_text" />
@@ -257,40 +246,7 @@ function template_body_above()
 	echo '
 			</div>
 		</div>
-		<br class="clear" />';
-
-	// Define the upper_section toggle in JavaScript.
-	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var oMainHeaderToggle = new smc_Toggle({
-				bToggleEnabled: true,
-				bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
-				aSwappableContainers: [
-					\'upper_section\'
-				],
-				aSwapImages: [
-					{
-						sId: \'upshrink\',
-						srcExpanded: smf_images_url + \'/upshrink.png\',
-						altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-						srcCollapsed: smf_images_url + \'/upshrink2.png\',
-						altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-					}
-				],
-				oThemeOptions: {
-					bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-					sOptionName: \'collapse_header\',
-					sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-					sSessionId: ', JavaScriptEscape($context['session_id']), '
-				},
-				oCookieOptions: {
-					bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-					sCookieName: \'upshrink\'
-				}
-			});
-		// ]]></script>';
-
-	echo '
+		<br class="clear" />
 	</div></div>';
 
 	echo '
@@ -342,6 +298,54 @@ function template_body_below()
 function template_html_below()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+
+	// Define the upper_section toggle in JavaScript.
+	echo '
+	<script type="text/javascript" src="', $context['cached_js'], '"></script>
+	<script type="text/javascript"><!-- // --><![CDATA[
+		var smf_theme_url = "', $settings['theme_url'], '";
+		var smf_default_theme_url = "', $settings['default_theme_url'], '";
+		var smf_images_url = "', $settings['images_url'], '";
+		var smf_scripturl = "', $scripturl, '";
+		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
+		var fPmPopup = function ()
+		{
+			if (confirm("' . $txt['show_personal_messages'] . '"))
+				window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
+		}
+		addLoadEvent(fPmPopup);' : '', '
+		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
+		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
+		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
+		initMenu(document.getElementById("main_menu"));
+
+		var oMainHeaderToggle = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
+			aSwappableContainers: [
+				\'upper_section\'
+			],
+			aSwapImages: [
+				{
+					sId: \'upshrink\',
+					srcExpanded: smf_images_url + \'/upshrink.png\',
+					altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
+					srcCollapsed: smf_images_url + \'/upshrink2.png\',
+					altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
+				}
+			],
+			oThemeOptions: {
+				bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
+				sOptionName: \'collapse_header\',
+				sSessionVar: ', JavaScriptEscape($context['session_var']), ',
+				sSessionId: ', JavaScriptEscape($context['session_id']), '
+			},
+			oCookieOptions: {
+				bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
+				sCookieName: \'upshrink\'
+			}
+		});
+	// ]]></script>';
 
 	// Output any postponed code. (Usually for Javascript added by mods.)
 	echo $context['footer'];
@@ -442,10 +446,7 @@ function template_menu()
 			</li>';
 	}
 	echo '
-		</ul></div>
-		<script type="text/javascript"><!-- // --><![CDATA[
-			initMenu(document.getElementById("main_menu"));
-		// ]]></script>';
+		</ul></div>';
 }
 
 // Generate a strip of buttons.

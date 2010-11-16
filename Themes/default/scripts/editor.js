@@ -693,7 +693,7 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 	}
 }
 
-smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
+smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 {
 	this.setFocus();
 
@@ -765,7 +765,7 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 }
 
 // Changing a select box?
-smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
+smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 {
 	this.setFocus();
 
@@ -1370,7 +1370,7 @@ smc_Editor.prototype.resizeOverIframe = function(oEvent)
 }
 
 // This resizes an editor.
-smc_Editor.prototype.resizeOverDocument = function (oEvent)
+smc_Editor.prototype.resizeOverDocument = function(oEvent)
 {
 	if ('event' in window)
 		oEvent = window.event;
@@ -1389,7 +1389,7 @@ smc_Editor.prototype.resizeOverDocument = function (oEvent)
 	return false;
 }
 
-smc_Editor.prototype.endResize = function (oEvent)
+smc_Editor.prototype.endResize = function(oEvent)
 {
 	if ('event' in window)
 		oEvent = window.event;
@@ -1526,7 +1526,7 @@ function smc_SmileyBox(oOptions)
 	this.init();
 }
 
-smc_SmileyBox.prototype.init = function ()
+smc_SmileyBox.prototype.init = function()
 {
 	// Get the HTML content of the smileys visible on the post screen.
 	this.getSmileyRowsContent('postform');
@@ -1547,15 +1547,15 @@ smc_SmileyBox.prototype.init = function ()
 	{
 		var oMoreLink = document.getElementById(this.opt.sUniqueId + '_addMoreSmileys');
 		oMoreLink.instanceRef = this;
-		oMoreLink.onclick = function () {
+		oMoreLink.onclick = function() {
 			this.instanceRef.handleShowMoreSmileys();
 			return false;
-		}
+		};
 	}
 }
 
 // Loop through the smileys to setup the HTML.
-smc_SmileyBox.prototype.getSmileyRowsContent = function (sLocation)
+smc_SmileyBox.prototype.getSmileyRowsContent = function(sLocation)
 {
 	// If it's already defined, don't bother.
 	if (sLocation in this.oSmileyRowsContent)
@@ -1580,7 +1580,7 @@ smc_SmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 	}
 }
 
-smc_SmileyBox.prototype.initSmileys = function (sLocation, oDocument)
+smc_SmileyBox.prototype.initSmileys = function(sLocation, oDocument)
 {
 	for (var iSmileyRowIndex = 0, iSmileyRowCount = this.opt.oSmileyLocations[sLocation].length; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
 	{
@@ -1589,15 +1589,15 @@ smc_SmileyBox.prototype.initSmileys = function (sLocation, oDocument)
 			var oSmiley = oDocument.getElementById(this.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString());
 			oSmiley.instanceRef = this;
 			oSmiley.style.cursor = 'pointer';
-			oSmiley.onclick = function () {
+			oSmiley.onclick = function() {
 				this.instanceRef.clickHandler(this);
 				return false;
-			}
+			};
 		}
 	}
 }
 
-smc_SmileyBox.prototype.clickHandler = function (oSmileyImg)
+smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 {
 	// Dissect the id...
 	var aMatches = oSmileyImg.id.match(/([^_]+)_(\d+)_(\d+)$/);
@@ -1616,7 +1616,7 @@ smc_SmileyBox.prototype.clickHandler = function (oSmileyImg)
 	return false;
 }
 
-smc_SmileyBox.prototype.handleShowMoreSmileys = function ()
+smc_SmileyBox.prototype.handleShowMoreSmileys = function()
 {
 	// Focus the window if it's already opened.
 	if (this.oSmileyPopupWindow != null && 'closed' in this.oSmileyPopupWindow && !this.oSmileyPopupWindow.closed)
@@ -1645,10 +1645,10 @@ smc_SmileyBox.prototype.handleShowMoreSmileys = function ()
 	// Add a function to the close window button.
 	var aCloseLink = this.oSmileyPopupWindow.document.getElementById(this.opt.sUniqueId + '_closeMoreSmileys');
 	aCloseLink.instanceRef = this;
-	aCloseLink.onclick = function () {
+	aCloseLink.onclick = function() {
 		this.instanceRef.oSmileyPopupWindow.close();
 		return false;
-	}
+	};
 }
 
 /*
@@ -1663,7 +1663,7 @@ function smc_BBCButtonBox(oOptions)
 	this.init();
 }
 
-smc_BBCButtonBox.prototype.init = function ()
+smc_BBCButtonBox.prototype.init = function()
 {
 	var sBbcContent = '';
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
@@ -1746,13 +1746,13 @@ smc_BBCButtonBox.prototype.init = function ()
 					}
 
 					oCurControl.oImg.instanceRef = this;
-					oCurControl.oImg.onmouseover = function () {
+					oCurControl.oImg.onmouseover = function() {
 						this.instanceRef.handleButtonMouseOver(this);
 					};
-					oCurControl.oImg.onmouseout = function () {
+					oCurControl.oImg.onmouseout = function() {
 						this.instanceRef.handleButtonMouseOut(this);
 					};
-					oCurControl.oImg.onclick = function () {
+					oCurControl.oImg.onclick = function() {
 						this.instanceRef.handleButtonClick(this);
 					};
 
@@ -1764,28 +1764,28 @@ smc_BBCButtonBox.prototype.init = function ()
 					oCurControl.oSelect = document.getElementById(this.opt.sUniqueId.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
 
 					oCurControl.oSelect.instanceRef = this;
-					oCurControl.oSelect.onchange = oCurControl.onchange = function () {
+					oCurControl.oSelect.onchange = oCurControl.onchange = function() {
 						this.instanceRef.handleSelectChange(this);
-					}
+					};
 				break;
 			}
 		}
 	}
 }
 
-smc_BBCButtonBox.prototype.handleButtonMouseOver = function (oButtonImg)
+smc_BBCButtonBox.prototype.handleButtonMouseOver = function(oButtonImg)
 {
 	oButtonImg.bHover = true;
 	this.updateButtonStatus(oButtonImg);
 }
 
-smc_BBCButtonBox.prototype.handleButtonMouseOut = function (oButtonImg)
+smc_BBCButtonBox.prototype.handleButtonMouseOut = function(oButtonImg)
 {
 	oButtonImg.bHover = false;
 	this.updateButtonStatus(oButtonImg);
 }
 
-smc_BBCButtonBox.prototype.updateButtonStatus = function (oButtonImg)
+smc_BBCButtonBox.prototype.updateButtonStatus = function(oButtonImg)
 {
 	var sNewPos = 0;
 	if (oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPosHover' in this.opt)
@@ -1801,7 +1801,7 @@ smc_BBCButtonBox.prototype.updateButtonStatus = function (oButtonImg)
 		oButtonImg.style.backgroundPosition = '-' + sNewPos[0] + 'px -' + sNewPos[1] + 'px';
 }
 
-smc_BBCButtonBox.prototype.handleButtonClick = function (oButtonImg)
+smc_BBCButtonBox.prototype.handleButtonClick = function(oButtonImg)
 {
 	// Dissect the id attribute...
 	var aMatches = oButtonImg.id.match(/(\d+)_(\d+)$/);
@@ -1820,7 +1820,7 @@ smc_BBCButtonBox.prototype.handleButtonClick = function (oButtonImg)
 	return false;
 }
 
-smc_BBCButtonBox.prototype.handleSelectChange = function (oSelectControl)
+smc_BBCButtonBox.prototype.handleSelectChange = function(oSelectControl)
 {
 	// Dissect the id attribute...
 	var aMatches = oSelectControl.id.match(/(\d+)_(\d+)$/);
@@ -1838,7 +1838,7 @@ smc_BBCButtonBox.prototype.handleSelectChange = function (oSelectControl)
 	return true;
 }
 
-smc_BBCButtonBox.prototype.setActive = function (aButtons)
+smc_BBCButtonBox.prototype.setActive = function(aButtons)
 {
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
@@ -1854,7 +1854,7 @@ smc_BBCButtonBox.prototype.setActive = function (aButtons)
 	}
 }
 
-smc_BBCButtonBox.prototype.emulateClick = function (sCode)
+smc_BBCButtonBox.prototype.emulateClick = function(sCode)
 {
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
@@ -1871,7 +1871,7 @@ smc_BBCButtonBox.prototype.emulateClick = function (sCode)
 	return false;
 }
 
-smc_BBCButtonBox.prototype.setSelect = function (sSelectName, sValue)
+smc_BBCButtonBox.prototype.setSelect = function(sSelectName, sValue)
 {
 	if (!('sButtonClickHandler' in this.opt))
 		return;
@@ -1902,7 +1902,7 @@ function wedgeAttachSelect(oOptions)
 	wedgeAttachSelect.prototype.addElement(document.getElementById(wedgeAttachSelect.prototype.opts.file_item));
 }
 
-wedgeAttachSelect.prototype.addElement = function (element)
+wedgeAttachSelect.prototype.addElement = function(element)
 {
 	// Make sure it's a file input element, ignore it if not
 	if (element.tagName == 'INPUT' && element.type == 'file')
@@ -1910,8 +1910,7 @@ wedgeAttachSelect.prototype.addElement = function (element)
 		element.id = 'file_' + this.attachId++;
 		element.name = 'attachment[]';
 		element.multi_selector = this;
-		element.onchange = function()
-		{
+		element.onchange = function() {
 			if (element.value == '')
 				return;
 
@@ -1941,10 +1940,10 @@ wedgeAttachSelect.prototype.addElement = function (element)
 		this.count++;
 		this.current_element = element;
 		this.checkActive();
-	}
+	};
 }
 
-wedgeAttachSelect.prototype.checkExtension = function (filename)
+wedgeAttachSelect.prototype.checkExtension = function(filename)
 {
 	if (!wedgeAttachSelect.prototype.opts.attachment_ext)
 		return true; // we're not checking
@@ -1972,7 +1971,7 @@ wedgeAttachSelect.prototype.checkExtension = function (filename)
 	return value;
 }
 
-wedgeAttachSelect.prototype.addListRow = function (element)
+wedgeAttachSelect.prototype.addListRow = function(element)
 {
 	var new_row = document.createElement('div');
 	var new_row_button = document.createElement('input');
@@ -1981,8 +1980,7 @@ wedgeAttachSelect.prototype.addListRow = function (element)
 	new_row_button.className = 'button_submit';
 	new_row.element = element;
 
-	new_row_button.onclick = function ()
-	{
+	new_row_button.onclick = function() {
 		// Remove element from form
 		this.parentNode.element.parentNode.removeChild(this.parentNode.element);
 		this.parentNode.parentNode.removeChild(this.parentNode);

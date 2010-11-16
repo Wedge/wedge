@@ -151,7 +151,6 @@ smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 			this.oYears[oToggle.opt.sYearId].oMonths[sMonth].oToggle.changeState(true);
 }
 
-
 smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
@@ -170,7 +169,6 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 		oYearToggle.opt.aSwappableContainers = aNewContainers;
 	}
 }
-
 
 smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 {

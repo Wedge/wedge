@@ -230,7 +230,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
-		array('enableCompressedCSS', $txt['enableCompressedCSS'], 'db', 'check', null, 'enableCompressedCSS'),
+		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
 		'',

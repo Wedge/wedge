@@ -2,9 +2,10 @@
 // All code changes compared to SMF 2.0 are protected by
 // the Wedge license, http://wedgeforum.com/license/
 
-var smf_formSubmitted = false;
-var lastKeepAliveCheck = new Date().getTime();
-var smf_editorArray = new Array();
+var
+	smf_formSubmitted = false,
+	lastKeepAliveCheck = new Date().getTime(),
+	smf_editorArray = new Array();
 
 // Basic browser detection
 var ua = navigator.userAgent.toLowerCase();
@@ -102,7 +103,7 @@ String.prototype.php_to8bit = function ()
 	{
 		n = this.charCodeAt(i);
 		if (n < 128)
-			sReturn += String.fromCharCode(n)
+			sReturn += String.fromCharCode(n);
 		else if (n < 2048)
 			sReturn += String.fromCharCode(192 | n >> 6) + String.fromCharCode(128 | n & 63);
 		else if (n < 65536)
@@ -390,7 +391,7 @@ function smf_avatarResize()
 				this.avatar.width = (smf_avatarMaxHeight * this.avatar.width) / this.avatar.height;
 				this.avatar.height = smf_avatarMaxHeight;
 			}
-		}
+		};
 		tempAvatars[j].src = possibleAvatars[i].src;
 		j++;
 	}
@@ -529,7 +530,7 @@ smc_Toggle.prototype.init = function ()
 		this.oCookie = new smc_Cookie({});
 
 		// Check if the cookie is set.
-		var cookieValue = this.oCookie.get(this.opt.oCookieOptions.sCookieName)
+		var cookieValue = this.oCookie.get(this.opt.oCookieOptions.sCookieName);
 		if (cookieValue != null)
 			this.opt.bCurrentlyCollapsed = cookieValue == '1';
 	}
@@ -554,7 +555,7 @@ smc_Toggle.prototype.init = function ()
 				oImage.onclick = function () {
 					this.instanceRef.toggle();
 					this.blur();
-				}
+				};
 				oImage.style.cursor = 'pointer';
 
 				// Preload the collapsed image.
@@ -580,7 +581,7 @@ smc_Toggle.prototype.init = function ()
 					this.instanceRef.toggle();
 					this.blur();
 					return false;
-				}
+				};
 			}
 		}
 	}
@@ -717,19 +718,19 @@ function createEventListener(oTarget)
 		{
 			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
 				oTarget.attachEvent('on' + sEvent, funcHandler);
-			}
+			};
 			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
 				oTarget.detachEvent('on' + sEvent, funcHandler);
-			}
+			};
 		}
 		else
 		{
 			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
 				oTarget['on' + sEvent] = funcHandler;
-			}
+			};
 			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
 				oTarget['on' + sEvent] = null;
-			}
+			};
 		}
 	}
 }
@@ -842,7 +843,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	this.dropdownList.onchange = function() {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
-	}
+	};
 }
 
 // A global array containing all IconList objects.
@@ -1067,7 +1068,7 @@ function addLoadEvent(fNewOnload)
 				else if (typeof(aOnloadEvents[i]) == 'string')
 					eval(aOnloadEvents[i]);
 			}
-		}
+		};
 	}
 
 	// This isn't the first event function, add it to the list.
