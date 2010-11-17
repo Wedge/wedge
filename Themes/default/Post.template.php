@@ -64,9 +64,10 @@ function template_main()
 							pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
 						}
 				}
-				pollOptionNum++
+				pollOptionNum++;
 
 				setOuterHTML(document.getElementById(\'pollMoreOptions\'), ', JavaScriptEscape('<li><label for="options-'), ' + pollOptionNum + ', JavaScriptEscape('">' . $txt['option'] . ' '), ' + pollOptionNum + ', JavaScriptEscape('</label>: <input type="text" name="options['), ' + pollOptionNum + ', JavaScriptEscape(']" id="options-'), ' + pollOptionNum + ', JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="'), ' + pollTabIndex + ', JavaScriptEscape('" class="input_text" /></li><li id="pollMoreOptions"></li>'), ');
+				return false;
 			}';
 
 	// If we are making a calendar event we want to ensure we show the current days in a month etc... this is done here.
@@ -326,7 +327,7 @@ function template_main()
 		echo '
 								<li id="pollMoreOptions"></li>
 							</ul>
-							<strong><a href="javascript:addPollOption(); void(0);">(', $txt['poll_add_option'], ')</a></strong>
+							<strong><a href="#" lang="return addPollOption();" class="clickme">(', $txt['poll_add_option'], ')</a></strong>
 						</fieldset>
 						<fieldset id="poll_options">
 							<legend>', $txt['poll_options'], '</legend>
@@ -422,7 +423,7 @@ function template_main()
 		foreach ($context['current_attachments'] as $attachment)
 			echo '
 						<dd class="smalltext">
-							<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="javascript:oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
+							<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
 						</dd>';
 		echo '
 					</dl>';

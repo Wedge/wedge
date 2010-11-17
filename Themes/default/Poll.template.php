@@ -18,9 +18,10 @@ function template_main()
 						if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
 							pollOptionNum++;
 				}
-				pollOptionNum++
+				pollOptionNum++;
 
 				setOuterHTML(document.getElementById("pollMoreOptions"), \'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255" class="input_text" /></li><li id="pollMoreOptions"></li\');
+				return false;
 			}
 		// ]]></script>';
 
@@ -72,7 +73,7 @@ function template_main()
 	echo '
 							<li id="pollMoreOptions"></li>
 						</ul>
-						<strong><a href="javascript:addPollOption(); void(0);">(', $txt['poll_add_option'], ')</a></strong>
+						<strong><a href="#" lang="return addPollOption();" class="clickme">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>
 					<fieldset id="poll_options">
 						<legend>', $txt['poll_options'], ':</legend>

@@ -523,8 +523,10 @@ UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
 		div.id = 'userMenu' + iMsg;
 		div.className = 'usermenu';
 		var sHTML = '';
+		if (!(this.list['user' + iUserId]))
+			return false;
 		var aLinkList = this.list['user' + iUserId];
-		for (var i = 0; i < aLinkList.length; i++)
+		for (var i = 0, j = aLinkList.length; i < j; i++)
 		{
 			if (aLinkList[i][0].charAt[0] == '?')
 				aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
@@ -539,4 +541,5 @@ UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
 	}
 	else
 		menu_div.parentNode.removeChild(menu_div);
+	return false;
 }

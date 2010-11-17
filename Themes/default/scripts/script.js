@@ -1309,6 +1309,22 @@ function hideUlUnderLi(li)
 /* --------------------------------------------------------
    End of dropdown menu code */
 
+// Putting JS code into the lang tag and fixing it at runtime. Trick and treats! -- Nao.
+function clickMagic()
+{
+	var divs = document.querySelectorAll ? document.querySelectorAll('.clickme') : document.getElementsByTagName('*');
+	for (var i in divs)
+	{
+		var div = divs[i], cls = div.className ? div.className : '';
+		if (cls.indexOf('clickme') > -1)
+			div.onclick = function() {
+				var val = false;
+				eval(this.lang.replace(/return /g, 'val = ').replace(/return;/g, 'break;'));
+				return val;
+			};
+	}
+}
+
 function testStyle(sty)
 {
 	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
@@ -1317,7 +1333,15 @@ function testStyle(sty)
 }
 
 // Has your browser got the goods?
+// These variables aren't used, but you can now use them in your custom scripts.
+// In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
 var
 	wedgerocks = document.createElement('wedgerocks'),
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
+
+// And now we turn clickme classes into proper onclicks.
+if (document.addEventListener)
+	document.addEventListener('DOMContentLoaded', clickMagic, false);
+else
+	addLoadEvent(clickMagic);

@@ -544,7 +544,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}pretty_urls_cache
 			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
-			array(),
+			array()
 		);
 	}
 

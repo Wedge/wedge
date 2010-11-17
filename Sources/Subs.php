@@ -3507,9 +3507,10 @@ function wedge_add_js($scripts)
  * @param array $css List of all CSS files to concatenate
  * @param string $target Determine where we're saving the file: default theme, or custom theme?
  * @param bool $gzip Should we gzip the resulting file?
+ * @param string $ext The extension... .css, .css.gz or .cgz
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_css($filename, $css, $target, $gzip = false)
+function wedge_cache_css($filename, $css, $target, $gzip = false, $ext = '.css')
 {
 	global $settings, $modSettings, $wedge_base_dir;
 
@@ -3529,7 +3530,7 @@ function wedge_cache_css($filename, $css, $target, $gzip = false)
 		mkdir($dest);
 	if ($gzip)
 		$final = gzencode($final, 9);
-	file_put_contents($dest . '/' . $filename . '.css' . ($gzip ? '.gz' : ''), $final);
+	file_put_contents($dest . '/' . $filename . $ext, $final);
 	return time();
 }
 
@@ -3540,9 +3541,10 @@ function wedge_cache_css($filename, $css, $target, $gzip = false)
  * @param array $js List of all JS files to concatenate
  * @param string $target Determine where we're saving the file: default theme, or custom theme?
  * @param bool $gzip Should we gzip the resulting file?
+ * @param string $ext The extension... .js, .js.gz or .jgz
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_js($filename, $js, $target, $gzip = false)
+function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 {
 	global $settings, $modSettings, $wedge_base_dir, $sourcedir, $wedge_quotes;
 
@@ -3574,7 +3576,7 @@ function wedge_cache_js($filename, $js, $target, $gzip = false)
 		mkdir($dest);
 	if ($gzip)
 		$final = gzencode($final, 9);
-	file_put_contents($dest . '/' . $filename . '.js' . ($gzip ? '.gz' : ''), $final);
+	file_put_contents($dest . '/' . $filename . $ext, $final);
 
 	return time();
 }
@@ -3666,13 +3668,13 @@ function template_header()
 	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? '.css.gz' : '.css';
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
 	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
 	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
-		$filetime = wedge_cache_css($id, $css, $target, $can_gzip);
+		$filetime = wedge_cache_css($id, $css, $target, $can_gzip, $ext);
 
 	$context['cached_css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
 
@@ -3692,11 +3694,11 @@ function template_header()
 		$latest_date = max($latest_date, filemtime($add));
 	}
 	$id = md5(implode(',', $context['javascript_files']));
-	$ext = $can_gzip ? '.js.gz' : '.js';
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
 	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
 	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
-		$filetime = wedge_cache_js($id, $context['javascript_files'], $target, $can_gzip);
+		$filetime = wedge_cache_js($id, $context['javascript_files'], $target, $can_gzip, $ext);
 
 	$context['cached_js'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
 

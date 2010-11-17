@@ -75,22 +75,12 @@ function template_html_above()
 	// Show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<!-- Powered by Wedge, © WedgeBox 2010 - http://wedgeforum.com -->
+<!-- Powered by Wedge, (c) WedgeBox 2010 - http://wedgeforum.com -->
 <head>';
 
 	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
 	echo '
-	<link rel="stylesheet" type="text/css" href="', $context['cached_css'], '" />';
-
-	$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
-
-	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
-		echo '
-	<style>
-		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
-	</style>';
-
-	echo '
+	<link rel="stylesheet" type="text/css" href="', $context['cached_css'], '" />
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -346,6 +336,16 @@ function template_html_below()
 			}
 		});
 	// ]]></script>';
+
+	// Yeah, putting style contents in the footer sucks... But it's IE, who cares.
+	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
+	{
+		$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
+		echo '
+	<style>
+		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
+	</style>';
+	}
 
 	// Output any postponed code. (Usually for Javascript added by mods.)
 	echo $context['footer'];
