@@ -1309,7 +1309,9 @@ function hideUlUnderLi(li)
 /* --------------------------------------------------------
    End of dropdown menu code */
 
-// Putting JS code into the lang tag and fixing it at runtime. Trick and treats! -- Nao.
+var clickers = [];
+
+// Putting JS code into a comment next to the element, and fixing it at runtime. Trick and treats! -- Nao.
 function clickMagic()
 {
 	var divs = document.querySelectorAll ? document.querySelectorAll('.clickme') : document.getElementsByTagName('*');
@@ -1317,11 +1319,20 @@ function clickMagic()
 	{
 		var div = divs[i], cls = div.className ? div.className : '';
 		if (cls.indexOf('clickme') > -1)
+		{
+			var next = div.firstChild;
+			if (next == null)
+				next = div.nextSibling;
+			if (next.nodeType != 8)
+				continue;
+			var did = div.id ? div.id : (div.id = 'clickmagic_' + i);
+			clickers[did] = next.nodeValue.replace(/return /g, 'val = ').replace(/return;/g, 'break;');
 			div.onclick = function() {
 				var val = false;
-				eval(this.lang.replace(/return /g, 'val = ').replace(/return;/g, 'break;'));
+				eval(clickers[this.id]);
 				return val;
 			};
+		}
 	}
 }
 

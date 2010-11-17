@@ -108,7 +108,7 @@ function template_main()
 			'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'image' => 'poll_change_vote.gif', 'lang' => true, 'url' => $scripturl . '?action=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 			'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'image' => 'poll_lock.gif', 'lang' => true, 'url' => $scripturl . '?action=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 			'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'image' => 'poll_edit.gif', 'lang' => true, 'url' => $scripturl . '?action=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
-			'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'image' => 'admin_remove_poll.gif', 'lang' => true, 'custom' => 'lang="return confirm(\'' . $txt['poll_remove_warn'] . '\');" class="clickme"', 'url' => $scripturl . '?action=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+			'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'image' => 'admin_remove_poll.gif', 'lang' => true, 'code' => 'return confirm(\'' . $txt['poll_remove_warn'] . '\');', 'url' => $scripturl . '?action=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
 		template_button_strip($poll_buttons);
@@ -143,7 +143,7 @@ function template_main()
 	// Build the normal button array.
 	$normal_buttons = array(
 		'reply' => array('test' => 'can_reply', 'text' => 'reply', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true),
-		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'custom' => 'lang="return confirm(\'' . ($context['is_marked_notify'] ? $txt['notification_disable_topic'] : $txt['notification_enable_topic']) . '\');" class="clickme"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'code' => 'return confirm(\'' . ($context['is_marked_notify'] ? $txt['notification_disable_topic'] : $txt['notification_enable_topic']) . '\');', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'image' => 'markunread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'image' => 'sendtopic.gif', 'lang' => true, 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
 		'print' => array('text' => 'print', 'image' => 'print.gif', 'lang' => true, 'custom' => 'rel="new_win nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
@@ -229,7 +229,7 @@ function template_main()
 
 		// Show a link to the member's profile.
 		echo '
-								<a href="', $message['member']['href'], '" lang="return oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], ');" onmousedown="return false;" class="clickme">', $message['member']['name'], '</a>
+								<a href="', $message['member']['href'], '" onmousedown="return false;" class="clickme"><!-- return oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], '); -->', $message['member']['name'], '</a>
 							</h4>
 							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
 
@@ -345,7 +345,7 @@ function template_main()
 					// Because this seems just a touch convoluted if a single line.
 					if (!$context['can_moderate_forum'])
 						echo '
-										<li><a href="', $scripturl, '?action=helpadmin;help=see_member_ip" lang="return reqWin(this);" class="help clickme"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
+										<li><a href="', $scripturl, '?action=helpadmin;help=see_member_ip" class="help clickme"><!-- return reqWin(this); --><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
 					else
 						echo '
 										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;area=tracking;sa=ip;u=' . $message['member']['id'], ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
@@ -410,7 +410,7 @@ function template_main()
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
-									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" lang="return oQuickReply.quote(', $message['id'], ');" class="clickme">', $txt['quote'], '</a></li>';
+									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" class="clickme"><!-- return oQuickReply.quote(', $message['id'], '); -->', $txt['quote'], '</a></li>';
 
 		// So... quick reply is off, but they *can* reply?
 		elseif ($context['can_quote'])
@@ -425,7 +425,7 @@ function template_main()
 		// How about... even... remove it entirely?!
 		if ($message['can_remove'])
 			echo '
-									<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '" lang="return confirm(\'', $txt['remove_message'], '?\');" class="clickme">', $txt['remove'], '</a></li>';
+									<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '" class="clickme"><!-- return confirm(\'', $txt['remove_message'], '?\'); -->', $txt['remove'], '</a></li>';
 
 		// What about splitting it off the rest of the topic?
 		if ($context['can_split'] && !empty($context['real_num_replies']))
@@ -473,7 +473,7 @@ function template_main()
 		// Can the user modify the contents of this post?  Show the modify inline image.
 		if ($message['can_modify'])
 			echo '
-							<img src="', $settings['images_url'], '/icons/modify_inline.gif" alt="" title="', $txt['modify_msg'], '" class="modifybutton clickme" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" lang="oQuickModify.modifyMsg(\'', $message['id'], '\')" />';
+							<img src="', $settings['images_url'], '/icons/modify_inline.gif" alt="" title="', $txt['modify_msg'], '" class="modifybutton clickme" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" /><!-- oQuickModify.modifyMsg(\'', $message['id'], '\'); -->';
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
@@ -503,7 +503,7 @@ function template_main()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" lang="', $attachment['thumbnail']['javascript'], '" class="clickme"><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
+										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="clickme"><!-- ', $attachment['thumbnail']['javascript'], ' --><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
 					else
 						echo '
 										<img src="' . $attachment['href'] . ';image" alt="" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
@@ -609,7 +609,7 @@ function template_main()
 
 	$mod_buttons = array(
 		'move' => array('test' => 'can_move', 'text' => 'move_topic', 'image' => 'admin_move.gif', 'lang' => true, 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),
-		'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'image' => 'admin_rem.gif', 'lang' => true, 'custom' => 'lang="return confirm(\'' . $txt['are_sure_remove_topic'] . '\');" class="clickme"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_var'] . '=' . $context['session_id']),
+		'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'image' => 'admin_rem.gif', 'lang' => true, 'code' => 'return confirm(\'' . $txt['are_sure_remove_topic'] . '\');', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_var'] . '=' . $context['session_id']),
 		'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'image' => 'admin_lock.gif', 'lang' => true, 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'sticky' => array('test' => 'can_sticky', 'text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'image' => 'admin_sticky.gif', 'lang' => true, 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		'merge' => array('test' => 'can_merge', 'text' => 'merge', 'image' => 'merge.gif', 'lang' => true, 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
@@ -681,7 +681,7 @@ function template_main()
 								', $context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit clickme" style="display: none" lang="oQuickReply.switchMode();" />
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit clickme" style="display: none" /><!-- oQuickReply.switchMode(); -->
 							</div>
 							<div class="righttext padding">
 								', $context['postbox']->outputButtons(), '
@@ -760,7 +760,7 @@ function template_main()
 								<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
 								<input type="hidden" name="msg" value="%msg_id%" />
 								<div class="righttext">
-									<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" lang="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" accesskey="s" class="button_submit clickme" />&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" lang="spellCheck(\'quickModForm\', \'message\');" class="button_submit clickme" />&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" lang="return oQuickModify.modifyCancel();" class="button_submit clickme" />
+									<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit clickme" /><!-- return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\'); -->&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit clickme" /><!-- spellCheck(\'quickModForm\', \'message\'); -->&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit clickme" /><!-- return oQuickModify.modifyCancel(); -->
 								</div>
 							</div>') . ',
 						sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%;" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '" class="input_text" />') . ',
