@@ -1419,14 +1419,6 @@ smc_Editor.prototype.endResize = function(oEvent)
 	Can safely be called by mods.
 */
 
-// Remember the current position.
-function storeCaret(oTextHandle)
-{
-	// Only bother if it will be useful.
-	if ('createTextRange' in oTextHandle)
-		oTextHandle.caretPos = document.selection.createRange().duplicate();
-}
-
 // Replaces the currently selected text with the passed text.
 function replaceText(text, oTextHandle)
 {

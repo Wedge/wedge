@@ -1,34 +1,32 @@
 <?php
 
 /*
-	Pretty URLs - custom version for Wedge.
+	Pretty URLs - custom Wedge version.
 	Distributed under the New BSD license.
 	http://prettyurls.googlecode.com/svn/trunk/LICENCE
 
 	Original developer:						Dannii
 	Subdomains and current development:		Nao
 
-	None of this code was written by anyone else. JUST TO BE CLEAR! >8D
+	None of this code was written by anyone else. JUST SO WE'RE CLEAR! >8D
 */
-
-//	A file for filter extensions to be placed in
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-//	Build the table of pretty topic URLs
-//	This function used to do a lot more, but I kept the name the same though now it doesn't
+// Build the table of pretty topic URLs
+// This function used to do a lot more, but I kept the name the same though now it doesn't
 function pretty_synchronise_topic_urls()
 {
 	global $modSettings, $smcFunc, $sourcedir;
 
-	//	Clear the URLs cache
+	// Clear the URLs cache
 	$smcFunc['db_query']('', '
 		TRUNCATE TABLE {db_prefix}pretty_topic_urls',
 		array()
 	);
 
-	//	Get the current database pretty URLs and other stuff
+	// Get the current database pretty URLs and other stuff
 	$query = $smcFunc['db_query']('', '
 		SELECT t.id_topic, t.id_board, m.subject
 		FROM {db_prefix}topics AS t
@@ -40,7 +38,7 @@ function pretty_synchronise_topic_urls()
 	$oldUrls = array();
 	$tablePretty = array();
 
-	//	Fill the $topicData array
+	// Fill the $topicData array
 	while ($row = $smcFunc['db_fetch_assoc']($query))
 		$topicData[] = array(
 			'id_topic' => $row['id_topic'],
@@ -51,25 +49,25 @@ function pretty_synchronise_topic_urls()
 
 	require_once($sourcedir . '/Subs-PrettyUrls.php');
 
-	//	Go through the $topicData array and fix anything that needs fixing
+	// Go through the $topicData array and fix anything that needs fixing
 	foreach ($topicData as $row)
 	{
-		//	A topic in the recycle board deserves only a blank URL
+		// A topic in the recycle board deserves only a blank URL
 		$pretty_text = $modSettings['recycle_enable'] && $row['id_board'] == $modSettings['recycle_board'] ? '' : trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
-		//	Can't be empty, can't be a number and can't be the same as another
+		// Can't be empty, can't be a number and can't be the same as another
 		if ($pretty_text == '' || is_numeric($pretty_text) /* || in_array($pretty_text, $oldUrls) CYNAMOD */)
 		{
-			//	Add suffix '-tID_TOPIC' to the pretty url
+			// Add suffix '-tID_TOPIC' to the pretty url
 			$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . ($pretty_text != '' ? '-t' : 't') . $row['id_topic'];
 			$pretty_text = preg_replace('/-+/', '-', $pretty_text);
 		}
 
-		//	Update the arrays
+		// Update the arrays
 		$tablePretty[] = '(' . (int) $row['id_topic'] . ", '" . $pretty_text . "')";
 		$oldUrls[] = $pretty_text;
 	}
 
-	//	Update the database
+	// Update the database
 	if (count($tablePretty) > 0)
 	{
 		$smcFunc['db_query']('', '
@@ -81,7 +79,7 @@ function pretty_synchronise_topic_urls()
 	}
 }
 
-//	Filter miscellaneous action urls
+// Filter miscellaneous action urls
 function pretty_urls_actions_filter($urls)
 {
 	global $scripturl, $boardurl;
@@ -115,7 +113,7 @@ function pretty_urls_actions_filter($urls)
 	return $urls; */
 }
 
-//	Filter topic urls
+// Filter topic urls
 function pretty_urls_topic_filter($urls)
 {
 	global $context, $modSettings, $scripturl, $smcFunc, $sourcedir;
@@ -125,7 +123,7 @@ function pretty_urls_topic_filter($urls)
 	$query_data = array();
 	foreach ($urls as $url_id => $url)
 	{
-		//	Get the topic data ready to query the database with
+		// Get the topic data ready to query the database with
 		if (!isset($url['replacement']))
 			if (preg_match($pattern, $url['url'], $matches))
 			{
@@ -143,10 +141,10 @@ function pretty_urls_topic_filter($urls)
 			}
 	}
 
-	//	Query the database with these topic IDs
+	// Query the database with these topic IDs
 	if (count($query_data) != 0)
 	{
-		//	Look for existing topic URLs
+		// Look for existing topic URLs
 		$query_data = array_keys(array_flip($query_data));
 		$topicData = array();
 		$unpretty_topics = array();
@@ -169,12 +167,12 @@ function pretty_urls_topic_filter($urls)
 				$unpretty_topics[] = $row['id_topic'];
 		$smcFunc['db_free_result']($query);
 
-		//	Generate new topic URLs if required
+		// Generate new topic URLs if required
 		if (count($unpretty_topics) != 0)
 		{
 			require_once($sourcedir . '/Subs-PrettyUrls.php');
 
-			//	Get the topic subjects
+			// Get the topic subjects
 			$new_topics = array();
 			$new_urls = array();
 			$query_check = array();
@@ -198,18 +196,18 @@ function pretty_urls_topic_filter($urls)
 				);
 			$smcFunc['db_free_result']($query);
 
-			//	Generate URLs for each new topic
+			// Generate URLs for each new topic
 			foreach ($new_topics as $row)
 			{
 				$pretty_text = trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
-				//	A topic in the recycle board doesn't deserve a proper URL
+				// A topic in the recycle board doesn't deserve a proper URL
 				if (($modSettings['recycle_enable'] && $row['id_board'] == $modSettings['recycle_board']) || $pretty_text == '')
-					//	Use 'tID_TOPIC' as a pretty url
+					// Use 'tID_TOPIC' as a pretty url
 					$pretty_text = 't' . $row['id_topic'];
-				//	No duplicates and no numerical URLs - that would just confuse everyone!
+				// No duplicates and no numerical URLs - that would just confuse everyone!
 				if (/*in_array($pretty_text, $new_urls) || CYNAMOD */ is_numeric($pretty_text))
 				{
-					//	Add suffix '-tID_TOPIC' to the pretty url
+					// Add suffix '-tID_TOPIC' to the pretty url
 					$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . '-t' . $row['id_topic'];
 					$pretty_text = preg_replace('/-+/', '-', $pretty_text);
 				}
@@ -217,7 +215,7 @@ function pretty_urls_topic_filter($urls)
 				$new_urls[$row['id_topic']] = $pretty_text;
 			}
 
-			//	Find any duplicates of existing URLs
+			// Find any duplicates of existing URLs
 			$query = $smcFunc['db_query']('', '
 				SELECT pretty_url
 				FROM {db_prefix}pretty_topic_urls
@@ -227,11 +225,11 @@ function pretty_urls_topic_filter($urls)
 				$existing_urls[] = $row['pretty_url'];
 			$smcFunc['db_free_result']($query);
 
-			//	Finalise the new URLs ...
+			// Finalise the new URLs ...
 			foreach ($new_topics as $row)
 			{
 				$pretty_text = $new_urls[$row['id_topic']];
-				//	Check if the new URL is already in use
+				// Check if the new URL is already in use
 				/* CYNAMOD
 				if (in_array($pretty_text, $existing_urls))
 				{
@@ -240,13 +238,13 @@ function pretty_urls_topic_filter($urls)
 				}
 				*/
 				$add_new[] = array($row['id_topic'], $pretty_text);
-				//	Add to the original array of topic URLs
+				// Add to the original array of topic URLs
 				$topicData[$row['id_topic']] = array(
 					'pretty_board' => !empty($row['board_url']) ? $row['board_url'] : $row['id_board'],
 					'pretty_url' => $pretty_text,
 				);
 			}
-			//	... and add them to the database!
+			// ... and add them to the database!
 			$smcFunc['db_insert']('',
 				'{db_prefix}pretty_topic_urls',
 				array('id_topic' => 'int', 'pretty_url' => 'string'),
@@ -254,7 +252,7 @@ function pretty_urls_topic_filter($urls)
 				array());
 		}
 
-		//	Build the replacement URLs
+		// Build the replacement URLs
 		foreach ($urls as $url_id => $url)
 			if (isset($url['topic_id']) && isset($topicData[$url['topic_id']]))
 			{
@@ -265,7 +263,7 @@ function pretty_urls_topic_filter($urls)
 	return $urls;
 }
 
-//	Filter board urls
+// Filter board urls
 function pretty_urls_board_filter($urls)
 {
 	global $scripturl, $modSettings, $context, $smcFunc;
@@ -273,7 +271,7 @@ function pretty_urls_board_filter($urls)
 	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;mois=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
 	foreach ($urls as $url_id => $url)
-		//	Split out the board URLs and replace them
+		// Split out the board URLs and replace them
 		if (!isset($url['replacement']))
 			if (preg_match($pattern, $url['url'], $matches))
 			{
@@ -319,7 +317,7 @@ function pretty_urls_board_filter($urls)
 	return $urls;
 }
 
-//	Filter profiles
+// Filter profiles
 function pretty_profiles_filter($urls)
 {
 	global $boardurl, $modSettings, $scripturl, $smcFunc;
@@ -328,7 +326,7 @@ function pretty_profiles_filter($urls)
 	$query_data = array();
 	foreach ($urls as $url_id => &$url)
 	{
-		//	Get the profile data ready to query the database with
+		// Get the profile data ready to query the database with
 		if (!isset($url['replacement']))
 			if (preg_match($pattern, $url['url'], $matches))
 			{
@@ -343,7 +341,7 @@ function pretty_profiles_filter($urls)
 			}
 	}
 
-	//	Query the database with these profile IDs
+	// Query the database with these profile IDs
 	if (count($query_data) != 0)
 	{
 		$memberNames = array();
@@ -361,7 +359,7 @@ function pretty_profiles_filter($urls)
 		}
 		$smcFunc['db_free_result']($query);
 
-		//	Build the replacement URLs
+		// Build the replacement URLs
 		foreach ($urls as $url_id => &$url)
 			if (isset($url['profile_id']))
 				$url['replacement'] = 'http://my.wedgeo.com/' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '' : 'guest/')) . ($url['match3'] == ';sites' ? 'sites/' : $url['match1'] . $url['match3']);

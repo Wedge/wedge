@@ -327,7 +327,7 @@ function template_main()
 		echo '
 								<li id="pollMoreOptions"></li>
 							</ul>
-							<strong><a href="#" lang="return addPollOption();" class="clickme">(', $txt['poll_add_option'], ')</a></strong>
+							<strong><a href="#" data-onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 						</fieldset>
 						<fieldset id="poll_options">
 							<legend>', $txt['poll_options'], '</legend>

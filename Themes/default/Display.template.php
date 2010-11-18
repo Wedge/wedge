@@ -229,7 +229,7 @@ function template_main()
 
 		// Show a link to the member's profile.
 		echo '
-								<a href="', $message['member']['href'], '" onmousedown="return false;" class="clickme"><!-- return oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], '); -->', $message['member']['name'], '</a>
+								<a href="', $message['member']['href'], '" onmousedown="return false;" data-onclick="return oUserMenu.switchMenu(this, ', $message['id'], ', ', $message['member']['id'], ');">', $message['member']['name'], '</a>
 							</h4>
 							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
 
@@ -345,7 +345,7 @@ function template_main()
 					// Because this seems just a touch convoluted if a single line.
 					if (!$context['can_moderate_forum'])
 						echo '
-										<li><a href="', $scripturl, '?action=helpadmin;help=see_member_ip" class="help clickme"><!-- return reqWin(this); --><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
+										<li><a href="', $scripturl, '?action=helpadmin;help=see_member_ip" data-onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
 					else
 						echo '
 										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;area=tracking;sa=ip;u=' . $message['member']['id'], ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '" /></a></li>';
@@ -410,7 +410,7 @@ function template_main()
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
-									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" class="clickme"><!-- return oQuickReply.quote(', $message['id'], '); -->', $txt['quote'], '</a></li>';
+									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" data-onclick="return oQuickReply.quote(', $message['id'], ');">', $txt['quote'], '</a></li>';
 
 		// So... quick reply is off, but they *can* reply?
 		elseif ($context['can_quote'])
@@ -425,7 +425,7 @@ function template_main()
 		// How about... even... remove it entirely?!
 		if ($message['can_remove'])
 			echo '
-									<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '" class="clickme"><!-- return confirm(\'', $txt['remove_message'], '?\'); -->', $txt['remove'], '</a></li>';
+									<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '" data-onclick="return confirm(\'', $txt['remove_message'], '?\');">', $txt['remove'], '</a></li>';
 
 		// What about splitting it off the rest of the topic?
 		if ($context['can_split'] && !empty($context['real_num_replies']))
@@ -473,7 +473,7 @@ function template_main()
 		// Can the user modify the contents of this post?  Show the modify inline image.
 		if ($message['can_modify'])
 			echo '
-							<img src="', $settings['images_url'], '/icons/modify_inline.gif" alt="" title="', $txt['modify_msg'], '" class="modifybutton clickme" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" /><!-- oQuickModify.modifyMsg(\'', $message['id'], '\'); -->';
+							<img src="', $settings['images_url'], '/icons/modify_inline.gif" alt="" title="', $txt['modify_msg'], '" class="modifybutton" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" data-onclick="oQuickModify.modifyMsg(\'', $message['id'], '\');" />';
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
@@ -503,7 +503,7 @@ function template_main()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="clickme"><!-- ', $attachment['thumbnail']['javascript'], ' --><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
+										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" data-onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
 					else
 						echo '
 										<img src="' . $attachment['href'] . ';image" alt="" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
@@ -681,7 +681,7 @@ function template_main()
 								', $context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit clickme" style="display: none" /><!-- oQuickReply.switchMode(); -->
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit" style="display: none" data-onclick="oQuickReply.switchMode();" />
 							</div>
 							<div class="righttext padding">
 								', $context['postbox']->outputButtons(), '
@@ -760,7 +760,7 @@ function template_main()
 								<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
 								<input type="hidden" name="msg" value="%msg_id%" />
 								<div class="righttext">
-									<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit clickme" /><!-- return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\'); -->&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit clickme" /><!-- spellCheck(\'quickModForm\', \'message\'); -->&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit clickme" /><!-- return oQuickModify.modifyCancel(); -->
+									<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit" data-onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" />&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="spellCheck(\'quickModForm\', \'message\');" />&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="return oQuickModify.modifyCancel();" />
 								</div>
 							</div>') . ',
 						sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%;" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '" class="input_text" />') . ',

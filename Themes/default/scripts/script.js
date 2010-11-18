@@ -1309,30 +1309,25 @@ function hideUlUnderLi(li)
 /* --------------------------------------------------------
    End of dropdown menu code */
 
-var clickers = [];
-
-// Putting JS code into a comment next to the element, and fixing it at runtime. Trick and treats! -- Nao.
+// Moving all data-* protected inline JS to their proper events. Trick and treats!
 function clickMagic()
 {
-	var divs = document.querySelectorAll ? document.querySelectorAll('.clickme') : document.getElementsByTagName('*');
-	for (var i in divs)
+	var divs = document.querySelectorAll ? document.querySelectorAll('*[data-onclick], .hitme') : document.getElementsByTagName('*');
+	for (var i = 0, j = divs ? divs.length : 0; i < j; i++)
 	{
-		var div = divs[i], cls = div.className ? div.className : '';
-		if (cls.indexOf('clickme') > -1)
+		var div = divs[i], cls = div.className ? div.className : '', att = div.attributes, here = [];
+
+		// In most cases, we only need to set the onclick handler...
+		if (cls.indexOf('hitme') == -1)
 		{
-			var next = div.firstChild;
-			if (next == null)
-				next = div.nextSibling;
-			if (next.nodeType != 8)
-				continue;
-			var did = div.id ? div.id : (div.id = 'clickmagic_' + i);
-			clickers[did] = next.nodeValue.replace(/return /g, 'val = ').replace(/return;/g, 'break;');
-			div.onclick = function() {
-				var val = false;
-				eval(clickers[this.id]);
-				return val;
-			};
+			div['onclick'] = new Function(div.getAttribute('data-onclick');
+			continue;
 		}
+		for (var k = 0, m = att.length; k < m; j++)
+			if (att[k].name.substr(0, 7) == 'data-on')
+				here[k] = att[k].name.substr(5);
+		for (var k in here)
+			div[here[j]] = new Function(div.getAttribute('data-' + here[k]));
 	}
 }
 
