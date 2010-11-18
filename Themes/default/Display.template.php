@@ -697,150 +697,150 @@ function template_main()
 
 	if ($context['show_spellchecking'])
 		$context['footer'] .= '
-			<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>
-			<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>
+<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
 
 	$context['footer'] .= '
-			<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
-			<script type="text/javascript"><!-- // --><![CDATA[';
+<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
+<script type="text/javascript"><!-- // --><![CDATA[';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 		$context['footer'] .= '
-				var oQuickReply = new QuickReply({
-					bDefaultCollapsed: ' . (!empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true') . ',
-					iTopicId: ' . $context['current_topic'] . ',
-					iStart: ' . $context['start'] . ',
-					sScriptUrl: smf_scripturl,
-					sImagesUrl: "' . $settings['images_url'] . '",
-					sContainerId: "quickReplyOptions",
-					sImageId: "quickReplyExpand",
-					sImageCollapsed: "collapse.gif",
-					sImageExpanded: "expand.gif",
-					sJumpAnchor: "quickreply",
-					sBbcDiv: "' . ($context['postbox']->show_bbc ? 'bbcBox_message' : '') . '",
-					sSmileyDiv: "' . (!empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '') . '",
-					sSwitchMode: "switch_mode",
-					bUsingWysiwyg: ' . ($context['postbox']->rich_active ? 'true' : 'false') . '
-				});';
+	var oQuickReply = new QuickReply({
+		bDefaultCollapsed: ' . (!empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true') . ',
+		iTopicId: ' . $context['current_topic'] . ',
+		iStart: ' . $context['start'] . ',
+		sScriptUrl: smf_scripturl,
+		sImagesUrl: "' . $settings['images_url'] . '",
+		sContainerId: "quickReplyOptions",
+		sImageId: "quickReplyExpand",
+		sImageCollapsed: "collapse.gif",
+		sImageExpanded: "expand.gif",
+		sJumpAnchor: "quickreply",
+		sBbcDiv: "' . ($context['postbox']->show_bbc ? 'bbcBox_message' : '') . '",
+		sSmileyDiv: "' . (!empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '') . '",
+		sSwitchMode: "switch_mode",
+		bUsingWysiwyg: ' . ($context['postbox']->rich_active ? 'true' : 'false') . '
+	});';
 
 	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
 		$context['footer'] .= '
-				var oInTopicModeration = new InTopicModeration({
-					sSelf: \'oInTopicModeration\',
-					sCheckboxContainerMask: \'in_topic_mod_check_\',
-					aMessageIds: [\'' . implode('\', \'', $removableMessageIDs) . '\'],
-					sSessionId: \'' . $context['session_id'] . '\',
-					sSessionVar: \'' . $context['session_var'] . '\',
-					sButtonStrip: \'moderationbuttons\',
-					sButtonStripDisplay: \'moderationbuttons_strip\',
-					bUseImageButton: false,
-					bCanRemove: ' . ($context['can_remove_post'] ? 'true' : 'false') . ',
-					sRemoveButtonLabel: \'' . $txt['quickmod_delete_selected'] . '\',
-					sRemoveButtonImage: \'delete_selected.gif\',
-					sRemoveButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
-					bCanRestore: ' . ($context['can_restore_msg'] ? 'true' : 'false') . ',
-					sRestoreButtonLabel: \'' . $txt['quick_mod_restore'] . '\',
-					sRestoreButtonImage: \'restore_selected.gif\',
-					sRestoreButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
-					sFormId: \'quickModForm\'
-				});';
+	var oInTopicModeration = new InTopicModeration({
+		sSelf: \'oInTopicModeration\',
+		sCheckboxContainerMask: \'in_topic_mod_check_\',
+		aMessageIds: [\'' . implode('\', \'', $removableMessageIDs) . '\'],
+		sSessionId: \'' . $context['session_id'] . '\',
+		sSessionVar: \'' . $context['session_var'] . '\',
+		sButtonStrip: \'moderationbuttons\',
+		sButtonStripDisplay: \'moderationbuttons_strip\',
+		bUseImageButton: false,
+		bCanRemove: ' . ($context['can_remove_post'] ? 'true' : 'false') . ',
+		sRemoveButtonLabel: \'' . $txt['quickmod_delete_selected'] . '\',
+		sRemoveButtonImage: \'delete_selected.gif\',
+		sRemoveButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
+		bCanRestore: ' . ($context['can_restore_msg'] ? 'true' : 'false') . ',
+		sRestoreButtonLabel: \'' . $txt['quick_mod_restore'] . '\',
+		sRestoreButtonImage: \'restore_selected.gif\',
+		sRestoreButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
+		sFormId: \'quickModForm\'
+	});';
 
 	$context['footer'] .= '
-				if (\'XMLHttpRequest\' in window)
-				{
-					var oQuickModify = new QuickModify({
-						sScriptUrl: smf_scripturl,
-						bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
-						iTopicId: ' . $context['current_topic'] . ',
-						sTemplateBodyEdit: ' . JavaScriptEscape('
-							<div id="quick_edit_body_container" style="width: 90%">
-								<div id="error_box" style="padding: 4px;" class="error"></div>
-								<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br />
-								<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
-								<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
-								<input type="hidden" name="msg" value="%msg_id%" />
-								<div class="righttext">
-									<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit" data-onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" />&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="spellCheck(\'quickModForm\', \'message\');" />&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="return oQuickModify.modifyCancel();" />
-								</div>
-							</div>') . ',
-						sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%;" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '" class="input_text" />') . ',
-						sTemplateBodyNormal: ' . JavaScriptEscape('%body%') . ',
-						sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
-						sTemplateTopSubject: ' . JavaScriptEscape($txt['topic'] . ': %subject% &nbsp;(' . $txt['read'] . ' ' . $context['num_views'] . ' ' . $txt['times'] . ')') . ',
-						sErrorBorderStyle: ' . JavaScriptEscape('1px solid red') . '
-					});
+	if (\'XMLHttpRequest\' in window)
+	{
+		var oQuickModify = new QuickModify({
+			sScriptUrl: smf_scripturl,
+			bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
+			iTopicId: ' . $context['current_topic'] . ',
+			sTemplateBodyEdit: ' . JavaScriptEscape('
+				<div id="quick_edit_body_container" style="width: 90%">
+					<div id="error_box" style="padding: 4px;" class="error"></div>
+					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br />
+					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+					<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
+					<input type="hidden" name="msg" value="%msg_id%" />
+					<div class="righttext">
+						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit" data-onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" />&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="spellCheck(\'quickModForm\', \'message\');" />&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" data-onclick="return oQuickModify.modifyCancel();" />
+					</div>
+				</div>') . ',
+			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%;" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '" class="input_text" />') . ',
+			sTemplateBodyNormal: ' . JavaScriptEscape('%body%') . ',
+			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
+			sTemplateTopSubject: ' . JavaScriptEscape($txt['topic'] . ': %subject% &nbsp;(' . $txt['read'] . ' ' . $context['num_views'] . ' ' . $txt['times'] . ')') . ',
+			sErrorBorderStyle: ' . JavaScriptEscape('1px solid red') . '
+		});
 
-					aJumpTo[aJumpTo.length] = new JumpTo({
-						sContainerId: "display_jump_to",
-						sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
-						iCurBoardId: ' . $context['current_board'] . ',
-						iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
-						sCurBoardName: "' . $context['jump_to']['board_name'] . '",
-						sBoardChildLevelIndicator: "==",
-						sBoardPrefix: "=> ",
-						sCatSeparator: "-----------------------------",
-						sCatPrefix: "",
-						sGoButtonLabel: "' . $txt['go'] . '"
-					});
+		aJumpTo[aJumpTo.length] = new JumpTo({
+			sContainerId: "display_jump_to",
+			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
+			iCurBoardId: ' . $context['current_board'] . ',
+			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
+			sCurBoardName: "' . $context['jump_to']['board_name'] . '",
+			sBoardChildLevelIndicator: "==",
+			sBoardPrefix: "=> ",
+			sCatSeparator: "-----------------------------",
+			sCatPrefix: "",
+			sGoButtonLabel: "' . $txt['go'] . '"
+		});
 
-					aIconLists[aIconLists.length] = new IconList({
-						sBackReference: "aIconLists[" + aIconLists.length + "]",
-						sIconIdPrefix: "msg_icon_",
-						sScriptUrl: smf_scripturl,
-						bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
-						iBoardId: ' . $context['current_board'] . ',
-						iTopicId: ' . $context['current_topic'] . ',
-						sSessionId: "' . $context['session_id'] . '",
-						sSessionVar: "' . $context['session_var'] . '",
-						sLabelIconList: "' . $txt['message_icon'] . '",
-						sBoxBackground: "transparent",
-						sBoxBackgroundHover: "#ffffff",
-						iBoxBorderWidthHover: 1,
-						sBoxBorderColorHover: "#adadad",
-						sContainerBackground: "#ffffff",
-						sContainerBorder: "1px solid #adadad",
-						sItemBorder: "1px solid #ffffff",
-						sItemBorderHover: "1px dotted gray",
-						sItemBackground: "transparent",
-						sItemBackgroundHover: "#e0e0f0"
-					});
-				}';
+		aIconLists[aIconLists.length] = new IconList({
+			sBackReference: "aIconLists[" + aIconLists.length + "]",
+			sIconIdPrefix: "msg_icon_",
+			sScriptUrl: smf_scripturl,
+			bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
+			iBoardId: ' . $context['current_board'] . ',
+			iTopicId: ' . $context['current_topic'] . ',
+			sSessionId: "' . $context['session_id'] . '",
+			sSessionVar: "' . $context['session_var'] . '",
+			sLabelIconList: "' . $txt['message_icon'] . '",
+			sBoxBackground: "transparent",
+			sBoxBackgroundHover: "#ffffff",
+			iBoxBorderWidthHover: 1,
+			sBoxBorderColorHover: "#adadad",
+			sContainerBackground: "#ffffff",
+			sContainerBorder: "1px solid #adadad",
+			sItemBorder: "1px solid #ffffff",
+			sItemBorderHover: "1px dotted gray",
+			sItemBackground: "transparent",
+			sItemBackgroundHover: "#e0e0f0"
+		});
+	}';
 
 	if (!empty($ignoredMsgs))
 	{
 		$context['footer'] .= '
-				var aIgnoreToggles = new Array();';
+	var aIgnoreToggles = new Array();';
 
 		foreach ($ignoredMsgs as $msgid)
 		{
 			$context['footer'] .= '
-				aIgnoreToggles[' . $msgid . '] = new smc_Toggle({
-					bToggleEnabled: true,
-					bCurrentlyCollapsed: true,
-					aSwappableContainers: [
-						\'msg_' . $msgid . '_extra_info\',
-						\'msg_' . $msgid . '\',
-						\'msg_' . $msgid . '_footer\',
-						\'msg_' . $msgid . '_quick_mod\',
-						\'modify_button_' . $msgid . '\',
-						\'msg_' . $msgid . '_signature\'
+	aIgnoreToggles[' . $msgid . '] = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: true,
+		aSwappableContainers: [
+			\'msg_' . $msgid . '_extra_info\',
+			\'msg_' . $msgid . '\',
+			\'msg_' . $msgid . '_footer\',
+			\'msg_' . $msgid . '_quick_mod\',
+			\'modify_button_' . $msgid . '\',
+			\'msg_' . $msgid . '_signature\'
 
-					],
-					aSwapLinks: [
-						{
-							sId: \'msg_' . $msgid . '_ignored_link\',
-							msgExpanded: \'\',
-							msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
-						}
-					]
-				});';
+		],
+		aSwapLinks: [
+			{
+				sId: \'msg_' . $msgid . '_ignored_link\',
+				msgExpanded: \'\',
+				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
+			}
+		]
+	});';
 		}
 	}
 
 	if (!empty($context['user_menu']))
 	{
 		$context['footer'] .= '
-				var oUserMenu = new UserMenu({';
+	var oUserMenu = new UserMenu({';
 
 		$menu_started = false;
 		foreach ($context['user_menu'] as $user => $linklist)
@@ -851,15 +851,15 @@ function template_main()
 				$context['footer'] .= ',';
 
 			$context['footer'] .= '
-					user' . $user . ': [' . implode(',', $linklist) . ']';
+		user' . $user . ': [' . implode(',', $linklist) . ']';
 		}
 
 		$context['footer'] .= '
-				});';
+	});';
 	}
 
 	$context['footer'] .= '
-			// ]]></script>';
+// ]]></script>';
 }
 
 ?>

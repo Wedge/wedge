@@ -72,8 +72,8 @@ function template_html_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $boardurl;
 
-	// Show right to left and the character set for ease of translating.
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	// Declare HTML5, and show right to left and the character set for ease of translating.
+	echo '<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <!-- Powered by Wedge, (c) WedgeBox 2010 - http://wedgeforum.com -->
 <head>';
@@ -281,8 +281,8 @@ function template_body_below()
 		<p>', $txt['page_created'], $context['load_time'], $txt['seconds_with'], $context['load_queries'], $txt['queries'], '</p>';
 
 	echo '
-	</div></div>', !empty($settings['forum_width']) ? '
-</div>' : '</div>';
+	</div></div>
+</div>';
 }
 
 function template_html_below()
@@ -291,60 +291,61 @@ function template_html_below()
 
 	// Define the upper_section toggle in JavaScript.
 	echo '
-	<script type="text/javascript" src="', $context['cached_js'], '"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
-		var smf_theme_url = "', $settings['theme_url'], '";
-		var smf_default_theme_url = "', $settings['default_theme_url'], '";
-		var smf_images_url = "', $settings['images_url'], '";
-		var smf_scripturl = "', $scripturl, '";
-		var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
-		var fPmPopup = function ()
-		{
-			if (confirm("' . $txt['show_personal_messages'] . '"))
-				window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
-		}
-		addLoadEvent(fPmPopup);' : '', '
-		var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-		var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
-		DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
-		initMenu(document.getElementById("main_menu"));
 
-		var oMainHeaderToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
-			aSwappableContainers: [
-				\'upper_section\'
-			],
-			aSwapImages: [
-				{
-					sId: \'upshrink\',
-					srcExpanded: smf_images_url + \'/upshrink.png\',
-					altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-					srcCollapsed: smf_images_url + \'/upshrink2.png\',
-					altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-				sOptionName: \'collapse_header\',
-				sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-				sSessionId: ', JavaScriptEscape($context['session_id']), '
-			},
-			oCookieOptions: {
-				bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-				sCookieName: \'upshrink\'
+<script type="text/javascript" src="', $context['cached_js'], '"></script>
+<script type="text/javascript"><!-- // --><![CDATA[
+	var smf_theme_url = "', $settings['theme_url'], '";
+	var smf_default_theme_url = "', $settings['default_theme_url'], '";
+	var smf_images_url = "', $settings['images_url'], '";
+	var smf_scripturl = "', $scripturl, '";
+	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
+	var fPmPopup = function ()
+	{
+		if (confirm("' . $txt['show_personal_messages'] . '"))
+			window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
+	}
+	addLoadEvent(fPmPopup);' : '', '
+	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
+	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
+	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
+	initMenu(document.getElementById("main_menu"));
+
+	var oMainHeaderToggle = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
+		aSwappableContainers: [
+			\'upper_section\'
+		],
+		aSwapImages: [
+			{
+				sId: \'upshrink\',
+				srcExpanded: smf_images_url + \'/upshrink.png\',
+				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
+				srcCollapsed: smf_images_url + \'/upshrink2.png\',
+				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
 			}
-		});
-	// ]]></script>';
+		],
+		oThemeOptions: {
+			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
+			sOptionName: \'collapse_header\',
+			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
+			sSessionId: ', JavaScriptEscape($context['session_id']), '
+		},
+		oCookieOptions: {
+			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
+			sCookieName: \'upshrink\'
+		}
+	});
+// ]]></script>';
 
 	// Yeah, putting style contents in the footer sucks... But it's IE, who cares.
 	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
 	{
 		$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
 		echo '
-	<style>
-		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
-	</style>';
+<style>
+	#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
+</style>';
 	}
 
 	// Output any postponed code. (Usually for Javascript added by mods.)

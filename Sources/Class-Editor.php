@@ -75,42 +75,42 @@ class wedgeEditor
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			$context['footer'] .= '
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
-			var oEditorStrings = {
-				wont_work: \'' . addcslashes($txt['rich_edit_wont_work'], "'") . '\',
-				func_disabled: \'' . addcslashes($txt['rich_edit_function_disabled'], "'") . '\',
-				prompt_text_email: \'' . addcslashes($txt['prompt_text_email'], "'") . '\',
-				prompt_text_ftp: \'' . addcslashes($txt['prompt_text_ftp'], "'") . '\',
-				prompt_text_url: \'' . addcslashes($txt['prompt_text_url'], "'") . '\',
-				prompt_text_img: \'' . addcslashes($txt['prompt_text_img'], "'") . '\',
-				prompt_text_desc: \'' . addcslashes($txt['prompt_text_desc'], "'") . '\'
-			}
-		// ]]></script>
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
+<script type="text/javascript"><!-- // --><![CDATA[
+	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
+	var oEditorStrings = {
+		wont_work: \'' . addcslashes($txt['rich_edit_wont_work'], "'") . '\',
+		func_disabled: \'' . addcslashes($txt['rich_edit_function_disabled'], "'") . '\',
+		prompt_text_email: \'' . addcslashes($txt['prompt_text_email'], "'") . '\',
+		prompt_text_ftp: \'' . addcslashes($txt['prompt_text_ftp'], "'") . '\',
+		prompt_text_url: \'' . addcslashes($txt['prompt_text_url'], "'") . '\',
+		prompt_text_img: \'' . addcslashes($txt['prompt_text_img'], "'") . '\',
+		prompt_text_desc: \'' . addcslashes($txt['prompt_text_desc'], "'") . '\'
+	}
+// ]]></script>
+<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
 				$context['footer'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
 
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))
 					$context['footer'] .= '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
-			<input type="hidden" name="spellstring" value="" />
-		</form>';
+<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
+	<input type="hidden" name="spellstring" value="" />
+</form>';
 
 				// Also make sure that spell check works with rich edit.
 				$context['footer'] .= '
-		<script type="text/javascript"><!-- // --><![CDATA[
-		function spellCheckDone()
-		{
-			for (i = 0; i < smf_editorArray.length; i++)
-				setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
-		}
-		// ]]></script>';
+<script type="text/javascript"><!-- // --><![CDATA[
+function spellCheckDone()
+{
+	for (i = 0; i < smf_editorArray.length; i++)
+		setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
+}
+// ]]></script>';
 			}
 		}
 
@@ -2271,117 +2271,117 @@ class wedgeEditor
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />';
 
 		$context['footer'] .= '
-		<script type="text/javascript"><!-- // --><![CDATA[';
+<script type="text/javascript"><!-- // --><![CDATA[';
 
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
 			$context['footer'] .= '
-			var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
-				sUniqueId: ' . JavaScriptEscape($smileycontainer) . ',
-				sContainerDiv: ' . JavaScriptEscape($smileycontainer) . ',
-				sClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.insertSmiley') . ',
-				oSmileyLocations: {';
+	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
+		sUniqueId: ' . JavaScriptEscape($smileycontainer) . ',
+		sContainerDiv: ' . JavaScriptEscape($smileycontainer) . ',
+		sClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.insertSmiley') . ',
+		oSmileyLocations: {';
 
 			foreach ($this->smileys as $location => $smileyRows)
 			{
 				$context['footer'] .= '
-					' . $location . ': [';
+			' . $location . ': [';
 				foreach ($smileyRows as $smileyRow)
 				{
 					$context['footer'] .= '
-						[';
+				[';
 					foreach ($smileyRow['smileys'] as $smiley)
 						$context['footer'] .= '
-							{
-								sCode: ' . JavaScriptEscape($smiley['code']) . ',
-								sSrc: ' . JavaScriptEscape($settings['smileys_url'] . '/' . $smiley['filename']) . ',
-								sDescription: ' . JavaScriptEscape($smiley['description']) . '
-							}' . (empty($smiley['isLast']) ? ',' : '');
+					{
+						sCode: ' . JavaScriptEscape($smiley['code']) . ',
+						sSrc: ' . JavaScriptEscape($settings['smileys_url'] . '/' . $smiley['filename']) . ',
+						sDescription: ' . JavaScriptEscape($smiley['description']) . '
+					}' . (empty($smiley['isLast']) ? ',' : '');
 
 				$context['footer'] .= '
-						]' . (empty($smileyRow['isLast']) ? ',' : '');
+				]' . (empty($smileyRow['isLast']) ? ',' : '');
 				}
 				$context['footer'] .= '
-					]' . ($location === 'postform' ? ',' : '');
+			]' . ($location === 'postform' ? ',' : '');
 			}
 			$context['footer'] .= '
-				},
-				sSmileyBoxTemplate: ' . JavaScriptEscape('
-					%smileyRows% %moreSmileys%
-				') . ',
-				sSmileyRowTemplate: ' . JavaScriptEscape('
-					<div>%smileyRow%</div>
-				') . ',
-				sSmileyTemplate: ' . JavaScriptEscape('
-					<img src="%smileySource%" align="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%" />
-				') . ',
-				sMoreSmileysTemplate: ' . JavaScriptEscape('
-					<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
-				') . ',
-				sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . ',
-				sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-					<html>
-						<head>
-							<title>' . $txt['more_smileys_title'] . '</title>
-							<link rel="stylesheet" type="text/css" href="' . $context['cached_css'] . '" />
-						</head>
-						<body id="help_popup">
-							<div class="padding windowbg">
-								<div class="cat_bar">
-									<h3>' . $txt['more_smileys_pick'] . '</h3>
-									</h3>
-								</div>
-								<div class="padding">
-									%smileyRows%
-								</div>
-								<div class="smalltext centertext">
-									<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
-								</div>
-							</div>
-						</body>
-					</html>') . '
-			});';
+		},
+		sSmileyBoxTemplate: ' . JavaScriptEscape('
+			%smileyRows% %moreSmileys%
+		') . ',
+		sSmileyRowTemplate: ' . JavaScriptEscape('
+			<div>%smileyRow%</div>
+		') . ',
+		sSmileyTemplate: ' . JavaScriptEscape('
+			<img src="%smileySource%" align="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%" />
+		') . ',
+		sMoreSmileysTemplate: ' . JavaScriptEscape('
+			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
+		') . ',
+		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . ',
+		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			<html>
+				<head>
+					<title>' . $txt['more_smileys_title'] . '</title>
+					<link rel="stylesheet" type="text/css" href="' . $context['cached_css'] . '" />
+				</head>
+				<body id="help_popup">
+					<div class="padding windowbg">
+						<div class="cat_bar">
+							<h3>' . $txt['more_smileys_pick'] . '</h3>
+							</h3>
+						</div>
+						<div class="padding">
+							%smileyRows%
+						</div>
+						<div class="smalltext centertext">
+							<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
+						</div>
+					</div>
+				</body>
+			</html>') . '
+	});';
 		}
 
 		if ($this->show_bbc)
 		{
 			$context['footer'] .= '
-			var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
-				sUniqueId: ' . JavaScriptEscape($bbccontainer) . ',
-				sContainerDiv: ' . JavaScriptEscape($bbccontainer) . ',
-				sButtonClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleButtonClick') . ',
-				sSelectChangeHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleSelectChange') . ',
-				sSprite: ' . JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png') . ',
-				aButtonRows: [';
+	var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
+		sUniqueId: ' . JavaScriptEscape($bbccontainer) . ',
+		sContainerDiv: ' . JavaScriptEscape($bbccontainer) . ',
+		sButtonClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleButtonClick') . ',
+		sSelectChangeHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleSelectChange') . ',
+		sSprite: ' . JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png') . ',
+		aButtonRows: [';
 
 			// Here loop through the array, printing the images/rows/separators!
 			foreach ($this->bbc as $i => $buttonRow)
 			{
 				$context['footer'] .= '
-					[';
+			[';
 				foreach ($buttonRow as $tag)
 				{
 					// Is there a "before" part for this bbc button? If not, it can't be a button!!
 					if (isset($tag['before']))
 						$context['footer'] .= '
-						{
-							sType: \'button\',
-							bEnabled: ' . (empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false') . ',' . (!is_array($tag['image']) ? '
-							sImage: ' . JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') : '
-							sPos: [' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . ']') . ',
-							sCode: ' . JavaScriptEscape($tag['code']) . ',
-							sBefore: ' . JavaScriptEscape($tag['before']) . ',
-							sAfter: ' . (isset($tag['after']) ? JavaScriptEscape($tag['after']) : 'null') . ',
-							sDescription: ' . JavaScriptEscape($tag['description']) . '
-						}' . (empty($tag['isLast']) ? ',' : '');
+				{
+					sType: \'button\',
+					bEnabled: ' . (empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false') . ',' . (!is_array($tag['image']) ? '
+					sImage: ' . JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') : '
+					sPos: [' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . ']') . ',
+					sCode: ' . JavaScriptEscape($tag['code']) . ',
+					sBefore: ' . JavaScriptEscape($tag['before']) . ',
+					sAfter: ' . (isset($tag['after']) ? JavaScriptEscape($tag['after']) : 'null') . ',
+					sDescription: ' . JavaScriptEscape($tag['description']) . '
+				}' . (empty($tag['isLast']) ? ',' : '');
 
 					// Must be a divider then.
 					else
 						$context['footer'] .= '
-						{
-							sType: \'divider\'
-						}' . (empty($tag['isLast']) ? ',' : '');
+				{
+					sType: \'divider\'
+				}' . (empty($tag['isLast']) ? ',' : '');
 				}
 
 				// Add the select boxes to the first row.
@@ -2390,113 +2390,113 @@ class wedgeEditor
 					// Show the font drop down...
 					if (!isset($this->disabled_tags['font']))
 						$context['footer'] .= ',
-						{
-							sType: \'select\',
-							sName: \'sel_face\',
-							oOptions: {
-								\'\': ' . JavaScriptEscape($txt['font_face']) . ',
-								\'courier\': \'Courier\',
-								\'arial\': \'Arial\',
-								\'arial black\': \'Arial Black\',
-								\'impact\': \'Impact\',
-								\'verdana\': \'Verdana\',
-								\'times new roman\': \'Times New Roman\',
-								\'georgia\': \'Georgia\',
-								\'andale mono\': \'Andale Mono\',
-								\'trebuchet ms\': \'Trebuchet MS\',
-								\'comic sans ms\': \'Comic Sans MS\'
-							}
-						}';
+				{
+					sType: \'select\',
+					sName: \'sel_face\',
+					oOptions: {
+						\'\': ' . JavaScriptEscape($txt['font_face']) . ',
+						\'courier\': \'Courier\',
+						\'arial\': \'Arial\',
+						\'arial black\': \'Arial Black\',
+						\'impact\': \'Impact\',
+						\'verdana\': \'Verdana\',
+						\'times new roman\': \'Times New Roman\',
+						\'georgia\': \'Georgia\',
+						\'andale mono\': \'Andale Mono\',
+						\'trebuchet ms\': \'Trebuchet MS\',
+						\'comic sans ms\': \'Comic Sans MS\'
+					}
+				}';
 
 					// Font sizes anyone?
 					if (!isset($this->disabled_tags['size']))
 						$context['footer'] .= ',
-						{
-							sType: \'select\',
-							sName: \'sel_size\',
-							oOptions: {
-								\'\': ' . JavaScriptEscape($txt['font_size']) . ',
-								\'1\': \'6pt\',
-								\'2\': \'8pt\',
-								\'3\': \'10pt\',
-								\'4\': \'12pt\',
-								\'5\': \'14pt\',
-								\'6\': \'18pt\',
-								\'7\': \'24pt\'
-							}
-						}';
+				{
+					sType: \'select\',
+					sName: \'sel_size\',
+					oOptions: {
+						\'\': ' . JavaScriptEscape($txt['font_size']) . ',
+						\'1\': \'6pt\',
+						\'2\': \'8pt\',
+						\'3\': \'10pt\',
+						\'4\': \'12pt\',
+						\'5\': \'14pt\',
+						\'6\': \'18pt\',
+						\'7\': \'24pt\'
+					}
+				}';
 
 					// Print a drop down list for all the colors we allow!
 					if (!isset($this->disabled_tags['color']))
 						$context['footer'] .= ',
-						{
-							sType: \'select\',
-							sName: \'sel_color\',
-							oOptions: {
-								\'\': ' . JavaScriptEscape($txt['change_color']) . ',
-								\'black\': ' . JavaScriptEscape($txt['black']) . ',
-								\'red\': ' . JavaScriptEscape($txt['red']) . ',
-								\'yellow\': ' . JavaScriptEscape($txt['yellow']) . ',
-								\'pink\': ' . JavaScriptEscape($txt['pink']) . ',
-								\'green\': ' . JavaScriptEscape($txt['green']) . ',
-								\'orange\': ' . JavaScriptEscape($txt['orange']) . ',
-								\'purple\': ' . JavaScriptEscape($txt['purple']) . ',
-								\'blue\': ' . JavaScriptEscape($txt['blue']) . ',
-								\'beige\': ' . JavaScriptEscape($txt['beige']) . ',
-								\'brown\': ' . JavaScriptEscape($txt['brown']) . ',
-								\'teal\': ' . JavaScriptEscape($txt['teal']) . ',
-								\'navy\': ' . JavaScriptEscape($txt['navy']) . ',
-								\'maroon\': ' . JavaScriptEscape($txt['maroon']) . ',
-								\'limegreen\': ' . JavaScriptEscape($txt['lime_green']) . ',
-								\'white\': ' . JavaScriptEscape($txt['white']) . '
-							}
-						}';
+				{
+					sType: \'select\',
+					sName: \'sel_color\',
+					oOptions: {
+						\'\': ' . JavaScriptEscape($txt['change_color']) . ',
+						\'black\': ' . JavaScriptEscape($txt['black']) . ',
+						\'red\': ' . JavaScriptEscape($txt['red']) . ',
+						\'yellow\': ' . JavaScriptEscape($txt['yellow']) . ',
+						\'pink\': ' . JavaScriptEscape($txt['pink']) . ',
+						\'green\': ' . JavaScriptEscape($txt['green']) . ',
+						\'orange\': ' . JavaScriptEscape($txt['orange']) . ',
+						\'purple\': ' . JavaScriptEscape($txt['purple']) . ',
+						\'blue\': ' . JavaScriptEscape($txt['blue']) . ',
+						\'beige\': ' . JavaScriptEscape($txt['beige']) . ',
+						\'brown\': ' . JavaScriptEscape($txt['brown']) . ',
+						\'teal\': ' . JavaScriptEscape($txt['teal']) . ',
+						\'navy\': ' . JavaScriptEscape($txt['navy']) . ',
+						\'maroon\': ' . JavaScriptEscape($txt['maroon']) . ',
+						\'limegreen\': ' . JavaScriptEscape($txt['lime_green']) . ',
+						\'white\': ' . JavaScriptEscape($txt['white']) . '
+					}
+				}';
 				}
 				$context['footer'] .= '
-					]' . ($i == count($this->bbc) - 1 ? '' : ',');
+			]' . ($i == count($this->bbc) - 1 ? '' : ',');
 			}
 			$context['footer'] .= '
-				],
-				sButtonTemplate: ' . JavaScriptEscape('
-					<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>
-				') . ',
-				sButtonBackgroundPos: [0, 22],
-				sButtonBackgroundPosHover: [0, 0],
-				sActiveButtonBackgroundPos: [0, 0],
-				sDividerTemplate: ' . JavaScriptEscape('
-					<div class="bbc_divider"></div>
-				') . ',
-				sSelectTemplate: ' . JavaScriptEscape('
-					<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt;">
-						%selectOptions%
-					</select>
-				') . ',
-				sButtonRowTemplate: ' . JavaScriptEscape('
-					<div>%buttonRow%</div>
-				') . '
-			});';
+		],
+		sButtonTemplate: ' . JavaScriptEscape('
+			<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>
+		') . ',
+		sButtonBackgroundPos: [0, 22],
+		sButtonBackgroundPosHover: [0, 0],
+		sActiveButtonBackgroundPos: [0, 0],
+		sDividerTemplate: ' . JavaScriptEscape('
+			<div class="bbc_divider"></div>
+		') . ',
+		sSelectTemplate: ' . JavaScriptEscape('
+			<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt;">
+				%selectOptions%
+			</select>
+		') . ',
+		sButtonRowTemplate: ' . JavaScriptEscape('
+			<div>%buttonRow%</div>
+		') . '
+	});';
 		}
 
 		// Now it's all drawn out we'll actually setup the box.
 		$context['footer'] .= '
-			var oEditorHandle_' . $this->id . ' = new smc_Editor({
-				sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
-				sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
-				sFormId: ' . JavaScriptEscape($this->form) . ',
-				sUniqueId: ' . JavaScriptEscape($this->id) . ',
-				bRTL: ' . ($txt['lang_rtl'] ? 'true' : 'false') . ',
-				bWysiwyg: ' . ($this->rich_active ? 'true' : 'false') . ',
-				sText: ' . JavaScriptEscape($this->rich_active ? $this->rich_value : '') . ',
-				sEditWidth: ' . JavaScriptEscape($this->width) . ',
-				sEditHeight: ' . JavaScriptEscape($this->height) . ',
-				bRichEditOff: ' . (empty($modSettings['disable_wysiwyg']) ? 'false' : 'true') . ',
-				oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
-				oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . '
-			});
-			smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';';
+	var oEditorHandle_' . $this->id . ' = new smc_Editor({
+		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
+		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
+		sFormId: ' . JavaScriptEscape($this->form) . ',
+		sUniqueId: ' . JavaScriptEscape($this->id) . ',
+		bRTL: ' . ($txt['lang_rtl'] ? 'true' : 'false') . ',
+		bWysiwyg: ' . ($this->rich_active ? 'true' : 'false') . ',
+		sText: ' . JavaScriptEscape($this->rich_active ? $this->rich_value : '') . ',
+		sEditWidth: ' . JavaScriptEscape($this->width) . ',
+		sEditHeight: ' . JavaScriptEscape($this->height) . ',
+		bRichEditOff: ' . (empty($modSettings['disable_wysiwyg']) ? 'false' : 'true') . ',
+		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
+		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . '
+	});
+	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';';
 
 		$context['footer'] .= '
-		// ]]></script>';
+// ]]></script>';
 	}
 
 	public function outputButtons()

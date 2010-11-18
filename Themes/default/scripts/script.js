@@ -1320,7 +1320,7 @@ function clickMagic()
 		// In most cases, we only need to set the onclick handler...
 		if (cls.indexOf('hitme') == -1)
 		{
-			div['onclick'] = new Function(div.getAttribute('data-onclick');
+			div['onclick'] = new Function(div.getAttribute('data-onclick'));
 			continue;
 		}
 		for (var k = 0, m = att.length; k < m; j++)
@@ -1328,6 +1328,30 @@ function clickMagic()
 				here[k] = att[k].name.substr(5);
 		for (var k in here)
 			div[here[j]] = new Function(div.getAttribute('data-' + here[k]));
+	}
+}
+
+// This will add an extra class to any external links.
+// Ignored for now because it needs some improvement to the domain name detection.
+function linkMagic()
+{
+	var i, a, hre;
+	var noddy = document.getElementsByTagName('a'), hre, i, a;
+	for (i = 0; a = noddy[i]; i++)
+	{
+		// Leave a way out to external links.
+		if (a.getAttribute('title') == '-')
+			continue;
+
+		hre = a.getAttribute('href');
+		if (typeof hre == 'string' && hre.length > 0)
+		{
+			if ((hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
+			{
+				a.setAttribute('class', 'xt');
+				a.setAttribute('className', 'xt');
+			}
+		}
 	}
 }
 

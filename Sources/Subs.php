@@ -2460,7 +2460,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			foreach ($matches as $m)
 			{
 				$my_pos = $end_blockquote = strpos($message, $m[0]);
-				$message = substr_replace($message, '<a class="fnotel" name="footlink' . ++$feet . '" href="#footnote' . $feet . '">[' . ++$f . ']</a>', $my_pos, strlen($m[0]));
+				$message = substr_replace($message, '<a class="fnotel" id="footlink' . ++$feet . '" href="#footnote' . $feet . '">[' . ++$f . ']</a>', $my_pos, strlen($m[0]));
 				$addnote[$feet] = array($feet, $f, $m[1]);
 
 				while ($end_blockquote !== false)
@@ -2485,12 +2485,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 			$message = preg_replace_callback('~(?:<foot:\d+>)+~', create_function('$match', '
 				global $addnote;
-				$msg = \'<table class="footnotes" width="100%" cellspacing="0" border="0">\';
+				$msg = \'<table class="footnotes" style="width: 100%">\';
 				preg_match_all(\'~<foot:(\d+)>~\', $match[0], $mat);
 				foreach ($mat[1] as $note)
 				{
 					$n = &$addnote[$note];
-					$msg .= \'<tr><td class="footnum"><a name="footnote\' . $n[0] . \'" href="#footlink\' . $n[0] . \'">&nbsp;\' . $n[1] . \'.&nbsp;</a></td><td class="footnote">\'
+					$msg .= \'<tr><td class="footnum"><a id="footnote\' . $n[0] . \'" href="#footlink\' . $n[0] . \'">&nbsp;\' . $n[1] . \'.&nbsp;</a></td><td class="footnote">\'
 						 . (stripos($n[2], \'[nb]\', 1) === false ? $n[2] : parse_bbc($n[2])) . \'</td></tr>\';
 				}
 				return $msg . \'</table>\';'), $message);
