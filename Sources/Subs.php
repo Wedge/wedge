@@ -1207,7 +1207,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'tag' => 'glow',
 				'type' => 'unparsed_commas',
 				'test' => '[#0-9a-zA-Z\-]{3,12},([012]\d{1,2}|\d{1,2})(,[^]]+)?\]',
-				'before' => $context['browser']['is_ie'] ? '<table border="0" cellpadding="0" cellspacing="0" style="display: inline; vertical-align: middle; font: inherit;"><tr><td style="filter: Glow(color=$1, strength=$2); font: inherit;">' : '<span style="text-shadow: $1 1px 1px 1px">',
+				'before' => $context['browser']['is_ie'] ? '<table style="border: 0; padding: 0; display: inline; vertical-align: middle; font: inherit;"><tr><td style="filter: Glow(color=$1, strength=$2); font: inherit;">' : '<span style="text-shadow: $1 1px 1px 1px">',
 				'after' => $context['browser']['is_ie'] ? '</td></tr></table> ' : '</span>',
 			),
 			array(
@@ -4764,12 +4764,14 @@ function call_hook($hook, $parameters = array())
 	// Loop through each function.
 	foreach ($modSettings['hooks'][$hook] as $function)
 	{
-		$function = trim($function);
-		$call = strpos($function, '::') !== false ? explode('::', $function) : $function;
+		$fun = trim($function);
+		$call = strpos($fun, '::') !== false ? explode('::', $fun) : $fun;
 
-		// Is it valid?
+		// If it isn't valid, remove it from our list.
 		if (is_callable($call))
-			$results[$function] = call_user_func_array($call, $parameters);
+			$results[$fun] = call_user_func_array($call, $parameters);
+		else
+			remove_hook($call, $function);
 	}
 
 	return $results;

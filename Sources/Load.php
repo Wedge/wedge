@@ -197,11 +197,15 @@ function reloadSettings()
 
 	// Any files to pre-include?
 	if (!empty($modSettings['hooks']['pre_include']))
+	{
 		foreach ($modSettings['hooks']['pre_include'] as $include)
-			if (file_exists($include = strtr(trim($include), array('$boarddir' => $boarddir))))
-				require_once($include);
+			if (file_exists($inc = strtr(trim($include), array('$boarddir' => $boarddir))))
+				require_once($inc);
+			else
+				remove_hook('pre_include', $include);
+	}
 
-	// Call pre load integration functions.
+	// Call pre-load integration functions.
 	call_hook('pre_load');
 }
 

@@ -392,39 +392,39 @@ function template_coppa()
 
 	// Formulate a nice complicated message!
 	echo '
-			<div class="title_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
-			<div class="windowbg2 wrc">
-				<p>', $context['coppa']['body'], '</p>
-				<p>
-					<span><a href="', $scripturl, '?action=coppa;form;member=', $context['coppa']['id'], '" target="_blank" class="new_win">', $txt['coppa_form_link_popup'], '</a> | <a href="', $scripturl, '?action=coppa;form;dl;member=', $context['coppa']['id'], '">', $txt['coppa_form_link_download'], '</a></span>
-				</p>
-				<p>', $context['coppa']['many_options'] ? $txt['coppa_send_to_two_options'] : $txt['coppa_send_to_one_option'], '</p>';
+		<div class="title_bar">
+			<h3>', $context['page_title'], '</h3>
+		</div>
+		<div class="windowbg2 wrc">
+			<p>', $context['coppa']['body'], '</p>
+			<p>
+				<span><a href="', $scripturl, '?action=coppa;form;member=', $context['coppa']['id'], '" target="_blank" class="new_win">', $txt['coppa_form_link_popup'], '</a> | <a href="', $scripturl, '?action=coppa;form;dl;member=', $context['coppa']['id'], '">', $txt['coppa_form_link_download'], '</a></span>
+			</p>
+			<p>', $context['coppa']['many_options'] ? $txt['coppa_send_to_two_options'] : $txt['coppa_send_to_one_option'], '</p>';
 
 	// Can they send by post?
 	if (!empty($context['coppa']['post']))
 		echo '
-				<h4>1) ', $txt['coppa_send_by_post'], '</h4>
-				<div class="coppa_contact">
-					', $context['coppa']['post'], '
-				</div>';
+			<h4>1) ', $txt['coppa_send_by_post'], '</h4>
+			<div class="coppa_contact">
+				', $context['coppa']['post'], '
+			</div>';
 
 	// Can they send by fax??
 	if (!empty($context['coppa']['fax']))
 		echo '
-				<h4>', !empty($context['coppa']['post']) ? '2' : '1', ') ', $txt['coppa_send_by_fax'], '</h4>
-				<div class="coppa_contact">
-					', $context['coppa']['fax'], '
-				</div>';
+			<h4>', !empty($context['coppa']['post']) ? '2' : '1', ') ', $txt['coppa_send_by_fax'], '</h4>
+			<div class="coppa_contact">
+				', $context['coppa']['fax'], '
+			</div>';
 
 	// Offer an alternative Phone Number?
 	if ($context['coppa']['phone'])
 		echo '
-				<p>', $context['coppa']['phone'], '</p>';
+			<p>', $context['coppa']['phone'], '</p>';
 
 	echo '
-			</div>';
+		</div>';
 }
 
 // An easily printable form for giving permission to access the forum for a minor.
@@ -434,7 +434,7 @@ function template_coppa_form()
 
 	// Show the form (As best we can)
 	echo '
-		<table border="0" width="100%" cellpadding="3" cellspacing="0" class="tborder" align="center">
+		<table class="tborder w100 cp4 cs0" align="center">
 			<tr>
 				<td align="left">', $context['forum_contacts'], '</td>
 			</tr><tr>

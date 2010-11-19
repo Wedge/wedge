@@ -63,7 +63,7 @@ if (!defined('SMF'))
 			+ default_value = Value to be displayed if a key is missing from a
 			  row.
 			+ shading = Should the left, top or both (all) parts of the table
-			  beshaded?
+			  be shaded?
 			+ width_normal = width of an unshaded column (auto means not
 			  defined).
 			+ align_normal = alignment of data in an unshaded column.

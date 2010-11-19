@@ -1230,6 +1230,26 @@ table.table_grid thead tr.catbg th {
 	cursor: default;
 }
 
+/* Table overrides, for deprecated cell/width params
+------------------------------------------------------- */
+
+table.w100 {
+	width: 100%;
+}
+table.cs0, table.cs1 {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+table.cs1 td {
+	border-spacing: 1px;
+}
+table.cp0 th, table.cp0 td {
+	padding: 0;
+}
+table.cp4 th, table.cp4 td {
+	padding: 4px;
+}
+
 /* Common styles used to add corners to divisions.
 ------------------------------------------------------- */
 
@@ -2783,6 +2803,12 @@ dl {
 #stats {
 	margin-top: 5px;
 }
+#stats td {
+	text-align: center;
+}
+#stats th {
+	width: 15%;
+}
 dl.stats {
 	clear: both;
 	overflow: hidden;
@@ -2821,12 +2847,15 @@ dl.stats dd {
 	background: url(../images/bar_stats.png) no-repeat 100%;
 	height: 16px;
 }
-tr th.stats_month {
+#stats th.stats_year, #stats th.stats_month {
 	width: 25%;
-	padding: 0 1.5em;
+	padding: 0.3em 0.75em;
 	text-align: left;
 }
-tr td.stats_day {
+#stats th.stats_month {
+	padding: 0.3em 1.5em;
+}
+#stats td.stats_day {
 	padding: 0 3em;
 	text-align: left;
 }

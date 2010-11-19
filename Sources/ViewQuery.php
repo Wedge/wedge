@@ -177,14 +177,14 @@ function ViewQuery()
 			if ($result === false)
 			{
 				echo '
-		<table border="1" cellpadding="4" cellspacing="0" style="empty-cells: show; font-family: serif; margin-bottom: 2ex;">
+		<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
 			<tr><td>', $smcFunc['db_error']($db_connection), '</td></tr>
 		</table>';
 				continue;
 			}
 
 			echo '
-		<table border="1" rules="all" cellpadding="4" cellspacing="0" style="empty-cells: show; font-family: serif; margin-bottom: 2ex;">';
+		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
 
 			$row = $smcFunc['db_fetch_assoc']($result);
 
