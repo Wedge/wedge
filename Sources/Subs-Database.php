@@ -57,8 +57,6 @@ function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_transaction' => 'smf_db_transaction',
 			'db_error' => 'mysql_error',
 			'db_select_db' => 'mysql_select_db',
-			'db_title' => 'MySQL',
-			'db_sybase' => false,
 			'db_escape_wildcard_string' => 'smf_db_escape_wildcard_string',
 		);
 
