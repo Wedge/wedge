@@ -41,7 +41,7 @@ if (!defined('SMF'))
  * - Set the timezone (for PHP 5.1+)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
- * - Check if SMF_HOOK_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
+ * - Check if WEDGE_HOOK_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
  * - Load any files specified in the file preloader ($modSettings['hooks']['pre_include']), and run any functions specified in the pre_load hook.
  */
 function reloadSettings()
