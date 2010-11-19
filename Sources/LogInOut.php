@@ -230,10 +230,10 @@ function Login2()
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			openid_uri, passwd_flood
 		FROM {db_prefix}members
-		WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
+		WHERE member_name = {string:user_name}'
 		LIMIT 1',
 		array(
-			'user_name' => $smcFunc['db_case_sensitive'] ? strtolower($_REQUEST['user']) : $_REQUEST['user'],
+			'user_name' => $_REQUEST['user'],
 		)
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
