@@ -1285,7 +1285,7 @@ function template_edit_options()
 				// Did you forget to type your password?
 				if (document.forms.creator.oldpasswrd.value == "")
 				{
-					alert("', $txt['required_security_reasons'], '");
+					alert(', JavaScriptEscape($txt['required_security_reasons']), ');
 					return false;
 				}';
 
@@ -1321,7 +1321,7 @@ function template_profile_pm_settings()
 										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
 								</dt>
 								<dd>
-										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 &amp;&amp; !document.getElementById(\'copy_to_outbox\').checked) alert(\'', $txt['pm_recommend_enable_outbox'], '\');">
+										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 &amp;&amp; !document.getElementById(\'copy_to_outbox\').checked) alert(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
 											<option value="0"', $context['display_mode'] == 0 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_all'], '</option>
 											<option value="1"', $context['display_mode'] == 1 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_one'], '</option>
 											<option value="2"', $context['display_mode'] == 2 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_linked'], '</option>

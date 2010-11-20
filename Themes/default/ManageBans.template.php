@@ -20,7 +20,7 @@ function template_ban_edit()
 
 	echo '
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="UTF-8" onsubmit="if (this.ban_name.value == \'\') {alert(\'', $txt['ban_name_empty'], '\'); return false;} if (this.partial_ban.checked &amp;&amp; !(this.cannot_post.checked || this.cannot_register.checked || this.cannot_login.checked)) {alert(\'', $txt['ban_restriction_empty'], '\'); return false;}">
+			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="UTF-8" onsubmit="if (this.ban_name.value == \'\') { alert(', JavaScriptEscape($txt['ban_name_empty']), '); return false; } if (this.partial_ban.checked &amp;&amp; !(this.cannot_post.checked || this.cannot_register.checked || this.cannot_login.checked)) { alert(', JavaScriptEscape($txt['ban_restriction_empty']), '); return false; }">
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['ban_name'], ':</strong>

@@ -214,16 +214,16 @@ function template_permission_index()
 				{
 					if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
 					{
-						alert("', $txt['permissions_only_one_option'], '");
+						alert(', JavaScriptEscape($txt['permissions_only_one_option']), ');
 						return false;
 					}
 					if (document.forms.permissionForm.predefined.value == "" && document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
 					{
-						alert("', $txt['permissions_no_action'], '");
+						alert(', JavaScriptEscape($txt['permissions_no_action']), ');
 						return false;
 					}
 					if (document.forms.permissionForm.permissions.value != "" && document.forms.permissionForm.add_remove.value == "deny")
-						return confirm("', $txt['permissions_deny_dangerous'], '");
+						return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
 
 					return true;
 				}
@@ -459,7 +459,7 @@ function template_modify_group()
 			function warnAboutDeny()
 			{
 				if (window.smf_usedDeny)
-					return confirm("', $txt['permissions_deny_dangerous'], '");
+					return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
 				else
 					return true;
 			}
