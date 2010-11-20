@@ -74,7 +74,7 @@ function template_html_above()
 
 	// Declare HTML5, and show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <!-- Powered by Wedge, (c) WedgeBox 2010 - http://wedgeforum.com -->
 <head>';
 
@@ -283,7 +283,7 @@ function template_body_below()
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
 			<li><a id="site_credits" href="', $scripturl, '?action=credits"><span>', $txt['site_credits'], '</span></a></li>
-			<li>|&nbsp;&nbsp;<a id="button_xhtml" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_xhtml'], '"><span>', $txt['xhtml'], '</span></a></li>',
+			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>',
 			!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) ? '
 			<li>|&nbsp;&nbsp;<a id="button_rss" href="' . $scripturl . '?action=.xml;type=rss" class="new_win"><span>' . $txt['rss'] . '</span></a></li>' : '', '
 			<li class="last">|&nbsp;&nbsp;<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
