@@ -83,7 +83,7 @@ function template_html_above()
 	<link rel="stylesheet" type="text/css" href="', $context['cached_css'], '" />
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta charset="utf-8" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '';
 
@@ -91,6 +91,11 @@ function template_html_above()
 	if (!empty($context['robot_no_index']))
 		echo '
 	<meta name="robots" content="noindex" />';
+
+	// Our alltime favorite doesn't really like HTML5...
+	if ($context['browser']['is_ie6'])
+		echo '
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	// Present a canonical url for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))

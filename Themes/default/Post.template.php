@@ -7,96 +7,98 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
 
 	// Start the javascript... and boy is there a lot.
-	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[';
+	$context['footer'] .= '
+<script><!-- // --><![CDATA[';
 
 	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes.
 	if ($context['browser']['is_firefox'])
-		echo '
-			function reActivate()
-			{
-				document.forms.postmodify.message.readOnly = false;
-			}
-			window.addEventListener("pageshow", reActivate, false);';
+		$context['footer'] .= '
+	function reActivate()
+	{
+		document.forms.postmodify.message.readOnly = false;
+	}
+	window.addEventListener("pageshow", reActivate, false);';
 
 	// Start with message icons - and any missing from this theme.
-	echo '
-			var icon_urls = {';
+	$context['footer'] .= '
+	var icon_urls = {';
 	foreach ($context['icons'] as $icon)
-		echo '
-				\'', $icon['value'], '\': \'', $icon['url'], '\'', $icon['is_last'] ? '' : ',';
-	echo '
-			};';
+		$context['footer'] .= '
+		\'' . $icon['value'] . '\': \'' . $icon['url'] . '\'' . ($icon['is_last'] ? '' : ',');
+	$context['footer'] .= '
+	};';
 
 	// The actual message icon selector.
-	echo '
-			function showimage()
-			{
-				document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
-			}';
+	$context['footer'] .= '
+	function showimage()
+	{
+		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
+	}';
 
 	// If this is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
 	if ($context['make_poll'])
-		echo '
-			function pollOptions()
-			{
-				var expire_time = document.getElementById(\'poll_expire\');
+		$context['footer'] .= '
+	function pollOptions()
+	{
+		var expire_time = document.getElementById(\'poll_expire\');
 
-				if (isEmptyText(expire_time) || expire_time.value == 0)
+		if (isEmptyText(expire_time) || expire_time.value == 0)
+		{
+			document.forms.postmodify.poll_hide[2].disabled = true;
+			if (document.forms.postmodify.poll_hide[2].checked)
+				document.forms.postmodify.poll_hide[1].checked = true;
+		}
+		else
+			document.forms.postmodify.poll_hide[2].disabled = false;
+	}
+
+	var pollOptionNum = 0, pollTabIndex;
+	function addPollOption()
+	{
+		if (pollOptionNum == 0)
+		{
+			for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
+				if (document.forms.postmodify.elements[i].id.substr(0, 8) == \'options-\')
 				{
-					document.forms.postmodify.poll_hide[2].disabled = true;
-					if (document.forms.postmodify.poll_hide[2].checked)
-						document.forms.postmodify.poll_hide[1].checked = true;
+					pollOptionNum++;
+					pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
 				}
-				else
-					document.forms.postmodify.poll_hide[2].disabled = false;
-			}
+		}
+		pollOptionNum++;
 
-			var pollOptionNum = 0, pollTabIndex;
-			function addPollOption()
-			{
-				if (pollOptionNum == 0)
-				{
-					for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
-						if (document.forms.postmodify.elements[i].id.substr(0, 8) == \'options-\')
-						{
-							pollOptionNum++;
-							pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
-						}
-				}
-				pollOptionNum++;
-
-				setOuterHTML(document.getElementById(\'pollMoreOptions\'), ', JavaScriptEscape('<li><label for="options-'), ' + pollOptionNum + ', JavaScriptEscape('">' . $txt['option'] . ' '), ' + pollOptionNum + ', JavaScriptEscape('</label>: <input type="text" name="options['), ' + pollOptionNum + ', JavaScriptEscape(']" id="options-'), ' + pollOptionNum + ', JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="'), ' + pollTabIndex + ', JavaScriptEscape('" class="input_text" /></li><li id="pollMoreOptions"></li>'), ');
-				return false;
-			}';
+		setOuterHTML(document.getElementById(\'pollMoreOptions\'), ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text" /></li><li id="pollMoreOptions"></li>') . ');
+		return false;
+	}';
 
 	// If we are making a calendar event we want to ensure we show the current days in a month etc... this is done here.
 	if ($context['make_event'])
-		echo '
-			var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		$context['footer'] .= '
+	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-			function generateDays()
-			{
-				var dayElement = document.getElementById(\'day\'), yearElement = document.getElementById(\'year\'), monthElement = document.getElementById(\'month\');
-				var days, selected = dayElement.selectedIndex;
+	function generateDays()
+	{
+		var dayElement = document.getElementById(\'day\'), yearElement = document.getElementById(\'year\'), monthElement = document.getElementById(\'month\');
+		var days, selected = dayElement.selectedIndex;
 
-				monthLength[1] = yearElement.options[yearElement.selectedIndex].value % 4 == 0 ? 29 : 28;
-				days = monthLength[monthElement.value - 1];
+		monthLength[1] = yearElement.options[yearElement.selectedIndex].value % 4 == 0 ? 29 : 28;
+		days = monthLength[monthElement.value - 1];
 
-				while (dayElement.options.length)
-					dayElement.options[0] = null;
+		while (dayElement.options.length)
+			dayElement.options[0] = null;
 
-				for (i = 1; i <= days; i++)
-					dayElement.options[dayElement.length] = new Option(i, i);
+		for (i = 1; i <= days; i++)
+			dayElement.options[dayElement.length] = new Option(i, i);
 
-				if (selected < days)
-					dayElement.selectedIndex = selected;
-			}';
+		if (selected < days)
+			dayElement.selectedIndex = selected;
+	}';
 
 	// End of the javascript, start the form and display the link tree.
+	$context['footer'] .= '
+// ]]></script>';
+
 	echo '
-		// ]]></script>
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden hitme" data-onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -132,9 +134,9 @@ function template_main()
 						<dt>
 							<strong style="', empty($context['error_type']) || $context['error_type'] != 'serious' ? 'display: none;' : '', '" id="error_serious">', $txt['error_while_submitting'], '</strong>
 						</dt>
-						<dt class="error" id="error_list">
+						<dd class="error" id="error_list">
 							', empty($context['post_error']['messages']) ? '' : implode('<br />', $context['post_error']['messages']), '
-						</dt>
+						</dd>
 					</dl>
 				</div>';
 
@@ -191,7 +193,7 @@ function template_main()
 						', $txt['message_icon'], ':
 					</dt>
 					<dd>
-						<select name="icon" id="icon" onchange="showimage()">';
+						<select name="icon" id="icon" data-onchange="showimage()" class="hitme">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
@@ -200,7 +202,7 @@ function template_main()
 
 	echo '
 						</select>
-						<img src="', $context['icon_url'], '" name="icons" hspace="15" alt="" />
+						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px" alt="" />
 					</dd>
 				</dl>
 				<hr class="clear" />';
@@ -215,7 +217,7 @@ function template_main()
 						<input type="text" name="evtitle" maxlength="60" size="60" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
+							<select name="year" id="year" tabindex="', $context['tabindex']++, '" data-onchange="generateDays();" class="hitme">';
 
 		// Show a list of all the years we allow...
 		for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -225,7 +227,7 @@ function template_main()
 		echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" onchange="generateDays();">';
+							<select name="month" id="month" data-onchange="generateDays();" class="hitme">';
 
 		// There are 12 months per year - ensure that they all get listed.
 		for ($month = 1; $month <= 12; $month++)
@@ -343,7 +345,7 @@ function template_main()
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4" class="input_text" /> ', $txt['days_word'], '
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" data-onchange="pollOptions();" maxlength="4" class="input_text hitme" /> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
@@ -423,7 +425,7 @@ function template_main()
 		foreach ($context['current_attachments'] as $attachment)
 			echo '
 					<dd class="smalltext">
-						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
+						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" data-onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
 					</dd>';
 		echo '
 				</dl>';
@@ -438,7 +440,7 @@ function template_main()
 						', $txt['attach'], ':
 					</dt>
 					<dd class="smalltext">
-						<input type="file" size="60" name="attachment[]" id="attachment1" class="input_file" />
+						<input type="file" name="attachment[]" id="attachment1" class="input_file" />
 						<div id="attachments_container"></div>
 					</dd>
 					<dd class="smalltext">';
@@ -458,13 +460,15 @@ function template_main()
 
 		echo '
 					</dd>
-				</dl>
-				<script type="text/javascript"><!-- // --><![CDATA[
-					var oAttach = new wedgeAttachSelect({
-						file_item: "attachment1",
-						file_container: "attachments_container",
-						max: ', $context['max_allowed_attachments'], ',
-						message_txt_delete: ', JavaScriptEscape($txt['remove']);
+				</dl>';
+
+	$context['footer'] .= '
+<script><!-- // --><![CDATA[
+	var oAttach = new wedgeAttachSelect({
+		file_item: "attachment1",
+		file_container: "attachments_container",
+		max: ' . $context['max_allowed_attachments'] . ',
+		message_txt_delete: ' . JavaScriptEscape($txt['remove']);
 
 		// This is purely setting it up to be displayed in a JSON friendly fashion without having a JSON function handy.
 		// Included here since it seemed almost more related to display than logic.
@@ -474,14 +478,14 @@ function template_main()
 			foreach ($ext as $k => $v)
 				$ext[$k] = JavaScriptEscape($v);
 
-			echo ',
-						message_ext_error: ', JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])), ',
-						attachment_ext: [', implode(',', $ext), ']';
+			$context['footer'] .= ',
+		message_ext_error: ' . JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])) . ',
+		attachment_ext: [' . implode(',', $ext) . ']';
 		}
 
-		echo '
-					});
-				// ]]></script>';
+	$context['footer'] .= '
+	});
+// ]]></script>';
 	}
 
 	// Is visual verification enabled?
@@ -527,7 +531,7 @@ function template_main()
 
 	// The functions used to preview a posts without loading a new page.
 	$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 	var current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ';
 	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
 	var txt_preview_title = "' . $txt['preview_title'] . '";
@@ -656,7 +660,7 @@ function template_main()
 
 	if ($context['can_quote'])
 		$context['footer'] .= '
-				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';';
+				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';';
 
 	$context['footer'] .= '
 				newPostsHTML += \'<br class="clear" />\';
@@ -763,7 +767,7 @@ function template_main()
 			if ($context['can_quote'])
 				echo '
 					<ul class="reset smalltext quickbuttons" id="msg_', $post['id'], '_quote">
-						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
+						<li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
 					</ul>';
 
 			echo '
@@ -786,7 +790,7 @@ function template_main()
 		</div>';
 
 		$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 	var aIgnoreToggles = new Array();';
 
 		foreach ($ignored_posts as $post_id)
@@ -864,13 +868,13 @@ function template_spellcheck()
 	// As you may expect - we need a lot of javascript for this... load it form the separate files.
 	echo '
 		</style>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			var spell_formname = window.opener.spell_formname;
 			var spell_fieldname = window.opener.spell_fieldname;
 		// ]]></script>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>
+		<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
+		<script><!-- // --><![CDATA[
 			', $context['spell_js'], '
 		// ]]></script>
 	</head>

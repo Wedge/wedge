@@ -53,39 +53,40 @@ function template_event_post()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// Start the javascript for drop down boxes...
+	$context['footer'] .= '
+<script type="text/javascript"><!-- // --><![CDATA[
+	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+	function generateDays()
+	{
+		var days = 0, selected = 0;
+		var dayElement = document.getElementById("day"), yearElement = document.getElementById("year"), monthElement = document.getElementById("month");
+
+		monthLength[1] = 28;
+		if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
+			monthLength[1] = 29;
+
+		selected = dayElement.selectedIndex;
+		while (dayElement.options.length)
+			dayElement.options[0] = null;
+
+		days = monthLength[monthElement.value - 1];
+
+		for (i = 1; i <= days; i++)
+			dayElement.options[dayElement.length] = new Option(i, i);
+
+		if (selected < days)
+			dayElement.selectedIndex = selected;
+	}
+
+	function toggleLinked(form)
+	{
+		form.board.disabled = !form.link_to_board.checked;
+	}
+// ]]></script>';
+
 	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-			function generateDays()
-			{
-				var days = 0, selected = 0;
-				var dayElement = document.getElementById("day"), yearElement = document.getElementById("year"), monthElement = document.getElementById("month");
-
-				monthLength[1] = 28;
-				if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
-					monthLength[1] = 29;
-
-				selected = dayElement.selectedIndex;
-				while (dayElement.options.length)
-					dayElement.options[0] = null;
-
-				days = monthLength[monthElement.value - 1];
-
-				for (i = 1; i <= days; i++)
-					dayElement.options[dayElement.length] = new Option(i, i);
-
-				if (selected < days)
-					dayElement.selectedIndex = selected;
-			}
-
-			function toggleLinked(form)
-			{
-				form.board.disabled = !form.link_to_board.checked;
-			}
-		// ]]></script>
-
-		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" onsubmit="submitonce(this);smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
+		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" data-onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" class="hitme" style="margin: 0;">';
 
 	if (!empty($context['event']['new']))
 		echo '
@@ -122,7 +123,7 @@ function template_event_post()
 						<input type="text" name="evtitle" maxlength="70" size="70" value="', $context['event']['title'], '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" id="year" onchange="generateDays();">';
+							<select name="year" data-onchange="generateDays();" class="hitme">';
 
 	// Show a list of all the years we allow...
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -132,7 +133,7 @@ function template_event_post()
 	echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" onchange="generateDays();">';
+							<select name="month" id="month" data-onchange="generateDays();" class="hitme">';
 
 	// There are 12 months per year - ensure that they all get listed.
 	for ($month = 1; $month <= 12; $month++)
@@ -184,11 +185,11 @@ function template_event_post()
 		echo '
 								<li>
 									', $txt['calendar_link_event'], '
-									<input type="checkbox" style="vertical-align: middle;" class="input_check" name="link_to_board" checked="checked" onclick="toggleLinked(this.form);" />
+									<input type="checkbox" style="vertical-align: middle;" class="input_check" name="link_to_board" checked="checked" data-onclick="toggleLinked(this.form);" />
 								</li>
 								<li>
 									', $txt['calendar_post_in'], '
-									<select id="board" name="board" onchange="this.form.submit();">';
+									<select id="board" name="board" data-onchange="this.form.submit();" class="hitme">';
 		foreach ($context['event']['categories'] as $category)
 		{
 			echo '
@@ -216,7 +217,7 @@ function template_event_post()
 	// Delete button?
 	if (empty($context['event']['new']))
 		echo '
-						<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(\'', $txt['calendar_confirm_delete'], '\');" class="button_submit" />';
+						<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" data-onclick="return confirm(\'', $txt['calendar_confirm_delete'], '\');" class="button_submit" />';
 
 	echo '
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -346,7 +347,7 @@ function template_show_month_grid($grid_name)
 
 						// Stop at ten?
 						if ($count == 10 && $use_js_hide)
-							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br /><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
+							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br /><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" data-onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
 
 						$count++;
 					}

@@ -821,7 +821,7 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
+.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td {
 	color: #222;
 	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 	font-size: 1.1em;
@@ -2932,17 +2932,13 @@ dl.addrules dt.floatleft {
 	background-color: #fff;
 }
 
+#calendar .cat_bar {
+	margin-bottom: 4px;
+}
 #month_grid {
 	width: 200px;
 	text-align: center;
 	float: left;
-}
-#month_grid div.cat_bar {
-	height: 25px;
-}
-#month_grid .cat_bar h3 {
-	height: 25px;
-	line-height: 27px;
 }
 #month_grid table {
 	width: 200px;
@@ -2953,7 +2949,6 @@ dl.addrules dt.floatleft {
 }
 #main_grid table .cat_bar h3 {
 	text-align: center;
-	height: 29px;
 	border-top: 2px solid #fff;
 	border-bottom: none;
 }
@@ -2977,7 +2972,7 @@ dl.addrules dt.floatleft {
 	text-align: center;
 	padding-left: 0;
 	font-size: large;
-	height: 29px;
+	height: 23px;
 }
 #main_grid h3 span.floatleft, #main_grid h3 span.floatright {
 	display: block;
@@ -3116,7 +3111,7 @@ span.hidelink {
 tr.catbg th {
 	background: #e5eee5 url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
-tr.titlebg th {
+tr.titlebg th, tr.titlebg2 th {
 	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
 }
 tr.catbg td {

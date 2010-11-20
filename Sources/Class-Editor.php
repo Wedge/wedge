@@ -75,7 +75,7 @@ class wedgeEditor
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 	var oEditorStrings = {
 		wont_work: \'' . addcslashes($txt['rich_edit_wont_work'], "'") . '\',
@@ -87,13 +87,13 @@ class wedgeEditor
 		prompt_text_desc: \'' . addcslashes($txt['prompt_text_desc'], "'") . '\'
 	}
 // ]]></script>
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
+<script src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
 				$context['footer'] .= '
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+<script src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
 
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))
@@ -104,7 +104,7 @@ class wedgeEditor
 
 				// Also make sure that spell check works with rich edit.
 				$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 function spellCheckDone()
 {
 	for (i = 0; i < smf_editorArray.length; i++)
@@ -2253,7 +2253,7 @@ function spellCheckDone()
 		<div id="smileyBox_', $this->id, '"></div>';
 
 		echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			function storeCaret(oTextHandle)
 			{
 				if (\'createTextRange\' in oTextHandle)
@@ -2271,7 +2271,7 @@ function spellCheckDone()
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />';
 
 		$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[';
+<script><!-- // --><![CDATA[';
 
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)

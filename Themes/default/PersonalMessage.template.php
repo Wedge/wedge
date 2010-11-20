@@ -45,7 +45,7 @@ function template_folder()
 
 	// The every helpful javascript!
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var allLabels = {};
 		var currentLabels = {};
 		function loadLabelChoices()
@@ -509,31 +509,31 @@ function template_subject_list()
 	global $context, $options, $settings, $modSettings, $txt, $scripturl;
 
 	echo '
-	<table width="100%" class="table_grid" cellspacing="0">
+	<table class="table_grid w100 cs0">
 	<thead>
 		<tr class="catbg">
-			<th align="center" width="4%" class="first_th">
+			<th style="text-align: center; width: 4%" class="first_th">
 			</th>
-			<th class="lefttext" width="22%">
+			<th class="lefttext" style="width: 22%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
 			<th>
-				<div class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + document.getElementById(\'selPMView\').value;">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + document.getElementById(\'selPMView\').value;">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
 					<option value="', $display_mode, '"', ($context['display_mode'] == $display_mode ? ' selected="selected"' : ''), '>', $display_desc, '</option>';
 
 	echo '
-				</select></div>
-				<div class="floatleft">
+				</select></span>
+				<span class="floatleft">
 					<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
-				</div>
+				</span>
 			</th>
-			<th class="lefttext" width="15%">
+			<th class="lefttext" style="width: 15%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
-			<th align="center" width="4%" class="last_th">
+			<th style="text-align: center; width: 4%" class="last_th">
 				<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />
 			</th>
 		</tr>
@@ -551,7 +551,7 @@ function template_subject_list()
 		echo '
 		<tr class="', $next_alternate ? 'windowbg' : 'windowbg2', '">
 			<td align="center" width="4%">
-			<script type="text/javascript"><!-- // --><![CDATA[
+			<script><!-- // --><![CDATA[
 				currentLabels[', $message['id'], '] = {';
 
 		if (!empty($message['labels']))
@@ -625,7 +625,7 @@ function template_search()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function expandCollapseLabels()
 		{
 			var current = document.getElementById("searchLabelsExpand").style.display != "none";
@@ -673,7 +673,7 @@ function template_search()
 				<span class="enhanced">
 					<strong>', $txt['pm_search_text'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="input_text" />
-					<script type="text/javascript"><!-- // --><![CDATA[
+					<script><!-- // --><![CDATA[
 						function initSearch()
 						{
 							if (document.forms.searchform.search.value.indexOf("%u") != -1)
@@ -1016,9 +1016,9 @@ function template_send()
 	</div>';
 
 	echo '
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/PersonalMessage.js?rc3"></script>
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script src="', $settings['default_theme_url'], '/scripts/PersonalMessage.js?rc3"></script>
+	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+	<script><!-- // --><![CDATA[
 		var oPersonalMessageSend = new smf_PersonalMessageSend({
 			sSelf: \'oPersonalMessageSend\',
 			sSessionId: \'', $context['session_id'], '\',
@@ -1335,7 +1335,7 @@ function template_add_rule()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var criteriaNum = 0;
 		var actionNum = 0;
 		var groups = new Array()
@@ -1409,14 +1409,7 @@ function template_add_rule()
 
 		function updateActionDef(optNum)
 		{
-			if (document.getElementById("acttype" + optNum).value == "lab")
-			{
-				document.getElementById("labdiv" + optNum).style.display = "";
-			}
-			else
-			{
-				document.getElementById("labdiv" + optNum).style.display = "none";
-			}
+			document.getElementById("labdiv" + optNum).style.display = (document.getElementById("acttype" + optNum).value == "lab") ? "" : "none";
 		}
 
 		// Rebuild the rule description!
@@ -1633,7 +1626,7 @@ function template_add_rule()
 
 	// Now setup all the bits!
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[';
+	<script><!-- // --><![CDATA[';
 
 	foreach ($context['rule']['criteria'] as $k => $c)
 		echo '

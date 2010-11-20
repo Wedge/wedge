@@ -195,3 +195,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 #admin_main_section {
 	width: 100%;
 }
+/* Since IE6 doesn't understand border-spacing, we'll just hide borders. */
+table.table_grid, table.cs0, table.cs1 {
+	border-collapse: collapse;
+}
