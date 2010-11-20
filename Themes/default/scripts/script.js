@@ -1316,7 +1316,7 @@ function clickMagic()
 	var divs = document.querySelectorAll ? document.querySelectorAll('*[data-onclick], .hitme') : document.getElementsByTagName('*');
 	for (var i = 0, j = divs ? divs.length : 0; i < j; i++)
 	{
-		var div = divs[i], cls = div.className ? div.className : '', att = div.attributes, here = [];
+		var div = divs[i], cls = div.className ? div.className : '';
 
 		// In most cases, we only need to set the onclick handler...
 		if (cls.indexOf('hitme') == -1)
@@ -1324,11 +1324,13 @@ function clickMagic()
 			div['onclick'] = new Function(div.getAttribute('data-onclick'));
 			continue;
 		}
-		for (var k = 0, m = att.length; k < m; j++)
+
+		var att = div.attributes, here = [];
+		for (var k = 0, m = att.length; k < m; k++)
 			if (att[k].name.substr(0, 7) == 'data-on')
 				here[k] = att[k].name.substr(5);
 		for (var k in here)
-			div[here[j]] = new Function(div.getAttribute('data-' + here[k]));
+			div[here[k]] = new Function(div.getAttribute('data-' + here[k]));
 	}
 }
 
