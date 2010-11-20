@@ -151,34 +151,34 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
 	$context['footer'] .= '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		var oInfoCenterToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ' . (empty($options['collapse_header_ic']) ? 'false' : 'true') . ',
-			aSwappableContainers: [
-				\'upshrinkHeaderIC\'
-			],
-			aSwapImages: [
-				{
-					sId: \'upshrink_ic\',
-					srcExpanded: smf_images_url + \'/collapse.gif\',
-					altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ',
-					srcCollapsed: smf_images_url + \'/expand.gif\',
-					altCollapsed: ' . JavaScriptEscape($txt['upshrink_description']) . '
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ',
-				sOptionName: \'collapse_header_ic\',
-				sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
-				sSessionId: ' . JavaScriptEscape($context['session_id']) . '
-			},
-			oCookieOptions: {
-				bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',
-				sCookieName: \'upshrinkIC\'
+<script type="text/javascript"><!-- // --><![CDATA[
+	var oInfoCenterToggle = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ' . (empty($options['collapse_header_ic']) ? 'false' : 'true') . ',
+		aSwappableContainers: [
+			\'upshrinkHeaderIC\'
+		],
+		aSwapImages: [
+			{
+				sId: \'upshrink_ic\',
+				srcExpanded: smf_images_url + \'/collapse.gif\',
+				altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ',
+				srcCollapsed: smf_images_url + \'/expand.gif\',
+				altCollapsed: ' . JavaScriptEscape($txt['upshrink_description']) . '
 			}
-		});
-	// ]]></script>';
+		],
+		oThemeOptions: {
+			bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ',
+			sOptionName: \'collapse_header_ic\',
+			sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
+			sSessionId: ' . JavaScriptEscape($context['session_id']) . '
+		},
+		oCookieOptions: {
+			bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',
+			sCookieName: \'upshrinkIC\'
+		}
+	});
+// ]]></script>';
 }
 
 /**

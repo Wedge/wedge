@@ -295,7 +295,7 @@ function template_body_below()
 		<p>', $txt['page_created'], $context['load_time'], $txt['seconds_with'], $context['load_queries'], $txt['queries'], '</p>';
 
 	echo '
-	</div></div>
+	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', $context['browser']['is_ie6'] ? '' : '
 </div>';
 }
 
@@ -355,7 +355,8 @@ function template_html_below()
 	// Output any postponed code. (Usually for Javascript added by mods.)
 	echo $context['footer'];
 
-	echo '
+	echo $context['browser']['is_ie6'] ? '
+</div>' : '', '
 </body></html>';
 }
 
