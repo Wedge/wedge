@@ -61,7 +61,7 @@ function template_edit_news()
 				</noscript>
 			</div>
 			<div class="floatrightpadding">
-				<input type="submit" name="save_items" value="', $txt['save'], '" class="button_submit" /> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(\'', $txt['editnews_remove_confirm'], '\');" class="button_submit" />
+				<input type="submit" name="save_items" value="', $txt['save'], '" class="button_submit" /> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="button_submit" />
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
@@ -244,7 +244,7 @@ function template_email_members_compose()
 					<textarea cols="70" rows="9" name="message" class="editor">', $context['default_message'], '</textarea>
 				</p>
 				<ul class="reset">
-					<li><label for="send_pm"><input type="checkbox" name="send_pm" id="send_pm" class="input_check" onclick="if (this.checked && ', $context['total_emails'], ' != 0 && !confirm(\'', $txt['admin_news_cannot_pm_emails_js'], '\')) return false; this.form.parse_html.disabled = this.checked; this.form.send_html.disabled = this.checked; " /> ', $txt['email_as_pms'], '</label></li>
+					<li><label for="send_pm"><input type="checkbox" name="send_pm" id="send_pm" class="input_check" onclick="if (this.checked && ', $context['total_emails'], ' != 0 && !confirm(', JavaScriptEscape($txt['admin_news_cannot_pm_emails_js']), ')) return false; this.form.parse_html.disabled = this.checked; this.form.send_html.disabled = this.checked;" /> ', $txt['email_as_pms'], '</label></li>
 					<li><label for="send_html"><input type="checkbox" name="send_html" id="send_html" class="input_check" onclick="this.form.parse_html.disabled = !this.checked;" /> ', $txt['email_as_html'], '</label></li>
 					<li><label for="parse_html"><input type="checkbox" name="parse_html" id="parse_html" checked="checked" disabled="disabled" class="input_check" /> ', $txt['email_parsed_html'], '</label></li>
 				</ul>

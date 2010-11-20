@@ -152,7 +152,7 @@ function template_maintain_members()
 
 		function checkAttributeValidity()
 		{
-			origText = \'', $txt['reattribute_confirm'], '\';
+			origText = ', JavaScriptEscape($txt['reattribute_confirm']), ';
 			valid = true;
 
 			// Do all the fields!
@@ -164,13 +164,13 @@ function template_maintain_members()
 			{
 				if (!document.getElementById(\'from_email\').value)
 					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, \'', addcslashes($txt['reattribute_confirm_email'], "'"), '\').replace(/%find%/, document.getElementById(\'from_email\').value);
+				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, document.getElementById(\'from_email\').value);
 			}
 			else
 			{
 				if (!document.getElementById(\'from_name\').value)
 					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, \'', addcslashes($txt['reattribute_confirm_username'], "'"), '\').replace(/%find%/, document.getElementById(\'from_name\').value);
+				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, document.getElementById(\'from_name\').value);
 			}
 
 			document.getElementById(\'do_attribute\').disabled = valid ? \'\' : \'disabled\';
@@ -213,7 +213,7 @@ function template_maintain_members()
 					<input type="checkbox" name="posts" id="posts" checked="checked" class="input_check" />
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit" /></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" data-onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -240,7 +240,7 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(\'', $txt['maintain_members_confirm'], '\');" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScript($txt['maintain_members_confirm']), ');" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -363,7 +363,7 @@ function template_maintain_topics()
 	echo '
 						</div>
 					</div>
-					<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(\'', $txt['maintain_old_confirm'], '\');" class="button_submit" /></span>
+					<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_old_confirm']), ');" class="button_submit" /></span>
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				</form>
 			</div>
@@ -410,7 +410,7 @@ function template_maintain_topics()
 	}
 	echo '
 				</select></p>
-				<span><input type="submit" value="', $txt['move_topics_now'], '" onclick="if (document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].disabled || document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_to\').selectedIndex].disabled) return false; var confirmText = \'', $txt['move_topics_confirm'] . '\'; return confirm(confirmText.replace(/%board_from%/, document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')).replace(/%board_to%/, document.getElementById(\'id_board_to\').options[document.getElementById(\'id_board_to\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')));" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['move_topics_now'], '" onclick="if (document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].disabled || document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_to\').selectedIndex].disabled) return false; var confirmText = ', JavaScriptEscape($txt['move_topics_confirm']), '; return confirm(confirmText.replace(/%board_from%/, document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')).replace(/%board_to%/, document.getElementById(\'id_board_to\').options[document.getElementById(\'id_board_to\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')));" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>

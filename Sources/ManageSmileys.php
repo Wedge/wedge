@@ -438,7 +438,7 @@ function EditSmileySets()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
@@ -454,7 +454,7 @@ function EditSmileySets()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return confirm(\'' . $txt['smiley_sets_confirm'] . '\');" style="float: right;" class="button_submit" /> [<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset' . '">' . $txt['smiley_sets_add'] . '</a>]',
+				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ');" style="float: right;" class="button_submit" /> [<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset' . '">' . $txt['smiley_sets_add'] . '</a>]',
 			),
 		),
 	);
@@ -898,7 +898,7 @@ function EditSmileys()
 
 		// Create a list of options for selecting smiley sets.
 		$smileyset_option_list = '
-			<select name="set" onchange="changeSet(this.options[this.selectedIndex].value);">';
+			<select name="set" data-onchange="changeSet(this.options[this.selectedIndex].value);" class="hitme">';
 		foreach ($context['smiley_sets'] as $smiley_set)
 			$smileyset_option_list .= '
 				<option value="' . $smiley_set['path'] . '"' . ($modSettings['smiley_sets_default'] == $smiley_set['path'] ? ' selected="selected"' : '') . '>' . $smiley_set['name'] . '</option>';
@@ -1024,7 +1024,7 @@ function EditSmileys()
 				),
 				'check' => array(
 					'header' => array(
-						'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+						'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
 					),
 					'data' => array(
 						'sprintf' => array(
@@ -1050,7 +1050,7 @@ function EditSmileys()
 				array(
 					'position' => 'below_table_data',
 					'value' => '
-						<select name="smiley_action" onchange="makeChanges(this.value);">
+						<select name="smiley_action" data-onchange="makeChanges(this.value);" class="hitme">
 							<option value="-1">' . $txt['smileys_with_selected'] . ':</option>
 							<option value="-1">--------------</option>
 							<option value="hidden">' . $txt['smileys_make_hidden'] . '</option>
@@ -1069,7 +1069,7 @@ function EditSmileys()
 						return false;
 					else if (action == \'delete\')
 					{
-						if (confirm(\'' . $txt['smileys_confirm'] . '\'))
+						if (confirm(' . JavaScriptEscape($txt['smileys_confirm']) . '))
 							document.forms.smileyForm.submit();
 					}
 					else
@@ -1661,7 +1661,7 @@ function EditMessageIcons()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'sprintf' => array(

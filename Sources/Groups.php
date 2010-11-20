@@ -824,6 +824,8 @@ function GroupRequests()
 	// We're going to want this for making our list.
 	require_once($sourcedir . '/Subs-List.php');
 
+	$warning = JavaScriptEscape($txt['mc_groupr_warning']);
+
 	// This is all the information required for a group listing.
 	$listOptions = array(
 		'id' => 'group_request_list',
@@ -882,7 +884,7 @@ function GroupRequests()
 			),
 			'action' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" class="input_check" data-onclick="invertAll(this, this.form);" />',
 					'style' => 'width: 4%;',
 				),
 				'data' => array(
@@ -908,14 +910,14 @@ function GroupRequests()
 			array(
 				'position' => 'bottom_of_list',
 				'value' => '
-					<select name="req_action" onchange="if (this.value != 0 &amp;&amp; (this.value == \'reason\' || confirm(\'' . $txt['mc_groupr_warning'] . '\'))) this.form.submit();">
+					<select name="req_action" onchange="if (this.value != 0 &amp;&amp; (this.value == \'reason\' || confirm(' . $warning . '))) this.form.submit();">
 						<option value="0">' . $txt['with_selected'] . ':</option>
 						<option value="0">---------------------</option>
 						<option value="approve">' . $txt['mc_groupr_approve'] . '</option>
 						<option value="reject">' . $txt['mc_groupr_reject'] . '</option>
 						<option value="reason">' . $txt['mc_groupr_reject_w_reason'] . '</option>
 					</select>
-					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = document.getElementById(\'req_action\'); if (sel.value != 0 &amp;&amp; sel.value != \'reason\' &amp;&amp; !confirm(\'' . $txt['mc_groupr_warning'] . '\')) return false;" class="button_submit" />',
+					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = document.getElementById(\'req_action\'); if (sel.value != 0 &amp;&amp; sel.value != \'reason\' &amp;&amp; !confirm(' . $warning . ')) return false;" class="button_submit" />',
 				'align' => 'right',
 			),
 		),

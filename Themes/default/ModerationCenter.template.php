@@ -253,7 +253,7 @@ function template_reported_posts()
 			<div>
 				<div class="floatright">
 					<a href="', $report['report_href'], '">', $details_button, '</a>
-					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(\'' . $txt['mc_reportedp_ignore_confirm'] . '\');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
+					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
 					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
 					', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check" />' : '', '
 				</div>
@@ -358,7 +358,7 @@ function template_unapproved_posts()
 	echo '
 		<div class="pagesection">
 			<div class="floatright">
-				<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(\'', $txt['mc_unapproved_sure'], '\')) submit();">
+				<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
 					<option value="0">', $txt['with_selected'], ':</option>
 					<option value="0">-------------------</option>
 					<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
@@ -448,7 +448,7 @@ function template_unapproved_attachments()
 			</table>
 			<div class="pagesection">
 				<div class="floatright">
-					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(\'', $txt['mc_unapproved_sure'], '\')) submit();">
+					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
 						<option value="0">', $txt['with_selected'], ':</option>
 						<option value="0">-------------------</option>
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
@@ -493,7 +493,7 @@ function template_viewmodreport()
 		$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'align="middle"');
 
 		echo '
-						<a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(\'' . $txt['mc_reportedp_ignore_confirm'] . '\');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a>
+						<a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a>
 						<a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
 					</span>
 					', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
@@ -609,7 +609,7 @@ function template_user_watch_post_callback($post)
 
 	if ($post['can_delete'])
 		$output_html .= '
-							<a href="' . $scripturl . '?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['mc_watched_users_delete_post'] . '\');">' . $delete_button . '</a>
+							<a href="' . $scripturl . '?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ');">' . $delete_button . '</a>
 							<input type="checkbox" name="delete[]" value="' . $post['id'] . '" class="input_check" />';
 
 	$output_html .= '

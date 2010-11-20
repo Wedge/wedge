@@ -163,9 +163,11 @@ function template_generic_menu_dropdown_above()
 	}
 
 	echo '
-</ul>
-<script type="text/javascript"><!-- // --><![CDATA[
-	initMenu(document.getElementById("amen', $mid > 1 ? '_' . ($mid-1) : '', '"));
+</ul>';
+
+	$context['footer'] .= '
+<script><!-- // --><![CDATA[
+	initMenu(document.getElementById("amen' . ($mid > 1 ? '_' . ($mid-1) : '') . '"));
 // ]]></script>';
 
 	// This is the main table - we need it so we can keep the content to the right of it.

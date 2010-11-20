@@ -277,7 +277,7 @@ function ViewSpiders()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -298,7 +298,7 @@ function ViewSpiders()
 				'position' => 'below_table_data',
 				'value' => '
 					<input type="submit" name="addSpider" value="' . $txt['spiders_add'] . '" class="button_submit" />
-					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return confirm(\'' . $txt['spider_remove_selected_confirm'] . '\');" class="button_submit" />
+					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['spider_remove_selected_confirm']) . ');" class="button_submit" />
 				',
 				'style' => 'text-align: right;',
 			),

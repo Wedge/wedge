@@ -16,6 +16,8 @@ function template_main()
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
 
+	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
+
 	foreach ($context['posts'] as $post)
 	{
 		echo '
@@ -50,7 +52,7 @@ function template_main()
 		// How about... even... remove it entirely?!
 		if ($post['can_delete'])
 			echo '
-						<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(\'', $txt['remove_message'], '?\');"><span>', $txt['remove'], '</span></a></li>';
+						<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
 
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
 			echo '

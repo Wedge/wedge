@@ -219,7 +219,7 @@ function template_modifysmiley()
 					</dd>
 				</dl>
 				<input type="submit" value="', $txt['smileys_save'], '" class="button_submit" />
-				<input type="submit" name="deletesmiley" value="', $txt['smileys_delete'], '" onclick="return confirm(\'', $txt['smileys_delete_confirm'], '\');" class="button_submit" />
+				<input type="submit" name="deletesmiley" value="', $txt['smileys_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['smileys_delete_confirm']), ');" class="button_submit" />
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			<input type="hidden" name="smiley" value="', $context['current_smiley']['id'], '" />

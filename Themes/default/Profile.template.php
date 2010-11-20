@@ -210,7 +210,7 @@ function template_summary()
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
-				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;save;area=activateaccount;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(\'' . $txt['profileConfirm'] . '\');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
+				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;save;area=activateaccount;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
 
 		// If the current member is banned, show a message and possibly a link to the ban.
 		if (!empty($context['member']['bans']))
@@ -322,6 +322,8 @@ function template_showPosts()
 	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'align="middle"');
 	$notify_button = create_button('notify_sm.gif', 'notify_replies', 'notify', 'align="middle"');
 
+	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
+
 	// Are we displaying posts or attachments?
 	if (!isset($context['attachments']))
 	{
@@ -358,7 +360,7 @@ function template_showPosts()
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])
 					echo '
-							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(\'', $txt['remove_message'], '?\');"><span>', $txt['remove'], '</span></a></li>';
+							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
 
 				echo '
 						</ul>
@@ -2291,7 +2293,7 @@ function template_deleteAccount()
 
 		echo '
 				<div>
-					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" class="input_check" onclick="if (this.checked) return confirm(\'', $txt['deleteAccount_confirm'], '\');" /> ', $txt['deleteAccount_member'], '.</label>
+					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" class="input_check" onclick="if (this.checked) return confirm(', JavaScriptEscape($txt['deleteAccount_confirm']), ');" /> ', $txt['deleteAccount_member'], '.</label>
 				</div>
 				<div>
 					<input type="submit" value="', $txt['delete'], '" class="button_submit" />
@@ -2368,7 +2370,7 @@ function template_profile_group_manage()
 								<span class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</span>
 							</dt>
 							<dd>
-								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 &amp;&amp; !confirm(\'' . $txt['deadmin_confirm'] . '\')) this.value = 1;"' : ''), '>';
+								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 &amp;&amp; !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
 		// Fill the select box with all primary member groups that can be assigned to a member.
 		foreach ($context['member_groups'] as $member_group)
 			if (!empty($member_group['can_be_primary']))

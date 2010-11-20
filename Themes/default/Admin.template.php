@@ -124,57 +124,56 @@ function template_admin()
 
 	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
-		echo '
-		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>';
+		$context['footer'] .= '
+<script src="' . $scripturl . '?action=viewsmfile;filename=current-version.js"></script>
+<script src="' . $scripturl . '?action=viewsmfile;filename=latest-news.js"></script>';
 
 	// This sets the announcements and current versions themselves ;)
-	echo '
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var oAdminIndex = new smf_AdminIndex({
-				sSelf: \'oAdminCenter\',
+	$context['footer'] .= '
+<script src="' . $settings['default_theme_url'] . '/scripts/admin.js?rc3"></script>
+<script><!-- // --><![CDATA[
+	var oAdminIndex = new smf_AdminIndex({
+		sSelf: \'oAdminCenter\',
 
-				bLoadAnnouncements: true,
-				sAnnouncementTemplate: ', JavaScriptEscape('
-					<dl>
-						%content%
-					</dl>
-				'), ',
-				sAnnouncementMessageTemplate: ', JavaScriptEscape('
-					<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
-					<dd>
-						%message%
-					</dd>
-				'), ',
-				sAnnouncementContainerId: \'smfAnnouncements\',
+		bLoadAnnouncements: true,
+		sAnnouncementTemplate: ' . JavaScriptEscape('
+			<dl>
+				%content%
+			</dl>
+		') . ',
+		sAnnouncementMessageTemplate: ' . JavaScriptEscape('
+			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
+			<dd>
+				%message%
+			</dd>
+		') . ',
+		sAnnouncementContainerId: \'smfAnnouncements\',
 
-				bLoadVersions: true,
-				sSmfVersionContainerId: \'smfVersion\',
-				sYourVersionContainerId: \'yourVersion\',
-				sVersionOutdatedTemplate: ', JavaScriptEscape('
-					<span class="alert">%currentVersion%</span>
-				'), ',
+		bLoadVersions: true,
+		sSmfVersionContainerId: \'smfVersion\',
+		sYourVersionContainerId: \'yourVersion\',
+		sVersionOutdatedTemplate: ' . JavaScriptEscape('
+			<span class="alert">%currentVersion%</span>
+		') . ',
 
-				bLoadUpdateNotification: true,
-				sUpdateNotificationContainerId: \'update_section\',
-				sUpdateNotificationDefaultTitle: ', JavaScriptEscape($txt['update_available']), ',
-				sUpdateNotificationDefaultMessage: ', JavaScriptEscape($txt['update_message']), ',
-				sUpdateNotificationTemplate: ', JavaScriptEscape('
-					<div class="cat_bar">
-						<h3 id="update_title">
-							%title%
-						</h3>
-					</div>
-					<div class="windowbg wrc">
-						<div id="update_message" class="smalltext">
-							%message%
-						</div>
-					</div>'), ',
-				sUpdateNotificationLink: ', JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']), '
-
-			});
-		// ]]></script>';
+		bLoadUpdateNotification: true,
+		sUpdateNotificationContainerId: \'update_section\',
+		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
+		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
+		sUpdateNotificationTemplate: ' . JavaScriptEscape('
+			<div class="cat_bar">
+				<h3 id="update_title">
+					%title%
+				</h3>
+			</div>
+			<div class="windowbg wrc">
+				<div id="update_message" class="smalltext">
+					%message%
+				</div>
+			</div>') . ',
+		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']) . '
+	});
+// ]]></script>';
 }
 
 // Mangage the copyright.
@@ -1228,7 +1227,7 @@ function template_edit_profile_field()
 
 	if ($context['fid'])
 		echo '
-					<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(\'', $txt['custom_edit_delete_sure'], '\');" class="button_submit" />';
+					<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(', JavaScriptEscape($txt['custom_edit_delete_sure']), ');" class="button_submit" />';
 
 	echo '
 				</div>
@@ -1749,7 +1748,7 @@ function template_modify_language_entries()
 	// English can't be deleted.
 	if ($context['lang_id'] != 'english')
 		echo '
-					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' onclick="confirm(\'', $txt['languages_delete_confirm'], '\');" class="button_submit" />';
+					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled="disabled"' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="button_submit" />';
 
 	echo '
 				</div>

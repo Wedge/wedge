@@ -92,8 +92,17 @@ function template_html_above()
 		echo '
 	<meta name="robots" content="noindex" />';
 
-	// Our alltime favorite doesn't really like HTML5...
-	if ($context['browser']['is_ie6'])
+	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
+	{
+		$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
+		echo '
+	<style>
+		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
+	</style>';
+	}
+
+	// Our alltime favorites don't really like HTML5...
+	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
@@ -297,8 +306,8 @@ function template_html_below()
 	// Define the upper_section toggle in JavaScript.
 	echo '
 
-<script type="text/javascript" src="', $context['cached_js'], '"></script>
-<script type="text/javascript"><!-- // --><![CDATA[
+<script src="', $context['cached_js'], '"></script>
+<script><!-- // --><![CDATA[
 	var smf_theme_url = "', $settings['theme_url'], '";
 	var smf_default_theme_url = "', $settings['default_theme_url'], '";
 	var smf_images_url = "', $settings['images_url'], '";
@@ -306,7 +315,7 @@ function template_html_below()
 	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
 	var fPmPopup = function ()
 	{
-		if (confirm("' . $txt['show_personal_messages'] . '"))
+		if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 			window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
 	}
 	addLoadEvent(fPmPopup);' : '', '
@@ -342,16 +351,6 @@ function template_html_below()
 		}
 	});
 // ]]></script>';
-
-	// Yeah, putting style contents in the footer sucks... But it's IE, who cares.
-	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
-	{
-		$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
-		echo '
-<style>
-	#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
-</style>';
-	}
 
 	// Output any postponed code. (Usually for Javascript added by mods.)
 	echo $context['footer'];
@@ -469,7 +468,7 @@ function template_button_strip($button_strip, $direction = 'top', $strip_options
 	{
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
-				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['code']) ? ' data-onclick="' . $value['code'] . '"' : '') . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
+				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
 	}
 
 	// No buttons? No button strip either.
