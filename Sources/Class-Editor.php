@@ -2320,27 +2320,27 @@ function spellCheckDone()
 			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
 		') . ',
 		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . ',
-		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-			<html>
-				<head>
-					<title>' . $txt['more_smileys_title'] . '</title>
-					<link rel="stylesheet" type="text/css" href="' . $context['cached_css'] . '" />
-				</head>
-				<body id="help_popup">
-					<div class="padding windowbg">
-						<div class="cat_bar">
-							<h3>' . $txt['more_smileys_pick'] . '</h3>
-							</h3>
-						</div>
-						<div class="padding">
-							%smileyRows%
-						</div>
-						<div class="smalltext centertext">
-							<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
-						</div>
-					</div>
-				</body>
-			</html>') . '
+		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html>
+<html>
+	<head>
+		<title>' . $txt['more_smileys_title'] . '</title>
+		<link rel="stylesheet" type="text/css" href="' . $context['cached_css'] . '" />
+	</head>
+	<body id="help_popup">
+		<div class="padding windowbg">
+			<div class="cat_bar">
+				<h3>' . $txt['more_smileys_pick'] . '</h3>
+				</h3>
+			</div>
+			<div class="padding">
+				%smileyRows%
+			</div>
+			<div class="smalltext centertext">
+				<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
+			</div>
+		</div>
+	</body>
+</html>') . '
 	});';
 		}
 

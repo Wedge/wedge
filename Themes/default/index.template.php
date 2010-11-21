@@ -57,9 +57,6 @@ function template_init()
 	/* Use plain buttons - as opposed to text buttons? */
 	$settings['use_buttons'] = true;
 
-	/* Does this theme use the strict doctype? */
-	$settings['strict_doctype'] = false;
-
 	/* Does this theme use post previews on the message index? */
 	$settings['message_index_preview'] = false;
 

@@ -38,17 +38,17 @@ function template_main()
 		// We're not able (through the template) to sort the search results right now...
 		if (isset($context['old_search']))
 			echo '
-					<th scope="col" class="', isset($column['class']) ? ' ' . $column['class'] : '', '"', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
+					<th scope="col"', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
 						', $column['label'], '</th>';
 		// This is a selected column, so underline it or some such.
 		elseif ($column['selected'])
 			echo '
-					<th scope="col" class="', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto; white-space: nowrap"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '>
+					<th scope="col" class="nowrap', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '>
 						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" /></a></th>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
-					<th scope="col" class="', isset($column['class']) ? ' ' . $column['class'] : '', '"', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
+					<th scope="col"', isset($column['class']) ? ' class="' . $column['class'] . '"' : '', isset($column['width']) ? ' style="width: ' . $column['width'] . 'px"' : '', isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '', '>
 						', $column['link'], '</th>';
 	}
 	echo '
@@ -101,7 +101,7 @@ function template_main()
 		if (!isset($context['disabled_fields']['posts']))
 		{
 			echo '
-					<td class="windowbg2" style="white-space: nowrap; width: 15px">', $member['posts'], '</td>
+					<td class="windowbg2 nowrap" style="width: 15px">', $member['posts'], '</td>
 					<td class="windowbg statsbar" style="width: 120px">';
 
 			if (!empty($member['post_percent']))

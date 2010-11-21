@@ -299,7 +299,7 @@ function template_view_package()
 
 	// Toggle options.
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var aOperationElements = new Array();';
 
 	// Operations.
@@ -333,7 +333,7 @@ function template_view_package()
 	// And a bit more for database changes.
 	if (!empty($context['database_changes']))
 		echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var database_changes_area = document.getElementById(\'db_changes_div\');
 		var db_vis = false;
 		database_changes_area.style.display = "none";
@@ -352,7 +352,7 @@ function template_extract_package()
 
 	if (!empty($context['redirect_url']))
 		echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		setTimeout("doRedirect();", ', empty($context['redirect_timeout']) ? '5000' : $context['redirect_timeout'], ');
 
 		function doRedirect()
@@ -540,7 +540,7 @@ function template_browse()
 			<div class="clear_right"></div>
 		</div>
 
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			window.smfForum_scripturl = "', $scripturl, '";
 			window.smfForum_sessionid = "', $context['session_id'], '";
 			window.smfForum_sessionvar = "', $context['session_var'], '";';
@@ -553,10 +553,10 @@ function template_browse()
 
 	if (empty($modSettings['disable_smf_js']))
 		echo '
-		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=latest-packages.js"></script>';
+		<script src="', $scripturl, '?action=viewsmfile;filename=latest-packages.js"></script>';
 
 	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			var tempOldOnload;
 
 			function smfSetLatestPackages()
@@ -570,7 +570,7 @@ function template_browse()
 		// ]]></script>';
 
 		echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			smfSetLatestPackages();
 		// ]]></script>';
 
@@ -1152,7 +1152,7 @@ function template_package_list()
 	{
 		$section_count = count($context['package_list']);
 		echo '
-	<script type="text/javascript"><!-- // --><![CDATA[';
+	<script><!-- // --><![CDATA[';
 		foreach ($context['package_list'] as $section => $ps)
 		{
 			echo '
@@ -1353,13 +1353,13 @@ function template_control_chmod()
 	// Hide the details of the list.
 	if (empty($context['package_ftp']['form_elements_only']))
 		echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			document.getElementById(\'need_writable_list\').style.display = \'none\';
 		// ]]></script>';
 
 	// Quick generate the test button.
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		// Generate a "test ftp" button.
 		var generatedButton = false;
 		function generateFTPTest()
@@ -1435,7 +1435,7 @@ function template_control_chmod()
 
 	// Make sure the button gets generated last.
 	$context['footer'] .= '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		generateFTPTest();
 	// ]]></script>';
 }
@@ -1462,37 +1462,37 @@ function template_view_operations()
 	// Determine the position text.
 	$operation_text = $context['operations']['position'] == 'replace' ? 'operation_replace' : ($context['operations']['position'] == 'before' ? 'operation_after' : 'operation_before');
 
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<title>', $txt['operation_title'], '</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" href="', wedge_buildCSS('index+admin'), '" />
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
-	</head>
-	<body>
-		<div class="padding windowbg">
-			<div class="cat_bar">
-				<h3>
-					', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-				</h3>
-			</div>
-			<div class="padding">
-				<code id="find_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['position'] == 'end' ? '?&gt;' : $context['operations']['search'], '</code>
-			</div>
-			<div class="cat_bar">
-				<h3 class="topmargin">
-					', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-				</h3>
-			</div>
-			<div class="padding">
-				<code id="replace_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['replace'], '</code>
-			</div>
+	echo '<!DOCTYPE html>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+<head>
+	<title>', $txt['operation_title'], '</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
+	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/admin.css" />
+</head>
+<body>
+	<div class="padding windowbg">
+		<div class="cat_bar">
+			<h3>
+				', $txt['operation_find'], '<a href="#" data-onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+			</h3>
 		</div>
-	</body>
+		<div class="padding">
+			<code id="find_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['position'] == 'end' ? '?&gt;' : $context['operations']['search'], '</code>
+		</div>
+		<div class="cat_bar">
+			<h3 class="topmargin">
+				', $txt[$operation_text], '<a href="#" data-onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+			</h3>
+		</div>
+		<div class="padding">
+			<code id="replace_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['replace'], '</code>
+		</div>
+	</div>
+	<script src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
+	<script src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
+</body>
 </html>';
-
 }
 
 function template_file_permissions()
@@ -1501,7 +1501,7 @@ function template_file_permissions()
 
 	// This will handle expanding the selection.
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var oRadioColors = {
 			0: "#D1F7BF",
 			1: "#FFBBBB",
@@ -1963,7 +1963,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 		if ($level > 1 && !$isFound)
 			echo '
-		</table><script type="text/javascript"><!-- // --><![CDATA[
+		</table><script><!-- // --><![CDATA[
 			expandFolder(\'', $js_ident, '\', \'\');
 		// ]]></script>
 		<table width="100%" class="table_grid" cellspacing="0">
@@ -2062,7 +2062,7 @@ function template_action_permissions()
 
 	// Just the countdown stuff
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var countdown = ', $countDown, ';
 		doAutoSubmit();
 

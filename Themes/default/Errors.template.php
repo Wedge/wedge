@@ -163,23 +163,23 @@ function template_show_file()
 {
 	global $context, $settings;
 
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+	echo '<!DOCTYPE html>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
 		<title>', $context['file_data']['file'], '</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
+		<meta charset="utf-8" />
 	</head>
 	<body>
-		<table cellpadding="0" cellspacing="3">';
+		<table class="cp0 cs3">';
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
 		$line_num = $index+$context['file_data']['min'];
 		$is_target = $line_num == $context['file_data']['target'];
 		echo '
 			<tr>
-				<td align="right"', $is_target ? ' style="font-weight: bold; border: 1px solid black;border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
-				<td style="white-space: nowrap;', $is_target ? ' border: 1px solid black;border-width: 1px 1px 1px 0;':'','">', $line, '</td>
+				<td class="righttext"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
+				<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
 			</tr>';
 	}
 	echo '

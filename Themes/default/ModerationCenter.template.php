@@ -703,10 +703,10 @@ function template_show_notice()
 	global $txt, $settings, $options, $context;
 
 	// We do all the HTML for this one!
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+	echo '<!DOCTYPE html>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta charset="utf-8" />
 		<title>', $context['page_title'], '</title>
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
 	</head>
@@ -766,12 +766,12 @@ function template_warn_template()
 	if ($context['template_data']['can_edit_personal'])
 		echo '
 				<input type="checkbox" name="make_personal" id="make_personal" ', $context['template_data']['personal'] ? 'checked="checked"' : '', ' class="input_check" />
-					<label for="make_personal">
-						<strong>', $txt['mc_warning_template_personal'], '</strong>
-					</label>
-					<br />
-					<span class="smalltext">', $txt['mc_warning_template_personal_desc'], '</span>
-					<br />';
+				<label for="make_personal">
+					<strong>', $txt['mc_warning_template_personal'], '</strong>
+				</label>
+				<br />
+				<span class="smalltext">', $txt['mc_warning_template_personal_desc'], '</span>
+				<br />';
 
 	echo '
 				<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />

@@ -463,21 +463,21 @@ function template_verification_sound()
 {
 	global $context, $settings, $options, $txt, $scripturl;
 
-	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+	echo '<!DOCTYPE html>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>', $context['page_title'], '</title>
+		<meta charset="utf-8" />
 		<meta name="robots" content="noindex" />
+		<title>', $context['page_title'], '</title>
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<style type="text/css">';
+		<style>';
 
 	// Just show the help text and a "close window" link.
 	echo '
 		</style>
 	</head>
 	<body style="margin: 1ex;">
-		<div class="popuptext" style="text-align: center;">';
+		<div class="popuptext" style="text-align: center">';
 	if ($context['browser']['is_ie'])
 		echo '
 			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
@@ -509,7 +509,7 @@ function template_admin_register()
 			<h3>', $txt['admin_browse_register_new'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
-			<script type="text/javascript"><!-- // --><![CDATA[
+			<script><!-- // --><![CDATA[
 				function onCheckChange()
 				{
 					if (document.forms.postForm.emailActivate.checked || document.forms.postForm.password.value == \'\')

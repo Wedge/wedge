@@ -312,7 +312,7 @@ function template_modify_board()
 						<strong>', $txt['pretty']['url'], ':</strong>
 						<p class="smalltext">', $txt['pretty']['url_desc'], '</p>
 					</dt>
-					<dd style="white-space: nowrap">
+					<dd class="nowrap">
 						<select dir="rtl" name="pretty_url_dom">';
 
 		foreach ($context['board']['subdomains'] as $subdo)

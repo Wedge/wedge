@@ -69,9 +69,9 @@ function template_admin()
 					<div id="version_details">
 						<strong>', $txt['support_versions'], ':</strong><br />
 						', $txt['support_versions_forum'], ':
-						<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em><br />
+						<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em><br />
 						', $txt['support_versions_current'], ':
-						<em id="smfVersion" style="white-space: nowrap;">??</em><br />
+						<em id="smfVersion" class="nowrap">??</em><br />
 						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />';
 
 	// Have they paid to remove copyright?
@@ -226,9 +226,9 @@ function template_credits()
 		<div class="windowbg wrc">
 			<strong>', $txt['support_versions'], ':</strong><br />
 				', $txt['support_versions_forum'], ':
-			<em id="yourVersion" style="white-space: nowrap;">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />
+			<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />
 				', $txt['support_versions_current'], ':
-			<em id="smfVersion" style="white-space: nowrap;">??</em><br />';
+			<em id="smfVersion" class="nowrap">??</em><br />';
 
 	// Display all the variables we have server information for.
 	foreach ($context['current_versions'] as $version)

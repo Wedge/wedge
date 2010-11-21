@@ -2246,9 +2246,6 @@ function template_include($filename, $once = false)
 		else
 			ob_start();
 
-		if (isset($_GET['debug']) && !WIRELESS)
-			header('Content-Type: application/xhtml+xml; charset=UTF-8');
-
 		// Don't cache error pages!!
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -2257,15 +2254,15 @@ function template_include($filename, $once = false)
 		if (!isset($txt['template_parse_error']))
 		{
 			$txt['template_parse_error'] = 'Template Parse Error!';
-			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system.  This problem should only be temporary, so please come back later and try again.  If you continue to see this message, please contact the administrator.<br /><br />You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file.  Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>).  To see more specific error information from PHP, try <a href="' . $boardurl . '%1$s" class="extern">accessing the file directly</a>.<br /><br />You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
+			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br /><br />You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
+			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="' . $boardurl . '%1$s" class="extern">accessing the file directly</a>.<br /><br />You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
 		}
 
 		// First, let's get the doctype and language information out of the way.
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
+		echo '<!DOCTYPE html>
+<html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
+		<meta charset="utf-8" />';
 
 		if (!empty($maintenance) && !allowedTo('admin_forum'))
 			echo '

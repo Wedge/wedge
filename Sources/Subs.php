@@ -2859,7 +2859,6 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  * - Ensure any integration-hooked buffers are called.
  * - Display the header if correct to display then main page content, then the contents of $context['include_after_template'], followed by footer if correct to display, and lastly by debug data if enabled and available.
  * - Store the user agent string from the browser for security comparisons next page load.
- * - Attempt to clean up known issues with strict HTML doctypes, e.g. rewriting a hrefs that have explicit stated 'target' which is only available in XHTML 1.0 Transitional not Strict.
  *
  * @param mixed $header Whether to issue the header templates or not (often including the main menu). Normally this will be the case, because normally you will require standard templating (i.e pass null, or true here when calling from elsewhere in the app), or false if you require raw content output.
  * @param mixed $do_footer Nominally this follows $header, with one important difference. Whereas with $header, null means to have headers, with $do_footer, null means to inherit from $header. So to have headers, a null/null combination is usually desirable (as index.php does), or to have raw output, simply pass $header as false and omit this parameter.
@@ -2953,17 +2952,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 	// For session check verfication.... don't switch browsers...
 	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
-
-	if (!empty($settings['strict_doctype']))
-	{
-		// The theme author wants to use the STRICT doctype (only God knows why).
-		$temp = ob_get_contents();
-		ob_clean();
-
-		echo strtr($temp, array(
-			'var smf_iso_case_folding' => 'var target_blank = \'_blank\'; var smf_iso_case_folding',
-			'target="_blank"' => 'onclick="this.target=target_blank"'));
-	}
 
 	// Hand off the output to the portal, etc. we're integrated with.
 	call_hook('exit', array($do_footer && !WIRELESS));
@@ -3640,10 +3628,7 @@ function template_header()
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-		// Are we debugging the template/html content?
-		if (!isset($_REQUEST['xml']) && isset($_GET['debug']) && !$context['browser']['is_ie'] && !WIRELESS)
-			header('Content-Type: application/xhtml+xml');
-		elseif (!isset($_REQUEST['xml']) && !WIRELESS)
+		if (!isset($_REQUEST['xml']) && !WIRELESS)
 			header('Content-Type: text/html; charset=UTF-8');
 	}
 

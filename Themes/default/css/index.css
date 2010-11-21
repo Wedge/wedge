@@ -601,7 +601,9 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 .clear_right {
 	clear: right;
 }
-
+.nowrap {
+	white-space: nowrap;
+}
 /* Default font sizes: small (8pt), normal (10pt), and large (14pt). */
 .smalltext, tr.smalltext th {
 	font-size: .85em;
@@ -1236,12 +1238,15 @@ table.table_grid thead tr.catbg th {
 table.w100 {
 	width: 100%;
 }
-table.cs0, table.cs1 {
+table.cs0, table.cs1, table.cs3 {
 	border-collapse: separate;
 	border-spacing: 0;
 }
 table.cs1 td {
 	border-spacing: 1px;
+}
+table.cs3 td {
+	border-spacing: 3px;
 }
 table.cp0 th, table.cp0 td {
 	padding: 0;

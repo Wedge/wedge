@@ -384,8 +384,8 @@ function show_db_error($loadavg = false)
 	}
 
 	if (!empty($maintenance))
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+		echo '<!DOCTYPE html>
+<html>
 	<head>
 		<meta name="robots" content="noindex" />
 		<title>', $mtitle, '</title>
@@ -397,8 +397,8 @@ function show_db_error($loadavg = false)
 </html>';
 	// If this is a load average problem, display an appropriate message (but we still don't have language files!)
 	elseif ($loadavg)
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+		echo '<!DOCTYPE html>
+<html>
 	<head>
 		<meta name="robots" content="noindex" />
 		<title>Temporarily Unavailable</title>
@@ -410,8 +410,8 @@ function show_db_error($loadavg = false)
 </html>';
 	// What to do?  Language files haven't and can't be loaded yet...
 	else
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+		echo '<!DOCTYPE html>
+<html>
 	<head>
 		<meta name="robots" content="noindex" />
 		<title>Connection Problems</title>
