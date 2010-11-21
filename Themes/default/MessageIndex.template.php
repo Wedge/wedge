@@ -147,7 +147,7 @@ function template_main()
 
 		echo '
 	<div class="tborder topic_table" id="messageindex">
-		<table class="table_grid" cellspacing="0">
+		<table class="table_grid cs0">
 			<thead>
 				<tr class="catbg">';
 
@@ -155,34 +155,34 @@ function template_main()
 		if (!empty($context['topics']))
 		{
 			echo '
-					<th scope="col" class="first_th" width="4%">&nbsp;</th>
+					<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 					<th scope="col" class="lefttext"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a> / <a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=starter', $context['sort_by'] == 'starter' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['started_by'], $context['sort_by'] == 'starter' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>
-					<th scope="col" width="14%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a> / <a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=views', $context['sort_by'] == 'views' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['views'], $context['sort_by'] == 'views' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
+					<th scope="col" style="width: 14%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a> / <a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=views', $context['sort_by'] == 'views' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['views'], $context['sort_by'] == 'views' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
 
 			// Show a "select all" box for quick moderation?
 			if (empty($context['can_quick_mod']))
 				echo '
-					<th scope="col" class="lefttext last_th" width="22%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
+					<th scope="col" class="lefttext last_th" style="width: 22%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
 			else
 				echo '
-					<th scope="col" class="lefttext" width="22%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
+					<th scope="col" class="lefttext" style="width: 22%"><a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
 
 			// Show a "select all" box for quick moderation?
 			if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
 				echo '
-					<th scope="col" class="last_th" width="24"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" /></th>';
+					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" data-onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" /></th>';
 
 			// If it's on in "image" mode, don't show anything but the column.
 			elseif (!empty($context['can_quick_mod']))
 				echo '
-					<th class="last_th" width="4%">&nbsp;</th>';
+					<th class="last_th" style="width: 4%">&nbsp;</th>';
 		}
 		// No topics.... just say, "sorry bub".
 		else
 			echo '
-					<th scope="col" class="first_th" width="8%">&nbsp;</th>
+					<th scope="col" class="first_th" style="width: 8%">&nbsp;</th>
 					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
-					<th scope="col" class="last_th" width="8%">&nbsp;</th>';
+					<th scope="col" class="last_th" style="width: 8%">&nbsp;</th>';
 
 		echo '
 				</tr>
@@ -269,7 +269,7 @@ function template_main()
 			if (!empty($context['can_quick_mod']))
 			{
 				echo '
-					<td class="moderation ', $color_class, '" align="center">';
+					<td class="centertext moderation ', $color_class, '">';
 				if ($options['display_quick_mod'] == 1)
 					echo '
 						<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />';
@@ -304,7 +304,7 @@ function template_main()
 		{
 			echo '
 				<tr class="titlebg">
-					<td colspan="6" align="right">
+					<td colspan="6" class="righttext">
 						<select class="qaction" name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
 							<option value="">--------</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
@@ -372,78 +372,80 @@ function template_main()
 	if (!$context['no_topic_listing'])
 		echo '
 			<p class="floatleft smalltext">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" align="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" align="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" style="vertical-align: middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" style="vertical-align: middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" align="middle" /> ' . $txt['poll'] : '', '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" style="vertical-align: middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" style="vertical-align: middle" /> ' . $txt['poll'] : '', '
 			</p>';
 
+	$context['footer'] .= '
+<script><!-- // --><![CDATA[
+	if (typeof(window.XMLHttpRequest) != "undefined")
+		aJumpTo[aJumpTo.length] = new JumpTo({
+			sContainerId: "message_index_jump_to",
+			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
+			iCurBoardId: ' . $context['current_board'] . ',
+			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
+			sCurBoardName: "' . $context['jump_to']['board_name'] . '",
+			sBoardChildLevelIndicator: "==",
+			sBoardPrefix: "=> ",
+			sCatSeparator: "-----------------------------",
+			sCatPrefix: "",
+			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
+		});
+// ]]></script>';
+
 	echo '
-			<script type="text/javascript"><!-- // --><![CDATA[
-				if (typeof(window.XMLHttpRequest) != "undefined")
-					aJumpTo[aJumpTo.length] = new JumpTo({
-						sContainerId: "message_index_jump_to",
-						sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">', $context['jump_to']['label'], ':<" + "/label> %dropdown_list%",
-						iCurBoardId: ', $context['current_board'], ',
-						iCurBoardChildLevel: ', $context['jump_to']['child_level'], ',
-						sCurBoardName: "', $context['jump_to']['board_name'], '",
-						sBoardChildLevelIndicator: "==",
-						sBoardPrefix: "=> ",
-						sCatSeparator: "-----------------------------",
-						sCatPrefix: "",
-						sGoButtonLabel: "', $txt['quick_mod_go'], '"
-					});
-			// ]]></script>
 		</div>
 	</div>';
 
 	// Javascript for inline editing.
-	echo '
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/topic.js"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	$context['footer'] .= '
+<script src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
+<script><!-- // --><![CDATA[
 
-		// Hide certain bits during topic edit.
-		hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
+	// Hide certain bits during topic edit.
+	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
 
-		// Use it to detect when we\'ve stopped editing.
-		document.onclick = modify_topic_click;
+	// Use it to detect when we\'ve stopped editing.
+	document.onclick = modify_topic_click;
 
-		var mouse_on_div;
-		function modify_topic_click()
+	var mouse_on_div;
+	function modify_topic_click()
+	{
+		if (in_edit_mode == 1 && mouse_on_div == 0)
+			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+	}
+
+	function modify_topic_keypress(oEvent)
+	{
+		if (typeof(oEvent.keyCode) != "undefined" && oEvent.keyCode == 13)
 		{
-			if (in_edit_mode == 1 && mouse_on_div == 0)
-				modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
+			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+			if (typeof(oEvent.preventDefault) == "undefined")
+				oEvent.returnValue = false;
+			else
+				oEvent.preventDefault();
 		}
+	}
 
-		function modify_topic_keypress(oEvent)
-		{
-			if (typeof(oEvent.keyCode) != "undefined" && oEvent.keyCode == 13)
-			{
-				modify_topic_save("', $context['session_id'], '", "', $context['session_var'], '");
-				if (typeof(oEvent.preventDefault) == "undefined")
-					oEvent.returnValue = false;
-				else
-					oEvent.preventDefault();
-			}
-		}
+	// For templating, shown when an inline edit is made.
+	function modify_topic_show_edit(subject)
+	{
+		// Just template the subject.
+		cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
+	}
 
-		// For templating, shown when an inline edit is made.
-		function modify_topic_show_edit(subject)
-		{
-			// Just template the subject.
-			cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event)" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
-		}
+	// And the reverse for hiding it.
+	function modify_topic_hide_edit(subject)
+	{
+		// Re-template the subject!
+		cur_subject_div.innerHTML = \'<a href="' . $scripturl . '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
+	}
 
-		// And the reverse for hiding it.
-		function modify_topic_hide_edit(subject)
-		{
-			// Re-template the subject!
-			cur_subject_div.innerHTML = \'<a href="', $scripturl, '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
-		}
-
-	// ]]></script>';
+// ]]></script>';
 }
 
 ?>

@@ -175,7 +175,7 @@ function ViewQuery()
 			}
 
 			echo '
-		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
+		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
 
 			$row = $smcFunc['db_fetch_assoc']($result);
 

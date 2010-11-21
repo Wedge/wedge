@@ -315,7 +315,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	if (!XMLDoc || !XMLDoc.getElementsByTagName('smf')[0])
 	{
 		// Mozilla will nicely tell us what's wrong.
-		if (XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
+		if (XMLDoc && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
 			document.getElementById('error_box').innerHTML = XMLDoc.firstChild.textContent;
 		else
 			this.modifyCancel();

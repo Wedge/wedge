@@ -1044,9 +1044,11 @@ function smf_itemPos(itemHandle)
 }
 
 // This function takes the script URL and prepares it to allow the query string to be appended to it.
+// It also replaces the host name with the current one. Which is required for security reasons.
 function smf_prepareScriptUrl(sUrl)
 {
-	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
+	var finalUrl = sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
+	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
 var aOnloadEvents = new Array();
