@@ -78,13 +78,13 @@ class wedgeEditor
 <script><!-- // --><![CDATA[
 	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 	var oEditorStrings = {
-		wont_work: \'' . addcslashes($txt['rich_edit_wont_work'], "'") . '\',
-		func_disabled: \'' . addcslashes($txt['rich_edit_function_disabled'], "'") . '\',
-		prompt_text_email: \'' . addcslashes($txt['prompt_text_email'], "'") . '\',
-		prompt_text_ftp: \'' . addcslashes($txt['prompt_text_ftp'], "'") . '\',
-		prompt_text_url: \'' . addcslashes($txt['prompt_text_url'], "'") . '\',
-		prompt_text_img: \'' . addcslashes($txt['prompt_text_img'], "'") . '\',
-		prompt_text_desc: \'' . addcslashes($txt['prompt_text_desc'], "'") . '\'
+		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
+		func_disabled: ' . JavaScriptEscape($txt['rich_edit_function_disabled']) . ',
+		prompt_text_email: ' . JavaScriptEscape($txt['prompt_text_email']) . ',
+		prompt_text_ftp: ' . JavaScriptEscape($txt['prompt_text_ftp']) . ',
+		prompt_text_url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
+		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
+		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
 	}
 // ]]></script>
 <script src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';

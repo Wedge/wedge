@@ -300,7 +300,8 @@ function template_html_below()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	// Define the upper_section toggle in JavaScript.
+	// Kickstart the Javascript section -- files to include,
+	// main variables and the upper_section toggle.
 	echo '
 
 <script src="', $context['cached_js'], '"></script>
@@ -319,6 +320,7 @@ function template_html_below()
 	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
 	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
 	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
+
 	initMenu(document.getElementById("main_menu"));
 
 	var oMainHeaderToggle = new smc_Toggle({
@@ -349,7 +351,7 @@ function template_html_below()
 	});
 // ]]></script>';
 
-	// Output any postponed code. (Usually for Javascript added by mods.)
+	// Output any postponed code. (Usually for Javascript added by mods or templates.)
 	echo $context['footer'];
 
 	echo $context['browser']['is_ie6'] ? '
