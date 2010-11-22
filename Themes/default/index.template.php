@@ -348,11 +348,12 @@ function template_html_below()
 			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
 			sCookieName: \'upshrink\'
 		}
-	});
-// ]]></script>';
+	});';
+
+	$context['footer'] = SCRIPT_FOOTER . $context['footer'];
 
 	// Output any postponed code. (Usually for Javascript added by mods or templates.)
-	echo $context['footer'];
+	echo str_replace("\n\n\n", "\n\n", preg_replace('~(?:// \]\]></script>(\s)*<script><!-- // --><!\[CDATA\[|(?<!\]\]>)</script>(\s)*<script>(?!<!--))~', '$1$2', $context['footer']));
 
 	echo $context['browser']['is_ie6'] ? '
 </div>' : '', '

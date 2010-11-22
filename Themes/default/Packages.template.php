@@ -1352,92 +1352,81 @@ function template_control_chmod()
 
 	// Hide the details of the list.
 	if (empty($context['package_ftp']['form_elements_only']))
-		echo '
-		<script><!-- // --><![CDATA[
-			document.getElementById(\'need_writable_list\').style.display = \'none\';
-		// ]]></script>';
+		$context['footer'] .= SCRIPT_HEADER . '
+	document.getElementById(\'need_writable_list\').style.display = \'none\';' . SCRIPT_FOOTER;
 
 	// Quick generate the test button.
-	echo '
-	<script><!-- // --><![CDATA[
-		// Generate a "test ftp" button.
-		var generatedButton = false;
-		function generateFTPTest()
+	$context['footer'] .= SCRIPT_HEADER . '
+	// Generate a "test ftp" button.
+	var generatedButton = false;
+	function generateFTPTest()
+	{
+		// Don\'t ever call this twice!
+		if (generatedButton)
+			return false;
+		generatedButton = true;
+
+		// No XML?
+		if (!window.XMLHttpRequest || (!document.getElementById("test_ftp_placeholder") && !document.getElementById("test_ftp_placeholder_full")))
+			return false;
+
+		var ftpTest = document.createElement("input");
+		ftpTest.type = "button";
+		ftpTest.onclick = testFTP;
+
+		if (document.getElementById("test_ftp_placeholder"))
 		{
-			// Don\'t ever call this twice!
-			if (generatedButton)
-				return false;
-			generatedButton = true;
-
-			// No XML?
-			if (!window.XMLHttpRequest || (!document.getElementById("test_ftp_placeholder") && !document.getElementById("test_ftp_placeholder_full")))
-				return false;
-
-			var ftpTest = document.createElement("input");
-			ftpTest.type = "button";
-			ftpTest.onclick = testFTP;
-
-			if (document.getElementById("test_ftp_placeholder"))
-			{
-				ftpTest.value = "', $txt['package_ftp_test'], '";
-				document.getElementById("test_ftp_placeholder").appendChild(ftpTest);
-			}
-			else
-			{
-				ftpTest.value = "', $txt['package_ftp_test_connection'], '";
-				document.getElementById("test_ftp_placeholder_full").appendChild(ftpTest);
-			}
+			ftpTest.value = "' . JavaScriptEscape($txt['package_ftp_test']) . '";
+			document.getElementById("test_ftp_placeholder").appendChild(ftpTest);
 		}
-		function testFTP()
+		else
 		{
-			ajax_indicator(true);
-
-			// What we need to post.
-			var oPostData = {
-				0: "ftp_server",
-				1: "ftp_port",
-				2: "ftp_username",
-				3: "ftp_password",
-				4: "ftp_path"
-			}
-
-			var sPostData = "";
-			for (i = 0; i < 5; i++)
-				sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
-
-			// Post the data out.
-			sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;sa=ftptest;xml;', $context['session_var'], '=', $context['session_id'], '\', sPostData, testFTPResults);
+			ftpTest.value = "' . JavaScriptEscape($txt['package_ftp_test_connection']) . '";
+			document.getElementById("test_ftp_placeholder_full").appendChild(ftpTest);
 		}
-		function testFTPResults(oXMLDoc)
+	}
+	function testFTP()
+	{
+		ajax_indicator(true);
+
+		// What we need to post.
+		var oPostData = {
+			0: "ftp_server",
+			1: "ftp_port",
+			2: "ftp_username",
+			3: "ftp_password",
+			4: "ftp_path"
+		}
+
+		var sPostData = "";
+		for (i = 0; i < 5; i++)
+			sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
+
+		// Post the data out.
+		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_var'] . '=' . $context['session_id'] . '\', sPostData, testFTPResults);
+	}
+	function testFTPResults(oXMLDoc)
+	{
+		ajax_indicator(false);
+
+		// This assumes it went wrong!
+		var wasSuccess = false;
+		var message = ' . JavaScriptEscape($txt['package_ftp_test_failed']) . ';
+
+		var results = oXMLDoc.getElementsByTagName(\'results\')[0].getElementsByTagName(\'result\');
+		if (results.length > 0)
 		{
-			ajax_indicator(false);
-
-			// This assumes it went wrong!
-			var wasSuccess = false;
-			var message = ', JavaScriptEscape($txt['package_ftp_test_failed']), ';
-
-			var results = oXMLDoc.getElementsByTagName(\'results\')[0].getElementsByTagName(\'result\');
-			if (results.length > 0)
-			{
-				if (results[0].getAttribute(\'success\') == 1)
-					wasSuccess = true;
-				message = results[0].firstChild.nodeValue;
-			}
-
-			document.getElementById("ftp_error_div").style.display = "";
-			document.getElementById("ftp_error_div").style.backgroundColor = wasSuccess ? "green" : "red";
-			document.getElementById("ftp_error_innerdiv").style.backgroundColor = wasSuccess ? "#DBFDC7" : "#FDBDBD";
-
-			document.getElementById("ftp_error_message").innerHTML = message;
+			if (results[0].getAttribute(\'success\') == 1)
+				wasSuccess = true;
+			message = results[0].firstChild.nodeValue;
 		}
-		generateFTPTest();
-	// ]]></script>';
 
-	// Make sure the button gets generated last.
-	$context['footer'] .= '
-	<script><!-- // --><![CDATA[
-		generateFTPTest();
-	// ]]></script>';
+		document.getElementById("ftp_error_div").style.display = "";
+		document.getElementById("ftp_error_div").style.backgroundColor = wasSuccess ? "green" : "red";
+		document.getElementById("ftp_error_innerdiv").style.backgroundColor = wasSuccess ? "#DBFDC7" : "#FDBDBD";
+		document.getElementById("ftp_error_message").innerHTML = message;
+	}
+	generateFTPTest();' . SCRIPT_FOOTER;
 }
 
 function template_ftp_required()

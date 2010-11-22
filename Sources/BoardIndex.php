@@ -150,8 +150,7 @@ function BoardIndex()
 
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[
+	$context['footer'] .= SCRIPT_HEADER . '
 	var oInfoCenterToggle = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: ' . (empty($options['collapse_header_ic']) ? 'false' : 'true') . ',
@@ -177,8 +176,7 @@ function BoardIndex()
 			bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',
 			sCookieName: \'upshrinkIC\'
 		}
-	});
-// ]]></script>';
+	});' . SCRIPT_FOOTER;
 }
 
 /**

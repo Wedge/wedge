@@ -74,8 +74,7 @@ class wedgeEditor
 			loadTemplate(false, $context['browser']['is_ie'] ? 'editor_ie' : 'editor'); // we don't need any templates; this class does it. But we do need CSS.
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
-			$context['footer'] .= '
-<script><!-- // --><![CDATA[
+			$context['footer'] .= SCRIPT_HEADER . '
 	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
@@ -85,8 +84,7 @@ class wedgeEditor
 		prompt_text_url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
 		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
 		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
-	}
-// ]]></script>
+	}' . SCRIPT_FOOTER . '
 <script src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
@@ -103,14 +101,12 @@ class wedgeEditor
 </form>';
 
 				// Also make sure that spell check works with rich edit.
-				$context['footer'] .= '
-<script><!-- // --><![CDATA[
-function spellCheckDone()
-{
-	for (i = 0; i < smf_editorArray.length; i++)
-		setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
-}
-// ]]></script>';
+				$context['footer'] .= SCRIPT_HEADER . '
+	function spellCheckDone()
+	{
+		for (i = 0; i < smf_editorArray.length; i++)
+			setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
+	}' . SCRIPT_FOOTER;
 			}
 		}
 
@@ -2270,8 +2266,7 @@ function spellCheckDone()
 		</div>
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />';
 
-		$context['footer'] .= '
-<script><!-- // --><![CDATA[';
+		$context['footer'] .= SCRIPT_HEADER;
 
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
@@ -2495,8 +2490,7 @@ function spellCheckDone()
 	});
 	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';';
 
-		$context['footer'] .= '
-// ]]></script>';
+		$context['footer'] .= SCRIPT_FOOTER;
 	}
 
 	public function outputButtons()
