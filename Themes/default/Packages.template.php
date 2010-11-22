@@ -1791,7 +1791,7 @@ function template_file_permissions()
 				', $txt['package_file_perms'], '
 			</h3>
 		</div>
-		<table class="table_grid w100 cs0">
+		<table class="table_grid w100 cs0 cp0">
 		<thead>
 			<tr class="catbg center">
 				<th class="first_th left" style="width: 30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
@@ -1915,7 +1915,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 			$cur_ident = preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident . '/' . $name);
 			echo '
 			<tr class="windowbg center" id="content_', $cur_ident, '">
-				<td class="smalltext left" style="width: 30%">' . str_repeat('&nbsp;', $level * 5), '
+				<td style="width: 30%" class="smalltext left">' . str_repeat('&nbsp;', $level * 5), '
 					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '<a id="link_' . $cur_ident . '" href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident . '/' . $name) . ';back_look=' . $context['back_look_data'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . $cur_ident . '" onclick="return expandFolder(\'' . $cur_ident . '\', \'' . addcslashes($ident . '/' . $name, "'\\") . '\');">' : '';
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
@@ -1926,7 +1926,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 					', $name, '
 					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '</a>' : '', '
 				</td>
-				<td class="smalltext left">
+				<td style="width: 30%" class="smalltext left">
 					<span class="', ($dir['perms']['chmod'] ? 'success' : 'error'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>

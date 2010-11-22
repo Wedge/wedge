@@ -21,7 +21,7 @@ function template_editsets()
 		</div>
 	</div>
 	<br class="clear" />
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		window.smfForum_scripturl = "', $scripturl, '";
 		window.smfForum_sessionid = "', $context['session_id'], '";
 		window.smfForum_sessionvar = "', $context['session_var'], '";
@@ -29,10 +29,10 @@ function template_editsets()
 
 	if (empty($modSettings['disable_smf_js']))
 		echo '
-	<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=latest-smileys.js"></script>';
+	<script src="', $scripturl, '?action=viewsmfile;filename=latest-smileys.js"></script>';
 
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function smfSetLatestSmileys()
 		{
 			if (typeof(window.smfLatestSmileys) != "undefined")
@@ -226,7 +226,7 @@ function template_modifysmiley()
 		</form>
 	</div>
 	<br class="clear" />
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function updatePreview()
 		{
 			var currentImage = document.getElementById("preview");
@@ -241,7 +241,7 @@ function template_addsmiley()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function switchType()
 		{
 			document.getElementById("ul_settings").style.display = document.getElementById("method-existing").checked ? "none" : "";
@@ -389,7 +389,7 @@ function template_addsmiley()
 		</form>
 	</div>
 	<br class="clear" />
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 
 		function updatePreview()
 		{

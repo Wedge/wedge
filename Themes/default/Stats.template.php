@@ -377,8 +377,8 @@ function template_main()
 	</div>';
 
 		$context['footer'] .= '
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/stats.js"></script>
-<script type="text/javascript"><!-- // --><![CDATA[
+<script src="' . $settings['default_theme_url'] . '/scripts/stats.js"></script>
+<script><!-- // --><![CDATA[
 	var oStatsCenter = new smf_StatsCenter({
 		sTableId: \'stats\',
 

@@ -699,11 +699,11 @@ function template_main()
 	if ($context['show_spellchecking'])
 		$context['footer'] .= '
 <form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+<script src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
 
 	$context['footer'] .= '
-<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
-<script type="text/javascript"><!-- // --><![CDATA[';
+<script src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
+<script><!-- // --><![CDATA[';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 		$context['footer'] .= '

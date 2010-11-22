@@ -130,7 +130,7 @@ function template_maintain_members()
 			</div>';
 
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var warningMessage = \'\';
 		var membersSwap = false;
 
@@ -247,8 +247,8 @@ function template_maintain_members()
 	</div>
 	<br class="clear" />
 
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+	<script><!-- // --><![CDATA[
 		var oAttributeMemberSuggest = new smc_AutoSuggest({
 			sSelf: \'oAttributeMemberSuggest\',
 			sSessionId: \'', $context['session_id'], '\',
@@ -276,7 +276,7 @@ function template_maintain_topics()
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
 	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			var rotSwap = false;
 			function swapRot()
 			{

@@ -151,7 +151,7 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
 	$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 	var oInfoCenterToggle = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: ' . (empty($options['collapse_header_ic']) ? 'false' : 'true') . ',

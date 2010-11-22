@@ -58,7 +58,7 @@ function template_main()
 				<span class="enhanced">
 					<strong>', $txt['search_for'], ':</strong>
 					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />
-					<script type="text/javascript"><!-- // --><![CDATA[
+					<script><!-- // --><![CDATA[
 						function initSearch()
 						{
 							if (document.forms.searchform.search.value.indexOf("%u") != -1)
@@ -192,7 +192,7 @@ function template_main()
 	echo '
 	</form>
 
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function selectBoards(ids)
 		{
 			var toggle = true;
@@ -471,7 +471,7 @@ function template_results()
 	echo '
 		<br class="clear" />
 		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			if (typeof(window.XMLHttpRequest) != "undefined")
 				aJumpTo[aJumpTo.length] = new JumpTo({
 					sContainerId: "search_jump_to",

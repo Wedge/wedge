@@ -194,8 +194,8 @@ function template_boardindex_newsfader()
 	echo '
 		</ul>
 	</div>
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/fader.js"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script src="', $settings['default_theme_url'], '/scripts/fader.js"></script>
+	<script><!-- // --><![CDATA[
 
 		// Create a news fader object.
 		var oNewsFader = new smf_NewsFader({

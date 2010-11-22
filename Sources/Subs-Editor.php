@@ -132,7 +132,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
 			$context['header'] .= '
-		<script type="text/javascript" src="' . $settings['default_theme_url'] . '/scripts/captcha.js"></script>';
+		<script src="' . $settings['default_theme_url'] . '/scripts/captcha.js"></script>';
 
 		// Skip I, J, L, O, Q, S and Z.
 		$context['standard_captcha_range'] = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
@@ -158,9 +158,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// Add javascript for the object.
 	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'] && !WIRELESS)
 		$context['footer'] .= '
-			<script type="text/javascript"><!-- // --><![CDATA[
-				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", 1);
-			// ]]></script>';
+<script><!-- // --><![CDATA[
+	var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", 1);
+// ]]></script>';
 
 	// Is there actually going to be anything?
 	if (empty($thisVerification['show_visual']) && empty($thisVerification['number_questions']))

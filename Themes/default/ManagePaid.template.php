@@ -8,7 +8,7 @@ function template_modify_subscription()
 
 	// Javascript for the duration stuff.
 	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script><!-- // --><![CDATA[
 			function toggleDuration(toChange)
 			{
 				if (toChange == \'fixed\')
@@ -230,7 +230,7 @@ function template_modify_user_subscription()
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 		function generateDays(offset)
@@ -362,8 +362,8 @@ function template_modify_user_subscription()
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+		<script><!-- // --><![CDATA[
 			var oAddMemberSuggest = new smc_AutoSuggest({
 				sSelf: \'oAddMemberSuggest\',
 				sSessionId: \'', $context['session_id'], '\',
@@ -591,7 +591,7 @@ function template_choose_payment()
 
 		if (!empty($gateway['javascript']))
 			echo '
-				<script type="text/javascript"><!-- // --><![CDATA[
+				<script><!-- // --><![CDATA[
 					', $gateway['javascript'], '
 				// ]]></script>';
 

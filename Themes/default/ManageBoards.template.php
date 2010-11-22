@@ -525,8 +525,8 @@ function template_modify_board()
 	</div>
 	<br class="clear" />
 
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+	<script><!-- // --><![CDATA[
 		var oModeratorSuggest = new smc_AutoSuggest({
 			sSelf: \'oModeratorSuggest\',
 			sSessionId: \'', $context['session_id'], '\',
@@ -555,7 +555,7 @@ function template_modify_board()
 
 	// Javascript for deciding what to show.
 	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function refreshOptions()
 		{
 			var redirect = document.getElementById("redirect_enable");

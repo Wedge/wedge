@@ -1809,15 +1809,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$type = empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time() ? 'task' : 'mailq';
 			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
 
-			$context['header'] .= '
-	<script type="text/javascript">
-		function smfAutoTask()
-		{
-			var tempImage = new Image();
-			tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
-		}
-		window.setTimeout("smfAutoTask();", 1);
-	</script>';
+			$context['footer'] .= '
+<script>
+	function smfAutoTask()
+	{
+		var tempImage = new Image();
+		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
+	}
+	window.setTimeout("smfAutoTask();", 1);
+</script>';
 		}
 	}
 

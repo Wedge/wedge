@@ -75,7 +75,7 @@ function template_modify_weights()
 		</form>
 	</div>
 	<br class="clear" />
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function calculateNewValues()
 		{
 			var total = 0;
@@ -274,7 +274,7 @@ function template_create_index_progress()
 		</form>
 	</div>
 	<br class="clear" />
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		var countdown = 10;
 		doAutoSubmit();
 

@@ -87,7 +87,7 @@ function ViewQuery()
 	<head>
 		<title>', $context['forum_name_html_safe'], '</title>
 		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<style type="text/css">
+		<style>
 			body { margin: 1ex }
 			body, td, th, .normaltext { font-size: x-small }
 			.smalltext { font-size: xx-small }

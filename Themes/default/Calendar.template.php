@@ -54,7 +54,7 @@ function template_event_post()
 
 	// Start the javascript for drop down boxes...
 	$context['footer'] .= '
-<script type="text/javascript"><!-- // --><![CDATA[
+<script><!-- // --><![CDATA[
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()

@@ -248,7 +248,7 @@ function template_admin_browse()
 			<div class="cat_bar">
 				<h3>', $txt['admin_browse_outstanding'], '</h3>
 			</div>
-			<script type="text/javascript"><!-- // --><![CDATA[
+			<script><!-- // --><![CDATA[
 				function onOutstandingSubmit()
 				{
 					if (document.forms.postFormOutstanding.todo.value == "")

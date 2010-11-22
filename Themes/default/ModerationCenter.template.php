@@ -57,10 +57,10 @@ function template_latest_news()
 	// This requires a lot of javascript...
 	//!!! Put this in it's own file!!
 	echo '
-		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>
-		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
-		<script type="text/javascript"><!-- // --><![CDATA[
+		<script src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
+		<script src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>
+		<script src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
+		<script><!-- // --><![CDATA[
 			var oAdminIndex = new smf_AdminIndex({
 				sSelf: \'oAdminCenter\',
 
