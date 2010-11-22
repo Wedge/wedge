@@ -626,7 +626,7 @@ function template_edit_censored()
 						setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
 					}
 				// ]]></script>
-				<hr width="100%" size="1" class="hrcolor" />
+				<hr style="width: 100%; height: 1px" class="hrcolor" />
 				<dl class="settings">
 					<dt>
 						<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
