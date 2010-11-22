@@ -1376,7 +1376,5 @@ var
 	can_boxshadow = testStyle('boxShadow');
 
 // And now we turn clickme classes into proper onclicks.
-if (document.addEventListener)
-	document.addEventListener('DOMContentLoaded', clickMagic, false);
-else
-	addLoadEvent(clickMagic);
+// We can do it immediately, because all of the DOM is loaded at this point.
+clickMagic();

@@ -22,13 +22,9 @@ function autoDetectTimeOffset(currentTime)
 // Prevent Chrome from auto completing fields when viewing/editing other members profiles
 function disableAutoComplete()
 {
-	if (is_chrome && document.addEventListener)
-		document.addEventListener("DOMContentLoaded", disableAutoCompleteNow, false);
-}
+	if (!is_chrome)
+		return;
 
-// Once DOMContentLoaded is triggered, call the function
-function disableAutoCompleteNow()
-{
 	for (var i = 0, n = document.forms.length; i < n; i++)
 	{
 		var die = document.forms[i].elements;

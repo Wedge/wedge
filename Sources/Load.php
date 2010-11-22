@@ -602,14 +602,7 @@ function loadBoard()
 				'id' => $board,
 				'owner_id' => $row['id_owner'],
 				'owner_name' => $row['owner_name'],
-				'moderators' => array(
-					$row['id_owner'] => array(
-						'id' => $row['id_owner'],
-						'name' => $row['owner_name'],
-						'href' => $scripturl . '?action=profile;u=' . $row['id_owner'],
-						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_owner'] . '">' . $row['owner_name'] . '</a>'
-					),
-				),
+				'moderators' => array(),
 				'cat' => array(
 					'id' => $row['id_cat'],
 					'name' => $row['cname']
@@ -655,6 +648,16 @@ function loadBoard()
 
 			// Load the membergroups allowed, and check permissions.
 			$board_info['groups'] = $row['member_groups'] == '' ? array() : explode(',', $row['member_groups']);
+
+			if (!empty($row['id_owner']))
+				$board_info['moderators'] = array(
+					$row['id_owner'] => array(
+						'id' => $row['id_owner'],
+						'name' => $row['owner_name'],
+						'href' => $scripturl . '?action=profile;u=' . $row['id_owner'],
+						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_owner'] . '">' . $row['owner_name'] . '</a>'
+					)
+				);
 
 			do
 			{

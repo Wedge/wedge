@@ -98,14 +98,14 @@ function template_view_package()
 		echo '
 				', $txt['perform_actions'], '
 			</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 			<thead>
 				<tr class="catbg">
-					<th scope="col" width="20"></th>
-					<th scope="col" width="30"></th>
+					<th scope="col" style="width: 20px"></th>
+					<th scope="col" style="width: 30px"></th>
 					<th scope="col" class="lefttext">', $txt['package_install_type'], '</th>
-					<th scope="col" class="lefttext" width="50%">', $txt['package_install_action'], '</th>
-					<th scope="col" class="lefttext" width="20%">', $txt['package_install_desc'], '</th>
+					<th scope="col" class="lefttext" style="width: 50%">', $txt['package_install_action'], '</th>
+					<th scope="col" class="lefttext" style="width: 20%">', $txt['package_install_desc'], '</th>
 				</tr>
 			</thead>
 			<tbody>';
@@ -134,7 +134,7 @@ function template_view_package()
 				echo '
 				<tr id="operation_', $action_num, '">
 					<td colspan="5" class="windowbg3">
-						<table border="0" cellpadding="3" cellspacing="0" width="100%">';
+						<table class="w100 cp4 cs0">';
 
 				// Show the operations.
 				$alternate2 = true;
@@ -146,12 +146,12 @@ function template_view_package()
 
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
-								<td width="0"></td>
-								<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
-								<td width="30" class="smalltext">', $operation_num, '.</td>
-								<td width="23%" class="smalltext">', $txt[$operation_text], '</td>
-								<td width="50%" class="smalltext">', $operation['action'], '</td>
-								<td width="20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
+								<td style="width: 0"></td>
+								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
+								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
+								<td style="width: 50%" class="smalltext">', $operation['action'], '</td>
+								<td style="width: 20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
 							</tr>';
 
 					$operation_num++;
@@ -186,7 +186,7 @@ function template_view_package()
 				<div class="information">
 					', $txt['package_other_themes_desc'], '
 				</div>
-				<table width="100%" class="table_grid" cellspacing="0">';
+				<table class="table_grid w100 cs0">';
 
 			$failure = JavaScriptEscape($txt['package_theme_failure_warning']);
 
@@ -199,7 +199,7 @@ function template_view_package()
 				echo '
 					<tr class="catbg">
 						<td></td>
-						<td align="center">';
+						<td class="centertext">';
 				if (!empty($context['themes_locked']))
 					echo '
 							<input type="hidden" name="custom_theme[]" value="', $id, '" />';
@@ -216,12 +216,12 @@ function template_view_package()
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
 						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none;" />' : '', '</td>
-						<td width="30" align="center">
+						<td style="width: 30px" class="centertext">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '" class="input_check" ', (!empty($action['not_mod']) ? '' : 'disabled="disabled"'), ' ', !empty($context['themes_locked']) ? 'checked="checked"' : '', '/>
 						</td>
 						<td>', $action['type'], '</td>
-						<td width="50%">', $action['action'], '</td>
-						<td width="20%"><strong>', $action['description'], '</strong></td>
+						<td style="width: 50%">', $action['action'], '</td>
+						<td style="width: 20%"><strong>', $action['description'], '</strong></td>
 					</tr>';
 
 					// Is there water on the knee? Operation!
@@ -230,7 +230,7 @@ function template_view_package()
 						echo '
 					<tr id="operation_', $action_num, '">
 						<td colspan="5" class="windowbg3">
-							<table border="0" cellpadding="3" cellspacing="0" width="100%">';
+							<table class="w100 cp4 cs0">';
 
 						$alternate2 = true;
 						$operation_num = 1;
@@ -241,12 +241,12 @@ function template_view_package()
 
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
-									<td width="0"></td>
-									<td width="30" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
-									<td width="30" class="smalltext">', $operation_num, '.</td>
-									<td width="23%" class="smalltext">', $txt[$operation_text], '</td>
-									<td width="50%" class="smalltext">', $operation['action'], '</td>
-									<td width="20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
+									<td style="width: 0"></td>
+									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
+									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
+									<td style="width: 50%" class="smalltext">', $operation['action'], '</td>
+									<td style="width: 20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
 								</tr>';
 							$operation_num++;
 							$alternate2 = !$alternate2;
@@ -488,13 +488,13 @@ function template_view_installed()
 	else
 	{
 		echo '
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th scope="col" width="32"></th>
-				<th scope="col" width="25%">', $txt['mod_name'], '</th>
-				<th scope="col" width="25%">', $txt['mod_version'], '</th>
-				<th scope="col" width="49%"></th>
+				<th scope="col" style="width: 32px"></th>
+				<th scope="col" style="width: 25%">', $txt['mod_name'], '</th>
+				<th scope="col" style="width: 25%">', $txt['mod_version'], '</th>
+				<th scope="col" style="width: 49%"></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -507,7 +507,7 @@ function template_view_installed()
 				<td><span class="smalltext">', ++$i, '.</span></td>
 				<td><span class="smalltext">', $file['name'], '</span></td>
 				<td><span class="smalltext">', $file['version'], '</span></td>
-				<td align="right"><span class="smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></span></td>
+				<td class="righttext"><span class="smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></span></td>
 			</tr>';
 			$alt = !$alt;
 		}
@@ -532,7 +532,7 @@ function template_browse()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>', $txt['packages_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" style="vertical-align: top" /></a>', $txt['packages_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -590,13 +590,13 @@ function template_browse()
 			<h3>', $txt['modification_package'], '</h3>
 		</div>
 
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="first_th" width="32"></th>
-				<th class="lefttext" width="25%">', $txt['mod_name'], '</th>
-				<th class="lefttext" width="25%">', $txt['mod_version'], '</th>
-				<th class="last_th" width="49%"></th>
+				<th class="first_th" style="width: 32px"></th>
+				<th class="lefttext" style="width: 25%">', $txt['mod_name'], '</th>
+				<th class="lefttext" style="width: 25%">', $txt['mod_version'], '</th>
+				<th class="last_th" style="width: 49%"></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -613,11 +613,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" align="middle" style="margin-left: 2ex;" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td align="right">';
+				<td class="righttext">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -649,13 +649,13 @@ function template_browse()
 		<div class="title_bar">
 			<h3>', $txt['avatar_package'], '</h3>
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th width="32"></th>
-				<th width="25%">', $txt['mod_name'], '</th>
-				<th width="25%">', $txt['mod_version'], '</th>
-				<th width="49%"></th>
+				<th style="width: 32px"></th>
+				<th style="width: 25%">', $txt['mod_name'], '</th>
+				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th style="width: 49%"></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -670,11 +670,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" align="middle" style="margin-left: 2ex;" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex;" />';
 
 			echo '
 				</td>
-				<td align="right">';
+				<td class="righttext">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -705,13 +705,13 @@ function template_browse()
 		<div class="title_bar">
 			<h3>' . $txt['language_package'] . '</h3>
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th width="32"></th>
-				<th width="25%">', $txt['mod_name'], '</th>
-				<th width="25%">', $txt['mod_version'], '</th>
-				<th width="49%"></th>
+				<th style="width: 32px"></th>
+				<th style="width: 25%">', $txt['mod_name'], '</th>
+				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th style="width: 49%"></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -726,11 +726,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" align="middle" style="margin-left: 2ex;" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td align="right">';
+				<td class="righttext">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -761,13 +761,13 @@ function template_browse()
 		<div class="title_bar">
 			<h3>' . $txt['unknown_package'] . '</h3>
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th width="32"></th>
-				<th width="25%">', $txt['mod_name'], '</th>
-				<th width="25%">', $txt['mod_version'], '</th>
-				<th width="49%"></th>
+				<th style="width: 32px"></th>
+				<th style="width: 25%">', $txt['mod_name'], '</th>
+				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th style="width: 49%"></th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -782,11 +782,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" align="middle" style="margin-left: 2ex;" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td align="right">';
+				<td class="righttext">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -818,8 +818,8 @@ function template_browse()
 		<div class="flow_auto">
 			<div class="padding smalltext floatleft">
 				', $txt['package_installed_key'], '
-				<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" align="middle" style="margin-left: 1ex;" /> ', $txt['package_installed_current'], '
-				<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" align="middle" style="margin-left: 2ex;" /> ', $txt['package_installed_old'], '
+				<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" style="vertical-align: middle; margin-left: 1ex" /> ', $txt['package_installed_current'], '
+				<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" style="vertical-align: middle; margin-left: 2ex" /> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
 				<a href="#" onclick="document.getElementById(\'advanced_box\').style.display = document.getElementById(\'advanced_box\').style.display == \'\' ? \'none\' : \'\'; return false;">', $txt['package_advanced_button'], '</a>
@@ -1097,7 +1097,7 @@ function template_package_list()
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
-						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" align="middle" style="margin-left: 2ex;" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '" />';
+						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" style="vertical-align: middle; margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '" />';
 
 					echo '</strong>
 							<ul id="package_section_', $i, '_pkg_', $id, '" class="package_section">';
@@ -1141,8 +1141,8 @@ function template_package_list()
 		</div>
 		<div class="padding smalltext floatleft">
 			', $txt['package_installed_key'], '
-			<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" align="middle" style="margin-left: 1ex;" /> ', $txt['package_installed_current'], '
-			<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" align="middle" style="margin-left: 2ex;" /> ', $txt['package_installed_old'], '
+			<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" style="vertical-align: middle; margin-left: 1ex" /> ', $txt['package_installed_current'], '
+			<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" style="vertical-align: middle; margin-left: 2ex" /> ', $txt['package_installed_old'], '
 		</div>
 	</div>
 	<br class="clear" />';
@@ -1791,16 +1791,16 @@ function template_file_permissions()
 				', $txt['package_file_perms'], '
 			</h3>
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="first_th lefttext" width="30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
-				<th width="30%" class="lefttext">', $txt['package_file_perms_status'], '</th>
-				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
-				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
-				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
-				<th align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
-				<th class="last_th" align="center" width="8%"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
+				<th class="first_th lefttext" style="width: 30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
+				<th style="width: 30%" class="lefttext">', $txt['package_file_perms_status'], '</th>
+				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
+				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
+				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
+				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
+				<th style="width: 8%" class="centertext last_th"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
 			</tr>
 		</thead>';
 
@@ -1809,7 +1809,7 @@ function template_file_permissions()
 		echo '
 		<tbody>
 			<tr class="windowbg2">
-				<td width="30%"><strong>';
+				<td style="width: 30%"><strong>';
 
 		if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 			echo '
@@ -1818,15 +1818,15 @@ function template_file_permissions()
 		echo '
 					', $name, '
 				</strong></td>
-				<td width="30%">
+				<td style="width: 30%">
 					<span style="color: ', ($dir['perms']['chmod'] ? 'green' : 'red'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td align="center" class="perm_read" width="8%"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
-				<td align="center" class="perm_write" width="8%"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
-				<td align="center" class="perm_execute" width="8%"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
-				<td align="center" class="perm_custom" width="8%"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
-				<td align="center" class="perm_nochange" width="8%"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_read"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_write"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_execute"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_custom"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_nochange"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
 			</tr>
 		</tbody>';
 
@@ -1909,13 +1909,13 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 				$drawn_div = true;
 				echo '
 		</table>
-		<table width="100%" class="table_grid" cellspacing="0" id="', $js_ident, '">';
+		<table class="table_grid w100 cs0" id="', $js_ident, '">';
 			}
 
 			$cur_ident = preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident . '/' . $name);
 			echo '
 			<tr class="windowbg" id="content_', $cur_ident, '">
-				<td class="smalltext" width="30%">' . str_repeat('&nbsp;', $level * 5), '
+				<td class="smalltext" style="width: 30%">' . str_repeat('&nbsp;', $level * 5), '
 					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '<a id="link_' . $cur_ident . '" href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident . '/' . $name) . ';back_look=' . $context['back_look_data'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . $cur_ident . '" onclick="return expandFolder(\'' . $cur_ident . '\', \'' . addcslashes($ident . '/' . $name, "'\\") . '\');">' : '';
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
@@ -1930,11 +1930,11 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 					<span class="', ($dir['perms']['chmod'] ? 'success' : 'error'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td align="center" width="8%" class="perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read" class="input_radio" /></td>
-				<td align="center" width="8%" class="perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable" class="input_radio" /></td>
-				<td align="center" width="8%" class="perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute" class="input_radio" /></td>
-				<td align="center" width="8%" class="perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom" class="input_radio" /></td>
-				<td align="center" width="8%" class="perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom" class="input_radio" /></td>
+				<td style="width: 8%" class="centertext perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
 			</tr>
 			<tr id="insert_div_loc_' . $cur_ident . '" style="display: none;"><td></td></tr>';
 
@@ -1947,7 +1947,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 	if ($has_more)
 		echo '
 			<tr class="windowbg" id="content_', $js_ident, '_more">
-				<td class="smalltext" width="40%">' . str_repeat('&nbsp;', $level * 5), '
+				<td class="smalltext" style="width: 40%">' . str_repeat('&nbsp;', $level * 5), '
 					&#171; <a href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident) . ';fileoffset=', ($context['file_offset'] + $context['file_limit']), ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident) . '">', $txt['package_file_perms_more_files'], '</a> &#187;
 				</td>
 				<td colspan="6"></td>
@@ -1966,7 +1966,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 		</table><script><!-- // --><![CDATA[
 			expandFolder(\'', $js_ident, '\', \'\');
 		// ]]></script>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 			<tr style="display: none;"><td></td></tr>';
 	}
 }

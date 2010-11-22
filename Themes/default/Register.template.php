@@ -337,14 +337,14 @@ function template_registration_form()
 		</form>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var regTextStrings = {
-				"username_valid": "', $txt['registration_username_available'], '",
-				"username_invalid": "', $txt['registration_username_unavailable'], '",
-				"username_check": "', $txt['registration_username_check'], '",
-				"password_short": "', $txt['registration_password_short'], '",
-				"password_reserved": "', $txt['registration_password_reserved'], '",
-				"password_numbercase": "', $txt['registration_password_numbercase'], '",
-				"password_no_match": "', $txt['registration_password_no_match'], '",
-				"password_valid": "', $txt['registration_password_valid'], '"
+				"username_valid": ', JavaScriptEscape($txt['registration_username_available']), ',
+				"username_invalid": ', JavaScriptEscape($txt['registration_username_unavailable']), ',
+				"username_check": ', JavaScriptEscape($txt['registration_username_check']), ',
+				"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
+				"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
+				"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
+				"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
+				"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 			};
 			var verificationHandle = new smfRegister("registration", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
 			// Update the authentication status.
