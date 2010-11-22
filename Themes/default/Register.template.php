@@ -434,23 +434,26 @@ function template_coppa_form()
 
 	// Show the form (As best we can)
 	echo '
-		<table class="tborder w100 cp4 cs0" align="center">
+		<table class="tborder w100 cp4 cs0 centertext">
 			<tr>
-				<td align="left">', $context['forum_contacts'], '</td>
-			</tr><tr>
-				<td align="right">
+				<td class="left">', $context['forum_contacts'], '</td>
+			</tr>
+			<tr>
+				<td class="right">
 					<em>', $txt['coppa_form_address'], '</em>: ', $context['ul'], '<br />
 					', $context['ul'], '<br />
 					', $context['ul'], '<br />
 					', $context['ul'], '
 				</td>
-			</tr><tr>
-				<td align="right">
+			</tr>
+			<tr>
+				<td class="right">
 					<em>', $txt['coppa_form_date'], '</em>: ', $context['ul'], '
 					<br /><br />
 				</td>
-			</tr><tr>
-				<td align="left">
+			</tr>
+			<tr>
+				<td class="left">
 					', $context['coppa_body'], '
 				</td>
 			</tr>

@@ -167,13 +167,13 @@ function template_ban_edit()
 		echo '
 			<br />
 			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="UTF-8" style="padding: 0px;margin: 0px;" onsubmit="return confirm(', JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']), ');">
-				<table width="100%" class="table_grid" cellspacing="0">
+				<table class="table_grid w100 cs0">
 					<thead>
 						<tr class="catbg">
-							<th width="65%" align="left">', $txt['ban_banned_entity'], '</td>
-							<th width="15%" align="center">', $txt['ban_hits'], '</td>
-							<th width="15%" align="center">', $txt['ban_actions'], '</td>
-							<th width="5%" align="center"><input type="checkbox" onclick="invertAll(this, this.form, \'ban_items\');" class="input_check" /></td>
+							<th style="width: 65%" class="left">', $txt['ban_banned_entity'], '</td>
+							<th style="width: 15%" class="center">', $txt['ban_hits'], '</td>
+							<th style="width: 15%" class="center">', $txt['ban_actions'], '</td>
+							<th style="width: 5%" class="center"><input type="checkbox" onclick="invertAll(this, this.form, \'ban_items\');" class="input_check" /></td>
 						</tr>
 					</thead>
 					<tbody>';
@@ -187,8 +187,8 @@ function template_ban_edit()
 			foreach ($context['ban_items'] as $ban_item)
 			{
 				echo '
-						<tr class="windowbg2" align="left">
-							<td>';
+						<tr class="windowbg2 center">
+							<td class="left">';
 				if ($ban_item['type'] == 'ip')
 					echo '		<strong>', $txt['ip'], ':</strong>&nbsp;', $ban_item['ip'];
 				elseif ($ban_item['type'] == 'hostname')
@@ -199,9 +199,9 @@ function template_ban_edit()
 					echo '		<strong>', $txt['username'], ':</strong>&nbsp;', $ban_item['user']['link'];
 				echo '
 							</td>
-							<td class="windowbg" align="center">', $ban_item['hits'], '</td>
-							<td class="windowbg" align="center"><a href="', $scripturl, '?action=admin;area=ban;sa=edittrigger;bg=', $context['ban']['id'], ';bi=', $ban_item['id'], '">', $txt['ban_edit_trigger'], '</a></td>
-							<td align="center" class="windowbg2"><input type="checkbox" name="ban_items[]" value="', $ban_item['id'], '" class="input_check" /></td>
+							<td class="windowbg">', $ban_item['hits'], '</td>
+							<td class="windowbg"><a href="', $scripturl, '?action=admin;area=ban;sa=edittrigger;bg=', $context['ban']['id'], ';bi=', $ban_item['id'], '">', $txt['ban_edit_trigger'], '</a></td>
+							<td class="windowbg2"><input type="checkbox" name="ban_items[]" value="', $ban_item['id'], '" class="input_check" /></td>
 						</tr>';
 			}
 		}
@@ -248,7 +248,7 @@ function template_ban_edit()
 			sSuggestId: \'user\',
 			sControlId: \'user\',
 			sSearchType: \'member\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			bItemList: false
 		});
 
@@ -334,7 +334,7 @@ function template_ban_edit_trigger()
 			sSuggestId: \'username\',
 			sControlId: \'user\',
 			sSearchType: \'member\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			bItemList: false
 		});
 

@@ -442,7 +442,7 @@ function template_set_settings()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" align="top" /> ', $txt['theme_variants'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="top" /> ', $txt['theme_variants'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -792,12 +792,12 @@ function template_edit_browse()
 
 	echo '
 	<div id="admincenter">
-		<table width="100%" class="table_grid tborder" cellspacing="0">
+		<table class="table_grid tborder w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="lefttext first_th" scope="col" width="50%">', $txt['themeadmin_edit_filename'], '</th>
-				<th scope="col" width="35%">', $txt['themeadmin_edit_modified'], '</th>
-				<th class="last_th" scope="col" width="15%">', $txt['themeadmin_edit_size'], '</th>
+				<th class="left first_th w50" scope="col">', $txt['themeadmin_edit_filename'], '</th>
+				<th scope="col" style="width: 35%">', $txt['themeadmin_edit_modified'], '</th>
+				<th class="last_th" scope="col" style="width: 15%">', $txt['themeadmin_edit_size'], '</th>
 			</tr>
 		</thead>
 		<tbody>';
@@ -823,8 +823,8 @@ function template_edit_browse()
 
 		echo '
 				</td>
-				<td class="righttext">', !empty($file['last_modified']) ? $file['last_modified'] : '', '</td>
-				<td class="righttext">', $file['size'], '</td>
+				<td class="right">', !empty($file['last_modified']) ? $file['last_modified'] : '', '</td>
+				<td class="right">', $file['size'], '</td>
 			</tr>';
 	}
 

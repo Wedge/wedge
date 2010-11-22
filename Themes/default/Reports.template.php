@@ -95,7 +95,7 @@ function template_main()
 				<tr class="windowbg table_caption">';
 			else
 				echo '
-				<tr class="', !empty($row[0]['separator']) ? 'catbg' : ($alternate ? 'windowbg' : 'windowbg2'), '" valign="top">';
+				<tr class="', !empty($row[0]['separator']) ? 'catbg' : ($alternate ? 'windowbg' : 'windowbg2'), ' top">';
 
 			// Now do each column.
 			$column_number = 0;
@@ -115,12 +115,12 @@ function template_main()
 				// Shaded?
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
-					<td align="', $table['align']['shaded'], '" class="table_caption"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
+					<td class="', $table['align']['shaded'], ' table_caption"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
 						', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
 					</td>';
 				else
 					echo '
-					<td class="smalltext" align="', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px"' : '', !empty($data['style']) ? ' style="' . $data['style'] . '"' : '', '>
+					<td class="smalltext ', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px' . (!empty($data['style']) ? '; ' . $data['style'] : '') . '"' : (!empty($data['style']) ? ' style="' . $data['style'] . '"' : ''), '>
 						', $data['v'], '
 					</td>';
 
@@ -183,10 +183,10 @@ function template_print()
 		{
 			if ($row_number == 0 && !empty($table['shading']['top']))
 				echo '
-				<tr class="titlebg" valign="top">';
+				<tr class="titlebg top">';
 			else
 				echo '
-				<tr class="', $alternate ? 'windowbg' : 'windowbg2', '" valign="top">';
+				<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">';
 
 			// Now do each column!!
 			$column_number = 0;
@@ -205,12 +205,12 @@ function template_print()
 				// Shaded?
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
-					<td align="', $table['align']['shaded'], '" class="titlebg"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
+					<td class="', $table['align']['shaded'], ' titlebg"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
 						', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
 					</td>';
 				else
 					echo '
-					<td align="', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px"' : '', !empty($data['style']) ? ' style="' . $data['style'] . '"' : '', '>
+					<td class="', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px' . (!empty($data['style']) ? '; ' . $data['style'] : '') . '"' : (!empty($data['style']) ? ' style="' . $data['style'] . '"' : ''), '>
 						', $data['v'], '
 					</td>';
 

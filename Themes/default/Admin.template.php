@@ -373,16 +373,16 @@ function template_view_versions()
 			</h3>
 		</div>
 		<div class="information">', $txt['version_check_desc'], '</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
-					<tr class="catbg" align="left">
-						<th class="first_th" scope="col" width="50%">
+					<tr class="catbg left">
+						<th scope="col" class="first_th w50">
 							<strong>', $txt['admin_smffile'], '</strong>
 						</th>
-						<th scope="col" width="25%">
+						<th scope="col" class="w25">
 							<strong>', $txt['dvc_your'], '</strong>
 						</th>
-						<th class="last_th" scope="col"" width="25%">
+						<th scope="col" class="last_th w25">
 							<strong>', $txt['dvc_current'], '</strong>
 						</th>
 					</tr>
@@ -419,20 +419,20 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table id="Sources" width="100%" class="table_grid" cellspacing="0">
+			<table id="Sources" class="table_grid w100 cs0">
 			<tbody>';
 
 	// Loop through every source file displaying its version - using javascript.
 	foreach ($context['file_versions'] as $filename => $version)
 		echo '
 				<tr>
-					<td class="windowbg2" width="50%" style="padding-left: 3ex;">
+					<td class="windowbg2 w50" style="padding-left: 3ex">
 						', $filename, '
 					</td>
-					<td class="windowbg2" width="25%">
+					<td class="windowbg2 w25">
 						<em id="yourSources', $filename, '">', $version, '</em>
 					</td>
-					<td class="windowbg2" width="25%">
+					<td class="windowbg2 w25">
 						<em id="currentSources', $filename, '">??</em>
 					</td>
 				</tr>';
@@ -442,35 +442,35 @@ function template_view_versions()
 			</tbody>
 			</table>
 
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<tbody>
 					<tr>
-						<td class="windowbg" width="50%">
+						<td class="windowbg w50">
 							<a href="#" id="Default-link">', $txt['dvc_default'], '</a>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="yourDefault">??</em>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="currentDefault">??</em>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<table id="Default" width="100%" class="table_grid" cellspacing="0">
+			<table id="Default" class="table_grid w100 cs0">
 				<tbody>';
 
 	foreach ($context['default_template_versions'] as $filename => $version)
 		echo '
 					<tr>
-						<td class="windowbg2" width="50%" style="padding-left: 3ex;">
+						<td class="windowbg2 w50" style="padding-left: 3ex">
 							', $filename, '
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="yourDefault', $filename, '">', $version, '</em>
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="currentDefault', $filename, '">??</em>
 						</td>
 					</tr>';
@@ -480,23 +480,23 @@ function template_view_versions()
 				</tbody>
 			</table>
 
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<tbody>
 					<tr>
-						<td class="windowbg" width="50%">
+						<td class="windowbg w50">
 							<a href="#" id="Languages-link">', $txt['dvc_languages'], '</a>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="yourLanguages">??</em>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="currentLanguages">??</em>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<table id="Languages" width="100%" class="table_grid" cellspacing="0">
+			<table id="Languages" class="table_grid w100 cs0">
 				<tbody>';
 
 	foreach ($context['default_language_versions'] as $language => $files)
@@ -504,13 +504,13 @@ function template_view_versions()
 		foreach ($files as $filename => $version)
 			echo '
 					<tr>
-						<td class="windowbg2" width="50%" style="padding-left: 3ex;">
+						<td class="windowbg2 w50" style="padding-left: 3ex">
 							', $filename, '.<em>', $language, '</em>.php
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="your', $filename, '.', $language, '">', $version, '</em>
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="current', $filename, '.', $language, '">??</em>
 						</td>
 					</tr>';
@@ -524,35 +524,35 @@ function template_view_versions()
 	if (!empty($context['template_versions']))
 	{
 		echo '
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<tbody>
 					<tr>
-						<td class="windowbg" width="50%">
+						<td class="windowbg w50">
 							<a href="#" id="Templates-link">', $txt['dvc_templates'], '</a>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="yourTemplates">??</em>
 						</td>
-						<td class="windowbg" width="25%">
+						<td class="windowbg w25">
 							<em id="currentTemplates">??</em>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<table id="Templates" width="100%" class="table_grid" cellspacing="0">
+			<table id="Templates" class="table_grid w100 cs0">
 				<tbody>';
 
 		foreach ($context['template_versions'] as $filename => $version)
 			echo '
 					<tr>
-						<td class="windowbg2" width="50%" style="padding-left: 3ex;">
+						<td class="windowbg2 w50" style="padding-left: 3ex">
 							', $filename, '
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="yourTemplates', $filename, '">', $version, '</em>
 						</td>
-						<td class="windowbg2" width="25%">
+						<td class="windowbg2 w25">
 							<em id="currentTemplates', $filename, '">??</em>
 						</td>
 					</tr>';
@@ -564,7 +564,7 @@ function template_view_versions()
 
 	echo '
 		</div>
-	<br class="clear" />';
+		<br class="clear" />';
 
 	/* Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
 	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
@@ -1105,7 +1105,7 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt>
-							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong><br />
 							<span class="smalltext">', $txt['custom_edit_enclose_desc'], '</span>
 						</dt>
@@ -1178,7 +1178,7 @@ function template_edit_profile_field()
 					<legend>', $txt['custom_edit_advanced'], '</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong><br />
 							<span class="smalltext">', $txt['custom_edit_mask_desc'], '</span>
 						</dt>
@@ -1443,7 +1443,7 @@ function template_add_language()
 		echo '
 			<div class="information">', $txt['add_language_smf_found'], '</div>
 
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th" scope="col">', $txt['name'], '</th>
@@ -1457,12 +1457,12 @@ function template_add_language()
 
 		foreach ($context['smf_languages'] as $language)
 			echo '
-					<tr class="windowbg2">
-						<td align="left">', $language['name'], '</td>
-						<td align="left">', $language['description'], '</td>
-						<td align="left">', $language['version'], '</td>
-						<td align="center">', $language['utf8'] ? $txt['yes'] : $txt['no'], '</td>
-						<td align="left"><a href="', $language['link'], '">', $txt['add_language_smf_install'], '</a></td>
+					<tr class="windowbg2 left">
+						<td>', $language['name'], '</td>
+						<td>', $language['description'], '</td>
+						<td>', $language['version'], '</td>
+						<td class="center">', $language['utf8'] ? $txt['yes'] : $txt['no'], '</td>
+						<td><a href="', $language['link'], '">', $txt['add_language_smf_install'], '</a></td>
 					</tr>';
 
 		echo '
@@ -1535,19 +1535,19 @@ function template_download_language()
 					', $txt['languages_download_theme_files'], '
 				</h3>
 			</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th" scope="col">
 							', $txt['languages_download_filename'], '
 						</th>
-						<th scope="col" width="100">
+						<th scope="col" style="width: 100px">
 							', $txt['languages_download_writable'], '
 						</th>
-						<th scope="col" width="100">
+						<th scope="col" style="width: 100px">
 							', $txt['languages_download_exists'], '
 						</th>
-						<th class="last_th" scope="col" width="50">
+						<th class="last_th" scope="col" style="width: 50px">
 							', $txt['languages_download_copy'], '
 						</th>
 					</tr>

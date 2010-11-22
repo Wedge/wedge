@@ -513,9 +513,9 @@ function template_subject_list()
 	<table class="table_grid w100 cs0">
 	<thead>
 		<tr class="catbg">
-			<th style="text-align: center; width: 4%" class="first_th">
+			<th class="first_th center" style="width: 4%">
 			</th>
-			<th class="lefttext" style="width: 22%">
+			<th class="left" style="width: 22%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
 			<th>
@@ -531,7 +531,7 @@ function template_subject_list()
 					<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 				</span>
 			</th>
-			<th class="lefttext" style="width: 15%">
+			<th class="left" style="width: 15%">
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 			</th>
 			<th style="text-align: center; width: 4%" class="last_th">
@@ -551,7 +551,7 @@ function template_subject_list()
 	{
 		echo '
 		<tr class="', $next_alternate ? 'windowbg' : 'windowbg2', '">
-			<td align="center" width="4%">
+			<td class="center" style="width: 4%">
 			<script><!-- // --><![CDATA[
 				currentLabels[', $message['id'], '] = {';
 
@@ -573,7 +573,7 @@ function template_subject_list()
 			<td>', $message['time'], '</td>
 			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*" />' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ($scripturl . '?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" />' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
-			<td align="center" width="4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if (document.getElementById(\'deletedisplay', $message['id'], '\')) document.getElementById(\'deletedisplay', $message['id'], '\').checked = this.checked;" class="input_check" /></td>
+			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if (document.getElementById(\'deletedisplay', $message['id'], '\')) document.getElementById(\'deletedisplay', $message['id'], '\').checked = this.checked;" class="input_check" /></td>
 		</tr>';
 		$next_alternate = !$next_alternate;
 	}
@@ -765,12 +765,12 @@ function template_search_results()
 	// complete results ?
 	if (empty($context['search_params']['show_complete']) && !empty($context['personal_messages']))
 		echo '
-	<table width="100%" class="table_grid" cellspacing="0">
+	<table class="table_grid w100 cs0">
 	<thead>
-		<tr class="catbg">
-			<th class="lefttext first_th" width="30%">', $txt['date'], '</th>
-			<th class="lefttext" width="50%">', $txt['subject'], '</th>
-			<th class="lefttext last_th" width="20%">', $txt['from'], '</th>
+		<tr class="catbg left">
+			<th class="first_th" style="width: 30%">', $txt['date'], '</th>
+			<th class="w50">', $txt['subject'], '</th>
+			<th class="last_th" style="width: 20%">', $txt['from'], '</th>
 		</tr>
 	</thead>
 	<tbody>';
@@ -809,8 +809,8 @@ function template_search_results()
 
 			if ($context['can_send_pm'])
 			{
-				$quote_button = create_button('quote.gif', 'reply_quote', 'reply_quote', 'align="middle"');
-				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'align="middle"');
+				$quote_button = create_button('quote.gif', 'reply_quote', 'reply_quote', 'class="middle"');
+				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'class="middle"');
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])
 					echo '
@@ -831,7 +831,7 @@ function template_search_results()
 		{
 			// !!! No context at all of the search?
 			echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', '" valign="top">
+			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">
 				<td>', $message['time'], '</td>
 				<td>', $message['link'], '</td>
 				<td>', $message['member']['link'], '</td>
@@ -1024,7 +1024,7 @@ function template_send()
 			sSelf: \'oPersonalMessageSend\',
 			sSessionId: \'', $context['session_id'], '\',
 			sSessionVar: \'', $context['session_var'], '\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			sToControlId: \'to_control\',
 			aToRecipients: [';
 
@@ -1111,13 +1111,13 @@ function template_labels()
 		<div class="description">
 			', $txt['pm_labels_desc'], '
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="lefttext first_th">
+				<th class="left first_th">
 					', $txt['pm_label_name'], '
 				</th>
-				<th class="centertext last_th" width="4%">';
+				<th class="center last_th" style="width: 4%">';
 
 	if (count($context['labels']) > 2)
 		echo '
@@ -1131,8 +1131,8 @@ function template_labels()
 
 	if (count($context['labels']) < 2)
 		echo '
-			<tr class="windowbg2">
-				<td colspan="2" align="center">', $txt['pm_labels_no_exist'], '</td>
+			<tr class="windowbg2 center">
+				<td colspan="2">', $txt['pm_labels_no_exist'], '</td>
 			</tr>';
 	else
 	{
@@ -1147,7 +1147,7 @@ function template_labels()
 				<td>
 					<input type="text" name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30" class="input_text" />
 				</td>
-				<td width="4%" align="center"><input type="checkbox" class="input_check" name="delete_label[', $label['id'], ']" /></td>
+				<td style="width: 4%" class="center"><input type="checkbox" class="input_check" name="delete_label[', $label['id'], ']" /></td>
 			</tr>';
 
 			$alternate = !$alternate;
@@ -1268,13 +1268,13 @@ function template_rules()
 		<div class="description">
 			', $txt['pm_manage_rules_desc'], '
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
-				<th class="lefttext first_th">
+				<th class="left first_th">
 					', $txt['pm_rule_title'], '
 				</th>
-				<th width="4%" class="centertext last_th">';
+				<th style="width: 4%" class="center last_th">';
 
 	if (!empty($context['rules']))
 		echo '
@@ -1289,7 +1289,7 @@ function template_rules()
 	if (empty($context['rules']))
 		echo '
 			<tr class="windowbg2">
-				<td colspan="2" align="center">
+				<td colspan="2" class="center">
 					', $txt['pm_rules_none'], '
 				</td>
 			</tr>';
@@ -1302,7 +1302,7 @@ function template_rules()
 				<td>
 					<a href="', $scripturl, '?action=pm;sa=manrules;add;rid=', $rule['id'], '">', $rule['name'], '</a>
 				</td>
-				<td width="4%" align="center">
+				<td style="width: 4%" class="center">
 					<input type="checkbox" name="delrule[', $rule['id'], ']" class="input_check" />
 				</td>
 			</tr>';

@@ -241,10 +241,10 @@ function template_reported_posts()
 		</div>';
 
 	// Make the buttons.
-	$close_button = create_button('close.gif', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'align="middle"');
-	$details_button = create_button('details.gif', 'mc_reportedp_details', 'mc_reportedp_details', 'align="middle"');
-	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'align="middle"');
-	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'align="middle"');
+	$close_button = create_button('close.gif', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
+	$details_button = create_button('details.gif', 'mc_reportedp_details', 'mc_reportedp_details', 'class="middle"');
+	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
+	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
 
 	foreach ($context['reports'] as $report)
 	{
@@ -311,8 +311,8 @@ function template_unapproved_posts()
 		</div>';
 
 	// Make up some buttons
-	$approve_button = create_button('approve.gif', 'approve', 'approve', 'align="middle"');
-	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'align="middle"');
+	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
+	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
 
 	// No posts?
 	if (empty($context['unapproved_items']))
@@ -395,8 +395,8 @@ function template_unapproved_attachments()
 			</div>';
 
 	// The ever popular approve button, with the massively unpopular delete.
-	$approve_button = create_button('approve.gif', 'approve', 'approve', 'align="middle"');
-	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'align="middle"');
+	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
+	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
 
 	// None awaiting?
 	if (empty($context['unapproved_items']))
@@ -409,14 +409,14 @@ function template_unapproved_attachments()
 			<div class="pagesection">
 				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
 			</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 			<thead>
 				<tr class="catbg">
 					<th>', $txt['mc_unapproved_attach_name'], '</th>
 					<th>', $txt['mc_unapproved_attach_size'], '</th>
 					<th>', $txt['mc_unapproved_attach_poster'], '</th>
 					<th>', $txt['date'], '</th>
-					<th nowrap="nowrap" align="center"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
+					<th class="nowrap center"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
 				</tr>
 			</thead>
 			<tbody>';
@@ -428,7 +428,7 @@ function template_unapproved_attachments()
 					<td>
 						', $item['filename'], '
 					</td>
-					<td align="right">
+					<td class="right">
 						', $item['size'], $txt['kilobyte'], '
 					</td>
 					<td>
@@ -437,7 +437,7 @@ function template_unapproved_attachments()
 					<td class="smalltext">
 						', $item['time'], '<br />', $txt['in'], ' <a href="', $item['message']['href'], '">', $item['message']['subject'], '</a>
 					</td>
-					<td width="4%" align="center">
+					<td style="width: 4%" class="center">
 						<input type="checkbox" name="item[]" value="', $item['id'], '" checked="checked" class="input_check" />
 					</td>
 				</tr>';
@@ -488,9 +488,9 @@ function template_viewmodreport()
 					<span class="floatright">';
 
 		// Make the buttons.
-		$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'align="middle"');
-		$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'align="middle"');
-		$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'align="middle"');
+		$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
+		$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
+		$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
 
 		echo '
 						<a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a>
@@ -547,7 +547,7 @@ function template_viewmodreport()
 			<div class="cat_bar">
 				<h3>', $txt['mc_modreport_modactions'], '</h3>
 			</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
 						<th>', $txt['modlog_action'], '</th>
@@ -598,7 +598,7 @@ function template_user_watch_post_callback($post)
 
 	// We'll have a delete please bob.
 	if (empty($delete_button))
-		$delete_button = create_button('delete.gif', 'remove_message', 'remove', 'align="middle"');
+		$delete_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
 
 	$output_html = '
 					<div>

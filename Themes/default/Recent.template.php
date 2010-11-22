@@ -118,21 +118,21 @@ function template_unread()
 
 		echo '
 			<div class="tborder topic_table" id="unread">
-				<table class="table_grid" cellspacing="0">
+				<table class="table_grid cs0">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th" width="4%">&nbsp;</th>
+							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 							<th scope="col">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
-							<th scope="col" width="14%" align="center">
+							<th scope="col" style="width: 14%" class="center">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>';
 
 		// Show a "select all" box for quick moderation?
 		if ($show_checkboxes)
 			echo '
-							<th scope="col" width="22%">
+							<th scope="col" style="width: 22%">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
 							<th class="last_th">
@@ -140,7 +140,7 @@ function template_unread()
 							</th>';
 		else
 			echo '
-							<th scope="col" class="smalltext last_th" width="22%">
+							<th scope="col" class="smalltext last_th" style="width: 22%">
 								<a href="', $scripturl, '?action=unread', $context['showing_all_topics'] ? ';all' : '', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>';
 		echo '
@@ -194,7 +194,7 @@ function template_unread()
 
 			if ($show_checkboxes)
 				echo '
-							<td class="windowbg2" valign="middle" align="center">
+							<td class="windowbg2 middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
 							</td>';
 			echo '
@@ -207,7 +207,7 @@ function template_unread()
 		if (empty($settings['use_tabs']) && !empty($mark_read))
 			echo '
 						<tr class="catbg">
-							<td colspan="', $show_checkboxes ? '6' : '5', '" align="right">
+							<td colspan="', $show_checkboxes ? '6' : '5', '" class="right">
 								', template_button_strip($mark_read, 'top'), '
 							</td>
 						</tr>';
@@ -244,12 +244,12 @@ function template_unread()
 	echo '
 		<div class="description" id="topic_icons">
 			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" align="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" align="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" class="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" class="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" align="middle" /> ' . $txt['poll'] : '', '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" class="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" class="middle" /> ' . $txt['poll'] : '', '
 			</p>
 		</div>
 	</div>';
@@ -301,21 +301,21 @@ function template_replies()
 
 		echo '
 			<div class="tborder topic_table" id="unreadreplies">
-				<table class="table_grid" cellspacing="0">
+				<table class="table_grid cs0">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th" width="4%">&nbsp;</th>
+							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 							<th scope="col">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
-							<th scope="col" width="14%" align="center">
+							<th scope="col" style="width: 14%" class="center">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] === 'replies' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] === 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>';
 
 		// Show a "select all" box for quick moderation?
 		if ($show_checkboxes)
 				echo '
-							<th scope="col" width="22%">
+							<th scope="col" style="width: 22%">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>
 							<th class="last_th">
@@ -323,7 +323,7 @@ function template_replies()
 							</th>';
 		else
 			echo '
-							<th scope="col" class="last_th" width="22%">
+							<th scope="col" class="last_th" style="width: 22%">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a>
 							</th>';
 		echo '
@@ -377,7 +377,7 @@ function template_replies()
 
 			if ($show_checkboxes)
 				echo '
-							<td class="windowbg2" valign="middle" align="center">
+							<td class="windowbg2 middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
 							</td>';
 			echo '
@@ -387,7 +387,7 @@ function template_replies()
 		if (empty($settings['use_tabs']) && !empty($mark_read))
 			echo '
 						<tr class="catbg">
-							<td colspan="', $show_checkboxes ? '6' : '5', '" align="right">
+							<td colspan="', $show_checkboxes ? '6' : '5', '" class="right">
 								', template_button_strip($mark_read, 'top'), '
 							</td>
 						</tr>';
@@ -420,12 +420,12 @@ function template_replies()
 	echo '
 		<div class="description flow_auto" id="topic_icons">
 			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" align="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" align="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" alt="" class="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" alt="" class="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" align="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" align="middle" /> ' . $txt['poll'] : '', '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" alt="" class="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" class="middle" /> ' . $txt['poll'] : '', '
 			</p>
 		</div>
 	</div>';

@@ -2314,7 +2314,7 @@ function spellCheckDone()
 			<div>%smileyRow%</div>
 		') . ',
 		sSmileyTemplate: ' . JavaScriptEscape('
-			<img src="%smileySource%" align="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%" />
+			<img src="%smileySource%" class="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%" />
 		') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('
 			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>

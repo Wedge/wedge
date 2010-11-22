@@ -231,30 +231,30 @@ function template_modify_user_subscription()
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	echo '
 	<script type="text/javascript"><!-- // --><![CDATA[
-			var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-			function generateDays(offset)
-			{
-				var days = 0, selected = 0;
-				var dayElement = document.getElementById("day" + offset), yearElement = document.getElementById("year" + offset), monthElement = document.getElementById("month" + offset);
+		function generateDays(offset)
+		{
+			var days = 0, selected = 0;
+			var dayElement = document.getElementById("day" + offset), yearElement = document.getElementById("year" + offset), monthElement = document.getElementById("month" + offset);
 
-				monthLength[1] = 28;
-				if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
-					monthLength[1] = 29;
+			monthLength[1] = 28;
+			if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
+				monthLength[1] = 29;
 
-				selected = dayElement.selectedIndex;
-				while (dayElement.options.length)
-					dayElement.options[0] = null;
+			selected = dayElement.selectedIndex;
+			while (dayElement.options.length)
+				dayElement.options[0] = null;
 
-				days = monthLength[monthElement.value - 1];
+			days = monthLength[monthElement.value - 1];
 
-				for (i = 1; i <= days; i++)
-					dayElement.options[dayElement.length] = new Option(i, i);
+			for (i = 1; i <= days; i++)
+				dayElement.options[dayElement.length] = new Option(i, i);
 
-				if (selected < days)
-					dayElement.selectedIndex = selected;
-			}
-		// ]]></script>';
+			if (selected < days)
+				dayElement.selectedIndex = selected;
+		}
+	// ]]></script>';
 
 	echo '
 	<div id="admincenter">
@@ -371,7 +371,7 @@ function template_modify_user_subscription()
 				sSuggestId: \'name_subscriber\',
 				sControlId: \'name_control\',
 				sSearchType: \'member\',
-				sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 				bItemList: false
 			});
 		// ]]></script>';
@@ -503,13 +503,13 @@ function template_user_subscription()
 		<div class="information">
 			', $txt['paid_current_desc'], '
 		</div>
-		<table width="100%" class="table_grid" cellspacing="0">
+		<table class="table_grid w100 cs0">
 			<thead>
-				<tr class="catbg">
-					<th class="first_th" width="30%">', $txt['paid_name'], '</th>
-					<th align="center">', $txt['paid_status'], '</th>
-					<th align="center">', $txt['start_date'], '</th>
-					<th class="last_th" align="center">', $txt['end_date'], '</th>
+				<tr class="catbg center">
+					<th class="first_th left" style="width: 30%">', $txt['paid_name'], '</th>
+					<th>', $txt['paid_status'], '</th>
+					<th>', $txt['start_date'], '</th>
+					<th class="last_th">', $txt['end_date'], '</th>
 				</tr>
 			</thead>
 			<tbody>';
@@ -517,7 +517,7 @@ function template_user_subscription()
 	if (empty($context['current']))
 		echo '
 				<tr class="windowbg">
-					<td align="center" colspan="4">
+					<td class="center" colspan="4">
 						', $txt['paid_none_yet'], '
 					</td>
 				</tr>';

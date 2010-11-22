@@ -14,7 +14,7 @@ function template_modify_weights()
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_frequency" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_frequency" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_frequency'], ':
 					</dt>
 					<dd class="large_caption">
@@ -22,7 +22,7 @@ function template_modify_weights()
 						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_age" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_age" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_age'], ':
 					</dt>
 					<dd class="large_caption">
@@ -30,7 +30,7 @@ function template_modify_weights()
 						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_length" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_length" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_length'], ':
 					</dt>
 					<dd class="large_caption">
@@ -38,7 +38,7 @@ function template_modify_weights()
 						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_subject" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_subject" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_subject'], ':
 					</dt>
 					<dd class="large_caption">
@@ -46,7 +46,7 @@ function template_modify_weights()
 						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_first_message" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_first_message" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_first_message'], ':
 					</dt>
 					<dd class="large_caption">
@@ -54,7 +54,7 @@ function template_modify_weights()
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_frequency" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a>
+						<a href="', $scripturl, '?action=helpadmin;help=search_weight_frequency" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 						', $txt['search_weight_sticky'], ':
 					</dt>
 					<dd class="large_caption">

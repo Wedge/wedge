@@ -9,12 +9,12 @@ function template_edit_news()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=editnews" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify">
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th class="first_th" width="50%">', $txt['admin_edit_news'], '</th>
-						<th align="left" width="45%">', $txt['preview'], '</th>
-						<th class="last_th" align="center" width="5%"><input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" /></th>
+						<th class="first_th w50">', $txt['admin_edit_news'], '</th>
+						<th class="left" style="width: 45%">', $txt['preview'], '</th>
+						<th class="last_th center" style="width: 5%"><input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" /></th>
 					</tr>
 				</thead>
 				<tbody>';
@@ -22,31 +22,28 @@ function template_edit_news()
 	// Loop through all the current news items so you can edit/remove them.
 	foreach ($context['admin_current_news'] as $admin_news)
 		echo '
-					<tr class="windowbg2">
-						<td align="center">
-
+					<tr class="windowbg2 center">
+						<td>
 							<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="width: 85%;">', $admin_news['unparsed'], '</textarea></div>
-						</td><td align="left" valign="top">
+						</td>
+						<td class="left top">
 							<div style="overflow: auto; width: 100%; height: 10ex;">', $admin_news['parsed'], '</div>
-						</td><td align="center">
+						</td>
+						<td>
 							<input type="checkbox" name="remove[]" value="', $admin_news['id'], '" class="input_check" />
 						</td>
 					</tr>';
 
 	// This provides an empty text box to add a news item to the site.
 	echo '
-					<tr id="moreNews" class="windowbg2" style="display: none;">
-						<td align="center">
-							<div id="moreNewsItems"></div>
-						</td>
-						<td align="center">
-						</td>
-						<td align="center">
-						</td>
+					<tr id="moreNews" class="windowbg2 center" style="display: none;">
+						<td><div id="moreNewsItems"></div></td>
+						<td></td>
+						<td></td>
 					</tr>
 				</tbody>
 			</table>
-			<div class="floatleftpadding">
+			<div class="floatleft padding">
 				<div id="moreNewsItems_link" style="display: none;"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					document.getElementById("moreNewsItems_link").style.display = "";
@@ -60,7 +57,7 @@ function template_edit_news()
 					<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" style="width: 85%;" name="news[]"></textarea></div>
 				</noscript>
 			</div>
-			<div class="floatrightpadding">
+			<div class="floatright padding">
 				<input type="submit" name="save_items" value="', $txt['save'], '" class="button_submit" /> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="button_submit" />
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -200,7 +197,7 @@ function template_email_members()
 			bItemList: true,
 			sPostName: \'member_list\',
 			sURLMask: \'action=profile;u=%item_id%\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			sItemListContainerId: \'members_container\',
 			aListItems: []
 		});
@@ -214,7 +211,7 @@ function template_email_members()
 			bItemList: true,
 			sPostName: \'exclude_member_list\',
 			sURLMask: \'action=profile;u=%item_id%\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			sItemListContainerId: \'exclude_members_container\',
 			aListItems: []
 		});
@@ -276,7 +273,7 @@ function template_email_members_send()
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="cat_bar">
 				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" align="top" /></a> ', $txt['admin_newsletters'], '
+					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a> ', $txt['admin_newsletters'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">

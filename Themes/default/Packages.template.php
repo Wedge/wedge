@@ -103,9 +103,9 @@ function template_view_package()
 				<tr class="catbg">
 					<th scope="col" style="width: 20px"></th>
 					<th scope="col" style="width: 30px"></th>
-					<th scope="col" class="lefttext">', $txt['package_install_type'], '</th>
-					<th scope="col" class="lefttext" style="width: 50%">', $txt['package_install_action'], '</th>
-					<th scope="col" class="lefttext" style="width: 20%">', $txt['package_install_desc'], '</th>
+					<th scope="col" class="left">', $txt['package_install_type'], '</th>
+					<th scope="col" class="left w50">', $txt['package_install_action'], '</th>
+					<th scope="col" class="left" style="width: 20%">', $txt['package_install_desc'], '</th>
 				</tr>
 			</thead>
 			<tbody>';
@@ -150,7 +150,7 @@ function template_view_package()
 								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
 								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
-								<td style="width: 50%" class="smalltext">', $operation['action'], '</td>
+								<td class="w50 smalltext">', $operation['action'], '</td>
 								<td style="width: 20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
 							</tr>';
 
@@ -199,7 +199,7 @@ function template_view_package()
 				echo '
 					<tr class="catbg">
 						<td></td>
-						<td class="centertext">';
+						<td class="center">';
 				if (!empty($context['themes_locked']))
 					echo '
 							<input type="hidden" name="custom_theme[]" value="', $id, '" />';
@@ -216,11 +216,11 @@ function template_view_package()
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
 						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none;" />' : '', '</td>
-						<td style="width: 30px" class="centertext">
+						<td style="width: 30px" class="center">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '" class="input_check" ', (!empty($action['not_mod']) ? '' : 'disabled="disabled"'), ' ', !empty($context['themes_locked']) ? 'checked="checked"' : '', '/>
 						</td>
 						<td>', $action['type'], '</td>
-						<td style="width: 50%">', $action['action'], '</td>
+						<td class="w50">', $action['action'], '</td>
 						<td style="width: 20%"><strong>', $action['description'], '</strong></td>
 					</tr>';
 
@@ -245,7 +245,7 @@ function template_view_package()
 									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], ($operation['is_boardmod'] ? ';boardmod' : ''), (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
 									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
-									<td style="width: 50%" class="smalltext">', $operation['action'], '</td>
+									<td class="w50 smalltext">', $operation['action'], '</td>
 									<td style="width: 20%" class="smalltext">', $operation['description'], !empty($operation['ignore_failure']) ? ' (' . $txt['operation_ignore'] . ')' : '', '</td>
 								</tr>';
 							$operation_num++;
@@ -492,8 +492,8 @@ function template_view_installed()
 		<thead>
 			<tr class="catbg">
 				<th scope="col" style="width: 32px"></th>
-				<th scope="col" style="width: 25%">', $txt['mod_name'], '</th>
-				<th scope="col" style="width: 25%">', $txt['mod_version'], '</th>
+				<th scope="col" class="w25">', $txt['mod_name'], '</th>
+				<th scope="col" class="w25">', $txt['mod_version'], '</th>
 				<th scope="col" style="width: 49%"></th>
 			</tr>
 		</thead>
@@ -507,7 +507,7 @@ function template_view_installed()
 				<td><span class="smalltext">', ++$i, '.</span></td>
 				<td><span class="smalltext">', $file['name'], '</span></td>
 				<td><span class="smalltext">', $file['version'], '</span></td>
-				<td class="righttext"><span class="smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></span></td>
+				<td class="right"><span class="smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></span></td>
 			</tr>';
 			$alt = !$alt;
 		}
@@ -532,7 +532,7 @@ function template_browse()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" style="vertical-align: top" /></a>', $txt['packages_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>', $txt['packages_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -594,8 +594,8 @@ function template_browse()
 		<thead>
 			<tr class="catbg">
 				<th class="first_th" style="width: 32px"></th>
-				<th class="lefttext" style="width: 25%">', $txt['mod_name'], '</th>
-				<th class="lefttext" style="width: 25%">', $txt['mod_version'], '</th>
+				<th class="left w25">', $txt['mod_name'], '</th>
+				<th class="left w25">', $txt['mod_version'], '</th>
 				<th class="last_th" style="width: 49%"></th>
 			</tr>
 		</thead>
@@ -613,11 +613,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td class="righttext">';
+				<td class="right">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -653,8 +653,8 @@ function template_browse()
 		<thead>
 			<tr class="catbg">
 				<th style="width: 32px"></th>
-				<th style="width: 25%">', $txt['mod_name'], '</th>
-				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th class="w25">', $txt['mod_name'], '</th>
+				<th class="w25">', $txt['mod_version'], '</th>
 				<th style="width: 49%"></th>
 			</tr>
 		</thead>
@@ -670,11 +670,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex;" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex;" />';
 
 			echo '
 				</td>
-				<td class="righttext">';
+				<td class="right">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -709,8 +709,8 @@ function template_browse()
 		<thead>
 			<tr class="catbg">
 				<th style="width: 32px"></th>
-				<th style="width: 25%">', $txt['mod_name'], '</th>
-				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th class="w25">', $txt['mod_name'], '</th>
+				<th class="w25">', $txt['mod_version'], '</th>
 				<th style="width: 49%"></th>
 			</tr>
 		</thead>
@@ -726,11 +726,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td class="righttext">';
+				<td class="right">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -765,8 +765,8 @@ function template_browse()
 		<thead>
 			<tr class="catbg">
 				<th style="width: 32px"></th>
-				<th style="width: 25%">', $txt['mod_name'], '</th>
-				<th style="width: 25%">', $txt['mod_version'], '</th>
+				<th class="w25">', $txt['mod_name'], '</th>
+				<th class="w25">', $txt['mod_version'], '</th>
 				<th style="width: 49%"></th>
 			</tr>
 		</thead>
@@ -782,11 +782,11 @@ function template_browse()
 
 			if ($package['is_installed'] && !$package['is_newer'])
 				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" style="vertical-align: middle; margin-left: 2ex" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
 
 			echo '
 				</td>
-				<td class="righttext">';
+				<td class="right">';
 
 			if ($package['can_uninstall'])
 				echo '
@@ -818,8 +818,8 @@ function template_browse()
 		<div class="flow_auto">
 			<div class="padding smalltext floatleft">
 				', $txt['package_installed_key'], '
-				<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" style="vertical-align: middle; margin-left: 1ex" /> ', $txt['package_installed_current'], '
-				<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" style="vertical-align: middle; margin-left: 2ex" /> ', $txt['package_installed_old'], '
+				<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
+				<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
 				<a href="#" onclick="document.getElementById(\'advanced_box\').style.display = document.getElementById(\'advanced_box\').style.display == \'\' ? \'none\' : \'\'; return false;">', $txt['package_advanced_button'], '</a>
@@ -1097,7 +1097,7 @@ function template_package_list()
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
-						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" style="vertical-align: middle; margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '" />';
+						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" class="middle" style="margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '" />';
 
 					echo '</strong>
 							<ul id="package_section_', $i, '_pkg_', $id, '" class="package_section">';
@@ -1141,8 +1141,8 @@ function template_package_list()
 		</div>
 		<div class="padding smalltext floatleft">
 			', $txt['package_installed_key'], '
-			<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" style="vertical-align: middle; margin-left: 1ex" /> ', $txt['package_installed_current'], '
-			<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" style="vertical-align: middle; margin-left: 2ex" /> ', $txt['package_installed_old'], '
+			<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
+			<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
 		</div>
 	</div>
 	<br class="clear" />';
@@ -1793,14 +1793,14 @@ function template_file_permissions()
 		</div>
 		<table class="table_grid w100 cs0">
 		<thead>
-			<tr class="catbg">
-				<th class="first_th lefttext" style="width: 30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
-				<th style="width: 30%" class="lefttext">', $txt['package_file_perms_status'], '</th>
-				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
-				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
-				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
-				<th style="width: 8%" class="centertext"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
-				<th style="width: 8%" class="centertext last_th"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
+			<tr class="catbg center">
+				<th class="first_th left" style="width: 30%">&nbsp;', $txt['package_file_perms_name'], '&nbsp;</th>
+				<th style="width: 30%" class="left">', $txt['package_file_perms_status'], '</th>
+				<th style="width: 8%"><span class="filepermissions">', $txt['package_file_perms_status_read'], '</span></th>
+				<th style="width: 8%"><span class="filepermissions">', $txt['package_file_perms_status_write'], '</span></th>
+				<th style="width: 8%"><span class="filepermissions">', $txt['package_file_perms_status_execute'], '</span></th>
+				<th style="width: 8%"><span class="filepermissions">', $txt['package_file_perms_status_custom'], '</span></th>
+				<th style="width: 8%" class="last_th"><span class="filepermissions">', $txt['package_file_perms_status_no_change'], '</span></th>
 			</tr>
 		</thead>';
 
@@ -1808,8 +1808,8 @@ function template_file_permissions()
 	{
 		echo '
 		<tbody>
-			<tr class="windowbg2">
-				<td style="width: 30%"><strong>';
+			<tr class="windowbg2 center">
+				<td style="width: 30%" class="left"><strong>';
 
 		if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 			echo '
@@ -1818,15 +1818,15 @@ function template_file_permissions()
 		echo '
 					', $name, '
 				</strong></td>
-				<td style="width: 30%">
+				<td style="width: 30%" class="left">
 					<span style="color: ', ($dir['perms']['chmod'] ? 'green' : 'red'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td style="width: 8%" class="centertext perm_read"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_write"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_execute"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_custom"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_nochange"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
 			</tr>
 		</tbody>';
 
@@ -1914,8 +1914,8 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 			$cur_ident = preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident . '/' . $name);
 			echo '
-			<tr class="windowbg" id="content_', $cur_ident, '">
-				<td class="smalltext" style="width: 30%">' . str_repeat('&nbsp;', $level * 5), '
+			<tr class="windowbg center" id="content_', $cur_ident, '">
+				<td class="smalltext left" style="width: 30%">' . str_repeat('&nbsp;', $level * 5), '
 					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '<a id="link_' . $cur_ident . '" href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident . '/' . $name) . ';back_look=' . $context['back_look_data'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . $cur_ident . '" onclick="return expandFolder(\'' . $cur_ident . '\', \'' . addcslashes($ident . '/' . $name, "'\\") . '\');">' : '';
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
@@ -1926,15 +1926,15 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 					', $name, '
 					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '</a>' : '', '
 				</td>
-				<td class="smalltext">
+				<td class="smalltext left">
 					<span class="', ($dir['perms']['chmod'] ? 'success' : 'error'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td style="width: 8%" class="centertext perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom" class="input_radio" /></td>
-				<td style="width: 8%" class="centertext perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
 			</tr>
 			<tr id="insert_div_loc_' . $cur_ident . '" style="display: none;"><td></td></tr>';
 

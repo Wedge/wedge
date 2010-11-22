@@ -346,21 +346,21 @@ function template_merge_extra_options()
 			<div class="title_bar">
 				<h3>', $txt['merge_topic_list'], '</h3>
 			</div>
-			<table width="100%" class="bordercolor table_grid" cellspacing="0">
+			<table class="table_grid bordercolor w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th scope="col" class="first_th" align="center" width="10px">', $txt['merge_check'], '</th>
-						<th scope="col" class="lefttext">', $txt['subject'], '</th>
-						<th scope="col" class="lefttext">', $txt['started_by'], '</th>
-						<th scope="col" class="lefttext">', $txt['last_post'], '</th>
-						<th scope="col" class="last_th" width="20px">' . $txt['merge_include_notifications'] . '</th>
+						<th scope="col" class="first_th center" style="width: 10px">', $txt['merge_check'], '</th>
+						<th scope="col" class="left">', $txt['subject'], '</th>
+						<th scope="col" class="left">', $txt['started_by'], '</th>
+						<th scope="col" class="left">', $txt['last_post'], '</th>
+						<th scope="col" class="last_th" style="width: 20px">' . $txt['merge_include_notifications'] . '</th>
 					</tr>
 				</thead>
 				<tbody>';
 		foreach ($context['topics'] as $topic)
 			echo '
 					<tr class="windowbg2">
-						<td align="center">
+						<td class="center">
 							<input type="checkbox" class="input_check" name="topics[]" value="' . $topic['id'] . '" checked="checked" />
 						</td>
 						<td>
@@ -374,7 +374,7 @@ function template_merge_extra_options()
 							' . $topic['updated']['link'] . '<br />
 							<span class="smalltext">', $topic['updated']['time'], '</span>
 						</td>
-						<td align="center">
+						<td class="center">
 							<input type="checkbox" class="input_check" name="notifications[]" value="' . $topic['id'] . '" checked="checked" />
 						</td>
 					</tr>';

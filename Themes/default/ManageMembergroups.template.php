@@ -340,7 +340,7 @@ function template_edit_group()
 				bItemList: true,
 				sPostName: \'moderator_list\',
 				sURLMask: \'action=profile;u=%item_id%\',
-				sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 				sItemListContainerId: \'moderator_container\',
 				aListItems: [';
 
@@ -442,7 +442,7 @@ function template_group_members()
 			</div>
 			<br />
 			<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>
-			<table width="100%" class="table_grid" cellspacing="0">
+			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
 						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>
@@ -452,7 +452,7 @@ function template_group_members()
 						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" alt="" />' : '', '</a></th>';
 	if (!empty($context['group']['assignable']))
 		echo '
-						<td width="4%" align="center"><input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" /></td>';
+						<td style="width: 4%" class="center"><input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" /></td>';
 	echo '
 					</tr>
 				</thead>
@@ -460,8 +460,8 @@ function template_group_members()
 
 	if (empty($context['members']))
 		echo '
-					<tr class="windowbg2">
-						<td colspan="6" align="center">', $txt['membergroups_members_no_members'], '</td>
+					<tr class="windowbg2 center">
+						<td colspan="6">', $txt['membergroups_members_no_members'], '</td>
 					</tr>';
 
 	foreach ($context['members'] as $member)
@@ -469,7 +469,7 @@ function template_group_members()
 		echo '
 					<tr class="windowbg2">
 						<td>', $member['name'], '</td>
-						<td', $member['show_email'] == 'no_through_forum' && $settings['use_image_buttons'] ? ' align="center"' : '', '>';
+						<td', $member['show_email'] == 'no_through_forum' && $settings['use_image_buttons'] ? ' class="center"' : '', '>';
 
 		// Is it totally hidden?
 		if ($member['show_email'] == 'no')
@@ -495,7 +495,7 @@ function template_group_members()
 						<td', empty($context['group']['assignable']) ? ' colspan="2"' : '', '>', $member['posts'], '</td>';
 		if (!empty($context['group']['assignable']))
 			echo '
-						<td align="center" width="4%"><input type="checkbox" name="rem[]" value="', $member['id'], '" class="input_check" ', ($context['user']['id'] == $member['id'] && $context['group']['id'] == 1 ? 'onclick="if (this.checked) return confirm(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ')" ' : ''), '/></td>';
+						<td class="center" style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '" class="input_check" ', ($context['user']['id'] == $member['id'] && $context['group']['id'] == 1 ? 'onclick="if (this.checked) return confirm(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ')" ' : ''), '/></td>';
 		echo '
 					</tr>';
 	}
@@ -546,7 +546,7 @@ function template_group_members()
 				sSearchType: \'member\',
 				sPostName: \'member_add\',
 				sURLMask: \'action=profile;u=%item_id%\',
-				sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 				bItemList: true,
 				sItemListContainerId: \'toAddItemContainer\'
 			});

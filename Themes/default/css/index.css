@@ -1232,11 +1232,38 @@ table.table_grid thead tr.catbg th {
 	cursor: default;
 }
 
-/* Table overrides, for deprecated cell/width params
-------------------------------------------------------- */
+/* HTML5 overrides for deprecated alignment/width params
+--------------------------------------------------------- */
 
-table.w100 {
+.w100 {
 	width: 100%;
+}
+.w50 {
+	width: 50%;
+}
+.w25 {
+	width: 25%;
+}
+img.top, td.top, th.top, tr.top td, tr.top th {
+	vertical-align: top;
+}
+img.middle, td.middle, th.middle, tr.middle td, tr.middle th {
+	vertical-align: middle;
+}
+img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th {
+	vertical-align: bottom;
+}
+table.left th, tr.left th, th.left,
+table.left td, tr.left td, td.left {
+	text-align: left;
+}
+table.right th, tr.right th, th.right,
+table.right td, tr.right td, td.right {
+	text-align: right;
+}
+table.center th, tr.center th, th.center,
+table.center td, tr.center td, td.center {
+	text-align: center:
 }
 table.cs0, table.cs1, table.cs3 {
 	border-collapse: separate;

@@ -181,11 +181,11 @@ function template_boardindex_newsfader()
 	<div id="newsfader">
 		<div class="cat_bar">
 			<h3>
-				<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" align="bottom" style="display: none;" />
+				<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="vertical-align: bottom; display: none" />
 				', $txt['news'], '
 			</h3>
 		</div>
-		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none;"', '>';
+		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';
 
 			foreach ($context['news_lines'] as $news)
 				echo '

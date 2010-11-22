@@ -44,7 +44,7 @@ function template_error_log()
 					<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['errlog'], '
 				</h3>
 			</div>
-			<table cellspacing="1" class="table_grid" id="error_log">
+			<table class="table_grid cs1" id="error_log">
 				<tr>
 					<td colspan="3" class="windowbg">
 						&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':';
@@ -73,8 +73,8 @@ function template_error_log()
 
 	if (!empty($context['errors']))
 		echo '
-				<tr class="titlebg">
-					<td colspan="3" class="lefttext">
+				<tr class="titlebg left">
+					<td colspan="3">
 						<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="button_submit" /> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="button_submit" /></div>
 						<label for="check_all1"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;" class="input_check" /><strong>', $txt['check_all'], '</strong></label>
 					</td>
@@ -132,8 +132,8 @@ function template_error_log()
 
 	if (!empty($context['errors']))
 		echo '
-				<tr class="titlebg">
-					<td colspan="3" class="lefttext">
+				<tr class="titlebg left">
+					<td colspan="3">
 						<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="button_submit" /> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="button_submit" /></div>
 						&nbsp;<label for="check_all2"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;" class="input_check" /><strong>', $txt['check_all'], '</strong></label>
 					</td>
@@ -178,7 +178,7 @@ function template_show_file()
 		$is_target = $line_num == $context['file_data']['target'];
 		echo '
 			<tr>
-				<td class="righttext"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
+				<td class="right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
 				<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
 			</tr>';
 	}
