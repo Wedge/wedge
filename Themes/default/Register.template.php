@@ -37,61 +37,90 @@ function template_registration_form()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	echo '
-		<script src="', $settings['default_theme_url'], '/scripts/register.js"></script>
-		<script><!-- // --><![CDATA[
-			function verifyAgree()
-			{
-				if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
-				{
-					alert("', $txt['register_passwords_differ_js'], '");
-					return false;
-				}
+	$context['footer'] .= '
+<script src="' . $settings['default_theme_url'] . '/scripts/register.js"></script>
+<script><!-- // --><![CDATA[
+	function verifyAgree()
+	{
+		if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
+		{
+			alert("' . JavaScriptEscape($txt['register_passwords_differ_js']) . '");
+			return false;
+		}
 
-				return true;
-			}
+		return true;
+	}
 
-			var currentAuthMethod = \'passwd\';
-			function updateAuthMethod()
-			{
-				// What authentication method is being used?
-				if (!document.getElementById(\'auth_openid\') || !document.getElementById(\'auth_openid\').checked)
-					currentAuthMethod = \'passwd\';
-				else
-					currentAuthMethod = \'openid\';
+	var currentAuthMethod = \'passwd\';
+	function updateAuthMethod()
+	{
+		// What authentication method is being used?
+		if (!document.getElementById(\'auth_openid\') || !document.getElementById(\'auth_openid\').checked)
+			currentAuthMethod = \'passwd\';
+		else
+			currentAuthMethod = \'openid\';
 
-				// No openID?
-				if (!document.getElementById(\'auth_openid\'))
-					return true;
+		// No openID?
+		if (!document.getElementById(\'auth_openid\'))
+			return true;
 
-				document.forms.registration.openid_url.disabled = currentAuthMethod == \'openid\' ? false : true;
-				document.forms.registration.smf_autov_pwmain.disabled = currentAuthMethod == \'passwd\' ? false : true;
-				document.forms.registration.smf_autov_pwverify.disabled = currentAuthMethod == \'passwd\' ? false : true;
-				document.getElementById(\'smf_autov_pwmain_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
-				document.getElementById(\'smf_autov_pwverify_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
+		document.forms.registration.openid_url.disabled = currentAuthMethod == \'openid\' ? false : true;
+		document.forms.registration.smf_autov_pwmain.disabled = currentAuthMethod == \'passwd\' ? false : true;
+		document.forms.registration.smf_autov_pwverify.disabled = currentAuthMethod == \'passwd\' ? false : true;
+		document.getElementById(\'smf_autov_pwmain_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
+		document.getElementById(\'smf_autov_pwverify_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
 
-				if (currentAuthMethod == \'passwd\')
-				{
-					verificationHandle.refreshMainPassword();
-					verificationHandle.refreshVerifyPassword();
-					document.forms.registration.openid_url.style.backgroundColor = \'\';
-					document.getElementById(\'password1_group\').style.display = \'\';
-					document.getElementById(\'password2_group\').style.display = \'\';
-					document.getElementById(\'openid_group\').style.display = \'none\';
-				}
-				else
-				{
-					document.forms.registration.smf_autov_pwmain.style.backgroundColor = \'\';
-					document.forms.registration.smf_autov_pwverify.style.backgroundColor = \'\';
-					document.forms.registration.openid_url.style.backgroundColor = \'#FFF0F0\';
-					document.getElementById(\'password1_group\').style.display = \'none\';
-					document.getElementById(\'password2_group\').style.display = \'none\';
-					document.getElementById(\'openid_group\').style.display = \'\';
-				}
+		if (currentAuthMethod == \'passwd\')
+		{
+			verificationHandle.refreshMainPassword();
+			verificationHandle.refreshVerifyPassword();
+			document.forms.registration.openid_url.style.backgroundColor = \'\';
+			document.getElementById(\'password1_group\').style.display = \'\';
+			document.getElementById(\'password2_group\').style.display = \'\';
+			document.getElementById(\'openid_group\').style.display = \'none\';
+		}
+		else
+		{
+			document.forms.registration.smf_autov_pwmain.style.backgroundColor = \'\';
+			document.forms.registration.smf_autov_pwverify.style.backgroundColor = \'\';
+			document.forms.registration.openid_url.style.backgroundColor = \'#FFF0F0\';
+			document.getElementById(\'password1_group\').style.display = \'none\';
+			document.getElementById(\'password2_group\').style.display = \'none\';
+			document.getElementById(\'openid_group\').style.display = \'\';
+		}
 
-				return true;
-			}
-		// ]]></script>';
+		return true;
+	}
+	var regTextStrings = {
+		"username_valid": ' . JavaScriptEscape($txt['registration_username_available']) . ',
+		"username_invalid": ' . JavaScriptEscape($txt['registration_username_unavailable']) . ',
+		"username_check": ' . JavaScriptEscape($txt['registration_username_check']) . ',
+		"password_short": ' . JavaScriptEscape($txt['registration_password_short']) . ',
+		"password_reserved": ' . JavaScriptEscape($txt['registration_password_reserved']) . ',
+		"password_numbercase": ' . JavaScriptEscape($txt['registration_password_numbercase']) . ',
+		"password_no_match": ' . JavaScriptEscape($txt['registration_password_no_match']) . ',
+		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
+	};
+	var verificationHandle = new smfRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
+	// Update the authentication status.
+	updateAuthMethod();
+
+	function autoDetectTimeOffset()
+	{
+		var localTime = new Date();
+		var serverTime = new Date(' . $context['current_forum_time_js'] . ');
+
+		if (!localTime.getTime() || !serverTime.getTime())
+			return 0;
+
+		var diff = Math.round((localTime.getTime() - serverTime.getTime())/3600000);
+		diff %= 24;
+
+		return diff;
+	}
+
+	document.getElementById(\'time_offset\').value = autoDetectTimeOffset();
+// ]]></script>';
 
 	// Any errors?
 	if (!empty($context['registration_errors']))
@@ -148,15 +177,15 @@ function template_registration_form()
 					<dl class="register_form" id="authentication_group">
 						<dt>
 							<strong>', $txt['authenticate_label'], ':</strong>
-							<a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a>
+							<a href="', $scripturl, '?action=helpadmin;help=register_openid" data-onclick="return reqWin(this);" class="help">(?)</a>
 						</dt>
 						<dd>
 							<label for="auth_pass" id="option_auth_pass">
-								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '" ', empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '" ', empty($context['openid']) ? 'checked="checked" ' : '', ' data-onclick="updateAuthMethod();" class="input_radio" />
 								', $txt['authenticate_password'], '
 							</label>
 							<label for="auth_openid" id="option_auth_openid">
-								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '" ', !empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '" ', !empty($context['openid']) ? 'checked="checked" ' : '', ' data-onclick="updateAuthMethod();" class="input_radio" />
 								', $txt['authenticate_openid'], '
 							</label>
 						</dd>
@@ -334,38 +363,7 @@ function template_registration_form()
 			</div>
 			<input type="hidden" name="step" value="2" />
 			<input type="hidden" name="time_offset" value="0" id="time_offset" />
-		</form>
-		<script><!-- // --><![CDATA[
-			var regTextStrings = {
-				"username_valid": ', JavaScriptEscape($txt['registration_username_available']), ',
-				"username_invalid": ', JavaScriptEscape($txt['registration_username_unavailable']), ',
-				"username_check": ', JavaScriptEscape($txt['registration_username_check']), ',
-				"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
-				"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
-				"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
-				"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
-				"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
-			};
-			var verificationHandle = new smfRegister("registration", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
-			// Update the authentication status.
-			updateAuthMethod();
-
-			function autoDetectTimeOffset()
-			{
-				var localTime = new Date();
-				var serverTime = new Date(', $context['current_forum_time_js'], ');
-
-				if (!localTime.getTime() || !serverTime.getTime())
-					return 0;
-
-				var diff = Math.round((localTime.getTime() - serverTime.getTime())/3600000);
-				diff %= 24;
-
-				return diff;
-			}
-
-			document.getElementById(\'time_offset\').value = autoDetectTimeOffset();
-		// ]]></script>';
+		</form>';
 }
 
 // After registration... all done ;).
@@ -418,7 +416,7 @@ function template_coppa()
 				', $context['coppa']['fax'], '
 			</div>';
 
-	// Offer an alternative Phone Number?
+	// Offer an alternative phone number?
 	if ($context['coppa']['phone'])
 		echo '
 			<p>', $context['coppa']['phone'], '</p>';
@@ -480,7 +478,7 @@ function template_verification_sound()
 		</style>
 	</head>
 	<body style="margin: 1ex;">
-		<div class="popuptext" style="text-align: center">';
+		<div class="popuptext centertext">';
 	if ($context['browser']['is_ie'])
 		echo '
 			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
@@ -495,7 +493,7 @@ function template_verification_sound()
 	echo '
 			<br />
 			<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
-			<a href="javascript:self.close();">', $txt['visual_verification_sound_close'], '</a><br />
+			<a href="javascript:window.parent.document.getElementById(\'helpFrame\').parentNode.removeChild(window.parent.document.getElementById(\'helpFrame\'))">', $txt['visual_verification_sound_close'], '</a><br />
 			<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
 		</div>
 	</body>
@@ -588,7 +586,7 @@ function template_admin_register()
 							<strong><label for="emailActivate_check">', $txt['admin_register_email_activate'], ':</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked="checked"' : '', ' onclick="onCheckChange();" class="input_check" />
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked="checked"' : '', ' data-onclick="onCheckChange();" class="input_check" />
 						</dd>
 					</dl>
 					<div class="righttext">

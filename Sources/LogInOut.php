@@ -230,7 +230,7 @@ function Login2()
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			openid_uri, passwd_flood
 		FROM {db_prefix}members
-		WHERE member_name = {string:user_name}'
+		WHERE member_name = {string:user_name}
 		LIMIT 1',
 		array(
 			'user_name' => $_REQUEST['user'],
