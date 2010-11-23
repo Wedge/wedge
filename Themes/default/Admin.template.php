@@ -795,23 +795,20 @@ function template_show_settings()
 
 			// A title?
 			if ($config_var['type'] == 'title')
-			{
 				echo '
-					<div class="cat_bar">
-						<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>
-							', ($config_var['help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
-							', $config_var['label'], '
-						</h3>
-					</div>';
-			}
+			<div class="cat_bar settings_cat">
+				<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
+					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
+					', $config_var['label'], '
+				</h3>
+			</div>';
+
 			// A description?
 			else
-			{
 				echo '
-					<p class="description">
-						', $config_var['label'], '
-					</p>';
-			}
+			<p class="description">
+				', $config_var['label'], '
+			</p>';
 
 			continue;
 		}

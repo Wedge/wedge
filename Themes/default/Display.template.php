@@ -507,7 +507,7 @@ function template_main()
 										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" data-onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
 					else
 						echo '
-										<img src="' . $attachment['href'] . ';image" alt="" style="width: ' . $attachment['width'] . 'px; height: ' . $attachment['height'] . 'px"/><br />';
+										<img src="' . $attachment['href'] . ';image" alt="" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
 				}
 				echo '
 										<a href="' . $attachment['href'] . '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle" alt="*" />&nbsp;' . $attachment['name'] . '</a> ';

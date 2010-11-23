@@ -971,7 +971,7 @@ function template_edit_style()
 				previewTimeout = window.setTimeout("refreshPreview(true); previewTimeout = null;", 500);
 			}
 		// ]]></script>
-		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 300px"></iframe>';
+		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 300px" seamless="seamless"></iframe>';
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '

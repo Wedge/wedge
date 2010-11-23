@@ -79,7 +79,7 @@ function template_summary()
 				', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '<li>' . $context['member']['aim']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '<li>' . $context['member']['yim']['link'] . '</li>' : '', '
 			</ul>
-			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" style="vertical-align: middle" />' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
+			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle" />' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 
 	// Can they add this member as a buddy?
 	if (!empty($context['can_have_buddy']) && !$context['user']['is_owner'])
@@ -317,10 +317,10 @@ function template_showPosts()
 		</div>';
 
 	// Button shortcuts
-	$quote_button = create_button('quote.gif', 'reply_quote', 'quote', 'style="vertical-align: middle"');
-	$reply_button = create_button('reply_sm.gif', 'reply', 'reply', 'style="vertical-align: middle"');
-	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'style="vertical-align: middle"');
-	$notify_button = create_button('notify_sm.gif', 'notify_replies', 'notify', 'style="vertical-align: middle"');
+	$quote_button = create_button('quote.gif', 'reply_quote', 'quote', 'class="middle"');
+	$reply_button = create_button('reply_sm.gif', 'reply', 'reply', 'class="middle"');
+	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
+	$notify_button = create_button('notify_sm.gif', 'notify_replies', 'notify', 'class="middle"');
 
 	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
 
@@ -395,7 +395,7 @@ function template_showPosts()
 		<table class="table_grid w100 cs1 cp2 centertext">
 			<thead>
 				<tr class="titlebg">
-					<th class="first_th lefttext" scope="col" style="width: 25%">
+					<th class="first_th left w25" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=filename', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'filename' ? ';asc' : ''), '">
 							', $txt['show_attach_filename'], '
 							', ($context['sort_order'] == 'filename' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
@@ -407,13 +407,13 @@ function template_showPosts()
 							', ($context['sort_order'] == 'downloads' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
 						</a>
 					</th>
-					<th class="lefttext" scope="col" style="width: 30%">
+					<th class="left" scope="col" style="width: 30%">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=subject', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'subject' ? ';asc' : ''), '">
 							', $txt['message'], '
 							', ($context['sort_order'] == 'subject' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
 						</a>
 					</th>
-					<th class="last_th lefttext" scope="col">
+					<th class="last_th left" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=posted', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'posted' ? ';asc' : ''), '">
 						', $txt['show_attach_posted'], '
 						', ($context['sort_order'] == 'posted' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
@@ -430,7 +430,7 @@ function template_showPosts()
 			echo '
 				<tr class="', $attachment['approved'] ? ($alternate ? 'windowbg' : 'windowbg2') : 'approvebg', '">
 					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', !$attachment['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</td>
-					<td class="centertext">', $attachment['downloads'], '</td>
+					<td class="center">', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
 					<td>', $attachment['posted'], '</td>
 				</tr>';
@@ -441,7 +441,7 @@ function template_showPosts()
 	if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
 		echo '
 				<tr>
-					<td class="tborder windowbg2 padding centertext" colspan="4">
+					<td class="tborder windowbg2 padding center" colspan="4">
 						', isset($context['attachments']) ? $txt['show_attachments_none'] : ($context['is_topics'] ? $txt['show_topics_none'] : $txt['show_posts_none']), '
 					</td>
 				</tr>';
@@ -470,7 +470,7 @@ function template_editBuddies()
 		</div>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
-				<th class="first_th lefttext" scope="col" style="width: 20%">', $txt['name'], '</th>
+				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
 				<th scope="col">', $txt['icq'], '</th>
@@ -484,7 +484,7 @@ function template_editBuddies()
 	if (empty($context['buddies']))
 		echo '
 			<tr class="windowbg2">
-				<td colspan="8" class="centertext"><strong>', $txt['no_buddies'], '</strong></td>
+				<td colspan="8" class="center"><strong>', $txt['no_buddies'], '</strong></td>
 			</tr>';
 
 	// Now loop through each buddy showing info on each.
@@ -492,15 +492,15 @@ function template_editBuddies()
 	foreach ($context['buddies'] as $buddy)
 	{
 		echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
-				<td>', $buddy['link'], '</td>
-				<td class="centertext"><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '" /></a></td>
-				<td class="centertext">', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '" /></a>'), '</td>
-				<td class="centertext">', $buddy['icq']['link'], '</td>
-				<td class="centertext">', $buddy['aim']['link'], '</td>
-				<td class="centertext">', $buddy['yim']['link'], '</td>
-				<td class="centertext">', $buddy['msn']['link'], '</td>
-				<td class="centertext"><a href="', $scripturl, '?action=profile;area=lists;sa=buddies;u=', $context['id_member'], ';remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '" /></a></td>
+			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
+				<td class="left">', $buddy['link'], '</td>
+				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '" /></a></td>
+				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '" /></a>'), '</td>
+				<td>', $buddy['icq']['link'], '</td>
+				<td>', $buddy['aim']['link'], '</td>
+				<td>', $buddy['yim']['link'], '</td>
+				<td>', $buddy['msn']['link'], '</td>
+				<td><a href="', $scripturl, '?action=profile;area=lists;sa=buddies;u=', $context['id_member'], ';remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '" /></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -535,7 +535,7 @@ function template_editBuddies()
 			sSuggestId: \'new_buddy\',
 			sControlId: \'new_buddy\',
 			sSearchType: \'member\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			bItemList: false
 		});
 	// ]]></script>';
@@ -568,7 +568,7 @@ function template_editIgnoreList()
 	if (empty($context['ignore_list']))
 		echo '
 			<tr class="windowbg2">
-				<td colspan="8" class="centertext"><strong>', $txt['no_ignore'], '</strong></td>
+				<td colspan="8" class="center"><strong>', $txt['no_ignore'], '</strong></td>
 			</tr>';
 
 	// Now loop through each buddy showing info on each.
@@ -576,15 +576,15 @@ function template_editIgnoreList()
 	foreach ($context['ignore_list'] as $member)
 	{
 		echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
-				<td>', $member['link'], '</td>
-				<td class="centertext"><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '" /></a></td>
-				<td class="centertext">', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '" /></a>'), '</td>
-				<td class="centertext">', $member['icq']['link'], '</td>
-				<td class="centertext">', $member['aim']['link'], '</td>
-				<td class="centertext">', $member['yim']['link'], '</td>
-				<td class="centertext">', $member['msn']['link'], '</td>
-				<td class="centertext"><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '" /></a></td>
+			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
+				<td class="left">', $member['link'], '</td>
+				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '" /></a></td>
+				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '" /></a>'), '</td>
+				<td>', $member['icq']['link'], '</td>
+				<td>', $member['aim']['link'], '</td>
+				<td>', $member['yim']['link'], '</td>
+				<td>', $member['msn']['link'], '</td>
+				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '" /></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -619,7 +619,7 @@ function template_editIgnoreList()
 			sSuggestId: \'new_ignore\',
 			sControlId: \'new_ignore\',
 			sSearchType: \'member\',
-			sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			bItemList: false
 		});
 	// ]]></script>';
@@ -805,9 +805,9 @@ function template_showPermissions()
 			echo '
 					<table class="table_grid w100 cs0">
 						<thead>
-							<tr class="titlebg">
-								<th class="lefttext first_th" scope="col" style="width: 50%">', $txt['showPermissions_permission'], '</th>
-								<th class="lefttext last_th" scope="col" style="width: 50%">', $txt['showPermissions_status'], '</th>
+							<tr class="titlebg left">
+								<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
+								<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
 							</tr>
 						</thead>
 						<tbody>';
@@ -869,9 +869,9 @@ function template_showPermissions()
 			echo '
 				<table class="table_grid w100 cs0">
 					<thead>
-						<tr class="titlebg">
-							<th class="lefttext first_th" scope="col" style="width: 50%">', $txt['showPermissions_permission'], '</th>
-							<th class="lefttext last_th" scope="col" style="width: 50%">', $txt['showPermissions_status'], '</th>
+						<tr class="titlebg left">
+							<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
+							<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
 						</tr>
 					</thead>
 					<tbody>';
@@ -1657,7 +1657,7 @@ function template_groupMembership()
 						<td>
 							<label for="primary_', $group['id'], '"><strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '<br /><span class="smalltext">' . $group['desc'] . '</span>' : ''), '</label>
 						</td>
-						<td style="width: 15%" class="righttext">';
+						<td style="width: 15%" class="right">';
 
 				// Can they leave their group?
 				if ($group['can_leave'])
@@ -1703,7 +1703,7 @@ function template_groupMembership()
 						<td>
 							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '<br /><span class="smalltext">' . $group['desc'] . '</span>' : ''), '
 						</td>
-						<td style="width: 15%" class="lefttext">';
+						<td style="width: 15%" class="left">';
 
 				if ($group['type'] == 3)
 					echo '
@@ -2173,7 +2173,7 @@ function template_issueWarning()
 		</div>
 		<table class="table_grid w100 cs0 cp4">
 			<thead>
-				<tr class="titlebg lefttext">
+				<tr class="titlebg left">
 					<th class="first_th" scope="col" style="width: 20%">', $txt['profile_warning_previous_issued'], '</th>
 					<th scope="col" style="width: 30%">', $txt['profile_warning_previous_time'], '</th>
 					<th scope="col">', $txt['profile_warning_previous_reason'], '</th>
@@ -2210,7 +2210,7 @@ function template_issueWarning()
 	if (empty($context['previous_warnings']))
 		echo '
 				<tr class="windowbg2">
-					<td class="centertext" colspan="4">
+					<td class="center" colspan="4">
 						', $txt['profile_warning_previous_none'], '
 					</td>
 				</tr>';
@@ -2504,9 +2504,7 @@ function template_profile_avatar_select()
 								<strong id="personal_picture">', $txt['personal_picture'], '</strong>
 								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['choose_avatar_gallery'] . '</label><br />' : '', '
 								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['my_own_pic'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['avatar_will_upload'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_gravatar']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_gravatar">' . $txt['gravatar'] . '</label>
-' : '', '
+								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['avatar_will_upload'] . '</label>' : '', '
 							</dt>
 							<dd>';
 
@@ -2650,18 +2648,6 @@ function template_profile_avatar_select()
 									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" alt="" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
 								</div>';
 	}
-	// --- Begin modification - Gravatar Integration ---
-	// Are they allowed to use Gravatar?
-	if (!empty($context['member']['avatar']['allow_gravatar']))
-	{
-		echo '
-								<div id="avatar_gravatar">
-									<div class="smalltext">', $txt['gravatar_desc'], '</div>
-									<img name="gravatar" id="gravatar" src="', $context['member']['avatar']['gravatar'], '" alt="', $txt['gravatar'], '" />
-								</div>';
-	}
-	// --- End modification ---
-
 
 	echo '
 								<script><!-- // --><![CDATA[
@@ -2687,12 +2673,6 @@ function template_profile_avatar_select()
 												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "";' : '', '
-												break;
-											case "avatar_choice_gravatar":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = ""none;' : '', '
-												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "";' : '', '
 												break;
 										}
 									}
@@ -2768,7 +2748,7 @@ function template_profile_smiley_pick()
 		echo '
 									<option value="', $set['id'], '"', $set['selected'] ? ' selected="selected"' : '', '>', $set['name'], '</option>';
 	echo '
-								</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $modSettings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'])) . '/smiley.gif' : $settings['images_url'] . '/blank.gif', '" alt=":)" style="vertical-align: top; padding-left: 20px" />
+								</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $modSettings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'])) . '/smiley.gif' : $settings['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px" />
 							</dd>';
 }
 

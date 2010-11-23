@@ -15,18 +15,12 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 		// Is there anything to cycle images with - if so attach the refresh image function?
 		var cycleHandle = document.getElementById('visual_verification' + uniqueID + '_refresh');
 		if (cycleHandle)
-		{
-			createEventListener(cycleHandle);
-			cycleHandle.addEventListener('click', refreshImages, false);
-		}
+			cycleHandle.onclick = refreshImages;
 
 		// Maybe a voice is here to spread light?
 		var soundHandle = document.getElementById('visual_verification' + uniqueID + '_sound');
 		if (soundHandle)
-		{
-			createEventListener(soundHandle);
-			soundHandle.addEventListener('click', playSound, false);
-		}
+			soundHandle.onclick = playSound;
 	}
 
 	// Change the images.
@@ -54,23 +48,6 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 	// Request a sound... play it Mr Soundman...
 	function playSound(ev)
 	{
-		if (!ev)
-			ev = window.event;
-
-		popupFailed = reqWin(imageURL + ";sound", 400, 120);
-
-		// Don't follow the link if the popup worked, which it would have done!
-		if (!popupFailed)
-		{
-			if (is_ie && ev.cancelBubble)
-				ev.cancelBubble = true;
-			else if (ev.stopPropagation)
-			{
-				ev.stopPropagation();
-				ev.preventDefault();
-			}
-		}
-
-		return popupFailed;
+		return reqWin(this, 400, 120);
 	}
 }

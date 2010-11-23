@@ -279,19 +279,19 @@ function template_main()
 					$confirm = JavaScriptEscape($txt['quickmod_confirm']);
 
 					if ($topic['quick_mod']['remove'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" style="width: 16px" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '" /></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '" /></a>';
 
 					if ($topic['quick_mod']['lock'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" style="width: 16px" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '" /></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '" /></a>';
 
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 						echo '<br />';
 
 					if ($topic['quick_mod']['sticky'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=sticky;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" style="width: 16px" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '" /></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=sticky;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '" /></a>';
 
 					if ($topic['quick_mod']['move'])
-						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" style="width: 16px" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '" /></a>';
+						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '" /></a>';
 				}
 				echo '
 					</td>';
