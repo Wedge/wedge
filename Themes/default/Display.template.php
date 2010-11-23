@@ -697,18 +697,18 @@ function template_main()
 			<br class="clear" />';
 
 	if ($context['show_spellchecking'])
+	{
 		$context['footer'] .= '
-<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>
-<script src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>';
+		add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
+	}
 
-	$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
-<script><!-- // --><![CDATA[';
+	add_js_file($settings['default_theme_url'] . '/scripts/topic.js');
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
-		$context['footer'] .= '
+		add_js('
 	var oQuickReply = new QuickReply({
-		bDefaultCollapsed: ' . (!empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true') . ',
+		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
 		iTopicId: ' . $context['current_topic'] . ',
 		iStart: ' . $context['start'] . ',
 		sScriptUrl: smf_scripturl,
@@ -718,14 +718,14 @@ function template_main()
 		sImageCollapsed: "collapse.gif",
 		sImageExpanded: "expand.gif",
 		sJumpAnchor: "quickreply",
-		sBbcDiv: "' . ($context['postbox']->show_bbc ? 'bbcBox_message' : '') . '",
-		sSmileyDiv: "' . (!empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '') . '",
+		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
+		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
 		sSwitchMode: "switch_mode",
-		bUsingWysiwyg: ' . ($context['postbox']->rich_active ? 'true' : 'false') . '
-	});';
+		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
+	});');
 
 	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
-		$context['footer'] .= '
+		add_js('
 	var oInTopicModeration = new InTopicModeration({
 		sSelf: \'oInTopicModeration\',
 		sCheckboxContainerMask: \'in_topic_mod_check_\',
@@ -744,14 +744,14 @@ function template_main()
 		sRestoreButtonImage: \'restore_selected.gif\',
 		sRestoreButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
 		sFormId: \'quickModForm\'
-	});';
+	});');
 
-	$context['footer'] .= '
+	add_js('
 	if (\'XMLHttpRequest\' in window)
 	{
 		var oQuickModify = new QuickModify({
 			sScriptUrl: smf_scripturl,
-			bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
+			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
@@ -788,7 +788,7 @@ function template_main()
 			sBackReference: "aIconLists[" + aIconLists.length + "]",
 			sIconIdPrefix: "msg_icon_",
 			sScriptUrl: smf_scripturl,
-			bShowModify: ' . ($settings['show_modify'] ? 'true' : 'false') . ',
+			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
 			iBoardId: ' . $context['current_board'] . ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sSessionId: "' . $context['session_id'] . '",
@@ -805,16 +805,16 @@ function template_main()
 			sItemBackground: "transparent",
 			sItemBackgroundHover: "#e0e0f0"
 		});
-	}';
+	}');
 
 	if (!empty($ignoredMsgs))
 	{
-		$context['footer'] .= '
-	var aIgnoreToggles = new Array();';
+		add_js('
+	var aIgnoreToggles = new Array();');
 
 		foreach ($ignoredMsgs as $msgid)
 		{
-			$context['footer'] .= '
+			add_js('
 	aIgnoreToggles[' . $msgid . '] = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
@@ -825,7 +825,6 @@ function template_main()
 			\'msg_' . $msgid . '_quick_mod\',
 			\'modify_button_' . $msgid . '\',
 			\'msg_' . $msgid . '_signature\'
-
 		],
 		aSwapLinks: [
 			{
@@ -834,14 +833,14 @@ function template_main()
 				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
 			}
 		]
-	});';
+	});');
 		}
 	}
 
 	if (!empty($context['user_menu']))
 	{
-		$context['footer'] .= '
-	var oUserMenu = new UserMenu({';
+		add_js('
+	var oUserMenu = new UserMenu({');
 
 		$menu_started = false;
 		foreach ($context['user_menu'] as $user => $linklist)
@@ -849,18 +848,15 @@ function template_main()
 			if (!$menu_started)
 				$menu_started = true;
 			else
-				$context['footer'] .= ',';
+				$context['footer_js'] .= ',';
 
-			$context['footer'] .= '
+			$context['footer_js'] .= '
 		user' . $user . ': [' . implode(',', $linklist) . ']';
 		}
 
-		$context['footer'] .= '
+		$context['footer_js'] .= '
 	});';
 	}
-
-	$context['footer'] .= '
-// ]]></script>';
 }
 
 ?>

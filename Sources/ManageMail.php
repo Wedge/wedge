@@ -332,29 +332,27 @@ function ModifyMailSettings($return_config = false)
 
 	prepareDBSettingContext($config_vars);
 
-	$context['settings_insert_above'] = '
-	<script><!-- // --><![CDATA[
-		var bDay = {';
+	add_js('
+	var bDay = {';
 
 	$i = 0;
 	foreach ($birthdayEmails as $index => $email)
 	{
 		$is_last = ++$i == count($birthdayEmails);
-		$context['settings_insert_above'] .= '
-			' . $index . ': {
-				subject: ' . JavaScriptEscape($email['subject']) . ',
-				body: ' . JavaScriptEscape($email['body']) . '
-			}' . (!$is_last ? ',' : '');
+		$context['footer_js'] .= '
+		' . $index . ': {
+			subject: ' . JavaScriptEscape($email['subject']) . ',
+			body: ' . JavaScriptEscape($email['body']) . '
+		}' . (!$is_last ? ',' : '');
 	}
-	$context['settings_insert_above'] .= '
-		};
-		function fetch_birthday_preview()
-		{
-			var index = document.getElementById(\'birthday_email\').value;
-			document.getElementById(\'birthday_subject\').innerHTML = bDay[index].subject;
-			document.getElementById(\'birthday_body\').innerHTML = bDay[index].body;
-		}
-	// ]]></script>';
+	add_js('
+	};
+	function fetch_birthday_preview()
+	{
+		var index = document.getElementById(\'birthday_email\').value;
+		document.getElementById(\'birthday_subject\').innerHTML = bDay[index].subject;
+		document.getElementById(\'birthday_body\').innerHTML = bDay[index].body;
+	}');
 }
 
 // This function clears the mail queue of all emails, and at the end redirects to browse.

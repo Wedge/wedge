@@ -3409,10 +3409,10 @@ function setupThemeContext($forceload = false)
 
 	// Resize avatars the fancy, but non-GD requiring way.
 	if ($modSettings['avatar_action_too_large'] == 'option_js_resize' && (!empty($modSettings['avatar_max_width_external']) || !empty($modSettings['avatar_max_height_external'])))
-		$context['footer'] .= SCRIPT_HEADER . '
+		add_js('
 	var smf_avatarMaxWidth = ' . (int) $modSettings['avatar_max_width_external'] . ';
 	var smf_avatarMaxHeight = ' . (int) $modSettings['avatar_max_height_external'] . ';
-	addLoadEvent(smf_avatarResize);' . SCRIPT_FOOTER;
+	addLoadEvent(smf_avatarResize);');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(

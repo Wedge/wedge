@@ -324,18 +324,18 @@ function ModifyRegistrationSettings($return_config = false)
 	$context['settings_title'] = $txt['settings'];
 
 	// Define some javascript for COPPA.
-	$context['settings_post_javascript'] = '
-		function checkCoppa()
-		{
-			var coppaDisabled = document.getElementById(\'coppaAge\').value == 0;
-			document.getElementById(\'coppaType\').disabled = coppaDisabled;
+	add_js('
+	function checkCoppa()
+	{
+		var coppaDisabled = document.getElementById(\'coppaAge\').value == 0;
+		document.getElementById(\'coppaType\').disabled = coppaDisabled;
 
-			var disableContacts = coppaDisabled || document.getElementById(\'coppaType\').options[document.getElementById(\'coppaType\').selectedIndex].value != 1;
-			document.getElementById(\'coppaPost\').disabled = disableContacts;
-			document.getElementById(\'coppaFax\').disabled = disableContacts;
-			document.getElementById(\'coppaPhone\').disabled = disableContacts;
-		}
-		checkCoppa();';
+		var disableContacts = coppaDisabled || document.getElementById(\'coppaType\').options[document.getElementById(\'coppaType\').selectedIndex].value != 1;
+		document.getElementById(\'coppaPost\').disabled = disableContacts;
+		document.getElementById(\'coppaFax\').disabled = disableContacts;
+		document.getElementById(\'coppaPhone\').disabled = disableContacts;
+	}
+	checkCoppa();');
 
 	// Turn the postal address into something suitable for a textbox.
 	$modSettings['coppaPost'] = !empty($modSettings['coppaPost']) ? preg_replace('~<br ?/?' . '>~', "\n", $modSettings['coppaPost']) : '';

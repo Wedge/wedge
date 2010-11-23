@@ -298,11 +298,12 @@ function template_body_below()
 
 function template_html_below()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
-	// Kickstart the Javascript section -- files to include,
-	// main variables and the upper_section toggle.
-	echo '
+	// Incluce postponed HTML and then kickstart the Javascript section
+	// -- files to include, main variables and the upper_section toggle.
+
+	echo $context['footer'], '
 
 <script src="', $context['cached_js'], '"></script>
 <script><!-- // --><![CDATA[
@@ -350,10 +351,9 @@ function template_html_below()
 		}
 	});';
 
-	$context['footer'] = SCRIPT_FOOTER . $context['footer'];
-
 	// Output any postponed code. (Usually for Javascript added by mods or templates.)
-	echo str_replace("\n\n\n", "\n\n", preg_replace('~(?:// \]\]></script>(\s)*<script><!-- // --><!\[CDATA\[|(?<!\]\]>)</script>(\s)*<script>(?!<!--))~', '$1$2', $context['footer']));
+	echo $context['footer_js'], empty($footer_coding) ? '' : '
+// ]]></script>';
 
 	echo $context['browser']['is_ie6'] ? '
 </div>' : '', '

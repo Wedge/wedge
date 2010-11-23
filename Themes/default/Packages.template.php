@@ -1352,11 +1352,11 @@ function template_control_chmod()
 
 	// Hide the details of the list.
 	if (empty($context['package_ftp']['form_elements_only']))
-		$context['footer'] .= SCRIPT_HEADER . '
-	document.getElementById(\'need_writable_list\').style.display = \'none\';' . SCRIPT_FOOTER;
+		add_js('
+	document.getElementById(\'need_writable_list\').style.display = \'none\';');
 
 	// Quick generate the test button.
-	$context['footer'] .= SCRIPT_HEADER . '
+	add_js('
 	// Generate a "test ftp" button.
 	var generatedButton = false;
 	function generateFTPTest()
@@ -1426,7 +1426,7 @@ function template_control_chmod()
 		document.getElementById("ftp_error_innerdiv").style.backgroundColor = wasSuccess ? "#DBFDC7" : "#FDBDBD";
 		document.getElementById("ftp_error_message").innerHTML = message;
 	}
-	generateFTPTest();' . SCRIPT_FOOTER;
+	generateFTPTest();');
 }
 
 function template_ftp_required()

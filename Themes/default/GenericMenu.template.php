@@ -165,8 +165,8 @@ function template_generic_menu_dropdown_above()
 	echo '
 </ul>';
 
-	$context['footer'] .= SCRIPT_HEADER . '
-	initMenu(document.getElementById("amen' . ($mid > 1 ? '_' . ($mid-1) : '') . '"));' . SCRIPT_FOOTER;
+	add_js('
+	initMenu(document.getElementById("amen' . ($mid > 1 ? '_' . ($mid-1) : '') . '"));');
 
 	// This is the main table - we need it so we can keep the content to the right of it.
 	echo '

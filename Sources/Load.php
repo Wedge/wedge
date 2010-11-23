@@ -1391,7 +1391,7 @@ function detectBrowser()
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_info, $user_settings, $board_info, $sc;
+	global $user_info, $user_settings, $board_info, $sc, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
 	global $context, $settings, $options, $sourcedir, $ssi_theme, $smcFunc;
 
@@ -1622,6 +1622,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['header'] = '';
 	if (!isset($context['footer']))
 		$context['footer'] = '';
+	if (!isset($context['footer_js']))
+		$context['footer_js'] = '';
+
+	// Specifies that the Javascript footer section is currently
+	// open for sending JS code without <script> tags.
+	$footer_coding = true;
 
 	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];
@@ -1809,15 +1815,13 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$type = empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time() ? 'task' : 'mailq';
 			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
 
-			$context['footer'] .= '
-<script>
+			add_js('
 	function smfAutoTask()
 	{
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
 	}
-	window.setTimeout("smfAutoTask();", 1);
-</script>';
+	window.setTimeout("smfAutoTask();", 1);');
 		}
 	}
 

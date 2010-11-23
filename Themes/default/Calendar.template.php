@@ -53,8 +53,7 @@ function template_event_post()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// Start the javascript for drop down boxes...
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[
+	add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
@@ -82,8 +81,7 @@ function template_event_post()
 	function toggleLinked(form)
 	{
 		form.board.disabled = !form.link_to_board.checked;
-	}
-// ]]></script>';
+	}');
 
 	echo '
 		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" data-onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" class="hitme" style="margin: 0;">';

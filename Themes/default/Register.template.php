@@ -37,9 +37,8 @@ function template_registration_form()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/register.js"></script>
-<script><!-- // --><![CDATA[
+	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+	add_js('
 	function verifyAgree()
 	{
 		if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
@@ -119,8 +118,7 @@ function template_registration_form()
 		return diff;
 	}
 
-	document.getElementById(\'time_offset\').value = autoDetectTimeOffset();
-// ]]></script>';
+	document.getElementById(\'time_offset\').value = autoDetectTimeOffset();');
 
 	// Any errors?
 	if (!empty($context['registration_errors']))

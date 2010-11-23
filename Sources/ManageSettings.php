@@ -654,26 +654,26 @@ function ModifySpamSettings($return_config = false)
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
 
 	$config_vars = array(
-				array('check', 'reg_verification'),
-				array('check', 'search_enable_captcha'),
-				// This, my friend, is a cheat :p
-				'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
-				array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0){ document.getElementById(\'guests_require_captcha\').checked = true; document.getElementById(\'guests_require_captcha\').disabled = true;} else {document.getElementById(\'guests_require_captcha\').disabled = false;}'),
-				array('check', 'guests_report_require_captcha'),
-			'',
+			array('check', 'reg_verification'),
+			array('check', 'search_enable_captcha'),
+			// This, my friend, is a cheat :p
+			'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
+			array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0){ document.getElementById(\'guests_require_captcha\').checked = true; document.getElementById(\'guests_require_captcha\').disabled = true;} else {document.getElementById(\'guests_require_captcha\').disabled = false;}'),
+			array('check', 'guests_report_require_captcha'),
+		'',
 			// PM Settings
-				'pm1' => array('int', 'max_pm_recipients'),
-				'pm2' => array('int', 'pm_posts_verification'),
-				'pm3' => array('int', 'pm_posts_per_hour'),
+			'pm1' => array('int', 'max_pm_recipients'),
+			'pm2' => array('int', 'pm_posts_verification'),
+			'pm3' => array('int', 'pm_posts_per_hour'),
 			// Visual verification.
 			array('title', 'configure_verification_means'),
 			array('desc', 'configure_verification_means_desc'),
-				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => 'refreshImages();'),
-				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
+			'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => 'refreshImages();'),
+			array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
-				array('callback', 'question_answer_list'),
+			array('callback', 'question_answer_list'),
 	);
 
 	if ($return_config)
@@ -759,7 +759,7 @@ function ModifySpamSettings($return_config = false)
 						);
 				}
 			}
-			// It's so shiney and new!
+			// It's so shiny and new!
 			elseif ($question != '' && $answer != '')
 			{
 				$questionInserts[] = array(
@@ -799,12 +799,12 @@ function ModifySpamSettings($return_config = false)
 		$_SESSION['visual_verification_code'] .= $character_range[array_rand($character_range)];
 
 	// Some javascript for CAPTCHA.
-	$context['settings_post_javascript'] = '
-		function refreshImages()
-		{
-			var imageType = document.getElementById(\'visual_verification_type\').value;
-			document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
-		}';
+	add_js('
+	function refreshImages()
+	{
+		var imageType = document.getElementById(\'visual_verification_type\').value;
+		document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
+	}');
 
 	// Show the image itself.
 	$config_vars['vv']['postinput'] = '<br /><img src="' . $context['verification_image_href'] . ';type=' . (empty($modSettings['visual_verification_type']) ? 0 : $modSettings['visual_verification_type']) . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image" /><br />';
@@ -818,8 +818,8 @@ function ModifySpamSettings($return_config = false)
 
 	// Some minor javascript for the guest post setting.
 	if ($modSettings['posts_require_captcha'])
-		$context['settings_post_javascript'] .= '
-		document.getElementById(\'guests_require_captcha\').disabled = true;';
+		add_js('
+	document.getElementById(\'guests_require_captcha\').disabled = true;');
 
 	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=spam';
 	$context['settings_title'] = $txt['antispam_Settings'];
@@ -859,8 +859,8 @@ function ModifySignatureSettings($return_config = false)
 	$context['sub_template'] = 'show_settings';
 
 	// Disable the max smileys option if we don't allow smileys at all!
-	$context['settings_post_javascript'] = '
-		document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;';
+	add_js('
+	document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;');
 
 	// Load all the signature settings.
 	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);

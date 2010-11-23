@@ -6,38 +6,34 @@ function template_main()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
 
-	// Start the javascript... and boy is there a lot.
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[';
-
 	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes.
 	if ($context['browser']['is_firefox'])
-		$context['footer'] .= '
+		add_js('
 	function reActivate()
 	{
 		document.forms.postmodify.message.readOnly = false;
 	}
-	window.addEventListener("pageshow", reActivate, false);';
+	window.addEventListener("pageshow", reActivate, false);');
 
 	// Start with message icons - and any missing from this theme.
-	$context['footer'] .= '
-	var icon_urls = {';
+	add_js('
+	var icon_urls = {');
 	foreach ($context['icons'] as $icon)
-		$context['footer'] .= '
+		$context['footer_js'] .= '
 		\'' . $icon['value'] . '\': \'' . $icon['url'] . '\'' . ($icon['is_last'] ? '' : ',');
-	$context['footer'] .= '
+	$context['footer_js'] .= '
 	};';
 
 	// The actual message icon selector.
-	$context['footer'] .= '
+	add_js('
 	function showimage()
 	{
 		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
-	}';
+	}');
 
 	// If this is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
 	if ($context['make_poll'])
-		$context['footer'] .= '
+		add_js('
 	function pollOptions()
 	{
 		var expire_time = document.getElementById(\'poll_expire\');
@@ -68,11 +64,11 @@ function template_main()
 
 		setOuterHTML(document.getElementById(\'pollMoreOptions\'), ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text" /></li><li id="pollMoreOptions"></li>') . ');
 		return false;
-	}';
+	}');
 
 	// If we are making a calendar event we want to ensure we show the current days in a month etc... this is done here.
 	if ($context['make_event'])
-		$context['footer'] .= '
+		add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
@@ -91,11 +87,9 @@ function template_main()
 
 		if (selected < days)
 			dayElement.selectedIndex = selected;
-	}';
+	}');
 
-	// End of the javascript, start the form and display the link tree.
-	$context['footer'] .= '
-// ]]></script>';
+	// Start the form and display the link tree.
 
 	echo '
 		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden hitme" data-onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
@@ -462,13 +456,12 @@ function template_main()
 					</dd>
 				</dl>';
 
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[
+		add_js('
 	var oAttach = new wedgeAttachSelect({
 		file_item: "attachment1",
 		file_container: "attachments_container",
 		max: ' . $context['max_allowed_attachments'] . ',
-		message_txt_delete: ' . JavaScriptEscape($txt['remove']);
+		message_txt_delete: ' . JavaScriptEscape($txt['remove']));
 
 		// This is purely setting it up to be displayed in a JSON friendly fashion without having a JSON function handy.
 		// Included here since it seemed almost more related to display than logic.
@@ -478,14 +471,13 @@ function template_main()
 			foreach ($ext as $k => $v)
 				$ext[$k] = JavaScriptEscape($v);
 
-			$context['footer'] .= ',
+			$context['footer_js'] .= ',
 		message_ext_error: ' . JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])) . ',
 		attachment_ext: [' . implode(',', $ext) . ']';
 		}
 
-	$context['footer'] .= '
-	});
-// ]]></script>';
+		$context['footer_js'] .= '
+	});';
 	}
 
 	// Is visual verification enabled?
@@ -530,24 +522,25 @@ function template_main()
 		</form>';
 
 	// The functions used to preview a posts without loading a new page.
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[
+	add_js('
 	var current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ';
 	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
 	var txt_preview_title = "' . $txt['preview_title'] . '";
 	var txt_preview_fetch = "' . $txt['preview_fetch'] . '";
 	var new_replies = new Array(), reply_counter = ' . (empty($counter) ? 0 : $counter) . ';
 	function previewPost()
-	{';
+	{');
+
 	if ($context['browser']['is_firefox'])
-		$context['footer'] .= '
+		add_js('
 		// Firefox doesn\'t render <marquee> that have been put it using javascript
 		if (document.forms.postmodify.elements[' . JavaScriptEscape($context['postbox']->id) . '].value.indexOf(\'[move]\') != -1)
 		{
 			return submitThisOnce(document.forms.postmodify);
-		}';
-	$context['footer'] .= '
-		// !!! Currently not sending poll options and option checkboxes.
+		}');
+
+	// !!! Currently not sending poll options and option checkboxes.
+	add_js('
 		var x = new Array();
 		var textFields = [\'subject\', ' . JavaScriptEscape($context['postbox']->id) . ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
 		var numericFields = [
@@ -656,13 +649,13 @@ function template_main()
 				if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue != 0)
 					ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
 
-				newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';';
+				newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';');
 
 	if ($context['can_quote'])
-		$context['footer'] .= '
-				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';';
+		add_js('
+				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
 
-	$context['footer'] .= '
+	add_js('
 				newPostsHTML += \'<br class="clear" />\';
 
 				if (ignoring)
@@ -698,14 +691,14 @@ function template_main()
 
 		if (typeof(smf_codeFix) != \'undefined\')
 			smf_codeFix();
-	}';
+	}');
 
 	// Code for showing and hiding additional options.
 	if (!empty($settings['additional_options_collapsable']))
-		$context['footer'] .= '
+		add_js('
 	var oSwapAdditionalOptions = new smc_Toggle({
 		bToggleEnabled: true,
-		bCurrentlyCollapsed: ' . ($context['show_additional_options'] ? 'false' : 'true') . ',
+		bCurrentlyCollapsed: ', $context['show_additional_options'] ? 'false' : 'true', ',
 		funcOnBeforeCollapse: function () {
 			document.getElementById(\'additional_options\').value = \'0\';
 		},
@@ -734,10 +727,7 @@ function template_main()
 				msgCollapsed: ' . JavaScriptEscape($txt['post_additionalopt']) . '
 			}
 		]
-	});';
-
-	$context['footer'] .= '
-// ]]></script>';
+	});');
 
 	// If the user is replying to a topic show the previous posts.
 	if (isset($context['previous_posts']) && count($context['previous_posts']) > 0)
@@ -789,12 +779,11 @@ function template_main()
 		echo '
 		</div>';
 
-		$context['footer'] .= '
-<script><!-- // --><![CDATA[
-	var aIgnoreToggles = new Array();';
+		add_js('
+	var aIgnoreToggles = new Array();');
 
 		foreach ($ignored_posts as $post_id)
-			$context['footer'] .= '
+			add_js('
 	aIgnoreToggles[' . $post_id . '] = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
@@ -809,9 +798,9 @@ function template_main()
 				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
 			}
 		]
-	});';
+	});');
 
-		$context['footer'] .= '
+		add_js('
 	function insertQuoteFast(messageid)
 	{
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;mode=\' + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
@@ -823,8 +812,7 @@ function template_main()
 		for (var i = 0, n = XMLDoc.getElementsByTagName(\'quote\')[0].childNodes.length; i < n; i++)
 			text += XMLDoc.getElementsByTagName(\'quote\')[0].childNodes[i].nodeValue;
 		oEditorHandle_' . $context['postbox']->id . '.insertText(text, false, true);
-	}
-// ]]></script>';
+	}');
 	}
 }
 

@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file handles functions that manage the query string, and incoming sanitation thereof, amongst other things.
+ * This file handles functions that manage the output buffer, query string, and incoming sanitation thereof, amongst other things.
  *
  * @package wedge
  */
@@ -655,6 +655,47 @@ function JavaScriptEscape($string)
 		'<a href' => '<a hr\'+\'ef',
 		$scripturl => $scripturl . '\'+\'',
 	)) . '\'';
+}
+
+// Add a string to the footer Javascript. Several strings can be passed as parameters, allowing for easier conversion.
+// !!! Document this properly. I've named it the simplest possible way but it'll probably need to be renamed later.
+// Can be done with a site-wide search & replace, as "add_js" is only used in "wedge_add_js" (which, if add_js
+// is not renamed, will need to be renamed itself... You get the point. Hopefully.)
+function add_js()
+{
+	global $context, $footer_coding;
+
+	$code = implode("\n", func_get_args());
+	if ($code[0] !== "\n" && $code[0] !== "\r")
+		$code = "\n" . $code;
+
+	if (empty($footer_coding))
+	{
+		$context['footer_js'] .= '
+<script><!-- // --><[!CDATA[';
+		$footer_coding = true;
+	}
+	$context['footer_js'] .= $code;
+}
+
+// Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.
+// !!! Document this properly, and maybe add support for adding ?nocache automatically, and check for the .js extension.
+function add_js_file()
+{
+	global $context, $footer_coding;
+
+	$files = func_get_args();
+	$code = '
+<script src="' . implode('"></script>
+<script src="', $files) . '"></script>';
+
+	if (!empty($footer_coding))
+	{
+		$context['footer_js'] .= '
+// ]]></script>';
+		$footer_coding = false;
+	}
+	$context['footer_js'] .= $code;
 }
 
 /**

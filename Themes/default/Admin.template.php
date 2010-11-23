@@ -124,29 +124,26 @@ function template_admin()
 
 	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
-		$context['footer'] .= '
-<script src="' . $scripturl . '?action=viewsmfile;filename=current-version.js"></script>
-<script src="' . $scripturl . '?action=viewsmfile;filename=latest-news.js"></script>';
+		add_js_file($scripturl . '?action=viewsmfile;filename=current-version.js', $scripturl . '?action=viewsmfile;filename=latest-news.js');
 
 	// This sets the announcements and current versions themselves ;)
-	$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/admin.js?rc3"></script>
-<script><!-- // --><![CDATA[
+	add_js_file($settings['default_theme_url'] . '/scripts/admin.js?rc3');
+	add_js('
 	var oAdminIndex = new smf_AdminIndex({
 		sSelf: \'oAdminCenter\',
 
 		bLoadAnnouncements: true,
-		sAnnouncementTemplate: ' . JavaScriptEscape('
+		sAnnouncementTemplate: ', JavaScriptEscape('
 			<dl>
 				%content%
 			</dl>
-		') . ',
-		sAnnouncementMessageTemplate: ' . JavaScriptEscape('
+		'), ',
+		sAnnouncementMessageTemplate: ', JavaScriptEscape('
 			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
 			<dd>
 				%message%
 			</dd>
-		') . ',
+		'), ',
 		sAnnouncementContainerId: \'smfAnnouncements\',
 
 		bLoadVersions: true,
@@ -172,8 +169,7 @@ function template_admin()
 				</div>
 			</div>') . ',
 		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']) . '
-	});
-// ]]></script>';
+	});');
 }
 
 // Mangage the copyright.
@@ -282,6 +278,9 @@ function template_credits()
 
 		foreach ($section['groups'] as $group)
 		{
+			if (empty($group['members']))
+				continue;
+
 			if (isset($group['title']))
 				echo '
 				<dt>
@@ -306,58 +305,55 @@ function template_credits()
 	<br class="clear" />';
 
 	// This makes all the support information available to the support script...
-	echo '
-		<script><!-- // --><![CDATA[
-			var smfSupportVersions = {};
+	add_js('
+	var smfSupportVersions = {};
 
-			smfSupportVersions.forum = "', $context['forum_version'], '";';
+	smfSupportVersions.forum = "', $context['forum_version'], '";');
 
 	// Don't worry, none of this is logged, it's just used to give information that might be of use.
 	foreach ($context['current_versions'] as $variable => $version)
-		echo '
-			smfSupportVersions.', $variable, ' = "', $version['version'], '";';
+		add_js('
+	smfSupportVersions.', $variable, ' = "', $version['version'], '";');
 
 	// Now we just have to include the script and wait ;).
-	echo '
-		// ]]></script>
-		<script src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-		<script src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>
-		<script src="', $scripturl, '?action=viewsmfile;filename=latest-support.js"></script>';
+	add_js_file(
+		$scripturl . '?action=viewsmfile;filename=current-version.js',
+		$scripturl . '?action=viewsmfile;filename=latest-news.js',
+		$scripturl . '?action=viewsmfile;filename=latest-support.js'
+	);
 
 	// This sets the latest support stuff.
-	echo '
-		<script><!-- // --><![CDATA[
-			function smfSetLatestSupport()
-			{
-				if (window.smfLatestSupport)
-					document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
-			}
+	add_js('
+	function smfSetLatestSupport()
+	{
+		if (window.smfLatestSupport)
+			document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
+	}
 
-			function smfCurrentVersion()
-			{
-				var smfVer, yourVer;
+	function smfCurrentVersion()
+	{
+		var smfVer, yourVer;
 
-				if (!window.smfVersion)
-					return;
+		if (!window.smfVersion)
+			return;
 
-				smfVer = document.getElementById("smfVersion");
-				yourVer = document.getElementById("yourVersion");
-				smfVer.innerHTML = window.smfVersion;
+		smfVer = document.getElementById("smfVersion");
+		yourVer = document.getElementById("yourVersion");
+		smfVer.innerHTML = window.smfVersion;
 
-				var currentVersion = yourVer.innerHTML;
-				if (currentVersion != window.smfVersion)
-					yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
-			}';
+		var currentVersion = yourVer.innerHTML;
+		if (currentVersion != window.smfVersion)
+			yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
+	}');
 
 	// IE 4 is rather annoying, this wouldn't be necessary...
-	echo '
-			var fSetupCredits = function ()
-			{
-				smfSetLatestSupport();
-				smfCurrentVersion()
-			}
-			addLoadEvent(fSetupCredits);
-		// ]]></script>';
+	add_js('
+	var fSetupCredits = function ()
+	{
+		smfSetLatestSupport();
+		smfCurrentVersion()
+	}
+	addLoadEvent(fSetupCredits);');
 }
 
 // Displays information about file versions installed, and compares them to current version.
@@ -570,24 +566,23 @@ function template_view_versions()
 	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
 	   red.  It also contains the function, swapOption, that toggles showing the detailed information for each of the
 	   file categories. (sources, languages, and templates.) */
-	echo '
-		<script src="', $scripturl, '?action=viewsmfile;filename=detailed-version.js"></script>
-		<script src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
-		<script><!-- // --><![CDATA[
-			var oViewVersions = new smf_ViewVersions({
-				aKnownLanguages: [
-					\'.', implode('\',
-					\'.', $context['default_known_languages']), '\'
-				],
-				oSectionContainerIds: {
-					Sources: \'Sources\',
-					Default: \'Default\',
-					Languages: \'Languages\',
-					Templates: \'Templates\'
-				}
-			});
-		// ]]></script>';
-
+	add_js_file(
+		$scripturl . '?action=viewsmfile;filename=detailed-version.js',
+		$settings['default_theme_url'] . '/scripts/admin.js?rc3'
+	);
+	add_js('
+	var oViewVersions = new smf_ViewVersions({
+		aKnownLanguages: [
+			\'.', implode('\',
+			\'.', $context['default_known_languages']), '\'
+		],
+		oSectionContainerIds: {
+			Sources: \'Sources\',
+			Default: \'Default\',
+			Languages: \'Languages\',
+			Templates: \'Templates\'
+		}
+	});');
 }
 
 // Form for stopping people using naughty words, etc.
@@ -617,15 +612,17 @@ function template_edit_censored()
 				<noscript>
 					<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /></div>
 				</noscript>
-				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#;" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>
-				<script><!-- // --><![CDATA[
-					document.getElementById("moreCensoredWords_link").style.display = "";
+				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#" data-onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
-					function addNewWord()
-					{
-						setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
-					}
-				// ]]></script>
+	add_js('
+	document.getElementById("moreCensoredWords_link").style.display = "";
+
+	function addNewWord()
+	{
+		setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
+	}');
+
+	echo '
 				<hr style="width: 100%; height: 1px" class="hrcolor" />
 				<dl class="settings">
 					<dt>
@@ -705,58 +702,45 @@ function template_not_done()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
-		var countdown = ', $context['continue_countdown'], ';
-		doAutoSubmit();
+	<br class="clear" />';
 
-		function doAutoSubmit()
-		{
-			if (countdown == 0)
-				document.forms.autoSubmit.submit();
-			else if (countdown == -1)
-				return;
+	add_js('
+	var countdown = ', $context['continue_countdown'], ';
+	doAutoSubmit();
 
-			document.forms.autoSubmit.cont.value = "', $txt['not_done_continue'], ' (" + countdown + ")";
-			countdown--;
+	function doAutoSubmit()
+	{
+		if (countdown == 0)
+			document.forms.autoSubmit.submit();
+		else if (countdown == -1)
+			return;
 
-			setTimeout("doAutoSubmit();", 1000);
-		}
-	// ]]></script>';
+		document.forms.autoSubmit.cont.value = "', $txt['not_done_continue'], ' (" + countdown + ")";
+		countdown--;
+
+		setTimeout("doAutoSubmit();", 1000);
+	}');
 }
 
-// Template for showing settings (Of any kind really!)
+// Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
 	global $context, $txt, $settings, $scripturl;
 
-	echo '
-	<script><!-- // --><![CDATA[';
-
-	if (!empty($context['settings_pre_javascript']))
-		echo $context['settings_pre_javascript'];
-
 	// If we have BBC selection we have a bit of JS.
 	if (!empty($context['bbc_sections']))
+		add_js('
+	function toggleBBCDisabled(section, disable)
 	{
-		echo '
-		function toggleBBCDisabled(section, disable)
+		for (var i = 0; i < document.forms.bbcForm.length; i++)
 		{
-			for (var i = 0; i < document.forms.bbcForm.length; i++)
-			{
-				if (typeof(document.forms.bbcForm[i].name) == "undefined" || (document.forms.bbcForm[i].name.substr(0, 11) != "enabledTags") || (document.forms.bbcForm[i].name.indexOf(section) != 11))
-					continue;
+			if (typeof(document.forms.bbcForm[i].name) == "undefined" || (document.forms.bbcForm[i].name.substr(0, 11) != "enabledTags") || (document.forms.bbcForm[i].name.indexOf(section) != 11))
+				continue;
 
-				document.forms.bbcForm[i].disabled = disable;
-			}
-			document.getElementById("bbc_" + section + "_select_all").disabled = disable;
-		}';
-	}
-	echo '
-	// ]]></script>';
-
-	if (!empty($context['settings_insert_above']))
-		echo $context['settings_insert_above'];
+			document.forms.bbcForm[i].disabled = disable;
+		}
+		document.getElementById("bbc_" + section + "_select_all").disabled = disable;
+	}');
 
 	echo '
 	<div id="admincenter">
@@ -963,14 +947,6 @@ function template_show_settings()
 		</form>
 	</div>
 	<br class="clear" />';
-
-	if (!empty($context['settings_post_javascript']))
-		echo '
-	<script><!-- // --><![CDATA[', $context['settings_post_javascript'], '
-	// ]]></script>';
-
-	if (!empty($context['settings_insert_below']))
-		echo $context['settings_insert_below'];
 }
 
 // Template for showing custom profile fields.
@@ -999,43 +975,41 @@ function template_edit_profile_field()
 	global $context, $txt, $settings, $scripturl;
 
 	// All the javascript for this page - quite a bit!
-	echo '
-	<script><!-- // --><![CDATA[
-		function updateInputBoxes()
+	add_js('
+	function updateInputBoxes()
+	{
+		curType = document.getElementById("field_type").value;
+		privStatus = document.getElementById("private").value;
+		document.getElementById("max_length_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("max_length_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("dimension_dt").style.display = curType == "textarea" ? "" : "none";
+		document.getElementById("dimension_dd").style.display = curType == "textarea" ? "" : "none";
+		document.getElementById("bbc_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("bbc_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("options_dt").style.display = curType == "select" || curType == "radio" ? "" : "none";
+		document.getElementById("options_dd").style.display = curType == "select" || curType == "radio" ? "" : "none";
+		document.getElementById("default_dt").style.display = curType == "check" ? "" : "none";
+		document.getElementById("default_dd").style.display = curType == "check" ? "" : "none";
+		document.getElementById("mask_dt").style.display = curType == "text" ? "" : "none";
+		document.getElementById("mask").style.display = curType == "text" ? "" : "none";
+		document.getElementById("can_search_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("can_search_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
+		document.getElementById("regex_div").style.display = curType == "text" && document.getElementById("mask").value == "regex" ? "" : "none";
+		document.getElementById("display").disabled = false;
+		// Cannot show this on the topic
+		if (curType == "textarea" || privStatus >= 2)
 		{
-			curType = document.getElementById("field_type").value;
-			privStatus = document.getElementById("private").value;
-			document.getElementById("max_length_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("max_length_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("dimension_dt").style.display = curType == "textarea" ? "" : "none";
-			document.getElementById("dimension_dd").style.display = curType == "textarea" ? "" : "none";
-			document.getElementById("bbc_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("bbc_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("options_dt").style.display = curType == "select" || curType == "radio" ? "" : "none";
-			document.getElementById("options_dd").style.display = curType == "select" || curType == "radio" ? "" : "none";
-			document.getElementById("default_dt").style.display = curType == "check" ? "" : "none";
-			document.getElementById("default_dd").style.display = curType == "check" ? "" : "none";
-			document.getElementById("mask_dt").style.display = curType == "text" ? "" : "none";
-			document.getElementById("mask").style.display = curType == "text" ? "" : "none";
-			document.getElementById("can_search_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("can_search_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-			document.getElementById("regex_div").style.display = curType == "text" && document.getElementById("mask").value == "regex" ? "" : "none";
-			document.getElementById("display").disabled = false;
-			// Cannot show this on the topic
-			if (curType == "textarea" || privStatus >= 2)
-			{
-				document.getElementById("display").checked = false;
-				document.getElementById("display").disabled = true;
-			}
+			document.getElementById("display").checked = false;
+			document.getElementById("display").disabled = true;
 		}
+	}
 
-		var startOptID = ', count($context['field']['options']), ';
-		function addOption()
-		{
-			setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
-			startOptID++;
-		}
-	// ]]></script>';
+	var startOptID = ', count($context['field']['options']), ';
+	function addOption()
+	{
+		setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
+		startOptID++;
+	}');
 
 	echo '
 	<div id="admincenter">
@@ -1887,60 +1861,59 @@ function template_callback_question_answer_list()
 
 		</dt><dd></dd>';
 
-	// The javascript needs to go at the end but we'll put it in this template for looks.
-	$context['settings_post_javascript'] .= '
-		// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
-		function createNamedElement(type, name, customFields)
+	add_js('
+	// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
+	function createNamedElement(type, name, customFields)
+	{
+		var element = null;
+
+		if (!customFields)
+			customFields = "";
+
+		// Try the IE way; this fails on standards-compliant browsers
+		try
 		{
-			var element = null;
-
-			if (!customFields)
-				customFields = "";
-
-			// Try the IE way; this fails on standards-compliant browsers
-			try
-			{
-				element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
-			}
-			catch (e)
-			{
-			}
-			if (!element || element.nodeName != type.toUpperCase())
-			{
-				// Non-IE browser; use canonical method to create named element
-				element = document.createElement(type);
-				element.name = name;
-			}
-
-			return element;
+			element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
+		}
+		catch (e)
+		{
+		}
+		if (!element || element.nodeName != type.toUpperCase())
+		{
+			// Non-IE browser; use canonical method to create named element
+			element = document.createElement(type);
+			element.name = name;
 		}
 
-		var placeHolder = document.getElementById(\'add_more_question_placeholder\');
+		return element;
+	}
 
-		function addAnotherQuestion()
-		{
-			var newDT = document.createElement("dt");
+	var placeHolder = document.getElementById(\'add_more_question_placeholder\');
 
-			var newInput = createNamedElement("input", "question[]");
-			newInput.type = "text";
-			newInput.className = "input_text";
-			newInput.size = "50";
-			newInput.setAttribute("class", "verification_question");
-			newDT.appendChild(newInput);
+	function addAnotherQuestion()
+	{
+		var newDT = document.createElement("dt");
 
-			newDD = document.createElement("dd");
+		var newInput = createNamedElement("input", "question[]");
+		newInput.type = "text";
+		newInput.className = "input_text";
+		newInput.size = "50";
+		newInput.setAttribute("class", "verification_question");
+		newDT.appendChild(newInput);
 
-			newInput = createNamedElement("input", "answer[]");
-			newInput.type = "text";
-			newInput.className = "input_text";
-			newInput.size = "50";
-			newInput.setAttribute("class", "verification_answer");
-			newDD.appendChild(newInput);
+		newDD = document.createElement("dd");
 
-			placeHolder.parentNode.insertBefore(newDT, placeHolder);
-			placeHolder.parentNode.insertBefore(newDD, placeHolder);
-		}
-		document.getElementById(\'add_more_link_div\').style.display = \'\';';
+		newInput = createNamedElement("input", "answer[]");
+		newInput.type = "text";
+		newInput.className = "input_text";
+		newInput.size = "50";
+		newInput.setAttribute("class", "verification_answer");
+		newDD.appendChild(newInput);
+
+		placeHolder.parentNode.insertBefore(newDT, placeHolder);
+		placeHolder.parentNode.insertBefore(newDD, placeHolder);
+	}
+	document.getElementById(\'add_more_link_div\').style.display = \'\';');
 }
 
 // Repairing boards.

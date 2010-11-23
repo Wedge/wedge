@@ -376,9 +376,8 @@ function template_main()
 		</div>
 	</div>';
 
-		$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/stats.js"></script>
-<script><!-- // --><![CDATA[
+		add_js_file($settings['default_theme_url'] . '/scripts/stats.js');
+		add_js('
 	var oStatsCenter = new smf_StatsCenter({
 		sTableId: \'stats\',
 
@@ -398,13 +397,13 @@ function template_main()
 		sDayRowClassname: \'windowbg2\',
 		sDayRowIdPrefix: \'tr_day_\',
 
-		aCollapsedYears: [';
+		aCollapsedYears: [');
 
 		foreach ($context['collapsed_years'] as $id => $year)
-			$context['footer'] .= '
+			$context['footer_js'] .= '
 			\'' . $year . '\'' . ($id != count($context['collapsed_years']) - 1 ? ',' : '');
 
-		$context['footer'] .= '
+		add_js('
 		],
 
 		aDataCells: [
@@ -415,8 +414,7 @@ function template_main()
 			\'most_members_online\'' . (empty($modSettings['hitStats']) ? '' : ',
 			\'hits\'') . '
 		]
-	});
-// ]]></script>';
+	});');
 	}
 }
 

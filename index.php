@@ -37,9 +37,6 @@ $forum_version = 'SMF 2.0 RC4 (Wedge 0.1)';
 
 // Get everything started up...
 define('SMF', 1);
-define('SCRIPT_HEADER', "\n" . '<script><!-- // --><![CDATA[');
-define('SCRIPT_FOOTER', "\n" . '// ]]></script>');
-
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);

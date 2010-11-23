@@ -380,8 +380,7 @@ function template_main()
 				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" alt="" class="middle" /> ' . $txt['poll'] : '', '
 			</p>';
 
-	$context['footer'] .= '
-<script><!-- // --><![CDATA[
+	add_js('
 	if (typeof(window.XMLHttpRequest) != "undefined")
 		aJumpTo[aJumpTo.length] = new JumpTo({
 			sContainerId: "message_index_jump_to",
@@ -394,18 +393,15 @@ function template_main()
 			sCatSeparator: "-----------------------------",
 			sCatPrefix: "",
 			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
-		});
-// ]]></script>';
+		});');
 
 	echo '
 		</div>
 	</div>';
 
 	// Javascript for inline editing.
-	$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/topic.js"></script>
-<script><!-- // --><![CDATA[
-
+	add_js_file($settings['default_theme_url'] . '/scripts/topic.js');
+	add_js('
 	// Hide certain bits during topic edit.
 	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
 
@@ -443,9 +439,7 @@ function template_main()
 	{
 		// Re-template the subject!
 		cur_subject_div.innerHTML = \'<a href="' . $scripturl . '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
-	}
-
-// ]]></script>';
+	}');
 }
 
 ?>

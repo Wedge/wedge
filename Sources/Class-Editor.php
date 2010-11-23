@@ -74,7 +74,7 @@ class wedgeEditor
 			loadTemplate(false, $context['browser']['is_ie'] ? 'editor_ie' : 'editor'); // we don't need any templates; this class does it. But we do need CSS.
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
-			$context['footer'] .= SCRIPT_HEADER . '
+			add_js('
 	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
@@ -84,14 +84,13 @@ class wedgeEditor
 		prompt_text_url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
 		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
 		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
-	}' . SCRIPT_FOOTER . '
-<script src="' . $settings['default_theme_url'] . '/scripts/editor.js?rc4"></script>';
+	}');
+			add_js_file($settings['default_theme_url'] . '/scripts/editor.js?rc4');
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
-				$context['footer'] .= '
-<script src="' . $settings['default_theme_url'] . '/scripts/spellcheck.js"></script>';
+				add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
 
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))
@@ -101,12 +100,12 @@ class wedgeEditor
 </form>';
 
 				// Also make sure that spell check works with rich edit.
-				$context['footer'] .= SCRIPT_HEADER . '
+				add_js('
 	function spellCheckDone()
 	{
 		for (i = 0; i < smf_editorArray.length; i++)
 			setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
-	}' . SCRIPT_FOOTER;
+	}');
 			}
 		}
 
@@ -2266,41 +2265,40 @@ class wedgeEditor
 		</div>
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />';
 
-		$context['footer'] .= SCRIPT_HEADER;
-
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
-			$context['footer'] .= '
+			add_js('
 	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
 		sUniqueId: ' . JavaScriptEscape($smileycontainer) . ',
 		sContainerDiv: ' . JavaScriptEscape($smileycontainer) . ',
 		sClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.insertSmiley') . ',
-		oSmileyLocations: {';
+		oSmileyLocations: {');
 
 			foreach ($this->smileys as $location => $smileyRows)
 			{
-				$context['footer'] .= '
+				$context['footer_js'] .= '
 			' . $location . ': [';
 				foreach ($smileyRows as $smileyRow)
 				{
-					$context['footer'] .= '
+					$context['footer_js'] .= '
 				[';
 					foreach ($smileyRow['smileys'] as $smiley)
-						$context['footer'] .= '
+						$context['footer_js'] .= '
 					{
 						sCode: ' . JavaScriptEscape($smiley['code']) . ',
 						sSrc: ' . JavaScriptEscape($settings['smileys_url'] . '/' . $smiley['filename']) . ',
 						sDescription: ' . JavaScriptEscape($smiley['description']) . '
 					}' . (empty($smiley['isLast']) ? ',' : '');
 
-				$context['footer'] .= '
+				$context['footer_js'] .= '
 				]' . (empty($smileyRow['isLast']) ? ',' : '');
 				}
-				$context['footer'] .= '
+				$context['footer_js'] .= '
 			]' . ($location === 'postform' ? ',' : '');
 			}
-			$context['footer'] .= '
+
+			add_js('
 		},
 		sSmileyBoxTemplate: ' . JavaScriptEscape('
 			%smileyRows% %moreSmileys%
@@ -2336,30 +2334,30 @@ class wedgeEditor
 		</div>
 	</body>
 </html>') . '
-	});';
+	});');
 		}
 
 		if ($this->show_bbc)
 		{
-			$context['footer'] .= '
+			add_js('
 	var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
 		sUniqueId: ' . JavaScriptEscape($bbccontainer) . ',
 		sContainerDiv: ' . JavaScriptEscape($bbccontainer) . ',
 		sButtonClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleButtonClick') . ',
 		sSelectChangeHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleSelectChange') . ',
 		sSprite: ' . JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png') . ',
-		aButtonRows: [';
+		aButtonRows: [');
 
 			// Here loop through the array, printing the images/rows/separators!
 			foreach ($this->bbc as $i => $buttonRow)
 			{
-				$context['footer'] .= '
+				$context['footer_js'] .= '
 			[';
 				foreach ($buttonRow as $tag)
 				{
 					// Is there a "before" part for this bbc button? If not, it can't be a button!!
 					if (isset($tag['before']))
-						$context['footer'] .= '
+						$context['footer_js'] .= '
 				{
 					sType: \'button\',
 					bEnabled: ' . (empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false') . ',' . (!is_array($tag['image']) ? '
@@ -2373,7 +2371,7 @@ class wedgeEditor
 
 					// Must be a divider then.
 					else
-						$context['footer'] .= '
+						$context['footer_js'] .= '
 				{
 					sType: \'divider\'
 				}' . (empty($tag['isLast']) ? ',' : '');
@@ -2384,7 +2382,7 @@ class wedgeEditor
 				{
 					// Show the font drop down...
 					if (!isset($this->disabled_tags['font']))
-						$context['footer'] .= ',
+						$context['footer_js'] .= ',
 				{
 					sType: \'select\',
 					sName: \'sel_face\',
@@ -2405,7 +2403,7 @@ class wedgeEditor
 
 					// Font sizes anyone?
 					if (!isset($this->disabled_tags['size']))
-						$context['footer'] .= ',
+						$context['footer_js'] .= ',
 				{
 					sType: \'select\',
 					sName: \'sel_size\',
@@ -2423,7 +2421,7 @@ class wedgeEditor
 
 					// Print a drop down list for all the colors we allow!
 					if (!isset($this->disabled_tags['color']))
-						$context['footer'] .= ',
+						$context['footer_js'] .= ',
 				{
 					sType: \'select\',
 					sName: \'sel_color\',
@@ -2447,10 +2445,11 @@ class wedgeEditor
 					}
 				}';
 				}
-				$context['footer'] .= '
+				$context['footer_js'] .= '
 			]' . ($i == count($this->bbc) - 1 ? '' : ',');
 			}
-			$context['footer'] .= '
+
+			add_js('
 		],
 		sButtonTemplate: ' . JavaScriptEscape('
 			<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>
@@ -2469,11 +2468,11 @@ class wedgeEditor
 		sButtonRowTemplate: ' . JavaScriptEscape('
 			<div>%buttonRow%</div>
 		') . '
-	});';
+	});');
 		}
 
 		// Now it's all drawn out we'll actually setup the box.
-		$context['footer'] .= '
+		add_js('
 	var oEditorHandle_' . $this->id . ' = new smc_Editor({
 		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
 		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
@@ -2488,9 +2487,7 @@ class wedgeEditor
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . '
 	});
-	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';';
-
-		$context['footer'] .= SCRIPT_FOOTER;
+	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';');
 	}
 
 	public function outputButtons()
