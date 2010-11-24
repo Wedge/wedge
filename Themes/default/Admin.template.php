@@ -133,17 +133,17 @@ function template_admin()
 		sSelf: \'oAdminCenter\',
 
 		bLoadAnnouncements: true,
-		sAnnouncementTemplate: ' . JavaScriptEscape('
+		sAnnouncementTemplate: ', JavaScriptEscape('
 			<dl>
 				%content%
 			</dl>
-		') . ',
-		sAnnouncementMessageTemplate: ' . JavaScriptEscape('
+		'), ',
+		sAnnouncementMessageTemplate: ', JavaScriptEscape('
 			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
 			<dd>
 				%message%
 			</dd>
-		') . ',
+		'), ',
 		sAnnouncementContainerId: \'smfAnnouncements\',
 
 		bLoadVersions: true,
@@ -308,12 +308,12 @@ function template_credits()
 	add_js('
 	var smfSupportVersions = {};
 
-	smfSupportVersions.forum = "' . $context['forum_version'] . '";');
+	smfSupportVersions.forum = "', $context['forum_version'], '";');
 
-	// Don't worry, none of this is logged. It's just used to give information that might be of use.
+	// Don't worry, none of this is logged, it's just used to give information that might be of use.
 	foreach ($context['current_versions'] as $variable => $version)
 		add_js('
-	smfSupportVersions.' . $variable . ' = "' . $version['version'] . '";');
+	smfSupportVersions.', $variable, ' = "', $version['version'], '";');
 
 	// Now we just have to include the script and wait ;).
 	add_js_file(
@@ -344,10 +344,16 @@ function template_credits()
 		var currentVersion = yourVer.innerHTML;
 		if (currentVersion != window.smfVersion)
 			yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
-	}
+	}');
 
-	smfSetLatestSupport();
-	smfCurrentVersion();');
+	// IE 4 is rather annoying, this wouldn't be necessary...
+	add_js('
+	var fSetupCredits = function ()
+	{
+		smfSetLatestSupport();
+		smfCurrentVersion()
+	}
+	addLoadEvent(fSetupCredits);');
 }
 
 // Displays information about file versions installed, and compares them to current version.
@@ -567,8 +573,8 @@ function template_view_versions()
 	add_js('
 	var oViewVersions = new smf_ViewVersions({
 		aKnownLanguages: [
-			\'.' . implode('\',
-			\'.' . $context['default_known_languages']) . '\'
+			\'.', implode('\',
+			\'.', $context['default_known_languages']), '\'
 		],
 		oSectionContainerIds: {
 			Sources: \'Sources\',
@@ -699,7 +705,7 @@ function template_not_done()
 	<br class="clear" />';
 
 	add_js('
-	var countdown = ' . $context['continue_countdown'] . ';
+	var countdown = ', $context['continue_countdown'], ';
 	doAutoSubmit();
 
 	function doAutoSubmit()
@@ -709,7 +715,7 @@ function template_not_done()
 		else if (countdown == -1)
 			return;
 
-		document.forms.autoSubmit.cont.value = "' . $txt['not_done_continue'] . ' (" + countdown + ")";
+		document.forms.autoSubmit.cont.value = "', $txt['not_done_continue'], ' (" + countdown + ")";
 		countdown--;
 
 		setTimeout("doAutoSubmit();", 1000);
@@ -951,14 +957,13 @@ function template_show_custom_profile()
 	// Standard fields.
 	template_show_list('standard_profile_fields');
 
-	add_js('
-	var iNumChecks = document.forms.standardProfileFields.length;
-	for (var i = 0; i < iNumChecks; i++)
-		if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
-			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;');
-
 	echo '
-	<br />';
+	<script><!-- // --><![CDATA[
+		var iNumChecks = document.forms.standardProfileFields.length;
+		for (var i = 0; i < iNumChecks; i++)
+			if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
+				document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;
+	// ]]></script><br />';
 
 	// Custom fields.
 	template_show_list('custom_profile_fields');
@@ -999,7 +1004,7 @@ function template_edit_profile_field()
 		}
 	}
 
-	var startOptID = ' . count($context['field']['options']) . ';
+	var startOptID = ', count($context['field']['options']), ';
 	function addOption()
 	{
 		setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
@@ -1204,8 +1209,10 @@ function template_edit_profile_field()
 	<br class="clear" />';
 
 	// Get the javascript bits right!
-	add_js('
-	updateInputBoxes();');
+	echo '
+	<script><!-- // --><![CDATA[
+		updateInputBoxes();
+	// ]]></script>';
 }
 
 // Results page for an admin search.
@@ -1284,25 +1291,24 @@ function template_core_features()
 {
 	global $context, $txt, $settings, $options, $scripturl;
 
-	add_js('
-	function toggleItem(itemID)
-	{
-		// Toggle the hidden item.
-		var itemValueHandle = document.getElementById("feature_" + itemID);
-		itemValueHandle.value = itemValueHandle.value == 1 ? 0 : 1;
-
-		// Change the image, alternative text and the title.
-		document.getElementById("switch_" + itemID).src = \'' . $settings['images_url'] . '/admin/switch_\' + (itemValueHandle.value == 1 ? \'on\' : \'off\') + \'.png\';
-		document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? \'' . $txt['core_settings_switch_off'] . '\' : \'' . $txt['core_settings_switch_on'] . '\';
-		document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? \'' . $txt['core_settings_switch_off'] . '\' : \'' . $txt['core_settings_switch_on']. '\';
-
-		// Don\'t reload.
-		return false;
-	}');
-
 	echo '
-	<div id="admincenter">';
+	<script><!-- // --><![CDATA[
+		function toggleItem(itemID)
+		{
+			// Toggle the hidden item.
+			var itemValueHandle = document.getElementById("feature_" + itemID);
+			itemValueHandle.value = itemValueHandle.value == 1 ? 0 : 1;
 
+			// Change the image, alternative text and the title.
+			document.getElementById("switch_" + itemID).src = \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.value == 1 ? \'on\' : \'off\') + \'.png\';
+			document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? \'', $txt['core_settings_switch_off'], '\' : \'', $txt['core_settings_switch_on'], '\';
+			document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? \'', $txt['core_settings_switch_off'], '\' : \'', $txt['core_settings_switch_on'], '\';
+
+			// Don\'t reload.
+			return false;
+		}
+	// ]]></script>
+	<div id="admincenter">';
 	if ($context['is_new_install'])
 	{
 		echo '
@@ -1360,16 +1366,15 @@ function template_core_features()
 	<br class="clear" />';
 
 	// Turn on the pretty javascript if we can!
-	add_js('
-	document.getElementById(\'js_worked\').value = "1";');
-
+	echo '
+	<script><!-- // --><![CDATA[
+		document.getElementById(\'js_worked\').value = "1";';
 		foreach ($context['features'] as $id => $feature)
-		add_js('
-	document.getElementById(\'js_feature_' . $id . '\').style.display = "";
-	document.getElementById(\'plain_feature_' . $id . '\').style.display = "none";');
-
-	add_js('
-');
+			echo '
+		document.getElementById(\'js_feature_', $id, '\').style.display = "";
+		document.getElementById(\'plain_feature_', $id, '\').style.display = "none";';
+	echo '
+	// ]]></script>';
 }
 
 // Add a new language
@@ -1618,37 +1623,38 @@ function template_download_language()
 	<br class="clear" />';
 
 	// The javascript for expand and collapse of sections.
+	echo '
+	<script><!-- // --><![CDATA[';
+
 	// Each theme gets its own handler.
 	foreach ($context['files']['images'] as $theme => $group)
 	{
 		$count = 0;
-		add_js('
-		var oTogglePanel_' . $theme . ' = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: true,
-			aSwappableContainers: [');
-
+		echo '
+			var oTogglePanel_', $theme, ' = new smc_Toggle({
+				bToggleEnabled: true,
+				bCurrentlyCollapsed: true,
+				aSwappableContainers: [';
 		foreach ($group as $file)
-			add_js('
-				' . JavaScriptEscape($theme . '-' . $count++), ',');
-
-		add_js('
-				null
-			],
-			aSwapImages: [
-				{
-					sId: \'toggle_image_' . $theme . '\',
-					srcExpanded: smf_images_url + \'/sort_down.gif\',
-					altExpanded: \'*\',
-					srcCollapsed: smf_images_url + \'/selected.gif\',
-					altCollapsed: \'*\'
-				}
-			]
-		});');
+			echo '
+					', JavaScriptEscape($theme . '-' . $count++), ',';
+		echo '
+					null
+				],
+				aSwapImages: [
+					{
+						sId: \'toggle_image_', $theme, '\',
+						srcExpanded: smf_images_url + \'/sort_down.gif\',
+						altExpanded: \'*\',
+						srcCollapsed: smf_images_url + \'/selected.gif\',
+						altCollapsed: \'*\'
+					}
+				]
+			});';
 	}
 
-	add_js('
-	');
+	echo '
+	// ]]></script>';
 }
 
 // Edit some language entries?
@@ -1986,22 +1992,26 @@ function template_repair_boards()
 	<br class="clear" />';
 
 	if (!empty($context['redirect_to_recount']))
-		add_js('
-	var countdown = 5;
-	doAutoSubmit();
-
-	function doAutoSubmit()
 	{
-		if (countdown == 0)
-			document.forms.recount_form.submit();
-		else if (countdown == -1)
-			return;
+		echo '
+	<script><!-- // --><![CDATA[
+		var countdown = 5;
+		doAutoSubmit();
 
-		document.forms.recount_form.recount_now.value = "' . $txt['errors_recount_now'] . ' (" + countdown + ")";
-		countdown--;
+		function doAutoSubmit()
+		{
+			if (countdown == 0)
+				document.forms.recount_form.submit();
+			else if (countdown == -1)
+				return;
 
-		setTimeout("doAutoSubmit();", 1000);
-	}');
+			document.forms.recount_form.recount_now.value = "', $txt['errors_recount_now'], ' (" + countdown + ")";
+			countdown--;
+
+			setTimeout("doAutoSubmit();", 1000);
+		}
+	// ]]></script>';
+	}
 }
 
 // Pretty URLs

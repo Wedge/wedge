@@ -135,14 +135,16 @@ function template_new_group()
 
 	if ($context['undefined_group'])
 	{
-		add_js('
-	function swapPostGroup(isChecked)
-	{
-		var min_posts_text = document.getElementById(\'min_posts_text\');
-		document.getElementById(\'min_posts_input\').disabled = !isChecked;
-		min_posts_text.style.color = isChecked ? "" : "#888888";
-	}
-	swapPostGroup(' . ($context['post_group'] ? 'true' : 'false') . ');');
+		echo '
+			<script><!-- // --><![CDATA[
+				function swapPostGroup(isChecked)
+				{
+					var min_posts_text = document.getElementById(\'min_posts_text\');
+					document.getElementById(\'min_posts_input\').disabled = !isChecked;
+					min_posts_text.style.color = isChecked ? "" : "#888888";
+				}
+				swapPostGroup(', $context['post_group'] ? 'true' : 'false', ');
+			// ]]></script>';
 	}
 
 	echo '
@@ -308,11 +310,11 @@ function template_edit_group()
 							<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
 						</fieldset>
 						<a href="#" onclick="document.getElementById(\'visible_boards\').style.display = \'block\'; document.getElementById(\'visible_boards_link\').style.display = \'none\'; return false;" id="visible_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
+						<script><!-- // --><![CDATA[
+							document.getElementById("visible_boards_link").style.display = "";
+							document.getElementById("visible_boards").style.display = "none";
+						// ]]></script>
 					</dd>';
-
-		add_js('
-	document.getElementById("visible_boards_link").style.display = "";
-	document.getElementById("visible_boards").style.display = "none";');
 	}
 
 	echo '
@@ -325,53 +327,55 @@ function template_edit_group()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
-
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
-	add_js('
-	var oModeratorSuggest = new smc_AutoSuggest({
-		sSelf: \'oModeratorSuggest\',
-		sSessionId: \'' . $context['session_id'] . '\',
-		sSessionVar: \'' . $context['session_var'] . '\',
-		sSuggestId: \'group_moderators\',
-		sControlId: \'group_moderators\',
-		sSearchType: \'member\',
-		bItemList: true,
-		sPostName: \'moderator_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
-		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
-		sItemListContainerId: \'moderator_container\',
-		aListItems: [');
+	<br class="clear" />
+		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+		<script><!-- // --><![CDATA[
+			var oModeratorSuggest = new smc_AutoSuggest({
+				sSelf: \'oModeratorSuggest\',
+				sSessionId: \'', $context['session_id'], '\',
+				sSessionVar: \'', $context['session_var'], '\',
+				sSuggestId: \'group_moderators\',
+				sControlId: \'group_moderators\',
+				sSearchType: \'member\',
+				bItemList: true,
+				sPostName: \'moderator_list\',
+				sURLMask: \'action=profile;u=%item_id%\',
+				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+				sItemListContainerId: \'moderator_container\',
+				aListItems: [';
 
 			foreach ($context['group']['moderators'] as $id_member => $member_name)
-				add_js('
-			{
-				sItemId: ' . JavaScriptEscape($id_member) . ',
-				sItemName: ' . JavaScriptEscape($member_name) . '
-			}' . ($id_member == $context['group']['last_moderator_id'] ? '' : ','));
+				echo '
+					{
+						sItemId: ', JavaScriptEscape($id_member), ',
+						sItemName: ', JavaScriptEscape($member_name), '
+					}', $id_member == $context['group']['last_moderator_id'] ? '' : ',';
 
-			add_js('
-		]
-	});');
+			echo '
+				]
+			});
+		// ]]></script>';
 
 	if ($context['group']['allow_post_group'])
-		add_js('
-	function swapPostGroup(isChecked)
-	{
-		var min_posts_text = document.getElementById(\'min_posts_text\');
-		var group_desc_text = document.getElementById(\'group_desc_text\');
-		var group_hidden_text = document.getElementById(\'group_hidden_text\');
-		var group_moderators_text = document.getElementById(\'group_moderators_text\');
-		document.forms.groupForm.min_posts.disabled = !isChecked;
-		min_posts_text.style.color = isChecked ? "" : "#888888";
-		document.forms.groupForm.group_desc_input.disabled = isChecked;
-		group_desc_text.style.color = !isChecked ? "" : "#888888";
-		document.forms.groupForm.group_hidden_input.disabled = isChecked;
-		group_hidden_text.style.color = !isChecked ? "" : "#888888";
-		document.forms.groupForm.group_moderators.disabled = isChecked;
-		group_moderators_text.style.color = !isChecked ? "" : "#888888";
-	}
-	swapPostGroup(' . ($context['group']['is_post_group'] ? 'true' : 'false') . ');');
+		echo '
+		<script><!-- // --><![CDATA[
+			function swapPostGroup(isChecked)
+			{
+				var min_posts_text = document.getElementById(\'min_posts_text\');
+				var group_desc_text = document.getElementById(\'group_desc_text\');
+				var group_hidden_text = document.getElementById(\'group_hidden_text\');
+				var group_moderators_text = document.getElementById(\'group_moderators_text\');
+				document.forms.groupForm.min_posts.disabled = !isChecked;
+				min_posts_text.style.color = isChecked ? "" : "#888888";
+				document.forms.groupForm.group_desc_input.disabled = isChecked;
+				group_desc_text.style.color = !isChecked ? "" : "#888888";
+				document.forms.groupForm.group_hidden_input.disabled = isChecked;
+				group_hidden_text.style.color = !isChecked ? "" : "#888888";
+				document.forms.groupForm.group_moderators.disabled = isChecked;
+				group_moderators_text.style.color = !isChecked ? "" : "#888888";
+			}
+			swapPostGroup(', $context['group']['is_post_group'] ? 'true' : 'false', ');
+		// ]]></script>';
 }
 
 // Templating for viewing the members of a group.
@@ -530,21 +534,23 @@ function template_group_members()
 	<br class="clear" />';
 
 	if (!empty($context['group']['assignable']))
-		add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
-		add_js('
-	var oAddMemberSuggest = new smc_AutoSuggest({
-		sSelf: \'oAddMemberSuggest\',
-		sSessionId: \'' . $context['session_id'] . '\',
-		sSessionVar: \'' . $context['session_var'] . '\',
-		sSuggestId: \'to_suggest\',
-		sControlId: \'toAdd\',
-		sSearchType: \'member\',
-		sPostName: \'member_add\',
-		sURLMask: \'action=profile;u=%item_id%\',
-		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
-		bItemList: true,
-		sItemListContainerId: \'toAddItemContainer\'
-	});');
+		echo '
+		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+		<script><!-- // --><![CDATA[
+			var oAddMemberSuggest = new smc_AutoSuggest({
+				sSelf: \'oAddMemberSuggest\',
+				sSessionId: \'', $context['session_id'], '\',
+				sSessionVar: \'', $context['session_var'], '\',
+				sSuggestId: \'to_suggest\',
+				sControlId: \'toAdd\',
+				sSearchType: \'member\',
+				sPostName: \'member_add\',
+				sURLMask: \'action=profile;u=%item_id%\',
+				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+				bItemList: true,
+				sItemListContainerId: \'toAddItemContainer\'
+			});
+		// ]]></script>';
 }
 
 // Allow the moderator to enter a reason to each user being rejected.

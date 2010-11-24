@@ -7,7 +7,8 @@ function template_edit_holiday()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Start with javascript for getting the calendar dates right.
-	add_js('
+	echo '
+		<script><!-- // --><![CDATA[
 			var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 			function generateDays()
@@ -30,7 +31,8 @@ function template_edit_holiday()
 
 				if (selected < days)
 					dayElement.selectedIndex = selected;
-			}');
+			}
+		// ]]></script>';
 
 	// Show a form for all the holiday information.
 	echo '

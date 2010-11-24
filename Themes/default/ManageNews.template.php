@@ -44,17 +44,15 @@ function template_edit_news()
 				</tbody>
 			</table>
 			<div class="floatleft padding">
-				<div id="moreNewsItems_link" style="display: none;"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>';
-
-	add_js('
-	document.getElementById("moreNewsItems_link").style.display = "";
-	function addNewsItem()
-	{
-		document.getElementById("moreNews").style.display = "";
-		setOuterHTML(document.getElementById("moreNewsItems"), \'<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="width: 85%;"><\' + \'/textarea><\' + \'/div><div id="moreNewsItems"><\' + \'/div>\');
-	}');
-
-	echo '
+				<div id="moreNewsItems_link" style="display: none;"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>
+				<script><!-- // --><![CDATA[
+					document.getElementById("moreNewsItems_link").style.display = "";
+					function addNewsItem()
+					{
+						document.getElementById("moreNews").style.display = "";
+						setOuterHTML(document.getElementById("moreNewsItems"), \'<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="width: 85%;"><\' + \'/textarea><\' + \'/div><div id="moreNewsItems"><\' + \'/div>\');
+					}
+				// ]]></script>
 				<noscript>
 					<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" style="width: 85%;" name="news[]"></textarea></div>
 				</noscript>
@@ -73,16 +71,18 @@ function template_email_members()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	// This is some javascript for the simple/advanced toggling stuff.
-	add_js('
-	function toggleAdvanced(mode)
-	{
-		// What styles are we doing?
-		var divStyle = mode ? "" : "none";
+	echo '
+	<script><!-- // --><![CDATA[
+		function toggleAdvanced(mode)
+		{
+			// What styles are we doing?
+			var divStyle = mode ? "" : "none";
 
-		document.getElementById("advanced_settings_div").style.display = divStyle;
-		document.getElementById("gosimple").style.display = divStyle;
-		document.getElementById("goadvanced").style.display = mode ? "none" : "";
-	}');
+			document.getElementById("advanced_settings_div").style.display = divStyle;
+			document.getElementById("gosimple").style.display = divStyle;
+			document.getElementById("goadvanced").style.display = mode ? "none" : "";
+		}
+	// ]]></script>';
 
 	echo '
 	<div id="admincenter">
@@ -183,37 +183,39 @@ function template_email_members()
 	<br class="clear" />';
 
 	// Make the javascript stuff visible.
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
-	add_js('
-	document.getElementById("advanced_select_div").style.display = "";
-	var oMemberSuggest = new smc_AutoSuggest({
-		sSelf: \'oMemberSuggest\',
-		sSessionId: \'' . $context['session_id'] . '\',
-		sSessionVar: \'' . $context['session_var'] . '\',
-		sSuggestId: \'members\',
-		sControlId: \'members\',
-		sSearchType: \'member\',
-		bItemList: true,
-		sPostName: \'member_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
-		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
-		sItemListContainerId: \'members_container\',
-		aListItems: []
-	});
-	var oExcludeMemberSuggest = new smc_AutoSuggest({
-		sSelf: \'oExcludeMemberSuggest\',
-		sSessionId: \'' . $context['session_id'] . '\',
-		sSessionVar: \'' . $context['session_var'] . '\',
-		sSuggestId: \'exclude_members\',
-		sControlId: \'exclude_members\',
-		sSearchType: \'member\',
-		bItemList: true,
-		sPostName: \'exclude_member_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
-		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
-		sItemListContainerId: \'exclude_members_container\',
-		aListItems: []
-	});');
+	echo '
+	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
+	<script><!-- // --><![CDATA[
+		document.getElementById("advanced_select_div").style.display = "";
+		var oMemberSuggest = new smc_AutoSuggest({
+			sSelf: \'oMemberSuggest\',
+			sSessionId: \'', $context['session_id'], '\',
+			sSessionVar: \'', $context['session_var'], '\',
+			sSuggestId: \'members\',
+			sControlId: \'members\',
+			sSearchType: \'member\',
+			bItemList: true,
+			sPostName: \'member_list\',
+			sURLMask: \'action=profile;u=%item_id%\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+			sItemListContainerId: \'members_container\',
+			aListItems: []
+		});
+		var oExcludeMemberSuggest = new smc_AutoSuggest({
+			sSelf: \'oExcludeMemberSuggest\',
+			sSessionId: \'', $context['session_id'], '\',
+			sSessionVar: \'', $context['session_var'], '\',
+			sSuggestId: \'exclude_members\',
+			sControlId: \'exclude_members\',
+			sSearchType: \'member\',
+			bItemList: true,
+			sPostName: \'exclude_member_list\',
+			sURLMask: \'action=profile;u=%item_id%\',
+			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+			sItemListContainerId: \'exclude_members_container\',
+			aListItems: []
+		});
+	// ]]></script>';
 }
 
 function template_email_members_compose()
@@ -298,24 +300,24 @@ function template_email_members_send()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear" />
+	<script><!-- // --><![CDATA[
+		var countdown = 2;
+		doAutoSubmit();
 
-	add_js('
-	var countdown = 2;
-	doAutoSubmit();
+		function doAutoSubmit()
+		{
+			if (countdown == 0)
+				document.forms.autoSubmit.submit();
+			else if (countdown == -1)
+				return;
 
-	function doAutoSubmit()
-	{
-		if (countdown == 0)
-			document.forms.autoSubmit.submit();
-		else if (countdown == -1)
-			return;
+			document.forms.autoSubmit.b.value = "', $txt['email_continue'], ' (" + countdown + ")";
+			countdown--;
 
-		document.forms.autoSubmit.b.value = "' . JavaScriptEscape($txt['email_continue']) . ' (" + countdown + ")";
-		countdown--;
-
-		setTimeout("doAutoSubmit();", 1000);
-	}');
+			setTimeout("doAutoSubmit();", 1000);
+		}
+	// ]]></script>';
 }
 
 ?>

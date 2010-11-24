@@ -183,8 +183,10 @@ function template_show_list($list_id = null)
 		template_create_list_menu($cur_list['list_menu'], 'bottom');
 
 	if (isset($cur_list['javascript']))
-		add_js('
-	' . $cur_list['javascript']);
+		echo '
+	<script><!-- // --><![CDATA[
+		', $cur_list['javascript'], '
+	// ]]></script>';
 }
 
 function template_additional_rows($row_position, $cur_list)
