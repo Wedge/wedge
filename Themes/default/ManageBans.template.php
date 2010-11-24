@@ -226,40 +226,39 @@ function template_ban_edit()
 
 	echo '
 	</div>
-	<br class="clear" />
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var fUpdateStatus = function ()
-		{
-			document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
-			document.getElementById("cannot_post").disabled = document.getElementById("full_ban").checked;
-			document.getElementById("cannot_register").disabled = document.getElementById("full_ban").checked;
-			document.getElementById("cannot_login").disabled = document.getElementById("full_ban").checked;
-		}
-		addLoadEvent(fUpdateStatus);';
+	<br class="clear" />';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js('
+	var fUpdateStatus = function ()
+	{
+		document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
+		document.getElementById("cannot_post").disabled = document.getElementById("full_ban").checked;
+		document.getElementById("cannot_register").disabled = document.getElementById("full_ban").checked;
+		document.getElementById("cannot_login").disabled = document.getElementById("full_ban").checked;
+	}
+	fUpdateStatus();');
 
 	// Auto suggest only needed for adding new bans, not editing
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
-		echo '
-			var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAddMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'user\',
-			sControlId: \'user\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
+		add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'' . $context['session_id'] . '\',
+		sSessionVar: \'' . $context['session_var'] . '\',
+		sSuggestId: \'username\',
+		sControlId: \'user\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
+		bItemList: false
+	});
 
-		function onUpdateName(oAutoSuggest)
-		{
-			document.getElementById(\'user_check\').checked = true;
-			return true;
-		}
-		oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');';
-
-	echo '// ]]></script>';
+	function onUpdateName(oAutoSuggest)
+	{
+		document.getElementById(\'user_check\').checked = true;
+		return true;
+	}
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
 }
 
 function template_ban_edit_trigger()
@@ -324,27 +323,27 @@ function template_ban_edit_trigger()
 			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAddMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'username\',
-			sControlId: \'user\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
+	<br class="clear" />';
 
-		function onUpdateName(oAutoSuggest)
-		{
-			selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
-			return true;
-		}
-		oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');
-	// ]]></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'' . $context['session_id'] . '\',
+		sSessionVar: \'' . $context['session_var'] . '\',
+		sSuggestId: \'username\',
+		sControlId: \'user\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
+		bItemList: false
+	});
+
+	function onUpdateName(oAutoSuggest)
+	{
+		selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
+		return true;
+	}
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
 }
 
 ?>

@@ -129,57 +129,57 @@ function template_maintain_members()
 				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
 			</div>';
 
-	echo '
-	<script><!-- // --><![CDATA[
-		var warningMessage = \'\';
-		var membersSwap = false;
+	add_js('
+	var warningMessage = \'\';
+	var membersSwap = false;
 
-		function swapMembers()
+	function swapMembers()
+	{
+		membersSwap = !membersSwap;
+		var membersForm = document.getElementById(\'membersForm\');
+
+		document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif");
+		document.getElementById("membersText").innerHTML = membersSwap ? "' . $txt['maintain_members_choose'] . '" : "' . $txt['maintain_members_all'] . '";
+		document.getElementById("membersPanel").style.display = (membersSwap ? "block" : "none");
+
+		for (var i = 0; i < membersForm.length; i++)
 		{
-			membersSwap = !membersSwap;
-			var membersForm = document.getElementById(\'membersForm\');
-
-			document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif");
-			document.getElementById("membersText").innerHTML = membersSwap ? "', $txt['maintain_members_choose'], '" : "', $txt['maintain_members_all'], '";
-			document.getElementById("membersPanel").style.display = (membersSwap ? "block" : "none");
-
-			for (var i = 0; i < membersForm.length; i++)
-			{
-				if (membersForm.elements[i].type.toLowerCase() == "checkbox")
-					membersForm.elements[i].checked = !membersSwap;
-			}
+			if (membersForm.elements[i].type.toLowerCase() == "checkbox")
+				membersForm.elements[i].checked = !membersSwap;
 		}
+	}
 
-		function checkAttributeValidity()
+	function checkAttributeValidity()
+	{
+		origText = ' . JavaScriptEscape($txt['reattribute_confirm']) . ';
+		valid = true;
+
+		// Do all the fields!
+		if (!document.getElementById(\'to\').value)
+			valid = false;
+		warningMessage = origText.replace(/%member_to%/, document.getElementById(\'to\').value);
+
+		if (document.getElementById(\'type_email\').checked)
 		{
-			origText = ', JavaScriptEscape($txt['reattribute_confirm']), ';
-			valid = true;
-
-			// Do all the fields!
-			if (!document.getElementById(\'to\').value)
+			if (!document.getElementById(\'from_email\').value)
 				valid = false;
-			warningMessage = origText.replace(/%member_to%/, document.getElementById(\'to\').value);
-
-			if (document.getElementById(\'type_email\').checked)
-			{
-				if (!document.getElementById(\'from_email\').value)
-					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, document.getElementById(\'from_email\').value);
-			}
-			else
-			{
-				if (!document.getElementById(\'from_name\').value)
-					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, document.getElementById(\'from_name\').value);
-			}
-
-			document.getElementById(\'do_attribute\').disabled = valid ? \'\' : \'disabled\';
-
-			setTimeout("checkAttributeValidity();", 500);
-			return valid;
+			warningMessage = warningMessage.replace(/%type%/, ' . JavaScriptEscape($txt['reattribute_confirm_email']) . ').replace(/%find%/, document.getElementById(\'from_email\').value);
 		}
+		else
+		{
+			if (!document.getElementById(\'from_name\').value)
+				valid = false;
+			warningMessage = warningMessage.replace(/%type%/, ' . JavaScriptEscape($txt['reattribute_confirm_username']) . ').replace(/%find%/, document.getElementById(\'from_name\').value);
+		}
+
+		document.getElementById(\'do_attribute\').disabled = valid ? \'\' : \'disabled\';
+
 		setTimeout("checkAttributeValidity();", 500);
-	// ]]></script>
+		return valid;
+	}
+	setTimeout("checkAttributeValidity();", 500);');
+
+	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
 			<h3>', $txt['maintain_reattribute_posts'], '</h3>
@@ -245,21 +245,20 @@ function template_maintain_members()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />
+	<br class="clear" />';
 
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAttributeMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAttributeMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'attributeMember\',
-			sControlId: \'to\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
-	// ]]></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js('
+	var oAttributeMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAttributeMemberSuggest\',
+		sSessionId: \'' . $context['session_id'] . '\',
+		sSessionVar: \'' . $context['session_var'] . '\',
+		sSuggestId: \'attributeMember\',
+		sControlId: \'to\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
+		bItemList: false
+	});');
 }
 
 // Template for the topic maintenance tasks.
@@ -275,30 +274,28 @@ function template_maintain_topics()
 			</div>';
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
-	echo '
-		<script><!-- // --><![CDATA[
-			var rotSwap = false;
-			function swapRot()
-			{
-				rotSwap = !rotSwap;
+	add_js('
+	var rotSwap = false;
+	function swapRot()
+	{
+		rotSwap = !rotSwap;
 
-				// Toggle icon
-				document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
-				document.getElementById("rotText").innerHTML = rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ';
+		// Toggle icon
+		document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
+		document.getElementById("rotText").innerHTML = rotSwap ? ' . JavaScriptEscape($txt['maintain_old_choose']) . ' : ' . JavaScriptEscape($txt['maintain_old_all']) . ';
 
-				// Toggle panel
-				document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";
+		// Toggle panel
+		document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";
 
-				// Toggle checkboxes
-				var rotPanel = document.getElementById(\'rotPanel\');
-				var oBoardCheckBoxes = rotPanel.getElementsByTagName(\'input\');
-				for (var i = 0; i < oBoardCheckBoxes.length; i++)
-				{
-					if (oBoardCheckBoxes[i].type.toLowerCase() == "checkbox")
-						oBoardCheckBoxes[i].checked = !rotSwap;
-				}
-			}
-		// ]]></script>';
+		// Toggle checkboxes
+		var rotPanel = document.getElementById(\'rotPanel\');
+		var oBoardCheckBoxes = rotPanel.getElementsByTagName(\'input\');
+		for (var i = 0; i < oBoardCheckBoxes.length; i++)
+		{
+			if (oBoardCheckBoxes[i].type.toLowerCase() == "checkbox")
+				oBoardCheckBoxes[i].checked = !rotSwap;
+		}
+	}');
 
 	echo '
 	<div id="manage_maintenance">

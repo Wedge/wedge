@@ -67,24 +67,24 @@ function template_announcement_send()
 			</div>
 		</form>
 	</div>
-	<br />
-		<script><!-- // --><![CDATA[
-			var countdown = 2;
-			doAutoSubmit();
+	<br />';
 
-			function doAutoSubmit()
-			{
-				if (countdown == 0)
-					document.forms.autoSubmit.submit();
-				else if (countdown == -1)
-					return;
+	add_js('
+	var countdown = 2;
+	doAutoSubmit();
 
-				document.forms.autoSubmit.b.value = "', $txt['announce_continue'], ' (" + countdown + ")";
-				countdown--;
+	function doAutoSubmit()
+	{
+		if (countdown == 0)
+			document.forms.autoSubmit.submit();
+		else if (countdown == -1)
+			return;
 
-				setTimeout("doAutoSubmit();", 1000);
-			}
-		// ]]></script>';
+		document.forms.autoSubmit.b.value = "' . $txt['announce_continue'] . ' (" + countdown + ")";
+		countdown--;
+
+		setTimeout("doAutoSubmit();", 1000);
+	}');
 }
 
 ?>

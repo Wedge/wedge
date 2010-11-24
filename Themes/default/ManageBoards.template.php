@@ -523,64 +523,59 @@ function template_modify_board()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />
+	<br class="clear" />';
 
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oModeratorSuggest = new smc_AutoSuggest({
-			sSelf: \'oModeratorSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'moderators\',
-			sControlId: \'moderators\',
-			sSearchType: \'member\',
-			bItemList: true,
-			sPostName: \'moderator_list\',
-			sURLMask: \'action=profile;u=%item_id%\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			sItemListContainerId: \'moderator_container\',
-			aListItems: [';
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js('
+	var oModeratorSuggest = new smc_AutoSuggest({
+		sSelf: \'oModeratorSuggest\',
+		sSessionId: \'' . $context['session_id'] . '\',
+		sSessionVar: \'' . $context['session_var'] . '\',
+		sSuggestId: \'moderators\',
+		sControlId: \'moderators\',
+		sSearchType: \'member\',
+		bItemList: true,
+		sPostName: \'moderator_list\',
+		sURLMask: \'action=profile;u=%item_id%\',
+		sTextDeleteItem: ' . JavaScriptEscape($txt['autosuggest_delete_item']) . ',
+		sItemListContainerId: \'moderator_container\',
+		aListItems: [');
 
 	foreach ($context['board']['moderators'] as $id_member => $member_name)
-		echo '
-				{
-					sItemId: ', JavaScriptEscape($id_member), ',
-					sItemName: ', JavaScriptEscape($member_name), '
-				}', $id_member == $context['board']['last_moderator_id'] ? '' : ',';
+		add_js('
+			{
+				sItemId: ' . JavaScriptEscape($id_member) . ',
+				sItemName: ' . JavaScriptEscape($member_name) . '
+			}' . ($id_member == $context['board']['last_moderator_id'] ? '' : ','));
 
-	echo '
-			]
-		});
-	// ]]></script>';
+	add_js('
+		]
+	});
 
-	// Javascript for deciding what to show.
-	echo '
-	<script><!-- // --><![CDATA[
-		function refreshOptions()
-		{
-			var redirect = document.getElementById("redirect_enable");
-			var redirectEnabled = redirect ? redirect.checked : false;
-			var nonDefaultTheme = document.getElementById("boardtheme").value == 0 ? false : true;
+	function refreshOptions()
+	{
+		var redirect = document.getElementById("redirect_enable");
+		var redirectEnabled = redirect ? redirect.checked : false;
+		var nonDefaultTheme = document.getElementById("boardtheme").value == 0 ? false : true;
 
-			// What to show?
-			document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
-			document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
-			document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";';
+		// What to show?
+		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
+		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
+		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";');
 
 	if (!$context['board']['topics'] && empty($context['board']['is_recycle']))
 	{
-		echo '
-			document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";';
+		add_js('
+		document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";');
 
 		if ($context['board']['redirect'])
-			echo '
-			document.getElementById("reset_redirect_div").style.display = redirectEnabled ? "" : "none";';
+			add_js('
+		document.getElementById("reset_redirect_div").style.display = redirectEnabled ? "" : "none";');
 	}
 
-	echo '
-		}
-		refreshOptions();
-	// ]]></script>';
+	add_js('
+	}
+	refreshOptions();');
 }
 
 function wedge_show_stylings(&$theme, &$style, $level)

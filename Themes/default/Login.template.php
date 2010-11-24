@@ -6,9 +6,9 @@ function template_login()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	echo '
-		<script src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
+	add_js_file($settings['default_theme_url'] . '/scripts/sha1.js');
 
+	echo '
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
 			<div class="cat_bar">
@@ -65,10 +65,8 @@ function template_login()
 		</div></form>';
 
 	// Focus on the correct input - username or password.
-	echo '
-		<script><!-- // --><![CDATA[
-			document.forms.frmLogin.', isset($context['default_username']) && $context['default_username'] != '' ? 'passwrd' : 'user', '.focus();
-		// ]]></script>';
+	add_js('
+	document.forms.frmLogin.', isset($context['default_username']) && $context['default_username'] != '' ? 'passwrd' : 'user', '.focus();');
 }
 
 // Tell a guest to get lost or login!
@@ -77,8 +75,9 @@ function template_kick_guest()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
+	add_js_file($settings['default_theme_url'] . '/scripts/sha1.js');
+
 	echo '
-	<script src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
 			<div class="cat_bar">
@@ -131,10 +130,8 @@ function template_kick_guest()
 	</form>';
 
 	// Do the focus thing...
-	echo '
-		<script><!-- // --><![CDATA[
-			document.forms.frmLogin.user.focus();
-		// ]]></script>';
+	add_js('
+	document.forms.frmLogin.user.focus();');
 }
 
 // This is for maintenance mode.
@@ -143,8 +140,9 @@ function template_maintenance()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Display the administrator's message at the top.
+	add_js_file($settings['default_theme_url'] . '/scripts/sha1.js');
+
 	echo '
-<script src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="tborder login" id="maintenance_mode">
 		<div class="cat_bar">
@@ -181,9 +179,9 @@ function template_admin_login()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
-	echo '
-<script src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
+	add_js_file($settings['default_theme_url'] . '/scripts/sha1.js');
 
+	echo '
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
 	<div class="tborder login" id="admin_login">
 		<div class="cat_bar">
@@ -211,10 +209,8 @@ function template_admin_login()
 </form>';
 
 	// Focus on the password box.
-	echo '
-<script><!-- // --><![CDATA[
-	document.forms.frmLogin.admin_pass.focus();
-// ]]></script>';
+	add_js('
+	document.forms.frmLogin.admin_pass.focus();');
 }
 
 // Activate your account manually?
