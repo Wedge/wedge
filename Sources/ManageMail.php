@@ -339,12 +339,13 @@ function ModifyMailSettings($return_config = false)
 	foreach ($birthdayEmails as $index => $email)
 	{
 		$is_last = ++$i == count($birthdayEmails);
-		$context['footer_js'] .= '
-		' . $index . ': {
-			subject: ' . JavaScriptEscape($email['subject']) . ',
-			body: ' . JavaScriptEscape($email['body']) . '
-		}' . (!$is_last ? ',' : '');
+		add_js('
+		', $index, ': {
+			subject: ', JavaScriptEscape($email['subject']), ',
+			body: ', JavaScriptEscape($email['body']), '
+		}', !$is_last ? ',' : '');
 	}
+
 	add_js('
 	};
 	function fetch_birthday_preview()

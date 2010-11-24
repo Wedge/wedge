@@ -665,17 +665,21 @@ function add_js()
 {
 	global $context, $footer_coding;
 
-	$code = implode("\n", func_get_args());
-	if ($code[0] !== "\n" && $code[0] !== "\r")
-		$code = "\n" . $code;
-
 	if (empty($footer_coding))
 	{
 		$context['footer_js'] .= '
 <script><!-- // --><[!CDATA[';
 		$footer_coding = true;
 	}
-	$context['footer_js'] .= $code;
+	$context['footer_js'] .= implode('', func_get_args());
+}
+
+// Same as earlier, but can be shown BEFORE all scripts are loaded, because
+// the code doesn't seem to rely on script.js or other files.
+// !!! Right now this is just a placeholder. If we include jQuery, it will be worth it.
+function add_js_inline()
+{
+	add_js(implode('', func_get_args()));
 }
 
 // Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.
