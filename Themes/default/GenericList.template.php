@@ -68,7 +68,7 @@ function template_show_list($list_id = null)
 	}
 
 	echo '
-			<table class="table_grid cs0" style="width: ', !empty($cur_list['width']) ? $cur_list['width'] . 'px' : '100%', '">';
+			<table class="table_grid cs0" style="width: ', !empty($cur_list['width']) && $cur_list['width'] != '100%' ? $cur_list['width'] . 'px' : '100%', '">';
 
 	// Show the column headers.
 	$header_count = count($cur_list['headers']);
@@ -183,10 +183,7 @@ function template_show_list($list_id = null)
 		template_create_list_menu($cur_list['list_menu'], 'bottom');
 
 	if (isset($cur_list['javascript']))
-		echo '
-	<script><!-- // --><![CDATA[
-		', $cur_list['javascript'], '
-	// ]]></script>';
+		add_js($cur_list['javascript']);
 }
 
 function template_additional_rows($row_position, $cur_list)
@@ -195,7 +192,8 @@ function template_additional_rows($row_position, $cur_list)
 
 	foreach ($cur_list['additional_rows'][$row_position] as $row)
 		echo '
-			<div class="additional_row', empty($row['class']) ? '' : ' ' . $row['class'], '"', empty($row['style']) ? '' : ' style="' . $row['style'] . '"', '>', $row['value'], '</div>';
+		<div class="additional_row', empty($row['class']) ? '' : ' ' . $row['class'], '"', empty($row['style']) ? '' : ' style="' . $row['style'] . '"', '>', $row['value'], '
+		</div>';
 }
 
 function template_create_list_menu($list_menu, $direction = 'top')

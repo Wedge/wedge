@@ -199,3 +199,9 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 table.table_grid, table.cs0, table.cs1 {
 	border-collapse: collapse;
 }
+.bbc_divider, .bbc_button, .bbc_button div {
+	display: inline;
+}
+.bbc_button {
+	margin: 0 2px;
+}

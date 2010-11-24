@@ -779,8 +779,6 @@ function setupProfileContext($fields)
 	// Some default bits.
 	$context['profile_prehtml'] = '';
 	$context['profile_posthtml'] = '';
-	$context['profile_javascript'] = '';
-	$context['profile_onsubmit_javascript'] = '';
 
 	$i = 0;
 	$last_type = '';
@@ -814,12 +812,6 @@ function setupProfileContext($fields)
 			// Was there an error with this field on posting?
 			if (isset($context['profile_errors'][$field]))
 				$cur_field['is_error'] = true;
-
-			// Any javascript stuff?
-			if (!empty($cur_field['js_submit']))
-				$context['profile_onsubmit_javascript'] .= $cur_field['js_submit'];
-			if (!empty($cur_field['js']))
-				$context['profile_javascript'] .= $cur_field['js'];
 
 			// Any template stuff?
 			if (!empty($cur_field['prehtml']))

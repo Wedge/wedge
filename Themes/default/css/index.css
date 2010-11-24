@@ -289,6 +289,10 @@ textarea {
 	border: 1px solid #aaa;
 	cursor: pointer;
 	font-weight: normal;
+	padding: 4px 5px;
+	border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
 }
 input:hover, textarea:hover, button:hover, select:hover {
 	border: 1px solid #454545;
@@ -1253,26 +1257,35 @@ img.middle, td.middle, th.middle, tr.middle td, tr.middle th {
 img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th {
 	vertical-align: bottom;
 }
-table.left th, tr.left th, th.left,
-table.left td, tr.left td, td.left {
+table.left th, table tr.left th, table tr th.left,
+table.left td, table tr.left td, table tr td.left {
 	text-align: left;
 }
-table.right th, tr.right th, th.right,
-table.right td, tr.right td, td.right {
+table.right th, table tr.right th, table tr th.right,
+table.right td, table tr.right td, table tr td.right {
 	text-align: right;
 }
-table.center th, tr.center th, th.center,
-table.center td, tr.center td, td.center {
-	text-align: center:
+table.center th, table tr.center th, table tr th.center,
+table.center td, table tr.center td, table tr td.center {
+	text-align: center;
+}
+table tr th.left, table tr td.left {
+	text-align: left;
+}
+table tr th.right, table tr td.right {
+	text-align: right;
+}
+table tr th.center, table tr td.center {
+	text-align: center;
 }
 table.cs0, table.cs1, table.cs3 {
 	border-collapse: separate;
 	border-spacing: 0;
 }
-table.cs1 td {
+table.cs1 {
 	border-spacing: 1px;
 }
-table.cs3 td {
+table.cs3 {
 	border-spacing: 3px;
 }
 table.cp0 th, table.cp0 td {
@@ -2426,7 +2439,7 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 
 #fatal_error {
 	width: 80%;
-	margin: auto;
+	margin: 10px auto;
 }
 
 .errorbox {
@@ -2848,7 +2861,7 @@ dl.stats {
 	padding: 0;
 }
 dl.stats dt {
-	width: 49%;
+	width: 54%;
 	float: left;
 	margin: 0 0 4px;
 	line-height: 16px;
@@ -2858,7 +2871,7 @@ dl.stats dt {
 }
 dl.stats dd {
 	text-align: right;
-	width: 50%;
+	width: 45%;
 	font-size: 1em;
 	float: right;
 	margin: 0 0 4px;
@@ -3046,7 +3059,7 @@ span.hidelink {
 ------------------------------------------------- */
 #mlist_search {
 	margin: auto;
-	width: 500px;
+	width: 520px;
 }
 
 /* Styles for the basic search section.

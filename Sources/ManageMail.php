@@ -333,7 +333,7 @@ function ModifyMailSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 
 	add_js('
-	var bDay = {';
+	var bDay = {');
 
 	$i = 0;
 	foreach ($birthdayEmails as $index => $email)

@@ -1063,36 +1063,36 @@ function EditSmileys()
 				),
 			),
 			'javascript' => '
-				function makeChanges(action)
-				{
-					if (action == \'-1\')
-						return false;
-					else if (action == \'delete\')
-					{
-						if (confirm(' . JavaScriptEscape($txt['smileys_confirm']) . '))
-							document.forms.smileyForm.submit();
-					}
-					else
-						document.forms.smileyForm.submit();
-					return true;
-				}
-				function changeSet(newSet)
-				{
-					var currentImage, i, knownSmileys = [];
+	function makeChanges(action)
+	{
+		if (action == \'-1\')
+			return false;
+		else if (action == \'delete\')
+		{
+			if (confirm(' . JavaScriptEscape($txt['smileys_confirm']) . '))
+				document.forms.smileyForm.submit();
+		}
+		else
+			document.forms.smileyForm.submit();
+		return true;
+	}
+	function changeSet(newSet)
+	{
+		var currentImage, i, knownSmileys = [];
 
-					if (knownSmileys.length == 0)
-					{
-						for (var i = 0, n = document.images.length; i < n; i++)
-							if (document.images[i].id.substr(0, 6) == \'smiley\')
-								knownSmileys[knownSmileys.length] = document.images[i].id.substr(6);
-					}
+		if (knownSmileys.length == 0)
+		{
+			for (var i = 0, n = document.images.length; i < n; i++)
+				if (document.images[i].id.substr(0, 6) == \'smiley\')
+					knownSmileys[knownSmileys.length] = document.images[i].id.substr(6);
+		}
 
-					for (i = 0; i < knownSmileys.length; i++)
-					{
-						currentImage = document.getElementById("smiley" + knownSmileys[i]);
-						currentImage.src = "' . $modSettings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value;
-					}
-				}',
+		for (i = 0; i < knownSmileys.length; i++)
+		{
+			currentImage = document.getElementById("smiley" + knownSmileys[i]);
+			currentImage.src = "' . $modSettings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value;
+		}
+	}',
 		);
 
 		require_once($sourcedir . '/Subs-List.php');

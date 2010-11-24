@@ -1030,20 +1030,19 @@ function ModifyLanguages()
 		),
 		// For highlighting the default.
 		'javascript' => '
-					var prevClass = "";
-					var prevDiv = "";
-					function highlightSelected(box)
-					{
-						if (prevClass != "")
-							prevDiv.className = prevClass;
+	var prevClass = "";
+	var prevDiv = "";
+	function highlightSelected(box)
+	{
+		if (prevClass != "")
+			prevDiv.className = prevClass;
 
-						prevDiv = document.getElementById(box);
-						prevClass = prevDiv.className;
+		prevDiv = document.getElementById(box);
+		prevClass = prevDiv.className;
 
-						prevDiv.className = "highlight2";
-					}
-					highlightSelected("list_language_list_' . ($language == '' ? 'english' : $language). '");
-		',
+		prevDiv.className = "highlight2";
+	}
+	highlightSelected("list_language_list_' . ($language == '' ? 'english' : $language). '");',
 	);
 
 	// Display a warning if we cannot edit the default setting.

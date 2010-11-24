@@ -715,7 +715,9 @@ function template_show_settings()
 	// Have we got some custom code to insert?
 	if (!empty($context['settings_message']))
 		echo '
-			<div class="information">', $context['settings_message'], '</div>';
+			<div class="information">
+				', $context['settings_message'], '
+			</div>';
 
 	// Now actually loop through all the variables.
 	$is_open = false;
@@ -729,14 +731,14 @@ function template_show_settings()
 			{
 				$is_open = false;
 				echo '
-					</dl>
-				</div>
+				</dl>
 			</div>';
 			}
 
 			// A title?
 			if ($config_var['type'] == 'title')
 				echo '
+
 			<div class="cat_bar settings_cat">
 				<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
 					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
@@ -796,11 +798,11 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 				else
 					echo '
-						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '><label for="', $config_var['name'], '">', $config_var['label'], '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 
 				echo '
@@ -864,7 +866,7 @@ function template_show_settings()
 						<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
 
 				echo !empty($config_var['postinput']) ? '
-							' . $config_var['postinput'] : '', '
+						' . $config_var['postinput'] : '', '
 					</dd>';
 			}
 		}
@@ -914,13 +916,11 @@ function template_show_custom_profile()
 	// Standard fields.
 	template_show_list('standard_profile_fields');
 
-	echo '
-	<script><!-- // --><![CDATA[
-		var iNumChecks = document.forms.standardProfileFields.length;
-		for (var i = 0; i < iNumChecks; i++)
-			if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
-				document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;
-	// ]]></script><br />';
+	add_js_inline('
+	var iNumChecks = document.forms.standardProfileFields.length;
+	for (var i = 0; i < iNumChecks; i++)
+		if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
+			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;');
 
 	// Custom fields.
 	template_show_list('custom_profile_fields');
@@ -953,6 +953,7 @@ function template_edit_profile_field()
 		document.getElementById("can_search_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
 		document.getElementById("regex_div").style.display = curType == "text" && document.getElementById("mask").value == "regex" ? "" : "none";
 		document.getElementById("display").disabled = false;
+
 		// Cannot show this on the topic
 		if (curType == "textarea" || privStatus >= 2)
 		{
@@ -966,7 +967,9 @@ function template_edit_profile_field()
 	{
 		setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
 		startOptID++;
-	}');
+	}
+
+	updateInputBoxes();');
 
 	echo '
 	<div id="admincenter">
@@ -1164,12 +1167,6 @@ function template_edit_profile_field()
 		</form>
 	</div>
 	<br class="clear" />';
-
-	// Get the javascript bits right!
-	echo '
-	<script><!-- // --><![CDATA[
-		updateInputBoxes();
-	// ]]></script>';
 }
 
 // Results page for an admin search.
@@ -1248,23 +1245,26 @@ function template_core_features()
 {
 	global $context, $txt, $settings, $options, $scripturl;
 
+	$switch_off = JavaScriptEscape($txt['core_settings_switch_off']);
+	$switch_on = JavaScriptEscape($txt['core_settings_switch_on']);
+
+	add_js('
+	function toggleItem(itemID)
+	{
+		// Toggle the hidden item.
+		var itemValueHandle = document.getElementById("feature_" + itemID);
+		itemValueHandle.value = itemValueHandle.value == 1 ? 0 : 1;
+
+		// Change the image, alternative text and the title.
+		document.getElementById("switch_" + itemID).src = \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.value == 1 ? \'on\' : \'off\') + \'.png\';
+		document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
+		document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
+
+		// Don\'t reload.
+		return false;
+	}');
+
 	echo '
-	<script><!-- // --><![CDATA[
-		function toggleItem(itemID)
-		{
-			// Toggle the hidden item.
-			var itemValueHandle = document.getElementById("feature_" + itemID);
-			itemValueHandle.value = itemValueHandle.value == 1 ? 0 : 1;
-
-			// Change the image, alternative text and the title.
-			document.getElementById("switch_" + itemID).src = \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.value == 1 ? \'on\' : \'off\') + \'.png\';
-			document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? \'', $txt['core_settings_switch_off'], '\' : \'', $txt['core_settings_switch_on'], '\';
-			document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? \'', $txt['core_settings_switch_off'], '\' : \'', $txt['core_settings_switch_on'], '\';
-
-			// Don\'t reload.
-			return false;
-		}
-	// ]]></script>
 	<div id="admincenter">';
 	if ($context['is_new_install'])
 	{
@@ -1323,15 +1323,13 @@ function template_core_features()
 	<br class="clear" />';
 
 	// Turn on the pretty javascript if we can!
-	echo '
-	<script><!-- // --><![CDATA[
-		document.getElementById(\'js_worked\').value = "1";';
-		foreach ($context['features'] as $id => $feature)
-			echo '
-		document.getElementById(\'js_feature_', $id, '\').style.display = "";
-		document.getElementById(\'plain_feature_', $id, '\').style.display = "none";';
-	echo '
-	// ]]></script>';
+	add_js('
+	document.getElementById(\'js_worked\').value = "1";');
+
+	foreach ($context['features'] as $id => $feature)
+		add_js('
+	document.getElementById(\'js_feature_', $id, '\').style.display = "";
+	document.getElementById(\'plain_feature_', $id, '\').style.display = "none";');
 }
 
 // Add a new language
@@ -1579,39 +1577,36 @@ function template_download_language()
 	</div>
 	<br class="clear" />';
 
-	// The javascript for expand and collapse of sections.
-	echo '
-	<script><!-- // --><![CDATA[';
-
+	// The javascript for expanding and collapsing sections.
 	// Each theme gets its own handler.
 	foreach ($context['files']['images'] as $theme => $group)
 	{
 		$count = 0;
-		echo '
-			var oTogglePanel_', $theme, ' = new smc_Toggle({
-				bToggleEnabled: true,
-				bCurrentlyCollapsed: true,
-				aSwappableContainers: [';
-		foreach ($group as $file)
-			echo '
-					', JavaScriptEscape($theme . '-' . $count++), ',';
-		echo '
-					null
-				],
-				aSwapImages: [
-					{
-						sId: \'toggle_image_', $theme, '\',
-						srcExpanded: smf_images_url + \'/sort_down.gif\',
-						altExpanded: \'*\',
-						srcCollapsed: smf_images_url + \'/selected.gif\',
-						altCollapsed: \'*\'
-					}
-				]
-			});';
-	}
 
-	echo '
-	// ]]></script>';
+		add_js('
+	var oTogglePanel_', $theme, ' = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: true,
+		aSwappableContainers: [');
+
+		foreach ($group as $file)
+			add_js('
+			', JavaScriptEscape($theme . '-' . $count++), ',');
+
+		add_js('
+			null
+		],
+		aSwapImages: [
+			{
+				sId: \'toggle_image_', $theme, '\',
+				srcExpanded: smf_images_url + \'/sort_down.gif\',
+				altExpanded: \'*\',
+				srcCollapsed: smf_images_url + \'/selected.gif\',
+				altCollapsed: \'*\'
+			}
+		]
+	});');
+	}
 }
 
 // Edit some language entries?
@@ -1949,26 +1944,22 @@ function template_repair_boards()
 	<br class="clear" />';
 
 	if (!empty($context['redirect_to_recount']))
+		add_js_inline('
+	var countdown = 5;
+	doAutoSubmit();
+
+	function doAutoSubmit()
 	{
-		echo '
-	<script><!-- // --><![CDATA[
-		var countdown = 5;
-		doAutoSubmit();
+		if (countdown == 0)
+			document.forms.recount_form.submit();
+		else if (countdown == -1)
+			return;
 
-		function doAutoSubmit()
-		{
-			if (countdown == 0)
-				document.forms.recount_form.submit();
-			else if (countdown == -1)
-				return;
+		document.forms.recount_form.recount_now.value = "', $txt['errors_recount_now'], ' (" + countdown + ")";
+		countdown--;
 
-			document.forms.recount_form.recount_now.value = "', $txt['errors_recount_now'], ' (" + countdown + ")";
-			countdown--;
-
-			setTimeout("doAutoSubmit();", 1000);
-		}
-	// ]]></script>';
-	}
+		setTimeout("doAutoSubmit();", 1000);
+	}');
 }
 
 // Pretty URLs

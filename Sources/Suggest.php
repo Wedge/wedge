@@ -29,6 +29,11 @@ function Suggest($checkRegistered = null)
 {
 	global $context;
 
+	// These are all registered types.
+	$searchTypes = array(
+		'member' => 'Member',
+	);
+
 	// If we're just checking the callback function is registered return true or false.
 	if ($checkRegistered != null)
 		return function_exists('Suggest_Search_' . $checkRegistered);

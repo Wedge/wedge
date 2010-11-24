@@ -271,9 +271,8 @@ function ScheduledTasks()
 			),
 			array(
 				'position' => 'after_title',
-				'value' => '
-					<span class="smalltext">' . $txt['scheduled_tasks_time_offset'] . '</span>',
-				'class' => 'windowbg2',
+				'value' => $txt['scheduled_tasks_time_offset'],
+				'class' => 'smalltext',
 			),
 		),
 	);

@@ -9,6 +9,7 @@
  */
 
 /* Set a fontsize that will look the same in all browsers. */
+
 body {
 	background: #444;
 	color: #ccc;
@@ -23,7 +24,9 @@ body {
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
 }
+
 /* We're redefining all sections to use full width, and then we set a padding on them. */
+
 #header, #navi, #menu_container, #footer {
 	background: #444;
 	color: #ccc;
@@ -45,10 +48,12 @@ body {
 #header h2 {
 	color: #ccc;
 }
+
 /* The menu is inside another div that had padding applied to it, so we use
    a negative margin to make it cancel the padding and use the full width.
    Without that, the background would be cut off on the sides.
    We don't need to set a padding again since it's already set above. */
+
 #menu_container {
 	border: 3px solid #fd9604;
 	border-width: 0 0 3px 0;
@@ -78,12 +83,15 @@ body {
 #content {
 	background: #f6fff8;
 }
+
 /* Text color for the forum title in the header */
+
 #header h1.forumtitle a {
 	color: #fff;
 }
 
 /* Specific colors for the main menu, because it's on a dark background... */
+
 #main_menu li.chosen h4 {
 	margin-bottom: 0;
 	padding-bottom: 5px;
@@ -121,6 +129,7 @@ code.bbc_code {
 ------------------------------------------------------- */
 
 /* Alternating backgrounds for posts, and several other sections of the forum. */
+
 .windowbg, #preview_body {
 	background: #f3f3f3 url(../../images/theme/grad700.png) 0 -550px repeat-x;
 }
@@ -132,6 +141,7 @@ code.bbc_code {
 }
 
 /* Colors for background of posts requiring approval */
+
 .approvebg {
 	background-color: #ffeaea;
 }
@@ -140,6 +150,7 @@ code.bbc_code {
 }
 
 /* Color for background of *topics* requiring approval */
+
 .approvetbg {
 	background-color: #e4a17c;
 }
@@ -148,6 +159,7 @@ code.bbc_code {
 }
 
 /* Sticky topics get a different background */
+
 .stickybg {
 	background: #e8d8cf;
 }
@@ -156,6 +168,7 @@ code.bbc_code {
 }
 
 /* Locked posts get a different shade, too! */
+
 .lockedbg {
 	background: #d4dce2;
 }

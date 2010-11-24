@@ -191,48 +191,47 @@ function template_boardindex_newsfader()
 				echo '
 			<li>', $news, '</li>';
 
-	echo '
+		echo '
 		</ul>
-	</div>
-	<script src="', $settings['default_theme_url'], '/scripts/fader.js"></script>
-	<script><!-- // --><![CDATA[
+	</div>';
 
-		// Create a news fader object.
-		var oNewsFader = new smf_NewsFader({
-			sSelf: \'oNewsFader\',
-			sFaderControlId: \'smfFadeScroller\',
-			sItemTemplate: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
-			iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
-		});
+		add_js_file($settings['default_theme_url'] . '/scripts/fader.js');
 
-		// Create the news fader toggle.
-		var smfNewsFadeToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
-			aSwappableContainers: [
-				\'smfFadeScroller\'
-			],
-			aSwapImages: [
-				{
-					sId: \'newsupshrink\',
-					srcExpanded: smf_images_url + \'/collapse.gif\',
-					altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-					srcCollapsed: smf_images_url + \'/expand.gif\',
-					altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-				sOptionName: \'collapse_news_fader\',
-				sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-				sSessionId: ', JavaScriptEscape($context['session_id']), '
-			},
-			oCookieOptions: {
-				bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-				sCookieName: \'newsupshrink\'
+		// Create a news fader object and toggle.
+		add_js('
+	var oNewsFader = new smf_NewsFader({
+		sSelf: \'oNewsFader\',
+		sFaderControlId: \'smfFadeScroller\',
+		sItemTemplate: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
+		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
+	});
+
+	var smfNewsFadeToggle = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
+		aSwappableContainers: [
+			\'smfFadeScroller\'
+		],
+		aSwapImages: [
+			{
+				sId: \'newsupshrink\',
+				srcExpanded: smf_images_url + \'/collapse.gif\',
+				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
+				srcCollapsed: smf_images_url + \'/expand.gif\',
+				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
 			}
-		});
-	// ]]></script>';
+		],
+		oThemeOptions: {
+			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
+			sOptionName: \'collapse_news_fader\',
+			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
+			sSessionId: ', JavaScriptEscape($context['session_id']), '
+		},
+		oCookieOptions: {
+			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
+			sCookieName: \'newsupshrink\'
+		}
+	});');
 	}
 }
 

@@ -57,3 +57,13 @@ hr
 	font-size: x-small;
 	text-align: center;
 }
+table.cs1 {
+	border-collapse: separate;
+	border-spacing: 1px;
+}
+table.cp4 th, table.cp4 td {
+	padding: 4px;
+}
+table.w100 {
+	width: 100%;
+}

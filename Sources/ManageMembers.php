@@ -787,35 +787,35 @@ function MembersAwaitingActivation()
 
 	// Setup the Javascript function for selecting an action for the list.
 	$javascript = '
-		function onSelectChange()
-		{
-			if (document.forms.postForm.todo.value == "")
-				return;
+	function onSelectChange()
+	{
+		if (document.forms.postForm.todo.value == "")
+			return;
 
-			var message = "";';
+		var message = "";';
 
 	// We have special messages for approving deletion of accounts - it's surprisingly logical - honest.
 	if ($context['current_filter'] == 4)
 		$javascript .= '
-			if (document.forms.postForm.todo.value.indexOf("reject") != -1)
-				message = "' . $txt['admin_browse_w_delete'] . '";
-			else
-				message = "' . $txt['admin_browse_w_reject'] . '";';
+		if (document.forms.postForm.todo.value.indexOf("reject") != -1)
+			message = "' . $txt['admin_browse_w_delete'] . '";
+		else
+			message = "' . $txt['admin_browse_w_reject'] . '";';
 	// Otherwise a nice standard message.
 	else
 		$javascript .= '
-			if (document.forms.postForm.todo.value.indexOf("delete") != -1)
-				message = "' . $txt['admin_browse_w_delete'] . '";
-			else if (document.forms.postForm.todo.value.indexOf("reject") != -1)
-				message = "' . $txt['admin_browse_w_reject'] . '";
-			else if (document.forms.postForm.todo.value == "remind")
-				message = "' . $txt['admin_browse_w_remind'] . '";
-			else
-				message = "' . ($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']) . '";';
+		if (document.forms.postForm.todo.value.indexOf("delete") != -1)
+			message = "' . $txt['admin_browse_w_delete'] . '";
+		else if (document.forms.postForm.todo.value.indexOf("reject") != -1)
+			message = "' . $txt['admin_browse_w_reject'] . '";
+		else if (document.forms.postForm.todo.value == "remind")
+			message = "' . $txt['admin_browse_w_remind'] . '";
+		else
+			message = "' . ($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']) . '";';
 	$javascript .= '
-			if (confirm(message + " ' . $txt['admin_browse_warn'] . '"))
-				document.forms.postForm.submit();
-		}';
+		if (confirm(message + " ' . $txt['admin_browse_warn'] . '"))
+			document.forms.postForm.submit();
+	}';
 
 	$listOptions = array(
 		'id' => 'approve_list',

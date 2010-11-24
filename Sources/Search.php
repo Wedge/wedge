@@ -1726,8 +1726,8 @@ function PlushSearch2()
 	$context['can_send_pm'] = allowedTo('pm_send');
 
 	$context['jump_to'] = array(
-		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => addslashes(un_htmlspecialchars($txt['select_destination'])),
+		'label' => JavaScriptEscape('<label class="smalltext" for="%select_id%">' . $txt['jump_to'] . ':</label> %dropdown_list%'),
+		'board_name' => JavaScriptEscape($txt['select_destination']),
 	);
 }
 
