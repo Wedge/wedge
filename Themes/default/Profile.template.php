@@ -6,15 +6,12 @@ function template_profile_above()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	echo '
-	<script src="', $settings['default_theme_url'], '/scripts/profile.js"></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/profile.js');
 
 	// Prevent Chrome from auto completing fields when viewing/editing other members profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
-		echo '
-	<script><!-- // --><![CDATA[
-		disableAutoComplete();
-	// ]]></script>';
+		add_js('
+	disableAutoComplete();');
 
 	// If an error occurred while trying to save previously, give the user a clue!
 	if (!empty($context['post_errors']))
@@ -210,13 +207,13 @@ function template_summary()
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
-				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;save;area=activateaccount;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
+				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;save;area=activateaccount;u=' . $context['id_member'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '"', ($context['activate_type'] == 4 ? ' data-onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
 
 		// If the current member is banned, show a message and possibly a link to the ban.
 		if (!empty($context['member']['bans']))
 		{
 			echo '
-				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\';return false;">' . $txt['view_ban'] . '</a>]</dt>
+				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" data-onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\';return false;">' . $txt['view_ban'] . '</a>]</dt>
 				<dt class="clear" id="ban_info" style="display: none;">
 					<strong>', $txt['user_banned_by_following'], ':</strong>';
 
@@ -360,7 +357,7 @@ function template_showPosts()
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])
 					echo '
-							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
+							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" data-onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
 
 				echo '
 						</ul>
@@ -525,20 +522,21 @@ function template_editBuddies()
 				<input type="submit" value="', $txt['buddy_add_button'], '" class="button_submit" />
 			</div>
 		</div>
-	</form>
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAddBuddySuggest = new smc_AutoSuggest({
-			sSelf: \'oAddBuddySuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'new_buddy\',
-			sControlId: \'new_buddy\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
-	// ]]></script>';
+	</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAddBuddySuggest = new smc_AutoSuggest({
+		sSelf: \'oAddBuddySuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'new_buddy\',
+		sControlId: \'new_buddy\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});');
 }
 
 // Template for showing the ignore list of the current user.
@@ -609,9 +607,10 @@ function template_editIgnoreList()
 				<input type="submit" value="', $txt['ignore_add_button'], '" class="button_submit" />
 			</div>
 		</div>
-	</form>
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
+	</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js('
 		var oAddIgnoreSuggest = new smc_AutoSuggest({
 			sSelf: \'oAddIgnoreSuggest\',
 			sSessionId: \'', $context['session_id'], '\',
@@ -622,7 +621,7 @@ function template_editIgnoreList()
 			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 			bItemList: false
 		});
-	// ]]></script>';
+	');
 }
 
 // This template shows an admin information on a users IP addresses used and errors attributed to them.
@@ -642,7 +641,7 @@ function template_trackActivity()
 				<dl class="noborder">
 					<dt>', $txt['most_recent_ip'], ':
 						', (empty($context['last_ip2']) ? '' : '<br />
-						<span class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</span>'), '
+						<span class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" data-onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</span>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['last_ip'], ';u=', $context['member']['id'], '">', $context['last_ip'], '</a>';
@@ -1274,36 +1273,35 @@ function template_edit_options()
 		</form>';
 
 	// Some javascript!
-	echo '
-		<script><!-- // --><![CDATA[
-			function checkProfileSubmit()
-			{';
+	add_js('
+	function checkProfileSubmit()
+	{');
 
 	// If this part requires a password, make sure to give a warning.
 	if ($context['require_password'])
-		echo '
-				// Did you forget to type your password?
-				if (document.forms.creator.oldpasswrd.value == "")
-				{
-					alert(', JavaScriptEscape($txt['required_security_reasons']), ');
-					return false;
-				}';
+		add_js('
+		// Did you forget to type your password?
+		if (document.forms.creator.oldpasswrd.value == "")
+		{
+			alert(' . JavaScriptEscape($txt['required_security_reasons']) . ');
+			return false;
+		}');
 
 	// Any onsubmit javascript?
 	if (!empty($context['profile_onsubmit_javascript']))
-		echo '
-				', $context['profile_javascript'];
+		add_js('
+		' . $context['profile_javascript']);
 
-	echo '
-			}';
+	add_js('
+	}');
 
 	// Any totally custom stuff?
 	if (!empty($context['profile_javascript']))
-		echo '
-			', $context['profile_javascript'];
+		add_js('
+	', $context['profile_javascript']);
 
-	echo '
-		// ]]></script>';
+	add_js('
+');
 
 	// Any final spellchecking stuff?
 	if (!empty($context['show_spellchecking']))
@@ -1650,7 +1648,7 @@ function template_groupMembership()
 				if ($context['can_edit_primary'])
 					echo '
 						<td style="width: 4%">
-							<input type="radio" name="primary" id="primary_', $group['id'], '" value="', $group['id'], '" ', $group['is_primary'] ? 'checked="checked"' : '', ' onclick="highlightSelected(\'primdiv_' . $group['id'] . '\');" ', $group['can_be_primary'] ? '' : 'disabled="disabled"', ' class="input_radio" />
+							<input type="radio" name="primary" id="primary_', $group['id'], '" value="', $group['id'], '" ', $group['is_primary'] ? 'checked="checked"' : '', ' data-onclick="highlightSelected(\'primdiv_' . $group['id'] . '\');" ', $group['can_be_primary'] ? '' : 'disabled="disabled"', ' class="input_radio" />
 						</td>';
 
 				echo '
@@ -1726,26 +1724,27 @@ function template_groupMembership()
 		}
 
 		// Javascript for the selector stuff.
-		echo '
-		<script><!-- // --><![CDATA[
-		var prevClass = "";
-		var prevDiv = "";
-		function highlightSelected(box)
+		add_js('
+	var prevClass = "";
+	var prevDiv = "";
+	function highlightSelected(box)
+	{
+		if (prevClass != "")
 		{
-			if (prevClass != "")
-			{
-				prevDiv.className = prevClass;
-			}
-			prevDiv = document.getElementById(box);
-			prevClass = prevDiv.className;
+			prevDiv.className = prevClass;
+		}
+		prevDiv = document.getElementById(box);
+		prevClass = prevDiv.className;
 
-			prevDiv.className = "highlight2";
-		}';
+		prevDiv.className = "highlight2";
+	}');
+
 		if (isset($context['groups']['member'][$context['primary_group']]))
-			echo '
-		highlightSelected("primdiv_' . $context['primary_group'] . '");';
-		echo '
-	// ]]></script>';
+			add_js('
+	highlightSelected("primdiv_' . $context['primary_group'] . '");');
+
+		add_js('
+');
 	}
 
 	echo '
@@ -1759,8 +1758,7 @@ function template_ignoreboards()
 	global $context, $txt, $settings, $scripturl;
 
 	// The main containing header.
-	echo '
-	<script><!-- // --><![CDATA[
+	add_js('
 		function selectBoards(ids)
 		{
 			var toggle = true;
@@ -1770,9 +1768,9 @@ function template_ignoreboards()
 
 			for (i = 0; i < ids.length; i++)
 				document.forms.creator["ignore_brd" + ids[i]].checked = !toggle;
-		}
-	// ]]></script>
+		}');
 
+	echo '
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3>
@@ -1799,7 +1797,7 @@ function template_ignoreboards()
 
 		echo '
 					<li class="category">
-						<a href="#" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
+						<a href="#" data-onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
 						<ul>';
 
 		foreach ($category['boards'] as $board)
@@ -1921,132 +1919,134 @@ function template_issueWarning()
 
 	template_load_warning_variables();
 
-	echo '
-	<script><!-- // --><![CDATA[
-		function setWarningBarPos(curEvent, isMove, changeAmount)
-		{
-			barWidth = ', $context['warningBarWidth'], ';
+	add_js('
+	function setWarningBarPos(curEvent, isMove, changeAmount)
+	{
+		barWidth = ' . $context['warningBarWidth'] . ';
 
-			// Are we passing the amount to change it by?
-			if (changeAmount)
+		// Are we passing the amount to change it by?
+		if (changeAmount)
+		{
+			if (document.getElementById(\'warning_level\').value == \'SAME\')
+				percent = ' . $context['member']['warning'] . ' + changeAmount;
+			else
+				percent = parseInt(document.getElementById(\'warning_level\').value) + changeAmount;
+		}
+		// If not then it\'s a mouse thing.
+		else
+		{
+			if (!curEvent)
+				var curEvent = window.event;
+
+			// If it\'s a movement check the button state first!
+			if (isMove)
 			{
-				if (document.getElementById(\'warning_level\').value == \'SAME\')
-					percent = ', $context['member']['warning'], ' + changeAmount;
-				else
-					percent = parseInt(document.getElementById(\'warning_level\').value) + changeAmount;
+				if (!curEvent.button || curEvent.button != 1)
+					return false
 			}
-			// If not then it\'s a mouse thing.
+
+			// Get the position of the container.
+			contain = document.getElementById(\'warning_contain\');
+			position = 0;
+			while (contain != null)
+			{
+				position += contain.offsetLeft;
+				contain = contain.offsetParent;
+			}
+
+			// Where is the mouse?
+			if (curEvent.pageX)
+			{
+				mouse = curEvent.pageX;
+			}
 			else
 			{
-				if (!curEvent)
-					var curEvent = window.event;
-
-				// If it\'s a movement check the button state first!
-				if (isMove)
-				{
-					if (!curEvent.button || curEvent.button != 1)
-						return false
-				}
-
-				// Get the position of the container.
-				contain = document.getElementById(\'warning_contain\');
-				position = 0;
-				while (contain != null)
-				{
-					position += contain.offsetLeft;
-					contain = contain.offsetParent;
-				}
-
-				// Where is the mouse?
-				if (curEvent.pageX)
-				{
-					mouse = curEvent.pageX;
-				}
-				else
-				{
-					mouse = curEvent.clientX;
-					mouse += document.documentElement.scrollLeft != "undefined" ? document.documentElement.scrollLeft : document.body.scrollLeft;
-				}
-
-				// Is this within bounds?
-				if (mouse < position || mouse > position + barWidth)
-					return;
-
-				percent = Math.round(((mouse - position) / barWidth) * 100);
-
-				// Round percent to the nearest 5 - by kinda cheating!
-				percent = Math.round(percent / 5) * 5;
+				mouse = curEvent.clientX;
+				mouse += document.documentElement.scrollLeft != "undefined" ? document.documentElement.scrollLeft : document.body.scrollLeft;
 			}
 
-			// What are the limits?
-			minLimit = ', $context['min_allowed'], ';
-			maxLimit = ', $context['max_allowed'], ';
+			// Is this within bounds?
+			if (mouse < position || mouse > position + barWidth)
+				return;
 
-			percent = Math.max(percent, minLimit);
-			percent = Math.min(percent, maxLimit);
+			percent = Math.round(((mouse - position) / barWidth) * 100);
 
-			size = barWidth * (percent/100);
+			// Round percent to the nearest 5 - by kinda cheating!
+			percent = Math.round(percent / 5) * 5;
+		}
 
-			document.getElementById(\'warning_text\').innerHTML = percent + "%";
-			document.getElementById(\'warning_level\').value = percent;
-			document.getElementById(\'warning_progress\').style.width = size + "px";
+		// What are the limits?
+		minLimit = ' . $context['min_allowed'] . ';
+		maxLimit = ' . $context['max_allowed'] . ';
 
-			// Get the right color.
-			color = "black"';
+		percent = Math.max(percent, minLimit);
+		percent = Math.min(percent, maxLimit);
+
+		size = barWidth * (percent/100);
+
+		document.getElementById(\'warning_text\').innerHTML = percent + "%";
+		document.getElementById(\'warning_level\').value = percent;
+		document.getElementById(\'warning_progress\').style.width = size + "px";
+
+		// Get the right color.
+		color = "black"');
 
 	foreach ($context['colors'] as $limit => $color)
-		echo '
-			if (percent >= ', $limit, ')
-				color = "', $color, '";';
+		add_js('
+		if (percent >= ' . $limit . ')
+			color = "' . $color . '";
+');
 
-	echo '
-			document.getElementById(\'warning_progress\').style.backgroundColor = color;
+	add_js('
+		document.getElementById(\'warning_progress\').style.backgroundColor = color;
 
-			// Also set the right effect.
-			effectText = "";';
+		// Also set the right effect.
+		effectText = "";');
 
 	foreach ($context['level_effects'] as $limit => $text)
-		echo '
-			if (percent >= ', $limit, ')
-				effectText = "', $text, '";';
+		add_js('
+		if (percent >= ' . $limit . ')
+			effectText = "' . $text . '";
+');
 
-	echo '
-			document.getElementById(\'cur_level_div\').innerHTML = effectText;
-		}
+	add_js('
+		document.getElementById(\'cur_level_div\').innerHTML = effectText;
+	}
 
-		// Disable notification boxes as required.
-		function modifyWarnNotify()
-		{
-			disable = !document.getElementById(\'warn_notify\').checked;
-			document.getElementById(\'warn_sub\').disabled = disable;
-			document.getElementById(\'warn_body\').disabled = disable;
-			document.getElementById(\'warn_temp\').disabled = disable;
-			document.getElementById(\'new_template_link\').style.display = disable ? \'none\' : \'\';
-		}
+	// Disable notification boxes as required.
+	function modifyWarnNotify()
+	{
+		disable = !document.getElementById(\'warn_notify\').checked;
+		document.getElementById(\'warn_sub\').disabled = disable;
+		document.getElementById(\'warn_body\').disabled = disable;
+		document.getElementById(\'warn_temp\').disabled = disable;
+		document.getElementById(\'new_template_link\').style.display = disable ? \'none\' : \'\';
+	}
 
-		function changeWarnLevel(amount)
-		{
-			setWarningBarPos(false, false, amount);
-		}
+	function changeWarnLevel(amount)
+	{
+		setWarningBarPos(false, false, amount);
+	}
 
-		// Warn template.
-		function populateNotifyTemplate()
-		{
-			index = document.getElementById(\'warn_temp\').value;
-			if (index == -1)
-				return false;
+	// Warn template.
+	function populateNotifyTemplate()
+	{
+		index = document.getElementById(\'warn_temp\').value;
+		if (index == -1)
+			return false;
 
-			// Otherwise see what we can do...';
+		// Otherwise see what we can do...');
 
 	foreach ($context['notification_templates'] as $k => $type)
-		echo '
-			if (index == ', $k, ')
-				document.getElementById(\'warn_body\').value = "', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '";';
+		add_js('
+		if (index == ' . $k . ')
+			document.getElementById(\'warn_body\').value = "' . strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')) . '";
+');
 
-	echo '
-		}
+	add_js('
+	}
 
-	// ]]></script>';
+');
 
 	echo '
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
@@ -2088,12 +2088,12 @@ function template_issueWarning()
 				<dd>
 					<div id="warndiv1" style="display: none;">
 						<div>
-							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(-5); return false;">[-]</a></span>
-							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;" onmousedown="setWarningBarPos(event, true);" onmousemove="setWarningBarPos(event, true);" onclick="setWarningBarPos(event);">
+							<span class="floatleft" style="padding: 0 0.5em"><a href="#" data-onclick="changeWarnLevel(-5); return false;">[-]</a></span>
+							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;" onmousedown="setWarningBarPos(event, true);" onmousemove="setWarningBarPos(event, true);" data-onclick="setWarningBarPos(event);">
 								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['member']['warning'], '%</div>
 								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], ';">&nbsp;</div>
 							</div>
-							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(5); return false;">[+]</a></span>
+							<span class="floatleft" style="padding: 0 0.5em"><a href="#" data-onclick="changeWarnLevel(5); return false;">[+]</a></span>
 							<div class="clear_left smalltext">', $txt['profile_warning_impact'], ': <span id="cur_level_div">', $context['level_effects'][$context['current_level']], '</span></div>
 						</div>
 						<input type="hidden" name="warning_level" id="warning_level" value="SAME" />
@@ -2129,7 +2129,7 @@ function template_issueWarning()
 					<strong>', $txt['profile_warning_notify'], ':</strong>
 				</dt>
 				<dd>
-					<input type="checkbox" name="warn_notify" id="warn_notify" onclick="modifyWarnNotify();" ', $context['warning_data']['notify'] ? 'checked="checked"' : '', ' class="input_check" />
+					<input type="checkbox" name="warn_notify" id="warn_notify" data-onclick="modifyWarnNotify();" ', $context['warning_data']['notify'] ? 'checked="checked"' : '', ' class="input_check" />
 				</dd>
 				<dt>
 					<strong>', $txt['profile_warning_notify_subject'], ':</strong>
@@ -2199,7 +2199,7 @@ function template_issueWarning()
 		if (!empty($warning['id_notice']))
 			echo '
 						<div class="floatright">
-							<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif" alt="" /></a>
+							<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" data-onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif" alt="" /></a>
 						</div>';
 		echo '
 					</td>
@@ -2221,17 +2221,16 @@ function template_issueWarning()
 		<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
 
 	// Do our best to get pretty javascript enabled.
-	echo '
-	<script><!-- // --><![CDATA[
-		document.getElementById(\'warndiv1\').style.display = "";
-		document.getElementById(\'warndiv2\').style.display = "none";';
+	add_js('
+	document.getElementById(\'warndiv1\').style.display = "";
+	document.getElementById(\'warndiv2\').style.display = "none";');
 
 	if (!$context['user']['is_owner'])
-		echo '
-		modifyWarnNotify();';
+		add_js('
+	modifyWarnNotify();');
 
-	echo '
-	// ]]></script>';
+	add_js('
+');
 }
 
 // Template to show for deleting a users account - now with added delete post capability!
@@ -2293,7 +2292,7 @@ function template_deleteAccount()
 
 		echo '
 				<div>
-					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" class="input_check" onclick="if (this.checked) return confirm(', JavaScriptEscape($txt['deleteAccount_confirm']), ');" /> ', $txt['deleteAccount_member'], '.</label>
+					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" class="input_check" data-onclick="if (this.checked) return confirm(', JavaScriptEscape($txt['deleteAccount_confirm']), ');" /> ', $txt['deleteAccount_member'], '.</label>
 				</div>
 				<div>
 					<input type="submit" value="', $txt['delete'], '" class="button_submit" />
@@ -2367,7 +2366,7 @@ function template_profile_group_manage()
 	echo '
 							<dt>
 								<strong>', $txt['primary_membergroup'], ': </strong><br />
-								<span class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</span>
+								<span class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" data-onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</span>
 							</dt>
 							<dd>
 								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 &amp;&amp; !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
@@ -2394,12 +2393,12 @@ function template_profile_group_manage()
 									<label for="additional_groups-', $member_group['id'], '"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked="checked"' : '', ' class="input_check" /> ', $member_group['name'], '</label><br />';
 		echo '
 								</span>
-								<a href="#" onclick="document.getElementById(\'additional_groupsList\').style.display = \'block\'; document.getElementById(\'additional_groupsLink\').style.display = \'none\'; return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
-								<script><!-- // --><![CDATA[
-									document.getElementById("additional_groupsList").style.display = "none";
-									document.getElementById("additional_groupsLink").style.display = "";
-								// ]]></script>
+								<a href="#" data-onclick="document.getElementById(\'additional_groupsList\').style.display = \'block\'; document.getElementById(\'additional_groupsLink\').style.display = \'none\'; return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
 							</dd>';
+
+	add_js('
+	document.getElementById("additional_groupsList").style.display = "none";
+	document.getElementById("additional_groupsLink").style.display = "";');
 
 }
 
@@ -2434,7 +2433,7 @@ function template_profile_signature_modify()
 
 	if ($context['show_spellchecking'])
 		echo '
-								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="button_submit" />';
+								<input type="button" value="', $txt['spell_check'], '" data-onclick="spellCheck(\'creator\', \'signature\');" class="button_submit" />';
 
 		echo '
 							</dt>
@@ -2452,45 +2451,44 @@ function template_profile_signature_modify()
 
 	// Load the spell checker?
 	if ($context['show_spellchecking'])
-		echo '
-								<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>';
+		add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
 
 	// Some javascript used to count how many characters have been used so far in the signature.
+	add_js('
+	function tick()
+	{
+		if (typeof(document.forms.creator) != "undefined")
+		{
+			calcCharLeft();
+			setTimeout("tick()", 1000);
+		}
+		else
+			setTimeout("tick()", 800);
+	}
+
+	function calcCharLeft()
+	{
+		var maxLength = ' . $context['signature_limits']['max_length'] . ';
+		var oldSignature = "", currentSignature = document.forms.creator.signature.value;
+
+		if (!document.getElementById("signatureLeft"))
+			return;
+
+		if (oldSignature != currentSignature)
+		{
+			oldSignature = currentSignature;
+
+			if (currentSignature.replace(/\r/, "").length > maxLength)
+				document.forms.creator.signature.value = currentSignature.replace(/\r/, "").substring(0, maxLength);
+			currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
+		}
+
+		document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
+	}
+
+	tick();');
+
 	echo '
-								<script><!-- // --><![CDATA[
-									function tick()
-									{
-										if (typeof(document.forms.creator) != "undefined")
-										{
-											calcCharLeft();
-											setTimeout("tick()", 1000);
-										}
-										else
-											setTimeout("tick()", 800);
-									}
-
-									function calcCharLeft()
-									{
-										var maxLength = ', $context['signature_limits']['max_length'], ';
-										var oldSignature = "", currentSignature = document.forms.creator.signature.value;
-
-										if (!document.getElementById("signatureLeft"))
-											return;
-
-										if (oldSignature != currentSignature)
-										{
-											oldSignature = currentSignature;
-
-											if (currentSignature.replace(/\r/, "").length > maxLength)
-												document.forms.creator.signature.value = currentSignature.replace(/\r/, "").substring(0, maxLength);
-											currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
-										}
-
-										document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
-									}
-
-									addLoadEvent(tick);
-								// ]]></script>
 							</dd>';
 }
 
@@ -2502,9 +2500,9 @@ function template_profile_avatar_select()
 	echo '
 							<dt>
 								<strong id="personal_picture">', $txt['personal_picture'], '</strong>
-								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['choose_avatar_gallery'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['my_own_pic'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['avatar_will_upload'] . '</label>' : '', '
+								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" data-onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['choose_avatar_gallery'] . '</label><br />' : '', '
+								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" data-onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['my_own_pic'] . '</label><br />' : '', '
+								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" data-onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['avatar_will_upload'] . '</label>' : '', '
 							</dt>
 							<dd>';
 
@@ -2526,107 +2524,107 @@ function template_profile_avatar_select()
 										<select name="file" id="file" size="10" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled="disabled"><option></option></select>
 									</div>
 									<div><img name="avatar" id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
-									<script><!-- // --><![CDATA[
-										var files = ["' . implode('", "', $context['avatar_list']) . '"];
-										var avatar = document.getElementById("avatar");
-										var cat = document.getElementById("cat");
-										var selavatar = "' . $context['avatar_selected'] . '";
-										var avatardir = "' . $modSettings['avatar_url'] . '/";
-										var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
-										var file = document.getElementById("file");
-
-										if (avatar.src.indexOf("blank.gif") > -1)
-											changeSel(selavatar);
-										else
-											previewExternalAvatar(avatar.src)
-
-										function changeSel(selected)
-										{
-											if (cat.selectedIndex == -1)
-												return;
-
-											if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
-											{
-												var i;
-												var count = 0;
-
-												file.style.display = "inline";
-												file.disabled = false;
-
-												for (i = file.length; i >= 0; i = i - 1)
-													file.options[i] = null;
-
-												for (i = 0; i < files.length; i++)
-													if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
-													{
-														var filename = files[i].substr(files[i].indexOf("/") + 1);
-														var showFilename = filename.substr(0, filename.lastIndexOf("."));
-														showFilename = showFilename.replace(/[_]/g, " ");
-
-														file.options[count] = new Option(showFilename, files[i]);
-
-														if (filename == selected)
-														{
-															if (file.options.defaultSelected)
-																file.options[count].defaultSelected = true;
-															else
-																file.options[count].selected = true;
-														}
-
-														count++;
-													}
-
-												if (file.selectedIndex == -1 && file.options[0])
-													file.options[0].selected = true;
-
-												showAvatar();
-											}
-											else
-											{
-												file.style.display = "none";
-												file.disabled = true;
-												document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
-												document.getElementById("avatar").style.width = "";
-												document.getElementById("avatar").style.height = "";
-											}
-										}
-
-										function showAvatar()
-										{
-											if (file.selectedIndex == -1)
-												return;
-
-											document.getElementById("avatar").src = avatardir + file.options[file.selectedIndex].value;
-											document.getElementById("avatar").alt = file.options[file.selectedIndex].text;
-											document.getElementById("avatar").alt += file.options[file.selectedIndex].text == size ? "!" : "";
-											document.getElementById("avatar").style.width = "";
-											document.getElementById("avatar").style.height = "";
-										}
-
-										function previewExternalAvatar(src)
-										{
-											if (!document.getElementById("avatar"))
-												return;
-
-											var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
-											var maxWidth = ', !empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0, ';
-											var tempImage = new Image();
-
-											tempImage.src = src;
-											if (maxWidth != 0 && tempImage.width > maxWidth)
-											{
-												document.getElementById("avatar").style.height = parseInt((maxWidth * tempImage.height) / tempImage.width) + "px";
-												document.getElementById("avatar").style.width = maxWidth + "px";
-											}
-											else if (maxHeight != 0 && tempImage.height > maxHeight)
-											{
-												document.getElementById("avatar").style.width = parseInt((maxHeight * tempImage.width) / tempImage.height) + "px";
-												document.getElementById("avatar").style.height = maxHeight + "px";
-											}
-											document.getElementById("avatar").src = src;
-										}
-									// ]]></script>
 								</div>';
+
+		add_js('
+	var files = ["' . implode('", "', $context['avatar_list']) . '"];
+	var avatar = document.getElementById("avatar");
+	var cat = document.getElementById("cat");
+	var selavatar = "' . $context['avatar_selected'] . '";
+	var avatardir = "' . $modSettings['avatar_url'] . '/";
+	var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
+	var file = document.getElementById("file");
+
+	if (avatar.src.indexOf("blank.gif") > -1)
+		changeSel(selavatar);
+	else
+		previewExternalAvatar(avatar.src)
+
+	function changeSel(selected)
+	{
+		if (cat.selectedIndex == -1)
+			return;
+
+		if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
+		{
+			var i;
+			var count = 0;
+
+			file.style.display = "inline";
+			file.disabled = false;
+
+			for (i = file.length; i >= 0; i = i - 1)
+				file.options[i] = null;
+
+			for (i = 0; i < files.length; i++)
+				if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
+				{
+					var filename = files[i].substr(files[i].indexOf("/") + 1);
+					var showFilename = filename.substr(0, filename.lastIndexOf("."));
+					showFilename = showFilename.replace(/[_]/g, " ");
+
+					file.options[count] = new Option(showFilename, files[i]);
+
+					if (filename == selected)
+					{
+						if (file.options.defaultSelected)
+							file.options[count].defaultSelected = true;
+						else
+							file.options[count].selected = true;
+					}
+
+					count++;
+				}
+
+			if (file.selectedIndex == -1 && file.options[0])
+				file.options[0].selected = true;
+
+			showAvatar();
+		}
+		else
+		{
+			file.style.display = "none";
+			file.disabled = true;
+			document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
+			document.getElementById("avatar").style.width = "";
+			document.getElementById("avatar").style.height = "";
+		}
+	}
+
+	function showAvatar()
+	{
+		if (file.selectedIndex == -1)
+			return;
+
+		document.getElementById("avatar").src = avatardir + file.options[file.selectedIndex].value;
+		document.getElementById("avatar").alt = file.options[file.selectedIndex].text;
+		document.getElementById("avatar").alt += file.options[file.selectedIndex].text == size ? "!" : "";
+		document.getElementById("avatar").style.width = "";
+		document.getElementById("avatar").style.height = "";
+	}
+
+	function previewExternalAvatar(src)
+	{
+		if (!document.getElementById("avatar"))
+			return;
+
+		var maxHeight = ' . (!empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0) . ';
+		var maxWidth = ' . (!empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0) . ';
+		var tempImage = new Image();
+
+		tempImage.src = src;
+		if (maxWidth != 0 && tempImage.width > maxWidth)
+		{
+			document.getElementById("avatar").style.height = parseInt((maxWidth * tempImage.height) / tempImage.width) + "px";
+			document.getElementById("avatar").style.width = maxWidth + "px";
+		}
+		else if (maxHeight != 0 && tempImage.height > maxHeight)
+		{
+			document.getElementById("avatar").style.width = parseInt((maxHeight * tempImage.width) / tempImage.height) + "px";
+			document.getElementById("avatar").style.height = maxHeight + "px";
+		}
+		document.getElementById("avatar").src = src;
+	}');
 	}
 
 	// If the user can link to an off server avatar, show them a box to input the address.
@@ -2649,34 +2647,34 @@ function template_profile_avatar_select()
 								</div>';
 	}
 
-	echo '
-								<script><!-- // --><![CDATA[
-									', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '', '
-									', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? '' : 'none') . '";' : '', '
-									', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? '' : 'none') . '";' : '', '
+	add_js('
+	' . (!empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '') . '
+	' . (!empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? '' : 'none') . '";' : '') . '
+	' . (!empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? '' : 'none') . '";' : '') . '
 
-									function swap_avatar(type)
-									{
-										switch(type.id)
-										{
-											case "avatar_choice_server_stored":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-												break;
-											case "avatar_choice_external":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-												break;
-											case "avatar_choice_upload":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "";' : '', '
-												break;
-										}
-									}
-								// ]]></script>
+	function swap_avatar(type)
+	{
+		switch(type.id)
+		{
+			case "avatar_choice_server_stored":
+				' . (!empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '') . '
+				break;
+			case "avatar_choice_external":
+				' . (!empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '') . '
+				break;
+			case "avatar_choice_upload":
+				' . (!empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '') . '
+				' . (!empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "";' : '') . '
+				break;
+		}
+	}');
+
+	echo '
 							</dd>';
 
 }
@@ -2689,7 +2687,7 @@ function template_profile_timeformat_modify()
 	echo '
 							<dt>
 								<strong>', $txt['time_format'], ':</strong><br />
-								<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
+								<a href="', $scripturl, '?action=helpadmin;help=time_format" data-onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
 								<span class="smalltext">&nbsp;', $txt['date_format'], '</span>
 							</dt>
 							<dd>
@@ -2715,7 +2713,7 @@ function template_profile_timeoffset_modify()
 								<span class="smalltext">', $txt['personal_time_offset'], '</span>
 							</dt>
 							<dd>
-								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); document.getElementById(\'time_offset\').value = autoDetectTimeOffset(currentDate); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" data-onclick="currentDate = new Date(', $context['current_forum_time_js'], '); document.getElementById(\'time_offset\').value = autoDetectTimeOffset(currentDate); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 							</dd>';
 }
 
@@ -2757,9 +2755,10 @@ function template_authentication_method()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
+	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+
 	// The main header!
 	echo '
-		<script src="', $settings['default_theme_url'], '/scripts/register.js"></script>
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">
 			<div class="cat_bar">
 				<h3>
@@ -2770,8 +2769,8 @@ function template_authentication_method()
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br />
-						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
+						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" data-onclick="return reqWin(this);" class="help">(?)</a></em><br />
+						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>
 						<dl id="auth_openid_div">
@@ -2825,16 +2824,15 @@ function template_authentication_method()
 		</form>';
 
 	// The password stuff.
-	echo '
-	<script><!-- // --><![CDATA[
+	add_js('
 	var regTextStrings = {
-		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
-		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
-		"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
-		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
-		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
+		"password_short": ' . JavaScriptEscape($txt['registration_password_short']) . ' .
+		"password_reserved": ' . JavaScriptEscape($txt['registration_password_reserved']) . ' .
+		"password_numbercase": ' . JavaScriptEscape($txt['registration_password_numbercase']) . ' .
+		"password_no_match": ' . JavaScriptEscape($txt['registration_password_no_match']) . ' .
+		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
 	};
-	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
+	var verificationHandle = new smfRegister("creator", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
 	var currentAuthMethod = \'passwd\';
 	function updateAuthMethod()
 	{
@@ -2871,8 +2869,7 @@ function template_authentication_method()
 			document.getElementById("auth_pass_div").style.display = "none";
 		}
 	}
-	updateAuthMethod();
-	// ]]></script>';
+	updateAuthMethod();');
 }
 
 ?>

@@ -43,7 +43,7 @@ function template_registration_form()
 	{
 		if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
 		{
-			alert("' . JavaScriptEscape($txt['register_passwords_differ_js']) . '");
+			alert(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
 			return false;
 		}
 
@@ -506,24 +506,24 @@ function template_admin_register()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
+	add_js('
+	function onCheckChange()
+	{
+		if (document.forms.postForm.emailActivate.checked || document.forms.postForm.password.value == \'\')
+		{
+			document.forms.postForm.emailPassword.disabled = true;
+			document.forms.postForm.emailPassword.checked = true;
+		}
+		else
+			document.forms.postForm.emailPassword.disabled = false;
+	}');
+
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>', $txt['admin_browse_register_new'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
-			<script><!-- // --><![CDATA[
-				function onCheckChange()
-				{
-					if (document.forms.postForm.emailActivate.checked || document.forms.postForm.password.value == \'\')
-					{
-						document.forms.postForm.emailPassword.disabled = true;
-						document.forms.postForm.emailPassword.checked = true;
-					}
-					else
-						document.forms.postForm.emailPassword.disabled = false;
-				}
-			// ]]></script>
 			<div class="windowbg2 wrc">
 				<div id="register_screen">';
 
