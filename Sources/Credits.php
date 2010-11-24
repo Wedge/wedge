@@ -159,21 +159,6 @@ function Credits($in_admin = false)
 		),
 	);
 
-	if (!empty($modSettings['copy_settings']) || !empty($modSettings['copyright_key']))
-	{
-		if (empty($modSettings['copy_settings']))
-			$modSettings['copy_settings'] = 'a,0';
-
-		list ($key, $expire) = explode(',', $modSettings['copy_settings']);
-
-		if ($expire >= time())
-		{
-			$context['copyright_removal_expires'] = timeformat($expire);
-			$context['copyright_removal_validate_url'] = sprintf('http://www.simplemachines.org/copyright/index.php?action=validate;url=%1$s', base64_encode($boardurl));
-			$context['copyright_removal_validate'] = sprintf($txt['credits_removal_good'], $context['copyright_removal_expires'], $context['copyright_removal_validate_url']);
-		}
-	}
-
 	$context['copyrights'] = array(
 		'smf' => sprintf($forum_copyright, $forum_version),
 		'mods' => array(

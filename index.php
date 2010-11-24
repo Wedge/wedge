@@ -33,16 +33,21 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'SMF 2.0 RC4 (Wedge 0.1)';
+$forum_version = 'Wedge 0.1 (based on SMF 2.0 RC4)';
+define('WEDGE_VERSION', '0.1 (based on SMF 2.0 RC4)');
+
+// Knock knock! We're entering through the front door.
+define('SMF', 1);
+// We're still in Alpha...
+define('CACHE_SUFFIX', 'a');
 
 // Get everything started up...
-define('SMF', 1);
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
 $time_start = microtime();
 
-// This makes it so headers can be sent!
+// Makes sure that headers can be sent!
 ob_start();
 
 // Do some cleaning, just in case.

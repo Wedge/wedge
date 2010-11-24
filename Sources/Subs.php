@@ -3791,11 +3791,8 @@ function theme_copyright($get_it = false)
 	// For SSI and other things, skip the version number.
 	if (empty($forum_version))
 		$forum_version = 'Wedge';
-	$forum_copyright = sprintf($forum_copyright, $forum_version);
 
-	if (isset($modSettings['copyright_key']) && sha1($modSettings['copyright_key'] . 'banjo') == '1d01885ece7a9355bdeb22ed107f0ffa8c323026')
-		return;
-	echo $forum_copyright;
+	echo sprintf($forum_copyright, $forum_version);
 }
 
 /**
@@ -3825,22 +3822,6 @@ function template_footer()
 
 	foreach (array_reverse($context['template_layers']) as $layer)
 		loadSubTemplate($layer . '_below', true);
-
-	// Do not remove hard-coded text - it's in here so users cannot change the text easily. (as if it were in language file)
-	if (!theme_copyright(true) && !empty($context['template_layers']) && SMF !== 'SSI' && !WIRELESS)
-	{
-		// DO NOT MODIFY THIS SECTION. DO NOT REMOVE YOUR COPYRIGHT.
-		// DOING SO VOIDS YOUR LICENSE AND IS ILLEGAL.
-
-		echo '
-			<div style="text-align: center !important; display: block !important; visibility: visible !important; font-size: large !important; font-weight: bold; color: black !important; background-color: white !important;">
-				Sorry, the copyright must be in the template.<br />
-				Please notify this forum\'s administrator that this site is missing the copyright message for <a href="http://www.simplemachines.org/" style="color: black !important; font-size: large !important;">SMF</a> so they can rectify the situation. Display of copyright is a <a href="http://www.simplemachines.org/about/license.php" style="color: red;">legal requirement</a>. For more information on this please visit the <a href="http://www.simplemachines.org">Simple Machines</a> website.', empty($context['user']['is_admin']) ? '' : '<br />
-				Not sure why this message is appearing? <a href="http://www.simplemachines.org/redirect/index.php?copyright_error">Take a look at some common causes.</a>', '
-			</div>';
-
-		log_error('Copyright removed!!');
-	}
 }
 
 /**

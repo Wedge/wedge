@@ -186,14 +186,8 @@ function template_credits()
 		</div>
 		<div class="windowbg wrc">
 			<dl>
-				<dt><strong>', $txt['credits_forum'], '</strong></dt>', '
-				<dd>', $context['copyrights']['smf'];
-
-	if (!empty($context['copyright_removal_validate']))
-		echo '<br />', $context['copyright_removal_validate'];
-
-	echo '
-				</dd>
+				<dt><strong>', $txt['credits_forum'], '</strong></dt>
+				<dd>', $context['copyrights']['smf'], '</dd>
 			</dl>';
 
 	if (!empty($context['copyrights']['mods']))

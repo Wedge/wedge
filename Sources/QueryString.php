@@ -680,6 +680,7 @@ function add_js()
 
 // Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.
 // !!! Document this properly, and maybe add support for adding ?nocache automatically, and check for the .js extension.
+// !!! For later: we may use CACHE_SUFFIX on file names, i.e. adding ?alpha to the end of every URL. Clean up first!
 function add_js_file()
 {
 	global $context, $footer_coding;

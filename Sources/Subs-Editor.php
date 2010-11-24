@@ -131,8 +131,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
-			$context['header'] .= '
-		<script src="' . $settings['default_theme_url'] . '/scripts/captcha.js"></script>';
+			add_js_file($settings['default_theme_url'] . '/scripts/captcha.js');
 
 		// Skip I, J, L, O, Q, S and Z.
 		$context['standard_captcha_range'] = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));

@@ -72,7 +72,7 @@ function template_html_above()
 	// Declare HTML5, and show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<!-- Powered by Wedge, (c) WedgeBox 2010 - http://wedgeforum.com -->
+<!-- Powered by Wedge, (c) Wedgebox 2010 - http://wedgeforum.com -->
 <head>';
 
 	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.

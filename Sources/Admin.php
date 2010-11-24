@@ -545,60 +545,6 @@ function AdminHome()
 		'http://www.simplemachines.org/redirect/customize_support'
 		);
 
-	// Copyright?
-	if (!empty($modSettings['copy_settings']) || !empty($modSettings['copyright_key']))
-	{
-		if (empty($modSettings['copy_settings']))
-			$modSettings['copy_settings'] = 'a,0';
-
-		// Not done it yet...
-		if (empty($_SESSION['copy_expire']))
-		{
-			list ($key, $expires) = explode(',', $modSettings['copy_settings']);
-			// Get the expired date.
-			require_once($sourcedir . '/Subs-Package.php');
-			$return_data = fetch_web_data('http://www.simplemachines.org/smf/copyright/check_copyright.php?site=' . base64_encode($boardurl) . '&key=' . $key . '&version=' . base64_encode($forum_version));
-
-			// Get the expire date.
-			$return_data = substr($return_data, strpos($return_data, 'STARTCOPY') + 9);
-			$return_data = trim(substr($return_data, 0, strpos($return_data, 'ENDCOPY')));
-
-			$deletekeys = true;
-			if ($return_data != 'void')
-			{
-				list ($_SESSION['copy_expire'], $copyright_key) = explode('|', $return_data);
-				$_SESSION['copy_key'] = $key;
-
-				if ($_SESSION['copy_expire'] > time())
-				{
-					$deletekeys = false;
-					$copy_settings = $key . ',' . (int) $_SESSION['copy_expire'];
-					updateSettings(array('copy_settings' => $copy_settings, 'copyright_key' => $copyright_key));
-				}
-			}
-
-			if ($deletekeys)
-			{
-				$_SESSION['copy_expire'] = '';
-				$smcFunc['db_query']('', '
-					DELETE FROM {db_prefix}settings
-					WHERE variable = {string:copy_settings}
-						OR variable = {string:copyright_key}',
-					array(
-						'copy_settings' => 'copy_settings',
-						'copyright_key' => 'copyright_key',
-					)
-				);
-			}
-		}
-
-		if (isset($_SESSION['copy_expire']) && $_SESSION['copy_expire'] > time())
-		{
-			$context['copyright_expires'] = (int) (($_SESSION['copy_expire'] - time()) / 3600 / 24);
-			$context['copyright_key'] = $_SESSION['copy_key'];
-		}
-	}
-
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
 
@@ -673,53 +619,6 @@ function AdminHome()
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
 	}
-}
-
-// Allow users to remove their copyright.
-function ManageCopyright()
-{
-	global $forum_version, $txt, $sourcedir, $context, $boardurl, $modSettings;
-
-	isAllowedTo('admin_forum');
-
-	if (isset($_POST['copy_code']))
-	{
-		checkSession('post');
-
-		$_POST['copy_code'] = urlencode($_POST['copy_code']);
-
-		// Check the actual code.
-		require_once($sourcedir . '/Subs-Package.php');
-		$return_data = fetch_web_data('http://www.simplemachines.org/smf/copyright/check_copyright.php?site=' . base64_encode($boardurl) . '&key=' . $_POST['copy_code'] . '&version=' . base64_encode($forum_version));
-
-		// Get the data back
-		$return_data = substr($return_data, strpos($return_data, 'STARTCOPY') + 9);
-		$return_data = trim(substr($return_data, 0, strpos($return_data, 'ENDCOPY')));
-
-		if ($return_data != 'void')
-		{
-			list ($_SESSION['copy_expire'], $copyright_key) = explode('|', $return_data);
-
-			if ($_SESSION['copy_expire'] <= time())
-			{
-				// So sorry but that has already expired.
-				$_SESSION['copy_expire'] = '';
-				fatal_lang_error('copyright_failed');
-			}
-
-			$_SESSION['copy_key'] = $_POST['copy_code'];
-			$copy_settings = $_POST['copy_code'] . ',' . (int) $_SESSION['copy_expire'];
-			updateSettings(array('copy_settings' => $copy_settings, 'copyright_key' => $copyright_key));
-			redirectexit('action=admin');
-		}
-		else
-		{
-			fatal_lang_error('copyright_failed');
-		}
-	}
-
-	$context['sub_template'] = 'manage_copyright';
-	$context['page_title'] = $txt['copyright_removal'];
 }
 
 // This allocates out all the search stuff.

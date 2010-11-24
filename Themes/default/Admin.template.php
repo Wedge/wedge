@@ -74,19 +74,6 @@ function template_admin()
 						<em id="smfVersion" class="nowrap">??</em><br />
 						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />';
 
-	// Have they paid to remove copyright?
-	if (!empty($context['copyright_expires']))
-	{
-		echo '
-						<br />', sprintf($txt['copyright_ends_in'], $context['copyright_expires']);
-
-		if ($context['copyright_expires'] < 30)
-			echo '
-						<div class="alert">', sprintf($txt['copyright_click_renew'], $context['copyright_key']), '</div>';
-
-		echo '<br />';
-	}
-
 	// Display all the members who can administrate the forum.
 	echo '
 						<br />
@@ -124,7 +111,10 @@ function template_admin()
 
 	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
-		add_js_file($scripturl . '?action=viewsmfile;filename=current-version.js', $scripturl . '?action=viewsmfile;filename=latest-news.js');
+		add_js_file(
+			$scripturl . '?action=viewsmfile;filename=current-version.js',
+			$scripturl . '?action=viewsmfile;filename=latest-news.js'
+		);
 
 	// This sets the announcements and current versions themselves ;)
 	add_js_file($settings['default_theme_url'] . '/scripts/admin.js?rc3');
@@ -170,39 +160,6 @@ function template_admin()
 			</div>') . ',
 		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']) . '
 	});');
-}
-
-// Mangage the copyright.
-function template_manage_copyright()
-{
-	global $context, $settings, $options, $scripturl, $txt;
-
-	echo '
-	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=copyright" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $txt['copyright_removal'], '
-				</h3>
-			</div>
-			<div class="windowbg wrc">
-				<span class="smalltext">', $txt['copyright_removal_desc'], '</span>
-				<dl class="settings">
-					<dt>
-						<strong>', $txt['copyright_code'], ':</strong>
-					</dt>
-					<dd>
-						<input type="text" name="copy_code" value="" class="input_text" />
-					</dd>
-				</dl>
-				<p>
-					<input type="submit" value="', $txt['copyright_proceed'], '" class="button_submit" />
-				</p>
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-		</form>
-	</div>
-	<br class="clear" />';
 }
 
 // Show some support information and credits to those who helped make this.
