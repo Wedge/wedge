@@ -53,7 +53,7 @@ function template_event_post()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// Start the javascript for drop down boxes...
-	add_js('
+	add_js_inline('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
@@ -61,9 +61,8 @@ function template_event_post()
 		var days = 0, selected = 0;
 		var dayElement = document.getElementById("day"), yearElement = document.getElementById("year"), monthElement = document.getElementById("month");
 
-		monthLength[1] = 28;
-		if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
-			monthLength[1] = 29;
+		var year = yearElement.options[yearElement.selectedIndex].value;
+		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
 		selected = dayElement.selectedIndex;
 		while (dayElement.options.length)
@@ -183,7 +182,7 @@ function template_event_post()
 		echo '
 								<li>
 									', $txt['calendar_link_event'], '
-									<input type="checkbox" style="vertical-align: middle;" class="input_check" name="link_to_board" checked="checked" data-onclick="toggleLinked(this.form);" />
+									<input type="checkbox" style="vertical-align: middle;" class="input_check" name="link_to_board" checked="checked" onclick="toggleLinked(this.form);" />
 								</li>
 								<li>
 									', $txt['calendar_post_in'], '

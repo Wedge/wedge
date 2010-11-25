@@ -2,7 +2,6 @@
 	smf_AdminIndex(oOptions)
 	{
 		public init()
-		public loadAdminIndex()
 		public setAnnouncements()
 		public showCurrentVersion()
 		public checkUpdateAvailable()
@@ -11,7 +10,6 @@
 	smf_ViewVersions(oOptions)
 	{
 		public init()
-		public loadViewVersions
 		public swapOption(oSendingElement, sName)
 		public compareVersions(sCurrent, sTarget)
 		public determineVersions()
@@ -29,15 +27,6 @@ function smf_AdminIndex(oOptions)
 
 smf_AdminIndex.prototype.init = function ()
 {
-	window.adminIndexInstanceRef = this;
-	var fHandlePageLoaded = function () {
-		window.adminIndexInstanceRef.loadAdminIndex();
-	}
-	addLoadEvent(fHandlePageLoaded);
-}
-
-smf_AdminIndex.prototype.loadAdminIndex = function ()
-{
 	// Load the text box containing the latest news items.
 	if (this.opt.bLoadAnnouncements)
 		this.setAnnouncements();
@@ -46,11 +35,10 @@ smf_AdminIndex.prototype.loadAdminIndex = function ()
 	if (this.opt.bLoadVersions)
 		this.showCurrentVersion();
 
-	// Load the text box that sais there's a new version available.
+	// Load the text box that says there's a new version available.
 	if (this.opt.bLoadUpdateNotification)
 		this.checkUpdateAvailable();
 }
-
 
 smf_AdminIndex.prototype.setAnnouncements = function ()
 {
@@ -116,16 +104,6 @@ function smf_ViewVersions (oOptions)
 }
 
 smf_ViewVersions.prototype.init = function ()
-{
-	// Load this on loading of the page.
-	window.viewVersionsInstanceRef = this;
-	var fHandlePageLoaded = function () {
-		window.viewVersionsInstanceRef.loadViewVersions();
-	}
-	addLoadEvent(fHandlePageLoaded);
-}
-
-smf_ViewVersions.prototype.loadViewVersions = function ()
 {
 	this.determineVersions();
 }

@@ -470,7 +470,6 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 			this.instanceRef.itemClicked(this);
 		}
 
-
 		aNewDisplayData[i] = oNewDivHandle;
 	}
 

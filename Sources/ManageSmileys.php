@@ -997,7 +997,7 @@ function EditSmileys()
 							$description = htmlspecialchars($rowData[\'description\']);
 
 							if (!empty($missing_sets))
-								$description .= sprintf(\'<br /><span class="smalltext"><strong>%1$s:</strong> %2$s</span>\', $txt[\'smileys_not_found_in_set\'], implode(\', \', $missing_sets));
+								$description .= sprintf(\'<div class="smalltext"><strong>%1$s:</strong> %2$s</div>\', $txt[\'smileys_not_found_in_set\'], implode(\', \', $missing_sets));
 
 							return $description;
 						'),

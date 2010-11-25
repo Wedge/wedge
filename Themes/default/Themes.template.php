@@ -351,7 +351,7 @@ function template_set_options()
 
 		if (isset($setting['description']))
 			echo '
-						<br /><span class="smalltext">', $setting['description'], '</span>';
+						<div class="smalltext">', $setting['description'], '</div>';
 
 		echo '
 					</li>';

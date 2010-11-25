@@ -290,9 +290,6 @@ textarea {
 	cursor: pointer;
 	font-weight: normal;
 	padding: 4px 5px;
-	border-radius: 7px;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
 }
 input:hover, textarea:hover, button:hover, select:hover {
 	border: 1px solid #454545;
@@ -1074,13 +1071,14 @@ dl.settings {
 	padding: 0;
 }
 dl.settings dt {
-	width: 47%;
+	width: 48%;
 	float: left;
 	margin: 0 0 10px;
 	padding: 0;
 	clear: both;
 }
 dl.settings dt .smalltext {
+	padding: 3px 20px 3px 8px;
 	font-style: italic;
 	color: #888;
 }
@@ -1106,7 +1104,7 @@ dl.settings dt.windowbg {
 	clear: both;
 }
 dl.settings dd {
-	width: 47%;
+	width: 48%;
 	float: left;
 	margin: 0 0 3px;
 	padding: 0;

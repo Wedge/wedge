@@ -67,13 +67,13 @@ function template_find_members()
 				</div>
 				<div class="padding">
 					<strong>', $txt['find_username'], ':</strong><br />
-					<input type="text" name="search" id="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" style="margin-top: 4px; width: 96%;" class="input_text" /><br />
-					<span class="smalltext"><em>', $txt['find_wildcards'], '</em></span><br />';
+					<input type="text" name="search" id="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" style="margin-top: 4px; width: 96%;" class="input_text" />
+					<div class="smalltext"><em>', $txt['find_wildcards'], '</em></div>';
 
 	// Only offer to search for buddies if we have some!
 	if (!empty($context['show_buddies']))
 		echo '
-					<span class="smalltext"><label for="buddies"><input type="checkbox" class="input_check" name="buddies" id="buddies"', !empty($context['buddy_search']) ? ' checked="checked"' : '', ' /> ', $txt['find_buddies'], '</label></span><br />';
+					<div class="smalltext"><label for="buddies"><input type="checkbox" class="input_check" name="buddies" id="buddies"', !empty($context['buddy_search']) ? ' checked="checked"' : '', ' /> ', $txt['find_buddies'], '</label></div>';
 
 	echo '
 					<div class="padding righttext">

@@ -300,8 +300,13 @@ function template_html_below()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
-	// Incluce postponed HTML and then kickstart the Javascript section
-	// -- files to include, main variables and the upper_section toggle.
+	// Incluce postponed inline JS, postponed HTML, and then kickstart the main
+	// Javascript section -- files to include, main vars and functions to start.
+
+	if (!empty($context['footer_js_inline']))
+		echo '
+<script><!-- // --><![CDATA[', $context['footer_js_inline'], '
+// ]]></script>';
 
 	echo $context['footer'], '
 
@@ -311,13 +316,7 @@ function template_html_below()
 	var smf_default_theme_url = "', $settings['default_theme_url'], '";
 	var smf_images_url = "', $settings['images_url'], '";
 	var smf_scripturl = "', $scripturl, '";
-	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';', $context['show_pm_popup'] ? '
-	var fPmPopup = function ()
-	{
-		if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
-			window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");
-	}
-	addLoadEvent(fPmPopup);' : '', '
+	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
 	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
 	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
 	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
@@ -349,9 +348,12 @@ function template_html_below()
 			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
 			sCookieName: \'upshrink\'
 		}
-	});';
+	});', $context['show_pm_popup'] ? '
 
-	// Output any postponed code. (Usually for Javascript added by mods or templates.)
+	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
+		window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");' : '';
+
+	// Output any postponed Javascript added by templates and mods.
 	echo $context['footer_js'], empty($footer_coding) ? '' : '
 // ]]></script>';
 

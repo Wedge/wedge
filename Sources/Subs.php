@@ -3843,8 +3843,8 @@ function db_debug_junk()
 	global $context, $scripturl, $boarddir, $modSettings, $boarddir;
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits, $txt;
 
-	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery
-	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || $_GET['action'] != 'viewquery') && !WIRELESS);
+	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
+	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'helpadmin')) && !WIRELESS);
 	// Check groups
 	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
 		$show_debug &= $context['user']['is_admin'];

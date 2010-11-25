@@ -77,9 +77,9 @@ function template_main()
 		var days, selected = dayElement.selectedIndex;
 
 		var year = yearElement.options[yearElement.selectedIndex].value;
-		monthLength[1] = (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) ? 29 : 28;
-		days = monthLength[monthElement.value - 1];
+		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
+		days = monthLength[monthElement.value - 1];
 		while (dayElement.options.length)
 			dayElement.options[0] = null;
 

@@ -15,9 +15,8 @@ function template_edit_holiday()
 		var days = 0, selected = 0;
 		var dayElement = document.getElementById("day"), yearElement = document.getElementById("year"), monthElement = document.getElementById("month");
 
-		monthLength[1] = 28;
-		if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
-			monthLength[1] = 29;
+		var year = yearElement.options[yearElement.selectedIndex].value;
+		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
 		selected = dayElement.selectedIndex;
 		while (dayElement.options.length)

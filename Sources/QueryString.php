@@ -674,12 +674,13 @@ function add_js()
 	$context['footer_js'] .= implode('', func_get_args());
 }
 
-// Same as earlier, but can be shown BEFORE all scripts are loaded (or even in the header if it's
-// not too big?), because the code doesn't seem to rely on script.js or other files.
-// !!! Right now this is just a placeholder. If we include jQuery, it will be worth it.
+// Same as earlier, but can be shown BEFORE all scripts are loaded,
+// because the code doesn't rely on script.js or other externals.
 function add_js_inline()
 {
-	add_js(implode('', func_get_args()));
+	global $context;
+
+	$context['footer_js_inline'] .= implode('', func_get_args());
 }
 
 // Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.

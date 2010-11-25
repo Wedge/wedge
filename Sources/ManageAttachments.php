@@ -234,7 +234,7 @@ function ManageAvatarSettings($return_config = false)
 		// External avatars?
 		array('title', 'avatar_external'),
 			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups']),
-			array('check', 'avatar_download_external', 0, 'onchange' => 'fUpdateStatus();'),
+			array('check', 'avatar_download_external', 0, 'onchange' => 'updateFormStatus();'),
 			array('text', 'avatar_max_width_external', 6),
 			array('text', 'avatar_max_height_external', 6),
 			array('select', 'avatar_action_too_large',
@@ -257,7 +257,7 @@ function ManageAvatarSettings($return_config = false)
 			array('check', 'avatar_paranoid'),
 		'',
 			array('check', 'avatar_download_png'),
-			array('select', 'custom_avatar_enabled', array($txt['option_attachment_dir'], $txt['option_specified_dir']), 'onchange' => 'fUpdateStatus();'),
+			array('select', 'custom_avatar_enabled', array($txt['option_attachment_dir'], $txt['option_specified_dir']), 'onchange' => 'updateFormStatus();'),
 			array('text', 'custom_avatar_dir', 40, 'subtext' => $txt['custom_avatar_dir_desc'], 'invalid' => !$context['valid_custom_avatar_dir']),
 			array('text', 'custom_avatar_url', 40),
 		array('title', 'avatar_defaults'),
