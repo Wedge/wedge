@@ -1903,127 +1903,125 @@ function template_issueWarning()
 
 	template_load_warning_variables();
 
-	echo '
-	<script><!-- // --><![CDATA[
-		function setWarningBarPos(curEvent, isMove, changeAmount)
-		{
-			barWidth = ', $context['warningBarWidth'], ';
+	add_js_inline('
+	function setWarningBarPos(curEvent, isMove, changeAmount)
+	{
+		barWidth = ', $context['warningBarWidth'], ';
 
-			// Are we passing the amount to change it by?
-			if (changeAmount)
+		// Are we passing the amount to change it by?
+		if (changeAmount)
+		{
+			if (document.getElementById(\'warning_level\').value == \'SAME\')
+				percent = ', $context['member']['warning'], ' + changeAmount;
+			else
+				percent = parseInt(document.getElementById(\'warning_level\').value) + changeAmount;
+		}
+		// If not then it\'s a mouse thing.
+		else
+		{
+			if (!curEvent)
+				var curEvent = window.event;
+
+			// If it\'s a movement check the button state first!
+			if (isMove)
+				if (!curEvent.button || curEvent.button != 1)
+					return false;
+
+			// Get the position of the container.
+			contain = document.getElementById(\'warning_contain\');
+			position = 0;
+			while (contain != null)
 			{
-				if (document.getElementById(\'warning_level\').value == \'SAME\')
-					percent = ', $context['member']['warning'], ' + changeAmount;
-				else
-					percent = parseInt(document.getElementById(\'warning_level\').value) + changeAmount;
+				position += contain.offsetLeft;
+				contain = contain.offsetParent;
 			}
-			// If not then it\'s a mouse thing.
+
+			// Where is the mouse?
+			if (curEvent.pageX)
+				mouse = curEvent.pageX;
 			else
 			{
-				if (!curEvent)
-					var curEvent = window.event;
-
-				// If it\'s a movement check the button state first!
-				if (isMove)
-					if (!curEvent.button || curEvent.button != 1)
-						return false;
-
-				// Get the position of the container.
-				contain = document.getElementById(\'warning_contain\');
-				position = 0;
-				while (contain != null)
-				{
-					position += contain.offsetLeft;
-					contain = contain.offsetParent;
-				}
-
-				// Where is the mouse?
-				if (curEvent.pageX)
-					mouse = curEvent.pageX;
-				else
-				{
-					mouse = curEvent.clientX;
-					mouse += document.documentElement.scrollLeft != "undefined" ? document.documentElement.scrollLeft : document.body.scrollLeft;
-				}
-
-				// Is this within bounds?
-				if (mouse < position || mouse > position + barWidth)
-					return;
-
-				percent = Math.round(((mouse - position) / barWidth) * 100);
-
-				// Round percent to the nearest 5
-				percent = Math.round(percent / 5) * 5;
+				mouse = curEvent.clientX;
+				mouse += document.documentElement.scrollLeft != "undefined" ? document.documentElement.scrollLeft : document.body.scrollLeft;
 			}
 
-			// What are the limits?
-			minLimit = ', $context['min_allowed'], ';
-			maxLimit = ', $context['max_allowed'], ';
+			// Is this within bounds?
+			if (mouse < position || mouse > position + barWidth)
+				return;
 
-			percent = Math.max(percent, minLimit);
-			percent = Math.min(percent, maxLimit);
+			percent = Math.round(((mouse - position) / barWidth) * 100);
 
-			size = barWidth * (percent/100);
+			// Round percent to the nearest 5
+			percent = Math.round(percent / 5) * 5;
+		}
 
-			document.getElementById(\'warning_text\').innerHTML = percent + "%";
-			document.getElementById(\'warning_level\').value = percent;
-			document.getElementById(\'warning_progress\').style.width = size + "px";
+		// What are the limits?
+		minLimit = ', $context['min_allowed'], ';
+		maxLimit = ', $context['max_allowed'], ';
 
-			// Get the right color.
-			color = "black"';
+		percent = Math.max(percent, minLimit);
+		percent = Math.min(percent, maxLimit);
+
+		size = barWidth * (percent/100);
+
+		document.getElementById(\'warning_text\').innerHTML = percent + "%";
+		document.getElementById(\'warning_level\').value = percent;
+		document.getElementById(\'warning_progress\').style.width = size + "px";
+
+		// Get the right color.
+		color = "black"');
 
 	foreach ($context['colors'] as $limit => $color)
-		echo '
-			if (percent >= ', $limit, ')
-				color = "', $color, '";';
+		add_js_inline('
+		if (percent >= ', $limit, ')
+			color = "', $color, '";');
 
-	echo '
-			document.getElementById(\'warning_progress\').style.backgroundColor = color;
+	add_js_inline('
+		document.getElementById(\'warning_progress\').style.backgroundColor = color;
 
-			// Also set the right effect.
-			effectText = "";';
+		// Also set the right effect.
+		effectText = "";');
 
 	foreach ($context['level_effects'] as $limit => $text)
-		echo '
-			if (percent >= ', $limit, ')
-				effectText = "', $text, '";';
+		add_js_inline('
+		if (percent >= ', $limit, ')
+			effectText = "', $text, '";');
 
-	echo '
-			document.getElementById(\'cur_level_div\').innerHTML = effectText;
-		}
+	add_js_inline('
+		document.getElementById(\'cur_level_div\').innerHTML = effectText;
+	}
 
-		// Disable notification boxes as required.
-		function modifyWarnNotify()
-		{
-			disable = !document.getElementById(\'warn_notify\').checked;
-			document.getElementById(\'warn_sub\').disabled = disable;
-			document.getElementById(\'warn_body\').disabled = disable;
-			document.getElementById(\'warn_temp\').disabled = disable;
-			document.getElementById(\'new_template_link\').style.display = disable ? \'none\' : \'\';
-		}
+	// Disable notification boxes as required.
+	function modifyWarnNotify()
+	{
+		disable = !document.getElementById(\'warn_notify\').checked;
+		document.getElementById(\'warn_sub\').disabled = disable;
+		document.getElementById(\'warn_body\').disabled = disable;
+		document.getElementById(\'warn_temp\').disabled = disable;
+		document.getElementById(\'new_template_link\').style.display = disable ? \'none\' : \'\';
+	}
 
-		function changeWarnLevel(amount)
-		{
-			setWarningBarPos(false, false, amount);
-		}
+	function changeWarnLevel(amount)
+	{
+		setWarningBarPos(false, false, amount);
+	}
 
-		// Warn template.
-		function populateNotifyTemplate()
-		{
-			index = document.getElementById(\'warn_temp\').value;
-			if (index == -1)
-				return false;
+	// Warn template.
+	function populateNotifyTemplate()
+	{
+		index = document.getElementById(\'warn_temp\').value;
+		if (index == -1)
+			return false;
 
-			// Otherwise see what we can do...';
+		// Otherwise see what we can do...');
 
 	foreach ($context['notification_templates'] as $k => $type)
-		echo '
-			if (index == ', $k, ')
-				document.getElementById(\'warn_body\').value = "', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '";';
+		add_js_inline('
+		if (index == ', $k, ')
+			document.getElementById(\'warn_body\').value = "', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '";');
 
-	echo '
-		}
-	// ]]></script>';
+	add_js_inline('
+	}');
 
 	echo '
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
@@ -2198,17 +2196,13 @@ function template_issueWarning()
 		<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
 
 	// Do our best to get pretty javascript enabled.
-	echo '
-	<script><!-- // --><![CDATA[
-		document.getElementById(\'warndiv1\').style.display = "";
-		document.getElementById(\'warndiv2\').style.display = "none";';
+	add_js_inline('
+	document.getElementById(\'warndiv1\').style.display = "";
+	document.getElementById(\'warndiv2\').style.display = "none";');
 
 	if (!$context['user']['is_owner'])
-		echo '
-		modifyWarnNotify();';
-
-	echo '
-	// ]]></script>';
+		add_js_inline('
+	modifyWarnNotify();');
 }
 
 // Template to show for deleting a users account - now with added delete post capability!
@@ -2502,6 +2496,7 @@ function template_profile_avatar_select()
 										<select name="file" id="file" size="10" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled="disabled"><option></option></select>
 									</div>
 									<div><img name="avatar" id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
+
 									<script><!-- // --><![CDATA[
 										var files = ["' . implode('", "', $context['avatar_list']) . '"];
 										var avatar = document.getElementById("avatar");
@@ -2514,7 +2509,7 @@ function template_profile_avatar_select()
 										if (avatar.src.indexOf("blank.gif") > -1)
 											changeSel(selavatar);
 										else
-											previewExternalAvatar(avatar.src)
+											previewExternalAvatar(avatar.src);
 
 										function changeSel(selected)
 										{
@@ -2548,7 +2543,6 @@ function template_profile_avatar_select()
 															else
 																file.options[count].selected = true;
 														}
-
 														count++;
 													}
 
@@ -2607,23 +2601,19 @@ function template_profile_avatar_select()
 
 	// If the user can link to an off server avatar, show them a box to input the address.
 	if (!empty($context['member']['avatar']['allow_external']))
-	{
 		echo '
 								<div id="avatar_external">
 									<div class="smalltext">', $txt['avatar_by_url'], '</div>
 									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['external'], '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);" class="input_text" />
 								</div>';
-	}
 
 	// If the user is able to upload avatars to the server show them an upload box.
 	if (!empty($context['member']['avatar']['allow_upload']))
-	{
 		echo '
 								<div id="avatar_upload">
 									<input type="file" size="48" name="attachment" value="" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');" class="input_file" />
 									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" alt="" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
 								</div>';
-	}
 
 	echo '
 							</dd>';

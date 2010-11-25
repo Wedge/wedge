@@ -341,15 +341,13 @@ function template_extract_package()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	if (!empty($context['redirect_url']))
-		echo '
-	<script><!-- // --><![CDATA[
-		setTimeout("doRedirect();", ', empty($context['redirect_timeout']) ? '5000' : $context['redirect_timeout'], ');
+		add_js_inline('
+	setTimeout("doRedirect();", ', empty($context['redirect_timeout']) ? '5000' : $context['redirect_timeout'], ');
 
-		function doRedirect()
-		{
-			window.location = "', $context['redirect_url'], '";
-		}
-	// ]]></script>';
+	function doRedirect()
+	{
+		window.location = "', $context['redirect_url'], '";
+	}');
 
 	echo '
 	<div id="admincenter">';
@@ -1424,12 +1422,14 @@ function template_view_operations()
 	<meta charset="utf-8" />
 	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
 	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/admin.css" />
+	<script src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
+	<script src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
 </head>
 <body>
 	<div class="padding windowbg">
 		<div class="cat_bar">
 			<h3>
-				', $txt['operation_find'], '<a href="#" data-onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+				', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
 			</h3>
 		</div>
 		<div class="padding">
@@ -1437,15 +1437,13 @@ function template_view_operations()
 		</div>
 		<div class="cat_bar">
 			<h3 class="topmargin">
-				', $txt[$operation_text], '<a href="#" data-onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+				', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
 			</h3>
 		</div>
 		<div class="padding">
 			<code id="replace_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['replace'], '</code>
 		</div>
 	</div>
-	<script src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
-	<script src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
 </body>
 </html>';
 }

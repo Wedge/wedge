@@ -1385,7 +1385,6 @@ function detectBrowser()
  * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
  * - Initialize the theme by calling the init subtemplate.
  * - Load any theme specific language files.
- * - Prepare variables in the case of theme variants being available.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
  * - Call the load_theme integration hook.
  */
@@ -1733,26 +1732,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!empty($settings['require_theme_strings']))
 		loadLanguage('ThemeStrings', '', false);
 
-	// We allow theme variants, because we're cool.
-	$context['theme_variant'] = '';
-	$context['theme_variant_url'] = '';
-	if (!empty($settings['theme_variants']))
-	{
-		// Overriding - for previews and that ilk.
-		if (!empty($_REQUEST['variant']))
-			$_SESSION['id_variant'] = $_REQUEST['variant'];
-		// User selection?
-		if (empty($settings['disable_user_variant']) || allowedTo('admin_forum'))
-			$context['theme_variant'] = !empty($_SESSION['id_variant']) ? $_SESSION['id_variant'] : (!empty($options['theme_variant']) ? $options['theme_variant'] : '');
-		// If not a user variant, select the default.
-		if ($context['theme_variant'] == '' || !in_array($context['theme_variant'], $settings['theme_variants']))
-			$context['theme_variant'] = !empty($settings['default_variant']) && in_array($settings['default_variant'], $settings['theme_variants']) ? $settings['default_variant'] : $settings['theme_variants'][0];
-
-		// Do this to keep things easier in the templates.
-		$context['theme_variant'] = '_' . $context['theme_variant'];
-		$context['theme_variant_url'] = $context['theme_variant'] . '/';
-	}
-
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
 		$user_info['time_format'] = $txt['time_format'];
@@ -1772,7 +1751,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Time to determine our CSS list...
 
-	// First, load our requested CSS variant folder.
+	// First, load our requested styling folder.
 	$folders = isset($board_info, $board_info['styling']) ? explode('/', $board_info['styling']) : array('css');
 	$context['css_folders'] = array();
 	$current_folder = $folders[0] == 'css' ? '' : '/css';

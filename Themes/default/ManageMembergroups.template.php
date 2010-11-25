@@ -311,11 +311,11 @@ function template_edit_group()
 							<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
 						</fieldset>
 						<a href="#" onclick="document.getElementById(\'visible_boards\').style.display = \'block\'; document.getElementById(\'visible_boards_link\').style.display = \'none\'; return false;" id="visible_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
-						<script><!-- // --><![CDATA[
-							document.getElementById("visible_boards_link").style.display = "";
-							document.getElementById("visible_boards").style.display = "none";
-						// ]]></script>
 					</dd>';
+
+		add_js_inline('
+	document.getElementById("visible_boards_link").style.display = "";
+	document.getElementById("visible_boards").style.display = "none";');
 	}
 
 	echo '

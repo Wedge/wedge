@@ -6,24 +6,22 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	// Some javascript for adding more options.
-	echo '
-		<script><!-- // --><![CDATA[
-			var pollOptionNum = 0;
+	add_js('
+	var pollOptionNum = 0;
 
-			function addPollOption()
-			{
-				if (pollOptionNum == 0)
-				{
-					for (var i = 0; i < document.forms.postmodify.elements.length; i++)
-						if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
-							pollOptionNum++;
-				}
-				pollOptionNum++;
+	function addPollOption()
+	{
+		if (pollOptionNum == 0)
+		{
+			for (var i = 0; i < document.forms.postmodify.elements.length; i++)
+				if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
+					pollOptionNum++;
+		}
+		pollOptionNum++;
 
-				setOuterHTML(document.getElementById("pollMoreOptions"), \'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255" class="input_text" /></li><li id="pollMoreOptions"></li\');
-				return false;
-			}
-		// ]]></script>';
+		setOuterHTML(document.getElementById("pollMoreOptions"), \'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255" class="input_text" /></li><li id="pollMoreOptions"></li\');
+		return false;
+	}');
 
 	// Start the main poll form.
 	echo '

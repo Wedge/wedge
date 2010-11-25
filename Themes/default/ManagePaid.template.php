@@ -224,32 +224,29 @@ function template_modify_user_subscription()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
-	echo '
-	<script><!-- // --><![CDATA[
-		var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	add_js_inline('
+	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-		function generateDays(offset)
-		{
-			var days = 0, selected = 0;
-			var dayElement = document.getElementById("day" + offset), yearElement = document.getElementById("year" + offset), monthElement = document.getElementById("month" + offset);
+	function generateDays(offset)
+	{
+		var days = 0, selected = 0;
+		var dayElement = document.getElementById("day" + offset), yearElement = document.getElementById("year" + offset), monthElement = document.getElementById("month" + offset);
 
-			monthLength[1] = 28;
-			if (yearElement.options[yearElement.selectedIndex].value % 4 == 0)
-				monthLength[1] = 29;
+		var year = yearElement.options[yearElement.selectedIndex].value;
+		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
-			selected = dayElement.selectedIndex;
-			while (dayElement.options.length)
-				dayElement.options[0] = null;
+		selected = dayElement.selectedIndex;
+		while (dayElement.options.length)
+			dayElement.options[0] = null;
 
-			days = monthLength[monthElement.value - 1];
+		days = monthLength[monthElement.value - 1];
 
-			for (i = 1; i <= days; i++)
-				dayElement.options[dayElement.length] = new Option(i, i);
+		for (i = 1; i <= days; i++)
+			dayElement.options[dayElement.length] = new Option(i, i);
 
-			if (selected < days)
-				dayElement.selectedIndex = selected;
-		}
-	// ]]></script>';
+		if (selected < days)
+			dayElement.selectedIndex = selected;
+	}');
 
 	echo '
 	<div id="admincenter">
@@ -586,10 +583,7 @@ function template_choose_payment()
 			<form action="', $gateway['form'], '" method="post">';
 
 		if (!empty($gateway['javascript']))
-			echo '
-				<script><!-- // --><![CDATA[
-					', $gateway['javascript'], '
-				// ]]></script>';
+			add_js_inline($gateway['javascript']);
 
 		foreach ($gateway['hidden'] as $name => $value)
 			echo '

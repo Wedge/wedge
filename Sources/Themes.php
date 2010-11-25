@@ -774,15 +774,6 @@ function SetThemeSettings()
 	loadTemplate('Settings');
 	loadSubTemplate('settings');
 
-	// Load the variants separately...
-	$settings['theme_variants'] = array();
-	if (file_exists($settings['theme_dir'] . '/index.template.php'))
-	{
-		$file_contents = implode('', file($settings['theme_dir'] . '/index.template.php'));
-		if (preg_match('~\$settings\[\'theme_variants\'\]\s*=(.+?);~', $file_contents, $matches))
-			eval('global $settings;' . $matches[0]);
-	}
-
 	// Submitting!
 	if (isset($_POST['submit']))
 	{
@@ -866,21 +857,6 @@ function SetThemeSettings()
 			$context['settings'][$i]['type'] = 'list';
 
 		$context['settings'][$i]['value'] = !isset($settings[$setting['id']]) ? '' : $settings[$setting['id']];
-	}
-
-	// Do we support variants?
-	if (!empty($settings['theme_variants']))
-	{
-		$context['theme_variants'] = array();
-		foreach ($settings['theme_variants'] as $variant)
-		{
-			// Have any text, old chap?
-			$context['theme_variants'][$variant] = array(
-				'label' => isset($txt['variant_' . $variant]) ? $txt['variant_' . $variant] : $variant,
-				'thumbnail' => !file_exists($settings['theme_dir'] . '/images/thumbnail.gif') || file_exists($settings['theme_dir'] . '/images/thumbnail_' . $variant . '.gif') ? $settings['images_url'] . '/thumbnail_' . $variant . '.gif' : ($settings['images_url'] . '/thumbnail.gif'),
-			);
-		}
-		$context['default_variant'] = !empty($settings['default_variant']) && isset($context['theme_variants'][$settings['default_variant']]) ? $settings['default_variant'] : $settings['theme_variants'][0];
 	}
 
 	// Restore the current theme.
@@ -973,18 +949,7 @@ function PickTheme()
 	if (isset($_GET['id']))
 		$_GET['th'] = $_GET['id'];
 
-	// Saving a variant cause JS doesn't work - pretend it did ;)
-	if (isset($_POST['save']))
-	{
-		// Which theme?
-		foreach ($_POST['save'] as $k => $v)
-			$_GET['th'] = (int) $k;
-
-		if (isset($_POST['vrt'][$k]))
-			$_GET['vrt'] = $_POST['vrt'][$k];
-	}
-
-	// Have we made a desicion, or are we just browsing?
+	// Have we made a decision, or are we just browsing?
 	if (isset($_GET['th']))
 	{
 		checkSession('get');
@@ -995,57 +960,13 @@ function PickTheme()
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
 		{
 			updateMemberData($user_info['id'], array('id_theme' => (int) $_GET['th']));
-
-			// A variants to save for the user?
-			if (!empty($_GET['vrt']))
-			{
-				$smcFunc['db_insert']('replace',
-					'{db_prefix}themes',
-					array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-					array($_GET['th'], $user_info['id'], 'theme_variant', $_GET['vrt']),
-					array('id_theme', 'id_member', 'variable')
-				);
-				cache_put_data('theme_settings-' . $_GET['th'] . ':' . $user_info['id'], null, 90);
-
-				$_SESSION['id_variant'] = 0;
-			}
-
 			redirectexit('action=profile;area=theme');
-		}
-
-		// If changing members or guests - and there's a variant - assume changing default variant.
-		if (!empty($_GET['vrt']) && ($_REQUEST['u'] == '0' || $_REQUEST['u'] == '-1'))
-		{
-			$smcFunc['db_insert']('replace',
-				'{db_prefix}themes',
-				array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-				array($_GET['th'], 0, 'default_variant', $_GET['vrt']),
-				array('id_theme', 'id_member', 'variable')
-			);
-
-			// Make it obvious that it's changed
-			cache_put_data('theme_settings-' . $_GET['th'], null, 90);
 		}
 
 		// For everyone.
 		if ($_REQUEST['u'] == '0')
 		{
 			updateMemberData(null, array('id_theme' => (int) $_GET['th']));
-
-			// Remove any custom variants.
-			if (!empty($_GET['vrt']))
-			{
-				$smcFunc['db_query']('', '
-					DELETE FROM {db_prefix}themes
-					WHERE id_theme = {int:current_theme}
-						AND variable = {string:theme_variant}',
-					array(
-						'current_theme' => (int) $_GET['th'],
-						'theme_variant' => 'theme_variant',
-					)
-				);
-			}
-
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
 		}
 		// Change the default/guest theme.
@@ -1058,21 +979,6 @@ function PickTheme()
 		else
 		{
 			updateMemberData((int) $_REQUEST['u'], array('id_theme' => (int) $_GET['th']));
-
-			if (!empty($_GET['vrt']))
-			{
-				$smcFunc['db_insert']('replace',
-					'{db_prefix}themes',
-					array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-					array($_GET['th'], (int) $_REQUEST['u'], 'theme_variant', $_GET['vrt']),
-					array('id_theme', 'id_member', 'variable')
-				);
-				cache_put_data('theme_settings-' . $_GET['th'] . ':' . (int) $_REQUEST['u'], null, 90);
-
-				if ($user_info['id'] == $_REQUEST['u'])
-					$_SESSION['id_variant'] = 0;
-			}
-
 			redirectexit('action=profile;u=' . (int) $_REQUEST['u'] . ';area=theme');
 		}
 	}
@@ -1120,7 +1026,7 @@ function PickTheme()
 		$request = $smcFunc['db_query']('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:name}, {string:theme_url}, {string:theme_dir}, {string:images_url}, {string:disable_user_variant})' . (!allowedTo('admin_forum') ? '
+			WHERE variable IN ({string:name}, {string:theme_url}, {string:theme_dir}, {string:images_url})' . (!allowedTo('admin_forum') ? '
 				AND id_theme IN ({array_string:known_themes})' : '') . '
 				AND id_theme != {int:default_theme}
 				AND id_member = {int:no_member}',
@@ -1131,7 +1037,6 @@ function PickTheme()
 				'theme_url' => 'theme_url',
 				'theme_dir' => 'theme_dir',
 				'images_url' => 'images_url',
-				'disable_user_variant' => 'disable_user_variant',
 				'known_themes' => explode(',', $modSettings['knownThemes']),
 			)
 		);
@@ -1182,26 +1087,8 @@ function PickTheme()
 	}
 	$smcFunc['db_free_result']($request);
 
-	// Get any member variant preferences.
-	$variant_preferences = array();
-	if ($context['current_member'] > 0)
-	{
-		$request = $smcFunc['db_query']('', '
-			SELECT id_theme, value
-			FROM {db_prefix}themes
-			WHERE variable = {string:theme_variant}',
-			array(
-				'theme_variant' => 'theme_variant',
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$variant_preferences[$row['id_theme']] = $row['value'];
-		$smcFunc['db_free_result']($request);
-	}
-
 	// Save the setting first.
 	$current_images_url = $settings['images_url'];
-	$current_theme_variants = !empty($settings['theme_variants']) ? $settings['theme_variants'] : array();
 
 	foreach ($context['available_themes'] as $id_theme => $theme_data)
 	{
@@ -1224,43 +1111,10 @@ function PickTheme()
 
 		$context['available_themes'][$id_theme]['thumbnail_href'] = $txt['theme_thumbnail_href'];
 		$context['available_themes'][$id_theme]['description'] = $txt['theme_description'];
-
-		// Are there any variants?
-		if (file_exists($theme_data['theme_dir'] . '/index.template.php') && empty($theme_data['disable_user_variant']))
-		{
-			$file_contents = implode('', file($theme_data['theme_dir'] . '/index.template.php'));
-			if (preg_match('~\$settings\[\'theme_variants\'\]\s*=(.+?);~', $file_contents, $matches))
-			{
-				$settings['theme_variants'] = array();
-
-				// Fill settings up.
-				eval('global $settings;' . $matches[0]);
-
-				if (!empty($settings['theme_variants']))
-				{
-					loadLanguage('Settings');
-
-					$context['available_themes'][$id_theme]['variants'] = array();
-					foreach ($settings['theme_variants'] as $variant)
-						$context['available_themes'][$id_theme]['variants'][$variant] = array(
-							'label' => isset($txt['variant_' . $variant]) ? $txt['variant_' . $variant] : $variant,
-							'thumbnail' => !file_exists($theme_data['theme_dir'] . '/images/thumbnail.gif') || file_exists($theme_data['theme_dir'] . '/images/thumbnail_' . $variant . '.gif') ? $theme_data['images_url'] . '/thumbnail_' . $variant . '.gif' : ($theme_data['images_url'] . '/thumbnail.gif'),
-						);
-
-					$context['available_themes'][$id_theme]['selected_variant'] = isset($_GET['vrt']) ? $_GET['vrt'] : (!empty($variant_preferences[$id_theme]) ? $variant_preferences[$id_theme] : (!empty($settings['default_variant']) ? $settings['default_variant'] : $settings['theme_variants'][0]));
-					if (!isset($context['available_themes'][$id_theme]['variants'][$context['available_themes'][$id_theme]['selected_variant']]['thumbnail']))
-						$context['available_themes'][$id_theme]['selected_variant'] = $settings['theme_variants'][0];
-
-					$context['available_themes'][$id_theme]['thumbnail_href'] = $context['available_themes'][$id_theme]['variants'][$context['available_themes'][$id_theme]['selected_variant']]['thumbnail'];
-					// Allow themes to override the text.
-					$context['available_themes'][$id_theme]['pick_label'] = isset($txt['variant_pick']) ? $txt['variant_pick'] : $txt['theme_pick_variant'];
-				}
-			}
-		}
 	}
+
 	// Then return it.
 	$settings['images_url'] = $current_images_url;
-	$settings['theme_variants'] = $current_theme_variants;
 
 	// As long as we're not doing the default theme...
 	if (!isset($_REQUEST['u']) || $_REQUEST['u'] >= 0)

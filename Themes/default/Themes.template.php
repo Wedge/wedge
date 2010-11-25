@@ -419,45 +419,7 @@ function template_set_settings()
 						<input type="text" id="theme_dir" name="options[theme_dir]" value="', $context['theme_settings']['actual_theme_dir'], '" size="50" style="max-width: 100%; width: 50ex;" class="input_text" />
 					</dd>
 				</dl>
-			</div>';
-
-	// Do we allow theme variants?
-	if (!empty($context['theme_variants']))
-	{
-		echo '
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" class="top" /> ', $txt['theme_variants'], '
-				</h3>
 			</div>
-			<div class="windowbg2 wrc">
-				<dl class="settings">
-					<dt>
-						<label for="variant">', $txt['theme_variants_default'], '</label>:
-					</dt>
-					<dd>
-						<select id="variant" name="options[default_variant]" onchange="changeVariant(this.value)">';
-
-		foreach ($context['theme_variants'] as $key => $variant)
-			echo '
-							<option value="', $key, '" ', $context['default_variant'] == $key ? 'selected="selected"' : '', '>', $variant['label'], '</option>';
-
-		echo '
-						</select>
-					</dd>
-					<dt>
-						<label for="disable_user_variant">', $txt['theme_variants_user_disable'], '</label>:
-					</dt>
-					<dd>
-						<input type="hidden" name="options[disable_user_variant]" value="0" />
-						<input type="checkbox" name="options[disable_user_variant]" id="disable_user_variant"', !empty($context['theme_settings']['disable_user_variant']) ? ' checked="checked"' : '', ' value="1" class="input_check" />
-					</dd>
-				</dl>
-				<img src="', $context['theme_variants'][$context['default_variant']]['thumbnail'], '" id="variant_preview" alt="" />
-			</div>';
-	}
-
-	echo '
 			<div class="cat_bar">
 				<h3>
 					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_options'], '
@@ -548,31 +510,6 @@ function template_set_settings()
 		</form>
 	</div>
 	<br class="clear" />';
-
-	if (!empty($context['theme_variants']))
-	{
-		echo '
-		<script><!-- // --><![CDATA[
-		var oThumbnails = {';
-
-		// All the variant thumbnails.
-		$count = 1;
-		foreach ($context['theme_variants'] as $key => $variant)
-		{
-			echo '
-			\'', $key, '\': \'', $variant['thumbnail'], '\'', count($context['theme_variants']) == $count ? '' : ',';
-			$count++;
-		}
-
-		echo '
-		}
-
-		function changeVariant(sVariant)
-		{
-			document.getElementById(\'variant_preview\').src = oThumbnails[sVariant];
-		}
-		// ]]></script>';
-	}
 }
 
 // This template allows for the selection of different themes ;).
@@ -586,7 +523,6 @@ function template_pick()
 
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
-	{
 		echo '
 			<div class="cat_bar">
 				<h3>
@@ -596,26 +532,9 @@ function template_pick()
 			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc">
 				<div class="flow_hidden">
 					<div class="floatright"><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" alt="" class="padding" /></a></div>
-					<p>', $theme['description'], '</p>';
-
-		if (!empty($theme['variants']))
-		{
-			echo '
-					<label for="variant', $theme['id'], '"><strong>', $theme['pick_label'], '</strong></label>:
-					<select id="variant', $theme['id'], '" name="vrt[', $theme['id'], ']" onchange="changeVariant', $theme['id'], '(this.value);">';
-
-			foreach ($theme['variants'] as $key => $variant)
-				echo '
-						<option value="', $key, '" ', $theme['selected_variant'] == $key ? 'selected="selected"' : '', '>', $variant['label'], '</option>';
-
-			echo '
-					</select>
-					<noscript>
-						<input type="submit" name="save[', $theme['id'], ']" value="', $txt['save'], '" class="button_submit" />
-					</noscript>';
-		}
-
-		echo '
+					<p>
+						', $theme['description'], '
+					</p>
 					<br />
 					<p>
 						<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
@@ -631,37 +550,6 @@ function template_pick()
 					</ul>
 				</div>
 			</div>';
-
-		if (!empty($theme['variants']))
-		{
-			echo '
-			<script><!-- // --><![CDATA[
-			var sBaseUseUrl = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';
-			var sBasePreviewUrl = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';
-			var oThumbnails', $theme['id'], ' = {';
-
-			// All the variant thumbnails.
-			$count = 1;
-			foreach ($theme['variants'] as $key => $variant)
-			{
-				echo '
-				\'', $key, '\': \'', $variant['thumbnail'], '\'', count($theme['variants']) == $count ? '' : ',';
-				$count++;
-			}
-
-			echo '
-			}
-
-			function changeVariant', $theme['id'], '(sVariant)
-			{
-				document.getElementById(\'theme_thumb_', $theme['id'], '\').src = oThumbnails', $theme['id'], '[sVariant];
-				document.getElementById(\'theme_use_', $theme['id'], '\').href = sBaseUseUrl + \';vrt=\' + sVariant;
-				document.getElementById(\'theme_thumb_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
-				document.getElementById(\'theme_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
-			}
-			// ]]></script>';
-		}
-	}
 
 	echo '
 		</form>
