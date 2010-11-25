@@ -494,10 +494,10 @@ function template_view_installed()
 		{
 			echo '
 			<tr class="', $alt ? 'windowbg' : 'windowbg2', '">
-				<td><span class="smalltext">', ++$i, '.</span></td>
-				<td><span class="smalltext">', $file['name'], '</span></td>
-				<td><span class="smalltext">', $file['version'], '</span></td>
-				<td class="right"><span class="smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></span></td>
+				<td class="smalltext">', ++$i, '.</td>
+				<td class="smalltext">', $file['name'], '</td>
+				<td class="smalltext">', $file['version'], '</td>
+				<td class="right smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></td>
 			</tr>';
 			$alt = !$alt;
 		}
@@ -816,10 +816,10 @@ function template_browse()
 					</p>
 					<dl class="settings">
 						<dt>
-							<strong>', $txt['package_emulate'], ':</strong><br />
-							<span class="smalltext">
+							<strong>', $txt['package_emulate'], ':</strong>
+							<div class="smalltext">
 								<a href="#" onclick="document.getElementById(\'ve\').value = \'', $forum_version, '\'; return false">', $txt['package_emulate_revert'], '</a>
-							</span>
+							</div>
 						</dt>
 						<dd>
 							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25" class="input_text" />
@@ -953,8 +953,8 @@ function template_servers()
 							<strong>', $txt['package_download_filename'], ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="filename" size="50" class="input_text" /><br />
-							<span class="smalltext">', $txt['package_download_filename_info'], '</span>
+							<input type="text" name="filename" size="50" class="input_text" />
+							<div class="smalltext">', $txt['package_download_filename_info'], '</div>
 						</dd>
 					</dl>
 					<div class="righttext">

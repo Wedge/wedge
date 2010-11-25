@@ -184,9 +184,6 @@ h1.forumtitle a {
 	-moz-border-radius: 0 0 12px 12px;
 	-webkit-border-radius: 0 0 12px 12px;
 }
-#footer span.smalltext {
-	font-size: 100%;
-}
 #footer div.frame {
 	display: block;
 	padding: 15px 20px;
@@ -2267,14 +2264,6 @@ dl.register_form dt {
 	clear: both;
 	width: 50%;
 	margin: .5em 0 0;
-}
-
-dl.register_form dt strong {
-	font-weight: bold;
-}
-
-dl.register_form dt span {
-	display: block;
 }
 
 dl.register_form dd {

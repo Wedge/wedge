@@ -639,9 +639,9 @@ function template_trackActivity()
 	echo '
 			<div id="tracking" class="windowbg2 wrc">
 				<dl class="noborder">
-					<dt>', $txt['most_recent_ip'], ':
-						', (empty($context['last_ip2']) ? '' : '<br />
-						<span class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" data-onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</span>'), '
+					<dt>
+						', $txt['most_recent_ip'], ':', (empty($context['last_ip2']) ? '' : '
+						<div class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" data-onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</div>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['last_ip'], ';u=', $context['member']['id'], '">', $context['last_ip'], '</a>';
@@ -1141,8 +1141,7 @@ function template_edit_options()
 			// Does it have any subtext to show?
 			if (!empty($field['subtext']))
 				echo '
-						<br />
-						<span class="smalltext">', $field['subtext'], '</span>';
+						<div class="smalltext">', $field['subtext'], '</div>';
 
 			echo '
 					</dt>
@@ -1218,8 +1217,8 @@ function template_edit_options()
 		{
 			echo '
 					<dt>
-						<strong>', $field['name'], ': </strong><br />
-						<span class="smalltext">', $field['desc'], '</span>
+						<strong>', $field['name'], ': </strong>
+						<div class="smalltext">', $field['desc'], '</div>
 					</dt>
 					<dd>
 						', $field['input_html'], '
@@ -1244,8 +1243,8 @@ function template_edit_options()
 		echo '
 				<dl>
 					<dt>
-						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong><br />
-						<span class="smalltext">', $txt['required_security_reasons'], '</span>
+						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
+						<div class="smalltext">', $txt['required_security_reasons'], '</div>
 					</dt>
 					<dd>
 						<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />
@@ -2094,8 +2093,8 @@ function template_issueWarning()
 	{
 		echo '
 				<dt>
-					<strong>', $txt['profile_warning_reason'], ':</strong><br />
-					<span class="smalltext">', $txt['profile_warning_reason_desc'], '</span>
+					<strong>', $txt['profile_warning_reason'], ':</strong>
+					<div class="smalltext">', $txt['profile_warning_reason_desc'], '</div>
 				</dt>
 				<dd>
 					<input type="text" name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%;" class="input_text" />
@@ -2300,8 +2299,8 @@ function template_profile_save()
 		echo '
 					<dl>
 						<dt>
-							<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong><br />
-							<span class="smalltext">', $txt['required_security_reasons'], '</span>
+							<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
+							<div class="smalltext">', $txt['required_security_reasons'], '</div>
 						</dt>
 						<dd>
 							<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />
@@ -2344,8 +2343,8 @@ function template_profile_group_manage()
 
 	echo '
 							<dt>
-								<strong>', $txt['primary_membergroup'], ': </strong><br />
-								<span class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</span>
+								<strong>', $txt['primary_membergroup'], ': </strong>
+								<div class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</div>
 							</dt>
 							<dd>
 								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 &amp;&amp; !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
@@ -2389,8 +2388,8 @@ function template_profile_birthdate()
 	// Just show the pretty box!
 	echo '
 							<dt>
-								<strong>', $txt['dob'], ':</strong><br />
-								<span class="smalltext">', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</span>
+								<strong>', $txt['dob'], ':</strong>
+								<div class="smalltext">', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</div>
 							</dt>
 							<dd>
 								<input type="text" name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '" class="input_text" /> -
@@ -2406,8 +2405,8 @@ function template_profile_signature_modify()
 
 	echo '
 							<dt>
-								<strong>', $txt['signature'], ':</strong><br />
-								<span class="smalltext">', $txt['sig_info'], '</span><br />
+								<strong>', $txt['signature'], ':</strong>
+								<div class="smalltext">', $txt['sig_info'], '</div>
 								<br />';
 
 	if ($context['show_spellchecking'])
@@ -2422,11 +2421,11 @@ function template_profile_signature_modify()
 	// If there is a limit at all!
 	if (!empty($context['signature_limits']['max_length']))
 		echo '
-								<span class="smalltext">', sprintf($txt['max_sig_characters'], $context['signature_limits']['max_length']), ' <span id="signatureLeft">', $context['signature_limits']['max_length'], '</span></span><br />';
+								<div class="smalltext">', sprintf($txt['max_sig_characters'], $context['signature_limits']['max_length']), ' <span id="signatureLeft">', $context['signature_limits']['max_length'], '</span></div>';
 
 	if ($context['signature_warning'])
 		echo '
-								<span class="smalltext">', $context['signature_warning'], '</span>';
+								<div class="smalltext">', $context['signature_warning'], '</div>';
 
 	echo '
 							</dd>';
@@ -2664,9 +2663,11 @@ function template_profile_timeformat_modify()
 
 	echo '
 							<dt>
-								<strong>', $txt['time_format'], ':</strong><br />
-								<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
-								<span class="smalltext">&nbsp;', $txt['date_format'], '</span>
+								<strong>', $txt['time_format'], ':</strong>
+								<div class="smalltext">
+									<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
+									&nbsp;', $txt['date_format'], '
+								</div>
 							</dt>
 							<dd>
 								<select name="easyformat" onchange="document.forms.creator.time_format.value = this.options[this.selectedIndex].value;" style="margin-bottom: 4px;">';
@@ -2687,8 +2688,8 @@ function template_profile_timeoffset_modify()
 
 	echo '
 							<dt>
-								<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['time_offset'], ':</strong><br />
-								<span class="smalltext">', $txt['personal_time_offset'], '</span>
+								<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['time_offset'], ':</strong>
+								<div class="smalltext">', $txt['personal_time_offset'], '</div>
 							</dt>
 							<dd>
 								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); document.getElementById(\'time_offset\').value = autoDetectTimeOffset(currentDate); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
@@ -2783,8 +2784,8 @@ function template_authentication_method()
 				<hr style="width: 100%; height: 1px" class="hrcolor" />
 				<dl>
 					<dt>
-						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong><br />
-						<span class="smalltext">', $txt['required_security_reasons'], '</span>
+						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
+						<div class="smalltext">', $txt['required_security_reasons'], '</div>
 					</dt>
 					<dd>
 						<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />

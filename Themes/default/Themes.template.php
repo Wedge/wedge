@@ -498,8 +498,8 @@ function template_set_settings()
 						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
 
 			if (isset($setting['description']))
-				echo '<br />
-						<span class="smalltext">', $setting['description'], '</span>';
+				echo '
+						<div class="smalltext">', $setting['description'], '</div>';
 
 			echo '
 					</dt>
@@ -517,8 +517,8 @@ function template_set_settings()
 						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
 
 			if (isset($setting['description']))
-				echo '<br />
-						<span class="smalltext">', $setting['description'], '</span>';
+				echo '
+						<div class="smalltext">', $setting['description'], '</div>';
 
 			echo '
 					</dt>
@@ -542,8 +542,8 @@ function template_set_settings()
 						<label for="', $setting['id'], '">', $setting['label'], '</label>:';
 
 			if (isset($setting['description']))
-				echo '<br />
-						<span class="smalltext">', $setting['description'], '</span>';
+				echo '
+						<div class="smalltext">', $setting['description'], '</div>';
 
 			echo '
 					</dt>

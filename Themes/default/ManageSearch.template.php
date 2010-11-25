@@ -328,22 +328,22 @@ function template_spider_edit()
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>
-						<strong>', $txt['spider_name'], ':</strong><br />
-						<span class="smalltext">', $txt['spider_name_desc'], '</span>
+						<strong>', $txt['spider_name'], ':</strong>
+						<div class="smalltext">', $txt['spider_name_desc'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="spider_name" value="', $context['spider']['name'], '" class="input_text" />
 					</dd>
 					<dt>
-						<strong>', $txt['spider_agent'], ':</strong><br />
-						<span class="smalltext">', $txt['spider_agent_desc'], '</span>
+						<strong>', $txt['spider_agent'], ':</strong>
+						<div class="smalltext">', $txt['spider_agent_desc'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="spider_agent" value="', $context['spider']['agent'], '" class="input_text" />
 					</dd>
 					<dt>
-						<strong>', $txt['spider_ip_info'], ':</strong><br />
-						<span class="smalltext">', $txt['spider_ip_info_desc'], '</span>
+						<strong>', $txt['spider_ip_info'], ':</strong>
+						<div class="smalltext">', $txt['spider_ip_info_desc'], '</div>
 					</dt>
 					<dd>
 						<textarea name="spider_ip" rows="4" cols="20">', $context['spider']['ip_info'], '</textarea>

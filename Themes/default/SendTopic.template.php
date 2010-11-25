@@ -134,8 +134,8 @@ function template_custom_email()
 						<input type="text" id="y_name" name="y_name" size="24" maxlength="40" value="', $context['user']['name'], '" class="input_text" />
 					</dd>
 					<dt>
-						<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label><br />
-						<span class="smalltext">', $txt['send_email_disclosed'], '</span>
+						<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
+						<div class="smalltext">', $txt['send_email_disclosed'], '</div>
 					</dt>
 					<dd>
 						<input type="text" id="y_mail" name="y_email" size="24" maxlength="50" value="', $context['user']['email'], '" class="input_text" />
@@ -144,8 +144,8 @@ function template_custom_email()
 	else
 		echo '
 					<dt>
-						<strong>', $txt['sendtopic_sender_email'], ':</strong><br />
-						<span class="smalltext">', $txt['send_email_disclosed'], '</span>
+						<strong>', $txt['sendtopic_sender_email'], ':</strong>
+						<div class="smalltext">', $txt['send_email_disclosed'], '</div>
 					</dt>
 					<dd>
 						<em>', $context['user']['email'], '</em>

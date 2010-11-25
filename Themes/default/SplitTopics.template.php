@@ -367,12 +367,12 @@ function template_merge_extra_options()
 							<a href="' . $scripturl . '?topic=' . $topic['id'] . '.0" target="_blank" class="new_win">' . $topic['subject'] . '</a>
 						</td>
 						<td>
-							', $topic['started']['link'], '<br />
-							<span class="smalltext">', $topic['started']['time'], '</span>
+							', $topic['started']['link'], '
+							<div class="smalltext">', $topic['started']['time'], '</div>
 						</td>
 						<td>
-							' . $topic['updated']['link'] . '<br />
-							<span class="smalltext">', $topic['updated']['time'], '</span>
+							' . $topic['updated']['link'] . '
+							<div class="smalltext">', $topic['updated']['time'], '</div>
 						</td>
 						<td class="center">
 							<input type="checkbox" class="input_check" name="notifications[]" value="' . $topic['id'] . '" checked="checked" />

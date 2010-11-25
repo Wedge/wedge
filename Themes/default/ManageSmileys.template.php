@@ -319,8 +319,8 @@ function template_addsmiley()
 				<fieldset id="ul_settings" style="display: none;">
 					<dl class="settings">
 						<dt>
-							<strong>', $txt['smileys_add_upload_choose'], ':</strong><br />
-							<span class="smalltext">', $txt['smileys_add_upload_choose_desc'], '</span>
+							<strong>', $txt['smileys_add_upload_choose'], ':</strong>
+							<div class="smalltext">', $txt['smileys_add_upload_choose_desc'], '</div>
 						</dt>
 						<dd>
 							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod(\'upload\');" class="input_file" />

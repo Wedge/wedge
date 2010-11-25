@@ -755,8 +755,8 @@ function template_warn_template()
 						<input type="text" id="template_title" name="template_title" value="', $context['template_data']['title'], '" size="30" class="input_text" />
 					</dd>
 					<dt>
-						<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong><br />
-						<span class="smalltext">', $txt['mc_warning_template_body_desc'], '</span>
+						<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong>
+						<div class="smalltext">', $txt['mc_warning_template_body_desc'], '</div>
 					</dt>
 					<dd>
 						<textarea id="template_body" name="template_body" rows="10" cols="45" class="smalltext">', $context['template_data']['body'], '</textarea>
@@ -769,8 +769,7 @@ function template_warn_template()
 				<label for="make_personal">
 					<strong>', $txt['mc_warning_template_personal'], '</strong>
 				</label>
-				<br />
-				<span class="smalltext">', $txt['mc_warning_template_personal_desc'], '</span>
+				<div class="smalltext">', $txt['mc_warning_template_personal_desc'], '</div>
 				<br />';
 
 	echo '
