@@ -73,7 +73,6 @@ function template_set_password()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
-	<script src="', $settings['default_theme_url'], '/scripts/register.js"></script>
 	<br />
 	<form action="', $scripturl, '?action=reminder;sa=setpassword2" name="reminder_form" id="reminder_form" method="post" accept-charset="UTF-8">
 		<div class="tborder login">
@@ -103,17 +102,19 @@ function template_set_password()
 		<input type="hidden" name="code" value="', $context['code'], '" />
 		<input type="hidden" name="u" value="', $context['memID'], '" />
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-	</form>
-	<script><!-- // --><![CDATA[
+	</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+
+	add_js('
 	var regTextStrings = {
-		"password_short": "', $txt['registration_password_short'], '",
-		"password_reserved": "', $txt['registration_password_reserved'], '",
-		"password_numbercase": "', $txt['registration_password_numbercase'], '",
-		"password_no_match": "', $txt['registration_password_no_match'], '",
-		"password_valid": "', $txt['registration_password_valid'], '"
+		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
+		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
+		"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
+		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
+		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new smfRegister("reminder_form", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
-// ]]></script>';
+	var verificationHandle = new smfRegister("reminder_form", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
 }
 
 function template_ask()
@@ -121,7 +122,6 @@ function template_ask()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
-	<script src="', $settings['default_theme_url'], '/scripts/register.js"></script>
 	<br />
 	<form action="', $scripturl, '?action=reminder;sa=secret2" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="tborder login">
@@ -162,19 +162,18 @@ function template_ask()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
 
-	if ($context['account_type'] == 'password')
-		echo '
-<script><!-- // --><![CDATA[
-	var regTextStrings = {
-		"password_short": "', $txt['registration_password_short'], '",
-		"password_reserved": "', $txt['registration_password_reserved'], '",
-		"password_numbercase": "', $txt['registration_password_numbercase'], '",
-		"password_no_match": "', $txt['registration_password_no_match'], '",
-		"password_valid": "', $txt['registration_password_valid'], '"
-	};
-	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
-// ]]></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
 
+	if ($context['account_type'] == 'password')
+		add_js('
+	var regTextStrings = {
+		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
+		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
+		"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
+		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
+		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
+	};
+	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
 }
 
 ?>

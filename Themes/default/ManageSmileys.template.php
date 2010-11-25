@@ -20,37 +20,20 @@ function template_editsets()
 			<div id="smileysLatest">', $txt['smiley_sets_latest_fetch'], '</div>
 		</div>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
-		window.smfForum_scripturl = "', $scripturl, '";
-		window.smfForum_sessionid = "', $context['session_id'], '";
-		window.smfForum_sessionvar = "', $context['session_var'], '";
-	// ]]></script>';
+	<br class="clear" />';
+
+	add_js('
+	window.smfForum_scripturl = "', $scripturl, '";
+	window.smfForum_sessionid = "', $context['session_id'], '";
+	window.smfForum_sessionvar = "', $context['session_var'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
-		echo '
-	<script src="', $scripturl, '?action=viewsmfile;filename=latest-smileys.js"></script>';
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-smileys.js');
 
-	echo '
-	<script><!-- // --><![CDATA[
-		function smfSetLatestSmileys()
-		{
-			if (typeof(window.smfLatestSmileys) != "undefined")
-				document.getElementById("smileysLatest").innerHTML = window.smfLatestSmileys;';
-
-		if (!empty($context['selected_set']))
-			echo '
-
-			changeSet("', $context['selected_set'], '");';
-		if (!empty($context['selected_smiley']))
-			echo '
-			loadSmiley(', $context['selected_smiley'], ');';
-
-		echo '
-		}
-
-		smfSetLatestSmileys();
-	// ]]></script>';
+	add_js('
+	if (typeof(window.smfLatestSmileys) != "undefined")
+		document.getElementById("smileysLatest").innerHTML = window.smfLatestSmileys;', !empty($context['selected_set']) ? '
+	changeSet("' . $context['selected_set'] . '");' : '');
 }
 
 // Modifying a smiley set.
@@ -282,7 +265,7 @@ function template_addsmiley()
 							<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview" alt="" />
 						</dt>
 						<dd>
-							', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();selectMethod(\'existing\');">';
+							', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview(); selectMethod(\'existing\');">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '

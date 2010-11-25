@@ -542,17 +542,8 @@ function template_browse()
 		add_js_file($scripturl . '?action=viewsmfile;filename=latest-packages.js');
 
 	add_js('
-	var tempOldOnload;
-
-	function smfSetLatestPackages()
-	{
-		if (typeof(window.smfLatestPackages) != "undefined")
-			document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;
-
-		if (tempOldOnload)
-			tempOldOnload();
-	}
-	smfSetLatestPackages();');
+	if (typeof(window.smfLatestPackages) != "undefined")
+		document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;');
 
 	echo '
 		<br />

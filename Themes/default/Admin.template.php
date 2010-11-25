@@ -282,30 +282,19 @@ function template_credits()
 
 	// This sets the latest support stuff.
 	add_js('
-	function smfSetLatestSupport()
+	if (window.smfLatestSupport)
+		document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
+
+	if (window.smfVersion)
 	{
-		if (window.smfLatestSupport)
-			document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
-	}
-
-	function smfCurrentVersion()
-	{
-		var smfVer, yourVer;
-
-		if (!window.smfVersion)
-			return;
-
-		smfVer = document.getElementById("smfVersion");
-		yourVer = document.getElementById("yourVersion");
+		var smfVer = document.getElementById("smfVersion");
+		var yourVer = document.getElementById("yourVersion");
 		smfVer.innerHTML = window.smfVersion;
 
 		var currentVersion = yourVer.innerHTML;
 		if (currentVersion != window.smfVersion)
 			yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
-	}
-
-	smfSetLatestSupport();
-	smfCurrentVersion();');
+	}');
 }
 
 // Displays information about file versions installed, and compares them to current version.

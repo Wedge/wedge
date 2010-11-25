@@ -152,35 +152,20 @@ function template_main()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
+	<br class="clear" />';
 
-	<script><!-- // --><![CDATA[
-		window.smfForum_scripturl = "', $scripturl, '";
-		window.smfForum_sessionid = "', $context['session_id'], '";
-		window.smfForum_sessionvar = "', $context['session_var'], '";
-		window.smfThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';
-	// ]]></script>';
+	add_js('
+	window.smfForum_scripturl = "', $scripturl, '";
+	window.smfForum_sessionid = "', $context['session_id'], '";
+	window.smfForum_sessionvar = "', $context['session_var'], '";
+	window.smfThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
 
 	if (empty($modSettings['disable_smf_js']))
-		echo '
-	<script src="', $scripturl, '?action=viewsmfile;filename=latest-themes.js"></script>';
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-themes.js');
 
-	echo '
-	<script><!-- // --><![CDATA[
-		var tempOldOnload;
-
-		function smfSetLatestThemes()
-		{
-			if (typeof(window.smfLatestThemes) != "undefined")
-				document.getElementById("themeLatest").innerHTML = window.smfLatestThemes;
-
-			if (tempOldOnload)
-				tempOldOnload();
-		}
-	// ]]></script>
-	<script><!-- // --><![CDATA[
-		smfSetLatestThemes();
-	// ]]></script>';
+	add_js('
+	if (typeof(window.smfLatestThemes) != "undefined")
+		document.getElementById("themeLatest").innerHTML = window.smfLatestThemes;');
 }
 
 function template_list_themes()
