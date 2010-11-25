@@ -57,7 +57,7 @@ function template_permission_index()
 
 		if (!empty($group['children']))
 			echo '
-							<br /><span class="smalltext">', $txt['permissions_includes_inherited'], ': &quot;', implode('&quot;, &quot;', $group['children']), '&quot;</span>';
+							<div class="smalltext">', $txt['permissions_includes_inherited'], ': &quot;', implode('&quot;, &quot;', $group['children']), '&quot;</div>';
 
 		echo '
 						</td>
@@ -180,54 +180,49 @@ function template_permission_index()
 			</div>';
 
 		// Javascript for the advanced stuff.
-		echo '
+		add_js('
+	var oPermissionsPanelToggle = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
+		aSwappableContainers: [
+			\'permissions_panel_advanced\'
+		],
+		aSwapImages: [
+			{
+				sId: \'permissions_panel_toggle\',
+				srcExpanded: smf_images_url + \'/sort_down.gif\',
+				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
+				srcCollapsed: smf_images_url + \'/selected.gif\',
+				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
+			}
+		],
+		oThemeOptions: {
+			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
+			sOptionName: \'admin_preferences\',
+			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
+			sSessionId: ', JavaScriptEscape($context['session_id']), ',
+			sThemeId: \'1\',
+			sAdditionalVars: \';admin_key=app\'
+		}
+	});
 
-			<script><!-- // --><![CDATA[
-				var oPermissionsPanelToggle = new smc_Toggle({
-					bToggleEnabled: true,
-					bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
-					aSwappableContainers: [
-						\'permissions_panel_advanced\'
-					],
-					aSwapImages: [
-						{
-							sId: \'permissions_panel_toggle\',
-							srcExpanded: smf_images_url + \'/sort_down.gif\',
-							altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-							srcCollapsed: smf_images_url + \'/selected.gif\',
-							altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-						}
-					],
-					oThemeOptions: {
-						bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-						sOptionName: \'admin_preferences\',
-						sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-						sSessionId: ', JavaScriptEscape($context['session_id']), ',
-						sThemeId: \'1\',
-						sAdditionalVars: \';admin_key=app\'
-					}
-				});';
+	function checkSubmit()
+	{
+		if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
+		{
+			alert(', JavaScriptEscape($txt['permissions_only_one_option']), ');
+			return false;
+		}
+		if (document.forms.permissionForm.predefined.value == "" && document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
+		{
+			alert(', JavaScriptEscape($txt['permissions_no_action']), ');
+			return false;
+		}
+		if (document.forms.permissionForm.permissions.value != "" && document.forms.permissionForm.add_remove.value == "deny")
+			return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
 
-		echo '
-
-				function checkSubmit()
-				{
-					if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
-					{
-						alert(', JavaScriptEscape($txt['permissions_only_one_option']), ');
-						return false;
-					}
-					if (document.forms.permissionForm.predefined.value == "" && document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
-					{
-						alert(', JavaScriptEscape($txt['permissions_no_action']), ');
-						return false;
-					}
-					if (document.forms.permissionForm.permissions.value != "" && document.forms.permissionForm.add_remove.value == "deny")
-						return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
-
-					return true;
-				}
-			// ]]></script>';
+		return true;
+	}');
 
 		if (!empty($context['profile']))
 			echo '
@@ -664,7 +659,7 @@ function template_modify_group_simple($type)
 	echo '
 				</tbody>
 			</table>
-	<script><!-- // --><![CDATA[';
+			<script><!-- // --><![CDATA[';
 
 	if ($context['profile']['can_modify'] && empty($context['simple_javascript_displayed']))
 	{
@@ -673,87 +668,83 @@ function template_modify_group_simple($type)
 
 		// Manually toggle the breakdown.
 		echo '
-	function toggleBreakdown(id_group, forcedisplayType)
-	{
-		displayType = document.getElementById("group_hr_div_" + id_group).style.display == "none" ? "" : "none";
-		if (typeof(forcedisplayType) != "undefined")
-			displayType = forcedisplayType;
+				function toggleBreakdown(id_group, forcedisplayType)
+				{
+					displayType = document.getElementById("group_hr_div_" + id_group).style.display == "none" ? "" : "none";
+					if (typeof(forcedisplayType) != "undefined")
+						displayType = forcedisplayType;
 
-		for (i = 0; i < groupPermissions[id_group].length; i++)
-		{
-			document.getElementById("perm_div_" + id_group + "_" + groupPermissions[id_group][i]).style.display = displayType
-		}
-		document.getElementById("group_hr_div_" + id_group).style.display = displayType
-		document.getElementById("group_toggle_img_" + id_group).src = "', $settings['images_url'], '/" + (displayType == "none" ? "selected" : "sort_down") + ".gif";
+					for (i = 0; i < groupPermissions[id_group].length; i++)
+					{
+						document.getElementById("perm_div_" + id_group + "_" + groupPermissions[id_group][i]).style.display = displayType
+					}
+					document.getElementById("group_hr_div_" + id_group).style.display = displayType
+					document.getElementById("group_toggle_img_" + id_group).src = "', $settings['images_url'], '/" + (displayType == "none" ? "selected" : "sort_down") + ".gif";
 
-		return false;
-	}';
+					return false;
+				}';
 
 		// This function decides what to do when ANYTHING is touched!
 		echo '
-		var groupPermissions = new Array();
-		function determineGroupState(id_group, forceState)
-		{
-			if (typeof(forceState) != "undefined")
-				thisState = forceState;
+				var groupPermissions = new Array();
+				function determineGroupState(id_group, forceState)
+				{
+					if (typeof(forceState) != "undefined")
+						thisState = forceState;
 
-			// Cycle through this groups elements.
-			var curState = false, thisState;
-			for (var i = 0; i < groupPermissions[id_group].length; i++)
-			{';
+					// Cycle through this groups elements.
+					var curState = false, thisState;
+					for (var i = 0; i < groupPermissions[id_group].length; i++)
+					{';
 
 		if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
 			echo '
-				if (typeof(forceState) != "undefined")
-				{
-					document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
-				}
+					if (typeof(forceState) != "undefined")
+						document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
 
-				thisState = document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked ? \'on\' : \'off\';';
+					thisState = document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked ? \'on\' : \'off\';';
 		else
 			echo '
-				if (typeof(forceState) != "undefined")
-				{
-					document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
-					document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked = forceState == \'off\' ? 1 : 0;
-					document.getElementById(\'select_deny_\' + groupPermissions[id_group][i]).checked = forceState == \'deny\' ? 1 : 0;
-				}
+					if (typeof(forceState) != "undefined")
+					{
+						document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
+						document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked = forceState == \'off\' ? 1 : 0;
+						document.getElementById(\'select_deny_\' + groupPermissions[id_group][i]).checked = forceState == \'deny\' ? 1 : 0;
+					}
 
-				if (document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked)
-					thisState = \'on\';
-				else if (document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked)
-					thisState = \'off\';
-				else
-					thisState = \'deny\';';
+					if (document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked)
+						thisState = \'on\';
+					else if (document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked)
+						thisState = \'off\';
+					else
+						thisState = \'deny\';';
 
 		echo '
-				// Unless this is the first element, or it\'s the same state as the last we\'re buggered.
-				if (curState == false || thisState == curState)
-				{
-					curState = thisState;
+					// Unless this is the first element, or it\'s the same state as the last we\'re buggered.
+					if (curState == false || thisState == curState)
+						curState = thisState;
+					else
+					{
+						curState = \'fudged\';
+						i = 999;
+					}
 				}
-				else
-				{
-					curState = \'fudged\';
-					i = 999;
-				}
-			}
 
-			// First check the right master is selected!';
+		// First check the right master is selected!';
 		if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
 			echo '
-			document.getElementById("group_select_" + id_group).checked = curState == \'on\' ? 1 : 0;';
+				document.getElementById("group_select_" + id_group).checked = curState == \'on\' ? 1 : 0;';
 		else
 			echo '
-			document.getElementById("group_select_on_" + id_group).checked = curState == \'on\' ? 1 : 0;
-			document.getElementById("group_select_off_" + id_group).checked = curState == \'off\' ? 1 : 0;
-			document.getElementById("group_select_deny_" + id_group).checked = curState == \'deny\' ? 1 : 0;';
+				document.getElementById("group_select_on_" + id_group).checked = curState == \'on\' ? 1 : 0;
+				document.getElementById("group_select_off_" + id_group).checked = curState == \'off\' ? 1 : 0;
+				document.getElementById("group_select_deny_" + id_group).checked = curState == \'deny\' ? 1 : 0;';
 
 		// Force the display?
 		echo '
-			if (curState != \'fudged\')
-				toggleBreakdown(id_group, "none");
-		}';
+				if (curState != \'fudged\')
+					toggleBreakdown(id_group, "none");
+			}';
 	}
 
 	// Some more javascript to be displayed as long as we are editing.
@@ -1121,7 +1112,7 @@ function template_postmod_permissions()
 							<span ', ($group['color'] ? 'style="color: ' . $group['color'] . '"' : ''), '>', $group['name'], '</span>';
 		if (!empty($group['children']))
 			echo '
-							<br /><span class="smalltext">', $txt['permissions_includes_inherited'], ': &quot;', implode('&quot;, &quot;', $group['children']), '&quot;</span>';
+							<div class="smalltext">', $txt['permissions_includes_inherited'], ': &quot;', implode('&quot;, &quot;', $group['children']), '&quot;</div>';
 
 		echo '
 						</td>

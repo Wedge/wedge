@@ -298,52 +298,42 @@ function template_view_package()
 	<br class="clear" />';
 
 	// Toggle options.
-	echo '
-	<script><!-- // --><![CDATA[
-		var aOperationElements = new Array();';
+	add_js('
+	var aOperationElements = new Array();');
 
 	// Operations.
 	if (!empty($js_operations))
-	{
 		foreach ($js_operations as $key => $operation)
-		{
-			echo '
-			aOperationElements[', $key, '] = new smc_Toggle({
-				bToggleEnabled: true,
-				bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
-				aSwappableContainers: [
-					\'operation_', $key, '\'
-				],
-				aSwapImages: [
-					{
-						sId: \'operation_img_', $key, '\',
-						srcExpanded: smf_images_url + \'/sort_down.gif\',
-						altExpanded: \'*\',
-						srcCollapsed: smf_images_url + \'/selected.gif\',
-						altCollapsed: \'*\'
-					}
-				]
-			});';
-		}
-	}
-
-	echo '
-	// ]]></script>';
+			add_js('
+	aOperationElements[', $key, '] = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
+		aSwappableContainers: [
+			\'operation_', $key, '\'
+		],
+		aSwapImages: [
+			{
+				sId: \'operation_img_', $key, '\',
+				srcExpanded: smf_images_url + \'/sort_down.gif\',
+				altExpanded: \'*\',
+				srcCollapsed: smf_images_url + \'/selected.gif\',
+				altCollapsed: \'*\'
+			}
+		]
+	});');
 
 	// And a bit more for database changes.
 	if (!empty($context['database_changes']))
-		echo '
-	<script><!-- // --><![CDATA[
-		var database_changes_area = document.getElementById(\'db_changes_div\');
-		var db_vis = false;
-		database_changes_area.style.display = "none";
-		function swap_database_changes()
-		{
-			db_vis = !db_vis;
-			database_changes_area.style.display = db_vis ? "" : "none";
-			return false;
-		}
-	// ]]></script>';
+		add_js_inline('
+	var database_changes_area = document.getElementById(\'db_changes_div\');
+	var db_vis = false;
+	database_changes_area.style.display = "none";
+	function swap_database_changes()
+	{
+		db_vis = !db_vis;
+		database_changes_area.style.display = db_vis ? "" : "none";
+		return false;
+	}');
 }
 
 function template_extract_package()
@@ -538,41 +528,31 @@ function template_browse()
 		<div class="windowbg2 wrc">
 			<div id="packagesLatest">', $txt['packages_latest_fetch'], '</div>
 			<div class="clear_right"></div>
-		</div>
+		</div>';
 
-		<script><!-- // --><![CDATA[
-			window.smfForum_scripturl = "', $scripturl, '";
-			window.smfForum_sessionid = "', $context['session_id'], '";
-			window.smfForum_sessionvar = "', $context['session_var'], '";';
-
-	// Make a list of already installed mods so nothing is listed twice ;).
-	echo '
-			window.smfInstalledPackages = ["', implode('", "', $context['installed_mods']), '"];
-			window.smfVersion = "', $context['forum_version'], '";
-		// ]]></script>';
+	// Make a list of already installed mods so nothing is listed twice ;)
+	add_js('
+	window.smfForum_scripturl = "', $scripturl, '";
+	window.smfForum_sessionid = "', $context['session_id'], '";
+	window.smfForum_sessionvar = "', $context['session_var'], '";
+	window.smfInstalledPackages = ["', implode('", "', $context['installed_mods']), '"];
+	window.smfVersion = "', $context['forum_version'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
-		echo '
-		<script src="', $scripturl, '?action=viewsmfile;filename=latest-packages.js"></script>';
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-packages.js');
 
-	echo '
-		<script><!-- // --><![CDATA[
-			var tempOldOnload;
+	add_js('
+	var tempOldOnload;
 
-			function smfSetLatestPackages()
-			{
-				if (typeof(window.smfLatestPackages) != "undefined")
-					document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;
+	function smfSetLatestPackages()
+	{
+		if (typeof(window.smfLatestPackages) != "undefined")
+			document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;
 
-				if (tempOldOnload)
-				tempOldOnload();
-			}
-		// ]]></script>';
-
-		echo '
-		<script><!-- // --><![CDATA[
-			smfSetLatestPackages();
-		// ]]></script>';
+		if (tempOldOnload)
+			tempOldOnload();
+	}
+	smfSetLatestPackages();');
 
 	echo '
 		<br />
@@ -1151,52 +1131,47 @@ function template_package_list()
 	if (!empty($context['package_list']))
 	{
 		$section_count = count($context['package_list']);
-		echo '
-	<script><!-- // --><![CDATA[';
+
 		foreach ($context['package_list'] as $section => $ps)
 		{
-			echo '
-		var oPackageServerToggle_', $section, ' = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
-			aSwappableContainers: [
-				\'package_section_', $section, '\'
-			],
-			aSwapImages: [
-				{
-					sId: \'ps_img_', $section, '\',
-					srcExpanded: smf_images_url + \'/upshrink.png\',
-					altExpanded: \'*\',
-					srcCollapsed: smf_images_url + \'/upshrink2.png\',
-					altCollapsed: \'*\'
-				}
-			]
-		});';
+			add_js('
+	var oPackageServerToggle_', $section, ' = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
+		aSwappableContainers: [
+			\'package_section_', $section, '\'
+		],
+		aSwapImages: [
+			{
+				sId: \'ps_img_', $section, '\',
+				srcExpanded: smf_images_url + \'/upshrink.png\',
+				altExpanded: \'*\',
+				srcCollapsed: smf_images_url + \'/upshrink2.png\',
+				altCollapsed: \'*\'
+			}
+		]
+	});');
 
 			foreach ($ps['items'] as $id => $package)
-			{
 				if (!$package['is_text'] && !$package['is_line'] && !$package['is_remote'])
-					echo '
-		var oPackageToggle_', $section, '_pkg_', $id, ' = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: true,
-			aSwappableContainers: [
-				\'package_section_', $section, '_pkg_', $id, '\'
-			],
-			aSwapImages: [
-				{
-					sId: \'ps_img_', $section, '_pkg_', $id, '\',
-					srcExpanded: smf_images_url + \'/upshrink.png\',
-					altExpanded: \'*\',
-					srcCollapsed: smf_images_url + \'/upshrink2.png\',
-					altCollapsed: \'*\'
-				}
-			]
-		});';
+					add_js('
+	var oPackageToggle_', $section, '_pkg_', $id, ' = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: true,
+		aSwappableContainers: [
+			\'package_section_', $section, '_pkg_', $id, '\'
+		],
+		aSwapImages: [
+			{
+				sId: \'ps_img_', $section, '_pkg_', $id, '\',
+				srcExpanded: smf_images_url + \'/upshrink.png\',
+				altExpanded: \'*\',
+				srcCollapsed: smf_images_url + \'/upshrink2.png\',
+				altCollapsed: \'*\'
 			}
+		]
+	});');
 		}
-		echo '
-	// ]]></script>';
 	}
 }
 
@@ -1352,7 +1327,7 @@ function template_control_chmod()
 
 	// Hide the details of the list.
 	if (empty($context['package_ftp']['form_elements_only']))
-		add_js('
+		add_js_inline('
 	document.getElementById(\'need_writable_list\').style.display = \'none\';');
 
 	// Quick generate the test button.
@@ -1376,12 +1351,12 @@ function template_control_chmod()
 
 		if (document.getElementById("test_ftp_placeholder"))
 		{
-			ftpTest.value = "' . JavaScriptEscape($txt['package_ftp_test']) . '";
+			ftpTest.value = ', JavaScriptEscape($txt['package_ftp_test']), ';
 			document.getElementById("test_ftp_placeholder").appendChild(ftpTest);
 		}
 		else
 		{
-			ftpTest.value = "' . JavaScriptEscape($txt['package_ftp_test_connection']) . '";
+			ftpTest.value = ', JavaScriptEscape($txt['package_ftp_test_connection']), ';
 			document.getElementById("test_ftp_placeholder_full").appendChild(ftpTest);
 		}
 	}
@@ -1489,277 +1464,275 @@ function template_file_permissions()
 	global $txt, $scripturl, $context, $settings;
 
 	// This will handle expanding the selection.
-	echo '
-	<script><!-- // --><![CDATA[
-		var oRadioColors = {
-			0: "#D1F7BF",
-			1: "#FFBBBB",
-			2: "#FDD7AF",
-			3: "#C2C6C0",
-			4: "#EEEEEE"
-		}
-		var oRadioValues = {
-			0: "read",
-			1: "writable",
-			2: "execute",
-			3: "custom",
-			4: "no_change"
-		}
-		function expandFolder(folderIdent, folderReal)
+	add_js('
+	var oRadioColors = {
+		0: "#D1F7BF",
+		1: "#FFBBBB",
+		2: "#FDD7AF",
+		3: "#C2C6C0",
+		4: "#EEEEEE"
+	}
+	var oRadioValues = {
+		0: "read",
+		1: "writable",
+		2: "execute",
+		3: "custom",
+		4: "no_change"
+	}
+	function expandFolder(folderIdent, folderReal)
+	{
+		// See if it already exists.
+		var possibleTags = document.getElementsByTagName("tr");
+		var foundOne = false;
+
+		for (var i = 0; i < possibleTags.length; i++)
 		{
-			// See if it already exists.
-			var possibleTags = document.getElementsByTagName("tr");
-			var foundOne = false;
-
-			for (var i = 0; i < possibleTags.length; i++)
+			if (possibleTags[i].id.indexOf("content_" + folderIdent + ":-:") == 0)
 			{
-				if (possibleTags[i].id.indexOf("content_" + folderIdent + ":-:") == 0)
-				{
-					possibleTags[i].style.display = possibleTags[i].style.display == "none" ? "" : "none";
-					foundOne = true;
-				}
+				possibleTags[i].style.display = possibleTags[i].style.display == "none" ? "" : "none";
+				foundOne = true;
 			}
-
-			// Got something then we\'re done.
-			if (foundOne)
-				return false;
-
-			// Otherwise we need to get the wicked thing.
-			else if (window.XMLHttpRequest)
-			{
-				ajax_indicator(true);
-				getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
-			}
-			// Otherwise reload.
-			else
-				return true;
-
-			return false;
 		}
-		function dynamicExpandFolder()
-		{
-			expandFolder(this.ident, this.path);
 
+		// Got something then we\'re done.
+		if (foundOne)
 			return false;
-		}
-		function dynamicAddMore()
+
+		// Otherwise we need to get the wicked thing.
+		else if (window.XMLHttpRequest)
 		{
 			ajax_indicator(true);
-
-			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
+			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
 		}
-		function repeatString(sString, iTime)
+		// Otherwise reload.
+		else
+			return true;
+
+		return false;
+	}
+	function dynamicExpandFolder()
+	{
+		expandFolder(this.ident, this.path);
+
+		return false;
+	}
+	function dynamicAddMore()
+	{
+		ajax_indicator(true);
+
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
+	}
+	function repeatString(sString, iTime)
+	{
+		if (iTime < 1)
+			return \'\';
+		else
+			return sString + repeatString(sString, iTime - 1);
+	}
+	// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
+	function createNamedElement(type, name, customFields)
+	{
+		var element = null;
+
+		if (!customFields)
+			customFields = "";
+
+		// Try the IE way; this fails on standards-compliant browsers
+		try
 		{
-			if (iTime < 1)
-				return \'\';
-			else
-				return sString + repeatString(sString, iTime - 1);
+			element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
 		}
-		// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
-		function createNamedElement(type, name, customFields)
+		catch (e)
 		{
-			var element = null;
-
-			if (!customFields)
-				customFields = "";
-
-			// Try the IE way; this fails on standards-compliant browsers
-			try
-			{
-				element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
-			}
-			catch (e)
-			{
-			}
-			if (!element || element.nodeName != type.toUpperCase())
-			{
-				// Non-IE browser; use canonical method to create named element
-				element = document.createElement(type);
-				element.name = name;
-			}
-
-			return element;
 		}
-		// Getting something back?
-		function onNewFolderReceived(oXMLDoc)
+		if (!element || element.nodeName != type.toUpperCase())
 		{
-			ajax_indicator(false);
+			// Non-IE browser; use canonical method to create named element
+			element = document.createElement(type);
+			element.name = name;
+		}
 
-			var fileItems = oXMLDoc.getElementsByTagName(\'folders\')[0].getElementsByTagName(\'folder\');
+		return element;
+	}
+	// Getting something back?
+	function onNewFolderReceived(oXMLDoc)
+	{
+		ajax_indicator(false);
 
-			// No folders, no longer worth going further.
-			if (fileItems.length < 1)
+		var fileItems = oXMLDoc.getElementsByTagName(\'folders\')[0].getElementsByTagName(\'folder\');
+
+		// No folders, no longer worth going further.
+		if (fileItems.length < 1)
+		{
+			if (oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0])
 			{
-				if (oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0])
-				{
-					var rootName = oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0].firstChild.nodeValue;
-					var itemLink = document.getElementById(\'link_\' + rootName);
+				var rootName = oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0].firstChild.nodeValue;
+				var itemLink = document.getElementById(\'link_\' + rootName);
 
-					// Move the children up.
-					for (i = 0; i <= itemLink.childNodes.length; i++)
-						itemLink.parentNode.insertBefore(itemLink.childNodes[0], itemLink);
+				// Move the children up.
+				for (i = 0; i <= itemLink.childNodes.length; i++)
+					itemLink.parentNode.insertBefore(itemLink.childNodes[0], itemLink);
 
-					// And remove the link.
-					itemLink.parentNode.removeChild(itemLink);
-				}
-				return false;
+				// And remove the link.
+				itemLink.parentNode.removeChild(itemLink);
 			}
-			var tableHandle = false;
-			var isMore = false;
-			var ident = "";
-			var my_ident = "";
-			var curLevel = 0;
+			return false;
+		}
+		var tableHandle = false;
+		var isMore = false;
+		var ident = "";
+		var my_ident = "";
+		var curLevel = 0;
 
-			for (var i = 0; i < fileItems.length; i++)
+		for (var i = 0; i < fileItems.length; i++)
+		{
+			if (fileItems[i].getAttribute(\'more\') == 1)
 			{
-				if (fileItems[i].getAttribute(\'more\') == 1)
-				{
-					isMore = true;
-					var curOffset = fileItems[i].getAttribute(\'offset\');
-				}
-
-				if (fileItems[i].getAttribute(\'more\') != 1 && document.getElementById("insert_div_loc_" + fileItems[i].getAttribute(\'ident\')))
-				{
-					ident = fileItems[i].getAttribute(\'ident\');
-					my_ident = fileItems[i].getAttribute(\'my_ident\');
-					curLevel = fileItems[i].getAttribute(\'level\') * 5;
-					curPath = fileItems[i].getAttribute(\'path\');
-
-					// Get where we\'re putting it next to.
-					tableHandle = document.getElementById("insert_div_loc_" + fileItems[i].getAttribute(\'ident\'));
-
-					var curRow = document.createElement("tr");
-					curRow.className = "windowbg";
-					curRow.id = "content_" + my_ident;
-					curRow.style.display = "";
-					var curCol = document.createElement("td");
-					curCol.className = "smalltext";
-					curCol.width = "40%";
-
-					// This is the name.
-					var fileName = document.createTextNode(fileItems[i].firstChild.nodeValue);
-
-					// Start by wacking in the spaces.
-					curCol.innerHTML = repeatString("&nbsp;", curLevel);
-
-					// Create the actual text.
-					if (fileItems[i].getAttribute(\'folder\') == 1)
-					{
-						var linkData = document.createElement("a");
-						linkData.name = "fol_" + my_ident;
-						linkData.id = "link_" + my_ident;
-						linkData.href = \'#\';
-						linkData.path = curPath + "/" + fileItems[i].firstChild.nodeValue;
-						linkData.ident = my_ident;
-						linkData.onclick = dynamicExpandFolder;
-
-						var folderImage = document.createElement("img");
-						folderImage.src = \'', addcslashes($settings['default_images_url'], "\\"), '/board.gif\';
-						linkData.appendChild(folderImage);
-
-						linkData.appendChild(fileName);
-						curCol.appendChild(linkData);
-					}
-					else
-						curCol.appendChild(fileName);
-
-					curRow.appendChild(curCol);
-
-					// Right, the permissions.
-					curCol = document.createElement("td");
-					curCol.className = "smalltext";
-
-					var writeSpan = document.createElement("span");
-					writeSpan.style.color = fileItems[i].getAttribute(\'writable\') ? "green" : "red";
-					writeSpan.innerHTML = fileItems[i].getAttribute(\'writable\') ? \'', $txt['package_file_perms_writable'], '\' : \'', $txt['package_file_perms_not_writable'], '\';
-					curCol.appendChild(writeSpan);
-
-					if (fileItems[i].getAttribute(\'permissions\'))
-					{
-						var permData = document.createTextNode("\u00a0(', $txt['package_file_perms_chmod'], ': " + fileItems[i].getAttribute(\'permissions\') + ")");
-						curCol.appendChild(permData);
-					}
-
-					curRow.appendChild(curCol);
-
-					// Now add the five radio buttons.
-					for (j = 0; j < 5; j++)
-					{
-						curCol = document.createElement("td");
-						curCol.style.backgroundColor = oRadioColors[j];
-						curCol.align = "center";
-
-						var curInput = createNamedElement("input", "permStatus[" + curPath + "/" + fileItems[i].firstChild.nodeValue + "]", j == 4 ? \'checked="checked"\' : "");
-						curInput.type = "radio";
-						curInput.checked = "checked";
-						curInput.value = oRadioValues[j];
-
-						curCol.appendChild(curInput);
-						curRow.appendChild(curCol);
-					}
-
-					// Put the row in.
-					tableHandle.parentNode.insertBefore(curRow, tableHandle);
-
-					// Put in a new dummy section?
-					if (fileItems[i].getAttribute(\'folder\') == 1)
-					{
-						var newRow = document.createElement("tr");
-						newRow.id = "insert_div_loc_" + my_ident;
-						newRow.style.display = "none";
-						tableHandle.parentNode.insertBefore(newRow, tableHandle);
-						var newCol = document.createElement("td");
-						newCol.colspan = 2;
-						newRow.appendChild(newCol);
-					}
-				}
+				isMore = true;
+				var curOffset = fileItems[i].getAttribute(\'offset\');
 			}
 
-			// Is there some more to remove?
-			if (document.getElementById("content_" + ident + "_more"))
+			if (fileItems[i].getAttribute(\'more\') != 1 && document.getElementById("insert_div_loc_" + fileItems[i].getAttribute(\'ident\')))
 			{
-				document.getElementById("content_" + ident + "_more").parentNode.removeChild(document.getElementById("content_" + ident + "_more"));
-			}
+				ident = fileItems[i].getAttribute(\'ident\');
+				my_ident = fileItems[i].getAttribute(\'my_ident\');
+				curLevel = fileItems[i].getAttribute(\'level\') * 5;
+				curPath = fileItems[i].getAttribute(\'path\');
 
-			// Add more?
-			if (isMore && tableHandle)
-			{
-				// Create the actual link.
-				var linkData = document.createElement("a");
-				linkData.href = \'#fol_\' + my_ident;
-				linkData.path = curPath;
-				linkData.offset = curOffset;
-				linkData.onclick = dynamicAddMore;
+				// Get where we\'re putting it next to.
+				tableHandle = document.getElementById("insert_div_loc_" + fileItems[i].getAttribute(\'ident\'));
 
-				linkData.appendChild(document.createTextNode(\'', $txt['package_file_perms_more_files'], '\'));
-
-				curRow = document.createElement("tr");
+				var curRow = document.createElement("tr");
 				curRow.className = "windowbg";
-				curRow.id = "content_" + ident + "_more";
-				tableHandle.parentNode.insertBefore(curRow, tableHandle);
-				curCol = document.createElement("td");
+				curRow.id = "content_" + my_ident;
+				curRow.style.display = "";
+				var curCol = document.createElement("td");
 				curCol.className = "smalltext";
 				curCol.width = "40%";
 
+				// This is the name.
+				var fileName = document.createTextNode(fileItems[i].firstChild.nodeValue);
+
+				// Start by wacking in the spaces.
 				curCol.innerHTML = repeatString("&nbsp;", curLevel);
-				curCol.appendChild(document.createTextNode(\'\\u00ab \'));
-				curCol.appendChild(linkData);
-				curCol.appendChild(document.createTextNode(\' \\u00bb\'));
+
+				// Create the actual text.
+				if (fileItems[i].getAttribute(\'folder\') == 1)
+				{
+					var linkData = document.createElement("a");
+					linkData.name = "fol_" + my_ident;
+					linkData.id = "link_" + my_ident;
+					linkData.href = \'#\';
+					linkData.path = curPath + "/" + fileItems[i].firstChild.nodeValue;
+					linkData.ident = my_ident;
+					linkData.onclick = dynamicExpandFolder;
+
+					var folderImage = document.createElement("img");
+					folderImage.src = \'', addcslashes($settings['default_images_url'], "\\"), '/board.gif\';
+					linkData.appendChild(folderImage);
+
+					linkData.appendChild(fileName);
+					curCol.appendChild(linkData);
+				}
+				else
+					curCol.appendChild(fileName);
 
 				curRow.appendChild(curCol);
+
+				// Right, the permissions.
 				curCol = document.createElement("td");
 				curCol.className = "smalltext";
+
+				var writeSpan = document.createElement("span");
+				writeSpan.style.color = fileItems[i].getAttribute(\'writable\') ? "green" : "red";
+				writeSpan.innerHTML = fileItems[i].getAttribute(\'writable\') ? \'', $txt['package_file_perms_writable'], '\' : \'', $txt['package_file_perms_not_writable'], '\';
+				curCol.appendChild(writeSpan);
+
+				if (fileItems[i].getAttribute(\'permissions\'))
+				{
+					var permData = document.createTextNode("\u00a0(', $txt['package_file_perms_chmod'], ': " + fileItems[i].getAttribute(\'permissions\') + ")");
+					curCol.appendChild(permData);
+				}
+
 				curRow.appendChild(curCol);
+
+				// Now add the five radio buttons.
+				for (j = 0; j < 5; j++)
+				{
+					curCol = document.createElement("td");
+					curCol.style.backgroundColor = oRadioColors[j];
+					curCol.align = "center";
+
+					var curInput = createNamedElement("input", "permStatus[" + curPath + "/" + fileItems[i].firstChild.nodeValue + "]", j == 4 ? \'checked="checked"\' : "");
+					curInput.type = "radio";
+					curInput.checked = "checked";
+					curInput.value = oRadioValues[j];
+
+					curCol.appendChild(curInput);
+					curRow.appendChild(curCol);
+				}
+
+				// Put the row in.
+				tableHandle.parentNode.insertBefore(curRow, tableHandle);
+
+				// Put in a new dummy section?
+				if (fileItems[i].getAttribute(\'folder\') == 1)
+				{
+					var newRow = document.createElement("tr");
+					newRow.id = "insert_div_loc_" + my_ident;
+					newRow.style.display = "none";
+					tableHandle.parentNode.insertBefore(newRow, tableHandle);
+					var newCol = document.createElement("td");
+					newCol.colspan = 2;
+					newRow.appendChild(newCol);
+				}
 			}
-
-			// Keep track of it.
-			var curInput = createNamedElement("input", "back_look[]");
-			curInput.type = "hidden";
-			curInput.value = curPath;
-
-			curCol.appendChild(curInput);
 		}
-	// ]]></script>';
+
+		// Is there some more to remove?
+		if (document.getElementById("content_" + ident + "_more"))
+		{
+			document.getElementById("content_" + ident + "_more").parentNode.removeChild(document.getElementById("content_" + ident + "_more"));
+		}
+
+		// Add more?
+		if (isMore && tableHandle)
+		{
+			// Create the actual link.
+			var linkData = document.createElement("a");
+			linkData.href = \'#fol_\' + my_ident;
+			linkData.path = curPath;
+			linkData.offset = curOffset;
+			linkData.onclick = dynamicAddMore;
+
+			linkData.appendChild(document.createTextNode(\'', $txt['package_file_perms_more_files'], '\'));
+
+			curRow = document.createElement("tr");
+			curRow.className = "windowbg";
+			curRow.id = "content_" + ident + "_more";
+			tableHandle.parentNode.insertBefore(curRow, tableHandle);
+			curCol = document.createElement("td");
+			curCol.className = "smalltext";
+			curCol.width = "40%";
+
+			curCol.innerHTML = repeatString("&nbsp;", curLevel);
+			curCol.appendChild(document.createTextNode(\'\\u00ab \'));
+			curCol.appendChild(linkData);
+			curCol.appendChild(document.createTextNode(\' \\u00bb\'));
+
+			curRow.appendChild(curCol);
+			curCol = document.createElement("td");
+			curCol.className = "smalltext";
+			curRow.appendChild(curCol);
+		}
+
+		// Keep track of it.
+		var curInput = createNamedElement("input", "back_look[]");
+		curInput.type = "hidden";
+		curInput.value = curPath;
+
+		curCol.appendChild(curInput);
+	}');
 
 		echo '
 	<div class="information">
@@ -1951,18 +1924,22 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 				$isFound = true;
 
 		if ($level > 1 && !$isFound)
+		{
 			echo '
-		</table><script><!-- // --><![CDATA[
-			expandFolder(\'', $js_ident, '\', \'\');
-		// ]]></script>
+		</table>';
+			add_js('
+	expandFolder(\'', $js_ident, '\', \'\');');
+		}
+
+		echo '
 		<table class="table_grid w100 cs0">
-			<tr style="display: none;"><td></td></tr>';
+			<tr style="display: none"><td></td></tr>';
 	}
 }
 
 function template_action_permissions()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $settings, $smcFunc;
 
 	$countDown = 3;
 
@@ -2042,7 +2019,7 @@ function template_action_permissions()
 				<input type="hidden" name="method" value="', $context['method'], '" />
 				<input type="hidden" name="action_changes" value="1" />
 				<div class="righttext padding">
-					<input type="submit" name="go" id="cont" value="', $txt['not_done_continue'], '" class="button_submit" />
+					<input type="submit" name="go" id="cont" value="', $smcFunc['htmlspecialchars']($txt['not_done_continue']), '" class="button_submit" />
 				</div>
 			</div>
 		</form>
@@ -2050,25 +2027,22 @@ function template_action_permissions()
 	<br class="clear" />';
 
 	// Just the countdown stuff
-	echo '
-	<script><!-- // --><![CDATA[
-		var countdown = ', $countDown, ';
-		doAutoSubmit();
+	add_js_inline('
+	var countdown = ', $countDown, ';
+	doAutoSubmit();
 
-		function doAutoSubmit()
-		{
-			if (countdown == 0)
-				document.forms.perm_submit.submit();
-			else if (countdown == -1)
-				return;
+	function doAutoSubmit()
+	{
+		if (countdown == 0)
+			document.forms.perm_submit.submit();
+		else if (countdown == -1)
+			return;
 
-			document.getElementById(\'cont\').value = "', $txt['not_done_continue'], ' (" + countdown + ")";
-			countdown--;
+		document.getElementById(\'cont\').value = ', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")";
+		countdown--;
 
-			setTimeout("doAutoSubmit();", 1000);
-		}
-	// ]]></script>';
-
+		setTimeout("doAutoSubmit();", 1000);
+	}');
 }
 
 ?>

@@ -239,38 +239,34 @@ function template_admin_browse()
 
 	template_show_list('approve_list');
 
-	// If we have lots of outstanding members try and make the admin's life easier.
+	// If we have lots of outstanding members, try and make the admin's life easier.
 	if ($context['approve_list']['total_num_items'] > 20)
 	{
+		add_js_inline('
+	function onOutstandingSubmit()
+	{
+		if (document.forms.postFormOutstanding.todo.value == "")
+			return;
+
+		var message = "";
+		if (document.forms.postFormOutstanding.todo.value.indexOf("delete") != -1)
+			message = ', JavaScriptEscape($txt['admin_browse_w_delete']), ';
+		else if (document.forms.postFormOutstanding.todo.value.indexOf("reject") != -1)
+			message = ', JavaScriptEscape($txt['admin_browse_w_reject']), ';
+		else if (document.forms.postFormOutstanding.todo.value == "remind")
+			message = ', JavaScriptEscape($txt['admin_browse_w_remind']), ';
+		else
+			message = ', JavaScriptEscape($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']), ';
+
+		return confirm(message + ', JavaScriptEscape(' ' . $txt['admin_browse_outstanding_warn']), ');
+	}');
+
 		echo '
 		<br />
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
 			<div class="cat_bar">
 				<h3>', $txt['admin_browse_outstanding'], '</h3>
 			</div>
-			<script><!-- // --><![CDATA[
-				function onOutstandingSubmit()
-				{
-					if (document.forms.postFormOutstanding.todo.value == "")
-						return;
-
-					var message = "";
-					if (document.forms.postFormOutstanding.todo.value.indexOf("delete") != -1)
-						message = "', $txt['admin_browse_w_delete'], '";
-					else if (document.forms.postFormOutstanding.todo.value.indexOf("reject") != -1)
-						message = "', $txt['admin_browse_w_reject'], '";
-					else if (document.forms.postFormOutstanding.todo.value == "remind")
-						message = "', $txt['admin_browse_w_remind'], '";
-					else
-						message = "', $context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate'], '";
-
-					if (confirm(message + " ', $txt['admin_browse_outstanding_warn'], '"))
-						return true;
-					else
-						return false;
-				}
-			// ]]></script>
-
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>

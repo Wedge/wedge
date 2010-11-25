@@ -57,16 +57,13 @@ function template_main()
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['search_for'], ':</strong>
-					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />
-					<script><!-- // --><![CDATA[
-						function initSearch()
-						{
-							if (document.forms.searchform.search.value.indexOf("%u") != -1)
-								document.forms.searchform.search.value = unescape(document.forms.searchform.search.value);
-						}
-						createEventListener(window);
-						window.addEventListener("load", initSearch, false);
-					// ]]></script>
+					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />';
+
+		add_js_inline('
+	if (document.forms.searchform.search.value.indexOf("%u") != -1)
+		document.forms.searchform.search.value = unescape(document.forms.searchform.search.value);');
+
+		echo '
 					<select name="searchtype">
 						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['all_words'], '</option>
 						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['any_words'], '</option>
@@ -470,23 +467,22 @@ function template_results()
 	// Show a jump to box for easy navigation.
 	echo '
 		<br class="clear" />
-		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>
-		<script><!-- // --><![CDATA[
-			if (typeof(window.XMLHttpRequest) != "undefined")
-				aJumpTo[aJumpTo.length] = new JumpTo({
-					sContainerId: "search_jump_to",
-					sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">', $context['jump_to']['label'], ':<" + "/label> %dropdown_list%",
-					iCurBoardId: 0,
-					iCurBoardChildLevel: 0,
-					sCurBoardName: "', $context['jump_to']['board_name'], '",
-					sBoardChildLevelIndicator: "==",
-					sBoardPrefix: "=> ",
-					sCatSeparator: "-----------------------------",
-					sCatPrefix: "",
-					sGoButtonLabel: "', $txt['quick_mod_go'], '"
-				});
-		// ]]></script>';
+		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>';
 
+	add_js('
+	if (typeof(window.XMLHttpRequest) != "undefined")
+		aJumpTo[aJumpTo.length] = new JumpTo({
+			sContainerId: "search_jump_to",
+			sJumpToTemplate: ', $context['jump_to']['label'], ',
+			iCurBoardId: 0,
+			iCurBoardChildLevel: 0,
+			sCurBoardName: ', $context['jump_to']['board_name'], ',
+			sBoardChildLevelIndicator: "==",
+			sBoardPrefix: "=> ",
+			sCatSeparator: "-----------------------------",
+			sCatPrefix: "",
+			sGoButtonLabel: ', JavaScriptEscape($txt['quick_mod_go']), '
+		});');
 }
 
 ?>

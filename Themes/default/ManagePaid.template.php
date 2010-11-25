@@ -7,22 +7,12 @@ function template_modify_subscription()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Javascript for the duration stuff.
-	echo '
-		<script><!-- // --><![CDATA[
-			function toggleDuration(toChange)
-			{
-				if (toChange == \'fixed\')
-				{
-					document.getElementById("fixed_area").style.display = "inline";
-					document.getElementById("flexible_area").style.display = "none";
-				}
-				else
-				{
-					document.getElementById("fixed_area").style.display = "none";
-					document.getElementById("flexible_area").style.display = "inline";
-				}
-			}
-		// ]]></script>';
+	add_js_inline('
+	function toggleDuration(toChange)
+	{
+		document.getElementById("fixed_area").style.display = toChange == \'fixed\' ? "inline" : "none";
+		document.getElementById("flexible_area").style.display = toChange == \'fixed\' ? "none" : "inline";
+	}');
 
 	echo '
 	<div id="admincenter">
@@ -35,9 +25,9 @@ function template_modify_subscription()
 		echo '
 			<div class="information">
 				<span class="alert">', $txt['paid_mod_edit_note'], '</span>
-			</div>
-			';
+			</div>';
 	echo '
+
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>
@@ -59,7 +49,8 @@ function template_modify_subscription()
 						<input type="checkbox" name="repeatable" id="repeatable_check"', empty($context['sub']['repeatable']) ? '' : ' checked="checked"', ' class="input_check" />
 					</dd>
 					<dt>
-						<label for="activated_check">', $txt['paid_mod_active'], '</label>:<br /><span class="smalltext">', $txt['paid_mod_active_desc'], '</span>
+						<label for="activated_check">', $txt['paid_mod_active'], '</label>:
+						<div class="smalltext">', $txt['paid_mod_active_desc'], '</div>
 					</dt>
 					<dd>
 						<input type="checkbox" name="active" id="activated_check"', empty($context['sub']['active']) ? '' : ' checked="checked"', ' class="input_check" />
@@ -68,7 +59,8 @@ function template_modify_subscription()
 				<hr class="hrcolor" />
 				<dl class="settings">
 					<dt>
-						', $txt['paid_mod_prim_group'], ':<br /><span class="smalltext">', $txt['paid_mod_prim_group_desc'], '</span>
+						', $txt['paid_mod_prim_group'], ':
+						<div class="smalltext">', $txt['paid_mod_prim_group_desc'], '</div>
 					</dt>
 					<dd>
 						<select name="prim_group" ', !empty($context['disable_groups']) ? 'disabled="disabled"' : '', '>
@@ -83,7 +75,8 @@ function template_modify_subscription()
 						</select>
 					</dd>
 					<dt>
-						', $txt['paid_mod_add_groups'], ':<br /><span class="smalltext">', $txt['paid_mod_add_groups_desc'], '</span>
+						', $txt['paid_mod_add_groups'], ':
+						<div class="smalltext">', $txt['paid_mod_add_groups_desc'], '</div>
 					</dt>
 					<dd>';
 
@@ -95,13 +88,15 @@ function template_modify_subscription()
 	echo '
 					</dd>
 					<dt>
-						', $txt['paid_mod_reminder'], ':<br /><span class="smalltext">', $txt['paid_mod_reminder_desc'], '</span>
+						', $txt['paid_mod_reminder'], ':
+						<div class="smalltext">', $txt['paid_mod_reminder_desc'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="reminder" value="', $context['sub']['reminder'], '" size="6" class="input_text" />
 					</dd>
 					<dt>
-						', $txt['paid_mod_email'], ':<br /><span class="smalltext">', $txt['paid_mod_email_desc'], '</span>
+						', $txt['paid_mod_email'], ':
+						<div class="smalltext">', $txt['paid_mod_email_desc'], '</div>
 					</dt>
 					<dd>
 						<textarea name="emailcomplete" rows="6" cols="40">', $context['sub']['email_complete'], '</textarea>
@@ -109,7 +104,7 @@ function template_modify_subscription()
 				</dl>
 				<hr class="hrcolor" />
 				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed" ', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? 'checked="checked"' : '', ' class="input_radio" onclick="toggleDuration(\'fixed\');" />
-				<strong>', $txt['paid_mod_fixed_price'], '</strong>
+				<label for="duration_type_fixed"><strong>', $txt['paid_mod_fixed_price'], '</strong></label>
 				<br />
 				<div id="fixed_area" ', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? '' : 'style="display: none;"', '>
 					<fieldset>
@@ -136,17 +131,18 @@ function template_modify_subscription()
 					</fieldset>
 				</div>
 				<input type="radio" name="duration_type" id="duration_type_flexible" value="flexible" ', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'flexible' ? 'checked="checked"' : '', ' class="input_radio" onclick="toggleDuration(\'flexible\');" />
-				<strong>', $txt['paid_mod_flexible_price'], '</strong>
+				<label for="duration_type_flexible"><strong>', $txt['paid_mod_flexible_price'], '</strong></label>
 				<br />
 				<div id="flexible_area" ', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'flexible' ? '' : 'style="display: none;"', '>
 					<fieldset>';
 
-	//!! Removed until implemented
-	if (!empty($sdflsdhglsdjgs))
+	// !!! Removed until implemented
+	if (false)
 		echo '
 						<dl class="settings">
 							<dt>
-								<label for="allow_partial_check">', $txt['paid_mod_allow_partial'], '</label>:<br /><span class="smalltext">', $txt['paid_mod_allow_partial_desc'], '</span>
+								<label for="allow_partial_check">', $txt['paid_mod_allow_partial'], '</label>:
+								<div class="smalltext">', $txt['paid_mod_allow_partial_desc'], '</div>
 							</dt>
 							<dd>
 								<input type="checkbox" name="allow_partial" id="allow_partial_check"', empty($context['sub']['allow_partial']) ? '' : ' checked="checked"', ' class="input_check" />
@@ -220,7 +216,6 @@ function template_delete_subscription()
 		</form>
 	</div>
 	<br class="clear" />';
-
 }
 
 // Add or edit an existing subscriber.
@@ -272,8 +267,8 @@ function template_modify_user_subscription()
 	if ($context['action_type'] == 'add')
 		echo '
 					<dt>
-						<strong>', $txt['paid_username'], ':</strong><br />
-						<span class="smalltext">', $txt['one_username'], '</span>
+						<strong>', $txt['paid_username'], ':</strong>
+						<div class="smalltext">', $txt['one_username'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="name" id="name_control" value="', $context['sub']['username'], '" size="30" class="input_text" />
@@ -301,7 +296,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : $txt['calendar_month']), '&nbsp;
+					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : ''), '&nbsp;
 					<select name="month" id="month" onchange="generateDays(\'\');">';
 
 	// There are 12 months per year - ensure that they all get listed.
@@ -311,7 +306,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : $txt['calendar_day']), '&nbsp;
+					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : ''), '&nbsp;
 					<select name="day" id="day">';
 
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
@@ -335,7 +330,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : $txt['calendar_month']), '&nbsp;
+					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : ''), '&nbsp;
 					<select name="monthend" id="monthend" onchange="generateDays(\'end\');">';
 
 	// There are 12 months per year - ensure that they all get listed.
@@ -345,7 +340,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : $txt['calendar_day']), '&nbsp;
+					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : ''), '&nbsp;
 					<select name="dayend" id="dayend">';
 
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
@@ -361,20 +356,21 @@ function template_modify_user_subscription()
 				<input type="submit" name="save_sub" value="', $txt['paid_settings_save'], '" class="button_submit" />
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-		</form>
-		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-		<script><!-- // --><![CDATA[
-			var oAddMemberSuggest = new smc_AutoSuggest({
-				sSelf: \'oAddMemberSuggest\',
-				sSessionId: \'', $context['session_id'], '\',
-				sSessionVar: \'', $context['session_var'], '\',
-				sSuggestId: \'name_subscriber\',
-				sControlId: \'name_control\',
-				sSearchType: \'member\',
-				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-				bItemList: false
-			});
-		// ]]></script>';
+		</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'name_subscriber\',
+		sControlId: \'name_control\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});');
 
 	if (!empty($context['pending_payments']))
 	{
@@ -383,7 +379,7 @@ function template_modify_user_subscription()
 			<h3>', $txt['pending_payments'], '</h3>
 		</div>
 		<div class="information">
-		', $txt['pending_payments_desc'], '
+			', $txt['pending_payments_desc'], '
 		</div>
 		<div class="cat_bar">
 			<h3>', $txt['pending_payments_value'], '</h3>

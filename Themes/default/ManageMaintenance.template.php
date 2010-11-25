@@ -140,7 +140,7 @@ function template_maintain_members()
 			var membersForm = document.getElementById(\'membersForm\');
 
 			document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif");
-			document.getElementById("membersText").innerHTML = membersSwap ? "', $txt['maintain_members_choose'], '" : "', $txt['maintain_members_all'], '";
+			document.getElementById("membersText").innerHTML = membersSwap ? ', JavaScriptEscape($txt['maintain_members_choose']), ' : ', JavaScriptEscape($txt['maintain_members_all']), ';
 			document.getElementById("membersPanel").style.display = (membersSwap ? "block" : "none");
 
 			for (var i = 0; i < membersForm.length; i++)
@@ -245,21 +245,21 @@ function template_maintain_members()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />
+	<br class="clear" />';
 
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAttributeMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAttributeMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'attributeMember\',
-			sControlId: \'to\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
-	// ]]></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAttributeMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAttributeMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'attributeMember\',
+		sControlId: \'to\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});');
 }
 
 // Template for the topic maintenance tasks.
@@ -270,35 +270,31 @@ function template_maintain_topics()
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
 		echo '
-			<div class="maintenance_finished">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
+	<div class="maintenance_finished">
+		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
+	</div>';
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
-	echo '
-		<script><!-- // --><![CDATA[
-			var rotSwap = false;
-			function swapRot()
-			{
-				rotSwap = !rotSwap;
+	add_js_inline('
+	var rotSwap = false;
+	function swapRot()
+	{
+		rotSwap = !rotSwap;
 
-				// Toggle icon
-				document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
-				document.getElementById("rotText").innerHTML = rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ';
+		// Toggle icon
+		document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
+		document.getElementById("rotText").innerHTML = rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ';
 
-				// Toggle panel
-				document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";
+		// Toggle panel
+		document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";
 
-				// Toggle checkboxes
-				var rotPanel = document.getElementById(\'rotPanel\');
-				var oBoardCheckBoxes = rotPanel.getElementsByTagName(\'input\');
-				for (var i = 0; i < oBoardCheckBoxes.length; i++)
-				{
-					if (oBoardCheckBoxes[i].type.toLowerCase() == "checkbox")
-						oBoardCheckBoxes[i].checked = !rotSwap;
-				}
-			}
-		// ]]></script>';
+		// Toggle checkboxes
+		var rotPanel = document.getElementById(\'rotPanel\');
+		var oBoardCheckBoxes = rotPanel.getElementsByTagName(\'input\');
+		for (var i = 0; i < oBoardCheckBoxes.length; i++)
+			if (oBoardCheckBoxes[i].type.toLowerCase() == "checkbox")
+				oBoardCheckBoxes[i].checked = !rotSwap;
+	}');
 
 	echo '
 	<div id="manage_maintenance">

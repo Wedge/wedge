@@ -6,15 +6,12 @@ function template_profile_above()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	echo '
-	<script src="', $settings['default_theme_url'], '/scripts/profile.js"></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/profile.js');
 
 	// Prevent Chrome from auto completing fields when viewing/editing other members profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
-		echo '
-	<script><!-- // --><![CDATA[
-		disableAutoComplete();
-	// ]]></script>';
+		add_js('
+	disableAutoComplete();');
 
 	// If an error occurred while trying to save previously, give the user a clue!
 	if (!empty($context['post_errors']))
@@ -216,13 +213,13 @@ function template_summary()
 		if (!empty($context['member']['bans']))
 		{
 			echo '
-				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\';return false;">' . $txt['view_ban'] . '</a>]</dt>
+				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\'; return false;">' . $txt['view_ban'] . '</a>]</dt>
 				<dt class="clear" id="ban_info" style="display: none;">
 					<strong>', $txt['user_banned_by_following'], ':</strong>';
 
 			foreach ($context['member']['bans'] as $ban)
 				echo '
-					<br /><span class="smalltext">', $ban['explanation'], '</span>';
+					<div class="smalltext">', $ban['explanation'], '</div>';
 
 			echo '
 				</dt>';
@@ -525,20 +522,21 @@ function template_editBuddies()
 				<input type="submit" value="', $txt['buddy_add_button'], '" class="button_submit" />
 			</div>
 		</div>
-	</form>
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAddBuddySuggest = new smc_AutoSuggest({
-			sSelf: \'oAddBuddySuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'new_buddy\',
-			sControlId: \'new_buddy\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
-	// ]]></script>';
+	</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAddBuddySuggest = new smc_AutoSuggest({
+		sSelf: \'oAddBuddySuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'new_buddy\',
+		sControlId: \'new_buddy\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});');
 }
 
 // Template for showing the ignore list of the current user.
@@ -609,20 +607,21 @@ function template_editIgnoreList()
 				<input type="submit" value="', $txt['ignore_add_button'], '" class="button_submit" />
 			</div>
 		</div>
-	</form>
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAddIgnoreSuggest = new smc_AutoSuggest({
-			sSelf: \'oAddIgnoreSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'new_ignore\',
-			sControlId: \'new_ignore\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
-	// ]]></script>';
+	</form>';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAddIgnoreSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddIgnoreSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'new_ignore\',
+		sControlId: \'new_ignore\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});');
 }
 
 // This template shows an admin information on a users IP addresses used and errors attributed to them.
@@ -642,7 +641,7 @@ function template_trackActivity()
 				<dl class="noborder">
 					<dt>', $txt['most_recent_ip'], ':
 						', (empty($context['last_ip2']) ? '' : '<br />
-						<span class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</span>'), '
+						<span class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" data-onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</span>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['last_ip'], ';u=', $context['member']['id'], '">', $context['last_ip'], '</a>';
@@ -982,7 +981,7 @@ function template_statPanel()
 	}
 
 	echo '
-				<span class="clear" />
+				<div class="clear"></div>
 			</div>
 		</div>';
 
@@ -1274,36 +1273,21 @@ function template_edit_options()
 		</form>';
 
 	// Some javascript!
-	echo '
-		<script><!-- // --><![CDATA[
-			function checkProfileSubmit()
-			{';
+	add_js_inline('
+	function checkProfileSubmit()
+	{');
 
 	// If this part requires a password, make sure to give a warning.
 	if ($context['require_password'])
-		echo '
-				// Did you forget to type your password?
-				if (document.forms.creator.oldpasswrd.value == "")
-				{
-					alert(', JavaScriptEscape($txt['required_security_reasons']), ');
-					return false;
-				}';
+		add_js_inline('
+		if (document.forms.creator.oldpasswrd.value == "")
+		{
+			alert(', JavaScriptEscape($txt['required_security_reasons']), ');
+			return false;
+		}');
 
-	// Any onsubmit javascript?
-	if (!empty($context['profile_onsubmit_javascript']))
-		echo '
-				', $context['profile_javascript'];
-
-	echo '
-			}';
-
-	// Any totally custom stuff?
-	if (!empty($context['profile_javascript']))
-		echo '
-			', $context['profile_javascript'];
-
-	echo '
-		// ]]></script>';
+	add_js_inline('
+	}');
 
 	// Any final spellchecking stuff?
 	if (!empty($context['show_spellchecking']))
@@ -1655,7 +1639,8 @@ function template_groupMembership()
 
 				echo '
 						<td>
-							<label for="primary_', $group['id'], '"><strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '<br /><span class="smalltext">' . $group['desc'] . '</span>' : ''), '</label>
+							<label for="primary_', $group['id'], '"><strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '
+							<div class="smalltext">' . $group['desc'] . '</div>' : ''), '</label>
 						</td>
 						<td style="width: 15%" class="right">';
 
@@ -1701,7 +1686,8 @@ function template_groupMembership()
 				echo '
 					<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td>
-							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '<br /><span class="smalltext">' . $group['desc'] . '</span>' : ''), '
+							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '
+							<div class="smalltext">' . $group['desc'] . '</div>' : ''), '
 						</td>
 						<td style="width: 15%" class="left">';
 
@@ -1726,32 +1712,29 @@ function template_groupMembership()
 		}
 
 		// Javascript for the selector stuff.
-		echo '
-		<script><!-- // --><![CDATA[
-		var prevClass = "";
-		var prevDiv = "";
-		function highlightSelected(box)
-		{
-			if (prevClass != "")
-			{
-				prevDiv.className = prevClass;
-			}
-			prevDiv = document.getElementById(box);
-			prevClass = prevDiv.className;
+		add_js_inline('
+	var prevClass = "";
+	var prevDiv = "";
+	function highlightSelected(box)
+	{
+		if (prevClass != "")
+			prevDiv.className = prevClass;
 
-			prevDiv.className = "highlight2";
-		}';
+		prevDiv = document.getElementById(box);
+		prevClass = prevDiv.className;
+
+		prevDiv.className = "highlight2";
+	}');
+
 		if (isset($context['groups']['member'][$context['primary_group']]))
-			echo '
-		highlightSelected("primdiv_' . $context['primary_group'] . '");';
-		echo '
-	// ]]></script>';
+			add_js_inline('
+	highlightSelected("primdiv_' . $context['primary_group'] . '");');
 	}
 
 	echo '
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" name="u" value="', $context['id_member'], '" />
-			</form>';
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="u" value="', $context['id_member'], '" />
+		</form>';
 }
 
 function template_ignoreboards()
@@ -1943,10 +1926,8 @@ function template_issueWarning()
 
 				// If it\'s a movement check the button state first!
 				if (isMove)
-				{
 					if (!curEvent.button || curEvent.button != 1)
-						return false
-				}
+						return false;
 
 				// Get the position of the container.
 				contain = document.getElementById(\'warning_contain\');
@@ -1959,9 +1940,7 @@ function template_issueWarning()
 
 				// Where is the mouse?
 				if (curEvent.pageX)
-				{
 					mouse = curEvent.pageX;
-				}
 				else
 				{
 					mouse = curEvent.clientX;
@@ -1974,7 +1953,7 @@ function template_issueWarning()
 
 				percent = Math.round(((mouse - position) / barWidth) * 100);
 
-				// Round percent to the nearest 5 - by kinda cheating!
+				// Round percent to the nearest 5
 				percent = Math.round(percent / 5) * 5;
 			}
 
@@ -2045,7 +2024,6 @@ function template_issueWarning()
 
 	echo '
 		}
-
 	// ]]></script>';
 
 	echo '
@@ -2081,7 +2059,7 @@ function template_issueWarning()
 	// Is there only so much they can apply?
 	if ($context['warning_limit'])
 		echo '
-					<br /><span class="smalltext">', sprintf($txt['profile_warning_limit_attribute'], $context['warning_limit']), '</span>';
+					<div class="smalltext">', sprintf($txt['profile_warning_limit_attribute'], $context['warning_limit']), '</div>';
 
 	echo '
 				</dt>
@@ -2450,48 +2428,45 @@ function template_profile_signature_modify()
 		echo '
 								<span class="smalltext">', $context['signature_warning'], '</span>';
 
+	echo '
+							</dd>';
+
 	// Load the spell checker?
 	if ($context['show_spellchecking'])
-		echo '
-								<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>';
+		add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
 
 	// Some javascript used to count how many characters have been used so far in the signature.
-	echo '
-								<script><!-- // --><![CDATA[
-									function tick()
-									{
-										if (typeof(document.forms.creator) != "undefined")
-										{
-											calcCharLeft();
-											setTimeout("tick()", 1000);
-										}
-										else
-											setTimeout("tick()", 800);
-									}
+	add_js_inline('
+	function tick()
+	{
+		if (typeof(document.forms.creator) != "undefined")
+		{
+			calcCharLeft();
+			setTimeout("tick()", 1000);
+		}
+		else
+			setTimeout("tick()", 800);
+	}
+	function calcCharLeft()
+	{
+		var maxLength = ', $context['signature_limits']['max_length'], ';
+		var oldSignature = "", currentSignature = document.forms.creator.signature.value;
 
-									function calcCharLeft()
-									{
-										var maxLength = ', $context['signature_limits']['max_length'], ';
-										var oldSignature = "", currentSignature = document.forms.creator.signature.value;
+		if (!document.getElementById("signatureLeft"))
+			return;
 
-										if (!document.getElementById("signatureLeft"))
-											return;
+		if (oldSignature != currentSignature)
+		{
+			oldSignature = currentSignature;
 
-										if (oldSignature != currentSignature)
-										{
-											oldSignature = currentSignature;
+			if (currentSignature.replace(/\r/, "").length > maxLength)
+				document.forms.creator.signature.value = currentSignature.replace(/\r/, "").substring(0, maxLength);
+			currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
+		}
 
-											if (currentSignature.replace(/\r/, "").length > maxLength)
-												document.forms.creator.signature.value = currentSignature.replace(/\r/, "").substring(0, maxLength);
-											currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
-										}
-
-										document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
-									}
-
-									addLoadEvent(tick);
-								// ]]></script>
-							</dd>';
+		document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
+	}
+	tick();');
 }
 
 function template_profile_avatar_select()
@@ -2515,10 +2490,12 @@ function template_profile_avatar_select()
 								<div id="avatar_server_stored">
 									<div>
 										<select name="cat" id="cat" size="10" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
-		// This lists all the file catergories.
+		// This lists all the file categories.
 		foreach ($context['avatars'] as $avatar)
 			echo '
 											<option value="', $avatar['filename'] . ($avatar['is_dir'] ? '/' : ''), '"', ($avatar['checked'] ? ' selected="selected"' : ''), '>', $avatar['name'], '</option>';
+
+		// !!! Hmm... Should we put all of this code to the end?
 		echo '
 										</select>
 									</div>
@@ -2650,35 +2627,34 @@ function template_profile_avatar_select()
 	}
 
 	echo '
-								<script><!-- // --><![CDATA[
-									', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '', '
-									', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? '' : 'none') . '";' : '', '
-									', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? '' : 'none') . '";' : '', '
-
-									function swap_avatar(type)
-									{
-										switch(type.id)
-										{
-											case "avatar_choice_server_stored":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-												break;
-											case "avatar_choice_external":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-												break;
-											case "avatar_choice_upload":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "";' : '', '
-												break;
-										}
-									}
-								// ]]></script>
 							</dd>';
 
+	add_js_inline(!empty($context['member']['avatar']['allow_server_stored']) ? '
+	document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '', !empty($context['member']['avatar']['allow_external']) ? '
+	document.getElementById("avatar_external").style.display = "' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? '' : 'none') . '";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+	document.getElementById("avatar_upload").style.display = "' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? '' : 'none') . '";' : '', '
+
+	function swap_avatar(type)
+	{
+		switch (type.id)
+		{
+			case "avatar_choice_server_stored":', !empty($context['member']['avatar']['allow_server_stored']) ? '
+				document.getElementById("avatar_server_stored").style.display = "";' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				document.getElementById("avatar_external").style.display = "none";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				document.getElementById("avatar_upload").style.display = "none";' : '', '
+				break;
+			case "avatar_choice_external":', !empty($context['member']['avatar']['allow_server_stored']) ? '
+				document.getElementById("avatar_server_stored").style.display = "none";' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				document.getElementById("avatar_external").style.display = "";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				document.getElementById("avatar_upload").style.display = "none";' : '', '
+				break;
+			case "avatar_choice_upload":', !empty($context['member']['avatar']['allow_server_stored']) ? '
+				document.getElementById("avatar_server_stored").style.display = "none";' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				document.getElementById("avatar_external").style.display = "none";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				document.getElementById("avatar_upload").style.display = "";' : '', '
+				break;
+		}
+	}');
 }
 
 // Select the time format!
@@ -2758,8 +2734,9 @@ function template_authentication_method()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	// The main header!
+	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+
 	echo '
-		<script src="', $settings['default_theme_url'], '/scripts/register.js"></script>
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">
 			<div class="cat_bar">
 				<h3>
@@ -2770,8 +2747,8 @@ function template_authentication_method()
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br />
-						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
+						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" data-onclick="return reqWin(this);" class="help">(?)</a></em><br />
+						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>
 						<dl id="auth_openid_div">
@@ -2825,8 +2802,8 @@ function template_authentication_method()
 		</form>';
 
 	// The password stuff.
-	echo '
-	<script><!-- // --><![CDATA[
+	add_js('
+
 	var regTextStrings = {
 		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
 		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
@@ -2836,6 +2813,7 @@ function template_authentication_method()
 	};
 	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
 	var currentAuthMethod = \'passwd\';
+
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
@@ -2871,8 +2849,7 @@ function template_authentication_method()
 			document.getElementById("auth_pass_div").style.display = "none";
 		}
 	}
-	updateAuthMethod();
-	// ]]></script>';
+	updateAuthMethod();');
 }
 
 ?>

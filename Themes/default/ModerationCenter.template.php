@@ -56,28 +56,28 @@ function template_latest_news()
 
 	// This requires a lot of javascript...
 	//!!! Put this in it's own file!!
-	echo '
-		<script src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-		<script src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>
-		<script src="', $settings['default_theme_url'], '/scripts/admin.js?rc3"></script>
-		<script><!-- // --><![CDATA[
-			var oAdminIndex = new smf_AdminIndex({
-				sSelf: \'oAdminCenter\',
+	add_js_file(
+		$scripturl . '?action=viewsmfile;filename=current-version.js',
+		$scripturl . '?action=viewsmfile;filename=latest-news.js',
+		$settings['default_theme_url'] . '/scripts/admin.js?rc3'
+	);
 
-				bLoadAnnouncements: true,
-				sAnnouncementTemplate: ', JavaScriptEscape('
-					<dl>
-						%content%
-					</dl>'), ',
-				sAnnouncementMessageTemplate: ', JavaScriptEscape('
-					<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
-					<dd>
-						%message%
-					</dd>'), ',
-				sAnnouncementContainerId: \'smfAnnouncements\'
-			});
-		// ]]></script>';
+	add_js('
+	var oAdminIndex = new smf_AdminIndex({
+		sSelf: \'oAdminCenter\',
 
+		bLoadAnnouncements: true,
+		sAnnouncementTemplate: ', JavaScriptEscape('
+			<dl>
+				%content%
+			</dl>'), ',
+		sAnnouncementMessageTemplate: ', JavaScriptEscape('
+			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
+			<dd>
+				%message%
+			</dd>'), ',
+		sAnnouncementContainerId: \'smfAnnouncements\'
+	});');
 }
 
 // Show all the group requests the user can see.
@@ -416,7 +416,7 @@ function template_unapproved_attachments()
 					<th>', $txt['mc_unapproved_attach_size'], '</th>
 					<th>', $txt['mc_unapproved_attach_poster'], '</th>
 					<th>', $txt['date'], '</th>
-					<th class="nowrap center"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
+					<th class="nowrap center"><input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
 				</tr>
 			</thead>
 			<tbody>';

@@ -116,8 +116,9 @@ function template_admin()
 			$scripturl . '?action=viewsmfile;filename=latest-news.js'
 		);
 
-	// This sets the announcements and current versions themselves ;)
 	add_js_file($settings['default_theme_url'] . '/scripts/admin.js?rc3');
+
+	// This sets the announcements and current versions themselves ;)
 	add_js('
 	var oAdminIndex = new smf_AdminIndex({
 		sSelf: \'oAdminCenter\',
@@ -301,16 +302,10 @@ function template_credits()
 		var currentVersion = yourVer.innerHTML;
 		if (currentVersion != window.smfVersion)
 			yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
-	}');
-
-	// IE 4 is rather annoying, this wouldn't be necessary...
-	add_js('
-	var fSetupCredits = function ()
-	{
-		smfSetLatestSupport();
-		smfCurrentVersion()
 	}
-	addLoadEvent(fSetupCredits);');
+
+	smfSetLatestSupport();
+	smfCurrentVersion();');
 }
 
 // Displays information about file versions installed, and compares them to current version.
@@ -621,7 +616,7 @@ function template_edit_censored()
 // Maintenance is a lovely thing, isn't it?
 function template_not_done()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $settings, $options, $txt, $scripturl, $smcFunc;
 
 	echo '
 	<div id="admincenter">
@@ -654,14 +649,14 @@ function template_not_done()
 
 	echo '
 			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', $txt['not_done_continue'], '" class="button_submit" /></div>
+				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', $smcFunc['htmlspecialchars']($txt['not_done_continue']), '" class="button_submit" /></div>
 				', $context['continue_post_data'], '
 			</form>
 		</div>
 	</div>
 	<br class="clear" />';
 
-	add_js('
+	add_js_inline('
 	var countdown = ', $context['continue_countdown'], ';
 	doAutoSubmit();
 
@@ -672,7 +667,7 @@ function template_not_done()
 		else if (countdown == -1)
 			return;
 
-		document.forms.autoSubmit.cont.value = "', $txt['not_done_continue'], ' (" + countdown + ")";
+		document.forms.autoSubmit.cont.value = ', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")";
 		countdown--;
 
 		setTimeout("doAutoSubmit();", 1000);
@@ -686,7 +681,7 @@ function template_show_settings()
 
 	// If we have BBC selection we have a bit of JS.
 	if (!empty($context['bbc_sections']))
-		add_js('
+		add_js_inline('
 	function toggleBBCDisabled(section, disable)
 	{
 		for (var i = 0; i < document.forms.bbcForm.length; i++)
@@ -793,7 +788,7 @@ function template_show_settings()
 				// Some quick helpers...
 				$javascript = $config_var['javascript'];
 				$disabled = !empty($config_var['disabled']) ? ' disabled="disabled"' : '';
-				$subtext = !empty($config_var['subtext']) ? '<br /><span class="smalltext"> ' . $config_var['subtext'] . '</span>' : '';
+				$subtext = !empty($config_var['subtext']) ? '<br /><div class="smalltext"> ' . $config_var['subtext'] . '</div>' : '';
 
 				// Show the [?] button.
 				if ($config_var['help'])
@@ -997,8 +992,8 @@ function template_edit_profile_field()
 							<textarea name="field_desc" rows="3" cols="40">', $context['field']['desc'], '</textarea>
 						</dd>
 						<dt>
-							<strong>', $txt['custom_edit_profile'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_profile_desc'], '</span>
+							<strong>', $txt['custom_edit_profile'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_profile_desc'], '</div>
 						</dt>
 						<dd>
 							<select name="profile_area">
@@ -1037,8 +1032,8 @@ function template_edit_profile_field()
 						</dd>
 						<dt>
 							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
-							<strong>', $txt['custom_edit_enclose'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_enclose_desc'], '</span>
+							<strong>', $txt['custom_edit_enclose'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_enclose_desc'], '</div>
 						</dt>
 						<dd>
 							<textarea name="enclose" rows="10" cols="50">', @$context['field']['enclose'], '</textarea>
@@ -1061,8 +1056,8 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt id="max_length_dt">
-							<strong>', $txt['custom_edit_max_length'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_max_length_desc'], '</span>
+							<strong>', $txt['custom_edit_max_length'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_max_length_desc'], '</div>
 						</dt>
 						<dd id="max_length_dd">
 							<input type="text" name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6" class="input_text" />
@@ -1082,8 +1077,8 @@ function template_edit_profile_field()
 						</dd>
 						<dt id="options_dt">
 							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
-							<strong>', $txt['custom_edit_options'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_options_desc'], '</span>
+							<strong>', $txt['custom_edit_options'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_options_desc'], '</div>
 						</dt>
 						<dd id="options_dd">
 							<div>';
@@ -1110,8 +1105,8 @@ function template_edit_profile_field()
 					<dl class="settings">
 						<dt id="mask_dt">
 							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
-							<strong>', $txt['custom_edit_mask'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_mask_desc'], '</span>
+							<strong>', $txt['custom_edit_mask'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_mask_desc'], '</div>
 						</dt>
 						<dd>
 							<select name="mask" id="mask" onchange="updateInputBoxes();">
@@ -1127,7 +1122,7 @@ function template_edit_profile_field()
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_privacy'], ':</strong>
-							<span class="smalltext">', $txt['custom_edit_privacy_desc'], '</span>
+							<div class="smalltext">', $txt['custom_edit_privacy_desc'], '</div>
 						</dt>
 						<dd>
 							<select name="private" id="private" onchange="updateInputBoxes();" style="width: 100%">
@@ -1138,15 +1133,15 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt id="can_search_dt">
-							<strong>', $txt['custom_edit_can_search'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_can_search_desc'], '</span>
+							<strong>', $txt['custom_edit_can_search'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_can_search_desc'], '</div>
 						</dt>
 						<dd id="can_search_dd">
 							<input type="checkbox" name="can_search"', $context['field']['can_search'] ? ' checked="checked"' : '', ' class="input_check" />
 						</dd>
 						<dt>
-							<strong>', $txt['custom_edit_active'], ':</strong><br />
-							<span class="smalltext">', $txt['custom_edit_active_desc'], '</span>
+							<strong>', $txt['custom_edit_active'], ':</strong>
+							<div class="smalltext">', $txt['custom_edit_active_desc'], '</div>
 						</dt>
 						<dd>
 							<input type="checkbox" name="active"', $context['field']['active'] ? ' checked="checked"' : '', ' class="input_check" />
@@ -1208,8 +1203,8 @@ function template_admin_search_results()
 			<li>
 				<p>
 					<a href="', $context['doc_scripturl'], '?topic=', $result['topic_id'], '.0" target="_blank" class="new_win"><strong>', $result['messages'][0]['subject'], '</strong></a>
-					<br /><span class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
-					<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a> /</span>
+					<div class="smalltext"><a href="', $result['category']['href'], '" target="_blank" class="new_win">', $result['category']['name'], '</a> &nbsp;/&nbsp;
+					<a href="', $result['board']['href'], '" target="_blank" class="new_win">', $result['board']['name'], '</a>&nbsp;/</div>
 				</p>
 				<p class="double_height">
 					', $result['messages'][0]['body'], '
@@ -1248,7 +1243,7 @@ function template_core_features()
 	$switch_off = JavaScriptEscape($txt['core_settings_switch_off']);
 	$switch_on = JavaScriptEscape($txt['core_settings_switch_on']);
 
-	add_js('
+	add_js_inline('
 	function toggleItem(itemID)
 	{
 		// Toggle the hidden item.
@@ -1260,7 +1255,6 @@ function template_core_features()
 		document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
 		document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
 
-		// Don\'t reload.
 		return false;
 	}');
 
@@ -1323,11 +1317,11 @@ function template_core_features()
 	<br class="clear" />';
 
 	// Turn on the pretty javascript if we can!
-	add_js('
+	add_js_inline('
 	document.getElementById(\'js_worked\').value = "1";');
 
 	foreach ($context['features'] as $id => $feature)
-		add_js('
+		add_js_inline('
 	document.getElementById(\'js_feature_', $id, '\').style.display = "";
 	document.getElementById(\'plain_feature_', $id, '\').style.display = "none";');
 }
@@ -1496,8 +1490,8 @@ function template_download_language()
 			echo '
 				<tr class="windowbg', $alternate ? '2' : '', '" id="', $theme, '-', $count++, '">
 					<td>
-						<strong>', $file['name'], '</strong><br />
-						<span class="smalltext">', $txt['languages_download_dest'], ': ', $file['destination'], '</span>
+						<strong>', $file['name'], '</strong>
+						<div class="smalltext">', $txt['languages_download_dest'], ': ', $file['destination'], '</div>
 					</td>
 					<td>
 						<span style="color: ', ($file['writable'] ? 'green' : 'red'), ';">', ($file['writable'] ? $txt['yes'] : $txt['no']), '</span>
@@ -1813,8 +1807,9 @@ function template_callback_question_answer_list()
 
 		</dt><dd></dd>';
 
-	add_js('
-	// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
+	// Create a named element dynamically
+	// Thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
+	add_js_inline('
 	function createNamedElement(type, name, customFields)
 	{
 		var element = null;
@@ -1827,9 +1822,7 @@ function template_callback_question_answer_list()
 		{
 			element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
 		}
-		catch (e)
-		{
-		}
+		catch (e) {}
 		if (!element || element.nodeName != type.toUpperCase())
 		{
 			// Non-IE browser; use canonical method to create named element
@@ -1871,7 +1864,7 @@ function template_callback_question_answer_list()
 // Repairing boards.
 function template_repair_boards()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $smcFunc;
 
 	echo '
 	<div id="admincenter">
@@ -1924,7 +1917,7 @@ function template_repair_boards()
 				</p>
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="recount" id="recount_now" value="', $txt['errors_recount_now'], '" />
+					<input type="submit" name="recount" id="recount_now" value="', $smcFunc['htmlspecialchars']($txt['errors_recount_now']), '" />
 				</form>';
 		}
 		else
@@ -1955,7 +1948,7 @@ function template_repair_boards()
 		else if (countdown == -1)
 			return;
 
-		document.forms.recount_form.recount_now.value = "', $txt['errors_recount_now'], ' (" + countdown + ")";
+		document.forms.recount_form.recount_now.value = ', JavaScriptEscape($txt['errors_recount_now']), ' + " (" + countdown + ")";
 		countdown--;
 
 		setTimeout("doAutoSubmit();", 1000);

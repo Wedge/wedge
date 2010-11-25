@@ -136,90 +136,90 @@ function template_select()
 			</p>
 		</form>
 	</div>
-	<br class="clear" />
-		<script><!-- // --><![CDATA[
-			var start = new Array();
-			start[0] = ', $context['not_selected']['start'], ';
-			start[1] = ', $context['selected']['start'], ';
+	<br class="clear" />';
 
-			function select(direction, msg_id)
+	add_js('
+	var start = new Array();
+	start[0] = ', $context['not_selected']['start'], ';
+	start[1] = ', $context['selected']['start'], ';
+
+	function select(direction, msg_id)
+	{
+		if (window.XMLHttpRequest)
+		{
+			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
+			return false;
+		}
+		else
+			return true;
+	}
+	function applyWindowClasses(oList)
+	{
+		var bAlternate = false;
+		oListItems = oList.getElementsByTagName("LI");
+		for (i = 0; i < oListItems.length; i++)
+		{
+			// Skip dummies.
+			if (oListItems[i].id == "")
+				continue;
+			oListItems[i].className = "windowbg" + (bAlternate ? "2" : "") + " wrc";
+			bAlternate = !bAlternate;
+		}
+	}
+	function onDocReceived(XMLDoc)
+	{
+		var i, j, k, pageIndex;
+		for (i = 0; i < 2; i++)
+		{
+			pageIndex = XMLDoc.getElementsByTagName("pageIndex")[i];
+			document.getElementById("pageindex_" + pageIndex.getAttribute("section")).innerHTML = pageIndex.firstChild.nodeValue;
+			start[i] = pageIndex.getAttribute("startFrom");
+		}
+		var numChanges = XMLDoc.getElementsByTagName("change").length;
+		var curChange, curSection, curAction, curId, curList, curData, newItem, sInsertBeforeId;
+		for (i = 0; i < numChanges; i++)
+		{
+			curChange = XMLDoc.getElementsByTagName("change")[i];
+			curSection = curChange.getAttribute("section");
+			curAction = curChange.getAttribute("curAction");
+			curId = curChange.getAttribute("id");
+			curList = document.getElementById("messages_" + curSection);
+			if (curAction == "remove")
+				curList.removeChild(document.getElementById(curSection + "_" + curId));
+			// Insert a message.
+			else
 			{
-				if (window.XMLHttpRequest)
+				// By default, insert the element at the end of the list.
+				sInsertBeforeId = null;
+				// Loop through the list to try and find an item to insert after.
+				oListItems = curList.getElementsByTagName("LI");
+				for (j = 0, k = oListItems.length; j < k; j++)
 				{
-					getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
-					return false;
-				}
-				else
-					return true;
-			}
-			function applyWindowClasses(oList)
-			{
-				var bAlternate = false;
-				oListItems = oList.getElementsByTagName("LI");
-				for (i = 0; i < oListItems.length; i++)
-				{
-					// Skip dummies.
-					if (oListItems[i].id == "")
-						continue;
-					oListItems[i].className = "windowbg" + (bAlternate ? "2" : "") + " wrc";
-					bAlternate = !bAlternate;
-				}
-			}
-			function onDocReceived(XMLDoc)
-			{
-				var i, j, k, pageIndex;
-				for (i = 0; i < 2; i++)
-				{
-					pageIndex = XMLDoc.getElementsByTagName("pageIndex")[i];
-					document.getElementById("pageindex_" + pageIndex.getAttribute("section")).innerHTML = pageIndex.firstChild.nodeValue;
-					start[i] = pageIndex.getAttribute("startFrom");
-				}
-				var numChanges = XMLDoc.getElementsByTagName("change").length;
-				var curChange, curSection, curAction, curId, curList, curData, newItem, sInsertBeforeId;
-				for (i = 0; i < numChanges; i++)
-				{
-					curChange = XMLDoc.getElementsByTagName("change")[i];
-					curSection = curChange.getAttribute("section");
-					curAction = curChange.getAttribute("curAction");
-					curId = curChange.getAttribute("id");
-					curList = document.getElementById("messages_" + curSection);
-					if (curAction == "remove")
-						curList.removeChild(document.getElementById(curSection + "_" + curId));
-					// Insert a message.
-					else
+					if (parseInt(oListItems[j].id.substr(curSection.length + 1)) < curId)
 					{
-						// By default, insert the element at the end of the list.
-						sInsertBeforeId = null;
-						// Loop through the list to try and find an item to insert after.
-						oListItems = curList.getElementsByTagName("LI");
-						for (j = 0, k = oListItems.length; j < k; j++)
-						{
-							if (parseInt(oListItems[j].id.substr(curSection.length + 1)) < curId)
-							{
-								// This would be a nice place to insert the row.
-								sInsertBeforeId = oListItems[j].id;
-								// We\'re done for now. Escape the loop.
-								j = oListItems.length + 1;
-							}
-						}
-
-						// Let\'s create a nice container for the message.
-						newItem = document.createElement("LI");
-						newItem.id = curSection + "_" + curId;
-						newItem.innerHTML = "<div class=\\"message_header\\"><a class=\\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (curSection == "selected" ? "up" : "down") + "\', " + curId + ");\\"><img src=\\"', $settings['images_url'], '/split_" + (curSection == "selected" ? "de" : "") + "select.gif\\" alt=\\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\\" /></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> ', $txt['by'], ' <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br /><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em></div><div class=\\"post\\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div>";
-
-						// So, where do we insert it?
-						if (typeof sInsertBeforeId == "string")
-							curList.insertBefore(newItem, document.getElementById(sInsertBeforeId));
-						else
-							curList.appendChild(newItem);
+						// This would be a nice place to insert the row.
+						sInsertBeforeId = oListItems[j].id;
+						// We\'re done for now. Escape the loop.
+						j = oListItems.length + 1;
 					}
 				}
-				// After all changes, make sure the window backgrounds are still correct for both lists.
-				applyWindowClasses(document.getElementById("messages_selected"));
-				applyWindowClasses(document.getElementById("messages_not_selected"));
+
+				// Let\'s create a nice container for the message.
+				newItem = document.createElement("LI");
+				newItem.id = curSection + "_" + curId;
+				newItem.innerHTML = "<div class=\\"message_header\\"><a class=\\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (curSection == "selected" ? "up" : "down") + "\', " + curId + ");\\"><img src=\\"', $settings['images_url'], '/split_" + (curSection == "selected" ? "de" : "") + "select.gif\\" alt=\\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\\" /></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> ', $txt['by'], ' <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br /><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em></div><div class=\\"post\\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div>";
+
+				// So, where do we insert it?
+				if (typeof sInsertBeforeId == "string")
+					curList.insertBefore(newItem, document.getElementById(sInsertBeforeId));
+				else
+					curList.appendChild(newItem);
 			}
-		// ]]></script>';
+		}
+		// After all changes, make sure the window backgrounds are still correct for both lists.
+		applyWindowClasses(document.getElementById("messages_selected"));
+		applyWindowClasses(document.getElementById("messages_not_selected"));
+	}');
 }
 
 function template_merge_done()

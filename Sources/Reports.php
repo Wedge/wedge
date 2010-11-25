@@ -438,16 +438,12 @@ function BoardPermissionsReport()
 				$group_permissions = isset($groups[$id_group]) ? $groups[$id_group] : array();
 
 				// Do we have any data for this group?
+				// Set the data for this group to be the local permission.
 				if (isset($group_permissions[$ID_PERM]))
-				{
-					// Set the data for this group to be the local permission.
 					$curData[$id_group] = $group_permissions[$ID_PERM];
-				}
 				// Otherwise means it's set to disallow..
 				else
-				{
 					$curData[$id_group] = 'x';
-				}
 
 				// Now actually make the data for the group look right.
 				if (empty($curData[$id_group]))

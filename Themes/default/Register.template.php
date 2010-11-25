@@ -38,12 +38,13 @@ function template_registration_form()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+
 	add_js('
 	function verifyAgree()
 	{
 		if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
 		{
-			alert("' . JavaScriptEscape($txt['register_passwords_differ_js']) . '");
+			alert(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
 			return false;
 		}
 
@@ -51,6 +52,7 @@ function template_registration_form()
 	}
 
 	var currentAuthMethod = \'passwd\';
+
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
@@ -90,6 +92,7 @@ function template_registration_form()
 
 		return true;
 	}
+
 	var regTextStrings = {
 		"username_valid": ' . JavaScriptEscape($txt['registration_username_available']) . ',
 		"username_invalid": ' . JavaScriptEscape($txt['registration_username_unavailable']) . ',
@@ -100,7 +103,9 @@ function template_registration_form()
 		"password_no_match": ' . JavaScriptEscape($txt['registration_password_no_match']) . ',
 		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
 	};
+
 	var verificationHandle = new smfRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
+
 	// Update the authentication status.
 	updateAuthMethod();
 

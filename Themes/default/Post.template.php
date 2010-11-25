@@ -8,7 +8,7 @@ function template_main()
 
 	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes.
 	if ($context['browser']['is_firefox'])
-		add_js('
+		add_js_inline('
 	function reActivate()
 	{
 		document.forms.postmodify.message.readOnly = false;
@@ -16,16 +16,16 @@ function template_main()
 	window.addEventListener("pageshow", reActivate, false);');
 
 	// Start with message icons - and any missing from this theme.
-	add_js('
+	add_js_inline('
 	var icon_urls = {');
 	foreach ($context['icons'] as $icon)
-		$context['footer_js'] .= '
-		\'' . $icon['value'] . '\': \'' . $icon['url'] . '\'' . ($icon['is_last'] ? '' : ',');
-	$context['footer_js'] .= '
-	};';
+		add_js_inline('
+		"' . $icon['value'] . '": "' . $icon['url'] . '"' . ($icon['is_last'] ? '' : ','));
+	add_js_inline('
+	};');
 
 	// The actual message icon selector.
-	add_js('
+	add_js_inline('
 	function showimage()
 	{
 		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
@@ -66,9 +66,9 @@ function template_main()
 		return false;
 	}');
 
-	// If we are making a calendar event we want to ensure we show the current days in a month etc... this is done here.
+	// If we are making a calendar event we want to ensure we show the current days in a month etc... This is done here.
 	if ($context['make_event'])
-		add_js('
+		add_js_inline('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
@@ -76,7 +76,8 @@ function template_main()
 		var dayElement = document.getElementById(\'day\'), yearElement = document.getElementById(\'year\'), monthElement = document.getElementById(\'month\');
 		var days, selected = dayElement.selectedIndex;
 
-		monthLength[1] = yearElement.options[yearElement.selectedIndex].value % 4 == 0 ? 29 : 28;
+		var year = yearElement.options[yearElement.selectedIndex].value;
+		monthLength[1] = (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) ? 29 : 28;
 		days = monthLength[monthElement.value - 1];
 
 		while (dayElement.options.length)
@@ -471,13 +472,13 @@ function template_main()
 			foreach ($ext as $k => $v)
 				$ext[$k] = JavaScriptEscape($v);
 
-			$context['footer_js'] .= ',
-		message_ext_error: ' . JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])) . ',
-		attachment_ext: [' . implode(',', $ext) . ']';
+			add_js(',
+		message_ext_error: ', JavaScriptEscape(str_replace('{attach_exts}', $context['allowed_extensions'], $txt['cannot_attach_ext'])), ',
+		attachment_ext: [', implode(',', $ext), ']');
 		}
 
-		$context['footer_js'] .= '
-	});';
+		add_js('
+	});');
 	}
 
 	// Is visual verification enabled?
@@ -521,7 +522,7 @@ function template_main()
 			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
 		</form>';
 
-	// The functions used to preview a posts without loading a new page.
+	// The functions used to preview posts without loading a new page.
 	add_js('
 	var current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ';
 	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
@@ -531,13 +532,11 @@ function template_main()
 	function previewPost()
 	{');
 
+	// Firefox doesn't render <marquee>'s that have been put in using Javascript
 	if ($context['browser']['is_firefox'])
 		add_js('
-		// Firefox doesn\'t render <marquee> that have been put it using javascript
 		if (document.forms.postmodify.elements[' . JavaScriptEscape($context['postbox']->id) . '].value.indexOf(\'[move]\') != -1)
-		{
-			return submitThisOnce(document.forms.postmodify);
-		}');
+			return submitThisOnce(document.forms.postmodify);');
 
 	// !!! Currently not sending poll options and option checkboxes.
 	add_js('
@@ -576,11 +575,12 @@ function template_main()
 
 		return false;
 	}
+
 	function onDocSent(XMLDoc)
 	{
 		if (!XMLDoc)
 		{
-			document.forms.postmodify.preview.onclick = new function ()
+			document.forms.postmodify.preview.onclick = function ()
 			{
 				return true;
 			}

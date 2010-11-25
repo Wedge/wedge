@@ -29,15 +29,15 @@ function template_ban_edit()
 						<input type="text" name="ban_name" value="', $context['ban']['name'], '" size="25" maxlength="20" class="input_text" />
 					</dd>
 					<dt>
-						<strong>', $txt['ban_reason'], ':</strong><br />
-						<span class="smalltext">', $txt['ban_reason_desc'], '</span>
+						<strong>', $txt['ban_reason'], ':</strong>
+						<div class="smalltext">', $txt['ban_reason_desc'], '</div>
 					</dt>
 					<dd>
 						<textarea name="reason" cols="50" rows="3">', $context['ban']['reason'], '</textarea>
 					</dd>
 					<dt>
-						<strong>', $txt['ban_notes'], ':</strong><br />
-						<span class="smalltext">', $txt['ban_notes_desc'], '</span>
+						<strong>', $txt['ban_notes'], ':</strong>
+						<div class="smalltext">', $txt['ban_notes_desc'], '</div>
 					</dt>
 					<dd>
 						<textarea name="notes" cols="50" rows="3">', $context['ban']['notes'], '</textarea>
@@ -47,16 +47,16 @@ function template_ban_edit()
 					<legend>
 						', $txt['ban_expiration'], '
 					</legend>
-					<input type="radio" name="expiration" value="never" id="never_expires" onclick="fUpdateStatus();"', $context['ban']['expiration']['status'] == 'never' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="never_expires">', $txt['never'], '</label><br />
-					<input type="radio" name="expiration" value="one_day" id="expires_one_day" onclick="fUpdateStatus();"', $context['ban']['expiration']['status'] == 'still_active_but_we_re_counting_the_days' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="expires_one_day">', $txt['ban_will_expire_within'], '</label>: <input type="text" name="expire_date" id="expire_date" size="3" value="', $context['ban']['expiration']['days'], '" class="input_text" /> ', $txt['ban_days'], '<br />
-					<input type="radio" name="expiration" value="expired" id="already_expired" onclick="fUpdateStatus();"', $context['ban']['expiration']['status'] == 'expired' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="already_expired">', $txt['ban_expired'], '</label>
+					<input type="radio" name="expiration" value="never" id="never_expires" onclick="updateFormStatus();"', $context['ban']['expiration']['status'] == 'never' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="never_expires">', $txt['never'], '</label><br />
+					<input type="radio" name="expiration" value="one_day" id="expires_one_day" onclick="updateFormStatus();"', $context['ban']['expiration']['status'] == 'still_active_but_we_re_counting_the_days' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="expires_one_day">', $txt['ban_will_expire_within'], '</label>: <input type="text" name="expire_date" id="expire_date" size="3" value="', $context['ban']['expiration']['days'], '" class="input_text" /> ', $txt['ban_days'], '<br />
+					<input type="radio" name="expiration" value="expired" id="already_expired" onclick="updateFormStatus();"', $context['ban']['expiration']['status'] == 'expired' ? ' checked="checked"' : '', ' class="input_radio" /> <label for="already_expired">', $txt['ban_expired'], '</label>
 				</fieldset>
 				<fieldset class="ban_settings floatright">
 					<legend>
 						', $txt['ban_restriction'], '
 					</legend>
-					<input type="radio" name="full_ban" id="full_ban" value="1" onclick="fUpdateStatus();"', $context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' class="input_radio" /> <label for="full_ban">', $txt['ban_full_ban'], '</label><br />
-					<input type="radio" name="full_ban" id="partial_ban" value="0" onclick="fUpdateStatus();"', !$context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' class="input_radio" /> <label for="partial_ban">', $txt['ban_partial_ban'], '</label><br />
+					<input type="radio" name="full_ban" id="full_ban" value="1" onclick="updateFormStatus();"', $context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' class="input_radio" /> <label for="full_ban">', $txt['ban_full_ban'], '</label><br />
+					<input type="radio" name="full_ban" id="partial_ban" value="0" onclick="updateFormStatus();"', !$context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' class="input_radio" /> <label for="partial_ban">', $txt['ban_partial_ban'], '</label><br />
 					<input type="checkbox" name="cannot_post" id="cannot_post" value="1"', $context['ban']['cannot']['post'] ? ' checked="checked"' : '', ' class="ban_restriction input_radio" /> <label for="cannot_post">', $txt['ban_cannot_post'], '</label> (<a href="', $scripturl, '?action=helpadmin;help=ban_cannot_post" onclick="return reqWin(this);">?</a>)<br />
 					<input type="checkbox" name="cannot_register" id="cannot_register" value="1"', $context['ban']['cannot']['register'] ? ' checked="checked"' : '', ' class="ban_restriction input_radio" /> <label for="cannot_register">', $txt['ban_cannot_register'], '</label><br />
 					<input type="checkbox" name="cannot_login" id="cannot_login" value="1"', $context['ban']['cannot']['login'] ? ' checked="checked"' : '', ' class="ban_restriction input_radio" /> <label for="cannot_login">', $txt['ban_cannot_login'], '</label><br />
@@ -226,40 +226,40 @@ function template_ban_edit()
 
 	echo '
 	</div>
-	<br class="clear" />
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var fUpdateStatus = function ()
-		{
-			document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
-			document.getElementById("cannot_post").disabled = document.getElementById("full_ban").checked;
-			document.getElementById("cannot_register").disabled = document.getElementById("full_ban").checked;
-			document.getElementById("cannot_login").disabled = document.getElementById("full_ban").checked;
-		}
-		addLoadEvent(fUpdateStatus);';
+	<br class="clear" />';
+
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js_inline('
+	function updateFormStatus()
+	{
+		document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
+		document.getElementById("cannot_post").disabled = document.getElementById("full_ban").checked;
+		document.getElementById("cannot_register").disabled = document.getElementById("full_ban").checked;
+		document.getElementById("cannot_login").disabled = document.getElementById("full_ban").checked;
+	}
+	updateFormStatus();');
 
 	// Auto suggest only needed for adding new bans, not editing
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
-		echo '
-			var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAddMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'user\',
-			sControlId: \'user\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
+		add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'user\',
+		sControlId: \'user\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});
 
-		function onUpdateName(oAutoSuggest)
-		{
-			document.getElementById(\'user_check\').checked = true;
-			return true;
-		}
-		oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');';
-
-	echo '// ]]></script>';
+	function onUpdateName(oAutoSuggest)
+	{
+		document.getElementById(\'user_check\').checked = true;
+		return true;
+	}
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
 }
 
 function template_ban_edit_trigger()
@@ -324,27 +324,28 @@ function template_ban_edit_trigger()
 			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-	<script><!-- // --><![CDATA[
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: \'oAddMemberSuggest\',
-			sSessionId: \'', $context['session_id'], '\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSuggestId: \'username\',
-			sControlId: \'user\',
-			sSearchType: \'member\',
-			sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-			bItemList: false
-		});
+	<br class="clear" />';
 
-		function onUpdateName(oAutoSuggest)
-		{
-			selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
-			return true;
-		}
-		oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');
-	// ]]></script>';
+	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+	add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'username\',
+		sControlId: \'user\',
+		sSearchType: \'member\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});
+
+	function onUpdateName(oAutoSuggest)
+	{
+		selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
+		return true;
+	}
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
 }
 
 ?>

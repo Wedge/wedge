@@ -377,6 +377,7 @@ function template_main()
 	</div>';
 
 		add_js_file($settings['default_theme_url'] . '/scripts/stats.js');
+
 		add_js('
 	var oStatsCenter = new smf_StatsCenter({
 		sTableId: \'stats\',
@@ -400,8 +401,8 @@ function template_main()
 		aCollapsedYears: [');
 
 		foreach ($context['collapsed_years'] as $id => $year)
-			$context['footer_js'] .= '
-			\'' . $year . '\'' . ($id != count($context['collapsed_years']) - 1 ? ',' : '');
+			add_js('
+			\'' . $year . '\'' . ($id != count($context['collapsed_years']) - 1 ? ',' : ''));
 
 		add_js('
 		],

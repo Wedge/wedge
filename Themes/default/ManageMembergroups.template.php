@@ -66,8 +66,8 @@ function template_new_group()
 	{
 		echo '
 					<dt>
-						<label for="permission_base"><strong>', $txt['membergroups_permissions'], ':</strong></label><br />
-						<span class="smalltext">', $txt['membergroups_can_edit_later'], '</span>
+						<label for="permission_base"><strong>', $txt['membergroups_permissions'], ':</strong></label>
+						<div class="smalltext">', $txt['membergroups_can_edit_later'], '</div>
 					</dt>
 					<dd>
 						<fieldset id="permission_base">
@@ -112,8 +112,8 @@ function template_new_group()
 
 	echo '
 					<dt>
-						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['post_group'] ? '<br />
-						<span class="smalltext" style="font-weight: normal">' . $txt['membergroups_new_board_post_groups'] . '</span>' : '', '
+						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['post_group'] ? '
+						<div class="smalltext">' . $txt['membergroups_new_board_post_groups'] . '</div>' : '', '
 					</dt>
 					<dd>
 						<fieldset id="visible_boards">
@@ -231,8 +231,8 @@ function template_edit_group()
 	{
 		echo '
 					<dt id="group_inherit_text">
-						<label for="group_inherit_input"><strong>', $txt['membergroups_edit_inherit_permissions'], '</strong></label>:<br />
-						<span class="smalltext">', $txt['membergroups_edit_inherit_permissions_desc'], '</span>
+						<label for="group_inherit_input"><strong>', $txt['membergroups_edit_inherit_permissions'], '</strong></label>:
+						<div class="smalltext">', $txt['membergroups_edit_inherit_permissions_desc'], '</div>
 					</dt>
 					<dd>
 						<select name="group_inherit" id="group_inherit_input">
@@ -263,6 +263,7 @@ function template_edit_group()
 	echo '
 					<dt>
 						<label for="online_color_input"><strong>', $txt['membergroups_online_color'], ':</strong></label>
+						<div class="smalltext">', $txt['membergroups_online_color_desc'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="online_color" id="online_color_input" value="', $context['group']['color'], '" size="20" class="input_text" />
@@ -274,8 +275,8 @@ function template_edit_group()
 						<input type="text" name="star_count" id="star_count_input" value="', $context['group']['star_count'], '" size="4" onkeyup="if (this.value.length > 2) this.value = 99;" onkeydown="this.onkeyup();" onchange="if (this.value != 0) this.form.star_image.onchange();" class="input_text" />
 					</dd>
 					<dt>
-						<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label><br />
-						<span class="smalltext">', $txt['membergroups_star_image_note'], '</span>
+						<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label>
+						<div class="smalltext">', $txt['membergroups_star_image_note'], '</div>
 					</dt>
 					<dd>
 						', $txt['membergroups_images_url'], '
@@ -283,8 +284,8 @@ function template_edit_group()
 						<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '" alt="*" />
 					</dd>
 					<dt>
-						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label><br />
-						<span class="smalltext">', $txt['membergroups_max_messages_note'], '</span>
+						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label>
+						<div class="smalltext">', $txt['membergroups_max_messages_note'], '</div>
 					</dt>
 					<dd>
 						<input type="text" name="max_messages" id="max_messages_input" value="', $context['group']['id'] == 1 ? 0 : $context['group']['max_messages'], '" size="6"', $context['group']['id'] == 1 ? ' disabled="disabled"' : '', ' class="input_text" />
@@ -294,8 +295,8 @@ function template_edit_group()
 	{
 		echo '
 					<dt>
-						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['group']['is_post_group'] ? '<br />
-						<span class="smalltext">' . $txt['membergroups_new_board_post_groups'] . '</span>' : '', '
+						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['group']['is_post_group'] ? '
+						<div class="smalltext">' . $txt['membergroups_new_board_post_groups'] . '</div>' : '', '
 					</dt>
 					<dd>
 						<fieldset id="visible_boards" style="width: 95%;">
@@ -327,55 +328,60 @@ function template_edit_group()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
-		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-		<script><!-- // --><![CDATA[
-			var oModeratorSuggest = new smc_AutoSuggest({
-				sSelf: \'oModeratorSuggest\',
-				sSessionId: \'', $context['session_id'], '\',
-				sSessionVar: \'', $context['session_var'], '\',
-				sSuggestId: \'group_moderators\',
-				sControlId: \'group_moderators\',
-				sSearchType: \'member\',
-				bItemList: true,
-				sPostName: \'moderator_list\',
-				sURLMask: \'action=profile;u=%item_id%\',
-				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-				sItemListContainerId: \'moderator_container\',
-				aListItems: [';
+	<br class="clear" />';
 
-			foreach ($context['group']['moderators'] as $id_member => $member_name)
-				echo '
-					{
-						sItemId: ', JavaScriptEscape($id_member), ',
-						sItemName: ', JavaScriptEscape($member_name), '
-					}', $id_member == $context['group']['last_moderator_id'] ? '' : ',';
+	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
+	{
+		add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
 
-			echo '
-				]
-			});
-		// ]]></script>';
+		add_js('
+	var oModeratorSuggest = new smc_AutoSuggest({
+		sSelf: \'oModeratorSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'group_moderators\',
+		sControlId: \'group_moderators\',
+		sSearchType: \'member\',
+		bItemList: true,
+		sPostName: \'moderator_list\',
+		sURLMask: \'action=profile;u=%item_id%\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		sItemListContainerId: \'moderator_container\',
+		aListItems: [');
+
+		foreach ($context['group']['moderators'] as $id_member => $member_name)
+			add_js('
+			{
+				sItemId: ', JavaScriptEscape($id_member), ',
+				sItemName: ', JavaScriptEscape($member_name), '
+			}', $id_member == $context['group']['last_moderator_id'] ? '' : ',');
+
+		add_js('
+		]
+	});');
+	}
 
 	if ($context['group']['allow_post_group'])
-		echo '
-		<script><!-- // --><![CDATA[
-			function swapPostGroup(isChecked)
-			{
-				var min_posts_text = document.getElementById(\'min_posts_text\');
-				var group_desc_text = document.getElementById(\'group_desc_text\');
-				var group_hidden_text = document.getElementById(\'group_hidden_text\');
-				var group_moderators_text = document.getElementById(\'group_moderators_text\');
-				document.forms.groupForm.min_posts.disabled = !isChecked;
-				min_posts_text.style.color = isChecked ? "" : "#888888";
-				document.forms.groupForm.group_desc_input.disabled = isChecked;
-				group_desc_text.style.color = !isChecked ? "" : "#888888";
-				document.forms.groupForm.group_hidden_input.disabled = isChecked;
-				group_hidden_text.style.color = !isChecked ? "" : "#888888";
-				document.forms.groupForm.group_moderators.disabled = isChecked;
-				group_moderators_text.style.color = !isChecked ? "" : "#888888";
-			}
-			swapPostGroup(', $context['group']['is_post_group'] ? 'true' : 'false', ');
-		// ]]></script>';
+		add_js_inline('
+	function swapPostGroup(isChecked)
+	{
+		var min_posts_text = document.getElementById(\'min_posts_text\');
+		var group_desc_text = document.getElementById(\'group_desc_text\');
+		var group_hidden_text = document.getElementById(\'group_hidden_text\');
+		var group_moderators_text = document.getElementById(\'group_moderators_text\');
+		document.forms.groupForm.min_posts.disabled = !isChecked;
+		min_posts_text.style.color = isChecked ? "" : "#888888";
+		document.forms.groupForm.group_desc_input.disabled = isChecked;
+		group_desc_text.style.color = !isChecked ? "" : "#888888";
+		document.forms.groupForm.group_hidden_input.disabled = isChecked;
+		group_hidden_text.style.color = !isChecked ? "" : "#888888";
+		if (group_moderators_text)
+		{
+			document.forms.groupForm.group_moderators.disabled = isChecked;
+			group_moderators_text.style.color = !isChecked ? "" : "#888888";
+		}
+	}
+	swapPostGroup(', $context['group']['is_post_group'] ? 'true' : 'false', ');');
 }
 
 // Templating for viewing the members of a group.
@@ -534,23 +540,24 @@ function template_group_members()
 	<br class="clear" />';
 
 	if (!empty($context['group']['assignable']))
-		echo '
-		<script src="', $settings['default_theme_url'], '/scripts/suggest.js?rc3"></script>
-		<script><!-- // --><![CDATA[
-			var oAddMemberSuggest = new smc_AutoSuggest({
-				sSelf: \'oAddMemberSuggest\',
-				sSessionId: \'', $context['session_id'], '\',
-				sSessionVar: \'', $context['session_var'], '\',
-				sSuggestId: \'to_suggest\',
-				sControlId: \'toAdd\',
-				sSearchType: \'member\',
-				sPostName: \'member_add\',
-				sURLMask: \'action=profile;u=%item_id%\',
-				sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-				bItemList: true,
-				sItemListContainerId: \'toAddItemContainer\'
-			});
-		// ]]></script>';
+	{
+		add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+
+		add_js('
+	var oAddMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAddMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sSuggestId: \'to_suggest\',
+		sControlId: \'toAdd\',
+		sSearchType: \'member\',
+		sPostName: \'member_add\',
+		sURLMask: \'action=profile;u=%item_id%\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: true,
+		sItemListContainerId: \'toAddItemContainer\'
+	});');
+	}
 }
 
 // Allow the moderator to enter a reason to each user being rejected.

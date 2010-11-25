@@ -251,7 +251,8 @@ function template_create_index()
 
 function template_create_index_progress()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $settings, $options, $scripturl, $txt, $smcFunc;
+
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
@@ -265,7 +266,7 @@ function template_create_index_progress()
 				<p>
 					<strong>', $txt['search_create_index_progress'], ': ', $context['percentage'], '%</strong>
 				</p>
-				<input type="submit" name="b" value="', $txt['search_create_index_continue'], '" class="button_submit" />
+				<input type="submit" name="b" value="', $smcFunc['htmlspecialchars']($txt['search_create_index_continue']), '" class="button_submit" />
 			</div>
 			<input type="hidden" name="step" value="', $context['step'], '" />
 			<input type="hidden" name="start" value="', $context['start'], '" />
@@ -273,25 +274,24 @@ function template_create_index_progress()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
-		var countdown = 10;
-		doAutoSubmit();
+	<br class="clear" />';
 
-		function doAutoSubmit()
-		{
-			if (countdown == 0)
-				document.forms.autoSubmit.submit();
-			else if (countdown == -1)
-				return;
+	add_js_inline('
+	var countdown = 10;
+	doAutoSubmit();
 
-			document.forms.autoSubmit.b.value = "', $txt['search_create_index_continue'], ' (" + countdown + ")";
-			countdown--;
+	function doAutoSubmit()
+	{
+		if (countdown == 0)
+			document.forms.autoSubmit.submit();
+		else if (countdown == -1)
+			return;
 
-			setTimeout("doAutoSubmit();", 1000);
-		}
-	// ]]></script>';
+		document.forms.autoSubmit.b.value = ', JavaScriptEscape($txt['search_create_index_continue']), ' + " (" + countdown + ")";
+		countdown--;
 
+		setTimeout("doAutoSubmit();", 1000);
+	}');
 }
 
 function template_create_index_done()
