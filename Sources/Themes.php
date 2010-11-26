@@ -968,69 +968,84 @@ function PickTheme()
 	);
 
 	$_SESSION['id_theme'] = 0;
-
-	if (isset($_GET['id']))
-		$_GET['th'] = $_GET['id'];
+	$_SESSION['styling'] = '';
 
 	// Have we made a decision, or are we just browsing?
 	if (isset($_GET['th']))
 	{
 		checkSession('get');
 
-		$_GET['th'] = (int) $_GET['th'];
+		$th = explode('_', $_GET['th']);
+		$id = (int) $th[0];
+		$css = isset($th[1]) ? base64_decode($th[1]) : 'css';
 
 		// Save for this user.
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
 		{
-			updateMemberData($user_info['id'], array('id_theme' => (int) $_GET['th']));
+			updateMemberData($user_info['id'], array(
+				'id_theme' => $id,
+				'styling' => $css
+			));
 			redirectexit('action=profile;area=theme');
 		}
 
 		// For everyone.
 		if ($_REQUEST['u'] == '0')
 		{
-			updateMemberData(null, array('id_theme' => (int) $_GET['th']));
+			updateMemberData(null, array(
+				'id_theme' => $id,
+				'styling' => $css
+			));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
 		}
 		// Change the default/guest theme.
 		elseif ($_REQUEST['u'] == '-1')
 		{
-			updateSettings(array('theme_guests' => (int) $_GET['th']));
+			updateSettings(array(
+				'theme_guests' => $id,
+				'theme_styling_guests' => $css
+			));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
 		}
 		// Change a specific member's theme.
 		else
 		{
-			updateMemberData((int) $_REQUEST['u'], array('id_theme' => (int) $_GET['th']));
+			updateMemberData((int) $_REQUEST['u'], array(
+				'id_theme' => $id,
+				'styling' => $css
+			));
 			redirectexit('action=profile;u=' . (int) $_REQUEST['u'] . ';area=theme');
 		}
 	}
 
-	// Figure out who the member of the minute is, and what theme they've chosen.
+	// Figure out who the current member is, and what theme they've chosen.
 	if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
 	{
 		$context['current_member'] = $user_info['id'];
 		$context['current_theme'] = $user_info['theme'];
+		$context['current_styling'] = $user_info['styling'];
 	}
-	// Everyone can't chose just one.
+	// Everyone can't choose just one.
 	elseif ($_REQUEST['u'] == '0')
 	{
 		$context['current_member'] = 0;
 		$context['current_theme'] = 0;
+		$context['current_styling'] = 'css';
 	}
 	// Guests and such...
 	elseif ($_REQUEST['u'] == '-1')
 	{
 		$context['current_member'] = -1;
 		$context['current_theme'] = $modSettings['theme_guests'];
+		$context['current_styling'] = $modSettings['theme_styling_guests'];
 	}
-	// Someones else :P.
+	// Someone else :P
 	else
 	{
 		$context['current_member'] = (int) $_REQUEST['u'];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_theme
+			SELECT id_theme, styling
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
@@ -1038,7 +1053,7 @@ function PickTheme()
 				'current_member' => $context['current_member'],
 			)
 		);
-		list ($context['current_theme']) = $smcFunc['db_fetch_row']($request);
+		list ($context['current_theme'], $context['current_styling']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 	}
 
@@ -1072,6 +1087,8 @@ function PickTheme()
 					'num_users' => 0
 				);
 			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
+			if ($row['variable'] == 'theme_dir')
+				$context['available_themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['value'] . '/css');
 		}
 		$smcFunc['db_free_result']($request);
 	}

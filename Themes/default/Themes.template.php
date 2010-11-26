@@ -522,7 +522,7 @@ function template_set_settings()
 	<br class="clear" />';
 }
 
-// This template allows for the selection of different themes ;).
+// This template allows for the selection of different themes ;)
 function template_pick()
 {
 	global $context, $settings, $options, $scripturl, $txt;
@@ -533,38 +533,72 @@ function template_pick()
 
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
+	{
 		echo '
 			<div class="cat_bar">
 				<h3>
 					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
 				</h3>
 			</div>
-			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc">
-				<div class="flow_hidden">
-					<div class="floatright"><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" alt="" class="padding" /></a></div>
-					<p>
-						', $theme['description'], '
-					</p>
-					<br />
-					<p>
-						<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
-					</p>
-					<br />
-					<ul class="reset">
-						<li>
-							<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_use_', $theme['id'], '">[', $txt['theme_set'], ']</a>
-						</li>
-						<li>
-							<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a>
-						</li>
-					</ul>
+			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">
+				<div class="floatright">
+					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" alt="" class="padding" /></a>
 				</div>
+				<p>
+					', $theme['description'], '
+				</p>
+				<br />
+				<p>
+					<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
+				</p>
+				<br />
+				<ul class="reset">
+					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_use_', $theme['id'], '">[', $txt['theme_set'], ']</a></li>
+					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a></li>
+				</ul>';
+
+		if ($theme['id'] !== 0 && !empty($theme['stylings']))
+		{
+			echo '
+				<div class="title_bar" style="clear: right">
+					<h4>', $txt['theme_stylings'], '</h4>
+				</div>';
+
+			template_list_stylings($theme, $theme['id']);
+		}
+
+		echo '
 			</div>';
+	}
 
 	echo '
 		</form>
 	</div>
 	<br class="clear" />';
+}
+
+function template_list_stylings(&$theme, $theme_id)
+{
+	global $txt, $context, $scripturl;
+
+	foreach ($theme['stylings'] as $sty)
+	{
+		$target = $theme_id . '_' . base64_encode($sty['dir']);
+		echo '
+				<div class="roundframe" style="margin: 8px">
+					<p><strong>', $sty['name'], '</strong></p>
+					<p>', $sty['comment'], '</p>
+					<ul class="reset">
+						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $target, ';', $context['session_var'], '=', $context['session_id'], '" id="theme_use_', $target, '_', '">[', $txt['theme_styling_set'], ']</a></li>
+						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $target, ';', $context['session_var'], '=', $context['session_id'], '" id="theme_preview_', $target, '_', '">[', $txt['theme_styling_preview'], ']</a></li>
+					</ul>';
+
+		if (!empty($sty['stylings']))
+			template_list_stylings($sty, $theme_id);
+
+		echo '
+				</div>';
+	}
 }
 
 // Okay, that theme was installed successfully!

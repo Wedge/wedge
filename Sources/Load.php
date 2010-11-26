@@ -409,6 +409,7 @@ function loadUserSettings()
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
+		'styling' => empty($user_settings['styling']) ? 'css' : $user_settings['styling'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -1400,15 +1401,24 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// The theme was specified by REQUEST.
 	elseif (!empty($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
 	{
-		$id_theme = (int) $_REQUEST['theme'];
+		$th = explode('_', $_REQUEST['theme']);
+		$id_theme = (int) $th[0];
+		$styling = isset($th[1]) ? base64_decode($th[1]) : 'css';
 		$_SESSION['id_theme'] = $id_theme;
+		$_SESSION['styling'] = $styling;
 	}
 	// The theme was specified by REQUEST... previously.
 	elseif (!empty($_SESSION['id_theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
+	{
 		$id_theme = (int) $_SESSION['id_theme'];
-	// The theme is just the user's choice. (might use ?board=1;theme=0 to force board theme.)
+		$styling = !empty($_SESSION['styling']) ? $_SESSION['styling'] : 'css';
+	}
+	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
 	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
+	{
 		$id_theme = $user_info['theme'];
+		$styling = $user_info['styling'];
+	}
 	// The theme was specified by the board.
 	elseif (!empty($board_info['theme']))
 	{

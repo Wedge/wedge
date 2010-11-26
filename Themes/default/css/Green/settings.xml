@@ -7,6 +7,7 @@
 <styling>
 	<!--
 		Styling name.
+
 		This will only be shown to anyone who can change a styling.
 	-->
 	<name><![CDATA[
@@ -14,9 +15,11 @@
 	]]></name>
 	<!--
 		Styling type.
+
 		Possible values:
 			add (default, add this styling to the root style)
 			replace (discard the root style and consider this as the basic style)
+
 		Warnings:
 			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
 			- These files should have their url() paths modified accordingly. e.g., url(../../img) instead of url(../img)
@@ -28,11 +31,16 @@
 	</type>
 	<!--
 		Styling comment.
-		This will only be shown to anyone who can change a styling.
-		Will only show up when they select the styling. Use the opportunity
-		to communicate details to users, such as ways to customize your styling.
+
+		This HTML text will only be shown to users when selecting a styling,
+		either for the default forum theme (admins), board theme (board
+		owners) and default theme override (regular users, if allowed.)
+
+		Use the opportunity to communicate credits or details to users.
+		Technical information is best posted wherever you upload the file.
 	-->
 	<comment><![CDATA[
-		This styling's purpose is to show what nested stylings can do.
+		Made by Nao in a few minutes.
+		<br />This styling's purpose is to show what nested stylings can do.
 	]]></comment>
 </styling>
