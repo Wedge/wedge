@@ -579,6 +579,8 @@ function EditBoard()
 	$smcFunc['db_free_result']($request);
 
 	// Get theme dir for all themes
+	require_once($sourcedir . '/Themes.php');
+
 	$request = $smcFunc['db_query']('', '
 		SELECT id_theme AS id, value AS dir
 		FROM {db_prefix}themes
@@ -601,47 +603,6 @@ function EditBoard()
 		$context['sub_template'] = 'confirm_board_delete';
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
-}
-
-function wedge_get_styling_list($dir, $files = array())
-{
-	global $settings;
-
-	$styles = array();
-
-	$files = empty($files) ? scandir($dir) : $files;
-	foreach ($files as $file)
-	{
-		$this_dir = $dir . '/' . $file;
-		if ($file === 'cache' || $file === '.' || $file === '..' || !is_dir($this_dir))
-			continue;
-		$these_files = scandir($this_dir);
-		if (!in_array('index.css', $these_files))
-			continue;
-		if (in_array('settings.xml', $these_files))
-		{
-			$setxml = file_get_contents($this_dir . '/settings.xml');
-			// I'm not actually parsing it XML-style... Mwahaha! I'm evil.
-			$style = array(
-				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
-				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
-				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
-			);
-		}
-		else
-			$style = array(
-				'name' => $file,
-				'type' => 'add',
-				'comment' => '',
-			);
-		$minus_this = strpos($this_dir, '/css/') + ($style['type'] == 'add' ? 1 : 5);
-		$style['dir'] = substr($this_dir, $minus_this);
-		$styles[$this_dir] = $style;
-		$sub_styles = wedge_get_styling_list($this_dir, $these_files);
-		if (!empty($sub_styles))
-			$styles[$this_dir]['stylings'] = $sub_styles;
-	}
-	return $styles;
 }
 
 // Make changes to/delete a board.

@@ -193,27 +193,40 @@ function ThemeAdmin()
 			SELECT id_theme, value AS name
 			FROM {db_prefix}themes
 			WHERE variable = {string:name}
-				AND id_member = {int:no_member}
+				AND id_member = 0
 			ORDER BY id_theme',
 			array(
-				'no_member' => 0,
 				'name' => 'name',
 			)
 		);
 		$context['themes'] = array();
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$context['themes'][] = array(
+			$context['themes'][$row['id_theme']] = array(
 				'id' => $row['id_theme'],
 				'name' => $row['name'],
 				'known' => in_array($row['id_theme'], $knownThemes),
 			);
 		$smcFunc['db_free_result']($request);
 
+		// While we're at it, get all stylings...
+		$request = $smcFunc['db_query']('', '
+			SELECT id_theme, value AS dir
+			FROM {db_prefix}themes
+			WHERE variable = {string:dir}
+				AND id_member = 0',
+			array(
+				'dir' => 'theme_dir',
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$context['themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['dir'] . '/css');
+		$smcFunc['db_free_result']($request);
+
 		// Can we create a new theme?
 		$context['can_create_new'] = is_writable($boarddir . '/Themes');
 		$context['new_theme_dir'] = substr(realpath($boarddir . '/Themes/default'), 0, -7);
 
-		// Look for a non existent theme directory. (ie theme87.)
+		// Look for a non existent theme directory. (i.e. theme87.)
 		$theme_dir = $boarddir . '/Themes/theme';
 		$i = 1;
 		while (file_exists($theme_dir . $i))
@@ -233,14 +246,24 @@ function ThemeAdmin()
 		if (!in_array($_POST['options']['theme_guests'], $_POST['options']['known_themes']))
 				fatal_lang_error('themes_default_selectable', false);
 
+		$arrh = explode('_', $_POST['options']['theme_guests']);
+
 		// Commit the new settings.
 		updateSettings(array(
 			'theme_allow' => $_POST['options']['theme_allow'],
-			'theme_guests' => $_POST['options']['theme_guests'],
+			'theme_guests' => $arrh[0],
+			'theme_styling_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'css',
 			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
-		if ((int) $_POST['theme_reset'] == 0 || in_array($_POST['theme_reset'], $_POST['options']['known_themes']))
-			updateMemberData(null, array('id_theme' => (int) $_POST['theme_reset']));
+		if (!empty($_POST['theme_reset']))
+		{
+			$reset = explode('_', $_POST['theme_reset']);
+			if ((int) $reset[0] == 0 || in_array($reset[0], $_POST['options']['known_themes']))
+				updateMemberData(null, array(
+					'id_theme' => (int) $_POST['theme_reset'],
+					'styling' => isset($reset[1]) ? base64_decode($reset[1]) : 'css'
+				));
+		}
 
 		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=admin');
 	}
@@ -1992,6 +2015,69 @@ function CopyTemplate()
 	}
 
 	$context['sub_template'] = 'copy_template';
+}
+
+/**
+ * Get a list of all stylings available for a given theme folder.
+ */
+function wedge_get_styling_list($dir, $files = array())
+{
+	global $settings;
+
+	$styles = array();
+
+	$files = empty($files) ? scandir($dir) : $files;
+	foreach ($files as $file)
+	{
+		$this_dir = $dir . '/' . $file;
+		if ($file === 'cache' || $file === '.' || $file === '..' || !is_dir($this_dir))
+			continue;
+		$these_files = scandir($this_dir);
+		if (!in_array('index.css', $these_files))
+			continue;
+		if (in_array('settings.xml', $these_files))
+		{
+			// I'm not actually parsing it XML-style... Mwahaha! I'm evil.
+			$setxml = file_get_contents($this_dir . '/settings.xml');
+			$style = array(
+				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
+				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
+				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
+			);
+		}
+		else
+			$style = array(
+				'name' => $file,
+				'type' => 'add',
+				'comment' => '',
+			);
+		$minus_this = strpos($this_dir, '/css/') + ($style['type'] == 'add' ? 1 : 5);
+		$style['dir'] = substr($this_dir, $minus_this);
+		$styles[$this_dir] = $style;
+		$sub_styles = wedge_get_styling_list($this_dir, $these_files);
+		if (!empty($sub_styles))
+			$styles[$this_dir]['stylings'] = $sub_styles;
+	}
+	return $styles;
+}
+
+/**
+ * Return a list of <option> variables for use in Themes and ManageBoard templates.
+ */
+function wedge_show_stylings(&$theme, &$style, $level, $current_theme_id, $current_styling)
+{
+	global $context;
+
+	$last = count($style);
+	$current = 1;
+	foreach ($style as $sty)
+	{
+		$intro = '&nbsp;' . str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
+		echo '<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $theme['id'] && $current_styling == $sty['dir'] ? ' selected="selected"' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
+		if (!empty($sty['stylings']))
+			wedge_show_stylings($theme, $sty['stylings'], $level + 1, $current_theme_id, $current_styling);
+		$current++;
+	}
 }
 
 ?>

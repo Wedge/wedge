@@ -49,12 +49,18 @@ function template_main()
 						<label for="theme_guests">', $txt['theme_guests'], ':</label>
 					</dt>
 					<dd>
-						<select name="options[theme_guests]" id="theme_guests">';
+						<select name="options[theme_guests]" id="theme_guests">
+							';
+
+	$styling = empty($modSettings['theme_styling_guests']) ? 'css' : $modSettings['theme_styling_guests'];
 
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'] as $theme)
-		echo '
-							<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+	{
+		echo '<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] && $styling == 'css' ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+		if (!empty($theme['stylings']))
+			wedge_show_stylings($theme, $theme['stylings'], 1, $modSettings['theme_guests'], $styling);
+	}
 
 	echo '
 						</select>
@@ -70,8 +76,12 @@ function template_main()
 
 	// Same thing, this time for changing the theme of everyone.
 	foreach ($context['themes'] as $theme)
+	{
 		echo '
 							<option value="', $theme['id'], '">', $theme['name'], '</option>';
+		if (!empty($theme['stylings']))
+			wedge_show_stylings($theme, $theme['stylings'], 1, '', '');
+	}
 
 	echo '
 						</select>

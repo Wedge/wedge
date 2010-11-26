@@ -1411,15 +1411,24 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$id_theme = $user_info['theme'];
 	// The theme was specified by the board.
 	elseif (!empty($board_info['theme']))
+	{
 		$id_theme = $board_info['theme'];
+		$styling = isset($board_info['styling']) ? $board_info['styling'] : 'css';
+	}
 	// The theme is the forum's default.
 	else
+	{
 		$id_theme = $modSettings['theme_guests'];
+		$styling = $modSettings['theme_styling_guests'];
+	}
 
 	// Verify the id_theme... no foul play.
 	// Always allow the board specific theme, if they are overriding.
 	if (!empty($board_info['theme']) && $board_info['override_theme'])
+	{
 		$id_theme = $board_info['theme'];
+		$styling = isset($board_info['styling']) ? $board_info['styling'] : 'css';
+	}
 	// If they have specified a particular theme to use with SSI allow it to be used.
 	elseif (!empty($ssi_theme) && $id_theme == $ssi_theme)
 		$id_theme = (int) $id_theme;
@@ -1752,7 +1761,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Time to determine our CSS list...
 
 	// First, load our requested styling folder.
-	$folders = isset($board_info, $board_info['styling']) ? explode('/', $board_info['styling']) : array('css');
+	$folders = isset($styling) ? explode('/', $styling) : array('css');
 	$context['css_folders'] = array();
 	$current_folder = $folders[0] == 'css' ? '' : '/css';
 	foreach ($folders as $folder)
