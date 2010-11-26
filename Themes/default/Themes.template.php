@@ -535,7 +535,7 @@ function template_pick()
 	foreach ($context['available_themes'] as $theme)
 	{
 		echo '
-			<div class="cat_bar">
+			<div class="cat_bar" style="margin: 8px 0">
 				<h3>
 					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
 				</h3>
@@ -560,7 +560,7 @@ function template_pick()
 		if ($theme['id'] !== 0 && !empty($theme['stylings']))
 		{
 			echo '
-				<div class="title_bar" style="clear: right">
+				<div class="title_bar" style="margin-top: 8px; clear: right">
 					<h4>', $txt['theme_stylings'], '</h4>
 				</div>';
 
