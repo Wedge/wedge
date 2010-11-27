@@ -11,11 +11,14 @@ function template_avatar_settings_below()
 	add_js_inline('
 	function updateFormStatus()
 	{
-		document.getElementById("avatar_max_width_external").disabled = document.getElementById("avatar_download_external").checked;
-		document.getElementById("avatar_max_height_external").disabled = document.getElementById("avatar_download_external").checked;
-		document.getElementById("avatar_action_too_large").disabled = document.getElementById("avatar_download_external").checked;
-		document.getElementById("custom_avatar_dir").disabled = document.getElementById("custom_avatar_enabled").value == 0;
-		document.getElementById("custom_avatar_url").disabled = document.getElementById("custom_avatar_enabled").value == 0;
+		var external_avatar_checked = document.getElementById("avatar_download_external").checked;
+		var custom_avatar_disabled = document.getElementById("custom_avatar_enabled").value == 0;
+
+		document.getElementById("avatar_max_width_external").disabled = external_avatar_checked;
+		document.getElementById("avatar_max_height_external").disabled = external_avatar_checked;
+		document.getElementById("avatar_action_too_large").disabled = external_avatar_checked;
+		document.getElementById("custom_avatar_dir").disabled = custom_avatar_disabled;
+		document.getElementById("custom_avatar_url").disabled = custom_avatar_disabled;
 	}
 	updateFormStatus();');
 }

@@ -233,10 +233,12 @@ function template_ban_edit()
 	add_js_inline('
 	function updateFormStatus()
 	{
+		var full_ban_checked = document.getElementById("full_ban").checked;
+
 		document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
-		document.getElementById("cannot_post").disabled = document.getElementById("full_ban").checked;
-		document.getElementById("cannot_register").disabled = document.getElementById("full_ban").checked;
-		document.getElementById("cannot_login").disabled = document.getElementById("full_ban").checked;
+		document.getElementById("cannot_post").disabled = full_ban_checked;
+		document.getElementById("cannot_register").disabled = full_ban_checked;
+		document.getElementById("cannot_login").disabled = full_ban_checked;
 	}
 	updateFormStatus();');
 

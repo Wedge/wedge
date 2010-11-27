@@ -3766,33 +3766,14 @@ function template_header()
 }
 
 /**
- * Attempts to ensure the copyright is actually displayed.
- *
- * Several steps occur in the attempt to prevent copyright removal.
- * If we don't have the right key (or a key at all), output the copyright and mark it as found for later.
- *
- * This function should not appear in any public function database due to @ignore.
- *
- * @param bool $get_it If true, return whether the copyright has been displayed previously, otherwise add the copyright.
- * @return mixed This function only returns a value (boolean) if $get_it was true (from template_footer). Otherwise the function is a void.
- * @ignore
+ * Shows the copyright notice.
  */
-function theme_copyright($get_it = false)
+function theme_copyright()
 {
-	global $forum_copyright, $context, $boardurl, $forum_version, $txt, $modSettings;
-
-	// DO NOT MODIFY THIS FUNCTION. DO NOT REMOVE YOUR COPYRIGHT.
-	// DOING SO VOIDS YOUR LICENSE AND IS ILLEGAL.
-
-	// Meaning, this is the footer checking in..
-	if ($get_it === true)
-		return true;
+	global $forum_copyright, $forum_version;
 
 	// For SSI and other things, skip the version number.
-	if (empty($forum_version))
-		$forum_version = 'Wedge';
-
-	echo sprintf($forum_copyright, $forum_version);
+	echo sprintf($forum_copyright, empty($forum_version) ? 'Wedge' : $forum_version);
 }
 
 /**
