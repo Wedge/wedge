@@ -51,7 +51,7 @@ if (!defined('SMF'))
  */
 function BoardIndex()
 {
-	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
+	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl, $options;
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)

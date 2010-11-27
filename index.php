@@ -153,7 +153,7 @@ if (isset($_GET['openid_restore_post']) && !empty($_SESSION['openid']['saved_dat
 $function = smf_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'jsoption', 'requestmembers', '.xml', 'xmlhttp')) || !defined('WEDGE_NO_LOG'))
+if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'requestmembers', '.xml', 'xmlhttp')) || !defined('WEDGE_NO_LOG'))
 {
 	// Log this user as online.
 	writeLog();
@@ -297,7 +297,7 @@ function smf_main()
 		'im' => array('PersonalMessage.php', 'MessageMain'),
 		'jseditor' => array('Class-Editor.php', array('wedgeEditor', 'EditorCallback')),
 		'jsmodify' => array('JSModify.php', 'JSModify'),
-		'jsoption' => array('Themes.php', 'SetJavaScript'),
+		'jsoption' => array('Jsoption.php', 'Jsoption'),
 		'lock' => array('LockTopic.php', 'LockTopic'),
 		'lockvoting' => array('Poll.php', 'LockVoting'),
 		'login' => array('LogInOut.php', 'Login'),
@@ -331,8 +331,8 @@ function smf_main()
 		'reporttm' => array('SendTopic.php', 'ReportToModerator'),
 		'requestmembers' => array('Subs-Auth.php', 'RequestMembers'),
 		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
-		'search' => array('Search.php', 'PlushSearch1'),
-		'search2' => array('Search.php', 'PlushSearch2'),
+		'search' => array('Search.php', 'Search'),
+		'search2' => array('Search2.php', 'Search2'),
 		'sendtopic' => array('SendTopic.php', 'EmailUser'),
 		'smstats' => array('SMStats.php', 'SMStats'),
 		'suggest' => array('Suggest.php', 'Suggest'),
