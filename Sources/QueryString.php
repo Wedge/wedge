@@ -671,7 +671,8 @@ function add_js()
 <script><!-- // --><[!CDATA[';
 		$footer_coding = true;
 	}
-	$context['footer_js'] .= implode('', func_get_args());
+	$args = func_get_args();
+	$context['footer_js'] .= implode('', $args);
 }
 
 // Same as earlier, but can be shown BEFORE all scripts are loaded,
@@ -680,7 +681,8 @@ function add_js_inline()
 {
 	global $context;
 
-	$context['footer_js_inline'] .= implode('', func_get_args());
+	$args = func_get_args();
+	$context['footer_js_inline'] .= implode('', $args);
 }
 
 // Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.
