@@ -1324,7 +1324,7 @@ smc_Editor.prototype.startResize = function(oEvent)
 
 	window.smf_oCurrentResizeEditor = this.iArrayPosition;
 
-	var aCurCoordinates = smf_mousePose(oEvent);
+	var aCurCoordinates = getMousePosition(oEvent);
 	this.osmc_EditorCurrentResize.old_y = aCurCoordinates[1];
 	this.osmc_EditorCurrentResize.old_rel_y = null;
 	this.osmc_EditorCurrentResize.cur_height = parseInt(this.oTextHandle.style.height);
@@ -1353,7 +1353,7 @@ smc_Editor.prototype.resizeOverIframe = function(oEvent)
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
 
-	var newCords = smf_mousePose(oEvent);
+	var newCords = getMousePosition(oEvent);
 
 	if (this.osmc_EditorCurrentResize.old_rel_y == null)
 		this.osmc_EditorCurrentResize.old_rel_y = newCords[1];
@@ -1378,7 +1378,7 @@ smc_Editor.prototype.resizeOverDocument = function(oEvent)
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
 
-	var newCords = smf_mousePose(oEvent);
+	var newCords = getMousePosition(oEvent);
 
 	var iNewHeight = newCords[1] - this.osmc_EditorCurrentResize.old_y + this.osmc_EditorCurrentResize.cur_height;
 	if (iNewHeight < 0)
@@ -1418,6 +1418,26 @@ smc_Editor.prototype.endResize = function(oEvent)
 	Helper functions.
 	Can safely be called by mods.
 */
+
+// Getting the mouse position on the screen.
+function getMousePosition(oEvent)
+{
+	var x = 0;
+	var y = 0;
+
+	if (oEvent.pageX)
+	{
+		y = oEvent.pageY;
+		x = oEvent.pageX;
+	}
+	else if (oEvent.clientX)
+	{
+		x = oEvent.clientX + (document.documentElement.scrollLeft ? document.documentElement : document.body).scrollLeft;
+		y = oEvent.clientY + (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop;
+	}
+
+	return [x, y];
+}
 
 // Replaces the currently selected text with the passed text.
 function replaceText(text, oTextHandle)

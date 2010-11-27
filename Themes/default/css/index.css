@@ -212,6 +212,10 @@ a:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
+/* Inside a post, if you publish a link, you want it to stand out... */
+.post a {
+	text-decoration: underline;
+}
 
 /* Links that open in a new window. */
 a.new_win:link, a.new_win:visited {
