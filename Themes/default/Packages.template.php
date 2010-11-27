@@ -457,61 +457,6 @@ function template_examine()
 	<br class="clear" />';
 }
 
-function template_view_installed()
-{
-	global $context, $settings, $options, $txt, $scripturl;
-
-	echo '
-	<div id="admincenter">
-		<div class="title_bar">
-			<h3>' . $txt['view_and_remove'] . '</h3>
-		</div>';
-
-	if (empty($context['installed_mods']))
-		echo '
-		<div class="information">
-			', $txt['no_mods_installed'], '
-		</div>';
-
-	else
-	{
-		echo '
-		<table class="table_grid w100 cs0">
-		<thead>
-			<tr class="catbg">
-				<th scope="col" style="width: 32px"></th>
-				<th scope="col" class="w25">', $txt['mod_name'], '</th>
-				<th scope="col" class="w25">', $txt['mod_version'], '</th>
-				<th scope="col" style="width: 49%"></th>
-			</tr>
-		</thead>
-		<tbody>';
-
-		$alt = false;
-		foreach ($context['installed_mods'] as $i => $file)
-		{
-			echo '
-			<tr class="', $alt ? 'windowbg' : 'windowbg2', '">
-				<td class="smalltext">', ++$i, '.</td>
-				<td class="smalltext">', $file['name'], '</td>
-				<td class="smalltext">', $file['version'], '</td>
-				<td class="right smalltext"><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $file['filename'], ';pid=', $file['id'], '">[ ', $txt['uninstall'], ' ]</a></td>
-			</tr>';
-			$alt = !$alt;
-		}
-
-		echo '
-		</tbody>
-		</table>
-		<br />
-		<a href="', $scripturl, '?action=admin;area=packages;sa=flush;', $context['session_var'], '=', $context['session_id'], '">[ ', $txt['delete_list'], ' ]</a>';
-	}
-
-	echo '
-	</div>
-	<br class="clear" />';
-}
-
 function template_browse()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $forum_version;

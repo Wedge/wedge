@@ -42,9 +42,6 @@ if (!defined('SMF'))
 	void ExamineFile()
 		// !!!
 
-	void InstalledList()
-		// !!!
-
 	void FlushInstall()
 		// !!!
 
@@ -92,7 +89,6 @@ function Packages()
 		'install2' => 'PackageInstall',
 		'uninstall' => 'PackageInstallTest',
 		'uninstall2' => 'PackageInstall',
-		'installed' => 'InstalledList',
 		'options' => 'PackageOptions',
 		'perms' => 'PackagePermissions',
 		'flush' => 'FlushInstall',
@@ -116,9 +112,6 @@ function Packages()
 			),
 			'packageget' => array(
 				'description' => $txt['download_packages_desc'],
-			),
-			'installed' => array(
-				'description' => $txt['installed_packages_desc'],
 			),
 			'perms' => array(
 				'description' => $txt['package_file_perms_desc'],
@@ -1192,18 +1185,6 @@ function ExamineFile()
 		if (strtolower(strrchr($_REQUEST['file'], '.')) == '.php')
 			$context['filedata'] = highlight_php_code($context['filedata']);
 	}
-}
-
-// List the installed packages.
-function InstalledList()
-{
-	global $txt, $scripturl, $context;
-
-	$context['page_title'] .= ' - ' . $txt['installed_packages'];
-	$context['sub_template'] = 'view_installed';
-
-	// Load the installed mods and send them to the template.
-	$context['installed_mods'] = loadInstalledPackages();
 }
 
 // Empty out the installed list.
