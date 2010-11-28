@@ -51,7 +51,7 @@ function Jsoption()
 
 	// This good-for-nothing pixel is being used to keep the session alive.
 	if (empty($_GET['var']) || !isset($_GET['val']))
-		redirectexit($settings['images_url'] . '/blank.gif');
+		blankGif();
 
 	// Sorry, guests can't go any further than this..
 	if ($user_info['is_guest'] || $user_info['id'] == 0)
@@ -79,7 +79,7 @@ function Jsoption()
 
 	// Can't change reserved vars.
 	if (in_array(strtolower($_GET['var']), $reservedVars))
-		redirectexit($settings['images_url'] . '/blank.gif');
+		blankGif();
 
 	// Use a specific theme?
 	if (isset($_GET['th']) || isset($_GET['id']))
@@ -113,7 +113,7 @@ function Jsoption()
 	cache_put_data('theme_settings-' . $settings['theme_id'] . ':' . $user_info['id'], null, 60);
 
 	// Don't output anything...
-	redirectexit($settings['images_url'] . '/blank.gif');
+	blankGif();
 }
 
 ?>

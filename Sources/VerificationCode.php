@@ -44,11 +44,7 @@ function VerificationCode()
 
 	// Somehow no code was generated or the session was lost.
 	if (empty($code))
-	{
-		header('Content-Type: image/gif');
-		die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
-	}
-
+		blankGif();
 	// Show a window that will play the verification code.
 	elseif (isset($_REQUEST['sound']))
 	{
@@ -71,10 +67,7 @@ function VerificationCode()
 			header('HTTP/1.1 400 Bad Request');
 		// You must be up to no good.
 		else
-		{
-			header('Content-Type: image/gif');
-			die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
-		}
+			blankGif();
 	}
 
 	elseif ($_REQUEST['format'] === '.wav')
