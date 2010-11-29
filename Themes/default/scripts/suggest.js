@@ -3,6 +3,9 @@ function smc_AutoSuggest(oOptions)
 {
 	this.opt = oOptions;
 
+	// Nothing else for now.
+	this.opt.sSearchType = 'member';
+
 	// Store the handle to the text box.
 	this.oTextHandle = document.getElementById(this.opt.sControlId);
 	this.oRealTextHandle = null;
@@ -354,7 +357,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	}
 
 	var oNewDiv = document.createElement('div');
-	oNewDiv.id = 'suggest_' + this.opt.sSuggestId + '_' + sItemId;
+	oNewDiv.id = 'suggest_' + this.opt.sControlId + '_' + sItemId;
 	oNewDiv.innerHTML = this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId).replace(/%item_href%/g, smf_prepareScriptUrl(smf_scripturl) + this.opt.sURLMask.replace(/%item_id%/g, sItemId)).replace(/%item_name%/g, sItemName).replace(/%images_url%/g, smf_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem);
 	this.oItemList.appendChild(oNewDiv);
 
@@ -375,12 +378,12 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 // Delete an item that has been added, if at all?
 smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
 {
-	var oDiv = document.getElementById('suggest_' + this.opt.sSuggestId + '_' + sItemId);
+	var oDiv = document.getElementById('suggest_' + this.opt.sControlId + '_' + sItemId);
 
 	// Remove the div if it exists.
 	if (typeof(oDiv) == 'object' && oDiv != null)
 	{
-		oDiv.parentNode.removeChild(document.getElementById('suggest_' + this.opt.sSuggestId + '_' + sItemId));
+		oDiv.parentNode.removeChild(document.getElementById('suggest_' + this.opt.sControlId + '_' + sItemId));
 
 		// Decrease the internal item count.
 		this.iItemCount --;

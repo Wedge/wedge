@@ -240,7 +240,7 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScript($txt['maintain_members_confirm']), ');" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -254,11 +254,8 @@ function template_maintain_members()
 		sSelf: \'oAttributeMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'attributeMember\',
 		sControlId: \'to\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 }
 

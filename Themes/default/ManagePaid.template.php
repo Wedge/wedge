@@ -362,11 +362,8 @@ function template_modify_user_subscription()
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'name_subscriber\',
 		sControlId: \'name_control\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 
 	if (!empty($context['pending_payments']))

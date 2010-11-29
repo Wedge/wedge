@@ -249,11 +249,8 @@ function template_ban_edit()
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'user\',
 		sControlId: \'user\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});
 
 	function onUpdateName(oAutoSuggest)
@@ -335,11 +332,8 @@ function template_ban_edit_trigger()
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'username\',
 		sControlId: \'user\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});
 
 	function onUpdateName(oAutoSuggest)

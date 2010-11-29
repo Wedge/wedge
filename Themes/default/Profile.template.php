@@ -531,11 +531,8 @@ function template_editBuddies()
 		sSelf: \'oAddBuddySuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'new_buddy\',
 		sControlId: \'new_buddy\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 }
 
@@ -616,11 +613,8 @@ function template_editIgnoreList()
 		sSelf: \'oAddIgnoreSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'new_ignore\',
 		sControlId: \'new_ignore\',
-		sSearchType: \'member\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: false
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 }
 

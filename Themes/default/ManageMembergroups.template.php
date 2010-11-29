@@ -339,9 +339,7 @@ function template_edit_group()
 		sSelf: \'oModeratorSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'group_moderators\',
 		sControlId: \'group_moderators\',
-		sSearchType: \'member\',
 		bItemList: true,
 		sPostName: \'moderator_list\',
 		sURLMask: \'action=profile;u=%item_id%\',
@@ -548,13 +546,11 @@ function template_group_members()
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
-		sSuggestId: \'to_suggest\',
 		sControlId: \'toAdd\',
-		sSearchType: \'member\',
+		bItemList: true,
 		sPostName: \'member_add\',
 		sURLMask: \'action=profile;u=%item_id%\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		bItemList: true,
 		sItemListContainerId: \'toAddItemContainer\'
 	});');
 	}
