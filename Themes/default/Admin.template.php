@@ -916,11 +916,11 @@ function template_edit_profile_field()
 	global $context, $txt, $settings, $scripturl;
 
 	// All the javascript for this page - quite a bit!
-	add_js('
+	add_js_inline('
 	function updateInputBoxes()
 	{
-		curType = document.getElementById("field_type").value;
-		privStatus = document.getElementById("private").value;
+		var curType = document.getElementById("field_type").value;
+		var privStatus = document.getElementById("private").value;
 		document.getElementById("max_length_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
 		document.getElementById("max_length_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
 		document.getElementById("dimension_dt").style.display = curType == "textarea" ? "" : "none";
@@ -945,15 +945,15 @@ function template_edit_profile_field()
 			document.getElementById("display").disabled = true;
 		}
 	}
+	updateInputBoxes();');
 
+	add_js('
 	var startOptID = ', count($context['field']['options']), ';
 	function addOption()
 	{
 		setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
 		startOptID++;
-	}
-
-	updateInputBoxes();');
+	}');
 
 	echo '
 	<div id="admincenter">

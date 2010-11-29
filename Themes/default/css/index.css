@@ -1350,12 +1350,15 @@ form.wrc {
 	border: 1px solid #000;
 	position: absolute;
 	visibility: hidden;
+	color: #000;
 }
 .auto_suggest_item {
 	background-color: #ddd;
+	padding: 2px 3px 1px;
 }
 .auto_suggest_item_hover {
 	background-color: #888;
+	padding: 2px 3px 1px;
 	cursor: pointer;
 	color: #eee;
 }
