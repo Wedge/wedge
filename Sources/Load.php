@@ -1738,7 +1738,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize our JS files to cache right before we run template_init().
-	$context['javascript_files'] = array('scripts/script.js');
+	if (empty($modSettings['jquery_remote']))
+		$context['javascript_files'] = array('scripts/jquery-1.4.4.min.js', 'scripts/script.js');
+	else
+		$context['javascript_files'] = array('scripts/script.js');
 
 	// Initialize the theme
 	loadSubTemplate('init', 'ignore');

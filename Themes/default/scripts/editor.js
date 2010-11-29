@@ -1281,7 +1281,7 @@ smc_Editor.prototype.shortcutCheck = function(oEvent)
 			// So much to do!
 			var oForm = document.getElementById(this.sFormId);
 			submitThisOnce(oForm);
-			submitonce(oForm);
+			submitonce();
 			smc_saveEntities(oForm.name, ['subject', this.opt.sUniqueId, 'guestname', 'evtitle', 'question']);
 			oForm.submit();
 

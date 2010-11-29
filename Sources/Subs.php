@@ -51,9 +51,8 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 {
 	global $sourcedir, $modSettings, $smcFunc;
 
-	switch ($type)
+	if ($type === 'member')
 	{
-	case 'member':
 		$changes = array(
 			'memberlist_updated' => time(),
 		);
@@ -113,9 +112,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 		}
 
 		updateSettings($changes);
-		break;
-
-	case 'message':
+	}
+	elseif ($type === 'message')
+	{
 		if ($parameter1 === true && $parameter2 !== null)
 			updateSettings(array('totalMessages' => true, 'maxMsgID' => $parameter2), true);
 		else
@@ -139,9 +138,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				'maxMsgID' => $row['max_msg_id'] === null ? 0 : $row['max_msg_id']
 			));
 		}
-		break;
-
-	case 'subject':
+	}
+	elseif ($type === 'subject')
+	{
 		// Remove the previous subject (if any).
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_search_subjects
@@ -188,9 +187,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					array('word', 'id_topic')
 				);
 		}
-		break;
-
-	case 'topic':
+	}
+	elseif ($type === 'topic')
+	{
 		if ($parameter1 === true)
 			updateSettings(array('totalTopics' => true), true);
 		else
@@ -210,9 +209,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 			updateSettings(array('totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']));
 		}
-		break;
-
-	case 'postgroups':
+	}
+	elseif ($type === 'postgroups')
+	{
 		// Parameter two is the updated columns: we should check to see if we base groups off any of these.
 		if ($parameter2 !== null && !in_array('posts', $parameter2))
 			return;
@@ -252,7 +251,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			$lastMin = $min_posts;
 		}
 
-		// A big fat CASE WHEN... END is faster than a zillion UPDATE's ;).
+		// A big fat CASE WHEN... END should be faster than a zillion UPDATE's ;)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}members
 			SET id_post_group = CASE ' . $conditions . '
@@ -263,11 +262,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				'members' => $parameter1,
 			)
 		);
-		break;
-
-		default:
-			trigger_error('updateStats(): Invalid statistic type \'' . $type . '\'', E_USER_NOTICE);
 	}
+	else
+		trigger_error('updateStats(): Invalid statistic type \'' . $type . '\'', E_USER_NOTICE);
 }
 
 /**
@@ -3528,22 +3525,72 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 	// Delete all duplicates.
 	$js = array_flip(array_unique(array_flip($js)));
 	foreach ($js as $file)
-		$final .= file_get_contents($dir . $file);
-	$tricky_one = '~(?<!\\\\)(?:replace\(.*?(?<!\\\\)\)|\'.*?(?<!\\\\)\'|".*?(?<!\\\\)"|/\*.*?\*/|//.*?(?=[\r\n]))~s';
-	preg_match_all($tricky_one, $final, $wedge_quotes);
-	$final = preg_replace($tricky_one, '{wedge_quotes}', $final);
-//	$final = preg_replace('~\s*([,;:{\[\]<>\(\)|&=!+-])\s*~', '$1', $final);
-//	$final = str_replace(array("\r", "\t"), array("\n", ' '), $final);
-//	$final = preg_replace(array('~ +~', "~\n+ *~"), array(' ', "\n"), $final);
-	$final = preg_replace_callback('~{wedge_quotes}~', 'wedge_restore_quotes', $final);
-	$final = preg_replace("~\n+ *~", "\n", $final);
+	{
+		$cont = file_get_contents($dir . $file);
+		if (preg_match("~/\* Optimize:\n(.*?)\n\*/~s", $cont, $match))
+		{
+			$match = explode("\n", $match[1]);
+			$search = $replace = array();
+			foreach ($match as $variable)
+			{
+				$pair = explode(' = ', $variable);
+				$search[] = $pair[0];
+				$replace[] = $pair[1];
+			}
+			$cont = str_replace($search, $replace, $cont);
+		}
+		$final .= $cont;
+	}
 
-/*	require_once($sourcedir . '/Class-Minify.php');
+// !!! Delete these lines. They're cool and all, but they need to go.
+// !!! Just don't let me do that myself, Pete. Please. Pretty please.
+// !!! Have mercy. These regexes represent hours of work. <sob>
+
+//	$tricky_one = '~(?<!\\\\)(?:replace\(.*?(?<!\\\\)\)|\'.*?(?<!\\\\)\'|".*?(?<!\\\\)"|/\*.*?\*/|//.*?(?=[\r\n]))~s';
+//	preg_match_all($tricky_one, $final, $wedge_quotes);
+//	$final = preg_replace($tricky_one, '{wedge_quotes}', $final);
+
+////	$final = preg_replace('~\s*([,;:{\[\]<>\(\)|&=!+-])\s*~', '$1', $final);
+////	$final = str_replace(array("\r", "\t"), array("\n", ' '), $final);
+////	$final = preg_replace(array('~ +~', "~\n+ *~"), array(' ', "\n"), $final);
+
+//	$final = preg_replace_callback('~{wedge_quotes}~', 'wedge_restore_quotes', $final);
+//	$final = preg_replace("~\n+ *~", "\n", $final);
+
+	require_once($sourcedir . '/Class-Minify.php');
 
 	// Call the minify process. If we're saving in gzip, best have the script
 	// unpacked. Otherwise, use the compression mechanism.
 	$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
-	$final = $packer->pack(); */
+
+	// Adding newlines after } will fix a common problem in the packer. Only bigger by a few bytes...
+
+	// !!! Again, delete this... :(
+	// $final = preg_replace('~(=function\([^)]*\)(?:{(?:(?' . '>[^{}]|(?R))+?)}))~i', '$1'."\n", $packer->pack());
+	$final = $packer->pack();
+	$max = strlen($final);
+	$i = 0;
+	$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
+	while (true)
+	{
+		$i = strpos($final, '=function(', $i);
+		if ($i === false)
+			break;
+		$k = strpos($final, '{', $i) + 1;
+		$m = 1;
+		while ($m > 0 && $k <= $max)
+		{
+			$d = $final[$k++];
+			$m += $d === '{' ? 1 : ($d === '}' ? -1 : 0);
+		}
+		$e = $k < $max ? $final[$k] : $final[$k - 1];
+		if (isset($alphabet[$e]))
+		{
+			$final = substr_replace($final, ';', $k, 0);
+			$max++;
+		}
+		$i++;
+	}
 
 	$dest = $settings[$target . 'dir'] . '/cache';
 	if (!file_exists($dest))

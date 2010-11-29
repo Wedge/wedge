@@ -20,8 +20,7 @@ if (is_ie || is_webkit || is_ff)
 	addLoadEvent(smf_codeBoxFix);
 
 // Toggles the element height and width styles of an image.
-function smc_toggleImageDimensions()
-{
+addLoadEvent(function () {
 	var oImage, oImages = document.querySelectorAll ? document.querySelectorAll('img.resized') : document.getElementsByTagName('IMG');
 	for (oImage in oImages)
 	{
@@ -34,10 +33,7 @@ function smc_toggleImageDimensions()
 			this.style.width = this.style.height = this.style.width == 'auto' ? null : 'auto';
 		};
 	}
-}
-
-// Add a load event for the function above.
-addLoadEvent(smc_toggleImageDimensions);
+});
 
 // Adds a button to a certain button strip.
 function smf_addButton(sButtonStripId, bUseImage, oOptions)
@@ -58,4 +54,23 @@ function smf_addButton(sButtonStripId, bUseImage, oOptions)
 	oNewButton.innerHTML = '<a href="' + oOptions.sUrl + '" ' + ('sCustom' in oOptions ? oOptions.sCustom : '') + '><span class="last"' + ('sId' in oOptions ? ' id="' + oOptions.sId + '"': '') + '>' + oOptions.sText + '</span></a>';
 
 	oButtonStripList.appendChild(oNewButton);
+}
+
+/* Optimize:
+codeFix = c
+oImages = o
+oImage = i
+sButtonStripId = s
+oButtonStrip = b
+aItems = a
+oLastSpan = o
+oButtonStripList = t
+oNewButton = n
+*/
+
+var test = function () {
+something();
+}
+var test2 = function () {
+something2();
 }

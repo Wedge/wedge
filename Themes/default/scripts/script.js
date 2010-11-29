@@ -132,32 +132,32 @@ String.prototype.php_strtolower = function ()
 	) : this.php_strtr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
 }
 
-String.prototype.php_urlencode = function()
+String.prototype.php_urlencode = function ()
 {
 	return escape(this).replace(/\+/g, '%2b').replace('*', '%2a').replace('/', '%2f').replace('@', '%40');
 }
 
-String.prototype.php_htmlspecialchars = function()
+String.prototype.php_htmlspecialchars = function ()
 {
 	return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-String.prototype.php_unhtmlspecialchars = function()
+String.prototype.php_unhtmlspecialchars = function ()
 {
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
 }
 
-String.prototype.php_addslashes = function()
+String.prototype.php_addslashes = function ()
 {
 	return this.replace(/\\/g, '\\\\').replace(/'/g, '\\\'');
 }
 
-String.prototype._replaceEntities = function(sInput, sDummy, sNum)
+String.prototype._replaceEntities = function (sInput, sDummy, sNum)
 {
 	return String.fromCharCode(parseInt(sNum));
 }
 
-String.prototype.removeEntities = function()
+String.prototype.removeEntities = function ()
 {
 	return this.replace(/&(amp;)?#(\d+);/g, this._replaceEntities);
 }
@@ -237,7 +237,7 @@ function isEmptyText(theField)
 }
 
 // Only allow form submission ONCE.
-function submitonce(theform)
+function submitonce()
 {
 	smf_formSubmitted = true;
 
@@ -322,7 +322,6 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 }
 
 // Keep the session alive - always!
-var lastKeepAliveCheck = new Date().getTime();
 function smf_sessionKeepAlive()
 {
 	var curTime = new Date().getTime();
@@ -366,7 +365,7 @@ function smf_avatarResize()
 		tempAvatars[j] = new Image();
 		tempAvatars[j].avatar = possibleAvatars[i];
 
-		tempAvatars[j].onload = function()
+		tempAvatars[j].onload = function ()
 		{
 			this.avatar.width = this.width;
 			this.avatar.height = this.height;
@@ -427,8 +426,7 @@ function hashAdminPassword(doForm, username, cur_session_id)
 // Shows the page numbers by clicking the dots (in compact view).
 function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 {
-	var replacement = '', i, oldLastPage = 0;
-	var perPageLimit = 50;
+	var replacement = '', i, oldLastPage = 0, perPageLimit = 50;
 
 	// The dots were bold, the page numbers are not (in most cases).
 	spanNode.style.fontWeight = 'normal';
@@ -473,7 +471,7 @@ function smc_Cookie(oOptions)
 	this.init();
 }
 
-smc_Cookie.prototype.init = function()
+smc_Cookie.prototype.init = function ()
 {
 	if ('cookie' in document && document.cookie != '')
 	{
@@ -486,12 +484,12 @@ smc_Cookie.prototype.init = function()
 	}
 }
 
-smc_Cookie.prototype.get = function(sKey)
+smc_Cookie.prototype.get = function (sKey)
 {
 	return sKey in this.oCookies ? this.oCookies[sKey] : null;
 }
 
-smc_Cookie.prototype.set = function(sKey, sValue)
+smc_Cookie.prototype.set = function (sKey, sValue)
 {
 	document.cookie = sKey + '=' + encodeURIComponent(sValue);
 }
@@ -577,7 +575,7 @@ smc_Toggle.prototype.init = function ()
 }
 
 // Collapse or expand the section.
-smc_Toggle.prototype.changeState = function(bCollapse, bInit)
+smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
@@ -641,7 +639,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed ? '1' : '0', 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, this.opt.oThemeOptions.sSessionId, this.opt.oThemeOptions.sSessionVar, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
 }
 
-smc_Toggle.prototype.toggle = function()
+smc_Toggle.prototype.toggle = function ()
 {
 	// Change the state by reversing the current state.
 	this.changeState(!this.bCollapsed);
@@ -727,8 +725,9 @@ function createEventListener(oTarget)
 // This function will retrieve the contents needed for the jump to boxes.
 function grabJumpToContent()
 {
-	var oXMLDoc = getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml');
-	var aBoardsAndCategories = new Array();
+	var
+		oXMLDoc = getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml'),
+		aBoardsAndCategories = new Array();
 
 	ajax_indicator(true);
 
@@ -777,10 +776,9 @@ JumpTo.prototype.showSelect = function ()
 // Fill the jump to box with entries. Method of the JumpTo class.
 JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 {
-	var iIndexPointer = 0;
-
 	// Create an option that'll be above and below the category.
-	var oDashOption = document.createElement('option');
+	var oDashOption = document.createElement('option'), iIndexPointer = 0;
+
 	oDashOption.appendChild(document.createTextNode(this.opt.sCatSeparator));
 	oDashOption.disabled = 'disabled';
 	oDashOption.value = '';
@@ -829,7 +827,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	this.dropdownList.focus();
 
 	// Add an onchange action
-	this.dropdownList.onchange = function() {
+	this.dropdownList.onchange = function () {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 	};
@@ -838,8 +836,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 // Short function for finding the actual position of an item.
 function smf_itemPos(itemHandle)
 {
-	var itemX = 0;
-	var itemY = 0;
+	var itemX = 0, itemY = 0;
 
 	if ('offsetParent' in itemHandle)
 	{
@@ -881,7 +878,7 @@ function addLoadEvent(fNewOnload)
 	{
 		aOnloadEvents[0] = window.onload;
 		aOnloadEvents[1] = fNewOnload;
-		window.onload = function() {
+		window.onload = function () {
 			for (var i = 0, n = aOnloadEvents.length; i < n; i++)
 			{
 				if (typeof(aOnloadEvents[i]) == 'function')
@@ -928,8 +925,8 @@ function smfSelectText(oCurElement, bActOnElement)
 		}
 		else
 		{
-			var curRange = document.createRange();
-			curRange.selectNodeContents(oCodeArea);
+			var oCurRange = document.createRange();
+			oCurRange.selectNodeContents(oCodeArea);
 
 			oCurSelection.removeAllRanges();
 			oCurSelection.addRange(curRange);
@@ -996,7 +993,7 @@ function initMenu(menu)
 			}
 			lis[i].onmouseover = showMe;
 			lis[i].onmouseout = timeoutHide;
-			lis[i].onclick = function() { hideAllUls(menu); };
+			lis[i].onclick = function () { hideAllUls(menu); };
 			lis[i].onblur = timeoutHide;
 			lis[i].onfocus = showMe;
 		}
@@ -1154,8 +1151,8 @@ function clickMagic()
 function linkMagic()
 {
 	var i, a, hre;
-	var noddy = document.getElementsByTagName('a'), hre, i, a;
-	for (i = 0; a = noddy[i]; i++)
+	var n = document.getElementsByTagName('a'), hre, i, a;
+	for (i = 0; a = n[i]; i++)
 	{
 		// Leave a way out to external links.
 		if (a.getAttribute('title') == '-')
@@ -1191,3 +1188,48 @@ var
 // And now we turn clickme classes into proper onclicks.
 // We can do it immediately, because all of the DOM is loaded at this point.
 clickMagic();
+
+/* Optimize:
+smf_formSubmitted = sfs
+ajax_indicator_ele = aie
+lastKeepAliveCheck = lka
+aOnloadEvents = aoe
+alternateWidth = w
+alternateHeight = h
+previousTarget = p
+helpFrame = f
+noScrollbars = n
+oReplacements = o
+sReturn = s
+oMyDoc = d
+bAsync = b
+sUrl = u
+sContent = c
+funcCallback = f
+oCaller = o
+sFrom = f
+sTo = t
+sMatch = m
+theField = f
+theValue = v
+currentNode = n
+currentLi = c
+sFormName = f
+aElementNames = e
+sMask = m
+oCurSelection = c
+oCodeArea = a
+oCurElement = e
+bActOnElement = t
+oCurRange = r
+fNewOnload = f
+itemHandle = h
+aBoardsAndCategories = b
+oDashOption = d
+sChildLevelPrefix = p
+cur_session_id = s
+cur_session_var = v
+additional_vars = a
+oRadioGroup = r
+theArray = a
+*/

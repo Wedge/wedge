@@ -300,7 +300,7 @@ function template_html_below()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
-	// Incluce postponed inline JS, postponed HTML, and then kickstart the main
+	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// Javascript section -- files to include, main vars and functions to start.
 
 	if (!empty($context['footer_js_inline']))
@@ -308,8 +308,8 @@ function template_html_below()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo $context['footer'], '
-
+	echo $context['footer'], !empty($modSettings['jquery_remote']) ? '
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>' : '', '
 <script src="', $context['cached_js'], '"></script>
 <script><!-- // --><![CDATA[
 	var smf_theme_url = "', $settings['theme_url'], '";
