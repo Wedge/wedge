@@ -489,58 +489,6 @@ function JSMembers()
 		$context['links']['up'] = $scripturl . '?action=pm;sa=send' . (empty($_REQUEST['u']) ? '' : ';u=' . $_REQUEST['u']);
 }
 
-function RequestMembers()
-{
-	global $user_info, $txt, $smcFunc;
-
-	checkSession('get');
-
-	$_REQUEST['search'] = $smcFunc['htmlspecialchars']($_REQUEST['search']) . '*';
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
-	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
-
-	// Guaranteed to be UTF-8 so let's advise that.
-	header('Content-Type: text/plain; charset=UTF-8');
-
-	$request = $smcFunc['db_query']('', '
-		SELECT real_name
-		FROM {db_prefix}members
-		WHERE real_name LIKE {string:search}' . (isset($_REQUEST['buddies']) ? '
-			AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
-		array(
-			'buddy_list' => $user_info['buddies'],
-			'search' => $_REQUEST['search'],
-		)
-	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		// Note that this is already UTF-8 since it's stored that way.
-		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
-
-		if (preg_match('~&#\d+;~', $row['real_name']) != 0)
-		{
-			$fixchar = create_function('$n', '
-				if ($n < 128)
-					return chr($n);
-				elseif ($n < 2048)
-					return chr(192 | $n >> 6) . chr(128 | $n & 63);
-				elseif ($n < 65536)
-					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-				else
-					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
-
-			$row['real_name'] = preg_replace('~&#(\d+);~e', '$fixchar(\'$1\')', $row['real_name']);
-		}
-
-		echo $row['real_name'], "\n";
-	}
-	$smcFunc['db_free_result']($request);
-
-	obExit(false);
-}
-
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {

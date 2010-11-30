@@ -327,7 +327,6 @@ function smf_main()
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
 		'reporttm' => array('SendTopic.php', 'ReportToModerator'),
-		'requestmembers' => array('Subs-Auth.php', 'RequestMembers'),
 		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
 		'search' => array('Search.php', 'Search'),
 		'search2' => array('Search2.php', 'Search2'),
