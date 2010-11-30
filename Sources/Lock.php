@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This file provides the handling for locking and stickying topics from the main topic view.
+ * This file provides the handling for locking topics from the main topic view.
  *
  * @package wedge
  */
@@ -42,7 +42,7 @@ if (!defined('SMF'))
  * - Send notifications to relevant users.
  * - Return to the topic once done (into moderation mode if in wireless viewing)
  */
-function LockTopic()
+function Lock()
 {
 	global $topic, $user_info, $sourcedir, $board, $smcFunc;
 
@@ -106,71 +106,6 @@ function LockTopic()
 	sendNotifications($topic, empty($locked) ? 'unlock' : 'lock');
 
 	// Back to the topic!
-	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . (WIRELESS ? ';moderate' : ''));
-}
-
-/**
- * Handles the user request to sticky or unsticky a topic from within the topic itself. Called via ?action=sticky.
- *
- * This function takes the current topic status and reverts it; so sticky topics become unstickied, and vice versa.
- * - It requires the make_sticky permission, which is not a any/own permission (so users cannot just, even accidentally, gain the power to sticky only their own topics)
- * - It can be disabled from the admin panel (and this is stored in $modSettings['enableStickyTopics'])
- * - Session validation is done based on the URL containing the normal session identifiers.
- * - The action will be logged in the moderation log (if enabled, see {@link logAction()})
- * - Send notifications to relevant users.
- * - Return to the topic once done (into moderation mode if in wireless viewing)
- */
-function Sticky()
-{
-	global $modSettings, $topic, $board, $sourcedir, $smcFunc;
-
-	// Make sure the user can sticky it, and they are stickying *something*.
-	isAllowedTo('make_sticky');
-
-	// You shouldn't be able to (un)sticky a topic if the setting is disabled.
-	if (empty($modSettings['enableStickyTopics']))
-		fatal_lang_error('cannot_make_sticky', false);
-
-	// You can't sticky a board or something!
-	if (empty($topic))
-		fatal_lang_error('not_a_topic', false);
-
-	checkSession('get');
-
-	// We need Subs-Post.php for the sendNotifications() function.
-	require_once($sourcedir . '/Subs-Post.php');
-
-	// Is this topic already stickied, or no?
-	$request = $smcFunc['db_query']('', '
-		SELECT is_sticky
-		FROM {db_prefix}topics
-		WHERE id_topic = {int:current_topic}
-		LIMIT 1',
-		array(
-			'current_topic' => $topic,
-		)
-	);
-	list ($is_sticky) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	// Toggle the sticky value.... pretty simple ;).
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}topics
-		SET is_sticky = {int:is_sticky}
-		WHERE id_topic = {int:current_topic}',
-		array(
-			'current_topic' => $topic,
-			'is_sticky' => empty($is_sticky) ? 1 : 0,
-		)
-	);
-
-	// Log this sticky action - always a moderator thing.
-	logAction(empty($is_sticky) ? 'sticky' : 'unsticky', array('topic' => $topic, 'board' => $board));
-	// Notify people that this topic has been stickied?
-	if (empty($is_sticky))
-		sendNotifications($topic, 'sticky');
-
-	// Take them back to the now stickied topic.
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . (WIRELESS ? ';moderate' : ''));
 }
 

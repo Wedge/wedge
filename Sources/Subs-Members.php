@@ -1165,34 +1165,6 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	return $smcFunc['db_affected_rows']();
 }
 
-// This simple function adds/removes the passed user from the current users buddy list.
-function BuddyListToggle()
-{
-	global $user_info;
-
-	checkSession('get');
-
-	isAllowedTo('profile_identity_own');
-	is_not_guest();
-
-	if (empty($_REQUEST['u']))
-		fatal_lang_error('no_access', false);
-	$_REQUEST['u'] = (int) $_REQUEST['u'];
-
-	// Remove if it's already there...
-	if (in_array($_REQUEST['u'], $user_info['buddies']))
-		$user_info['buddies'] = array_diff($user_info['buddies'], array($_REQUEST['u']));
-	// ...or add if it's not and if it's not you.
-	elseif ($user_info['id'] != $_REQUEST['u'])
-		$user_info['buddies'][] = (int) $_REQUEST['u'];
-
-	// Update the settings.
-	updateMemberData($user_info['id'], array('buddy_list' => implode(',', $user_info['buddies'])));
-
-	// Redirect back to the profile
-	redirectexit('action=profile;u=' . $_REQUEST['u']);
-}
-
 function list_getMembers($start, $items_per_page, $sort, $where, $where_params = array(), $get_duplicates = false)
 {
 	global $smcFunc;

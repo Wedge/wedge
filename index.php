@@ -271,13 +271,17 @@ function smf_main()
 		}
 	}
 
+	// Compatibility with SMF
+	if (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml')
+		$_REQUEST['action'] = 'feed';
+
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = array(
 		'activate' => array('Activate.php', 'Activate'),
 		'admin' => array('Admin.php', 'Admin'),
 		'announce' => array('Announce.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
-		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
+		'buddy' => array('Buddy.php', 'Buddy'),
 		'calendar' => array('Calendar.php', 'CalendarMain'),
 		'collapse' => array('BoardIndex.php', 'CollapseCategory'),
 		'coppa' => array('CoppaForm.php', 'CoppaForm'),
@@ -296,7 +300,7 @@ function smf_main()
 		'jseditor' => array('Jseditor.php', 'Jseditor'),
 		'jsmodify' => array('JSModify.php', 'JSModify'),
 		'jsoption' => array('Jsoption.php', 'Jsoption'),
-		'lock' => array('LockTopic.php', 'LockTopic'),
+		'lock' => array('Lock.php', 'Lock'),
 		'lockvoting' => array('Poll.php', 'LockVoting'),
 		'login' => array('LogInOut.php', 'Login'),
 		'login2' => array('LogInOut.php', 'Login2'),
@@ -336,7 +340,7 @@ function smf_main()
 		'spellcheck' => array('Spellcheck.php', 'Spellcheck'),
 		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
 		'stats' => array('Stats.php', 'Stats'),
-		'sticky' => array('LockTopic.php', 'Sticky'),
+		'sticky' => array('Sticky.php', 'Sticky'),
 		'theme' => array('Themes.php', 'ThemesMain'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Unread.php', 'Unread'),
