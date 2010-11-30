@@ -1,3 +1,9 @@
+/*!
+ * This file is under the SMF license.
+ * All code changes compared against SMF 2.0 are protected
+ * by the Wedge license, http://wedgeforum.com/license/
+ */
+
 // The purpose of this code is to fix the height of overflow: auto blocks, because some browsers can't figure it out for themselves.
 function smf_codeBoxFix()
 {

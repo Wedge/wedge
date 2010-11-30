@@ -1,10 +1,14 @@
 
-/*
-	The post editor.
-	Features:
-		- A plain text post editor
-		- A WYSIWTF (What you see is WTF) post editor
-*/
+/*!
+ * This file is under the SMF license.
+ * All code changes compared against SMF 2.0 are protected
+ * by the Wedge license, http://wedgeforum.com/license/
+ *
+ *	The post editor.
+ *	Features:
+ *		- A plain text post editor
+ *		- A WYSIWTF (What you see is WTF) post editor
+ */
 
 function smc_Editor(oOptions)
 {

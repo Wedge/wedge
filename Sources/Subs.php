@@ -3542,32 +3542,23 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 		$final .= $cont;
 	}
 
-// !!! Delete these lines. They're cool and all, but they need to go.
-// !!! Just don't let me do that myself, Pete. Please. Pretty please.
-// !!! Have mercy. These regexes represent hours of work. <sob>
-
-//	$tricky_one = '~(?<!\\\\)(?:replace\(.*?(?<!\\\\)\)|\'.*?(?<!\\\\)\'|".*?(?<!\\\\)"|/\*.*?\*/|//.*?(?=[\r\n]))~s';
-//	preg_match_all($tricky_one, $final, $wedge_quotes);
-//	$final = preg_replace($tricky_one, '{wedge_quotes}', $final);
-
-////	$final = preg_replace('~\s*([,;:{\[\]<>\(\)|&=!+-])\s*~', '$1', $final);
-////	$final = str_replace(array("\r", "\t"), array("\n", ' '), $final);
-////	$final = preg_replace(array('~ +~', "~\n+ *~"), array(' ', "\n"), $final);
-
-//	$final = preg_replace_callback('~{wedge_quotes}~', 'wedge_restore_quotes', $final);
-//	$final = preg_replace("~\n+ *~", "\n", $final);
-
-	require_once($sourcedir . '/Class-Minify.php');
-
 	// Call the minify process. If we're saving in gzip, best have the script
 	// unpacked. Otherwise, use the compression mechanism.
-	$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
+	define('JSMIN', 1);
 
-	// Adding newlines after } will fix a common problem in the packer. Only bigger by a few bytes...
+	if (defined('JSMIN'))
+	{
+		require_once($sourcedir . '/Class-JSMin.php');
+		$final = JSMin::minify($final);
+	}
+	else
+	{
+		require_once($sourcedir . '/Class-Minify.php');
+		$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
+		$final = $packer->pack();
+	}
 
-	// !!! Again, delete this... :(
-	// $final = preg_replace('~(=function\([^)]*\)(?:{(?:(?' . '>[^{}]|(?R))+?)}))~i', '$1'."\n", $packer->pack());
-	$final = $packer->pack();
+	// Adding a semicolon after } will fix a common problem in the packer.
 	$max = strlen($final);
 	$i = 0;
 	$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
@@ -3618,22 +3609,6 @@ function wedge_fix_relative_css($matches)
 		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
 	// At this point, we now have css/Styling/sprite.png or images/hello.png
 	return 'url(../' . $fix . ')';
-}
-
-/**
- * Restore protected quotes in strings, and remove comments in the process.
- *
- * @param string $match A portion to restore
- * @return string Restore contents
- */
-function wedge_restore_quotes($match)
-{
-	global $wedge_quotes;
-	static $in_pos = 0;
-
-	if ($wedge_quotes[0][$in_pos][0] == '/')
-		$wedge_quotes[0][$in_pos] = '';
-	return $wedge_quotes[0][$in_pos++];
 }
 
 /**
