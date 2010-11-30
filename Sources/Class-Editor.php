@@ -2506,35 +2506,6 @@ class wedgeEditor
 		<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" data-onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="button_submit" />';
 	}
 
-	public static function EditorCallback()
-	{
-		global $context, $smcFunc;
-
-		checkSession('get');
-
-		if (!isset($_REQUEST['view']) || !isset($_REQUEST['message']))
-			fatal_lang_error('no_access', false);
-
-		$context['sub_template'] = 'sendbody';
-
-		$context['view'] = (int) $_REQUEST['view'];
-
-		// Return the right thing for the mode.
-		if ($context['view'])
-		{
-			$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
-			$context['message'] = wedgeEditor::bbc_to_html($_REQUEST['message']);
-		}
-		else
-		{
-			$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
-			$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
-
-			$context['message'] = wedgeEditor::html_to_bbc($_REQUEST['message']);
-		}
-
-		$context['message'] = $smcFunc['htmlspecialchars']($context['message']);
-	}
 }
 
 ?>

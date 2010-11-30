@@ -153,7 +153,7 @@ if (isset($_GET['openid_restore_post']) && !empty($_SESSION['openid']['saved_dat
 $function = smf_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'requestmembers')) || !defined('WEDGE_NO_LOG'))
+if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember')) || !defined('WEDGE_NO_LOG'))
 {
 	// Log this user as online.
 	writeLog();
@@ -293,7 +293,7 @@ function smf_main()
 		'groups' => array('Groups.php', 'Groups'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
-		'jseditor' => array('Class-Editor.php', array('wedgeEditor', 'EditorCallback')),
+		'jseditor' => array('Jseditor.php', 'Jseditor'),
 		'jsmodify' => array('JSModify.php', 'JSModify'),
 		'jsoption' => array('Jsoption.php', 'Jsoption'),
 		'lock' => array('LockTopic.php', 'LockTopic'),
