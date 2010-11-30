@@ -233,8 +233,9 @@ function smf_main()
 		// You can only login.... otherwise, you're getting the "maintenance mode" display.
 		if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'login2' || $_REQUEST['action'] == 'logout'))
 		{
-			require_once($sourcedir . '/LogInOut.php');
-			return $_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout';
+			$action = $_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout';
+			require_once($sourcedir . '/' . $action . '.php');
+			return $action;
 		}
 		// Don't even try it, sonny.
 		else
@@ -302,9 +303,9 @@ function smf_main()
 		'jsoption' => array('Jsoption.php', 'Jsoption'),
 		'lock' => array('Lock.php', 'Lock'),
 		'lockvoting' => array('Poll.php', 'LockVoting'),
-		'login' => array('LogInOut.php', 'Login'),
-		'login2' => array('LogInOut.php', 'Login2'),
-		'logout' => array('LogInOut.php', 'Logout'),
+		'login' => array('Login.php', 'Login'),
+		'login2' => array('Login2.php', 'Login2'),
+		'logout' => array('Logout.php', 'Logout'),
 		'markasread' => array('Subs-Boards.php', 'MarkRead'),
 		'mergeposts' => array('SplitTopics.php', 'MergePosts'),
 		'mergetopics' => array('SplitTopics.php', 'MergeTopics'),

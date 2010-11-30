@@ -365,7 +365,7 @@ function smf_openID_return()
 			'openid_uri' => $openid_uri,
 		);
 
-		require_once($sourcedir . '/LogInOut.php');
+		require_once($sourcedir . '/Subs-Login.php');
 
 		if (!checkActivation())
 			return;
