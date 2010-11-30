@@ -1,0 +1,25 @@
+
+/*
+	The negative margin trick doesn't work on IE6...
+	Although I could work for hours to find a workaround,
+	I'll just say this and we're done: screw you, IE6!
+*/
+
+#main_menu {
+	background-color: #444;
+}
+#menu_container {
+	width: 100%;
+	background-color: #444;
+}
+
+/*
+	Why does this need 'important', will you ask, given that
+	it isn't recognized by IE6?
+	Don't ask me. I noticed that !important fixes it. It's
+	probably an engine hiccup or something on my setup.
+*/
+
+.cat_bar h3 a {
+	color: #fff !important;
+}
