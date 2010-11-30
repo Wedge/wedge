@@ -230,15 +230,16 @@ function template_reported_posts()
 	global $settings, $options, $context, $txt, $scripturl;
 
 	echo '
-	<form action="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
-		<div class="cat_bar">
-			<h3>
-				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
-			</h3>
-		</div>
-		<div class="pagesection">
-			<div class="pages">', $txt['pages'], ': ', $context['page_index'], '</div>
-		</div>';
+	<div id="modcenter">
+		<form action="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3>
+					', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
+				</h3>
+			</div>
+			<div class="pagesection">
+				<div class="pages">', $txt['pages'], ': ', $context['page_index'], '</div>
+			</div>';
 
 	// Make the buttons.
 	$close_button = create_button('close.gif', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
@@ -249,19 +250,19 @@ function template_reported_posts()
 	foreach ($context['reports'] as $report)
 	{
 		echo '
-		<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
-			<div>
-				<div class="floatright">
-					<a href="', $report['report_href'], '">', $details_button, '</a>
-					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
-					<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
-					', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check" />' : '', '
+			<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
+				<div>
+					<div class="floatright">
+						<a href="', $report['report_href'], '">', $details_button, '</a>
+						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$report['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a>
+						<a href="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';close=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
+						', !$context['view_closed'] ? '<input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check" />' : '', '
+					</div>
+					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
 				</div>
-				<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
-			</div>
-			<br />
-			<div class="smalltext">
-				&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br />';
+				<br />
+				<div class="smalltext">
+					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br />';
 
 		// Prepare the comments...
 		$comments = array();
@@ -269,31 +270,32 @@ function template_reported_posts()
 			$comments[$comment['member']['id']] = $comment['member']['link'];
 
 		echo '
-				&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
-			</div>
-			<hr />
-			', $report['body'], '
-		</div>';
+					&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
+				</div>
+				<hr />
+				', $report['body'], '
+			</div>';
 	}
 
 	// Were none found?
 	if (empty($context['reports']))
 		echo '
-		<div class="windowbg2 wrc">
-			<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
-		</div>';
+			<div class="windowbg2 wrc">
+				<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
+			</div>';
 
 	echo '
-		<div class="pagesection">
-			<div class="floatleft">
-				', $txt['pages'], ': ', $context['page_index'], '
+			<div class="pagesection">
+				<div class="floatleft">
+					', $txt['pages'], ': ', $context['page_index'], '
+				</div>
+				<div class="floatright">
+					', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="button_submit" />' : '', '
+				</div>
 			</div>
-			<div class="floatright">
-				', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="button_submit" />' : '', '
-			</div>
-		</div>
-		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-	</form>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+		</form>
+	</div>
 	<br class="clear" />';
 }
 
@@ -305,10 +307,10 @@ function template_unapproved_posts()
 	// Just a big table of it all really...
 	echo '
 	<div id="modcenter">
-	<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
-		<div class="cat_bar">
-			<h3>', $txt['mc_unapproved_posts'], '</h3>
-		</div>';
+		<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3>', $txt['mc_unapproved_posts'], '</h3>
+			</div>';
 
 	// Make up some buttons
 	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
@@ -317,66 +319,66 @@ function template_unapproved_posts()
 	// No posts?
 	if (empty($context['unapproved_items']))
 		echo '
-		<div class="windowbg2 wrc">
-			<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
-		</div>';
+			<div class="windowbg2 wrc">
+				<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
+			</div>';
 	else
 		echo '
-			<div class="pagesection">
-				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
-			</div>';
+				<div class="pagesection">
+					<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
+				</div>';
 
 	foreach ($context['unapproved_items'] as $item)
 	{
 		echo '
-		<div class="cat_bar">
-			<h3>
-				<span class="smalltext floatleft">', $item['counter'], '</span>
-				<span class="smalltext floatleft"><a href="', $scripturl, '#c', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
-				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
-			</h3>
-		</div>
-		<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
-			<div class="post">', $item['body'], '</div>
-			<span class="floatright">
-				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';approve=', $item['id'], '">', $approve_button, '</a>';
+			<div class="cat_bar">
+				<h3>
+					<span class="smalltext floatleft">', $item['counter'], '</span>
+					<span class="smalltext floatleft"><a href="', $scripturl, '#c', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
+					<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
+				</h3>
+			</div>
+			<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
+				<div class="post">', $item['body'], '</div>
+				<span class="floatright">
+					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';approve=', $item['id'], '">', $approve_button, '</a>';
 
-			if ($item['can_delete'])
+				if ($item['can_delete'])
+					echo '
+					', $context['menu_separator'], '
+					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
+
 				echo '
-				', $context['menu_separator'], '
-				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
+					<input type="checkbox" name="item[]" value="', $item['id'], '" checked="checked" class="input_check" /> ';
 
-			echo '
-				<input type="checkbox" name="item[]" value="', $item['id'], '" checked="checked" class="input_check" /> ';
-
-			echo '
-			</span>
-			<br class="clear" />
-		</div>';
+				echo '
+				</span>
+				<br class="clear" />
+			</div>';
 	}
 
 	echo '
-		<div class="pagesection">
-			<div class="floatright">
-				<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
-					<option value="0">', $txt['with_selected'], ':</option>
-					<option value="0">-------------------</option>
-					<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
-					<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>
-				</select>
-				<noscript><input type="submit" name="submit" value="', $txt['go'], '" class="button_submit" /></noscript>
-			</div>';
+			<div class="pagesection">
+				<div class="floatright">
+					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
+						<option value="0">', $txt['with_selected'], ':</option>
+						<option value="0">-------------------</option>
+						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
+						<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>
+					</select>
+					<noscript><input type="submit" name="submit" value="', $txt['go'], '" class="button_submit" /></noscript>
+				</div>';
 
 	if (!empty($context['unapproved_items']))
 		echo '
-			<div class="floatleft">
-				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
-			</div>';
+				<div class="floatleft">
+					<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
+				</div>';
 
 	echo '
-		</div>
-		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-	</form>
+			</div>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+		</form>
 	</div>
 	<br class="clear" />';
 }
@@ -390,7 +392,7 @@ function template_unapproved_attachments()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=attachmod;sa=attachments;start=', $context['start'], '" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
+			<div class="cat_bar">
 				<h3>', $txt['mc_unapproved_attachments'], '</h3>
 			</div>';
 

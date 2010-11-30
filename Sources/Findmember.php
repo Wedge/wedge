@@ -27,8 +27,8 @@ if (!defined('SMF'))
 
 define('WEDGE_NO_LOG', 1);
 
-/* This file handles searches for users when in WAP2 mode (for sending them a message)
-
+/*
+	This file handles searches for users when in WAP2 mode (for sending them a message)
 */
 
 function Findmember()

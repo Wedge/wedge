@@ -67,10 +67,3 @@ oLastSpan = o
 oButtonStripList = t
 oNewButton = n
 */
-
-var test = function () {
-something();
-}
-var test2 = function () {
-something2();
-}
