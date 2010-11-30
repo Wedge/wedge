@@ -34,7 +34,7 @@ function template_info_center_recentposts()
 			<div class="hslice" id="recent_posts_content">
 				<div class="entry-title" style="display: none;">', $context['forum_name_html_safe'], ' - ', $txt['recent_posts'], '</div>
 				<div class="entry-content" style="display: none;">
-					<a rel="feedurl" href="', $scripturl, '?action=.xml;type=webslice">', $txt['subscribe_webslice'], '</a>
+					<a rel="feedurl" href="', $scripturl, '?action=feed;type=webslice">', $txt['subscribe_webslice'], '</a>
 				</div>';
 
 		// Only show one post.

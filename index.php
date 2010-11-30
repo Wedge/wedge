@@ -153,7 +153,7 @@ if (isset($_GET['openid_restore_post']) && !empty($_SESSION['openid']['saved_dat
 $function = smf_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
-if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'requestmembers', '.xml', 'xmlhttp')) || !defined('WEDGE_NO_LOG'))
+if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('findmember', 'jseditor', 'requestmembers')) || !defined('WEDGE_NO_LOG'))
 {
 	// Log this user as online.
 	writeLog();
@@ -288,6 +288,7 @@ function smf_main()
 		'editpoll' => array('Poll.php', 'EditPoll'),
 		'editpoll2' => array('Poll.php', 'EditPoll2'),
 		'emailuser' => array('SendTopic.php', 'EmailUser'),
+		'feed' => array('Feed.php', 'Feed'),
 		'findmember' => array('Subs-Auth.php', 'JSMembers'),
 		'groups' => array('Groups.php', 'Groups'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
@@ -346,8 +347,7 @@ function smf_main()
 		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
 		'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
 		'who' => array('Who.php', 'Who'),
-		'.xml' => array('News.php', 'ShowXmlFeed'),
-		'xmlhttp' => array('Xml.php', 'XMLhttpMain'),
+		'xmlhttp' => array('Xmlhttp.php', 'Xmlhttp'),
 	);
 
 	// Allow modifying $actionArray easily.

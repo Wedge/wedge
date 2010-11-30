@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* News.php                                                                        *
+* Feed.php                                                                        *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -25,9 +25,11 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file contains the files necessary to display news as an XML feed.
+define('WEDGE_NO_LOG', 1);
 
-	void ShowXmlFeed()
+/*	This file contains the code necessary to display interesting data feeds, normally XML.
+
+	void Feed()
 		- is called to output xml information.
 		- can be passed four subactions which decide what is output: 'recent'
 		  for recent posts, 'news' for news topics, 'members' for recently
@@ -37,7 +39,7 @@ if (!defined('SMF'))
 		- outputs an rss feed instead of a proprietary one if the 'type' get
 		  parameter is 'rss' or 'rss2'.
 		- does not use any templates, sub templates, or template layers.
-		- is accessed via ?action=.xml.
+		- is accessed via ?action=feed.
 
 	void dumpTags(array data, int indentation, string tag = use_array,
 			string format)
@@ -70,7 +72,7 @@ if (!defined('SMF'))
 */
 
 // Show an xml file representing recent information or a profile.
-function ShowXmlFeed()
+function Feed()
 {
 	global $board, $board_info, $context, $scripturl, $txt, $modSettings, $user_info;
 	global $query_this_board, $smcFunc, $forum_version, $cdata_override;

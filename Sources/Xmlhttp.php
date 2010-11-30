@@ -31,13 +31,15 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+define('WEDGE_NO_LOG', 1);
+
 /**
  * This function handles the initial interaction from action=xmlhttp, loading the template then directing process to the appropriate handler.
  *
  * @see GetJumpTo()
  * @see ListMessageIcons()
  */
-function XMLhttpMain()
+function Xmlhttp()
 {
 	loadTemplate('Xml');
 
