@@ -3556,31 +3556,31 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 		require_once($sourcedir . '/Class-Minify.php');
 		$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
 		$final = $packer->pack();
-	}
 
-	// Adding a semicolon after } will fix a common problem in the packer.
-	$max = strlen($final);
-	$i = 0;
-	$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
-	while (true)
-	{
-		$i = strpos($final, '=function(', $i);
-		if ($i === false)
-			break;
-		$k = strpos($final, '{', $i) + 1;
-		$m = 1;
-		while ($m > 0 && $k <= $max)
+		// Adding a semicolon after } will fix a common problem in the packer.
+		$max = strlen($final);
+		$i = 0;
+		$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
+		while (true)
 		{
-			$d = $final[$k++];
-			$m += $d === '{' ? 1 : ($d === '}' ? -1 : 0);
+			$i = strpos($final, '=function(', $i);
+			if ($i === false)
+				break;
+			$k = strpos($final, '{', $i) + 1;
+			$m = 1;
+			while ($m > 0 && $k <= $max)
+			{
+				$d = $final[$k++];
+				$m += $d === '{' ? 1 : ($d === '}' ? -1 : 0);
+			}
+			$e = $k < $max ? $final[$k] : $final[$k - 1];
+			if (isset($alphabet[$e]))
+			{
+				$final = substr_replace($final, ';', $k, 0);
+				$max++;
+			}
+			$i++;
 		}
-		$e = $k < $max ? $final[$k] : $final[$k - 1];
-		if (isset($alphabet[$e]))
-		{
-			$final = substr_replace($final, ';', $k, 0);
-			$max++;
-		}
-		$i++;
 	}
 
 	$dest = $settings[$target . 'dir'] . '/cache';
