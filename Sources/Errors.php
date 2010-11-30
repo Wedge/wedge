@@ -109,6 +109,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		);
 		$last_error = $error_info;
 
+		if (!isset($context['app_error_count']))
+			$context['app_error_count'] = 0;
 		$context['app_error_count']++;
 	}
 

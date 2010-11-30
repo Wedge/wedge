@@ -50,7 +50,8 @@ if (!defined('SMF'))
 		- for actions that have a subaction which should be represented
 		   differently, use whoall_ACTION_SUBACTION.
 		- for actions that include a topic, and should be restricted, use
-		   whotopic_ACTION.
+		   whotopic_ACTION, or for subactions to be represented differently,
+		   use whotopic_ACTION_SUBACTION.
 		- for actions that use a message, by msg or quote, use whopost_ACTION.
 		- for administrator-only actions, use whoadmin_ACTION.
 		- for actions that should be viewable only with certain permissions,
@@ -200,7 +201,7 @@ function Who()
 		// Send the information to the template.
 		$context['members'][$row['session']] = array(
 			'id' => $row['id_member'],
-			'ip' => allowedTo('view_ip_address_any') || ($row['member'] == $context['user']['id'] && allowedTo('view_ip_address_own')) ? $row['ip'] : '',
+			'ip' => allowedTo('view_ip_address_any') || ($row['id_member'] == $context['user']['id'] && allowedTo('view_ip_address_own')) ? $row['ip'] : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
 			'timestamp' => forum_time(true, $row['log_time']),
@@ -394,7 +395,16 @@ function determineActions($urls, $preferred_prefix = false)
 			// An action any old fellow can look at. (if ['whoall_' . $action] exists, we know everyone can see it.)
 			elseif (isset($txt['whoall_' . $actions['action']]))
 				$data[$k] = $preferred_prefix && isset($txt[$preferred_prefix . $actions['action']]) ? $txt[$preferred_prefix . $actions['action']] : $txt['whoall_' . $actions['action']];
-			// Viewable if and only if they can see the board...
+			// Viewable if and only if they can see the board, and it's a specific action/subaction
+			elseif (isset($actions['sa'], $txt['whotopic_' . $actions['action'] . '_' . $actions['sa']]))
+			{
+				// Find out what topic they are accessing.
+				$topic = (int) (isset($actions['topic']) ? $actions['topic'] : (isset($actions['from']) ? $actions['from'] : 0));
+
+				$data[$k] = $txt['who_hidden'];
+				$topic_ids[$topic][$k] = $txt['whotopic_' . $actions['action'] . '_' . $actions['sa']];
+			}
+			// Viewable if and only if they can see the board... but it's only a general action
 			elseif (isset($txt['whotopic_' . $actions['action']]))
 			{
 				// Find out what topic they are accessing.

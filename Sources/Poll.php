@@ -43,7 +43,7 @@ if (!defined('SMF'))
 		- if not an admin must have poll_lock_any permission.
 		- otherwise must be poll starter with poll_lock_own permission.
 		- upon successful completion of action will direct user back to topic.
-		- is accessed via ?action=lockvoting.
+		- is accessed via ?action=poll;sa=lockvoting.
 
 	void EditPoll()
 		- is called to display screen for editing or adding a poll.
@@ -56,7 +56,7 @@ if (!defined('SMF'))
 		  action.
 		- otherwise must be poll starter with poll_edit_own permission for
 		  editing, or be topic starter with poll_add_any permission for adding.
-		- is accessed via ?action=editpoll.
+		- is accessed via ?action=poll;sa=editpoll.
 
 	void EditPoll2()
 		- is called to update the settings for a poll, or add a new one.
@@ -68,7 +68,7 @@ if (!defined('SMF'))
 		- in the case of an error will redirect back to EditPoll and display
 		  the relevant error message.
 		- upon successful completion of action will direct user back to topic.
-		- is accessed via ?action=editpoll2.
+		- is accessed via ?action=poll;sa=editpoll2.
 
 	void RemovePoll()
 		- is called to remove a poll from a topic.
@@ -76,8 +76,32 @@ if (!defined('SMF'))
 		- user must have poll_remove_any permission.
 		- otherwise must be poll starter with poll_remove_own permission.
 		- upon successful completion of action will direct user back to topic.
-		- is accessed via ?action=removepoll.
+		- is accessed via ?action=poll;sa=removepoll.
 */
+
+// Handle poll stuff generally
+function Poll()
+{
+	global $topic;
+
+	// Make sure the topic is not empty.
+	if (empty($topic))
+		fatal_lang_error('no_access', false);
+
+	$subactions = array(
+		'vote' => 'Vote',
+		'lockvoting' => 'LockVoting',
+		'editpoll' => 'EditPoll',
+		'editpoll2' => 'EditPoll2',
+		'removepoll' => 'RemovePoll',
+	);
+
+	// Not a valid action? Go back to the topic and try again.
+	if (empty($_REQUEST['sa']) || empty($subactions[$_REQUEST['sa']]))
+		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
+
+	$subactions[$_REQUEST['sa']]();
+}
 
 // Allow the user to vote.
 function Vote()
@@ -329,9 +353,6 @@ function LockVoting()
 function EditPoll()
 {
 	global $txt, $user_info, $context, $topic, $board, $smcFunc, $sourcedir, $scripturl;
-
-	if (empty($topic))
-		fatal_lang_error('no_access', false);
 
 	loadLanguage('Post');
 	loadTemplate('Poll');
@@ -610,17 +631,13 @@ function EditPoll2()
 
 	// Sneaking off, are we?
 	if (empty($_POST))
-		redirectexit('action=editpoll;topic=' . $topic . '.0');
+		redirectexit('action=poll;sa=editpoll;topic=' . $topic . '.0');
 
 	if (checkSession('post', '', false) != '')
 		$poll_errors[] = 'session_timeout';
 
 	if (isset($_POST['preview']))
 		return EditPoll();
-
-	// HACKERS (!!) can't edit :P.
-	if (empty($topic))
-		fatal_lang_error('no_access', false);
 
 	// Is this a new poll, or editing an existing?
 	$isEdit = isset($_REQUEST['add']) ? 0 : 1;
@@ -900,10 +917,6 @@ function EditPoll2()
 function RemovePoll()
 {
 	global $topic, $user_info, $smcFunc;
-
-	// Make sure the topic is not empty.
-	if (empty($topic))
-		fatal_lang_error('no_access', false);
 
 	// Verify the session.
 	checkSession('get');
