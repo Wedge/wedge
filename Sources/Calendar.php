@@ -56,7 +56,7 @@ if (!defined('SMF'))
 // Show the calendar.
 function CalendarMain()
 {
-	global $txt, $context, $modSettings, $scripturl, $options, $sourcedir;
+	global $txt, $context, $modSettings, $scripturl, $options;
 
 	// Permissions, permissions, permissions.
 	isAllowedTo('calendar_view');
@@ -88,7 +88,7 @@ function CalendarMain()
 		$context['robot_no_index'] = true;
 
 	// Get the current day of month...
-	require_once($sourcedir . '/Subs-Calendar.php');
+	loadSource('Subs-Calendar');
 	$today = getTodayInfo();
 
 	// If the month and year are not passed in, use today's date as a starting point.
@@ -175,14 +175,14 @@ function CalendarMain()
 
 function CalendarPost()
 {
-	global $context, $txt, $user_info, $sourcedir, $scripturl;
+	global $context, $txt, $user_info, $scripturl;
 	global $modSettings, $topic, $smcFunc;
 
 	// Well - can they?
 	isAllowedTo('calendar_post');
 
 	// We need this for all kinds of useful functions.
-	require_once($sourcedir . '/Subs-Calendar.php');
+	loadSource('Subs-Calendar');
 
 	// Cast this for safety...
 	if (isset($_REQUEST['eventid']))
@@ -205,7 +205,7 @@ function CalendarPost()
 		if ($_REQUEST['eventid'] == -1 && isset($_POST['link_to_board']))
 		{
 			$_REQUEST['calendar'] = 1;
-			require_once($sourcedir . '/Post.php');
+			loadSource('Post');
 			return Post();
 		}
 		// New...
@@ -250,7 +250,7 @@ function CalendarPost()
 	if (empty($modSettings['cal_allow_unlinked']) && empty($_REQUEST['eventid']))
 	{
 		$_REQUEST['calendar'] = 1;
-		require_once($sourcedir . '/Post.php');
+		loadSource('Post');
 		return Post();
 	}
 
@@ -278,7 +278,7 @@ function CalendarPost()
 			fatal_lang_error('cannot_post_new', 'permission');
 
 		// Load the list of boards and categories in the context.
-		require_once($sourcedir . '/Subs-MessageIndex.php');
+		loadSource('Subs-MessageIndex');
 		$boardListOptions = array(
 			'included_boards' => in_array(0, $boards) ? null : $boards,
 			'not_redirection' => true,
@@ -321,14 +321,14 @@ function CalendarPost()
 
 function iCalDownload()
 {
-	global $smcFunc, $sourcedir, $forum_version, $context, $modSettings;
+	global $smcFunc, $forum_version, $context, $modSettings;
 
 	// Goes without saying that this is required.
 	if (!isset($_REQUEST['eventid']))
 		fatal_lang_error('no_access', false);
 
 	// This is kinda wanted.
-	require_once($sourcedir . '/Subs-Calendar.php');
+	loadSource('Subs-Calendar');
 
 	// Load up the event in question and check it exists.
 	$event = getEventProperties($_REQUEST['eventid']);

@@ -42,7 +42,7 @@ if (!defined('SMF'))
  */
 function Collapse()
 {
-	global $user_info, $sourcedir, $context;
+	global $user_info, $context;
 
 	// Just in case, no need, no need.
 	$context['robot_no_index'] = true;
@@ -56,12 +56,12 @@ function Collapse()
 	if (in_array($_REQUEST['sa'], array('expand', 'collapse', 'toggle')) && isset($_REQUEST['c']))
 	{
 		// And collapse/expand/toggle the category.
-		require_once($sourcedir . '/Subs-Categories.php');
+		loadSource('Subs-Categories');
 		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array($user_info['id']));
 	}
 
 	// And go back to the board index.
-	require_once($sourcedir . '/BoardIndex.php');
+	loadSource('BoardIndex');
 	BoardIndex();
 }
 

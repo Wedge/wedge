@@ -43,11 +43,10 @@ if (!defined('SMF'))
 function Login2()
 {
 	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
-	global $cookiename, $maintenance, $modSettings, $context, $sc, $sourcedir;
+	global $cookiename, $maintenance, $modSettings, $context, $sc;
 
 	// Load cookie authentication stuff and subsidiary login stuff.
-	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Subs-Login.php');
+	loadSource(array('Subs-Auth', 'Subs-Login'));
 
 	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
 	{
@@ -131,7 +130,7 @@ function Login2()
 
 	if (!empty($_REQUEST['openid_identifier']) && !empty($modSettings['enableOpenID']))
 	{
-		require_once($sourcedir . '/Subs-OpenID.php');
+		loadSource('Subs-OpenID');
 		if (($open_id = smf_openID_validate($_REQUEST['openid_identifier'])) !== 'no_data')
 			return $open_id;
 	}

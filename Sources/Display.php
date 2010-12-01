@@ -65,7 +65,7 @@ if (!defined('SMF'))
 function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
-	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
+	global $options, $user_info, $board_info, $topic, $board;
 	global $attachments, $messages_request, $topicinfo, $language, $smcFunc;
 
 	// What are you gonna display if these are empty?!
@@ -367,7 +367,7 @@ function Display()
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'post',
 		);
@@ -1129,7 +1129,7 @@ function Display()
 		$context['name'] = isset($_SESSION['guest_name']) ? $_SESSION['guest_name'] : '';
 		$context['email'] = isset($_SESSION['guest_email']) ? $_SESSION['guest_email'] : '';
 
-		require_once($sourcedir . '/Class-Editor.php');
+		loadSource('Class-Editor');
 		$context['postbox'] = new wedgeEditor(
 			array(
 				'id' => 'message',
@@ -1356,7 +1356,7 @@ function prepareDisplayContext($reset = false)
 
 function loadAttachmentContext($id_msg)
 {
-	global $attachments, $modSettings, $txt, $scripturl, $topic, $sourcedir, $smcFunc;
+	global $attachments, $modSettings, $txt, $scripturl, $topic, $smcFunc;
 
 	// Set up the attachment info - based on code by Meriadoc.
 	$attachmentData = array();
@@ -1397,7 +1397,7 @@ function loadAttachmentContext($id_msg)
 				{
 					$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
 
-					require_once($sourcedir . '/Subs-Graphics.php');
+					loadSource('Subs-Graphics');
 					if (createThumbnail($filename, $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
 					{
 						// So what folder are we putting this image in?
@@ -1461,7 +1461,7 @@ function loadAttachmentContext($id_msg)
 							// Do we need to remove an old thumbnail?
 							if (!empty($old_id_thumb))
 							{
-								require_once($sourcedir . '/ManageAttachments.php');
+								loadSource('ManageAttachments');
 								removeAttachments(array('id_attach' => $old_id_thumb), '', false, false);
 							}
 						}
@@ -1530,12 +1530,12 @@ function approved_attach_sort($a, $b)
 // In-topic quick moderation.
 function QuickInTopicModeration()
 {
-	global $sourcedir, $topic, $board, $user_info, $smcFunc, $modSettings, $context;
+	global $topic, $board, $user_info, $smcFunc, $modSettings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
 
-	require_once($sourcedir . '/RemoveTopic.php');
+	loadSource('RemoveTopic');
 
 	if (empty($_REQUEST['msgs']))
 		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);

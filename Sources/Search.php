@@ -49,7 +49,7 @@ $GLOBALS['search_versions'] = array(
 // Ask the user what they want to search for.
 function Search()
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context, $smcFunc, $sourcedir;
+	global $txt, $scripturl, $modSettings, $user_info, $context, $smcFunc;
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
@@ -75,7 +75,7 @@ function Search()
 	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'search',
 		);

@@ -41,13 +41,13 @@ if (!defined('SMF'))
 // Log the user out.
 function Logout($internal = false, $redirect = true)
 {
-	global $sourcedir, $user_info, $user_settings, $context, $modSettings, $smcFunc;
+	global $user_info, $user_settings, $context, $modSettings, $smcFunc;
 
 	// Make sure they aren't being auto-logged out.
 	if (!$internal)
 		checkSession('get');
 
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 
 	if (isset($_SESSION['pack_ftp']))
 		$_SESSION['pack_ftp'] = null;

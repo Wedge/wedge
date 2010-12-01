@@ -154,7 +154,7 @@ function Ban()
 function BanList()
 {
 	global $txt, $context, $ban_request, $ban_counts, $scripturl;
-	global $user_info, $smcFunc, $sourcedir;
+	global $user_info, $smcFunc;
 
 	// User pressed the 'remove selection button'.
 	if (!empty($_POST['removeBans']) && !empty($_POST['remove']) && is_array($_POST['remove']))
@@ -342,7 +342,7 @@ function BanList()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';
@@ -1105,8 +1105,7 @@ function BanEditTrigger()
 
 function BanBrowseTriggers()
 {
-	global $modSettings, $context, $scripturl, $smcFunc, $txt;
-	global $sourcedir, $settings;
+	global $modSettings, $context, $scripturl, $smcFunc, $txt, $settings;
 
 	if (!empty($_POST['remove_triggers']) && !empty($_POST['remove']) && is_array($_POST['remove']))
 	{
@@ -1290,7 +1289,7 @@ function BanBrowseTriggers()
 	}
 
 	// Create the list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// The list is the only thing to show, so make it the default sub template.
@@ -1358,8 +1357,7 @@ function list_getNumBanTriggers($trigger_type)
 
 function BanLog()
 {
-	global $scripturl, $context, $smcFunc, $sourcedir, $txt;
-	global $context;
+	global $scripturl, $context, $smcFunc, $txt, $context;
 
 	// Delete one or more entries.
 	if (!empty($_POST['removeAll']) || (!empty($_POST['removeSelected']) && !empty($_POST['remove'])))
@@ -1496,7 +1494,7 @@ function BanLog()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['page_title'] = $txt['ban_log'];

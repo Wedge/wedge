@@ -415,10 +415,10 @@ function updateAdminPreferences()
 // Send all the administrators a lovely email.
 function emailAdmins($template, $replacements = array(), $additional_recipients = array())
 {
-	global $smcFunc, $sourcedir, $language, $modSettings;
+	global $smcFunc, $language, $modSettings;
 
 	// We certainly want this.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Load all groups which are effectively admins.
 	$request = $smcFunc['db_query']('', '

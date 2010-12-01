@@ -33,11 +33,11 @@ define('WEDGE_NO_LOG', 1);
 
 function Findmember()
 {
-	global $context, $scripturl, $user_info, $smcFunc, $sourcedir;
+	global $context, $scripturl, $user_info, $smcFunc;
 
 	checkSession('get');
 
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_pm';

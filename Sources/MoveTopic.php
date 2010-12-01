@@ -160,7 +160,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $sourcedir, $modSettings, $context;
+	global $txt, $board, $topic, $scripturl, $modSettings, $context;
 	global $board, $language, $user_info, $smcFunc;
 
 	if (empty($topic))
@@ -212,8 +212,7 @@ function MoveTopic2()
 	}
 
 	checkSession();
-	require_once($sourcedir . '/Subs-Post.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Post', 'Class-Editor'));
 
 	// The destination board must be numeric.
 	$_POST['toboard'] = (int) $_POST['toboard'];
@@ -394,7 +393,7 @@ function MoveTopic2()
 // Moves one or more topics to a specific board. (doesn't check permissions.)
 function moveTopics($topics, $toBoard)
 {
-	global $sourcedir, $user_info, $modSettings, $smcFunc;
+	global $user_info, $modSettings, $smcFunc;
 
 	// Empty array?
 	if (empty($topics))
@@ -693,7 +692,7 @@ function moveTopics($topics, $toBoard)
 		foreach ($topics as $topic_id)
 			cache_put_data('topic_board-' . $topic_id, null, 120);
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	$updates = array_keys($fromBoards);
 	$updates[] = $toBoard;

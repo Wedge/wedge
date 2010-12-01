@@ -191,10 +191,10 @@ function ReportsMain()
 // Standard report about what settings the boards have.
 function BoardReport()
 {
-	global $context, $txt, $sourcedir, $smcFunc;
+	global $context, $txt, $smcFunc;
 
 	// Load the permission profiles.
-	require_once($sourcedir . '/ManagePermissions.php');
+	loadSource('ManagePermissions');
 	loadLanguage('ManagePermissions');
 	loadPermissionProfiles();
 
@@ -672,9 +672,9 @@ function GroupPermissionsReport()
 // Report for showing all the forum staff members - quite a feat!
 function StaffReport()
 {
-	global $sourcedir, $context, $txt, $smcFunc;
+	global $context, $txt, $smcFunc;
 
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 
 	// Fetch all the board names.
 	$request = $smcFunc['db_query']('', '

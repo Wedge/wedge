@@ -49,7 +49,7 @@ if (!defined('SMF'))
  */
 function updateStats($type, $parameter1 = null, $parameter2 = null)
 {
-	global $sourcedir, $modSettings, $smcFunc;
+	global $modSettings, $smcFunc;
 
 	if ($type === 'member')
 	{
@@ -2629,7 +2629,7 @@ function highlight_php_code($code)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc, $sourcedir;
+	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($settings['display_who_viewing']) && ($topic || $board))
@@ -2648,7 +2648,7 @@ function writeLog($force = false)
 	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
 	if (!empty($user_info['possibly_robot']) && !empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
 	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
+		loadSource('ManageSearchEngines');
 		logSpider();
 	}
 
@@ -2774,7 +2774,7 @@ function writeLog($force = false)
  */
 function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 {
-	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache, $sourcedir;
+	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
@@ -2808,7 +2808,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	//	Redirections should be prettified too
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
-		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		loadSource('PrettyUrls-Filters');
 		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation), 'url_id' => 'setLocation'));
 		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
 		foreach ($filter_callbacks as $callback)
@@ -2977,7 +2977,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
  */
 function logAction($action, $extra = array(), $log_type = 'moderate')
 {
-	global $modSettings, $user_info, $smcFunc, $sourcedir;
+	global $modSettings, $user_info, $smcFunc;
 
 	$log_types = array(
 		'moderate' => 1,
@@ -3025,7 +3025,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 		// Alright, if we get any result back, update open reports.
 		if ($smcFunc['db_num_rows']($request) > 0)
 		{
-			require_once($sourcedir . '/ModerationCenter.php');
+			loadSource('ModerationCenter');
 			updateSettings(array('last_mod_report_action' => time()));
 			recountOpenReports();
 		}
@@ -3208,8 +3208,6 @@ function spamProtection($error_type)
  */
 function url_image_size($url)
 {
-	global $sourcedir;
-
 	// Make sure it is a proper URL.
 	$url = str_replace(' ', '%20', $url);
 
@@ -3254,7 +3252,7 @@ function url_image_size($url)
 				// This probably means allow_url_fopen is off, let's try GD.
 				if ($size === false && function_exists('imagecreatefromstring'))
 				{
-					include_once($sourcedir . '/Subs-Package.php');
+					loadSource('Subs-Package');
 
 					// It's going to hate us for doing this, but another request...
 					$image = @imagecreatefromstring(fetch_web_data($url));
@@ -3517,7 +3515,7 @@ function wedge_cache_css($filename, $css, $target, $gzip = false, $ext = '.css')
  */
 function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 {
-	global $settings, $modSettings, $wedge_base_dir, $sourcedir, $wedge_quotes;
+	global $settings, $modSettings, $wedge_base_dir, $wedge_quotes;
 
 	$final = '';
 	$dir = $settings[$target . 'dir'] . '/';
@@ -3548,12 +3546,12 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 
 	if (defined('JSMIN'))
 	{
-		require_once($sourcedir . '/Class-JSMin.php');
+		loadSource('Class-JSMin');
 		$final = JSMin::minify($final);
 	}
 	else
 	{
-		require_once($sourcedir . '/Class-Minify.php');
+		loadSource('Class-Minify');
 		$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
 		$final = $packer->pack();
 

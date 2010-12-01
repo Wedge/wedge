@@ -106,7 +106,7 @@ function Poll()
 // Allow the user to vote.
 function Vote()
 {
-	global $topic, $txt, $user_info, $smcFunc, $sourcedir, $modSettings;
+	global $topic, $txt, $user_info, $smcFunc, $modSettings;
 
 	// Make sure you can vote.
 	isAllowedTo('poll_vote');
@@ -286,7 +286,7 @@ function Vote()
 			)
 		);
 
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0);
 	}
@@ -352,7 +352,7 @@ function LockVoting()
 // Ask what to change in a poll.
 function EditPoll()
 {
-	global $txt, $user_info, $context, $topic, $board, $smcFunc, $sourcedir, $scripturl;
+	global $txt, $user_info, $context, $topic, $board, $smcFunc, $scripturl;
 
 	loadLanguage('Post');
 	loadTemplate('Poll');
@@ -397,7 +397,7 @@ function EditPoll()
 		isAllowedTo('poll_add_' . ($user_info['id'] == $pollinfo['id_member_started'] ? 'own' : 'any'));
 
 	// Do we enable guest voting?
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 	$groupsAllowedVote = groupsAllowedTo('poll_vote', $board);
 
 	// Want to make sure before you actually submit?  Must be a lot of options, or something.
@@ -627,7 +627,7 @@ function EditPoll()
 function EditPoll2()
 {
 	global $txt, $topic, $board, $context;
-	global $modSettings, $user_info, $smcFunc, $sourcedir;
+	global $modSettings, $user_info, $smcFunc;
 
 	// Sneaking off, are we?
 	if (empty($_POST))
@@ -717,7 +717,7 @@ function EditPoll2()
 	// Make sure guests are actually allowed to vote generally.
 	if ($_POST['poll_guest_vote'])
 	{
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		$allowedGroups = groupsAllowedTo('poll_vote', $board);
 		if (!in_array(-1, $allowedGroups['allowed']))
 			$_POST['poll_guest_vote'] = 0;

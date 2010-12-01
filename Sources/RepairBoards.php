@@ -53,7 +53,7 @@ if (!defined('SMF'))
 
 function RepairBoards()
 {
-	global $txt, $scripturl, $db_connection, $context, $sourcedir;
+	global $txt, $scripturl, $db_connection, $context;
 	global $salvageCatID, $salvageBoardID, $smcFunc, $errorTests;
 
 	isAllowedTo('admin_forum');
@@ -106,7 +106,7 @@ function RepairBoards()
 		$context['error_search'] = false;
 		$context['to_fix'] = isset($_SESSION['repairboards_to_fix']) ? $_SESSION['repairboards_to_fix'] : array();
 
-		require_once($sourcedir . '/Subs-Boards.php');
+		loadSource('Subs-Boards');
 
 		// Get the MySQL version for future reference.
 		$mysql_version = $smcFunc['db_server_info']($db_connection);

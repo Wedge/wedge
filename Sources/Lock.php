@@ -44,7 +44,7 @@ if (!defined('SMF'))
  */
 function Lock()
 {
-	global $topic, $user_info, $sourcedir, $board, $smcFunc;
+	global $topic, $user_info, $board, $smcFunc;
 
 	// Just quit if there's no topic to lock.
 	if (empty($topic))
@@ -53,7 +53,7 @@ function Lock()
 	checkSession('get');
 
 	// Get Subs-Post.php for sendNotifications.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Find out who started the topic - in case User Topic Locking is enabled.
 	$request = $smcFunc['db_query']('', '

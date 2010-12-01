@@ -88,10 +88,10 @@ function checkActivation()
 function DoLogin()
 {
 	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
-	global $cookiename, $maintenance, $modSettings, $context, $sourcedir;
+	global $cookiename, $maintenance, $modSettings, $context;
 
 	// Load cookie authentication stuff.
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 
 	// Call login integration functions.
 	call_hook('login', array($user_settings['member_name'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime']));
@@ -312,12 +312,12 @@ function sha1_rol($num, $cnt)
 // This protects against brute force attacks on a member's password. Importantly even if the password was right we DON'T TELL THEM!
 function validatePasswordFlood($id_member, $password_flood_value = false, $was_correct = false)
 {
-	global $smcFunc, $cookiename, $sourcedir;
+	global $smcFunc, $cookiename;
 
 	// As this is only brute protection, we allow 5 attempts every 10 seconds.
 
 	// Destroy any session or cookie data about this member, as they validated wrong.
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 
 	setLoginCookie(-3600, 0);
 	if (isset($_SESSION['login_' . $cookiename]))

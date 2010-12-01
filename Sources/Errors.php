@@ -350,7 +350,7 @@ function setup_fatal_error_context($error_message)
  */
 function show_db_error($loadavg = false)
 {
-	global $sourcedir, $mbname, $maintenance, $mtitle, $mmessage, $modSettings;
+	global $mbname, $maintenance, $mtitle, $mmessage, $modSettings;
 	global $db_connection, $webmaster_email, $db_last_error, $db_error_send, $smcFunc;
 
 	// Don't cache this page!
@@ -372,7 +372,7 @@ function show_db_error($loadavg = false)
 
 		if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
 		{
-			require_once($sourcedir . '/Subs-Admin.php');
+			loadSource('Subs-Admin');
 
 			// Avoid writing to the Settings.php file if at all possible; use shared memory instead.
 			cache_put_data('db_last_error', time(), 600);

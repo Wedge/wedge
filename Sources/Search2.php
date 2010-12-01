@@ -116,7 +116,7 @@ function Search2()
 	// Are you allowed?
 	isAllowedTo('search_posts');
 
-	require_once($sourcedir . '/Display.php');
+	loadSource('Display');
 
 	// Search has a special database set.
 	db_extend('search');
@@ -125,7 +125,8 @@ function Search2()
 	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
 	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php'))
 		fatal_lang_error('search_api_missing');
-	require_once($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php');
+
+	loadSource('SearchAPI-' . ucwords($modSettings['search_index']));
 
 	// Create an instance of the search API and check it is valid for this version of SMF.
 	$search_class_name = $modSettings['search_index'] . '_search';
@@ -136,7 +137,7 @@ function Search2()
 		loadLanguage('Errors');
 		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($modSettings['search_index']) . '.php'), 'critical');
 
-		require_once($sourcedir . '/SearchAPI-Standard.php');
+		loadSource('SearchAPI-Standard');
 		$searchAPI = new standard_search();
 	}
 
@@ -694,7 +695,7 @@ function Search2()
 			$context['search_errors']['need_verification_code'] = true;
 		else
 		{
-			require_once($sourcedir . '/Subs-Editor.php');
+			loadSource('Subs-Editor');
 			$verificationOptions = array(
 				'id' => 'search',
 			);
@@ -748,7 +749,7 @@ function Search2()
 	if (!empty($context['search_errors']))
 	{
 		$_REQUEST['params'] = $context['params'];
-		require_once($sourcedir . '/Search.php');
+		loadSource('Search');
 		return Search();
 	}
 
@@ -1227,7 +1228,7 @@ function Search2()
 					{
 						$context['search_errors']['query_not_specific_enough'] = true;
 						$_REQUEST['params'] = $context['params'];
-						require_once($sourcedir . '/Search.php');
+						loadSource('Search');
 						return Search();
 					}
 					elseif (!empty($indexedResults))
@@ -1531,7 +1532,7 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $modSettings, $scripturl, $user_info, $sourcedir;
+	global $txt, $modSettings, $scripturl, $user_info;
 	global $memberContext, $context, $settings, $options, $messages_request;
 	global $boards_can, $participants, $smcFunc;
 
@@ -1737,7 +1738,7 @@ function prepareSearchContext($reset = false)
 		// If we've found a message we can move, and we don't already have it, load the destinations.
 		if ($options['display_quick_mod'] == 1 && !isset($context['move_to_boards']) && $context['can_move'])
 		{
-			require_once($sourcedir . '/Subs-MessageIndex.php');
+			loadSource('Subs-MessageIndex');
 			$boardListOptions = array(
 				'use_permissions' => true,
 				'not_redirection' => true,

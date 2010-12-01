@@ -51,7 +51,7 @@ if (!defined('SMF'))
  */
 function JSModify()
 {
-	global $sourcedir, $modSettings, $board, $topic, $txt;
+	global $modSettings, $board, $topic, $txt;
 	global $user_info, $context, $smcFunc, $language;
 
 	// We have to have a topic!
@@ -59,8 +59,7 @@ function JSModify()
 		obExit(false);
 
 	checkSession('get');
-	require_once($sourcedir . '/Subs-Post.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Post', 'Class-Editor'));
 
 	// Assume the first message if no message ID was given.
 	$request = $smcFunc['db_query']('', '

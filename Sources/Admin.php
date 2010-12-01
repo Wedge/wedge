@@ -659,7 +659,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $scripturl, $sourcedir;
+	global $context, $txt, $helptxt, $scripturl;
 
 	// Try to get some more memory.
 	@ini_set('memory_limit', '128M');
@@ -676,8 +676,7 @@ function AdminSearchInternal()
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageCalendar', 'ManageMail', 'ManagePaid', 'ManagePermissions',
 		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
 	);
-	foreach ($include_files as $file)
-		require_once($sourcedir . '/' . $file . '.php');
+	loadSource($include_files);
 
 	/* This is the huge array that defines everything... it's a huge array of items formatted as follows:
 		0 = Language index (Can be array of indexes) to search through for this setting.
@@ -796,9 +795,9 @@ function AdminSearchInternal()
 // All this does is pass through to manage members.
 function AdminSearchMember()
 {
-	global $context, $sourcedir;
+	global $context;
 
-	require_once($sourcedir . '/ManageMembers.php');
+	loadSource('ManageMembers');
 	$_REQUEST['sa'] = 'query';
 
 	$_POST['membername'] = $context['search_term'];
@@ -945,6 +944,7 @@ function AdminLogs()
 		),
 	);
 
+	// !!! Fix this to use loadSource
 	require_once($sourcedir . '/' . $log_functions[$sub_action][0]);
 	$log_functions[$sub_action][1]();
 }

@@ -37,7 +37,7 @@ define('WEDGE_NO_LOG', 1);
 // Show the verification code or let it hear.
 function VerificationCode()
 {
-	global $sourcedir, $modSettings, $context, $scripturl;
+	global $modSettings, $context, $scripturl;
 
 	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
 	$code = $verification_id && isset($_SESSION[$verification_id . '_vv']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
@@ -61,7 +61,7 @@ function VerificationCode()
 	// Try the nice code using GD.
 	elseif (empty($_REQUEST['format']))
 	{
-		require_once($sourcedir . '/Subs-Graphics.php');
+		loadSource('Subs-Graphics');
 
 		if (!showCodeImage($code))
 			header('HTTP/1.1 400 Bad Request');
@@ -72,7 +72,7 @@ function VerificationCode()
 
 	elseif ($_REQUEST['format'] === '.wav')
 	{
-		require_once($sourcedir . '/Subs-Sound.php');
+		loadSource('Subs-Sound');
 
 		if (!createWaveFile($code))
 			header('HTTP/1.1 400 Bad Request');

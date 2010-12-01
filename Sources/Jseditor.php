@@ -29,14 +29,14 @@ define('WEDGE_NO_LOG', 1);
 
 function Jseditor()
 {
-	global $context, $smcFunc, $sourcedir;
+	global $context, $smcFunc;
 
 	checkSession('get');
 
 	if (!isset($_REQUEST['view']) || !isset($_REQUEST['message']))
 		fatal_lang_error('no_access', false);
 
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource('Class-Editor');
 
 	$context['sub_template'] = 'sendbody';
 

@@ -37,7 +37,7 @@ if (!defined('SMF'))
 
 function smf_openID_validate($openid_uri, $return = false, $save_fields = array(), $return_action = null)
 {
-	global $sourcedir, $scripturl, $boardurl, $modSettings;
+	global $scripturl, $boardurl, $modSettings;
 
 	$openid_url = smf_openID_canonize($openid_uri);
 
@@ -229,7 +229,7 @@ function smf_openID_removeAssociation($handle)
 
 function smf_openID_return()
 {
-	global $smcFunc, $user_info, $user_profile, $sourcedir, $modSettings, $context, $sc, $user_settings;
+	global $smcFunc, $user_info, $user_profile, $modSettings, $context, $sc, $user_settings;
 
 	// Is OpenID even enabled?
 	if (empty($modSettings['enableOpenID']))
@@ -332,7 +332,7 @@ function smf_openID_return()
 		// Were we just verifying the registration state?
 		if (isset($_GET['sa']) && $_GET['sa'] == 'register2')
 		{
-			require_once($sourcedir . '/Register.php');
+			loadSource('Register');
 			return Register2(true);
 		}
 		else
@@ -343,7 +343,7 @@ function smf_openID_return()
 		$_SESSION['openid_revalidate_time'] = time();
 
 		// Restore the get data.
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		$_SESSION['openid']['saved_data'][$_GET['t']]['get']['openid_restore_post'] = $_GET['t'];
 		$query_string = construct_query_string($_SESSION['openid']['saved_data'][$_GET['t']]['get']);
 
@@ -365,7 +365,7 @@ function smf_openID_return()
 			'openid_uri' => $openid_uri,
 		);
 
-		require_once($sourcedir . '/Subs-Login.php');
+		loadSource('Subs-Login');
 
 		if (!checkActivation())
 			return;
@@ -489,9 +489,7 @@ function smf_openid_generate_private_key()
 
 function smf_openID_getServerInfo($openid_url)
 {
-	global $sourcedir;
-
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Get the html and parse it for the openid variable which will tell us where to go.
 	$webdata = fetch_web_data($openid_url);

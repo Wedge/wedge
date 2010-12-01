@@ -401,11 +401,11 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
 	global $scripturl, $txt, $user_info, $language;
-	global $modSettings, $smcFunc, $sourcedir;
+	global $modSettings, $smcFunc;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource('Class-Editor');
 
 	$onBehalf = $from !== null;
 
@@ -956,7 +956,7 @@ function server_parse($message, $socket, $response)
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $sourcedir, $context, $smcFunc;
+	global $modSettings, $context, $smcFunc;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -1150,7 +1150,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $txt, $modSettings, $smcFunc, $context, $sourcedir;
+	global $user_info, $txt, $modSettings, $smcFunc, $context;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1345,7 +1345,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$_REQUEST['msgid'] = $msgOptions['id'];
 			$_REQUEST['pid'] = $msgOptions['id'];
 			$_REQUEST['topic'] = $topicOptions['id'];
-			include($sourcedir . '/SplitTopics.php');
+			loadSource('SplitTopics');
 			MergePosts(false);
 		}
 	}
@@ -1478,9 +1478,9 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // !!!
 function createAttachment(&$attachmentOptions)
 {
-	global $modSettings, $sourcedir, $smcFunc, $context;
+	global $modSettings, $smcFunc, $context;
 
-	require_once($sourcedir . '/Subs-Graphics.php');
+	loadSource('Subs-Graphics');
 
 	// We need to know where this thing is going.
 	if (!empty($modSettings['currentAttachmentUploadDir']))
@@ -1592,7 +1592,7 @@ function createAttachment(&$attachmentOptions)
 		// Soon to be too big - warn the admins...
 		elseif (!isset($modSettings['attachment_full_notified']) && $modSettings['attachmentDirSizeLimit'] > 4000 && $attachmentOptions['size'] + $dirSize > ($modSettings['attachmentDirSizeLimit'] - 2000) * 1024)
 		{
-			require_once($sourcedir . '/Subs-Admin.php');
+			loadSource('Subs-Admin');
 			emailAdmins('admin_attachments_full');
 			updateSettings(array('attachment_full_notified' => 1));
 		}
@@ -1719,7 +1719,7 @@ function createAttachment(&$attachmentOptions)
 			if (empty($modSettings['attachment_image_reencode']) || (!reencodeImage($attachmentOptions['destination'], $size[2])))
 			{
 				// Nothing to do: not allowed or not successful re-encoding it.
-				require_once($sourcedir . '/ManageAttachments.php');
+				loadSource('ManageAttachments');
 				removeAttachments(array(
 					'id_attach' => $attachmentOptions['id']
 				));
@@ -2001,7 +2001,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // Approve (or not) some posts... without permission checks...
 function approvePosts($msgs, $approve = true)
 {
-	global $sourcedir, $smcFunc;
+	global $smcFunc;
 
 	if (!is_array($msgs))
 		$msgs = array($msgs);
@@ -2176,7 +2176,7 @@ function approvePosts($msgs, $approve = true)
 	{
 		if (!empty($notification_topics))
 		{
-			require_once($sourcedir . '/Post2.php');
+			loadSource('Post2');
 			notifyMembersBoard($notification_topics);
 		}
 		if (!empty($notification_posts))
@@ -2254,7 +2254,7 @@ function approveTopics($topics, $approve = true)
 function sendApprovalNotifications(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $sourcedir, $context, $smcFunc;
+	global $modSettings, $context, $smcFunc;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))

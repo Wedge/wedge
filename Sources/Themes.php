@@ -749,7 +749,7 @@ function SetThemeOptions()
 // Administrative global settings.
 function SetThemeSettings()
 {
-	global $txt, $context, $settings, $modSettings, $sourcedir, $smcFunc;
+	global $txt, $context, $settings, $modSettings, $smcFunc;
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 		return ThemeAdmin();
@@ -1168,14 +1168,14 @@ function PickTheme()
 
 function ThemeInstall()
 {
-	global $sourcedir, $boarddir, $boardurl, $txt, $context, $settings, $modSettings, $smcFunc;
+	global $boarddir, $boardurl, $txt, $context, $settings, $modSettings, $smcFunc;
 
 	checkSession('request');
 
 	isAllowedTo('admin_forum');
 	checkSession('request');
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	loadTemplate('Themes');
 
@@ -1316,7 +1316,7 @@ function ThemeInstall()
 		if (!is_writable($boarddir . '/Themes'))
 			fatal_lang_error('theme_install_write_error', 'critical');
 
-		require_once($sourcedir . '/Subs-Package.php');
+		loadSource('Subs-Package');
 
 		// Set the default settings...
 		$theme_name = strtok(basename(isset($_FILES['theme_gz']) ? $_FILES['theme_gz']['name'] : $_REQUEST['theme_gz']), '.');

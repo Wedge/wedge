@@ -35,7 +35,7 @@ if (!defined('SMF'))
 // Allows for moderation from the message index.
 function QuickModeration()
 {
-	global $sourcedir, $board, $user_info, $modSettings, $sourcedir, $smcFunc, $context;
+	global $board, $user_info, $modSettings, $smcFunc, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -48,7 +48,7 @@ function QuickModeration()
 		$_SESSION['topicseen_cache'] = array();
 
 	// This is going to be needed to send off the notifications and for updateLastMessages().
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Remember the last board they moved things to.
 	if (isset($_REQUEST['move_to']))
@@ -122,7 +122,7 @@ function QuickModeration()
 			if (empty($_REQUEST['topics']) || count($_REQUEST['topics']) < 2)
 				redirectexit($redirect_url);
 
-			require_once($sourcedir . '/SplitTopics.php');
+			loadSource('SplitTopics');
 			return MergeExecute($_REQUEST['topics']);
 		}
 
@@ -298,7 +298,7 @@ function QuickModeration()
 
 		$moveCache = $moveCache2;
 
-		require_once($sourcedir . '/MoveTopic.php');
+		loadSource('MoveTopic');
 
 		// Do the actual moves...
 		foreach ($moveTos as $to => $topics)
@@ -406,7 +406,7 @@ function QuickModeration()
 				sendNotifications($topic, 'remove');
 			}
 
-			require_once($sourcedir . '/RemoveTopic.php');
+			loadSource('RemoveTopic');
 			removeTopics($removeCache);
 		}
 	}

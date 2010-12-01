@@ -44,7 +44,7 @@ if (!defined('SMF'))
  */
 function Sticky()
 {
-	global $modSettings, $topic, $board, $sourcedir, $smcFunc;
+	global $modSettings, $topic, $board, $smcFunc;
 
 	// Make sure the user can sticky it, and they are stickying *something*.
 	isAllowedTo('make_sticky');
@@ -60,7 +60,7 @@ function Sticky()
 	checkSession('get');
 
 	// We need Subs-Post.php for the sendNotifications() function.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Is this topic already stickied, or no?
 	$request = $smcFunc['db_query']('', '

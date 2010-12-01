@@ -75,7 +75,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $sourcedir, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
+	global $context, $txt, $scripturl, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
 
 	checkSession();
 
@@ -146,10 +146,9 @@ function RemindPick()
 	if (empty($row['secret_question']) || (isset($_POST['reminder_type']) && $_POST['reminder_type'] == 'email'))
 	{
 		// Randomly generate a new password, with only alpha numeric characters that is a max length of 10 chars.
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource(array('Subs-Members', 'Subs-Post'));
 		$password = generateValidationCode();
 
-		require_once($sourcedir . '/Subs-Post.php');
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
 			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
@@ -209,7 +208,7 @@ function setPassword()
 
 function setPassword2()
 {
-	global $context, $txt, $modSettings, $smcFunc, $sourcedir;
+	global $context, $txt, $modSettings, $smcFunc;
 
 	checkSession();
 
@@ -249,14 +248,12 @@ function setPassword2()
 	$smcFunc['db_free_result']($request);
 
 	// Is the password actually valid?
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource(array('Subs-Auth', 'Subs-Login'));
 	$passwordError = validatePassword($_POST['passwrd1'], $username, array($email));
 
 	// What - it's not?
 	if ($passwordError != null)
 		fatal_lang_error('profile_error_password_' . $passwordError, false);
-
-	require_once($sourcedir . '/Subs-Login.php');
 
 	// Quit if this code is not right.
 	if (empty($_POST['code']) || substr($realCode, 0, 10) != substr(md5($_POST['code']), 0, 10))
@@ -332,7 +329,7 @@ function SecretAnswerInput()
 
 function SecretAnswer2()
 {
-	global $txt, $context, $modSettings, $smcFunc, $sourcedir;
+	global $txt, $context, $modSettings, $smcFunc;
 
 	checkSession();
 
@@ -382,7 +379,7 @@ function SecretAnswer2()
 		fatal_lang_error('passwords_dont_match', false);
 
 	// Make sure they have a strong enough password.
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 	$passwordError = validatePassword($_POST['passwrd1'], $row['member_name'], array($row['email_address']));
 
 	// Invalid?

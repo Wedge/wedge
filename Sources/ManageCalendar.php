@@ -79,7 +79,7 @@ function ModifyHolidays()
 			$_REQUEST['holiday'][$id] = (int) $id;
 
 		// Now the IDs are "safe" do the delete...
-		require_once($sourcedir . '/Subs-Calendar.php');
+		loadSource('Subs-Calendar');
 		removeHolidays($_REQUEST['holiday']);
 	}
 
@@ -167,7 +167,7 @@ function ModifyHolidays()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	//loadTemplate('ManageCalendar');
@@ -282,7 +282,7 @@ function EditHoliday()
 
 function ModifyCalendarSettings($return_config = false)
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $sourcedir, $scripturl, $smcFunc;
+	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl, $smcFunc;
 
 	// Load the boards list.
 	$boards = array('');
@@ -330,7 +330,7 @@ function ModifyCalendarSettings($return_config = false)
 		return $config_vars;
 
 	// Get the settings template fired up.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	// Some important context stuff
 	$context['page_title'] = $txt['calendar_settings'];

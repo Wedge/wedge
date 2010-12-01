@@ -96,7 +96,7 @@ if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
 {
-	require_once($sourcedir . '/ScheduledTasks.php');
+	loadSource('ScheduledTasks');
 	AutoTask();
 }
 
@@ -234,20 +234,20 @@ function smf_main()
 		if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'login2' || $_REQUEST['action'] == 'logout'))
 		{
 			$action = $_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout';
-			require_once($sourcedir . '/' . $action . '.php');
+			loadSource($action);
 			return $action;
 		}
 		// Don't even try it, sonny.
 		else
 		{
-			require_once($sourcedir . '/Subs-Auth.php');
+			loadSource('Subs-Auth');
 			return 'InMaintenance';
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
 	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
 	{
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		return 'KickGuest';
 	}
 	elseif (empty($_REQUEST['action']))
@@ -255,19 +255,19 @@ function smf_main()
 		// Action and board are both empty... BoardIndex!
 		if (empty($board) && empty($topic))
 		{
-			require_once($sourcedir . '/BoardIndex.php');
+			loadSource('BoardIndex');
 			return 'BoardIndex';
 		}
 		// Topic is empty, and action is empty.... MessageIndex!
 		elseif (empty($topic))
 		{
-			require_once($sourcedir . '/MessageIndex.php');
+			loadSource('MessageIndex');
 			return 'MessageIndex';
 		}
 		// Board is not empty... topic is not empty... action is empty.. Display!
 		else
 		{
-			require_once($sourcedir . '/Display.php');
+			loadSource('Display');
 			return 'Display';
 		}
 	}
@@ -359,16 +359,17 @@ function smf_main()
 		// Catch the action with the theme?
 		if (!empty($settings['catch_action']))
 		{
-			require_once($sourcedir . '/Themes.php');
+			loadSource('Themes');
 			return 'WrapAction';
 		}
 
 		// Fall through to the board index then...
-		require_once($sourcedir . '/BoardIndex.php');
+		loadSource('BoardIndex');
 		return 'BoardIndex';
 	}
 
 	// Otherwise, it was set - so let's go to that action.
+	// !!! Fix this $sourcedir for loadSource
 	require_once($sourcedir . '/' . $actionArray[$_REQUEST['action']][0]);
 	return $actionArray[$_REQUEST['action']][1];
 }

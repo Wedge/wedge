@@ -67,10 +67,10 @@ function Xmlhttp()
  */
 function GetJumpTo()
 {
-	global $user_info, $context, $smcFunc, $sourcedir;
+	global $user_info, $context, $smcFunc;
 
 	// Find the boards/cateogories they can see.
-	require_once($sourcedir . '/Subs-MessageIndex.php');
+	loadSource('Subs-MessageIndex');
 	$boardListOptions = array(
 		'use_permissions' => true,
 		'selected_board' => isset($context['current_board']) ? $context['current_board'] : 0,
@@ -97,9 +97,9 @@ function GetJumpTo()
  */
 function ListMessageIcons()
 {
-	global $context, $sourcedir, $board;
+	global $context, $board;
 
-	require_once($sourcedir . '/Subs-Editor.php');
+	loadSource('Subs-Editor');
 	$context['icons'] = getMessageIcons($board);
 
 	$context['sub_template'] = 'message_icons';

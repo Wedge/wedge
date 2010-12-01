@@ -927,9 +927,9 @@ function ssi_boardStats($output_method = 'echo')
 // Shows a list of online users:  YY Guests, ZZ Users and then a list...
 function ssi_whosOnline($output_method = 'echo')
 {
-	global $user_info, $txt, $sourcedir, $settings, $modSettings;
+	global $user_info, $txt, $settings, $modSettings;
 
-	require_once($sourcedir . '/Subs-MembersOnline.php');
+	loadSource('Subs-MembersOnline');
 	$membersOnlineOptions = array(
 		'show_hidden' => allowedTo('moderate_forum'),
 		'sort' => 'log_time',
@@ -1340,7 +1340,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 // Takes care of voting - don't worry, this is done automatically.
 function ssi_pollVote()
 {
-	global $context, $db_prefix, $user_info, $sc, $smcFunc, $sourcedir, $modSettings;
+	global $context, $db_prefix, $user_info, $sc, $smcFunc, $modSettings;
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
@@ -1437,7 +1437,7 @@ function ssi_pollVote()
 	{
 		$_COOKIE['guest_poll_vote'] = !empty($_COOKIE['guest_poll_vote']) ? ($_COOKIE['guest_poll_vote'] . ',' . $row['id_poll']) : $row['id_poll'];
 
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0);
 	}
@@ -1832,7 +1832,7 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 // Check the passed id_member/password.  If $is_username is true, treats $id as a username.
 function ssi_checkPassword($id = null, $password = null, $is_username = false)
 {
-	global $db_prefix, $sourcedir, $smcFunc;
+	global $db_prefix, $smcFunc;
 
 	// If $id is null, this was most likely called from a query string and should do nothing.
 	if ($id === null)

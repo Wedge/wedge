@@ -91,9 +91,7 @@ function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 // Extend the database functionality.
 function db_extend($type = 'extra')
 {
-	global $sourcedir;
-
-	require_once($sourcedir . '/Db' . ucfirst($type) . '.php');
+	loadSource('Db' . ucfirst($type));
 	$initFunc = 'db_' . $type . '_init';
 	$initFunc();
 }
@@ -414,7 +412,7 @@ function smf_db_transaction($type = 'commit', $connection = null)
 // Database error!
 function smf_db_error($db_string, $connection = null)
 {
-	global $txt, $context, $sourcedir, $webmaster_email, $modSettings;
+	global $txt, $context, $webmaster_email, $modSettings;
 	global $forum_version, $db_connection, $db_last_error, $db_persist;
 	global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 	global $smcFunc;
@@ -492,8 +490,7 @@ function smf_db_error($db_string, $connection = null)
 		if (!empty($fix_tables))
 		{
 			// Subs-Admin.php for updateSettingsFile(), Subs-Post.php for sendmail().
-			require_once($sourcedir . '/Subs-Admin.php');
-			require_once($sourcedir . '/Subs-Post.php');
+			loadSource(array('Subs-Admin', 'Subs-Post'));
 
 			// Make a note of the REPAIR...
 			cache_put_data('db_last_error', time(), 600);

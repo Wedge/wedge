@@ -47,7 +47,7 @@ if (!defined('SMF'))
 // Show the moderation log
 function ViewModlog()
 {
-	global $txt, $modSettings, $context, $scripturl, $sourcedir, $user_info, $smcFunc, $settings;
+	global $txt, $modSettings, $context, $scripturl, $user_info, $smcFunc, $settings;
 
 	// Are we looking at the moderation log or the administration log.
 	$context['log_type'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 3 : 1;
@@ -167,7 +167,7 @@ function ViewModlog()
 		}
 	}
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// This is all the information required for a watched user listing.
 	$listOptions = array(

@@ -33,7 +33,7 @@ if (!defined('SMF'))
 
 function Activate()
 {
-	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc, $language;
+	global $context, $txt, $modSettings, $scripturl, $smcFunc, $language;
 
 	loadLanguage('Login');
 	loadTemplate('Login');
@@ -115,7 +115,7 @@ function Activate()
 	// Resend the password, but only if the account wasn't activated yet.
 	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'resend' && ($row['is_activated'] == 0 || $row['is_activated'] == 2) && (!isset($_REQUEST['code']) || $_REQUEST['code'] == ''))
 	{
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
@@ -167,7 +167,7 @@ function Activate()
 
 	if (!isset($_POST['new_email']))
 	{
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 
 		adminNotify('activation', $row['id_member'], $row['member_name']);
 	}

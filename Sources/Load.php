@@ -135,13 +135,11 @@ function reloadSettings()
 			return $length === null ? implode(\'\', array_slice($ent_arr, $start)) : implode(\'\', array_slice($ent_arr, $start, $length));'),
 		'strtolower' => (function_exists('mb_strtolower') ? create_function('$string', '
 			return mb_strtolower($string, \'UTF-8\');') : create_function('$string', '
-			global $sourcedir;
-			require_once($sourcedir . \'/Subs-Charset.php\');
+			loadSource(\'/Subs-Charset\');
 			return utf8_strtolower($string);')),
 		'strtoupper' => (function_exists('mb_strtoupper') ? create_function('$string', '
 			return mb_strtoupper($string, \'UTF-8\');') : create_function('$string', '
-			global $sourcedir;
-			require_once($sourcedir . \'/Subs-Charset.php\');
+			loadSource(\'/Subs-Charset\');
 			return utf8_strtoupper($string);')),
 		'truncate' => create_function('$string, $length', (empty($modSettings['disableEntityCheck']) ? '
 			global $smcFunc;
@@ -225,7 +223,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings, $sourcedir, $smcFunc;
+	global $modSettings, $user_settings, $smcFunc;
 	global $cookiename, $user_info, $language;
 
 	$id_member = 0;
@@ -307,7 +305,7 @@ function loadUserSettings()
 		// If we no longer have the member maybe they're being all hackey, stop brute force!
 		if (!$id_member || !empty($user_settings['passwd_flood']))
 		{
-			require_once($sourcedir . '/Subs-Login.php');
+			loadSource('Subs-Login');
 			validatePasswordFlood(!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member, !empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false, $id_member != 0);
 		}
 	}
@@ -388,7 +386,7 @@ function loadUserSettings()
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
 		if ((!empty($modSettings['spider_mode']) || !empty($modSettings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
 		{
-			require_once($sourcedir . '/ManageSearchEngines.php');
+			loadSource('ManageSearchEngines');
 			$user_info['possibly_robot'] = SpiderCheck();
 		}
 		elseif (!empty($modSettings['spider_mode']))
@@ -804,7 +802,7 @@ function loadBoard()
  */
 function loadPermissions()
 {
-	global $user_info, $board, $board_info, $modSettings, $smcFunc, $sourcedir;
+	global $user_info, $board, $board_info, $modSettings, $smcFunc;
 
 	if ($user_info['is_admin'])
 	{
@@ -906,7 +904,7 @@ function loadPermissions()
 	{
 		if (!isset($_SESSION['mc']) || $_SESSION['mc']['time'] <= $modSettings['settings_updated'])
 		{
-			require_once($sourcedir . '/Subs-Auth.php');
+			loadSource('Subs-Auth');
 			rebuildModCache();
 		}
 		else
@@ -1393,7 +1391,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_info, $user_settings, $board_info, $sc, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
-	global $context, $settings, $options, $sourcedir, $ssi_theme, $smcFunc;
+	global $context, $settings, $options, $ssi_theme, $smcFunc;
 
 	// The theme was specified by parameter.
 	if (!empty($id_theme))
@@ -1805,7 +1803,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if ($context['browser']['possibly_robot'])
 		{
 			//!!! Maybe move this somewhere better?!
-			require_once($sourcedir . '/ScheduledTasks.php');
+			loadSource('ScheduledTasks');
 
 			// What to do, what to do?!
 			if (empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())
@@ -1833,6 +1831,23 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// We are ready to go.
 	$context['theme_loaded'] = true;
+}
+
+/**
+ * Loads a named source file for later use.
+ *
+ * This function does not do any error handling as if this breaks, something is usually seriously wrong that error catching isn't going to solve.
+ *
+ * @param mixed $source_name Either a string holding the name of a file in the source directory, or an array of the same, without .php extension to load.
+ */
+function loadSource($source_name)
+{
+	global $sourcedir;
+	if (!is_array($source_name))
+		$source_name = array($source_name);
+
+	foreach ($source_name as $file)
+		require_once($sourcedir . '/' . $file . '.php');
 }
 
 /**
@@ -1952,7 +1967,7 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
 	global $user_info, $language, $settings, $context, $modSettings;
-	global $cachedir, $db_show_debug, $sourcedir, $txt;
+	global $cachedir, $db_show_debug, $txt;
 	static $already_loaded = array();
 
 	// Default to the user's language.
@@ -1969,7 +1984,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	// Make sure we have $settings - if not we're in trouble and need to find it!
 	if (empty($settings['default_theme_dir']))
 	{
-		require_once($sourcedir . '/ScheduledTasks.php');
+		loadSource('ScheduledTasks');
 		loadEssentialThemeData();
 	}
 
@@ -2218,7 +2233,7 @@ function &censorText(&$text, $force = false)
 function template_include($filename, $once = false)
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
-	global $user_info, $boardurl, $boarddir, $sourcedir;
+	global $user_info, $boardurl, $boarddir;
 	global $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -2294,7 +2309,7 @@ function template_include($filename, $once = false)
 </html>';
 		else
 		{
-			require_once($sourcedir . '/Subs-Package.php');
+			loadSource('Subs-Package');
 
 			$error = fetch_web_data($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
 			if (empty($error))
@@ -2626,10 +2641,10 @@ function sessionGC($max_lifetime)
 function loadDatabase()
 {
 	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
-	global $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix;
+	global $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix;
 
 	// Load the file for the database.
-	require_once($sourcedir . '/Subs-Database.php');
+	loadSource('Subs-Database');
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
@@ -2670,6 +2685,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 
 	if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
+		// !!! Convert this to loadSource sometime
 		require_once($sourcedir . '/' . $file);
 		$cache_block = call_user_func_array($function, $params);
 

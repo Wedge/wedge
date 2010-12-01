@@ -51,7 +51,7 @@ if (!defined('SMF'))
  */
 function BoardIndex()
 {
-	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl, $options;
+	global $txt, $user_info, $modSettings, $context, $settings, $scripturl, $options;
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
@@ -83,7 +83,7 @@ function BoardIndex()
 		$context['robot_no_index'] = true;
 
 	// Retrieve the categories and boards.
-	require_once($sourcedir . '/Subs-BoardIndex.php');
+	loadSource('Subs-BoardIndex');
 	$boardIndexOptions = array(
 		'include_categories' => true,
 		'base_level' => 0,
@@ -94,7 +94,7 @@ function BoardIndex()
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
 	// Get the user online list.
-	require_once($sourcedir . '/Subs-MembersOnline.php');
+	loadSource('Subs-MembersOnline');
 	$membersOnlineOptions = array(
 		'show_hidden' => allowedTo('moderate_forum'),
 		'sort' => 'log_time',

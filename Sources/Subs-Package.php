@@ -531,7 +531,7 @@ function loadInstalledPackages()
 
 function getPackageInfo($gzfilename)
 {
-	global $boarddir, $sourcedir;
+	global $boarddir;
 
 	// Extract addon-info.xml from downloaded file. (*/ is used because it could be in any directory.)
 	if (strpos($gzfilename, 'http://') !== false)
@@ -554,7 +554,7 @@ function getPackageInfo($gzfilename)
 		return 'package_get_error_is_zero';
 
 	// Parse addon-info.xml into an xmlArray.
-	require_once($sourcedir . '/Class-Package.php');
+	loadSource('Class-Package');
 	$packageInfo = new xmlArray($packageInfo);
 
 	// !!! Error message of some sort?
@@ -576,7 +576,7 @@ function getPackageInfo($gzfilename)
 // Create a chmod control for chmoding files.
 function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $restore_write_status = false)
 {
-	global $context, $modSettings, $package_ftp, $boarddir, $txt, $sourcedir, $scripturl;
+	global $context, $modSettings, $package_ftp, $boarddir, $txt, $scripturl;
 
 	// If we're restoring the status of existing files prepare the data.
 	if ($restore_write_status && isset($_SESSION['pack_ftp']) && !empty($_SESSION['pack_ftp']['original_perms']))
@@ -737,7 +737,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 		}
 
 		// Create the list for display.
-		require_once($sourcedir . '/Subs-List.php');
+		loadSource('Subs-List');
 		createList($listOptions);
 
 		// If we just restored permissions then whereever we are, we are now done and dusted.
@@ -760,7 +760,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 	if (!empty($_SESSION['pack_ftp']['connected']))
 	{
 		// Load the file containing the ftp_connection class.
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 
 		$package_ftp = new ftp_connection($_SESSION['pack_ftp']['server'], $_SESSION['pack_ftp']['port'], $_SESSION['pack_ftp']['username'], package_crypt($_SESSION['pack_ftp']['password']));
 	}
@@ -768,7 +768,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 	// Just got a submission did we?
 	if (empty($package_ftp) && isset($_POST['ftp_username']))
 	{
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 		$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 		// We're connected, jolly good!
@@ -834,7 +834,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 		{
 			if (!isset($ftp))
 			{
-				require_once($sourcedir . '/Class-Package.php');
+				loadSource('Class-Package');
 				$ftp = new ftp_connection(null);
 			}
 			elseif ($ftp->error !== false && !isset($ftp_error))
@@ -879,7 +879,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 
 function packageRequireFTP($destination_url, $files = null, $return = false)
 {
-	global $context, $modSettings, $package_ftp, $boarddir, $txt, $sourcedir;
+	global $context, $modSettings, $package_ftp, $boarddir, $txt;
 
 	// Try to make them writable the manual way.
 	if ($files !== null)
@@ -946,7 +946,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	elseif (isset($_SESSION['pack_ftp']))
 	{
 		// Load the file containing the ftp_connection class.
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 
 		$package_ftp = new ftp_connection($_SESSION['pack_ftp']['server'], $_SESSION['pack_ftp']['port'], $_SESSION['pack_ftp']['username'], package_crypt($_SESSION['pack_ftp']['password']));
 
@@ -986,7 +986,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	}
 	elseif (isset($_POST['ftp_username']))
 	{
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 		$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 		if ($ftp->error === false)
@@ -1004,7 +1004,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	{
 		if (!isset($ftp))
 		{
-			require_once($sourcedir . '/Class-Package.php');
+			loadSource('Class-Package');
 			$ftp = new ftp_connection(null);
 		}
 		elseif ($ftp->error !== false && !isset($ftp_error))
@@ -1718,10 +1718,10 @@ function listtree($path, $sub_path = '')
 // Parse an xml based modification file.
 function parseModification($file, $testing = true, $undo = false, $theme_paths = array())
 {
-	global $boarddir, $sourcedir, $settings, $txt, $modSettings, $package_ftp;
+	global $boarddir, $settings, $txt, $modSettings, $package_ftp;
 
 	@set_time_limit(600);
-	require_once($sourcedir . '/Class-Package.php');
+	loadSource('Class-Package');
 	$xml = new xmlArray(strtr($file, array("\r" => '')));
 	$actions = array();
 	$everything_found = true;
@@ -2789,7 +2789,7 @@ function package_create_backup($id = 'backup')
 // Get the contents of a URL, irrespective of allow_url_fopen.
 function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection_level = 0)
 {
-	global $webmaster_email, $sourcedir;
+	global $webmaster_email;
 	static $keep_alive_dom = null, $keep_alive_fp = null;
 
 	preg_match('~^(http|ftp)(s)?://([^/:]+)(:(\d+))?(.+)$~', $url, $match);
@@ -2800,7 +2800,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 	elseif ($match[1] == 'ftp')
 	{
 		// Include the file containing the ftp_connection class.
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 
 		// Establish a connection and attempt to enable passive mode.
 		$ftp = new ftp_connection(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? 21 : $match[5], 'anonymous', $webmaster_email);
