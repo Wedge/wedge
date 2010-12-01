@@ -404,10 +404,6 @@ function ConvertUtf8()
 	// This is for the first screen telling backups is good.
 	if (!isset($_POST['proceed']))
 	{
-		// Character set conversions are only supported as of MySQL 4.1.2.
-		if (version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']())) > 0)
-			fatal_lang_error('utf8_db_version_too_low');
-
 		// Use the messages.body column as indicator for the database charset.
 		$request = $smcFunc['db_query']('', '
 			SHOW FULL COLUMNS
