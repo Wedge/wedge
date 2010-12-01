@@ -90,7 +90,7 @@ function BrowseMailQueue()
 	{
 		checkSession('post');
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_ids})',
 			array(
@@ -100,14 +100,14 @@ function BrowseMailQueue()
 	}
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*) AS queue_size, MIN(time_sent) AS oldest
 		FROM {db_prefix}mail_queue',
 		array(
 		)
 	);
-	list ($mailQueueSize, $mailOldest) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($mailQueueSize, $mailOldest) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	$context['oldest_mail'] = empty($mailOldest) ? $txt['mailqueue_oldest_not_available'] : time_since(time() - $mailOldest);
 	$context['mail_queue_size'] = comma_format($mailQueueSize);
@@ -231,7 +231,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			id_mail, time_sent, recipient, priority, private, subject
 		FROM {db_prefix}mail_queue
@@ -244,7 +244,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 		)
 	);
 	$mails = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Private PM/email subjects and similar shouldn't be shown in the mailbox area.
 		if (!empty($row['private']))
@@ -252,7 +252,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 
 		$mails[] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $mails;
 }
@@ -262,14 +262,14 @@ function list_getMailQueueSize()
 	global $smcFunc;
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*) AS queue_size
 		FROM {db_prefix}mail_queue',
 		array(
 		)
 	);
-	list ($mailQueueSize) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($mailQueueSize) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	return $mailQueueSize;
 }
@@ -369,14 +369,14 @@ function ClearMailQueue()
 	if (!isset($_GET['te']))
 	{
 		// How many items do we have?
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*) AS queue_size
 			FROM {db_prefix}mail_queue',
 			array(
 			)
 		);
-		list ($_GET['te']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($_GET['te']) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 	else
 		$_GET['te'] = (int) $_GET['te'];

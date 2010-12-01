@@ -160,7 +160,7 @@ function ViewQuery()
 		// Explain the query.
 		if ($query_id == $q && $is_select_query)
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				EXPLAIN ' . $select,
 				array(
 				)
@@ -169,7 +169,7 @@ function ViewQuery()
 			{
 				echo '
 		<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
-			<tr><td>', $smcFunc['db_error']($db_connection), '</td></tr>
+			<tr><td>', weDB::error($db_connection), '</td></tr>
 		</table>';
 				continue;
 			}
@@ -177,7 +177,7 @@ function ViewQuery()
 			echo '
 		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
 
-			$row = $smcFunc['db_fetch_assoc']($result);
+			$row = weDB::fetch_assoc($result);
 
 			echo '
 			<tr>
@@ -185,8 +185,8 @@ function ViewQuery()
 				<th>', array_keys($row)) . '</th>
 			</tr>';
 
-			$smcFunc['db_data_seek']($result, 0);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			weDB::data_seek($result, 0);
+			while ($row = weDB::fetch_assoc($result))
 			{
 				echo '
 			<tr>
@@ -194,7 +194,7 @@ function ViewQuery()
 				<td>', $row) . '</td>
 			</tr>';
 			}
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			echo '
 		</table>';

@@ -192,7 +192,7 @@ function MLAll()
 		// Only update the cache if something changed or no cache existed yet.
 		if (empty($memberlist_cache) || empty($modSettings['memberlist_updated']) || $memberlist_cache['last_update'] < $modSettings['memberlist_updated'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}
@@ -204,18 +204,18 @@ function MLAll()
 
 			$memberlist_cache = array(
 				'last_update' => time(),
-				'num_members' => $smcFunc['db_num_rows']($request),
+				'num_members' => weDB::num_rows($request),
 				'index' => array(),
 			);
 
-			for ($i = 0, $n = $smcFunc['db_num_rows']($request); $i < $n; $i += $cache_step_size)
+			for ($i = 0, $n = weDB::num_rows($request); $i < $n; $i += $cache_step_size)
 			{
-				$smcFunc['db_data_seek']($request, $i);
-				list($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
+				weDB::data_seek($request, $i);
+				list($memberlist_cache['index'][$i]) = weDB::fetch_row($request);
 			}
-			$smcFunc['db_data_seek']($request, $memberlist_cache['num_members'] - 1);
-			list ($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			weDB::data_seek($request, $memberlist_cache['num_members'] - 1);
+			list ($memberlist_cache['index'][$i]) = weDB::fetch_row($request);
+			weDB::free_result($request);
 
 			// Now we've got the cache...store it.
 			updateSettings(array('memberlist_cache' => serialize($memberlist_cache)));
@@ -227,7 +227,7 @@ function MLAll()
 	// Without cache we need an extra query to get the amount of members.
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE is_activated = {int:is_activated}',
@@ -235,8 +235,8 @@ function MLAll()
 				'is_activated' => 1,
 			)
 		);
-		list ($context['num_members']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($context['num_members']) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 
 	// Set defaults for sort (real_name) and start. (0)
@@ -250,7 +250,7 @@ function MLAll()
 
 		$_REQUEST['start'] = $match[0];
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE LOWER(SUBSTRING(real_name, 1, 1)) < {string:first_letter}
@@ -260,8 +260,8 @@ function MLAll()
 				'first_letter' => $_REQUEST['start'],
 			)
 		);
-		list ($_REQUEST['start']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($_REQUEST['start']) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 
 	$context['letter_links'] = '';
@@ -380,7 +380,7 @@ function MLAll()
 	}
 
 	// Select the members from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($_REQUEST['sort'] === 'is_online' ? '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'id_group' ? '
@@ -392,7 +392,7 @@ function MLAll()
 		$query_parameters
 	);
 	printMemberListRows($request);
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Add anchors at the start of each letter.
 	if ($_REQUEST['sort'] == 'real_name')
@@ -420,7 +420,7 @@ function MLSearch()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Can they search custom fields?
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT col_name, field_name, field_desc
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
@@ -436,13 +436,13 @@ function MLSearch()
 		)
 	);
 	$context['custom_search_fields'] = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$context['custom_search_fields'][$row['col_name']] = array(
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 		);
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// They're searching..
 	if (isset($_REQUEST['search'], $_REQUEST['fields']))
@@ -503,7 +503,7 @@ function MLSearch()
 
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : 'LIKE {string:search}';
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_id_group} THEN mem.id_post_group ELSE mem.id_group END)' .
@@ -513,14 +513,14 @@ function MLSearch()
 				AND mem.is_activated = {int:is_activated}',
 			$query_parameters
 		);
-		list ($numResults) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($numResults) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!!SLOW This query is slow.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -533,7 +533,7 @@ function MLSearch()
 			$query_parameters
 		);
 		printMemberListRows($request);
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 	else
 	{
@@ -568,21 +568,21 @@ function printMemberListRows($request)
 	global $context, $settings, $memberContext, $smcFunc;
 
 	// Get the most posts.
-	$result = $smcFunc['db_query']('', '
+	$result = weDB::query('
 		SELECT MAX(posts)
 		FROM {db_prefix}members',
 		array(
 		)
 	);
-	list ($MOST_POSTS) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	list ($MOST_POSTS) = weDB::fetch_row($result);
+	weDB::free_result($result);
 
 	// Avoid division by zero...
 	if ($MOST_POSTS == 0)
 		$MOST_POSTS = 1;
 
 	$members = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$members[] = $row['id_member'];
 
 	// Load all the members for display.

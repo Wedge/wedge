@@ -99,7 +99,7 @@ function Feed()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:current_category}',
@@ -107,13 +107,13 @@ function Feed()
 					'current_category' => (int) $_REQUEST['c'][0],
 				)
 			);
-			list ($feed_title) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($feed_title) = weDB::fetch_row($request);
+			weDB::free_result($request);
 
 			$feed_title = ' - ' . strip_tags($feed_title);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:current_category_list})
@@ -124,12 +124,12 @@ function Feed()
 		);
 		$total_cat_posts = 0;
 		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -144,7 +144,7 @@ function Feed()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board, b.num_posts, b.name
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -156,13 +156,13 @@ function Feed()
 		);
 
 		// Either the board specified doesn't exist or you have no access.
-		$num_boards = $smcFunc['db_num_rows']($request);
+		$num_boards = weDB::num_rows($request);
 		if ($num_boards == 0)
 			fatal_lang_error('no_board');
 
 		$total_posts = 0;
 		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			if ($num_boards == 1)
 				$feed_title = ' - ' . strip_tags($row['name']);
@@ -170,7 +170,7 @@ function Feed()
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -181,7 +181,7 @@ function Feed()
 	}
 	elseif (!empty($board))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT num_posts
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -190,8 +190,8 @@ function Feed()
 				'current_board' => $board,
 			)
 		);
-		list ($total_posts) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($total_posts) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		$feed_title = ' - ' . strip_tags($board_info['name']);
 
@@ -513,7 +513,7 @@ function getXmlMembers($xml_format)
 		return array();
 
 	// Find the most recent members.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, member_name, real_name, date_registered, last_login
 		FROM {db_prefix}members
 		ORDER BY id_member DESC
@@ -523,7 +523,7 @@ function getXmlMembers($xml_format)
 		)
 	);
 	$data = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Make the data look rss-ish.
 		if ($xml_format == 'rss' || $xml_format == 'rss2')
@@ -556,7 +556,7 @@ function getXmlMembers($xml_format)
 				'link' => $scripturl . '?action=profile;u=' . $row['id_member']
 			);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $data;
 }
@@ -577,7 +577,7 @@ function getXmlNews($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
 				m.icon, t.id_topic, t.id_board, t.num_replies,
@@ -603,9 +603,9 @@ function getXmlNews($xml_format)
 			)
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && weDB::num_rows($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -617,7 +617,7 @@ function getXmlNews($xml_format)
 			$done = true;
 	}
 	$data = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
 		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
@@ -683,7 +683,7 @@ function getXmlNews($xml_format)
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 			);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $data;
 }
@@ -698,7 +698,7 @@ function getXmlRecent($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -717,9 +717,9 @@ function getXmlRecent($xml_format)
 			)
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && weDB::num_rows($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -730,15 +730,15 @@ function getXmlRecent($xml_format)
 			$done = true;
 	}
 	$messages = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$messages[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (empty($messages))
 		return array();
 
 	// Find the most recent posts this user can see.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.id_topic, t.id_board,
 			b.name AS bname, t.num_replies, m.id_member, m.icon, mf.id_member AS id_first_member,
@@ -762,7 +762,7 @@ function getXmlRecent($xml_format)
 		)
 	);
 	$data = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
 		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
@@ -840,7 +840,7 @@ function getXmlRecent($xml_format)
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg']
 			);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $data;
 }

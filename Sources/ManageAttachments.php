@@ -489,7 +489,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 
 	// Choose a query depending on what we are viewing.
 	if ($browse_type === 'avatars')
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT
 				{string:blank_text} AS id_msg, IFNULL(mem.real_name, {string:not_applicable_text}) AS poster_name,
 				mem.last_login AS poster_time, 0 AS id_topic, a.id_member, a.id_attach, a.filename, a.file_hash, a.attachment_type,
@@ -509,7 +509,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 			)
 		);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT
 				m.id_msg, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.id_topic, m.id_member,
 				a.id_attach, a.filename, a.file_hash, a.attachment_type, a.size, a.width, a.height, a.downloads, mf.subject, t.id_board
@@ -529,9 +529,9 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 			)
 		);
 	$files = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$files[] = $row;
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $files;
 }
@@ -542,7 +542,7 @@ function list_getNumFiles($browse_type)
 
 	// Depending on the type of file, different queries are used.
 	if ($browse_type === 'avatars')
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
 		WHERE id_member != {int:guest_id_member}',
@@ -551,7 +551,7 @@ function list_getNumFiles($browse_type)
 		)
 	);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*) AS num_attach
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -565,8 +565,8 @@ function list_getNumFiles($browse_type)
 			)
 		);
 
-	list ($num_files) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($num_files) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	return $num_files;
 }
@@ -583,7 +583,7 @@ function MaintainFiles()
 		$attach_dirs = array($modSettings['attachmentUploadDir']);
 
 	// Get the number of attachments....
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
 		WHERE attachment_type = {int:attachment_type}
@@ -593,11 +593,11 @@ function MaintainFiles()
 			'guest_id_member' => 0,
 		)
 	);
-	list ($context['num_attachments']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($context['num_attachments']) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	// Also get the avatar amount....
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
 		WHERE id_member != {int:guest_id_member}',
@@ -605,8 +605,8 @@ function MaintainFiles()
 			'guest_id_member' => 0,
 		)
 	);
-	list ($context['num_avatars']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($context['num_avatars']) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	// Find out how big the directory is. We have to loop through all our attachment paths in case there's an old temp file in one of them.
 	$attachmentDirSize = 0;
@@ -658,7 +658,7 @@ function MoveAvatars()
 			fatal_lang_error('attachments_no_write', 'critical');
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_attach, id_folder, id_member, filename, file_hash
 		FROM {db_prefix}attachments
 		WHERE attachment_type = {int:attachment_type}
@@ -669,17 +669,17 @@ function MoveAvatars()
 		)
 	);
 	$updatedAvatars = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		$filename = getAttachmentFilename($row['filename'], $row['id_attach'], $row['id_folder'], false, $row['file_hash']);
 
 		if (rename($filename, $modSettings['custom_avatar_dir'] . '/' . $row['filename']))
 			$updatedAvatars[] = $row['id_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (!empty($updatedAvatars))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}attachments
 			SET attachment_type = {int:attachment_type}
 			WHERE id_attach IN ({array_int:updated_avatars})',
@@ -708,7 +708,7 @@ function RemoveAttachmentByAge()
 
 		// Update the messages to reflect the change.
 		if (!empty($messages))
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}messages
 				SET body = CONCAT(body, ' . (!empty($_POST['notice']) ? '{string:notice}' : '') . ')
 				WHERE id_msg IN ({array_int:messages})',
@@ -737,7 +737,7 @@ function RemoveAttachmentBySize()
 
 	// And make a note on the post.
 	if (!empty($messages))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}messages
 			SET body = CONCAT(body, ' . (!empty($_POST['notice']) ? '{string:notice}' : '') . ')
 			WHERE id_msg IN ({array_int:messages})',
@@ -771,7 +771,7 @@ function RemoveAttachment()
 
 			// And change the message to reflect this.
 			if (!empty($messages))
-				$smcFunc['db_query']('', '
+				weDB::query('
 					UPDATE {db_prefix}messages
 					SET body = CONCAT(body, {string:deleted_message})
 					WHERE id_msg IN ({array_int:messages_affected})',
@@ -801,7 +801,7 @@ function RemoveAllAttachments()
 
 	// Add the notice on the end of the changed messages.
 	if (!empty($messages))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}messages
 			SET body = CONCAT(body, {string:deleted_message})
 			WHERE id_msg IN ({array_int:messages})',
@@ -858,7 +858,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	$parents = array();
 
 	// Get all the attachment names and id_msg's.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			a.id_folder, a.filename, a.file_hash, a.attachment_type, a.id_attach, a.id_member' . ($query_type == 'messages' ? ', m.id_msg' : ', a.id_msg') . ',
 			thumb.id_folder AS thumb_folder, IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.filename AS thumb_filename, thumb.file_hash AS thumb_file_hash, thumb_parent.id_attach AS id_parent
@@ -870,7 +870,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 		WHERE ' . $condition,
 		$query_parameter
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Figure out the "encrypted" filename and unlink it ;).
 		if ($row['attachment_type'] == 1)
@@ -898,12 +898,12 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 			$msgs[] = $row['id_msg'];
 		$attach[] = $row['id_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Removed attachments don't have to be updated anymore.
 	$parents = array_diff($parents, $attach);
 	if (!empty($parents))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}attachments
 			SET id_thumb = {int:no_thumb}
 			WHERE id_attach IN ({array_int:parent_attachments})',
@@ -914,7 +914,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 		);
 
 	if (!empty($attach))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}attachments
 			WHERE id_attach IN ({array_int:attachment_list})',
 			array(
@@ -981,7 +981,7 @@ function RepairAttachments()
 	// Get stranded thumbnails.
 	if ($_GET['step'] <= 0)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT MAX(id_attach)
 			FROM {db_prefix}attachments
 			WHERE attachment_type = {int:thumbnail}',
@@ -989,14 +989,14 @@ function RepairAttachments()
 				'thumbnail' => 3,
 			)
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		list ($thumbnails) = weDB::fetch_row($result);
+		weDB::free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
 			$to_remove = array();
 
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT thumb.id_attach, thumb.id_folder, thumb.filename, thumb.file_hash
 				FROM {db_prefix}attachments AS thumb
 					LEFT JOIN {db_prefix}attachments AS tparent ON (tparent.id_thumb = thumb.id_attach)
@@ -1008,7 +1008,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 			{
 				// Only do anything once... just in case
 				if (!isset($to_remove[$row['id_attach']]))
@@ -1024,13 +1024,13 @@ function RepairAttachments()
 					}
 				}
 			}
-			if ($smcFunc['db_num_rows']($result) != 0)
+			if (weDB::num_rows($result) != 0)
 				$to_fix[] = 'missing_thumbnail_parent';
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('missing_thumbnail_parent', $to_fix))
-				$smcFunc['db_query']('', '
+				weDB::query('
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})
 						AND attachment_type = {int:attachment_type}',
@@ -1051,7 +1051,7 @@ function RepairAttachments()
 	// Find parents which think they have thumbnails, but actually, don't.
 	if ($_GET['step'] <= 1)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT MAX(id_attach)
 			FROM {db_prefix}attachments
 			WHERE id_thumb != {int:no_thumb}',
@@ -1059,14 +1059,14 @@ function RepairAttachments()
 				'no_thumb' => 0,
 			)
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		list ($thumbnails) = weDB::fetch_row($result);
+		weDB::free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
 			$to_update = array();
 
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT a.id_attach
 				FROM {db_prefix}attachments AS a
 					LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)
@@ -1078,18 +1078,18 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 			{
 				$to_update[] = $row['id_attach'];
 				$context['repair_errors']['parent_missing_thumbnail']++;
 			}
-			if ($smcFunc['db_num_rows']($result) != 0)
+			if (weDB::num_rows($result) != 0)
 				$to_fix[] = 'parent_missing_thumbnail';
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_update) && in_array('parent_missing_thumbnail', $to_fix))
-				$smcFunc['db_query']('', '
+				weDB::query('
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:no_thumb}
 					WHERE id_attach IN ({array_int:to_update})',
@@ -1110,21 +1110,21 @@ function RepairAttachments()
 	// This may take forever I'm afraid, but life sucks... recount EVERY attachments!
 	if ($_GET['step'] <= 2)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT MAX(id_attach)
 			FROM {db_prefix}attachments',
 			array(
 			)
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		list ($thumbnails) = weDB::fetch_row($result);
+		weDB::free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 250)
 		{
 			$to_remove = array();
 			$errors_found = array();
 
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT id_attach, id_folder, filename, file_hash, size, attachment_type
 				FROM {db_prefix}attachments
 				WHERE id_attach BETWEEN {int:substep} AND {int:substep} + 249',
@@ -1132,7 +1132,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 			{
 				// Get the filename.
 				if ($row['attachment_type'] == 1)
@@ -1161,7 +1161,7 @@ function RepairAttachments()
 
 								// Are we going to fix this now?
 								if ($fix_errors && in_array('wrong_folder', $to_fix))
-									$smcFunc['db_query']('', '
+									weDB::query('
 										UPDATE {db_prefix}attachments
 										SET id_folder = {int:new_folder}
 										WHERE id_attach = {int:id_attach}',
@@ -1199,7 +1199,7 @@ function RepairAttachments()
 					// Fix it here?
 					if ($fix_errors && in_array('file_wrong_size', $to_fix))
 					{
-						$smcFunc['db_query']('', '
+						weDB::query('
 							UPDATE {db_prefix}attachments
 							SET size = {int:filesize}
 							WHERE id_attach = {int:id_attach}',
@@ -1220,19 +1220,19 @@ function RepairAttachments()
 				$to_fix[] = 'file_wrong_size';
 			if (in_array('wrong_folder', $errors_found))
 				$to_fix[] = 'wrong_folder';
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove))
 			{
-				$smcFunc['db_query']('', '
+				weDB::query('
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})',
 					array(
 						'to_remove' => $to_remove,
 					)
 				);
-				$smcFunc['db_query']('', '
+				weDB::query('
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:no_thumb}
 					WHERE id_thumb IN ({array_int:to_remove})',
@@ -1254,20 +1254,20 @@ function RepairAttachments()
 	// Get avatars with no members associated with them.
 	if ($_GET['step'] <= 3)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT MAX(id_attach)
 			FROM {db_prefix}attachments',
 			array(
 			)
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		list ($thumbnails) = weDB::fetch_row($result);
+		weDB::free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
 			$to_remove = array();
 
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT a.id_attach, a.id_folder, a.filename, a.file_hash, a.attachment_type
 				FROM {db_prefix}attachments AS a
 					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)
@@ -1281,7 +1281,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['avatar_no_member']++;
@@ -1296,13 +1296,13 @@ function RepairAttachments()
 					@unlink($filename);
 				}
 			}
-			if ($smcFunc['db_num_rows']($result) != 0)
+			if (weDB::num_rows($result) != 0)
 				$to_fix[] = 'avatar_no_member';
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('avatar_no_member', $to_fix))
-				$smcFunc['db_query']('', '
+				weDB::query('
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})
 						AND id_member != {int:no_member}
@@ -1325,20 +1325,20 @@ function RepairAttachments()
 	// What about attachments, who are missing a message :'(
 	if ($_GET['step'] <= 4)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT MAX(id_attach)
 			FROM {db_prefix}attachments',
 			array(
 			)
 		);
-		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		list ($thumbnails) = weDB::fetch_row($result);
+		weDB::free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
 			$to_remove = array();
 
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT a.id_attach, a.id_folder, a.filename, a.file_hash
 				FROM {db_prefix}attachments AS a
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -1352,7 +1352,7 @@ function RepairAttachments()
 					'substep' => $_GET['substep'],
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 			{
 				$to_remove[] = $row['id_attach'];
 				$context['repair_errors']['attachment_no_msg']++;
@@ -1364,13 +1364,13 @@ function RepairAttachments()
 					@unlink($filename);
 				}
 			}
-			if ($smcFunc['db_num_rows']($result) != 0)
+			if (weDB::num_rows($result) != 0)
 				$to_fix[] = 'attachment_no_msg';
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('attachment_no_msg', $to_fix))
-				$smcFunc['db_query']('', '
+				weDB::query('
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})
 						AND id_member = {int:no_member}
@@ -1455,7 +1455,7 @@ function ApproveAttach()
 	{
 		$id_msg = (int) $_GET['mid'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_attach
 			FROM {db_prefix}attachments
 			WHERE id_msg = {int:id_msg}
@@ -1467,9 +1467,9 @@ function ApproveAttach()
 				'attachment_type' => 0,
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$attachments[] = $row['id_attach'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 	elseif (!empty($_GET['aid']))
 		$attachments[] = (int) $_GET['aid'];
@@ -1481,7 +1481,7 @@ function ApproveAttach()
 	$allowed_boards = boardsAllowedTo('approve_posts');
 
 	// Validate the attachments exist and are the right approval state.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT a.id_attach, m.id_board, m.id_msg, m.id_topic
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -1495,7 +1495,7 @@ function ApproveAttach()
 		)
 	);
 	$attachments = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// We can only add it if we can approve in this board!
 		if ($allowed_boards = array(0) || in_array($row['id_board'], $allowed_boards))
@@ -1506,7 +1506,7 @@ function ApproveAttach()
 			$redirect = 'topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (empty($attachments))
 		fatal_lang_error('no_access', false);
@@ -1530,7 +1530,7 @@ function ApproveAttachments($attachments)
 		return 0;
 
 	// For safety, check for thumbnails...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			a.id_attach, a.id_member, IFNULL(thumb.id_attach, 0) AS id_thumb
 		FROM {db_prefix}attachments AS a
@@ -1543,7 +1543,7 @@ function ApproveAttachments($attachments)
 		)
 	);
 	$attachments = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Update the thumbnail too...
 		if (!empty($row['id_thumb']))
@@ -1551,10 +1551,10 @@ function ApproveAttachments($attachments)
 
 		$attachments[] = $row['id_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Approving an attachment is not hard - it's easy.
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}attachments
 		SET approved = {int:is_approved}
 		WHERE id_attach IN ({array_int:attachments})',
@@ -1565,7 +1565,7 @@ function ApproveAttachments($attachments)
 	);
 
 	// Remove from the approval queue.
-	$smcFunc['db_query']('', '
+	weDB::query('
 		DELETE FROM {db_prefix}approval_queue
 		WHERE id_attach IN ({array_int:attachments})',
 		array(
@@ -1593,7 +1593,7 @@ function ManageAttachmentPaths()
 			if (empty($path))
 			{
 				// Let's not try to delete a path with files in it.
-				$request = $smcFunc['db_query']('', '
+				$request = weDB::query('
 					SELECT COUNT(id_attach) AS num_attach
 					FROM {db_prefix}attachments
 					WHERE id_folder = {int:id_folder}',
@@ -1602,8 +1602,8 @@ function ManageAttachmentPaths()
 					)
 				);
 
-				list ($num_attach) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				list ($num_attach) = weDB::fetch_row($request);
+				weDB::free_result($request);
 
 				// It's safe to delete.
 				if ($num_attach == 0)
@@ -1625,7 +1625,7 @@ function ManageAttachmentPaths()
 			foreach ($new_dirs as $id => $dir)
 			{
 				if ($id != 1)
-					$smcFunc['db_query']('', '
+					weDB::query('
 						UPDATE {db_prefix}attachments
 						SET id_folder = {int:default_folder}
 						WHERE id_folder = {int:current_folder}',
@@ -1749,7 +1749,7 @@ function list_getAttachDirs()
 	if (!is_array($modSettings['attachmentUploadDir']))
 		$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_folder, COUNT(id_attach) AS num_attach
 		FROM {db_prefix}attachments' . (empty($modSettings['custom_avatar_enabled']) ? '' : '
 		WHERE attachment_type != {int:type_avatar}') . '
@@ -1760,9 +1760,9 @@ function list_getAttachDirs()
 	);
 
 	$expected_files = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$expected_files[$row['id_folder']] = $row['num_attach'];
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	$attachdirs = array();
 	foreach ($modSettings['attachmentUploadDir'] as $id => $dir)

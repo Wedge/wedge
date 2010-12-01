@@ -37,7 +37,7 @@ function createMenu($menuData, $menuOptions = array())
 	if (isset($_GET['togglebar']) && !$user_info['is_guest'])
 	{
 		// Save the new dropdown menu state.
-		$smcFunc['db_insert']('replace',
+		weDB::insert('replace',
 			'{db_prefix}themes',
 			array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 			array(

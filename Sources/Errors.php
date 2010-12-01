@@ -101,7 +101,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}log_errors',
 			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'string-16', 'url' => 'string-65534', 'message' => 'string-65534', 'session' => 'string', 'error_type' => 'string', 'file' => 'string-255', 'line' => 'int'),
 			$error_info,
@@ -380,7 +380,7 @@ function show_db_error($loadavg = false)
 				updateLastDatabaseError();
 
 			// Language files aren't loaded yet :(.
-			$db_error = @$smcFunc['db_error']($db_connection);
+			$db_error = @weDB::error($db_connection);
 			@mail($webmaster_email, $mbname . ': SMF Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\nMySQL reported:\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that SMF could not connect to the database, contact your host if this continues.');
 		}
 	}
@@ -447,7 +447,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
 	// First, we have to get the online log, because we need to break apart the serialized string.
-	$query = $smcFunc['db_query']('', '
+	$query = weDB::query('
 		SELECT url
 		FROM {db_prefix}log_online
 		WHERE session = {string:session}',
@@ -455,9 +455,9 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 			'session' => $session_id,
 		)
 	);
-	if ($smcFunc['db_num_rows']($query) != 0)
+	if (weDB::num_rows($query) != 0)
 	{
-		list($url) = $smcFunc['db_fetch_row']($query);
+		list($url) = weDB::fetch_row($query);
 		$url = unserialize($url);
 
 		if ($is_lang)
@@ -471,7 +471,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 			);
 
 		$url = serialize($url);
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_online
 			SET url = {string:url}
 			WHERE session = {string:session}',
@@ -481,7 +481,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 			)
 		);
 	}
-	$smcFunc['db_free_result']($query);
+	weDB::free_result($query);
 }
 
 ?>

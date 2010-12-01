@@ -175,7 +175,7 @@ function cleanRequest()
 		$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
 		$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
 
-		$query = $smcFunc['db_query']('', '
+		$query = weDB::query('
 			SELECT id_board, url
 			FROM {db_prefix}boards AS b
 			WHERE urllen >= {int:len}
@@ -186,11 +186,11 @@ function cleanRequest()
 				'len' => ($len = strpos($pretty_request, '/')) !== false ? $len : strlen($pretty_request),
 			)
 		);
-		if ($smcFunc['db_num_rows']($query) == 0)
+		if (weDB::num_rows($query) == 0)
 			$_GET['board'] = $board = 0;
 		else
 		{
-			$pretty_board = $smcFunc['db_fetch_assoc']($query);
+			$pretty_board = weDB::fetch_assoc($query);
 
 			// The happy place where boards are identified.
 			$_GET['board'] = $board = $pretty_board['id_board'];
@@ -246,7 +246,7 @@ function cleanRequest()
 			// Plug-ins may want to play with their own URL system.
 			call_hook('determine_location', array($pretty_board));
 		}
-		$smcFunc['db_free_result']($query);
+		weDB::free_result($query);
 	}
 
 	// If magic quotes are on, we have some work to do...
@@ -332,7 +332,7 @@ function cleanRequest()
 			$_REQUEST['topic'] = str_replace(array('&#039;', '&#39;', '\\'), array(chr(18), chr(18), ''), $_REQUEST['topic']);
 			$_REQUEST['topic'] = preg_replace('`([\x80-\xff])`e', 'sprintf(\'%%%x\', ord(\'$1\'))', $_REQUEST['topic']);
 			// Are we feeling lucky?
-			$query = $smcFunc['db_query']('', '
+			$query = weDB::query('
 				SELECT p.id_topic, t.id_board
 				FROM {db_prefix}pretty_topic_urls AS p
 				INNER JOIN {db_prefix}topics AS t ON p.id_topic = t.id_topic
@@ -344,11 +344,11 @@ function cleanRequest()
 					'url' => $_SERVER['HTTP_HOST']
 				));
 			// No? No topic?!
-			if ($smcFunc['db_num_rows']($query) == 0)
+			if (weDB::num_rows($query) == 0)
 				$topic = 0;
 			else
-				list ($topic, $board) = $smcFunc['db_fetch_row']($query);
-			$smcFunc['db_free_result']($query);
+				list ($topic, $board) = weDB::fetch_row($query);
+			weDB::free_result($query);
 
 			// That query should be counted separately
 			$context['pretty']['db_count']++;
@@ -440,7 +440,7 @@ function cleanRequest()
 		$_SERVER['REQUEST_URL'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 	// And make sure HTTP_USER_AGENT is set.
-	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
+	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars(weDB::unescape_string($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
 
 	// Some final checking.
 	if (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['BAN_CHECK_IP']) === 0)
@@ -462,14 +462,14 @@ function escapestring__recursive($var)
 	global $smcFunc;
 
 	if (!is_array($var))
-		return $smcFunc['db_escape_string']($var);
+		return weDB::escape_string($var);
 
 	// Reindex the array with slashes.
 	$new_var = array();
 
 	// Add slashes to every element, even the indexes!
 	foreach ($var as $k => $v)
-		$new_var[$smcFunc['db_escape_string']($k)] = escapestring__recursive($v);
+		$new_var[weDB::escape_string($k)] = escapestring__recursive($v);
 
 	return $new_var;
 }
@@ -534,14 +534,14 @@ function unescapestring__recursive($var)
 	global $smcFunc;
 
 	if (!is_array($var))
-		return $smcFunc['db_unescape_string']($var);
+		return weDB::unescape_string($var);
 
 	// Reindex the array without slashes, this time.
 	$new_var = array();
 
 	// Strip the slashes from every element.
 	foreach ($var as $k => $v)
-		$new_var[$smcFunc['db_unescape_string']($k)] = unescapestring__recursive($v);
+		$new_var[weDB::unescape_string($k)] = unescapestring__recursive($v);
 
 	return $new_var;
 }
@@ -784,7 +784,7 @@ function ob_sessrewrite($buffer)
 
 			if ($use_cache)
 			{
-				$query = $smcFunc['db_query']('', '
+				$query = weDB::query('
 					SELECT url_id, replacement
 					FROM {db_prefix}pretty_urls_cache
 					WHERE url_id IN ({array_string:urls})
@@ -793,12 +793,12 @@ function ob_sessrewrite($buffer)
 						'urls' => $urls_query
 					)
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($query))
+				while ($row = weDB::fetch_assoc($query))
 				{
 					$cached_urls[$row['url_id']] = $row['replacement'];
 					unset($uncached_urls[$row['url_id']]);
 				}
-				$smcFunc['db_free_result']($query);
+				weDB::free_result($query);
 			}
 
 			// If there are any uncached URLs, process them

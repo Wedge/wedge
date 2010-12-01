@@ -139,7 +139,7 @@ function Post2()
 	// If this isn't a new topic load the topic info that we need.
 	if (!empty($topic))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT locked, is_sticky, id_poll, approved, id_first_msg, id_last_msg, id_member_started, id_board
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}
@@ -148,8 +148,8 @@ function Post2()
 				'current_topic' => $topic,
 			)
 		);
-		$topic_info = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$topic_info = weDB::fetch_assoc($request);
+		weDB::free_result($request);
 
 		// Though the topic should be there, it might have vanished.
 		if (!is_array($topic_info))
@@ -260,7 +260,7 @@ function Post2()
 	{
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member, poster_name, poster_email, poster_time, approved
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
@@ -269,10 +269,10 @@ function Post2()
 				'id_msg' => $_REQUEST['msg'],
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if (weDB::num_rows($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$row = weDB::fetch_assoc($request);
+		weDB::free_result($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
 			fatal_lang_error('topic_locked', false);
@@ -567,7 +567,7 @@ function Post2()
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
@@ -577,8 +577,8 @@ function Post2()
 					'attachment_type' => 0,
 				)
 			);
-			list ($quantity, $total_size) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($quantity, $total_size) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 		else
 		{
@@ -692,7 +692,7 @@ function Post2()
 	if (isset($_REQUEST['poll']))
 	{
 		// Create the poll.
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}polls',
 			array(
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
@@ -704,7 +704,7 @@ function Post2()
 			),
 			array('id_poll')
 		);
-		$id_poll = $smcFunc['db_insert_id']();
+		$id_poll = weDB::insert_id();
 
 		// Create each answer choice.
 		$i = 0;
@@ -715,7 +715,7 @@ function Post2()
 			$i++;
 		}
 
-		$smcFunc['db_insert']('insert',
+		weDB::insert('insert',
 			'{db_prefix}poll_choices',
 			array('id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255'),
 			$pollOptions,
@@ -812,7 +812,7 @@ function Post2()
 		if (!allowedTo('calendar_edit_any'))
 		{
 			// Get the event's poster.
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_member
 				FROM {db_prefix}calendar
 				WHERE id_event = {int:id_event}',
@@ -820,8 +820,8 @@ function Post2()
 					'id_event' => $_REQUEST['eventid'],
 				)
 			);
-			$row2 = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$row2 = weDB::fetch_assoc($request);
+			weDB::free_result($request);
 
 			// Silly hacker, Trix are for kids. ...probably trademarked somewhere, this is FAIR USE! (parody...)
 			isAllowedTo('calendar_edit_' . ($row2['id_member'] == $user_info['id'] ? 'own' : 'any'));
@@ -829,7 +829,7 @@ function Post2()
 
 		// Delete it?
 		if (isset($_REQUEST['deleteevent']))
-			$smcFunc['db_query']('', '
+			weDB::query('
 				DELETE FROM {db_prefix}calendar
 				WHERE id_event = {int:id_event}',
 				array(
@@ -842,7 +842,7 @@ function Post2()
 			$span = !empty($modSettings['cal_allowspan']) && !empty($_REQUEST['span']) ? min((int) $modSettings['cal_maxspan'], (int) $_REQUEST['span'] - 1) : 0;
 			$start_time = mktime(0, 0, 0, (int) $_REQUEST['month'], (int) $_REQUEST['day'], (int) $_REQUEST['year']);
 
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}calendar
 				SET end_date = {date:end_date},
 					start_date = {date:start_date},
@@ -865,7 +865,7 @@ function Post2()
 	// Mark all the parents read, since you just posted and they will be unread.
 	if (!$user_info['is_guest'] && !empty($board_info['parent_boards']))
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_boards
 			SET id_msg = {int:id_msg}
 			WHERE id_member = {int:current_member}
@@ -881,7 +881,7 @@ function Post2()
 	// Turn notification on or off.  (note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && allowedTo('mark_any_notify'))
 	{
-		$smcFunc['db_insert']('ignore',
+		weDB::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int'),
 			array($user_info['id'], $topic, 0),
@@ -889,7 +889,7 @@ function Post2()
 		);
 	}
 	elseif (!$newTopic)
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}log_notify
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:current_topic}',
@@ -939,7 +939,7 @@ function Post2()
 	if (!empty($_REQUEST['goback']))
 	{
 		// Mark the board as read.... because it might get confusing otherwise.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_boards
 			SET id_msg = {int:maxMsgID}
 			WHERE id_member = {int:current_member}
@@ -1026,7 +1026,7 @@ function notifyMembersBoard(&$topicData)
 	$digest_insert = array();
 	foreach ($topicData as $id => $data)
 		$digest_insert[] = array($data['topic'], $data['msg'], 'topic', $user_info['id']);
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}log_digest',
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
@@ -1036,7 +1036,7 @@ function notifyMembersBoard(&$topicData)
 	);
 
 	// Find the members with notification on for these boards.
-	$members = $smcFunc['db_query']('', '
+	$members = weDB::query('
 		SELECT
 			mem.id_member, mem.email_address, mem.notify_regularity, mem.notify_send_body, mem.lngfile,
 			ln.sent, ln.id_board, mem.id_group, mem.additional_groups, b.member_groups,
@@ -1058,7 +1058,7 @@ function notifyMembersBoard(&$topicData)
 			'notify_regularity' => 2,
 		)
 	);
-	while ($rowmember = $smcFunc['db_fetch_assoc']($members))
+	while ($rowmember = weDB::fetch_assoc($members))
 	{
 		if ($rowmember['id_group'] != 1)
 		{
@@ -1117,10 +1117,10 @@ function notifyMembersBoard(&$topicData)
 			$sentOnceAlready = 1;
 		}
 	}
-	$smcFunc['db_free_result']($members);
+	weDB::free_result($members);
 
 	// Sent!
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}log_notify
 		SET sent = {int:is_sent}
 		WHERE id_board IN ({array_int:board_list})

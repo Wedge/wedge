@@ -244,7 +244,7 @@ class wedgeEditor
 
 				if (!empty($names))
 				{
-					$request = $smcFunc['db_query']('', '
+					$request = weDB::query('
 						SELECT code, filename
 						FROM {db_prefix}smileys
 						WHERE filename IN ({array_string:smiley_filenames})',
@@ -253,9 +253,9 @@ class wedgeEditor
 						)
 					);
 					$mappings = array();
-					while ($row = $smcFunc['db_fetch_assoc']($request))
+					while ($row = weDB::fetch_assoc($request))
 						$mappings[$row['filename']] = htmlspecialchars($row['code']);
-					$smcFunc['db_free_result']($request);
+					weDB::free_result($request);
 
 					foreach ($matches[1] as $k => $file)
 						if (isset($mappings[$file]))
@@ -1730,7 +1730,7 @@ class wedgeEditor
 		{
 			if (($temp = cache_get_data('posting_smileys', 480)) == null)
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = weDB::query('
 					SELECT code, filename, description, smiley_row, hidden
 					FROM {db_prefix}smileys
 					WHERE hidden IN (0, 2)
@@ -1738,14 +1738,14 @@ class wedgeEditor
 					array(
 					)
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = weDB::fetch_assoc($request))
 				{
 					$row['filename'] = htmlspecialchars($row['filename']);
 					$row['description'] = htmlspecialchars($row['description']);
 
 					$this->smileys[empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				weDB::free_result($request);
 
 				foreach ($this->smileys as $section => $smileyRows)
 				{

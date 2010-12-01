@@ -324,7 +324,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		$cur_insert_len = 0;
 
 		// Dump the data...
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}mail_queue',
 			array(
 				'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string-65534', 'subject' => 'string-255',
@@ -343,7 +343,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 	{
 		$nextSendTime = time() + 10;
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:nextSendTime}
 			WHERE variable = {string:mail_next_send}
@@ -370,7 +370,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		if ($this_insert_len + $cur_insert_len > 1000000)
 		{
 			// Flush out what we have so far.
-			$smcFunc['db_insert']('',
+			weDB::insert('',
 				'{db_prefix}mail_queue',
 				array(
 					'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string-65534', 'subject' => 'string-255',
@@ -448,7 +448,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	}
 	if (!empty($usernames))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member, member_name
 			FROM {db_prefix}members
 			WHERE member_name IN ({array_string:usernames})',
@@ -456,10 +456,10 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 				'usernames' => array_keys($usernames),
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			if (isset($usernames[$smcFunc['strtolower']($row['member_name'])]))
 				$usernames[$smcFunc['strtolower']($row['member_name'])] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.
 		foreach ($recipients as $rec_type => $rec)
@@ -488,7 +488,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	$all_to = array_merge($recipients['to'], $recipients['bcc']);
 
 	// Check no-one will want it deleted right away!
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			id_member, criteria, is_or
 		FROM {db_prefix}pm_rules
@@ -501,7 +501,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	);
 	$deletes = array();
 	// Check whether we have to apply anything...
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		$criteria = unserialize($row['criteria']);
 		// Note we don't check the buddy status, cause deletion from buddy = madness!
@@ -521,28 +521,28 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if ($delete)
 			$deletes[$row['id_member']] = 1;
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Load the membergrounp message limits.
 	//!!! Consider caching this?
 	static $message_limit_cache = array();
 	if (!allowedTo('moderate_forum') && empty($message_limit_cache))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_group, max_messages
 			FROM {db_prefix}membergroups',
 			array(
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$message_limit_cache[$row['id_group']] = $row['max_messages'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// Load the groups that are allowed to read PMs.
 	$allowed_groups = array();
 	$disallowed_groups = array();
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_group, add_deny
 		FROM {db_prefix}permissions
 		WHERE permission = {string:read_permission}',
@@ -551,7 +551,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		)
 	);
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		if (empty($row['add_deny']))
 			$disallowed_groups[] = $row['id_group'];
@@ -559,12 +559,12 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			$allowed_groups[] = $row['id_group'];
 	}
 
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (empty($modSettings['permission_enable_deny']))
 		$disallowed_groups = array();
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			member_name, real_name, id_member, email_address, lngfile,
 			pm_email_notify, instant_messages,' . (allowedTo('moderate_forum') ? ' 0' : '
@@ -587,7 +587,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		)
 	);
 	$notifications = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Don't do anything for members to be deleted!
 		if (isset($deletes[$row['id_member']]))
@@ -638,14 +638,14 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 		$log['sent'][$row['id_member']] = sprintf(isset($txt['pm_successfully_sent']) ? $txt['pm_successfully_sent'] : '', $row['real_name']);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Only 'send' the message if there are any recipients left.
 	if (empty($all_to))
 		return $log;
 
 	// Insert the message itself and then grab the last insert id.
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}personal_messages',
 		array(
 			'id_pm_head' => 'int', 'id_member_from' => 'int', 'deleted_by_sender' => 'int',
@@ -657,14 +657,14 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		),
 		array('id_pm')
 	);
-	$id_pm = $smcFunc['db_insert_id']();
+	$id_pm = weDB::insert_id();
 
 	// Add the recipients.
 	if (!empty($id_pm))
 	{
 		// If this is new we need to set it part of it's own conversation.
 		if (empty($pm_head))
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}personal_messages
 				SET id_pm_head = {int:id_pm_head}
 				WHERE id_pm = {int:id_pm_head}',
@@ -674,7 +674,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			);
 
 		// Some people think manually deleting personal_messages is fun... it's not. We protect against it though :)
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}pm_recipients
 			WHERE id_pm = {int:id_pm}',
 			array(
@@ -688,7 +688,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			$insertRows[] = array($id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1);
 		}
 
-		$smcFunc['db_insert']('insert',
+		weDB::insert('insert',
 			'{db_prefix}pm_recipients',
 			array(
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
@@ -966,7 +966,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$topics = array($topics);
 
 	// Get the subject and body...
-	$result = $smcFunc['db_query']('', '
+	$result = weDB::query('
 		SELECT mf.subject, ml.body, ml.id_member, t.id_last_msg, t.id_topic,
 			IFNULL(mem.real_name, ml.poster_name) AS poster_name
 		FROM {db_prefix}topics AS t
@@ -980,7 +980,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		)
 	);
 	$topicData = array();
-	while ($row = $smcFunc['db_fetch_assoc']($result))
+	while ($row = weDB::fetch_assoc($result))
 	{
 		// Clean it up.
 		censorText($row['subject']);
@@ -997,7 +997,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			'exclude' => '',
 		);
 	}
-	$smcFunc['db_free_result']($result);
+	weDB::free_result($result);
 
 	// Work out any exclusions...
 	foreach ($topics as $key => $id)
@@ -1017,7 +1017,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 	$digest_insert = array();
 	foreach ($topicData as $id => $data)
 		$digest_insert[] = array($data['topic'], $data['last_id'], $type, (int) $data['exclude']);
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}log_digest',
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
@@ -1027,7 +1027,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 	);
 
 	// Find the members with notification on for this topic.
-	$members = $smcFunc['db_query']('', '
+	$members = weDB::query('
 		SELECT
 			mem.id_member, mem.email_address, mem.notify_regularity, mem.notify_types, mem.notify_send_body, mem.lngfile,
 			ln.sent, mem.id_group, mem.additional_groups, b.member_groups, mem.id_post_group, t.id_member_started,
@@ -1053,7 +1053,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		)
 	);
 	$sent = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($members))
+	while ($row = weDB::fetch_assoc($members))
 	{
 		// Don't do the excluded...
 		if ($topicData[$row['id_topic']]['exclude'] == $row['id_member'])
@@ -1105,14 +1105,14 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			$sent++;
 		}
 	}
-	$smcFunc['db_free_result']($members);
+	weDB::free_result($members);
 
 	if (isset($current_language) && $current_language != $user_info['language'])
 		loadLanguage('Post');
 
 	// Sent!
 	if ($type == 'reply' && !empty($sent))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_notify
 			SET sent = {int:is_sent}
 			WHERE id_topic IN ({array_int:topic_list})
@@ -1129,7 +1129,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 	{
 		foreach ($topicData as $id => $data)
 			if ($data['exclude'])
-				$smcFunc['db_query']('', '
+				weDB::query('
 					UPDATE {db_prefix}log_notify
 					SET sent = {int:not_sent}
 					WHERE id_topic = {int:id_topic}
@@ -1169,7 +1169,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		$topicOptions['is_approved'] = true;
 	elseif (!empty($topicOptions['id']) && !isset($topicOptions['is_approved']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT approved
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:id_topic}
@@ -1178,8 +1178,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				'id_topic' => $topicOptions['id'],
 			)
 		);
-		list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($topicOptions['is_approved']) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 
 	// If nothing was filled in as name/e-mail address, try the member table.
@@ -1193,7 +1193,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 		elseif ($posterOptions['id'] != $user_info['id'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT member_name, email_address
 				FROM {db_prefix}members
 				WHERE id_member = {int:id_member}
@@ -1203,7 +1203,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				)
 			);
 			// Couldn't find the current poster?
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if (weDB::num_rows($request) == 0)
 			{
 				trigger_error('createPost(): Invalid member id ' . $posterOptions['id'], E_USER_NOTICE);
 				$posterOptions['id'] = 0;
@@ -1211,8 +1211,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				$posterOptions['email'] = '';
 			}
 			else
-				list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+				list ($posterOptions['name'], $posterOptions['email']) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 		else
 		{
@@ -1227,7 +1227,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$new_topic = empty($topicOptions['id']);
 
 	// Insert the post.
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}messages',
 		array(
 			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
@@ -1241,7 +1241,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		),
 		array('id_msg')
 	);
-	$msgOptions['id'] = $smcFunc['db_insert_id']();
+	$msgOptions['id'] = weDB::insert_id();
 
 	// Something went wrong creating the message...
 	if (empty($msgOptions['id']))
@@ -1249,7 +1249,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	// Fix the attachments.
 	if (!empty($msgOptions['attachments']))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}attachments
 			SET id_msg = {int:id_msg}
 			WHERE id_attach IN ({array_int:attachment_list})',
@@ -1262,7 +1262,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	// Insert a new topic (if the topicID was left empty.)
 	if ($new_topic)
 	{
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}topics',
 			array(
 				'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
@@ -1276,13 +1276,13 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			),
 			array('id_topic')
 		);
-		$topicOptions['id'] = $smcFunc['db_insert_id']();
+		$topicOptions['id'] = weDB::insert_id();
 
 		// The topic couldn't be created for some reason.
 		if (empty($topicOptions['id']))
 		{
 			// We should delete the post that did work, though...
-			$smcFunc['db_query']('', '
+			weDB::query('
 				DELETE FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}',
 				array(
@@ -1294,7 +1294,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 
 		// Fix the message with the topic.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}messages
 			SET id_topic = {int:id_topic}
 			WHERE id_msg = {int:id_msg}',
@@ -1319,7 +1319,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		$countChange = $msgOptions['approved'] ? 'num_replies = num_replies + 1' : 'unapproved_posts = unapproved_posts + 1';
 
 		// Update the number of replies and the lock/sticky status.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}topics
 			SET
 				' . ($msgOptions['approved'] ? 'id_member_updated = {int:poster_id}, id_last_msg = {int:id_msg},' : '') . '
@@ -1352,7 +1352,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	// Creating is modifying...in a way.
 	//!!! Why not set id_msg_modified on the insert?
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}messages
 		SET id_msg_modified = {int:id_msg}
 		WHERE id_msg = {int:id_msg}',
@@ -1363,7 +1363,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	// Increase the number of posts and topics on the board.
 	if ($msgOptions['approved'])
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}boards
 			SET num_posts = num_posts + 1' . ($new_topic ? ', num_topics = num_topics + 1' : '') . '
 			WHERE id_board = {int:id_board}',
@@ -1373,7 +1373,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		);
 	else
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}boards
 			SET unapproved_posts = unapproved_posts + 1' . ($new_topic ? ', unapproved_topics = unapproved_topics + 1' : '') . '
 			WHERE id_board = {int:id_board}',
@@ -1383,7 +1383,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		);
 
 		// Add to the approval queue too.
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}approval_queue',
 			array(
 				'id_msg' => 'int',
@@ -1401,7 +1401,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		// Since it's likely they *read* it before replying, let's try an UPDATE first.
 		if (!$new_topic)
 		{
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}log_topics
 				SET id_msg = {int:id_msg}
 				WHERE id_member = {int:current_member}
@@ -1413,12 +1413,12 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				)
 			);
 
-			$flag = $smcFunc['db_affected_rows']() != 0;
+			$flag = weDB::affected_rows() != 0;
 		}
 
 		if (empty($flag))
 		{
-			$smcFunc['db_insert']('ignore',
+			weDB::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
 				array($topicOptions['id'], $posterOptions['id'], $msgOptions['id']),
@@ -1437,7 +1437,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$inserts[] = array($word, $msgOptions['id']);
 
 		if (!empty($inserts))
-			$smcFunc['db_insert']('ignore',
+			weDB::insert('ignore',
 				'{db_prefix}log_search_words',
 				array('id_word' => 'int', 'id_msg' => 'int'),
 				$inserts,
@@ -1607,7 +1607,7 @@ function createAttachment(&$attachmentOptions)
 			$attachmentOptions['errors'][] = 'bad_filename';
 
 		// Check if there's another file with that name...
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_attach
 			FROM {db_prefix}attachments
 			WHERE filename = {string:filename}
@@ -1616,9 +1616,9 @@ function createAttachment(&$attachmentOptions)
 				'filename' => strtolower($attachmentOptions['name']),
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if (weDB::num_rows($request) > 0)
 			$attachmentOptions['errors'][] = 'taken_filename';
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	if (!empty($attachmentOptions['errors']))
@@ -1635,7 +1635,7 @@ function createAttachment(&$attachmentOptions)
 			$attachmentOptions['fileext'] = '';
 	}
 
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}attachments',
 		array(
 			'id_folder' => 'int', 'id_msg' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
@@ -1649,14 +1649,14 @@ function createAttachment(&$attachmentOptions)
 		),
 		array('id_attach')
 	);
-	$attachmentOptions['id'] = $smcFunc['db_insert_id']();
+	$attachmentOptions['id'] = weDB::insert_id();
 
 	if (empty($attachmentOptions['id']))
 		return false;
 
 	// If it's not approved add to the approval queue.
 	if (!$attachmentOptions['approved'])
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}approval_queue',
 			array(
 				'id_attach' => 'int', 'id_msg' => 'int',
@@ -1693,7 +1693,7 @@ function createAttachment(&$attachmentOptions)
 		}
 
 		if (!empty($attachmentOptions['width']) && !empty($attachmentOptions['height']))
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}attachments
 				SET
 					width = {int:width},
@@ -1740,7 +1740,7 @@ function createAttachment(&$attachmentOptions)
 				if (isset($validImageTypes[$size[2]]))
 				{
 					$attachmentOptions['mime_type'] = 'image/' . $validImageTypes[$size[2]];
-					$smcFunc['db_query']('', '
+					weDB::query('
 						UPDATE {db_prefix}attachments
 						SET
 							mime_type = {string:mime_type}
@@ -1780,7 +1780,7 @@ function createAttachment(&$attachmentOptions)
 			$thumb_file_hash = getAttachmentFilename($thumb_filename, false, null, true);
 
 			// To the database we go!
-			$smcFunc['db_insert']('',
+			weDB::insert('',
 				'{db_prefix}attachments',
 				array(
 					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
@@ -1792,11 +1792,11 @@ function createAttachment(&$attachmentOptions)
 				),
 				array('id_attach')
 			);
-			$attachmentOptions['thumb'] = $smcFunc['db_insert_id']();
+			$attachmentOptions['thumb'] = weDB::insert_id();
 
 			if (!empty($attachmentOptions['thumb']))
 			{
-				$smcFunc['db_query']('', '
+				weDB::query('
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:id_thumb}
 					WHERE id_attach = {int:id_attach}',
@@ -1839,7 +1839,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 		if (!empty($modSettings['search_custom_index_config']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT body
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}',
@@ -1847,8 +1847,8 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 					'id_msg' => $msgOptions['id'],
 				)
 			);
-			list ($old_body) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($old_body) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 	}
 	if (!empty($msgOptions['modify_time']))
@@ -1875,7 +1875,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	// Lock and or sticky the post.
 	if ($topicOptions['sticky_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}topics
 			SET
 				is_sticky = {raw:is_sticky},
@@ -1896,7 +1896,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		return true;
 
 	// Change the post.
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}messages
 		SET ' . implode(', ', $messages_columns) . '
 		WHERE id_msg = {int:id_msg}',
@@ -1907,7 +1907,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	if (!empty($topicOptions['mark_as_read']) && !$user_info['is_guest'])
 	{
 		// Since it's likely they *read* it before editing, let's try an UPDATE first.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_topics
 			SET id_msg = {int:id_msg}
 			WHERE id_member = {int:current_member}
@@ -1919,11 +1919,11 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			)
 		);
 
-		$flag = $smcFunc['db_affected_rows']() != 0;
+		$flag = weDB::affected_rows() != 0;
 
 		if (empty($flag))
 		{
-			$smcFunc['db_insert']('ignore',
+			weDB::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
 				array($topicOptions['id'], $user_info['id'], $modSettings['maxMsgID']),
@@ -1948,7 +1948,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		if (!empty($removed_words))
 		{
 			$removed_words = array_merge($removed_words, $inserted_words);
-			$smcFunc['db_query']('', '
+			weDB::query('
 				DELETE FROM {db_prefix}log_search_words
 				WHERE id_msg = {int:id_msg}
 					AND id_word IN ({array_int:removed_words})',
@@ -1965,7 +1965,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$inserts = array();
 			foreach ($inserted_words as $word)
 				$inserts[] = array($word, $msgOptions['id']);
-			$smcFunc['db_insert']('insert',
+			weDB::insert('insert',
 				'{db_prefix}log_search_words',
 				array('id_word' => 'string', 'id_msg' => 'int'),
 				$inserts,
@@ -1977,7 +1977,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	if (isset($msgOptions['subject']))
 	{
 		// Only update the subject if this was the first message in the topic.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE id_first_msg = {int:id_first_msg}
@@ -1986,9 +1986,9 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				'id_first_msg' => $msgOptions['id'],
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) == 1)
+		if (weDB::num_rows($request) == 1)
 			updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// Finally, if we are setting the approved state we need to do much more work :(
@@ -2010,7 +2010,7 @@ function approvePosts($msgs, $approve = true)
 		return false;
 
 	// May as well start at the beginning, working out *what* we need to change.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT m.id_msg, m.approved, m.id_topic, m.id_board, t.id_first_msg, t.id_last_msg,
 			m.body, m.subject, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.id_member,
 			t.approved AS topic_approved, b.count_posts
@@ -2032,7 +2032,7 @@ function approvePosts($msgs, $approve = true)
 	$notification_topics = array();
 	$notification_posts = array();
 	$member_post_changes = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Easy...
 		$msgs[] = $row['id_msg'];
@@ -2104,13 +2104,13 @@ function approvePosts($msgs, $approve = true)
 		if ($row['id_member'] && empty($row['count_posts']))
 			$member_post_changes[$row['id_member']] = isset($member_post_changes[$row['id_member']]) ? $member_post_changes[$row['id_member']] + 1 : 1;
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (empty($msgs))
 		return;
 
 	// Now we have the differences make the changes, first the easy one.
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}messages
 		SET approved = {int:approved_state}
 		WHERE id_msg IN ({array_int:message_list})',
@@ -2123,7 +2123,7 @@ function approvePosts($msgs, $approve = true)
 	// If we were unapproving find the last msg in the topics...
 	if (!$approve)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_topic, MAX(id_msg) AS id_last_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})
@@ -2134,14 +2134,14 @@ function approvePosts($msgs, $approve = true)
 				'approved' => 1,
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$topic_changes[$row['id_topic']]['id_last_msg'] = $row['id_last_msg'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// ... next the topics...
 	foreach ($topic_changes as $id => $changes)
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}topics
 			SET approved = {int:approved}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_replies = num_replies + {int:num_replies}, id_last_msg = {int:id_last_msg}
@@ -2157,7 +2157,7 @@ function approvePosts($msgs, $approve = true)
 
 	// ... finally the boards...
 	foreach ($board_changes as $id => $changes)
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}boards
 			SET num_posts = num_posts + {int:num_posts}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_topics = num_topics + {int:num_topics}, unapproved_topics = unapproved_topics + {int:unapproved_topics}
@@ -2182,7 +2182,7 @@ function approvePosts($msgs, $approve = true)
 		if (!empty($notification_posts))
 			sendApprovalNotifications($notification_posts);
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}approval_queue
 			WHERE id_msg IN ({array_int:message_list})
 				AND id_attach = {int:id_attach}',
@@ -2199,7 +2199,7 @@ function approvePosts($msgs, $approve = true)
 		foreach ($msgs as $msg)
 			$msgInserts[] = array($msg);
 
-		$smcFunc['db_insert']('ignore',
+		weDB::insert('ignore',
 			'{db_prefix}approval_queue',
 			array('id_msg' => 'int'),
 			$msgInserts,
@@ -2232,7 +2232,7 @@ function approveTopics($topics, $approve = true)
 	$approve_type = $approve ? 0 : 1;
 
 	// Just get the messages to be approved and pass through...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})
@@ -2243,9 +2243,9 @@ function approveTopics($topics, $approve = true)
 		)
 	);
 	$msgs = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$msgs[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return approvePosts($msgs, $approve);
 }
@@ -2275,7 +2275,7 @@ function sendApprovalNotifications(&$topicData)
 	}
 
 	// These need to go into the digest too...
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}log_digest',
 		array(
 			'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
@@ -2285,7 +2285,7 @@ function sendApprovalNotifications(&$topicData)
 	);
 
 	// Find everyone who needs to know about this.
-	$members = $smcFunc['db_query']('', '
+	$members = weDB::query('
 		SELECT
 			mem.id_member, mem.email_address, mem.notify_regularity, mem.notify_types, mem.notify_send_body, mem.lngfile,
 			ln.sent, mem.id_group, mem.additional_groups, b.member_groups, mem.id_post_group, t.id_member_started,
@@ -2308,7 +2308,7 @@ function sendApprovalNotifications(&$topicData)
 		)
 	);
 	$sent = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($members))
+	while ($row = weDB::fetch_assoc($members))
 	{
 		if ($row['id_group'] != 1)
 		{
@@ -2357,14 +2357,14 @@ function sendApprovalNotifications(&$topicData)
 			$sent_this_time = true;
 		}
 	}
-	$smcFunc['db_free_result']($members);
+	weDB::free_result($members);
 
 	if (isset($current_language) && $current_language != $user_info['language'])
 		loadLanguage('Post');
 
 	// Sent!
 	if (!empty($sent))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_notify
 			SET sent = {int:is_sent}
 			WHERE id_topic IN ({array_int:topic_list})
@@ -2393,7 +2393,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	if (!$id_msg)
 	{
 		// Find the latest message on this board (highest id_msg.)
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_board, MAX(id_last_msg) AS id_msg
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
@@ -2405,9 +2405,9 @@ function updateLastMessages($setboards, $id_msg = 0)
 			)
 		);
 		$lastMsg = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$lastMsg[$row['id_board']] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 	else
 	{
@@ -2478,7 +2478,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	// Now commit the changes!
 	foreach ($parent_updates as $id_msg => $boards)
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}boards
 			SET id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})
@@ -2491,7 +2491,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	}
 	foreach ($board_updates as $board_data)
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}boards
 			SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})',
@@ -2516,7 +2516,7 @@ function adminNotify($type, $memberID, $member_name = null)
 	if ($member_name == null)
 	{
 		// Get the new user's name....
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT real_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
@@ -2525,15 +2525,15 @@ function adminNotify($type, $memberID, $member_name = null)
 				'id_member' => $memberID,
 			)
 		);
-		list ($member_name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($member_name) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 
 	$toNotify = array();
 	$groups = array();
 
 	// All membergroups who can approve members.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_group
 		FROM {db_prefix}permissions
 		WHERE permission = {string:moderate_forum}
@@ -2545,16 +2545,16 @@ function adminNotify($type, $memberID, $member_name = null)
 			'moderate_forum' => 'moderate_forum',
 		)
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$groups[] = $row['id_group'];
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Add administrators too...
 	$groups[] = 1;
 	$groups = array_unique($groups);
 
 	// Get a list of all members who have ability to approve accounts - these are the people who we inform.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, lngfile, email_address
 		FROM {db_prefix}members
 		WHERE (id_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:group_array_implode}, additional_groups) != 0)
@@ -2566,7 +2566,7 @@ function adminNotify($type, $memberID, $member_name = null)
 			'group_array_implode' => implode(', additional_groups) != 0 OR FIND_IN_SET(', $groups),
 		)
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		$replacements = array(
 			'USERNAME' => $member_name,
@@ -2586,7 +2586,7 @@ function adminNotify($type, $memberID, $member_name = null)
 		// And do the actual sending...
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (isset($current_language) && $current_language != $user_info['language'])
 		loadLanguage('Login');

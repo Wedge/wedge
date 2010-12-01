@@ -97,7 +97,7 @@ function ViewMembers()
 	loadTemplate('ManageMembers');
 
 	// Get counts on every type of activation - for sections and filtering alike.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*) AS total_members, is_activated
 		FROM {db_prefix}members
 		WHERE is_activated != {int:is_activated}
@@ -109,9 +109,9 @@ function ViewMembers()
 	$context['activation_numbers'] = array();
 	$context['awaiting_activation'] = 0;
 	$context['awaiting_approval'] = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$context['activation_numbers'][$row['is_activated']] = $row['total_members'];
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	foreach ($context['activation_numbers'] as $activation_type => $total_members)
 	{
@@ -225,7 +225,7 @@ function ViewMemberlist()
 		);
 		$context['postgroups'] = array();
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_group, group_name, min_posts
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}
@@ -235,7 +235,7 @@ function ViewMemberlist()
 				'newbie_group' => 4,
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			if ($row['min_posts'] == -1)
 				$context['membergroups'][] = array(
@@ -249,7 +249,7 @@ function ViewMemberlist()
 					'name' => $row['group_name']
 				);
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		// Some data about the form fields and how they are linked to the database.
 		$params = array(
@@ -668,7 +668,7 @@ function SearchMembers()
 	);
 	$context['postgroups'] = array();
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_group, group_name, min_posts
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
@@ -678,7 +678,7 @@ function SearchMembers()
 			'newbie_group' => 4,
 		)
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		if ($row['min_posts'] == -1)
 			$context['membergroups'][] = array(
@@ -692,7 +692,7 @@ function SearchMembers()
 				'name' => $row['group_name']
 			);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	$context['page_title'] = $txt['admin_members'];
 	$context['sub_template'] = 'search_members';
@@ -1088,7 +1088,7 @@ function AdminApprove()
 	}
 
 	// Get information on each of the members, things that are important to us, like email address...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, member_name, real_name, email_address, validation_code, lngfile
 		FROM {db_prefix}members
 		WHERE is_activated = {int:activated_status}' . $condition . '
@@ -1100,7 +1100,7 @@ function AdminApprove()
 		)
 	);
 
-	$member_count = $smcFunc['db_num_rows']($request);
+	$member_count = weDB::num_rows($request);
 
 	// If no results then just return!
 	if ($member_count == 0)
@@ -1109,7 +1109,7 @@ function AdminApprove()
 	$member_info = array();
 	$members = array();
 	// Fill the info array.
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		$members[] = $row['id_member'];
 		$member_info[] = array(
@@ -1121,13 +1121,13 @@ function AdminApprove()
 			'code' => $row['validation_code']
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Are we activating or approving the members?
 	if ($_POST['todo'] == 'ok' || $_POST['todo'] == 'okemail')
 	{
 		// Approve/activate this member.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}members
 			SET validation_code = {string:blank_string}, is_activated = {int:is_activated}
 			WHERE is_activated = {int:activated_status}' . $condition,
@@ -1174,7 +1174,7 @@ function AdminApprove()
 			$validation_code = generateValidationCode();
 
 			// Set these members for activation - I know this includes two id_member checks but it's safer than bodging $condition ;).
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}members
 				SET validation_code = {string:validation_code}, is_activated = {int:not_activated}
 				WHERE is_activated = {int:activated_status}
@@ -1277,7 +1277,7 @@ function AdminApprove()
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}
-		$smcFunc['db_insert']('',
+		weDB::insert('',
 			'{db_prefix}log_actions',
 			array(
 				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'string-16', 'action' => 'string',

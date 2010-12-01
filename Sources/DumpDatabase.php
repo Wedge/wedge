@@ -46,7 +46,6 @@ if (!defined('SMF'))
  * - Step through the tables, output the structure if requested, then iterate through the table itself to output if requested - all to STDOUT (which will be gzipped if the appropriate settings and handler has been fired)
  *
  * @todo Should this function require a true admin account (i.e. $user_info['is_admin'] rather than allowedTo('admin_forum'))
- * @todo Remove the call to $smcFunc['db_get_backup'], it's not applicable to MySQL.
  */
 function DumpDatabase2()
 {
@@ -63,7 +62,7 @@ function DumpDatabase2()
 	checkSession('post');
 
 	// We will need this, badly!
-	db_extend();
+	weDB::extend();
 
 	// Attempt to stop from dying...
 	@set_time_limit(600);
@@ -115,13 +114,6 @@ function DumpDatabase2()
 	// This should turn off the session URL parser.
 	$scripturl = '';
 
-	// If this database is flat file and has a handler function pass it to that.
-	if (!empty($smcFunc['db_get_backup']))
-	{
-		$smcFunc['db_get_backup']();
-		exit;
-	}
-
 	// Send the proper headers to let them download this file.
 	header('Content-Disposition: filename="' . $db_name . '-' . (empty($_REQUEST['struct']) ? 'data' : (empty($_REQUEST['data']) ? 'structure' : 'complete')) . '_' . strftime('%Y-%m-%d') . $extension . '"');
 	header('Cache-Control: private');
@@ -153,7 +145,7 @@ function DumpDatabase2()
 	}
 
 	// Dump each table.
-	$tables = $smcFunc['db_list_tables'](false, $db_prefix . '%');
+	$tables = weDBExtra::list_tables(false, $db_prefix . '%');
 	foreach ($tables as $tableName)
 	{
 		if (function_exists('apache_reset_timeout'))
@@ -168,7 +160,7 @@ function DumpDatabase2()
 				'-- Table structure for table `', $tableName, '`', $crlf,
 				'--', $crlf,
 				$crlf,
-				$smcFunc['db_table_sql']($tableName), ';', $crlf;
+				weDBExtra::table_sql($tableName), ';', $crlf;
 		}
 
 		// How about the data?
@@ -176,7 +168,7 @@ function DumpDatabase2()
 			continue;
 
 		// Are there any rows in this table?
-		$get_rows = $smcFunc['db_insert_sql']($tableName);
+		$get_rows = weDBExtra::insert_sql($tableName);
 
 		// No rows to get - skip it.
 		if (empty($get_rows))

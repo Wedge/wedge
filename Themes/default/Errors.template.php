@@ -13,6 +13,7 @@ function template_fatal_error()
 	global $context, $settings, $options, $txt;
 
 	echo '
+	<br />
 	<div id="fatal_error">
 		<div class="cat_bar">
 			<h3>

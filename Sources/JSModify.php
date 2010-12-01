@@ -62,7 +62,7 @@ function JSModify()
 	loadSource(array('Subs-Post', 'Class-Editor'));
 
 	// Assume the first message if no message ID was given.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 			SELECT
 				t.locked, t.num_replies, t.id_member_started, t.id_first_msg,
 				m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
@@ -81,10 +81,10 @@ function JSModify()
 				'guest_id' => 0,
 			)
 		);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	// Change either body or subject requires permissions to modify messages.
 	if (isset($_POST['message']) || isset($_POST['subject']) || isset($_REQUEST['icon']))
@@ -229,7 +229,7 @@ function JSModify()
 				cache_put_data('response_prefix', $context['response_prefix'], 600);
 			}
 
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}messages
 				SET subject = {string:subject}
 				WHERE id_topic = {int:current_topic}

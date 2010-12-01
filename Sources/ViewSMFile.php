@@ -44,7 +44,7 @@ function ViewSMFile()
 	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))
 		fatal_lang_error('no_access', false);
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT data, filetype
 		FROM {db_prefix}admin_info_files
 		WHERE filename = {string:current_filename}
@@ -54,11 +54,11 @@ function ViewSMFile()
 		)
 	);
 
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('admin_file_not_found', true, array($_REQUEST['filename']));
 
-	list ($file_data, $filetype) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($file_data, $filetype) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	// !!! Temp.
 	// Figure out if sesc is still being used.

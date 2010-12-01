@@ -119,7 +119,7 @@ function Search2()
 	loadSource('Display');
 
 	// Search has a special database set.
-	db_extend('search');
+	weDB::extend('search');
 
 	// Load up the search API we are going to use.
 	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
@@ -189,7 +189,7 @@ function Search2()
 
 	if (!empty($search_params['minage']) || !empty($search_params['maxage']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT ' . (empty($search_params['maxage']) ? '0, ' : 'IFNULL(MIN(id_msg), -1), ') . (empty($search_params['minage']) ? '0' : 'IFNULL(MAX(id_msg), -1)') . '
 			FROM {db_prefix}messages
 			WHERE 1=1' . ($modSettings['postmod_active'] ? '
@@ -202,10 +202,10 @@ function Search2()
 				'is_approved_true' => 1,
 			)
 		);
-		list ($minMsgID, $maxMsgID) = $smcFunc['db_fetch_row']($request);
+		list ($minMsgID, $maxMsgID) = weDB::fetch_row($request);
 		if ($minMsgID < 0 || $maxMsgID < 0)
 			$context['search_errors']['no_messages_in_time_frame'] = true;
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// Default the user name to a wildcard matching every user (*).
@@ -234,7 +234,7 @@ function Search2()
 		// Create a list of database-escaped search names.
 		$realNameMatches = array();
 		foreach ($possible_users as $possible_user)
-			$realNameMatches[] = $smcFunc['db_quote'](
+			$realNameMatches[] = weDB::quote(
 				'{string:possible_user}',
 				array(
 					'possible_user' => $possible_user
@@ -242,7 +242,7 @@ function Search2()
 			);
 
 		// Retrieve a list of possible members.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE {raw:match_possible_users}',
@@ -251,11 +251,11 @@ function Search2()
 			)
 		);
 		// Simply do nothing if there're too many members matching the criteria.
-		if ($smcFunc['db_num_rows']($request) > $maxMembersToSearch)
+		if (weDB::num_rows($request) > $maxMembersToSearch)
 			$userQuery = '';
-		elseif ($smcFunc['db_num_rows']($request) == 0)
+		elseif (weDB::num_rows($request) == 0)
 		{
-			$userQuery = $smcFunc['db_quote'](
+			$userQuery = weDB::quote(
 				'm.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})',
 				array(
 					'id_member_guest' => 0,
@@ -266,9 +266,9 @@ function Search2()
 		else
 		{
 			$memberlist = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = weDB::fetch_assoc($request))
 				$memberlist[] = $row['id_member'];
-			$userQuery = $smcFunc['db_quote'](
+			$userQuery = weDB::quote(
 				'(m.id_member IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
 				array(
 					'matched_members' => $memberlist,
@@ -277,7 +277,7 @@ function Search2()
 				)
 			);
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// If the boards were passed by URL (params=), temporarily put them back in $_REQUEST.
@@ -296,7 +296,7 @@ function Search2()
 	// Special case for boards: searching just one topic?
 	if (!empty($search_params['topic']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -310,12 +310,12 @@ function Search2()
 			)
 		);
 
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if (weDB::num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
 		$search_params['brd'] = array();
-		list ($search_params['brd'][0]) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($search_params['brd'][0]) = weDB::fetch_row($request);
+		weDB::free_result($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
 	elseif ($user_info['is_admin'] && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
@@ -323,7 +323,7 @@ function Search2()
 	else
 	{
 		$see_board = empty($search_params['advanced']) ? 'query_wanna_see_board' : 'query_see_board';
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {raw:boards_allowed_to_see}
@@ -338,9 +338,9 @@ function Search2()
 			)
 		);
 		$search_params['brd'] = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$search_params['brd'][] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		// This error should pro'bly only happen for hackers.
 		if (empty($search_params['brd']))
@@ -353,7 +353,7 @@ function Search2()
 			$search_params['brd'][$k] = (int) $v;
 
 		// If we've selected all boards, this parameter can be left empty.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}boards
 			WHERE redirect = {string:empty_string}',
@@ -361,8 +361,8 @@ function Search2()
 				'empty_string' => '',
 			)
 		);
-		list ($num_boards) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($num_boards) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		if (count($search_params['brd']) == $num_boards)
 			$boardQuery = '';
@@ -793,7 +793,7 @@ function Search2()
 			);
 
 			// Clear the previous cache of the final results cache.
-			$smcFunc['db_search_query']('', '
+			weDB::query('
 				DELETE FROM {db_prefix}log_search_results
 				WHERE id_search = {int:search_id}',
 				array(
@@ -869,7 +869,7 @@ function Search2()
 						}
 					}
 
-					$ignoreRequest = $smcFunc['db_search_query']('', '
+					$ignoreRequest = weDB::query('
 						INSERT IGNORE INTO {db_prefix}log_search_results
 							(id_search, id_topic, relevance, id_msg, num_matches)
 						SELECT
@@ -907,7 +907,7 @@ function Search2()
 						))
 					);
 
-					$numSubjectResults += $smcFunc['db_affected_rows']();
+					$numSubjectResults += weDB::affected_rows();
 
 					if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 						break;
@@ -916,7 +916,7 @@ function Search2()
 				// If there's data to be inserted for non-IGNORE databases do it here!
 				if (!empty($inserts))
 				{
-					$smcFunc['db_insert']('',
+					weDB::insert('',
 						'{db_prefix}log_search_results',
 						array('id_search' => 'int', 'id_topic' => 'int', 'relevance' => 'int', 'id_msg' => 'int', 'num_matches' => 'int'),
 						$inserts,
@@ -993,13 +993,13 @@ function Search2()
 				{
 					$inserts = array();
 					// Create a temporary table to store some preliminary results in.
-					$smcFunc['db_search_query']('', '
+					weDB::query('
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_topics',
 						array(
 							'db_error_skip' => true,
 						)
 					);
-					$createTemporary = $smcFunc['db_search_query']('', '
+					$createTemporary = weDB::query('
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_topics (
 							id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_topic)
@@ -1012,7 +1012,7 @@ function Search2()
 
 					// Clean up some previous cache.
 					if (!$createTemporary)
-						$smcFunc['db_search_query']('', '
+						weDB::query('
 							DELETE FROM {db_prefix}log_search_topics
 							WHERE id_search = {int:search_id}',
 							array(
@@ -1106,7 +1106,7 @@ function Search2()
 						if (empty($subject_query['where']))
 							continue;
 
-						$ignoreRequest = $smcFunc['db_search_query']('', '
+						$ignoreRequest = weDB::query('
 							INSERT IGNORE INTO {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics
 								(' . ($createTemporary ? '' : 'id_search, ') . 'id_topic)
 							SELECT ' . ($createTemporary ? '' : $_SESSION['search_cache']['id_search'] . ', ') . 't.id_topic
@@ -1121,7 +1121,7 @@ function Search2()
 							$subject_query['params']
 						);
 
-						$numSubjectResults += $smcFunc['db_affected_rows']();
+						$numSubjectResults += weDB::affected_rows();
 
 						if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 							break;
@@ -1130,7 +1130,7 @@ function Search2()
 					// Got some non-MySQL data to plonk in?
 					if (!empty($inserts))
 					{
-						$smcFunc['db_insert']('',
+						weDB::insert('',
 							('{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics'),
 							$createTemporary ? array('id_topic' => 'int') : array('id_search' => 'int', 'id_topic' => 'int'),
 							$inserts,
@@ -1152,14 +1152,14 @@ function Search2()
 				if ($searchAPI->supportsMethod('indexedWordQuery', $query_params))
 				{
 					$inserts = array();
-					$smcFunc['db_search_query']('', '
+					weDB::query('
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_messages',
 						array(
 							'db_error_skip' => true,
 						)
 					);
 
-					$createTemporary = $smcFunc['db_search_query']('', '
+					$createTemporary = weDB::query('
 						CREATE TEMPORARY TABLE {db_prefix}tmp_log_search_messages (
 							id_msg int(10) unsigned NOT NULL default {string:string_zero},
 							PRIMARY KEY (id_msg)
@@ -1171,7 +1171,7 @@ function Search2()
 					) !== false;
 
 					if (!$createTemporary)
-						$smcFunc['db_search_query']('', '
+						weDB::query('
 							DELETE FROM {db_prefix}log_search_messages
 							WHERE id_search = {int:id_search}',
 							array(
@@ -1206,7 +1206,7 @@ function Search2()
 
 							$ignoreRequest = $searchAPI->indexedWordQuery($words, $search_data);
 
-							$indexedResults += $smcFunc['db_affected_rows']();
+							$indexedResults += weDB::affected_rows();
 
 							if (!empty($maxMessageResults) && $indexedResults >= $maxMessageResults)
 								break;
@@ -1216,7 +1216,7 @@ function Search2()
 					// More non-MySQL stuff needed?
 					if (!empty($inserts))
 					{
-						$smcFunc['db_insert']('',
+						weDB::insert('',
 							'{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_messages',
 							$createTemporary ? array('id_msg' => 'int') : array('id_msg' => 'int', 'id_search' => 'int'),
 							$inserts,
@@ -1302,7 +1302,7 @@ function Search2()
 					}
 					$main_query['select']['relevance'] = substr($relevance, 0, -3) . ') / ' . $new_weight_total . ' AS relevance';
 
-					$ignoreRequest = $smcFunc['db_search_query']('', '
+					$ignoreRequest = weDB::query('
 						INSERT IGNORE INTO ' . '{db_prefix}log_search_results
 							(' . implode(', ', array_keys($main_query['select'])) . ')
 						SELECT
@@ -1320,14 +1320,14 @@ function Search2()
 						$main_query['parameters']
 					);
 
-					$_SESSION['search_cache']['num_results'] = $smcFunc['db_affected_rows']();
+					$_SESSION['search_cache']['num_results'] = weDB::affected_rows();
 				}
 
 				// Insert subject-only matches.
 				if ($_SESSION['search_cache']['num_results'] < $modSettings['search_max_results'] && $numSubjectResults !== 0)
 				{
 					$usedIDs = array_flip(empty($inserts) ? array() : array_keys($inserts));
-					$ignoreRequest = $smcFunc['db_search_query']('', '
+					$ignoreRequest = weDB::query('
 						INSERT IGNORE INTO {db_prefix}log_search_results
 							(id_search, id_topic, relevance, id_msg, num_matches)
 						SELECT
@@ -1360,7 +1360,7 @@ function Search2()
 						)
 					);
 
-					$_SESSION['search_cache']['num_results'] += $smcFunc['db_affected_rows']();
+					$_SESSION['search_cache']['num_results'] += weDB::affected_rows();
 				}
 				else
 					$_SESSION['search_cache']['num_results'] = 0;
@@ -1369,7 +1369,7 @@ function Search2()
 
 		// *** Retrieve the results to be shown on the page
 		$participants = array();
-		$request = $smcFunc['db_search_query']('', '
+		$request = weDB::query('
 			SELECT ' . (empty($search_params['topic']) ? 'lsr.id_topic' : $search_params['topic'] . ' AS id_topic') . ', lsr.id_msg, lsr.relevance, lsr.num_matches
 			FROM {db_prefix}log_search_results AS lsr' . ($search_params['sort'] == 'num_replies' ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = lsr.id_topic)' : '') . '
@@ -1380,7 +1380,7 @@ function Search2()
 				'id_search' => $_SESSION['search_cache']['id_search'],
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			$context['topics'][$row['id_msg']] = array(
 				'relevance' => round($row['relevance'] / 10, 1) . '%',
@@ -1390,7 +1390,7 @@ function Search2()
 			// By default they didn't participate in the topic!
 			$participants[$row['id_topic']] = false;
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		$num_results = $_SESSION['search_cache']['num_results'];
 	}
@@ -1427,7 +1427,7 @@ function Search2()
 		$msg_list = array_keys($context['topics']);
 
 		// Load the posters...
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member
 			FROM {db_prefix}messages
 			WHERE id_member != {int:no_member}
@@ -1439,15 +1439,15 @@ function Search2()
 			)
 		);
 		$posters = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$posters[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (!empty($posters))
 			loadMemberData(array_unique($posters));
 
 		// Get the messages out for the callback - select enough that it can be made to look just like Display.
-		$messages_request = $smcFunc['db_query']('', '
+		$messages_request = weDB::query('
 			SELECT
 				m.id_msg, m.subject, m.poster_name, m.poster_email, m.poster_time, m.id_member,
 				m.icon, m.poster_ip, m.body, m.smileys_enabled, m.modified_time, m.modified_name,
@@ -1478,13 +1478,13 @@ function Search2()
 		);
 
 		// If there are no results that means the things in the cache got deleted, so pretend we have no topics anymore.
-		if ($smcFunc['db_num_rows']($messages_request) == 0)
+		if (weDB::num_rows($messages_request) == 0)
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
 		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = weDB::query('
 				SELECT id_topic
 				FROM {db_prefix}messages
 				WHERE id_topic IN ({array_int:topic_list})
@@ -1496,9 +1496,9 @@ function Search2()
 					'topic_list' => array_keys($participants),
 				)
 			);
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = weDB::fetch_assoc($result))
 				$participants[$row['id_topic']] = true;
-			$smcFunc['db_free_result']($result);
+			weDB::free_result($result);
 		}
 	}
 
@@ -1547,10 +1547,10 @@ function prepareSearchContext($reset = false)
 
 	// Start from the beginning...
 	if ($reset)
-		return @$smcFunc['db_data_seek']($messages_request, 0);
+		return @weDB::data_seek($messages_request, 0);
 
 	// Attempt to get the next message.
-	$message = $smcFunc['db_fetch_assoc']($messages_request);
+	$message = weDB::fetch_assoc($messages_request);
 	if (!$message)
 		return false;
 

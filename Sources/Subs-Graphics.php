@@ -107,7 +107,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 
 	$id_folder = !empty($modSettings['currentAttachmentUploadDir']) ? $modSettings['currentAttachmentUploadDir'] : 1;
 	$avatar_hash = empty($modSettings['custom_avatar_enabled']) ? getAttachmentFilename($destName, false, null, true) : '';
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}attachments',
 		array(
 			'id_member' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-255', 'fileext' => 'string-8', 'size' => 'int',
@@ -119,7 +119,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 		),
 		array('id_attach')
 	);
-	$attachID = $smcFunc['db_insert_id']();
+	$attachID = weDB::insert_id();
 	// Retain this globally in case the script wants it.
 	$modSettings['new_avatar_data'] = array(
 		'id' => $attachID,
@@ -158,7 +158,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 			$mime_type = 'image/' . $ext;
 
 			// Write filesize in the database.
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}attachments
 				SET size = {int:filesize}, width = {int:width}, height = {int:height},
 					mime_type = {string:mime_type}
@@ -178,7 +178,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 	}
 	else
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}attachments
 			WHERE id_attach = {int:current_attachment}',
 			array(

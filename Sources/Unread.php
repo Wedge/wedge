@@ -78,7 +78,7 @@ function Unread()
 			$boards[] = (int) $board;
 
 		// The easiest thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board, b.id_parent
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}
@@ -92,11 +92,11 @@ function Unread()
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			if (in_array($row['id_parent'], $boards))
 				$boards[] = $row['id_board'];
 
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -117,7 +117,7 @@ function Unread()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -127,9 +127,9 @@ function Unread()
 			)
 		);
 		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -144,7 +144,7 @@ function Unread()
 		foreach ($_REQUEST['c'] as $i => $c)
 			$_REQUEST['c'][$i] = (int) $c;
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}
@@ -154,9 +154,9 @@ function Unread()
 			)
 		);
 		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -168,7 +168,7 @@ function Unread()
 	else
 	{
 		// Don't bother to show deleted posts!
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -178,9 +178,9 @@ function Unread()
 			)
 		);
 		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -222,7 +222,7 @@ function Unread()
 
 	if (!empty($_REQUEST['c']) && is_array($_REQUEST['c']) && count($_REQUEST['c']) == 1)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT name
 			FROM {db_prefix}categories
 			WHERE id_cat = {int:id_cat}
@@ -231,8 +231,8 @@ function Unread()
 				'id_cat' => (int) $_REQUEST['c'][0],
 			)
 		);
-		list ($name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($name) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		$context['linktree'][] = array(
 			'url' => $scripturl . '#c' . (int) $_REQUEST['c'][0],
@@ -281,7 +281,7 @@ function Unread()
 	{
 		if (!empty($board))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT MIN(id_msg)
 				FROM {db_prefix}log_mark_read
 				WHERE id_member = {int:current_member}
@@ -291,12 +291,12 @@ function Unread()
 					'current_member' => $user_info['id'],
 				)
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($earliest_msg) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT MIN(lmr.id_msg)
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
@@ -305,8 +305,8 @@ function Unread()
 					'current_member' => $user_info['id'],
 				)
 			);
-			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($earliest_msg) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 
 		// This is needed in case of topics marked unread.
@@ -320,7 +320,7 @@ function Unread()
 			else
 			{
 				// This query is pretty slow, but it's needed to ensure nothing crucial is ignored.
-				$request = $smcFunc['db_query']('', '
+				$request = weDB::query('
 					SELECT MIN(id_msg)
 					FROM {db_prefix}log_topics
 					WHERE id_member = {int:current_member}',
@@ -328,8 +328,8 @@ function Unread()
 						'current_member' => $user_info['id'],
 					)
 				);
-				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				list ($earliest_msg2) = weDB::fetch_row($request);
+				weDB::free_result($request);
 
 				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
 				if ($earliest_msg2 == 0)
@@ -346,14 +346,14 @@ function Unread()
 
 	if ($modSettings['totalMessages'] > 100000 && $context['showing_all_topics'])
 	{
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
 			array(
 			)
 		);
 
 		// Let's copy things out of the log_topics table, to reduce searching.
-		$have_temp_table = $smcFunc['db_query']('', '
+		$have_temp_table = weDB::query('
 			CREATE TEMPORARY TABLE {db_prefix}log_topics_unread (
 				PRIMARY KEY (id_topic)
 			)
@@ -377,7 +377,7 @@ function Unread()
 
 	if ($context['showing_all_topics'] && $have_temp_table)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)
@@ -392,8 +392,8 @@ function Unread()
 				'is_approved' => 1,
 			))
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($num_topics, $min_message) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -427,7 +427,7 @@ function Unread()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -455,7 +455,7 @@ function Unread()
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t' . (!empty($have_temp_table) ? '
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)' : '
@@ -473,8 +473,8 @@ function Unread()
 				'is_approved' => 1,
 			))
 		);
-		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($num_topics, $min_message) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -512,7 +512,7 @@ function Unread()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -543,7 +543,7 @@ function Unread()
 	$context['topics'] = array();
 	$topic_ids = array();
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 			continue;
@@ -685,11 +685,11 @@ function Unread()
 			)
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (!empty($modSettings['enableParticipation']) && !empty($topic_ids))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = weDB::query('
 			SELECT id_topic
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})
@@ -701,12 +701,12 @@ function Unread()
 				'topic_list' => $topic_ids,
 			)
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($result))
+		while ($row = weDB::fetch_assoc($result))
 		{
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
 		}
-		$smcFunc['db_free_result']($result);
+		weDB::free_result($result);
 	}
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);

@@ -97,7 +97,7 @@ function RemindPick()
 		fatal_lang_error('username_no_exist', false);
 
 	// Find the user!
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, openid_uri, secret_question
 		FROM {db_prefix}members
 		WHERE ' . $where . '
@@ -106,11 +106,11 @@ function RemindPick()
 		))
 	);
 	// Maybe email?
-	if ($smcFunc['db_num_rows']($request) == 0 && empty($_REQUEST['uid']))
+	if (weDB::num_rows($request) == 0 && empty($_REQUEST['uid']))
 	{
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, openid_uri, secret_question
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
@@ -118,12 +118,12 @@ function RemindPick()
 			array_merge($where_params, array(
 			))
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if (weDB::num_rows($request) == 0)
 			fatal_lang_error('no_user_with_email', false);
 	}
 
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	$context['account_type'] = !empty($row['openid_uri']) ? 'openid' : 'password';
 
@@ -226,7 +226,7 @@ function setPassword2()
 	loadLanguage('Login');
 
 	// Get the code as it should be from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT validation_code, member_name, email_address, passwd_flood
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -241,11 +241,11 @@ function setPassword2()
 	);
 
 	// Does this user exist at all?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('invalid_userid', false);
 
-	list ($realCode, $username, $email, $flood_value) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($realCode, $username, $email, $flood_value) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	// Is the password actually valid?
 	loadSource(array('Subs-Auth', 'Subs-Login'));
@@ -298,7 +298,7 @@ function SecretAnswerInput()
 		fatal_lang_error('username_no_exist', false);
 
 	// Get the stuff....
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, real_name, member_name, secret_question, openid_uri
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -307,11 +307,11 @@ function SecretAnswerInput()
 			'id_member' => (int) $_REQUEST['uid'],
 		)
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	$context['account_type'] = !empty($row['openid_uri']) ? 'openid' : 'password';
 
@@ -340,7 +340,7 @@ function SecretAnswer2()
 	loadLanguage('Login');
 
 	// Get the information from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, real_name, member_name, secret_answer, secret_question, openid_uri, email_address
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -349,11 +349,11 @@ function SecretAnswer2()
 			'id_member' => $_REQUEST['uid'],
 		)
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	// Check if the secret answer is correct.
 	if ($row['secret_question'] == '' || $row['secret_answer'] == '' || md5($_POST['secret_answer']) != $row['secret_answer'])

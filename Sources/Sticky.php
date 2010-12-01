@@ -63,7 +63,7 @@ function Sticky()
 	loadSource('Subs-Post');
 
 	// Is this topic already stickied, or no?
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT is_sticky
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -72,11 +72,11 @@ function Sticky()
 			'current_topic' => $topic,
 		)
 	);
-	list ($is_sticky) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($is_sticky) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	// Toggle the sticky value.... pretty simple ;).
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}topics
 		SET is_sticky = {int:is_sticky}
 		WHERE id_topic = {int:current_topic}',

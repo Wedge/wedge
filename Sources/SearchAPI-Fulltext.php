@@ -77,17 +77,17 @@ class fulltext_search
 		global $smcFunc;
 
 		// Try to determine the minimum number of letters for a fulltext search.
-		$request = $smcFunc['db_search_query']('', '
+		$request = weDB::query('
 			SHOW VARIABLES
 			LIKE {string:fulltext_minimum_word_length}',
 			array(
 				'fulltext_minimum_word_length' => 'ft_min_word_len',
 			)
 		);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+		if ($request !== false && weDB::num_rows($request) == 1)
 		{
-			list (, $min_word_length) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list (, $min_word_length) = weDB::fetch_row($request);
+			weDB::free_result($request);
 		}
 		// 4 is the MySQL default...
 		else
@@ -184,7 +184,7 @@ class fulltext_search
 			$query_where[] = 'MATCH (body) AGAINST ({string:boolean_match} IN BOOLEAN MODE)';
 		}
 
-		$ignoreRequest = $smcFunc['db_search_query']('', '
+		$ignoreRequest = weDB::query('
 			INSERT IGNORE INTO {db_prefix}' . $search_data['insert_into'] . '
 				(' . implode(', ', array_keys($query_select)) . ')
 			SELECT ' . implode(', ', $query_select) . '

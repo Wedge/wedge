@@ -611,7 +611,7 @@ function ModifyProfile($post_errors = array())
 						'ip' => $user_info['ip'],
 						'extra' => serialize(array_merge($v, array('applicator' => $user_info['id']))),
 					);
-				$smcFunc['db_insert']('',
+				weDB::insert('',
 					'{db_prefix}log_actions',
 					array(
 						'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'string-16',
@@ -678,7 +678,7 @@ function loadCustomFields($memID, $area = 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
 	// Load all the relevant fields - and data.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			col_name, field_name, field_desc, field_type, field_length, field_options,
 			default_value, bbc, enclose, placement
@@ -689,7 +689,7 @@ function loadCustomFields($memID, $area = 'summary')
 		)
 	);
 	$context['custom_fields'] = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Shortcut.
 		$exists = $memID && isset($user_profile[$memID], $user_profile[$memID]['options'][$row['col_name']]);
@@ -771,7 +771,7 @@ function loadCustomFields($memID, $area = 'summary')
 			'value' => $value,
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 }
 
 ?>

@@ -166,14 +166,14 @@ function BanList()
 			$_POST['remove'][(int) $index] = (int) $ban_id;
 
 		// Unban them all!
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}ban_groups
 			WHERE id_ban_group IN ({array_int:ban_list})',
 			array(
 				'ban_list' => $_POST['remove'],
 			)
 		);
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}ban_items
 			WHERE id_ban_group IN ({array_int:ban_list})',
 			array(
@@ -353,7 +353,7 @@ function list_getBans($start, $items_per_page, $sort)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT bg.id_ban_group, bg.name, bg.ban_time, bg.expire_time, bg.reason, bg.notes, COUNT(bi.id_ban) AS num_triggers
 		FROM {db_prefix}ban_groups AS bg
 			LEFT JOIN {db_prefix}ban_items AS bi ON (bi.id_ban_group = bg.id_ban_group)
@@ -367,10 +367,10 @@ function list_getBans($start, $items_per_page, $sort)
 		)
 	);
 	$bans = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$bans[] = $row;
 
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $bans;
 }
@@ -379,14 +379,14 @@ function list_getNumBans()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*) AS num_bans
 		FROM {db_prefix}ban_groups',
 		array(
 		)
 	);
-	list ($numBans) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($numBans) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	return $numBans;
 }
@@ -474,7 +474,7 @@ function BanEdit()
 			$_POST['email'] = strtolower(str_replace('*', '%', $_POST['email']));
 
 			// Check the user is not banning an admin.
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_member
 				FROM {db_prefix}members
 				WHERE (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0)
@@ -485,9 +485,9 @@ function BanEdit()
 					'email' => $_POST['email'],
 				)
 			);
-			if ($smcFunc['db_num_rows']($request) != 0)
+			if (weDB::num_rows($request) != 0)
 				fatal_lang_error('no_ban_admin', 'critical');
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 
 			$values['email_address'] = $_POST['email'];
 
@@ -497,7 +497,7 @@ function BanEdit()
 		{
 			$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($_POST['user'], ENT_QUOTES));
 
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
 				FROM {db_prefix}members
 				WHERE member_name = {string:user_name} OR real_name = {string:user_name}
@@ -507,10 +507,10 @@ function BanEdit()
 					'user_name' => $_POST['user'],
 				)
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if (weDB::num_rows($request) == 0)
 				fatal_lang_error('invalid_username', false);
-			list ($memberid, $isAdmin) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($memberid, $isAdmin) = weDB::fetch_row($request);
+			weDB::free_result($request);
 
 			if ($isAdmin && $isAdmin != 'f')
 				fatal_lang_error('no_ban_admin', 'critical');
@@ -523,14 +523,14 @@ function BanEdit()
 			fatal_lang_error('no_bantype_selected', false);
 
 		if ($newBan)
-			$smcFunc['db_insert']('',
+			weDB::insert('',
 				'{db_prefix}ban_items',
 				$insertKeys,
 				$values,
 				array('id_ban')
 			);
 		else
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}ban_items
 				SET ' . $updateString . '
 				WHERE id_ban = {int:ban_item}
@@ -562,7 +562,7 @@ function BanEdit()
 		foreach ($_POST['ban_items'] as $key => $value)
 			$_POST['ban_items'][$key] = (int) $value;
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}ban_items
 			WHERE id_ban IN ({array_int:ban_list})
 				AND id_ban_group = {int:ban_group}',
@@ -590,7 +590,7 @@ function BanEdit()
 		$_POST['ban_name'] = $smcFunc['htmlspecialchars']($_POST['ban_name'], ENT_QUOTES);
 
 		// Check whether a ban with this name already exists.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_ban_group
 			FROM {db_prefix}ban_groups
 			WHERE name = {string:new_ban_name}' . ($addBan ? '' : '
@@ -601,9 +601,9 @@ function BanEdit()
 				'new_ban_name' => $_POST['ban_name'],
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) == 1)
+		if (weDB::num_rows($request) == 1)
 			fatal_lang_error('ban_name_exists', false, array($_POST['ban_name']));
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
 		$_POST['notes'] = $smcFunc['htmlspecialchars']($_POST['notes'], ENT_QUOTES);
@@ -687,7 +687,7 @@ function BanEdit()
 					{
 						$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($_POST['user'], ENT_QUOTES));
 
-						$request = $smcFunc['db_query']('', '
+						$request = weDB::query('
 							SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
 							FROM {db_prefix}members
 							WHERE member_name = {string:username} OR real_name = {string:username}
@@ -697,10 +697,10 @@ function BanEdit()
 								'username' => $_POST['user'],
 							)
 						);
-						if ($smcFunc['db_num_rows']($request) == 0)
+						if (weDB::num_rows($request) == 0)
 							fatal_lang_error('invalid_username', false);
-						list ($_POST['bannedUser'], $isAdmin) = $smcFunc['db_fetch_row']($request);
-						$smcFunc['db_free_result']($request);
+						list ($_POST['bannedUser'], $isAdmin) = weDB::fetch_row($request);
+						weDB::free_result($request);
 
 						if ($isAdmin && $isAdmin != 'f')
 							fatal_lang_error('no_ban_admin', 'critical');
@@ -754,7 +754,7 @@ function BanEdit()
 			}
 
 			// Yes yes, we're ready to add now.
-			$smcFunc['db_insert']('',
+			weDB::insert('',
 				'{db_prefix}ban_groups',
 				array(
 					'name' => 'string-20', 'ban_time' => 'int', 'expire_time' => 'raw', 'cannot_access' => 'int', 'cannot_register' => 'int',
@@ -766,7 +766,7 @@ function BanEdit()
 				),
 				array('id_ban_group')
 			);
-			$_REQUEST['bg'] = $smcFunc['db_insert_id']();
+			$_REQUEST['bg'] = weDB::insert_id();
 
 			// Now that the ban group is added, add some triggers as well.
 			if (!empty($ban_triggers) && !empty($_REQUEST['bg']))
@@ -779,7 +779,7 @@ function BanEdit()
 				foreach ($ban_logs as $log_details)
 					logAction('ban', $log_details + array('new' => 1));
 
-				$smcFunc['db_insert']('',
+				weDB::insert('',
 					'{db_prefix}ban_items',
 					array(
 						'id_ban_group' => 'int', 'ip_low1' => 'int', 'ip_high1' => 'int', 'ip_low2' => 'int', 'ip_high2' => 'int',
@@ -792,7 +792,7 @@ function BanEdit()
 			}
 		}
 		else
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}ban_groups
 				SET
 					name = {string:ban_name},
@@ -826,7 +826,7 @@ function BanEdit()
 	if (!empty($_REQUEST['bg']))
 	{
 		$context['ban_items'] = array();
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT
 				bi.id_ban, bi.hostname, bi.email_address, bi.id_member, bi.hits,
 				bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4,
@@ -840,10 +840,10 @@ function BanEdit()
 				'current_ban' => $_REQUEST['bg'],
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if (weDB::num_rows($request) == 0)
 			fatal_lang_error('ban_not_found', false);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			if (!isset($context['ban']))
 			{
@@ -900,7 +900,7 @@ function BanEdit()
 				else
 				{
 					unset($context['ban_items'][$row['id_ban']]);
-					$smcFunc['db_query']('', '
+					weDB::query('
 						DELETE FROM {db_prefix}ban_items
 						WHERE id_ban = {int:current_ban}',
 						array(
@@ -910,7 +910,7 @@ function BanEdit()
 				}
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 	// Not an existing one, then it's probably a new one.
 	else
@@ -945,7 +945,7 @@ function BanEdit()
 		// Overwrite some of the default form values if a user ID was given.
 		if (!empty($_REQUEST['u']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_member, real_name, member_ip, email_address
 				FROM {db_prefix}members
 				WHERE id_member = {int:current_user}
@@ -954,9 +954,9 @@ function BanEdit()
 					'current_user' => (int) $_REQUEST['u'],
 				)
 			);
-			if ($smcFunc['db_num_rows']($request) > 0)
-				list ($context['ban_suggestions']['member']['id'], $context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			if (weDB::num_rows($request) > 0)
+				list ($context['ban_suggestions']['member']['id'], $context['ban_suggestions']['member']['name'], $context['ban_suggestions']['main_ip'], $context['ban_suggestions']['email']) = weDB::fetch_row($request);
+			weDB::free_result($request);
 
 			if (!empty($context['ban_suggestions']['member']['id']))
 			{
@@ -972,7 +972,7 @@ function BanEdit()
 
 				// Find some additional IP's used by this member.
 				$context['ban_suggestions']['message_ips'] = array();
-				$request = $smcFunc['db_query']('', '
+				$request = weDB::query('
 					SELECT DISTINCT poster_ip
 					FROM {db_prefix}messages
 					WHERE id_member = {int:current_user}
@@ -983,12 +983,12 @@ function BanEdit()
 						'poster_ip_regex' => '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$',
 					)
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = weDB::fetch_assoc($request))
 					$context['ban_suggestions']['message_ips'][] = $row['poster_ip'];
-				$smcFunc['db_free_result']($request);
+				weDB::free_result($request);
 
 				$context['ban_suggestions']['error_ips'] = array();
-				$request = $smcFunc['db_query']('', '
+				$request = weDB::query('
 					SELECT DISTINCT ip
 					FROM {db_prefix}log_errors
 					WHERE id_member = {int:current_user}
@@ -999,9 +999,9 @@ function BanEdit()
 						'poster_ip_regex' => '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$',
 					)
 				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
+				while ($row = weDB::fetch_assoc($request))
 					$context['ban_suggestions']['error_ips'][] = $row['ip'];
-				$smcFunc['db_free_result']($request);
+				weDB::free_result($request);
 
 				// Borrowing a few language strings from profile.
 				loadLanguage('Profile');
@@ -1059,7 +1059,7 @@ function BanEditTrigger()
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT
 				bi.id_ban, bi.id_ban_group, bi.hostname, bi.email_address, bi.id_member,
 				bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4,
@@ -1074,10 +1074,10 @@ function BanEditTrigger()
 				'ban_group' => (int) $_REQUEST['bg'],
 			)
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if (weDB::num_rows($request) == 0)
 			fatal_lang_error('ban_not_found', false);
-		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$row = weDB::fetch_assoc($request);
+		weDB::free_result($request);
 
 		$context['ban_trigger'] = array(
 			'id' => $row['id_ban'],
@@ -1115,7 +1115,7 @@ function BanBrowseTriggers()
 		foreach ($_POST['remove'] as $key => $value)
 			$_POST['remove'][$key] = $value;
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}ban_items
 			WHERE id_ban IN ({array_int:ban_list})',
 			array(
@@ -1307,7 +1307,7 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 		'email' => 'bi.email_address != {string:blank_string}',
 	);
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT
 			bi.id_ban, bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4, bi.hostname, bi.email_address, bi.hits,
 			bg.id_ban_group, bg.name' . ($trigger_type === 'member' ? ',
@@ -1323,9 +1323,9 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 		)
 	);
 	$ban_triggers = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$ban_triggers[] = $row;
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $ban_triggers;
 }
@@ -1340,7 +1340,7 @@ function list_getNumBanTriggers($trigger_type)
 		'email' => 'bi.email_address != {string:blank_string}',
 	);
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}ban_items AS bi' . ($trigger_type === 'member' ? '
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)' : '
@@ -1349,8 +1349,8 @@ function list_getNumBanTriggers($trigger_type)
 			'blank_string' => '',
 		)
 	);
-	list ($num_triggers) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($num_triggers) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	return $num_triggers;
 }
@@ -1366,7 +1366,7 @@ function BanLog()
 
 		// 'Delete all entries' button was pressed.
 		if (!empty($_POST['removeAll']))
-			$smcFunc['db_query']('', '
+			weDB::query('
 				TRUNCATE {db_prefix}log_banned',
 				array(
 				)
@@ -1379,7 +1379,7 @@ function BanLog()
 			foreach ($_POST['remove'] as $index => $log_id)
 				$_POST['remove'][$index] = (int) $log_id;
 
-			$smcFunc['db_query']('', '
+			weDB::query('
 				DELETE FROM {db_prefix}log_banned
 				WHERE id_ban_log IN ({array_int:ban_list})',
 				array(
@@ -1506,7 +1506,7 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT lb.id_ban_log, lb.id_member, IFNULL(lb.ip, {string:dash}) AS ip, IFNULL(lb.email, {string:dash}) AS email, lb.log_time, IFNULL(mem.real_name, {string:blank_string}) AS real_name
 		FROM {db_prefix}log_banned AS lb
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lb.id_member)
@@ -1518,9 +1518,9 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 		)
 	);
 	$log_entries = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 		$log_entries[] = $row;
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $log_entries;
 }
@@ -1529,14 +1529,14 @@ function list_getNumBanLogEntries()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_banned AS lb',
 		array(
 		)
 	);
-	list ($num_entries) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($num_entries) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	return $num_entries;
 }
@@ -1582,7 +1582,7 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 	else
 		return false;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT bg.id_ban_group, bg.name
 		FROM {db_prefix}ban_groups AS bg
 		INNER JOIN {db_prefix}ban_items AS bi ON
@@ -1594,15 +1594,15 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 		LIMIT 1',
 		$values
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if (weDB::num_rows($request) != 0)
 	{
-		list ($error_id_ban, $error_ban_name) = $smcFunc['db_fetch_row']($request);
+		list ($error_id_ban, $error_ban_name) = weDB::fetch_row($request);
 		fatal_lang_error('ban_trigger_already_exists', false, array(
 			$fullip,
 			'<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $error_id_ban . '">' . $error_ban_name . '</a>',
 		));
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	return $values;
 }
@@ -1616,7 +1616,7 @@ function updateBanMembers()
 	$newMembers = array();
 
 	// Start by getting all active bans - it's quicker doing this in parts...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT bi.id_member, bi.email_address
 		FROM {db_prefix}ban_items AS bi
 			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -1633,7 +1633,7 @@ function updateBanMembers()
 	$memberIDs = array();
 	$memberEmails = array();
 	$memberEmailWild = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		if ($row['id_member'])
 			$memberIDs[$row['id_member']] = $row['id_member'];
@@ -1646,7 +1646,7 @@ function updateBanMembers()
 				$memberEmails[$row['email_address']] = $row['email_address'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Build up the query.
 	$queryPart = array();
@@ -1671,13 +1671,13 @@ function updateBanMembers()
 	// Find all banned members.
 	if (!empty($queryPart))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT mem.id_member, mem.is_activated
 			FROM {db_prefix}members AS mem
 			WHERE ' . implode( ' OR ', $queryPart),
 			$queryValues
 		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			if (!in_array($row['id_member'], $allMembers))
 			{
@@ -1690,12 +1690,12 @@ function updateBanMembers()
 				}
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	// We welcome our new members in the realm of the banned.
 	if (!empty($newMembers))
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member IN ({array_int:new_banned_members})',
 			array(
@@ -1704,7 +1704,7 @@ function updateBanMembers()
 		);
 
 	// Find members that are wrongfully marked as banned.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT mem.id_member, mem.is_activated - 10 AS new_value
 		FROM {db_prefix}members AS mem
 			LEFT JOIN {db_prefix}ban_items AS bi ON (bi.id_member = mem.id_member OR mem.email_address LIKE bi.email_address)
@@ -1717,7 +1717,7 @@ function updateBanMembers()
 			'ban_flag' => 10,
 		)
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Don't do this twice!
 		if (!in_array($row['id_member'], $allMembers))
@@ -1726,7 +1726,7 @@ function updateBanMembers()
 			$allMembers[] = $row['id_member'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	if (!empty($updates))
 		foreach ($updates as $newStatus => $members)

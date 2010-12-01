@@ -55,7 +55,7 @@ function PrintPage()
 	$context['robot_no_index'] = true;
 
 	// Get the topic starter information.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT m.poster_time, IFNULL(mem.real_name, m.poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -67,10 +67,10 @@ function PrintPage()
 		)
 	);
 	// Redirect to the boardindex if no valid topic id is provided.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		redirectexit();
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	// Let's "output" all that info.
 	loadTemplate('Printpage');
@@ -84,7 +84,7 @@ function PrintPage()
 		$context['parent_boards'][] = $parent['name'];
 
 	// Split the topics up so we can print them.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT subject, poster_time, body, IFNULL(mem.real_name, poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -98,7 +98,7 @@ function PrintPage()
 		)
 	);
 	$context['posts'] = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		// Censor the subject and message.
 		censorText($row['subject']);
@@ -115,7 +115,7 @@ function PrintPage()
 		if (!isset($context['topic_subject']))
 			$context['topic_subject'] = $row['subject'];
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.0';

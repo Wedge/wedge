@@ -45,7 +45,7 @@ function CoppaForm()
 		fatal_lang_error('no_access', false);
 
 	// Get the user details...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT member_name
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -55,10 +55,10 @@ function CoppaForm()
 			'is_coppa' => 5,
 		)
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
-	list ($username) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	list ($username) = weDB::fetch_row($request);
+	weDB::free_result($request);
 
 	if (isset($_GET['form']))
 	{

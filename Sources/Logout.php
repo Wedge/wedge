@@ -66,7 +66,7 @@ function Logout($internal = false, $redirect = true)
 		call_hook('logout', array($user_settings['member_name']));
 
 		// If you log out, you aren't online anymore :P.
-		$smcFunc['db_query']('', '
+		weDB::query('
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			array(

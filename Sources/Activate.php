@@ -53,7 +53,7 @@ function Activate()
 	}
 
 	// Get the code from the database...
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_member, validation_code, member_name, real_name, email_address, is_activated, passwd, lngfile
 		FROM {db_prefix}members' . (empty($_REQUEST['u']) ? '
 		WHERE member_name = {string:email_address} OR email_address = {string:email_address}' : '
@@ -66,7 +66,7 @@ function Activate()
 	);
 
 	// Does this user exist at all?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if (weDB::num_rows($request) == 0)
 	{
 		$context['sub_template'] = 'retry_activate';
 		$context['page_title'] = $txt['invalid_userid'];
@@ -75,8 +75,8 @@ function Activate()
 		return;
 	}
 
-	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$row = weDB::fetch_assoc($request);
+	weDB::free_result($request);
 
 	// Change their email address? (they probably tried a fake one first :P.)
 	if (isset($_POST['new_email'], $_REQUEST['passwd']) && sha1(strtolower($row['member_name']) . $_REQUEST['passwd']) == $row['passwd'])
@@ -92,7 +92,7 @@ function Activate()
 		isBannedEmail($_POST['new_email'], 'cannot_register', $txt['ban_register_prohibited']);
 
 		// Ummm... don't even dare try to take someone else's email!!
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
@@ -102,9 +102,9 @@ function Activate()
 			)
 		);
 		// !!! Separate the sprintf?
-		if ($smcFunc['db_num_rows']($request) != 0)
+		if (weDB::num_rows($request) != 0)
 			fatal_lang_error('email_in_use', false, array(htmlspecialchars($_POST['new_email'])));
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 
 		updateMemberData($row['id_member'], array('email_address' => $_POST['new_email']));
 		$row['email_address'] = $_POST['new_email'];

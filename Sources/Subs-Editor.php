@@ -76,7 +76,7 @@ function getMessageIcons($board_id)
 	{
 		if (($temp = cache_get_data('posting_icons-' . $board_id, 480)) == null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT title, filename
 				FROM {db_prefix}message_icons
 				WHERE id_board IN (0, {int:board_id})',
@@ -85,9 +85,9 @@ function getMessageIcons($board_id)
 				)
 			);
 			$icon_data = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = weDB::fetch_assoc($request))
 				$icon_data[] = $row;
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 
 			cache_put_data('posting_icons-' . $board_id, $icon_data, 480);
 		}
@@ -170,7 +170,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	{
 		if (($modSettings['question_id_cache'] = cache_get_data('verificationQuestionIds', 300)) == null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_comment
 				FROM {db_prefix}log_comments
 				WHERE comment_type = {string:ver_test}',
@@ -179,9 +179,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				)
 			);
 			$modSettings['question_id_cache'] = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = weDB::fetch_assoc($request))
 				$modSettings['question_id_cache'][] = $row['id_comment'];
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 
 			if (!empty($modSettings['cache_enable']))
 				cache_put_data('verificationQuestionIds', $modSettings['question_id_cache'], 300);
@@ -218,7 +218,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		if ($thisVerification['number_questions'])
 		{
 			// Get the answers and see if they are all right!
-			$request = $smcFunc['db_query']('', '
+			$request = weDB::query('
 				SELECT id_comment, recipient_name AS answer
 				FROM {db_prefix}log_comments
 				WHERE comment_type = {string:ver_test}
@@ -229,12 +229,12 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				)
 			);
 			$incorrectQuestions = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = weDB::fetch_assoc($request))
 			{
 				if (empty($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim($smcFunc['htmlspecialchars'](strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
 					$incorrectQuestions[] = $row['id_comment'];
 			}
-			$smcFunc['db_free_result']($request);
+			weDB::free_result($request);
 
 			if (!empty($incorrectQuestions))
 				$verification_errors[] = 'wrong_verification_answer';
@@ -296,7 +296,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// Have we got some questions to load?
 	if (!empty($questionIDs))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT id_comment, body AS question
 			FROM {db_prefix}log_comments
 			WHERE comment_type = {string:ver_test}
@@ -307,7 +307,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			)
 		);
 		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = weDB::fetch_assoc($request))
 		{
 			$thisVerification['questions'][] = array(
 				'id' => $row['id_comment'],
@@ -318,7 +318,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			);
 			$_SESSION[$verificationOptions['id'] . '_vv']['q'][] = $row['id_comment'];
 		}
-		$smcFunc['db_free_result']($request);
+		weDB::free_result($request);
 	}
 
 	$_SESSION[$verificationOptions['id'] . '_vv']['count'] = empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) ? 1 : $_SESSION[$verificationOptions['id'] . '_vv']['count'] + 1;

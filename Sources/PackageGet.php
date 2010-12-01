@@ -114,14 +114,14 @@ function PackageServers()
 	$context['page_title'] .= ' - ' . $txt['download_packages'];
 
 	// Load the list of servers.
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_server, name, url
 		FROM {db_prefix}package_servers',
 		array(
 		)
 	);
 	$context['servers'] = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		$context['servers'][] = array(
 			'name' => $row['name'],
@@ -129,7 +129,7 @@ function PackageServers()
 			'id' => $row['id_server'],
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	$context['package_download_broken'] = !is_writable($boarddir . '/Packages') || !is_writable($boarddir . '/Packages/installed.list');
 
@@ -210,7 +210,7 @@ function PackageGBrowse()
 		$server = (int) $_GET['server'];
 
 		// Query the server list to find the current server.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT name, url
 			FROM {db_prefix}package_servers
 			WHERE id_server = {int:current_server}
@@ -219,8 +219,8 @@ function PackageGBrowse()
 				'current_server' => $server,
 			)
 		);
-		list ($name, $url) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($name, $url) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		// If the server does not exist, dump out.
 		if (empty($url))
@@ -547,7 +547,7 @@ function PackageDownload()
 		$server = (int) $_GET['server'];
 
 		// Query the server table to find the requested server.
-		$request = $smcFunc['db_query']('', '
+		$request = weDB::query('
 			SELECT name, url
 			FROM {db_prefix}package_servers
 			WHERE id_server = {int:current_server}
@@ -556,8 +556,8 @@ function PackageDownload()
 				'current_server' => $server,
 			)
 		);
-		list ($name, $url) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		list ($name, $url) = weDB::fetch_row($request);
+		weDB::free_result($request);
 
 		// If server does not exist then dump out.
 		if (empty($url))
@@ -737,7 +737,7 @@ function PackageServerAdd()
 	if (strpos($serverurl, 'http://') !== 0 && strpos($serverurl, 'https://') !== 0)
 		$serverurl = 'http://' . $serverurl;
 
-	$smcFunc['db_insert']('',
+	weDB::insert('',
 		'{db_prefix}package_servers',
 		array(
 			'name' => 'string-255', 'url' => 'string-255',
@@ -758,7 +758,7 @@ function PackageServerRemove()
 
 	checkSession('get');
 
-	$smcFunc['db_query']('', '
+	weDB::query('
 		DELETE FROM {db_prefix}package_servers
 		WHERE id_server = {int:current_server}',
 		array(

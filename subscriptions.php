@@ -87,7 +87,7 @@ if (empty($member_id))
 	generateSubscriptionError($txt['paid_empty_member']);
 
 // Verify the member.
-$request = $smcFunc['db_query']('', '
+$request = weDB::query('
 	SELECT id_member, member_name, real_name, email_address
 	FROM {db_prefix}members
 	WHERE id_member = {int:current_member}',
@@ -96,13 +96,13 @@ $request = $smcFunc['db_query']('', '
 	)
 );
 // Didn't find them?
-if ($smcFunc['db_num_rows']($request) == 0)
+if (weDB::num_rows($request) == 0)
 	generateSubscriptionError(sprintf($txt['paid_could_not_find_member'], $member_id));
-$member_info = $smcFunc['db_fetch_assoc']($request);
-$smcFunc['db_free_result']($request);
+$member_info = weDB::fetch_assoc($request);
+weDB::free_result($request);
 
 // Get the subscription details.
-$request = $smcFunc['db_query']('', '
+$request = weDB::query('
 	SELECT cost, length, name
 	FROM {db_prefix}subscriptions
 	WHERE id_subscribe = {int:current_subscription}',
@@ -112,14 +112,14 @@ $request = $smcFunc['db_query']('', '
 );
 
 // Didn't find it?
-if ($smcFunc['db_num_rows']($request) == 0)
+if (weDB::num_rows($request) == 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription'], $member_id, $subscription_id));
 
-$subscription_info = $smcFunc['db_fetch_assoc']($request);
-$smcFunc['db_free_result']($request);
+$subscription_info = weDB::fetch_assoc($request);
+weDB::free_result($request);
 
 // We wish to check the pending payments to make sure we are expecting this.
-$request = $smcFunc['db_query']('', '
+$request = weDB::query('
 	SELECT id_sublog, payments_pending, pending_details, end_time
 	FROM {db_prefix}log_subscribed
 	WHERE id_subscribe = {int:current_subscription}
@@ -130,10 +130,10 @@ $request = $smcFunc['db_query']('', '
 		'current_member' => $member_id,
 	)
 );
-if ($smcFunc['db_num_rows']($request) == 0)
+if (weDB::num_rows($request) == 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription_log'], $member_id, $subscription_id));
-$subscription_info += $smcFunc['db_fetch_assoc']($request);
-$smcFunc['db_free_result']($request);
+$subscription_info += weDB::fetch_assoc($request);
+weDB::free_result($request);
 
 // Is this a refund etc?
 if ($gatewayClass->isRefund())
@@ -155,7 +155,7 @@ if ($gatewayClass->isRefund())
 	}
 
 	// Mark it as complete so we have a record.
-	$smcFunc['db_query']('', '
+	weDB::query('
 		UPDATE {db_prefix}log_subscribed
 		SET end_time = {int:current_time}
 		WHERE id_subscribe = {int:current_subscription}
@@ -208,7 +208,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 		}
 		$subscription_info['pending_details'] = empty($real_details) ? '' : serialize($real_details);
 
-		$smcFunc['db_query']('', '
+		weDB::query('
 			UPDATE {db_prefix}log_subscribed
 			SET payments_pending = {int:payments_pending}, pending_details = {string:pending_details}
 			WHERE id_sublog = {int:current_subscription_item}',

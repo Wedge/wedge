@@ -570,7 +570,7 @@ function fix_serialized_columns()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = weDB::query('
 		SELECT id_action, extra
 		FROM {db_prefix}log_actions
 		WHERE action IN ({string:remove}, {string:delete})',
@@ -579,10 +579,10 @@ function fix_serialized_columns()
 			'delete' => 'delete',
 		)
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
+	while ($row = weDB::fetch_assoc($request))
 	{
 		if (@unserialize($row['extra']) === false && preg_match('~^(a:3:{s:5:"topic";i:\d+;s:7:"subject";s:)(\d+):"(.+)"(;s:6:"member";s:5:"\d+";})$~', $row['extra'], $matches) === 1)
-			$smcFunc['db_query']('', '
+			weDB::query('
 				UPDATE {db_prefix}log_actions
 				SET extra = {string:extra}
 				WHERE id_action = {int:current_action}',
@@ -592,7 +592,7 @@ function fix_serialized_columns()
 				)
 			);
 	}
-	$smcFunc['db_free_result']($request);
+	weDB::free_result($request);
 
 	// Refresh some cached data.
 	updateSettings(array(
