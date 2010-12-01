@@ -121,7 +121,7 @@ function theme_postbox($msg)
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
 	global $txt, $modSettings, $options, $smcFunc;
-	global $context, $settings, $user_info, $sourcedir, $scripturl;
+	global $context, $settings, $user_info, $scripturl;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))

@@ -290,7 +290,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
-				global $context, $old_profile, $context, $profile_vars, $sourcedir, $modSettings;
+				global $context, $old_profile, $context, $profile_vars, $modSettings;
 
 				if (strtolower($value) == strtolower($old_profile[\'email_address\']))
 					return false;
@@ -300,7 +300,7 @@ function loadProfileFields($force_reload = false)
 				// Do they need to revalidate? If so schedule the function!
 				if ($isValid === true && !empty($modSettings[\'send_validation_onChange\']) && !allowedTo(\'moderate_forum\'))
 				{
-					require_once($sourcedir . \'/Subs-Members.php\');
+					loadSource(\'Subs-Members\');
 					$profile_vars[\'validation_code\'] = generateValidationCode();
 					$profile_vars[\'is_activated\'] = 2;
 					$context[\'profile_execute_on_save\'][] = \'profileSendActivation\';
@@ -427,12 +427,12 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'prehtml' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? '<div class="alert">' . $txt['username_warning'] . '</div>' : '',
 			'input_validate' => create_function('&$value', '
-				global $sourcedir, $context, $user_info, $cur_profile;
+				global $context, $user_info, $cur_profile;
 
 				if (allowedTo(\'admin_forum\'))
 				{
 					// We\'ll need this...
-					require_once($sourcedir . \'/Subs-Auth.php\');
+					loadSource(\'Subs-Auth\');
 
 					// Maybe they are trying to change their password as well?
 					$resetPassword = true;
@@ -479,7 +479,7 @@ function loadProfileFields($force_reload = false)
 			'save_key' => 'passwd',
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
-				global $sourcedir, $user_info, $smcFunc, $cur_profile;
+				global $user_info, $smcFunc, $cur_profile;
 
 				// If we didn\'t try it then ignore it!
 				if ($value == \'\')
@@ -490,7 +490,7 @@ function loadProfileFields($force_reload = false)
 					return \'bad_new_password\';
 
 				// Let\'s get the validation function into play...
-				require_once($sourcedir . \'/Subs-Auth.php\');
+				loadSource(\'Subs-Auth\');
 				$passwordErrors = validatePassword($value, $cur_profile[\'member_name\'], array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\']));
 
 				// Were there errors?
@@ -565,7 +565,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum'),
 			'input_validate' => create_function('&$value', '
-				global $context, $smcFunc, $sourcedir, $cur_profile;
+				global $context, $smcFunc, $cur_profile;
 
 				$value = trim(preg_replace(\'~[\s]~u\', \' \', $value));
 
@@ -575,7 +575,7 @@ function loadProfileFields($force_reload = false)
 					return \'name_too_long\';
 				elseif ($cur_profile[\'real_name\'] != $value)
 				{
-					require_once($sourcedir . \'/Subs-Members.php\');
+					loadSource(\'Subs-Members\');
 					if (isReservedName($value, $context[\'id_member\']))
 						return \'name_taken\';
 				}
@@ -841,7 +841,7 @@ function setupProfileContext($fields)
 // Save the profile changes.
 function saveProfileFields()
 {
-	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $sourcedir, $modSettings, $cur_profile, $smcFunc;
+	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $modSettings, $cur_profile, $smcFunc;
 
 	// Load them up.
 	loadProfileFields();
@@ -975,7 +975,7 @@ function saveProfileFields()
 function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 {
 	global $user_info, $txt, $modSettings, $user_profile;
-	global $context, $settings, $sourcedir;
+	global $context, $settings;
 	global $smcFunc;
 
 	// These make life easier....
@@ -1317,7 +1317,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddyIgnoreLists($memID)
 {
-	global $sourcedir, $context, $txt, $scripturl, $modSettings, $user_profile;
+	global $context, $txt, $scripturl, $modSettings, $user_profile;
 
 	// Do a quick check to ensure people aren't getting here illegally!
 	if (!$context['user']['is_owner'] || empty($modSettings['enable_buddylist']))
@@ -1610,7 +1610,7 @@ function forumProfile($memID)
 // Allow the edit of *someone elses* personal message settings.
 function pmprefs($memID)
 {
-	global $sourcedir, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	loadThemeOptions($memID);
 	loadCustomFields($memID, 'pmprefs');
@@ -1725,7 +1725,7 @@ function theme($memID)
 // Changing authentication method? Only appropriate for people using OpenID.
 function authentication($memID, $saving = false)
 {
-	global $context, $cur_profile, $sourcedir, $txt, $post_errors, $modSettings;
+	global $context, $cur_profile, $txt, $post_errors, $modSettings;
 
 	loadLanguage('Login');
 
@@ -1744,7 +1744,7 @@ function authentication($memID, $saving = false)
 			// Is it valid?
 			else
 			{
-				require_once($sourcedir . '/Subs-Auth.php');
+				loadSource('Subs-Auth');
 				$passwordErrors = validatePassword($_POST['passwrd1'], $cur_profile['member_name'], array($cur_profile['real_name'], $cur_profile['email_address']));
 
 				// Were there errors?
@@ -1773,7 +1773,7 @@ function authentication($memID, $saving = false)
 		// Not right yet!
 		elseif ($_POST['authenticate'] == 'openid' && !empty($_POST['openid_identifier']))
 		{
-			require_once($sourcedir . '/Subs-OpenID.php');
+			loadSource('Subs-OpenID');
 			$_POST['openid_identifier'] = smf_openID_canonize($_POST['openid_identifier']);
 
 			if (smf_openid_member_exists($_POST['openid_identifier']))
@@ -1802,10 +1802,10 @@ function authentication($memID, $saving = false)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $smcFunc, $sourcedir, $settings;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $smcFunc, $settings;
 
 	// Gonna want this for the list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// Fine, start with the board list.
 	$listOptions = array(
@@ -2514,7 +2514,7 @@ function profileSaveGroups(&$value)
 // The avatar is incredibly complicated, what with the options... and what not.
 function profileSaveAvatarData(&$value)
 {
-	global $modSettings, $sourcedir, $smcFunc, $profile_vars, $cur_profile, $context;
+	global $modSettings, $smcFunc, $profile_vars, $cur_profile, $context;
 
 	$memID = $context['id_member'];
 	if (empty($memID) && !empty($context['password_auth_failed']))
@@ -2525,7 +2525,7 @@ function profileSaveAvatarData(&$value)
 	$cur_profile['attachment_type'] = 0;
 	$cur_profile['filename'] = '';
 
-	require_once($sourcedir . '/ManageAttachments.php');
+	loadSource('ManageAttachments');
 
 	// We need to know where we're going to be putting it..
 	if (!empty($modSettings['custom_avatar_enabled']))
@@ -2554,7 +2554,7 @@ function profileSaveAvatarData(&$value)
 		if (!is_writable($uploadDir))
 			fatal_lang_error('attachments_no_write', 'critical');
 
-		require_once($sourcedir . '/Subs-Package.php');
+		loadSource('Subs-Package');
 
 		$url = parse_url($_POST['userpicpersonal']);
 		$contents = fetch_web_data('http://' . $url['host'] . (empty($url['port']) ? '' : ':' . $url['port']) . str_replace(' ', '%20', trim($url['path'])));
@@ -2602,7 +2602,7 @@ function profileSaveAvatarData(&$value)
 					return 'bad_avatar';
 				elseif ($modSettings['avatar_action_too_large'] == 'option_download_and_resize')
 				{
-					require_once($sourcedir . '/Subs-Graphics.php');
+					loadSource('Subs-Graphics');
 					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width_external'], $modSettings['avatar_max_height_external']))
 					{
 						$profile_vars['avatar'] = '';
@@ -2645,7 +2645,7 @@ function profileSaveAvatarData(&$value)
 					// Attempt to chmod it.
 					@chmod($uploadDir . '/avatar_tmp_' . $memID, 0644);
 
-					require_once($sourcedir . '/Subs-Graphics.php');
+					loadSource('Subs-Graphics');
 					if (!downloadAvatar($uploadDir . '/avatar_tmp_' . $memID, $memID, $modSettings['avatar_max_width_upload'], $modSettings['avatar_max_height_upload']))
 						return 'bad_avatar';
 				}
@@ -2655,7 +2655,7 @@ function profileSaveAvatarData(&$value)
 			elseif (is_array($sizes))
 			{
 				// Now try to find an infection.
-				require_once($sourcedir . '/Subs-Graphics.php');
+				loadSource('Subs-Graphics');
 				if (!checkImageContents($_FILES['attachment']['tmp_name'], !empty($modSettings['avatar_paranoid'])))
 				{
 					// It's bad. Try to re-encode the contents?
@@ -2736,9 +2736,9 @@ function profileSaveAvatarData(&$value)
 // Validate the signature!
 function profileValidateSignature(&$value)
 {
-	global $sourcedir, $modSettings, $smcFunc, $txt;
+	global $modSettings, $smcFunc, $txt;
 
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource('Class-Editor');
 
 	// Admins can do whatever they hell they want!
 	if (!allowedTo('admin_forum'))
@@ -2938,12 +2938,12 @@ function profileValidateEmail($email, $memID = 0)
 // Reload a users settings.
 function profileReloadUser()
 {
-	global $sourcedir, $modSettings, $context, $cur_profile, $smcFunc, $profile_vars;
+	global $modSettings, $context, $cur_profile, $smcFunc, $profile_vars;
 
 	// Log them back in - using the verify password as they must have matched and this one doesn't get changed by anyone!
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
 	{
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		setLoginCookie(60 * $modSettings['cookieTime'], $context['id_member'], sha1(sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd2'])) . $cur_profile['password_salt']));
 	}
 
@@ -2954,9 +2954,9 @@ function profileReloadUser()
 // Send the user a new activation email if they need to reactivate!
 function profileSendActivation()
 {
-	global $sourcedir, $profile_vars, $txt, $context, $scripturl, $smcFunc, $cookiename, $cur_profile, $language, $modSettings;
+	global $profile_vars, $txt, $context, $scripturl, $smcFunc, $cookiename, $cur_profile, $language, $modSettings;
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Shouldn't happen but just in case.
 	if (empty($profile_vars['email_address']))
@@ -3100,7 +3100,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $sourcedir, $context, $user_profile, $modSettings, $txt, $smcFunc, $scripturl, $language;
+	global $user_info, $context, $user_profile, $modSettings, $txt, $smcFunc, $scripturl, $language;
 
 	// Let's be extra cautious...
 	if (!$context['user']['is_owner'] || empty($modSettings['show_group_membership']))
@@ -3249,7 +3249,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		);
 
 		// Send an email to all group moderators etc.
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 
 		// Do we have any group moderators?
 		$request = $smcFunc['db_query']('', '
@@ -3268,7 +3268,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		// Otherwise this is the backup!
 		if (empty($moderators))
 		{
-			require_once($sourcedir . '/Subs-Members.php');
+			loadSource('Subs-Members');
 			$moderators = membersAllowedTo('manage_membergroups');
 		}
 

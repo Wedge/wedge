@@ -32,14 +32,12 @@ if (!defined('SMF'))
 // This is a handling function for all things post moderation...
 function PostModerationMain()
 {
-	global $sourcedir;
-
 	//!!! We'll shift these later bud.
 	loadLanguage('ModerationCenter');
 	loadTemplate('ModerationCenter');
 
 	// Probably need this...
-	require_once($sourcedir . '/ModerationCenter.php');
+	loadSource('ModerationCenter');
 
 	// Allowed sub-actions, you know the drill by now!
 	$subactions = array(
@@ -59,7 +57,7 @@ function PostModerationMain()
 // View all unapproved posts.
 function UnapprovedPosts()
 {
-	global $txt, $scripturl, $context, $user_info, $sourcedir, $smcFunc;
+	global $txt, $scripturl, $context, $user_info, $smcFunc;
 
 	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
@@ -314,7 +312,7 @@ function UnapprovedPosts()
 // View all unapproved attachments.
 function UnapprovedAttachments()
 {
-	global $txt, $scripturl, $context, $user_info, $sourcedir, $smcFunc;
+	global $txt, $scripturl, $context, $user_info, $smcFunc;
 
 	$context['page_title'] = $txt['mc_unapproved_attachments'];
 
@@ -350,7 +348,7 @@ function UnapprovedAttachments()
 		checkSession('request');
 
 		// This will be handy.
-		require_once($sourcedir . '/ManageAttachments.php');
+		loadSource('ManageAttachments');
 
 		// Confirm the attachments are eligible for changing!
 		$request = $smcFunc['db_query']('', '
@@ -469,13 +467,13 @@ function UnapprovedAttachments()
 // Approve a post, just the one.
 function ApproveMessage()
 {
-	global $user_info, $topic, $board, $sourcedir, $smcFunc;
+	global $user_info, $topic, $board, $smcFunc;
 
 	checkSession('get');
 
 	$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	isAllowedTo('approve_posts');
 
@@ -516,9 +514,7 @@ function ApproveMessage()
 // Approve a batch of posts (or topics in their own right)
 function approveMessages($messages, $messageDetails, $current_view = 'replies')
 {
-	global $sourcedir;
-
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 	if ($current_view == 'topics')
 	{
 		approveTopics($messages);
@@ -542,7 +538,7 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 // This is a helper function - basically approve everything!
 function approveAllData()
 {
-	global $smcFunc, $sourcedir;
+	global $smcFunc;
 
 	// Start with messages and topics.
 	$request = $smcFunc['db_query']('', '
@@ -560,7 +556,7 @@ function approveAllData()
 
 	if (!empty($msgs))
 	{
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 		approvePosts($msgs);
 	}
 
@@ -580,7 +576,7 @@ function approveAllData()
 
 	if (!empty($attaches))
 	{
-		require_once($sourcedir . '/ManageAttachments.php');
+		loadSource('ManageAttachments');
 		ApproveAttachments($attaches);
 	}
 }
@@ -588,8 +584,8 @@ function approveAllData()
 // remove a batch of messages (or topics)
 function removeMessages($messages, $messageDetails, $current_view = 'replies')
 {
-	global $sourcedir, $modSettings;
-	require_once($sourcedir . '/RemoveTopic.php');
+	global $modSettings;
+	loadSource('RemoveTopic');
 	if ($current_view == 'topics')
 	{
 		removeTopics($messages);

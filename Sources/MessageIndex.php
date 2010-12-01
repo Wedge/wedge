@@ -37,7 +37,7 @@ if (!defined('SMF'))
 function MessageIndex()
 {
 	global $txt, $scripturl, $board, $modSettings, $context;
-	global $options, $settings, $board_info, $user_info, $smcFunc, $sourcedir;
+	global $options, $settings, $board_info, $user_info, $smcFunc;
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
@@ -216,7 +216,7 @@ function MessageIndex()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
-	require_once($sourcedir . '/Subs-BoardIndex.php');
+	loadSource('Subs-BoardIndex');
 	$boardIndexOptions = array(
 		'include_categories' => false,
 		'base_level' => $board_info['child_level'] + 1,
@@ -605,7 +605,7 @@ function MessageIndex()
 		// Find the boards/cateogories they can move their topic to.
 		if ($options['display_quick_mod'] == 1 && $context['can_move'] && !empty($context['topics']))
 		{
-			require_once($sourcedir . '/Subs-MessageIndex.php');
+			loadSource('Subs-MessageIndex');
 			$boardListOptions = array(
 				'excluded_boards' => array($board),
 				'not_redirection' => true,

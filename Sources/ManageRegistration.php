@@ -100,7 +100,7 @@ function RegCenter()
  */
 function AdminRegister()
 {
-	global $txt, $context, $sourcedir, $scripturl, $smcFunc;
+	global $txt, $context, $scripturl, $smcFunc;
 
 	if (!empty($_POST['regSubmit']))
 	{
@@ -124,7 +124,7 @@ function AdminRegister()
 			'memberGroup' => empty($_POST['group']) || !allowedTo('manage_membergroups') ? 0 : (int) $_POST['group'],
 		);
 
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		$memberID = registerMember($regOptions);
 		if (!empty($memberID))
 		{
@@ -279,10 +279,10 @@ function SetReserve()
  */
 function ModifyRegistrationSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $modSettings, $sourcedir;
+	global $txt, $context, $scripturl, $modSettings;
 
 	// This is really quite wanting.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	$config_vars = array(
 			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),

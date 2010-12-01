@@ -295,9 +295,7 @@ function MaintainTopics()
 // Find and fix all errors.
 function MaintainFindFixErrors()
 {
-	global $sourcedir;
-
-	require_once($sourcedir . '/RepairBoards.php');
+	loadSource('RepairBoards');
 	RepairBoards();
 }
 
@@ -355,7 +353,7 @@ function MaintainEmptyUnimportantLogs()
 function ConvertUtf8()
 {
 	global $scripturl, $context, $txt, $language;
-	global $modSettings, $user_info, $sourcedir, $smcFunc, $db_prefix;
+	global $modSettings, $user_info, $smcFunc, $db_prefix;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');
@@ -691,11 +689,11 @@ function ConvertUtf8()
 	updateSettings(array('global_character_set' => 'UTF-8', 'previousCharacterSet' => (empty($translation_tables[$_POST['src_charset']])) ? $charsets[$_POST['src_charset']] : $translation_tables[$_POST['src_charset']]));
 
 	// Store it in Settings.php too because it's needed before db connection.
-	require_once($sourcedir . '/Subs-Admin.php');
+	loadSource('Subs-Admin');
 	updateSettingsFile(array('db_character_set' => 'utf8'));
 
 	// The conversion might have messed up some serialized strings. Fix them!
-	require_once($sourcedir . '/Subs-Charset.php');
+	loadSource('Subs-Charset');
 	fix_serialized_columns();
 
 	redirectexit('action=admin;area=maintain;done=convertutf8');
@@ -705,7 +703,7 @@ function ConvertUtf8()
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {
-	global $db_character_set, $modSettings, $context, $sourcedir, $smcFunc;
+	global $db_character_set, $modSettings, $context, $smcFunc;
 
 	isAllowedTo('admin_forum');
 
@@ -888,7 +886,7 @@ function ConvertEntities()
 	}
 
 	// Make sure all serialized strings are all right.
-	require_once($sourcedir . '/Subs-Charset.php');
+	loadSource('Subs-Charset');
 	fix_serialized_columns();
 
 	// If we're here, we must be done.
@@ -901,7 +899,7 @@ function ConvertEntities()
 // Optimize the database's tables.
 function OptimizeTables()
 {
-	global $db_name, $db_prefix, $txt, $context, $scripturl, $sourcedir, $smcFunc;
+	global $db_name, $db_prefix, $txt, $context, $scripturl, $smcFunc;
 
 	isAllowedTo('admin_forum');
 
@@ -949,14 +947,14 @@ function OptimizeTables()
 	$context['num_tables_optimized'] = count($context['optimized_tables']);
 
 	// Check that we don't auto optimise again too soon!
-	require_once($sourcedir . '/ScheduledTasks.php');
+	loadSource('ScheduledTasks');
 	CalculateNextTrigger('auto_optimize', true);
 }
 
 // Recount all the important board totals.
 function AdminBoardRecount()
 {
-	global $txt, $context, $scripturl, $modSettings, $sourcedir;
+	global $txt, $context, $scripturl, $modSettings;
 	global $time_start, $smcFunc;
 
 	isAllowedTo('admin_forum');
@@ -1434,7 +1432,7 @@ function AdminBoardRecount()
 	updateStats('topic');
 
 	// Finally, update the latest event times.
-	require_once($sourcedir . '/ScheduledTasks.php');
+	loadSource('ScheduledTasks');
 	CalculateNextTrigger();
 
 	redirectexit('action=admin;area=maintain;sa=routine;done=recount');
@@ -1443,12 +1441,12 @@ function AdminBoardRecount()
 // Perform a detailed version check.  A very good thing ;).
 function VersionDetail()
 {
-	global $forum_version, $txt, $sourcedir, $context;
+	global $forum_version, $txt, $context;
 
 	isAllowedTo('admin_forum');
 
 	// Call the function that'll get all the version info we need.
-	require_once($sourcedir . '/Subs-Admin.php');
+	loadSource('Subs-Admin');
 	$versionOptions = array(
 		'include_ssi' => true,
 		'include_subscriptions' => true,
@@ -1475,12 +1473,12 @@ function VersionDetail()
 // Removing old posts doesn't take much as we really pass through.
 function MaintainReattributePosts()
 {
-	global $sourcedir, $context, $txt;
+	global $context, $txt;
 
 	checkSession();
 
 	// Find the member.
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 	$members = findMembers($_POST['to']);
 
 	if (empty($members))
@@ -1493,7 +1491,7 @@ function MaintainReattributePosts()
 	$membername = $_POST['type'] == 'name' ? $_POST['from_name'] : '';
 
 	// Now call the reattribute function.
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
 
 	$context['maintenance_finished'] = $txt['maintain_reattribute_posts'];
@@ -1502,16 +1500,14 @@ function MaintainReattributePosts()
 // Handling function for the backup stuff.
 function MaintainDownloadBackup()
 {
-	global $sourcedir;
-
-	require_once($sourcedir . '/DumpDatabase.php');
+	loadSource('DumpDatabase');
 	DumpDatabase2();
 }
 
 // Removing old members?
 function MaintainPurgeInactiveMembers()
 {
-	global $sourcedir, $context, $smcFunc, $txt;
+	global $context, $smcFunc, $txt;
 
 	$_POST['maxdays'] = (int) $_POST['maxdays'];
 	if (!empty($_POST['groups']) && $_POST['maxdays'])
@@ -1582,7 +1578,7 @@ function MaintainPurgeInactiveMembers()
 		}
 		$smcFunc['db_free_result']($request);
 
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		deleteMembers($members);
 	}
 
@@ -1592,16 +1588,14 @@ function MaintainPurgeInactiveMembers()
 // Removing old posts doesn't take much as we really pass through.
 function MaintainRemoveOldPosts()
 {
-	global $sourcedir, $context, $txt;
-
 	// Actually do what we're told!
-	require_once($sourcedir . '/RemoveTopic.php');
+	loadSource('RemoveTopic');
 	RemoveOldTopics2();
 }
 
 function MaintainMassMoveTopics()
 {
-	global $smcFunc, $sourcedir, $context, $txt;
+	global $smcFunc, $context, $txt;
 
 	// Only admins.
 	isAllowedTo('admin_forum');
@@ -1675,7 +1669,7 @@ function MaintainMassMoveTopics()
 			}
 
 			// Let's move them.
-			require_once($sourcedir . '/MoveTopic.php');
+			loadSource('MoveTopic');
 			moveTopics($topics, $id_board_to);
 
 			// We've done at least ten more topics.

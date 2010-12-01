@@ -204,7 +204,7 @@ function ViewMemberlist()
 		if (!empty($_POST['delete']))
 		{
 			// Delete all the selected members.
-			require_once($sourcedir . '/Subs-Members.php');
+			loadSource('Subs-Members');
 			deleteMembers($_POST['delete'], true);
 		}
 	}
@@ -646,7 +646,7 @@ function ViewMemberlist()
 	if (!allowedTo('profile_remove_any'))
 		unset($listOptions['columns']['check'], $listOptions['form'], $listOptions['additional_rows']);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';
@@ -1042,19 +1042,19 @@ function MembersAwaitingActivation()
 	if (!allowedTo('view_ip_address_any'))
 		unset($listOptions['columns']['ip']);
 	// Now that we have all the options, create the list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 }
 
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $modSettings, $sourcedir, $language, $user_info, $smcFunc;
+	global $txt, $context, $scripturl, $modSettings, $language, $user_info, $smcFunc;
 
 	// First, check our session.
 	checkSession();
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// We also need to the login languages here - for emails.
 	loadLanguage('Login');
@@ -1166,7 +1166,7 @@ function AdminApprove()
 	// Maybe we're sending it off for activation?
 	elseif ($_POST['todo'] == 'require_activation')
 	{
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 
 		// We have to do this for each member I'm afraid.
 		foreach ($member_info as $member)
@@ -1205,7 +1205,7 @@ function AdminApprove()
 	// Are we rejecting them?
 	elseif ($_POST['todo'] == 'reject' || $_POST['todo'] == 'rejectemail')
 	{
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		deleteMembers($members);
 
 		// Send email telling them they aren't welcome?
@@ -1225,7 +1225,7 @@ function AdminApprove()
 	// A simple delete?
 	elseif ($_POST['todo'] == 'delete' || $_POST['todo'] == 'deleteemail')
 	{
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		deleteMembers($members);
 
 		// Send email telling them they aren't welcome?

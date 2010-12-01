@@ -420,11 +420,11 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $scripturl, $context, $txt, $sourcedir, $modSettings, $smcFunc, $language;
+	global $scripturl, $context, $txt, $modSettings, $smcFunc, $language;
 
 	// Language... and a required file.
 	loadLanguage('Login');
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Get some important details.
 	$request = $smcFunc['db_query']('', '
@@ -475,7 +475,7 @@ function resetPassword($memID, $username = null)
 // Is this a valid username?
 function validateUsername($memID, $username)
 {
-	global $sourcedir, $txt;
+	global $txt;
 
 	// No name?!  How can you register with no name?
 	if ($username == '')
@@ -488,7 +488,7 @@ function validateUsername($memID, $username)
 	if (stristr($username, $txt['guest_title']) !== false)
 		fatal_lang_error('username_reserved', true, array($txt['guest_title']));
 
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 	if (isReservedName($username, $memID, false))
 		fatal_error('(' . htmlspecialchars($username) . ') ' . $txt['name_in_use'], false);
 

@@ -58,7 +58,7 @@ if (!defined('SMF'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $sourcedir, $options, $smcFunc;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $smcFunc;
 
 	// Load the language and templates....
 	loadLanguage('Admin');
@@ -67,7 +67,7 @@ function Admin()
 	// No indexing evil stuff.
 	$context['robot_no_index'] = true;
 
-	require_once($sourcedir . '/Subs-Menu.php');
+	loadSource('Subs-Menu');
 
 	// Some preferences.
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
@@ -90,7 +90,7 @@ function Admin()
 				),
 				'news' => array(
 					'label' => $txt['news_title'],
-					'file' => 'ManageNews.php',
+					'file' => 'ManageNews',
 					'function' => 'ManageNews',
 					'icon' => 'news.gif',
 					'permission' => array('edit_news', 'send_mail', 'admin_forum'),
@@ -102,7 +102,7 @@ function Admin()
 				),
 				'packages' => array(
 					'label' => $txt['package'],
-					'file' => 'Packages.php',
+					'file' => 'Packages',
 					'function' => 'Packages',
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
@@ -131,13 +131,13 @@ function Admin()
 			'areas' => array(
 				'corefeatures' => array(
 					'label' => $txt['core_settings_title'],
-					'file' => 'ManageSettings.php',
+					'file' => 'ManageSettings',
 					'function' => 'ModifyCoreFeatures',
 					'icon' => 'corefeatures.gif',
 				),
 				'featuresettings' => array(
 					'label' => $txt['modSettings_title'],
-					'file' => 'ManageSettings.php',
+					'file' => 'ManageSettings',
 					'function' => 'ModifyFeatureSettings',
 					'icon' => 'features.gif',
 					'subsections' => array(
@@ -150,7 +150,7 @@ function Admin()
 				),
 				'securitysettings' => array(
 					'label' => $txt['admin_security_moderation'],
-					'file' => 'ManageSettings.php',
+					'file' => 'ManageSettings',
 					'function' => 'ModifySecuritySettings',
 					'icon' => 'security.gif',
 					'subsections' => array(
@@ -161,7 +161,7 @@ function Admin()
 				),
 				'languages' => array(
 					'label' => $txt['language_configuration'],
-					'file' => 'ManageServer.php',
+					'file' => 'ManageServer',
 					'function' => 'ManageLanguages',
 					'icon' => 'languages.gif',
 					'subsections' => array(
@@ -172,7 +172,7 @@ function Admin()
 				),
 				'serversettings' => array(
 					'label' => $txt['admin_server_settings'],
-					'file' => 'ManageServer.php',
+					'file' => 'ManageServer',
 					'function' => 'ModifySettings',
 					'icon' => 'server.gif',
 					'subsections' => array(
@@ -185,14 +185,14 @@ function Admin()
 				),
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
-					'file' => 'Themes.php',
+					'file' => 'Themes',
 					'function' => 'ThemesMain',
 					'custom_url' => $scripturl . '?action=admin;area=theme;sa=settings;th=' . $settings['theme_id'],
 					'icon' => 'current_theme.gif',
 				),
 				'theme' => array(
 					'label' => $txt['theme_admin'],
-					'file' => 'Themes.php',
+					'file' => 'Themes',
 					'function' => 'ThemesMain',
 					'custom_url' => $scripturl . '?action=admin;area=theme;sa=admin',
 					'icon' => 'themes.gif',
@@ -205,7 +205,7 @@ function Admin()
 				),
 				'modsettings' => array(
 					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings.php',
+					'file' => 'ManageSettings',
 					'function' => 'ModifyModSettings',
 					'icon' => 'modifications.gif',
 					'subsections' => array(
@@ -223,7 +223,7 @@ function Admin()
 			'areas' => array(
 				'manageboards' => array(
 					'label' => $txt['admin_boards'],
-					'file' => 'ManageBoards.php',
+					'file' => 'ManageBoards',
 					'function' => 'ManageBoards',
 					'icon' => 'boards.gif',
 					'permission' => array('manage_boards'),
@@ -235,7 +235,7 @@ function Admin()
 				),
 				'postsettings' => array(
 					'label' => $txt['manageposts'],
-					'file' => 'ManagePosts.php',
+					'file' => 'ManagePosts',
 					'function' => 'ManagePostSettings',
 					'permission' => array('admin_forum'),
 					'icon' => 'posts.gif',
@@ -249,7 +249,7 @@ function Admin()
 				),
 				'managecalendar' => array(
 					'label' => $txt['manage_calendar'],
-					'file' => 'ManageCalendar.php',
+					'file' => 'ManageCalendar',
 					'function' => 'ManageCalendar',
 					'icon' => 'calendar.gif',
 					'permission' => array('admin_forum'),
@@ -261,7 +261,7 @@ function Admin()
 				),
 				'managesearch' => array(
 					'label' => $txt['manage_search'],
-					'file' => 'ManageSearch.php',
+					'file' => 'ManageSearch',
 					'function' => 'ManageSearch',
 					'icon' => 'search.gif',
 					'permission' => array('admin_forum'),
@@ -273,7 +273,7 @@ function Admin()
 				),
 				'smileys' => array(
 					'label' => $txt['smileys_manage'],
-					'file' => 'ManageSmileys.php',
+					'file' => 'ManageSmileys',
 					'function' => 'ManageSmileys',
 					'icon' => 'smiley.gif',
 					'permission' => array('manage_smileys'),
@@ -288,7 +288,7 @@ function Admin()
 				),
 				'manageattachments' => array(
 					'label' => $txt['attachments_avatars'],
-					'file' => 'ManageAttachments.php',
+					'file' => 'ManageAttachments',
 					'function' => 'ManageAttachments',
 					'icon' => 'attachment.gif',
 					'permission' => array('manage_attachments'),
@@ -307,7 +307,7 @@ function Admin()
 			'areas' => array(
 				'viewmembers' => array(
 					'label' => $txt['admin_users'],
-					'file' => 'ManageMembers.php',
+					'file' => 'ManageMembers',
 					'function' => 'ViewMembers',
 					'icon' => 'members.gif',
 					'permission' => array('moderate_forum'),
@@ -318,7 +318,7 @@ function Admin()
 				),
 				'membergroups' => array(
 					'label' => $txt['admin_groups'],
-					'file' => 'ManageMembergroups.php',
+					'file' => 'ManageMembergroups',
 					'function' => 'ModifyMembergroups',
 					'icon' => 'membergroups.gif',
 					'permission' => array('manage_membergroups'),
@@ -330,7 +330,7 @@ function Admin()
 				),
 				'permissions' => array(
 					'label' => $txt['edit_permissions'],
-					'file' => 'ManagePermissions.php',
+					'file' => 'ManagePermissions',
 					'function' => 'ModifyPermissions',
 					'icon' => 'permissions.gif',
 					'permission' => array('manage_permissions'),
@@ -344,7 +344,7 @@ function Admin()
 				),
 				'regcenter' => array(
 					'label' => $txt['registration_center'],
-					'file' => 'ManageRegistration.php',
+					'file' => 'ManageRegistration',
 					'function' => 'RegCenter',
 					'icon' => 'regcenter.gif',
 					'permission' => array('admin_forum', 'moderate_forum'),
@@ -357,7 +357,7 @@ function Admin()
 				),
 				'ban' => array(
 					'label' => $txt['ban_title'],
-					'file' => 'ManageBans.php',
+					'file' => 'ManageBans',
 					'function' => 'Ban',
 					'icon' => 'ban.gif',
 					'permission' => 'manage_bans',
@@ -371,7 +371,7 @@ function Admin()
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
 					'enabled' => in_array('ps', $context['admin_features']),
-					'file' => 'ManagePaid.php',
+					'file' => 'ManagePaid',
 					'icon' => 'paid.gif',
 					'function' => 'ManagePaidSubscriptions',
 					'permission' => 'admin_forum',
@@ -383,7 +383,7 @@ function Admin()
 				'sengines' => array(
 					'label' => $txt['search_engines'],
 					'enabled' => in_array('sp', $context['admin_features']),
-					'file' => 'ManageSearchEngines.php',
+					'file' => 'ManageSearchEngines',
 					'icon' => 'engines.gif',
 					'function' => 'SearchEngines',
 					'permission' => 'admin_forum',
@@ -402,7 +402,7 @@ function Admin()
 			'areas' => array(
 				'maintain' => array(
 					'label' => $txt['maintain_title'],
-					'file' => 'ManageMaintenance.php',
+					'file' => 'ManageMaintenance',
 					'icon' => 'maintain.gif',
 					'function' => 'ManageMaintenance',
 					'subsections' => array(
@@ -414,7 +414,7 @@ function Admin()
 				),
 				'scheduledtasks' => array(
 					'label' => $txt['maintain_tasks'],
-					'file' => 'ManageScheduledTasks.php',
+					'file' => 'ManageScheduledTasks',
 					'icon' => 'scheduled.gif',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => array(
@@ -424,7 +424,7 @@ function Admin()
 				),
 				'mailqueue' => array(
 					'label' => $txt['mailqueue_title'],
-					'file' => 'ManageMail.php',
+					'file' => 'ManageMail',
 					'function' => 'ManageMail',
 					'icon' => 'mail.gif',
 					'subsections' => array(
@@ -435,7 +435,7 @@ function Admin()
 				'reports' => array(
 					'enabled' => in_array('rg', $context['admin_features']),
 					'label' => $txt['generate_reports'],
-					'file' => 'Reports.php',
+					'file' => 'Reports',
 					'function' => 'ReportsMain',
 					'icon' => 'reports.gif',
 				),
@@ -455,7 +455,7 @@ function Admin()
 				),
 				'repairboards' => array(
 					'label' => $txt['admin_repair'],
-					'file' => 'RepairBoards.php',
+					'file' => 'RepairBoards',
 					'function' => 'RepairBoards',
 					'select' => 'maintain',
 					'hidden' => true,
@@ -503,7 +503,7 @@ function Admin()
 
 	// Now - finally - call the right place!
 	if (isset($admin_include_data['file']))
-		require_once($sourcedir . '/' . $admin_include_data['file']);
+		loadSource($admin_include_data['file']);
 
 	$admin_include_data['function']();
 }
@@ -511,13 +511,13 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $sourcedir, $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings, $smcFunc;
+	global $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings, $smcFunc;
 
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(array('admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'));
 
 	// Find all of this forum's administrators...
-	require_once($sourcedir . '/Subs-Membergroups.php');
+	loadSource('Subs-Membergroups');
 	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
 	{
 		// Add a 'more'-link if there are more than 32.
@@ -525,7 +525,7 @@ function AdminHome()
 	}
 
 	// Load the credits stuff.
-	require_once($sourcedir . '/Credits.php');
+	loadSource('Credits');
 	Credits(true);
 
 	// Fill in the blanks in the support resources paragraphs.
@@ -555,7 +555,7 @@ function AdminHome()
 	$context['forum_version'] = $forum_version;
 
 	// Get a list of current server versions.
-	require_once($sourcedir . '/Subs-Admin.php');
+	loadSource('Subs-Admin');
 	$checkFor = array(
 		'gd',
 		'db_server',
@@ -623,7 +623,7 @@ function AdminHome()
 // This allocates out all the search stuff.
 function AdminSearch()
 {
-	global $txt, $context, $smcFunc, $sourcedir;
+	global $txt, $context, $smcFunc;
 
 	isAllowedTo('admin_forum');
 
@@ -646,7 +646,7 @@ function AdminSearch()
 		$context['admin_preferences']['sb'] = $context['search_type'];
 
 		// Update the preferences.
-		require_once($sourcedir . '/Subs-Admin.php');
+		loadSource('Subs-Admin');
 		updateAdminPreferences();
 	}
 
@@ -808,7 +808,7 @@ function AdminSearchMember()
 // This file allows the user to search the SM online manual for a little of help.
 function AdminSearchOM()
 {
-	global $context, $sourcedir;
+	global $context;
 
 	$docsURL = 'docs.simplemachines.org';
 	$context['doc_scripturl'] = 'http://docs.simplemachines.org/index.php';
@@ -826,7 +826,7 @@ function AdminSearchOM()
 	$postVars = implode('&', $postVars);
 
 	// Get the results from the doc site.
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 	$search_results = fetch_web_data($context['doc_scripturl'] . '?action=search2&xml', $postVars);
 
 	// If we didn't get any xml back we are in trouble - perhaps the doc site is overloaded?
@@ -837,7 +837,7 @@ function AdminSearchOM()
 
 	// Otherwise we simply walk through the XML and stick it in context for display.
 	$context['search_results'] = array();
-	require_once($sourcedir . '/Class-Package.php');
+	loadSource('Class-Package');
 
 	// Get the results loaded into an array for processing!
 	$results = new xmlArray($search_results, false);
@@ -895,17 +895,17 @@ function AdminSearchOM()
 // This function decides which log to load.
 function AdminLogs()
 {
-	global $sourcedir, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// These are the logs they can load.
 	$log_functions = array(
-		'errorlog' => array('ManageErrors.php', 'ViewErrorLog'),
-		'adminlog' => array('Modlog.php', 'ViewModlog'),
-		'modlog' => array('Modlog.php', 'ViewModlog'),
-		'banlog' => array('ManageBans.php', 'BanLog'),
-		'spiderlog' => array('ManageSearchEngines.php', 'SpiderLogs'),
-		'tasklog' => array('ManageScheduledTasks.php', 'TaskLog'),
-		'pruning' => array('ManageSettings.php', 'ModifyPruningSettings'),
+		'errorlog' => array('ManageErrors', 'ViewErrorLog'),
+		'adminlog' => array('Modlog', 'ViewModlog'),
+		'modlog' => array('Modlog', 'ViewModlog'),
+		'banlog' => array('ManageBans', 'BanLog'),
+		'spiderlog' => array('ManageSearchEngines', 'SpiderLogs'),
+		'tasklog' => array('ManageScheduledTasks', 'TaskLog'),
+		'pruning' => array('ManageSettings', 'ModifyPruningSettings'),
 	);
 
 	$sub_action = isset($_REQUEST['sa'], $log_functions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'errorlog';
@@ -944,8 +944,7 @@ function AdminLogs()
 		),
 	);
 
-	// !!! Fix this to use loadSource
-	require_once($sourcedir . '/' . $log_functions[$sub_action][0]);
+	loadSource($log_functions[$sub_action][0]);
 	$log_functions[$sub_action][1]();
 }
 

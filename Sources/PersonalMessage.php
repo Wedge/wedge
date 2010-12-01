@@ -110,7 +110,7 @@ if (!defined('SMF'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $scripturl, $sourcedir, $context, $user_info, $user_settings, $smcFunc, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $user_settings, $smcFunc, $modSettings;
 
 	// No guests!
 	is_not_guest();
@@ -119,7 +119,7 @@ function MessageMain()
 	isAllowedTo('pm_read');
 
 	// This file contains the basic functions for sending a PM.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	loadLanguage('PersonalMessage');
 
@@ -295,7 +295,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $scripturl, $sourcedir, $sc, $modSettings, $settings, $user_info, $options;
+	global $txt, $context, $scripturl, $sc, $modSettings, $settings, $user_info, $options;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -402,7 +402,7 @@ function messageIndexBar($area)
 		);
 	}
 
-	require_once($sourcedir . '/Subs-Menu.php');
+	loadSource('Subs-Menu');
 
 	// What page is this, again?
 	$current_page = $scripturl . '?action=pm' . (!empty($_REQUEST['sa']) ? ';sa=' . $_REQUEST['sa'] : '') . (!empty($context['folder']) ? ';f=' . $context['folder'] : '') . (!empty($context['current_label_id']) ? ';l=' . $context['current_label_id'] : '');
@@ -1530,7 +1530,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $sourcedir, $scripturl, $modSettings;
+	global $txt, $scripturl, $modSettings;
 	global $context, $options, $smcFunc, $language, $user_info;
 
 	isAllowedTo('pm_send');
@@ -1772,8 +1772,7 @@ function MessagePost()
 	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
 
 	// Needed for the WYSIWYG editor.
-	require_once($sourcedir . '/Subs-Editor.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// Now create the editor.
 	$context['postbox'] = new wedgeEditor(
@@ -1808,7 +1807,7 @@ function MessagePost()
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
 	global $txt, $context, $scripturl, $modSettings;
-	global $smcFunc, $user_info, $sourcedir;
+	global $smcFunc, $user_info;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
@@ -1921,8 +1920,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	}
 
 	// We need to load the editor once more.
-	require_once($sourcedir . '/Subs-Editor.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// Create it...
 	$context['postbox'] = new wedgeEditor(
@@ -1960,12 +1958,11 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 // Send it!
 function MessagePost2()
 {
-	global $txt, $context, $sourcedir;
+	global $txt, $context;
 	global $user_info, $modSettings, $scripturl, $smcFunc;
 
 	isAllowedTo('pm_send');
-	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Auth', 'Class-Editor'));
 
 	loadLanguage('PersonalMessage', '', false);
 
@@ -2123,7 +2120,7 @@ function MessagePost2()
 	// Wrong verification code?
 	if (!$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'pm',
 		);
@@ -2935,12 +2932,11 @@ function ManageLabels()
 // Edit Personal Message Settings
 function MessageSettings()
 {
-	global $txt, $user_settings, $user_info, $context, $sourcedir, $smcFunc;
+	global $txt, $user_settings, $user_info, $context, $smcFunc;
 	global $scripturl, $profile_vars, $cur_profile, $user_profile;
 
 	// Need this for the display.
-	require_once($sourcedir . '/Profile.php');
-	require_once($sourcedir . '/Profile-Modify.php');
+	loadSource(array('Profile', 'Profile-Modify'));
 
 	// We want them to submit back to here.
 	$context['profile_custom_submit_url'] = $scripturl . '?action=pm;sa=settings;save';
@@ -2988,7 +2984,7 @@ function MessageSettings()
 // Allows a user to report a personal message they receive to the administrator.
 function ReportMessage()
 {
-	global $txt, $context, $scripturl, $sourcedir;
+	global $txt, $context, $scripturl;
 	global $user_info, $language, $modSettings, $smcFunc;
 
 	// Check that this feature is even enabled!

@@ -49,10 +49,10 @@ if (!defined('SMF'))
 // Browse the list of package servers, add servers...
 function PackageGet()
 {
-	global $txt, $scripturl, $context, $boarddir, $sourcedir, $modSettings;
+	global $txt, $scripturl, $context, $boarddir, $modSettings;
 
 	isAllowedTo('admin_forum');
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Use the Packages template... no reason to separate.
 	loadLanguage('Packages');
@@ -107,7 +107,7 @@ function PackageGet()
 
 function PackageServers()
 {
-	global $txt, $scripturl, $context, $boarddir, $sourcedir, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $boarddir, $modSettings, $smcFunc;
 
 	// Ensure we use the correct template, and page title.
 	$context['sub_template'] = 'servers';
@@ -145,7 +145,7 @@ function PackageServers()
 	{
 		if (isset($_POST['ftp_username']))
 		{
-			require_once($sourcedir . '/Class-Package.php');
+			loadSource('Class-Package');
 			$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 			if ($ftp->error === false)
@@ -163,7 +163,7 @@ function PackageServers()
 		{
 			if (!isset($ftp))
 			{
-				require_once($sourcedir . '/Class-Package.php');
+				loadSource('Class-Package');
 				$ftp = new ftp_connection(null);
 			}
 			elseif ($ftp->error !== false && !isset($ftp_error))
@@ -200,7 +200,7 @@ function PackageServers()
 // Browse a server's list of packages.
 function PackageGBrowse()
 {
-	global $txt, $boardurl, $context, $scripturl, $boarddir, $sourcedir, $forum_version, $context, $smcFunc;
+	global $txt, $boardurl, $context, $scripturl, $boarddir, $forum_version, $context, $smcFunc;
 
 	if (isset($_GET['server']))
 	{
@@ -272,7 +272,7 @@ function PackageGBrowse()
 	@set_time_limit(600);
 
 	// Read packages.xml and parse into xmlArray. (the true tells it to trim things ;).)
-	require_once($sourcedir . '/Class-Package.php');
+	loadSource('Class-Package');
 	$listing = new xmlArray(fetch_web_data($_GET['package']), true);
 
 	// Errm.... empty file?  Try the URL....
@@ -530,7 +530,7 @@ function PackageGBrowse()
 // Download a package.
 function PackageDownload()
 {
-	global $txt, $scripturl, $boarddir, $context, $sourcedir, $smcFunc;
+	global $txt, $scripturl, $boarddir, $context, $smcFunc;
 
 	// Use the downloaded sub template.
 	$context['sub_template'] = 'downloaded';
@@ -637,7 +637,7 @@ function PackageDownload()
 // Upload a new package to the directory.
 function PackageUpload()
 {
-	global $txt, $scripturl, $boarddir, $context, $sourcedir;
+	global $txt, $scripturl, $boarddir, $context;
 
 	// Setup the correct template, even though I'll admit we ain't downloading ;)
 	$context['sub_template'] = 'downloaded';

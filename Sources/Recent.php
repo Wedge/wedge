@@ -36,7 +36,7 @@ if (!defined('SMF'))
 // Find the ten most recent posts.
 function RecentPosts()
 {
-	global $txt, $scripturl, $user_info, $context, $modSettings, $sourcedir, $board, $smcFunc;
+	global $txt, $scripturl, $user_info, $context, $modSettings, $board, $smcFunc;
 
 	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];

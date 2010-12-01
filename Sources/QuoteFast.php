@@ -46,11 +46,10 @@ if (!defined('SMF'))
  */
 function QuoteFast()
 {
-	global $modSettings, $user_info, $txt, $settings, $context;
-	global $sourcedir, $smcFunc;
+	global $modSettings, $user_info, $txt, $settings, $context, $smcFunc;
 
 	loadLanguage('Post');
-	include_once($sourcedir . '/Class-Editor.php');
+	loadSource('Class-Editor');
 	$moderate_boards = boardsAllowedTo('moderate_board');
 
 	$request = $smcFunc['db_query']('', '

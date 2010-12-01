@@ -59,7 +59,7 @@ if (!defined('SMF'))
 // The main handling function for sending specialist (Or otherwise) emails to a user.
 function EmailUser()
 {
-	global $topic, $txt, $context, $scripturl, $sourcedir, $smcFunc;
+	global $topic, $txt, $context, $scripturl, $smcFunc;
 
 	// Don't index anything here.
 	$context['robot_no_index'] = true;
@@ -81,7 +81,7 @@ function EmailUser()
 // Send a topic to a friend.
 function SendTopic()
 {
-	global $topic, $txt, $context, $scripturl, $sourcedir, $smcFunc, $modSettings;
+	global $topic, $txt, $context, $scripturl, $smcFunc, $modSettings;
 
 	// Check permissions...
 	isAllowedTo('send_topic');
@@ -127,7 +127,7 @@ function SendTopic()
 	spamProtection('sendtopc');
 
 	// This is needed for sendmail().
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Trim the names..
 	$_POST['y_name'] = trim($_POST['y_name']);
@@ -178,7 +178,7 @@ function SendTopic()
 // Allow a user to send an email.
 function CustomEmail()
 {
-	global $context, $modSettings, $user_info, $smcFunc, $txt, $scripturl, $sourcedir;
+	global $context, $modSettings, $user_info, $smcFunc, $txt, $scripturl;
 
 	// Can the user even see this information?
 	if ($user_info['is_guest'] && !empty($modSettings['guest_hideContacts']))
@@ -244,7 +244,7 @@ function CustomEmail()
 	// Are we actually sending it?
 	if (isset($_POST['send'], $_POST['email_body']))
 	{
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 
 		checkSession();
 
@@ -302,7 +302,7 @@ function CustomEmail()
 // Report a post to the moderator... ask for a comment.
 function ReportToModerator()
 {
-	global $txt, $topic, $sourcedir, $modSettings, $user_info, $context, $smcFunc;
+	global $txt, $topic, $modSettings, $user_info, $context, $smcFunc;
 
 	$context['robot_no_index'] = true;
 
@@ -342,7 +342,7 @@ function ReportToModerator()
 	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['guests_report_require_captcha']);
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'report',
 		);
@@ -367,7 +367,7 @@ function ReportToModerator()
 // Send the emails.
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $sourcedir, $language, $context, $smcFunc;
+	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $language, $context, $smcFunc;
 
 	// You must have the proper permissions!
 	isAllowedTo('report_any');
@@ -375,7 +375,7 @@ function ReportToModerator2()
 	// Make sure they aren't spamming.
 	spamProtection('reporttm');
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// No errors, yet.
 	$post_errors = array();
@@ -406,7 +406,7 @@ function ReportToModerator2()
 	// Could they get the right verification code?
 	if ($user_info['is_guest'] && !empty($modSettings['guests_report_require_captcha']))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'report',
 		);
@@ -452,7 +452,7 @@ function ReportToModerator2()
 	$subject = un_htmlspecialchars($message['subject']);
 
 	// Get a list of members with the moderate_board permission.
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 	$moderators = membersAllowedTo('moderate_board', $board);
 
 	$request = $smcFunc['db_query']('', '

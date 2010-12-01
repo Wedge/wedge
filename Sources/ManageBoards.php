@@ -125,11 +125,11 @@ function ManageBoards()
 // The main control panel thing.
 function ManageBoardsMain()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $sourcedir, $txt;
+	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $txt;
 
 	loadTemplate('ManageBoards');
 
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'move' && in_array($_REQUEST['move_to'], array('child', 'before', 'after', 'top')))
 	{
@@ -243,10 +243,10 @@ function ManageBoardsMain()
 // Modify a specific category.
 function EditCategory()
 {
-	global $txt, $context, $cat_tree, $boardList, $boards, $sourcedir;
+	global $txt, $context, $cat_tree, $boardList, $boards;
 
 	loadTemplate('ManageBoards');
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 	getBoardTree();
 
 	// id_cat must be a number.... if it exists.
@@ -321,11 +321,9 @@ function EditCategory()
 // Complete the modifications to a specific category.
 function EditCategory2()
 {
-	global $sourcedir;
-
 	checkSession();
 
-	require_once($sourcedir . '/Subs-Categories.php');
+	loadSource('Subs-Categories');
 
 	$_POST['cat'] = (int) $_POST['cat'];
 
@@ -374,15 +372,15 @@ function EditCategory2()
 // Modify a specific board...
 function EditBoard()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $sourcedir, $smcFunc, $modSettings, $user_info;
+	global $txt, $context, $cat_tree, $boards, $boardList, $smcFunc, $modSettings, $user_info;
 
 	loadTemplate('ManageBoards');
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 	getBoardTree(true);
 
 	// For editing the profile we'll need this.
 	loadLanguage('ManagePermissions');
-	require_once($sourcedir . '/ManagePermissions.php');
+	loadSource('ManagePermissions');
 	loadPermissionProfiles();
 
 	// Load available subdomains
@@ -579,7 +577,7 @@ function EditBoard()
 	$smcFunc['db_free_result']($request);
 
 	// Get theme dir for all themes
-	require_once($sourcedir . '/Themes.php');
+	loadSource('Themes');
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_theme AS id, value AS dir
@@ -608,11 +606,11 @@ function EditBoard()
 // Make changes to/delete a board.
 function EditBoard2()
 {
-	global $txt, $sourcedir, $modSettings, $smcFunc, $context;
+	global $txt, $modSettings, $smcFunc, $context;
 
 	checkSession();
 
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 
 	$_POST['boardid'] = (int) $_POST['boardid'];
 
@@ -747,7 +745,7 @@ function EditBoard2()
 
 function EditBoardSettings($return_config = false)
 {
-	global $context, $txt, $sourcedir, $modSettings, $scripturl, $smcFunc;
+	global $context, $txt, $modSettings, $scripturl, $smcFunc;
 
 	// Load the boards list - for the recycle bin!
 	$recycle_boards = array('');
@@ -781,8 +779,7 @@ function EditBoardSettings($return_config = false)
 		return $config_vars;
 
 	// Needed for the settings template and inline permission functions.
-	require_once($sourcedir . '/ManagePermissions.php');
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Don't let guests have these permissions.
 	$context['post_url'] = $scripturl . '?action=admin;area=manageboards;save;sa=settings';

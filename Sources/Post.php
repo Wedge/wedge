@@ -89,13 +89,12 @@ function Post()
 {
 	global $txt, $scripturl, $topic, $modSettings, $board;
 	global $user_info, $sc, $board_info, $context, $settings;
-	global $sourcedir, $options, $smcFunc, $language;
+	global $options, $smcFunc, $language;
 
 	loadLanguage('Post');
 
 	// Needed for the editor and message icons.
-	require_once($sourcedir . '/Subs-Editor.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// You can't reply with a poll... hacker.
 	if (isset($_REQUEST['poll']) && !empty($topic) && !isset($_REQUEST['msg']))
@@ -109,7 +108,7 @@ function Post()
 	if (empty($board) && !$context['make_event'])
 		fatal_lang_error('no_board', false);
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	if (isset($_REQUEST['xml']))
 	{
@@ -246,7 +245,7 @@ function Post()
 		else
 			isAllowedTo('poll_add_any');
 
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		$allowedVoteGroups = groupsAllowedTo('poll_vote', $board);
 
 		// Set up the poll options.
@@ -291,7 +290,7 @@ function Post()
 			// If the user doesn't have permission to edit the post in this topic, redirect them.
 			if ((empty($id_member_poster) || $id_member_poster != $user_info['id'] || !allowedTo('modify_own')) && !allowedTo('modify_any'))
 			{
-				require_once($sourcedir . '/Calendar.php');
+				loadSource('Calendar');
 				return CalendarPost();
 			}
 
@@ -349,7 +348,7 @@ function Post()
 				fatal_lang_error('cannot_post_new', 'user');
 
 			// Load a list of boards for this event in the context.
-			require_once($sourcedir . '/Subs-MessageIndex.php');
+			loadSource('Subs-MessageIndex');
 			$boardListOptions = array(
 				'included_boards' => in_array(0, $boards) ? null : $boards,
 				'not_redirection' => true,
@@ -450,7 +449,7 @@ function Post()
 					$context['post_error']['long_name'] = true;
 				else
 				{
-					require_once($sourcedir . '/Subs-Members.php');
+					loadSource('Subs-Members');
 					if (isReservedName(htmlspecialchars($_REQUEST['guestname']), 0, true, false))
 						$context['post_error']['bad_name'] = true;
 				}
@@ -1181,7 +1180,7 @@ function Post()
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'post',
 		);

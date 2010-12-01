@@ -44,7 +44,7 @@ define('WEDGE_NO_LOG', 1);
 // Download an attachment.
 function Dlattach()
 {
-	global $txt, $modSettings, $user_info, $scripturl, $context, $sourcedir, $topic, $smcFunc;
+	global $txt, $modSettings, $user_info, $scripturl, $context, $topic, $smcFunc;
 
 	// Some defaults that we need.
 	$context['no_last_modified'] = true;

@@ -92,7 +92,7 @@ if (!defined('SMF'))
 // Delete a group of/single member.
 function deleteMembers($users, $check_not_admin = false)
 {
-	global $sourcedir, $modSettings, $user_info, $smcFunc;
+	global $modSettings, $user_info, $smcFunc;
 
 	// Try give us a while to sort this out...
 	@set_time_limit(600);
@@ -365,7 +365,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Delete personal messages.
-	require_once($sourcedir . '/PersonalMessage.php');
+	loadSource('PersonalMessage');
 	deleteMessages(null, null, $users);
 
 	$smcFunc['db_query']('', '
@@ -388,7 +388,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Delete avatar.
-	require_once($sourcedir . '/ManageAttachments.php');
+	loadSource('ManageAttachments');
 	removeAttachments(array('id_member' => $users));
 
 	// It's over, no more moderation for you.
@@ -460,14 +460,13 @@ function deleteMembers($users, $check_not_admin = false)
 
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $modSettings, $context, $sourcedir;
+	global $scripturl, $txt, $modSettings, $context;
 	global $user_info, $options, $settings, $smcFunc;
 
 	loadLanguage('Login');
 
 	// We'll need some external functions.
-	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource(array('Subs-Auth', 'Subs-Post'));
 
 	// Put any errors in here.
 	$reg_errors = array();

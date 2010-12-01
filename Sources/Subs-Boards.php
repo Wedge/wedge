@@ -482,7 +482,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $sourcedir, $cat_tree, $boards, $boardList, $modSettings, $smcFunc, $context;
+	global $cat_tree, $boards, $boardList, $modSettings, $smcFunc, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -776,7 +776,7 @@ function modifyBoard($board_id, &$boardOptions)
 		if (empty($m[2]))
 			$m[2] = 'noisen.com';
 
-		require_once($sourcedir . '/Subs-PrettyUrls.php');
+		loadSource('Subs-PrettyUrls');
 
 		// Everything was empty? Generate a default name
 		if (empty($purl) && $dom == 'noisen.com')
@@ -914,7 +914,7 @@ function createBoard($boardOptions)
 // Remove one or more boards.
 function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 {
-	global $sourcedir, $boards, $smcFunc;
+	global $boards, $smcFunc;
 
 	// No boards to delete? Return!
 	if (empty($boards_to_remove))
@@ -961,7 +961,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 		$topics[] = $row['id_topic'];
 	$smcFunc['db_free_result']($request);
 
-	require_once($sourcedir . '/RemoveTopic.php');
+	loadSource('RemoveTopic');
 	removeTopics($topics, false);
 
 	// Delete the board's logs.

@@ -57,7 +57,7 @@ if (!defined('SMF'))
 // Edit the position and properties of a category.
 function modifyCategory($category_id, $catOptions)
 {
-	global $sourcedir, $smcFunc;
+	global $smcFunc;
 
 	$catUpdates = array();
 	$catParameters = array();
@@ -105,7 +105,7 @@ function modifyCategory($category_id, $catOptions)
 				);
 
 		// If the category order changed, so did the board order.
-		require_once($sourcedir . '/Subs-Boards.php');
+		loadSource('Subs-Boards');
 		reorderBoards();
 	}
 
@@ -185,9 +185,9 @@ function createCategory($catOptions)
 // Remove one or more categories.
 function deleteCategories($categories, $moveBoardsTo = null)
 {
-	global $sourcedir, $smcFunc, $cat_tree;
+	global $smcFunc, $cat_tree;
 
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 
 	getBoardTree();
 

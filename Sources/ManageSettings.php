@@ -80,7 +80,7 @@ if (!defined('SMF'))
 // This just avoids some repetition.
 function loadGeneralSettingParameters($subActions = array(), $defaultAction = '')
 {
-	global $context, $txt, $sourcedir;
+	global $context, $txt;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -89,7 +89,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 	loadLanguage('ManageSettings');
 
 	// Will need the utility functions from here.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	$context['sub_template'] = 'show_settings';
 
@@ -261,12 +261,10 @@ function ModifyCoreFeatures($return_config = false)
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
 			'setting_callback' => create_function('$value', '
-				global $sourcedir;
-
 				// Cant use warning post moderation if disabled!
 				if (!$value)
 				{
-					require_once($sourcedir . \'/PostModeration.php\');
+					loadSource(\'PostModeration\');
 					approveAllData();
 
 					return array(\'warning_moderate\' => 0);
@@ -298,8 +296,7 @@ function ModifyCoreFeatures($return_config = false)
 					return array(\'spider_group\' => 0, \'show_spider_online\' => 0);
 			'),
 			'on_save' => create_function('', '
-				global $sourcedir, $modSettings;
-				require_once($sourcedir . \'/ManageSearchEngines.php\');
+				loadSource(\'ManageSearchEngines\');
 				recacheSpiderNames();
 			'),
 		),
@@ -1195,8 +1192,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $sc, $smcFunc;
-	global $modSettings, $sourcedir;
+	global $txt, $scripturl, $context, $settings, $sc, $smcFunc, $modSettings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	$context['sub_template'] = 'show_custom_profile';
@@ -1237,7 +1233,7 @@ function ShowCustomProfiles()
 			updateSettings($changes);
 	}
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	$listOptions = array(
 		'id' => 'standard_profile_fields',
@@ -1873,7 +1869,7 @@ function EditCustomProfiles()
 
 function ModifyPruningSettings($return_config = false)
 {
-	global $txt, $scripturl, $sourcedir, $context, $settings, $sc, $modSettings;
+	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
@@ -1900,7 +1896,7 @@ function ModifyPruningSettings($return_config = false)
 		return $config_vars;
 
 	// We'll need this in a bit.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -1994,7 +1990,7 @@ function ModifyGeneralModSettings($return_config = false)
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs()
 {
-	global $context, $modSettings, $settings, $sourcedir, $txt, $smcFunc;
+	global $context, $modSettings, $settings, $txt, $smcFunc;
 
 	$context['sub_template'] = 'pretty_urls';
 	$context['page_title'] = $txt['admin_pretty_urls'];
@@ -2021,7 +2017,7 @@ function ModifyPrettyURLs()
 	// Are we resetting now?
 	if (isset($_REQUEST['reset']))
 	{
-		require_once($sourcedir . '/Subs-PrettyUrls.php');
+		loadSource('Subs-PrettyUrls');
 		$output = install_pretty_urls();
 		$context['reset_output'] = $output . $txt['pretty_went_right'];
 	}
@@ -2029,7 +2025,7 @@ function ModifyPrettyURLs()
 	// Are we repopulating now?
 	elseif (isset($_REQUEST['refill']))
 	{
-		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		loadSource('PrettyUrls-Filters');
 		$output = pretty_synchronise_topic_urls();
 		$context['reset_output'] = $output . $txt['pretty_converted'];
 	}
@@ -2055,7 +2051,7 @@ function ModifyPrettyURLs()
 			);
 
 		// Update the filters too
-		require_once($sourcedir . '/Subs-PrettyUrls.php');
+		loadSource('Subs-PrettyUrls');
 		pretty_update_filters();
 
 		redirectexit('action=admin;area=featuresettings;sa=pretty');

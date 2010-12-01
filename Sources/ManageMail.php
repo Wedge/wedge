@@ -45,7 +45,7 @@ if (!defined('SMF'))
 // This function passes control through to the relevant section
 function ManageMail()
 {
-	global $context, $txt, $scripturl, $modSettings, $sourcedir;
+	global $context, $txt, $scripturl, $modSettings;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -54,7 +54,7 @@ function ManageMail()
 	loadLanguage('ManageMail');
 
 	// We'll need the utility functions from here.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	$context['page_title'] = $txt['mailqueue_title'];
 	$context['sub_template'] = 'show_settings';
@@ -84,7 +84,6 @@ function ManageMail()
 function BrowseMailQueue()
 {
 	global $scripturl, $context, $modSettings, $txt, $smcFunc;
-	global $sourcedir;
 
 	// First, are we deleting something from the queue?
 	if (isset($_REQUEST['delete']))
@@ -221,7 +220,7 @@ function BrowseMailQueue()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	loadTemplate('ManageMail');
@@ -359,12 +358,12 @@ function ModifyMailSettings($return_config = false)
 // This function clears the mail queue of all emails, and at the end redirects to browse.
 function ClearMailQueue()
 {
-	global $sourcedir, $smcFunc;
+	global $smcFunc;
 
 	checkSession('get');
 
 	// This is certainly needed!
-	require_once($sourcedir . '/ScheduledTasks.php');
+	loadSource('ScheduledTasks');
 
 	// If we don't yet have the total to clear, find it.
 	if (!isset($_GET['te']))

@@ -80,14 +80,14 @@ if (!defined('SMF'))
 // The entrance point for all 'Manage Membergroup' actions.
 function ModifyMembergroups()
 {
-	global $context, $txt, $scripturl, $sourcedir;
+	global $context, $txt, $scripturl;
 
 	$subActions = array(
 		'add' => array('AddMembergroup', 'manage_membergroups'),
 		'delete' => array('DeleteMembergroup', 'manage_membergroups'),
 		'edit' => array('EditMembergroup', 'manage_membergroups'),
 		'index' => array('MembergroupIndex', 'manage_membergroups'),
-		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups.php'),
+		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups'),
 		'settings' => array('ModifyMembergroupsettings', 'admin_forum'),
 	);
 
@@ -96,7 +96,7 @@ function ModifyMembergroups()
 
 	// Is it elsewhere?
 	if (isset($subActions[$_REQUEST['sa']][2]))
-		require_once($sourcedir . '/' . $subActions[$_REQUEST['sa']][2]);
+		loadSource($subActions[$_REQUEST['sa']][2]);
 
 	// Do the permission check, you might not be allowed her.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
@@ -237,7 +237,7 @@ function MembergroupIndex()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// The second list shows the post count based groups.
@@ -354,7 +354,7 @@ function MembergroupIndex()
 // Add a membergroup.
 function AddMembergroup()
 {
-	global $context, $txt, $sourcedir, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings, $smcFunc;
 
 	// A form was submitted, we can start adding.
 	if (!empty($_POST['group_name']))
@@ -400,7 +400,7 @@ function AddMembergroup()
 		if ($_POST['perm_type'] == 'predefined')
 		{
 			// Set default permission level.
-			require_once($sourcedir . '/ManagePermissions.php');
+			loadSource('ManagePermissions');
 			setPermissionLevel($_POST['level'], $id_group, 'null');
 		}
 		// Copy or inherit the permissions!
@@ -409,7 +409,7 @@ function AddMembergroup()
 			$copy_id = $_POST['perm_type'] == 'copy' ? (int) $_POST['copyperm'] : (int) $_POST['inheritperm'];
 
 			// Don't allow copying of a real priviledged person!
-			require_once($sourcedir . '/ManagePermissions.php');
+			loadSource('ManagePermissions');
 			loadIllegalPermissions();
 
 			$request = $smcFunc['db_query']('', '
@@ -585,11 +585,9 @@ function AddMembergroup()
 // Deleting a membergroup by URL (not implemented).
 function DeleteMembergroup()
 {
-	global $sourcedir;
-
 	checkSession('get');
 
-	require_once($sourcedir . '/Subs-Membergroups.php');
+	loadSource('Subs-Membergroups');
 	deleteMembergroups((int) $_REQUEST['group']);
 
 	// Go back to the membergroup index.
@@ -599,7 +597,7 @@ function DeleteMembergroup()
 // Editing a membergroup.
 function EditMembergroup()
 {
-	global $context, $txt, $sourcedir, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings, $smcFunc;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
 
@@ -631,7 +629,7 @@ function EditMembergroup()
 	{
 		checkSession();
 
-		require_once($sourcedir . '/Subs-Membergroups.php');
+		loadSource('Subs-Membergroups');
 		deleteMembergroups($_REQUEST['group']);
 
 		redirectexit('action=admin;area=membergroups;');
@@ -804,7 +802,7 @@ function EditMembergroup()
 		// Do we need to set inherited permissions?
 		if ($_POST['group_inherit'] != -2 && $_POST['group_inherit'] != $_POST['old_inherit'])
 		{
-			require_once($sourcedir . '/ManagePermissions.php');
+			loadSource('ManagePermissions');
 			updateChildPermissions($_POST['group_inherit']);
 		}
 
@@ -1009,13 +1007,13 @@ function EditMembergroup()
 // Set general membergroup settings.
 function ModifyMembergroupsettings()
 {
-	global $context, $sourcedir, $scripturl, $modSettings, $txt;
+	global $context, $scripturl, $modSettings, $txt;
 
 	$context['sub_template'] = 'show_settings';
 	$context['page_title'] = $txt['membergroups_settings'];
 
 	// Needed for the settings functions.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	// Don't allow assignment of guests.
 	$context['permissions_excluded'] = array(-1);

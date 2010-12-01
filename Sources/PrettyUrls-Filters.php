@@ -18,7 +18,7 @@ if (!defined('SMF'))
 // This function used to do a lot more, but I kept the name the same though now it doesn't
 function pretty_synchronise_topic_urls()
 {
-	global $modSettings, $smcFunc, $sourcedir;
+	global $modSettings, $smcFunc;
 
 	// Clear the URLs cache
 	$smcFunc['db_query']('', '
@@ -47,7 +47,7 @@ function pretty_synchronise_topic_urls()
 		);
 	$smcFunc['db_free_result']($query);
 
-	require_once($sourcedir . '/Subs-PrettyUrls.php');
+	loadSource('Subs-PrettyUrls');
 
 	// Go through the $topicData array and fix anything that needs fixing
 	foreach ($topicData as $row)
@@ -116,7 +116,7 @@ function pretty_urls_actions_filter($urls)
 // Filter topic urls
 function pretty_urls_topic_filter($urls)
 {
-	global $context, $modSettings, $scripturl, $smcFunc, $sourcedir;
+	global $context, $modSettings, $scripturl, $smcFunc;
 
 /////////////////////////////////// .a-z ?!?! Y'a un 'blème......
 	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
@@ -170,7 +170,7 @@ function pretty_urls_topic_filter($urls)
 		// Generate new topic URLs if required
 		if (count($unpretty_topics) != 0)
 		{
-			require_once($sourcedir . '/Subs-PrettyUrls.php');
+			loadSource('Subs-PrettyUrls');
 
 			// Get the topic subjects
 			$new_topics = array();

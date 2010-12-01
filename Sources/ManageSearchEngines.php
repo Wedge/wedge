@@ -66,7 +66,7 @@ function SearchEngines()
 // This is really just the settings page.
 function ManageSearchEngineSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc;
+	global $context, $txt, $modSettings, $scripturl, $smcFunc;
 
 	$config_vars = array(
 		// How much detail?
@@ -117,7 +117,7 @@ function ManageSearchEngineSettings($return_config = false)
 		$_POST['spider_group'] = 0;
 
 	// We'll want this for our easy save.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	// Setup the template.
 	$context['page_title'] = $txt['settings'];
@@ -145,7 +145,7 @@ function ManageSearchEngineSettings($return_config = false)
 // View a list of all the spiders we know about.
 function ViewSpiders()
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl, $smcFunc;
 
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
 	{
@@ -302,7 +302,7 @@ function ViewSpiders()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';
@@ -640,7 +640,7 @@ function consolidateSpiderStats()
 // See what spiders have been up to.
 function SpiderLogs()
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc, $modSettings;
+	global $context, $txt, $scripturl, $smcFunc, $modSettings;
 
 	// Load the template and language just incase.
 	loadLanguage('Search');
@@ -720,7 +720,7 @@ function SpiderLogs()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// Now determine the actions of the URLs.
@@ -738,7 +738,7 @@ function SpiderLogs()
 		}
 
 		// Now stick in the new URLs.
-		require_once($sourcedir . '/Who.php');
+		loadSource('Who');
 		$urls = determineActions($urls, 'whospider_');
 		foreach ($urls as $k => $new_url)
 		{
@@ -791,7 +791,7 @@ function list_getNumSpiderLogs()
 // Show the spider statistics.
 function SpiderStats()
 {
-	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl, $smcFunc;
 
 	// Force an update of the stats every 60 seconds.
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
@@ -932,7 +932,7 @@ function SpiderStats()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';

@@ -47,13 +47,13 @@ if (!defined('SMF'))
 // Completely remove an entire topic.
 function RemoveTopic2()
 {
-	global $user_info, $topic, $board, $sourcedir, $smcFunc, $context, $modSettings;
+	global $user_info, $topic, $board, $smcFunc, $context, $modSettings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
 
 	// This file needs to be included for sendNotifications().
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Trying to fool us around, are we?
 	if (empty($topic))
@@ -232,7 +232,7 @@ function RemoveOldTopics2()
 // Removes the passed id_topic's. (permissions are NOT checked here!)
 function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = false)
 {
-	global $sourcedir, $modSettings, $smcFunc;
+	global $modSettings, $smcFunc;
 
 	// Nothing to do?
 	if (empty($topics))
@@ -316,11 +316,11 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			);
 
 			// Move the topics to the recycle board.
-			require_once($sourcedir . '/MoveTopic.php');
+			loadSource('MoveTopic');
 			moveTopics($recycleTopics, $modSettings['recycle_board']);
 
 			// Close reports that are being recycled.
-			require_once($sourcedir . '/ModerationCenter.php');
+			loadSource('ModerationCenter');
 
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}log_reported
@@ -447,7 +447,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	}
 
 	// Get rid of the attachment, if it exists.
-	require_once($sourcedir . '/ManageAttachments.php');
+	loadSource('ManageAttachments');
 	$attachmentQuery = array(
 		'attachment_type' => 0,
 		'id_topic' => $topics,
@@ -555,7 +555,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		'calendar_updated' => time(),
 	));
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 	$updates = array();
 	foreach ($adjustBoards as $stats)
 		$updates[] = $stats['id_board'];
@@ -565,7 +565,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 // Remove a specific message (including permission checks).
 function removeMessage($message, $decreasePostCount = true)
 {
-	global $board, $sourcedir, $modSettings, $user_info, $smcFunc, $context;
+	global $board, $modSettings, $user_info, $smcFunc, $context;
 
 	if (empty($message) || !is_numeric($message))
 		return false;
@@ -669,7 +669,7 @@ function removeMessage($message, $decreasePostCount = true)
 	);
 	if ($smcFunc['db_affected_rows']() != 0)
 	{
-		require_once($sourcedir . '/ModerationCenter.php');
+		loadSource('ModerationCenter');
 		updateSettings(array('last_mod_report_action' => time()));
 		recountOpenReports();
 	}
@@ -967,7 +967,7 @@ function removeMessage($message, $decreasePostCount = true)
 		}
 
 		// Delete attachment(s) if they exist.
-		require_once($sourcedir . '/ManageAttachments.php');
+		loadSource('ManageAttachments');
 		$attachmentQuery = array(
 			'attachment_type' => 0,
 			'id_msg' => $message,
@@ -983,7 +983,7 @@ function removeMessage($message, $decreasePostCount = true)
 	));
 
 	// And now to update the last message of each board we messed with.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 	if ($recycle)
 		updateLastMessages(array($row['id_board'], $modSettings['recycle_board']));
 	else
@@ -994,7 +994,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 function RestoreTopic()
 {
-	global $context, $smcFunc, $modSettings, $sourcedir;
+	global $context, $smcFunc, $modSettings;
 
 	// Check session.
 	checkSession('get');
@@ -1007,7 +1007,7 @@ function RestoreTopic()
 	isAllowedTo('move_any', $modSettings['recycle_board']);
 
 	// We need this file.
-	require_once($sourcedir . '/MoveTopic.php');
+	loadSource('MoveTopic');
 
 	$unfound_messages = array();
 	$topics_to_restore = array();
@@ -1226,7 +1226,7 @@ function RestoreTopic()
 // Take a load of messages from one place and stick them in a topic.
 function mergePosts($msgs = array(), $from_topic, $target_topic)
 {
-	global $context, $smcFunc, $modSettings, $sourcedir;
+	global $context, $smcFunc, $modSettings;
 
 	//!!! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
 
@@ -1445,7 +1445,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 	);
 
 	// Need it to update some stats.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Update stats.
 	updateStats('topic');

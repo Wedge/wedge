@@ -123,10 +123,9 @@ function ManageNews()
 // Let the administrator(s) edit the news.
 function EditNews()
 {
-	global $txt, $modSettings, $context, $sourcedir, $user_info;
-	global $smcFunc;
+	global $txt, $modSettings, $context, $user_info, $smcFunc;
 
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource('Class-Editor');
 
 	// The 'remove selected' button was pressed.
 	if (!empty($_POST['delete_selection']) && !empty($_POST['remove']))
@@ -297,7 +296,7 @@ function SelectMailingMembers()
 // Email your members...
 function ComposeMailing()
 {
-	global $txt, $sourcedir, $context, $smcFunc;
+	global $txt, $context, $smcFunc;
 
 	// Start by finding any members!
 	$toClean = array();
@@ -307,7 +306,7 @@ function ComposeMailing()
 		$toClean[] = 'exclude_members';
 	if (!empty($toClean))
 	{
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		foreach ($toClean as $type)
 		{
 			// Remove the quotes.
@@ -450,7 +449,7 @@ function ComposeMailing()
 // Send out the mailing!
 function SendMailing($clean_only = false)
 {
-	global $txt, $sourcedir, $context, $smcFunc;
+	global $txt, $context, $smcFunc;
 	global $scripturl, $modSettings, $user_info;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.
@@ -543,7 +542,7 @@ function SendMailing($clean_only = false)
 	if ($clean_only)
 		return;
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Save the message and its subject in $context
 	$context['subject'] = htmlspecialchars($_POST['subject']);
@@ -776,7 +775,7 @@ function SendMailing($clean_only = false)
 
 function ModifyNewsSettings($return_config = false)
 {
-	global $context, $sourcedir, $modSettings, $txt, $scripturl;
+	global $context, $modSettings, $txt, $scripturl;
 
 	$config_vars = array(
 		array('title', 'settings'),
@@ -796,8 +795,7 @@ function ModifyNewsSettings($return_config = false)
 	$context['sub_template'] = 'show_settings';
 
 	// Needed for the inline permission functions, and the settings template.
-	require_once($sourcedir . '/ManagePermissions.php');
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Wrap it all up nice and warm...
 	$context['post_url'] = $scripturl . '?action=admin;area=news;save;sa=settings';

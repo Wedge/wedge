@@ -86,7 +86,7 @@ if (!defined('SMF'))
  */
 function Post2()
 {
-	global $board, $topic, $txt, $modSettings, $sourcedir, $context;
+	global $board, $topic, $txt, $modSettings, $context;
 	global $user_info, $board_info, $options, $smcFunc;
 
 	// Sneaking off, are we?
@@ -99,8 +99,7 @@ function Post2()
 	$context['robot_no_index'] = true;
 
 	// Things we need, to make us strong. We like being strong.
-	require_once($sourcedir . '/Subs-Editor.php');
-	require_once($sourcedir . '/Class-Editor.php');
+	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
 	wedgeEditor::preparseWYSIWYG('message');
@@ -108,7 +107,7 @@ function Post2()
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
 	{
-		require_once($sourcedir . '/Post.php');
+		loadSource('Post');
 		return Post();
 	}
 
@@ -125,7 +124,7 @@ function Post2()
 	// Wrong verification code?
 	if (!$user_info['is_admin'] && !$user_info['is_mod'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1)))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'post',
 		);
@@ -134,7 +133,7 @@ function Post2()
 			$post_errors = array_merge($post_errors, $context['require_verification']);
 	}
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 	loadLanguage('Post');
 
 	// If this isn't a new topic load the topic info that we need.
@@ -219,7 +218,7 @@ function Post2()
 		if (empty($options['no_new_reply_warning']) && isset($_POST['last_msg']) && $topic_info['id_last_msg'] > $_POST['last_msg'])
 		{
 			$_REQUEST['preview'] = true;
-			require_once($sourcedir . '/Post.php');
+			loadSource('Post');
 			return Post();
 		}
 
@@ -436,7 +435,7 @@ function Post2()
 	if ($posterIsGuest)
 	{
 		// If user is a guest, make sure the chosen name isn't taken.
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		if (isReservedName($_POST['guestname'], 0, true, false) && (!isset($row['poster_name']) || $_POST['guestname'] != $row['poster_name']))
 			$post_errors[] = 'bad_name';
 	}
@@ -464,7 +463,7 @@ function Post2()
 			$context['post_error']['messages'][] = $txt['error_' . $post_error];
 		}
 
-		require_once($sourcedir . '/Post.php');
+		loadSource('Post');
 		return Post();
 	}
 
@@ -510,7 +509,7 @@ function Post2()
 		// Make sure guests are actually allowed to vote generally.
 		if ($_POST['poll_guest_vote'])
 		{
-			require_once($sourcedir . '/Subs-Members.php');
+			loadSource('Subs-Members');
 			$allowedVoteGroups = groupsAllowedTo('poll_vote', $board);
 			if (!in_array(-1, $allowedVoteGroups['allowed']))
 				$_POST['poll_guest_vote'] = 0;
@@ -537,7 +536,7 @@ function Post2()
 		foreach ($_POST['attach_del'] as $i => $dummy)
 			$del_temp[$i] = (int) $dummy;
 
-		require_once($sourcedir . '/ManageAttachments.php');
+		loadSource('ManageAttachments');
 		$attachmentQuery = array(
 			'attachment_type' => 0,
 			'id_msg' => (int) $_REQUEST['msg'],
@@ -785,7 +784,7 @@ function Post2()
 	// Editing or posting an event?
 	if (isset($_POST['calendar']) && (!isset($_REQUEST['eventid']) || $_REQUEST['eventid'] == -1))
 	{
-		require_once($sourcedir . '/Subs-Calendar.php');
+		loadSource('Subs-Calendar');
 
 		// Make sure they can link an event to this post.
 		canLinkEvent();
@@ -806,7 +805,7 @@ function Post2()
 		$_REQUEST['eventid'] = (int) $_REQUEST['eventid'];
 
 		// Validate the post...
-		require_once($sourcedir . '/Subs-Calendar.php');
+		loadSource('Subs-Calendar');
 		validateEventPost();
 
 		// If you're not allowed to edit any events, you have to be the poster.
@@ -989,9 +988,9 @@ function Post2()
 function notifyMembersBoard(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $sourcedir, $board, $smcFunc, $context;
+	global $modSettings, $board, $smcFunc, $context;
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Do we have one or lots of topics?
 	if (isset($topicData['body']))

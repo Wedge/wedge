@@ -128,7 +128,7 @@ function ManageSmileys()
 
 function EditSmileySettings($return_config = false)
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $sourcedir, $scripturl;
+	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl;
 
 	// The directories...
 	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
@@ -162,7 +162,7 @@ function EditSmileySettings($return_config = false)
 		return $config_vars;
 
 	// Setup the basics of the settings template.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 	$context['sub_template'] = 'show_settings';
 
 	// Finish up the form...
@@ -195,7 +195,7 @@ function EditSmileySettings($return_config = false)
 function EditSmileySets()
 {
 	global $modSettings, $context, $settings, $txt, $boarddir;
-	global $smcFunc, $scripturl, $sourcedir;
+	global $smcFunc, $scripturl;
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
@@ -459,7 +459,7 @@ function EditSmileySets()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 }
 
@@ -758,7 +758,7 @@ function AddSmiley()
 function EditSmileys()
 {
 	global $modSettings, $context, $settings, $txt, $boarddir;
-	global $smcFunc, $scripturl, $sourcedir;
+	global $smcFunc, $scripturl;
 
 	// Force the correct tab to be displayed.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsmileys';
@@ -1095,7 +1095,7 @@ function EditSmileys()
 	}',
 		);
 
-		require_once($sourcedir . '/Subs-List.php');
+		loadSource('Subs-List');
 		createList($listOptions);
 
 		// The list is the only thing to show, so make it the main template.
@@ -1360,12 +1360,12 @@ function EditSmileyOrder()
 
 function InstallSmileySet()
 {
-	global $sourcedir, $boarddir, $modSettings, $smcFunc;
+	global $boarddir, $modSettings, $smcFunc;
 
 	isAllowedTo('manage_smileys');
 	checkSession('request');
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	$name = strtok(basename(isset($_FILES['set_gz']) ? $_FILES['set_gz']['name'] : $_REQUEST['set_gz']), '.');
 	$name = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $name);
@@ -1467,7 +1467,7 @@ function ImportSmileys($smileyPath)
 function EditMessageIcons()
 {
 	global $user_info, $modSettings, $context, $settings, $txt;
-	global $boarddir, $smcFunc, $scripturl, $sourcedir;
+	global $boarddir, $smcFunc, $scripturl;
 
 	// Get a list of icons.
 	$context['icons'] = array();
@@ -1685,7 +1685,7 @@ function EditMessageIcons()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// If we're adding/editing an icon we'll need a list of boards
@@ -1705,7 +1705,7 @@ function EditMessageIcons()
 			'use_permissions' => true,
 			'selected_board' => isset($context['icon']['board_id']) ? $context['icon']['board_id'] : 0,
 		);
-		require_once($sourcedir . '/Subs-MessageIndex.php');
+		loadSource('Subs-MessageIndex');
 		$context['categories'] = getBoardList($boardListOptions);
 	}
 }

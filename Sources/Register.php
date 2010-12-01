@@ -42,7 +42,7 @@ if (!defined('SMF'))
 function Register($reg_errors = array())
 {
 	global $txt, $boarddir, $context, $settings, $modSettings, $user_info;
-	global $language, $scripturl, $smcFunc, $sourcedir, $smcFunc, $cur_profile;
+	global $language, $scripturl, $smcFunc, $smcFunc, $cur_profile;
 
 	// Is this an incoming AJAX check?
 	if (isset($_GET['sa']) && $_GET['sa'] == 'usernamecheck')
@@ -145,13 +145,13 @@ function Register($reg_errors = array())
 	}
 
 	// Any custom fields we want filled in?
-	require_once($sourcedir . '/Profile.php');
+	loadSource('Profile');
 	loadCustomFields(0, 'register');
 
 	// Or any standard ones?
 	if (!empty($modSettings['registration_fields']))
 	{
-		require_once($sourcedir . '/Profile-Modify.php');
+		loadSource('Profile-Modify');
 
 		// Setup some important context.
 		loadLanguage('Profile');
@@ -175,7 +175,7 @@ function Register($reg_errors = array())
 	// Generate a visual verification code to make sure the user is no bot.
 	if (!empty($modSettings['reg_verification']))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
+		loadSource('Subs-Editor');
 		$verificationOptions = array(
 			'id' => 'register',
 		);
@@ -214,7 +214,7 @@ function Register($reg_errors = array())
 // Actually register the member.
 function Register2($verifiedOpenID = false)
 {
-	global $scripturl, $txt, $modSettings, $context, $sourcedir;
+	global $scripturl, $txt, $modSettings, $context;
 	global $user_info, $options, $settings, $smcFunc;
 
 	// Start collecting together any errors.
@@ -253,7 +253,7 @@ function Register2($verifiedOpenID = false)
 		// Check whether the visual verification code was entered correctly.
 		if (!empty($modSettings['reg_verification']))
 		{
-			require_once($sourcedir . '/Subs-Editor.php');
+			loadSource('Subs-Editor');
 			$verificationOptions = array(
 				'id' => 'register',
 			);
@@ -306,7 +306,7 @@ function Register2($verifiedOpenID = false)
 		$_POST['secret_answer'] = md5($_POST['secret_answer']);
 
 	// Needed for isReservedName() and registerMember().
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 
 	// Validation... even if we're not a mall.
 	if (isset($_POST['real_name']) && (!empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum')))
@@ -461,7 +461,7 @@ function Register2($verifiedOpenID = false)
 			if (!in_array($k, array('sc', 'sesc', $context['session_var'], 'passwrd1', 'passwrd2', 'regSubmit')))
 				$save_variables[$k] = $v;
 
-		require_once($sourcedir . '/Subs-OpenID.php');
+		loadSource('Subs-OpenID');
 		smf_openID_validate($_POST['openid_identifier'], false, $save_variables);
 	}
 	// If we've come from OpenID set up some default stuff.
@@ -489,8 +489,7 @@ function Register2($verifiedOpenID = false)
 	// We'll do custom fields after as then we get to use the helper function!
 	if (!empty($_POST['customfield']))
 	{
-		require_once($sourcedir . '/Profile.php');
-		require_once($sourcedir . '/Profile-Modify.php');
+		loadSource(array('Profile', 'Profile-Modify'));
 		makeCustomFieldChanges($memberID, 'register');
 	}
 
@@ -522,7 +521,7 @@ function Register2($verifiedOpenID = false)
 // See if a username already exists.
 function RegisterCheckUsername()
 {
-	global $sourcedir, $smcFunc, $context, $txt;
+	global $smcFunc, $context, $txt;
 
 	// This is XML!
 	loadTemplate('Xml');
@@ -546,7 +545,7 @@ function RegisterCheckUsername()
 		$context['valid_username'] = false;
 	else
 	{
-		require_once($sourcedir . '/Subs-Members.php');
+		loadSource('Subs-Members');
 		$context['valid_username'] &= isReservedName($context['checked_username'], 0, false, false) ? 0 : 1;
 	}
 }

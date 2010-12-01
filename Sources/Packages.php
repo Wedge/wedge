@@ -61,19 +61,19 @@ if (!defined('SMF'))
 // This is the notoriously defunct package manager..... :/.
 function Packages()
 {
-	global $txt, $scripturl, $sourcedir, $context;
+	global $txt, $scripturl, $context;
 
 	//!!! Remove this!
 	if (isset($_GET['get']) || isset($_GET['pgdownload']))
 	{
-		require_once($sourcedir . '/PackageGet.php');
+		loadSource('PackageGet');
 		return PackageGet();
 	}
 
 	isAllowedTo('admin_forum');
 
 	// Load all the basic stuff.
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 	loadLanguage('Packages');
 	loadTemplate('Packages', 'admin');
 
@@ -129,7 +129,7 @@ function Packages()
 // Test install a package.
 function PackageInstallTest()
 {
-	global $boarddir, $txt, $context, $scripturl, $sourcedir, $modSettings, $smcFunc, $settings;
+	global $boarddir, $txt, $context, $scripturl, $modSettings, $smcFunc, $settings;
 
 	// You have to specify a file!!
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
@@ -139,7 +139,7 @@ function PackageInstallTest()
 	// Do we have an existing id, for uninstalls and the like.
 	$context['install_id'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 0;
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Load up the package FTP information?
 	create_chmod_control();
@@ -693,7 +693,7 @@ function PackageInstallTest()
 // Apply another type of (avatar, language, etc.) package.
 function PackageInstall()
 {
-	global $boarddir, $txt, $context, $boardurl, $scripturl, $sourcedir, $modSettings;
+	global $boarddir, $txt, $context, $boardurl, $scripturl, $modSettings;
 	global $user_info, $smcFunc;
 
 	// Make sure we don't install this mod twice.
@@ -708,7 +708,7 @@ function PackageInstall()
 	// If this is an uninstall, we'll have an id.
 	$context['install_id'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 0;
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// !!! TODO: Perhaps do it in steps, if necessary?
 
@@ -1108,9 +1108,9 @@ function PackageInstall()
 // List the files in a package.
 function PackageList()
 {
-	global $txt, $scripturl, $boarddir, $context, $sourcedir;
+	global $txt, $scripturl, $boarddir, $context;
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// No package?  Show him or her the door.
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
@@ -1136,9 +1136,9 @@ function PackageList()
 // List the files in a package.
 function ExamineFile()
 {
-	global $txt, $scripturl, $boarddir, $context, $sourcedir;
+	global $txt, $scripturl, $boarddir, $context;
 
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// No package?  Show him or her the door.
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
@@ -1190,12 +1190,12 @@ function ExamineFile()
 // Empty out the installed list.
 function FlushInstall()
 {
-	global $boarddir, $sourcedir, $smcFunc;
+	global $boarddir, $smcFunc;
 
 	// Always check the session.
 	checkSession('get');
 
-	include_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Record when we last did this.
 	package_put_contents($boarddir . '/Packages/installed.list', time());
@@ -1401,7 +1401,7 @@ function PackageBrowse()
 
 function PackageOptions()
 {
-	global $txt, $scripturl, $context, $sourcedir, $modSettings;
+	global $txt, $scripturl, $context, $modSettings;
 
 	if (isset($_POST['submit']))
 	{
@@ -1433,7 +1433,7 @@ function PackageOptions()
 
 function ViewOperations()
 {
-	global $context, $txt, $boarddir, $sourcedir, $smcFunc, $modSettings;
+	global $context, $txt, $boarddir, $smcFunc, $modSettings;
 
 	// Can't be in here buddy.
 	isAllowedTo('admin_forum');
@@ -1443,7 +1443,7 @@ function ViewOperations()
 		fatal_lang_error('operation_invalid', 'general');
 
 	// Load the required file.
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Uninstalling the mod?
 	$reverse = isset($_REQUEST['reverse']) ? true : false;
@@ -1534,7 +1534,7 @@ function PackagePermissions()
 
 	if (empty($package_ftp) && !isset($_POST['skip_ftp']))
 	{
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource('Class-Package');
 		$ftp = new ftp_connection(null);
 		list ($username, $detect_path, $found_path) = $ftp->detect_path($boarddir);
 

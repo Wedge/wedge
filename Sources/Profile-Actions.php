@@ -46,7 +46,7 @@ if (!defined('SMF'))
 // Activate an account.
 function activateAccount($memID)
 {
-	global $sourcedir, $context, $user_profile, $modSettings;
+	global $context, $user_profile, $modSettings;
 
 	isAllowedTo('moderate_forum');
 
@@ -55,7 +55,7 @@ function activateAccount($memID)
 		// If we are approving the deletion of an account, we do something special ;)
 		if ($user_profile[$memID]['is_activated'] == 4)
 		{
-			require_once($sourcedir . '/Subs-Members.php');
+			loadSource('Subs-Members');
 			deleteMembers($context['id_member']);
 			redirectexit();
 		}
@@ -82,7 +82,7 @@ function activateAccount($memID)
 function issueWarning($memID)
 {
 	global $txt, $scripturl, $modSettings, $user_info, $mbname;
-	global $context, $cur_profile, $memberContext, $smcFunc, $sourcedir;
+	global $context, $cur_profile, $memberContext, $smcFunc;
 
 	// Get all the actual settings.
 	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
@@ -172,7 +172,7 @@ function issueWarning($memID)
 			// Send the PM?
 			else
 			{
-				require_once($sourcedir . '/Subs-Post.php');
+				loadSource('Subs-Post');
 				$from = array(
 					'id' => 0,
 					'name' => $context['forum_name'],
@@ -422,7 +422,7 @@ function deleteAccount($memID)
 
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $sourcedir, $context, $cur_profile, $modSettings, $smcFunc;
+	global $user_info, $context, $cur_profile, $modSettings, $smcFunc;
 
 	// !!! Add a way to delete pms as well?
 
@@ -460,7 +460,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 	}
 
 	// This file is needed for the deleteMembers function.
-	require_once($sourcedir . '/Subs-Members.php');
+	loadSource('Subs-Members');
 
 	// Do you have permission to delete others profiles, or is that your profile you wanna delete?
 	if ($memID != $user_info['id'])
@@ -472,7 +472,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 		if ($_POST['remove_type'] != 'none' && allowedTo('moderate_forum'))
 		{
 			// Include RemoveTopics - essential for this type of work!
-			require_once($sourcedir . '/RemoveTopic.php');
+			loadSource('RemoveTopic');
 
 			// First off we delete any topics the member has started - if they wanted topics being done.
 			if ($_POST['remove_type'] == 'topics')
@@ -530,7 +530,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 	{
 		deleteMembers($memID);
 
-		require_once($sourcedir . '/Logout.php');
+		loadSource('Logout');
 		Logout(true);
 
 		redirectExit();
@@ -540,14 +540,14 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $sourcedir, $modSettings, $smcFunc, $scripturl;
+	global $context, $txt, $modSettings, $smcFunc, $scripturl;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');
 	loadLanguage('ManagePaid');
 
 	// Load all of the subscriptions.
-	require_once($sourcedir . '/ManagePaid.php');
+	loadSource('ManagePaid');
 	loadSubscriptions();
 	$context['member']['id'] = $memID;
 

@@ -41,7 +41,7 @@ define('WEDGE_NO_LOG', 1);
 // See http://www.simplemachines.org/about/stats.php for more info.
 function SMStats()
 {
-	global $modSettings, $user_info, $forum_version, $sourcedir;
+	global $modSettings, $user_info, $forum_version;
 
 	// First, is it disabled?
 	if (empty($modSettings['allow_sm_stats']))
@@ -56,7 +56,7 @@ function SMStats()
 		die();
 
 	// Get some server versions.
-	require_once($sourcedir . '/Subs-Admin.php');
+	loadSource('Subs-Admin');
 	$checkFor = array(
 		'php',
 		'db_server',

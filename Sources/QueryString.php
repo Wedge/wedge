@@ -719,7 +719,7 @@ function add_js_file()
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context, $db_prefix;
-	global $sourcedir, $txt, $time_start, $db_count, $db_show_debug, $smcFunc, $cached_urls, $use_cache;
+	global $txt, $time_start, $db_count, $db_show_debug, $smcFunc, $cached_urls, $use_cache;
 	static $second_time_debugging = false;
 
 	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
@@ -806,7 +806,7 @@ function ob_sessrewrite($buffer)
 			{
 				// Run each filter callback function on each URL
 				if (!function_exists('pretty_urls_topic_filter'))
-					require($sourcedir . '/PrettyUrls-Filters.php');
+					loadSource('PrettyUrls-Filters');
 				$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
 				foreach ($filter_callbacks as $callback)
 				{

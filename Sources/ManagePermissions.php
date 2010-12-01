@@ -402,7 +402,7 @@ function PermissionIndex()
 
 function PermissionByBoard()
 {
-	global $context, $modSettings, $txt, $smcFunc, $sourcedir, $cat_tree, $boardList, $boards;
+	global $context, $modSettings, $txt, $smcFunc, $cat_tree, $boardList, $boards;
 
 	$context['page_title'] = $txt['permissions_boards'];
 	$context['edit_all'] = isset($_GET['edit']);
@@ -439,7 +439,7 @@ function PermissionByBoard()
 	loadPermissionProfiles();
 
 	// Get the board tree.
-	require_once($sourcedir . '/Subs-Boards.php');
+	loadSource('Subs-Boards');
 
 	getBoardTree();
 
@@ -727,7 +727,7 @@ function SetQuickGroups()
 
 function ModifyMembergroup()
 {
-	global $context, $txt, $modSettings, $smcFunc, $sourcedir;
+	global $context, $txt, $modSettings, $smcFunc;
 
 	if (!isset($_GET['group']))
 		fatal_lang_error('no_access', false);
@@ -740,7 +740,7 @@ function ModifyMembergroup()
 		$context['admin_preferences']['pv'] = $_GET['view'] == 'classic' ? 'classic' : 'simple';
 
 		// Update the users preferences.
-		require_once($sourcedir . '/Subs-Admin.php');
+		loadSource('Subs-Admin');
 		updateAdminPreferences();
 	}
 
@@ -997,7 +997,7 @@ function ModifyMembergroup2()
 // Screen for modifying general permission settings.
 function GeneralPermissionSettings($return_config = false)
 {
-	global $context, $modSettings, $sourcedir, $txt, $scripturl, $smcFunc;
+	global $context, $modSettings, $txt, $scripturl, $smcFunc;
 
 	// All the setting variables
 	$config_vars = array(
@@ -1017,7 +1017,7 @@ function GeneralPermissionSettings($return_config = false)
 	$context['sub_template'] = 'show_settings';
 
 	// Needed for the inline permission functions, and the settings template.
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource('ManageServer');
 
 	// Don't let guests have these permissions.
 	$context['post_url'] = $scripturl . '?action=admin;area=permissions;save;sa=settings';

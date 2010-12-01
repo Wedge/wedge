@@ -120,7 +120,7 @@ if (!defined('SMF'))
 // Split a topic into two separate topics... in case it got offtopic, etc.
 function SplitTopics()
 {
-	global $topic, $sourcedir;
+	global $topic;
 
 	// And... which topic were you splitting, again?
 	if (empty($topic))
@@ -132,8 +132,8 @@ function SplitTopics()
 	// Load up the "dependencies" - the template, getMsgMemberID(), and sendNotifications().
 	if (!isset($_REQUEST['xml']))
 		loadTemplate('SplitTopics');
-	require_once($sourcedir . '/Subs-Boards.php');
-	require_once($sourcedir . '/Subs-Post.php');
+
+	loadSource(array('Subs-Boards', 'Subs-Post'));
 
 	$subActions = array(
 		'selectTopics' => 'SplitSelectTopics',
@@ -987,7 +987,7 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $user_info, $txt, $context, $scripturl, $sourcedir;
+	global $user_info, $txt, $context, $scripturl;
 	global $smcFunc, $language, $modSettings;
 
 	// Check the session.
@@ -1571,7 +1571,7 @@ function MergeExecute($topics = array())
 	list($id_board) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	// Update all the statistics.
 	updateStats('topic');

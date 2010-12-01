@@ -60,7 +60,7 @@ if (!defined('SMF'))
 // Entry point, permission checks, admin bars, etc.
 function Groups()
 {
-	global $context, $txt, $scripturl, $sourcedir, $user_info;
+	global $context, $txt, $scripturl, $user_info;
 
 	// The sub-actions that we can do. Format "Function Name, Mod Bar Index if appropriate".
 	$subActions = array(
@@ -80,7 +80,7 @@ function Groups()
 	// If we can see the moderation center, and this has a mod bar entry, add the mod center bar.
 	if (allowedTo('access_mod_center') || $user_info['mod_cache']['bq'] != '0=1' || $user_info['mod_cache']['gq'] != '0=1' || allowedTo('manage_membergroups'))
 	{
-		require_once($sourcedir . '/ModerationCenter.php');
+		loadSource('ModerationCenter');
 		$_GET['area'] = $_REQUEST['sa'] == 'requests' ? 'groups' : 'viewgroups';
 		ModerationMain(true);
 	}
@@ -102,7 +102,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $modSettings, $smcFunc, $sourcedir;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $modSettings, $smcFunc;
 
 	// Yep, find the groups...
 	$request = $smcFunc['db_query']('', '
@@ -190,7 +190,7 @@ function GroupList()
 	$context['page_title'] = $txt['viewing_groups'];
 
 	// Making a list is not hard with this beauty.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// Use the standard templates for showing this.
 	$listOptions = array(
@@ -392,7 +392,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $scripturl, $context, $modSettings, $sourcedir, $user_info, $settings, $smcFunc;
+	global $txt, $scripturl, $context, $modSettings, $user_info, $settings, $smcFunc;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -473,7 +473,7 @@ function MembergroupMembers()
 		foreach ($_REQUEST['rem'] as $key => $group)
 			$_REQUEST['rem'][$key] = (int) $group;
 
-		require_once($sourcedir . '/Subs-Membergroups.php');
+		loadSource('Subs-Membergroups');
 		removeMembersFromGroups($_REQUEST['rem'], $_REQUEST['group'], true);
 	}
 	// Must be adding new members to the group...
@@ -540,7 +540,7 @@ function MembergroupMembers()
 		// Do the updates...
 		if (!empty($members))
 		{
-			require_once($sourcedir . '/Subs-Membergroups.php');
+			loadSource('Subs-Membergroups');
 			addMembersToGroup($members, $_REQUEST['group'], isset($_POST['additional']) || $context['group']['hidden'] ? 'only_additional' : 'auto', true);
 		}
 	}
@@ -636,7 +636,7 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $scripturl, $user_info, $sourcedir, $smcFunc, $modSettings, $language;
+	global $txt, $context, $scripturl, $user_info, $smcFunc, $modSettings, $language;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
@@ -754,7 +754,7 @@ function GroupRequests()
 
 			if (!empty($email_details))
 			{
-				require_once($sourcedir . '/Subs-Post.php');
+				loadSource('Subs-Post');
 
 				// They are being approved?
 				if ($_POST['req_action'] == 'approve')
@@ -822,7 +822,7 @@ function GroupRequests()
 	}
 
 	// We're going to want this for making our list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	$warning = JavaScriptEscape($txt['mc_groupr_warning']);
 

@@ -32,7 +32,7 @@ if (!defined('SMF'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $sourcedir, $options, $smcFunc;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $smcFunc;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
@@ -47,7 +47,7 @@ function ModerationMain($dont_call = false)
 		isAllowedTo('access_mod_center');
 
 	// We're gonna want a menu of some kind.
-	require_once($sourcedir . '/Subs-Menu.php');
+	loadSource('Subs-Menu');
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
@@ -68,11 +68,11 @@ function ModerationMain($dont_call = false)
 				'modlog' => array(
 					'label' => $txt['modlog_view'],
 					'enabled' => !empty($modSettings['modlog_enabled']) && $context['can_moderate_boards'],
-					'file' => 'Modlog.php',
+					'file' => 'Modlog',
 					'function' => 'ViewModlog',
 				),
 				'notice' => array(
-					'file' => 'ModerationCenter.php',
+					'file' => 'ModerationCenter',
 					'function' => 'ShowNotice',
 					'select' => 'index'
 				),
@@ -103,7 +103,7 @@ function ModerationMain($dont_call = false)
 				'postmod' => array(
 					'label' => $txt['mc_unapproved_posts'],
 					'enabled' => $context['can_moderate_approvals'],
-					'file' => 'PostModeration.php',
+					'file' => 'PostModeration',
 					'function' => 'PostModerationMain',
 					'custom_url' => $scripturl . '?action=moderate;area=postmod;sa=posts',
 					'subsections' => array(
@@ -114,14 +114,14 @@ function ModerationMain($dont_call = false)
 				'attachmod' => array(
 					'label' => $txt['mc_unapproved_attachments'],
 					'enabled' => $context['can_moderate_approvals'],
-					'file' => 'PostModeration.php',
+					'file' => 'PostModeration',
 					'function' => 'PostModerationMain',
 					'custom_url' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
 				),
 				'reports' => array(
 					'label' => $txt['mc_reported_posts'],
 					'enabled' => $context['can_moderate_boards'],
-					'file' => 'ModerationCenter.php',
+					'file' => 'ModerationCenter',
 					'function' => 'ReportedPosts',
 					'subsections' => array(
 						'open' => array($txt['mc_reportedp_active']),
@@ -136,13 +136,13 @@ function ModerationMain($dont_call = false)
 			'areas' => array(
 				'groups' => array(
 					'label' => $txt['mc_group_requests'],
-					'file' => 'Groups.php',
+					'file' => 'Groups',
 					'function' => 'Groups',
 					'custom_url' => $scripturl . '?action=moderate;area=groups;sa=requests',
 				),
 				'viewgroups' => array(
 					'label' => $txt['mc_view_groups'],
-					'file' => 'Groups.php',
+					'file' => 'Groups',
 					'function' => 'Groups',
 				),
 			),
@@ -196,7 +196,7 @@ function ModerationMain($dont_call = false)
 	if (!$dont_call)
 	{
 		if (isset($mod_include_data['file']))
-			require_once($sourcedir . '/' . $mod_include_data['file']);
+			loadSource($mod_include_data['file']);
 
 		$mod_include_data['function']();
 	}
@@ -757,7 +757,7 @@ function recountOpenReports()
 
 function ModReport()
 {
-	global $user_info, $context, $sourcedir, $scripturl, $txt, $smcFunc;
+	global $user_info, $context, $scripturl, $txt, $smcFunc;
 
 	// Have to at least give us something
 	if (empty($_REQUEST['report']))
@@ -900,8 +900,7 @@ function ModReport()
 	$smcFunc['db_free_result']($request);
 
 	// What have the other moderators done to this message?
-	require_once($sourcedir . '/Modlog.php');
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource(array('Modlog', 'Subs-List'));
 	loadLanguage('Modlog');
 
 	// This is all the information from the moderation log.
@@ -1043,7 +1042,7 @@ function ShowNotice()
 // View watched users.
 function ViewWatchedUsers()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $user_info, $sourcedir;
+	global $smcFunc, $modSettings, $context, $txt, $scripturl, $user_info;
 
 	// Some important context!
 	$context['page_title'] = $txt['mc_watched_users_title'];
@@ -1076,7 +1075,7 @@ function ViewWatchedUsers()
 
 		if (!empty($toDelete))
 		{
-			require_once($sourcedir . '/RemoveTopic.php');
+			loadSource('RemoveTopic');
 			// If they don't have permission we'll let it error - either way no chance of a security slip here!
 			foreach ($toDelete as $did)
 				removeMessage($did);
@@ -1104,7 +1103,7 @@ function ViewWatchedUsers()
 			$approve_query = ' AND 0';
 	}
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
@@ -1455,12 +1454,12 @@ function ViewWarnings()
 // Simply put, look at the warning log!
 function ViewWarningLog()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $sourcedir;
+	global $smcFunc, $modSettings, $context, $txt, $scripturl;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
@@ -1611,7 +1610,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 // Load all the warning templates.
 function ViewWarningTemplates()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $sourcedir, $user_info;
+	global $smcFunc, $modSettings, $context, $txt, $scripturl, $user_info;
 
 	// Submitting a new one?
 	if (isset($_POST['add']))
@@ -1656,7 +1655,7 @@ function ViewWarningTemplates()
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_templates_title'];
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
@@ -1812,7 +1811,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 // Edit a warning template.
 function ModifyWarningTemplate()
 {
-	global $smcFunc, $context, $txt, $user_info, $sourcedir;
+	global $smcFunc, $context, $txt, $user_info;
 
 	$context['id_template'] = isset($_REQUEST['tid']) ? (int) $_REQUEST['tid'] : 0;
 	$context['is_edit'] = $context['id_template'];
@@ -1864,7 +1863,7 @@ function ModifyWarningTemplate()
 		checkSession('post');
 
 		// To check the BBC is pretty good...
-		require_once($sourcedir . '/Class-Editor.php');
+		loadSource('Class-Editor');
 
 		// Bit of cleaning!
 		$_POST['template_body'] = trim($_POST['template_body']);
@@ -1943,7 +1942,7 @@ function ModifyWarningTemplate()
 // Change moderation preferences.
 function ModerationSettings()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $scripturl, $user_settings, $user_info;
+	global $context, $smcFunc, $txt, $scripturl, $user_settings, $user_info;
 
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');

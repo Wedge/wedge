@@ -37,7 +37,7 @@ class wedgeEditor
 	public function __construct($editorOptions)
 	{
 		global $txt, $modSettings, $options, $smcFunc;
-		global $context, $settings, $user_info, $sourcedir, $scripturl;
+		global $context, $settings, $user_info, $scripturl;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -175,7 +175,7 @@ class wedgeEditor
 
 	public static function html_to_bbc($text)
 	{
-		global $modSettings, $smcFunc, $sourcedir, $scripturl, $context;
+		global $modSettings, $smcFunc, $scripturl, $context;
 
 		// Replace newlines with spaces, as that's how browsers usually interpret them.
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);

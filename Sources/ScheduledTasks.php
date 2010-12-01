@@ -188,7 +188,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $modSettings, $mbname, $txt, $sourcedir, $smcFunc;
+	global $scripturl, $modSettings, $mbname, $txt, $smcFunc;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = $smcFunc['db_query']('', '
@@ -323,10 +323,10 @@ function scheduled_approval_notification()
 	}
 	$smcFunc['db_free_result']($request);
 
-	// Get the mailing stuff.
-	require_once($sourcedir . '/Subs-Post.php');
 	// Need the below for loadLanguage to work!
 	loadEssentialThemeData();
+	// Get the mailing stuff.
+	loadSource('Subs-Post');
 
 	// Finally, loop through each member, work out what they can do, and send it.
 	foreach ($members as $id => $member)
@@ -401,7 +401,7 @@ function scheduled_approval_notification()
 // Do some daily cleaning up.
 function scheduled_daily_maintenance()
 {
-	global $smcFunc, $modSettings, $sourcedir;
+	global $smcFunc, $modSettings;
 
 	// First clean out the data cache.
 	clean_cache();
@@ -469,7 +469,7 @@ function scheduled_daily_maintenance()
 	// Do any spider stuff.
 	if (!empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
 	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
+		loadSource('ManageSearchEngines');
 		consolidateSpiderStats();
 	}
 
@@ -489,7 +489,7 @@ function scheduled_daily_maintenance()
 	// Regenerate the Diffie-Hellman keys if OpenID is enabled.
 	if (!empty($modSettings['enableOpenID']))
 	{
-		require_once($sourcedir . '/Subs-OpenID.php');
+		loadSource('Subs-OpenID');
 		smf_openID_setup_DH(true);
 	}
 	elseif (!empty($modSettings['dh_keys']))
@@ -553,11 +553,11 @@ function scheduled_auto_optimize()
 // Send out a daily email of all subscribed topics.
 function scheduled_daily_digest()
 {
-	global $is_weekly, $txt, $mbname, $scripturl, $sourcedir, $smcFunc, $context, $modSettings;
+	global $is_weekly, $txt, $mbname, $scripturl, $smcFunc, $context, $modSettings;
 
 	// We'll want this...
-	require_once($sourcedir . '/Subs-Post.php');
 	loadEssentialThemeData();
+	loadSource('Subs-Post');
 
 	$is_weekly = !empty($is_weekly) ? 1 : 0;
 
@@ -864,7 +864,7 @@ function scheduled_weekly_digest()
 // Send a bunch of emails from the mail queue.
 function ReduceMailQueue($number = false, $override_limit = false, $force_send = false)
 {
-	global $modSettings, $smcFunc, $sourcedir;
+	global $modSettings, $smcFunc;
 
 	// Are we intending another script to be sending out the queue?
 	if (!empty($modSettings['mail_queue_use_cron']) && empty($force_send))
@@ -979,7 +979,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		return false;
 
 	if (!empty($modSettings['mail_type']) && $modSettings['smtp_host'] != '')
-		require_once($sourcedir . '/Subs-Post.php');
+		loadSource('Subs-Post');
 
 	// Send each email, yea!
 	$failed_emails = array();
@@ -1189,7 +1189,7 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $settings, $modSettings, $smcFunc, $mbname, $context, $sourcedir;
+	global $settings, $modSettings, $smcFunc, $mbname, $context;
 
 	// Get all the default theme variables.
 	$result = $smcFunc['db_query']('', '
@@ -1229,7 +1229,7 @@ function loadEssentialThemeData()
 	// Assume we want this.
 	$context['forum_name'] = $mbname;
 
-	// Check loadLanguage actually exists!
+	// Check loadLanguage actually exists! Can't use loadSource if Load.php hasn't already been loaded.
 	if (!function_exists('loadLanguage'))
 	{
 		require_once($sourcedir . '/Load.php');
@@ -1241,7 +1241,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchSMfiles()
 {
-	global $sourcedir, $txt, $language, $settings, $forum_version, $modSettings, $smcFunc;
+	global $txt, $language, $settings, $forum_version, $modSettings, $smcFunc;
 
 	// What files do we want to get
 	$request = $smcFunc['db_query']('', '
@@ -1265,7 +1265,7 @@ function scheduled_fetchSMfiles()
 	$smcFunc['db_free_result']($request);
 
 	// We're gonna need fetch_web_data() to pull this off.
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Just in case we run into a problem.
 	loadEssentialThemeData();
@@ -1303,13 +1303,13 @@ function scheduled_fetchSMfiles()
 
 function scheduled_birthdayemails()
 {
-	global $modSettings, $sourcedir, $mbname, $txt, $smcFunc, $birthdayEmails;
+	global $modSettings, $mbname, $txt, $smcFunc, $birthdayEmails;
 
 	// Need this in order to load the language files.
 	loadEssentialThemeData();
 
 	// Going to need this to send the emails.
-	require_once($sourcedir . '/Subs-Post.php');
+	loadSource('Subs-Post');
 
 	$greeting = isset($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday';
 
@@ -1564,7 +1564,7 @@ function scheduled_weekly_maintenance()
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $txt, $sourcedir, $scripturl, $smcFunc, $modSettings, $language;
+	global $txt, $scripturl, $smcFunc, $modSettings, $language;
 
 	// Start off by checking for removed subscriptions.
 	$request = $smcFunc['db_query']('', '
@@ -1579,7 +1579,7 @@ function scheduled_paid_subscriptions()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		require_once($sourcedir . '/ManagePaid.php');
+		loadSource('ManagePaid');
 		removeSubscription($row['id_subscribe'], $row['id_member']);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1607,7 +1607,7 @@ function scheduled_paid_subscriptions()
 		// If this is the first one load the important bits.
 		if (empty($subs_reminded))
 		{
-			require_once($sourcedir . '/Subs-Post.php');
+			loadSource('Subs-Post');
 			// Need the below for loadLanguage to work!
 			loadEssentialThemeData();
 		}

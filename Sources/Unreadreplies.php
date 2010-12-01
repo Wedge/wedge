@@ -35,7 +35,7 @@ if (!defined('SMF'))
 // Find unread topics and replies.
 function Unreadreplies()
 {
-	global $board, $txt, $scripturl, $sourcedir;
+	global $board, $txt, $scripturl;
 	global $user_info, $context, $settings, $modSettings, $smcFunc, $options;
 
 	// Guests can't have unread things, we don't know anything about them.

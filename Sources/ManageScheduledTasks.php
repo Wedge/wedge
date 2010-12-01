@@ -93,7 +93,7 @@ function ManageScheduledTasks()
 // List all the scheduled task in place on the forum.
 function ScheduledTasks()
 {
-	global $context, $txt, $sourcedir, $smcFunc, $user_info, $modSettings, $scripturl;
+	global $context, $txt, $smcFunc, $user_info, $modSettings, $scripturl;
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
@@ -106,7 +106,7 @@ function ScheduledTasks()
 		checkSession();
 
 		// We'll recalculate the dates at the end!
-		require_once($sourcedir . '/ScheduledTasks.php');
+		loadSource('ScheduledTasks');
 
 		// Enable and disable as required.
 		$enablers = array(0);
@@ -147,7 +147,7 @@ function ScheduledTasks()
 		);
 
 		// Let's get it on!
-		require_once($sourcedir . '/ScheduledTasks.php');
+		loadSource('ScheduledTasks');
 		ignore_user_abort(true);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -277,7 +277,7 @@ function ScheduledTasks()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'view_scheduled_tasks';
@@ -321,7 +321,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 // Function for editing a task.
 function EditTask()
 {
-	global $context, $txt, $sourcedir, $smcFunc, $user_info, $modSettings;
+	global $context, $txt, $smcFunc, $user_info, $modSettings;
 
 	// Just set up some lovely context stuff.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'tasks';
@@ -340,7 +340,7 @@ function EditTask()
 		checkSession();
 
 		// We'll need this for calculating the next event.
-		require_once($sourcedir . '/ScheduledTasks.php');
+		loadSource('ScheduledTasks');
 
 		// Do we have a valid offset?
 		preg_match('~(\d{1,2}):(\d{1,2})~', $_POST['offset'], $matches);
@@ -422,7 +422,7 @@ function EditTask()
 // Show the log of all tasks that have taken place.
 function TaskLog()
 {
-	global $scripturl, $context, $txt, $smcFunc, $sourcedir;
+	global $scripturl, $context, $txt, $smcFunc;
 
 	// Let's load the language just in case we are outside the Scheduled area.
 	loadLanguage('ManageScheduledTasks');
@@ -512,7 +512,7 @@ function TaskLog()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';

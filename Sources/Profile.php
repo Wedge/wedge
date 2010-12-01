@@ -40,7 +40,7 @@ if (!defined('SMF'))
 // Allow the change or view of profiles...
 function ModifyProfile($post_errors = array())
 {
-	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
+	global $txt, $scripturl, $user_info, $context, $user_profile, $cur_profile;
 	global $modSettings, $memberContext, $profile_vars, $smcFunc, $post_errors, $options, $user_settings;
 
 	// Don't reload this as we may have processed error strings.
@@ -48,7 +48,7 @@ function ModifyProfile($post_errors = array())
 		loadLanguage('Profile');
 	loadTemplate('Profile');
 
-	require_once($sourcedir . '/Subs-Menu.php');
+	loadSource('Subs-Menu');
 
 	// Did we get the user by name...
 	if (isset($_REQUEST['user']))
@@ -101,7 +101,7 @@ function ModifyProfile($post_errors = array())
 			'areas' => array(
 				'summary' => array(
 					'label' => $txt['summary'],
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'summary',
 					'permission' => array(
 						'own' => 'profile_view_own',
@@ -110,7 +110,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'statistics' => array(
 					'label' => $txt['statPanel'],
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'statPanel',
 					'permission' => array(
 						'own' => 'profile_view_own',
@@ -119,7 +119,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'showposts' => array(
 					'label' => $txt['showPosts'],
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'showPosts',
 					'subsections' => array(
 						'messages' => array($txt['showMessages'], array('profile_view_own', 'profile_view_any')),
@@ -133,7 +133,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'permissions' => array(
 					'label' => $txt['showPermissions'],
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'showPermissions',
 					'permission' => array(
 						'own' => 'manage_permissions',
@@ -142,7 +142,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'tracking' => array(
 					'label' => $txt['trackUser'],
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'tracking',
 					'subsections' => array(
 						'activity' => array($txt['trackActivity'], 'moderate_forum'),
@@ -157,7 +157,7 @@ function ModifyProfile($post_errors = array())
 				'viewwarning' => array(
 					'label' => $txt['profile_view_warnings'],
 					'enabled' => in_array('w', $context['admin_features']) && $modSettings['warning_settings'][0] == 1 && $cur_profile['warning'] && $context['user']['is_owner'] && !empty($modSettings['warning_show']),
-					'file' => 'Profile-View.php',
+					'file' => 'Profile-View',
 					'function' => 'viewWarning',
 					'permission' => array(
 						'own' => 'profile_view_own',
@@ -171,7 +171,7 @@ function ModifyProfile($post_errors = array())
 			'areas' => array(
 				'account' => array(
 					'label' => $txt['account'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'account',
 					'enabled' => $context['user']['is_admin'] || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
 					'sc' => 'post',
@@ -183,7 +183,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'forumprofile' => array(
 					'label' => $txt['forumprofile'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'forumProfile',
 					'sc' => 'post',
 					'permission' => array(
@@ -203,7 +203,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'authentication' => array(
 					'label' => $txt['authentication'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'authentication',
 					'enabled' => !empty($modSettings['enableOpenID']) || !empty($cur_profile['openid_uri']),
 					'sc' => 'post',
@@ -216,7 +216,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'notification' => array(
 					'label' => $txt['notification'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'notification',
 					'sc' => 'post',
 					'permission' => array(
@@ -227,7 +227,7 @@ function ModifyProfile($post_errors = array())
 				// Without profile_extra_own, settings are accessible from the PM section.
 				'pmprefs' => array(
 					'label' => $txt['pmprefs'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'pmprefs',
 					'enabled' => allowedTo(array('profile_extra_own', 'profile_extra_any')),
 					'sc' => 'post',
@@ -238,7 +238,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'ignoreboards' => array(
 					'label' => $txt['ignoreboards'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'ignoreboards',
 					'enabled' => !empty($modSettings['allow_ignore_boards']),
 					'sc' => 'post',
@@ -249,7 +249,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'lists' => array(
 					'label' => $txt['editBuddyIgnoreLists'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'editBuddyIgnoreLists',
 					'enabled' => !empty($modSettings['enable_buddylist']) && $context['user']['is_owner'],
 					'sc' => 'post',
@@ -264,7 +264,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'groupmembership' => array(
 					'label' => $txt['groupmembership'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'groupMembership',
 					'enabled' => !empty($modSettings['show_group_membership']) && $context['user']['is_owner'],
 					'sc' => 'request',
@@ -289,7 +289,7 @@ function ModifyProfile($post_errors = array())
 				'issuewarning' => array(
 					'label' => $txt['profile_issue_warning'],
 					'enabled' => in_array('w', $context['admin_features']) && $modSettings['warning_settings'][0] == 1 && (!$context['user']['is_owner'] || $context['user']['is_admin']),
-					'file' => 'Profile-Actions.php',
+					'file' => 'Profile-Actions',
 					'function' => 'issueWarning',
 					'permission' => array(
 						'own' => array('issue_warning'),
@@ -307,7 +307,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'subscriptions' => array(
 					'label' => $txt['subscriptions'],
-					'file' => 'Profile-Actions.php',
+					'file' => 'Profile-Actions',
 					'function' => 'subscriptions',
 					'enabled' => !empty($modSettings['paid_enabled']),
 					'permission' => array(
@@ -317,7 +317,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'deleteaccount' => array(
 					'label' => $txt['deleteAccount'],
-					'file' => 'Profile-Actions.php',
+					'file' => 'Profile-Actions',
 					'function' => 'deleteAccount',
 					'sc' => 'post',
 					'password' => true,
@@ -327,7 +327,7 @@ function ModifyProfile($post_errors = array())
 					),
 				),
 				'activateaccount' => array(
-					'file' => 'Profile-Actions.php',
+					'file' => 'Profile-Actions',
 					'function' => 'activateAccount',
 					'sc' => 'get',
 					'select' => 'summary',
@@ -447,7 +447,7 @@ function ModifyProfile($post_errors = array())
 
 	// File to include?
 	if (isset($profile_include_data['file']))
-		require_once($sourcedir . '/' . $profile_include_data['file']);
+		loadSource($profile_include_data['file']);
 
 	// Make sure that the area function does exist!
 	if (!isset($profile_include_data['function']) || !function_exists($profile_include_data['function']))
@@ -506,7 +506,7 @@ function ModifyProfile($post_errors = array())
 			// If we're using OpenID try to revalidate.
 			if (!empty($user_settings['openid_uri']))
 			{
-				require_once($sourcedir . '/Subs-OpenID.php');
+				loadSource('Subs-OpenID');
 				smf_openID_revalidate();
 			}
 			else
@@ -567,7 +567,7 @@ function ModifyProfile($post_errors = array())
 		{
 			$force_redirect = true;
 			// Ensure we include this.
-			require_once($sourcedir . '/Profile-Modify.php');
+			loadSource('Profile-Modify');
 			saveProfileChanges($profile_vars, $post_errors, $memID);
 		}
 

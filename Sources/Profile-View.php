@@ -79,7 +79,7 @@ if (!defined('SMF'))
 // View a summary.
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $sourcedir, $scripturl, $smcFunc;
+	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl, $smcFunc;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -150,7 +150,7 @@ function summary($memID)
 
 	if (!empty($modSettings['who_enabled']))
 	{
-		include_once($sourcedir . '/Who.php');
+		loadSource('Who');
 		$action = determineActions($user_profile[$memID]['url']);
 
 		if ($action !== false)
@@ -259,7 +259,7 @@ function summary($memID)
 function showPosts($memID)
 {
 	global $txt, $user_info, $scripturl, $modSettings;
-	global $context, $user_profile, $sourcedir, $smcFunc, $board;
+	global $context, $user_profile, $smcFunc, $board;
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
@@ -316,7 +316,7 @@ function showPosts($memID)
 			redirectexit('action=profile;u=' . $memID . ';area=showposts;start=' . $_GET['start']);
 
 		// We can be lazy, since removeMessage() will check the permissions for us.
-		require_once($sourcedir . '/RemoveTopic.php');
+		loadSource('RemoveTopic');
 		removeMessage((int) $_GET['delete']);
 
 		// Add it to the mod log.
@@ -581,7 +581,7 @@ function showPosts($memID)
 function showAttachments($memID)
 {
 	global $txt, $user_info, $scripturl, $modSettings, $board;
-	global $context, $user_profile, $sourcedir, $smcFunc;
+	global $context, $user_profile, $smcFunc;
 
 	// OBEY permissions!
 	$boardsAllowed = boardsAllowedTo('view_attachments');
@@ -860,7 +860,7 @@ function statPanel($memID)
 
 function tracking($memID)
 {
-	global $sourcedir, $context, $txt, $scripturl, $modSettings, $user_profile;
+	global $context, $txt, $scripturl, $modSettings, $user_profile;
 
 	$subActions = array(
 		'activity' => array('trackActivity', $txt['trackActivity']),
@@ -869,9 +869,6 @@ function tracking($memID)
 	);
 
 	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'activity';
-
-	if (isset($types[$context['tracking_area']][1]))
-		require_once($sourcedir . '/' . $types[$context['tracking_area']][1]);
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
@@ -899,7 +896,7 @@ function tracking($memID)
 
 function trackActivity($memID)
 {
-	global $scripturl, $txt, $modSettings, $sourcedir;
+	global $scripturl, $txt, $modSettings;
 	global $user_profile, $context, $smcFunc;
 
 	// Verify if the user has sufficient permissions.
@@ -988,7 +985,7 @@ function trackActivity($memID)
 	);
 
 	// Create the list for viewing.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// If this is a big forum, or a large posting user, let's limit the search.
@@ -1218,7 +1215,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 function TrackIP($memID = 0)
 {
-	global $user_profile, $scripturl, $txt, $user_info, $modSettings, $sourcedir;
+	global $user_profile, $scripturl, $txt, $user_info, $modSettings;
 	global $context, $smcFunc;
 
 	// Can the user do this?
@@ -1268,7 +1265,7 @@ function TrackIP($memID = 0)
 	ksort($context['ips']);
 
 	// Gonna want this for the list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// Start with the user messages.
 	$listOptions = array(
@@ -1496,9 +1493,9 @@ function TrackIP($memID = 0)
 
 function trackEdits($memID)
 {
-	global $scripturl, $txt, $modSettings, $sourcedir, $context, $smcFunc;
+	global $scripturl, $txt, $modSettings, $context, $smcFunc;
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 
 	// Get the names of any custom fields.
 	$request = $smcFunc['db_query']('', '
@@ -1693,7 +1690,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 function showPermissions($memID)
 {
 	global $scripturl, $txt, $board, $modSettings;
-	global $user_profile, $context, $user_info, $sourcedir, $smcFunc;
+	global $user_profile, $context, $user_info, $smcFunc;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('manage_permissions');
@@ -1703,7 +1700,7 @@ function showPermissions($memID)
 	loadTemplate('ManageMembers');
 
 	// Load all the permission profiles.
-	require_once($sourcedir . '/ManagePermissions.php');
+	loadSource('ManagePermissions');
 	loadPermissionProfiles();
 
 	$context['member']['id'] = $memID;
@@ -1870,7 +1867,7 @@ function showPermissions($memID)
 // View a members warnings?
 function viewWarning($memID)
 {
-	global $modSettings, $context, $sourcedir, $txt, $scripturl;
+	global $modSettings, $context, $txt, $scripturl;
 
 	// Firstly, can we actually even be here?
 	if (!allowedTo('issue_warning') && (empty($modSettings['warning_show']) || ($modSettings['warning_show'] == 1 && !$context['user']['is_owner'])))
@@ -1882,8 +1879,7 @@ function viewWarning($memID)
 	$modSettings['warning_mute'] = !empty($modSettings['warning_mute']) ? $modSettings['warning_mute'] : 110;
 
 	// Let's use a generic list to get all the current warnings, and use the issue warnings grab-a-granny thing.
-	require_once($sourcedir . '/Subs-List.php');
-	require_once($sourcedir . '/Profile-Actions.php');
+	loadSource(array('Subs-List', 'Profile-Actions'));
 
 	$listOptions = array(
 		'id' => 'view_warnings',
@@ -1950,7 +1946,7 @@ function viewWarning($memID)
 	);
 
 	// Create the list for viewing.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// Create some common text bits for the template.

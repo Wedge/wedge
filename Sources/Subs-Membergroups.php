@@ -65,7 +65,7 @@ if (!defined('SMF'))
 // Delete one or more membergroups.
 function deleteMembergroups($groups)
 {
-	global $sourcedir, $smcFunc, $modSettings;
+	global $smcFunc, $modSettings;
 
 	// Make sure it's an array.
 	if (!is_array($groups))

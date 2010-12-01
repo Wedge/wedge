@@ -114,7 +114,7 @@ if (!defined('SMF'))
 // Check if the user is who he/she says he is
 function validateSession()
 {
-	global $modSettings, $sourcedir, $user_info, $sc, $user_settings;
+	global $modSettings, $user_info, $sc, $user_settings;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();
@@ -126,7 +126,7 @@ function validateSession()
 	if (!empty($modSettings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
 		return;
 
-	require_once($sourcedir . '/Subs-Auth.php');
+	loadSource('Subs-Auth');
 
 	// Hashed password, ahoy!
 	if (isset($_POST['admin_hash_pass']) && strlen($_POST['admin_hash_pass']) == 40)
@@ -158,7 +158,7 @@ function validateSession()
 	// OpenID?
 	if (!empty($user_settings['openid_uri']))
 	{
-		require_once($sourcedir . '/Subs-OpenID.php');
+		loadSource('Subs-OpenID');
 		smf_openID_revalidate();
 
 		$_SESSION['admin_time'] = time();
@@ -232,7 +232,7 @@ function is_not_guest($message = '')
 function is_not_banned($forceCheck = false)
 {
 	global $txt, $modSettings, $context, $user_info;
-	global $sourcedir, $cookiename, $user_settings, $smcFunc;
+	global $cookiename, $user_settings, $smcFunc;
 
 	// You cannot be banned if you are an admin - doesn't help if you log out.
 	if ($user_info['is_admin'])
@@ -342,7 +342,7 @@ function is_not_banned($forceCheck = false)
 		if ($user_info['id'] && (($user_settings['is_activated'] >= 10 && !$flag_is_activated)
 			|| ($user_settings['is_activated'] < 10 && $flag_is_activated)))
 		{
-			require_once($sourcedir . '/ManageBans.php');
+			loadSource('ManageBans');
 			updateBanMembers();
 		}
 	}
@@ -377,7 +377,7 @@ function is_not_banned($forceCheck = false)
 		// My mistake. Next time better.
 		if (!isset($_SESSION['ban']['cannot_access']))
 		{
-			require_once($sourcedir . '/Subs-Auth.php');
+			loadSource('Subs-Auth');
 			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0);
 		}
@@ -417,7 +417,7 @@ function is_not_banned($forceCheck = false)
 		);
 
 		// A goodbye present.
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
 		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], 0);
 
@@ -471,7 +471,7 @@ function is_not_banned($forceCheck = false)
 		$_GET['topic'] = '';
 		writeLog(true);
 
-		require_once($sourcedir . '/Logout.php');
+		loadSource('Logout');
 		Logout(true, false);
 
 		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br />' . $_SESSION['ban']['cannot_login']['reason']) . '<br />' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br />' . $txt['ban_continue_browse'], 'user');
@@ -485,7 +485,7 @@ function is_not_banned($forceCheck = false)
 // Fix permissions according to ban status.
 function banPermissions()
 {
-	global $user_info, $sourcedir, $modSettings, $context;
+	global $user_info, $modSettings, $context;
 
 	// Somehow they got here, at least take away all permissions...
 	if (isset($_SESSION['ban']['cannot_access']))
@@ -543,7 +543,7 @@ function banPermissions()
 		$user_info['mod_cache'] = $_SESSION['mc'];
 	else
 	{
-		require_once($sourcedir . '/Subs-Auth.php');
+		loadSource('Subs-Auth');
 		rebuildModCache();
 	}
 
@@ -552,7 +552,7 @@ function banPermissions()
 		$context['open_mod_reports'] = $_SESSION['rc']['reports'];
 	elseif ($_SESSION['mc']['bq'] != '0=1')
 	{
-		require_once($sourcedir . '/ModerationCenter.php');
+		loadSource('ModerationCenter');
 		recountOpenReports();
 	}
 	else

@@ -320,7 +320,7 @@ function ModifyDatabaseSettings($return_config = false)
 // This function basically edits anything which is configuration and stored in the database, except for caching.
 function ModifyCookieSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $sourcedir, $modSettings, $cookiename, $user_settings;
+	global $context, $scripturl, $txt, $modSettings, $cookiename, $user_settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -352,7 +352,7 @@ function ModifyCookieSettings($return_config = false)
 		if ($cookiename != $_POST['cookiename'])
 		{
 			$original_session_id = $context['session_id'];
-			include_once($sourcedir . '/Subs-Auth.php');
+			loadSource('Subs-Auth');
 
 			// Remove the old cookie.
 			setLoginCookie(-3600, 0);
@@ -536,14 +536,13 @@ function ManageLanguages()
 // Interface for adding a new language
 function AddLanguage()
 {
-	global $context, $sourcedir, $forum_version, $boarddir, $txt, $smcFunc, $scripturl;
+	global $context, $forum_version, $boarddir, $txt, $smcFunc, $scripturl;
 
 	// Are we searching for new languages courtesy of Simple Machines?
 	if (!empty($_POST['smf_add_sub']))
 	{
 		// Need fetch_web_data.
-		require_once($sourcedir . '/Subs-Package.php');
-		require_once($sourcedir . '/Class-Package.php');
+		loadSource(array('Subs-Package', 'Class-Package'));
 
 		$context['smf_search_term'] = htmlspecialchars(trim($_POST['smf_add']));
 
@@ -587,10 +586,10 @@ function AddLanguage()
 // Download a language file from the Simple Machines website.
 function DownloadLanguage()
 {
-	global $context, $sourcedir, $forum_version, $boarddir, $txt, $smcFunc, $scripturl, $modSettings;
+	global $context, $forum_version, $boarddir, $txt, $smcFunc, $scripturl, $modSettings;
 
 	loadLanguage('ManageSettings');
-	require_once($sourcedir . '/Subs-Package.php');
+	loadSource('Subs-Package');
 
 	// Clearly we need to know what to request.
 	if (!isset($_GET['did']))
@@ -940,7 +939,7 @@ function DownloadLanguage()
 		cache_put_data('known_languages_all', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['default_list'] = 'lang_main_files_list';
@@ -950,7 +949,7 @@ function DownloadLanguage()
 function ModifyLanguages()
 {
 	global $txt, $context, $scripturl;
-	global $user_info, $smcFunc, $sourcedir, $language, $boarddir, $forum_version;
+	global $user_info, $smcFunc, $language, $boarddir, $forum_version;
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
@@ -959,7 +958,7 @@ function ModifyLanguages()
 
 		if ($_POST['def_language'] != $language)
 		{
-			require_once($sourcedir . '/Subs-Admin.php');
+			loadSource('Subs-Admin');
 			updateSettingsFile(array('language' => '\'' . $_POST['def_language'] . '\''));
 			$language = $_POST['def_language'];
 		}
@@ -1053,7 +1052,7 @@ function ModifyLanguages()
 				'class' => 'smalltext alert',
 			);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';
@@ -1184,7 +1183,7 @@ function ModifyLanguageSettings($return_config = false)
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $sourcedir, $language;
+	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $language;
 
 	loadLanguage('ManageSettings');
 
@@ -1279,7 +1278,7 @@ function ModifyLanguage()
 		checkSession();
 
 		// !!! Todo: FTP Controls?
-		require_once($sourcedir . '/Subs-Package.php');
+		loadSource('Subs-Package');
 
 		// First, Make a backup?
 		if (!empty($modSettings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['lang_id'] . '$$$'))
@@ -1319,7 +1318,7 @@ function ModifyLanguage()
 		// Sixth, if we deleted the default language, set us back to english?
 		if ($context['lang_id'] == $language)
 		{
-			require_once($sourcedir . '/Subs-Admin.php');
+			loadSource('Subs-Admin');
 			$language = 'english';
 			updateSettingsFile(array('language' => '\'' . $language . '\''));
 		}
@@ -1808,7 +1807,7 @@ function prepareServerSettingsContext(&$config_vars)
 // Helper function, it sets up the context for database settings.
 function prepareDBSettingContext(&$config_vars)
 {
-	global $txt, $helptxt, $context, $modSettings, $sourcedir;
+	global $txt, $helptxt, $context, $modSettings;
 
 	loadLanguage('Help');
 
@@ -1904,7 +1903,7 @@ function prepareDBSettingContext(&$config_vars)
 	// If we have inline permissions we need to prep them.
 	if (!empty($inlinePermissions) && allowedTo('manage_permissions'))
 	{
-		require_once($sourcedir . '/ManagePermissions.php');
+		loadSource('ManagePermissions');
 		init_inline_permissions($inlinePermissions, isset($context['permissions_excluded']) ? $context['permissions_excluded'] : array());
 	}
 
@@ -1959,7 +1958,7 @@ function prepareDBSettingContext(&$config_vars)
 function saveSettings(&$config_vars)
 {
 	global $boarddir, $sc, $cookiename, $modSettings, $user_settings;
-	global $sourcedir, $context, $cachedir;
+	global $context, $cachedir;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))
@@ -2037,7 +2036,7 @@ function saveSettings(&$config_vars)
 	}
 
 	// Save the relevant settings in the Settings.php file.
-	require_once($sourcedir . '/Subs-Admin.php');
+	loadSource('Subs-Admin');
 	updateSettingsFile($new_settings);
 
 	// Now loopt through the remaining (database-based) settings.
@@ -2063,7 +2062,7 @@ function saveSettings(&$config_vars)
 // Helper function for saving database settings.
 function saveDBSettings(&$config_vars)
 {
-	global $sourcedir, $context;
+	global $context;
 
 	$inlinePermissions = array();
 	foreach ($config_vars as $var)
@@ -2128,7 +2127,7 @@ function saveDBSettings(&$config_vars)
 	// If we have inline permissions we need to save them.
 	if (!empty($inlinePermissions) && allowedTo('manage_permissions'))
 	{
-		require_once($sourcedir . '/ManagePermissions.php');
+		loadSource('ManagePermissions');
 		save_inline_permissions($inlinePermissions);
 	}
 }

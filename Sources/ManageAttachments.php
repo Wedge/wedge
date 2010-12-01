@@ -161,7 +161,7 @@ function ManageAttachments()
 
 function ManageAttachmentSettings($return_config = false)
 {
-	global $txt, $modSettings, $scripturl, $context, $options, $sourcedir;
+	global $txt, $modSettings, $scripturl, $context, $options;
 
 	$context['valid_upload_dir'] = is_dir($modSettings['attachmentUploadDir']) && is_writable($modSettings['attachmentUploadDir']);
 
@@ -200,8 +200,7 @@ function ManageAttachmentSettings($return_config = false)
 		return $config_vars;
 
 	// These are very likely to come in handy! (i.e. without them we're doomed!)
-	require_once($sourcedir . '/ManagePermissions.php');
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Saving settings?
 	if (isset($_GET['save']))
@@ -220,7 +219,7 @@ function ManageAttachmentSettings($return_config = false)
 
 function ManageAvatarSettings($return_config = false)
 {
-	global $txt, $context, $modSettings, $sourcedir, $scripturl;
+	global $txt, $context, $modSettings, $scripturl;
 
 	$context['valid_avatar_dir'] = is_dir($modSettings['avatar_directory']);
 	$context['valid_custom_avatar_dir'] = empty($modSettings['custom_avatar_enabled']) || (!empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']));
@@ -268,8 +267,7 @@ function ManageAvatarSettings($return_config = false)
 		return $config_vars;
 
 	// We need these files for the inline permission settings, and the settings template.
-	require_once($sourcedir . '/ManagePermissions.php');
-	require_once($sourcedir . '/ManageServer.php');
+	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Saving avatar settings?
 	if (isset($_GET['save']))
@@ -298,8 +296,7 @@ function ManageAvatarSettings($return_config = false)
 
 function BrowseFiles()
 {
-	global $context, $txt, $scripturl, $options, $modSettings;
-	global $smcFunc, $sourcedir;
+	global $context, $txt, $scripturl, $options, $modSettings, $smcFunc;
 
 	$context['sub_template'] = 'browse';
 
@@ -482,7 +479,7 @@ function BrowseFiles()
 	);
 
 	// Create the list.
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 }
 
@@ -1579,7 +1576,7 @@ function ApproveAttachments($attachments)
 
 function ManageAttachmentPaths()
 {
-	global $modSettings, $scripturl, $context, $txt, $sourcedir, $smcFunc;
+	global $modSettings, $scripturl, $context, $txt, $smcFunc;
 
 	// Saving?
 	if (isset($_REQUEST['save']))
@@ -1734,7 +1731,7 @@ function ManageAttachmentPaths()
 		),
 	);
 
-	require_once($sourcedir . '/Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	// Fix up our template.

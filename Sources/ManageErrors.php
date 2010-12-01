@@ -53,7 +53,7 @@ if (!defined('SMF'))
 // View the forum's error log.
 function ViewErrorLog()
 {
-	global $scripturl, $txt, $context, $modSettings, $user_profile, $filter, $boarddir, $sourcedir, $themedir, $smcFunc;
+	global $scripturl, $txt, $context, $modSettings, $user_profile, $filter, $boarddir, $themedir, $smcFunc;
 
 	// Viewing contents of a file?
 	if (isset($_GET['file']))

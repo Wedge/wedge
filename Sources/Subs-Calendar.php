@@ -633,8 +633,6 @@ function getCalendarWeek($month, $year, $day, $calendarOptions)
 // Retrieve all events for the given days, independently of the users offset.
 function cache_getOffsetIndependentEvents($days_to_index)
 {
-	global $sourcedir;
-
 	$low_date = strftime('%Y-%m-%d', forum_time(false) - 24 * 3600);
 	$high_date = strftime('%Y-%m-%d', forum_time(false) + $days_to_index * 24 * 3600);
 
@@ -768,7 +766,7 @@ function cache_getRecentEvents($eventOptions)
 // Makes sure the calendar post is valid.
 function validateEventPost()
 {
-	global $modSettings, $txt, $sourcedir, $smcFunc;
+	global $modSettings, $txt, $smcFunc;
 
 	if (!isset($_POST['deleteevent']))
 	{
