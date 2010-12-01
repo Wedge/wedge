@@ -804,7 +804,7 @@ function ViewSubscribedUsers()
 		),
 	);
 
-	loadSource('Subs-List.php');
+	loadSource('Subs-List');
 	createList($listOptions);
 
 	$context['sub_template'] = 'show_list';
