@@ -83,7 +83,7 @@ function template_event_post()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" data-onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" class="hitme" style="margin: 0;">';
+		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" data-onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
 
 	if (!empty($context['event']['new']))
 		echo '
@@ -120,7 +120,7 @@ function template_event_post()
 						<input type="text" name="evtitle" maxlength="70" size="70" value="', $context['event']['title'], '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" data-onchange="generateDays();" class="hitme">';
+							<select name="year" data-onchange="generateDays();">';
 
 	// Show a list of all the years we allow...
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -130,7 +130,7 @@ function template_event_post()
 	echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" data-onchange="generateDays();" class="hitme">';
+							<select name="month" id="month" data-onchange="generateDays();">';
 
 	// There are 12 months per year - ensure that they all get listed.
 	for ($month = 1; $month <= 12; $month++)
@@ -186,7 +186,7 @@ function template_event_post()
 								</li>
 								<li>
 									', $txt['calendar_post_in'], '
-									<select id="board" name="board" data-onchange="this.form.submit();" class="hitme">';
+									<select id="board" name="board" data-onchange="this.form.submit();">';
 		foreach ($context['event']['categories'] as $category)
 		{
 			echo '

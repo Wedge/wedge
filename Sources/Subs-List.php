@@ -80,7 +80,7 @@ function createList($listOptions)
 	{
 		// First get an impression of how many items to expect.
 		if (isset($listOptions['get_count']['file']))
-			require_once($listOptions['get_count']['file']);
+			loadSource($listOptions['get_count']['file']);
 		$list_context['total_num_items'] = call_user_func_array($listOptions['get_count']['function'], empty($listOptions['get_count']['params']) ? array() : $listOptions['get_count']['params']);
 
 		// Default the start to the beginning...sounds logical.
@@ -110,7 +110,7 @@ function createList($listOptions)
 
 	// Get the file with the function for the item list.
 	if (isset($listOptions['get_items']['file']))
-		require_once($listOptions['get_items']['file']);
+		loadSource($listOptions['get_items']['file']);
 
 	// Call the function and include which items we want and in what order.
 	$list_items = call_user_func_array($listOptions['get_items']['function'], array_merge(array($list_context['start'], $list_context['items_per_page'], $sort), empty($listOptions['get_items']['params']) ? array() : $listOptions['get_items']['params']));

@@ -898,7 +898,7 @@ function EditSmileys()
 
 		// Create a list of options for selecting smiley sets.
 		$smileyset_option_list = '
-			<select name="set" data-onchange="changeSet(this.options[this.selectedIndex].value);" class="hitme">';
+			<select name="set" data-onchange="changeSet(this.options[this.selectedIndex].value);">';
 		foreach ($context['smiley_sets'] as $smiley_set)
 			$smileyset_option_list .= '
 				<option value="' . $smiley_set['path'] . '"' . ($modSettings['smiley_sets_default'] == $smiley_set['path'] ? ' selected="selected"' : '') . '>' . $smiley_set['name'] . '</option>';
@@ -1050,7 +1050,7 @@ function EditSmileys()
 				array(
 					'position' => 'below_table_data',
 					'value' => '
-						<select name="smiley_action" data-onchange="makeChanges(this.value);" class="hitme">
+						<select name="smiley_action" data-onchange="makeChanges(this.value);">
 							<option value="-1">' . $txt['smileys_with_selected'] . ':</option>
 							<option value="-1">--------------</option>
 							<option value="hidden">' . $txt['smileys_make_hidden'] . '</option>

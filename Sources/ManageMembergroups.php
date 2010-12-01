@@ -119,7 +119,7 @@ function ModifyMembergroups()
 // An overview of the current membergroups.
 function MembergroupIndex()
 {
-	global $txt, $scripturl, $context, $settings, $smcFunc, $sourcedir;
+	global $txt, $scripturl, $context, $settings, $smcFunc;
 
 	$context['page_title'] = $txt['membergroups_title'];
 
@@ -130,7 +130,7 @@ function MembergroupIndex()
 		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
 		'default_sort_col' => 'name',
 		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Membergroups.php',
+			'file' => 'Subs-Membergroups',
 			'function' => 'list_getMembergroups',
 			'params' => array(
 				'regular',
@@ -251,7 +251,7 @@ function MembergroupIndex()
 			'desc' => 'desc2',
 		),
 		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Membergroups.php',
+			'file' => 'Subs-Membergroups',
 			'function' => 'list_getMembergroups',
 			'params' => array(
 				'post_count',

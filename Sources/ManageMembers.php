@@ -182,7 +182,7 @@ function ViewMembers()
 // View all members.
 function ViewMemberlist()
 {
-	global $txt, $scripturl, $context, $modSettings, $sourcedir, $smcFunc, $user_info;
+	global $txt, $scripturl, $context, $modSettings, $smcFunc, $user_info;
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -456,7 +456,7 @@ function ViewMemberlist()
 		'base_href' => $scripturl . '?action=admin;area=viewmembers' . $context['params_url'],
 		'default_sort_col' => 'user_name',
 		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Members.php',
+			'file' => 'Subs-Members',
 			'function' => 'list_getMembers',
 			'params' => array(
 				isset($where) ? $where : '1=1',
@@ -464,7 +464,7 @@ function ViewMemberlist()
 			),
 		),
 		'get_count' => array(
-			'file' => $sourcedir . '/Subs-Members.php',
+			'file' => 'Subs-Members',
 			'function' => 'list_getNumMembers',
 			'params' => array(
 				isset($where) ? $where : '1=1',
@@ -702,7 +702,6 @@ function SearchMembers()
 function MembersAwaitingActivation()
 {
 	global $txt, $context, $scripturl, $modSettings, $smcFunc;
-	global $sourcedir;
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
@@ -823,7 +822,7 @@ function MembersAwaitingActivation()
 		'base_href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : ''),
 		'default_sort_col' => 'date_registered',
 		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Members.php',
+			'file' => 'Subs-Members',
 			'function' => 'list_getMembers',
 			'params' => array(
 				'is_activated = {int:activated_status}',
@@ -832,7 +831,7 @@ function MembersAwaitingActivation()
 			),
 		),
 		'get_count' => array(
-			'file' => $sourcedir . '/Subs-Members.php',
+			'file' => 'Subs-Members',
 			'function' => 'list_getNumMembers',
 			'params' => array(
 				'is_activated = {int:activated_status}',
@@ -991,7 +990,7 @@ function MembersAwaitingActivation()
 						[<a href="' . $scripturl . '?action=admin;area=viewmembers;sa=browse;showdupes=' . ($context['show_duplicates'] ? 0 : 1) . ';type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . ($context['show_duplicates'] ? $txt['dont_check_for_duplicate'] : $txt['check_for_duplicate']) . '</a>]
 					</div>
 					<div class="floatright">
-						<select name="todo" data-onchange="onSelectChange();" class="hitme">
+						<select name="todo" data-onchange="onSelectChange();">
 							' . $allowed_actions . '
 						</select>
 						<noscript><input type="submit" value="' . $txt['go'] . '" class="button_submit" /></noscript>

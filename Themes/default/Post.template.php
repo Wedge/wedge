@@ -93,7 +93,7 @@ function template_main()
 	// Start the form and display the link tree.
 
 	echo '
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden hitme" data-onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" data-onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -188,7 +188,7 @@ function template_main()
 						', $txt['message_icon'], ':
 					</dt>
 					<dd>
-						<select name="icon" id="icon" data-onchange="showimage()" class="hitme">';
+						<select name="icon" id="icon" data-onchange="showimage()">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
@@ -212,7 +212,7 @@ function template_main()
 						<input type="text" name="evtitle" maxlength="60" size="60" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" id="year" tabindex="', $context['tabindex']++, '" data-onchange="generateDays();" class="hitme">';
+							<select name="year" id="year" tabindex="', $context['tabindex']++, '" data-onchange="generateDays();">';
 
 		// Show a list of all the years we allow...
 		for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -222,7 +222,7 @@ function template_main()
 		echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" data-onchange="generateDays();" class="hitme">';
+							<select name="month" id="month" data-onchange="generateDays();">';
 
 		// There are 12 months per year - ensure that they all get listed.
 		for ($month = 1; $month <= 12; $month++)
@@ -340,7 +340,7 @@ function template_main()
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" data-onchange="pollOptions();" maxlength="4" class="input_text hitme" /> ', $txt['days_word'], '
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" data-onchange="pollOptions();" maxlength="4" class="input_text" /> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>

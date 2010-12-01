@@ -68,7 +68,7 @@ function ManageCalendar()
 // The function that handles adding, and deleting holiday data
 function ModifyHolidays()
 {
-	global $sourcedir, $scripturl, $txt, $context;
+	global $scripturl, $txt, $context;
 
 	// Submitting something...
 	if (isset($_REQUEST['delete']) && !empty($_REQUEST['holiday']))
@@ -90,11 +90,11 @@ function ModifyHolidays()
 		'base_href' => $scripturl . '?action=admin;area=managecalendar;sa=holidays',
 		'default_sort_col' => 'name',
 		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Calendar.php',
+			'file' => 'Subs-Calendar',
 			'function' => 'list_getHolidays',
 		),
 		'get_count' => array(
-			'file' => $sourcedir . '/Subs-Calendar.php',
+			'file' => 'Subs-Calendar',
 			'function' => 'list_getNumHolidays',
 		),
 		'no_items_label' => $txt['holidays_no_entries'],

@@ -193,7 +193,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'theme' => array(
 					'label' => $txt['theme'],
-					'file' => 'Profile-Modify.php',
+					'file' => 'Profile-Modify',
 					'function' => 'theme',
 					'sc' => 'post',
 					'permission' => array(
