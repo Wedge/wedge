@@ -149,12 +149,12 @@ function template_print_above()
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="utf-8" />
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/report.css" />
-	</head>
-	<body>';
+<head>
+	<meta charset="utf-8" />
+	<title>', $context['page_title'], '</title>
+	<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/report.css" />
+</head>
+<body>';
 }
 
 function template_print()
@@ -165,16 +165,16 @@ function template_print()
 	foreach ($context['tables'] as $table)
 	{
 		echo '
-		<div style="overflow: visible;', $table['max_width'] != 'auto' ? ' width: ' . $table['max_width'] . 'px;' : '', '">
-			<table class="bordercolor w100 cs1 cp4">';
+	<div style="overflow: visible;', $table['max_width'] != 'auto' ? ' width: ' . $table['max_width'] . 'px;' : '', '">
+		<table class="bordercolor w100 cs1 cp4">';
 
 		if (!empty($table['title']))
 			echo '
-				<tr class="catbg">
-					<td colspan="', $table['column_count'], '">
-						', $table['title'], '
-					</td>
-				</tr>';
+			<tr class="catbg">
+				<td colspan="', $table['column_count'], '">
+					', $table['title'], '
+				</td>
+			</tr>';
 
 		// Now do each row!
 		$alternate = false;
@@ -183,10 +183,10 @@ function template_print()
 		{
 			if ($row_number == 0 && !empty($table['shading']['top']))
 				echo '
-				<tr class="titlebg top">';
+			<tr class="titlebg top">';
 			else
 				echo '
-				<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">';
+			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">';
 
 			// Now do each column!!
 			$column_number = 0;
@@ -196,36 +196,37 @@ function template_print()
 				if (!empty($data['separator']) && $column_number == 0)
 				{
 					echo '
-					<td colspan="', $table['column_count'], '" class="catbg">
-						<strong>', $data['v'], ':</strong>
-					</td>';
+				<td colspan="', $table['column_count'], '" class="catbg">
+					<strong>', $data['v'], ':</strong>
+				</td>';
 					break;
 				}
 
 				// Shaded?
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
-					<td class="', $table['align']['shaded'], ' titlebg"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
-						', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
-					</td>';
+				<td class="', $table['align']['shaded'], ' titlebg"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
+					', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
+				</td>';
 				else
 					echo '
-					<td class="', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px' . (!empty($data['style']) ? '; ' . $data['style'] : '') . '"' : (!empty($data['style']) ? ' style="' . $data['style'] . '"' : ''), '>
-						', $data['v'], '
-					</td>';
+				<td class="', $table['align']['normal'], '"', $table['width']['normal'] != 'auto' ? ' style="width: ' . $table['width']['normal'] . 'px' . (!empty($data['style']) ? '; ' . $data['style'] : '') . '"' : (!empty($data['style']) ? ' style="' . $data['style'] . '"' : ''), '>
+					', $data['v'], '
+				</td>';
 
 				$column_number++;
 			}
 
 			echo '
-				</tr>';
+			</tr>';
 
 			$row_number++;
 			$alternate = !$alternate;
 		}
 		echo '
-			</table>
-		</div><br />';
+		</table>
+	</div>
+	<br />';
 	}
 }
 
@@ -235,8 +236,8 @@ function template_print_below()
 	global $context, $settings, $options;
 
 	echo '
-		<div class="copyright">', theme_copyright(), '</div>
-	</body>
+	<div class="copyright">', theme_copyright(), '</div>
+</body>
 </html>';
 }
 

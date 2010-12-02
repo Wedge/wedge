@@ -77,7 +77,7 @@ function template_html_above()
 
 	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
 	echo '
-	<link rel="stylesheet" type="text/css" href="', $context['cached_css'], '" />
+	<link rel="stylesheet" href="', $context['cached_css'], '" />
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
 	<meta charset="utf-8" />

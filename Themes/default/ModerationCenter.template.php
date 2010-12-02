@@ -707,29 +707,29 @@ function template_show_notice()
 	// We do all the HTML for this one!
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="utf-8" />
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-	</head>
-	<body>
-		<div class="cat_bar">
-			<h3>', $txt['show_notice'], '</h3>
-		</div>
-		<div class="title_bar">
-			<h3>', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
-		</div>
-		<div class="windowbg wrc">
-			<dl>
-				<dt>
-					<strong>', $txt['show_notice_text'], ':</strong>
-				</dt>
-				<dd>
-					', $context['notice_body'], '
-				</dd>
-			</dl>
-		</div>
-	</body>
+<head>
+	<meta charset="utf-8" />
+	<title>', $context['page_title'], '</title>
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+</head>
+<body>
+	<div class="cat_bar">
+		<h3>', $txt['show_notice'], '</h3>
+	</div>
+	<div class="title_bar">
+		<h3>', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
+	</div>
+	<div class="windowbg wrc">
+		<dl>
+			<dt>
+				<strong>', $txt['show_notice_text'], ':</strong>
+			</dt>
+			<dd>
+				', $context['notice_body'], '
+			</dd>
+		</dl>
+	</div>
+</body>
 </html>';
 
 }

@@ -1305,15 +1305,15 @@ function loadMemberContext($user, $display_custom_fields = false)
  * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected, so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
  *
  * Current detection:
- * - Opera 9.x through 10.x, plus generic
- * - Webkit (render core for Safari, Chrome, Android...) (generic)
- * - Firefox 1.x through 3.x (including 3.5 and 3.6, though simply as Firefox 3.x) plus generic
- * - iPhone/iPod (generic)
- * - Android (generic)
- * - Chrome (generic)
- * - Safari (generic)
- * - Gecko engine (used in Firefox, Seamonkey, others) (generic)
- * - Internet Explorer 6, 7, 8, 9 (plus generic)
+ * - Opera
+ * - Firefox
+ * - Chrome
+ * - Safari
+ * - Webkit (used in Safari, Chrome, Android...)
+ * - iPhone/iPod Touch (Safari Mobile)
+ * - Android
+ * - Gecko engine (used in Firefox and compatible)
+ * - Internet Explorer (plus tests for 6, 7, 8, 9)
  */
 function detectBrowser()
 {

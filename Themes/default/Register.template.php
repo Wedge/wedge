@@ -469,41 +469,41 @@ function template_verification_sound()
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="robots" content="noindex" />
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<style>';
+<head>
+	<meta charset="utf-8" />
+	<meta name="robots" content="noindex" />
+	<title>', $context['page_title'], '</title>
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<style>';
 
 	// Just show the help text and a "close window" link.
 	echo '
-		</style>
-	</head>
-	<body style="margin: 1ex;">
-		<div class="popuptext centertext">
-			<audio src="', $context['verification_sound_href'], '" controls="controls">';
+	</style>
+</head>
+<body style="margin: 1ex;">
+	<div class="popuptext centertext">
+		<audio src="', $context['verification_sound_href'], '" controls="controls">';
 
 	if ($context['browser']['is_ie'])
 		echo '
-				<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
-					<param name="AutoStart" value="1" />
-					<param name="FileName" value="', $context['verification_sound_href'], '" />
-				</object>';
+			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
+				<param name="AutoStart" value="1" />
+				<param name="FileName" value="', $context['verification_sound_href'], '" />
+			</object>';
 	else
 		echo '
-				<object type="audio/x-wav" data="', $context['verification_sound_href'], '">
-					<a href="', $context['verification_sound_href'], '" rel="nofollow">', $context['verification_sound_href'], '</a>
-				</object>';
+			<object type="audio/x-wav" data="', $context['verification_sound_href'], '">
+				<a href="', $context['verification_sound_href'], '" rel="nofollow">', $context['verification_sound_href'], '</a>
+			</object>';
 
 	echo '
-			</audio>
-			<br />
-			<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
-			<a href="javascript:window.parent.document.getElementById(\'helpFrame\').parentNode.removeChild(window.parent.document.getElementById(\'helpFrame\'))">', $txt['visual_verification_sound_close'], '</a><br />
-			<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
-		</div>
-	</body>
+		</audio>
+		<br />
+		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
+		<a href="javascript:window.parent.document.getElementById(\'helpFrame\').parentNode.removeChild(window.parent.document.getElementById(\'helpFrame\'))">', $txt['visual_verification_sound_close'], '</a><br />
+		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
+	</div>
+</body>
 </html>';
 }
 

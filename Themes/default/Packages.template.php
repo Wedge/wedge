@@ -1215,8 +1215,8 @@ function template_view_operations()
 <head>
 	<title>', $txt['operation_title'], '</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-	<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/admin.css" />
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/admin.css" />
 	<script src="', $settings['default_theme_url'], '/scripts/script.js?rc3"></script>
 	<script src="', $settings['default_theme_url'], '/scripts/theme.js?rc3"></script>
 </head>

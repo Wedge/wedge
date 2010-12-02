@@ -84,17 +84,17 @@ function ViewQuery()
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<title>', $context['forum_name_html_safe'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<style>
-			body { margin: 1ex }
-			body, td, th, .normaltext { font-size: x-small }
-			.smalltext { font-size: xx-small }
-		</style>
-	</head>
-	<body id="help_popup">
-		<div class="tborder windowbg description">';
+<head>
+	<title>', $context['forum_name_html_safe'], '</title>
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<style>
+		body { margin: 1ex }
+		body, td, th, .normaltext { font-size: x-small }
+		.smalltext { font-size: xx-small }
+	</style>
+</head>
+<body id="help_popup">
+	<div class="tborder windowbg description">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{
@@ -141,10 +141,11 @@ function ViewQuery()
 		}
 
 		echo '
-		<div id="qq', $q, '" style="margin-bottom: 2ex;">
-			<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none;">
-				', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '
-			</a><br />';
+	<div id="qq', $q, '" style="margin-bottom: 2ex;">
+		<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none;">
+			', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '
+		</a>
+		<br />';
 
 		if (!empty($query_data['f']) && !empty($query_data['l']))
 			echo sprintf($txt['debug_query_in_line'], $query_data['f'], $query_data['l']);
@@ -155,7 +156,7 @@ function ViewQuery()
 			echo sprintf($txt['debug_query_which_took'], round($query_data['t'], 8));
 
 		echo '
-		</div>';
+	</div>';
 
 		// Explain the query.
 		if ($query_id == $q && $is_select_query)
@@ -168,42 +169,42 @@ function ViewQuery()
 			if ($result === false)
 			{
 				echo '
-		<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
-			<tr><td>', wedb::error($db_connection), '</td></tr>
-		</table>';
+	<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
+		<tr><td>', wedb::error($db_connection), '</td></tr>
+	</table>';
 				continue;
 			}
 
 			echo '
-		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
+	<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
 
 			$row = wedb::fetch_assoc($result);
 
 			echo '
-			<tr>
-				<th>' . implode('</th>
-				<th>', array_keys($row)) . '</th>
-			</tr>';
+		<tr>
+			<th>' . implode('</th>
+			<th>', array_keys($row)) . '</th>
+		</tr>';
 
 			wedb::data_seek($result, 0);
 			while ($row = wedb::fetch_assoc($result))
 			{
 				echo '
-			<tr>
-				<td>' . implode('</td>
-				<td>', $row) . '</td>
-			</tr>';
+		<tr>
+			<td>' . implode('</td>
+			<td>', $row) . '</td>
+		</tr>';
 			}
 			wedb::free_result($result);
 
 			echo '
-		</table>';
+	</table>';
 		}
 	}
 
 	echo '
-		</div>
-	</body>
+	</div>
+</body>
 </html>';
 
 	obExit(false);

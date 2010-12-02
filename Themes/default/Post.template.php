@@ -824,72 +824,72 @@ function template_spellcheck()
 	// The style information that makes the spellchecker look... like the forum hopefully!
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="utf-8" />
-		<title>', $txt['spell_check'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<style>
-			body, td
-			{
-				font-size: small;
-				margin: 0;
-				background: #f0f0f0;
-				color: #000;
-				padding: 10px;
-			}
-			.highlight
-			{
-				color: red;
-				font-weight: bold;
-			}
-			#spellview
-			{
-				border-style: outset;
-				border: 1px solid black;
-				padding: 5px;
-				width: 95%;
-				height: 314px;
-				overflow: auto;
-				background: #ffffff;
-			}';
+<head>
+	<meta charset="utf-8" />
+	<title>', $txt['spell_check'], '</title>
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<style>
+		body, td
+		{
+			font-size: small;
+			margin: 0;
+			background: #f0f0f0;
+			color: #000;
+			padding: 10px;
+		}
+		.highlight
+		{
+			color: red;
+			font-weight: bold;
+		}
+		#spellview
+		{
+			border-style: outset;
+			border: 1px solid black;
+			padding: 5px;
+			width: 95%;
+			height: 314px;
+			overflow: auto;
+			background: #ffffff;
+		}';
 
 	// As you may expect - we need a lot of javascript for this... load it form the separate files.
 	echo '
-		</style>
-		<script><!-- // --><![CDATA[
-			var spell_formname = window.opener.spell_formname;
-			var spell_fieldname = window.opener.spell_fieldname;
-		// ]]></script>
-		<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>
-		<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
-		<script><!-- // --><![CDATA[
-			', $context['spell_js'], '
-		// ]]></script>
-	</head>
-	<body onload="nextWord(false);">
-		<form action="#" method="post" accept-charset="UTF-8" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0;">
-			<div id="spellview">&nbsp;</div>
-			<table class="w100 cp4 cs0">
-				<tr class="windowbg">
-					<td class="top w50">
-						', $txt['spellcheck_change_to'], '<br />
-						<input type="text" name="changeto" style="width: 98%;" class="input_text" />
-					</td>
-					<td class="w50">
-						', $txt['spellcheck_suggest'], '<br />
-						<select name="suggestions" style="width: 98%;" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
-						</select>
-					</td>
-				</tr>
-			</table>
-			<div class="righttext" style="padding: 4px;">
-				<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();" class="button_submit" />
-				<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();" class="button_submit" />
-				<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);" class="button_submit" />
-				<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);" class="button_submit" />
-			</div>
-		</form>
-	</body>
+	</style>
+	<script><!-- // --><![CDATA[
+		var spell_formname = window.opener.spell_formname;
+		var spell_fieldname = window.opener.spell_fieldname;
+	// ]]></script>
+	<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>
+	<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
+	<script><!-- // --><![CDATA[
+		', $context['spell_js'], '
+	// ]]></script>
+</head>
+<body onload="nextWord(false);">
+	<form action="#" method="post" accept-charset="UTF-8" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0;">
+		<div id="spellview">&nbsp;</div>
+		<table class="w100 cp4 cs0">
+			<tr class="windowbg">
+				<td class="top w50">
+					', $txt['spellcheck_change_to'], '<br />
+					<input type="text" name="changeto" style="width: 98%;" class="input_text" />
+				</td>
+				<td class="w50">
+					', $txt['spellcheck_suggest'], '<br />
+					<select name="suggestions" style="width: 98%;" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
+					</select>
+				</td>
+			</tr>
+		</table>
+		<div class="righttext" style="padding: 4px;">
+			<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();" class="button_submit" />
+			<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();" class="button_submit" />
+			<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);" class="button_submit" />
+			<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);" class="button_submit" />
+		</div>
+	</form>
+</body>
 </html>';
 }
 

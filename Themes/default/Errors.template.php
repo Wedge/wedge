@@ -166,26 +166,28 @@ function template_show_file()
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<title>', $context['file_data']['file'], '</title>
-		<link rel="stylesheet" type="text/css" href="', $settings['theme_url'], '/css/index.css" />
-		<meta charset="utf-8" />
-	</head>
-	<body>
-		<table class="cp0 cs3">';
+<head>
+	<title>', $context['file_data']['file'], '</title>
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<meta charset="utf-8" />
+</head>
+<body>
+	<table class="cp0 cs3">';
+
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
 		$line_num = $index+$context['file_data']['min'];
 		$is_target = $line_num == $context['file_data']['target'];
 		echo '
-			<tr>
-				<td class="right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
-				<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
-			</tr>';
+		<tr>
+			<td class="right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
+			<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
+		</tr>';
 	}
+
 	echo '
-		</table>
-	</body>
+	</table>
+</body>
 </html>';
 }
 

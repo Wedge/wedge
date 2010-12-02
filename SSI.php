@@ -52,14 +52,16 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 	$cachedir = $boarddir . '/cache';
 
 $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
-/* Set this to one of three values depending on what you want to happen in the case of a fatal error.
+/*
+  Set this to one of three values depending on what you want to happen in the case of a fatal error.
+
 	false:	Default, will just load the error sub template and die - not putting any theme layers around it.
 	true:	Will load the error sub template AND put the SMF layers around it (Not useful if on total custom pages).
 	string:	Name of a callback function to call in the event of an error to allow you to define your own methods. Will die after function returns.
 */
 $ssi_on_error_method = false;
 
-// Don't do john didley if the forum's been shut down competely.
+// Don't do anything if the forum's been shut down competely.
 if ($maintenance == 2 && (!isset($ssi_maintenance_off) || $ssi_maintenance_off !== true))
 	die($mmessage);
 
@@ -387,19 +389,19 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 		return $posts;
 
 	echo '
-		<table border="0" class="ssi_table">';
+		<table class="ssi_table">';
 	foreach ($posts as $post)
 		echo '
 			<tr>
-				<td align="right" valign="top" nowrap="nowrap">
+				<td class="top right nowrap">
 					[', $post['board']['link'], ']
 				</td>
-				<td valign="top">
+				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
 					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>' : '', '
 				</td>
-				<td align="right" nowrap="nowrap">
+				<td class="right nowrap">
 					', $post['time'], '
 				</td>
 			</tr>';
@@ -508,7 +510,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
 			'new_from' => $row['new_from'],
-			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" align="middle" alt="' . $row['icon'] . '" />',
+			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
 		);
 	}
 	wedb::free_result($request);
@@ -518,19 +520,19 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		return $posts;
 
 	echo '
-		<table border="0" class="ssi_table">';
+		<table class="ssi_table">';
 	foreach ($posts as $post)
 		echo '
 			<tr>
-				<td align="right" valign="top" nowrap="nowrap">
+				<td class="top right nowrap">
 					[', $post['board']['link'], ']
 				</td>
-				<td valign="top">
+				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
 					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>', '
 				</td>
-				<td align="right" nowrap="nowrap">
+				<td class="top right nowrap">
 					', $post['time'], '
 				</td>
 			</tr>';
@@ -615,17 +617,17 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 
 	echo '
 		<table class="ssi_table">
-			<tr>
-				<th align="left">', $txt['board'], '</th>
-				<th align="left">', $txt['board_topics'], '</th>
-				<th align="left">', $txt['posts'], '</th>
+			<tr class="left">
+				<th>', $txt['board'], '</th>
+				<th>', $txt['board_topics'], '</th>
+				<th>', $txt['posts'], '</th>
 			</tr>';
 	foreach ($boards as $board)
 		echo '
 			<tr>
 				<td>', $board['link'], $board['new'] ? ' <a href="' . $board['href'] . '"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>' : '', '</td>
-				<td align="right">', comma_format($board['num_topics']), '</td>
-				<td align="right">', comma_format($board['num_posts']), '</td>
+				<td class="right">', comma_format($board['num_topics']), '</td>
+				<td class="right">', comma_format($board['num_posts']), '</td>
 			</tr>';
 	echo '
 		</table>';
@@ -698,19 +700,19 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 
 	echo '
 		<table class="ssi_table">
-			<tr>
-				<th align="left"></th>
-				<th align="left">', $txt['views'], '</th>
-				<th align="left">', $txt['replies'], '</th>
+			<tr class="left">
+				<th></th>
+				<th>', $txt['views'], '</th>
+				<th>', $txt['replies'], '</th>
 			</tr>';
 	foreach ($topics as $topic)
 		echo '
 			<tr>
-				<td align="left">
+				<td class="left">
 					', $topic['link'], '
 				</td>
-				<td align="right">', comma_format($topic['num_views']), '</td>
-				<td align="right">', comma_format($topic['num_replies']), '</td>
+				<td class="right">', comma_format($topic['num_views']), '</td>
+				<td class="right">', comma_format($topic['num_replies']), '</td>
 			</tr>';
 	echo '
 		</table>';
@@ -851,7 +853,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 	// Draw the table!
 	if ($output_method == 'echo')
 		echo '
-		<table border="0" class="ssi_table">';
+		<table class="ssi_table">';
 
 	$query_members = array();
 	foreach ($members as $member)
@@ -867,7 +869,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 		if ($output_method == 'echo')
 			echo '
 			<tr>
-				<td align="right" valign="top" nowrap="nowrap">
+				<td class="top right nowrap">
 					', $query_members[$member]['link'], '
 					<br />', $query_members[$member]['blurb'], '
 					<br />', $query_members[$member]['avatar']['image'], '
@@ -995,21 +997,21 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8">
-			<table border="0" cellspacing="1" cellpadding="0" class="ssi_table">
+			<table class="ssi_table cs1 cp0">
 				<tr>
-					<td align="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
+					<td class="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
 					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '" class="input_text" /></td>
 				</tr><tr>
-					<td align="right"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
+					<td class="right"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
 					<td><input type="password" name="passwrd" id="passwrd" size="9" class="input_password" /></td>
 				</tr>';
 
 	// Open ID?
 	if (!empty($modSettings['enableOpenID']))
 		echo '<tr>
-					<td colspan="2" align="center"><strong>&mdash;', $txt['or'], '&mdash;</strong></td>
+					<td colspan="2" class="center"><strong>&mdash;', $txt['or'], '&mdash;</strong></td>
 				</tr><tr>
-					<td align="right"><label for="openid_url">', $txt['openid'], ':</label>&nbsp;</td>
+					<td class="right"><label for="openid_url">', $txt['openid'], ':</label>&nbsp;</td>
 					<td><input type="text" name="openid_identifier" id="openid_url" class="input_text openid_login" size="17" /></td>
 				</tr>';
 
@@ -1130,7 +1132,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'id' => 'options-' . ($topPollInstead ? 'top-' : 'recent-') . $i,
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span style="white-space: nowrap;"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '" />'
 		);
@@ -1282,7 +1284,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'id' => 'options-' . $i,
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span style="white-space: nowrap;"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '" />'
 		);
@@ -1344,10 +1346,10 @@ function ssi_pollVote()
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
-		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		echo '<!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		history.go(-1);
 	// ]]></script>
 </head>
@@ -1621,7 +1623,10 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	if (wedb::num_rows($request) == 0)
 	{
 		if ($output_method == 'echo')
-			die($txt['ssi_no_guests']);
+		{
+			echo $txt['ssi_no_guests'];
+			return;
+		}
 		else
 			return array();
 	}
@@ -1915,7 +1920,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 				'filesize' => round($row['filesize'] /1024, 2) . $txt['kilobyte'],
 				'downloads' => $row['downloads'],
 				'href' => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'],
-				'link' => '<img src="' . $settings['images_url'] . '/icons/clip.gif" alt="" /> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
+				'link' => '<img src="' . $settings['images_url'] . '/icons/clip.gif" /> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
 				'is_image' => !empty($row['width']) && !empty($row['height']) && !empty($modSettings['attachmentShowImages']),
 			),
 			'topic' => array(
@@ -1951,18 +1956,18 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	// Give them the default.
 	echo '
 		<table class="ssi_downloads" cellpadding="2">
-			<tr>
-				<th align="left">', $txt['file'], '</th>
-				<th align="left">', $txt['posted_by'], '</th>
-				<th align="left">', $txt['downloads'], '</th>
-				<th align="left">', $txt['filesize'], '</th>
+			<tr class="left">
+				<th>', $txt['file'], '</th>
+				<th>', $txt['posted_by'], '</th>
+				<th>', $txt['downloads'], '</th>
+				<th>', $txt['filesize'], '</th>
 			</tr>';
 	foreach ($attachments as $attach)
 		echo '
 			<tr>
 				<td>', $attach['file']['link'], '</td>
 				<td>', $attach['member']['link'], '</td>
-				<td align="center">', $attach['file']['downloads'], '</td>
+				<td class="center">', $attach['file']['downloads'], '</td>
 				<td>', $attach['file']['filesize'], '</td>
 			</tr>';
 	echo '
