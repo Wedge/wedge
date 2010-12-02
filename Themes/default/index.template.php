@@ -302,13 +302,16 @@ function template_html_below()
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// Javascript section -- files to include, main vars and functions to start.
+	// Don't modify <!-- insert inline events here -->, as it's a placeholder.
+
+	echo "\n";
 
 	if (!empty($context['footer_js_inline']))
 		echo '
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo $context['footer'], !empty($modSettings['jquery_remote']) ? '
+	echo $context['footer'], "\n", !empty($modSettings['jquery_remote']) ? '
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>' : '', '
 <script src="', $context['cached_js'], '"></script>
 <script><!-- // --><![CDATA[
@@ -322,6 +325,8 @@ function template_html_below()
 	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
 
 	initMenu(document.getElementById("main_menu"));
+
+	<!-- insert inline events here -->
 
 	var oMainHeaderToggle = new smc_Toggle({
 		bToggleEnabled: true,

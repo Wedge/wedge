@@ -120,11 +120,10 @@ function QuickReply(oOptions)
 }
 
 // When a user presses quote, put it in the quick reply box (if expanded).
-QuickReply.prototype.quote = function (iMessageId, xDeprecated)
+QuickReply.prototype.quote = function (iMessage)
 {
-	// Compatibility with older templates.
-	if (typeof(xDeprecated) != 'undefined')
-		return true;
+	// iMessageId is taken from the owner ID -- quote_button_xxx
+	var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(13) : '';
 
 	if (this.bCollapsed)
 	{
@@ -206,10 +205,13 @@ QuickModify.prototype.isXmlHttpCapable = function ()
 }
 
 // Function called when a user presses the edit button.
-QuickModify.prototype.modifyMsg = function (iMessageId)
+QuickModify.prototype.modifyMsg = function (iMessage)
 {
 	if (!this.bXmlHttpCapable)
 		return;
+
+	// iMessageId is taken from the owner ID -- modify_button_xxx
+	var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(14) : '';
 
 	// Add backwards compatibility with old themes.
 	if (typeof(sSessionVar) == 'undefined')
@@ -658,39 +660,58 @@ function expandThumb(thumbID)
 	return false;
 }
 
+var current_user_menu = null;
+
+$('body').click(function() {
+	if (current_user_menu != null)
+	{
+		var menu_div = document.getElementById('userMenu' + current_user_menu);
+		menu_div.parentNode.removeChild(menu_div);
+		current_user_menu = null;
+	}
+});
+
 // *** The UserMenu
 function UserMenu(oList)
 {
 	this.list = oList;
 }
 
-UserMenu.prototype.switchMenu = function (oLink, iMsg, iUserId)
+UserMenu.prototype.switchMenu = function (oLink)
 {
-	var menu_div = document.getElementById('userMenu' + iMsg);
-	if (menu_div == null)
-	{
-		var pos = smf_itemPos(oLink);
-		var div = document.createElement('div');
-		div.id = 'userMenu' + iMsg;
-		div.className = 'usermenu';
-		var sHTML = '';
-		if (!(this.list['user' + iUserId]))
-			return false;
-		var aLinkList = this.list['user' + iUserId];
-		for (var i = 0, j = aLinkList.length; i < j; i++)
-		{
-			if (aLinkList[i][0].charAt[0] == '?')
-				aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
+	var details = oLink && oLink.id ? oLink.id.substr(2).split('_') : [0, 0];
+	var iMsg = details[0], iUserId = details[1];
 
-			sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
-		}
-		div.innerHTML = sHTML;
-		document.body.appendChild(div);
-		div.style.display = 'block';
-		div.style.left = pos[0] + 'px';
-		div.style.top = (pos[1] + oLink.offsetHeight) + 'px';
-	}
-	else
+	if (current_user_menu != null)
+	{
+		var menu_div = document.getElementById('userMenu' + current_user_menu);
 		menu_div.parentNode.removeChild(menu_div);
+		if (current_user_menu == iMsg)
+		{
+			current_user_menu = null;
+			return false;
+		}
+	}
+	current_user_menu = iMsg;
+	var pos = smf_itemPos(oLink);
+	var div = document.createElement('div');
+	div.id = 'userMenu' + iMsg;
+	div.className = 'usermenu';
+	var sHTML = '';
+	if (!(this.list['user' + iUserId]))
+		return false;
+	var aLinkList = this.list['user' + iUserId];
+	for (var i = 0, j = aLinkList.length; i < j; i++)
+	{
+		if (aLinkList[i][0].charAt[0] == '?')
+			aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
+
+		sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
+	}
+	div.innerHTML = sHTML;
+	document.body.appendChild(div);
+	div.style.display = 'block';
+	div.style.left = pos[0] + 'px';
+	div.style.top = (pos[1] + oLink.offsetHeight) + 'px';
 	return false;
 }

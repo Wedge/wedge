@@ -852,13 +852,59 @@ function ob_sessrewrite($buffer)
 		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
 		$timeDiff = round($newTime - (float) $matches[1], 3);
 		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
-		// Remove the link if you like, I won't enforce it like others do
-		$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<a href="http://code.google.com/p/prettyurls/">Pretty URLs</a> adds ' . $timeDiff . 's, ' . $queriesDiff . 'q)</span>';
+
+		// !!! Hardcoded stuff. Bad! Should we remove this entirely..?
+		$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (Pretty URLs add ' . $timeDiff . 's, ' . $queriesDiff . 'q)</span>';
 		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
  	}
- 
+
+	// Moving all inline events (<code onclick="event();">) to the footer, to make
+	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
+	$context['delayed_events'] = $context['delayed_dupes'] = array();
+	$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $buffer);
+
+	if (!empty($context['delayed_events']))
+	{
+		$thing = 'var eves = {';
+		foreach ($context['delayed_events'] as $eve)
+			$thing .= '
+		' . $eve[0] . ': ["' . $eve[1] . '", "' . $eve[2] . '"],';
+		$thing = substr($thing, 0, -1) . '
+	};
+	$("*[data-eve]").each(function() {
+		var elis = $(this).data("eve");
+		for (var eve in elis)
+			$(this).bind(eves[elis[eve]][0], new Function(eves[elis[eve]][1]));
+	});';
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+	}
+
 	// Return the changed buffer.
 	return $buffer;
+}
+
+// Move inline events to the end
+function wedge_event_delayer($match)
+{
+	global $context;
+	static $eve = 1;
+
+	$eve_list = array();
+	preg_match_all('~\son(\w+)="([^"]+)"~', $match[0], $insides, PREG_SET_ORDER);
+	foreach ($insides as $inside)
+	{
+		$match[0] = str_replace($inside[0], '', $match[0]);
+		$dupe = serialize($inside);
+		if (!isset($context['delayed_dupes'][$dupe]))
+		{
+			$context['delayed_events'][$eve] = array($eve, $inside[1], $inside[2]);
+			$context['delayed_dupes'][$dupe] = $eve;
+			$eve_list[] = $eve++;
+		}
+		else
+			$eve_list[] = $context['delayed_dupes'][$dupe];
+	}
+	return substr($match[0], 0, -1) . ' data-eve="[' . implode(',', $eve_list) . ']">';
 }
 
 // Remove and save script tags
