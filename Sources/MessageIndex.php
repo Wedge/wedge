@@ -42,7 +42,7 @@ function MessageIndex()
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
 	{
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}boards
 			SET num_posts = num_posts + 1
 			WHERE id_board = {int:current_board}',
@@ -141,7 +141,7 @@ function MessageIndex()
 			die;
 		}
 
-		weDB::insert('replace',
+		wedb::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
 			array($modSettings['maxMsgID'], $user_info['id'], $board),
@@ -150,7 +150,7 @@ function MessageIndex()
 
 		if (!empty($board_info['parent_boards']))
 		{
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}log_boards
 				SET id_msg = {int:id_msg}
 				WHERE id_member = {int:current_member}
@@ -171,7 +171,7 @@ function MessageIndex()
 		if (isset($_SESSION['topicseen_cache'][$board]))
 			unset($_SESSION['topicseen_cache'][$board]);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT sent
 			FROM {db_prefix}log_notify
 			WHERE id_board = {int:current_board}
@@ -182,13 +182,13 @@ function MessageIndex()
 				'current_member' => $user_info['id'],
 			)
 		);
-		$context['is_marked_notify'] = weDB::num_rows($request) != 0;
+		$context['is_marked_notify'] = wedb::num_rows($request) != 0;
 		if ($context['is_marked_notify'])
 		{
-			list ($sent) = weDB::fetch_row($request);
+			list ($sent) = wedb::fetch_row($request);
 			if (!empty($sent))
 			{
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}log_notify
 					SET sent = {int:is_sent}
 					WHERE id_board = {int:current_board}
@@ -201,7 +201,7 @@ function MessageIndex()
 				);
 			}
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 	else
 		$context['is_marked_notify'] = false;
@@ -233,7 +233,7 @@ function MessageIndex()
 		$context['view_members_list'] = array();
 		$context['view_num_hidden'] = 0;
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT
 				lo.id_member, lo.log_time, mem.real_name, mem.member_name, mem.show_online,
 				mg.online_color, mg.id_group, mg.group_name
@@ -247,7 +247,7 @@ function MessageIndex()
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if (empty($row['id_member']))
 				continue;
@@ -277,8 +277,8 @@ function MessageIndex()
 			if (empty($row['show_online']))
 				$context['view_num_hidden']++;
 		}
-		$context['view_num_guests'] = weDB::num_rows($request) - count($context['view_members']);
-		weDB::free_result($request);
+		$context['view_num_guests'] = wedb::num_rows($request) - count($context['view_members']);
+		wedb::free_result($request);
 
 		// Put them in "last clicked" order.
 		krsort($context['view_members_list']);
@@ -338,7 +338,7 @@ function MessageIndex()
 	$pre_query = $start > 0;
 	if ($pre_query && $maxindex > 0)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT t.id_topic
 			FROM {db_prefix}topics AS t' . ($context['sort_by'] === 'last_poster' ? '
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)' : (in_array($context['sort_by'], array('starter', 'subject')) ? '
@@ -359,7 +359,7 @@ function MessageIndex()
 			)
 		);
 		$topic_ids = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
 	}
 
@@ -369,7 +369,7 @@ function MessageIndex()
 		// For search engine effectiveness we'll link guests differently.
 		$context['pageindex_multiplier'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT
 				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board,
 				' . ($user_info['is_guest'] ? '0' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from,
@@ -404,7 +404,7 @@ function MessageIndex()
 		);
 
 		// Begin 'printing' the message index for current board.
-		while ($row = weDB::fetch_assoc($result))
+		while ($row = wedb::fetch_assoc($result))
 		{
 			if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 				continue;
@@ -540,7 +540,7 @@ function MessageIndex()
 				'unapproved_posts' => $row['unapproved_posts'],
 			);
 		}
-		weDB::free_result($result);
+		wedb::free_result($result);
 
 		// Fix the sequence of topics if they were retrieved in the wrong order. (for speed reasons...)
 		if ($fake_ascending)
@@ -548,7 +548,7 @@ function MessageIndex()
 
 		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'] && !empty($topic_ids))
 		{
-			$result = weDB::query('
+			$result = wedb::query('
 				SELECT id_topic
 				FROM {db_prefix}messages
 				WHERE id_topic IN ({array_int:topic_list})
@@ -560,9 +560,9 @@ function MessageIndex()
 					'topic_list' => $topic_ids,
 				)
 			);
-			while ($row = weDB::fetch_assoc($result))
+			while ($row = wedb::fetch_assoc($result))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
-			weDB::free_result($result);
+			wedb::free_result($result);
 		}
 	}
 

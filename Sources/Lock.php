@@ -56,7 +56,7 @@ function Lock()
 	loadSource('Subs-Post');
 
 	// Find out who started the topic - in case User Topic Locking is enabled.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member_started, locked
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -65,8 +65,8 @@ function Lock()
 			'current_topic' => $topic,
 		)
 	);
-	list ($starter, $locked) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($starter, $locked) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Can you lock topics here, mister?
 	$user_lock = !allowedTo('lock_any');
@@ -89,7 +89,7 @@ function Lock()
 		fatal_lang_error('locked_by_admin', 'user');
 
 	// Actually lock the topic in the database with the new value.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}topics
 		SET locked = {int:locked}
 		WHERE id_topic = {int:current_topic}',

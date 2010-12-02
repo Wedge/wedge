@@ -107,7 +107,7 @@ function markBoardsRead($boards, $unread = false)
 	{
 		// Clear out all the places where this lovely info is stored.
 		// !! Maybe not log_mark_read?
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_mark_read
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
@@ -116,7 +116,7 @@ function markBoardsRead($boards, $unread = false)
 				'board_list' => $boards,
 			)
 		);
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_boards
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
@@ -134,14 +134,14 @@ function markBoardsRead($boards, $unread = false)
 			$markRead[] = array($modSettings['maxMsgID'], $user_info['id'], $board);
 
 		// Update log_mark_read and log_boards.
-		weDB::insert('replace',
+		wedb::insert('replace',
 			'{db_prefix}log_mark_read',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
 			$markRead,
 			array('id_board', 'id_member')
 		);
 
-		weDB::insert('replace',
+		wedb::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
 			$markRead,
@@ -150,7 +150,7 @@ function markBoardsRead($boards, $unread = false)
 	}
 
 	// Get rid of useless log_topics data, because log_mark_read is better for it - even if marking unread - I think so...
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT MIN(id_topic)
 		FROM {db_prefix}log_topics
 		WHERE id_member = {int:current_member}',
@@ -158,14 +158,14 @@ function markBoardsRead($boards, $unread = false)
 			'current_member' => $user_info['id'],
 		)
 	);
-	list ($lowest_topic) = weDB::fetch_row($result);
-	weDB::free_result($result);
+	list ($lowest_topic) = wedb::fetch_row($result);
+	wedb::free_result($result);
 
 	if (empty($lowest_topic))
 		return;
 
 	// !!!SLOW This query seems to eat it sometimes.
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT lt.id_topic
 		FROM {db_prefix}log_topics AS lt
 			INNER JOIN {db_prefix}topics AS t /*!40000 USE INDEX (PRIMARY) */ ON (t.id_topic = lt.id_topic
@@ -179,12 +179,12 @@ function markBoardsRead($boards, $unread = false)
 		)
 	);
 	$topics = array();
-	while ($row = weDB::fetch_assoc($result))
+	while ($row = wedb::fetch_assoc($result))
 		$topics[] = $row['id_topic'];
-	weDB::free_result($result);
+	wedb::free_result($result);
 
 	if (!empty($topics))
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_topics
 			WHERE id_member = {int:current_member}
 				AND id_topic IN ({array_int:topic_list})',
@@ -208,7 +208,7 @@ function MarkRead()
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'all')
 	{
 		// Find all the boards this user can see.
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}',
@@ -216,9 +216,9 @@ function MarkRead()
 			)
 		);
 		$boards = array();
-		while ($row = weDB::fetch_assoc($result))
+		while ($row = wedb::fetch_assoc($result))
 			$boards[] = $row['id_board'];
-		weDB::free_result($result);
+		wedb::free_result($result);
 
 		if (!empty($boards))
 			markBoardsRead($boards, isset($_REQUEST['unread']));
@@ -241,7 +241,7 @@ function MarkRead()
 		foreach ($topics as $id_topic)
 			$markRead[] = array($modSettings['maxMsgID'], $user_info['id'], (int) $id_topic);
 
-		weDB::insert('replace',
+		wedb::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
 			$markRead,
@@ -258,7 +258,7 @@ function MarkRead()
 	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'topic')
 	{
 		// First, let's figure out what the latest message is.
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT id_first_msg, id_last_msg
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}',
@@ -266,8 +266,8 @@ function MarkRead()
 				'current_topic' => $topic,
 			)
 		);
-		$topicinfo = weDB::fetch_assoc($result);
-		weDB::free_result($result);
+		$topicinfo = wedb::fetch_assoc($result);
+		wedb::free_result($result);
 
 		if (!empty($_GET['t']))
 		{
@@ -280,7 +280,7 @@ function MarkRead()
 			// Otherwise, get the latest message before the named one.
 			else
 			{
-				$result = weDB::query('
+				$result = wedb::query('
 					SELECT MAX(id_msg)
 					FROM {db_prefix}messages
 					WHERE id_topic = {int:current_topic}
@@ -292,8 +292,8 @@ function MarkRead()
 						'id_first_msg' => $topicinfo['id_first_msg'],
 					)
 				);
-				list ($earlyMsg) = weDB::fetch_row($result);
-				weDB::free_result($result);
+				list ($earlyMsg) = wedb::fetch_row($result);
+				wedb::free_result($result);
 			}
 		}
 		// Marking read from first page?  That's the whole topic.
@@ -301,7 +301,7 @@ function MarkRead()
 			$earlyMsg = 0;
 		else
 		{
-			$result = weDB::query('
+			$result = wedb::query('
 				SELECT id_msg
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
@@ -311,14 +311,14 @@ function MarkRead()
 					'current_topic' => $topic,
 				)
 			);
-			list ($earlyMsg) = weDB::fetch_row($result);
-			weDB::free_result($result);
+			list ($earlyMsg) = wedb::fetch_row($result);
+			wedb::free_result($result);
 
 			$earlyMsg--;
 		}
 
 		// Blam, unread!
-		weDB::insert('replace',
+		wedb::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
 			array($earlyMsg, $user_info['id'], $topic),
@@ -352,7 +352,7 @@ function MarkRead()
 			// They want to mark the entire tree starting with the boards specified
 			// The easist thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
 
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT b.id_board, b.id_parent
 				FROM {db_prefix}boards AS b
 				WHERE {query_see_board}
@@ -365,10 +365,10 @@ function MarkRead()
 					'board_list' => $boards,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				if (in_array($row['id_parent'], $boards))
 					$boards[] = $row['id_board'];
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 
 		$clauses = array();
@@ -387,7 +387,7 @@ function MarkRead()
 		if (empty($clauses))
 			redirectexit();
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -396,9 +396,9 @@ function MarkRead()
 			))
 		);
 		$boards = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		if (empty($boards))
 			redirectexit();
@@ -414,7 +414,7 @@ function MarkRead()
 		if (!isset($_REQUEST['unread']))
 		{
 			// Find all the boards this user can see.
-			$result = weDB::query('
+			$result = wedb::query('
 				SELECT b.id_board
 				FROM {db_prefix}boards AS b
 				WHERE b.id_parent IN ({array_int:parent_list})
@@ -423,20 +423,20 @@ function MarkRead()
 					'parent_list' => $boards,
 				)
 			);
-			if (weDB::num_rows($result) > 0)
+			if (wedb::num_rows($result) > 0)
 			{
 				$logBoardInserts = '';
-				while ($row = weDB::fetch_assoc($result))
+				while ($row = wedb::fetch_assoc($result))
 					$logBoardInserts[] = array($modSettings['maxMsgID'], $user_info['id'], $row['id_board']);
 
-				weDB::insert('replace',
+				wedb::insert('replace',
 					'{db_prefix}log_boards',
 					array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
 					$logBoardInserts,
 					array('id_member', 'id_board')
 				);
 			}
-			weDB::free_result($result);
+			wedb::free_result($result);
 
 			if (empty($board))
 				redirectexit();
@@ -459,7 +459,7 @@ function getMsgMemberID($messageID)
 	global $smcFunc;
 
 	// Find the topic and make sure the member still exists.
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT IFNULL(mem.id_member, 0)
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -469,12 +469,12 @@ function getMsgMemberID($messageID)
 			'selected_message' => (int) $messageID,
 		)
 	);
-	if (weDB::num_rows($result) > 0)
-		list ($memberID) = weDB::fetch_row($result);
+	if (wedb::num_rows($result) > 0)
+		list ($memberID) = wedb::fetch_row($result);
 	// The message doesn't even exist.
 	else
 		$memberID = 0;
-	weDB::free_result($result);
+	wedb::free_result($result);
 
 	return (int) $memberID;
 }
@@ -564,7 +564,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		// Fix the children of this board.
 		if (!empty($childList) && !empty($childUpdates))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET ' . implode(',
 					', $childUpdates) . '
@@ -577,7 +577,7 @@ function modifyBoard($board_id, &$boardOptions)
 			);
 
 		// Make some room for this spot.
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}boards
 			SET board_order = board_order + {int:new_order}
 			WHERE board_order > {int:insert_after}
@@ -674,7 +674,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
-		$request = weDB::query('
+		$request = wedb::query('
 			UPDATE {db_prefix}boards
 			SET
 				' . implode(',
@@ -689,7 +689,7 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['moderators']) || isset($boardOptions['moderator_string']))
 	{
 		// Reset current moderators for this board - if there are any!
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}moderators
 			WHERE id_board = {int:board_list}',
 			array(
@@ -717,7 +717,7 @@ function modifyBoard($board_id, &$boardOptions)
 				$boardOptions['moderators'] = array();
 			if (!empty($moderators))
 			{
-				$request = weDB::query('
+				$request = wedb::query('
 					SELECT id_member
 					FROM {db_prefix}members
 					WHERE member_name IN ({array_string:moderator_list}) OR real_name IN ({array_string:moderator_list})
@@ -726,9 +726,9 @@ function modifyBoard($board_id, &$boardOptions)
 						'moderator_list' => $moderators,
 					)
 				);
-				while ($row = weDB::fetch_assoc($request))
+				while ($row = wedb::fetch_assoc($request))
 					$boardOptions['moderators'][] = $row['id_member'];
-				weDB::free_result($request);
+				wedb::free_result($request);
 			}
 		}
 
@@ -739,7 +739,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderators'] as $moderator)
 				$inserts[] = array($board_id, $moderator);
 
-			weDB::insert('insert',
+			wedb::insert('insert',
 				'{db_prefix}moderators',
 				array('id_board' => 'int', 'id_member' => 'int'),
 				$inserts,
@@ -763,15 +763,15 @@ function modifyBoard($board_id, &$boardOptions)
 		$purl = isset($boardOptions['pretty_url']) ? strtolower($boardOptions['pretty_url']) : '';
 
 		//	Get ex-name...
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT url, id_cat
 			FROM {db_prefix}boards
 			WHERE id_board = {int:id_board}', array(
 				'id_board' => $board_id
 			));
 
-		list ($ex_name, $id_owner) = weDB::fetch_row($result);
-		weDB::free_result($result);
+		list ($ex_name, $id_owner) = wedb::fetch_row($result);
+		wedb::free_result($result);
 		preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $ex_name, $m);
 		if (empty($m[2]))
 			$m[2] = 'noisen.com';
@@ -800,7 +800,7 @@ function modifyBoard($board_id, &$boardOptions)
 			fatal_lang_error('pretty_duplicateboard', false);
 
 		// Save to the database
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}boards
 			SET url = {string:url}, urllen = {int:len}
 			WHERE id_board = {int:id_board}', array(
@@ -811,7 +811,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		// Mass-replace board name in cache
 		if (!empty($ex_name))
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}pretty_urls_cache
 				WHERE replacement LIKE \'http://' . $ex_name . '%\'');
 
@@ -850,7 +850,7 @@ function createBoard($boardOptions)
 	);
 
 	// Insert a board, the settings are dealt with later.
-	weDB::insert('',
+	wedb::insert('',
 		'{db_prefix}boards',
 		array(
 			'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
@@ -862,7 +862,7 @@ function createBoard($boardOptions)
 		),
 		array('id_board')
 	);
-	$board_id = weDB::insert_id();
+	$board_id = wedb::insert_id();
 
 	if (empty($board_id))
 		return 0;
@@ -880,7 +880,7 @@ function createBoard($boardOptions)
 
 		if (!empty($boards[$board_id]['parent']))
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_profile
 				FROM {db_prefix}boards
 				WHERE id_board = {int:board_parent}
@@ -889,10 +889,10 @@ function createBoard($boardOptions)
 					'board_parent' => (int) $boards[$board_id]['parent'],
 				)
 			);
-			list ($boardOptions['profile']) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($boardOptions['profile']) = wedb::fetch_row($request);
+			wedb::free_result($request);
 
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET id_profile = {int:new_profile}
 				WHERE id_board = {int:current_board}',
@@ -948,7 +948,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	}
 
 	// Delete ALL topics in the selected boards (done first so topics can't be marooned.)
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_topic
 		FROM {db_prefix}topics
 		WHERE id_board IN ({array_int:boards_to_remove})',
@@ -957,29 +957,29 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 		)
 	);
 	$topics = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$topics[] = $row['id_topic'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	loadSource('RemoveTopic');
 	removeTopics($topics, false);
 
 	// Delete the board's logs.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_mark_read
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
 			'boards_to_remove' => $boards_to_remove,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_boards
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
 			'boards_to_remove' => $boards_to_remove,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_notify
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
@@ -988,7 +988,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete this board's moderators.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}moderators
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
@@ -997,7 +997,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete any extra events in the calendar.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}calendar
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
@@ -1006,7 +1006,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete any message icons that only appear on these boards.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}message_icons
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
@@ -1015,7 +1015,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete the boards.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}boards
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		array(
@@ -1053,7 +1053,7 @@ function reorderBoards()
 	{
 		foreach ($boardList[$catID] as $boardID)
 			if ($boards[$boardID]['order'] != ++$board_order)
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET board_order = {int:new_order}
 					WHERE id_board = {int:selected_board}',
@@ -1065,7 +1065,7 @@ function reorderBoards()
 	}
 
 	// Sort the records of the boards table on the board_order value.
-	weDB::query('
+	wedb::query('
 		ALTER TABLE {db_prefix}boards
 		ORDER BY board_order',
 		array(
@@ -1080,7 +1080,7 @@ function fixChildren($parent, $newLevel, $newParent)
 	global $smcFunc;
 
 	// Grab all children of $parent...
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT id_board
 		FROM {db_prefix}boards
 		WHERE id_parent = {int:parent_board}',
@@ -1089,12 +1089,12 @@ function fixChildren($parent, $newLevel, $newParent)
 		)
 	);
 	$children = array();
-	while ($row = weDB::fetch_assoc($result))
+	while ($row = wedb::fetch_assoc($result))
 		$children[] = $row['id_board'];
-	weDB::free_result($result);
+	wedb::free_result($result);
 
 	// ...and set it to a new parent and child_level.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}boards
 		SET id_parent = {int:new_parent}, child_level = {int:new_child_level}
 		WHERE id_parent = {int:parent_board}',
@@ -1120,7 +1120,7 @@ function getBoardTree($restrict = false)
 				AND b.id_owner = ' . (int) $user_info['id'];
 
 	// Getting all the board and category information you'd ever wanted.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
 			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.styling, b.override_theme, b.id_profile, b.redirect,
@@ -1133,7 +1133,7 @@ function getBoardTree($restrict = false)
 	$cat_tree = array();
 	$boards = array();
 	$last_board_order = 0;
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (!isset($cat_tree[$row['id_cat']]))
 		{
@@ -1198,7 +1198,7 @@ function getBoardTree($restrict = false)
 
 				// Wrong child level...
 				if ($boards[$row['id_parent']]['tree']['node']['level'] != $row['child_level'] - 1)
-					weDB::query('
+					wedb::query('
 						UPDATE {db_prefix}boards
 						SET child_level = {int:new_child_level}
 						WHERE id_board = {int:selected_board}',
@@ -1217,7 +1217,7 @@ function getBoardTree($restrict = false)
 			}
 		}
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Get a list of all the boards in each category (using recursion).
 	$boardList = array();

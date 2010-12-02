@@ -234,14 +234,14 @@ function ModifyPostSettings($return_config = false)
 		// !!! @todo: Delete? Is it not already done in Wedge...?
 		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'])
 		{
-			weDB::extend('packages');
+			wedb::extend('packages');
 
-			$colData = weDBPackages::list_columns('{db_prefix}messages', true);
+			$colData = wedbPackages::list_columns('{db_prefix}messages', true);
 			foreach ($colData as $column)
 				if ($column['name'] == 'body')
 					$body_type = $column['type'];
 
-			$indData = weDBPackages::list_indexes('{db_prefix}messages', true);
+			$indData = wedbPackages::list_indexes('{db_prefix}messages', true);
 			foreach ($indData as $index)
 				foreach ($index['columns'] as $column)
 					if ($column == 'body' && $index['type'] == 'fulltext')
@@ -256,13 +256,13 @@ function ModifyPostSettings($return_config = false)
 				else
 				{
 					// Make it longer so we can do their limit.
-					weDBPackages::change_column('{db_prefix}messages', 'body', array('type' => 'mediumtext'));
+					wedbPackages::change_column('{db_prefix}messages', 'body', array('type' => 'mediumtext'));
 				}
 			}
 			elseif (isset($body_type) && $_POST['max_messageLength'] <= 65535 && $body_type != 'text')
 			{
 				// Shorten the column so we can have the benefit of fulltext searching again!
-				weDBPackages::change_column('{db_prefix}messages', 'body', array('type' => 'text'));
+				wedbPackages::change_column('{db_prefix}messages', 'body', array('type' => 'text'));
 			}
 		}
 

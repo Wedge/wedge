@@ -25,7 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class weDB
+class wedb
 {
 	protected static $instance; // container for self
 	protected static $_db_con; // store the database connection (normally)
@@ -75,7 +75,7 @@ class weDB
 			show_db_error();
 
 		if (isset($mysql_set_mode) && $mysql_set_mode === true)
-			weDB::query('SET sql_mode = \'\', AUTOCOMMIT = 1',
+			wedb::query('SET sql_mode = \'\', AUTOCOMMIT = 1',
 			array(),
 			false
 		);
@@ -91,7 +91,7 @@ class weDB
 		$type = ucfirst($type);
 
 		require_once($sourcedir . '/Class-DB' . $type . '.php'); // loadSource is not available for this.
-		call_user_func(array('weDB' . $type, 'getInstance')); // can't do this any other way prior to PHP 5.3.0 wherein $type::getInstance() is possible.
+		call_user_func(array('wedb' . $type, 'getInstance')); // can't do this any other way prior to PHP 5.3.0 wherein $type::getInstance() is possible.
 	}
 
 	public static function fix_prefix(&$db_prefix, $db_name)
@@ -110,7 +110,7 @@ class weDB
 			$db_callback = array($db_values, $connection == null ? self::$_db_con : $connection);
 
 			// Do the quoting and escaping
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'weDB::value_replacement__callback', $db_string);
+			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wedb::value_replacement__callback', $db_string);
 
 			// Clear this global variable.
 			$db_callback = array();
@@ -145,7 +145,7 @@ class weDB
 		$db_count = !isset($db_count) ? 1 : $db_count + 1;
 
 		if (empty($modSettings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
-			weDB::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
+			wedb::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
 
 		// Use "ORDER BY null" to prevent Mysql doing filesorts for Group By clauses without an Order By
 		if (strpos($db_string, 'GROUP BY') !== false && strpos($db_string, 'ORDER BY') === false && strpos($db_string, 'INSERT INTO') === false)
@@ -164,7 +164,7 @@ class weDB
 			$db_callback = array($db_values, $connection);
 
 			// Inject the values passed to this function.
-			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'weDB::value_replacement__callback', $db_string);
+			$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'wedb::value_replacement__callback', $db_string);
 
 			// This shouldn't be residing in global space any longer.
 			$db_callback = array();
@@ -382,7 +382,7 @@ class weDB
 
 				// Attempt to find and repair the broken table.
 				foreach ($fix_tables as $table)
-					weDB::query("
+					wedb::query("
 						REPAIR TABLE $table", false, false);
 
 				// And send off an email!
@@ -647,7 +647,7 @@ class weDB
 		foreach (debug_backtrace() as $step)
 		{
 			// Found it?
-			if (strpos($step['function'], 'query') === false && (isset($step['class']) && $step['class'] !== 'weDB') && (!in_array(substr($step['function'], 0, 5), array('preg_re', 'mysql'))))
+			if (strpos($step['function'], 'query') === false && (isset($step['class']) && $step['class'] !== 'wedb') && (!in_array(substr($step['function'], 0, 5), array('preg_re', 'mysql'))))
 			{
 				$log_message .= '<br />Function: ' . $step['function'];
 				break;

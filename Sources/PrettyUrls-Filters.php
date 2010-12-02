@@ -21,13 +21,13 @@ function pretty_synchronise_topic_urls()
 	global $modSettings, $smcFunc;
 
 	// Clear the URLs cache
-	weDB::query('
+	wedb::query('
 		TRUNCATE TABLE {db_prefix}pretty_topic_urls',
 		array()
 	);
 
 	// Get the current database pretty URLs and other stuff
-	$query = weDB::query('
+	$query = wedb::query('
 		SELECT t.id_topic, t.id_board, m.subject
 		FROM {db_prefix}topics AS t
 		INNER JOIN {db_prefix}messages AS m ON m.id_msg = t.id_first_msg',
@@ -39,13 +39,13 @@ function pretty_synchronise_topic_urls()
 	$tablePretty = array();
 
 	// Fill the $topicData array
-	while ($row = weDB::fetch_assoc($query))
+	while ($row = wedb::fetch_assoc($query))
 		$topicData[] = array(
 			'id_topic' => $row['id_topic'],
 			'id_board' => $row['id_board'],
 			'subject' => $row['subject']
 		);
-	weDB::free_result($query);
+	wedb::free_result($query);
 
 	loadSource('Subs-PrettyUrls');
 
@@ -70,7 +70,7 @@ function pretty_synchronise_topic_urls()
 	// Update the database
 	if (count($tablePretty) > 0)
 	{
-		weDB::query('
+		wedb::query('
 			REPLACE INTO {db_prefix}pretty_topic_urls
 				(id_topic, pretty_url)
 			VALUES ' . implode(', ', $tablePretty),
@@ -149,7 +149,7 @@ function pretty_urls_topic_filter($urls)
 		$topicData = array();
 		$unpretty_topics = array();
 
-		$query = weDB::query('
+		$query = wedb::query('
 			SELECT t.id_topic, t.id_board, p.pretty_url, b.url
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -157,7 +157,7 @@ function pretty_urls_topic_filter($urls)
 			WHERE t.id_topic IN ({array_int:topic_ids})',
 			array('topic_ids' => $query_data));
 
-		while ($row = weDB::fetch_assoc($query))
+		while ($row = wedb::fetch_assoc($query))
 			if (isset($row['pretty_url']))
 				$topicData[$row['id_topic']] = array(
 					'pretty_board' => !empty($row['url']) ? $row['url'] : 'wedgeo.com',
@@ -165,7 +165,7 @@ function pretty_urls_topic_filter($urls)
 				);
 			else
 				$unpretty_topics[] = $row['id_topic'];
-		weDB::free_result($query);
+		wedb::free_result($query);
 
 		// Generate new topic URLs if required
 		if (count($unpretty_topics) != 0)
@@ -179,7 +179,7 @@ function pretty_urls_topic_filter($urls)
 			$existing_urls = array();
 			$add_new = array();
 
-			$query = weDB::query('
+			$query = wedb::query('
 				SELECT t.id_topic, t.id_board, m.subject, b.url
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON m.id_msg = t.id_first_msg
@@ -187,14 +187,14 @@ function pretty_urls_topic_filter($urls)
 				WHERE t.id_topic IN ({array_int:topic_ids})',
 				array('topic_ids' => $unpretty_topics));
 
-			while ($row = weDB::fetch_assoc($query))
+			while ($row = wedb::fetch_assoc($query))
 				$new_topics[] = array(
 					'id_topic' => $row['id_topic'],
 					'id_board' => $row['id_board'],
 					'board_url' => $row['url'],
 					'subject' => $row['subject'],
 				);
-			weDB::free_result($query);
+			wedb::free_result($query);
 
 			// Generate URLs for each new topic
 			foreach ($new_topics as $row)
@@ -216,14 +216,14 @@ function pretty_urls_topic_filter($urls)
 			}
 
 			// Find any duplicates of existing URLs
-			$query = weDB::query('
+			$query = wedb::query('
 				SELECT pretty_url
 				FROM {db_prefix}pretty_topic_urls
 				WHERE pretty_url IN ({array_string:new_urls})',
 				array('new_urls' => $query_check));
-			while ($row = weDB::fetch_assoc($query))
+			while ($row = wedb::fetch_assoc($query))
 				$existing_urls[] = $row['pretty_url'];
-			weDB::free_result($query);
+			wedb::free_result($query);
 
 			// Finalise the new URLs ...
 			foreach ($new_topics as $row)
@@ -245,7 +245,7 @@ function pretty_urls_topic_filter($urls)
 				);
 			}
 			// ... and add them to the database!
-			weDB::insert('',
+			wedb::insert('',
 				'{db_prefix}pretty_topic_urls',
 				array('id_topic' => 'int', 'pretty_url' => 'string'),
 				$add_new,
@@ -298,13 +298,13 @@ function pretty_urls_board_filter($urls)
 	$url_list = array();
 	if (count($bo_list) > 0)
 	{
-		$query = weDB::query('
+		$query = wedb::query('
 			SELECT id_board, url
 			FROM {db_prefix}boards
 			WHERE id_board IN (' . implode(', ', array_keys(array_flip($bo_list))) . ')');
-		while ($row = weDB::fetch_assoc($query))
+		while ($row = wedb::fetch_assoc($query))
 			$url_list[$row['id_board']] = $row['url'];
-		weDB::free_result($query);
+		wedb::free_result($query);
 
 		foreach ($urls as $url_id => $url)
 			if (!isset($url['replacement']) && isset($url['board_id']))
@@ -345,11 +345,11 @@ function pretty_profiles_filter($urls)
 	if (count($query_data) != 0)
 	{
 		$memberNames = array();
-		$query = weDB::query('
+		$query = wedb::query('
 			SELECT id_member, member_name
 			FROM {db_prefix}members
 			WHERE id_member IN (' . implode(', ', array_keys(array_flip($query_data))) . ')');
-		while ($row = weDB::fetch_assoc($query))
+		while ($row = wedb::fetch_assoc($query))
 		{
 			$memberNames[$row['id_member']] = urlencode($row['member_name']); // !!! utf8_encode()?
 			if (strpos($memberNames[$row['id_member']], '%2B') !== false) // Stupid mod_rewrite bug!
@@ -357,7 +357,7 @@ function pretty_profiles_filter($urls)
 			// !!! Try this!!!
 			//	$memberNames[$row['id_member']] = urlencode(stripslashes(str_replace('+', ' ', $memberNames[$row['id_member']])));
 		}
-		weDB::free_result($query);
+		wedb::free_result($query);
 
 		// Build the replacement URLs
 		foreach ($urls as $url_id => &$url)

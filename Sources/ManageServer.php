@@ -782,7 +782,7 @@ function DownloadLanguage()
 			$value_data['params']['value_' . $k] = '%' . $index;
 		}
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
@@ -795,19 +795,19 @@ function DownloadLanguage()
 			))
 		);
 		$themes = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			// Find the right one.
 			foreach ($indexes as $index)
 				if (strpos($row['value'], $index) !== false)
 					$themes[$row['id_theme']] = $index;
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		if (!empty($themes))
 		{
 			// Now we have the id_theme we can get the pretty description.
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_theme, value
 				FROM {db_prefix}themes
 				WHERE id_member = {int:no_member}
@@ -819,12 +819,12 @@ function DownloadLanguage()
 					'name' => 'name',
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 			{
 				// Now we have it...
 				$context['theme_names'][$themes[$row['id_theme']]] = $row['value'];
 			}
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 	}
 
@@ -1104,14 +1104,14 @@ function list_getLanguages()
 	}
 
 	// Work out how many people are using each language.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT lngfile, COUNT(*) AS num_users
 		FROM {db_prefix}members
 		GROUP BY lngfile',
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Default?
 		if (empty($row['lngfile']) || !isset($languages[$row['lngfile']]))
@@ -1122,7 +1122,7 @@ function list_getLanguages()
 		elseif (isset($languages[$row['lngfile']]))
 			$languages[$row['lngfile']]['count'] += $row['num_users'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Restore the current users language.
 	$txt = $old_txt;
@@ -1200,7 +1200,7 @@ function ModifyLanguage()
 	$context['lang_id'] = $matches[1];
 
 	// Get all the theme data.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
@@ -1219,9 +1219,9 @@ function ModifyLanguage()
 			'theme_dir' => $settings['default_theme_dir'],
 		),
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$themes[$row['id_theme']][$row['variable']] = $row['value'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// This will be where we look
 	$lang_dirs = array();

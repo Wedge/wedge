@@ -160,7 +160,7 @@ function ViewQuery()
 		// Explain the query.
 		if ($query_id == $q && $is_select_query)
 		{
-			$result = weDB::query('
+			$result = wedb::query('
 				EXPLAIN ' . $select,
 				array(
 				)
@@ -169,7 +169,7 @@ function ViewQuery()
 			{
 				echo '
 		<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
-			<tr><td>', weDB::error($db_connection), '</td></tr>
+			<tr><td>', wedb::error($db_connection), '</td></tr>
 		</table>';
 				continue;
 			}
@@ -177,7 +177,7 @@ function ViewQuery()
 			echo '
 		<table class="cp4 cs0" rules="all" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">';
 
-			$row = weDB::fetch_assoc($result);
+			$row = wedb::fetch_assoc($result);
 
 			echo '
 			<tr>
@@ -185,8 +185,8 @@ function ViewQuery()
 				<th>', array_keys($row)) . '</th>
 			</tr>';
 
-			weDB::data_seek($result, 0);
-			while ($row = weDB::fetch_assoc($result))
+			wedb::data_seek($result, 0);
+			while ($row = wedb::fetch_assoc($result))
 			{
 				echo '
 			<tr>
@@ -194,7 +194,7 @@ function ViewQuery()
 				<td>', $row) . '</td>
 			</tr>';
 			}
-			weDB::free_result($result);
+			wedb::free_result($result);
 
 			echo '
 		</table>';

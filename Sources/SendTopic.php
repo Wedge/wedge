@@ -91,7 +91,7 @@ function SendTopic()
 		fatal_lang_error('not_a_topic', false);
 
 	// Get the topic's subject.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT m.subject, t.approved
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -101,10 +101,10 @@ function SendTopic()
 			'current_topic' => $topic,
 		)
 	);
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		fatal_lang_error('not_a_topic', false);
-	$row = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$row = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	// Can't send topic if it's unapproved and using post moderation.
 	if ($modSettings['postmod_active'] && !$row['approved'])
@@ -188,7 +188,7 @@ function CustomEmail()
 	$context['form_hidden_vars'] = array();
 	if (isset($_REQUEST['uid']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT email_address AS email, real_name AS name, id_member, hide_email
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}',
@@ -201,7 +201,7 @@ function CustomEmail()
 	}
 	elseif (isset($_REQUEST['msg']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT IFNULL(mem.email_address, m.poster_email) AS email, IFNULL(mem.real_name, m.poster_name) AS name, IFNULL(mem.id_member, 0) AS id_member, hide_email
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -214,11 +214,11 @@ function CustomEmail()
 		$context['form_hidden_vars']['msg'] = (int) $_REQUEST['msg'];
 	}
 
-	if (empty($request) || weDB::num_rows($request) == 0)
+	if (empty($request) || wedb::num_rows($request) == 0)
 		fatal_lang_error('cant_find_user_email');
 
-	$row = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$row = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	// Are you sure you got the address?
 	if (empty($row['email']))
@@ -321,7 +321,7 @@ function ReportToModerator()
 	$_REQUEST['msg'] = empty($_REQUEST['msg']) ? (int) $_REQUEST['mid'] : (int) $_REQUEST['msg'];
 
 	// Check the message's ID - don't want anyone reporting a post they can't even see!
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT m.id_msg, m.id_member, t.id_member_started
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -333,10 +333,10 @@ function ReportToModerator()
 			'id_msg' => $_REQUEST['msg'],
 		)
 	);
-	if (weDB::num_rows($result) == 0)
+	if (wedb::num_rows($result) == 0)
 		fatal_lang_error('no_board', false);
-	list ($_REQUEST['msg'], $member, $starter) = weDB::fetch_row($result);
-	weDB::free_result($result);
+	list ($_REQUEST['msg'], $member, $starter) = wedb::fetch_row($result);
+	wedb::free_result($result);
 
 	// Do we need to show the visual verification image?
 	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['guests_report_require_captcha']);
@@ -430,7 +430,7 @@ function ReportToModerator2()
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['msg'] = (int) $_POST['msg'];
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT m.id_topic, m.id_board, m.subject, m.body, m.id_member AS id_poster, m.poster_name, mem.real_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
@@ -442,10 +442,10 @@ function ReportToModerator2()
 			'id_msg' => $_POST['msg'],
 		)
 	);
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
-	$message = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$message = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	$poster_name = un_htmlspecialchars($message['real_name']) . ($message['real_name'] != $message['poster_name'] ? ' (' . $message['poster_name'] . ')' : '');
 	$reporterName = un_htmlspecialchars($user_info['name']) . ($user_info['name'] != $user_info['username'] && $user_info['username'] != '' ? ' (' . $user_info['username'] . ')' : '');
@@ -455,7 +455,7 @@ function ReportToModerator2()
 	loadSource('Subs-Members');
 	$moderators = membersAllowedTo('moderate_board', $board);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, email_address, lngfile, mod_prefs
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:moderator_list})
@@ -468,13 +468,13 @@ function ReportToModerator2()
 	);
 
 	// Check that moderators do exist!
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		fatal_lang_error('no_mods', false);
 
 	// If we get here, I believe we should make a record of this, for historical significance, yabber.
 	if (empty($modSettings['disable_log_report']))
 	{
-		$request2 = weDB::query('
+		$request2 = wedb::query('
 			SELECT id_report, ignore_all
 			FROM {db_prefix}log_reported
 			WHERE id_msg = {int:id_msg}
@@ -486,9 +486,9 @@ function ReportToModerator2()
 				'ignored' => 1,
 			)
 		);
-		if (weDB::num_rows($request2) != 0)
-			list ($id_report, $ignore) = weDB::fetch_row($request2);
-		weDB::free_result($request2);
+		if (wedb::num_rows($request2) != 0)
+			list ($id_report, $ignore) = wedb::fetch_row($request2);
+		wedb::free_result($request2);
 
 		// If we're just going to ignore these, then who gives a monkeys...
 		if (!empty($ignore))
@@ -496,7 +496,7 @@ function ReportToModerator2()
 
 		// Already reported? My god, we could be dealing with a real rogue here...
 		if (!empty($id_report))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}log_reported
 				SET num_reports = num_reports + 1, time_updated = {int:current_time}
 				WHERE id_report = {int:id_report}',
@@ -511,7 +511,7 @@ function ReportToModerator2()
 			if (empty($message['real_name']))
 				$message['real_name'] = $message['poster_name'];
 
-			weDB::insert('',
+			wedb::insert('',
 				'{db_prefix}log_reported',
 				array(
 					'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
@@ -524,13 +524,13 @@ function ReportToModerator2()
 				),
 				array('id_report')
 			);
-			$id_report = weDB::insert_id();
+			$id_report = wedb::insert_id();
 		}
 
 		// Now just add our report...
 		if ($id_report)
 		{
-			weDB::insert('',
+			wedb::insert('',
 				'{db_prefix}log_reported_comments',
 				array(
 					'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string', 'email_address' => 'string',
@@ -546,7 +546,7 @@ function ReportToModerator2()
 	}
 
 	// Find out who the real moderators are - for mod preferences.
-	$request2 = weDB::query('
+	$request2 = wedb::query('
 		SELECT id_member
 		FROM {db_prefix}moderators
 		WHERE id_board = {int:current_board}',
@@ -555,12 +555,12 @@ function ReportToModerator2()
 		)
 	);
 	$real_mods = array();
-	while ($row = weDB::fetch_assoc($request2))
+	while ($row = wedb::fetch_assoc($request2))
 		$real_mods[] = $row['id_member'];
-	weDB::free_result($request2);
+	wedb::free_result($request2);
 
 	// Send every moderator an email.
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Maybe they don't want to know?!
 		if (!empty($row['mod_prefs']))
@@ -584,7 +584,7 @@ function ReportToModerator2()
 		// Send it to the moderator.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], $user_info['email'], null, false, 2);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Keep track of when the mod reports get updated, that way we know when we need to look again.
 	updateSettings(array('last_mod_report_action' => time()));

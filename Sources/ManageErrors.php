@@ -83,7 +83,7 @@ function ViewErrorLog()
 		$filter = array(
 			'variable' => $_GET['filter'],
 			'value' => array(
-				'sql' => in_array($_GET['filter'], array('message', 'url', 'file')) ? base64_decode(strtr($_GET['value'], array(' ' => '+'))) : weDB::escape_wildcard_string($_GET['value']),
+				'sql' => in_array($_GET['filter'], array('message', 'url', 'file')) ? base64_decode(strtr($_GET['value'], array(' ' => '+'))) : wedb::escape_wildcard_string($_GET['value']),
 			),
 			'href' => ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'],
 			'entity' => $filters[$_GET['filter']]
@@ -94,7 +94,7 @@ function ViewErrorLog()
 		deleteErrors();
 
 	// Just how many errors are there?
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_errors' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : ''),
@@ -102,8 +102,8 @@ function ViewErrorLog()
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
 		)
 	);
-	list ($num_errors) = weDB::fetch_row($result);
-	weDB::free_result($result);
+	list ($num_errors) = wedb::fetch_row($result);
+	wedb::free_result($result);
 
 	// If this filter is empty...
 	if ($num_errors == 0 && isset($filter))
@@ -121,7 +121,7 @@ function ViewErrorLog()
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_error, id_member, ip, url, log_time, message, session, error_type, file, line
 		FROM {db_prefix}log_errors' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
@@ -134,11 +134,11 @@ function ViewErrorLog()
 	$context['errors'] = array();
 	$members = array();
 
-	for ($i = 0; $row = weDB::fetch_assoc($request); $i ++)
+	for ($i = 0; $row = wedb::fetch_assoc($request); $i ++)
 	{
-		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', weDB::escape_wildcard_string($row['message']));
+		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', wedb::escape_wildcard_string($row['message']));
 		if ($search_message == $filter['value']['sql'])
-			$search_message = weDB::escape_wildcard_string($row['message']);
+			$search_message = wedb::escape_wildcard_string($row['message']);
 		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), array("\r" => '', '<br />' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;')), array("\n" => '<br />'));
 
 		$context['errors'][$row['id_error']] = array(
@@ -152,7 +152,7 @@ function ViewErrorLog()
 			'timestamp' => $row['log_time'],
 			'url' => array(
 				'html' => htmlspecialchars((substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url']),
-				'href' => base64_encode(weDB::escape_wildcard_string($row['url']))
+				'href' => base64_encode(wedb::escape_wildcard_string($row['url']))
 			),
 			'message' => array(
 				'html' => $show_message,
@@ -182,13 +182,13 @@ function ViewErrorLog()
 		// Make a list of members to load later.
 		$members[$row['id_member']] = $row['id_member'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Load the member data.
 	if (!empty($members))
 	{
 		// Get some additional member info...
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_member, member_name, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
@@ -197,9 +197,9 @@ function ViewErrorLog()
 				'member_list' => $members,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$members[$row['id_member']] = $row;
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// This is a guest...
 		$members[0] = array(
@@ -257,7 +257,7 @@ function ViewErrorLog()
 
 	$sum = 0;
 	// What type of errors do we have and how many do we have?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT error_type, COUNT(*) AS num_errors
 		FROM {db_prefix}log_errors
 		GROUP BY error_type
@@ -266,7 +266,7 @@ function ViewErrorLog()
 			'critical_type' => 'critical',
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Total errors so far?
 		$sum += $row['num_errors'];
@@ -275,10 +275,10 @@ function ViewErrorLog()
 			'label' => (isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
 			'description' => isset($txt['errortype_' . $row['error_type'] . '_desc']) ? $txt['errortype_' . $row['error_type'] . '_desc'] : '',
 			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
-			'is_selected' => isset($filter) && $filter['value']['sql'] == weDB::escape_wildcard_string($row['error_type']),
+			'is_selected' => isset($filter) && $filter['value']['sql'] == wedb::escape_wildcard_string($row['error_type']),
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
@@ -307,14 +307,14 @@ function deleteErrors()
 
 	// Delete all or just some?
 	if (isset($_POST['delall']) && !isset($filter))
-		weDB::query('
+		wedb::query('
 			TRUNCATE {db_prefix}log_errors',
 			array(
 			)
 		);
 	// Deleting all with a filter?
 	elseif (isset($_POST['delall'], $filter))
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_errors
 			WHERE ' . $filter['variable'] . ' LIKE {string:filter}',
 			array(
@@ -324,7 +324,7 @@ function deleteErrors()
 	// Just specific errors?
 	elseif (!empty($_POST['delete']))
 	{
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_errors
 			WHERE id_error IN ({array_int:error_list})',
 			array(
@@ -346,13 +346,13 @@ function updateErrorCount()
 {
 	global $smcFunc, $modSettings;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT COUNT(id_error) AS errors
 		FROM {db_prefix}log_errors',
 		array()
 	);
 
-	list ($count) = weDB::fetch_row($request);
+	list ($count) = wedb::fetch_row($request);
 	updateSettings(
 		array(
 			'app_error_count' => $count,

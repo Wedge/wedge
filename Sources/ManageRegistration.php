@@ -145,7 +145,7 @@ function AdminRegister()
 	// Load the assignable member groups.
 	if (allowedTo('manage_membergroups'))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT group_name, id_group
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}
@@ -162,9 +162,9 @@ function AdminRegister()
 			)
 		);
 		$context['member_groups'] = array(0 => $txt['admin_register_group_none']);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['member_groups'][$row['id_group']] = $row['group_name'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 	else
 		$context['member_groups'] = array();

@@ -81,7 +81,7 @@ function ManageSearch()
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
 
-	weDB::extend('search');
+	wedb::extend('search');
 
 	$subActions = array(
 		'settings' => 'EditSearchSettings',
@@ -204,7 +204,7 @@ function EditSearchMethod()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
 	$context['sub_template'] = 'select_search_method';
-	$context['supports_fulltext'] = weDBSearch::supports('fulltext');
+	$context['supports_fulltext'] = wedbSearch::supports('fulltext');
 
 	// Load any apis.
 	$context['search_apis'] = loadSearchAPIs();
@@ -212,25 +212,25 @@ function EditSearchMethod()
 	// Detect whether a fulltext index is set.
 	if ($context['supports_fulltext'])
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW INDEX
 			FROM {db_prefix}messages',
 			array(
 			)
 		);
 		$context['fulltext_index'] = '';
-		if ($request !== false || weDB::num_rows($request) != 0)
+		if ($request !== false || wedb::num_rows($request) != 0)
 		{
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
 					$context['fulltext_index'][] = $row['Key_name'];
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			if (is_array($context['fulltext_index']))
 				$context['fulltext_index'] = array_unique($context['fulltext_index']);
 		}
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW COLUMNS
 			FROM {db_prefix}messages',
 			array(
@@ -238,14 +238,14 @@ function EditSearchMethod()
 		);
 		if ($request !== false)
 		{
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				if ($row['Field'] == 'body' && $row['Type'] == 'mediumtext')
 					$context['cannot_create_fulltext'] = true;
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 
 		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = weDB::query('
+			$request = wedb::query('
 				SHOW TABLE STATUS
 				FROM {string:database_name}
 				LIKE {string:table_name}',
@@ -255,7 +255,7 @@ function EditSearchMethod()
 				)
 			);
 		else
-			$request = weDB::query('
+			$request = wedb::query('
 				SHOW TABLE STATUS
 				LIKE {string:table_name}',
 				array(
@@ -265,10 +265,10 @@ function EditSearchMethod()
 
 		if ($request !== false)
 		{
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				if ((isset($row['Type']) && strtolower($row['Type']) != 'myisam') || (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam'))
 					$context['cannot_create_fulltext'] = true;
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 	}
 
@@ -277,7 +277,7 @@ function EditSearchMethod()
 		checkSession('get');
 
 		// Make sure it's gone before creating it.
-		weDB::query('
+		wedb::query('
 			ALTER TABLE {db_prefix}messages
 			DROP INDEX body',
 			array(
@@ -285,7 +285,7 @@ function EditSearchMethod()
 			)
 		);
 
-		weDB::query('
+		wedb::query('
 			ALTER TABLE {db_prefix}messages
 			ADD FULLTEXT body (body)',
 			array(
@@ -298,7 +298,7 @@ function EditSearchMethod()
 	{
 		checkSession('get');
 
-		weDB::query('
+		wedb::query('
 			ALTER TABLE {db_prefix}messages
 			DROP INDEX ' . implode(',
 			DROP INDEX ', $context['fulltext_index']),
@@ -319,11 +319,11 @@ function EditSearchMethod()
 	{
 		checkSession('get');
 
-		weDB::extend();
-		$tables = weDBExtra::list_tables(false, $db_prefix . 'log_search_words');
+		wedb::extend();
+		$tables = wedbExtra::list_tables(false, $db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
-			weDB::query('
+			wedb::query('
 				DROP TABLE {db_prefix}log_search_words',
 				array(
 				)
@@ -360,7 +360,7 @@ function EditSearchMethod()
 
 	// Get some info about the messages table, to show its size and index size.
 	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW TABLE STATUS
 			FROM {string:database_name}
 			LIKE {string:table_name}',
@@ -370,26 +370,26 @@ function EditSearchMethod()
 			)
 		);
 	else
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW TABLE STATUS
 			LIKE {string:table_name}',
 			array(
 				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
 			)
 		);
-	if ($request !== false && weDB::num_rows($request) == 1)
+	if ($request !== false && wedb::num_rows($request) == 1)
 	{
 		// Only do this if the user has permission to execute this query.
-		$row = weDB::fetch_assoc($request);
+		$row = wedb::fetch_assoc($request);
 		$context['table_info']['data_length'] = $row['Data_length'];
 		$context['table_info']['index_length'] = $row['Index_length'];
 		$context['table_info']['fulltext_length'] = $row['Index_length'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Now check the custom index table, if it exists at all.
 	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW TABLE STATUS
 			FROM {string:database_name}
 			LIKE {string:table_name}',
@@ -399,20 +399,20 @@ function EditSearchMethod()
 			)
 		);
 	else
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW TABLE STATUS
 			LIKE {string:table_name}',
 			array(
 				'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
 			)
 		);
-	if ($request !== false && weDB::num_rows($request) == 1)
+	if ($request !== false && wedb::num_rows($request) == 1)
 	{
 		// Only do this if the user has permission to execute this query.
-		$row = weDB::fetch_assoc($request);
+		$row = wedb::fetch_assoc($request);
 		$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
 		$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Format the data and index length in kilobytes.
@@ -493,18 +493,18 @@ function CreateMessageIndex()
 
 		if ($context['start'] === 0)
 		{
-			weDB::extend();
-			$tables = weDBExtra::list_tables(false, $db_prefix . 'log_search_words');
+			wedb::extend();
+			$tables = wedbExtra::list_tables(false, $db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
-				weDB::query('
+				wedb::query('
 					DROP TABLE {db_prefix}log_search_words',
 					array(
 					)
 				);
 			}
 
-			weDBSearch::create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
+			wedbSearch::create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
 
 			// Temporarily switch back to not using a search index.
 			if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom')
@@ -520,7 +520,7 @@ function CreateMessageIndex()
 			'todo' => 0,
 		);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_msg >= {int:starting_id} AS todo, COUNT(*) AS num_messages
 			FROM {db_prefix}messages
 			GROUP BY todo',
@@ -528,7 +528,7 @@ function CreateMessageIndex()
 				'starting_id' => $context['start'],
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$num_messages[empty($row['todo']) ? 'done' : 'todo'] = $row['num_messages'];
 
 		if (empty($num_messages['todo']))
@@ -544,7 +544,7 @@ function CreateMessageIndex()
 			while (time() < $stop)
 			{
 				$inserts = array();
-				$request = weDB::query('
+				$request = wedb::query('
 					SELECT id_msg, body
 					FROM {db_prefix}messages
 					WHERE id_msg BETWEEN {int:starting_id} AND {int:ending_id}
@@ -557,7 +557,7 @@ function CreateMessageIndex()
 				);
 				$forced_break = false;
 				$number_processed = 0;
-				while ($row = weDB::fetch_assoc($request))
+				while ($row = wedb::fetch_assoc($request))
 				{
 					// In theory it's possible for one of these to take friggin ages so add more timeout protection.
 					if ($stop < time())
@@ -574,12 +574,12 @@ function CreateMessageIndex()
 				}
 				$num_messages['done'] += $number_processed;
 				$num_messages['todo'] -= $number_processed;
-				weDB::free_result($request);
+				wedb::free_result($request);
 
 				$context['start'] += $forced_break ? $number_processed : $messages_per_batch;
 
 				if (!empty($inserts))
-					weDB::insert('ignore',
+					wedb::insert('ignore',
 						'{db_prefix}log_search_words',
 						array('id_word' => 'int', 'id_msg' => 'int'),
 						$inserts,
@@ -614,7 +614,7 @@ function CreateMessageIndex()
 
 			while (time() < $stop)
 			{
-				$request = weDB::query('
+				$request = wedb::query('
 					SELECT id_word, COUNT(id_word) AS num_words
 					FROM {db_prefix}log_search_words
 					WHERE id_word BETWEEN {int:starting_id} AND {int:ending_id}
@@ -626,14 +626,14 @@ function CreateMessageIndex()
 						'minimum_messages' => $max_messages,
 					)
 				);
-				while ($row = weDB::fetch_assoc($request))
+				while ($row = wedb::fetch_assoc($request))
 					$stop_words[] = $row['id_word'];
-				weDB::free_result($request);
+				wedb::free_result($request);
 
 				updateSettings(array('search_stopwords' => implode(',', $stop_words)));
 
 				if (!empty($stop_words))
-					weDB::query('
+					wedb::query('
 						DELETE FROM {db_prefix}log_search_words
 						WHERE id_word in ({array_int:stop_words})',
 						array(
@@ -658,7 +658,7 @@ function CreateMessageIndex()
 		$context['sub_template'] = 'create_index_done';
 
 		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => serialize($context['index_settings'])));
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}settings
 			WHERE variable = {string:search_custom_index_resume}',
 			array(

@@ -477,7 +477,7 @@ function loadInstalledPackages()
 	$install_file = implode('', file($boarddir . '/Packages/installed.list'));
 	if (trim($install_file) == '')
 	{
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}log_packages
 			SET install_state = {int:not_installed}',
 			array(
@@ -490,7 +490,7 @@ function loadInstalledPackages()
 	}
 
 	// Load the packages from the database - note this is ordered by install time to ensure latest package uninstalled first.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_install, package_id, filename, name, version
 		FROM {db_prefix}log_packages
 		WHERE install_state != {int:not_installed}
@@ -501,7 +501,7 @@ function loadInstalledPackages()
 	);
 	$installed = array();
 	$found = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Already found this? If so don't add it twice!
 		if (in_array($row['package_id'], $found))
@@ -517,7 +517,7 @@ function loadInstalledPackages()
 			'version' => $row['version'],
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	return $installed;
 }
@@ -2361,7 +2361,7 @@ function package_create_backup($id = 'backup')
 		$sourcedir => empty($_REQUEST['use_full_paths']) ? 'Sources/' : strtr($sourcedir . '/', '\\', '/')
 	);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT value
 		FROM {db_prefix}themes
 		WHERE id_member = {int:no_member}
@@ -2371,9 +2371,9 @@ function package_create_backup($id = 'backup')
 			'theme_dir' => 'theme_dir',
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$dirs[$row['value']] = empty($_REQUEST['use_full_paths']) ? 'Themes/' . basename($row['value']) . '/' : strtr($row['value'] . '/', '\\', '/');
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	while (!empty($dirs))
 	{

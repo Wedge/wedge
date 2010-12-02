@@ -231,7 +231,7 @@ function MaintainMembers()
 	global $context, $smcFunc, $txt;
 
 	// Get membergroups - for deleting members and the like.
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups',
 		array(
@@ -243,14 +243,14 @@ function MaintainMembers()
 			'name' => $txt['maintain_members_ungrouped']
 		),
 	);
-	while ($row = weDB::fetch_assoc($result))
+	while ($row = wedb::fetch_assoc($result))
 	{
 		$context['membergroups'][] = array(
 			'id' => $row['id_group'],
 			'name' => $row['group_name']
 		);
 	}
-	weDB::free_result($result);
+	wedb::free_result($result);
 }
 
 // Supporting function for the topics maintenance area.
@@ -259,7 +259,7 @@ function MaintainTopics()
 	global $context, $smcFunc, $txt;
 
 	// Let's load up the boards in case they are useful.
-	$result = weDB::query('
+	$result = wedb::query('
 		SELECT b.id_board, b.name, b.child_level, c.name AS cat_name, c.id_cat
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -270,7 +270,7 @@ function MaintainTopics()
 		)
 	);
 	$context['categories'] = array();
-	while ($row = weDB::fetch_assoc($result))
+	while ($row = wedb::fetch_assoc($result))
 	{
 		if (!isset($context['categories'][$row['id_cat']]))
 			$context['categories'][$row['id_cat']] = array(
@@ -284,7 +284,7 @@ function MaintainTopics()
 			'child_level' => $row['child_level']
 		);
 	}
-	weDB::free_result($result);
+	wedb::free_result($result);
 
 	if (isset($_GET['done']) && $_GET['done'] == 'purgeold')
 		$context['maintenance_finished'] = $txt['maintain_old'];
@@ -318,29 +318,29 @@ function MaintainEmptyUnimportantLogs()
 	checkSession();
 
 	// No one's online now.... MUHAHAHAHA :P.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_online');
 
 	// Dump the banning logs.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_banned');
 
 	// Start id_error back at 0 and dump the error log.
-	weDB::query('
+	wedb::query('
 		TRUNCATE {db_prefix}log_errors');
 
 	// Clear out the spam log.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_floodcontrol');
 
 	// Last but not least, the search logs!
-	weDB::query('
+	wedb::query('
 		TRUNCATE {db_prefix}log_search_topics');
 
-	weDB::query('
+	wedb::query('
 		TRUNCATE {db_prefix}log_search_messages');
 
-	weDB::query('
+	wedb::query('
 		TRUNCATE {db_prefix}log_search_results');
 
 	updateSettings(array('search_pointer' => 0));
@@ -387,16 +387,16 @@ function ConvertUtf8()
 	);
 
 	// Get a list of character sets supported by your MySQL server.
-	$request = weDB::query('
+	$request = wedb::query('
 		SHOW CHARACTER SET',
 		array(
 		)
 	);
 	$db_charsets = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$db_charsets[] = $row['Charset'];
 
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Character sets supported by both MySQL and SMF's language files.
 	$charsets = array_intersect($charsets, $db_charsets);
@@ -405,7 +405,7 @@ function ConvertUtf8()
 	if (!isset($_POST['proceed']))
 	{
 		// Use the messages.body column as indicator for the database charset.
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW FULL COLUMNS
 			FROM {db_prefix}messages
 			LIKE {string:body_like}',
@@ -413,8 +413,8 @@ function ConvertUtf8()
 				'body_like' => 'body',
 			)
 		);
-		$column_info = weDB::fetch_assoc($request);
-		weDB::free_result($request);
+		$column_info = wedb::fetch_assoc($request);
+		wedb::free_result($request);
 
 		// A collation looks like latin1_swedish. We only need the character set.
 		list($context['database_charset']) = explode('_', $column_info['Collation']);
@@ -561,7 +561,7 @@ function ConvertUtf8()
 
 	// Grab a list of tables.
 	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) === 1)
-		$queryTables = weDB::query('
+		$queryTables = wedb::query('
 			SHOW TABLE STATUS
 			FROM `' . strtr($match[1], array('`' => '')) . '`
 			LIKE {string:table_name}',
@@ -570,7 +570,7 @@ function ConvertUtf8()
 			)
 		);
 	else
-		$queryTables = weDB::query('
+		$queryTables = wedb::query('
 			SHOW TABLE STATUS
 			LIKE {string:table_name}',
 			array(
@@ -578,7 +578,7 @@ function ConvertUtf8()
 			)
 		);
 
-	while ($table_info = weDB::fetch_assoc($queryTables))
+	while ($table_info = wedb::fetch_assoc($queryTables))
 	{
 		// Just to make sure it doesn't time out.
 		if (function_exists('apache_reset_timeout'))
@@ -587,13 +587,13 @@ function ConvertUtf8()
 		$table_charsets = array();
 
 		// Loop through each column.
-		$queryColumns = weDB::query('
+		$queryColumns = wedb::query('
 			SHOW FULL COLUMNS
 			FROM ' . $table_info['Name'],
 			array(
 			)
 		);
-		while ($column_info = weDB::fetch_assoc($queryColumns))
+		while ($column_info = wedb::fetch_assoc($queryColumns))
 		{
 			// Only text'ish columns have a character set and need converting.
 			if (strpos($column_info['Type'], 'text') !== false || strpos($column_info['Type'], 'char') !== false)
@@ -610,7 +610,7 @@ function ConvertUtf8()
 				}
 			}
 		}
-		weDB::free_result($queryColumns);
+		wedb::free_result($queryColumns);
 
 		// Only change the column if the data doesn't match the current charset.
 		if ((count($table_charsets) === 1 && key($table_charsets) !== $charsets[$_POST['src_charset']]) || count($table_charsets) > 1)
@@ -632,7 +632,7 @@ function ConvertUtf8()
 			}
 
 			// Change the columns to binary form.
-			weDB::query('
+			wedb::query('
 				ALTER TABLE {raw:table_name}{raw:updates_blob}',
 				array(
 					'table_name' => $table_info['Name'],
@@ -649,7 +649,7 @@ function ConvertUtf8()
 						$update .= '
 							' . $column['Field'] . ' = ' . strtr($replace, array('%field%' => $column['Field'])) . ',';
 
-				weDB::query('
+				wedb::query('
 					UPDATE {raw:table_name}
 					SET {raw:updates}',
 					array(
@@ -660,7 +660,7 @@ function ConvertUtf8()
 			}
 
 			// Change the columns back, but with the proper character set.
-			weDB::query('
+			wedb::query('
 				ALTER TABLE {raw:table_name}{raw:updates_text}',
 				array(
 					'table_name' => $table_info['Name'],
@@ -671,7 +671,7 @@ function ConvertUtf8()
 
 		// Now do the actual conversion (if still needed).
 		if ($charsets[$_POST['src_charset']] !== 'utf8')
-			weDB::query('
+			wedb::query('
 				ALTER TABLE {raw:table_name}
 				CONVERT TO CHARACTER SET utf8',
 				array(
@@ -679,7 +679,7 @@ function ConvertUtf8()
 				)
 			);
 	}
-	weDB::free_result($queryTables);
+	wedb::free_result($queryTables);
 
 	// Let the settings know we have a new character set.
 	updateSettings(array('global_character_set' => 'UTF-8', 'previousCharacterSet' => (empty($translation_tables[$_POST['src_charset']])) ? $charsets[$_POST['src_charset']] : $translation_tables[$_POST['src_charset']]));
@@ -772,24 +772,24 @@ function ConvertEntities()
 
 		// Get a list of text columns.
 		$columns = array();
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW FULL COLUMNS
 			FROM {db_prefix}' . $cur_table,
 			array(
 			)
 		);
-		while ($column_info = weDB::fetch_assoc($request))
+		while ($column_info = wedb::fetch_assoc($request))
 			if (strpos($column_info['Type'], 'text') !== false || strpos($column_info['Type'], 'char') !== false)
 				$columns[] = strtolower($column_info['Field']);
 
 		// Get the column with the (first) primary key.
-		$request = weDB::query('
+		$request = wedb::query('
 			SHOW KEYS
 			FROM {db_prefix}' . $cur_table,
 			array(
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if ($row['Key_name'] === 'PRIMARY')
 			{
@@ -799,7 +799,7 @@ function ConvertEntities()
 				$primary_keys[] = $row['Column_name'];
 			}
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// No primary key, no glory.
 		// Same for columns. Just to be sure we've work to do!
@@ -807,14 +807,14 @@ function ConvertEntities()
 			continue;
 
 		// Get the maximum value for the primary key.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT MAX(' . $primary_key . ')
 			FROM {db_prefix}' . $cur_table,
 			array(
 			)
 		);
-		list($max_value) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list($max_value) = wedb::fetch_row($request);
+		wedb::free_result($request);
 
 		if (empty($max_value))
 			continue;
@@ -822,7 +822,7 @@ function ConvertEntities()
 		while ($context['start'] <= $max_value)
 		{
 			// Retrieve a list of rows that has at least one entity to convert.
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT {raw:primary_keys}, {raw:columns}
 				FROM {db_prefix}{raw:cur_table}
 				WHERE {raw:primary_key} BETWEEN {int:start} AND {int:start} + 499
@@ -837,7 +837,7 @@ function ConvertEntities()
 					'like_compare' => '(' . implode(' LIKE \'%&#%\' OR ', $columns) . ' LIKE \'%&#%\')',
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 			{
 				$insertion_variables = array();
 				$changes = array();
@@ -857,7 +857,7 @@ function ConvertEntities()
 
 				// Update the row.
 				if (!empty($changes))
-					weDB::query('
+					wedb::query('
 						UPDATE {db_prefix}' . $cur_table . '
 						SET
 							' . implode(',
@@ -866,7 +866,7 @@ function ConvertEntities()
 						$insertion_variables
 					);
 			}
-			weDB::free_result($request);
+			wedb::free_result($request);
 			$context['start'] += 500;
 
 			// After ten seconds interrupt.
@@ -902,7 +902,7 @@ function OptimizeTables()
 	checkSession('post');
 
 	ignore_user_abort(true);
-	weDB::extend();
+	wedb::extend();
 
 	// Start with no tables optimized.
 	$opttab = 0;
@@ -914,7 +914,7 @@ function OptimizeTables()
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.
-	$temp_tables = weDBExtra::list_tables(false, $real_prefix . '%');
+	$temp_tables = wedbExtra::list_tables(false, $real_prefix . '%');
 	$tables = array();
 	foreach ($temp_tables as $table)
 		$tables[] = array('table_name' => $table);
@@ -929,7 +929,7 @@ function OptimizeTables()
 	foreach ($tables as $table)
 	{
 		// Optimize the table!  We use backticks here because it might be a custom table.
-		$data_freed = weDBExtra::optimize_table($table['table_name']);
+		$data_freed = wedbExtra::optimize_table($table['table_name']);
 
 		if ($data_freed > 0)
 			$context['optimized_tables'][] = array(
@@ -966,14 +966,14 @@ function AdminBoardRecount()
 	@set_time_limit(600);
 
 	// Step the number of topics at a time so things don't time out...
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT MAX(id_topic)
 		FROM {db_prefix}topics',
 		array(
 		)
 	);
-	list ($max_topics) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($max_topics) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	$increment = min(max(50, ceil($max_topics / 4)), 2000);
 	if (empty($_REQUEST['start']))
@@ -989,7 +989,7 @@ function AdminBoardRecount()
 		while ($_REQUEST['start'] < $max_topics)
 		{
 			// Recount approved messages
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_topic, MAX(t.num_replies) AS num_replies,
 					CASE WHEN COUNT(ma.id_msg) >= 1 THEN COUNT(ma.id_msg) - 1 ELSE 0 END AS real_num_replies
 				FROM {db_prefix}topics AS t
@@ -1004,8 +1004,8 @@ function AdminBoardRecount()
 					'max_id' => $_REQUEST['start'] + $increment,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}topics
 					SET num_replies = {int:num_replies}
 					WHERE id_topic = {int:id_topic}',
@@ -1014,10 +1014,10 @@ function AdminBoardRecount()
 						'id_topic' => $row['id_topic'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			// Recount unapproved messages
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_topic, MAX(t.unapproved_posts) AS unapproved_posts,
 					COUNT(mu.id_msg) AS real_unapproved_posts
 				FROM {db_prefix}topics AS t
@@ -1032,8 +1032,8 @@ function AdminBoardRecount()
 					'max_id' => $_REQUEST['start'] + $increment,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = {int:unapproved_posts}
 					WHERE id_topic = {int:id_topic}',
@@ -1042,7 +1042,7 @@ function AdminBoardRecount()
 						'id_topic' => $row['id_topic'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -1062,7 +1062,7 @@ function AdminBoardRecount()
 	if ($_REQUEST['step'] <= 1)
 	{
 		if (empty($_REQUEST['start']))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET num_posts = {int:num_posts}
 				WHERE redirect = {string:redirect}',
@@ -1074,7 +1074,7 @@ function AdminBoardRecount()
 
 		while ($_REQUEST['start'] < $max_topics)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ m.id_board, COUNT(*) AS real_num_posts
 				FROM {db_prefix}messages AS m
 				WHERE m.id_topic > {int:id_topic_min}
@@ -1087,8 +1087,8 @@ function AdminBoardRecount()
 					'is_approved' => 1,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET num_posts = num_posts + {int:real_num_posts}
 					WHERE id_board = {int:id_board}',
@@ -1097,7 +1097,7 @@ function AdminBoardRecount()
 						'real_num_posts' => $row['real_num_posts'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -1117,7 +1117,7 @@ function AdminBoardRecount()
 	if ($_REQUEST['step'] <= 2)
 	{
 		if (empty($_REQUEST['start']))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET num_topics = {int:num_topics}',
 				array(
@@ -1127,7 +1127,7 @@ function AdminBoardRecount()
 
 		while ($_REQUEST['start'] < $max_topics)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_board, COUNT(*) AS real_num_topics
 				FROM {db_prefix}topics AS t
 				WHERE t.approved = {int:is_approved}
@@ -1140,8 +1140,8 @@ function AdminBoardRecount()
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET num_topics = num_topics + {int:real_num_topics}
 					WHERE id_board = {int:id_board}',
@@ -1150,7 +1150,7 @@ function AdminBoardRecount()
 						'real_num_topics' => $row['real_num_topics'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -1170,7 +1170,7 @@ function AdminBoardRecount()
 	if ($_REQUEST['step'] <= 3)
 	{
 		if (empty($_REQUEST['start']))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET unapproved_posts = {int:unapproved_posts}',
 				array(
@@ -1180,7 +1180,7 @@ function AdminBoardRecount()
 
 		while ($_REQUEST['start'] < $max_topics)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ m.id_board, COUNT(*) AS real_unapproved_posts
 				FROM {db_prefix}messages AS m
 				WHERE m.id_topic > {int:id_topic_min}
@@ -1193,8 +1193,8 @@ function AdminBoardRecount()
 					'is_approved' => 0,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET unapproved_posts = unapproved_posts + {int:unapproved_posts}
 					WHERE id_board = {int:id_board}',
@@ -1203,7 +1203,7 @@ function AdminBoardRecount()
 						'unapproved_posts' => $row['real_unapproved_posts'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -1223,7 +1223,7 @@ function AdminBoardRecount()
 	if ($_REQUEST['step'] <= 4)
 	{
 		if (empty($_REQUEST['start']))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET unapproved_topics = {int:unapproved_topics}',
 				array(
@@ -1233,7 +1233,7 @@ function AdminBoardRecount()
 
 		while ($_REQUEST['start'] < $max_topics)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_board, COUNT(*) AS real_unapproved_topics
 				FROM {db_prefix}topics AS t
 				WHERE t.approved = {int:is_approved}
@@ -1246,8 +1246,8 @@ function AdminBoardRecount()
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
-				weDB::query('
+			while ($row = wedb::fetch_assoc($request))
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET unapproved_topics = unapproved_topics + {int:real_unapproved_topics}
 					WHERE id_board = {int:id_board}',
@@ -1256,7 +1256,7 @@ function AdminBoardRecount()
 						'real_unapproved_topics' => $row['real_unapproved_topics'],
 					)
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -1275,7 +1275,7 @@ function AdminBoardRecount()
 	// Get all members with wrong number of personal messages.
 	if ($_REQUEST['step'] <= 5)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT /*!40001 SQL_NO_CACHE */ mem.id_member, COUNT(pmr.id_pm) AS real_num,
 				MAX(mem.instant_messages) AS instant_messages
 			FROM {db_prefix}members AS mem
@@ -1286,11 +1286,11 @@ function AdminBoardRecount()
 				'is_not_deleted' => 0,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			updateMemberData($row['id_member'], array('instant_messages' => $row['real_num']));
-		weDB::free_result($request);
+		wedb::free_result($request);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT /*!40001 SQL_NO_CACHE */ mem.id_member, COUNT(pmr.id_pm) AS real_num,
 				MAX(mem.unread_messages) AS unread_messages
 			FROM {db_prefix}members AS mem
@@ -1302,9 +1302,9 @@ function AdminBoardRecount()
 				'is_not_read' => 0,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			updateMemberData($row['id_member'], array('unread_messages' => $row['real_num']));
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
 		{
@@ -1320,7 +1320,7 @@ function AdminBoardRecount()
 	{
 		while ($_REQUEST['start'] < $modSettings['maxMsgID'])
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_board, m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND t.id_board != m.id_board)
@@ -1332,12 +1332,12 @@ function AdminBoardRecount()
 				)
 			);
 			$boards = array();
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				$boards[$row['id_board']][] = $row['id_msg'];
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			foreach ($boards as $board_id => $messages)
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}messages
 					SET id_board = {int:id_board}
 					WHERE id_msg IN ({array_int:id_msg_array})',
@@ -1362,7 +1362,7 @@ function AdminBoardRecount()
 	}
 
 	// Update the latest message of each board.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT m.id_board, MAX(m.id_msg) AS local_last_msg
 		FROM {db_prefix}messages AS m
 		WHERE m.approved = {int:is_approved}
@@ -1372,23 +1372,23 @@ function AdminBoardRecount()
 		)
 	);
 	$realBoardCounts = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$realBoardCounts[$row['id_board']] = $row['local_last_msg'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT /*!40001 SQL_NO_CACHE */ id_board, id_parent, id_last_msg, child_level, id_msg_updated
 		FROM {db_prefix}boards',
 		array(
 		)
 	);
 	$resort_me = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$row['local_last_msg'] = isset($realBoardCounts[$row['id_board']]) ? $realBoardCounts[$row['id_board']] : 0;
 		$resort_me[$row['child_level']][] = $row;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	krsort($resort_me);
 
@@ -1404,7 +1404,7 @@ function AdminBoardRecount()
 
 			// If what is and what should be the latest message differ, an update is necessary.
 			if ($row['local_last_msg'] != $row['id_last_msg'] || $curLastModifiedMsg != $row['id_msg_updated'])
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}boards
 					SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 					WHERE id_board = {int:id_board}',
@@ -1525,13 +1525,13 @@ function MaintainPurgeInactiveMembers()
 		}
 
 		// Need to get *all* groups then work out which (if any) we avoid.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_group, group_name, min_posts
 			FROM {db_prefix}membergroups',
 			array(
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			// Avoid this one?
 			if (!in_array($row['id_group'], $groups))
@@ -1549,7 +1549,7 @@ function MaintainPurgeInactiveMembers()
 				}
 			}
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// If we have ungrouped unselected we need to avoid those guys.
 		if (!in_array(0, $groups))
@@ -1559,7 +1559,7 @@ function MaintainPurgeInactiveMembers()
 		}
 
 		// Select all the members we're about to murder/remove...
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT mem.id_member, IFNULL(m.id_member, 0) AS is_mod
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}moderators AS m ON (m.id_member = mem.id_member)
@@ -1567,12 +1567,12 @@ function MaintainPurgeInactiveMembers()
 			$where_vars
 		);
 		$members = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if (!$row['is_mod'] || !in_array(3, $groups))
 				$members[] = $row['id_member'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		loadSource('Subs-Members');
 		deleteMembers($members);
@@ -1618,7 +1618,7 @@ function MaintainMassMoveTopics()
 	// How many topics are we converting?
 	if (!isset($_REQUEST['totaltopics']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}topics
 			WHERE id_board = {int:id_board_from}',
@@ -1626,8 +1626,8 @@ function MaintainMassMoveTopics()
 				'id_board_from' => $id_board_from,
 			)
 		);
-		list ($total_topics) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($total_topics) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 	else
 		$total_topics = (int) $_REQUEST['totaltopics'];
@@ -1641,7 +1641,7 @@ function MaintainMassMoveTopics()
 		while ($context['start'] <= $total_topics)
 		{
 			// Let's get the topics.
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_topic
 				FROM {db_prefix}topics
 				WHERE id_board = {int:id_board_from}
@@ -1653,7 +1653,7 @@ function MaintainMassMoveTopics()
 
 			// Get the ids.
 			$topics = array();
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				$topics[] = $row['id_topic'];
 
 			// Just return if we don't have any topics left to move.

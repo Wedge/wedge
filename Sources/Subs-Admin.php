@@ -82,13 +82,13 @@ function getServerVersions($checkFor)
 	// Now let's check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
-		weDB::extend();
-		if (!weDB::is_connected())
+		wedb::extend();
+		if (!wedb::is_connected())
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 		{
 			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => '');
-			$versions['db_server']['version'] = weDBExtra::get_version();
+			$versions['db_server']['version'] = wedbExtra::get_version();
 		}
 	}
 
@@ -390,7 +390,7 @@ function updateAdminPreferences()
 	$options['admin_preferences'] = serialize($context['admin_preferences']);
 
 	// Just check we haven't ended up with something theme exclusive somehow.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
 		AND variable = {string:admin_preferences}',
@@ -401,7 +401,7 @@ function updateAdminPreferences()
 	);
 
 	// Update the themes table.
-	weDB::insert('replace',
+	wedb::insert('replace',
 		'{db_prefix}themes',
 		array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 		array($user_info['id'], 1, 'admin_preferences', $options['admin_preferences']),
@@ -421,7 +421,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 	loadSource('Subs-Post');
 
 	// Load all groups which are effectively admins.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group
 		FROM {db_prefix}permissions
 		WHERE permission = {string:admin_forum}
@@ -434,11 +434,11 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		)
 	);
 	$groups = array(1);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$groups[] = $row['id_group'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, member_name, real_name, lngfile, email_address
 		FROM {db_prefix}members
 		WHERE (id_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:group_array_implode}, additional_groups) != 0)
@@ -451,7 +451,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		)
 	);
 	$emails_sent = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Stick their particulars in the replacement data.
 		$replacements['IDMEMBER'] = $row['id_member'];
@@ -467,7 +467,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		// Track who we emailed so we don't do it twice.
 		$emails_sent[] = $row['email_address'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Any additional users we must email this to?
 	if (!empty($additional_recipients))

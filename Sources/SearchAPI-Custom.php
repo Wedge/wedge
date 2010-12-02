@@ -194,7 +194,7 @@ class custom_search
 			}
 		}
 
-		$ignoreRequest = weDB::query('
+		$ignoreRequest = wedb::query('
 			INSERT IGNORE INTO {db_prefix}' . $search_data['insert_into'] . '
 				(' . implode(', ', array_keys($query_select)) . ')
 			SELECT ' . implode(', ', $query_select) . '

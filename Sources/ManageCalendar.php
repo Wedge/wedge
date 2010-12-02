@@ -203,7 +203,7 @@ function EditHoliday()
 		$_REQUEST['holiday'] = isset($_REQUEST['holiday']) ? (int) $_REQUEST['holiday'] : 0;
 
 		if (isset($_REQUEST['delete']))
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}calendar_holidays
 				WHERE id_holiday = {int:selected_holiday}',
 				array(
@@ -214,7 +214,7 @@ function EditHoliday()
 		{
 			$date = strftime($_REQUEST['year'] <= 4 ? '0004-%m-%d' : '%Y-%m-%d', mktime(0, 0, 0, $_REQUEST['month'], $_REQUEST['day'], $_REQUEST['year']));
 			if (isset($_REQUEST['edit']))
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}calendar_holidays
 					SET event_date = {date:holiday_date}, title = {string:holiday_title}
 					WHERE id_holiday = {int:selected_holiday}',
@@ -225,7 +225,7 @@ function EditHoliday()
 					)
 				);
 			else
-				weDB::insert('',
+				wedb::insert('',
 					'{db_prefix}calendar_holidays',
 					array(
 						'event_date' => 'date', 'title' => 'string-60',
@@ -256,7 +256,7 @@ function EditHoliday()
 	// If it's not new load the data.
 	else
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_holiday, YEAR(event_date) AS year, MONTH(event_date) AS month, DAYOFMONTH(event_date) AS day, title
 			FROM {db_prefix}calendar_holidays
 			WHERE id_holiday = {int:selected_holiday}
@@ -265,7 +265,7 @@ function EditHoliday()
 				'selected_holiday' => $_REQUEST['holiday'],
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['holiday'] = array(
 				'id' => $row['id_holiday'],
 				'day' => $row['day'],
@@ -273,7 +273,7 @@ function EditHoliday()
 				'year' => $row['year'] <= 4 ? 0 : $row['year'],
 				'title' => $row['title']
 			);
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Last day for the drop down?
@@ -286,16 +286,16 @@ function ModifyCalendarSettings($return_config = false)
 
 	// Load the boards list.
 	$boards = array('');
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)',
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Look, all the calendar settings - of which there are many!
 	$config_vars = array(

@@ -390,7 +390,7 @@ function Register2($verifiedOpenID = false)
 		$regOptions['theme_vars']['display_quick_reply'] = 1;
 
 	// Check whether we have fields that simply MUST be displayed?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT col_name, field_name, field_type, field_length, mask, show_reg
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:is_active}',
@@ -399,7 +399,7 @@ function Register2($verifiedOpenID = false)
 		)
 	);
 	$custom_field_errors = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Don't allow overriding of the theme variables.
 		if (isset($regOptions['theme_vars'][$row['col_name']]))
@@ -436,7 +436,7 @@ function Register2($verifiedOpenID = false)
 		if (trim($value) == '' && $row['show_reg'] > 1)
 			$custom_field_errors[] = array('custom_field_empty', array($row['field_name']));
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Process any errors.
 	if (!empty($custom_field_errors))

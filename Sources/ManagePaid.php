@@ -385,7 +385,7 @@ function ModifySubscription()
 	{
 		checkSession();
 
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}subscriptions
 			WHERE id_subscribe = {int:current_subscription}',
 			array(
@@ -448,7 +448,7 @@ function ModifySubscription()
 		// Is it new?!
 		if ($context['action_type'] == 'add')
 		{
-			weDB::insert('',
+			wedb::insert('',
 				'{db_prefix}subscriptions',
 				array(
 					'name' => 'string-60', 'description' => 'string-255', 'active' => 'int', 'length' => 'string-4', 'cost' => 'string',
@@ -467,7 +467,7 @@ function ModifySubscription()
 		else
 		{
 			// Don't do groups if there are active members
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT COUNT(*)
 				FROM {db_prefix}log_subscribed
 				WHERE id_subscribe = {int:current_subscription}
@@ -477,10 +477,10 @@ function ModifySubscription()
 					'is_active' => 1,
 				)
 			);
-			list ($disableGroups) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($disableGroups) = wedb::fetch_row($request);
+			wedb::free_result($request);
 
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}subscriptions
 					SET name = SUBSTRING({string:name}, 1, 60), description = SUBSTRING({string:description}, 1, 255), active = {int:is_active},
 					length = SUBSTRING({string:length}, 1, 4), cost = {string:cost}' . ($disableGroups ? '' : ', id_group = {int:id_group},
@@ -533,7 +533,7 @@ function ModifySubscription()
 	// Otherwise load up all the details.
 	else
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT name, description, cost, length, id_group, add_groups, active, repeatable, allow_partial, email_complete, reminder
 			FROM {db_prefix}subscriptions
 			WHERE id_subscribe = {int:current_subscription}
@@ -542,7 +542,7 @@ function ModifySubscription()
 				'current_subscription' => $context['sub_id'],
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			// Sort the date.
 			preg_match('~(\d*)(\w)~', $row['length'], $match);
@@ -581,10 +581,10 @@ function ModifySubscription()
 				'reminder' => $row['reminder'],
 			);
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Does this have members who are active?
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}log_subscribed
 			WHERE id_subscribe = {int:current_subscription}
@@ -594,12 +594,12 @@ function ModifySubscription()
 				'is_active' => 1,
 			)
 		);
-		list ($context['disable_groups']) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($context['disable_groups']) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 
 	// Load up all the groups.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
@@ -610,9 +610,9 @@ function ModifySubscription()
 		)
 	);
 	$context['groups'] = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$context['groups'][$row['id_group']] = $row['group_name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 }
 
 // View all the users subscribed to a particular subscription!
@@ -627,7 +627,7 @@ function ViewSubscribedUsers()
 	$context['sub_id'] = (int) $_REQUEST['sid'];
 
 	// Load the subscription information.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_subscribe, name, description, cost, length, id_group, add_groups, active
 		FROM {db_prefix}subscriptions
 		WHERE id_subscribe = {int:current_subscription}',
@@ -636,17 +636,17 @@ function ViewSubscribedUsers()
 		)
 	);
 	// Something wrong?
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 	// Do the subscription context.
-	$row = weDB::fetch_assoc($request);
+	$row = wedb::fetch_assoc($request);
 	$context['subscription'] = array(
 		'id' => $row['id_subscribe'],
 		'name' => $row['name'],
 		'desc' => $row['description'],
 		'active' => $row['active'],
 	);
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Are we searching for people?
 	$search_string = isset($_POST['ssearch']) && !empty($_POST['sub_search']) ? ' AND IFNULL(mem.real_name, {string:guest}) LIKE {string:search}' : '';
@@ -817,7 +817,7 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = arr
 	global $smcFunc;
 
 	// Get the total amount of users.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT COUNT(*) AS total_subs
 		FROM {db_prefix}log_subscribed AS ls
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
@@ -829,8 +829,8 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = arr
 			'no_pending_payments' => 0,
 		))
 	);
-	list ($memberCount) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($memberCount) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	return $memberCount;
 }
@@ -839,7 +839,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 {
 	global $smcFunc, $txt;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT ls.id_sublog, IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, {string:guest}) AS name, ls.start_time, ls.end_time,
 			ls.status, ls.payments_pending
 		FROM {db_prefix}log_subscribed AS ls
@@ -856,7 +856,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 		))
 	);
 	$subscribers = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$subscribers[] = array(
 			'id' => $row['id_sublog'],
 			'id_member' => $row['id_member'],
@@ -867,7 +867,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			'status' => $row['status'],
 			'status_text' => $row['status'] == 0 ? ($row['payments_pending'] == 0 ? $txt['paid_finished'] : $txt['paid_pending']) : $txt['paid_active'],
 		);
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	return $subscribers;
 }
@@ -890,7 +890,7 @@ function ModifyUserSubscription()
 	// If we haven't been passed the subscription ID get it.
 	if ($context['log_id'] && !$context['sub_id'])
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_subscribe
 			FROM {db_prefix}log_subscribed
 			WHERE id_sublog = {int:current_log_item}',
@@ -898,10 +898,10 @@ function ModifyUserSubscription()
 				'current_log_item' => $context['log_id'],
 			)
 		);
-		if (weDB::num_rows($request) == 0)
+		if (wedb::num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		list ($context['sub_id']) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($context['sub_id']) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 
 	if (!isset($context['subscriptions'][$context['sub_id']]))
@@ -929,7 +929,7 @@ function ModifyUserSubscription()
 		if (empty($context['log_id']))
 		{
 			// Find the user...
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_member, id_group
 				FROM {db_prefix}members
 				WHERE real_name = {string:name}
@@ -938,14 +938,14 @@ function ModifyUserSubscription()
 					'name' => $_POST['name'],
 				)
 			);
-			if (weDB::num_rows($request) == 0)
+			if (wedb::num_rows($request) == 0)
 				fatal_lang_error('error_member_not_found');
 
-			list ($id_member, $id_group) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($id_member, $id_group) = wedb::fetch_row($request);
+			wedb::free_result($request);
 
 			// Ensure the member doesn't already have a subscription!
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_subscribe
 				FROM {db_prefix}log_subscribed
 				WHERE id_subscribe = {int:current_subscription}
@@ -955,16 +955,16 @@ function ModifyUserSubscription()
 					'current_member' => $id_member,
 				)
 			);
-			if (weDB::num_rows($request) != 0)
+			if (wedb::num_rows($request) != 0)
 				fatal_lang_error('member_already_subscribed');
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			// Actually put the subscription in place.
 			if ($status == 1)
 				addSubscription($context['sub_id'], $id_member, 0, $starttime, $endtime);
 			else
 			{
-				weDB::insert('',
+				wedb::insert('',
 					'{db_prefix}log_subscribed',
 					array(
 						'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
@@ -981,7 +981,7 @@ function ModifyUserSubscription()
 		// Updating.
 		else
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_member, status
 				FROM {db_prefix}log_subscribed
 				WHERE id_sublog = {int:current_log_item}',
@@ -989,11 +989,11 @@ function ModifyUserSubscription()
 					'current_log_item' => $context['log_id'],
 				)
 			);
-			if (weDB::num_rows($request) == 0)
+			if (wedb::num_rows($request) == 0)
 				fatal_lang_error('no_access', false);
 
-			list ($id_member, $old_status) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($id_member, $old_status) = wedb::fetch_row($request);
+			wedb::free_result($request);
 
 			// Pick the right permission stuff depending on what the status is changing from/to.
 			if ($old_status == 1 && $status != 1)
@@ -1004,7 +1004,7 @@ function ModifyUserSubscription()
 			}
 			else
 			{
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}log_subscribed
 					SET start_time = {int:start_time}, end_time = {int:end_time}, status = {int:status}
 					WHERE id_sublog = {int:current_log_item}',
@@ -1033,7 +1033,7 @@ function ModifyUserSubscription()
 			foreach ($_REQUEST['delsub'] as $id => $dummy)
 				$toDelete[] = (int) $id;
 
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_subscribe, id_member
 				FROM {db_prefix}log_subscribed
 				WHERE id_sublog IN ({array_int:subscription_list})',
@@ -1041,9 +1041,9 @@ function ModifyUserSubscription()
 					'subscription_list' => $toDelete,
 				)
 			);
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				removeSubscription($row['id_subscribe'], $row['id_member'], isset($_REQUEST['delete']));
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 		redirectexit('action=admin;area=paidsubscribe;sa=viewsub;sid=' . $context['sub_id']);
 	}
@@ -1076,7 +1076,7 @@ function ModifyUserSubscription()
 
 		if (isset($_GET['uid']))
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE id_member = {int:current_member}',
@@ -1084,8 +1084,8 @@ function ModifyUserSubscription()
 					'current_member' => (int) $_GET['uid'],
 				)
 			);
-			list ($context['sub']['username']) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($context['sub']['username']) = wedb::fetch_row($request);
+			wedb::free_result($request);
 		}
 		else
 			$context['sub']['username'] = '';
@@ -1093,7 +1093,7 @@ function ModifyUserSubscription()
 	// Otherwise load the existing info.
 	else
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT ls.id_sublog, ls.id_subscribe, ls.id_member, start_time, end_time, status, payments_pending, pending_details,
 				IFNULL(mem.real_name, {string:blank_string}) AS username
 			FROM {db_prefix}log_subscribed AS ls
@@ -1105,10 +1105,10 @@ function ModifyUserSubscription()
 				'blank_string' => '',
 			)
 		);
-		if (weDB::num_rows($request) == 0)
+		if (wedb::num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
-		$row = weDB::fetch_assoc($request);
-		weDB::free_result($request);
+		$row = wedb::fetch_assoc($request);
+		wedb::free_result($request);
 
 		// Any pending payments?
 		$context['pending_payments'] = array();
@@ -1158,7 +1158,7 @@ function ModifyUserSubscription()
 						$new_details = serialize($pending_details);
 
 						// Update the entry.
-						weDB::query('
+						wedb::query('
 							UPDATE {db_prefix}log_subscribed
 							SET payments_pending = payments_pending - 1, pending_details = {string:pending_details}
 							WHERE id_sublog = {int:current_subscription_item}',
@@ -1213,7 +1213,7 @@ function reapplySubscriptions($users)
 
 	// Get all the members current groups.
 	$groups = array();
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, id_group, additional_groups
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:user_list})',
@@ -1221,16 +1221,16 @@ function reapplySubscriptions($users)
 			'user_list' => $users,
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$groups[$row['id_member']] = array(
 			'primary' => $row['id_group'],
 			'additional' => explode(',', $row['additional_groups']),
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT ls.id_member, ls.old_id_group, s.id_group, s.add_groups
 		FROM {db_prefix}log_subscribed AS ls
 			INNER JOIN {db_prefix}subscriptions AS s ON (s.id_subscribe = ls.id_subscribe)
@@ -1241,7 +1241,7 @@ function reapplySubscriptions($users)
 			'current_time' => time(),
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Specific primary group?
 		if ($row['id_group'] != 0)
@@ -1256,7 +1256,7 @@ function reapplySubscriptions($users)
 		if (!empty($row['add_groups']))
 			$groups[$row['id_member']]['additional'] = array_merge($groups[$row['id_member']]['additional'], explode(',', $row['add_groups']));
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Update all the members.
 	foreach ($groups as $id => $group)
@@ -1267,7 +1267,7 @@ function reapplySubscriptions($users)
 				unset($group['additional'][$key]);
 		$addgroups = implode(',', $group['additional']);
 
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}members
 			SET id_group = {int:primary_group}, additional_groups = {string:additional_groups}
 			WHERE id_member = {int:current_member}
@@ -1321,7 +1321,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	}
 
 	// Firstly, see whether it exists, and is active. If so then this is meerly an extension.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_sublog, end_time, start_time
 		FROM {db_prefix}log_subscribed
 		WHERE id_subscribe = {int:current_subscription}
@@ -1333,9 +1333,9 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			'is_active' => 1,
 		)
 	);
-	if (weDB::num_rows($request) != 0)
+	if (wedb::num_rows($request) != 0)
 	{
-		list ($id_sublog, $endtime, $starttime) = weDB::fetch_row($request);
+		list ($id_sublog, $endtime, $starttime) = wedb::fetch_row($request);
 
 		// If this has already expired but is active, extension means the period from now.
 		if ($endtime < time())
@@ -1350,7 +1350,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			$endtime = $forceEndTime;
 
 		// As everything else should be good, just update!
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}log_subscribed
 			SET end_time = {int:end_time}, start_time = {int:start_time}
 			WHERE id_sublog = {int:current_subscription_item}',
@@ -1363,10 +1363,10 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 
 		return;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// If we're here, that means we don't have an active subscription - that means we need to do some work!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT m.id_group, m.additional_groups
 		FROM {db_prefix}members AS m
 		WHERE m.id_member = {int:current_member}',
@@ -1375,11 +1375,11 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		)
 	);
 	// Just in case the member doesn't exist.
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		return;
 
-	list ($old_id_group, $additional_groups) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($old_id_group, $additional_groups) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Prepare additional groups.
 	$newAddGroups = explode(',', $curSub['add_groups']);
@@ -1407,7 +1407,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	$newAddGroups = implode(',', $newAddGroups);
 
 	// Store the new settings.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}members
 		SET id_group = {int:primary_group}, additional_groups = {string:additional_groups}
 		WHERE id_member = {int:current_member}',
@@ -1419,7 +1419,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	);
 
 	// Now log the subscription - maybe we have a dorment subscription we can restore?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_sublog, end_time, start_time
 		FROM {db_prefix}log_subscribed
 		WHERE id_subscribe = {int:current_subscription}
@@ -1430,9 +1430,9 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		)
 	);
 	//!!! Don't really need to do this twice...
-	if (weDB::num_rows($request) != 0)
+	if (wedb::num_rows($request) != 0)
 	{
-		list ($id_sublog, $endtime, $starttime) = weDB::fetch_row($request);
+		list ($id_sublog, $endtime, $starttime) = wedb::fetch_row($request);
 
 		// If this has already expired but is active, extension means the period from now.
 		if ($endtime < time())
@@ -1447,7 +1447,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			$endtime = $forceEndTime;
 
 		// As everything else should be good, just update!
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}log_subscribed
 			SET start_time = {int:start_time}, end_time = {int:end_time}, old_id_group = {int:old_id_group}, status = {int:is_active},
 				reminder_sent = {int:no_reminder_sent}
@@ -1464,7 +1464,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 
 		return;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Otherwise a very simple insert.
 	$endtime = time() + $duration;
@@ -1476,7 +1476,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	else
 		$starttime = $forceStartTime;
 
-	weDB::insert('',
+	wedb::insert('',
 		'{db_prefix}log_subscribed',
 		array(
 			'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
@@ -1498,7 +1498,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	loadSubscriptions();
 
 	// Load the user core bits.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT m.id_group, m.additional_groups
 		FROM {db_prefix}members AS m
 		WHERE m.id_member = {int:current_member}',
@@ -1508,9 +1508,9 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	);
 
 	// Just in case of errors.
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 	{
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE id_member = {int:current_member}',
 			array(
@@ -1519,11 +1519,11 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		);
 		return;
 	}
-	list ($id_group, $additional_groups) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($id_group, $additional_groups) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Get all of the subscriptions for this user that are active - it will be necessary!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_subscribe, old_id_group
 		FROM {db_prefix}log_subscribed
 		WHERE id_member = {int:current_member}
@@ -1539,7 +1539,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	$allowed = array();
 	$old_id_group = 0;
 	$new_id_group = -1;
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (!isset($context['subscriptions'][$row['id_subscribe']]))
 			continue;
@@ -1563,7 +1563,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 			}
 		}
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Now, for everything we are removing check they defintely are not allowed it.
 	$existingGroups = explode(',', $additional_groups);
@@ -1598,7 +1598,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	$existingGroups = implode(',', $existingGroups);
 
 	// Update the member
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}members
 		SET id_group = {int:primary_group}, additional_groups = {string:existing_groups}
 		WHERE id_member = {int:current_member}',
@@ -1611,7 +1611,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 
 	// Disable the subscription.
 	if (!$delete)
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}log_subscribed
 			SET status = {int:not_active}
 			WHERE id_member = {int:current_member}
@@ -1624,7 +1624,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		);
 	// Otherwise delete it!
 	else
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE id_member = {int:current_member}
 				AND id_subscribe = {int:current_subscription}',
@@ -1646,14 +1646,14 @@ function loadSubscriptions()
 	// Make sure this is loaded, just in case.
 	loadLanguage('ManagePaid');
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_subscribe, name, description, cost, length, id_group, add_groups, active, repeatable
 		FROM {db_prefix}subscriptions',
 		array(
 		)
 	);
 	$context['subscriptions'] = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Pick a cost.
 		$costs = @unserialize($row['cost']);
@@ -1711,39 +1711,39 @@ function loadSubscriptions()
 			'repeatable' => $row['repeatable'],
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Do the counts.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT COUNT(id_sublog) AS member_count, id_subscribe, status
 		FROM {db_prefix}log_subscribed
 		GROUP BY id_subscribe, status',
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$ind = $row['status'] == 0 ? 'finished' : 'total';
 
 		if (isset($context['subscriptions'][$row['id_subscribe']]))
 			$context['subscriptions'][$row['id_subscribe']][$ind] = $row['member_count'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// How many payments are we waiting on?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT SUM(payments_pending) AS total_pending, id_subscribe
 		FROM {db_prefix}log_subscribed
 		GROUP BY id_subscribe',
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (isset($context['subscriptions'][$row['id_subscribe']]))
 			$context['subscriptions'][$row['id_subscribe']]['pending'] = $row['total_pending'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 }
 
 // Load all the payment gateways.

@@ -134,7 +134,7 @@ function Search()
 	}
 
 	// Find all the boards this user is allowed to see.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT b.id_cat, c.name AS cat_name, b.id_board, b.name, b.child_level
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -144,10 +144,10 @@ function Search()
 			'empty_string' => '',
 		)
 	);
-	$context['num_boards'] = weDB::num_rows($request);
+	$context['num_boards'] = wedb::num_rows($request);
 	$context['boards_check_all'] = true;
 	$context['categories'] = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
@@ -169,7 +169,7 @@ function Search()
 		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
 			$context['boards_check_all'] = false;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Now, let's sort the list of categories into the boards for templates that like that.
 	$temp_boards = array();
@@ -214,7 +214,7 @@ function Search()
 			'href' => $scripturl . '?topic=' . $context['search_params']['topic'] . '.0',
 		);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT ms.subject
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -229,11 +229,11 @@ function Search()
 			)
 		);
 
-		if (weDB::num_rows($request) == 0)
+		if (wedb::num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
-		list ($context['search_topic']['subject']) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($context['search_topic']['subject']) = wedb::fetch_row($request);
+		wedb::free_result($request);
 
 		$context['search_topic']['link'] = '<a href="' . $context['search_topic']['href'] . '">' . $context['search_topic']['subject'] . '</a>';
 	}

@@ -25,7 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class weDBSearch
+class wedbSearch
 {
 	protected static $instance; // container for self
 
@@ -54,7 +54,7 @@ class weDBSearch
 		else
 			$size = 'int(10)';
 
-		weDB::query('
+		wedb::query('
 			CREATE TABLE {db_prefix}log_search_words (
 				id_word {raw:size} unsigned NOT NULL default {string:string_zero},
 				id_msg int(10) unsigned NOT NULL default {string:string_zero},

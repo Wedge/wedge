@@ -115,7 +115,7 @@ function ScheduledTasks()
 				$enablers[] = (int) $id;
 
 		// Do the update!
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = CASE WHEN id_task IN ({array_int:id_task_enable}) THEN 0 ELSE 1 END',
 			array(
@@ -136,7 +136,7 @@ function ScheduledTasks()
 			$tasks[] = (int) $task;
 
 		// Load up the tasks.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_task, task
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
@@ -149,7 +149,7 @@ function ScheduledTasks()
 		// Let's get it on!
 		loadSource('ScheduledTasks');
 		ignore_user_abort(true);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			$start_time = microtime();
 			// The functions got to exist for us to use it.
@@ -168,7 +168,7 @@ function ScheduledTasks()
 			if ($completed)
 			{
 				$total_time = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $start_time)), 3);
-				weDB::insert('',
+				wedb::insert('',
 					'{db_prefix}log_scheduled_tasks',
 					array('id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'),
 					array($row['id_task'], time(), $total_time),
@@ -176,7 +176,7 @@ function ScheduledTasks()
 				);
 			}
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 		redirectexit('action=admin;area=scheduledtasks;done');
 	}
 
@@ -289,14 +289,14 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt, $scripturl;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
 		FROM {db_prefix}scheduled_tasks',
 		array(
 		)
 	);
 	$known_tasks = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Find the next for regularity - don't offset as it's always server time!
 		$offset = sprintf($txt['scheduled_task_reg_starting'], date('H:i', $row['time_offset']));
@@ -313,7 +313,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 			'regularity' => $offset . ', ' . $repeating,
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	return $known_tasks;
 }
@@ -366,7 +366,7 @@ function EditTask()
 		$disabled = !isset($_POST['enabled']) ? 1 : 0;
 
 		// Do the update!
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}, time_offset = {int:time_offset}, time_unit = {string:time_unit},
 				time_regularity = {int:time_regularity}
@@ -388,7 +388,7 @@ function EditTask()
 	}
 
 	// Load the task, understand? Que? Que?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
 		FROM {db_prefix}scheduled_tasks
 		WHERE id_task = {int:id_task}',
@@ -398,10 +398,10 @@ function EditTask()
 	);
 
 	// Should never, ever, happen!
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$context['task'] = array(
 			'id' => $row['id_task'],
@@ -416,7 +416,7 @@ function EditTask()
 			'unit' => $row['time_unit'],
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 }
 
 // Show the log of all tasks that have taken place.
@@ -432,7 +432,7 @@ function TaskLog()
 	{
 		checkSession();
 
-		weDB::query('
+		wedb::query('
 			TRUNCATE {db_prefix}log_scheduled_tasks',
 			array(
 			)
@@ -527,7 +527,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.task
 		FROM {db_prefix}log_scheduled_tasks AS lst
 			INNER JOIN {db_prefix}scheduled_tasks AS st ON (st.id_task = lst.id_task)
@@ -537,14 +537,14 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 		)
 	);
 	$log_entries = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$log_entries[] = array(
 			'id' => $row['id_log'],
 			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
 			'time_run' => $row['time_run'],
 			'time_taken' => $row['time_taken'],
 		);
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	return $log_entries;
 }
@@ -553,14 +553,14 @@ function list_getNumTaskLogEntries()
 {
 	global $smcFunc;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_scheduled_tasks',
 		array(
 		)
 	);
-	list ($num_entries) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($num_entries) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	return $num_entries;
 }

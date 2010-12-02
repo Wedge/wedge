@@ -52,7 +52,7 @@ function QuoteFast()
 	loadSource('Class-Editor');
 	$moderate_boards = boardsAllowedTo('moderate_board');
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.id_topic, m.subject,
 			m.id_board, m.id_member, m.approved
 		FROM {db_prefix}messages AS m
@@ -69,8 +69,8 @@ function QuoteFast()
 			'not_locked' => 0,
 		)
 	);
-	$row = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$row = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	$context['sub_template'] = 'quotefast';
 	if (!empty($row))

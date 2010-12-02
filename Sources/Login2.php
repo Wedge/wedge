@@ -165,7 +165,7 @@ function Login2()
 	}
 
 	// Load the data up!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			openid_uri, passwd_flood
 		FROM {db_prefix}members
@@ -176,11 +176,11 @@ function Login2()
 		)
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 	{
-		weDB::free_result($request);
+		wedb::free_result($request);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, openid_uri,
 			passwd_flood
 			FROM {db_prefix}members
@@ -191,15 +191,15 @@ function Login2()
 			)
 		);
 		// Let them try again, it didn't match anything...
-		if (weDB::num_rows($request) == 0)
+		if (wedb::num_rows($request) == 0)
 		{
 			$context['login_errors'] = array($txt['username_no_exist']);
 			return;
 		}
 	}
 
-	$user_settings = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$user_settings = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	// Figure out the password using SMF's encryption - if what they typed is right.
 	if (isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40)

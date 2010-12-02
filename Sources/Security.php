@@ -307,7 +307,7 @@ function is_not_banned($forceCheck = false)
 				'cannot_post',
 				'cannot_register',
 			);
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT bi.id_ban, bi.email_address, bi.id_member, bg.cannot_access, bg.cannot_register,
 					bg.cannot_post, bg.cannot_login, bg.reason, IFNULL(bg.expire_time, 0) AS expire_time
 				FROM {db_prefix}ban_items AS bi
@@ -317,7 +317,7 @@ function is_not_banned($forceCheck = false)
 				$ban_query_vars
 			);
 			// Store every type of ban that applies to you in your session.
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 			{
 				foreach ($restrictions as $restriction)
 					if (!empty($row[$restriction]))
@@ -331,7 +331,7 @@ function is_not_banned($forceCheck = false)
 							$flag_is_activated = true;
 					}
 			}
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 
 		// Mark the cannot_access and cannot_post bans as being 'hit'.
@@ -353,7 +353,7 @@ function is_not_banned($forceCheck = false)
 		$bans = explode(',', $_COOKIE[$cookiename . '_']);
 		foreach ($bans as $key => $value)
 			$bans[$key] = (int) $value;
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT bi.id_ban, bg.reason
 			FROM {db_prefix}ban_items AS bi
 				INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -367,12 +367,12 @@ function is_not_banned($forceCheck = false)
 				'current_time' => time(),
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			$_SESSION['ban']['cannot_access']['ids'][] = $row['id_ban'];
 			$_SESSION['ban']['cannot_access']['reason'] = $row['reason'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// My mistake. Next time better.
 		if (!isset($_SESSION['ban']['cannot_access']))
@@ -388,7 +388,7 @@ function is_not_banned($forceCheck = false)
 	{
 		// We don't wanna see you!
 		if (!$user_info['is_guest'])
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}log_online
 				WHERE id_member = {int:current_member}',
 				array(
@@ -437,7 +437,7 @@ function is_not_banned($forceCheck = false)
 	elseif (isset($_SESSION['ban']['cannot_login']) && !$user_info['is_guest'])
 	{
 		// We don't wanna see you!
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			array(
@@ -568,7 +568,7 @@ function log_ban($ban_ids = array(), $email = null)
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
 		return;
 
-	weDB::insert('',
+	wedb::insert('',
 		'{db_prefix}log_banned',
 		array('id_member' => 'int', 'ip' => 'string-16', 'email' => 'string', 'log_time' => 'int'),
 		array($user_info['id'], $user_info['ip'], ($email === null ? ($user_info['is_guest'] ? '' : $user_info['email']) : $email), time()),
@@ -577,7 +577,7 @@ function log_ban($ban_ids = array(), $email = null)
 
 	// One extra point for these bans.
 	if (!empty($ban_ids))
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}ban_items
 			SET hits = hits + 1
 			WHERE id_ban IN ({array_int:ban_ids})',
@@ -601,7 +601,7 @@ function isBannedEmail($email, $restriction, $error)
 	$ban_reason = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['reason'] : '';
 
 	// ...and add to that the email address you're trying to register.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT bi.id_ban, bg.' . $restriction . ', bg.cannot_access, bg.reason
 		FROM {db_prefix}ban_items AS bi
 			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -614,7 +614,7 @@ function isBannedEmail($email, $restriction, $error)
 			'now' => time(),
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (!empty($row['cannot_access']))
 		{
@@ -627,7 +627,7 @@ function isBannedEmail($email, $restriction, $error)
 			$ban_reason = $row['reason'];
 		}
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// You're in biiig trouble.  Banned for the rest of this session!
 	if (isset($_SESSION['ban']['cannot_access']))
@@ -840,7 +840,7 @@ function allowedTo($permission, $boards = null)
 	elseif (!is_array($boards))
 		$boards = array($boards);
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT MIN(bp.add_deny) AS add_deny
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}board_permissions AS bp ON (bp.id_profile = b.id_profile)
@@ -860,13 +860,13 @@ function allowedTo($permission, $boards = null)
 	);
 
 	// Make sure they can do it on all of the boards.
-	if (weDB::num_rows($request) != count($boards))
+	if (wedb::num_rows($request) != count($boards))
 		return false;
 
 	$result = true;
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$result &= !empty($row['add_deny']);
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// If the query returned 1, they can do it... otherwise, they can't.
 	return $result;
@@ -936,7 +936,7 @@ function boardsAllowedTo($permissions, $check_access = true)
 	// All groups the user is in except 'moderator'.
 	$groups = array_diff($user_info['groups'], array(3));
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT b.id_board, bp.add_deny
 		FROM {db_prefix}board_permissions AS bp
 			INNER JOIN {db_prefix}boards AS b ON (b.id_profile = bp.id_profile)
@@ -954,14 +954,14 @@ function boardsAllowedTo($permissions, $check_access = true)
 	);
 	$boards = array();
 	$deny_boards = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (empty($row['add_deny']))
 			$deny_boards[] = $row['id_board'];
 		else
 			$boards[] = $row['id_board'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	$boards = array_unique(array_values(array_diff($boards, $deny_boards)));
 
@@ -1064,7 +1064,7 @@ function checkUserBehavior()
 			foreach ($_POST as $k => $v)
 				$entity .= ($entity != '' ? '<br />' : '') . htmlspecialchars($k . '=' . $v);
 
-			weDB::insert('insert',
+			wedb::insert('insert',
 				'{db_prefix}log_intrusion',
 				array(
 					'id_member' => 'int', 'error_type' => 'string', 'ip' => 'string', 'event_time' => 'int', 'http_method' => 'string',
@@ -1076,7 +1076,7 @@ function checkUserBehavior()
 				),
 				array('id_event')
 			);
-			$error_id = weDB::insert_id();
+			$error_id = wedb::insert_id();
 
 			// Set the page up
 			loadTemplate('Errors');

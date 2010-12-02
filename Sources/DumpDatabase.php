@@ -62,7 +62,7 @@ function DumpDatabase2()
 	checkSession('post');
 
 	// We will need this, badly!
-	weDB::extend();
+	wedb::extend();
 
 	// Attempt to stop from dying...
 	@set_time_limit(600);
@@ -145,7 +145,7 @@ function DumpDatabase2()
 	}
 
 	// Dump each table.
-	$tables = weDBExtra::list_tables(false, $db_prefix . '%');
+	$tables = wedbExtra::list_tables(false, $db_prefix . '%');
 	foreach ($tables as $tableName)
 	{
 		if (function_exists('apache_reset_timeout'))
@@ -160,7 +160,7 @@ function DumpDatabase2()
 				'-- Table structure for table `', $tableName, '`', $crlf,
 				'--', $crlf,
 				$crlf,
-				weDBExtra::table_sql($tableName), ';', $crlf;
+				wedbExtra::table_sql($tableName), ';', $crlf;
 		}
 
 		// How about the data?
@@ -168,7 +168,7 @@ function DumpDatabase2()
 			continue;
 
 		// Are there any rows in this table?
-		$get_rows = weDBExtra::insert_sql($tableName);
+		$get_rows = wedbExtra::insert_sql($tableName);
 
 		// No rows to get - skip it.
 		if (empty($get_rows))

@@ -131,7 +131,7 @@ function deleteMembers($users, $check_not_admin = false)
 	}
 
 	// Get their names for logging purposes.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, member_name, CASE WHEN id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0 THEN 1 ELSE 0 END AS is_admin
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:user_list})
@@ -143,13 +143,13 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 	$admins = array();
 	$user_log_details = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if ($row['is_admin'])
 			$admins[] = $row['id_member'];
 		$user_log_details[$row['id_member']] = array($row['id_member'], $row['member_name']);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	if (empty($user_log_details))
 		return;
@@ -186,7 +186,7 @@ function deleteMembers($users, $check_not_admin = false)
 
 	// Do the actual logging...
 	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
-		weDB::insert('',
+		wedb::insert('',
 			'{db_prefix}log_actions',
 			array(
 				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'string-16', 'action' => 'string',
@@ -197,7 +197,7 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 
 	// Make these peoples' posts guest posts.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}messages
 		SET id_member = {int:guest_id}, poster_email = {string:blank_email}
 		WHERE id_member IN ({array_int:users})',
@@ -207,7 +207,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}polls
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
@@ -218,7 +218,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Make these peoples' posts guest first posts and last posts.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}topics
 		SET id_member_started = {int:guest_id}
 		WHERE id_member_started IN ({array_int:users})',
@@ -227,7 +227,7 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}topics
 		SET id_member_updated = {int:guest_id}
 		WHERE id_member_updated IN ({array_int:users})',
@@ -237,7 +237,7 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}log_actions
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
@@ -247,7 +247,7 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}log_banned
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
@@ -257,7 +257,7 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}log_errors
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
@@ -268,7 +268,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Delete the member.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}members
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -277,7 +277,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Delete the logs...
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_actions
 		WHERE id_log = {int:log_type}
 			AND id_member IN ({array_int:users})',
@@ -286,14 +286,14 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_boards
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_comments
 		WHERE id_recipient IN ({array_int:users})
 			AND comment_type = {string:warntpl}',
@@ -302,49 +302,49 @@ function deleteMembers($users, $check_not_admin = false)
 			'warntpl' => 'warntpl',
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_group_requests
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_mark_read
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_notify
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_online
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_subscribed
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_topics
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}collapsed_categories
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -354,7 +354,7 @@ function deleteMembers($users, $check_not_admin = false)
 
 	// Make their votes appear as guest votes - at least it keeps the totals right.
 	//!!! Consider adding back in cookie protection.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}log_polls
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
@@ -368,7 +368,7 @@ function deleteMembers($users, $check_not_admin = false)
 	loadSource('PersonalMessage');
 	deleteMessages(null, null, $users);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}personal_messages
 		SET id_member_from = {int:guest_id}
 		WHERE id_member_from IN ({array_int:users})',
@@ -379,7 +379,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// They no longer exist, so we don't know who it was sent to.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}pm_recipients
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -392,14 +392,14 @@ function deleteMembers($users, $check_not_admin = false)
 	removeAttachments(array('id_member' => $users));
 
 	// It's over, no more moderation for you.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}moderators
 		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}group_moderators
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -408,7 +408,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// If you don't exist we can't ban you.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}ban_items
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -417,7 +417,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Remove individual theme settings.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}themes
 		WHERE id_member IN ({array_int:users})',
 		array(
@@ -426,7 +426,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// These users are nobody's buddy nomore.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, pm_ignore_list, buddy_list
 		FROM {db_prefix}members
 		WHERE FIND_IN_SET({raw:pm_ignore_list}, pm_ignore_list) != 0 OR FIND_IN_SET({raw:buddy_list}, buddy_list) != 0',
@@ -435,8 +435,8 @@ function deleteMembers($users, $check_not_admin = false)
 			'buddy_list' => implode(', buddy_list) != 0 OR FIND_IN_SET(', $users),
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
-		weDB::query('
+	while ($row = wedb::fetch_assoc($request))
+		wedb::query('
 			UPDATE {db_prefix}members
 			SET
 				pm_ignore_list = {string:pm_ignore_list},
@@ -448,7 +448,7 @@ function deleteMembers($users, $check_not_admin = false)
 				'buddy_list' => implode(',', array_diff(explode(',', $row['buddy_list']), $users)),
 			)
 		);
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Make sure no member's birthday is still sticking in the calendar...
 	updateSettings(array(
@@ -568,7 +568,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		isBannedEmail($regOptions['email'], 'cannot_register', $txt['ban_register_prohibited']);
 
 	// Check if the email address is in use.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member
 		FROM {db_prefix}members
 		WHERE email_address = {string:email_address}
@@ -580,9 +580,9 @@ function registerMember(&$regOptions, $return_errors = false)
 		)
 	);
 	// !!! Separate the sprintf?
-	if (weDB::num_rows($request) != 0)
+	if (wedb::num_rows($request) != 0)
 		$reg_errors[] = array('lang', 'email_in_use', false, array(htmlspecialchars($regOptions['email'])));
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// If we found any errors we need to do something about it right away!
 	foreach ($reg_errors as $key => $error)
@@ -697,7 +697,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		// Check if this group is assignable.
 		$unassignableGroups = array(-1, 3);
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_group
 			FROM {db_prefix}membergroups
 			WHERE min_posts != {int:min_posts}',
@@ -705,9 +705,9 @@ function registerMember(&$regOptions, $return_errors = false)
 				'min_posts' => -1,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$unassignableGroups[] = $row['id_group'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		if (in_array($regOptions['register_vars']['id_group'], $unassignableGroups))
 			$regOptions['register_vars']['id_group'] = 0;
@@ -759,13 +759,13 @@ function registerMember(&$regOptions, $return_errors = false)
 	}
 
 	// Register them into the database.
-	weDB::insert('',
+	wedb::insert('',
 		'{db_prefix}members',
 		$column_names,
 		$values,
 		array('id_member')
 	);
-	$memberID = weDB::insert_id();
+	$memberID = wedb::insert_id();
 
 	// Update the number of members and latest member's info - and pass the name, but remove the 's.
 	if ($regOptions['register_vars']['is_activated'] == 1)
@@ -779,7 +779,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$inserts = array();
 		foreach ($theme_vars as $var => $val)
 			$inserts[] = array($memberID, $var, $val);
-		weDB::insert('insert',
+		wedb::insert('insert',
 			'{db_prefix}themes',
 			array('id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 			$inserts,
@@ -950,7 +950,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	$checkName = strtr($name, array('_' => '\\_', '%' => '\\%'));
 
 	// Make sure they don't want someone else's name.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member
 		FROM {db_prefix}members
 		WHERE ' . (empty($current_ID_MEMBER) ? '' : 'id_member != {int:current_member}
@@ -961,14 +961,14 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			'check_name' => $checkName,
 		)
 	);
-	if (weDB::num_rows($request) > 0)
+	if (wedb::num_rows($request) > 0)
 	{
-		weDB::free_result($request);
+		wedb::free_result($request);
 		return true;
 	}
 
 	// Does name case insensitive match a member group name?
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group
 		FROM {db_prefix}membergroups
 		WHERE group_name LIKE {string:check_name}
@@ -977,9 +977,9 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			'check_name' => $checkName,
 		)
 	);
-	if (weDB::num_rows($request) > 0)
+	if (wedb::num_rows($request) > 0)
 	{
-		weDB::free_result($request);
+		wedb::free_result($request);
 		return true;
 	}
 
@@ -1001,7 +1001,7 @@ function groupsAllowedTo($permission, $board_id = null)
 	// Assume we're dealing with regular permissions (like profile_view_own).
 	if ($board_id === null)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_group, add_deny
 			FROM {db_prefix}permissions
 			WHERE permission = {string:permission}',
@@ -1009,9 +1009,9 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Otherwise it's time to look at the board.
@@ -1022,7 +1022,7 @@ function groupsAllowedTo($permission, $board_id = null)
 			$profile_id = $board_info['profile'];
 		elseif ($board_id !== 0)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT id_profile
 				FROM {db_prefix}boards
 				WHERE id_board = {int:id_board}
@@ -1031,15 +1031,15 @@ function groupsAllowedTo($permission, $board_id = null)
 					'id_board' => $board_id,
 				)
 			);
-			if (weDB::num_rows($request) == 0)
+			if (wedb::num_rows($request) == 0)
 				fatal_lang_error('no_board');
-			list ($profile_id) = weDB::fetch_row($request);
-			weDB::free_result($request);
+			list ($profile_id) = wedb::fetch_row($request);
+			wedb::free_result($request);
 		}
 		else
 			$profile_id = 1;
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT bp.id_group, bp.add_deny
 			FROM {db_prefix}board_permissions AS bp
 			WHERE bp.permission = {string:permission}
@@ -1049,9 +1049,9 @@ function groupsAllowedTo($permission, $board_id = null)
 				'permission' => $permission,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Denied is never allowed.
@@ -1073,7 +1073,7 @@ function membersAllowedTo($permission, $board_id = null)
 	$exclude_moderators = in_array(3, $member_groups['denied']) && $board_id !== null;
 	$member_groups['denied'] = array_diff($member_groups['denied'], array(3));
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($include_moderators || $exclude_moderators ? '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_member = mem.id_member AND mods.id_board = {int:board_id})' : '') . '
@@ -1088,9 +1088,9 @@ function membersAllowedTo($permission, $board_id = null)
 		)
 	);
 	$members = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$members[] = $row['id_member'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	return $members;
 }
@@ -1103,7 +1103,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	// Firstly, if email and username aren't passed find out the members email address and name.
 	if ($email === false && $membername === false)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT email_address, member_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:memID}
@@ -1112,8 +1112,8 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 				'memID' => $memID,
 			)
 		);
-		list ($email, $membername) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($email, $membername) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 
 	$query_parts = array();
@@ -1126,7 +1126,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	// If they want the post count restored then we need to do some research.
 	if ($post_count)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = {int:count_posts})
@@ -1143,14 +1143,14 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 				'recycled_icon' => 'recycled',
 			)
 		);
-		list ($messageCount) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($messageCount) = wedb::fetch_row($request);
+		wedb::free_result($request);
 
 		updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
 	}
 
 	// Finally, update the posts themselves!
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}messages AS m
 		SET m.id_member = {int:memID}
 		WHERE ' . $query,
@@ -1161,14 +1161,14 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		)
 	);
 
-	return weDB::affected_rows();
+	return wedb::affected_rows();
 }
 
 function list_getMembers($start, $items_per_page, $sort, $where, $where_params = array(), $get_duplicates = false)
 {
 	global $smcFunc;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT
 			mem.id_member, mem.member_name, mem.real_name, mem.email_address, mem.icq, mem.aim, mem.yim, mem.msn, mem.member_ip, mem.member_ip2, mem.last_login,
 			mem.posts, mem.is_activated, mem.date_registered, mem.id_group, mem.additional_groups, mg.group_name
@@ -1185,9 +1185,9 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	);
 
 	$members = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$members[] = $row;
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// If we want duplicates pass the members array off.
 	if ($get_duplicates)
@@ -1207,15 +1207,15 @@ function list_getNumMembers($where, $where_params = array())
 	// The database knows the amount when there are extra conditions.
 	else
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members AS mem
 			WHERE ' . $where,
 			array_merge($where_params, array(
 			))
 		);
-		list ($num_members) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($num_members) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 
 	return $num_members;
@@ -1245,7 +1245,7 @@ function populateDuplicateMembers(&$members)
 		return false;
 
 	// Fetch all members with this IP address, we'll filter out the current ones in a sec.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT
 			id_member, member_name, email_address, member_ip, member_ip2, is_activated
 		FROM {db_prefix}members
@@ -1257,7 +1257,7 @@ function populateDuplicateMembers(&$members)
 	);
 	$duplicate_members = array();
 	$duplicate_ids = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		//$duplicate_ids[] = $row['id_member'];
 
@@ -1275,10 +1275,10 @@ function populateDuplicateMembers(&$members)
 		if ($row['member_ip'] != $row['member_ip2'] && in_array($row['member_ip2'], $ips))
 			$duplicate_members[$row['member_ip2']][] = $member_context;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Also try to get a list of messages using these ips.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT
 			m.poster_ip, mem.id_member, mem.member_name, mem.email_address, mem.is_activated
 		FROM {db_prefix}messages AS m
@@ -1293,7 +1293,7 @@ function populateDuplicateMembers(&$members)
 	);
 
 	$had_ips = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Don't collect lots of the same.
 		if (isset($had_ips[$row['poster_ip']]) && in_array($row['id_member'], $had_ips[$row['poster_ip']]))
@@ -1309,7 +1309,7 @@ function populateDuplicateMembers(&$members)
 			'ip2' => $row['poster_ip'],
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Now we have all the duplicate members, stick them with their respective member in the list.
 	if (!empty($duplicate_members))
@@ -1340,14 +1340,14 @@ function generateValidationCode()
 {
 	global $smcFunc, $modSettings;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT RAND()',
 		array(
 		)
 	);
 
-	list ($dbRand) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($dbRand) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);
 }

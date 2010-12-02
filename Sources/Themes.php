@@ -181,7 +181,7 @@ function ThemeAdmin()
 		$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : array();
 
 		// Load up all the themes.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, value AS name
 			FROM {db_prefix}themes
 			WHERE variable = {string:name}
@@ -192,16 +192,16 @@ function ThemeAdmin()
 			)
 		);
 		$context['themes'] = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['themes'][$row['id_theme']] = array(
 				'id' => $row['id_theme'],
 				'name' => $row['name'],
 				'known' => in_array($row['id_theme'], $knownThemes),
 			);
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// While we're at it, get all stylings...
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, value AS dir
 			FROM {db_prefix}themes
 			WHERE variable = {string:dir}
@@ -210,9 +210,9 @@ function ThemeAdmin()
 				'dir' => 'theme_dir',
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['dir'] . '/css');
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Can we create a new theme?
 		$context['can_create_new'] = is_writable($boarddir . '/Themes');
@@ -272,7 +272,7 @@ function ThemeList()
 	{
 		checkSession();
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:theme_dir}, {string:theme_url}, {string:images_url}, {string:base_theme_dir}, {string:base_theme_url}, {string:base_images_url})
@@ -288,9 +288,9 @@ function ThemeList()
 			)
 		);
 		$themes = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$themes[$row['id_theme']][$row['variable']] = $row['value'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		$setValues = array();
 		foreach ($themes as $id => $theme)
@@ -314,7 +314,7 @@ function ThemeList()
 
 		if (!empty($setValues))
 		{
-			weDB::insert('replace',
+			wedb::insert('replace',
 				'{db_prefix}themes',
 				array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$setValues,
@@ -327,7 +327,7 @@ function ThemeList()
 
 	loadTemplate('Themes');
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_url}, {string:images_url})
@@ -341,7 +341,7 @@ function ThemeList()
 		)
 	);
 	$context['themes'] = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (!isset($context['themes'][$row['id_theme']]))
 			$context['themes'][$row['id_theme']] = array(
@@ -349,7 +349,7 @@ function ThemeList()
 			);
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	foreach ($context['themes'] as $i => $theme)
 	{
@@ -387,7 +387,7 @@ function SetThemeOptions()
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:name}, {string:theme_dir})
@@ -399,7 +399,7 @@ function SetThemeOptions()
 			)
 		);
 		$context['themes'] = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if (!isset($context['themes'][$row['id_theme']]))
 				$context['themes'][$row['id_theme']] = array(
@@ -409,9 +409,9 @@ function SetThemeOptions()
 				);
 			$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, COUNT(*) AS value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:guest_member}
@@ -420,24 +420,24 @@ function SetThemeOptions()
 				'guest_member' => -1,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_default_options'] = $row['value'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Need to make sure we don't do custom fields.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT col_name
 			FROM {db_prefix}custom_fields',
 			array(
 			)
 		);
 		$customFields = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$customFields[] = $row['col_name'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT COUNT(DISTINCT id_member) AS value, id_theme
 			FROM {db_prefix}themes
 			WHERE id_member > {int:no_member}
@@ -448,9 +448,9 @@ function SetThemeOptions()
 				'custom_fields' => empty($customFields) ? array() : $customFields,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['num_members'] = $row['value'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// There has to be a Settings template!
 		foreach ($context['themes'] as $k => $v)
@@ -491,7 +491,7 @@ function SetThemeOptions()
 		{
 			// Are there options in non-default themes set that should be cleared?
 			if (!empty($old_settings))
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme != {int:default_theme}
 						AND id_member = {int:guest_member}
@@ -503,7 +503,7 @@ function SetThemeOptions()
 					)
 				);
 
-			weDB::insert('replace',
+			wedb::insert('replace',
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$setValues,
@@ -533,7 +533,7 @@ function SetThemeOptions()
 			elseif ($_POST['default_options_master'][$opt] == 1)
 			{
 				// Delete then insert for ease of database compatibility!
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme = {int:default_theme}
 						AND id_member != {int:no_member}
@@ -544,7 +544,7 @@ function SetThemeOptions()
 						'option' => $opt,
 					)
 				);
-				weDB::query('
+				wedb::query('
 					INSERT INTO {db_prefix}themes
 						(id_member, id_theme, variable, value)
 					SELECT id_member, 1, SUBSTRING({string:option}, 1, 255), SUBSTRING({string:value}, 1, 65534)
@@ -559,7 +559,7 @@ function SetThemeOptions()
 			}
 			elseif ($_POST['default_options_master'][$opt] == 2)
 			{
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:option_name}
 						AND id_member > {int:no_member}',
@@ -573,7 +573,7 @@ function SetThemeOptions()
 
 		// Delete options from other themes.
 		if (!empty($old_settings))
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}themes
 				WHERE id_theme != {int:default_theme}
 					AND id_member > {int:no_member}
@@ -592,7 +592,7 @@ function SetThemeOptions()
 			elseif ($_POST['options_master'][$opt] == 1)
 			{
 				// Delete then insert for ease of database compatibility - again!
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}themes
 					WHERE id_theme = {int:current_theme}
 						AND id_member != {int:no_member}
@@ -603,7 +603,7 @@ function SetThemeOptions()
 						'option' => $opt,
 					)
 				);
-				weDB::query('
+				wedb::query('
 					INSERT INTO {db_prefix}themes
 						(id_member, id_theme, variable, value)
 					SELECT id_member, {int:current_theme}, SUBSTRING({string:option}, 1, 255), SUBSTRING({string:value}, 1, 65534)
@@ -617,7 +617,7 @@ function SetThemeOptions()
 			}
 			elseif ($_POST['options_master'][$opt] == 2)
 			{
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:option}
 						AND id_member > {int:no_member}
@@ -640,20 +640,20 @@ function SetThemeOptions()
 		// Don't delete custom fields!!
 		if ($_GET['th'] == 1)
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT col_name
 				FROM {db_prefix}custom_fields',
 				array(
 				)
 			);
 			$customFields = array();
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				$customFields[] = $row['col_name'];
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}themes
 			WHERE id_member > {int:no_member}
 				AND id_theme = {int:current_theme}
@@ -689,7 +689,7 @@ function SetThemeOptions()
 
 	if (empty($_REQUEST['who']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT variable, value
 			FROM {db_prefix}themes
 			WHERE id_theme IN (1, {int:current_theme})
@@ -700,9 +700,9 @@ function SetThemeOptions()
 			)
 		);
 		$context['theme_options'] = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		$context['theme_options_reset'] = false;
 	}
@@ -828,7 +828,7 @@ function SetThemeSettings()
 		// If we're actually inserting something..
 		if (!empty($inserts))
 		{
-			weDB::insert('replace',
+			wedb::insert('replace',
 				'{db_prefix}themes',
 				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$inserts,
@@ -906,7 +906,7 @@ function RemoveTheme()
 		if ($known[$i] == $_GET['th'])
 			unset($known[$i]);
 
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme = {int:current_theme}',
 		array(
@@ -914,7 +914,7 @@ function RemoveTheme()
 		)
 	);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}members
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -924,7 +924,7 @@ function RemoveTheme()
 		)
 	);
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}boards
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -1036,7 +1036,7 @@ function PickTheme()
 	{
 		$context['current_member'] = (int) $_REQUEST['u'];
 
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, styling
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
@@ -1045,15 +1045,15 @@ function PickTheme()
 				'current_member' => $context['current_member'],
 			)
 		);
-		list ($context['current_theme'], $context['current_styling']) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($context['current_theme'], $context['current_styling']) = wedb::fetch_row($request);
+		wedb::free_result($request);
 	}
 
 	// Get the theme name and descriptions.
 	$context['available_themes'] = array();
 	if (!empty($modSettings['knownThemes']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:name}, {string:theme_url}, {string:theme_dir}, {string:images_url})' . (!allowedTo('admin_forum') ? '
@@ -1070,7 +1070,7 @@ function PickTheme()
 				'known_themes' => explode(',', $modSettings['knownThemes']),
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if (!isset($context['available_themes'][$row['id_theme']]))
 				$context['available_themes'][$row['id_theme']] = array(
@@ -1082,7 +1082,7 @@ function PickTheme()
 			if ($row['variable'] == 'theme_dir')
 				$context['available_themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['value'] . '/css');
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Okay, this is a complicated problem: the default theme is 1, but they aren't allowed to access 1!
@@ -1096,7 +1096,7 @@ function PickTheme()
 	else
 		$guest_theme = $modSettings['theme_guests'];
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_theme, COUNT(*) AS the_count
 		FROM {db_prefix}members
 		GROUP BY id_theme
@@ -1104,7 +1104,7 @@ function PickTheme()
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Figure out which theme it is they are REALLY using.
 		if (!empty($modSettings['knownThemes']) && !in_array($row['id_theme'], explode(',', $modSettings['knownThemes'])))
@@ -1117,7 +1117,7 @@ function PickTheme()
 		else
 			$context['available_themes'][$guest_theme]['num_users'] += $row['the_count'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Save the setting first.
 	$current_images_url = $settings['images_url'];
@@ -1181,7 +1181,7 @@ function ThemeInstall()
 
 	if (isset($_GET['theme_id']))
 	{
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT value
 			FROM {db_prefix}themes
 			WHERE id_theme = {int:current_theme}
@@ -1194,8 +1194,8 @@ function ThemeInstall()
 				'name' => 'name',
 			)
 		);
-		list ($theme_name) = weDB::fetch_row($result);
-		weDB::free_result($result);
+		list ($theme_name) = wedb::fetch_row($result);
+		wedb::free_result($result);
 
 		$context['sub_template'] = 'installed';
 		$context['page_title'] = $txt['theme_installed'];
@@ -1250,7 +1250,7 @@ function ThemeInstall()
 		$theme_dir = realpath($theme_dir);
 
 		// Let's get some data for the new theme.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:theme_templates}, {string:theme_layers})
@@ -1263,7 +1263,7 @@ function ThemeInstall()
 				'theme_layers' => 'theme_layers',
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if ($row['variable'] == 'theme_templates')
 				$theme_templates = $row['value'];
@@ -1272,7 +1272,7 @@ function ThemeInstall()
 			else
 				continue;
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Let's add a theme_info.xml to this theme.
 		$xml_info = '<' . '?xml version="1.0"?' . '>
@@ -1382,7 +1382,7 @@ function ThemeInstall()
 			{
 				$install_info['based_on'] = preg_replace('~[^A-Za-z0-9\-_ ]~', '', $install_info['based_on']);
 
-				$request = weDB::query('
+				$request = wedb::query('
 					SELECT th.value AS base_theme_dir, th2.value AS base_theme_url' . (!empty($explicit_images) ? '' : ', th3.value AS images_url') . '
 					FROM {db_prefix}themes AS th
 						INNER JOIN {db_prefix}themes AS th2 ON (th2.id_theme = th.id_theme
@@ -1404,8 +1404,8 @@ function ThemeInstall()
 						'based_on_path' => '%' . "\\" . $install_info['based_on'],
 					)
 				);
-				$temp = weDB::fetch_assoc($request);
-				weDB::free_result($request);
+				$temp = wedb::fetch_assoc($request);
+				wedb::free_result($request);
 
 				// !!! An error otherwise?
 				if (is_array($temp))
@@ -1421,14 +1421,14 @@ function ThemeInstall()
 		}
 
 		// Find the newest id_theme.
-		$result = weDB::query('
+		$result = wedb::query('
 			SELECT MAX(id_theme)
 			FROM {db_prefix}themes',
 			array(
 			)
 		);
-		list ($id_theme) = weDB::fetch_row($result);
-		weDB::free_result($result);
+		list ($id_theme) = wedb::fetch_row($result);
+		wedb::free_result($result);
 
 		// This will be theme number...
 		$id_theme++;
@@ -1438,7 +1438,7 @@ function ThemeInstall()
 			$inserts[] = array($id_theme, $var, $val);
 
 		if (!empty($inserts))
-			weDB::insert('insert',
+			wedb::insert('insert',
 				'{db_prefix}themes',
 				array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$inserts,
@@ -1498,7 +1498,7 @@ function EditTheme()
 
 	if (empty($_GET['th']))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_templates}, {string:theme_layers})
@@ -1512,7 +1512,7 @@ function EditTheme()
 			)
 		);
 		$context['themes'] = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if (!isset($context['themes'][$row['id_theme']]))
 				$context['themes'][$row['id_theme']] = array(
@@ -1522,7 +1522,7 @@ function EditTheme()
 				);
 			$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		foreach ($context['themes'] as $key => $theme)
 		{
@@ -1565,7 +1565,7 @@ function EditTheme()
 	$context['session_error'] = false;
 
 	// Get the directory of the theme we are editing.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT value, id_theme
 		FROM {db_prefix}themes
 		WHERE variable = {string:theme_dir}
@@ -1576,8 +1576,8 @@ function EditTheme()
 			'theme_dir' => 'theme_dir',
 		)
 	);
-	list ($theme_dir, $context['theme_id']) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($theme_dir, $context['theme_id']) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	if (!isset($_REQUEST['filename']))
 	{
@@ -1646,7 +1646,7 @@ function EditTheme()
 			// Check for a parse error!
 			if (substr($_REQUEST['filename'], -13) == '.template.php' && is_writable($theme_dir) && @ini_get('display_errors'))
 			{
-				$request = weDB::query('
+				$request = wedb::query('
 					SELECT value
 					FROM {db_prefix}themes
 					WHERE variable = {string:theme_url}
@@ -1657,8 +1657,8 @@ function EditTheme()
 						'theme_url' => 'theme_url',
 					)
 				);
-				list ($theme_url) = weDB::fetch_row($request);
-				weDB::free_result($request);
+				list ($theme_url) = wedb::fetch_row($request);
+				wedb::free_result($request);
 
 				$fp = fopen($theme_dir . '/tmp_' . session_id() . '.php', 'w');
 				fwrite($fp, $_POST['entire_file']);
@@ -1823,7 +1823,7 @@ function CopyTemplate()
 
 	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT th1.value, th1.id_theme, th2.value
 		FROM {db_prefix}themes AS th1
 			LEFT JOIN {db_prefix}themes AS th2 ON (th2.variable = {string:base_theme_dir} AND th2.id_theme = {int:current_theme})
@@ -1836,8 +1836,8 @@ function CopyTemplate()
 			'theme_dir' => 'theme_dir',
 		)
 	);
-	list ($theme_dir, $context['theme_id'], $base_theme_dir) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($theme_dir, $context['theme_id'], $base_theme_dir) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	if (isset($_REQUEST['template']) && preg_match('~[\./\\\\:\0]~', $_REQUEST['template']) == 0)
 	{

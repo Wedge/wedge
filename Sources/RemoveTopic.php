@@ -59,7 +59,7 @@ function RemoveTopic2()
 	if (empty($topic))
 		redirectexit();
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT t.id_member_started, ms.subject, t.approved, b.wedge_type
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
@@ -70,8 +70,8 @@ function RemoveTopic2()
 			'current_topic' => $topic,
 		)
 	);
-	list ($starter, $subject, $approved, $b_type) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($starter, $subject, $approved, $b_type) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	if ($starter == $user_info['id'] && !allowedTo('remove_any') && ($b_type == 'forum' || $user_info['is_mod']))
 		isAllowedTo('remove_own');
@@ -107,7 +107,7 @@ function DeleteMessage()
 	if (empty($topic) && isset($_REQUEST['topic']))
 		$topic = (int) $_REQUEST['topic'];
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT t.id_member_started, m.id_member, m.subject, m.poster_time, m.approved
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = {int:id_msg} AND m.id_topic = {int:current_topic})
@@ -118,8 +118,8 @@ function DeleteMessage()
 			'id_msg' => $_REQUEST['msg'],
 		)
 	);
-	list ($starter, $poster, $subject, $post_time, $approved) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($starter, $poster, $subject, $post_time, $approved) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Verify they can see this!
 	if ($modSettings['postmod_active'] && !$approved && $poster != $user_info['id'])
@@ -207,7 +207,7 @@ function RemoveOldTopics2()
 	}
 
 	// All we're gonna do here is grab the id_topic's and send them to removeTopics().
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT t.id_topic
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
@@ -217,9 +217,9 @@ function RemoveOldTopics2()
 		$condition_params
 	);
 	$topics = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$topics[] = $row['id_topic'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	removeTopics($topics, false, true);
 
@@ -244,7 +244,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	// Decrease the post counts.
 	if ($decreasePostCount)
 	{
-		$requestMembers = weDB::query('
+		$requestMembers = wedb::query('
 			SELECT m.id_member, COUNT(*) AS posts
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -260,18 +260,18 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'is_approved' => 1,
 			)
 		);
-		if (weDB::num_rows($requestMembers) > 0)
+		if (wedb::num_rows($requestMembers) > 0)
 		{
-			while ($rowMembers = weDB::fetch_assoc($requestMembers))
+			while ($rowMembers = wedb::fetch_assoc($requestMembers))
 				updateMemberData($rowMembers['id_member'], array('posts' => 'posts - ' . $rowMembers['posts']));
 		}
-		weDB::free_result($requestMembers);
+		wedb::free_result($requestMembers);
 	}
 
 	// Recycle topics that aren't in the recycle board...
 	if (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 && !$ignoreRecycling)
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_topic, id_board, unapproved_posts, approved
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:topics})
@@ -282,16 +282,16 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'topics' => $topics,
 			)
 		);
-		if (weDB::num_rows($request) > 0)
+		if (wedb::num_rows($request) > 0)
 		{
 			// Get topics that will be recycled.
 			$recycleTopics = array();
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 			{
 				$recycleTopics[] = $row['id_topic'];
 
 				// Set the id_previous_board for this topic - and make it not sticky.
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}topics
 					SET id_previous_board = {int:id_previous_board}, is_sticky = {int:not_sticky}
 					WHERE id_topic = {int:id_topic}',
@@ -302,10 +302,10 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 					)
 				);
 			}
-			weDB::free_result($request);
+			wedb::free_result($request);
 
 			// Mark recycled topics as recycled.
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}messages
 				SET icon = {string:recycled}
 				WHERE id_topic IN ({array_int:recycle_topics})',
@@ -322,7 +322,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			// Close reports that are being recycled.
 			loadSource('ModerationCenter');
 
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}log_reported
 				SET closed = {int:is_closed}
 				WHERE id_topic IN ({array_int:recycle_topics})',
@@ -339,7 +339,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			$topics = array_diff($topics, $recycleTopics);
 		}
 		else
-			weDB::free_result($request);
+			wedb::free_result($request);
 	}
 
 	// Still topics left to delete?
@@ -349,7 +349,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	$adjustBoards = array();
 
 	// Find out how many posts we are deleting.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_board, approved, COUNT(*) AS num_topics, SUM(unapproved_posts) AS unapproved_posts,
 			SUM(num_replies) AS num_replies
 		FROM {db_prefix}topics
@@ -359,7 +359,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (!isset($adjustBoards[$row['id_board']]['num_posts']))
 		{
@@ -381,12 +381,12 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		else
 			$adjustBoards[$row['id_board']]['unapproved_topics'] += $row['num_topics'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Decrease the posts/topics...
 	foreach ($adjustBoards as $stats)
 	{
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}boards
 			SET
 				num_posts = CASE WHEN {int:num_posts} > num_posts THEN 0 ELSE num_posts - {int:num_posts} END,
@@ -405,7 +405,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	}
 
 	// Remove Polls.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_poll
 		FROM {db_prefix}topics
 		WHERE id_topic IN ({array_int:topics})
@@ -417,27 +417,27 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		)
 	);
 	$polls = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$polls[] = $row['id_poll'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	if (!empty($polls))
 	{
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}polls
 			WHERE id_poll IN ({array_int:polls})',
 			array(
 				'polls' => $polls,
 			)
 		);
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}poll_choices
 			WHERE id_poll IN ({array_int:polls})',
 			array(
 				'polls' => $polls,
 			)
 		);
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}log_polls
 			WHERE id_poll IN ({array_int:polls})',
 			array(
@@ -461,7 +461,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 
 		$words = array();
 		$messages = array();
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_msg, body
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})',
@@ -469,16 +469,16 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'topics' => $topics,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			$words = array_merge($words, text2words($row['body'], $customIndexSettings['bytes_per_word'], true));
 			$messages[] = $row['id_msg'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 		$words = array_unique($words);
 
 		if (!empty($words) && !empty($messages))
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}log_search_words
 				WHERE id_word IN ({array_int:word_list})
 					AND id_msg IN ({array_int:message_list})',
@@ -490,49 +490,49 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	}
 
 	// Delete anything related to the topic.
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}calendar
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_topics
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_notify
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}topics
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}log_search_subjects
 		WHERE id_topic IN ({array_int:topics})',
 		array(
 			'topics' => $topics,
 		)
 	);
-	weDB::query('
+	wedb::query('
 		DELETE FROM {db_prefix}pretty_topic_urls
 		WHERE id_topic IN ({array_int:topics})',
 		array(
@@ -541,7 +541,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	);
 	if (!empty($modSettings['pretty_enable_cache']))
 	{
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}pretty_urls_cache
 			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
 			array()
@@ -570,7 +570,7 @@ function removeMessage($message, $decreasePostCount = true)
 	if (empty($message) || !is_numeric($message))
 		return false;
 
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT
 			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
@@ -585,10 +585,10 @@ function removeMessage($message, $decreasePostCount = true)
 			'id_msg' => $message,
 		)
 	);
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 		return false;
-	$row = weDB::fetch_assoc($request);
-	weDB::free_result($request);
+	$row = wedb::fetch_assoc($request);
+	wedb::free_result($request);
 
 	if (empty($board) || $row['id_board'] != $board)
 	{
@@ -658,7 +658,7 @@ function removeMessage($message, $decreasePostCount = true)
 	}
 
 	// Close any moderation reports for this message.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}log_reported
 		SET closed = {int:is_closed}
 		WHERE id_msg = {int:id_msg}',
@@ -667,7 +667,7 @@ function removeMessage($message, $decreasePostCount = true)
 			'id_msg' => $message,
 		)
 	);
-	if (weDB::affected_rows() != 0)
+	if (wedb::affected_rows() != 0)
 	{
 		loadSource('ModerationCenter');
 		updateSettings(array('last_mod_report_action' => time()));
@@ -717,7 +717,7 @@ function removeMessage($message, $decreasePostCount = true)
 	if ($row['id_last_msg'] == $message)
 	{
 		// Find the last message, set it, and decrease the post count.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_msg, id_member
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:id_topic}
@@ -729,10 +729,10 @@ function removeMessage($message, $decreasePostCount = true)
 				'id_msg' => $message,
 			)
 		);
-		$row2 = weDB::fetch_assoc($request);
-		weDB::free_result($request);
+		$row2 = wedb::fetch_assoc($request);
+		wedb::free_result($request);
 
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}topics
 			SET
 				id_last_msg = {int:id_last_msg},
@@ -751,7 +751,7 @@ function removeMessage($message, $decreasePostCount = true)
 	}
 	// Only decrease post counts.
 	else
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}topics
 			SET ' . ($row['approved'] ? '
 				num_replies = CASE WHEN num_replies = {int:no_replies} THEN 0 ELSE num_replies - 1 END' : '
@@ -772,7 +772,7 @@ function removeMessage($message, $decreasePostCount = true)
 	if (!empty($modSettings['recycle_enable']) && $row['id_board'] != $modSettings['recycle_board'] && $row['icon'] != 'recycled')
 	{
 		// Check if the recycle board exists and if so get the read status.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT (IFNULL(lb.id_msg, 0) >= b.id_msg_updated) AS is_seen, id_last_msg
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
@@ -782,13 +782,13 @@ function removeMessage($message, $decreasePostCount = true)
 				'recycle_board' => $modSettings['recycle_board'],
 			)
 		);
-		if (weDB::num_rows($request) == 0)
+		if (wedb::num_rows($request) == 0)
 			fatal_lang_error('recycle_no_valid_board');
-		list ($isRead, $last_board_msg) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($isRead, $last_board_msg) = wedb::fetch_row($request);
+		wedb::free_result($request);
 
 		// Is there an existing topic in the recycle board to group this post with?
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_topic, id_first_msg, id_last_msg
 			FROM {db_prefix}topics
 			WHERE id_previous_topic = {int:id_previous_topic}
@@ -798,12 +798,12 @@ function removeMessage($message, $decreasePostCount = true)
 				'recycle_board' => $modSettings['recycle_board'],
 			)
 		);
-		list ($id_recycle_topic, $first_topic_msg, $last_topic_msg) = weDB::fetch_row($request);
-		weDB::free_result($request);
+		list ($id_recycle_topic, $first_topic_msg, $last_topic_msg) = wedb::fetch_row($request);
+		wedb::free_result($request);
 
 		// Insert a new topic in the recycle board if $id_recycle_topic is empty.
 		if (empty($id_recycle_topic))
-			weDB::insert('',
+			wedb::insert('',
 				'{db_prefix}topics',
 				array(
 					'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
@@ -817,12 +817,12 @@ function removeMessage($message, $decreasePostCount = true)
 			);
 
 		// Capture the ID of the new topic...
-		$topicID = empty($id_recycle_topic) ? weDB::insert_id() : $id_recycle_topic;
+		$topicID = empty($id_recycle_topic) ? wedb::insert_id() : $id_recycle_topic;
 
 		// If the topic creation went successful, move the message.
 		if ($topicID > 0)
 		{
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}messages
 				SET
 					id_topic = {int:id_topic},
@@ -840,7 +840,7 @@ function removeMessage($message, $decreasePostCount = true)
 			);
 
 			// Take any reported posts with us...
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}log_reported
 				SET
 					id_topic = {int:id_topic},
@@ -855,7 +855,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 			// Mark recycled topic as read.
 			if (!$user_info['is_guest'])
-				weDB::insert('replace',
+				wedb::insert('replace',
 					'{db_prefix}log_topics',
 					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
 					array($topicID, $user_info['id'], $modSettings['maxMsgID']),
@@ -864,7 +864,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 			// Mark recycle board as seen, if it was marked as seen before.
 			if (!empty($isRead) && !$user_info['is_guest'])
-				weDB::insert('replace',
+				wedb::insert('replace',
 					'{db_prefix}log_boards',
 					array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
 					array($modSettings['recycle_board'], $user_info['id'], $modSettings['maxMsgID']),
@@ -872,7 +872,7 @@ function removeMessage($message, $decreasePostCount = true)
 				);
 
 			// Add one topic and post to the recycle bin board.
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}boards
 				SET
 					num_topics = num_topics + {int:num_topics_inc},
@@ -888,7 +888,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 			// Let's increase the num_replies, and the first/last message ID as appropriate.
 			if (!empty($id_recycle_topic))
-				weDB::query('
+				wedb::query('
 					UPDATE {db_prefix}topics
 					SET num_replies = num_replies + 1' .
 						($message > $last_topic_msg ? ', id_last_msg = {int:id_merged_msg}' : '') .
@@ -909,7 +909,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 		// If it wasn't approved don't keep it in the queue.
 		if (!$row['approved'])
-			weDB::query('
+			wedb::query('
 				DELETE FROM {db_prefix}approval_queue
 				WHERE id_msg = {int:id_msg}
 					AND id_attach = {int:id_attach}',
@@ -920,7 +920,7 @@ function removeMessage($message, $decreasePostCount = true)
 			);
 	}
 
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}boards
 		SET ' . ($row['approved'] ? '
 			num_posts = CASE WHEN num_posts = {int:no_posts} THEN 0 ELSE num_posts - 1 END' : '
@@ -942,7 +942,7 @@ function removeMessage($message, $decreasePostCount = true)
 	if (!$recycle)
 	{
 		// Remove the message!
-		weDB::query('
+		wedb::query('
 			DELETE FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}',
 			array(
@@ -955,7 +955,7 @@ function removeMessage($message, $decreasePostCount = true)
 			$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
 			$words = text2words($row['body'], $customIndexSettings['bytes_per_word'], true);
 			if (!empty($words))
-				weDB::query('
+				wedb::query('
 					DELETE FROM {db_prefix}log_search_words
 					WHERE id_word IN ({array_int:word_list})
 						AND id_msg = {int:id_msg}',
@@ -1020,7 +1020,7 @@ function RestoreTopic()
 			$msgs[$k] = (int) $msg;
 
 		// Get the id_previous_board and id_previous_topic.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT m.id_topic, m.id_msg, m.id_board, m.subject, m.id_member, t.id_previous_board, t.id_previous_topic,
 				t.id_first_msg, b.count_posts, IFNULL(pt.id_board, 0) AS possible_prev_board
 			FROM {db_prefix}messages AS m
@@ -1035,7 +1035,7 @@ function RestoreTopic()
 
 		$actioned_messages = array();
 		$previous_topics = array();
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			// Restoring the first post means topic.
 			if ($row['id_msg'] == $row['id_first_msg'] && $row['id_previous_topic'] == $row['id_topic'])
@@ -1067,7 +1067,7 @@ function RestoreTopic()
 			if ($row['id_member'])
 				$actioned_messages[$row['id_previous_topic']]['members'][] = $row['id_member'];
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Check for topics we are going to fully restore.
 		foreach ($actioned_messages as $topic => $data)
@@ -1077,7 +1077,7 @@ function RestoreTopic()
 		// Load any previous topics to check they exist.
 		if (!empty($previous_topics))
 		{
-			$request = weDB::query('
+			$request = wedb::query('
 				SELECT t.id_topic, t.id_board, m.subject
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -1087,12 +1087,12 @@ function RestoreTopic()
 				)
 			);
 			$previous_topics = array();
-			while ($row = weDB::fetch_assoc($request))
+			while ($row = wedb::fetch_assoc($request))
 				$previous_topics[$row['id_topic']] = array(
 					'board' => $row['id_board'],
 					'subject' => $row['subject'],
 				);
-			weDB::free_result($request);
+			wedb::free_result($request);
 		}
 
 		// Restore each topic.
@@ -1123,7 +1123,7 @@ function RestoreTopic()
 
 		// Put the icons back.
 		if (!empty($messages))
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}messages
 				SET icon = {string:icon}
 				WHERE id_msg IN ({array_int:messages})',
@@ -1145,7 +1145,7 @@ function RestoreTopic()
 	if (!empty($topics_to_restore))
 	{
 		// Let's get the data for these topics.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT t.id_topic, t.id_previous_board, t.id_board, t.id_first_msg, m.subject
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -1154,7 +1154,7 @@ function RestoreTopic()
 				'topics' => $topics_to_restore,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			// We can only restore if the previous board is set.
 			if (empty($row['id_previous_board']))
@@ -1167,7 +1167,7 @@ function RestoreTopic()
 			moveTopics($row['id_topic'], $row['id_previous_board']);
 
 			// Let's remove the recycled icon.
-			weDB::query('
+			wedb::query('
 				UPDATE {db_prefix}messages
 				SET icon = {string:icon}
 				WHERE id_topic = {int:id_topic}',
@@ -1178,7 +1178,7 @@ function RestoreTopic()
 			);
 
 			// Let's see if the board that we are returning to has post count enabled.
-			$request2 = weDB::query('
+			$request2 = wedb::query('
 				SELECT count_posts
 				FROM {db_prefix}boards
 				WHERE id_board = {int:board}',
@@ -1186,13 +1186,13 @@ function RestoreTopic()
 					'board' => $row['id_previous_board'],
 				)
 			);
-			list ($count_posts) = weDB::fetch_row($request2);
-			weDB::free_result($request2);
+			list ($count_posts) = wedb::fetch_row($request2);
+			wedb::free_result($request2);
 
 			if (empty($count_posts))
 			{
 				// Let's get the members that need their post count restored.
-				$request2 = weDB::query('
+				$request2 = wedb::query('
 					SELECT id_member, COUNT(id_msg) AS post_count
 					FROM {db_prefix}messages
 					WHERE id_topic = {int:topic}
@@ -1204,15 +1204,15 @@ function RestoreTopic()
 					)
 				);
 
-				while ($member = weDB::fetch_assoc($request2))
+				while ($member = wedb::fetch_assoc($request2))
 					updateMemberData($member['id_member'], array('posts' => 'posts + ' . $member['post_count']));
-				weDB::free_result($request2);
+				wedb::free_result($request2);
 			}
 
 			// Log it.
 			logAction('restore_topic', array('topic' => $row['id_topic'], 'board' => $row['id_board'], 'board_to' => $row['id_previous_board']));
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	// Didn't find some things?
@@ -1239,7 +1239,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 		$msgs[$key] = (int) $msg;
 
 	// Get the source information.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT t.id_board, t.id_first_msg, t.num_replies, t.unapproved_posts
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -1248,11 +1248,11 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			'from_topic' => $from_topic,
 		)
 	);
-	list ($from_board, $from_first_msg, $from_replies, $from_unapproved_posts) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($from_board, $from_first_msg, $from_replies, $from_unapproved_posts) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Get some target topic and board stats.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT t.id_board, t.id_first_msg, t.num_replies, t.unapproved_posts, b.count_posts
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -1261,14 +1261,14 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			'target_topic' => $target_topic,
 		)
 	);
-	list ($target_board, $target_first_msg, $target_replies, $target_unapproved_posts, $count_posts) = weDB::fetch_row($request);
-	weDB::free_result($request);
+	list ($target_board, $target_first_msg, $target_replies, $target_unapproved_posts, $count_posts) = wedb::fetch_row($request);
+	wedb::free_result($request);
 
 	// Let's see if the board that we are returning to has post count enabled.
 	if (empty($count_posts))
 	{
 		// Let's get the members that need their post count restored.
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_member
 			FROM {db_prefix}messages
 			WHERE id_msg IN ({array_int:messages})
@@ -1279,12 +1279,12 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			)
 		);
 
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			updateMemberData($row['id_member'], array('posts' => '+'));
 	}
 
 	// Time to move the messages.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}messages
 		SET
 			id_topic = {int:target_topic},
@@ -1305,7 +1305,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 		'unapproved_posts' => 0,
 		'id_first_msg' => 9999999999,
 	);
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT MIN(id_msg) AS id_first_msg, MAX(id_msg) AS id_last_msg, COUNT(*) AS message_count, approved
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:target_topic}
@@ -1316,7 +1316,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			'target_topic' => $target_topic,
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if ($row['id_first_msg'] < $target_topic_data['id_first_msg'])
 			$target_topic_data['id_first_msg'] = $row['id_first_msg'];
@@ -1326,10 +1326,10 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 		else
 			$target_topic_data['num_replies'] = max(0, $row['message_count'] - 1);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// We have a new post count for the board.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}boards
 		SET
 			num_posts = num_posts + {int:diff_replies},
@@ -1343,7 +1343,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 	);
 
 	// In some cases we merged the only post in a topic so the topic data is left behind in the topic table.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_topic
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:from_topic}',
@@ -1354,12 +1354,12 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 
 	// Remove the topic if it doesn't have any messages.
 	$topic_exists = true;
-	if (weDB::num_rows($request) == 0)
+	if (wedb::num_rows($request) == 0)
 	{
 		removeTopics($from_topic, false, true);
 		$topic_exists = false;
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Recycled topic.
 	if ($topic_exists == true)
@@ -1370,7 +1370,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			'unapproved_posts' => 0,
 			'id_first_msg' => 9999999999,
 		);
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT MIN(id_msg) AS id_first_msg, MAX(id_msg) AS id_last_msg, COUNT(*) AS message_count, approved, subject
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:from_topic}
@@ -1381,7 +1381,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 				'from_topic' => $from_topic,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 		{
 			if ($row['id_first_msg'] < $source_topic_data['id_first_msg'])
 				$source_topic_data['id_first_msg'] = $row['id_first_msg'];
@@ -1391,10 +1391,10 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 			else
 				$source_topic_data['num_replies'] = max(0, $row['message_count'] - 1);
 		}
-		weDB::free_result($request);
+		wedb::free_result($request);
 
 		// Update the topic details for the source topic.
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}topics
 			SET
 				id_first_msg = {int:id_first_msg},
@@ -1412,7 +1412,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 		);
 
 		// We have a new post count for the source board.
-		weDB::query('
+		wedb::query('
 			UPDATE {db_prefix}boards
 			SET
 				num_posts = num_posts + {int:diff_replies},
@@ -1427,7 +1427,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 	}
 
 	// Finally get around to updating the destination topic, now all indexes etc on the source are fixed.
-	weDB::query('
+	wedb::query('
 		UPDATE {db_prefix}topics
 		SET
 			id_first_msg = {int:id_first_msg},
@@ -1460,7 +1460,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 
 	if (!empty($cache_updates))
 	{
-		$request = weDB::query('
+		$request = wedb::query('
 			SELECT id_topic, subject
 			FROM {db_prefix}messages
 			WHERE id_msg IN ({array_int:first_messages})',
@@ -1468,9 +1468,9 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 				'first_messages' => $cache_updates,
 			)
 		);
-		while ($row = weDB::fetch_assoc($request))
+		while ($row = wedb::fetch_assoc($request))
 			updateStats('subject', $row['id_topic'], $row['subject']);
-		weDB::free_result($request);
+		wedb::free_result($request);
 	}
 
 	updateLastMessages(array($from_board, $target_board));

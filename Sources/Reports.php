@@ -199,7 +199,7 @@ function BoardReport()
 	loadPermissionProfiles();
 
 	// Get every moderator.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT mods.id_board, mods.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)',
@@ -207,21 +207,21 @@ function BoardReport()
 		)
 	);
 	$moderators = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$moderators[$row['id_board']][] = $row['real_name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Get all the possible membergroups!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		array(
 		)
 	);
 	$groups = array(-1 => $txt['guest_title'], 0 => $txt['full_member']);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// All the fields we'll show.
 	$boardSettings = array(
@@ -241,7 +241,7 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile,
 			c.name AS cat_name, IFNULL(par.name, {string:text_none}) AS parent_name, IFNULL(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b
@@ -254,7 +254,7 @@ function BoardReport()
 		)
 	);
 	$boards = array(0 => array('name' => $txt['global_boards']));
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Each board has it's own table.
 		newTable($row['name'], '', 'left', 'auto', 'left', 200, 'left');
@@ -292,7 +292,7 @@ function BoardReport()
 		// Next add the main data.
 		addData($boardData);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 }
 
 // Generate a report on the current permissions by board and membergroup.
@@ -328,7 +328,7 @@ function BoardPermissionsReport()
 		$group_clause = '1=1';
 
 	// Fetch all the board names.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_board, name, id_profile
 		FROM {db_prefix}boards
 		WHERE ' . $board_clause . '
@@ -338,7 +338,7 @@ function BoardPermissionsReport()
 		)
 	);
 	$profiles = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$boards[$row['id_board']] = array(
 			'name' => $row['name'],
@@ -346,10 +346,10 @@ function BoardPermissionsReport()
 		);
 		$profiles[] = $row['id_profile'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Get all the possible membergroups, except admin!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
@@ -367,9 +367,9 @@ function BoardPermissionsReport()
 		$member_groups = array('col' => '', -1 => $txt['membergroups_guests'], 0 => $txt['membergroups_members']);
 	else
 		$member_groups = array('col' => '');
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$member_groups[$row['id_group']] = $row['group_name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Make sure that every group is represented - plus in rows!
 	setKeys('rows', $member_groups);
@@ -377,7 +377,7 @@ function BoardPermissionsReport()
 	// Cache every permission setting, to make sure we don't miss any allows.
 	$permissions = array();
 	$board_permissions = array();
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
@@ -390,7 +390,7 @@ function BoardPermissionsReport()
 			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		foreach ($boards as $id => $board)
 			if ($board['profile'] == $row['id_profile'])
@@ -405,7 +405,7 @@ function BoardPermissionsReport()
 			);
 		}
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Now cycle through the board permissions array... lots to do ;)
 	foreach ($board_permissions as $board => $groups)
@@ -470,13 +470,13 @@ function MemberGroupsReport()
 	global $context, $txt, $settings, $modSettings, $smcFunc;
 
 	// Fetch all the board names.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_board, name, member_groups, id_profile
 		FROM {db_prefix}boards',
 		array(
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		if (trim($row['member_groups']) == '')
 			$groups = array(1);
@@ -490,7 +490,7 @@ function MemberGroupsReport()
 			'groups' => $groups,
 		);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Standard settings.
 	$mgSettings = array(
@@ -517,7 +517,7 @@ function MemberGroupsReport()
 	addData($mgSettings);
 
 	// Now start cycling the membergroups!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.stars,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
@@ -550,9 +550,9 @@ function MemberGroupsReport()
 			'stars' => ''
 		),
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$rows[] = $row;
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	foreach ($rows as $row)
 	{
@@ -593,7 +593,7 @@ function GroupPermissionsReport()
 		$clause = 'id_group != {int:moderator_group}';
 
 	// Get all the possible membergroups, except admin!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
@@ -612,9 +612,9 @@ function GroupPermissionsReport()
 		$groups = array('col' => '', -1 => $txt['membergroups_guests'], 0 => $txt['membergroups_members']);
 	else
 		$groups = array('col' => '');
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$groups[$row['id_group']] = $row['group_name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Make sure that every group is represented!
 	setKeys('rows', $groups);
@@ -629,7 +629,7 @@ function GroupPermissionsReport()
 	addSeparator($txt['board_perms_permission']);
 
 	// Now the big permission fetch!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, add_deny, permission
 		FROM {db_prefix}permissions
 		WHERE ' . $clause . (empty($modSettings['permission_enable_deny']) ? '
@@ -642,7 +642,7 @@ function GroupPermissionsReport()
 		)
 	);
 	$lastPermission = null;
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// If this is a new permission flush the last row.
 		if ($row['permission'] != $lastPermission)
@@ -663,7 +663,7 @@ function GroupPermissionsReport()
 		else
 			$curData[$row['id_group']] = '<span style="color: red;">' . $txt['board_perms_deny'] . '</span>';
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Flush the last data!
 	addData($curData);
@@ -677,19 +677,19 @@ function StaffReport()
 	loadSource('Subs-Members');
 
 	// Fetch all the board names.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_board, name
 		FROM {db_prefix}boards',
 		array(
 		)
 	);
 	$boards = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$boards[$row['id_board']] = $row['name'];
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Get every moderator.
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT mods.id_board, mods.id_member
 		FROM {db_prefix}moderators AS mods',
 		array(
@@ -697,12 +697,12 @@ function StaffReport()
 	);
 	$moderators = array();
 	$local_mods = array();
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		$moderators[$row['id_member']][] = $row['id_board'];
 		$local_mods[$row['id_member']] = $row['id_member'];
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// Get a list of global moderators (i.e. members with moderation powers).
 	$global_mods = array_intersect(membersAllowedTo('moderate_board', 0), membersAllowedTo('approve_posts', 0), membersAllowedTo('remove_any', 0), membersAllowedTo('modify_any', 0));
@@ -718,16 +718,16 @@ function StaffReport()
 		fatal_lang_error('report_error_too_many_staff');
 
 	// Get all the possible membergroups!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		array(
 		)
 	);
 	$groups = array(0 => $txt['full_member']);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
-	weDB::free_result($request);
+	wedb::free_result($request);
 
 	// All the fields we'll show.
 	$staffSettings = array(
@@ -741,7 +741,7 @@ function StaffReport()
 	setKeys('cols');
 
 	// Get each member!
-	$request = weDB::query('
+	$request = wedb::query('
 		SELECT id_member, real_name, id_group, posts, last_login
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:staff_list})
@@ -750,7 +750,7 @@ function StaffReport()
 			'staff_list' => $allStaff,
 		)
 	);
-	while ($row = weDB::fetch_assoc($request))
+	while ($row = wedb::fetch_assoc($request))
 	{
 		// Each member gets their own table!.
 		newTable($row['real_name'], '', 'left', 'auto', 'left', 200, 'center');
@@ -784,7 +784,7 @@ function StaffReport()
 		// Next add the main data.
 		addData($staffData);
 	}
-	weDB::free_result($request);
+	wedb::free_result($request);
 }
 
 // This function creates a new table of data, most functions will only use it once.
