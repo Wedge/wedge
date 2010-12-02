@@ -71,7 +71,7 @@ function template_main()
 	echo '
 							<li id="pollMoreOptions"></li>
 						</ul>
-						<strong><a href="#" data-onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
+						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>
 					<fieldset id="poll_options">
 						<legend>', $txt['poll_options'], ':</legend>
@@ -130,7 +130,7 @@ function template_main()
 					</fieldset>';
 	echo '
 					<div class="righttext padding">
-						<input type="submit" name="post" value="', $txt['save'], '" data-onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />
+						<input type="submit" name="post" value="', $txt['save'], '" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />
 					</div>
 				</div>
 			</div>

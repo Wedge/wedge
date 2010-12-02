@@ -611,7 +611,7 @@ function ViewMemberlist()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
@@ -958,7 +958,7 @@ function MembersAwaitingActivation()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -990,7 +990,7 @@ function MembersAwaitingActivation()
 						[<a href="' . $scripturl . '?action=admin;area=viewmembers;sa=browse;showdupes=' . ($context['show_duplicates'] ? 0 : 1) . ';type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . ($context['show_duplicates'] ? $txt['dont_check_for_duplicate'] : $txt['check_for_duplicate']) . '</a>]
 					</div>
 					<div class="floatright">
-						<select name="todo" data-onchange="onSelectChange();">
+						<select name="todo" onchange="onSelectChange();">
 							' . $allowed_actions . '
 						</select>
 						<noscript><input type="submit" value="' . $txt['go'] . '" class="button_submit" /></noscript>

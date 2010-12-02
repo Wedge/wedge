@@ -2495,15 +2495,15 @@ class wedgeEditor
 		global $context, $settings, $options, $txt, $modSettings, $scripturl;
 
 		echo '
-		<input type="submit" value="', isset($this->labels['post_button']) ? $this->labels['post_button'] : $txt['post'], '" tabindex="', $context['tabindex']++, '" data-onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />';
+		<input type="submit" value="', isset($this->labels['post_button']) ? $this->labels['post_button'] : $txt['post'], '" tabindex="', $context['tabindex']++, '" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />';
 
 		if ($this->preview_type)
 			echo '
-		<input type="submit" name="preview" value="', isset($this->labels['preview_button']) ? $this->labels['preview_button'] : $txt['preview'], '" tabindex="', $context['tabindex']++, '" data-onclick="', $this->preview_type == 2 ? 'return event.ctrlKey || previewPost();' : 'return submitThisOnce(this);', '" accesskey="p" class="button_submit" />';
+		<input type="submit" name="preview" value="', isset($this->labels['preview_button']) ? $this->labels['preview_button'] : $txt['preview'], '" tabindex="', $context['tabindex']++, '" onclick="', $this->preview_type == 2 ? 'return event.ctrlKey || previewPost();' : 'return submitThisOnce(this);', '" accesskey="p" class="button_submit" />';
 
 		if ($context['show_spellchecking'])
 			echo '
-		<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" data-onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="button_submit" />';
+		<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="button_submit" />';
 	}
 
 }

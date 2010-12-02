@@ -418,7 +418,7 @@ function template_unapproved_attachments()
 					<th>', $txt['mc_unapproved_attach_size'], '</th>
 					<th>', $txt['mc_unapproved_attach_poster'], '</th>
 					<th>', $txt['date'], '</th>
-					<th class="nowrap center"><input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
+					<th class="nowrap center"><input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" checked="checked" /></th>
 				</tr>
 			</thead>
 			<tbody>';

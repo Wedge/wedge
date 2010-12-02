@@ -180,15 +180,15 @@ function template_registration_form()
 					<dl class="register_form" id="authentication_group">
 						<dt>
 							<strong>', $txt['authenticate_label'], ':</strong>
-							<a href="', $scripturl, '?action=helpadmin;help=register_openid" data-onclick="return reqWin(this);" class="help">(?)</a>
+							<a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a>
 						</dt>
 						<dd>
 							<label for="auth_pass" id="option_auth_pass">
-								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '" ', empty($context['openid']) ? 'checked="checked" ' : '', ' data-onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '" ', empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
 								', $txt['authenticate_password'], '
 							</label>
 							<label for="auth_openid" id="option_auth_openid">
-								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '" ', !empty($context['openid']) ? 'checked="checked" ' : '', ' data-onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '" ', !empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
 								', $txt['authenticate_openid'], '
 							</label>
 						</dd>
@@ -593,7 +593,7 @@ function template_admin_register()
 							<strong><label for="emailActivate_check">', $txt['admin_register_email_activate'], ':</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked="checked"' : '', ' data-onclick="onCheckChange();" class="input_check" />
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked="checked"' : '', ' onclick="onCheckChange();" class="input_check" />
 						</dd>
 					</dl>
 					<div class="righttext">

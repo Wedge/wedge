@@ -156,9 +156,9 @@ function MembergroupIndex()
 
 						// Add a help option for moderator and administrator.
 						if ($rowData[\'id_group\'] == 1)
-							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" data-onclick="return reqWin(this);">?</a>)\', $scripturl);
+							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqWin(this);">?</a>)\', $scripturl);
 						elseif ($rowData[\'id_group\'] == 3)
-							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" data-onclick="return reqWin(this);">?</a>)\', $scripturl);
+							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqWin(this);">?</a>)\', $scripturl);
 
 						return $group_name;
 					'),

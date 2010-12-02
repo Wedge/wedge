@@ -93,7 +93,7 @@ function template_main()
 	// Start the form and display the link tree.
 
 	echo '
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" data-onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -188,7 +188,7 @@ function template_main()
 						', $txt['message_icon'], ':
 					</dt>
 					<dd>
-						<select name="icon" id="icon" data-onchange="showimage()">';
+						<select name="icon" id="icon" onchange="showimage()">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
@@ -212,7 +212,7 @@ function template_main()
 						<input type="text" name="evtitle" maxlength="60" size="60" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" id="year" tabindex="', $context['tabindex']++, '" data-onchange="generateDays();">';
+							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
 
 		// Show a list of all the years we allow...
 		for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -222,7 +222,7 @@ function template_main()
 		echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" data-onchange="generateDays();">';
+							<select name="month" id="month" onchange="generateDays();">';
 
 		// There are 12 months per year - ensure that they all get listed.
 		for ($month = 1; $month <= 12; $month++)
@@ -324,7 +324,7 @@ function template_main()
 		echo '
 							<li id="pollMoreOptions"></li>
 						</ul>
-						<strong><a href="#" data-onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
+						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>
 					<fieldset id="poll_options">
 						<legend>', $txt['poll_options'], '</legend>
@@ -340,7 +340,7 @@ function template_main()
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" data-onchange="pollOptions();" maxlength="4" class="input_text" /> ', $txt['days_word'], '
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4" class="input_text" /> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
@@ -420,7 +420,7 @@ function template_main()
 		foreach ($context['current_attachments'] as $attachment)
 			echo '
 					<dd class="smalltext">
-						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" data-onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
+						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id= "attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
 					</dd>';
 		echo '
 				</dl>';
@@ -653,7 +653,7 @@ function template_main()
 
 	if ($context['can_quote'])
 		add_js('
-				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
+				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
 
 	add_js('
 				newPostsHTML += \'<br class="clear" />\';
@@ -757,7 +757,7 @@ function template_main()
 			if ($context['can_quote'])
 				echo '
 					<ul class="reset smalltext quickbuttons" id="msg_', $post['id'], '_quote">
-						<li class="quote_button"><a href="#postmodify" data-onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
+						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
 					</ul>';
 
 			echo '

@@ -172,7 +172,7 @@ function ViewModlog()
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
 		'id' => 'moderation_log_list',
-		'title' => '<a href="' . $scripturl . '?action=helpadmin;help=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" data-onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" class="top" /></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
+		'title' => '<a href="' . $scripturl . '?action=helpadmin;help=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" class="top" /></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
 		'width' => '100%',
 		'items_per_page' => $context['displaypage'],
 		'no_items_label' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin_log_' : '') . 'no_entries_found'],
@@ -268,7 +268,7 @@ function ViewModlog()
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" name="all" class="input_check" data-onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" name="all" class="input_check" onclick="invertAll(this, this.form);" />',
 				),
 				'data' => array(
 					'function' => create_function('$entry', '

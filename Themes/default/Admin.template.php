@@ -553,7 +553,7 @@ function template_edit_censored()
 				<noscript>
 					<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /></div>
 				</noscript>
-				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#" data-onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
+				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
 	add_js('
 	document.getElementById("moreCensoredWords_link").style.display = "";

@@ -83,7 +83,7 @@ function template_event_post()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" data-onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
+		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" onsubmit="submitonce(this); smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
 
 	if (!empty($context['event']['new']))
 		echo '
@@ -120,7 +120,7 @@ function template_event_post()
 						<input type="text" name="evtitle" maxlength="70" size="70" value="', $context['event']['title'], '" class="input_text" />
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
-							<select name="year" data-onchange="generateDays();">';
+							<select name="year" onchange="generateDays();">';
 
 	// Show a list of all the years we allow...
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
@@ -130,7 +130,7 @@ function template_event_post()
 	echo '
 							</select>
 							', $txt['calendar_month'], '
-							<select name="month" id="month" data-onchange="generateDays();">';
+							<select name="month" id="month" onchange="generateDays();">';
 
 	// There are 12 months per year - ensure that they all get listed.
 	for ($month = 1; $month <= 12; $month++)
@@ -186,7 +186,7 @@ function template_event_post()
 								</li>
 								<li>
 									', $txt['calendar_post_in'], '
-									<select id="board" name="board" data-onchange="this.form.submit();">';
+									<select id="board" name="board" onchange="this.form.submit();">';
 		foreach ($context['event']['categories'] as $category)
 		{
 			echo '
@@ -344,7 +344,7 @@ function template_show_month_grid($grid_name)
 
 						// Stop at ten?
 						if ($count == 10 && $use_js_hide)
-							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br /><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" data-onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
+							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br /><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
 
 						$count++;
 					}

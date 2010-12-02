@@ -197,7 +197,7 @@ function BrowseMailQueue()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" data-onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '

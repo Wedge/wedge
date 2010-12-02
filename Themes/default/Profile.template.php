@@ -635,7 +635,7 @@ function template_trackActivity()
 				<dl class="noborder">
 					<dt>
 						', $txt['most_recent_ip'], ':', (empty($context['last_ip2']) ? '' : '
-						<div class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" data-onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</div>'), '
+						<div class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</div>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['last_ip'], ';u=', $context['member']['id'], '">', $context['last_ip'], '</a>';
@@ -2732,8 +2732,8 @@ function template_authentication_method()
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" data-onclick="return reqWin(this);" class="help">(?)</a></em><br />
-						<input type="radio" data-onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
+						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br />
+						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked="checked"' : '', ' class="input_radio" /><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>
 						<dl id="auth_openid_div">

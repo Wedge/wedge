@@ -170,7 +170,7 @@ function template_main()
 			// Show a "select all" box for quick moderation?
 			if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
 				echo '
-					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" data-onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" /></th>';
+					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" /></th>';
 
 			// If it's on in "image" mode, don't show anything but the column.
 			elseif (!empty($context['can_quick_mod']))
@@ -241,7 +241,7 @@ function template_main()
 						<img src="', $topic['first_post']['icon_url'], '" alt="" />
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? '_my' : '', '">
-						<div ', (!empty($topic['quick_mod']['modify']) ? 'id="topic_' . $topic['first_post']['id'] . '" data-onmouseout="mouse_on_div = 0;" data-onmouseover="mouse_on_div = 1;" data-ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
+						<div ', (!empty($topic['quick_mod']['modify']) ? 'id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_sticky'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)

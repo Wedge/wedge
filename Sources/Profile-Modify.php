@@ -594,7 +594,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['secret_answer'],
 			'subtext' => $txt['secret_desc2'],
 			'size' => 20,
-			'postinput' => '<span class="smalltext" style="margin-left: 4ex;"><a href="' . $scripturl . '?action=helpadmin;help=secret_why_blank" data-onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a></span>',
+			'postinput' => '<span class="smalltext" style="margin-left: 4ex;"><a href="' . $scripturl . '?action=helpadmin;help=secret_why_blank" onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a></span>',
 			'value' => '',
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
@@ -1846,7 +1846,7 @@ function notification($memID)
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" data-onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" />',
 					'style' => 'width: 4%;',
 				),
 				'data' => array(
@@ -1962,7 +1962,7 @@ function notification($memID)
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" data-onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" />',
 					'style' => 'width: 4%;',
 				),
 				'data' => array(

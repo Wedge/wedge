@@ -884,7 +884,7 @@ function GroupRequests()
 			),
 			'action' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" data-onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" />',
 					'style' => 'width: 4%;',
 				),
 				'data' => array(

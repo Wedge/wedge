@@ -213,7 +213,7 @@ function template_maintain_members()
 					<input type="checkbox" name="posts" id="posts" checked="checked" class="input_check" />
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" data-onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit" /></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
