@@ -242,7 +242,7 @@ function template_generic_menu_tabs(&$menu_context)
 	// Show an icon and/or a help item?
 	if (!empty($selected_tab['icon']) || !empty($tab_context['icon']))
 		echo '
-			<img src="', $settings['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '" alt="" />';
+			<img src="', $settings['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '" />';
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '

@@ -1249,7 +1249,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'img',
 				'type' => 'unparsed_content',
-				'content' => '<img src="$1" alt="" class="bbc_img" />',
+				'content' => '<img src="$1" class="bbc_img" />',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					$data = strtr($data, array(\'<br />\' => \'\'));
 					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
@@ -3365,7 +3365,7 @@ function setupThemeContext($forceload = false)
 			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
 
 		if (!empty($context['user']['avatar']))
-			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . ' alt="" class="avatar" />';
+			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . ' class="avatar" />';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = array(

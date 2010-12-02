@@ -9,7 +9,7 @@ function template_main()
 	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<div class="cat_bar">
 			<h3>
-				', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />' : '', $txt['set_parameters'], '
+				', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif" />' : '', $txt['set_parameters'], '
 			</h3>
 		</div>';
 
@@ -124,7 +124,7 @@ function template_main()
 			<div class="roundframe">
 				<div class="title_bar">
 					<h4>
-						<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" alt="" /></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
+						<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" /></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 					</h4>
 				</div>
 				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
@@ -268,7 +268,7 @@ function template_results()
 		<div class="cat_bar">
 			<h3>';
 		echo '
-				<img src="', $settings['images_url'], '/buttons/search.gif" alt="" />', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+				<img src="', $settings['images_url'], '/buttons/search.gif" />', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 			</h3>
 		</div>
 		<div class="pagesection">
@@ -401,7 +401,7 @@ function template_results()
 		echo '
 		<div class="cat_bar">
 			<h3>
-				<img src="' . $settings['images_url'] . '/buttons/search.gif" alt="" />&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+				<img src="' . $settings['images_url'] . '/buttons/search.gif" />&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 			</h3>
 		</div>
 		<div class="pagesection">

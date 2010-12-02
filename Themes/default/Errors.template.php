@@ -52,7 +52,7 @@ function template_error_log()
 
 	$error_types = array();
 	foreach ($context['error_types'] as $type => $details)
-		$error_types[] = ($details['is_selected'] ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="" /> ' : '') . '<a href="' . $details['url'] . '" ' . ($details['is_selected'] ? 'style="font-weight: bold;"' : '') . ' title="' . $details['description'] . '">' . $details['label'] . '</a>';
+		$error_types[] = ($details['is_selected'] ? '<img src="' . $settings['images_url'] . '/selected.gif" /> ' : '') . '<a href="' . $details['url'] . '" ' . ($details['is_selected'] ? 'style="font-weight: bold;"' : '') . ' title="' . $details['description'] . '">' . $details['label'] . '</a>';
 
 	echo '
 						', implode('&nbsp;|&nbsp;', $error_types), '

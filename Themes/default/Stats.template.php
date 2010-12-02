@@ -12,7 +12,7 @@ function template_main()
 		</div>
 		<div class="title_bar">
 			<h4>
-				<img src="', $settings['images_url'], '/stats_info.gif" alt="" />', $txt['general_stats'], '
+				<img src="', $settings['images_url'], '/stats_info.gif" />', $txt['general_stats'], '
 			</h4>
 		</div>
 		<div class="flow_hidden">
@@ -81,7 +81,7 @@ function template_main()
 			<div id="top_posters">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_posters.gif" alt="" />', $txt['top_posters'], '
+						<img src="', $settings['images_url'], '/stats_posters.gif" />', $txt['top_posters'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -114,7 +114,7 @@ function template_main()
 			<div id="top_boards">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_board.gif" alt="" />', $txt['top_boards'], '
+						<img src="', $settings['images_url'], '/stats_board.gif" />', $txt['top_boards'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -148,7 +148,7 @@ function template_main()
 			<div id="top_topics_replies">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['top_topics_replies'], '
+						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['top_topics_replies'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -181,7 +181,7 @@ function template_main()
 			<div id="top_topics_views">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_views.gif" alt="" />', $txt['top_topics_views'], '
+						<img src="', $settings['images_url'], '/stats_views.gif" />', $txt['top_topics_views'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -214,7 +214,7 @@ function template_main()
 			<div id="top_topics_starter">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['top_starters'], '
+						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['top_starters'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -247,7 +247,7 @@ function template_main()
 			<div id="most_online">
 				<div class="title_bar">
 					<h4>
-						<img src="', $settings['images_url'], '/stats_views.gif" alt="" />', $txt['most_time_online'], '
+						<img src="', $settings['images_url'], '/stats_views.gif" />', $txt['most_time_online'], '
 					</h4>
 				</div>
 				<div class="windowbg2 wrc">
@@ -282,7 +282,7 @@ function template_main()
 		<div class="flow_hidden">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/stats_history.gif" alt="" />', $txt['forum_history'], '
+					<img src="', $settings['images_url'], '/stats_history.gif" />', $txt['forum_history'], '
 				</h3>
 			</div>';
 
@@ -332,7 +332,7 @@ function template_main()
 				echo '
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
 						<th class="stats_month">
-							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" alt="" id="img_', $month['id'], '" />
+							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" id="img_', $month['id'], '" />
 							<a id="m', $month['id'], '" href="', $month['href'], '" onclick="return doingExpandCollapse;">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th>', $month['new_topics'], '</th>

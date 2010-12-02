@@ -15,7 +15,7 @@ function template_admin()
 		echo '
 			<h3 id="quick_search">
 				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
-					<img src="', $settings['images_url'], '/filter.gif" alt="" />
+					<img src="', $settings['images_url'], '/filter.gif" />
 					<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text" />
 					<select name="search_type">
 						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_internal'], '</option>
@@ -97,7 +97,7 @@ function template_admin()
 	foreach ($context['quick_admin_tasks'] as $task)
 		echo '
 				<li>
-					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" alt="" class="home_image" /></a>' : '', '
+					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" class="home_image" /></a>' : '', '
 					<h5>', $task['link'], '</h5>
 					<span class="task">', $task['description'], '</span>
 				</li>';

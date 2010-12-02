@@ -1506,8 +1506,8 @@ p.moderators {
 	font-size: .8em;
 }
 #posting_icons img {
-	vertical-align: middle;
-	margin: 0 0 0 4ex;
+	vertical-align: -5px;
+	margin: 0 2px 0 4ex;
 }
 #postbuttons_upper ul li a span {
 	line-height: 19px;

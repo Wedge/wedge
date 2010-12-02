@@ -382,7 +382,7 @@ function template_set_settings()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_edit'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_edit'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -399,7 +399,7 @@ function template_set_settings()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_url_config'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_url_config'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -432,7 +432,7 @@ function template_set_settings()
 			</div>
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" alt="" />', $txt['theme_options'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_options'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -542,7 +542,7 @@ function template_pick()
 			</div>
 			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">
 				<div class="floatright">
-					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" alt="" class="padding" /></a>
+					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" class="padding" /></a>
 				</div>
 				<p>
 					', $theme['description'], '

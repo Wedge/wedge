@@ -142,7 +142,7 @@ function template_modifysmiley()
 						<strong>', $txt['smiley_preview'], ': </strong>
 					</dt>
 					<dd>
-						<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview" alt="" /> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
+						<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview" /> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '
@@ -262,7 +262,7 @@ function template_addsmiley()
 				<fieldset id="ex_settings">
 					<dl class="settings">
 						<dt>
-							<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview" alt="" />
+							<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview" />
 						</dt>
 						<dd>
 							', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview(); selectMethod(\'existing\');">';

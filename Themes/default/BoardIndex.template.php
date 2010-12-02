@@ -75,7 +75,7 @@ function template_boardindex()
 						</a>
 					</td>
 					<td class="info">
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
 				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
@@ -124,7 +124,7 @@ function template_boardindex()
 					foreach ($board['children'] as $child)
 					{
 						if (!$child['is_redirect'])
-							$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts" alt="" />' : '') . '</a>';
+							$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts" />' : '') . '</a>';
 						else
 							$child['link'] = '<a href="' . $child['href'] . '" title="' . comma_format($child['posts']) . ' ' . $txt['redirects'] . '">' . $child['name'] . '</a>';
 
@@ -251,9 +251,9 @@ function template_boardindex_below()
 
 		echo '
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_some.png" alt="" /> ', $txt['new_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" alt="" /> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" alt="" /> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_some.png" /> ', $txt['new_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" /> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" /> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 
@@ -266,8 +266,8 @@ function template_boardindex_below()
 		echo '
 	<div id="posting_icons" class="flow_hidden">
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" alt="" /> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" alt="" /> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" /> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" /> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 	}

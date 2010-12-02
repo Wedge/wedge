@@ -37,7 +37,7 @@ function template_main()
 		<form action="', $scripturl, '?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/email_sm.gif" alt="" />', $context['page_title'], '
+					<img src="', $settings['images_url'], '/email_sm.gif" />', $context['page_title'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -99,7 +99,7 @@ function template_custom_email()
 		<form action="', $scripturl, '?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/email_sm.gif" alt="" />', $context['page_title'], '
+					<img src="', $settings['images_url'], '/email_sm.gif" />', $context['page_title'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">

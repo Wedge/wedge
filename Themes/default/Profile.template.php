@@ -41,7 +41,7 @@ function template_summary()
 <div id="profileview" class="flow_auto">
 	<div class="cat_bar">
 		<h3>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['summary'], '
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['summary'], '
 		</h3>
 	</div>
 	<div id="basicinfo">
@@ -144,7 +144,7 @@ function template_summary()
 
 	echo '
 				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png" alt="" />' : ''), '</dd>';
+				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png" />' : ''), '</dd>';
 
 	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
 		echo '
@@ -305,7 +305,7 @@ function template_showPosts()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
 				', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
 			</h3>
 		</div>
@@ -395,25 +395,25 @@ function template_showPosts()
 					<th class="first_th left w25" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=filename', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'filename' ? ';asc' : ''), '">
 							', $txt['show_attach_filename'], '
-							', ($context['sort_order'] == 'filename' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
+							', ($context['sort_order'] == 'filename' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
 						</a>
 					</th>
 					<th scope="col" style="width: 12%">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=downloads', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'downloads' ? ';asc' : ''), '">
 							', $txt['show_attach_downloads'], '
-							', ($context['sort_order'] == 'downloads' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
+							', ($context['sort_order'] == 'downloads' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
 						</a>
 					</th>
 					<th class="left" scope="col" style="width: 30%">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=subject', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'subject' ? ';asc' : ''), '">
 							', $txt['message'], '
-							', ($context['sort_order'] == 'subject' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
+							', ($context['sort_order'] == 'subject' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
 						</a>
 					</th>
 					<th class="last_th left" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=posted', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'posted' ? ';asc' : ''), '">
 						', $txt['show_attach_posted'], '
-						', ($context['sort_order'] == 'posted' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" alt="" />' : ''), '
+						', ($context['sort_order'] == 'posted' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
 						</a>
 					</th>
 				</tr>
@@ -462,7 +462,7 @@ function template_editBuddies()
 	echo '
 		<div class="title_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['editBuddies'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editBuddies'], '
 			</h3>
 		</div>
 		<table class="table_grid w100 cs1 cp4 centertext">
@@ -544,7 +544,7 @@ function template_editIgnoreList()
 	echo '
 		<div class="title_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['editIgnoreList'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editIgnoreList'], '
 			</h3>
 		</div>
 		<table class="table_grid w100 cs1 cp4 centertext">
@@ -755,7 +755,7 @@ function template_showPermissions()
 	echo '
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['showPermissions'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['showPermissions'], '
 			</h3>
 		</div>';
 
@@ -915,7 +915,7 @@ function template_statPanel()
 		<div id="generalstats">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/stats_info.gif" alt="" />
+					<img src="', $settings['images_url'], '/stats_info.gif" />
 					', $txt['statPanel_generalStats'], ' - ', $context['member']['name'], '
 				</h3>
 			</div>
@@ -940,7 +940,7 @@ function template_statPanel()
 		<div id="activitytime" class="flow_hidden">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/stats_history.gif" alt="" />', $txt['statPanel_activityTime'], '
+					<img src="', $settings['images_url'], '/stats_history.gif" />', $txt['statPanel_activityTime'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">';
@@ -985,7 +985,7 @@ function template_statPanel()
 			<div id="popularposts">
 				<div class="cat_bar">
 					<h3>
-						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['statPanel_topBoards'], '
+						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['statPanel_topBoards'], '
 					</h3>
 				</div>
 				<div class="windowbg2 wrc">';
@@ -1022,7 +1022,7 @@ function template_statPanel()
 			<div id="popularactivity">
 				<div class="cat_bar">
 					<h3>
-						<img src="', $settings['images_url'], '/stats_replies.gif" alt="" />', $txt['statPanel_topBoardsActivity'], '
+						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['statPanel_topBoardsActivity'], '
 					</h3>
 				</div>
 				<div class="windowbg2 wrc">';
@@ -1071,7 +1071,7 @@ function template_edit_options()
 		<form action="', (!empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'] . ';save'), '" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data" onsubmit="return checkProfileSubmit();">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />';
+					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />';
 
 		// Don't say "Profile" if this isn't the profile...
 		if (!empty($context['profile_header_text']))
@@ -1506,7 +1506,7 @@ function template_notification()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['profile'], '
+					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
 				</h3>
 			</div>
 			<p class="windowbg description">', $txt['notification_info'], '</p>
@@ -1576,7 +1576,7 @@ function template_groupMembership()
 		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['profile'], '
+					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
 				</h3>
 			</div>
 			<p class="description">', $txt['groupMembership_info'], '</p>';
@@ -1752,7 +1752,7 @@ function template_ignoreboards()
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['profile'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
 			</h3>
 		</div>
 		<p class="description">', $txt['ignoreboards_info'], '</p>
@@ -1847,7 +1847,7 @@ function template_viewWarning()
 	echo '
 		<div class="title_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
 				', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
 			</h3>
 		</div>
@@ -2021,7 +2021,7 @@ function template_issueWarning()
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
 				', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
 			</h3>
 		</div>';
@@ -2168,7 +2168,7 @@ function template_issueWarning()
 		if (!empty($warning['id_notice']))
 			echo '
 						<div class="floatright">
-							<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif" alt="" /></a>
+							<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif" /></a>
 						</div>';
 		echo '
 					</td>
@@ -2209,7 +2209,7 @@ function template_deleteAccount()
 		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="title_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['deleteAccount'], '
+					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['deleteAccount'], '
 				</h3>
 			</div>';
 	// If deleting another account give them a lovely info box.
@@ -2606,7 +2606,7 @@ function template_profile_avatar_select()
 		echo '
 								<div id="avatar_upload">
 									<input type="file" size="48" name="attachment" value="" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');" class="input_file" />
-									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" alt="" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
+									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
 								</div>';
 
 	echo '
@@ -2725,7 +2725,7 @@ function template_authentication_method()
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" alt="" />', $txt['authentication'], '
+					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['authentication'], '
 				</h3>
 			</div>
 			<p class="windowbg description">', $txt['change_authentication'], '</p>

@@ -13,7 +13,7 @@ function template_login()
 		<div class="tborder login">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
+					<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">';
@@ -95,7 +95,7 @@ function template_kick_guest()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
+					<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">
@@ -186,7 +186,7 @@ function template_admin_login()
 	<div class="tborder login" id="admin_login">
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif" alt="" />', $txt['login'], '
+				<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
 			</h3>
 		</div>
 		<div class="roundframe centertext">';

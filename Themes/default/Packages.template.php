@@ -147,7 +147,7 @@ function template_view_package()
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
 								<td style="width: 0"></td>
-								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" /></a></td>
 								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 								<td class="w50 smalltext">', $operation['action'], '</td>
@@ -242,7 +242,7 @@ function template_view_package()
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
 									<td style="width: 0"></td>
-									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" alt="" /></a></td>
+									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" /></a></td>
 									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 									<td class="w50 smalltext">', $operation['action'], '</td>
@@ -514,8 +514,8 @@ function template_browse()
 		<div class="flow_auto">
 			<div class="padding smalltext floatleft">
 				', $txt['package_installed_key'], '
-				<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
-				<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
+				<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
+				<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
 				<a href="#" onclick="document.getElementById(\'advanced_box\').style.display = document.getElementById(\'advanced_box\').style.display == \'\' ? \'none\' : \'\'; return false;">', $txt['package_advanced_button'], '</a>
@@ -593,7 +593,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 		if ($package['is_installed'] && !$package['is_newer'])
 			echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" class="middle" style="margin-left: 2ex" />';
 
 		echo '
 				</td>
@@ -905,8 +905,8 @@ function template_package_list()
 		</div>
 		<div class="padding smalltext floatleft">
 			', $txt['package_installed_key'], '
-			<img src="', $settings['images_url'], '/icons/package_installed.gif" alt="" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
-			<img src="', $settings['images_url'], '/icons/package_old.gif" alt="" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
+			<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
+			<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
 		</div>
 	</div>
 	<br class="clear" />';

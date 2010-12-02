@@ -24,7 +24,7 @@ function template_main()
 			<div id="poll">
 				<div class="cat_bar">
 					<h3>
-						<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" alt="" />', $txt['poll'], '
+						<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" />', $txt['poll'], '
 					</h3>
 				</div>
 				<div class="windowbg wrc">
@@ -131,7 +131,7 @@ function template_main()
 		foreach ($context['linked_calendar_events'] as $event)
 			echo '
 						<li>
-							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="" title="' . $txt['modify'] . '" class="edit_event" /></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
+							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event" /></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
 						</li>';
 
 		echo '
@@ -384,7 +384,7 @@ function template_main()
 							<div class="flow_hidden">
 								<div class="keyinfo">
 									<div class="messageicon">
-										<img src="', $message['icon_url'] . '" alt=""', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', ' />
+										<img src="', $message['icon_url'] . '"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', ' />
 									</div>
 									<h5 id="subject_', $message['id'], '">
 										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
@@ -474,7 +474,7 @@ function template_main()
 		// Can the user modify the contents of this post?  Show the modify inline image.
 		if ($message['can_modify'])
 			echo '
-							<img src="', $settings['images_url'], '/icons/modify_inline.gif" alt="" title="', $txt['modify_msg'], '" class="modifybutton" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" onclick="oQuickModify.modifyMsg(this);" />';
+							<img src="', $settings['images_url'], '/icons/modify_inline.gif" title="', $txt['modify_msg'], '" class="modifybutton" id="modify_button_', $message['id'], '" style="cursor: pointer; display: none;" onclick="oQuickModify.modifyMsg(this);" />';
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
@@ -504,10 +504,10 @@ function template_main()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" alt="" id="thumb_', $attachment['id'], '" /></a><br />';
+										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '" /></a><br />';
 					else
 						echo '
-										<img src="' . $attachment['href'] . ';image" alt="" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
+										<img src="' . $attachment['href'] . ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
 				}
 				echo '
 										<a href="' . $attachment['href'] . '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle" alt="*" />&nbsp;' . $attachment['name'] . '</a> ';

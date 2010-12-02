@@ -197,7 +197,7 @@ function template_main()
 
 	echo '
 						</select>
-						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px" alt="" />
+						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px" />
 					</dd>
 				</dl>
 				<hr class="clear" />';
