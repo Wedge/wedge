@@ -494,237 +494,19 @@ function template_browse()
 			<h3>', $txt['browse_packages'], '</h3>
 		</div>';
 
-	$bad = JavaScriptEscape($txt['package_delete_bad']);
-
 	if (!empty($context['available_mods']))
-	{
-		echo '
-		<br />
-		<div class="title_bar">
-			<h3>', $txt['modification_package'], '</h3>
-		</div>
-
-		<table class="table_grid w100 cs0">
-		<thead>
-			<tr class="catbg">
-				<th class="first_th" style="width: 32px"></th>
-				<th class="left w25">', $txt['mod_name'], '</th>
-				<th class="left w25">', $txt['mod_version'], '</th>
-				<th class="last_th" style="width: 49%"></th>
-			</tr>
-		</thead>
-		<tbody>';
-
-		$alt = false;
-		foreach ($context['available_mods'] as $i => $package)
-		{
-			echo '
-			<tr class="', $alt ? 'windowbg2' : 'windowbg', '">
-				<td>', ++$i, '.</td>
-				<td>', $package['name'], '</td>
-				<td>
-					', $package['version'];
-
-			if ($package['is_installed'] && !$package['is_newer'])
-				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
-
-			echo '
-				</td>
-				<td class="right">';
-
-			if ($package['can_uninstall'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';
-			elseif ($package['can_upgrade'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';
-			elseif ($package['can_install'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';
-
-			echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
-				</td>
-			</tr>';
-			$alt = !$alt;
-		}
-
-		echo '
-		</tbody>
-		</table>';
-	}
+		template_sublist($context['available_mods'], $txt['modification_package']);
 
 	if (!empty($context['available_avatars']))
-	{
-		echo '
-		<br />
-		<div class="title_bar">
-			<h3>', $txt['avatar_package'], '</h3>
-		</div>
-		<table class="table_grid w100 cs0">
-		<thead>
-			<tr class="catbg">
-				<th style="width: 32px"></th>
-				<th class="w25">', $txt['mod_name'], '</th>
-				<th class="w25">', $txt['mod_version'], '</th>
-				<th style="width: 49%"></th>
-			</tr>
-		</thead>
-		<tbody>';
-
-		foreach ($context['available_avatars'] as $i => $package)
-		{
-			echo '
-			<tr class="windowbg2">
-				<td>', ++$i, '.</td>
-				<td>', $package['name'], '</td>
-				<td>', $package['version'];
-
-			if ($package['is_installed'] && !$package['is_newer'])
-				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex;" />';
-
-			echo '
-				</td>
-				<td class="right">';
-
-			if ($package['can_uninstall'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';
-			elseif ($package['can_upgrade'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';
-			elseif ($package['can_install'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';
-
-			echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
-				</td>
-			</tr>';
-		}
-
-		echo '
-		</tbody>
-		</table>';
-	}
+		template_sublist($context['available_avatars'], $txt['avatar_package']);
 
 	if (!empty($context['available_languages']))
-	{
-		echo '
-		<br />
-		<div class="title_bar">
-			<h3>' . $txt['language_package'] . '</h3>
-		</div>
-		<table class="table_grid w100 cs0">
-		<thead>
-			<tr class="catbg">
-				<th style="width: 32px"></th>
-				<th class="w25">', $txt['mod_name'], '</th>
-				<th class="w25">', $txt['mod_version'], '</th>
-				<th style="width: 49%"></th>
-			</tr>
-		</thead>
-		<tbody>';
-
-		foreach ($context['available_languages'] as $i => $package)
-		{
-			echo '
-			<tr class="windowbg">
-				<td>' . ++$i . '.</td>
-				<td>' . $package['name'] . '</td>
-				<td>' . $package['version'];
-
-			if ($package['is_installed'] && !$package['is_newer'])
-				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
-
-			echo '
-				</td>
-				<td class="right">';
-
-			if ($package['can_uninstall'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';
-			elseif ($package['can_upgrade'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';
-			elseif ($package['can_install'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';
-
-			echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
-				</td>
-			</tr>';
-		}
-
-		echo '
-		</tbody>
-		</table>';
-	}
+		template_sublist($context['available_languages'], $txt['language_package']);
 
 	if (!empty($context['available_other']))
-	{
-		echo '
-		<br />
-		<div class="title_bar">
-			<h3>' . $txt['unknown_package'] . '</h3>
-		</div>
-		<table class="table_grid w100 cs0">
-		<thead>
-			<tr class="catbg">
-				<th style="width: 32px"></th>
-				<th class="w25">', $txt['mod_name'], '</th>
-				<th class="w25">', $txt['mod_version'], '</th>
-				<th style="width: 49%"></th>
-			</tr>
-		</thead>
-		<tbody>';
+		template_sublist($context['available_other'], $txt['unknown_package']);
 
-		foreach ($context['available_other'] as $i => $package)
-		{
-			echo '
-			<tr class="windowbg2">
-				<td>' . ++$i . '.</td>
-				<td>' . $package['name'] . '</td>
-				<td>' . $package['version'];
-
-			if ($package['is_installed'] && !$package['is_newer'])
-				echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
-
-			echo '
-				</td>
-				<td class="right">';
-
-			if ($package['can_uninstall'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';
-			elseif ($package['can_upgrade'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';
-			elseif ($package['can_install'])
-				echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';
-
-			echo '
-					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
-				</td>
-			</tr>';
-		}
-
-		echo '
-		</tbody>
-		</table>';
-	}
-
-	if (empty($context['available_mods']) && empty($context['available_avatars']) && empty($context['available_languages']) && empty($context['available_other']))
+	if (empty($context['displayed_mod_listing']))
 		echo '
 		<div class="information">', $txt['no_packages'], '</div>';
 
@@ -770,6 +552,74 @@ function template_browse()
 		</form>
 	</div>
 	<br class="clear" />';
+}
+
+function template_sublist(&$mod_list, $mod_heading)
+{
+	global $context, $txt, $scripturl, $settings;
+	static $bad = null;
+
+	if ($bad === null)
+		$bad = JavaScriptEscape($txt['package_delete_bad']);
+
+	$context['displayed_mod_listing'] = true;
+
+	echo '
+		<br />
+		<div class="title_bar">
+			<h3>', $mod_heading, '</h3>
+		</div>
+
+		<table class="table_grid w100 cs0">
+		<thead>
+			<tr class="catbg">
+				<th class="first_th" style="width: 32px"></th>
+				<th class="left w25">', $txt['mod_name'], '</th>
+				<th class="left w25">', $txt['mod_version'], '</th>
+				<th class="last_th" style="width: 49%"></th>
+			</tr>
+		</thead>
+		<tbody>';
+
+	$alt = false;
+	foreach ($mod_list as $i => $package)
+	{
+		echo '
+			<tr class="', $alt ? 'windowbg2' : 'windowbg', '">
+				<td>', ++$i, '.</td>
+				<td>', $package['name'], '</td>
+				<td>
+					', $package['version'];
+
+		if ($package['is_installed'] && !$package['is_newer'])
+			echo '
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" alt="" class="middle" style="margin-left: 2ex" />';
+
+		echo '
+				</td>
+				<td class="right">';
+
+		if ($package['can_uninstall'])
+			echo '
+					<a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $package['filename'], ';pid=', $package['installed_id'], '">[ ', $txt['uninstall'], ' ]</a>';
+		elseif ($package['can_upgrade'])
+			echo '
+					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['package_upgrade'], ' ]</a>';
+		elseif ($package['can_install'])
+			echo '
+					<a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $package['filename'], '">[ ', $txt['install_mod'], ' ]</a>';
+
+		echo '
+					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
+					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
+				</td>
+			</tr>';
+		$alt = !$alt;
+	}
+
+	echo '
+		</tbody>
+		</table>';
 }
 
 function template_servers()
