@@ -160,8 +160,8 @@ function reloadSettings()
 			return implode(\'\', $words);'),
 	);
 
-	// Setting the timezone is a requirement for some functions in PHP >= 5.1.
-	if (isset($modSettings['default_timezone']) && function_exists('date_default_timezone_set'))
+	// Setting the timezone is a requirement.
+	if (isset($modSettings['default_timezone']))
 		date_default_timezone_set($modSettings['default_timezone']);
 
 	// Check the load averages?

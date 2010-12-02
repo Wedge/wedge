@@ -103,14 +103,10 @@ function CalendarMain()
 		fatal_lang_error('invalid_month', false);
 	if ($curPage['year'] < $modSettings['cal_minyear'] || $curPage['year'] > $modSettings['cal_maxyear'])
 		fatal_lang_error('invalid_year', false);
-	// If we have a day clean that too.
+	// If we have a day, make sure it's valid too.
 	if ($context['view_week'])
-	{
-		// Note $isValid is -1 < PHP 5.1
-		$isValid = mktime(0, 0, 0, $curPage['month'], $curPage['day'], $curPage['year']);
-		if ($curPage['day'] > 31 || !$isValid || $isValid == -1)
+		if ($curPage['day'] > 31 || mktime(0, 0, 0, $curPage['month'], $curPage['day'], $curPage['year']) === false)
 			fatal_lang_error('invalid_day', false);
-	}
 
 	// Load all the context information needed to show the calendar grid.
 	$calendarOptions = array(

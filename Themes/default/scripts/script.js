@@ -1124,30 +1124,6 @@ function hideUlUnderLi(li)
 /* --------------------------------------------------------
    End of dropdown menu code */
 
-// Moving all data-* protected inline JS to their proper events. Trick and treats!
-function clickMagic()
-{
-	var divs = document.querySelectorAll ? document.querySelectorAll('*[data-onclick], .hitme') : document.getElementsByTagName('*');
-	for (var i = 0, j = divs ? divs.length : 0; i < j; i++)
-	{
-		var div = divs[i], cls = div.className ? div.className : '';
-
-		// In most cases, we only need to set the onclick handler...
-		if (cls.indexOf('hitme') == -1)
-		{
-			div['onclick'] = new Function(div.getAttribute('data-onclick'));
-			continue;
-		}
-
-		var att = div.attributes, here = [];
-		for (var k = 0, m = att.length; k < m; k++)
-			if (att[k].name.substr(0, 7) == 'data-on')
-				here[k] = att[k].name.substr(5);
-		for (var k in here)
-			div[here[k]] = new Function(div.getAttribute('data-' + here[k]));
-	}
-}
-
 // This will add an extra class to any external links.
 // Ignored for now because it needs some improvement to the domain name detection.
 function linkMagic()
@@ -1186,10 +1162,6 @@ var
 	wedgerocks = document.createElement('wedgerocks'),
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
-
-// And now we turn clickme classes into proper onclicks.
-// We can do it immediately, because all of the DOM is loaded at this point.
-clickMagic();
 
 /* Optimize:
 smf_formSubmitted = sfs

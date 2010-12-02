@@ -2433,7 +2433,8 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 
 #fatal_error {
 	width: 80%;
-	margin: 10px auto;
+	margin: 0 auto;
+	padding: 25px 0 10px;
 }
 
 .errorbox {

@@ -457,8 +457,9 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'disallow_sendBody'),
 	);
 
-	// Get all the time zones.
-	if (function_exists('timezone_identifiers_list') && function_exists('date_default_timezone_set'))
+	// PHP 5.2+, as well as PHP 5.1 if experimental DateTime support is enabled,
+	// can give us a list of all the time zones. Well, let's do that.
+	if (function_exists('timezone_identifiers_list'))
 	{
 		$all_zones = timezone_identifiers_list();
 		// Make sure we set the value to the same as the printed value.
