@@ -380,10 +380,7 @@ function PackageInstallTest()
 				);
 			}
 
-			if ($action['boardmod'])
-				$mod_actions = parseBoardMod(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), true, $action['reverse'], $theme_paths);
-			else
-				$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), true, $action['reverse'], $theme_paths);
+			$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), true, $action['reverse'], $theme_paths);
 
 			if (count($mod_actions) == 1 && isset($mod_actions[0]) && $mod_actions[0]['type'] == 'error' && $mod_actions[0]['filename'] == '-')
 				$mod_actions[0]['filename'] = $action['filename'];
@@ -494,7 +491,6 @@ function PackageInstallTest()
 							'position' => $mod_action['position'],
 							'operation_key' => $operation_key,
 							'filename' => $action['filename'],
-							'is_boardmod' => $action['boardmod'],
 							'failed' => $mod_action['failed'],
 							'ignore_failure' => !empty($mod_action['ignore_failure']),
 						);
@@ -508,7 +504,6 @@ function PackageInstallTest()
 							'position' => $mod_action['position'],
 							'operation_key' => $operation_key,
 							'filename' => $action['filename'],
-							'is_boardmod' => $action['boardmod'],
 							'failed' => $mod_action['failed'],
 							'ignore_failure' => !empty($mod_action['ignore_failure']),
 						);
@@ -908,10 +903,7 @@ function PackageInstall()
 
 			if ($action['type'] == 'modification' && !empty($action['filename']))
 			{
-				if ($action['boardmod'])
-					$mod_actions = parseBoardMod(file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), false, $action['reverse'], $theme_paths);
-				else
-					$mod_actions = parseModification(file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), false, $action['reverse'], $theme_paths);
+				$mod_actions = parseModification(file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']), false, $action['reverse'], $theme_paths);
 
 				// Any errors worth noting?
 				foreach ($mod_actions as $key => $action)
@@ -1492,11 +1484,7 @@ function ViewOperations()
 		$theme_paths[$row['id_theme']][$row['variable']] = $row['value'];
 	weDB::free_result($request);
 
-	// Boardmod?
-	if (isset($_REQUEST['boardmod']))
-		$mod_actions = parseBoardMod(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $_REQUEST['filename']), true, $reverse, $theme_paths);
-	else
-		$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $_REQUEST['filename']), true, $reverse, $theme_paths);
+	$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $_REQUEST['filename']), true, $reverse, $theme_paths);
 
 	// Ok let's get the content of the file.
 	$context['operations'] = array(
