@@ -42,6 +42,10 @@ function Login()
 {
 	global $txt, $context, $scripturl;
 
+	// You're not a guest, why are you here?
+	if (!$context['user']['is_guest'])
+		redirectexit();
+
 	// In wireless?  If so, use the correct sub template.
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_login';
