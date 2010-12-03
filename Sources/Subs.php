@@ -865,7 +865,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
 	global $txt, $scripturl, $context, $modSettings, $user_info, $smcFunc;
-	static $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
+	static $master_codes = null, $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $disabled, $feet = 0;
 
 	// Don't waste cycles
@@ -884,6 +884,60 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			parsesmileys($message);
 
 		return $message;
+	}
+
+	if ($master_codes == null)
+	{
+		$field_list = array(
+			'before_code' => 'before',
+			'after_code' => 'after',
+			'content' => 'content',
+			'disabled_before' => 'disabled_before',
+			'disabled_after' => 'disabled_after',
+			'disabled_content' => 'disabled_content',
+			'test' => 'test',
+		);
+		$explode_list = array(
+			'disallow_children' => 'disallow_children',
+			'require_children' => 'require_children',
+			'require_parents' => 'require_parents',
+			'parsed_tags_allowed' => 'parsed_tags_allowed',
+		);
+
+		$result = wedb::query('
+			SELECT tag, bbctype, before_code, after_code, content, disabled_before,
+				disabled_after, disabled_content, block_level, test, validate_func, disallow_children,
+				require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace
+			FROM {db_prefix}bbcode',
+			array()
+		);
+		while ($row = wedb::fetch_assoc($result))
+		{
+			$bbcode = array(
+				'tag' => $row['tag'],
+				'block_level' => !empty($row['block_level']),
+				'trim' => 'trim_wpace',
+			);
+			if ($row['bbctype'] !== 'parsed')
+				$bbcode['type'] = $row['bbctype'];
+			if (!empty($row['params']))
+				$bbcode['parameters'] = unserialize($row['params']);
+			if (!empty($row['validate_func']))
+				$bbcode['validate'] = create_function('&$tag, &$data, $disabled', $row['validate_func']);
+			if ($row['quoted'] != 'none')
+				$bbcode['quoted'] = $row['quoted'];
+
+			foreach ($explode_list as $db_field => $bbc_field)
+				if (!empty($row[$db_field]))
+					$bbcode[$bbc_field] = explode(',', $row[$db_field]);
+			foreach ($field_list as $db_field => $bbc_field)
+				if (!empty($row[$db_field]))
+					$bbcode[$bbc_field] = trim($row[$db_field]);
+
+			// Reformat it from DB structure
+			$master_codes[] = $bbcode;
+		}
+		wedb::free_result($result);
 	}
 
 	// If we are not doing every tag then we don't cache this run.
@@ -907,685 +961,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (empty($modSettings['enableEmbeddedFlash']))
 			$disabled['flash'] = true;
 
-		/* The following bbc are formatted as an array, with keys as follows:
-
-			tag: the tag's name - should be lowercase!
-
-			type: one of...
-				- (missing): [tag]parsed content[/tag]
-				- unparsed_equals: [tag=xyz]parsed content[/tag]
-				- parsed_equals: [tag=parsed data]parsed content[/tag]
-				- unparsed_content: [tag]unparsed content[/tag]
-				- closed: [tag], [tag/], [tag /]
-				- unparsed_commas: [tag=1,2,3]parsed content[/tag]
-				- unparsed_commas_content: [tag=1,2,3]unparsed content[/tag]
-				- unparsed_equals_content: [tag=...]unparsed content[/tag]
-
-			parameters: an optional array of parameters, for the form
-			  [tag abc=123]content[/tag]. The array is an associative array
-			  where the keys are the parameter names, and the values are an
-			  array which may contain the following:
-				- match: a regular expression to validate and match the value.
-				- quoted: true if the value should be quoted.
-				- validate: callback to evaluate on the data, which is $data.
-				- value: a string in which to replace $1 with the data.
-				  either it or validate may be used, not both.
-				- optional: true if the parameter is optional.
-
-			test: a regular expression to test immediately after the tag's
-			  '=', ' ' or ']'. Typically, should have a \] at the end.
-			  Optional.
-
-			content: only available for unparsed_content, closed,
-			  unparsed_commas_content, and unparsed_equals_content.
-			  $1 is replaced with the content of the tag. Parameters
-			  are replaced in the form {param}. For unparsed_commas_content,
-			  $2, $3, ..., $n are replaced.
-
-			before: only when content is not used, to go before any
-			  content. For unparsed_equals, $1 is replaced with the value.
-			  For unparsed_commas, $1, $2, ..., $n are replaced.
-
-			after: similar to before in every way, except that it is used
-			  when the tag is closed.
-
-			disabled_content: used in place of content when the tag is
-			  disabled. For closed, default is '', otherwise it is '$1' if
-			  block_level is false, '<div>$1</div>' elsewise.
-
-			disabled_before: used in place of before when disabled. Defaults
-			  to '<div>' if block_level, '' if not.
-
-			disabled_after: used in place of after when disabled. Defaults
-			  to '</div>' if block_level, '' if not.
-
-			block_level: set to true the tag is a "block level" tag, similar
-			  to HTML. Block level tags cannot be nested inside tags that are
-			  not block level, and will not be implicitly closed as easily.
-			  One break following a block level tag may also be removed.
-
-			trim: if set, and 'inside' whitespace after the begin tag will be
-			  removed. If set to 'outside', whitespace after the end tag will
-			  meet the same fate.
-
-			validate: except when type is missing or 'closed', a callback to
-			  validate the data as $data. Depending on the tag's type, $data
-			  may be a string or an array of strings (corresponding to the
-			  replacement.)
-
-			quoted: when type is 'unparsed_equals' or 'parsed_equals' only,
-			  may be not set, 'optional', or 'required' corresponding to if
-			  the content may be quoted. This allows the parser to read
-			  [tag="abc]def[esdf]"] properly.
-
-			require_parents: an array of tag names, or not set. If set, the
-			  enclosing tag *must* be one of the listed tags, or parsing won't
-			  occur.
-
-			require_children: similar to require_parents, if set children
-			  won't be parsed if they are not in the list.
-
-			disallow_children: similar to, but very different from,
-			  require_children, if it is set the listed tags will not be
-			  parsed inside the tag.
-
-			parsed_tags_allowed: an array restricting what BBC can be in the
-			  parsed_equals parameter, if desired.
-		*/
-
-		$codes = array(
-			array(
-				'tag' => 'abbr',
-				'type' => 'unparsed_equals',
-				'before' => '<abbr title="$1">',
-				'after' => '</abbr>',
-				'quoted' => 'optional',
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'acronym',
-				'type' => 'unparsed_equals',
-				'before' => '<acronym title="$1">',
-				'after' => '</acronym>',
-				'quoted' => 'optional',
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'anchor',
-				'type' => 'unparsed_equals',
-				'test' => '[#]?([A-Za-z][A-Za-z0-9_\-]*)\]',
-				'before' => '<span id="post_$1">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'b',
-				'before' => '<strong>',
-				'after' => '</strong>',
-			),
-			array(
-				'tag' => 'bdo',
-				'type' => 'unparsed_equals',
-				'before' => '<bdo dir="$1">',
-				'after' => '</bdo>',
-				'test' => '(rtl|ltr)\]',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'black',
-				'before' => '<span style="color: black;" class="bbc_color">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'blue',
-				'before' => '<span style="color: blue;" class="bbc_color">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'br',
-				'type' => 'closed',
-				'content' => '<br />',
-			),
-			array(
-				'tag' => 'center',
-				'before' => '<div class="centertext">',
-				'after' => '</div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'code',
-				'type' => 'unparsed_content',
-				'content' => '<div class="codeheader">' . $txt['code'] . ': <a href="#" onclick="return smfSelectText(this);" class="codeoperation">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
-				// !!! Maybe this can be simplified?
-				'validate' => isset($disabled['code']) ? null : create_function('&$tag, &$data, $disabled', '
-					global $context;
-
-					if (!isset($disabled[\'code\']))
-					{
-						$php_parts = preg_split(\'~(&lt;\?php|\?&gt;)~\', $data, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != \'&lt;?php\')
-								continue;
-
-							$php_string = \'\';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != \'?&gt;\')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = \'\';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
-
-						// Older browsers are annoying, aren\'t they?
-						if (!$context[\'browser\'][\'is_gecko\'])
-							$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
-						else
-							$data = str_replace("\t", "&nbsp;&nbsp;&nbsp;", $data);
-
-						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
-						if ($context[\'browser\'][\'is_opera\'])
-							$data .= \'&nbsp;\';
-					}'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'code',
-				'type' => 'unparsed_equals_content',
-				'content' => '<div class="codeheader">' . $txt['code'] . ': ($2) <a href="#" onclick="return smfSelectText(this);" class="codeoperation">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
-				// !!! Maybe this can be simplified?
-				'validate' => isset($disabled['code']) ? null : create_function('&$tag, &$data, $disabled', '
-					global $context;
-
-					if (!isset($disabled[\'code\']))
-					{
-						$php_parts = preg_split(\'~(&lt;\?php|\?&gt;)~\', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != \'&lt;?php\')
-								continue;
-
-							$php_string = \'\';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != \'?&gt;\')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = \'\';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode(\'\', $php_parts));
-
-						// Older browsers are annoying, aren\'t they?
-						if (!$context[\'browser\'][\'is_gecko\'])
-							$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);
-						else
-							$data[0] = str_replace("\t", "&nbsp;&nbsp;&nbsp;", $data[0]);
-
-						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
-						if ($context[\'browser\'][\'is_opera\'])
-							$data[0] .= \'&nbsp;\';
-					}'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'color',
-				'type' => 'unparsed_equals',
-				'test' => '(#[\da-fA-F]{3}|#[\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\(\d{1,3}, ?\d{1,3}, ?\d{1,3}\))\]',
-				'before' => '<span style="color: $1;" class="bbc_color">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'email',
-				'type' => 'unparsed_content',
-				'content' => '<a href="mailto:$1" class="bbc_email">$1</a>',
-				// !!! Should this respect guest_hideContacts?
-				'validate' => create_function('&$tag, &$data, $disabled', '$data = strtr($data, array(\'<br />\' => \'\'));'),
-			),
-			array(
-				'tag' => 'email',
-				'type' => 'unparsed_equals',
-				'before' => '<a href="mailto:$1" class="bbc_email">',
-				'after' => '</a>',
-				// !!! Should this respect guest_hideContacts?
-				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'flash',
-				'type' => 'unparsed_commas_content',
-				'test' => '\d+,\d+\]',
-				'content' => $context['browser']['is_ie'] ? '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$2" height="$3"><param name="movie" value="$1" /><param name="play" value="true" /><param name="loop" value="true" /><param name="quality" value="high" /><param name="AllowScriptAccess" value="never" /><embed src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed></object>' : '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					if (isset($disabled[\'url\']))
-						$tag[\'content\'] = \'$1\';
-					elseif (strpos($data[0], \'http://\') !== 0 && strpos($data[0], \'https://\') !== 0)
-						$data[0] = \'http://\' . $data[0];
-				'),
-				'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
-			),
-			array(
-				'tag' => 'font',
-				'type' => 'unparsed_equals',
-				'test' => '[A-Za-z0-9_,\-\s]+?\]',
-				'before' => '<span style="font-family: $1;" class="bbc_font">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'ftp',
-				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$data = strtr($data, array(\'<br />\' => \'\'));
-					if (strpos($data, \'ftp://\') !== 0 && strpos($data, \'ftps://\') !== 0)
-						$data = \'ftp://\' . $data;
-				'),
-			),
-			array(
-				'tag' => 'ftp',
-				'type' => 'unparsed_equals',
-				'before' => '<a href="$1" class="bbc_ftp new_win" target="_blank">',
-				'after' => '</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					if (strpos($data, \'ftp://\') !== 0 && strpos($data, \'ftps://\') !== 0)
-						$data = \'ftp://\' . $data;
-				'),
-				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'glow',
-				'type' => 'unparsed_commas',
-				'test' => '[#0-9a-zA-Z\-]{3,12},([012]\d{1,2}|\d{1,2})(,[^]]+)?\]',
-				'before' => $context['browser']['is_ie'] ? '<table style="border: 0; padding: 0; display: inline; vertical-align: middle; font: inherit;"><tr><td style="filter: Glow(color=$1, strength=$2); font: inherit;">' : '<span style="text-shadow: $1 1px 1px 1px">',
-				'after' => $context['browser']['is_ie'] ? '</td></tr></table> ' : '</span>',
-			),
-			array(
-				'tag' => 'green',
-				'before' => '<span style="color: green;" class="bbc_color">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'html',
-				'type' => 'unparsed_content',
-				'content' => '$1',
-				'block_level' => true,
-				'disabled_content' => '$1',
-			),
-			array(
-				'tag' => 'hr',
-				'type' => 'closed',
-				'content' => '<hr />',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'i',
-				'before' => '<em>',
-				'after' => '</em>',
-			),
-			array(
-				'tag' => 'img',
-				'type' => 'unparsed_content',
-				'parameters' => array(
-					'alt' => array('optional' => true),
-					'width' => array('optional' => true, 'value' => ' width="$1"', 'match' => '(\d+)'),
-					'height' => array('optional' => true, 'value' => ' height="$1"', 'match' => '(\d+)'),
-				),
-				'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized" />',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$data = strtr($data, array(\'<br />\' => \'\'));
-					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-				'disabled_content' => '($1)',
-			),
-			array(
-				'tag' => 'img',
-				'type' => 'unparsed_content',
-				'content' => '<img src="$1" class="bbc_img" />',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$data = strtr($data, array(\'<br />\' => \'\'));
-					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-				'disabled_content' => '($1)',
-			),
-			array(
-				'tag' => 'iurl',
-				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_link">$1</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$data = strtr($data, array(\'<br />\' => \'\'));
-					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-			),
-			array(
-				'tag' => 'iurl',
-				'type' => 'unparsed_equals',
-				'before' => '<a href="$1" class="bbc_link">',
-				'after' => '</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					if (substr($data, 0, 1) == \'#\')
-						$data = \'#post_\' . substr($data, 1);
-					elseif (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'left',
-				'before' => '<div style="text-align: left;">',
-				'after' => '</div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'li',
-				'before' => '<li>',
-				'after' => '</li>',
-				'trim' => 'outside',
-				'require_parents' => array('list'),
-				'block_level' => true,
-				'disabled_before' => '',
-				'disabled_after' => '<br />',
-			),
-			array(
-				'tag' => 'list',
-				'before' => '<ul class="bbc_list">',
-				'after' => '</ul>',
-				'trim' => 'inside',
-				'require_children' => array('li', 'list'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'list',
-				'parameters' => array(
-					'type' => array('match' => '(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)'),
-				),
-				'before' => '<ul class="bbc_list" style="list-style-type: {type};">',
-				'after' => '</ul>',
-				'trim' => 'inside',
-				'require_children' => array('li'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'ltr',
-				'before' => '<div dir="ltr">',
-				'after' => '</div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'me',
-				'type' => 'unparsed_equals',
-				'before' => '<div class="meaction">* $1 ',
-				'after' => '</div>',
-				'quoted' => 'optional',
-				'block_level' => true,
-				'disabled_before' => '/me ',
-				'disabled_after' => '<br />',
-			),
-			array(
-				'tag' => 'mergedate',
-				'type' => 'unparsed_content',
-				'content' => '<div class="mergedate">' . $txt['search_date_posted'] . ' $1</div>',
-				'validate' => create_function('&$tag, &$data, $disabled', 'if (is_numeric($data)) $data = timeformat($data);'),
-			),
-			array(
-				'tag' => 'more',
-				'type' => 'closed',
-				'content' => '',
-			),
-			array(
-				'tag' => 'move',
-				'before' => '<marquee>',
-				'after' => '</marquee>',
-				'block_level' => true,
-				'disallow_children' => array('move'),
-			),
-			array(
-				'tag' => 'nobbc',
-				'type' => 'unparsed_content',
-				'content' => '$1',
-			),
-			array(
-				'tag' => 'php',
-				'type' => 'unparsed_content',
-				'content' => '<span class="phpcode">$1</span>',
-				'validate' => isset($disabled['php']) ? null : create_function('&$tag, &$data, $disabled', '
-					if (!isset($disabled[\'php\']))
-					{
-						$add_begin = substr(trim($data), 0, 5) != \'&lt;?\';
-						$data = highlight_php_code($add_begin ? \'&lt;?php \' . $data . \'?&gt;\' : $data);
-						if ($add_begin)
-							$data = preg_replace(array(\'~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~\', \'~\?&gt;((?:</(font|span)>)*)$~\'), \'$1\', $data, 2);
-					}'),
-				'block_level' => false,
-				'disabled_content' => '$1',
-			),
-			array(
-				'tag' => 'pre',
-				'before' => '<pre>',
-				'after' => '</pre>',
-			),
-			array(
-				'tag' => 'quote',
-				'before' => '<div class="quoteheader">' . $txt['quote'] . '</div><blockquote>',
-				'after' => '</blockquote><div class="quotefooter"></div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'quote',
-				'parameters' => array(
-					'author' => array('match' => '(.{1,192}?)', 'quoted' => true),
-				),
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' {author}</div><blockquote>',
-				'after' => '</blockquote><div class="quotefooter"></div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'quote',
-				'type' => 'parsed_equals',
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' $1</div><blockquote>',
-				'after' => '</blockquote><div class="quotefooter"></div>',
-				'quoted' => 'optional',
-				// Don't allow everything to be embedded with the author name.
-				'parsed_tags_allowed' => array('url', 'iurl', 'ftp'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'quote',
-				'parameters' => array(
-					'author' => array('match' => '([^<>]{1,192}?)'),
-					'link' => array('match' => '(topic=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|action=profile;u=\d+|msg=\d+)'),
-					'date' => array('match' => '(\d+)', 'validate' => 'on_timeformat'),
-				),
-				'before' => '<div class="quoteheader"><a href="' . $scripturl . '?{link}">' . $txt['quote_from'] . ' {author} ' . $txt['search_on'] . ' {date}</a></div><blockquote>',
-				'after' => '</blockquote><div class="quotefooter"></div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'quote',
-				'parameters' => array(
-					'author' => array('match' => '(.{1,192}?)'),
-				),
-				'before' => '<div class="quoteheader">' . $txt['quote_from'] . ' {author}</div><blockquote>',
-				'after' => '</blockquote><div class="quotefooter"></div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'red',
-				'before' => '<span style="color: red;" class="bbc_color">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'right',
-				'before' => '<div style="text-align: right;">',
-				'after' => '</div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'rtl',
-				'before' => '<div dir="rtl">',
-				'after' => '</div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 's',
-				'before' => '<del>',
-				'after' => '</del>',
-			),
-			array(
-				'tag' => 'shadow',
-				'type' => 'unparsed_commas',
-				'test' => '[#0-9a-zA-Z\-]{3,12},(left|right|top|bottom|[0123]\d{0,2})\]',
-				'before' => $context['browser']['is_ie'] ? '<span style="display: inline-block; filter: Shadow(color=$1, direction=$2); height: 1.2em;">' : '<span style="text-shadow: $1 $2">',
-				'after' => '</span>',
-				'validate' => $context['browser']['is_ie'] ? create_function('&$tag, &$data, $disabled', '
-					if ($data[1] == \'left\')
-						$data[1] = 270;
-					elseif ($data[1] == \'right\')
-						$data[1] = 90;
-					elseif ($data[1] == \'top\')
-						$data[1] = 0;
-					elseif ($data[1] == \'bottom\')
-						$data[1] = 180;
-					else
-						$data[1] = (int) $data[1];') : create_function('&$tag, &$data, $disabled', '
-					if ($data[1] == \'top\' || (is_numeric($data[1]) && $data[1] < 50))
-						$data[1] = \'0 -2px 1px\';
-					elseif ($data[1] == \'right\' || (is_numeric($data[1]) && $data[1] < 100))
-						$data[1] = \'2px 0 1px\';
-					elseif ($data[1] == \'bottom\' || (is_numeric($data[1]) && $data[1] < 190))
-						$data[1] = \'0 2px 1px\';
-					elseif ($data[1] == \'left\' || (is_numeric($data[1]) && $data[1] < 280))
-						$data[1] = \'-2px 0 1px\';
-					else
-						$data[1] = \'1px 1px 1px\';'),
-			),
-			array(
-				'tag' => 'size',
-				'type' => 'unparsed_equals',
-				'test' => '([1-9][\d]?p[xt]|(?:x-)?small(?:er)?|(?:x-)?large[r]?|(0\.[1-9]|[1-9](\.[\d][\d]?)?)?em)\]',
-				'before' => '<span style="font-size: $1;" class="bbc_size">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'size',
-				'type' => 'unparsed_equals',
-				'test' => '[1-7]\]',
-				'before' => '<span style="font-size: $1;" class="bbc_size">',
-				'after' => '</span>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$sizes = array(1 => 0.7, 2 => 1.0, 3 => 1.35, 4 => 1.45, 5 => 2.0, 6 => 2.65, 7 => 3.95);
-					$data = $sizes[$data] . \'em\';'
-				),
-			),
-			array(
-				'tag' => 'spoiler',
-				'before' => '<div class="spoiler"><div class="spoilerhint"><input type="button" value="' . $txt['spoiler'] . '" '
-					. 'onclick="n = this.parentNode.parentNode.lastChild.style; n.display = n.display == \'none\' ? \'block\' : \'none\'; return false;" />'
-					. $txt['click_for_spoiler'] . '</div><div class="spoiled" style="display: none">',
-				'after' => '</div></div>',
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'sub',
-				'before' => '<sub>',
-				'after' => '</sub>',
-			),
-			array(
-				'tag' => 'sup',
-				'before' => '<sup>',
-				'after' => '</sup>',
-			),
-			array(
-				'tag' => 'table',
-				'before' => '<table class="bbc_table">',
-				'after' => '</table>',
-				'trim' => 'inside',
-				'require_children' => array('tr'),
-				'block_level' => true,
-			),
-			array(
-				'tag' => 'td',
-				'before' => '<td>',
-				'after' => '</td>',
-				'require_parents' => array('tr'),
-				'trim' => 'outside',
-				'block_level' => true,
-				'disabled_before' => '',
-				'disabled_after' => '',
-			),
-			array(
-				'tag' => 'time',
-				'type' => 'unparsed_content',
-				'content' => '$1',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					if (is_numeric($data))
-						$data = timeformat($data);
-					else
-						$tag[\'content\'] = \'[time]$1[/time]\';'),
-			),
-			array(
-				'tag' => 'tr',
-				'before' => '<tr>',
-				'after' => '</tr>',
-				'require_parents' => array('table'),
-				'require_children' => array('td'),
-				'trim' => 'both',
-				'block_level' => true,
-				'disabled_before' => '',
-				'disabled_after' => '',
-			),
-			array(
-				'tag' => 'tt',
-				'before' => '<tt class="bbc_tt">',
-				'after' => '</tt>',
-			),
-			array(
-				'tag' => 'u',
-				'before' => '<span class="bbc_u">',
-				'after' => '</span>',
-			),
-			array(
-				'tag' => 'url',
-				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_link new_win" target="_blank">$1</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					$data = strtr($data, array(\'<br />\' => \'\'));
-					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-			),
-			array(
-				'tag' => 'url',
-				'type' => 'unparsed_equals',
-				'before' => '<a href="$1" class="bbc_link new_win" target="_blank">',
-				'after' => '</a>',
-				'validate' => create_function('&$tag, &$data, $disabled', '
-					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
-						$data = \'http://\' . $data;
-				'),
-				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
-				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'white',
-				'before' => '<span style="color: white;" class="bbc_color">',
-				'after' => '</span>',
-			),
-		);
-
-		// Let modders add new BBC without hassle.
-		call_hook('bbc_codes', array(&$codes));
+		$codes = $master_codes;
 
 		// This is mainly for the bbc manager, so it's easy to add tags above. Custom BBC should be added above this line.
 		if ($message === false)
@@ -1890,7 +1266,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				if (!$tag)
 					break;
 
-				if (!empty($tag['block_level']))
+				if ($tag['block_level'])
 				{
 					// Only find out if we need to.
 					if ($block_level === false)
@@ -1905,7 +1281,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						foreach ($bbc_codes[$look_for[0]] as $temp)
 							if ($temp['tag'] == $look_for)
 							{
-								$block_level = !empty($temp['block_level']);
+								$block_level = $temp['block_level'];
 								break;
 							}
 					}
@@ -1935,7 +1311,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					foreach ($bbc_codes[$look_for[0]] as $temp)
 						if ($temp['tag'] == $look_for)
 						{
-							$block_level = !empty($temp['block_level']);
+							$block_level = $temp['block_level'];
 							break;
 						}
 				}
@@ -1956,9 +1332,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$pos2 = $pos - 1;
 
 				// See the comment at the end of the big loop - just eating whitespace ;).
-				if (!empty($tag['block_level']) && substr($message, $pos, 6) == '<br />')
+				if ($tag['block_level'] && substr($message, $pos, 6) == '<br />')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (!empty($tag['trim']) && $tag['trim'] != 'inside' && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if (in_array($tag['trim'], array('outside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 			}
 
@@ -2210,7 +1586,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// Trim or eat trailing stuff... see comment at the end of the big loop.
 				if (!empty($open_tags[$i]['block_level']) && substr($message, $pos, 6) == '<br />')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (!empty($open_tags[$i]['trim']) && $tag['trim'] != 'inside' && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if (!empty($open_tags[$i]['trim']) && in_array($tag['trim'], array('outside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 
 				array_pop($open_tags);
@@ -2415,7 +1791,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 7);
 
 		// Are we trimming outside this tag?
-		if (!empty($tag['trim']) && $tag['trim'] != 'outside' && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
+		if (in_array($tag['trim'], array('inside', 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 1 + strlen($matches[0]));
 	}
 
