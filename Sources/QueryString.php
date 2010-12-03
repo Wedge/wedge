@@ -861,7 +861,8 @@ function ob_sessrewrite($buffer)
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
 	$context['delayed_events'] = $context['delayed_dupes'] = array();
-	$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $buffer);
+	$cut = explode("<!-- Javascript area -->\n", $buffer);
+	$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
 	if (!empty($context['delayed_events']))
 	{

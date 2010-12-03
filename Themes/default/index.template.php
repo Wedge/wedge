@@ -302,16 +302,21 @@ function template_html_below()
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// Javascript section -- files to include, main vars and functions to start.
-	// Don't modify <!-- insert inline events here -->, as it's a placeholder.
+	// Don't modify the HTML comments, as they're placeholders for Wedge.
 
-	echo "\n";
+	echo $context['footer'], '
 
+<!-- Javascript area -->';
+
+	// Code added here through add_js_inline() will execute before jQuery
+	// is loaded. You may add time-critical events here.
 	if (!empty($context['footer_js_inline']))
 		echo '
+
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo $context['footer'], "\n", !empty($modSettings['jquery_remote']) ? '
+	echo "\n", !empty($modSettings['jquery_remote']) ? '
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>' : '', '
 <script src="', $context['cached_js'], '"></script>
 <script><!-- // --><![CDATA[
