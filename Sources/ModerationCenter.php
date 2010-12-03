@@ -32,7 +32,7 @@ if (!defined('SMF'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $smcFunc;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
@@ -258,7 +258,7 @@ function ModBlockLatestNews()
 // Show a list of the most active watched users.
 function ModBlockWatchedUsers()
 {
-	global $context, $smcFunc, $scripturl, $modSettings;
+	global $context, $scripturl, $modSettings;
 
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
@@ -299,14 +299,14 @@ function ModBlockWatchedUsers()
 // Show an area for the moderator to type into.
 function ModBlockNotes()
 {
-	global $context, $smcFunc, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt, $user_info;
 
 	// Are we saving a note?
 	if (isset($_POST['makenote'], $_POST['new_note']))
 	{
 		checkSession();
 
-		$_POST['new_note'] = $smcFunc['htmlspecialchars'](trim($_POST['new_note']));
+		$_POST['new_note'] = westring::htmlspecialchars(trim($_POST['new_note']));
 		// Make sure they actually entered something.
 		if (!empty($_POST['new_note']) && $_POST['new_note'] !== $txt['mc_click_add_note'])
 		{
@@ -423,7 +423,7 @@ function ModBlockNotes()
 // Show a list of the most recent reported posts.
 function ModBlockReportedPosts()
 {
-	global $context, $user_info, $scripturl, $smcFunc;
+	global $context, $user_info, $scripturl;
 
 	// Got the info already?
 	$cachekey = md5(serialize($user_info['mod_cache']['bq']));
@@ -485,7 +485,7 @@ function ModBlockReportedPosts()
 // Show a list of all the group requests they can see.
 function ModBlockGroupRequests()
 {
-	global $context, $user_info, $scripturl, $smcFunc;
+	global $context, $user_info, $scripturl;
 
 	$context['group_requests'] = array();
 	// Make sure they can even moderate someone!
@@ -532,7 +532,7 @@ function ModBlockGroupRequests()
 // Browse all the reported posts...
 function ReportedPosts()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info, $smcFunc;
+	global $txt, $context, $scripturl, $modSettings, $user_info;
 
 	loadTemplate('ModerationCenter');
 
@@ -730,7 +730,7 @@ function ModerateGroups()
 // How many open reports do we have?
 function recountOpenReports()
 {
-	global $user_info, $context, $smcFunc;
+	global $user_info, $context;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -757,7 +757,7 @@ function recountOpenReports()
 
 function ModReport()
 {
-	global $user_info, $context, $scripturl, $txt, $smcFunc;
+	global $user_info, $context, $scripturl, $txt;
 
 	// Have to at least give us something
 	if (empty($_REQUEST['report']))
@@ -794,7 +794,7 @@ function ModReport()
 	{
 		checkSession();
 
-		$newComment = trim($smcFunc['htmlspecialchars']($_POST['mod_comment']));
+		$newComment = trim(westring::htmlspecialchars($_POST['mod_comment']));
 
 		// In it goes.
 		if (!empty($newComment))
@@ -1013,7 +1013,7 @@ function ModReport()
 // Show a notice sent to a user.
 function ShowNotice()
 {
-	global $smcFunc, $txt, $context;
+	global $txt, $context;
 
 	$context['page_title'] = $txt['show_notice'];
 	$context['sub_template'] = 'show_notice';
@@ -1042,7 +1042,7 @@ function ShowNotice()
 // View watched users.
 function ViewWatchedUsers()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $user_info;
+	global $modSettings, $context, $txt, $scripturl, $user_info;
 
 	// Some important context!
 	$context['page_title'] = $txt['mc_watched_users_title'];
@@ -1251,7 +1251,7 @@ function ViewWatchedUsers()
 
 function list_getWatchedUserCount($approve_query)
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -1269,7 +1269,7 @@ function list_getWatchedUserCount($approve_query)
 
 function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $dummy)
 {
-	global $smcFunc, $txt, $scripturl, $modSettings, $user_info, $context;
+	global $txt, $scripturl, $modSettings, $user_info, $context;
 
 	$request = wedb::query('
 		SELECT id_member, real_name, last_login, posts, warning
@@ -1363,7 +1363,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 
 function list_getWatchedUserPostsCount($approve_query)
 {
-	global $smcFunc, $modSettings, $user_info;
+	global $modSettings, $user_info;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -1385,7 +1385,7 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $smcFunc, $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $modSettings, $user_info;
 
 	$request = wedb::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
@@ -1454,7 +1454,7 @@ function ViewWarnings()
 // Simply put, look at the warning log!
 function ViewWarningLog()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl;
+	global $modSettings, $context, $txt, $scripturl;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
@@ -1556,7 +1556,7 @@ function ViewWarningLog()
 
 function list_getWarningCount()
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -1574,7 +1574,7 @@ function list_getWarningCount()
 
 function list_getWarnings($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $modSettings, $user_info;
 
 	$request = wedb::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
@@ -1610,7 +1610,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 // Load all the warning templates.
 function ViewWarningTemplates()
 {
-	global $smcFunc, $modSettings, $context, $txt, $scripturl, $user_info;
+	global $modSettings, $context, $txt, $scripturl, $user_info;
 
 	// Submitting a new one?
 	if (isset($_POST['add']))
@@ -1753,7 +1753,7 @@ function ViewWarningTemplates()
 
 function list_getWarningTemplateCount()
 {
-	global $smcFunc, $modSettings, $user_info;
+	global $modSettings, $user_info;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -1774,7 +1774,7 @@ function list_getWarningTemplateCount()
 
 function list_getWarningTemplates($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $modSettings, $user_info;
 
 	$request = wedb::query('
 		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,
@@ -1800,7 +1800,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			'creator' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
 			'time' => timeformat($row['log_time']),
 			'title' => $row['template_title'],
-			'body' => $smcFunc['htmlspecialchars']($row['body']),
+			'body' => westring::htmlspecialchars($row['body']),
 		);
 	}
 	wedb::free_result($request);
@@ -1811,7 +1811,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 // Edit a warning template.
 function ModifyWarningTemplate()
 {
-	global $smcFunc, $context, $txt, $user_info;
+	global $context, $txt, $user_info;
 
 	$context['id_template'] = isset($_REQUEST['tid']) ? (int) $_REQUEST['tid'] : 0;
 	$context['is_edit'] = $context['id_template'];
@@ -1849,7 +1849,7 @@ function ModifyWarningTemplate()
 		{
 			$context['template_data'] = array(
 				'title' => $row['template_title'],
-				'body' => $smcFunc['htmlspecialchars']($row['body']),
+				'body' => westring::htmlspecialchars($row['body']),
 				'personal' => $row['id_recipient'],
 				'can_edit_personal' => $row['id_member'] == $user_info['id'],
 			);
@@ -1874,7 +1874,7 @@ function ModifyWarningTemplate()
 			fatal_error($txt['mc_warning_template_error_empty']);
 
 		// Safety first.
-		$_POST['template_title'] = $smcFunc['htmlspecialchars']($_POST['template_title']);
+		$_POST['template_title'] = westring::htmlspecialchars($_POST['template_title']);
 
 		// Clean up BBC.
 		wedgeEditor::preparsecode($_POST['template_body']);
@@ -1942,7 +1942,7 @@ function ModifyWarningTemplate()
 // Change moderation preferences.
 function ModerationSettings()
 {
-	global $context, $smcFunc, $txt, $scripturl, $user_settings, $user_info;
+	global $context, $txt, $scripturl, $user_settings, $user_info;
 
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');

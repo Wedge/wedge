@@ -471,7 +471,7 @@ function url_exists($url)
 // Load the installed packages.
 function loadInstalledPackages()
 {
-	global $boarddir, $smcFunc;
+	global $boarddir;
 
 	// First, check that the database is valid, installed.list is still king.
 	$install_file = implode('', file($boarddir . '/Packages/installed.list'));
@@ -2343,7 +2343,7 @@ function package_crypt($pass)
 
 function package_create_backup($id = 'backup')
 {
-	global $sourcedir, $boarddir, $smcFunc;
+	global $sourcedir, $boarddir;
 
 	$files = array();
 

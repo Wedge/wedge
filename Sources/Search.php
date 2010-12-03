@@ -49,7 +49,7 @@ $GLOBALS['search_versions'] = array(
 // Ask the user what they want to search for.
 function Search()
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context, $smcFunc;
+	global $txt, $scripturl, $modSettings, $user_info, $context;
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
@@ -106,7 +106,7 @@ function Search()
 		$context['search_params']['search'] = un_htmlspecialchars($_REQUEST['search']);
 
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
+		$context['search_params']['search'] = westring::htmlspecialchars($context['search_params']['search']);
 	if (isset($context['search_params']['userspec']))
 		$context['search_params']['userspec'] = htmlspecialchars($context['search_params']['userspec']);
 	if (!empty($context['search_params']['searchtype']))

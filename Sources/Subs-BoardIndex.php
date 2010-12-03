@@ -39,7 +39,7 @@ if (!defined('SMF'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $smcFunc, $scripturl, $user_info, $modSettings, $txt;
+	global $scripturl, $user_info, $modSettings, $txt;
 	global $settings, $context;
 
 	// For performance, track the latest post while going through the boards.

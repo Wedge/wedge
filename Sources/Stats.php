@@ -43,7 +43,7 @@ if (!defined('SMF'))
 // Display some useful/interesting board statistics.
 function Stats()
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context, $smcFunc;
+	global $txt, $scripturl, $modSettings, $user_info, $context;
 
 	isAllowedTo('view_stats');
 
@@ -645,7 +645,7 @@ function Stats()
 
 function getDailyStats($condition_string, $condition_parameters = array())
 {
-	global $context, $smcFunc;
+	global $context;
 
 	// Activity by day.
 	$days_result = wedb::query('

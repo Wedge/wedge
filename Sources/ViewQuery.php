@@ -41,7 +41,7 @@ define('WEDGE_NO_LOG', 1);
 // See the queries....
 function ViewQuery()
 {
-	global $scripturl, $user_info, $settings, $context, $db_connection, $modSettings, $boarddir, $smcFunc, $txt, $db_show_debug;
+	global $scripturl, $user_info, $settings, $context, $db_connection, $modSettings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
 	// Check groups

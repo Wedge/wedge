@@ -292,8 +292,6 @@ function adminLogin()
 
 function adminLogin_outputPostVars($k, $v)
 {
-	global $smcFunc;
-
 	if (!is_array($v))
 		return '
 <input type="hidden" name="' . htmlspecialchars($k) . '" value="' . strtr($v, array('"' => '&quot;', '<' => '&lt;', '>' => '&gt;')) . '" />';
@@ -343,7 +341,7 @@ function construct_query_string($get)
 // Find members by email address, username, or real name.
 function findMembers($names, $use_wildcards = false, $buddies_only = false, $max = 500)
 {
-	global $scripturl, $user_info, $modSettings, $smcFunc;
+	global $scripturl, $user_info, $modSettings;
 
 	// If it's not already an array, make it one.
 	if (!is_array($names))
@@ -353,7 +351,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
-		$names[$i] = trim($smcFunc['strtolower']($name));
+		$names[$i] = trim(westring::strtolower($name));
 
 		$maybe_email |= strpos($name, '@') !== false;
 
@@ -420,7 +418,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $scripturl, $context, $txt, $modSettings, $smcFunc, $language;
+	global $scripturl, $context, $txt, $modSettings, $language;
 
 	// Language... and a required file.
 	loadLanguage('Login');
@@ -498,10 +496,10 @@ function validateUsername($memID, $username)
 // This function simply checks whether a password meets the current forum rules.
 function validatePassword($password, $username, $restrict_in = array())
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Perform basic requirements first.
-	if ($smcFunc['strlen']($password) < (empty($modSettings['password_strength']) ? 4 : 8))
+	if (westring::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
 		return 'short';
 
 	// Is this enough?
@@ -511,7 +509,7 @@ function validatePassword($password, $username, $restrict_in = array())
 	// Otherwise, perform the medium strength test - checking if password appears in the restricted string.
 	if (preg_match('~\b' . preg_quote($password, '~') . '\b~', implode(' ', $restrict_in)) != 0)
 		return 'restricted_words';
-	elseif ($smcFunc['strpos']($password, $username) !== false)
+	elseif (westring::strpos($password, $username) !== false)
 		return 'restricted_words';
 
 	// !!! If pspell is available, use it on the word, and return restricted_words if it doesn't give "bad spelling"?
@@ -522,7 +520,7 @@ function validatePassword($password, $username, $restrict_in = array())
 
 	// Otherwise, hard test next, check for numbers and letters, uppercase too.
 	$good = preg_match('~(\D\d|\d\D)~', $password) != 0;
-	$good &= $smcFunc['strtolower']($password) != $password;
+	$good &= westring::strtolower($password) != $password;
 
 	return $good ? null : 'chars';
 }
@@ -530,7 +528,7 @@ function validatePassword($password, $username, $restrict_in = array())
 // Quickly find out what this user can and cannot do.
 function rebuildModCache()
 {
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	// What groups can they moderate?
 	$group_query = allowedTo('manage_membergroups') ? '1=1' : '0=1';

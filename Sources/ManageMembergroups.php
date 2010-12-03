@@ -119,7 +119,7 @@ function ModifyMembergroups()
 // An overview of the current membergroups.
 function MembergroupIndex()
 {
-	global $txt, $scripturl, $context, $settings, $smcFunc;
+	global $txt, $scripturl, $context, $settings;
 
 	$context['page_title'] = $txt['membergroups_title'];
 
@@ -354,7 +354,7 @@ function MembergroupIndex()
 // Add a membergroup.
 function AddMembergroup()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	// A form was submitted, we can start adding.
 	if (!empty($_POST['group_name']))
@@ -597,7 +597,7 @@ function DeleteMembergroup()
 // Editing a membergroup.
 function EditMembergroup()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
 

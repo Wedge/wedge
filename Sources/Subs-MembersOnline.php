@@ -40,7 +40,7 @@ if (!defined('SMF'))
 // Retrieve a list and several other statistics of the users currently online.
 function getMembersOnlineStats($membersOnlineOptions)
 {
-	global $smcFunc, $context, $scripturl, $user_info, $modSettings, $txt;
+	global $context, $scripturl, $user_info, $modSettings, $txt;
 
 	// The list can be sorted in several ways.
 	$allowed_sort_options = array(
@@ -201,7 +201,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 // Check if the number of users online is a record and store it.
 function trackStatsUsersOnline($total_users_online)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	$settingsToUpdate = array();
 

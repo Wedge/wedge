@@ -32,7 +32,7 @@ if (!defined('SMF'))
 // Get the latest posts of a forum.
 function getLastPosts($latestPostOptions)
 {
-	global $scripturl, $txt, $user_info, $modSettings, $smcFunc, $context;
+	global $scripturl, $txt, $user_info, $modSettings, $context;
 
 	// Find all the posts.  Newer ones will have higher IDs.  (assuming the last 20 * number are accessable...)
 	// !!!SLOW This query is now slow, NEEDS to be fixed.  Maybe break into two?
@@ -67,8 +67,8 @@ function getLastPosts($latestPostOptions)
 		censorText($row['body']);
 
 		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
-		if ($smcFunc['strlen']($row['body']) > 128)
-			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
+		if (westring::strlen($row['body']) > 128)
+			$row['body'] = westring::substr($row['body'], 0, 128) . '...';
 
 		// Build the array.
 		$posts[] = array(

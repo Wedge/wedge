@@ -115,7 +115,7 @@ function ManagePostSettings()
 // Set the censored words.
 function SetCensor()
 {
-	global $txt, $modSettings, $context, $smcFunc;
+	global $txt, $modSettings, $context;
 
 	if (!empty($_POST['save_censor']))
 	{
@@ -192,7 +192,7 @@ function SetCensor()
 // Modify all settings related to posts and posting.
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $smcFunc, $db_prefix;
+	global $context, $txt, $modSettings, $scripturl, $db_prefix;
 
 	// All the settings...
 	$config_vars = array(

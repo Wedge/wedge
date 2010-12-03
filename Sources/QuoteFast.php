@@ -46,7 +46,7 @@ if (!defined('SMF'))
  */
 function QuoteFast()
 {
-	global $modSettings, $user_info, $txt, $settings, $context, $smcFunc;
+	global $modSettings, $user_info, $txt, $settings, $context;
 
 	loadLanguage('Post');
 	loadSource('Class-Editor');

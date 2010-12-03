@@ -33,7 +33,7 @@ define('WEDGE_NO_LOG', 1);
 
 function Findmember()
 {
-	global $context, $scripturl, $user_info, $smcFunc;
+	global $context, $scripturl, $user_info;
 
 	checkSession('get');
 
@@ -43,7 +43,7 @@ function Findmember()
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_pm';
 
 	if (isset($_REQUEST['search']))
-		$context['last_search'] = $smcFunc['htmlspecialchars']($_REQUEST['search'], ENT_QUOTES);
+		$context['last_search'] = westring::htmlspecialchars($_REQUEST['search'], ENT_QUOTES);
 	else
 		$_REQUEST['start'] = 0;
 
@@ -64,7 +64,7 @@ function Findmember()
 	// If the user has done a search, well - search.
 	if (isset($_REQUEST['search']))
 	{
-		$_REQUEST['search'] = $smcFunc['htmlspecialchars']($_REQUEST['search'], ENT_QUOTES);
+		$_REQUEST['search'] = westring::htmlspecialchars($_REQUEST['search'], ENT_QUOTES);
 
 		$context['results'] = findMembers(array($_REQUEST['search']), true, $context['buddy_search']);
 		$total_results = count($context['results']);

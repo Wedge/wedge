@@ -48,7 +48,7 @@ class fulltext_search
 
 	public function __construct()
 	{
-		global $smcFunc, $db_connection, $modSettings;
+		global $db_connection, $modSettings;
 
 		$this->bannedWords = empty($modSettings['search_banned_words']) ? array() : explode(',', $modSettings['search_banned_words']);
 		$this->min_word_length = $this->_getMinWordLength();
@@ -74,8 +74,6 @@ class fulltext_search
 	// What is the minimum word length full text supports?
 	protected function _getMinWordLength()
 	{
-		global $smcFunc;
-
 		// Try to determine the minimum number of letters for a fulltext search.
 		$request = wedb::query('
 			SHOW VARIABLES
@@ -123,7 +121,7 @@ class fulltext_search
 	// Search for indexed words.
 	public function indexedWordQuery($words, $search_data)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		$query_select = array(
 			'id_msg' => 'm.id_msg',

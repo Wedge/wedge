@@ -87,7 +87,7 @@ function checkActivation()
 
 function DoLogin()
 {
-	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
+	global $txt, $scripturl, $user_info, $user_settings;
 	global $cookiename, $maintenance, $modSettings, $context;
 
 	// Load cookie authentication stuff.
@@ -312,7 +312,7 @@ function sha1_rol($num, $cnt)
 // This protects against brute force attacks on a member's password. Importantly even if the password was right we DON'T TELL THEM!
 function validatePasswordFlood($id_member, $password_flood_value = false, $was_correct = false)
 {
-	global $smcFunc, $cookiename;
+	global $cookiename;
 
 	// As this is only brute protection, we allow 5 attempts every 10 seconds.
 

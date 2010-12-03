@@ -46,7 +46,7 @@
  */
 function getBoardList($boardListOptions = array())
 {
-	global $smcFunc, $user_info;
+	global $user_info;
 
 	if (isset($boardListOptions['excluded_boards'], $boardListOptions['included_boards']))
 		trigger_error('getBoardList(): Setting both excluded_boards and included_boards is not allowed.', E_USER_ERROR);

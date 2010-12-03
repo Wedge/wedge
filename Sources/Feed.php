@@ -75,7 +75,7 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $board, $board_info, $context, $scripturl, $txt, $modSettings, $user_info;
-	global $query_this_board, $smcFunc, $forum_version, $cdata_override;
+	global $query_this_board, $forum_version, $cdata_override;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -380,7 +380,7 @@ function Feed()
 
 function cdata_parse($data, $ns = '')
 {
-	global $smcFunc, $cdata_override;
+	global $cdata_override;
 
 	// Are we not doing it?
 	if (!empty($cdata_override))
@@ -388,14 +388,14 @@ function cdata_parse($data, $ns = '')
 
 	$cdata = '<![CDATA[';
 
-	for ($pos = 0, $n = $smcFunc['strlen']($data); $pos < $n; null)
+	for ($pos = 0, $n = westring::strlen($data); $pos < $n; null)
 	{
 		$positions = array(
-			$smcFunc['strpos']($data, '&', $pos),
-			$smcFunc['strpos']($data, ']', $pos),
+			westring::strpos($data, '&', $pos),
+			westring::strpos($data, ']', $pos),
 		);
 		if ($ns != '')
-			$positions[] = $smcFunc['strpos']($data, '<', $pos);
+			$positions[] = westring::strpos($data, '<', $pos);
 		foreach ($positions as $k => $dummy)
 		{
 			if ($dummy === false)
@@ -406,37 +406,37 @@ function cdata_parse($data, $ns = '')
 		$pos = empty($positions) ? $n : min($positions);
 
 		if ($pos - $old > 0)
-			$cdata .= $smcFunc['substr']($data, $old, $pos - $old);
+			$cdata .= westring::substr($data, $old, $pos - $old);
 		if ($pos >= $n)
 			break;
 
-		if ($smcFunc['substr']($data, $pos, 1) == '<')
+		if (westring::substr($data, $pos, 1) == '<')
 		{
-			$pos2 = $smcFunc['strpos']($data, '>', $pos);
+			$pos2 = westring::strpos($data, '>', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			if ($smcFunc['substr']($data, $pos + 1, 1) == '/')
-				$cdata .= ']]></' . $ns . ':' . $smcFunc['substr']($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
+			if (westring::substr($data, $pos + 1, 1) == '/')
+				$cdata .= ']]></' . $ns . ':' . westring::substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
 			else
-				$cdata .= ']]><' . $ns . ':' . $smcFunc['substr']($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
+				$cdata .= ']]><' . $ns . ':' . westring::substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
 			$pos = $pos2 + 1;
 		}
-		elseif ($smcFunc['substr']($data, $pos, 1) == ']')
+		elseif (westring::substr($data, $pos, 1) == ']')
 		{
 			$cdata .= ']]>&#093;<![CDATA[';
 			$pos++;
 		}
-		elseif ($smcFunc['substr']($data, $pos, 1) == '&')
+		elseif (westring::substr($data, $pos, 1) == '&')
 		{
-			$pos2 = $smcFunc['strpos']($data, ';', $pos);
+			$pos2 = westring::strpos($data, ';', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			$ent = $smcFunc['substr']($data, $pos + 1, $pos2 - $pos - 1);
+			$ent = westring::substr($data, $pos + 1, $pos2 - $pos - 1);
 
-			if ($smcFunc['substr']($data, $pos + 1, 1) == '#')
-				$cdata .= ']]>' . $smcFunc['substr']($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+			if (westring::substr($data, $pos + 1, 1) == '#')
+				$cdata .= ']]>' . westring::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			elseif (in_array($ent, array('amp', 'lt', 'gt', 'quot')))
-				$cdata .= ']]>' . $smcFunc['substr']($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+				$cdata .= ']]>' . westring::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			// !!! ??
 
 			$pos = $pos2 + 1;
@@ -507,7 +507,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 
 function getXmlMembers($xml_format)
 {
-	global $scripturl, $smcFunc;
+	global $scripturl;
 
 	if (!allowedTo('view_mlist'))
 		return array();
@@ -564,7 +564,7 @@ function getXmlMembers($xml_format)
 function getXmlNews($xml_format)
 {
 	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this_board, $smcFunc, $settings, $context;
+	global $query_this_board, $settings, $context;
 
 	/* Find the latest posts that:
 		- are the first post in their topic.
@@ -620,8 +620,8 @@ function getXmlNews($xml_format)
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr($smcFunc['substr'](str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && westring::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(westring::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -691,7 +691,7 @@ function getXmlNews($xml_format)
 function getXmlRecent($xml_format)
 {
 	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this_board, $smcFunc, $settings, $context;
+	global $query_this_board, $settings, $context;
 
 	$done = false;
 	$loops = 0;
@@ -765,8 +765,8 @@ function getXmlRecent($xml_format)
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr($smcFunc['substr'](str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && westring::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(westring::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 

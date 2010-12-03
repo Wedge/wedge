@@ -149,7 +149,7 @@ function ModifyPermissions()
 
 function PermissionIndex()
 {
-	global $txt, $scripturl, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $settings, $modSettings;
 
 	$context['page_title'] = $txt['permissions_title'];
 
@@ -402,7 +402,7 @@ function PermissionIndex()
 
 function PermissionByBoard()
 {
-	global $context, $modSettings, $txt, $smcFunc, $cat_tree, $boardList, $boards;
+	global $context, $modSettings, $txt, $cat_tree, $boardList, $boards;
 
 	$context['page_title'] = $txt['permissions_boards'];
 	$context['edit_all'] = isset($_GET['edit']);
@@ -470,7 +470,7 @@ function PermissionByBoard()
 
 function SetQuickGroups()
 {
-	global $context, $smcFunc;
+	global $context;
 
 	checkSession();
 
@@ -727,7 +727,7 @@ function SetQuickGroups()
 
 function ModifyMembergroup()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	if (!isset($_GET['group']))
 		fatal_lang_error('no_access', false);
@@ -875,7 +875,7 @@ function ModifyMembergroup()
 
 function ModifyMembergroup2()
 {
-	global $modSettings, $smcFunc, $context;
+	global $modSettings, $context;
 
 	checkSession();
 
@@ -997,7 +997,7 @@ function ModifyMembergroup2()
 // Screen for modifying general permission settings.
 function GeneralPermissionSettings($return_config = false)
 {
-	global $context, $modSettings, $txt, $scripturl, $smcFunc;
+	global $context, $modSettings, $txt, $scripturl;
 
 	// All the setting variables
 	$config_vars = array(
@@ -1100,7 +1100,7 @@ function GeneralPermissionSettings($return_config = false)
 // Set the permission level for a specific profile, group, or group for a profile.
 function setPermissionLevel($level, $group, $profile = 'null')
 {
-	global $smcFunc, $context;
+	global $context;
 
 	loadIllegalPermissions();
 	loadIllegalGuestPermissions();
@@ -1711,7 +1711,7 @@ function loadAllPermissions($loadType = 'classic')
 // Initialize a form with inline permissions.
 function init_inline_permissions($permissions, $excluded_groups = array())
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	loadLanguage('ManagePermissions');
 	loadTemplate('ManagePermissions');
@@ -1810,7 +1810,7 @@ function theme_inline_permissions($permission)
 // Save the permissions of a form containing inline permissions.
 function save_inline_permissions($permissions)
 {
-	global $context, $smcFunc;
+	global $context;
 
 	// No permissions? Not a great deal to do here.
 	if (!allowedTo('manage_permissions'))
@@ -1864,7 +1864,7 @@ function save_inline_permissions($permissions)
 
 function loadPermissionProfiles()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt;
 
 	$request = wedb::query('
 		SELECT id_profile, profile_name
@@ -1895,7 +1895,7 @@ function loadPermissionProfiles()
 // Add/Edit/Delete profiles.
 function EditPermissionProfiles()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt;
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
@@ -1907,7 +1907,7 @@ function EditPermissionProfiles()
 		checkSession();
 
 		$_POST['copy_from'] = (int) $_POST['copy_from'];
-		$_POST['profile_name'] = $smcFunc['htmlspecialchars']($_POST['profile_name']);
+		$_POST['profile_name'] = westring::htmlspecialchars($_POST['profile_name']);
 
 		// Insert the profile itself.
 		wedb::insert('',
@@ -1956,7 +1956,7 @@ function EditPermissionProfiles()
 		{
 			foreach ($_POST['rename_profile'] as $id => $value)
 			{
-				$value = $smcFunc['htmlspecialchars']($value);
+				$value = westring::htmlspecialchars($value);
 
 				if (trim($value) != '' && $id > 4)
 					wedb::query('
@@ -2042,8 +2042,6 @@ function EditPermissionProfiles()
 // This function updates the permissions of any groups based off this group.
 function updateChildPermissions($parents, $profile = null)
 {
-	global $smcFunc;
-
 	// All the parent groups to sort out.
 	if (!is_array($parents))
 		$parents = array($parents);
@@ -2218,7 +2216,7 @@ function loadIllegalGuestPermissions()
 // Present a nice way of applying post moderation.
 function ModifyPostModeration()
 {
-	global $context, $txt, $smcFunc, $modSettings;
+	global $context, $txt, $modSettings;
 
 	// Just in case.
 	checkSession('get');

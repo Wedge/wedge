@@ -123,7 +123,7 @@ function ManageNews()
 // Let the administrator(s) edit the news.
 function EditNews()
 {
-	global $txt, $modSettings, $context, $user_info, $smcFunc;
+	global $txt, $modSettings, $context, $user_info;
 
 	loadSource('Class-Editor');
 
@@ -169,7 +169,7 @@ function EditNews()
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
-			'unparsed' => $smcFunc['htmlspecialchars'](wedgeEditor::un_preparsecode($line)),
+			'unparsed' => westring::htmlspecialchars(wedgeEditor::un_preparsecode($line)),
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
 		);
 
@@ -179,7 +179,7 @@ function EditNews()
 
 function SelectMailingMembers()
 {
-	global $txt, $context, $modSettings, $smcFunc;
+	global $txt, $context, $modSettings;
 
 	$context['page_title'] = $txt['admin_newsletters'];
 
@@ -296,7 +296,7 @@ function SelectMailingMembers()
 // Email your members...
 function ComposeMailing()
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context;
 
 	// Start by finding any members!
 	$toClean = array();
@@ -317,7 +317,7 @@ function ComposeMailing()
 
 			foreach ($_POST[$type] as $index => $member)
 				if (strlen(trim($member)) > 0)
-					$_POST[$type][$index] = $smcFunc['htmlspecialchars']($smcFunc['strtolower'](trim($member)));
+					$_POST[$type][$index] = westring::htmlspecialchars(westring::strtolower(trim($member)));
 				else
 					unset($_POST[$type][$index]);
 
@@ -449,7 +449,7 @@ function ComposeMailing()
 // Send out the mailing!
 function SendMailing($clean_only = false)
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context;
 	global $scripturl, $modSettings, $user_info;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.

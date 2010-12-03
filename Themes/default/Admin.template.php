@@ -605,7 +605,7 @@ function template_edit_censored()
 // Maintenance is a lovely thing, isn't it?
 function template_not_done()
 {
-	global $context, $settings, $options, $txt, $scripturl, $smcFunc;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -638,7 +638,7 @@ function template_not_done()
 
 	echo '
 			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', $smcFunc['htmlspecialchars']($txt['not_done_continue']), '" class="button_submit" /></div>
+				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westring::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" /></div>
 				', $context['continue_post_data'], '
 			</form>
 		</div>
@@ -1853,7 +1853,7 @@ function template_callback_question_answer_list()
 // Repairing boards.
 function template_repair_boards()
 {
-	global $context, $txt, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -1906,7 +1906,7 @@ function template_repair_boards()
 				</p>
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="recount" id="recount_now" value="', $smcFunc['htmlspecialchars']($txt['errors_recount_now']), '" />
+					<input type="submit" name="recount" id="recount_now" value="', westring::htmlspecialchars($txt['errors_recount_now']), '" />
 				</form>';
 		}
 		else

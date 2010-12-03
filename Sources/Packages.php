@@ -129,7 +129,7 @@ function Packages()
 // Test install a package.
 function PackageInstallTest()
 {
-	global $boarddir, $txt, $context, $scripturl, $modSettings, $smcFunc, $settings;
+	global $boarddir, $txt, $context, $scripturl, $modSettings, $settings;
 
 	// You have to specify a file!!
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
@@ -374,7 +374,7 @@ function PackageInstallTest()
 
 				$context['actions'][] = array(
 					'type' => $txt['execute_modification'],
-					'action' => $smcFunc['htmlspecialchars'](strtr($action['filename'], array($boarddir => '.'))),
+					'action' => westring::htmlspecialchars(strtr($action['filename'], array($boarddir => '.'))),
 					'description' => $txt['package_action_error'],
 					'failed' => true,
 				);
@@ -422,7 +422,7 @@ function PackageInstallTest()
 
 						$context['theme_actions'][$mod_action['is_custom']]['actions'][$actual_filename] = array(
 							'type' => $txt['execute_modification'],
-							'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+							'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 							'description' => $failed ? $txt['package_action_failure'] : $txt['package_action_success'],
 							'failed' => $failed,
 						);
@@ -431,7 +431,7 @@ function PackageInstallTest()
 					{
 						$context['actions'][$actual_filename] = array(
 							'type' => $txt['execute_modification'],
-							'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+							'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 							'description' => $failed ? $txt['package_action_failure'] : $txt['package_action_success'],
 							'failed' => $failed,
 						);
@@ -446,7 +446,7 @@ function PackageInstallTest()
 				{
 					$context['actions'][$actual_filename] = array(
 						'type' => $txt['execute_modification'],
-						'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+						'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 						'description' => $txt['package_action_skipping']
 					);
 				}
@@ -455,7 +455,7 @@ function PackageInstallTest()
 					$context['has_failure'] = true;
 					$context['actions'][$actual_filename] = array(
 						'type' => $txt['execute_modification'],
-						'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+						'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 						'description' => $txt['package_action_missing'],
 						'failed' => true,
 					);
@@ -463,7 +463,7 @@ function PackageInstallTest()
 				elseif ($mod_action['type'] == 'error')
 					$context['actions'][$actual_filename] = array(
 						'type' => $txt['execute_modification'],
-						'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+						'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 						'description' => $txt['package_action_error'],
 						'failed' => true,
 					);
@@ -486,7 +486,7 @@ function PackageInstallTest()
 					if (empty($mod_action['is_custom']))
 						$context['actions'][$actual_filename]['operations'][] = array(
 							'type' => $txt['execute_modification'],
-							'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+							'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 							'description' => $mod_action['failed'] ? $txt['package_action_failure'] : $txt['package_action_success'],
 							'position' => $mod_action['position'],
 							'operation_key' => $operation_key,
@@ -499,7 +499,7 @@ function PackageInstallTest()
 					if (isset($mod_action['is_custom'], $context['theme_actions'][$mod_action['is_custom']]))
 						$context['theme_actions'][$mod_action['is_custom']]['actions'][$actual_filename]['operations'][] = array(
 							'type' => $txt['execute_modification'],
-							'action' => $smcFunc['htmlspecialchars'](strtr($mod_action['filename'], array($boarddir => '.'))),
+							'action' => westring::htmlspecialchars(strtr($mod_action['filename'], array($boarddir => '.'))),
 							'description' => $mod_action['failed'] ? $txt['package_action_failure'] : $txt['package_action_success'],
 							'position' => $mod_action['position'],
 							'operation_key' => $operation_key,
@@ -516,26 +516,26 @@ function PackageInstallTest()
 		elseif ($action['type'] == 'code')
 			$thisAction = array(
 				'type' => $txt['execute_code'],
-				'action' => $smcFunc['htmlspecialchars']($action['filename']),
+				'action' => westring::htmlspecialchars($action['filename']),
 			);
 		elseif ($action['type'] == 'database')
 		{
 			$thisAction = array(
 				'type' => $txt['execute_database_changes'],
-				'action' => $smcFunc['htmlspecialchars']($action['filename']),
+				'action' => westring::htmlspecialchars($action['filename']),
 			);
 		}
 		elseif (in_array($action['type'], array('create-dir', 'create-file')))
 			$thisAction = array(
 				'type' => $txt['package_create'] . ' ' . ($action['type'] == 'create-dir' ? $txt['package_tree'] : $txt['package_file']),
-				'action' => $smcFunc['htmlspecialchars'](strtr($action['destination'], array($boarddir => '.')))
+				'action' => westring::htmlspecialchars(strtr($action['destination'], array($boarddir => '.')))
 			);
 		elseif (in_array($action['type'], array('require-dir', 'require-file')))
 		{
 			// Do this one...
 			$thisAction = array(
 				'type' => $txt['package_extract'] . ' ' . ($action['type'] == 'require-dir' ? $txt['package_tree'] : $txt['package_file']),
-				'action' => $smcFunc['htmlspecialchars'](strtr($action['destination'], array($boarddir => '.')))
+				'action' => westring::htmlspecialchars(strtr($action['destination'], array($boarddir => '.')))
 			);
 
 			// Could this be theme related?
@@ -561,13 +561,13 @@ function PackageInstallTest()
 		elseif (in_array($action['type'], array('move-dir', 'move-file')))
 			$thisAction = array(
 				'type' => $txt['package_move'] . ' ' . ($action['type'] == 'move-dir' ? $txt['package_tree'] : $txt['package_file']),
-				'action' => $smcFunc['htmlspecialchars'](strtr($action['source'], array($boarddir => '.'))) . ' => ' . $smcFunc['htmlspecialchars'](strtr($action['destination'], array($boarddir => '.')))
+				'action' => westring::htmlspecialchars(strtr($action['source'], array($boarddir => '.'))) . ' => ' . westring::htmlspecialchars(strtr($action['destination'], array($boarddir => '.')))
 			);
 		elseif (in_array($action['type'], array('remove-dir', 'remove-file')))
 		{
 			$thisAction = array(
 				'type' => $txt['package_delete'] . ' ' . ($action['type'] == 'remove-dir' ? $txt['package_tree'] : $txt['package_file']),
-				'action' => $smcFunc['htmlspecialchars'](strtr($action['filename'], array($boarddir => '.')))
+				'action' => westring::htmlspecialchars(strtr($action['filename'], array($boarddir => '.')))
 			);
 
 			// Could this be theme related?
@@ -689,7 +689,7 @@ function PackageInstallTest()
 function PackageInstall()
 {
 	global $boarddir, $txt, $context, $boardurl, $scripturl, $modSettings;
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	// Make sure we don't install this mod twice.
 	checkSubmitOnce('check');
@@ -924,7 +924,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'code' && !empty($action['filename']))
 			{
 				// This is just here as reference for what is available.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version, $smcFunc;
+				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version;
 
 				// Now include the file and be done with it ;).
 				require($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']);
@@ -933,7 +933,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'database' && !empty($action['filename']) && (!$context['uninstalling'] || !empty($_POST['do_db_changes'])))
 			{
 				// These can also be there for database changes.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version, $smcFunc;
+				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version;
 				global $db_package_log;
 
 				// We'll likely want the package specific database functionality!
@@ -1182,7 +1182,7 @@ function ExamineFile()
 // Empty out the installed list.
 function FlushInstall()
 {
-	global $boarddir, $smcFunc;
+	global $boarddir;
 
 	// Always check the session.
 	checkSession('get');
@@ -1425,7 +1425,7 @@ function PackageOptions()
 
 function ViewOperations()
 {
-	global $context, $txt, $boarddir, $smcFunc, $modSettings;
+	global $context, $txt, $boarddir, $modSettings;
 
 	// Can't be in here buddy.
 	isAllowedTo('admin_forum');
@@ -1488,8 +1488,8 @@ function ViewOperations()
 
 	// Ok let's get the content of the file.
 	$context['operations'] = array(
-		'search' => $smcFunc['htmlspecialchars']($mod_actions[$_REQUEST['operation_key']]['search_original'], ENT_QUOTES),
-		'replace' => $smcFunc['htmlspecialchars']($mod_actions[$_REQUEST['operation_key']]['replace_original'], ENT_QUOTES),
+		'search' => westring::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['search_original'], ENT_QUOTES),
+		'replace' => westring::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['replace_original'], ENT_QUOTES),
 		'position' => $mod_actions[$_REQUEST['operation_key']]['position'],
 	);
 
@@ -1501,7 +1501,7 @@ function ViewOperations()
 // Allow the admin to reset permissions on files.
 function PackagePermissions()
 {
-	global $context, $txt, $modSettings, $boarddir, $sourcedir, $cachedir, $smcFunc, $package_ftp;
+	global $context, $txt, $modSettings, $boarddir, $sourcedir, $cachedir, $package_ftp;
 
 	// Let's try and be good, yes?
 	checkSession('get');

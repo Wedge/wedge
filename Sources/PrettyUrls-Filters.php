@@ -18,7 +18,7 @@ if (!defined('SMF'))
 // This function used to do a lot more, but I kept the name the same though now it doesn't
 function pretty_synchronise_topic_urls()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Clear the URLs cache
 	wedb::query('
@@ -116,7 +116,7 @@ function pretty_urls_actions_filter($urls)
 // Filter topic urls
 function pretty_urls_topic_filter($urls)
 {
-	global $context, $modSettings, $scripturl, $smcFunc;
+	global $context, $modSettings, $scripturl;
 
 /////////////////////////////////// .a-z ?!?! Y'a un 'blème......
 	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
@@ -266,7 +266,7 @@ function pretty_urls_topic_filter($urls)
 // Filter board urls
 function pretty_urls_board_filter($urls)
 {
-	global $scripturl, $modSettings, $context, $smcFunc;
+	global $scripturl, $modSettings, $context;
 
 	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;mois=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
@@ -320,7 +320,7 @@ function pretty_urls_board_filter($urls)
 // Filter profiles
 function pretty_profiles_filter($urls)
 {
-	global $boardurl, $modSettings, $scripturl, $smcFunc;
+	global $boardurl, $modSettings, $scripturl;
 
 	$pattern = '~(.*)action=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();

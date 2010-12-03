@@ -167,7 +167,7 @@ function ThemesMain()
 
 function ThemeAdmin()
 {
-	global $context, $boarddir, $modSettings, $smcFunc;
+	global $context, $boarddir, $modSettings;
 
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
@@ -263,7 +263,7 @@ function ThemeAdmin()
 
 function ThemeList()
 {
-	global $context, $boarddir, $boardurl, $smcFunc;
+	global $context, $boarddir, $boardurl;
 
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
@@ -379,7 +379,7 @@ function ThemeList()
 // Administrative global settings.
 function SetThemeOptions()
 {
-	global $txt, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $context, $settings, $modSettings;
 
 	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
 
@@ -749,7 +749,7 @@ function SetThemeOptions()
 // Administrative global settings.
 function SetThemeSettings()
 {
-	global $txt, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $context, $settings, $modSettings;
 
 	if (empty($_GET['th']) && empty($_GET['id']))
 		return ThemeAdmin();
@@ -888,7 +888,7 @@ function SetThemeSettings()
 // Remove a theme from the database.
 function RemoveTheme()
 {
-	global $modSettings, $context, $smcFunc;
+	global $modSettings, $context;
 
 	checkSession('get');
 
@@ -948,7 +948,7 @@ function RemoveTheme()
 // Choose a theme from a list.
 function PickTheme()
 {
-	global $txt, $context, $modSettings, $user_info, $language, $smcFunc, $settings, $scripturl;
+	global $txt, $context, $modSettings, $user_info, $language, $settings, $scripturl;
 
 	loadLanguage('Profile');
 	loadTemplate('Themes');
@@ -1168,7 +1168,7 @@ function PickTheme()
 
 function ThemeInstall()
 {
-	global $boarddir, $boardurl, $txt, $context, $settings, $modSettings, $smcFunc;
+	global $boarddir, $boardurl, $txt, $context, $settings, $modSettings;
 
 	checkSession('request');
 
@@ -1278,7 +1278,7 @@ function ThemeInstall()
 		$xml_info = '<' . '?xml version="1.0"?' . '>
 <theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
-	<id>smf:' . $smcFunc['strtolower'](str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
+	<id>smf:' . westring::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
 	<version>' . $modSettings['smfVersion'] . '</version>
 	<!-- Theme name, used purely for aesthetics. -->
 	<name>' . $_REQUEST['copy'] . '</name>
@@ -1483,7 +1483,7 @@ function WrapAction()
 
 function EditTheme()
 {
-	global $context, $settings, $scripturl, $boarddir, $smcFunc;
+	global $context, $settings, $scripturl, $boarddir;
 
 	if (isset($_REQUEST['preview']))
 	{
@@ -1814,7 +1814,7 @@ function get_file_listing($path, $relative)
 
 function CopyTemplate()
 {
-	global $context, $settings, $smcFunc;
+	global $context, $settings;
 
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');

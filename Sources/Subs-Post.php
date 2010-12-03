@@ -143,7 +143,6 @@ if (!defined('SMF'))
 function sendmail($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 {
 	global $webmaster_email, $context, $modSettings, $txt, $scripturl;
-	global $smcFunc;
 
 	// Use sendmail if it's set or if no SMTP server is set.
 	$use_sendmail = empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '';
@@ -309,7 +308,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 // Add an email to the mail queue.
 function AddMailQueue($flush = false, $to_array = array(), $subject = '', $message = '', $headers = '', $send_html = false, $priority = 3, $is_private = false)
 {
-	global $context, $modSettings, $smcFunc;
+	global $context, $modSettings;
 
 	static $cur_insert = array();
 	static $cur_insert_len = 0;
@@ -401,7 +400,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
 	global $scripturl, $txt, $user_info, $language;
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -426,8 +425,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		$user_info['name'] = $from['name'];
 
 	// This is the one that will go in their inbox.
-	$htmlmessage = $smcFunc['htmlspecialchars']($message, ENT_QUOTES);
-	$htmlsubject = $smcFunc['htmlspecialchars']($subject);
+	$htmlmessage = westring::htmlspecialchars($message, ENT_QUOTES);
+	$htmlsubject = westring::htmlspecialchars($subject);
 	wedgeEditor::preparsecode($htmlmessage);
 
 	// Integrated PMs
@@ -441,7 +440,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		{
 			if (!is_numeric($recipients[$rec_type][$id]))
 			{
-				$recipients[$rec_type][$id] = $smcFunc['strtolower'](trim(preg_replace('/[<>&"\'=\\\]/', '', $recipients[$rec_type][$id])));
+				$recipients[$rec_type][$id] = westring::strtolower(trim(preg_replace('/[<>&"\'=\\\]/', '', $recipients[$rec_type][$id])));
 				$usernames[$recipients[$rec_type][$id]] = 0;
 			}
 		}
@@ -457,8 +456,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			)
 		);
 		while ($row = wedb::fetch_assoc($request))
-			if (isset($usernames[$smcFunc['strtolower']($row['member_name'])]))
-				$usernames[$smcFunc['strtolower']($row['member_name'])] = $row['id_member'];
+			if (isset($usernames[westring::strtolower($row['member_name'])]))
+				$usernames[westring::strtolower($row['member_name'])] = $row['id_member'];
 		wedb::free_result($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.
@@ -956,7 +955,7 @@ function server_parse($message, $socket, $response)
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $context, $smcFunc;
+	global $modSettings, $context;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -1150,7 +1149,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $txt, $modSettings, $smcFunc, $context;
+	global $user_info, $txt, $modSettings, $context;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1478,7 +1477,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // !!!
 function createAttachment(&$attachmentOptions)
 {
-	global $modSettings, $smcFunc, $context;
+	global $modSettings, $context;
 
 	loadSource('Subs-Graphics');
 
@@ -1817,7 +1816,7 @@ function createAttachment(&$attachmentOptions)
 // !!!
 function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $modSettings, $smcFunc, $context;
+	global $user_info, $modSettings, $context;
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -2001,8 +2000,6 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // Approve (or not) some posts... without permission checks...
 function approvePosts($msgs, $approve = true)
 {
-	global $smcFunc;
-
 	if (!is_array($msgs))
 		$msgs = array($msgs);
 
@@ -2221,8 +2218,6 @@ function approvePosts($msgs, $approve = true)
 // Approve topics?
 function approveTopics($topics, $approve = true)
 {
-	global $smcFunc;
-
 	if (!is_array($topics))
 		$topics = array($topics);
 
@@ -2254,7 +2249,7 @@ function approveTopics($topics, $approve = true)
 function sendApprovalNotifications(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $context, $smcFunc;
+	global $modSettings, $context;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))
@@ -2380,7 +2375,7 @@ function sendApprovalNotifications(&$topicData)
 // Update the last message in a board, and its parents.
 function updateLastMessages($setboards, $id_msg = 0)
 {
-	global $board_info, $board, $modSettings, $smcFunc;
+	global $board_info, $board, $modSettings;
 
 	// Please - let's be sane.
 	if (empty($setboards))
@@ -2507,7 +2502,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $modSettings, $language, $scripturl, $user_info, $context, $smcFunc;
+	global $txt, $modSettings, $language, $scripturl, $user_info, $context;
 
 	// If the setting isn't enabled then just exit.
 	if (empty($modSettings['notify_new_registration']))

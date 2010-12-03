@@ -110,7 +110,7 @@ if (!defined('SMF'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $scripturl, $context, $user_info, $user_settings, $smcFunc, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $user_settings, $modSettings;
 
 	// No guests!
 	is_not_guest();
@@ -435,7 +435,7 @@ function messageIndexBar($area)
 function MessageFolder()
 {
 	global $txt, $scripturl, $modSettings, $context, $subjects_request;
-	global $messages_request, $user_info, $recipients, $options, $smcFunc, $memberContext, $user_settings;
+	global $messages_request, $user_info, $recipients, $options, $memberContext, $user_settings;
 
 	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
 	if (isset($_GET['view']))
@@ -880,7 +880,7 @@ function MessageFolder()
 // Get a personal message for the theme.  (used to save memory.)
 function prepareMessageContext($type = 'subject', $reset = false)
 {
-	global $txt, $scripturl, $modSettings, $context, $messages_request, $memberContext, $recipients, $smcFunc;
+	global $txt, $scripturl, $modSettings, $context, $messages_request, $memberContext, $recipients;
 	global $user_info, $subjects_request;
 
 	// Count the current message number....
@@ -1002,7 +1002,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 
 function MessageSearch()
 {
-	global $context, $txt, $scripturl, $modSettings, $smcFunc;
+	global $context, $txt, $scripturl, $modSettings;
 
 	if (isset($_REQUEST['params']))
 	{
@@ -1075,7 +1075,7 @@ function MessageSearch()
 function MessageSearch2()
 {
 	global $scripturl, $modSettings, $user_info, $context, $txt;
-	global $memberContext, $smcFunc;
+	global $memberContext;
 
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
@@ -1134,7 +1134,7 @@ function MessageSearch2()
 		$userQuery = '';
 	else
 	{
-		$userString = strtr($smcFunc['htmlspecialchars']($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
+		$userString = strtr(westring::htmlspecialchars($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
 		$userString = strtr($userString, array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_'));
 
 		preg_match_all('~"([^"]+)"~', $userString, $matches);
@@ -1247,7 +1247,7 @@ function MessageSearch2()
 	foreach ($matches[1] as $index => $word)
 		if ($word == '-')
 		{
-			$word = $smcFunc['strtolower'](trim($searchArray[$index]));
+			$word = westring::strtolower(trim($searchArray[$index]));
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($searchArray[$index]);
@@ -1257,7 +1257,7 @@ function MessageSearch2()
 	foreach ($tempSearch as $index => $word)
 		if (strpos(trim($word), '-') === 0)
 		{
-			$word = substr($smcFunc['strtolower'](trim($word)), 1);
+			$word = substr(westring::strtolower(trim($word)), 1);
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($tempSearch[$index]);
@@ -1268,13 +1268,13 @@ function MessageSearch2()
 	// Trim everything and make sure there are no words that are the same.
 	foreach ($searchArray as $index => $value)
 	{
-		$searchArray[$index] = $smcFunc['strtolower'](trim($value));
+		$searchArray[$index] = westring::strtolower(trim($value));
 		if ($searchArray[$index] == '')
 			unset($searchArray[$index]);
 		else
 		{
 			// Sort out entities first.
-			$searchArray[$index] = $smcFunc['htmlspecialchars']($searchArray[$index]);
+			$searchArray[$index] = westring::htmlspecialchars($searchArray[$index]);
 		}
 	}
 	$searchArray = array_unique($searchArray);
@@ -1531,7 +1531,7 @@ function MessageSearch2()
 function MessagePost()
 {
 	global $txt, $scripturl, $modSettings;
-	global $context, $options, $smcFunc, $language, $user_info;
+	global $context, $options, $language, $user_info;
 
 	isAllowedTo('pm_send');
 
@@ -1640,7 +1640,7 @@ function MessagePost()
 			cache_put_data('response_prefix', $context['response_prefix'], 600);
 		}
 		$form_subject = $row_quoted['subject'];
-		if ($context['reply'] && trim($context['response_prefix']) != '' && $smcFunc['strpos']($form_subject, trim($context['response_prefix'])) !== 0)
+		if ($context['reply'] && trim($context['response_prefix']) != '' && westring::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 			$form_subject = $context['response_prefix'] . $form_subject;
 
 		if (isset($_REQUEST['quote']))
@@ -1807,7 +1807,7 @@ function MessagePost()
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
 	global $txt, $context, $scripturl, $modSettings;
-	global $smcFunc, $user_info;
+	global $user_info;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
@@ -1845,8 +1845,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	}
 
 	// Set everything up like before....
-	$context['subject'] = isset($_REQUEST['subject']) ? $smcFunc['htmlspecialchars']($_REQUEST['subject']) : '';
-	$context['message'] = isset($_REQUEST['message']) ? str_replace(array('  '), array('&nbsp; '), $smcFunc['htmlspecialchars']($_REQUEST['message'])) : '';
+	$context['subject'] = isset($_REQUEST['subject']) ? westring::htmlspecialchars($_REQUEST['subject']) : '';
+	$context['message'] = isset($_REQUEST['message']) ? str_replace(array('  '), array('&nbsp; '), westring::htmlspecialchars($_REQUEST['message'])) : '';
 	$context['copy_to_outbox'] = !empty($_REQUEST['outbox']);
 	$context['reply'] = !empty($_REQUEST['replied_to']);
 
@@ -1959,7 +1959,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 function MessagePost2()
 {
 	global $txt, $context;
-	global $user_info, $modSettings, $scripturl, $smcFunc;
+	global $user_info, $modSettings, $scripturl;
 
 	isAllowedTo('pm_send');
 	loadSource(array('Subs-Auth', 'Class-Editor'));
@@ -2035,7 +2035,7 @@ function MessagePost2()
 			foreach ($namedRecipientList[$recipientType] as $index => $recipient)
 			{
 				if (strlen(trim($recipient)) > 0)
-					$namedRecipientList[$recipientType][$index] = $smcFunc['htmlspecialchars']($smcFunc['strtolower'](trim($recipient)));
+					$namedRecipientList[$recipientType][$index] = westring::htmlspecialchars(westring::strtolower(trim($recipient)));
 				else
 					unset($namedRecipientList[$recipientType][$index]);
 			}
@@ -2050,9 +2050,9 @@ function MessagePost2()
 				foreach ($foundMembers as $member)
 				{
 					$testNames = array(
-						$smcFunc['strtolower']($member['username']),
-						$smcFunc['strtolower']($member['name']),
-						$smcFunc['strtolower']($member['email']),
+						westring::strtolower($member['username']),
+						westring::strtolower($member['name']),
+						westring::strtolower($member['email']),
 					);
 
 					if (count(array_intersect($testNames, $namedRecipientList[$recipientType])) !== 0)
@@ -2104,7 +2104,7 @@ function MessagePost2()
 		$post_errors[] = 'no_subject';
 	if (!isset($_REQUEST['message']) || $_REQUEST['message'] == '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_REQUEST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && westring::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = 'long_message';
 	else
 	{
@@ -2113,7 +2113,7 @@ function MessagePost2()
 		wedgeEditor::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
-		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($message, false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
+		if (westring::htmltrim(strip_tags(parse_bbc($message, false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -2140,8 +2140,8 @@ function MessagePost2()
 	if (isset($_REQUEST['preview']))
 	{
 		// Set everything up to be displayed.
-		$context['preview_subject'] = $smcFunc['htmlspecialchars']($_REQUEST['subject']);
-		$context['preview_message'] = $smcFunc['htmlspecialchars']($_REQUEST['message'], ENT_QUOTES);
+		$context['preview_subject'] = westring::htmlspecialchars($_REQUEST['subject']);
+		$context['preview_message'] = westring::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
 		wedgeEditor::preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
@@ -2230,7 +2230,7 @@ function MessagePost2()
 // This function lists all buddies for wireless protocols.
 function WirelessAddBuddy()
 {
-	global $scripturl, $txt, $user_info, $context, $smcFunc;
+	global $scripturl, $txt, $user_info, $context;
 
 	isAllowedTo('pm_send');
 	$context['page_title'] = $txt['wireless_pm_add_buddy'];
@@ -2269,7 +2269,7 @@ function WirelessAddBuddy()
 // This function performs all additional stuff...
 function MessageActionsApply()
 {
-	global $txt, $context, $user_info, $options, $smcFunc;
+	global $txt, $context, $user_info, $options;
 
 	checkSession('request');
 
@@ -2457,7 +2457,7 @@ function MessageKillAll()
 // This function allows the user to delete all messages older than so many days.
 function MessagePrune()
 {
-	global $txt, $context, $user_info, $scripturl, $smcFunc;
+	global $txt, $context, $user_info, $scripturl;
 
 	// Actually delete the messages.
 	if (isset($_REQUEST['age']))
@@ -2525,7 +2525,7 @@ function MessagePrune()
 // Delete the specified personal messages.
 function deleteMessages($personal_messages, $folder = null, $owner = null)
 {
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	if ($owner === null)
 		$owner = array($user_info['id']);
@@ -2657,7 +2657,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 // Mark personal messages read.
 function markMessages($personal_messages = null, $label = null, $owner = null)
 {
-	global $user_info, $context, $smcFunc;
+	global $user_info, $context;
 
 	if ($owner === null)
 		$owner = $user_info['id'];
@@ -2724,7 +2724,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 // This function handles adding, deleting and editing labels on messages.
 function ManageLabels()
 {
-	global $txt, $context, $user_info, $scripturl, $smcFunc;
+	global $txt, $context, $user_info, $scripturl;
 
 	// Build the link tree elements...
 	$context['linktree'][] = array(
@@ -2758,10 +2758,10 @@ function ManageLabels()
 		// Adding a new label?
 		if (isset($_POST['add']))
 		{
-			$_POST['label'] = strtr($smcFunc['htmlspecialchars'](trim($_POST['label'])), array(',' => '&#044;'));
+			$_POST['label'] = strtr(westring::htmlspecialchars(trim($_POST['label'])), array(',' => '&#044;'));
 
-			if ($smcFunc['strlen']($_POST['label']) > 30)
-				$_POST['label'] = $smcFunc['substr']($_POST['label'], 0, 30);
+			if (westring::strlen($_POST['label']) > 30)
+				$_POST['label'] = westring::substr($_POST['label'], 0, 30);
 			if ($_POST['label'] != '')
 				$the_labels[] = $_POST['label'];
 		}
@@ -2790,10 +2790,10 @@ function ManageLabels()
 					continue;
 				elseif (isset($_POST['label_name'][$id]))
 				{
-					$_POST['label_name'][$id] = trim(strtr($smcFunc['htmlspecialchars']($_POST['label_name'][$id]), array(',' => '&#044;')));
+					$_POST['label_name'][$id] = trim(strtr(westring::htmlspecialchars($_POST['label_name'][$id]), array(',' => '&#044;')));
 
-					if ($smcFunc['strlen']($_POST['label_name'][$id]) > 30)
-						$_POST['label_name'][$id] = $smcFunc['substr']($_POST['label_name'][$id], 0, 30);
+					if (westring::strlen($_POST['label_name'][$id]) > 30)
+						$_POST['label_name'][$id] = westring::substr($_POST['label_name'][$id], 0, 30);
 					if ($_POST['label_name'][$id] != '')
 					{
 						$the_labels[(int) $id] = $_POST['label_name'][$id];
@@ -2932,7 +2932,7 @@ function ManageLabels()
 // Edit Personal Message Settings
 function MessageSettings()
 {
-	global $txt, $user_settings, $user_info, $context, $smcFunc;
+	global $txt, $user_settings, $user_info, $context;
 	global $scripturl, $profile_vars, $cur_profile, $user_profile;
 
 	// Need this for the display.
@@ -2985,7 +2985,7 @@ function MessageSettings()
 function ReportMessage()
 {
 	global $txt, $context, $scripturl;
-	global $user_info, $language, $modSettings, $smcFunc;
+	global $user_info, $language, $modSettings;
 
 	// Check that this feature is even enabled!
 	if (empty($modSettings['enableReportPM']) || empty($_REQUEST['pmsg']))
@@ -3121,7 +3121,7 @@ function ReportMessage()
 
 				// Plonk it in the array ;)
 				$messagesToSend[$cur_language] = array(
-					'subject' => ($smcFunc['strpos']($subject, $txt['pm_report_pm_subject']) === false ? $txt['pm_report_pm_subject'] : '') . un_htmlspecialchars($subject),
+					'subject' => (westring::strpos($subject, $txt['pm_report_pm_subject']) === false ? $txt['pm_report_pm_subject'] : '') . un_htmlspecialchars($subject),
 					'body' => $report_body,
 					'recipients' => array(
 						'to' => array(),
@@ -3151,7 +3151,7 @@ function ReportMessage()
 // List all rules, and allow adding/entering etc....
 function ManageRules()
 {
-	global $txt, $context, $user_info, $scripturl, $smcFunc;
+	global $txt, $context, $user_info, $scripturl;
 
 	// The link tree - gotta have this :o
 	$context['linktree'][] = array(
@@ -3247,7 +3247,7 @@ function ManageRules()
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
 
 		// Name is easy!
-		$ruleName = $smcFunc['htmlspecialchars'](trim($_POST['rule_name']));
+		$ruleName = westring::htmlspecialchars(trim($_POST['rule_name']));
 		if (empty($ruleName))
 			fatal_lang_error('pm_rule_no_name', false);
 
@@ -3290,7 +3290,7 @@ function ManageRules()
 			elseif ($type == 'gid')
 				$criteria[] = array('t' => 'gid', 'v' => (int) $_POST['ruledefgroup'][$ind]);
 			elseif (in_array($type, array('sub', 'msg')) && trim($_POST['ruledef'][$ind]) != '')
-				$criteria[] = array('t' => $type, 'v' => $smcFunc['htmlspecialchars'](trim($_POST['ruledef'][$ind])));
+				$criteria[] = array('t' => $type, 'v' => westring::htmlspecialchars(trim($_POST['ruledef'][$ind])));
 		}
 
 		// Also do the actions!
@@ -3376,7 +3376,7 @@ function ManageRules()
 // This will apply rules to all unread messages. If all_messages is set will, clearly, do it to all!
 function ApplyRules($all_messages = false)
 {
-	global $user_info, $smcFunc, $context, $options;
+	global $user_info, $context, $options;
 
 	// Want this - duh!
 	loadRules();
@@ -3479,7 +3479,7 @@ function ApplyRules($all_messages = false)
 // Load up all the rules for the current user.
 function LoadRules($reload = false)
 {
-	global $user_info, $context, $smcFunc;
+	global $user_info, $context;
 
 	if (isset($context['rules']) && !$reload)
 		return;
@@ -3515,7 +3515,7 @@ function LoadRules($reload = false)
 // Check if the PM is available to the current user.
 function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 {
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	$request = wedb::query('
 		SELECT

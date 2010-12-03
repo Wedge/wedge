@@ -49,7 +49,7 @@ if (!defined('SMF'))
  */
 function updateStats($type, $parameter1 = null, $parameter2 = null)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	if ($type === 'member')
 	{
@@ -282,7 +282,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
  */
 function updateMemberData($members, $data)
 {
-	global $modSettings, $user_info, $smcFunc;
+	global $modSettings, $user_info;
 
 	$parameters = array();
 	if (is_array($members))
@@ -429,7 +429,7 @@ function updateMemberData($members, $data)
  */
 function updateSettings($changeArray, $update = false, $debug = false)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	if (empty($changeArray) || !is_array($changeArray))
 		return;
@@ -636,7 +636,7 @@ function comma_format($number, $override_decimal_count = false)
  */
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
-	global $context, $user_info, $txt, $modSettings, $smcFunc;
+	global $context, $user_info, $txt, $modSettings;
 
 	// Offset the time.
 	if (!$offset_type)
@@ -685,7 +685,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	{
 		foreach (array('%a', '%A', '%b', '%B') as $token)
 			if (strpos($str, $token) !== false)
-				$str = str_replace($token, !empty($txt['lang_capitalize_dates']) ? $smcFunc['ucwords'](strftime($token, $time)) : strftime($token, $time), $str);
+				$str = str_replace($token, !empty($txt['lang_capitalize_dates']) ? westring::ucwords(strftime($token, $time)) : strftime($token, $time), $str);
 	}
 	else
 	{
@@ -751,14 +751,12 @@ function un_htmlspecialchars($string)
  */
 function shorten_subject($subject, $len)
 {
-	global $smcFunc;
-
 	// It was already short enough!
-	if ($smcFunc['strlen']($subject) <= $len)
+	if (westring::strlen($subject) <= $len)
 		return $subject;
 
 	// Shorten it by the length it was too long, and strip off junk from the end.
-	return $smcFunc['substr']($subject, 0, $len) . '...';
+	return westring::substr($subject, 0, $len) . '...';
 }
 
 /**
@@ -864,7 +862,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info, $smcFunc;
+	global $txt, $scripturl, $context, $modSettings, $user_info;
 	static $master_codes = null, $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $disabled, $feet = 0;
 
@@ -1221,7 +1219,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 			{
 				// The idea is, find words xx long, and then replace them with xx + space + more.
-				if ($smcFunc['strlen']($data) > $modSettings['fixLongWords'])
+				if (westring::strlen($data) > $modSettings['fixLongWords'])
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => "\xC2\xA0"));
@@ -1791,7 +1789,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 7);
 
 		// Are we trimming outside this tag?
-		if (in_array($tag['trim'], array('inside', 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
+		if (in_array($tag['trim'], array('inside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 1 + strlen($matches[0]));
 	}
 
@@ -1901,7 +1899,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
  */
 function parsesmileys(&$message)
 {
-	global $modSettings, $txt, $user_info, $context, $smcFunc;
+	global $modSettings, $txt, $user_info, $context;
 	static $smileyPregSearch = array(), $smileyPregReplacements = array();
 
 	// No smiley set at all?!
@@ -2005,7 +2003,7 @@ function highlight_php_code($code)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc;
+	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($settings['display_who_viewing']) && ($topic || $board))
@@ -2240,7 +2238,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt, $smcFunc;
+	global $context, $settings, $modSettings, $txt;
 	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -2266,7 +2264,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	{
 		// Was the page title set last minute? Also update the HTML safe one.
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = $smcFunc['htmlspecialchars'](un_htmlspecialchars($context['page_title']));
+			$context['page_title_html_safe'] = westring::htmlspecialchars(un_htmlspecialchars($context['page_title']));
 
 		// Start up the session URL fixer.
 		ob_start('ob_sessrewrite');
@@ -2353,7 +2351,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
  */
 function logAction($action, $extra = array(), $log_type = 'moderate')
 {
-	global $modSettings, $user_info, $smcFunc;
+	global $modSettings, $user_info;
 
 	$log_types = array(
 		'moderate' => 1,
@@ -2462,7 +2460,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
  */
 function trackStats($stats = array())
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 	static $cache_stats = array();
 
 	if (empty($modSettings['trackStats']))
@@ -2521,7 +2519,7 @@ function trackStats($stats = array())
  */
 function spamProtection($error_type)
 {
-	global $modSettings, $txt, $user_info, $smcFunc;
+	global $modSettings, $txt, $user_info;
 
 	// Certain types take less/more time.
 	$timeOverrides = array(
@@ -2671,7 +2669,7 @@ function url_image_size($url)
 function setupThemeContext($forceload = false)
 {
 	global $modSettings, $user_info, $scripturl, $context, $settings, $options, $txt, $maintenance;
-	global $user_settings, $smcFunc;
+	global $user_settings;
 	static $loaded = false;
 
 	// Under SSI this function can be called more then once. That can cause some problems.
@@ -2809,8 +2807,8 @@ function setupThemeContext($forceload = false)
 		$context['page_title'] = '';
 
 	// Set some specific vars.
-	$context['page_title_html_safe'] = $smcFunc['htmlspecialchars'](un_htmlspecialchars($context['page_title']));
-	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? $smcFunc['htmlspecialchars']($modSettings['meta_keywords']) : '';
+	$context['page_title_html_safe'] = westring::htmlspecialchars(un_htmlspecialchars($context['page_title']));
+	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? westring::htmlspecialchars($modSettings['meta_keywords']) : '';
 }
 
 /**
@@ -3373,7 +3371,7 @@ function db_debug_junk()
  */
 function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = false, $file_hash = '')
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Just make up a nice hash...
 	if ($new)
@@ -3597,13 +3595,13 @@ function test_ip_host($ip, $domain)
  */
 function text2words($text, $max_chars = 20, $encrypt = false)
 {
-	global $smcFunc, $context;
+	global $context;
 
 	// Step 1: Remove entities/things we don't consider words:
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br />' => ' ')));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
-	$words = un_htmlspecialchars($smcFunc['strtolower']($words));
+	$words = un_htmlspecialchars(westring::strtolower($words));
 
 	// Step 3: Ready to split apart and index!
 	$words = explode(' ', $words);
@@ -3648,7 +3646,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  */
 function trim_url($ur)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	$modSettings['urlLength'] = isset($modSettings['urlLength']) ? $modSettings['urlLength'] : 50;
 	if (empty($modSettings['urlLength']))
@@ -3657,7 +3655,7 @@ function trim_url($ur)
 	$url = html_entity_decode($ur, ENT_QUOTES);
 
 	// Check the length of the url
-	if ($smcFunc['strlen']($url) <= $modSettings['urlLength'])
+	if (westring::strlen($url) <= $modSettings['urlLength'])
 		return $ur;
 
 	$break = $modSettings['urlLength'] / 2;

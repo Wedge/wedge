@@ -33,7 +33,7 @@ if (!defined('SMF'))
 
 function Activate()
 {
-	global $context, $txt, $modSettings, $scripturl, $smcFunc, $language;
+	global $context, $txt, $modSettings, $scripturl, $language;
 
 	loadLanguage('Login');
 	loadTemplate('Login');

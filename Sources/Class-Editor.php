@@ -36,7 +36,7 @@ class wedgeEditor
 
 	public function __construct($editorOptions)
 	{
-		global $txt, $modSettings, $options, $smcFunc;
+		global $txt, $modSettings, $options;
 		global $context, $settings, $user_info, $scripturl;
 
 		if (!is_array($editorOptions))
@@ -123,7 +123,7 @@ class wedgeEditor
 
 	public static function bbc_to_html($text)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br />'));
@@ -175,7 +175,7 @@ class wedgeEditor
 
 	public static function html_to_bbc($text)
 	{
-		global $modSettings, $smcFunc, $scripturl, $context;
+		global $modSettings, $scripturl, $context;
 
 		// Replace newlines with spaces, as that's how browsers usually interpret them.
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);
@@ -1771,7 +1771,7 @@ class wedgeEditor
 	// Parses some bbc before sending into the database...
 	public static function preparsecode(&$message, $previewing = false)
 	{
-		global $user_info, $modSettings, $smcFunc, $context;
+		global $user_info, $modSettings, $context;
 
 		// This line makes all languages *theoretically* work even with the wrong charset ;).
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
@@ -1986,8 +1986,6 @@ class wedgeEditor
 	// This is very simple, and just removes things done by preparsecode.
 	public static function un_preparsecode($message)
 	{
-		global $smcFunc;
-
 		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// We're going to unparse only the stuff outside [code]...

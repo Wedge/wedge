@@ -82,7 +82,7 @@ if (!defined('SMF'))
 
 function ManagePaidSubscriptions()
 {
-	global $context, $txt, $scripturl, $smcFunc, $modSettings;
+	global $context, $txt, $scripturl, $modSettings;
 
 	// Load the required language and template.
 	loadLanguage('ManagePaid');
@@ -126,7 +126,7 @@ function ManagePaidSubscriptions()
 // Modify which payment methods are to be used.
 function ModifySubscriptionSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $smcFunc, $scripturl;
+	global $context, $txt, $modSettings, $scripturl;
 
 	// If the currency is set to something different then we need to set it to other for this to work and set it back shortly.
 	$modSettings['paid_currency'] = !empty($modSettings['paid_currency_code']) ? $modSettings['paid_currency_code'] : '';
@@ -231,7 +231,7 @@ function ModifySubscriptionSettings($return_config = false)
 // Are we looking at viewing the subscriptions?
 function ViewSubscriptions()
 {
-	global $context, $txt, $modSettings, $smcFunc, $scripturl;
+	global $context, $txt, $modSettings, $scripturl;
 
 	// Not made the settings yet?
 	if (empty($modSettings['paid_currency_symbol']))
@@ -371,7 +371,7 @@ function ViewSubscriptions()
 // Adding, editing and deleting subscriptions.
 function ModifySubscription()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	$context['sub_id'] = isset($_REQUEST['sid']) ? (int) $_REQUEST['sid'] : 0;
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
@@ -618,7 +618,7 @@ function ModifySubscription()
 // View all the users subscribed to a particular subscription!
 function ViewSubscribedUsers()
 {
-	global $context, $txt, $modSettings, $scripturl, $options, $smcFunc;
+	global $context, $txt, $modSettings, $scripturl, $options;
 
 	// Setup the template.
 	$context['page_title'] = $txt['viewing_users_subscribed'];
@@ -814,8 +814,6 @@ function ViewSubscribedUsers()
 // Returns how many people are subscribed to a paid subscription.
 function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = array())
 {
-	global $smcFunc;
-
 	// Get the total amount of users.
 	$request = wedb::query('
 		SELECT COUNT(*) AS total_subs
@@ -837,7 +835,7 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = arr
 
 function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $search_string, $search_vars = array())
 {
-	global $smcFunc, $txt;
+	global $txt;
 
 	$request = wedb::query('
 		SELECT ls.id_sublog, IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, {string:guest}) AS name, ls.start_time, ls.end_time,
@@ -875,7 +873,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 // Edit or add a user subscription.
 function ModifyUserSubscription()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	loadSubscriptions();
 
@@ -1205,8 +1203,6 @@ function ModifyUserSubscription()
 // Re-apply subscription rules.
 function reapplySubscriptions($users)
 {
-	global $smcFunc;
-
 	// Make it an array.
 	if (!is_array($users))
 		$users = array($users);
@@ -1284,7 +1280,7 @@ function reapplySubscriptions($users)
 // Add or extend a subscription of a user.
 function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTime = 0, $forceEndTime = 0)
 {
-	global $context, $smcFunc;
+	global $context;
 
 	// Take the easy way out...
 	loadSubscriptions();
@@ -1493,7 +1489,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 // Removes a subscription from a user, as in removes the groups.
 function removeSubscription($id_subscribe, $id_member, $delete = false)
 {
-	global $context, $smcFunc;
+	global $context;
 
 	loadSubscriptions();
 
@@ -1638,7 +1634,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 // This just kind of caches all the subscription data.
 function loadSubscriptions()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	if (!empty($context['subscriptions']))
 		return;

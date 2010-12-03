@@ -58,7 +58,7 @@ if (!defined('SMF'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $smcFunc;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options;
 
 	// Load the language and templates....
 	loadLanguage('Admin');
@@ -511,7 +511,7 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings, $smcFunc;
+	global $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings;
 
 	// You have to be able to do at least one of the below to see this page.
 	isAllowedTo(array('admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'));
@@ -623,7 +623,7 @@ function AdminHome()
 // This allocates out all the search stuff.
 function AdminSearch()
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -635,7 +635,7 @@ function AdminSearch()
 	);
 
 	$context['search_type'] = !isset($_REQUEST['search_type']) || !isset($subactions[$_REQUEST['search_type']]) ? 'internal' : $_REQUEST['search_type'];
-	$context['search_term'] = isset($_REQUEST['search_term']) ? $smcFunc['htmlspecialchars']($_REQUEST['search_term'], ENT_QUOTES) : '';
+	$context['search_term'] = isset($_REQUEST['search_term']) ? westring::htmlspecialchars($_REQUEST['search_term'], ENT_QUOTES) : '';
 
 	$context['sub_template'] = 'admin_search_results';
 	$context['page_title'] = $txt['admin_search_results'];

@@ -37,7 +37,6 @@ if (!defined('SMF'))
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
  * - Save the value in cache for next time.
- * - Declare the common code for $smcFunc, including the bytesafe string handling functions.
  * - Set the timezone (for PHP 5.1+)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
@@ -46,7 +45,7 @@ if (!defined('SMF'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $smcFunc, $txt, $context;
+	global $modSettings, $boarddir, $txt, $context;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wedb::query('
@@ -85,80 +84,7 @@ function reloadSettings()
 			cache_put_data('modSettings', $modSettings, 90);
 	}
 
-	// Set a list of common functions.
-	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e\', \'$smcFunc[\\\'entity_fix\\\'](\\\'\\2\\\')\', ', ')') : array('', '');
-
-	// Preg_replace can handle complex characters.
-	$space_chars = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
-
-	$smcFunc += array(
-		'entity_fix' => create_function('$string', '
-			$num = substr($string, 0, 1) === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
-			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num == 0x202E ? \'\' : \'&#\' . $num . \';\';'),
-		'htmlspecialchars' => create_function('$string, $quote_style = ENT_COMPAT', '
-			global $smcFunc;
-			return ' . strtr($ent_check[0], array('&' => '&amp;')) . 'htmlspecialchars($string, $quote_style, \'UTF-8\')' . $ent_check[1] . ';'),
-		'htmltrim' => create_function('$string', '
-			global $smcFunc;
-			return preg_replace(\'~^(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+$~u\', \'\', ' . implode('$string', $ent_check) . ');'),
-		'strlen' => create_function('$string', '
-			global $smcFunc;
-			return strlen(preg_replace(\'~' . $ent_list . '|.~u\', \'_\', ' . implode('$string', $ent_check) . '));'),
-		'strpos' => create_function('$haystack, $needle, $offset = 0', '
-			global $smcFunc;
-			$haystack_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u\', ' . implode('$haystack', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			$haystack_size = count($haystack_arr);
-			if (strlen($needle) === 1)
-			{
-				$result = array_search($needle, array_slice($haystack_arr, $offset));
-				return is_int($result) ? $result + $offset : false;
-			}
-			else
-			{
-				$needle_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u\', ' . implode('$needle', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-				$needle_size = count($needle_arr);
-
-				$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
-				while (is_int($result))
-				{
-					$offset += $result;
-					if (array_slice($haystack_arr, $offset, $needle_size) === $needle_arr)
-						return $offset;
-					$result = array_search($needle_arr[0], array_slice($haystack_arr, ++$offset));
-				}
-				return false;
-			}'),
-		'substr' => create_function('$string, $start, $length = null', '
-			global $smcFunc;
-			$ent_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u\', ' . implode('$string', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			return $length === null ? implode(\'\', array_slice($ent_arr, $start)) : implode(\'\', array_slice($ent_arr, $start, $length));'),
-		'strtolower' => (function_exists('mb_strtolower') ? create_function('$string', '
-			return mb_strtolower($string, \'UTF-8\');') : create_function('$string', '
-			loadSource(\'/Subs-Charset\');
-			return utf8_strtolower($string);')),
-		'strtoupper' => (function_exists('mb_strtoupper') ? create_function('$string', '
-			return mb_strtoupper($string, \'UTF-8\');') : create_function('$string', '
-			loadSource(\'/Subs-Charset\');
-			return utf8_strtoupper($string);')),
-		'truncate' => create_function('$string, $length', (empty($modSettings['disableEntityCheck']) ? '
-			global $smcFunc;
-			$string = ' . implode('$string', $ent_check) . ';' : '') . '
-			preg_match(\'~^(' . $ent_list . '|.){\' . $smcFunc[\'strlen\'](substr($string, 0, $length)) . \'}~u\', $string, $matches);
-			$string = $matches[0];
-			while (strlen($string) > $length)
-				$string = preg_replace(\'~(?:' . $ent_list . '|.)$~u\', \'\', $string);
-			return $string;'),
-		'ucfirst' => create_function('$string', '
-			global $smcFunc;
-			return $smcFunc[\'strtoupper\']($smcFunc[\'substr\']($string, 0, 1)) . $smcFunc[\'substr\']($string, 1);'),
-		'ucwords' => create_function('$string', '
-			global $smcFunc;
-			$words = preg_split(\'~([\s\r\n\t]+)~\', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-			for ($i = 0, $n = count($words); $i < $n; $i += 2)
-				$words[$i] = $smcFunc[\'ucfirst\']($words[$i]);
-			return implode(\'\', $words);'),
-	);
+	loadSource('Class-String');
 
 	// Setting the timezone is a requirement.
 	if (isset($modSettings['default_timezone']))
@@ -223,7 +149,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings, $smcFunc;
+	global $modSettings, $user_settings;
 	global $cookiename, $user_info, $language;
 
 	$id_member = 0;
@@ -483,7 +409,7 @@ function loadUserSettings()
 function loadBoard()
 {
 	global $txt, $scripturl, $context, $modSettings;
-	global $board_info, $board, $topic, $user_info, $smcFunc;
+	global $board_info, $board, $topic, $user_info;
 
 	// Assume they are not a moderator.
 	$user_info['is_mod'] = false;
@@ -796,7 +722,7 @@ function loadBoard()
  */
 function loadPermissions()
 {
-	global $user_info, $board, $board_info, $modSettings, $smcFunc;
+	global $user_info, $board, $board_info, $modSettings;
 
 	if ($user_info['is_admin'])
 	{
@@ -918,7 +844,7 @@ function loadPermissions()
  */
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
-	global $user_profile, $modSettings, $board_info, $smcFunc;
+	global $user_profile, $modSettings, $board_info;
 
 	// Can't just look for no users :P.
 	if (empty($users))
@@ -1105,7 +1031,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
-	global $context, $modSettings, $board_info, $settings, $smcFunc;
+	global $context, $modSettings, $board_info, $settings;
 	static $dataLoaded = array();
 
 	// If this person's data is already loaded, skip it.
@@ -1224,7 +1150,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'image_href' => $settings['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
 			'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 		),
-		'language' => $smcFunc['ucwords'](strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
+		'language' => westring::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
 		'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
 		'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 		'options' => $profile['options'],
@@ -1385,7 +1311,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_info, $user_settings, $board_info, $sc, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
-	global $context, $settings, $options, $ssi_theme, $smcFunc;
+	global $context, $settings, $options, $ssi_theme;
 
 	// The theme was specified by parameter.
 	if (!empty($id_theme))
@@ -1645,8 +1571,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
-	$context['forum_name_html_safe'] = $smcFunc['htmlspecialchars']($context['forum_name']);
-	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : $smcFunc['htmlspecialchars']($settings['header_logo_url']);
+	$context['forum_name_html_safe'] = westring::htmlspecialchars($context['forum_name']);
+	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : westring::htmlspecialchars($settings['header_logo_url']);
 	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	if (isset($modSettings['load_average']))
@@ -2061,7 +1987,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
  */
 function getBoardParents($id_parent)
 {
-	global $scripturl, $smcFunc;
+	global $scripturl;
 
 	$boards = array();
 
@@ -2121,7 +2047,7 @@ function getBoardParents($id_parent)
  */
 function getLanguages($use_cache = true)
 {
-	global $context, $smcFunc, $settings, $modSettings;
+	global $context, $settings, $modSettings;
 
 	// Either we don't use the cache, or it's expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
@@ -2157,7 +2083,7 @@ function getLanguages($use_cache = true)
 					continue;
 
 				$context['languages'][$matches[1]] = array(
-					'name' => $smcFunc['ucwords'](strtr($matches[1], array('_' => ' '))),
+					'name' => westring::ucwords(strtr($matches[1], array('_' => ' '))),
 					'selected' => false,
 					'filename' => $matches[1],
 					'location' => $language_dir . '/index.' . $matches[1] . '.php',
@@ -2519,8 +2445,6 @@ function sessionClose()
  */
 function sessionRead($session_id)
 {
-	global $smcFunc;
-
 	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
 		return false;
 
@@ -2549,8 +2473,6 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
-	global $smcFunc;
-
 	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
 		return false;
 
@@ -2586,8 +2508,6 @@ function sessionWrite($session_id, $data)
  */
 function sessionDestroy($session_id)
 {
-	global $smcFunc;
-
 	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
 		return false;
 
@@ -2608,7 +2528,7 @@ function sessionDestroy($session_id)
  */
 function sessionGC($max_lifetime)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Just set to the default or lower?  Ignore it for a higher value. (hopefully)
 	if (!empty($modSettings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $modSettings['databaseSession_lifetime'] > $max_lifetime))

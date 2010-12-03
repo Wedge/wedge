@@ -79,7 +79,7 @@ if (!defined('SMF'))
 // View a summary.
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl, $smcFunc;
+	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -259,7 +259,7 @@ function summary($memID)
 function showPosts($memID)
 {
 	global $txt, $user_info, $scripturl, $modSettings;
-	global $context, $user_profile, $smcFunc, $board;
+	global $context, $user_profile, $board;
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
@@ -581,7 +581,7 @@ function showPosts($memID)
 function showAttachments($memID)
 {
 	global $txt, $user_info, $scripturl, $modSettings, $board;
-	global $context, $user_profile, $smcFunc;
+	global $context, $user_profile;
 
 	// OBEY permissions!
 	$boardsAllowed = boardsAllowedTo('view_attachments');
@@ -680,7 +680,7 @@ function showAttachments($memID)
 
 function statPanel($memID)
 {
-	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $user_profile[$memID]['real_name'];
 
@@ -897,7 +897,7 @@ function tracking($memID)
 function trackActivity($memID)
 {
 	global $scripturl, $txt, $modSettings;
-	global $user_profile, $context, $smcFunc;
+	global $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('moderate_forum');
@@ -1110,8 +1110,6 @@ function trackActivity($memID)
 
 function list_getUserErrorCount($where, $where_vars = array())
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS error_count
 		FROM {db_prefix}log_errors
@@ -1126,7 +1124,7 @@ function list_getUserErrorCount($where, $where_vars = array())
 
 function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars = array())
 {
-	global $smcFunc, $txt, $scripturl;
+	global $txt, $scripturl;
 
 	// Get a list of error messages from this ip (range).
 	$request = wedb::query('
@@ -1159,8 +1157,6 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 
 function list_getIPMessageCount($where, $where_vars = array())
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
@@ -1176,7 +1172,7 @@ function list_getIPMessageCount($where, $where_vars = array())
 
 function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars = array())
 {
-	global $smcFunc, $txt, $scripturl;
+	global $txt, $scripturl;
 
 	// Get all the messages fitting this where clause.
 	// !!!SLOW This query is using a filesort.
@@ -1216,7 +1212,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 function TrackIP($memID = 0)
 {
 	global $user_profile, $scripturl, $txt, $user_info, $modSettings;
-	global $context, $smcFunc;
+	global $context;
 
 	// Can the user do this?
 	isAllowedTo('moderate_forum');
@@ -1493,7 +1489,7 @@ function TrackIP($memID = 0)
 
 function trackEdits($memID)
 {
-	global $scripturl, $txt, $modSettings, $context, $smcFunc;
+	global $scripturl, $txt, $modSettings, $context;
 
 	loadSource('Subs-List');
 
@@ -1590,8 +1586,6 @@ function trackEdits($memID)
 // How many edits?
 function list_getProfileEditCount($memID)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS edit_count
 		FROM {db_prefix}log_actions
@@ -1610,7 +1604,7 @@ function list_getProfileEditCount($memID)
 
 function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $txt, $scripturl, $context;
+	global $txt, $scripturl, $context;
 
 	// Get a list of error messages from this ip (range).
 	$request = wedb::query('
@@ -1690,7 +1684,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 function showPermissions($memID)
 {
 	global $scripturl, $txt, $board, $modSettings;
-	global $user_profile, $context, $user_info, $smcFunc;
+	global $user_profile, $context, $user_info;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('manage_permissions');

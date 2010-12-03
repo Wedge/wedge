@@ -152,7 +152,7 @@ function SplitTopics()
 // Part 1: General stuff.
 function SplitIndex()
 {
-	global $txt, $topic, $context, $smcFunc, $modSettings;
+	global $txt, $topic, $context, $modSettings;
 
 	// Validate "at".
 	if (empty($_GET['at']))
@@ -206,7 +206,7 @@ function SplitIndex()
 // Alright, you've decided what you want to do with it.... now to do it.
 function SplitExecute()
 {
-	global $txt, $board, $topic, $context, $user_info, $smcFunc, $modSettings;
+	global $txt, $board, $topic, $context, $user_info, $modSettings;
 
 	// Check the session to make sure they meant to do this.
 	checkSession();
@@ -257,7 +257,7 @@ function SplitExecute()
 // Get a selective list of topics...
 function SplitSelectTopics()
 {
-	global $txt, $scripturl, $topic, $context, $modSettings, $original_msgs, $smcFunc, $options;
+	global $txt, $scripturl, $topic, $context, $modSettings, $original_msgs, $options;
 
 	$context['page_title'] = $txt['split'] . ' - ' . $txt['select_split_posts'];
 
@@ -542,7 +542,7 @@ function SplitSelectionExecute()
 // Split a topic in two topics.
 function splitTopic($split1_id_topic, $split_messages, $new_subject)
 {
-	global $user_info, $topic, $board, $modSettings, $smcFunc, $txt;
+	global $user_info, $topic, $board, $modSettings, $txt;
 
 	// Nothing to split?
 	if (empty($split_messages))
@@ -690,10 +690,10 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 		fatal_lang_error('cant_insert_topic');
 
 	// Move the messages over to the other topic.
-	$new_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($new_subject)), array("\r" => '', "\n" => '', "\t" => ''));
+	$new_subject = strtr(westring::htmltrim(westring::htmlspecialchars($new_subject)), array("\r" => '', "\n" => '', "\t" => ''));
 	// Check the subject length.
-	if ($smcFunc['strlen']($new_subject) > 100)
-		$new_subject = $smcFunc['substr']($new_subject, 0, 100);
+	if (westring::strlen($new_subject) > 100)
+		$new_subject = westring::substr($new_subject, 0, 100);
 	// Valid subject?
 	if ($new_subject != '')
 	{
@@ -851,7 +851,7 @@ function MergeTopics()
 // Merge two topics together.
 function MergeIndex()
 {
-	global $txt, $board, $context, $smcFunc;
+	global $txt, $board, $context;
 	global $scripturl, $topic, $user_info, $modSettings;
 
 	if (!isset($_GET['from']))
@@ -988,7 +988,7 @@ function MergeIndex()
 function MergeExecute($topics = array())
 {
 	global $user_info, $txt, $context, $scripturl;
-	global $smcFunc, $language, $modSettings;
+	global $language, $modSettings;
 
 	// Check the session.
 	checkSession('request');
@@ -1200,10 +1200,10 @@ function MergeExecute($topics = array())
 	// Determine the subject of the newly merged topic - was a custom subject specified?
 	if (empty($_POST['subject']) && isset($_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$target_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$target_subject = strtr(westring::htmltrim(westring::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
 		// Keep checking the length.
-		if ($smcFunc['strlen']($target_subject) > 100)
-			$target_subject = $smcFunc['substr']($target_subject, 0, 100);
+		if (westring::strlen($target_subject) > 100)
+			$target_subject = westring::substr($target_subject, 0, 100);
 
 		// Nothing left - odd but pick the first topics subject.
 		if ($target_subject == '')
@@ -1602,7 +1602,7 @@ function MergeDone()
 
 function MergePosts($error_report = true)
 {
-	global $modSettings, $user_info, $txt, $settings, $user_info, $smcFunc;
+	global $modSettings, $user_info, $txt, $settings, $user_info;
 
 	loadLanguage('Errors');
 	if (!is_bool($error_report))
@@ -1676,7 +1676,7 @@ function MergePosts($error_report = true)
 					$modSettings['merge_post_separator'] = '[br]';
 				else
 				{
-					$modSettings['merge_post_separator'] = $smcFunc['htmlspecialchars']($modSettings['merge_post_separator'], ENT_QUOTES);
+					$modSettings['merge_post_separator'] = westring::htmlspecialchars($modSettings['merge_post_separator'], ENT_QUOTES);
 					$date = '[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]';
 					$modSettings['merge_post_separator'] = str_replace('$date', $date, $modSettings['merge_post_separator']);
 				}

@@ -29,7 +29,7 @@ define('WEDGE_NO_LOG', 1);
 
 function Jseditor()
 {
-	global $context, $smcFunc;
+	global $context;
 
 	checkSession('get');
 
@@ -56,7 +56,7 @@ function Jseditor()
 		$context['message'] = wedgeEditor::html_to_bbc($_REQUEST['message']);
 	}
 
-	$context['message'] = $smcFunc['htmlspecialchars']($context['message']);
+	$context['message'] = westring::htmlspecialchars($context['message']);
 }
 
 ?>

@@ -372,7 +372,7 @@ function EditCategory2()
 // Modify a specific board...
 function EditBoard()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $smcFunc, $modSettings, $user_info;
+	global $txt, $context, $cat_tree, $boards, $boardList, $modSettings, $user_info;
 
 	loadTemplate('ManageBoards');
 	loadSource('Subs-Boards');
@@ -606,7 +606,7 @@ function EditBoard()
 // Make changes to/delete a board.
 function EditBoard2()
 {
-	global $txt, $modSettings, $smcFunc, $context;
+	global $txt, $modSettings, $context;
 
 	checkSession();
 
@@ -745,7 +745,7 @@ function EditBoard2()
 
 function EditBoardSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $smcFunc;
+	global $context, $txt, $modSettings, $scripturl;
 
 	// Load the boards list - for the recycle bin!
 	$recycle_boards = array('');

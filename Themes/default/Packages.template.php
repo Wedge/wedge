@@ -8,7 +8,7 @@ function template_main()
 
 function template_view_package()
 {
-	global $context, $settings, $options, $txt, $scripturl, $smcFunc;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -790,7 +790,7 @@ function template_package_confirm()
 
 function template_package_list()
 {
-	global $context, $settings, $options, $txt, $scripturl, $smcFunc;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -869,7 +869,7 @@ function template_package_list()
 					// Show the mod type?
 					if ($package['type'] != '')
 						echo '
-								<li class="package_section">', $txt['package_type'], ':&nbsp; ', $smcFunc['ucwords']($smcFunc['strtolower']($package['type'])), '</li>';
+								<li class="package_section">', $txt['package_type'], ':&nbsp; ', westring::ucwords(westring::strtolower($package['type'])), '</li>';
 					// Show the version number?
 					if ($package['version'] != '')
 						echo '
@@ -1723,7 +1723,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 function template_action_permissions()
 {
-	global $txt, $scripturl, $context, $settings, $smcFunc;
+	global $txt, $scripturl, $context, $settings;
 
 	$countDown = 3;
 
@@ -1803,7 +1803,7 @@ function template_action_permissions()
 				<input type="hidden" name="method" value="', $context['method'], '" />
 				<input type="hidden" name="action_changes" value="1" />
 				<div class="righttext padding">
-					<input type="submit" name="go" id="cont" value="', $smcFunc['htmlspecialchars']($txt['not_done_continue']), '" class="button_submit" />
+					<input type="submit" name="go" id="cont" value="', westring::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" />
 				</div>
 			</div>
 		</form>

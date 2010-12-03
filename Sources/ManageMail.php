@@ -83,7 +83,7 @@ function ManageMail()
 // Display the mail queue...
 function BrowseMailQueue()
 {
-	global $scripturl, $context, $modSettings, $txt, $smcFunc;
+	global $scripturl, $context, $modSettings, $txt;
 
 	// First, are we deleting something from the queue?
 	if (isset($_REQUEST['delete']))
@@ -132,7 +132,7 @@ function BrowseMailQueue()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return $smcFunc[\'strlen\']($rowData[\'subject\']) > 50 ? sprintf(\'%1$s...\', htmlspecialchars($smcFunc[\'substr\']($rowData[\'subject\']), 0, 47)) : htmlspecialchars($rowData[\'subject\']);
+						return westring::strlen($rowData[\'subject\']) > 50 ? sprintf(\'%1$s...\', htmlspecialchars(westring::substr($rowData[\'subject\']), 0, 47)) : htmlspecialchars($rowData[\'subject\']);
 					'),
 					'class' => 'smalltext',
 				),
@@ -229,7 +229,7 @@ function BrowseMailQueue()
 
 function list_getMailQueue($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt;
+	global $txt;
 
 	$request = wedb::query('
 		SELECT
@@ -259,8 +259,6 @@ function list_getMailQueue($start, $items_per_page, $sort)
 
 function list_getMailQueueSize()
 {
-	global $smcFunc;
-
 	// How many items do we have?
 	$request = wedb::query('
 		SELECT COUNT(*) AS queue_size
@@ -358,8 +356,6 @@ function ModifyMailSettings($return_config = false)
 // This function clears the mail queue of all emails, and at the end redirects to browse.
 function ClearMailQueue()
 {
-	global $smcFunc;
-
 	checkSession('get');
 
 	// This is certainly needed!

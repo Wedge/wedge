@@ -224,10 +224,9 @@ function ModifyCoreFeatures($return_config = false)
 		'cp' => array(
 			'url' => 'action=admin;area=featuresettings;sa=profile',
 			'save_callback' => create_function('$value', '
-				global $smcFunc;
 				if (!$value)
 				{
-					$smcFunc[\'db_query\'](\'\', \'
+					wedb::query(\'
 						UPDATE {db_prefix}custom_fields
 						SET active = 0\');
 				}
@@ -646,7 +645,7 @@ function ModifyModerationSettings($return_config = false)
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $sc, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	// Generate a sample registration image.
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
@@ -719,8 +718,8 @@ function ModifySpamSettings($return_config = false)
 		$count_questions = 0;
 		foreach ($_POST['question'] as $id => $question)
 		{
-			$question = trim($smcFunc['htmlspecialchars']($question, ENT_COMPAT));
-			$answer = trim($smcFunc['strtolower']($smcFunc['htmlspecialchars']($_POST['answer'][$id], ENT_COMPAT)));
+			$question = trim(westring::htmlspecialchars($question, ENT_COMPAT));
+			$answer = trim(westring::strtolower(westring::htmlspecialchars($_POST['answer'][$id], ENT_COMPAT)));
 
 			// Already existed?
 			if (isset($context['question_answers'][$id]))
@@ -828,7 +827,7 @@ function ModifySpamSettings($return_config = false)
 // You'll never guess what this function does...
 function ModifySignatureSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $sig_start, $smcFunc, $helptxt, $scripturl;
+	global $context, $txt, $modSettings, $sig_start, $helptxt, $scripturl;
 
 	$config_vars = array(
 			// Are signatures even enabled?
@@ -906,7 +905,7 @@ function ModifySignatureSettings($return_config = false)
 
 				// Max characters...
 				if (!empty($sig_limits[1]))
-					$sig = $smcFunc['substr']($sig, 0, $sig_limits[1]);
+					$sig = westring::substr($sig, 0, $sig_limits[1]);
 				// Max lines...
 				if (!empty($sig_limits[2]))
 				{
@@ -1193,7 +1192,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $sc, $smcFunc, $modSettings;
+	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	$context['sub_template'] = 'show_custom_profile';
@@ -1418,7 +1417,7 @@ function ShowCustomProfiles()
 
 function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 {
-	global $txt, $modSettings, $smcFunc;
+	global $txt, $modSettings;
 
 	$list = array();
 
@@ -1462,8 +1461,6 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 function list_getProfileFieldSize()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}custom_fields',
@@ -1480,7 +1477,7 @@ function list_getProfileFieldSize()
 // Edit some profile fields?
 function EditCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $sc, $smcFunc;
+	global $txt, $scripturl, $context, $settings, $sc;
 
 	// Sort out the context!
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
@@ -1576,8 +1573,8 @@ function EditCustomProfiles()
 		// Everyone needs a name - even the (bracket) unknown...
 		if (trim($_POST['field_name']) == '')
 			fatal_lang_error('custom_option_need_name');
-		$_POST['field_name'] = $smcFunc['htmlspecialchars']($_POST['field_name']);
-		$_POST['field_desc'] = $smcFunc['htmlspecialchars']($_POST['field_desc']);
+		$_POST['field_name'] = westring::htmlspecialchars($_POST['field_name']);
+		$_POST['field_desc'] = westring::htmlspecialchars($_POST['field_desc']);
 
 		// Checkboxes...
 		$show_reg = isset($_POST['reg']) ? (int) $_POST['reg'] : 0;
@@ -1606,7 +1603,7 @@ function EditCustomProfiles()
 			foreach ($_POST['select_option'] as $k => $v)
 			{
 				// Clean, clean, clean...
-				$v = $smcFunc['htmlspecialchars']($v);
+				$v = westring::htmlspecialchars($v);
 				$v = strtr($v, array(',' => ''));
 
 				// Nada, zip, etc...
@@ -1632,7 +1629,7 @@ function EditCustomProfiles()
 		// Come up with the unique name?
 		if (empty($context['fid']))
 		{
-			$colname = $smcFunc['substr'](strtr($_POST['field_name'], array(' ' => '')), 0, 6);
+			$colname = westring::substr(strtr($_POST['field_name'], array(' ' => '')), 0, 6);
 			preg_match('~([\w\d_-]+)~', $colname, $matches);
 
 			// If there is nothing to the name, then let's start out own - for foreign languages etc.
@@ -1991,7 +1988,7 @@ function ModifyGeneralModSettings($return_config = false)
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs()
 {
-	global $context, $modSettings, $settings, $txt, $smcFunc;
+	global $context, $modSettings, $settings, $txt;
 
 	$context['sub_template'] = 'pretty_urls';
 	$context['page_title'] = $txt['admin_pretty_urls'];

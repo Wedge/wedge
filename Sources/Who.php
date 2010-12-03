@@ -62,7 +62,7 @@ if (!defined('SMF'))
 // Who's online, and what are they doing?
 function Who()
 {
-	global $context, $scripturl, $user_info, $txt, $modSettings, $memberContext, $smcFunc;
+	global $context, $scripturl, $user_info, $txt, $modSettings, $memberContext;
 
 	// Permissions, permissions, permissions.
 	isAllowedTo('who_view');
@@ -281,7 +281,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $smcFunc, $context, $settings;
+	global $txt, $user_info, $modSettings, $settings;
 
 	if (!allowedTo('who_view'))
 		return array();

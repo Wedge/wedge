@@ -102,7 +102,7 @@ class custom_search
 	// Do we have to do some work with the words we are searching for to prepare them?
 	public function prepareIndexes($word, &$wordsSearch, &$wordsExclude, $isExcluded)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		$subwords = text2words($word, $this->min_word_length, true);
 
@@ -116,7 +116,7 @@ class custom_search
 		{
 			foreach ($subwords as $subword)
 			{
-				if ($smcFunc['strlen']($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
+				if (westring::strlen($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
 				{
 					$wordsSearch['indexed_words'][] = $subword;
 					if ($isExcluded)
@@ -129,7 +129,7 @@ class custom_search
 	// Search for indexed words.
 	public function indexedWordQuery($words, $search_data)
 	{
-		global $modSettings, $smcFunc;
+		global $modSettings;
 
 		$query_select = array(
 			'id_msg' => 'm.id_msg',

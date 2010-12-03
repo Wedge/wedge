@@ -70,7 +70,7 @@ if (!defined('SMF'))
 // This function works out what to do!
 function AutoTask()
 {
-	global $time_start, $modSettings, $smcFunc;
+	global $time_start, $modSettings;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
@@ -188,7 +188,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $modSettings, $mbname, $txt, $smcFunc;
+	global $scripturl, $modSettings, $mbname, $txt;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wedb::query('
@@ -401,7 +401,7 @@ function scheduled_approval_notification()
 // Do some daily cleaning up.
 function scheduled_daily_maintenance()
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	// First clean out the data cache.
 	clean_cache();
@@ -508,7 +508,7 @@ function scheduled_daily_maintenance()
 // Auto optimize the database?
 function scheduled_auto_optimize()
 {
-	global $modSettings, $smcFunc, $db_prefix;
+	global $modSettings, $db_prefix;
 
 	// By default do it now!
 	$delay = false;
@@ -553,7 +553,7 @@ function scheduled_auto_optimize()
 // Send out a daily email of all subscribed topics.
 function scheduled_daily_digest()
 {
-	global $is_weekly, $txt, $mbname, $scripturl, $smcFunc, $context, $modSettings;
+	global $is_weekly, $txt, $mbname, $scripturl, $context, $modSettings;
 
 	// We'll want this...
 	loadEssentialThemeData();
@@ -864,7 +864,7 @@ function scheduled_weekly_digest()
 // Send a bunch of emails from the mail queue.
 function ReduceMailQueue($number = false, $override_limit = false, $force_send = false)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Are we intending another script to be sending out the queue?
 	if (!empty($modSettings['mail_queue_use_cron']) && empty($force_send))
@@ -1062,7 +1062,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 // Calculate the next time the passed tasks should be triggered.
 function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	$task_query = '';
 	if (!is_array($tasks))
@@ -1189,7 +1189,7 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $settings, $modSettings, $smcFunc, $mbname, $context;
+	global $settings, $modSettings, $mbname, $context;
 
 	// Get all the default theme variables.
 	$result = wedb::query('
@@ -1241,7 +1241,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchSMfiles()
 {
-	global $txt, $language, $settings, $forum_version, $modSettings, $smcFunc;
+	global $txt, $language, $settings, $forum_version, $modSettings;
 
 	// What files do we want to get
 	$request = wedb::query('
@@ -1303,7 +1303,7 @@ function scheduled_fetchSMfiles()
 
 function scheduled_birthdayemails()
 {
-	global $modSettings, $mbname, $txt, $smcFunc, $birthdayEmails;
+	global $modSettings, $mbname, $txt, $birthdayEmails;
 
 	// Need this in order to load the language files.
 	loadEssentialThemeData();
@@ -1380,7 +1380,7 @@ function scheduled_birthdayemails()
 
 function scheduled_weekly_maintenance()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
@@ -1564,7 +1564,7 @@ function scheduled_weekly_maintenance()
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $txt, $scripturl, $smcFunc, $modSettings, $language;
+	global $txt, $scripturl, $modSettings, $language;
 
 	// Start off by checking for removed subscriptions.
 	$request = wedb::query('

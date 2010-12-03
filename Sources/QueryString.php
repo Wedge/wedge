@@ -52,7 +52,7 @@ if (!defined('SMF'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context, $pretty_request, $pretty_board;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $pretty_request, $pretty_board;
 
 /*	// Makes it easier to refer to things this way.
 	if (!empty($modSettings['pretty_enable_filters']))
@@ -459,8 +459,6 @@ function cleanRequest()
  */
 function escapestring__recursive($var)
 {
-	global $smcFunc;
-
 	if (!is_array($var))
 		return wedb::escape_string($var);
 
@@ -486,10 +484,8 @@ function escapestring__recursive($var)
  */
 function htmlspecialchars__recursive($var, $level = 0)
 {
-	global $smcFunc;
-
 	if (!is_array($var))
-		return isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($var, ENT_QUOTES) : htmlspecialchars($var, ENT_QUOTES);
+		return is_callable('westring::htmlspecialchars') ? westring::htmlspecialchars($var, ENT_QUOTES) : htmlspecialchars($var, ENT_QUOTES);
 
 	// Add the htmlspecialchars to every element.
 	foreach ($var as $k => $v)
@@ -531,8 +527,6 @@ function urldecode__recursive($var, $level = 0)
  */
 function unescapestring__recursive($var)
 {
-	global $smcFunc;
-
 	if (!is_array($var))
 		return wedb::unescape_string($var);
 
@@ -582,10 +576,8 @@ function stripslashes__recursive($var, $level = 0)
  */
 function htmltrim__recursive($var, $level = 0)
 {
-	global $smcFunc;
-
 	if (!is_array($var))
-		return isset($smcFunc) ? $smcFunc['htmltrim']($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
+		return is_callable('westring::htmltrim') ? westring::htmltrim($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
 
 	// Go through all the elements and remove the whitespace.
 	foreach ($var as $k => $v)
@@ -719,7 +711,7 @@ function add_js_file()
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context, $db_prefix;
-	global $txt, $time_start, $db_count, $db_show_debug, $smcFunc, $cached_urls, $use_cache;
+	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache;
 	static $second_time_debugging = false;
 
 	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.

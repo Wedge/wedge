@@ -52,7 +52,7 @@ if (!defined('SMF'))
 function JSModify()
 {
 	global $modSettings, $board, $topic, $txt;
-	global $user_info, $context, $smcFunc, $language;
+	global $user_info, $context, $language;
 
 	// We have to have a topic!
 	if (empty($topic))
@@ -112,13 +112,13 @@ function JSModify()
 	}
 
 	$post_errors = array();
-	if (isset($_POST['subject']) && $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) !== '')
+	if (isset($_POST['subject']) && westring::htmltrim(westring::htmlspecialchars($_POST['subject'])) !== '')
 	{
-		$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['subject'] = strtr(westring::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
 
 		// Maximum number of characters.
-		if ($smcFunc['strlen']($_POST['subject']) > 100)
-			$_POST['subject'] = $smcFunc['substr']($_POST['subject'], 0, 100);
+		if (westring::strlen($_POST['subject']) > 100)
+			$_POST['subject'] = westring::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
 	{
@@ -128,23 +128,23 @@ function JSModify()
 
 	if (isset($_POST['message']))
 	{
-		if ($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['message'])) === '')
+		if (westring::htmltrim(westring::htmlspecialchars($_POST['message'])) === '')
 		{
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($modSettings['max_messageLength']) && westring::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		{
 			$post_errors[] = 'long_message';
 			unset($_POST['message']);
 		}
 		else
 		{
-			$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+			$_POST['message'] = westring::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
 			wedgeEditor::preparsecode($_POST['message']);
 
-			if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
+			if (westring::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);

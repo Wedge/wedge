@@ -43,7 +43,7 @@ if (!defined('SMF'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $smcFunc, $scripturl, $last_error, $context;
+	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
@@ -351,7 +351,7 @@ function setup_fatal_error_context($error_message)
 function show_db_error($loadavg = false)
 {
 	global $mbname, $maintenance, $mtitle, $mmessage, $modSettings;
-	global $db_connection, $webmaster_email, $db_last_error, $db_error_send, $smcFunc;
+	global $db_connection, $webmaster_email, $db_last_error, $db_error_send;
 
 	// Don't cache this page!
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -438,7 +438,7 @@ function show_db_error($loadavg = false)
  */
 function updateOnlineWithError($error, $is_lang, $sprintf = array())
 {
-	global $smcFunc, $user_info, $modSettings;
+	global $user_info, $modSettings;
 
 	// Don't bother if Who's Online is disabled.
 	if (empty($modSettings['who_enabled']))

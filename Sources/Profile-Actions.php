@@ -82,7 +82,7 @@ function activateAccount($memID)
 function issueWarning($memID)
 {
 	global $txt, $scripturl, $modSettings, $user_info, $mbname;
-	global $context, $cur_profile, $memberContext, $smcFunc;
+	global $context, $cur_profile, $memberContext;
 
 	// Get all the actual settings.
 	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
@@ -148,7 +148,7 @@ function issueWarning($memID)
 		$_POST['warn_reason'] = isset($_POST['warn_reason']) ? trim($_POST['warn_reason']) : '';
 		if ($_POST['warn_reason'] == '' && !$context['user']['is_owner'])
 			$issueErrors[] = 'warning_no_reason';
-		$_POST['warn_reason'] = $smcFunc['htmlspecialchars']($_POST['warn_reason']);
+		$_POST['warn_reason'] = westring::htmlspecialchars($_POST['warn_reason']);
 
 		// If the value hasn't changed it's either no JS or a real no change (Which this will pass)
 		if ($_POST['warning_level'] == 'SAME')
@@ -187,7 +187,7 @@ function issueWarning($memID)
 						'subject' => 'string-255', 'body' => 'string-65534',
 					),
 					array(
-						$smcFunc['htmlspecialchars']($_POST['warn_sub']), $smcFunc['htmlspecialchars']($_POST['warn_body']),
+						westring::htmlspecialchars($_POST['warn_sub']), westring::htmlspecialchars($_POST['warn_body']),
 					),
 					array('id_notice')
 				);
@@ -346,8 +346,6 @@ function issueWarning($memID)
 // Get the number of warnings a user has.
 function list_getUserWarningCount($memID)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
@@ -367,7 +365,7 @@ function list_getUserWarningCount($memID)
 // Get the data about a users warnings.
 function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $scripturl;
+	global $scripturl;
 
 	$request = wedb::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name,
@@ -405,7 +403,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 // Present a screen to make sure the user wants to be deleted
 function deleteAccount($memID)
 {
-	global $txt, $context, $user_info, $modSettings, $cur_profile, $smcFunc;
+	global $txt, $context, $user_info, $modSettings, $cur_profile;
 
 	if (!$context['user']['is_owner'])
 		isAllowedTo('profile_remove_any');
@@ -422,7 +420,7 @@ function deleteAccount($memID)
 
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $cur_profile, $modSettings, $smcFunc;
+	global $user_info, $context, $cur_profile, $modSettings;
 
 	// !!! Add a way to delete pms as well?
 
@@ -540,7 +538,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $modSettings, $smcFunc, $scripturl;
+	global $context, $txt, $modSettings, $scripturl;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');

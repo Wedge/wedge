@@ -37,7 +37,7 @@ if (!defined('SMF'))
 
 function Spellcheck()
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context;
 
 	// A list of "words" we know about but pspell doesn't.
 	$known_words = array('smf', 'php', 'mysql', 'www', 'gif', 'jpeg', 'png', 'http');
@@ -81,7 +81,7 @@ function Spellcheck()
 		$check_word = explode('|', $alphas[$i]);
 
 		// If the word is a known word, or spelled right...
-		if (in_array($smcFunc['strtolower']($check_word[0]), $known_words) || pspell_check($pspell_link, $check_word[0]) || !isset($check_word[2]))
+		if (in_array(westring::strtolower($check_word[0]), $known_words) || pspell_check($pspell_link, $check_word[0]) || !isset($check_word[2]))
 			continue;
 
 		// Find the word, and move up the "last occurance" to here.

@@ -67,7 +67,7 @@ function Xmlhttp()
  */
 function GetJumpTo()
 {
-	global $user_info, $context, $smcFunc;
+	global $user_info, $context;
 
 	// Find the boards/cateogories they can see.
 	loadSource('Subs-MessageIndex');

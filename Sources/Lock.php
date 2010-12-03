@@ -44,7 +44,7 @@ if (!defined('SMF'))
  */
 function Lock()
 {
-	global $topic, $user_info, $board, $smcFunc;
+	global $topic, $user_info, $board;
 
 	// Just quit if there's no topic to lock.
 	if (empty($topic))

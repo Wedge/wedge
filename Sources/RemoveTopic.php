@@ -47,7 +47,7 @@ if (!defined('SMF'))
 // Completely remove an entire topic.
 function RemoveTopic2()
 {
-	global $user_info, $topic, $board, $smcFunc, $context, $modSettings;
+	global $user_info, $topic, $board, $context, $modSettings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
@@ -97,7 +97,7 @@ function RemoveTopic2()
 // Remove just a single post.
 function DeleteMessage()
 {
-	global $user_info, $topic, $board, $modSettings, $smcFunc;
+	global $user_info, $topic, $board, $modSettings;
 
 	checkSession('get');
 
@@ -162,7 +162,7 @@ function DeleteMessage()
 // So long as you are sure... all old posts will be gone.
 function RemoveOldTopics2()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	isAllowedTo('admin_forum');
 	checkSession('post', 'admin');
@@ -232,7 +232,7 @@ function RemoveOldTopics2()
 // Removes the passed id_topic's. (permissions are NOT checked here!)
 function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = false)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Nothing to do?
 	if (empty($topics))
@@ -565,7 +565,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 // Remove a specific message (including permission checks).
 function removeMessage($message, $decreasePostCount = true)
 {
-	global $board, $modSettings, $user_info, $smcFunc, $context;
+	global $board, $modSettings, $user_info, $context;
 
 	if (empty($message) || !is_numeric($message))
 		return false;
@@ -994,7 +994,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 function RestoreTopic()
 {
-	global $context, $smcFunc, $modSettings;
+	global $context, $modSettings;
 
 	// Check session.
 	checkSession('get');
@@ -1226,7 +1226,7 @@ function RestoreTopic()
 // Take a load of messages from one place and stick them in a topic.
 function mergePosts($msgs = array(), $from_topic, $target_topic)
 {
-	global $context, $smcFunc, $modSettings;
+	global $context, $modSettings;
 
 	//!!! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
 

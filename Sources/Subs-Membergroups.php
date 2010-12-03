@@ -65,7 +65,7 @@ if (!defined('SMF'))
 // Delete one or more membergroups.
 function deleteMembergroups($groups)
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	// Make sure it's an array.
 	if (!is_array($groups))
@@ -239,7 +239,7 @@ function deleteMembergroups($groups)
 // Remove one or more members from one or more membergroups.
 function removeMembersFromGroups($members, $groups = null, $permissionCheckDone = false)
 {
-	global $smcFunc, $user_info, $modSettings;
+	global $user_info, $modSettings;
 
 	// You're getting nowhere without this permission, unless of course you are the group's moderator.
 	if (!$permissionCheckDone)
@@ -462,7 +462,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 						  available. If not, assign it to the additional group. */
 function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDone = false)
 {
-	global $smcFunc, $user_info, $modSettings;
+	global $user_info, $modSettings;
 
 	// Show your licence, but only if it hasn't been done yet.
 	if (!$permissionCheckDone)
@@ -611,7 +611,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 
 function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 {
-	global $scripturl, $txt, $smcFunc;
+	global $scripturl, $txt;
 
 	$request = wedb::query('
 		SELECT id_member, real_name
@@ -640,7 +640,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 // Retrieve a list of (visible) membergroups used by the cache.
 function cache_getMembergroupList()
 {
-	global $scripturl, $smcFunc;
+	global $scripturl;
 
 	$request = wedb::query('
 		SELECT id_group, group_name, online_color
@@ -671,7 +671,7 @@ function cache_getMembergroupList()
 
 function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
-	global $txt, $scripturl, $context, $settings, $smcFunc;
+	global $txt, $scripturl, $context, $settings;
 
 	$groups = array();
 

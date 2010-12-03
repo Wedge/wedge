@@ -56,7 +56,7 @@ if (!defined('SMF'))
 // Move a topic.  Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $settings, $smcFunc, $modSettings;
+	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $settings, $modSettings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -161,7 +161,7 @@ function MoveTopic()
 function MoveTopic2()
 {
 	global $txt, $board, $topic, $scripturl, $modSettings, $context;
-	global $board, $language, $user_info, $smcFunc;
+	global $board, $language, $user_info;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -244,10 +244,10 @@ function MoveTopic2()
 	// Rename the topic...
 	if (isset($_POST['reset_subject'], $_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$_POST['custom_subject'] = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['custom_subject'] = strtr(westring::htmltrim(westring::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
 		// Keep checking the length.
-		if ($smcFunc['strlen']($_POST['custom_subject']) > 100)
-			$_POST['custom_subject'] = $smcFunc['substr']($_POST['custom_subject'], 0, 100);
+		if (westring::strlen($_POST['custom_subject']) > 100)
+			$_POST['custom_subject'] = westring::substr($_POST['custom_subject'], 0, 100);
 
 		// If it's still valid move onwards and upwards.
 		if ($_POST['custom_subject'] != '')
@@ -302,7 +302,7 @@ function MoveTopic2()
 		if ($user_info['language'] != $language)
 			loadLanguage('index', $language);
 
-		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
+		$_POST['reason'] = westring::htmlspecialchars($_POST['reason'], ENT_QUOTES);
 		wedgeEditor::preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.
@@ -393,7 +393,7 @@ function MoveTopic2()
 // Moves one or more topics to a specific board. (doesn't check permissions.)
 function moveTopics($topics, $toBoard)
 {
-	global $user_info, $modSettings, $smcFunc;
+	global $user_info, $modSettings;
 
 	// Empty array?
 	if (empty($topics))

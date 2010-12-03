@@ -125,7 +125,7 @@ function trimpercent($str)
 
 function is_already_taken($url, $id, $id_owner)
 {
-	global $smcFunc, $context;
+	global $context;
 
 	$query = wedb::query('
 		SELECT id_board, url, id_owner
@@ -156,7 +156,7 @@ function is_already_taken($url, $id, $id_owner)
 // Update the database based on the installed filters
 function pretty_update_filters()
 {
-	global $modSettings, $boarddir, $boardurl, $smcFunc;
+	global $modSettings, $boarddir, $boardurl;
 
 	// Get the settings
 	$prettyFilters = unserialize($modSettings['pretty_filters']);
@@ -182,7 +182,7 @@ function pretty_update_filters()
 
 function pretty_update_topic($subject, $topic_id)
 {
-	global $smcFunc, $context;
+	global $context;
 
 	$pretty_text = trimpercent(substr(pretty_generate_url($subject), 0, 80));
 
@@ -229,7 +229,7 @@ function pretty_update_topic($subject, $topic_id)
 // !!! @todo: Move code to SMF converter?
 function install_pretty_urls()
 {
-	global $smcFunc, $modSettings, $boardurl;
+	global $modSettings, $boardurl;
 
 	// Start the list
 	$output = '<ul>';

@@ -44,7 +44,7 @@ if (!defined('SMF'))
  */
 function Sticky()
 {
-	global $modSettings, $topic, $board, $smcFunc;
+	global $modSettings, $topic, $board;
 
 	// Make sure the user can sticky it, and they are stickying *something*.
 	isAllowedTo('make_sticky');

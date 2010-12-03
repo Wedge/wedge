@@ -296,7 +296,7 @@ function ManageAvatarSettings($return_config = false)
 
 function BrowseFiles()
 {
-	global $context, $txt, $scripturl, $options, $modSettings, $smcFunc;
+	global $context, $txt, $scripturl, $options, $modSettings;
 
 	$context['sub_template'] = 'browse';
 
@@ -485,7 +485,7 @@ function BrowseFiles()
 
 function list_getFiles($start, $items_per_page, $sort, $browse_type)
 {
-	global $smcFunc, $txt;
+	global $txt;
 
 	// Choose a query depending on what we are viewing.
 	if ($browse_type === 'avatars')
@@ -538,8 +538,6 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 
 function list_getNumFiles($browse_type)
 {
-	global $smcFunc;
-
 	// Depending on the type of file, different queries are used.
 	if ($browse_type === 'avatars')
 		$request = wedb::query('
@@ -573,7 +571,7 @@ function list_getNumFiles($browse_type)
 
 function MaintainFiles()
 {
-	global $context, $modSettings, $txt, $smcFunc;
+	global $context, $modSettings, $txt;
 
 	$context['sub_template'] = 'maintenance';
 
@@ -645,7 +643,7 @@ function MaintainFiles()
 // !!! Not implemented yet.
 function MoveAvatars()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// First make sure the custom avatar dir is writable.
 	if (!is_writable($modSettings['custom_avatar_dir']))
@@ -694,7 +692,7 @@ function MoveAvatars()
 
 function RemoveAttachmentByAge()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	checkSession('post', 'admin');
 
@@ -728,7 +726,7 @@ function RemoveAttachmentByAge()
 
 function RemoveAttachmentBySize()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	checkSession('post', 'admin');
 
@@ -752,7 +750,7 @@ function RemoveAttachmentBySize()
 
 function RemoveAttachment()
 {
-	global $modSettings, $txt, $smcFunc;
+	global $modSettings, $txt;
 
 	checkSession('post');
 
@@ -790,7 +788,7 @@ function RemoveAttachment()
 // !!! Not implemented (yet?)
 function RemoveAllAttachments()
 {
-	global $txt, $smcFunc;
+	global $txt;
 
 	checkSession('get', 'admin');
 
@@ -817,7 +815,7 @@ function RemoveAllAttachments()
 // Removes attachments - allowed query_types: '', 'messages', 'members'
 function removeAttachments($condition, $query_type = '', $return_affected_messages = false, $autoThumbRemoval = true)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	//!!! This might need more work!
 	$new_condition = array();
@@ -929,7 +927,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 // This function should find attachments in the database that no longer exist and clear them, and fix filesize issues.
 function RepairAttachments()
 {
-	global $modSettings, $context, $txt, $smcFunc;
+	global $modSettings, $context, $txt;
 
 	checkSession('get');
 
@@ -1441,8 +1439,6 @@ function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
 // Called from a mouse click, works out what we want to do with attachments and actions it.
 function ApproveAttach()
 {
-	global $smcFunc;
-
 	// Security is our primary concern...
 	checkSession('get');
 
@@ -1524,8 +1520,6 @@ function ApproveAttach()
 // Approve an attachment, or maybe even more - no permission check!
 function ApproveAttachments($attachments)
 {
-	global $smcFunc;
-
 	if (empty($attachments))
 		return 0;
 
@@ -1576,7 +1570,7 @@ function ApproveAttachments($attachments)
 
 function ManageAttachmentPaths()
 {
-	global $modSettings, $scripturl, $context, $txt, $smcFunc;
+	global $modSettings, $scripturl, $context, $txt;
 
 	// Saving?
 	if (isset($_REQUEST['save']))
@@ -1743,7 +1737,7 @@ function ManageAttachmentPaths()
 // Prepare the actual attachment directories to be displayed in the list.
 function list_getAttachDirs()
 {
-	global $smcFunc, $modSettings, $context, $txt;
+	global $modSettings, $context, $txt;
 
 	// The dirs should already have been unserialized but just in case...
 	if (!is_array($modSettings['attachmentUploadDir']))

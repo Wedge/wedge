@@ -213,7 +213,7 @@ function ManageMaintenance()
 // !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
-	global $context, $modSettings, $smcFunc, $txt;
+	global $context, $modSettings, $txt;
 }
 
 // Supporting function for the routine maintenance area.
@@ -228,7 +228,7 @@ function MaintainRoutine()
 // Supporting function for the members maintenance area.
 function MaintainMembers()
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	// Get membergroups - for deleting members and the like.
 	$result = wedb::query('
@@ -256,7 +256,7 @@ function MaintainMembers()
 // Supporting function for the topics maintenance area.
 function MaintainTopics()
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	// Let's load up the boards in case they are useful.
 	$result = wedb::query('
@@ -313,7 +313,7 @@ function MaintainCleanCache()
 // Empties all uninmportant logs
 function MaintainEmptyUnimportantLogs()
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	checkSession();
 
@@ -353,7 +353,7 @@ function MaintainEmptyUnimportantLogs()
 function ConvertUtf8()
 {
 	global $scripturl, $context, $txt, $language;
-	global $modSettings, $user_info, $smcFunc, $db_prefix;
+	global $modSettings, $user_info, $db_prefix;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');
@@ -699,7 +699,7 @@ function ConvertUtf8()
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {
-	global $db_character_set, $modSettings, $context, $smcFunc;
+	global $db_character_set, $modSettings, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -895,7 +895,7 @@ function ConvertEntities()
 // Optimize the database's tables.
 function OptimizeTables()
 {
-	global $db_name, $db_prefix, $txt, $context, $scripturl, $smcFunc;
+	global $db_name, $db_prefix, $txt, $context, $scripturl;
 
 	isAllowedTo('admin_forum');
 
@@ -951,7 +951,7 @@ function OptimizeTables()
 function AdminBoardRecount()
 {
 	global $txt, $context, $scripturl, $modSettings;
-	global $time_start, $smcFunc;
+	global $time_start;
 
 	isAllowedTo('admin_forum');
 
@@ -1503,7 +1503,7 @@ function MaintainDownloadBackup()
 // Removing old members?
 function MaintainPurgeInactiveMembers()
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	$_POST['maxdays'] = (int) $_POST['maxdays'];
 	if (!empty($_POST['groups']) && $_POST['maxdays'])
@@ -1591,7 +1591,7 @@ function MaintainRemoveOldPosts()
 
 function MaintainMassMoveTopics()
 {
-	global $smcFunc, $context, $txt;
+	global $context, $txt;
 
 	// Only admins.
 	isAllowedTo('admin_forum');

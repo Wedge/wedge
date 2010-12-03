@@ -568,8 +568,6 @@ function utf8_strtoupper($string)
 // Fixes corrupted serialized strings after a character set conversion.
 function fix_serialized_columns()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_action, extra
 		FROM {db_prefix}log_actions

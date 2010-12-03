@@ -195,7 +195,7 @@ function EditSmileySettings($return_config = false)
 function EditSmileySets()
 {
 	global $modSettings, $context, $settings, $txt, $boarddir;
-	global $smcFunc, $scripturl;
+	global $scripturl;
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
@@ -513,7 +513,7 @@ function list_getNumSmileySets()
 
 function AddSmiley()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $smcFunc;
+	global $modSettings, $context, $settings, $txt, $boarddir;
 
 	// Get a list of all known smiley sets.
 	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
@@ -758,7 +758,7 @@ function AddSmiley()
 function EditSmileys()
 {
 	global $modSettings, $context, $settings, $txt, $boarddir;
-	global $smcFunc, $scripturl;
+	global $scripturl;
 
 	// Force the correct tab to be displayed.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsmileys';
@@ -1167,8 +1167,6 @@ function EditSmileys()
 
 function list_getSmileys($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
@@ -1186,8 +1184,6 @@ function list_getSmileys($start, $items_per_page, $sort)
 
 function list_getNumSmileys()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}smileys',
@@ -1202,7 +1198,7 @@ function list_getNumSmileys()
 
 function EditSmileyOrder()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $smcFunc;
+	global $modSettings, $context, $settings, $txt, $boarddir;
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))
@@ -1360,7 +1356,7 @@ function EditSmileyOrder()
 
 function InstallSmileySet()
 {
-	global $boarddir, $modSettings, $smcFunc;
+	global $boarddir, $modSettings;
 
 	isAllowedTo('manage_smileys');
 	checkSession('request');
@@ -1399,7 +1395,7 @@ function InstallSmileySet()
 // A function to import new smileys from an existing directory into the database.
 function ImportSmileys($smileyPath)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	if (empty($modSettings['smileys_dir']) || !is_dir($modSettings['smileys_dir'] . '/' . $smileyPath))
 		fatal_lang_error('smiley_set_unable_to_import');
@@ -1467,7 +1463,7 @@ function ImportSmileys($smileyPath)
 function EditMessageIcons()
 {
 	global $user_info, $modSettings, $context, $settings, $txt;
-	global $boarddir, $smcFunc, $scripturl;
+	global $boarddir, $scripturl;
 
 	// Get a list of icons.
 	$context['icons'] = array();
@@ -1712,7 +1708,7 @@ function EditMessageIcons()
 
 function list_getMessageIcons($start, $items_per_page, $sort)
 {
-	global $smcFunc, $user_info;
+	global $user_info;
 
 	$request = wedb::query('
 		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
@@ -1734,8 +1730,6 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 // This function sorts the smiley table by code length, it is needed as MySQL withdrew support for functions in order by.
 function sortSmileyTable()
 {
-	global $smcFunc;
-
 	wedb::extend('packages');
 
 	// Add a sorting column.

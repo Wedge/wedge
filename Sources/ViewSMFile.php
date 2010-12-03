@@ -37,7 +37,7 @@ define('WEDGE_NO_LOG', 1);
 // Get one of the admin information files from Simple Machines.
 function ViewSMFile()
 {
-	global $context, $modSettings, $smcFunc;
+	global $context, $modSettings;
 
 	@ini_set('memory_limit', '32M');
 

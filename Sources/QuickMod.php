@@ -35,7 +35,7 @@ if (!defined('SMF'))
 // Allows for moderation from the message index.
 function QuickModeration()
 {
-	global $board, $user_info, $modSettings, $smcFunc, $context;
+	global $board, $user_info, $modSettings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');

@@ -115,7 +115,7 @@ if (!defined('SMF'))
 // Get all birthdays within the given time range.
 function getBirthdayRange($low_date, $high_date)
 {
-	global $scripturl, $modSettings, $smcFunc;
+	global $scripturl, $modSettings;
 
 	// We need to search for any birthday in this range, and whatever year that birthday is on.
 	$year_low = (int) substr($low_date, 0, 4);
@@ -173,7 +173,7 @@ function getBirthdayRange($low_date, $high_date)
 // Get all events within the given time range.
 function getEventRange($low_date, $high_date, $use_permissions = true)
 {
-	global $scripturl, $modSettings, $user_info, $smcFunc, $context;
+	global $scripturl, $modSettings, $user_info, $context;
 
 	$low_date_time = sscanf($low_date, '%04d-%02d-%02d');
 	$low_date_time = mktime(0, 0, 0, $low_date_time[1], $low_date_time[2], $low_date_time[0]);
@@ -270,8 +270,6 @@ function getEventRange($low_date, $high_date, $use_permissions = true)
 // Get all holidays within the given time range.
 function getHolidayRange($low_date, $high_date)
 {
-	global $smcFunc;
-
 	// Get the lowest and highest dates for "all years".
 	if (substr($low_date, 0, 4) != substr($high_date, 0, 4))
 		$allyear_part = 'event_date BETWEEN {date:all_year_low} AND {date:all_year_dec}
@@ -312,7 +310,7 @@ function getHolidayRange($low_date, $high_date)
 // Does permission checks to see if an event can be linked to a board/topic.
 function canLinkEvent()
 {
-	global $user_info, $topic, $board, $smcFunc;
+	global $user_info, $topic, $board;
 
 	// If you can't post, you can't link.
 	isAllowedTo('calendar_post');
@@ -766,7 +764,7 @@ function cache_getRecentEvents($eventOptions)
 // Makes sure the calendar post is valid.
 function validateEventPost()
 {
-	global $modSettings, $txt, $smcFunc;
+	global $modSettings, $txt;
 
 	if (!isset($_POST['deleteevent']))
 	{
@@ -811,10 +809,10 @@ function validateEventPost()
 			fatal_lang_error('invalid_date', false);
 
 		// No title?
-		if ($smcFunc['htmltrim']($_POST['evtitle']) === '')
+		if (westring::htmltrim($_POST['evtitle']) === '')
 			fatal_lang_error('no_event_title', false);
-		if ($smcFunc['strlen']($_POST['evtitle']) > 30)
-			$_POST['evtitle'] = $smcFunc['substr']($_POST['evtitle'], 0, 30);
+		if (westring::strlen($_POST['evtitle']) > 30)
+			$_POST['evtitle'] = westring::substr($_POST['evtitle'], 0, 30);
 		$_POST['evtitle'] = str_replace(';', '', $_POST['evtitle']);
 	}
 }
@@ -822,8 +820,6 @@ function validateEventPost()
 // Get the event's poster.
 function getEventPoster($event_id)
 {
-	global $smcFunc;
-
 	// A simple database query, how hard can that be?
 	$request = wedb::query('
 		SELECT id_member
@@ -848,10 +844,10 @@ function getEventPoster($event_id)
 // Consolidating the various INSERT statements into this function.
 function insertEvent(&$eventOptions)
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Add special chars to the title.
-	$eventOptions['title'] = $smcFunc['htmlspecialchars']($eventOptions['title'], ENT_QUOTES);
+	$eventOptions['title'] = westring::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
 
 	// Add some sanity checking to the span.
 	$eventOptions['span'] = isset($eventOptions['span']) && $eventOptions['span'] > 0 ? (int) $eventOptions['span'] : 0;
@@ -893,10 +889,8 @@ function insertEvent(&$eventOptions)
 
 function modifyEvent($event_id, &$eventOptions)
 {
-	global $smcFunc;
-
 	// Properly sanitize the title.
-	$eventOptions['title'] = $smcFunc['htmlspecialchars']($eventOptions['title'], ENT_QUOTES);
+	$eventOptions['title'] = westring::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
 
 	// Scan the start date for validity and get its components.
 	if (($num_results = sscanf($eventOptions['start_date'], '%d-%d-%d', $year, $month, $day)) !== 3)
@@ -935,8 +929,6 @@ function modifyEvent($event_id, &$eventOptions)
 
 function removeEvent($event_id)
 {
-	global $smcFunc;
-
 	wedb::query('
 		DELETE FROM {db_prefix}calendar
 		WHERE id_event = {int:id_event}',
@@ -952,8 +944,6 @@ function removeEvent($event_id)
 
 function getEventProperties($event_id)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT
 			c.id_event, c.id_board, c.id_topic, MONTH(c.start_date) AS month,
@@ -1000,8 +990,6 @@ function getEventProperties($event_id)
 
 function list_getHolidays($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_holiday, YEAR(event_date) AS year, MONTH(event_date) AS month, DAYOFMONTH(event_date) AS day, title
 		FROM {db_prefix}calendar_holidays
@@ -1021,8 +1009,6 @@ function list_getHolidays($start, $items_per_page, $sort)
 
 function list_getNumHolidays()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}calendar_holidays',
@@ -1037,8 +1023,6 @@ function list_getNumHolidays()
 
 function removeHolidays($holiday_ids)
 {
-	global $smcFunc;
-
 	wedb::query('
 		DELETE FROM {db_prefix}calendar_holidays
 		WHERE id_holiday IN ({array_int:id_holiday})',

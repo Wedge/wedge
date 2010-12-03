@@ -59,7 +59,7 @@ if (!defined('SMF'))
 // The main handling function for sending specialist (Or otherwise) emails to a user.
 function EmailUser()
 {
-	global $topic, $txt, $context, $scripturl, $smcFunc;
+	global $topic, $txt, $context, $scripturl;
 
 	// Don't index anything here.
 	$context['robot_no_index'] = true;
@@ -81,7 +81,7 @@ function EmailUser()
 // Send a topic to a friend.
 function SendTopic()
 {
-	global $topic, $txt, $context, $scripturl, $smcFunc, $modSettings;
+	global $topic, $txt, $context, $scripturl, $modSettings;
 
 	// Check permissions...
 	isAllowedTo('send_topic');
@@ -178,7 +178,7 @@ function SendTopic()
 // Allow a user to send an email.
 function CustomEmail()
 {
-	global $context, $modSettings, $user_info, $smcFunc, $txt, $scripturl;
+	global $context, $modSettings, $user_info, $txt, $scripturl;
 
 	// Can the user even see this information?
 	if ($user_info['is_guest'] && !empty($modSettings['guest_hideContacts']))
@@ -302,7 +302,7 @@ function CustomEmail()
 // Report a post to the moderator... ask for a comment.
 function ReportToModerator()
 {
-	global $txt, $topic, $modSettings, $user_info, $context, $smcFunc;
+	global $txt, $topic, $modSettings, $user_info, $context;
 
 	$context['robot_no_index'] = true;
 
@@ -367,7 +367,7 @@ function ReportToModerator()
 // Send the emails.
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $language, $context, $smcFunc;
+	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $language, $context;
 
 	// You must have the proper permissions!
 	isAllowedTo('report_any');
@@ -385,9 +385,9 @@ function ReportToModerator2()
 		$post_errors[] = 'session_timeout';
 
 	// Make sure we have a comment and it's clean.
-	if (!isset($_POST['comment']) || $smcFunc['htmltrim']($_POST['comment']) === '')
+	if (!isset($_POST['comment']) || westring::htmltrim($_POST['comment']) === '')
 		$post_errors[] = 'no_comment';
-	$poster_comment = strtr($smcFunc['htmlspecialchars']($_POST['comment']), array("\r" => '', "\n" => '', "\t" => ''));
+	$poster_comment = strtr(westring::htmlspecialchars($_POST['comment']), array("\r" => '', "\n" => '', "\t" => ''));
 
 	// Guests need to provide their address!
 	if ($user_info['is_guest'])

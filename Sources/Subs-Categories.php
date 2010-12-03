@@ -57,8 +57,6 @@ if (!defined('SMF'))
 // Edit the position and properties of a category.
 function modifyCategory($category_id, $catOptions)
 {
-	global $smcFunc;
-
 	$catUpdates = array();
 	$catParameters = array();
 
@@ -144,8 +142,6 @@ function modifyCategory($category_id, $catOptions)
 // Create a new category.
 function createCategory($catOptions)
 {
-	global $smcFunc;
-
 	// Check required values.
 	if (!isset($catOptions['cat_name']) || trim($catOptions['cat_name']) == '')
 		trigger_error('createCategory(): A category name is required', E_USER_ERROR);
@@ -185,7 +181,7 @@ function createCategory($catOptions)
 // Remove one or more categories.
 function deleteCategories($categories, $moveBoardsTo = null)
 {
-	global $smcFunc, $cat_tree;
+	global $cat_tree;
 
 	loadSource('Subs-Boards');
 
@@ -256,8 +252,6 @@ function deleteCategories($categories, $moveBoardsTo = null)
 // Collapse, expand or toggle one or more categories for one or more members.
 function collapseCategories($categories, $new_status, $members = null, $check_collapsable = true)
 {
-	global $smcFunc;
-
 	// Collapse or expand the categories.
 	if ($new_status === 'collapse' || $new_status === 'expand')
 	{

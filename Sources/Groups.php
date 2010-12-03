@@ -102,7 +102,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $modSettings, $smcFunc;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $modSettings;
 
 	// Yep, find the groups...
 	$request = wedb::query('
@@ -260,7 +260,7 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt, $scripturl, $user_info, $settings;
+	global $txt, $scripturl, $user_info, $settings;
 
 	// Yep, find the groups...
 	$request = wedb::query('
@@ -369,8 +369,6 @@ function list_getGroups($start, $items_per_page, $sort)
 // How many groups are there that are visible?
 function list_getGroupCount()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(id_group) AS group_count
 		FROM {db_prefix}membergroups
@@ -392,7 +390,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info, $settings, $smcFunc;
+	global $txt, $scripturl, $context, $modSettings, $user_info, $settings;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -485,13 +483,13 @@ function MembergroupMembers()
 		$member_parameters = array();
 
 		// Get all the members to be added... taking into account names can be quoted ;)
-		$_REQUEST['toAdd'] = strtr($smcFunc['htmlspecialchars']($_REQUEST['toAdd'], ENT_QUOTES), array('&quot;' => '"'));
+		$_REQUEST['toAdd'] = strtr(westring::htmlspecialchars($_REQUEST['toAdd'], ENT_QUOTES), array('&quot;' => '"'));
 		preg_match_all('~"([^"]+)"~', $_REQUEST['toAdd'], $matches);
 		$member_names = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_REQUEST['toAdd']))));
 
 		foreach ($member_names as $index => $member_name)
 		{
-			$member_names[$index] = trim($smcFunc['strtolower']($member_names[$index]));
+			$member_names[$index] = trim(westring::strtolower($member_names[$index]));
 
 			if (strlen($member_names[$index]) == 0)
 				unset($member_names[$index]);
@@ -636,7 +634,7 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $scripturl, $user_info, $smcFunc, $modSettings, $language;
+	global $txt, $context, $scripturl, $user_info, $modSettings, $language;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
@@ -931,8 +929,6 @@ function GroupRequests()
 
 function list_getGroupRequestCount($where, $where_parameters)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_group_requests AS lgr
@@ -948,7 +944,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 
 function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_parameters)
 {
-	global $smcFunc, $txt, $scripturl;
+	global $txt, $scripturl;
 
 	$request = wedb::query('
 		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, lgr.reason,

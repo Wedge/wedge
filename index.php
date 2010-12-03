@@ -71,9 +71,6 @@ require_once($sourcedir . '/Security.php');
 if (!empty($maintenance) && $maintenance == 2)
 	show_db_error();
 
-// Create a variable to store some SMF specific functions in.
-$smcFunc = array();
-
 // Initate the database connection and define some database functions to use.
 loadDatabase();
 

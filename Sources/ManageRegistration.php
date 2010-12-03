@@ -100,7 +100,7 @@ function RegCenter()
  */
 function AdminRegister()
 {
-	global $txt, $context, $scripturl, $smcFunc;
+	global $txt, $context, $scripturl;
 
 	if (!empty($_POST['regSubmit']))
 	{
@@ -181,7 +181,7 @@ function AdminRegister()
  */
 function EditAgreement()
 {
-	global $txt, $boarddir, $context, $modSettings, $smcFunc, $settings;
+	global $txt, $boarddir, $context, $modSettings, $settings;
 
 	// By default we look at agreement.txt.
 	$context['current_agreement'] = '';

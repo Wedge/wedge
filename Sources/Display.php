@@ -66,7 +66,7 @@ function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
 	global $options, $user_info, $board_info, $topic, $board;
-	global $attachments, $messages_request, $topicinfo, $language, $smcFunc;
+	global $attachments, $messages_request, $topicinfo, $language;
 
 	// What are you gonna display if these are empty?!
 	if (empty($topic))
@@ -1152,7 +1152,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $smcFunc;
+	global $settings, $txt, $modSettings, $scripturl, $options, $user_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
 	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
@@ -1236,10 +1236,10 @@ function prepareDisplayContext($reset = false)
 	{
 		// Calculating the length...
 		if (!isset($context['correct_post_length']))
-			$context['correct_post_length'] = $smcFunc['strlen'](empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
+			$context['correct_post_length'] = westring::strlen(empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
 				'<br />[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br />' : '<br />');
 
-		$context['current_post_length'] = $smcFunc['strlen'](un_htmlspecialchars($message['body']));
+		$context['current_post_length'] = westring::strlen(un_htmlspecialchars($message['body']));
 		if (!isset($context['last_post_length']))
 		{
 			$context['last_post_length'] = 0;
@@ -1356,7 +1356,7 @@ function prepareDisplayContext($reset = false)
 
 function loadAttachmentContext($id_msg)
 {
-	global $attachments, $modSettings, $txt, $scripturl, $topic, $smcFunc;
+	global $attachments, $modSettings, $txt, $scripturl, $topic;
 
 	// Set up the attachment info - based on code by Meriadoc.
 	$attachmentData = array();
@@ -1530,7 +1530,7 @@ function approved_attach_sort($a, $b)
 // In-topic quick moderation.
 function QuickInTopicModeration()
 {
-	global $topic, $board, $user_info, $smcFunc, $modSettings, $context;
+	global $topic, $board, $user_info, $modSettings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');

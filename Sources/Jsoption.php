@@ -44,7 +44,7 @@ define('WEDGE_NO_LOG', 1);
 // Set an option via javascript.
 function Jsoption()
 {
-	global $settings, $user_info, $smcFunc, $options;
+	global $settings, $user_info, $options;
 
 	// Check the session id.
 	checkSession('get');

@@ -66,7 +66,7 @@ function SearchEngines()
 // This is really just the settings page.
 function ManageSearchEngineSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $smcFunc;
+	global $context, $txt, $modSettings, $scripturl;
 
 	$config_vars = array(
 		// How much detail?
@@ -145,7 +145,7 @@ function ManageSearchEngineSettings($return_config = false)
 // View a list of all the spiders we know about.
 function ViewSpiders()
 {
-	global $context, $txt, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl;
 
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
 	{
@@ -311,8 +311,6 @@ function ViewSpiders()
 
 function list_getSpiders($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_spider, spider_name, user_agent, ip_info
 		FROM {db_prefix}spiders
@@ -331,8 +329,6 @@ function list_getSpiders($start, $items_per_page, $sort)
 
 function list_getNumSpiders()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS num_spiders
 		FROM {db_prefix}spiders',
@@ -348,7 +344,7 @@ function list_getNumSpiders()
 // Here we can add, and edit, spider info!
 function EditSpider()
 {
-	global $context, $smcFunc, $txt;
+	global $context, $txt;
 
 	// Some standard stuff.
 	$context['id_spider'] = !empty($_GET['sid']) ? (int) $_GET['sid'] : 0;
@@ -441,7 +437,7 @@ function EditSpider()
 // Do we think the current user is a spider?
 function SpiderCheck()
 {
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	if (isset($_SESSION['id_robot']))
 		unset($_SESSION['id_robot']);
@@ -515,7 +511,7 @@ function SpiderCheck()
 //!!! Different file?
 function logSpider()
 {
-	global $smcFunc, $modSettings, $context;
+	global $modSettings, $context;
 
 	if (empty($modSettings['spider_mode']) || empty($_SESSION['id_robot']))
 		return;
@@ -575,8 +571,6 @@ function logSpider()
 // This function takes any unprocessed hits and turns them into stats.
 function consolidateSpiderStats()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_spider, MAX(log_time) AS last_seen, COUNT(*) AS num_hits
 		FROM {db_prefix}log_spider_hits
@@ -640,7 +634,7 @@ function consolidateSpiderStats()
 // See what spiders have been up to.
 function SpiderLogs()
 {
-	global $context, $txt, $scripturl, $smcFunc, $modSettings;
+	global $context, $txt, $scripturl, $modSettings;
 
 	// Load the template and language just incase.
 	loadLanguage('Search');
@@ -753,8 +747,6 @@ function SpiderLogs()
 
 function list_getSpiderLogs($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT sl.id_spider, sl.url, sl.log_time, s.spider_name
 		FROM {db_prefix}log_spider_hits AS sl
@@ -774,8 +766,6 @@ function list_getSpiderLogs($start, $items_per_page, $sort)
 
 function list_getNumSpiderLogs()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS num_logs
 		FROM {db_prefix}log_spider_hits',
@@ -791,7 +781,7 @@ function list_getNumSpiderLogs()
 // Show the spider statistics.
 function SpiderStats()
 {
-	global $context, $txt, $scripturl, $smcFunc;
+	global $context, $txt, $scripturl;
 
 	// Force an update of the stats every 60 seconds.
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
@@ -941,8 +931,6 @@ function SpiderStats()
 
 function list_getSpiderStats($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT ss.id_spider, ss.stat_date, ss.page_hits, s.spider_name
 		FROM {db_prefix}log_spider_stats AS ss
@@ -962,8 +950,6 @@ function list_getSpiderStats($start, $items_per_page, $sort)
 
 function list_getNumSpiderStats()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS num_stats
 		FROM {db_prefix}log_spider_stats',
@@ -979,8 +965,6 @@ function list_getNumSpiderStats()
 // Recache spider names?
 function recacheSpiderNames()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT id_spider, spider_name
 		FROM {db_prefix}spiders',
@@ -998,8 +982,6 @@ function recacheSpiderNames()
 // Sort the search engine table by user agent name to avoid misidentification of engine.
 function sortSpiderTable()
 {
-	global $smcFunc;
-
 	wedb::extend('packages');
 
 	// Add a sorting column.

@@ -77,7 +77,7 @@ function AnnounceTopic()
  */
 function AnnouncementSelectMembergroup()
 {
-	global $txt, $context, $topic, $board, $board_info, $smcFunc;
+	global $txt, $context, $topic, $board, $board_info;
 
 	$groups = array_merge($board_info['groups'], array(1));
 	foreach ($groups as $id => $group)
@@ -166,7 +166,7 @@ function AnnouncementSelectMembergroup()
 function AnnouncementSend()
 {
 	global $topic, $board, $board_info, $context, $modSettings;
-	global $language, $scripturl, $txt, $user_info, $smcFunc;
+	global $language, $scripturl, $txt, $user_info;
 
 	checkSession();
 

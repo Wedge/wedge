@@ -53,7 +53,7 @@ if (!defined('SMF'))
 // View the forum's error log.
 function ViewErrorLog()
 {
-	global $scripturl, $txt, $context, $modSettings, $user_profile, $filter, $boarddir, $themedir, $smcFunc;
+	global $scripturl, $txt, $context, $modSettings, $user_profile, $filter, $boarddir, $themedir;
 
 	// Viewing contents of a file?
 	if (isset($_GET['file']))
@@ -300,7 +300,7 @@ function ViewErrorLog()
 // Delete errors from the database.
 function deleteErrors()
 {
-	global $filter, $smcFunc;
+	global $filter;
 
 	// Make sure the session exists and is correct; otherwise, might be a hacker.
 	checkSession();
@@ -344,7 +344,7 @@ function deleteErrors()
 
 function updateErrorCount()
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$request = wedb::query('
 		SELECT COUNT(id_error) AS errors

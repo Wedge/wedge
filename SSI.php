@@ -33,7 +33,7 @@ global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
-global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
+global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
 // Remember the current configuration so it can be set back.
 $ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
@@ -75,9 +75,6 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
-
-// Create a variable to store some SMF specific functions in.
-$smcFunc = array();
 
 // Initate the database connection and define some database functions to use.
 loadDatabase();
@@ -256,7 +253,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0)
@@ -321,7 +318,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wedb::query('
@@ -371,7 +368,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			),
 			'subject' => $row['subject'],
 			'short_subject' => shorten_subject($row['subject'], 25),
-			'preview' => $smcFunc['strlen']($preview) > 128 ? $smcFunc['substr']($preview, 0, 128) . '...' : $preview,
+			'preview' => westring::strlen($preview) > 128 ? westring::substr($preview, 0, 128) . '...' : $preview,
 			'body' => $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
@@ -413,7 +410,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings, $smcFunc;
+	global $modSettings;
 
 	if ($exclude_boards === null && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0)
 		$exclude_boards = array($modSettings['recycle_board']);
@@ -472,8 +469,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	while ($row = wedb::fetch_assoc($request))
 	{
 		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
-		if ($smcFunc['strlen']($row['body']) > 128)
-			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
+		if (westring::strlen($row['body']) > 128)
+			$row['body'] = westring::substr($row['body'], 0, 128) . '...';
 
 		// Censor the subject.
 		censorText($row['subject']);
@@ -543,7 +540,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $db_prefix, $scripturl, $smcFunc;
+	global $db_prefix, $scripturl;
 
 	// Find the latest poster.
 	$request = wedb::query('
@@ -580,7 +577,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $context, $settings, $db_prefix, $txt, $scripturl, $user_info, $modSettings, $smcFunc;
+	global $context, $settings, $db_prefix, $txt, $scripturl, $user_info, $modSettings;
 
 	// Find boards with lots of posts.
 	$request = wedb::query('
@@ -636,7 +633,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $user_info, $modSettings, $smcFunc, $context;
+	global $db_prefix, $txt, $scripturl, $user_info, $modSettings, $context;
 
 	if ($modSettings['totalMessages'] > 100000)
 	{
@@ -827,7 +824,7 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings, $smcFunc, $memberContext;
+	global $modSettings, $memberContext;
 
 	// Fetch the members in question.
 	$request = wedb::query('
@@ -889,7 +886,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $modSettings, $smcFunc;
+	global $db_prefix, $txt, $scripturl, $modSettings;
 
 	$totals = array(
 		'members' => $modSettings['totalMembers'],
@@ -1034,7 +1031,7 @@ function ssi_topPoll($output_method = 'echo')
 // Show the most recently posted poll.
 function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $smcFunc, $modSettings;
+	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $modSettings;
 
 	$boardsAllowed = array_intersect(boardsAllowedTo('poll_view'), boardsAllowedTo('poll_vote'));
 
@@ -1166,7 +1163,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 function ssi_showPoll($topic = null, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $smcFunc, $modSettings;
+	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $modSettings;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
@@ -1342,7 +1339,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 // Takes care of voting - don't worry, this is done automatically.
 function ssi_pollVote()
 {
-	global $context, $db_prefix, $user_info, $sc, $smcFunc, $modSettings;
+	global $context, $db_prefix, $user_info, $sc, $modSettings;
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
@@ -1581,7 +1578,6 @@ function ssi_todaysCalendar($output_method = 'echo')
 function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
 	global $scripturl, $db_prefix, $txt, $settings, $modSettings, $context;
-	global $smcFunc;
 
 	loadLanguage('Stats');
 
@@ -1679,15 +1675,15 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// If we want to limit the length of the post.
-		if (!empty($length) && $smcFunc['strlen']($row['body']) > $length)
+		if (!empty($length) && westring::strlen($row['body']) > $length)
 		{
-			$row['body'] = $smcFunc['substr']($row['body'], 0, $length);
+			$row['body'] = westring::substr($row['body'], 0, $length);
 
 			// The first space or line break. (<br />, etc.)
 			$cutoff = max(strrpos($row['body'], ' '), strrpos($row['body'], '<'));
 
 			if ($cutoff !== false)
-				$row['body'] = $smcFunc['substr']($row['body'], 0, $cutoff);
+				$row['body'] = westring::substr($row['body'], 0, $cutoff);
 			$row['body'] .= '...';
 		}
 
@@ -1756,7 +1752,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 // Show the most recent events.
 function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 {
-	global $db_prefix, $user_info, $scripturl, $modSettings, $txt, $context, $smcFunc;
+	global $db_prefix, $user_info, $scripturl, $modSettings, $txt, $context;
 
 	// Find all events which are happening in the near future that the member can see.
 	$request = wedb::query('
@@ -1837,7 +1833,7 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 // Check the passed id_member/password.  If $is_username is true, treats $id as a username.
 function ssi_checkPassword($id = null, $password = null, $is_username = false)
 {
-	global $db_prefix, $smcFunc;
+	global $db_prefix;
 
 	// If $id is null, this was most likely called from a query string and should do nothing.
 	if ($id === null)
@@ -1861,7 +1857,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $smcFunc, $context, $modSettings, $scripturl, $txt, $settings;
+	global $context, $modSettings, $scripturl, $txt, $settings;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');

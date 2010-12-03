@@ -136,7 +136,7 @@ if (!defined('SMF'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $scripturl, $modSettings, $user_info, $old_profile, $smcFunc, $cur_profile, $language;
+	global $context, $profile_fields, $txt, $scripturl, $modSettings, $user_info, $old_profile, $cur_profile, $language;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -358,9 +358,9 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_extra',
 			'enabled' => $modSettings['theme_allow'] || allowedTo('admin_forum'),
 			'preload' => create_function('', '
-				global $smcFunc, $context, $cur_profile, $txt;
+				global $context, $cur_profile, $txt;
 
-				$request = $smcFunc[\'db_query\'](\'\', \'
+				$request = wedb::query(\'
 					SELECT value
 					FROM {db_prefix}themes
 					WHERE id_theme = {int:id_theme}
@@ -370,8 +370,8 @@ function loadProfileFields($force_reload = false)
 						\'variable\' => \'name\',
 					)
 				);
-				list ($name) = $smcFunc[\'db_fetch_row\']($request);
-				$smcFunc[\'db_free_result\']($request);
+				list ($name) = wedb::fetch_row($request);
+				wedb::free_result($request);
 
 				$context[\'member\'][\'theme\'] = array(
 					\'id\' => $cur_profile[\'id_theme\'],
@@ -479,7 +479,7 @@ function loadProfileFields($force_reload = false)
 			'save_key' => 'passwd',
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
-				global $user_info, $smcFunc, $cur_profile;
+				global $user_info, $cur_profile;
 
 				// If we didn\'t try it then ignore it!
 				if ($value == \'\')
@@ -565,13 +565,13 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum'),
 			'input_validate' => create_function('&$value', '
-				global $context, $smcFunc, $cur_profile;
+				global $context, $cur_profile;
 
 				$value = trim(preg_replace(\'~[\s]~u\', \' \', $value));
 
 				if (trim($value) == \'\')
 					return \'no_name\';
-				elseif ($smcFunc[\'strlen\']($value) > 60)
+				elseif (westring::strlen($value) > 60)
 					return \'name_too_long\';
 				elseif ($cur_profile[\'real_name\'] != $value)
 				{
@@ -766,7 +766,7 @@ function loadProfileFields($force_reload = false)
 // Setup the context for a page load!
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $smcFunc, $txt;
+	global $profile_fields, $context, $cur_profile, $txt;
 
 	// Make sure we have this!
 	loadProfileFields(true);
@@ -841,7 +841,7 @@ function setupProfileContext($fields)
 // Save the profile changes.
 function saveProfileFields()
 {
-	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $modSettings, $cur_profile, $smcFunc;
+	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $modSettings, $cur_profile;
 
 	// Load them up.
 	loadProfileFields();
@@ -976,7 +976,6 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 {
 	global $user_info, $txt, $modSettings, $user_profile;
 	global $context, $settings;
-	global $smcFunc;
 
 	// These make life easier....
 	$old_profile = &$user_profile[$memID];
@@ -1057,7 +1056,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 // Make any theme changes that are sent with the profile..
 function makeThemeChanges($memID, $id_theme)
 {
-	global $modSettings, $smcFunc, $context;
+	global $modSettings, $context;
 
 	$reservedVars = array(
 		'actual_theme_url',
@@ -1165,8 +1164,6 @@ function makeThemeChanges($memID, $id_theme)
 // Make any notification changes that need to be made.
 function makeNotificationChanges($memID)
 {
-	global $smcFunc;
-
 	// Update the boards they are being notified on.
 	if (isset($_POST['edit_notify_boards']) && !empty($_POST['notify_boards']))
 	{
@@ -1212,7 +1209,7 @@ function makeNotificationChanges($memID)
 // Save any changes to the custom profile fields...
 function makeCustomFieldChanges($memID, $area, $sanitize = true)
 {
-	global $context, $smcFunc, $user_profile, $user_info, $modSettings;
+	global $context, $user_profile, $user_info, $modSettings;
 
 	if ($sanitize && isset($_POST['customfield']))
 		$_POST['customfield'] = htmlspecialchars__recursive($_POST['customfield']);
@@ -1258,7 +1255,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 		{
 			$value = isset($_POST['customfield'][$row['col_name']]) ? $_POST['customfield'][$row['col_name']] : '';
 			if ($row['field_length'])
-				$value = $smcFunc['substr']($value, 0, $row['field_length']);
+				$value = westring::substr($value, 0, $row['field_length']);
 
 			// Any masks?
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
@@ -1353,7 +1350,7 @@ function editBuddyIgnoreLists($memID)
 function editBuddies($memID)
 {
 	global $txt, $scripturl, $modSettings;
-	global $context, $user_profile, $memberContext, $smcFunc;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
@@ -1381,7 +1378,7 @@ function editBuddies($memID)
 	elseif (isset($_POST['new_buddy']))
 	{
 		// Prepare the string for extraction...
-		$_POST['new_buddy'] = strtr($smcFunc['htmlspecialchars']($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
+		$_POST['new_buddy'] = strtr(westring::htmlspecialchars($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
 		preg_match_all('~"([^"]+)"~', $_POST['new_buddy'], $matches);
 		$new_buddies = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_buddy']))));
 
@@ -1460,7 +1457,7 @@ function editBuddies($memID)
 function editIgnoreList($memID)
 {
 	global $txt, $scripturl, $modSettings;
-	global $context, $user_profile, $memberContext, $smcFunc;
+	global $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
@@ -1488,7 +1485,7 @@ function editIgnoreList($memID)
 	elseif (isset($_POST['new_ignore']))
 	{
 		// Prepare the string for extraction...
-		$_POST['new_ignore'] = strtr($smcFunc['htmlspecialchars']($_POST['new_ignore'], ENT_QUOTES), array('&quot;' => '"'));
+		$_POST['new_ignore'] = strtr(westring::htmlspecialchars($_POST['new_ignore'], ENT_QUOTES), array('&quot;' => '"'));
 		preg_match_all('~"([^"]+)"~', $_POST['new_ignore'], $matches);
 		$new_entries = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_ignore']))));
 
@@ -1704,7 +1701,7 @@ function getAvatars($directory, $level)
 
 function theme($memID)
 {
-	global $txt, $context, $user_profile, $modSettings, $settings, $user_info, $smcFunc;
+	global $txt, $context, $user_profile, $modSettings, $settings, $user_info;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
@@ -1802,7 +1799,7 @@ function authentication($memID, $saving = false)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $smcFunc, $settings;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $settings;
 
 	// Gonna want this for the list.
 	loadSource('Subs-List');
@@ -2011,7 +2008,7 @@ function notification($memID)
 
 function list_getTopicNotificationCount($memID)
 {
-	global $smcFunc, $user_info, $context, $modSettings;
+	global $user_info, $context, $modSettings;
 
 	$request = wedb::query('
 		SELECT COUNT(*)
@@ -2034,7 +2031,7 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $txt, $scripturl, $user_info, $context, $modSettings;
+	global $txt, $scripturl, $user_info, $context, $modSettings;
 
 	// All the topics with notification on...
 	$request = wedb::query('
@@ -2091,7 +2088,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $smcFunc, $txt, $scripturl, $user_info;
+	global $txt, $scripturl, $user_info;
 
 	$request = wedb::query('
 		SELECT b.id_board, b.name, IFNULL(lb.id_msg, 0) AS board_read, b.id_msg_updated
@@ -2122,7 +2119,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 
 function loadThemeOptions($memID)
 {
-	global $context, $options, $cur_profile, $smcFunc;
+	global $context, $options, $cur_profile;
 
 	if (isset($_POST['default_options']))
 		$_POST['options'] = isset($_POST['options']) ? $_POST['options'] + $_POST['default_options'] : $_POST['default_options'];
@@ -2172,7 +2169,7 @@ function loadThemeOptions($memID)
 
 function ignoreboards($memID)
 {
-	global $txt, $user_info, $context, $modSettings, $smcFunc, $cur_profile;
+	global $txt, $user_info, $context, $modSettings, $cur_profile;
 
 	// Have the admins enabled this option?
 	if (empty($modSettings['allow_ignore_boards']))
@@ -2248,7 +2245,7 @@ function ignoreboards($memID)
 // Load all the languages for the profile.
 function profileLoadLanguages()
 {
-	global $context, $modSettings, $settings, $cur_profile, $language, $smcFunc;
+	global $context, $modSettings, $settings, $cur_profile, $language;
 
 	$context['profile_languages'] = array();
 
@@ -2268,7 +2265,7 @@ function profileLoadLanguages()
 // Load all the group info for the profile.
 function profileLoadGroups()
 {
-	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
+	global $cur_profile, $txt, $context, $user_settings;
 
 	$context['member_groups'] = array(
 		0 => array(
@@ -2321,7 +2318,7 @@ function profileLoadGroups()
 // Load key signature context data.
 function profileLoadSignatureData()
 {
-	global $modSettings, $context, $txt, $cur_profile, $smcFunc;
+	global $modSettings, $context, $txt, $cur_profile;
 
 	// Signature limits.
 	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
@@ -2418,7 +2415,7 @@ function profileLoadAvatarData()
 // Save a members group.
 function profileSaveGroups(&$value)
 {
-	global $profile_vars, $old_profile, $context, $smcFunc, $cur_profile;
+	global $profile_vars, $old_profile, $context, $cur_profile;
 
 	// Do we need to protect some groups?
 	if (!allowedTo('admin_forum'))
@@ -2514,7 +2511,7 @@ function profileSaveGroups(&$value)
 // The avatar is incredibly complicated, what with the options... and what not.
 function profileSaveAvatarData(&$value)
 {
-	global $modSettings, $smcFunc, $profile_vars, $cur_profile, $context;
+	global $modSettings, $profile_vars, $cur_profile, $context;
 
 	$memID = $context['id_member'];
 	if (empty($memID) && !empty($context['password_auth_failed']))
@@ -2736,7 +2733,7 @@ function profileSaveAvatarData(&$value)
 // Validate the signature!
 function profileValidateSignature(&$value)
 {
-	global $modSettings, $smcFunc, $txt;
+	global $modSettings, $txt;
 
 	loadSource('Class-Editor');
 
@@ -2750,9 +2747,9 @@ function profileValidateSignature(&$value)
 
 		$unparsed_signature = strtr(un_htmlspecialchars($value), array("\r" => '', '&#039' => '\''));
 		// Too long?
-		if (!empty($sig_limits[1]) && $smcFunc['strlen']($unparsed_signature) > $sig_limits[1])
+		if (!empty($sig_limits[1]) && westring::strlen($unparsed_signature) > $sig_limits[1])
 		{
-			$_POST['signature'] = trim(htmlspecialchars($smcFunc['substr']($unparsed_signature, 0, $sig_limits[1]), ENT_QUOTES));
+			$_POST['signature'] = trim(htmlspecialchars(westring::substr($unparsed_signature, 0, $sig_limits[1]), ENT_QUOTES));
 			$txt['profile_error_signature_max_length'] = sprintf($txt['profile_error_signature_max_length'], $sig_limits[1]);
 			return 'signature_max_length';
 		}
@@ -2906,7 +2903,7 @@ function profileValidateSignature(&$value)
 // Validate an email address.
 function profileValidateEmail($email, $memID = 0)
 {
-	global $smcFunc, $context;
+	global $context;
 
 	$email = strtr($email, array('&#039;' => '\''));
 
@@ -2938,7 +2935,7 @@ function profileValidateEmail($email, $memID = 0)
 // Reload a users settings.
 function profileReloadUser()
 {
-	global $modSettings, $context, $cur_profile, $smcFunc, $profile_vars;
+	global $modSettings, $context, $cur_profile, $profile_vars;
 
 	// Log them back in - using the verify password as they must have matched and this one doesn't get changed by anyone!
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
@@ -2954,7 +2951,7 @@ function profileReloadUser()
 // Send the user a new activation email if they need to reactivate!
 function profileSendActivation()
 {
-	global $profile_vars, $txt, $context, $scripturl, $smcFunc, $cookiename, $cur_profile, $language, $modSettings;
+	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $language, $modSettings;
 
 	loadSource('Subs-Post');
 
@@ -3006,7 +3003,7 @@ function profileSendActivation()
 // Function to allow the user to choose group membership etc...
 function groupMembership($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $smcFunc;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings;
 
 	$curMember = $user_profile[$memID];
 	$context['primary_group'] = $curMember['id_group'];
@@ -3100,7 +3097,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $user_profile, $modSettings, $txt, $smcFunc, $scripturl, $language;
+	global $user_info, $context, $user_profile, $modSettings, $txt, $scripturl, $language;
 
 	// Let's be extra cautious...
 	if (!$context['user']['is_owner'] || empty($modSettings['show_group_membership']))

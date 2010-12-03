@@ -536,7 +536,7 @@ function ManageLanguages()
 // Interface for adding a new language
 function AddLanguage()
 {
-	global $context, $forum_version, $boarddir, $txt, $smcFunc, $scripturl;
+	global $context, $forum_version, $boarddir, $txt, $scripturl;
 
 	// Are we searching for new languages courtesy of Simple Machines?
 	if (!empty($_POST['smf_add_sub']))
@@ -563,12 +563,12 @@ function AddLanguage()
 			foreach ($lang_files as $file)
 			{
 				// Were we searching?
-				if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), $smcFunc['strtolower']($context['smf_search_term'])) === false)
+				if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westring::strtolower($context['smf_search_term'])) === false)
 					continue;
 
 				$context['smf_languages'][] = array(
 					'id' => $file->fetch('id'),
-					'name' => $smcFunc['ucwords']($file->fetch('name')),
+					'name' => westring::ucwords($file->fetch('name')),
 					'version' => $file->fetch('version'),
 					'utf8' => $file->fetch('utf8'),
 					'description' => $file->fetch('description'),
@@ -586,7 +586,7 @@ function AddLanguage()
 // Download a language file from the Simple Machines website.
 function DownloadLanguage()
 {
-	global $context, $forum_version, $boarddir, $txt, $smcFunc, $scripturl, $modSettings;
+	global $context, $forum_version, $boarddir, $txt, $scripturl, $modSettings;
 
 	loadLanguage('ManageSettings');
 	loadSource('Subs-Package');
@@ -949,7 +949,7 @@ function DownloadLanguage()
 function ModifyLanguages()
 {
 	global $txt, $context, $scripturl;
-	global $user_info, $smcFunc, $language, $boarddir, $forum_version;
+	global $user_info, $language, $boarddir, $forum_version;
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
@@ -1071,7 +1071,7 @@ function list_getNumLanguages()
 // Fetch the actual language information.
 function list_getLanguages()
 {
-	global $settings, $smcFunc, $language, $context, $txt;
+	global $settings, $language, $context, $txt;
 
 	$languages = array();
 	// Keep our old entries.
@@ -1099,7 +1099,7 @@ function list_getLanguages()
 			'count' => 0,
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' '))),
+			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . westring::ucwords(strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
@@ -1134,7 +1134,7 @@ function list_getLanguages()
 // Edit language related settings.
 function ModifyLanguageSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $boarddir, $settings, $smcFunc;
+	global $scripturl, $context, $txt, $boarddir, $settings;
 
 	// Warn the user if the backup of Settings.php failed.
 	$settings_not_writable = !is_writable($boarddir . '/Settings.php');
@@ -1183,7 +1183,7 @@ function ModifyLanguageSettings($return_config = false)
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $language;
+	global $settings, $context, $txt, $modSettings, $boarddir, $language;
 
 	loadLanguage('ManageSettings');
 
@@ -1356,7 +1356,7 @@ function ModifyLanguage()
 	$context['lang_file_not_writable_message'] = is_writable($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
-		'name' => $smcFunc['ucwords'](strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
+		'name' => westring::ucwords(strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
 		'locale' => $txt['lang_locale'],
 		'dictionary' => $txt['lang_dictionary'],
 		'spelling' => $txt['lang_spelling'],
@@ -1555,8 +1555,6 @@ function ModifyLanguage()
 // This function could be two functions - either way it cleans language entries to/from display.
 function cleanLangString($string, $to_display = true)
 {
-	global $smcFunc;
-
 	// If going to display we make sure it doesn't have any HTML in it - etc.
 	$new_string = '';
 	if ($to_display)

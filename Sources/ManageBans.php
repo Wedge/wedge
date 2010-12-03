@@ -154,7 +154,7 @@ function Ban()
 function BanList()
 {
 	global $txt, $context, $ban_request, $ban_counts, $scripturl;
-	global $user_info, $smcFunc;
+	global $user_info;
 
 	// User pressed the 'remove selection button'.
 	if (!empty($_POST['removeBans']) && !empty($_POST['remove']) && is_array($_POST['remove']))
@@ -351,8 +351,6 @@ function BanList()
 
 function list_getBans($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT bg.id_ban_group, bg.name, bg.ban_time, bg.expire_time, bg.reason, bg.notes, COUNT(bi.id_ban) AS num_triggers
 		FROM {db_prefix}ban_groups AS bg
@@ -377,8 +375,6 @@ function list_getBans($start, $items_per_page, $sort)
 
 function list_getNumBans()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*) AS num_bans
 		FROM {db_prefix}ban_groups',
@@ -393,7 +389,7 @@ function list_getNumBans()
 
 function BanEdit()
 {
-	global $txt, $modSettings, $context, $ban_request, $scripturl, $smcFunc;
+	global $txt, $modSettings, $context, $ban_request, $scripturl;
 
 	$_REQUEST['bg'] = empty($_REQUEST['bg']) ? 0 : (int) $_REQUEST['bg'];
 
@@ -495,7 +491,7 @@ function BanEdit()
 		}
 		elseif ($_POST['bantype'] == 'user_ban')
 		{
-			$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($_POST['user'], ENT_QUOTES));
+			$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', westring::htmlspecialchars($_POST['user'], ENT_QUOTES));
 
 			$request = wedb::query('
 				SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
@@ -587,7 +583,7 @@ function BanEdit()
 			fatal_lang_error('ban_name_empty', false);
 
 		// Let's not allow HTML in ban names, it's more evil than beneficial.
-		$_POST['ban_name'] = $smcFunc['htmlspecialchars']($_POST['ban_name'], ENT_QUOTES);
+		$_POST['ban_name'] = westring::htmlspecialchars($_POST['ban_name'], ENT_QUOTES);
 
 		// Check whether a ban with this name already exists.
 		$request = wedb::query('
@@ -605,8 +601,8 @@ function BanEdit()
 			fatal_lang_error('ban_name_exists', false, array($_POST['ban_name']));
 		wedb::free_result($request);
 
-		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
-		$_POST['notes'] = $smcFunc['htmlspecialchars']($_POST['notes'], ENT_QUOTES);
+		$_POST['reason'] = westring::htmlspecialchars($_POST['reason'], ENT_QUOTES);
+		$_POST['notes'] = westring::htmlspecialchars($_POST['notes'], ENT_QUOTES);
 		$_POST['notes'] = str_replace(array("\r", "\n", '  '), array('', '<br />', '&nbsp; '), $_POST['notes']);
 		$_POST['expiration'] = $_POST['expiration'] == 'never' ? 'NULL' : ($_POST['expiration'] == 'expired' ? '0' : ($_POST['expire_date'] != $_POST['old_expire'] ? time() + 24 * 60 * 60 * (int) $_POST['expire_date'] : 'expire_time'));
 		$_POST['full_ban'] = empty($_POST['full_ban']) ? '0' : '1';
@@ -685,7 +681,7 @@ function BanEdit()
 					// We got a username, let's find its ID.
 					if (empty($_POST['bannedUser']))
 					{
-						$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($_POST['user'], ENT_QUOTES));
+						$_POST['user'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', westring::htmlspecialchars($_POST['user'], ENT_QUOTES));
 
 						$request = wedb::query('
 							SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
@@ -1026,7 +1022,7 @@ function BanEdit()
 
 function BanEditTrigger()
 {
-	global $context, $smcFunc;
+	global $context;
 
 	$context['sub_template'] = 'ban_edit_trigger';
 
@@ -1105,7 +1101,7 @@ function BanEditTrigger()
 
 function BanBrowseTriggers()
 {
-	global $modSettings, $context, $scripturl, $smcFunc, $txt, $settings;
+	global $modSettings, $context, $scripturl, $txt, $settings;
 
 	if (!empty($_POST['remove_triggers']) && !empty($_POST['remove']) && is_array($_POST['remove']))
 	{
@@ -1249,8 +1245,7 @@ function BanBrowseTriggers()
 	{
 		$listOptions['columns']['banned_entity']['data'] = array(
 			'function' => create_function('$rowData', '
-				global $smcFunc;
-				return strtr($smcFunc[\'htmlspecialchars\']($rowData[\'hostname\']), array(\'%\' => \'*\'));
+				return strtr(westring::htmlspecialchars($rowData[\'hostname\']), array(\'%\' => \'*\'));
 			'),
 		);
 		$listOptions['columns']['banned_entity']['sort'] = array(
@@ -1262,8 +1257,7 @@ function BanBrowseTriggers()
 	{
 		$listOptions['columns']['banned_entity']['data'] = array(
 			'function' => create_function('$rowData', '
-				global $smcFunc;
-				return strtr($smcFunc[\'htmlspecialchars\']($rowData[\'email_address\']), array(\'%\' => \'*\'));
+				return strtr(westring::htmlspecialchars($rowData[\'email_address\']), array(\'%\' => \'*\'));
 			'),
 		);
 		$listOptions['columns']['banned_entity']['sort'] = array(
@@ -1299,8 +1293,6 @@ function BanBrowseTriggers()
 
 function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 {
-	global $smcFunc;
-
 	$where = array(
 		'ip' => 'bi.ip_low1 > 0',
 		'hostname' => 'bi.hostname != {string:blank_string}',
@@ -1332,8 +1324,6 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 
 function list_getNumBanTriggers($trigger_type)
 {
-	global $smcFunc;
-
 	$where = array(
 		'ip' => 'bi.ip_low1 > 0',
 		'hostname' => 'bi.hostname != {string:blank_string}',
@@ -1357,7 +1347,7 @@ function list_getNumBanTriggers($trigger_type)
 
 function BanLog()
 {
-	global $scripturl, $context, $smcFunc, $txt, $context;
+	global $scripturl, $context, $txt, $context;
 
 	// Delete one or more entries.
 	if (!empty($_POST['removeAll']) || (!empty($_POST['removeSelected']) && !empty($_POST['remove'])))
@@ -1504,8 +1494,6 @@ function BanLog()
 
 function list_getBanLogEntries($start, $items_per_page, $sort)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT lb.id_ban_log, lb.id_member, IFNULL(lb.ip, {string:dash}) AS ip, IFNULL(lb.email, {string:dash}) AS email, lb.log_time, IFNULL(mem.real_name, {string:blank_string}) AS real_name
 		FROM {db_prefix}log_banned AS lb
@@ -1527,8 +1515,6 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 
 function list_getNumBanLogEntries()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_banned AS lb',
@@ -1566,7 +1552,7 @@ function range2ip($low, $high)
 
 function checkExistingTriggerIP($ip_array, $fullip = '')
 {
-	global $smcFunc, $scripturl;
+	global $scripturl;
 
 	if (count($ip_array) == 4)
 		$values = array(
@@ -1609,8 +1595,6 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 
 function updateBanMembers()
 {
-	global $smcFunc;
-
 	$updates = array();
 	$allMembers = array();
 	$newMembers = array();

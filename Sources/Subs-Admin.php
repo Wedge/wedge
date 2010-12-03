@@ -66,7 +66,7 @@ if (!defined('SMF'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $smcFunc, $memcached, $modSettings;
+	global $txt, $db_connection, $_PHPA, $memcached, $modSettings;
 
 	loadLanguage('Admin');
 
@@ -380,7 +380,7 @@ function updateSettingsFile($config_vars)
 
 function updateAdminPreferences()
 {
-	global $options, $context, $smcFunc, $settings, $user_info;
+	global $options, $context, $settings, $user_info;
 
 	// This must exist!
 	if (!isset($context['admin_preferences']))
@@ -415,7 +415,7 @@ function updateAdminPreferences()
 // Send all the administrators a lovely email.
 function emailAdmins($template, $replacements = array(), $additional_recipients = array())
 {
-	global $smcFunc, $language, $modSettings;
+	global $language, $modSettings;
 
 	// We certainly want this.
 	loadSource('Subs-Post');

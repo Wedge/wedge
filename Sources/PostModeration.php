@@ -57,7 +57,7 @@ function PostModerationMain()
 // View all unapproved posts.
 function UnapprovedPosts()
 {
-	global $txt, $scripturl, $context, $user_info, $smcFunc;
+	global $txt, $scripturl, $context, $user_info;
 
 	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
@@ -312,7 +312,7 @@ function UnapprovedPosts()
 // View all unapproved attachments.
 function UnapprovedAttachments()
 {
-	global $txt, $scripturl, $context, $user_info, $smcFunc;
+	global $txt, $scripturl, $context, $user_info;
 
 	$context['page_title'] = $txt['mc_unapproved_attachments'];
 
@@ -467,7 +467,7 @@ function UnapprovedAttachments()
 // Approve a post, just the one.
 function ApproveMessage()
 {
-	global $user_info, $topic, $board, $smcFunc;
+	global $user_info, $topic, $board;
 
 	checkSession('get');
 
@@ -538,8 +538,6 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 // This is a helper function - basically approve everything!
 function approveAllData()
 {
-	global $smcFunc;
-
 	// Start with messages and topics.
 	$request = wedb::query('
 		SELECT id_msg

@@ -90,7 +90,7 @@ if (!defined('SMF'))
 // Mark a board or multiple boards read.
 function markBoardsRead($boards, $unread = false)
 {
-	global $user_info, $modSettings, $smcFunc;
+	global $user_info, $modSettings;
 
 	// Force $boards to be an array.
 	if (!is_array($boards))
@@ -198,7 +198,7 @@ function markBoardsRead($boards, $unread = false)
 // Mark one or more boards as read.
 function MarkRead()
 {
-	global $board, $topic, $user_info, $board_info, $modSettings, $smcFunc;
+	global $board, $topic, $user_info, $board_info, $modSettings;
 
 	// No Guests allowed!
 	is_not_guest();
@@ -456,8 +456,6 @@ function MarkRead()
 // Get the id_member associated with the specified message.
 function getMsgMemberID($messageID)
 {
-	global $smcFunc;
-
 	// Find the topic and make sure the member still exists.
 	$result = wedb::query('
 		SELECT IFNULL(mem.id_member, 0)
@@ -482,7 +480,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $cat_tree, $boards, $boardList, $modSettings, $smcFunc, $context;
+	global $cat_tree, $boards, $boardList, $modSettings, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -701,7 +699,7 @@ function modifyBoard($board_id, &$boardOptions)
 		if (isset($boardOptions['moderator_string']) && trim($boardOptions['moderator_string']) != '')
 		{
 			// Divvy out the usernames, remove extra space.
-			$moderator_string = strtr($smcFunc['htmlspecialchars']($boardOptions['moderator_string'], ENT_QUOTES), array('&quot;' => '"'));
+			$moderator_string = strtr(westring::htmlspecialchars($boardOptions['moderator_string'], ENT_QUOTES), array('&quot;' => '"'));
 			preg_match_all('~"([^"]+)"~', $moderator_string, $matches);
 			$moderators = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $moderator_string)));
 			for ($k = 0, $n = count($moderators); $k < $n; $k++)
@@ -826,7 +824,7 @@ function modifyBoard($board_id, &$boardOptions)
 // Create a new board and set its properties and position.
 function createBoard($boardOptions)
 {
-	global $boards, $modSettings, $smcFunc;
+	global $boards, $modSettings;
 
 	// Trigger an error if one of the required values is not set.
 	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']))
@@ -914,7 +912,7 @@ function createBoard($boardOptions)
 // Remove one or more boards.
 function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 {
-	global $boards, $smcFunc;
+	global $boards;
 
 	// No boards to delete? Return!
 	if (empty($boards_to_remove))
@@ -1043,7 +1041,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 // Put all boards in the right order.
 function reorderBoards()
 {
-	global $cat_tree, $boardList, $boards, $smcFunc;
+	global $cat_tree, $boardList, $boards;
 
 	getBoardTree();
 
@@ -1077,8 +1075,6 @@ function reorderBoards()
 // Fixes the children of a board by setting their child_levels to new values.
 function fixChildren($parent, $newLevel, $newParent)
 {
-	global $smcFunc;
-
 	// Grab all children of $parent...
 	$result = wedb::query('
 		SELECT id_board
@@ -1114,7 +1110,7 @@ function fixChildren($parent, $newLevel, $newParent)
 // Restrict to their own boards anyone who's not an admin
 function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt, $modSettings, $smcFunc, $user_info;
+	global $cat_tree, $boards, $boardList, $txt, $modSettings, $user_info;
 
 	$restriction = $user_info['is_admin'] || !$restrict ? '' : '
 				AND b.id_owner = ' . (int) $user_info['id'];

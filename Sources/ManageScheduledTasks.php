@@ -93,7 +93,7 @@ function ManageScheduledTasks()
 // List all the scheduled task in place on the forum.
 function ScheduledTasks()
 {
-	global $context, $txt, $smcFunc, $user_info, $modSettings, $scripturl;
+	global $context, $txt, $user_info, $modSettings, $scripturl;
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
@@ -287,7 +287,7 @@ function ScheduledTasks()
 
 function list_getScheduledTasks($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt, $scripturl;
+	global $txt, $scripturl;
 
 	$request = wedb::query('
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
@@ -321,7 +321,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 // Function for editing a task.
 function EditTask()
 {
-	global $context, $txt, $smcFunc, $user_info, $modSettings;
+	global $context, $txt, $user_info, $modSettings;
 
 	// Just set up some lovely context stuff.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'tasks';
@@ -422,7 +422,7 @@ function EditTask()
 // Show the log of all tasks that have taken place.
 function TaskLog()
 {
-	global $scripturl, $context, $txt, $smcFunc;
+	global $scripturl, $context, $txt;
 
 	// Let's load the language just in case we are outside the Scheduled area.
 	loadLanguage('ManageScheduledTasks');
@@ -525,7 +525,7 @@ function TaskLog()
 
 function list_getTaskLogEntries($start, $items_per_page, $sort)
 {
-	global $smcFunc, $txt;
+	global $txt;
 
 	$request = wedb::query('
 		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.task
@@ -551,8 +551,6 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 
 function list_getNumTaskLogEntries()
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_scheduled_tasks',

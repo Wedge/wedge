@@ -75,7 +75,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
+	global $context, $txt, $scripturl, $user_info, $webmaster_email, $language, $modSettings;
 
 	checkSession();
 
@@ -208,7 +208,7 @@ function setPassword()
 
 function setPassword2()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	checkSession();
 
@@ -286,7 +286,7 @@ function setPassword2()
 // Get the secret answer.
 function SecretAnswerInput()
 {
-	global $txt, $context, $smcFunc;
+	global $txt, $context;
 
 	checkSession();
 
@@ -329,7 +329,7 @@ function SecretAnswerInput()
 
 function SecretAnswer2()
 {
-	global $txt, $context, $modSettings, $smcFunc;
+	global $txt, $context, $modSettings;
 
 	checkSession();
 

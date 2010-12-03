@@ -191,7 +191,7 @@ function ReportsMain()
 // Standard report about what settings the boards have.
 function BoardReport()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt;
 
 	// Load the permission profiles.
 	loadSource('ManagePermissions');
@@ -298,7 +298,7 @@ function BoardReport()
 // Generate a report on the current permissions by board and membergroup.
 function BoardPermissionsReport()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	// Get as much memory as possible as this can be big.
 	@ini_set('memory_limit', '256M');
@@ -467,7 +467,7 @@ function BoardPermissionsReport()
 // Show what the membergroups are made of.
 function MemberGroupsReport()
 {
-	global $context, $txt, $settings, $modSettings, $smcFunc;
+	global $context, $txt, $settings, $modSettings;
 
 	// Fetch all the board names.
 	$request = wedb::query('
@@ -577,7 +577,7 @@ function MemberGroupsReport()
 // Show the large variety of group permissions assigned to each membergroup.
 function GroupPermissionsReport()
 {
-	global $context, $txt, $modSettings, $smcFunc;
+	global $context, $txt, $modSettings;
 
 	if (isset($_REQUEST['groups']))
 	{
@@ -672,7 +672,7 @@ function GroupPermissionsReport()
 // Report for showing all the forum staff members - quite a feat!
 function StaffReport()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt;
 
 	loadSource('Subs-Members');
 

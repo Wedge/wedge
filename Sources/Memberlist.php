@@ -169,7 +169,7 @@ function Memberlist()
 function MLAll()
 {
 	global $txt, $scripturl, $user_info;
-	global $modSettings, $context, $smcFunc;
+	global $modSettings, $context;
 
 	// The chunk size for the cached index.
 	$cache_step_size = 500;
@@ -245,7 +245,7 @@ function MLAll()
 
 	if (!is_numeric($_REQUEST['start']))
 	{
-		if (preg_match('~^[^\'\\\\/]~u', $smcFunc['strtolower']($_REQUEST['start']), $match) === 0)
+		if (preg_match('~^[^\'\\\\/]~u', westring::strtolower($_REQUEST['start']), $match) === 0)
 			fatal_error('Hacker?', false);
 
 		$_REQUEST['start'] = $match[0];
@@ -400,7 +400,7 @@ function MLAll()
 		$last_letter = '';
 		foreach ($context['members'] as $i => $dummy)
 		{
-			$this_letter = $smcFunc['strtolower']($smcFunc['substr']($context['members'][$i]['name'], 0, 1));
+			$this_letter = westring::strtolower(westring::substr($context['members'][$i]['name'], 0, 1));
 
 			if ($this_letter != $last_letter && preg_match('~[a-z]~', $this_letter) === 1)
 			{
@@ -414,7 +414,7 @@ function MLAll()
 // Search for members...
 function MLSearch()
 {
-	global $txt, $scripturl, $context, $user_info, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $user_info, $modSettings;
 
 	$context['page_title'] = $txt['mlist_search'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -461,7 +461,7 @@ function MLSearch()
 			'regular_id_group' => 0,
 			'is_activated' => 1,
 			'blank_string' => '',
-			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
+			'search' => '%' . strtr(westring::htmlspecialchars($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
 		);
 
 		// Search for a name?
@@ -565,7 +565,7 @@ function MLSearch()
 function printMemberListRows($request)
 {
 	global $scripturl, $txt, $user_info, $modSettings;
-	global $context, $settings, $memberContext, $smcFunc;
+	global $context, $settings, $memberContext;
 
 	// Get the most posts.
 	$result = wedb::query('

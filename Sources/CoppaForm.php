@@ -35,7 +35,7 @@ if (!defined('SMF'))
 // This function will display the contact information for the forum, as well a form to fill in.
 function CoppaForm()
 {
-	global $context, $modSettings, $txt, $smcFunc;
+	global $context, $modSettings, $txt;
 
 	loadLanguage('Login');
 	loadTemplate('Register');

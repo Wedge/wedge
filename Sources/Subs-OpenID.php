@@ -105,8 +105,6 @@ function smf_openID_revalidate()
 
 function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 {
-	global $smcFunc;
-
 	if (!$no_delete)
 	{
 		// Delete the already expired associations.
@@ -143,7 +141,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 
 function smf_openID_makeAssociation($server)
 {
-	global $smcFunc, $modSettings, $p;
+	global $modSettings, $p;
 
 	$parameters = array(
 		'openid.mode=associate',
@@ -216,8 +214,6 @@ function smf_openID_makeAssociation($server)
 
 function smf_openID_removeAssociation($handle)
 {
-	global $smcFunc;
-
 	wedb::query('
 		DELETE FROM {db_prefix}openid_assoc
 		WHERE handle = {string:handle}',
@@ -229,7 +225,7 @@ function smf_openID_removeAssociation($handle)
 
 function smf_openID_return()
 {
-	global $smcFunc, $user_info, $user_profile, $modSettings, $context, $sc, $user_settings;
+	global $user_info, $user_profile, $modSettings, $context, $sc, $user_settings;
 
 	// Is OpenID even enabled?
 	if (empty($modSettings['enableOpenID']))
@@ -389,8 +385,6 @@ function smf_openID_canonize($uri)
 
 function smf_openid_member_exists($url)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT mem.id_member, mem.member_name
 		FROM {db_prefix}members AS mem

@@ -181,7 +181,7 @@ function ModifyHolidays()
 // This function is used for adding/editing a specific holiday
 function EditHoliday()
 {
-	global $txt, $context, $scripturl, $smcFunc;
+	global $txt, $context, $scripturl;
 
 	loadTemplate('ManageCalendar');
 
@@ -199,7 +199,7 @@ function EditHoliday()
 		checkSession();
 
 		// Not too long good sir?
-		$_REQUEST['title'] = $smcFunc['substr']($_REQUEST['title'], 0, 60);
+		$_REQUEST['title'] = westring::substr($_REQUEST['title'], 0, 60);
 		$_REQUEST['holiday'] = isset($_REQUEST['holiday']) ? (int) $_REQUEST['holiday'] : 0;
 
 		if (isset($_REQUEST['delete']))
@@ -282,7 +282,7 @@ function EditHoliday()
 
 function ModifyCalendarSettings($return_config = false)
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl, $smcFunc;
+	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl;
 
 	// Load the boards list.
 	$boards = array('');

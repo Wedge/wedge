@@ -76,7 +76,7 @@ if (!defined('SMF'))
 
 function ViewMembers()
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc;
+	global $txt, $scripturl, $context, $modSettings;
 
 	$subActions = array(
 		'all' => array('ViewMemberlist', 'moderate_forum'),
@@ -182,7 +182,7 @@ function ViewMembers()
 // View all members.
 function ViewMemberlist()
 {
-	global $txt, $scripturl, $context, $modSettings, $smcFunc, $user_info;
+	global $txt, $scripturl, $context, $modSettings, $user_info;
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -399,7 +399,7 @@ function ViewMemberlist()
 			else
 			{
 				// Replace the wildcard characters ('*' and '?') into MySQL ones.
-				$parameter = strtolower(strtr($smcFunc['htmlspecialchars']($_POST[$param_name], ENT_QUOTES), array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_')));
+				$parameter = strtolower(strtr(westring::htmlspecialchars($_POST[$param_name], ENT_QUOTES), array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_')));
 
 				$query_parts[] = '(' . implode( ' LIKE {string:' . $param_name . '_normal} OR ', $param_info['db_fields']) . ' LIKE {string:' . $param_name . '_normal})';
 				$where_params[$param_name . '_normal'] = '%' . $parameter . '%';
@@ -656,7 +656,7 @@ function ViewMemberlist()
 // Search the member list, using one or more criteria.
 function SearchMembers()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt;
 
 	// Get a list of all the membergroups and postgroups that can be selected.
 	$context['membergroups'] = array(
@@ -701,7 +701,7 @@ function SearchMembers()
 // List all members who are awaiting approval / activation
 function MembersAwaitingActivation()
 {
-	global $txt, $context, $scripturl, $modSettings, $smcFunc;
+	global $txt, $context, $scripturl, $modSettings;
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
@@ -1048,7 +1048,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $modSettings, $language, $user_info, $smcFunc;
+	global $txt, $context, $scripturl, $modSettings, $language, $user_info;
 
 	// First, check our session.
 	checkSession();

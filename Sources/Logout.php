@@ -41,7 +41,7 @@ if (!defined('SMF'))
 // Log the user out.
 function Logout($internal = false, $redirect = true)
 {
-	global $user_info, $user_settings, $context, $modSettings, $smcFunc;
+	global $user_info, $user_settings, $context, $modSettings;
 
 	// Make sure they aren't being auto-logged out.
 	if (!$internal)

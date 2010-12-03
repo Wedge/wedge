@@ -92,7 +92,7 @@ if (!defined('SMF'))
 // Delete a group of/single member.
 function deleteMembers($users, $check_not_admin = false)
 {
-	global $modSettings, $user_info, $smcFunc;
+	global $modSettings, $user_info;
 
 	// Try give us a while to sort this out...
 	@set_time_limit(600);
@@ -461,7 +461,7 @@ function deleteMembers($users, $check_not_admin = false)
 function registerMember(&$regOptions, $return_errors = false)
 {
 	global $scripturl, $txt, $modSettings, $context;
-	global $user_info, $options, $settings, $smcFunc;
+	global $user_info, $options, $settings;
 
 	loadLanguage('Login');
 
@@ -506,19 +506,19 @@ function registerMember(&$regOptions, $return_errors = false)
 	$regOptions['username'] = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $regOptions['username']);
 
 	// Don't use too long a name.
-	if ($smcFunc['strlen']($regOptions['username']) > 25)
+	if (westring::strlen($regOptions['username']) > 25)
 		$reg_errors[] = array('lang', 'error_long_name');
 
 	// Only these characters are permitted.
 	if (preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $regOptions['username'])) != 0 || $regOptions['username'] == '_' || $regOptions['username'] == '|' || strpos($regOptions['username'], '[code') !== false || strpos($regOptions['username'], '[/code') !== false)
 		$reg_errors[] = array('lang', 'error_invalid_characters_username');
 
-	if ($smcFunc['strtolower']($regOptions['username']) === $smcFunc['strtolower']($txt['guest_title']))
+	if (westring::strtolower($regOptions['username']) === westring::strtolower($txt['guest_title']))
 		$reg_errors[] = array('lang', 'username_reserved', 'general', array($txt['guest_title']));
 
 	// !!! Separate the sprintf?
 	if (empty($regOptions['email']) || preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $regOptions['email']) === 0 || strlen($regOptions['email']) > 255)
-		$reg_errors[] = array('done', sprintf($txt['valid_email_needed'], $smcFunc['htmlspecialchars']($regOptions['username'])));
+		$reg_errors[] = array('done', sprintf($txt['valid_email_needed'], westring::htmlspecialchars($regOptions['username'])));
 
 	if (!empty($regOptions['check_reserved_name']) && isReservedName($regOptions['username'], 0, false))
 		$reg_errors[] = array('done', '(' . htmlspecialchars($regOptions['username']) . ') ' . $txt['name_in_use']);
@@ -892,7 +892,7 @@ function registerMember(&$regOptions, $return_errors = false)
 // Check if a name is in the reserved words list. (name, current member id, name/username?.)
 function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal = true)
 {
-	global $user_info, $modSettings, $smcFunc, $context;
+	global $user_info, $modSettings, $context;
 
 	// No cheating with entities please.
 	$replaceEntities = create_function('$string', '
@@ -900,7 +900,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' : ($num < 0x80 ? chr($num) : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) : chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));'
 	);
 
-	$checkName = $smcFunc['strtolower'](preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$replaceEntities(\'\\2\')', $name));
+	$checkName = westring::strtolower(preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$replaceEntities(\'\\2\')', $name));
 
 	// Administrators are never restricted ;).
 	if (!allowedTo('moderate_forum') && ((!empty($modSettings['reserveName']) && $is_name) || !empty($modSettings['reserveUser']) && !$is_name))
@@ -920,10 +920,10 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 
 			// Case sensitive name?
 			if (empty($modSettings['reserveCase']))
-				$reservedCheck = $smcFunc['strtolower']($reservedCheck);
+				$reservedCheck = westring::strtolower($reservedCheck);
 
 			// If it's not just entire word, check for it in there somewhere...
-			if ($checkMe == $reservedCheck || ($smcFunc['strpos']($checkMe, $reservedCheck) !== false && empty($modSettings['reserveWord'])))
+			if ($checkMe == $reservedCheck || (westring::strpos($checkMe, $reservedCheck) !== false && empty($modSettings['reserveWord'])))
 				if ($fatal)
 					fatal_lang_error('username_reserved', 'password', array($reserved));
 				else
@@ -990,7 +990,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 // Get a list of groups that have a given permission (on a given board).
 function groupsAllowedTo($permission, $board_id = null)
 {
-	global $modSettings, $board_info, $smcFunc;
+	global $modSettings, $board_info;
 
 	// Admins are allowed to do anything.
 	$member_groups = array(
@@ -1063,8 +1063,6 @@ function groupsAllowedTo($permission, $board_id = null)
 // Get a list of members that have a given permission (on a given board).
 function membersAllowedTo($permission, $board_id = null)
 {
-	global $smcFunc;
-
 	$member_groups = groupsAllowedTo($permission, $board_id);
 
 	$include_moderators = in_array(3, $member_groups['allowed']) && $board_id !== null;
@@ -1098,8 +1096,6 @@ function membersAllowedTo($permission, $board_id = null)
 // This function is used to reassociate members with relevant posts.
 function reattributePosts($memID, $email = false, $membername = false, $post_count = false)
 {
-	global $smcFunc;
-
 	// Firstly, if email and username aren't passed find out the members email address and name.
 	if ($email === false && $membername === false)
 	{
@@ -1166,8 +1162,6 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 
 function list_getMembers($start, $items_per_page, $sort, $where, $where_params = array(), $get_duplicates = false)
 {
-	global $smcFunc;
-
 	$request = wedb::query('
 		SELECT
 			mem.id_member, mem.member_name, mem.real_name, mem.email_address, mem.icq, mem.aim, mem.yim, mem.msn, mem.member_ip, mem.member_ip2, mem.last_login,
@@ -1198,7 +1192,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 
 function list_getNumMembers($where, $where_params = array())
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	// We know how many members there are in total.
 	if (empty($where) || $where == '1')
@@ -1223,8 +1217,6 @@ function list_getNumMembers($where, $where_params = array())
 
 function populateDuplicateMembers(&$members)
 {
-	global $smcFunc;
-
 	// This will hold all the ip addresses.
 	$ips = array();
 	foreach ($members as $key => $member)
@@ -1338,7 +1330,7 @@ function populateDuplicateMembers(&$members)
 // Generate a random validation code.
 function generateValidationCode()
 {
-	global $smcFunc, $modSettings;
+	global $modSettings;
 
 	$request = wedb::query('
 		SELECT RAND()',

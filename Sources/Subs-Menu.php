@@ -31,7 +31,7 @@ if (!defined('SMF'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $settings, $options, $txt, $modSettings, $scripturl, $smcFunc, $user_info, $options;
+	global $context, $settings, $options, $txt, $modSettings, $scripturl, $user_info, $options;
 
 	// First are we toggling use of the side bar generally?
 	if (isset($_GET['togglebar']) && !$user_info['is_guest'])

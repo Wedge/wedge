@@ -36,7 +36,7 @@ if (!defined('SMF'))
 function Unread()
 {
 	global $board, $txt, $scripturl;
-	global $user_info, $context, $settings, $modSettings, $smcFunc, $options;
+	global $user_info, $context, $settings, $modSettings, $options;
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();
@@ -554,11 +554,11 @@ function Unread()
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
 			$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br />' => '&#10;')));
-			if ($smcFunc['strlen']($row['first_body']) > 128)
-				$row['first_body'] = $smcFunc['substr']($row['first_body'], 0, 128) . '...';
+			if (westring::strlen($row['first_body']) > 128)
+				$row['first_body'] = westring::substr($row['first_body'], 0, 128) . '...';
 			$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br />' => '&#10;')));
-			if ($smcFunc['strlen']($row['last_body']) > 128)
-				$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, 128) . '...';
+			if (westring::strlen($row['last_body']) > 128)
+				$row['last_body'] = westring::substr($row['last_body'], 0, 128) . '...';
 
 			// Censor the subject and message preview.
 			censorText($row['first_subject']);

@@ -54,7 +54,7 @@ if (!defined('SMF'))
 function RepairBoards()
 {
 	global $txt, $scripturl, $db_connection, $context;
-	global $salvageCatID, $salvageBoardID, $smcFunc, $errorTests;
+	global $salvageCatID, $salvageBoardID, $errorTests;
 
 	isAllowedTo('admin_forum');
 
@@ -180,7 +180,7 @@ function pauseRepairProcess($to_fix, $current_step_description, $max_substep = 0
 // Load up all the tests we might want to do ;)
 function loadForumTests()
 {
-	global $smcFunc, $errorTests;
+	global $errorTests;
 
 	/* Here this array is defined like so:
 		string check_query:	Query to be executed when testing if errors exist.
@@ -251,7 +251,7 @@ function loadForumTests()
 				WHERE t.id_topic IS NULL
 				GROUP BY m.id_topic, m.id_board',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc, $salvageBoardID;
+				global $salvageBoardID;
 
 				// Only if we don\'t have a reasonable idea of where to put it.
 				if ($row[\'id_board\'] == 0)
@@ -261,7 +261,7 @@ function loadForumTests()
 				}
 
 				// Make sure that no topics claim the first/last message as theirs.
-				$smcFunc[\'db_query\'](\'\', \'
+				wedb::query(\'
 					UPDATE {db_prefix}topics
 					SET id_first_msg = 0
 					WHERE id_first_msg = {int:id_first_msg}\',
@@ -269,7 +269,7 @@ function loadForumTests()
 						\'id_first_msg\' => $row[\'myid_first_msg\'],
 					)
 				);
-				$smcFunc[\'db_query\'](\'\', \'
+				wedb::query(\'
 					UPDATE {db_prefix}topics
 					SET id_last_msg = 0
 					WHERE id_last_msg = {int:id_last_msg}\',
@@ -281,7 +281,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
 				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
 
-				$smcFunc[\'db_insert\'](\'\',
+				wedb::insert(\'\',
 					\'{db_prefix}topics\',
 					array(
 						\'id_board\' => \'int\',
@@ -302,9 +302,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newTopicID = $smcFunc[\'db_insert_id\']();
+				$newTopicID = wedb::insert_id();
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}messages
 					SET id_topic = $newTopicID, id_board = $row[id_board]
 					WHERE id_topic = $row[id_topic]",
@@ -334,15 +334,14 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$topics', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
 							\'topics\' => $topics
 						)
 					);
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
@@ -367,7 +366,7 @@ function loadForumTests()
 				WHERE p.id_poll BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND t.id_poll IS NULL',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc, $salvageBoardID, $txt;
+				global $salvageBoardID, $txt;
 
 				// Only if we don\'t have a reasonable idea of where to put it.
 				if ($row[\'id_board\'] == 0)
@@ -378,7 +377,7 @@ function loadForumTests()
 
 				$row[\'poster_name\'] = !empty($row[\'poster_name\']) ? $row[\'poster_name\'] : $txt[\'guest\'];
 
-				$smcFunc[\'db_insert\'](\'\',
+				wedb::insert(\'\',
 					\'{db_prefix}messages\',
 					array(
 						\'id_board\' => \'int\',
@@ -411,9 +410,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newMessageID = $smcFunc[\'db_insert_id\']();
+				$newMessageID = wedb::insert_id();
 
-				$smcFunc[\'db_insert\'](\'\',
+				wedb::insert(\'\',
 					\'{db_prefix}topics\',
 					array(
 						\'id_board\' => \'int\',
@@ -436,9 +435,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newTopicID = $smcFunc[\'db_insert_id\']();
+				$newTopicID = wedb::insert_id();
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}messages
 					SET id_topic = $newTopicID, id_board = $row[id_board]
 					WHERE id_msg = $newMessageID",
@@ -477,7 +476,6 @@ function loadForumTests()
 				GROUP BY t.id_topic, t.id_first_msg, t.id_last_msg, t.approved, mf.approved
 				ORDER BY t.id_topic',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc;
 				$row[\'firstmsg_approved\'] = (int) $row[\'firstmsg_approved\'];
 				$row[\'myid_first_msg\'] = (int) $row[\'myid_first_msg\'];
 				$row[\'myid_last_msg\'] = (int) $row[\'myid_last_msg\'];
@@ -489,7 +487,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
 				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}topics
 					SET id_first_msg = $row[myid_first_msg],
 						id_member_started = $memberStartedID, id_last_msg = $row[myid_last_msg],
@@ -535,14 +533,13 @@ function loadForumTests()
 				GROUP BY t.id_topic, t.num_replies, mf.approved
 				ORDER BY t.id_topic',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc;
 				$row[\'my_num_replies\'] = (int) $row[\'my_num_replies\'];
 
 				// Not really a problem?
 				if ($row[\'my_num_replies\'] == $row[\'num_replies\'])
 					return false;
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}topics
 					SET num_replies = $row[my_num_replies]
 					WHERE id_topic = $row[id_topic]",
@@ -581,10 +578,9 @@ function loadForumTests()
 				HAVING unapproved_posts != COUNT(mu.id_msg)
 				ORDER BY t.id_topic',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc;
 				$row[\'my_unapproved_posts\'] = (int) $row[\'my_unapproved_posts\'];
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = $row[my_unapproved_posts]
 					WHERE id_topic = $row[id_topic]",
@@ -618,28 +614,28 @@ function loadForumTests()
 					AND t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY t.id_board',
 			'fix_processing' => create_function('$row', '
-				global $smcFunc, $salvageCatID;
+				global $salvageCatID;
 				createSalvageArea();
 
 				$row[\'my_num_topics\'] = (int) $row[\'my_num_topics\'];
 				$row[\'my_num_posts\'] = (int) $row[\'my_num_posts\'];
 
-				$smcFunc[\'db_insert\'](\'\',
+				wedb::db_insert(\'\',
 					\'{db_prefix}boards\',
 					array(\'id_cat\' => \'int\', \'name\' => \'string\', \'description\' => \'string\', \'num_topics\' => \'int\', \'num_posts\' => \'int\', \'member_groups\' => \'string\'),
 					array($salvageCatID, \'Salvaged board\', \'\', $row[\'my_num_topics\'], $row[\'my_num_posts\'], \'1\'),
 					array(\'id_board\')
 				);
-				$newBoardID = $smcFunc[\'db_insert_id\']();
+				$newBoardID = wedb::insert_id();
 
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}topics
 					SET id_board = $newBoardID
 					WHERE id_board = $row[id_board]",
 					array(
 					)
 				);
-				$smcFunc[\'db_query\'](\'\', "
+				wedb::query("
 					UPDATE {db_prefix}messages
 					SET id_board = $newBoardID
 					WHERE id_board = $row[id_board]",
@@ -660,9 +656,9 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_cat',
 				'process' => create_function('$cats', '
-					global $smcFunc, $salvageCatID;
+					global $salvageCatID;
 					createSalvageArea();
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						UPDATE {db_prefix}boards
 						SET id_cat = $salvageCatID
 						WHERE id_cat IN ({array_int:categories})",
@@ -694,8 +690,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_msg',
 				'process' => create_function('$msgs', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						UPDATE {db_prefix}messages
 						SET id_member = 0
 						WHERE id_msg IN ({array_int:msgs})",
@@ -719,9 +714,9 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_parent',
 				'process' => create_function('$parents', '
-					global $smcFunc, $salvageBoardID, $salvageCatID;
+					global $salvageBoardID, $salvageCatID;
 					createSalvageArea();
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						UPDATE {db_prefix}boards
 						SET id_parent = $salvageBoardID, id_cat = $salvageCatID, child_level = 1
 						WHERE id_parent IN ({array_int:parents})",
@@ -750,8 +745,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_poll',
 				'process' => create_function('$polls', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						UPDATE {db_prefix}topics
 						SET id_poll = 0
 						WHERE id_poll IN ({array_int:polls})",
@@ -781,8 +775,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$events', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', \'
+					wedb::query(\'
 						UPDATE {db_prefix}calendar
 						SET id_topic = 0, id_board = 0
 						WHERE id_topic IN ({array_int:events})\',
@@ -810,8 +803,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$topics', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
@@ -839,8 +831,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -868,8 +859,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_board',
 				'process' => create_function('$boards', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_board IN ({array_int:boards})",
 						array(
@@ -897,8 +887,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -926,8 +915,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_board',
 				'process' => create_function('$boards', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_board IN ({array_int:boards})",
 						array(
@@ -955,8 +943,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -984,8 +971,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_pm',
 				'process' => create_function('$pms', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_pm IN ({array_int:pms})",
 						array(
@@ -1014,8 +1000,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1043,8 +1028,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_pm',
 				'process' => create_function('$guestMessages', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						UPDATE {db_prefix}personal_messages
 						SET id_member_from = 0
 						WHERE id_pm IN ({array_int:guestMessages})",
@@ -1072,8 +1056,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_notify
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1099,16 +1082,14 @@ function loadForumTests()
 				WHERE t.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND lss.id_topic IS NULL',
 			'fix_full_processing' => create_function('$result', '
-				global $smcFunc;
-
 				$inserts = array();
-				while ($row = $smcFunc[\'db_fetch_assoc\']($result))
+				while ($row = wedb::fetch_assoc($result))
 				{
 					foreach (text2words($row[\'subject\']) as $word)
 						$inserts[] = array($word, $row[\'id_topic\']);
 					if (count($inserts) > 500)
 					{
-						$smcFunc[\'db_insert\'](\'ignore\',
+						wedb::insert(\'ignore\',
 							"{db_prefix}log_search_subjects",
 							array(\'word\' => \'string\', \'id_topic\' => \'int\'),
 							$inserts,
@@ -1120,7 +1101,7 @@ function loadForumTests()
 				}
 
 				if (!empty($inserts))
-					$smcFunc[\'db_insert\'](\'ignore\',
+					wedb::insert(\'ignore\',
 						"{db_prefix}log_search_subjects",
 						array(\'word\' => \'string\', \'id_topic\' => \'int\'),
 						$inserts,
@@ -1155,8 +1136,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$deleteTopics', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_search_subjects
 						WHERE id_topic IN ({array_int:deleteTopics})",
 						array(
@@ -1184,8 +1164,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1212,8 +1191,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_poll',
 				'process' => create_function('$polls', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_poll IN ({array_int:polls})",
 						array(
@@ -1240,8 +1218,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_report',
 				'process' => create_function('$reports', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_reported
 						WHERE id_report IN ({array_int:reports})",
 						array(
@@ -1268,8 +1245,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_report',
 				'process' => create_function('$reports', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_reported_comments
 						WHERE id_report IN ({array_int:reports})",
 						array(
@@ -1297,8 +1273,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', "
+					wedb::query("
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1326,8 +1301,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_group',
 				'process' => create_function('$groups', '
-					global $smcFunc;
-					$smcFunc[\'db_query\'](\'\', \'
+					wedb::query(\'
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_group IN ({array_int:groups})\',
 						array(
@@ -1343,7 +1317,7 @@ function loadForumTests()
 
 function findForumErrors($do_fix = false)
 {
-	global $context, $txt, $smcFunc, $errorTests, $db_cache, $db_temp_cache;
+	global $context, $txt, $errorTests, $db_cache, $db_temp_cache;
 
 	// This may take some time...
 	@set_time_limit(600);
@@ -1562,7 +1536,7 @@ function findForumErrors($do_fix = false)
 // Create a salvage area for repair purposes.
 function createSalvageArea()
 {
-	global $txt, $language, $salvageBoardID, $salvageCatID, $smcFunc;
+	global $txt, $language, $salvageBoardID, $salvageCatID;
 	static $createOnce = false;
 
 	// Have we already created it?

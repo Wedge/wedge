@@ -275,7 +275,7 @@ $gatewayClass->close();
 // Log an error then die.
 function generateSubscriptionError($text)
 {
-	global $modSettings, $notify_users, $smcFunc;
+	global $modSettings, $notify_users;
 
 	// Send an email?
 	if (!empty($modSettings['paid_email']))
@@ -290,7 +290,7 @@ function generateSubscriptionError($text)
 	// Maybe we can try to give them the post data?
 	if (!empty($_POST))
 		foreach ($_POST as $key => $val)
-			$text .= '<br />' . $smcFunc['htmlspecialchars']($key) . ': ' . $smcFunc['htmlspecialchars']($val);
+			$text .= '<br />' . westring::htmlspecialchars($key) . ': ' . westring::htmlspecialchars($val);
 
 	// Then just log and die.
 	log_error($text);
