@@ -169,7 +169,7 @@ function EditNews()
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
-			'unparsed' => westring::htmlspecialchars(wedgeEditor::un_preparsecode($line)),
+			'unparsed' => westr::htmlspecialchars(wedgeEditor::un_preparsecode($line)),
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
 		);
 
@@ -317,7 +317,7 @@ function ComposeMailing()
 
 			foreach ($_POST[$type] as $index => $member)
 				if (strlen(trim($member)) > 0)
-					$_POST[$type][$index] = westring::htmlspecialchars(westring::strtolower(trim($member)));
+					$_POST[$type][$index] = westr::htmlspecialchars(westr::strtolower(trim($member)));
 				else
 					unset($_POST[$type][$index]);
 

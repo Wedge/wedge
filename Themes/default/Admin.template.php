@@ -638,7 +638,7 @@ function template_not_done()
 
 	echo '
 			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westring::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" /></div>
+				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" /></div>
 				', $context['continue_post_data'], '
 			</form>
 		</div>
@@ -1906,7 +1906,7 @@ function template_repair_boards()
 				</p>
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="recount" id="recount_now" value="', westring::htmlspecialchars($txt['errors_recount_now']), '" />
+					<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '" />
 				</form>';
 		}
 		else

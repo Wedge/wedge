@@ -377,7 +377,7 @@ function iCalDownload()
 
 	// How big is it?
 	if (empty($modSettings['enableCompressedOutput']))
-		header('Content-Length: ' . westring::strlen($filecontents));
+		header('Content-Length: ' . westr::strlen($filecontents));
 
 	// This is a calendar item!
 	header('Content-Type: text/calendar');

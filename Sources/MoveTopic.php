@@ -244,10 +244,10 @@ function MoveTopic2()
 	// Rename the topic...
 	if (isset($_POST['reset_subject'], $_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$_POST['custom_subject'] = strtr(westring::htmltrim(westring::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['custom_subject'] = strtr(westr::htmltrim(westr::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
 		// Keep checking the length.
-		if (westring::strlen($_POST['custom_subject']) > 100)
-			$_POST['custom_subject'] = westring::substr($_POST['custom_subject'], 0, 100);
+		if (westr::strlen($_POST['custom_subject']) > 100)
+			$_POST['custom_subject'] = westr::substr($_POST['custom_subject'], 0, 100);
 
 		// If it's still valid move onwards and upwards.
 		if ($_POST['custom_subject'] != '')
@@ -302,7 +302,7 @@ function MoveTopic2()
 		if ($user_info['language'] != $language)
 			loadLanguage('index', $language);
 
-		$_POST['reason'] = westring::htmlspecialchars($_POST['reason'], ENT_QUOTES);
+		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
 		wedgeEditor::preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.

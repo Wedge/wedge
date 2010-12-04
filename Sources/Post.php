@@ -433,7 +433,7 @@ function Post()
 				$context['post_error']['no_subject'] = true;
 			if (htmltrim__recursive(htmlspecialchars__recursive($_REQUEST['message'])) == '')
 				$context['post_error']['no_message'] = true;
-			if (!empty($modSettings['max_messageLength']) && westring::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
+			if (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
 				$context['post_error']['long_message'] = true;
 
 			// Are you... a guest?
@@ -445,7 +445,7 @@ function Post()
 				// Validate the name and email.
 				if (!isset($_REQUEST['guestname']) || trim(strtr($_REQUEST['guestname'], '_', ' ')) == '')
 					$context['post_error']['no_name'] = true;
-				elseif (westring::strlen($_REQUEST['guestname']) > 25)
+				elseif (westr::strlen($_REQUEST['guestname']) > 25)
 					$context['post_error']['long_name'] = true;
 				else
 				{
@@ -489,15 +489,15 @@ function Post()
 		$context['can_announce'] &= $context['becomes_approved'];
 
 		// Set up the inputs for the form.
-		$form_subject = strtr(westring::htmlspecialchars($_REQUEST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
-		$form_message = westring::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
+		$form_subject = strtr(westr::htmlspecialchars($_REQUEST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+		$form_message = westr::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
 
 		// Make sure the subject isn't too long - taking into account special characters.
-		if (westring::strlen($form_subject) > 100)
-			$form_subject = westring::substr($form_subject, 0, 100);
+		if (westr::strlen($form_subject) > 100)
+			$form_subject = westr::substr($form_subject, 0, 100);
 
 		// Have we inadvertently trimmed off the subject of useful information?
-		if (westring::htmltrim($form_subject) === '')
+		if (westr::htmltrim($form_subject) === '')
 			$context['post_error']['no_subject'] = true;
 
 		// Any errors occurred?
@@ -526,7 +526,7 @@ function Post()
 
 		if (isset($_REQUEST['poll']))
 		{
-			$context['question'] = isset($_REQUEST['question']) ? westring::htmlspecialchars(trim($_REQUEST['question'])) : '';
+			$context['question'] = isset($_REQUEST['question']) ? westr::htmlspecialchars(trim($_REQUEST['question'])) : '';
 
 			$context['choices'] = array();
 			$choice_id = 0;
@@ -843,7 +843,7 @@ function Post()
 			wedb::free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
-			if (trim($context['response_prefix']) != '' && westring::strpos($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && westr::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the message and subject.
@@ -879,7 +879,7 @@ function Post()
 			$form_subject = $first_subject;
 
 			// Add 'Re: ' to the front of the subject.
-			if (trim($context['response_prefix']) != '' && $form_subject != '' && westring::strpos($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && $form_subject != '' && westr::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the subject.

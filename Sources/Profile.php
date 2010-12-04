@@ -697,7 +697,7 @@ function loadCustomFields($memID, $area = 'summary')
 
 		// If this was submitted already then make the value the posted version.
 		if (isset($_POST['customfield'], $_POST['customfield'][$row['col_name']]))
-			$value = westring::htmlspecialchars($_POST['customfield'][$row['col_name']]);
+			$value = westr::htmlspecialchars($_POST['customfield'][$row['col_name']]);
 
 		// HTML for the input form.
 		$output_html = $value;

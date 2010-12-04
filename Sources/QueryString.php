@@ -485,7 +485,7 @@ function escapestring__recursive($var)
 function htmlspecialchars__recursive($var, $level = 0)
 {
 	if (!is_array($var))
-		return is_callable('westring::htmlspecialchars') ? westring::htmlspecialchars($var, ENT_QUOTES) : htmlspecialchars($var, ENT_QUOTES);
+		return is_callable('westr::htmlspecialchars') ? westr::htmlspecialchars($var, ENT_QUOTES) : htmlspecialchars($var, ENT_QUOTES);
 
 	// Add the htmlspecialchars to every element.
 	foreach ($var as $k => $v)
@@ -577,7 +577,7 @@ function stripslashes__recursive($var, $level = 0)
 function htmltrim__recursive($var, $level = 0)
 {
 	if (!is_array($var))
-		return is_callable('westring::htmltrim') ? westring::htmltrim($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
+		return is_callable('westr::htmltrim') ? westr::htmltrim($var) : trim($var, ' ' . "\t\n\r\x0B" . '\0' . "\xA0");
 
 	// Go through all the elements and remove the whitespace.
 	foreach ($var as $k => $v)

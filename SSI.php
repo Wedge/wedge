@@ -368,7 +368,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			),
 			'subject' => $row['subject'],
 			'short_subject' => shorten_subject($row['subject'], 25),
-			'preview' => westring::strlen($preview) > 128 ? westring::substr($preview, 0, 128) . '...' : $preview,
+			'preview' => westr::strlen($preview) > 128 ? westr::substr($preview, 0, 128) . '...' : $preview,
 			'body' => $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
@@ -469,8 +469,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	while ($row = wedb::fetch_assoc($request))
 	{
 		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
-		if (westring::strlen($row['body']) > 128)
-			$row['body'] = westring::substr($row['body'], 0, 128) . '...';
+		if (westr::strlen($row['body']) > 128)
+			$row['body'] = westr::substr($row['body'], 0, 128) . '...';
 
 		// Censor the subject.
 		censorText($row['subject']);
@@ -1675,15 +1675,15 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// If we want to limit the length of the post.
-		if (!empty($length) && westring::strlen($row['body']) > $length)
+		if (!empty($length) && westr::strlen($row['body']) > $length)
 		{
-			$row['body'] = westring::substr($row['body'], 0, $length);
+			$row['body'] = westr::substr($row['body'], 0, $length);
 
 			// The first space or line break. (<br />, etc.)
 			$cutoff = max(strrpos($row['body'], ' '), strrpos($row['body'], '<'));
 
 			if ($cutoff !== false)
-				$row['body'] = westring::substr($row['body'], 0, $cutoff);
+				$row['body'] = westr::substr($row['body'], 0, $cutoff);
 			$row['body'] .= '...';
 		}
 

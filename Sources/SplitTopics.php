@@ -690,10 +690,10 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 		fatal_lang_error('cant_insert_topic');
 
 	// Move the messages over to the other topic.
-	$new_subject = strtr(westring::htmltrim(westring::htmlspecialchars($new_subject)), array("\r" => '', "\n" => '', "\t" => ''));
+	$new_subject = strtr(westr::htmltrim(westr::htmlspecialchars($new_subject)), array("\r" => '', "\n" => '', "\t" => ''));
 	// Check the subject length.
-	if (westring::strlen($new_subject) > 100)
-		$new_subject = westring::substr($new_subject, 0, 100);
+	if (westr::strlen($new_subject) > 100)
+		$new_subject = westr::substr($new_subject, 0, 100);
 	// Valid subject?
 	if ($new_subject != '')
 	{
@@ -1200,10 +1200,10 @@ function MergeExecute($topics = array())
 	// Determine the subject of the newly merged topic - was a custom subject specified?
 	if (empty($_POST['subject']) && isset($_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$target_subject = strtr(westring::htmltrim(westring::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$target_subject = strtr(westr::htmltrim(westr::htmlspecialchars($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
 		// Keep checking the length.
-		if (westring::strlen($target_subject) > 100)
-			$target_subject = westring::substr($target_subject, 0, 100);
+		if (westr::strlen($target_subject) > 100)
+			$target_subject = westr::substr($target_subject, 0, 100);
 
 		// Nothing left - odd but pick the first topics subject.
 		if ($target_subject == '')
@@ -1676,7 +1676,7 @@ function MergePosts($error_report = true)
 					$modSettings['merge_post_separator'] = '[br]';
 				else
 				{
-					$modSettings['merge_post_separator'] = westring::htmlspecialchars($modSettings['merge_post_separator'], ENT_QUOTES);
+					$modSettings['merge_post_separator'] = westr::htmlspecialchars($modSettings['merge_post_separator'], ENT_QUOTES);
 					$date = '[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]';
 					$modSettings['merge_post_separator'] = str_replace('$date', $date, $modSettings['merge_post_separator']);
 				}

@@ -290,7 +290,7 @@ function generateSubscriptionError($text)
 	// Maybe we can try to give them the post data?
 	if (!empty($_POST))
 		foreach ($_POST as $key => $val)
-			$text .= '<br />' . westring::htmlspecialchars($key) . ': ' . westring::htmlspecialchars($val);
+			$text .= '<br />' . westr::htmlspecialchars($key) . ': ' . westr::htmlspecialchars($val);
 
 	// Then just log and die.
 	log_error($text);

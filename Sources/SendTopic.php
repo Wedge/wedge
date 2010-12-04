@@ -385,9 +385,9 @@ function ReportToModerator2()
 		$post_errors[] = 'session_timeout';
 
 	// Make sure we have a comment and it's clean.
-	if (!isset($_POST['comment']) || westring::htmltrim($_POST['comment']) === '')
+	if (!isset($_POST['comment']) || westr::htmltrim($_POST['comment']) === '')
 		$post_errors[] = 'no_comment';
-	$poster_comment = strtr(westring::htmlspecialchars($_POST['comment']), array("\r" => '', "\n" => '', "\t" => ''));
+	$poster_comment = strtr(westr::htmlspecialchars($_POST['comment']), array("\r" => '', "\n" => '', "\t" => ''));
 
 	// Guests need to provide their address!
 	if ($user_info['is_guest'])

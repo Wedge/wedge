@@ -166,7 +166,7 @@ function Register($reg_errors = array())
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
 			if (isset($_POST[$field]))
-				$cur_profile[$field] = westring::htmlspecialchars($_POST[$field]);
+				$cur_profile[$field] = westr::htmlspecialchars($_POST[$field]);
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
@@ -190,16 +190,16 @@ function Register($reg_errors = array())
 	if (!empty($_SESSION['openid']['verified']) && !empty($_SESSION['openid']['openid_uri']))
 	{
 		$context['openid'] = $_SESSION['openid']['openid_uri'];
-		$context['username'] = westring::htmlspecialchars(!empty($_POST['user']) ? $_POST['user'] : $_SESSION['openid']['nickname']);
-		$context['email'] = westring::htmlspecialchars(!empty($_POST['email']) ? $_POST['email'] : $_SESSION['openid']['email']);
+		$context['username'] = westr::htmlspecialchars(!empty($_POST['user']) ? $_POST['user'] : $_SESSION['openid']['nickname']);
+		$context['email'] = westr::htmlspecialchars(!empty($_POST['email']) ? $_POST['email'] : $_SESSION['openid']['email']);
 	}
 	// See whether we have some prefiled values.
 	else
 	{
 		$context += array(
 			'openid' => isset($_POST['openid_identifier']) ? $_POST['openid_identifier'] : '',
-			'username' => isset($_POST['user']) ? westring::htmlspecialchars($_POST['user']) : '',
-			'email' => isset($_POST['email']) ? westring::htmlspecialchars($_POST['email']) : '',
+			'username' => isset($_POST['user']) ? westr::htmlspecialchars($_POST['user']) : '',
+			'email' => isset($_POST['email']) ? westr::htmlspecialchars($_POST['email']) : '',
 		);
 	}
 
@@ -312,7 +312,7 @@ function Register2($verifiedOpenID = false)
 	if (isset($_POST['real_name']) && (!empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum')))
 	{
 		$_POST['real_name'] = trim(preg_replace('~[\s]~u', ' ', $_POST['real_name']));
-		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && westring::strlen($_POST['real_name']) < 60)
+		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && westr::strlen($_POST['real_name']) < 60)
 			$possible_strings[] = 'real_name';
 	}
 
@@ -366,7 +366,7 @@ function Register2($verifiedOpenID = false)
 	// Include the additional options that might have been filled in.
 	foreach ($possible_strings as $var)
 		if (isset($_POST[$var]))
-			$regOptions['extra_register_vars'][$var] = westring::htmlspecialchars($_POST[$var], ENT_QUOTES);
+			$regOptions['extra_register_vars'][$var] = westr::htmlspecialchars($_POST[$var], ENT_QUOTES);
 	foreach ($possible_ints as $var)
 		if (isset($_POST[$var]))
 			$regOptions['extra_register_vars'][$var] = (int) $_POST[$var];
@@ -416,7 +416,7 @@ function Register2($verifiedOpenID = false)
 		if (!in_array($row['field_type'], array('check', 'select', 'radio')))
 		{
 			// Is it too long?
-			if ($row['field_length'] && $row['field_length'] < westring::strlen($value))
+			if ($row['field_length'] && $row['field_length'] < westr::strlen($value))
 				$custom_field_errors[] = array('custom_field_too_long', array($row['field_name'], $row['field_length']));
 
 			// Any masks to apply?
@@ -531,8 +531,8 @@ function RegisterCheckUsername()
 
 	// Clean it up like mother would.
 	$context['checked_username'] = preg_replace('~[\t\n\r\x0B\0\x{A0}]+~u', ' ', $context['checked_username']);
-	if (westring::strlen($context['checked_username']) > 25)
-		$context['checked_username'] = westring::htmltrim(westring::substr($context['checked_username'], 0, 25));
+	if (westr::strlen($context['checked_username']) > 25)
+		$context['checked_username'] = westr::htmltrim(westr::substr($context['checked_username'], 0, 25));
 
 	// Only these characters are permitted.
 	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $context['checked_username'])) != 0 || $context['checked_username'] == '_' || $context['checked_username'] == '|' || strpos($context['checked_username'], '[code') !== false || strpos($context['checked_username'], '[/code') !== false)

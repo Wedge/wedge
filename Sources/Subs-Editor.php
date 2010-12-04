@@ -231,7 +231,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$incorrectQuestions = array();
 			while ($row = wedb::fetch_assoc($request))
 			{
-				if (empty($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim(westring::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
+				if (empty($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
 					$incorrectQuestions[] = $row['id_comment'];
 			}
 			wedb::free_result($request);
@@ -290,7 +290,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	{
 		// Same questions as before.
 		$questionIDs = !empty($_SESSION[$verificationOptions['id'] . '_vv']['q']) ? $_SESSION[$verificationOptions['id'] . '_vv']['q'] : array();
-		$thisVerification['text_value'] = !empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) ? westring::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['code']) : '';
+		$thisVerification['text_value'] = !empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) ? westr::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['code']) : '';
 	}
 
 	// Have we got some questions to load?
@@ -314,7 +314,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				'q' => parse_bbc($row['question']),
 				'is_error' => !empty($incorrectQuestions) && in_array($row['id_comment'], $incorrectQuestions),
 				// Remember a previous submission?
-				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) ? westring::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) : '',
+				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) ? westr::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) : '',
 			);
 			$_SESSION[$verificationOptions['id'] . '_vv']['q'][] = $row['id_comment'];
 		}

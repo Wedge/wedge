@@ -306,7 +306,7 @@ function ModBlockNotes()
 	{
 		checkSession();
 
-		$_POST['new_note'] = westring::htmlspecialchars(trim($_POST['new_note']));
+		$_POST['new_note'] = westr::htmlspecialchars(trim($_POST['new_note']));
 		// Make sure they actually entered something.
 		if (!empty($_POST['new_note']) && $_POST['new_note'] !== $txt['mc_click_add_note'])
 		{
@@ -794,7 +794,7 @@ function ModReport()
 	{
 		checkSession();
 
-		$newComment = trim(westring::htmlspecialchars($_POST['mod_comment']));
+		$newComment = trim(westr::htmlspecialchars($_POST['mod_comment']));
 
 		// In it goes.
 		if (!empty($newComment))
@@ -1800,7 +1800,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			'creator' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
 			'time' => timeformat($row['log_time']),
 			'title' => $row['template_title'],
-			'body' => westring::htmlspecialchars($row['body']),
+			'body' => westr::htmlspecialchars($row['body']),
 		);
 	}
 	wedb::free_result($request);
@@ -1849,7 +1849,7 @@ function ModifyWarningTemplate()
 		{
 			$context['template_data'] = array(
 				'title' => $row['template_title'],
-				'body' => westring::htmlspecialchars($row['body']),
+				'body' => westr::htmlspecialchars($row['body']),
 				'personal' => $row['id_recipient'],
 				'can_edit_personal' => $row['id_member'] == $user_info['id'],
 			);
@@ -1874,7 +1874,7 @@ function ModifyWarningTemplate()
 			fatal_error($txt['mc_warning_template_error_empty']);
 
 		// Safety first.
-		$_POST['template_title'] = westring::htmlspecialchars($_POST['template_title']);
+		$_POST['template_title'] = westr::htmlspecialchars($_POST['template_title']);
 
 		// Clean up BBC.
 		wedgeEditor::preparsecode($_POST['template_body']);

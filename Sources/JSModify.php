@@ -112,13 +112,13 @@ function JSModify()
 	}
 
 	$post_errors = array();
-	if (isset($_POST['subject']) && westring::htmltrim(westring::htmlspecialchars($_POST['subject'])) !== '')
+	if (isset($_POST['subject']) && westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) !== '')
 	{
-		$_POST['subject'] = strtr(westring::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['subject'] = strtr(westr::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
 
 		// Maximum number of characters.
-		if (westring::strlen($_POST['subject']) > 100)
-			$_POST['subject'] = westring::substr($_POST['subject'], 0, 100);
+		if (westr::strlen($_POST['subject']) > 100)
+			$_POST['subject'] = westr::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
 	{
@@ -128,23 +128,23 @@ function JSModify()
 
 	if (isset($_POST['message']))
 	{
-		if (westring::htmltrim(westring::htmlspecialchars($_POST['message'])) === '')
+		if (westr::htmltrim(westr::htmlspecialchars($_POST['message'])) === '')
 		{
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && westring::strlen($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		{
 			$post_errors[] = 'long_message';
 			unset($_POST['message']);
 		}
 		else
 		{
-			$_POST['message'] = westring::htmlspecialchars($_POST['message'], ENT_QUOTES);
+			$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
 			wedgeEditor::preparsecode($_POST['message']);
 
-			if (westring::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
+			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);

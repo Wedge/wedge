@@ -1907,7 +1907,7 @@ function EditPermissionProfiles()
 		checkSession();
 
 		$_POST['copy_from'] = (int) $_POST['copy_from'];
-		$_POST['profile_name'] = westring::htmlspecialchars($_POST['profile_name']);
+		$_POST['profile_name'] = westr::htmlspecialchars($_POST['profile_name']);
 
 		// Insert the profile itself.
 		wedb::insert('',
@@ -1956,7 +1956,7 @@ function EditPermissionProfiles()
 		{
 			foreach ($_POST['rename_profile'] as $id => $value)
 			{
-				$value = westring::htmlspecialchars($value);
+				$value = westr::htmlspecialchars($value);
 
 				if (trim($value) != '' && $id > 4)
 					wedb::query('

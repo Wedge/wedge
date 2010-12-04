@@ -277,7 +277,7 @@ function template_email_members_send()
 				<p>
 					<strong>', $context['percentage_done'], '% ', $txt['email_done'], '</strong>
 				</p>
-				<input type="submit" name="b" value="', westring::htmlspecialchars($txt['email_continue']), '" class="button_submit" />
+				<input type="submit" name="b" value="', westr::htmlspecialchars($txt['email_continue']), '" class="button_submit" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" name="subject" value="', $context['subject'], '" />
 				<input type="hidden" name="message" value="', $context['message'], '" />

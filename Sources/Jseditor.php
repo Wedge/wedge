@@ -56,7 +56,7 @@ function Jseditor()
 		$context['message'] = wedgeEditor::html_to_bbc($_REQUEST['message']);
 	}
 
-	$context['message'] = westring::htmlspecialchars($context['message']);
+	$context['message'] = westr::htmlspecialchars($context['message']);
 }
 
 ?>

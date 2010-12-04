@@ -563,12 +563,12 @@ function AddLanguage()
 			foreach ($lang_files as $file)
 			{
 				// Were we searching?
-				if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westring::strtolower($context['smf_search_term'])) === false)
+				if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['smf_search_term'])) === false)
 					continue;
 
 				$context['smf_languages'][] = array(
 					'id' => $file->fetch('id'),
-					'name' => westring::ucwords($file->fetch('name')),
+					'name' => westr::ucwords($file->fetch('name')),
 					'version' => $file->fetch('version'),
 					'utf8' => $file->fetch('utf8'),
 					'description' => $file->fetch('description'),
@@ -1099,7 +1099,7 @@ function list_getLanguages()
 			'count' => 0,
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . westring::ucwords(strtr($lang['filename'], array('_' => ' '))),
+			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . westr::ucwords(strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
@@ -1356,7 +1356,7 @@ function ModifyLanguage()
 	$context['lang_file_not_writable_message'] = is_writable($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
-		'name' => westring::ucwords(strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
+		'name' => westr::ucwords(strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
 		'locale' => $txt['lang_locale'],
 		'dictionary' => $txt['lang_dictionary'],
 		'spelling' => $txt['lang_spelling'],

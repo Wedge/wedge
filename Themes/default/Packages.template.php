@@ -867,7 +867,7 @@ function template_package_list()
 					// Show the mod type?
 					if ($package['type'] != '')
 						echo '
-								<li class="package_section">', $txt['package_type'], ':&nbsp; ', westring::ucwords(westring::strtolower($package['type'])), '</li>';
+								<li class="package_section">', $txt['package_type'], ':&nbsp; ', westr::ucwords(westr::strtolower($package['type'])), '</li>';
 					// Show the version number?
 					if ($package['version'] != '')
 						echo '
@@ -1801,7 +1801,7 @@ function template_action_permissions()
 				<input type="hidden" name="method" value="', $context['method'], '" />
 				<input type="hidden" name="action_changes" value="1" />
 				<div class="righttext padding">
-					<input type="submit" name="go" id="cont" value="', westring::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" />
+					<input type="submit" name="go" id="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" />
 				</div>
 			</div>
 		</form>

@@ -56,7 +56,7 @@ function template_announcement_send()
 				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 				<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
 				<div id="confirm_buttons">
-					<input type="submit" name="b" value="', westring::htmlspecialchars($txt['announce_continue']), '" class="button_submit" />
+					<input type="submit" name="b" value="', westr::htmlspecialchars($txt['announce_continue']), '" class="button_submit" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="hidden" name="topic" value="', $context['current_topic'], '" />
 					<input type="hidden" name="move" value="', $context['move'], '" />

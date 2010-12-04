@@ -351,7 +351,7 @@ function Post2()
 
 		if ($_POST['guestname'] == '' || $_POST['guestname'] == '_')
 			$post_errors[] = 'no_name';
-		if (westring::strlen($_POST['guestname']) > 25)
+		if (westr::strlen($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -378,16 +378,16 @@ function Post2()
 	}
 
 	// Check the subject and message.
-	if (!isset($_POST['subject']) || westring::htmltrim(westring::htmlspecialchars($_POST['subject'])) === '')
+	if (!isset($_POST['subject']) || westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) === '')
 		$post_errors[] = 'no_subject';
-	if (!isset($_POST['message']) || westring::htmltrim(westring::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
+	if (!isset($_POST['message']) || westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && westring::strlen($_POST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = 'long_message';
 	else
 	{
 		// Prepare the message a bit for some additional testing.
-		$_POST['message'] = westring::htmlspecialchars($_POST['message'], ENT_QUOTES);
+		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
@@ -395,10 +395,10 @@ function Post2()
 		wedgeEditor::preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if (westring::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
+		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
-	if (isset($_POST['calendar']) && !isset($_REQUEST['deleteevent']) && westring::htmltrim($_POST['evtitle']) === '')
+	if (isset($_POST['calendar']) && !isset($_REQUEST['deleteevent']) && westr::htmltrim($_POST['evtitle']) === '')
 		$post_errors[] = 'no_event';
 
 	// Validate the poll...
@@ -476,13 +476,13 @@ function Post2()
 	@set_time_limit(300);
 
 	// Add special html entities to the subject, name, and email.
-	$_POST['subject'] = strtr(westring::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+	$_POST['subject'] = strtr(westr::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
 	$_POST['guestname'] = htmlspecialchars($_POST['guestname']);
 	$_POST['email'] = htmlspecialchars($_POST['email']);
 
 	// At this point, we want to make sure the subject isn't too long.
-	if (westring::strlen($_POST['subject']) > 100)
-		$_POST['subject'] = westring::substr($_POST['subject'], 0, 100);
+	if (westr::strlen($_POST['subject']) > 100)
+		$_POST['subject'] = westr::substr($_POST['subject'], 0, 100);
 
 	// Make the poll...
 	if (isset($_REQUEST['poll']))
@@ -524,7 +524,7 @@ function Post2()
 
 		// Clean up the question and answers.
 		$_POST['question'] = htmlspecialchars($_POST['question']);
-		$_POST['question'] = westring::truncate($_POST['question'], 255);
+		$_POST['question'] = westr::truncate($_POST['question'], 255);
 		$_POST['question'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $_POST['question']);
 		$_POST['options'] = htmlspecialchars__recursive($_POST['options']);
 	}
@@ -852,7 +852,7 @@ function Post2()
 					'end_date' => strftime('%Y-%m-%d', $start_time + $span * 86400),
 					'start_date' => strftime('%Y-%m-%d', $start_time),
 					'id_event' => $_REQUEST['eventid'],
-					'title' => westring::htmlspecialchars($_REQUEST['evtitle'], ENT_QUOTES),
+					'title' => westr::htmlspecialchars($_REQUEST['evtitle'], ENT_QUOTES),
 				)
 			);
 		}

@@ -388,14 +388,14 @@ function cdata_parse($data, $ns = '')
 
 	$cdata = '<![CDATA[';
 
-	for ($pos = 0, $n = westring::strlen($data); $pos < $n; null)
+	for ($pos = 0, $n = westr::strlen($data); $pos < $n; null)
 	{
 		$positions = array(
-			westring::strpos($data, '&', $pos),
-			westring::strpos($data, ']', $pos),
+			westr::strpos($data, '&', $pos),
+			westr::strpos($data, ']', $pos),
 		);
 		if ($ns != '')
-			$positions[] = westring::strpos($data, '<', $pos);
+			$positions[] = westr::strpos($data, '<', $pos);
 		foreach ($positions as $k => $dummy)
 		{
 			if ($dummy === false)
@@ -406,37 +406,37 @@ function cdata_parse($data, $ns = '')
 		$pos = empty($positions) ? $n : min($positions);
 
 		if ($pos - $old > 0)
-			$cdata .= westring::substr($data, $old, $pos - $old);
+			$cdata .= westr::substr($data, $old, $pos - $old);
 		if ($pos >= $n)
 			break;
 
-		if (westring::substr($data, $pos, 1) == '<')
+		if (westr::substr($data, $pos, 1) == '<')
 		{
-			$pos2 = westring::strpos($data, '>', $pos);
+			$pos2 = westr::strpos($data, '>', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			if (westring::substr($data, $pos + 1, 1) == '/')
-				$cdata .= ']]></' . $ns . ':' . westring::substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
+			if (westr::substr($data, $pos + 1, 1) == '/')
+				$cdata .= ']]></' . $ns . ':' . westr::substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
 			else
-				$cdata .= ']]><' . $ns . ':' . westring::substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
+				$cdata .= ']]><' . $ns . ':' . westr::substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
 			$pos = $pos2 + 1;
 		}
-		elseif (westring::substr($data, $pos, 1) == ']')
+		elseif (westr::substr($data, $pos, 1) == ']')
 		{
 			$cdata .= ']]>&#093;<![CDATA[';
 			$pos++;
 		}
-		elseif (westring::substr($data, $pos, 1) == '&')
+		elseif (westr::substr($data, $pos, 1) == '&')
 		{
-			$pos2 = westring::strpos($data, ';', $pos);
+			$pos2 = westr::strpos($data, ';', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			$ent = westring::substr($data, $pos + 1, $pos2 - $pos - 1);
+			$ent = westr::substr($data, $pos + 1, $pos2 - $pos - 1);
 
-			if (westring::substr($data, $pos + 1, 1) == '#')
-				$cdata .= ']]>' . westring::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+			if (westr::substr($data, $pos + 1, 1) == '#')
+				$cdata .= ']]>' . westr::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			elseif (in_array($ent, array('amp', 'lt', 'gt', 'quot')))
-				$cdata .= ']]>' . westring::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+				$cdata .= ']]>' . westr::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			// !!! ??
 
 			$pos = $pos2 + 1;
@@ -620,8 +620,8 @@ function getXmlNews($xml_format)
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && westring::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr(westring::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -765,8 +765,8 @@ function getXmlRecent($xml_format)
 	while ($row = wedb::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && westring::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr(westring::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		if (!empty($modSettings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 

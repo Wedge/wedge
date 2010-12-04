@@ -217,7 +217,7 @@ function Search2()
 		$userQuery = '';
 	else
 	{
-		$userString = strtr(westring::htmlspecialchars($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
+		$userString = strtr(westr::htmlspecialchars($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
 		$userString = strtr($userString, array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_'));
 
 		preg_match_all('~"([^"]+)"~', $userString, $matches);
@@ -420,7 +420,7 @@ function Search2()
 	if (!isset($search_params['search']) || $search_params['search'] == '')
 		$context['search_errors']['invalid_search_string'] = true;
 	// Too long?
-	elseif (westring::strlen($search_params['search']) > $context['search_string_limit'])
+	elseif (westr::strlen($search_params['search']) > $context['search_string_limit'])
 	{
 		$context['search_errors']['string_too_long'] = true;
 		$txt['error_string_too_long'] = sprintf($txt['error_string_too_long'], $context['search_string_limit']);
@@ -430,7 +430,7 @@ function Search2()
 	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
-	$stripped_query = un_htmlspecialchars(westring::strtolower($stripped_query));
+	$stripped_query = un_htmlspecialchars(westr::strtolower($stripped_query));
 
 	// This (hidden) setting will do fulltext searching in the most basic way.
 	if (!empty($modSettings['search_simple_fulltext']))
@@ -485,7 +485,7 @@ function Search2()
 			unset($searchArray[$index]);
 		}
 		// Don't allow very, very short words.
-		elseif (westring::strlen($value) < 2)
+		elseif (westr::strlen($value) < 2)
 		{
 			$context['search_errors']['search_string_small_words'] = true;
 			unset($searchArray[$index]);
@@ -602,20 +602,20 @@ function Search2()
 			if (preg_match('~^\w+$~', $word) === 0)
 			{
 				$did_you_mean['search'][] = '"' . $word . '"';
-				$did_you_mean['display'][] = '&quot;' . westring::htmlspecialchars($word) . '&quot;';
+				$did_you_mean['display'][] = '&quot;' . westr::htmlspecialchars($word) . '&quot;';
 				continue;
 			}
 			// For some strange reason spell check can crash PHP on decimals.
 			elseif (preg_match('~\d~', $word) === 1)
 			{
 				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = westring::htmlspecialchars($word);
+				$did_you_mean['display'][] = westr::htmlspecialchars($word);
 				continue;
 			}
 			elseif (pspell_check($pspell_link, $word))
 			{
 				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = westring::htmlspecialchars($word);
+				$did_you_mean['display'][] = westr::htmlspecialchars($word);
 				continue;
 			}
 
@@ -623,7 +623,7 @@ function Search2()
 			foreach ($suggestions as $i => $s)
 			{
 				// Search is case insensitive.
-				if (westring::strtolower($s) == westring::strtolower($word))
+				if (westr::strtolower($s) == westr::strtolower($word))
 					unset($suggestions[$i]);
 				// Plus, don't suggest something the user thinks is rude!
 				elseif ($suggestions[$i] != censorText($s))
@@ -635,13 +635,13 @@ function Search2()
 			{
 				$suggestions = array_values($suggestions);
 				$did_you_mean['search'][] = $suggestions[0];
-				$did_you_mean['display'][] = '<em><strong>' . westring::htmlspecialchars($suggestions[0]) . '</strong></em>';
+				$did_you_mean['display'][] = '<em><strong>' . westr::htmlspecialchars($suggestions[0]) . '</strong></em>';
 				$found_misspelling = true;
 			}
 			else
 			{
 				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = westring::htmlspecialchars($word);
+				$did_you_mean['display'][] = westr::htmlspecialchars($word);
 			}
 		}
 
@@ -656,12 +656,12 @@ function Search2()
 				if (preg_match('~^\w+$~', $word) == 0)
 				{
 					$temp_excluded['search'][] = '-"' . $word . '"';
-					$temp_excluded['display'][] = '-&quot;' . westring::htmlspecialchars($word) . '&quot;';
+					$temp_excluded['display'][] = '-&quot;' . westr::htmlspecialchars($word) . '&quot;';
 				}
 				else
 				{
 					$temp_excluded['search'][] = '-' . $word;
-					$temp_excluded['display'][] = '-' . westring::htmlspecialchars($word);
+					$temp_excluded['display'][] = '-' . westr::htmlspecialchars($word);
 				}
 			}
 
@@ -683,9 +683,9 @@ function Search2()
 	// Let the user adjust the search query, should they wish?
 	$context['search_params'] = $search_params;
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = westring::htmlspecialchars($context['search_params']['search']);
+		$context['search_params']['search'] = westr::htmlspecialchars($context['search_params']['search']);
 	if (isset($context['search_params']['userspec']))
-		$context['search_params']['userspec'] = westring::htmlspecialchars($context['search_params']['userspec']);
+		$context['search_params']['userspec'] = westr::htmlspecialchars($context['search_params']['userspec']);
 
 	// Do we have captcha enabled?
 	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
@@ -1589,10 +1589,10 @@ function prepareSearchContext($reset = false)
 		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], array('</div>' => '<br />', '</li>' => '<br />')), '<br>');
 
-		if (westring::strlen($message['body']) > $charLimit)
+		if (westr::strlen($message['body']) > $charLimit)
 		{
 			if (empty($context['key_words']))
-				$message['body'] = westring::substr($message['body'], 0, $charLimit) . '<strong>...</strong>';
+				$message['body'] = westr::substr($message['body'], 0, $charLimit) . '<strong>...</strong>';
 			else
 			{
 				$matchString = '';
@@ -1751,7 +1751,7 @@ function prepareSearchContext($reset = false)
 	foreach ($context['key_words'] as $query)
 	{
 		// Fix the international characters in the keyword too.
-		$query = strtr(westring::htmlspecialchars($query), array('\\\'' => '\''));
+		$query = strtr(westr::htmlspecialchars($query), array('\\\'' => '\''));
 
 		$body_highlighted = preg_replace('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/ieu', "'\$2' == '\$1' ? stripslashes('\$1') : '<strong class=\"highlight\">\$1</strong>'", $body_highlighted);
 		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<strong class="highlight">$1</strong>', $subject_highlighted);

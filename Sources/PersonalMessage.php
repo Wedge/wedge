@@ -1134,7 +1134,7 @@ function MessageSearch2()
 		$userQuery = '';
 	else
 	{
-		$userString = strtr(westring::htmlspecialchars($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
+		$userString = strtr(westr::htmlspecialchars($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
 		$userString = strtr($userString, array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_'));
 
 		preg_match_all('~"([^"]+)"~', $userString, $matches);
@@ -1247,7 +1247,7 @@ function MessageSearch2()
 	foreach ($matches[1] as $index => $word)
 		if ($word == '-')
 		{
-			$word = westring::strtolower(trim($searchArray[$index]));
+			$word = westr::strtolower(trim($searchArray[$index]));
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($searchArray[$index]);
@@ -1257,7 +1257,7 @@ function MessageSearch2()
 	foreach ($tempSearch as $index => $word)
 		if (strpos(trim($word), '-') === 0)
 		{
-			$word = substr(westring::strtolower(trim($word)), 1);
+			$word = substr(westr::strtolower(trim($word)), 1);
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($tempSearch[$index]);
@@ -1268,13 +1268,13 @@ function MessageSearch2()
 	// Trim everything and make sure there are no words that are the same.
 	foreach ($searchArray as $index => $value)
 	{
-		$searchArray[$index] = westring::strtolower(trim($value));
+		$searchArray[$index] = westr::strtolower(trim($value));
 		if ($searchArray[$index] == '')
 			unset($searchArray[$index]);
 		else
 		{
 			// Sort out entities first.
-			$searchArray[$index] = westring::htmlspecialchars($searchArray[$index]);
+			$searchArray[$index] = westr::htmlspecialchars($searchArray[$index]);
 		}
 	}
 	$searchArray = array_unique($searchArray);
@@ -1640,7 +1640,7 @@ function MessagePost()
 			cache_put_data('response_prefix', $context['response_prefix'], 600);
 		}
 		$form_subject = $row_quoted['subject'];
-		if ($context['reply'] && trim($context['response_prefix']) != '' && westring::strpos($form_subject, trim($context['response_prefix'])) !== 0)
+		if ($context['reply'] && trim($context['response_prefix']) != '' && westr::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 			$form_subject = $context['response_prefix'] . $form_subject;
 
 		if (isset($_REQUEST['quote']))
@@ -1845,8 +1845,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	}
 
 	// Set everything up like before....
-	$context['subject'] = isset($_REQUEST['subject']) ? westring::htmlspecialchars($_REQUEST['subject']) : '';
-	$context['message'] = isset($_REQUEST['message']) ? str_replace(array('  '), array('&nbsp; '), westring::htmlspecialchars($_REQUEST['message'])) : '';
+	$context['subject'] = isset($_REQUEST['subject']) ? westr::htmlspecialchars($_REQUEST['subject']) : '';
+	$context['message'] = isset($_REQUEST['message']) ? str_replace(array('  '), array('&nbsp; '), westr::htmlspecialchars($_REQUEST['message'])) : '';
 	$context['copy_to_outbox'] = !empty($_REQUEST['outbox']);
 	$context['reply'] = !empty($_REQUEST['replied_to']);
 
@@ -2035,7 +2035,7 @@ function MessagePost2()
 			foreach ($namedRecipientList[$recipientType] as $index => $recipient)
 			{
 				if (strlen(trim($recipient)) > 0)
-					$namedRecipientList[$recipientType][$index] = westring::htmlspecialchars(westring::strtolower(trim($recipient)));
+					$namedRecipientList[$recipientType][$index] = westr::htmlspecialchars(westr::strtolower(trim($recipient)));
 				else
 					unset($namedRecipientList[$recipientType][$index]);
 			}
@@ -2050,9 +2050,9 @@ function MessagePost2()
 				foreach ($foundMembers as $member)
 				{
 					$testNames = array(
-						westring::strtolower($member['username']),
-						westring::strtolower($member['name']),
-						westring::strtolower($member['email']),
+						westr::strtolower($member['username']),
+						westr::strtolower($member['name']),
+						westr::strtolower($member['email']),
 					);
 
 					if (count(array_intersect($testNames, $namedRecipientList[$recipientType])) !== 0)
@@ -2104,7 +2104,7 @@ function MessagePost2()
 		$post_errors[] = 'no_subject';
 	if (!isset($_REQUEST['message']) || $_REQUEST['message'] == '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && westring::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = 'long_message';
 	else
 	{
@@ -2113,7 +2113,7 @@ function MessagePost2()
 		wedgeEditor::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
-		if (westring::htmltrim(strip_tags(parse_bbc($message, false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
+		if (westr::htmltrim(strip_tags(parse_bbc($message, false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -2140,8 +2140,8 @@ function MessagePost2()
 	if (isset($_REQUEST['preview']))
 	{
 		// Set everything up to be displayed.
-		$context['preview_subject'] = westring::htmlspecialchars($_REQUEST['subject']);
-		$context['preview_message'] = westring::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
+		$context['preview_subject'] = westr::htmlspecialchars($_REQUEST['subject']);
+		$context['preview_message'] = westr::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
 		wedgeEditor::preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
@@ -2758,10 +2758,10 @@ function ManageLabels()
 		// Adding a new label?
 		if (isset($_POST['add']))
 		{
-			$_POST['label'] = strtr(westring::htmlspecialchars(trim($_POST['label'])), array(',' => '&#044;'));
+			$_POST['label'] = strtr(westr::htmlspecialchars(trim($_POST['label'])), array(',' => '&#044;'));
 
-			if (westring::strlen($_POST['label']) > 30)
-				$_POST['label'] = westring::substr($_POST['label'], 0, 30);
+			if (westr::strlen($_POST['label']) > 30)
+				$_POST['label'] = westr::substr($_POST['label'], 0, 30);
 			if ($_POST['label'] != '')
 				$the_labels[] = $_POST['label'];
 		}
@@ -2790,10 +2790,10 @@ function ManageLabels()
 					continue;
 				elseif (isset($_POST['label_name'][$id]))
 				{
-					$_POST['label_name'][$id] = trim(strtr(westring::htmlspecialchars($_POST['label_name'][$id]), array(',' => '&#044;')));
+					$_POST['label_name'][$id] = trim(strtr(westr::htmlspecialchars($_POST['label_name'][$id]), array(',' => '&#044;')));
 
-					if (westring::strlen($_POST['label_name'][$id]) > 30)
-						$_POST['label_name'][$id] = westring::substr($_POST['label_name'][$id], 0, 30);
+					if (westr::strlen($_POST['label_name'][$id]) > 30)
+						$_POST['label_name'][$id] = westr::substr($_POST['label_name'][$id], 0, 30);
 					if ($_POST['label_name'][$id] != '')
 					{
 						$the_labels[(int) $id] = $_POST['label_name'][$id];
@@ -3121,7 +3121,7 @@ function ReportMessage()
 
 				// Plonk it in the array ;)
 				$messagesToSend[$cur_language] = array(
-					'subject' => (westring::strpos($subject, $txt['pm_report_pm_subject']) === false ? $txt['pm_report_pm_subject'] : '') . un_htmlspecialchars($subject),
+					'subject' => (westr::strpos($subject, $txt['pm_report_pm_subject']) === false ? $txt['pm_report_pm_subject'] : '') . un_htmlspecialchars($subject),
 					'body' => $report_body,
 					'recipients' => array(
 						'to' => array(),
@@ -3247,7 +3247,7 @@ function ManageRules()
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
 
 		// Name is easy!
-		$ruleName = westring::htmlspecialchars(trim($_POST['rule_name']));
+		$ruleName = westr::htmlspecialchars(trim($_POST['rule_name']));
 		if (empty($ruleName))
 			fatal_lang_error('pm_rule_no_name', false);
 
@@ -3290,7 +3290,7 @@ function ManageRules()
 			elseif ($type == 'gid')
 				$criteria[] = array('t' => 'gid', 'v' => (int) $_POST['ruledefgroup'][$ind]);
 			elseif (in_array($type, array('sub', 'msg')) && trim($_POST['ruledef'][$ind]) != '')
-				$criteria[] = array('t' => $type, 'v' => westring::htmlspecialchars(trim($_POST['ruledef'][$ind])));
+				$criteria[] = array('t' => $type, 'v' => westr::htmlspecialchars(trim($_POST['ruledef'][$ind])));
 		}
 
 		// Also do the actions!

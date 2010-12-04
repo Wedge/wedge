@@ -57,7 +57,7 @@ function Suggest_Search_Member()
 {
 	global $user_info, $txt, $context;
 
-	$_REQUEST['search'] = trim(westring::strtolower($_REQUEST['search'])) . '*';
+	$_REQUEST['search'] = trim(westr::strtolower($_REQUEST['search'])) . '*';
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
 
 	// Find the member.
@@ -67,7 +67,7 @@ function Suggest_Search_Member()
 		WHERE real_name LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
 			AND id_member IN ({array_int:buddy_list})' : '') . '
 			AND is_activated IN (1, 11)
-		LIMIT ' . (westring::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
+		LIMIT ' . (westr::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		array(
 			'buddy_list' => $user_info['buddies'],
 			'search' => $_REQUEST['search'],

@@ -1150,7 +1150,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'image_href' => $settings['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
 			'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 		),
-		'language' => westring::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
+		'language' => westr::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
 		'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
 		'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 		'options' => $profile['options'],
@@ -1571,8 +1571,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
-	$context['forum_name_html_safe'] = westring::htmlspecialchars($context['forum_name']);
-	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : westring::htmlspecialchars($settings['header_logo_url']);
+	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
+	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : westr::htmlspecialchars($settings['header_logo_url']);
 	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	if (isset($modSettings['load_average']))
@@ -2083,7 +2083,7 @@ function getLanguages($use_cache = true)
 					continue;
 
 				$context['languages'][$matches[1]] = array(
-					'name' => westring::ucwords(strtr($matches[1], array('_' => ' '))),
+					'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
 					'selected' => false,
 					'filename' => $matches[1],
 					'location' => $language_dir . '/index.' . $matches[1] . '.php',

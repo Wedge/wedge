@@ -116,7 +116,7 @@ class custom_search
 		{
 			foreach ($subwords as $subword)
 			{
-				if (westring::strlen($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
+				if (westr::strlen($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
 				{
 					$wordsSearch['indexed_words'][] = $subword;
 					if ($isExcluded)

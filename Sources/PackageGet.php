@@ -307,17 +307,17 @@ function PackageGBrowse()
 	// Get default author and email if they exist.
 	if ($listing->exists('default-author'))
 	{
-		$default_author = westring::htmlspecialchars($listing->fetch('default-author'));
+		$default_author = westr::htmlspecialchars($listing->fetch('default-author'));
 		if ($listing->exists('default-author/@email'))
-			$default_email = westring::htmlspecialchars($listing->fetch('default-author/@email'));
+			$default_email = westr::htmlspecialchars($listing->fetch('default-author/@email'));
 	}
 
 	// Get default web site if it exists.
 	if ($listing->exists('default-website'))
 	{
-		$default_website = westring::htmlspecialchars($listing->fetch('default-website'));
+		$default_website = westr::htmlspecialchars($listing->fetch('default-website'));
 		if ($listing->exists('default-website/@title'))
-			$default_title = westring::htmlspecialchars($listing->fetch('default-website/@title'));
+			$default_title = westr::htmlspecialchars($listing->fetch('default-website/@title'));
 	}
 
 	$the_version = strtr($forum_version, array('SMF ' => ''));
@@ -344,10 +344,10 @@ function PackageGBrowse()
 			);
 
 			if (in_array($package['type'], array('title', 'text')))
-				$context['package_list'][$packageSection][$package['type']] = westring::htmlspecialchars($thisPackage->fetch('.'));
+				$context['package_list'][$packageSection][$package['type']] = westr::htmlspecialchars($thisPackage->fetch('.'));
 			// It's a Title, Heading, Rule or Text.
 			elseif (in_array($package['type'], array('heading', 'rule')))
-				$package['name'] = westring::htmlspecialchars($thisPackage->fetch('.'));
+				$package['name'] = westr::htmlspecialchars($thisPackage->fetch('.'));
 			// It's a Remote link.
 			elseif ($package['type'] == 'remote')
 			{
@@ -374,7 +374,7 @@ function PackageGBrowse()
 					$package['href'] = $scripturl . '?action=admin;area=packages;get;sa=browse;absolute=' . $current_url;
 				}
 
-				$package['name'] = westring::htmlspecialchars($thisPackage->fetch('.'));
+				$package['name'] = westr::htmlspecialchars($thisPackage->fetch('.'));
 				$package['link'] = '<a href="' . $package['href'] . '">' . $package['name'] . '</a>';
 			}
 			// It's a package...
@@ -398,7 +398,7 @@ function PackageGBrowse()
 				if ($package['description'] == '')
 					$package['description'] = $txt['package_no_description'];
 				else
-					$package['description'] = parse_bbc(preg_replace('~\[[/]?html\]~i', '', westring::htmlspecialchars($package['description'])));
+					$package['description'] = parse_bbc(preg_replace('~\[[/]?html\]~i', '', westr::htmlspecialchars($package['description'])));
 
 				$package['is_installed'] = isset($installed_mods[$package['id']]);
 				$package['is_current'] = $package['is_installed'] && ($installed_mods[$package['id']] == $package['version']);
@@ -418,7 +418,7 @@ function PackageGBrowse()
 				$package['download_conflict'] = is_array($already_exists) && $already_exists['id'] == $package['id'] && $already_exists['version'] != $package['version'];
 
 				$package['href'] = $url . '/' . $package['filename'];
-				$package['name'] = westring::htmlspecialchars($package['name']);
+				$package['name'] = westr::htmlspecialchars($package['name']);
 				$package['link'] = '<a href="' . $package['href'] . '">' . $package['name'] . '</a>';
 				$package['download']['href'] = $scripturl . '?action=admin;area=packages;get;sa=download' . $server_att . ';package=' . $current_url . $package['filename'] . ($package['download_conflict'] ? ';conflict' : '') . ';' . $context['session_var'] . '=' . $context['session_id'];
 				$package['download']['link'] = '<a href="' . $package['download']['href'] . '">' . $package['name'] . '</a>';
@@ -431,7 +431,7 @@ function PackageGBrowse()
 						$package['author']['email'] = $default_email;
 
 					if ($thisPackage->exists('author') && $thisPackage->fetch('author') != '')
-						$package['author']['name'] = westring::htmlspecialchars($thisPackage->fetch('author'));
+						$package['author']['name'] = westr::htmlspecialchars($thisPackage->fetch('author'));
 					else
 						$package['author']['name'] = $default_author;
 
@@ -446,11 +446,11 @@ function PackageGBrowse()
 				if ($thisPackage->exists('website') || isset($default_website))
 				{
 					if ($thisPackage->exists('website') && $thisPackage->exists('website/@title'))
-						$package['author']['website']['name'] = westring::htmlspecialchars($thisPackage->fetch('website/@title'));
+						$package['author']['website']['name'] = westr::htmlspecialchars($thisPackage->fetch('website/@title'));
 					elseif (isset($default_title))
 						$package['author']['website']['name'] = $default_title;
 					elseif ($thisPackage->exists('website'))
-						$package['author']['website']['name'] = westring::htmlspecialchars($thisPackage->fetch('website'));
+						$package['author']['website']['name'] = westr::htmlspecialchars($thisPackage->fetch('website'));
 					else
 						$package['author']['website']['name'] = $default_website;
 
@@ -728,8 +728,8 @@ function PackageServerAdd()
 		$_POST['serverurl'] = substr($_POST['serverurl'], 0, -1);
 
 	// Are they both nice and clean?
-	$servername = trim(westring::htmlspecialchars($_POST['servername']));
-	$serverurl = trim(westring::htmlspecialchars($_POST['serverurl']));
+	$servername = trim(westr::htmlspecialchars($_POST['servername']));
+	$serverurl = trim(westr::htmlspecialchars($_POST['serverurl']));
 
 	// Make sure the URL has the correct prefix.
 	if (strpos($serverurl, 'http://') !== 0 && strpos($serverurl, 'https://') !== 0)

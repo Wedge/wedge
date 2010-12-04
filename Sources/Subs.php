@@ -685,7 +685,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	{
 		foreach (array('%a', '%A', '%b', '%B') as $token)
 			if (strpos($str, $token) !== false)
-				$str = str_replace($token, !empty($txt['lang_capitalize_dates']) ? westring::ucwords(strftime($token, $time)) : strftime($token, $time), $str);
+				$str = str_replace($token, !empty($txt['lang_capitalize_dates']) ? westr::ucwords(strftime($token, $time)) : strftime($token, $time), $str);
 	}
 	else
 	{
@@ -752,11 +752,11 @@ function un_htmlspecialchars($string)
 function shorten_subject($subject, $len)
 {
 	// It was already short enough!
-	if (westring::strlen($subject) <= $len)
+	if (westr::strlen($subject) <= $len)
 		return $subject;
 
 	// Shorten it by the length it was too long, and strip off junk from the end.
-	return westring::substr($subject, 0, $len) . '...';
+	return westr::substr($subject, 0, $len) . '...';
 }
 
 /**
@@ -1200,7 +1200,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 			{
 				// The idea is, find words xx long, and then replace them with xx + space + more.
-				if (westring::strlen($data) > $modSettings['fixLongWords'])
+				if (westr::strlen($data) > $modSettings['fixLongWords'])
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => "\xC2\xA0"));
@@ -2245,7 +2245,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	{
 		// Was the page title set last minute? Also update the HTML safe one.
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = westring::htmlspecialchars(un_htmlspecialchars($context['page_title']));
+			$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']));
 
 		// Start up the session URL fixer.
 		ob_start('ob_sessrewrite');
@@ -2788,8 +2788,8 @@ function setupThemeContext($forceload = false)
 		$context['page_title'] = '';
 
 	// Set some specific vars.
-	$context['page_title_html_safe'] = westring::htmlspecialchars(un_htmlspecialchars($context['page_title']));
-	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? westring::htmlspecialchars($modSettings['meta_keywords']) : '';
+	$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']));
+	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? westr::htmlspecialchars($modSettings['meta_keywords']) : '';
 }
 
 /**
@@ -3582,7 +3582,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br />' => ' ')));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
-	$words = un_htmlspecialchars(westring::strtolower($words));
+	$words = un_htmlspecialchars(westr::strtolower($words));
 
 	// Step 3: Ready to split apart and index!
 	$words = explode(' ', $words);
@@ -3636,7 +3636,7 @@ function trim_url($ur)
 	$url = html_entity_decode($ur, ENT_QUOTES);
 
 	// Check the length of the url
-	if (westring::strlen($url) <= $modSettings['urlLength'])
+	if (westr::strlen($url) <= $modSettings['urlLength'])
 		return $ur;
 
 	$break = $modSettings['urlLength'] / 2;

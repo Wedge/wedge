@@ -266,7 +266,7 @@ function template_create_index_progress()
 				<p>
 					<strong>', $txt['search_create_index_progress'], ': ', $context['percentage'], '%</strong>
 				</p>
-				<input type="submit" name="b" value="', westring::htmlspecialchars($txt['search_create_index_continue']), '" class="button_submit" />
+				<input type="submit" name="b" value="', westr::htmlspecialchars($txt['search_create_index_continue']), '" class="button_submit" />
 			</div>
 			<input type="hidden" name="step" value="', $context['step'], '" />
 			<input type="hidden" name="start" value="', $context['start'], '" />

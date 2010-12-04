@@ -809,10 +809,10 @@ function validateEventPost()
 			fatal_lang_error('invalid_date', false);
 
 		// No title?
-		if (westring::htmltrim($_POST['evtitle']) === '')
+		if (westr::htmltrim($_POST['evtitle']) === '')
 			fatal_lang_error('no_event_title', false);
-		if (westring::strlen($_POST['evtitle']) > 30)
-			$_POST['evtitle'] = westring::substr($_POST['evtitle'], 0, 30);
+		if (westr::strlen($_POST['evtitle']) > 30)
+			$_POST['evtitle'] = westr::substr($_POST['evtitle'], 0, 30);
 		$_POST['evtitle'] = str_replace(';', '', $_POST['evtitle']);
 	}
 }
@@ -847,7 +847,7 @@ function insertEvent(&$eventOptions)
 	global $modSettings;
 
 	// Add special chars to the title.
-	$eventOptions['title'] = westring::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
+	$eventOptions['title'] = westr::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
 
 	// Add some sanity checking to the span.
 	$eventOptions['span'] = isset($eventOptions['span']) && $eventOptions['span'] > 0 ? (int) $eventOptions['span'] : 0;
@@ -890,7 +890,7 @@ function insertEvent(&$eventOptions)
 function modifyEvent($event_id, &$eventOptions)
 {
 	// Properly sanitize the title.
-	$eventOptions['title'] = westring::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
+	$eventOptions['title'] = westr::htmlspecialchars($eventOptions['title'], ENT_QUOTES);
 
 	// Scan the start date for validity and get its components.
 	if (($num_results = sscanf($eventOptions['start_date'], '%d-%d-%d', $year, $month, $day)) !== 3)

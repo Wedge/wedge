@@ -425,8 +425,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		$user_info['name'] = $from['name'];
 
 	// This is the one that will go in their inbox.
-	$htmlmessage = westring::htmlspecialchars($message, ENT_QUOTES);
-	$htmlsubject = westring::htmlspecialchars($subject);
+	$htmlmessage = westr::htmlspecialchars($message, ENT_QUOTES);
+	$htmlsubject = westr::htmlspecialchars($subject);
 	wedgeEditor::preparsecode($htmlmessage);
 
 	// Integrated PMs
@@ -440,7 +440,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		{
 			if (!is_numeric($recipients[$rec_type][$id]))
 			{
-				$recipients[$rec_type][$id] = westring::strtolower(trim(preg_replace('/[<>&"\'=\\\]/', '', $recipients[$rec_type][$id])));
+				$recipients[$rec_type][$id] = westr::strtolower(trim(preg_replace('/[<>&"\'=\\\]/', '', $recipients[$rec_type][$id])));
 				$usernames[$recipients[$rec_type][$id]] = 0;
 			}
 		}
@@ -456,8 +456,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			)
 		);
 		while ($row = wedb::fetch_assoc($request))
-			if (isset($usernames[westring::strtolower($row['member_name'])]))
-				$usernames[westring::strtolower($row['member_name'])] = $row['id_member'];
+			if (isset($usernames[westr::strtolower($row['member_name'])]))
+				$usernames[westr::strtolower($row['member_name'])] = $row['id_member'];
 		wedb::free_result($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.

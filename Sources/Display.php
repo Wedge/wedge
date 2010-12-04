@@ -1236,10 +1236,10 @@ function prepareDisplayContext($reset = false)
 	{
 		// Calculating the length...
 		if (!isset($context['correct_post_length']))
-			$context['correct_post_length'] = westring::strlen(empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
+			$context['correct_post_length'] = westr::strlen(empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
 				'<br />[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br />' : '<br />');
 
-		$context['current_post_length'] = westring::strlen(un_htmlspecialchars($message['body']));
+		$context['current_post_length'] = westr::strlen(un_htmlspecialchars($message['body']));
 		if (!isset($context['last_post_length']))
 		{
 			$context['last_post_length'] = 0;

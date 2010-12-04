@@ -351,7 +351,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
-		$names[$i] = trim(westring::strtolower($name));
+		$names[$i] = trim(westr::strtolower($name));
 
 		$maybe_email |= strpos($name, '@') !== false;
 
@@ -499,7 +499,7 @@ function validatePassword($password, $username, $restrict_in = array())
 	global $modSettings;
 
 	// Perform basic requirements first.
-	if (westring::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
+	if (westr::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
 		return 'short';
 
 	// Is this enough?
@@ -509,7 +509,7 @@ function validatePassword($password, $username, $restrict_in = array())
 	// Otherwise, perform the medium strength test - checking if password appears in the restricted string.
 	if (preg_match('~\b' . preg_quote($password, '~') . '\b~', implode(' ', $restrict_in)) != 0)
 		return 'restricted_words';
-	elseif (westring::strpos($password, $username) !== false)
+	elseif (westr::strpos($password, $username) !== false)
 		return 'restricted_words';
 
 	// !!! If pspell is available, use it on the word, and return restricted_words if it doesn't give "bad spelling"?
@@ -520,7 +520,7 @@ function validatePassword($password, $username, $restrict_in = array())
 
 	// Otherwise, hard test next, check for numbers and letters, uppercase too.
 	$good = preg_match('~(\D\d|\d\D)~', $password) != 0;
-	$good &= westring::strtolower($password) != $password;
+	$good &= westr::strtolower($password) != $password;
 
 	return $good ? null : 'chars';
 }
