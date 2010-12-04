@@ -22,56 +22,19 @@ var
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && v == 6, is_ie7 = is_ie && v == 7, is_ie8 = is_ie && v == 8, is_ie9 = is_ie && v >= 9;
 
-if (is_ie && !('XMLHttpRequest' in window) && 'ActiveXObject' in window)
-	window.XMLHttpRequest = function () { return new ActiveXObject('MSXML2.XMLHTTP'); };
-
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
 {
-	if (!('XMLHttpRequest' in window))
-		return null;
-
-	var oMyDoc = new XMLHttpRequest();
-	var bAsync = typeof(funcCallback) != 'undefined';
-	var oCaller = this;
-	if (bAsync)
-	{
-		oMyDoc.onreadystatechange = function () {
-			if (oMyDoc.readyState != 4)
-				return;
-
-			if (oMyDoc.responseXML != null && oMyDoc.status == 200)
-				funcCallback.call(oCaller, oMyDoc.responseXML);
-		};
-	}
-	oMyDoc.open('GET', sUrl, bAsync);
-	oMyDoc.send(null);
-
-	return oMyDoc;
+	return $.ajax(typeof(funcCallback) != 'undefined' ? { url: sUrl, success: funcCallback, context: this } : { url: sUrl, async: false, context: this });
 }
 
 // Send a post form to the server using XMLHttpRequest.
 function sendXMLDocument(sUrl, sContent, funcCallback)
 {
-	if (!window.XMLHttpRequest)
-		return false;
-
-	var oSendDoc = new window.XMLHttpRequest();
-	var oCaller = this;
-	if (typeof(funcCallback) != 'undefined')
-	{
-		oSendDoc.onreadystatechange = function () {
-			if (oSendDoc.readyState != 4)
-				return;
-
-			funcCallback.call(oCaller, oSendDoc.responseXML != null && oSendDoc.status == 200 ? oSendDoc.responseXML : false);
-		};
-	}
-	oSendDoc.open('POST', sUrl, true);
-	if ('setRequestHeader' in oSendDoc)
-		oSendDoc.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	oSendDoc.send(sContent);
-
+	$.ajax(typeof(funcCallback) != 'undefined' ?
+		{ url: sUrl, data: sContent, type: 'POST', context: this, success: funcCallback } :
+		{ url: sUrl, data: sContent, type: 'POST', context: this }
+	);
 	return true;
 }
 
