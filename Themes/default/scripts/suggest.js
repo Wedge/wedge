@@ -55,19 +55,14 @@ smc_AutoSuggest.prototype.init = function()
 
 	// Create a div that'll contain the results later on.
 	this.oSuggestDivHandle = document.createElement('div');
-	this.oSuggestDivHandle.className = 'auto_suggest_div';
-	document.body.appendChild(this.oSuggestDivHandle);
+	$(document.body).append($(this.oSuggestDivHandle).attr('class', 'auto_suggest_div'));
 
 	// Create a backup text input.
 	this.oRealTextHandle = document.createElement('input');
-	this.oRealTextHandle.type = 'hidden';
-	this.oRealTextHandle.name = this.oTextHandle.name;
-	this.oRealTextHandle.value = this.oTextHandle.value;
-	this.oTextHandle.form.appendChild(this.oRealTextHandle);
+	$(this.oTextHandle.form).append($(this.oRealTextHandle).attr({ type: 'hidden', name: this.oTextHandle.name, value: this.oTextHandle.value }));
 
 	// Disable autocomplete in any browser by obfuscating the name.
-	this.oTextHandle.name = 'dummy_' + Math.floor(Math.random() * 1000000);
-	this.oTextHandle.autocomplete = 'off';
+	$(this.oTextHandle).attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' });
 
 	this.oTextHandle.instanceRef = this;
 

@@ -710,8 +710,6 @@ UserMenu.prototype.switchMenu = function (oLink)
 	}
 	div.innerHTML = sHTML;
 	document.body.appendChild(div);
-	div.style.display = 'block';
-	div.style.left = pos[0] + 'px';
-	div.style.top = (pos[1] + oLink.offsetHeight) + 'px';
+	$(div).css({ display: 'block', left: pos[0] + 'px', top: (pos[1] + oLink.offsetHeight) + 'px' });
 	return false;
 }

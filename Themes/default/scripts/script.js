@@ -179,14 +179,14 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	}
 
 	helf = document.createElement('iframe');
-	$(document.body).append($(helf).attr('id', 'helf').attr('src', desktopURL).css({
-		'overflow': noScrollbars ? 'hidden' : 'auto',
-		'position': 'absolute',
-		'width': (alternateWidth ? alternateWidth : 480) + 'px',
-		'height': (alternateHeight ? alternateHeight : 220) + 'px',
-		'left': (aPos[0] + 15) + 'px',
-		'top': (aPos[1] + 15) + 'px',
-		'border': '1px solid #999'
+	$(document.body).append($(helf).attr({ id: 'helf', src: desktopURL }).css({
+		overflow: noScrollbars ? 'hidden' : 'auto',
+		position: 'absolute',
+		width: (alternateWidth ? alternateWidth : 480) + 'px',
+		height: (alternateHeight ? alternateHeight : 220) + 'px',
+		left: (aPos[0] + 15) + 'px',
+		top: (aPos[1] + 15) + 'px',
+		border: '1px solid #999'
 	}));
 
 	// Return false so the click won't follow the link ;)
@@ -634,7 +634,7 @@ function ajax_indicator(turn_on)
 	if (ajax_indicator_ele)
 	{
 		if (is_ie6)
-			$(ajax_indicator_ele).css({ 'position': 'absolute', 'top': (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
+			$(ajax_indicator_ele).css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
 		$(ajax_indicator_ele).css('display', turn_on ? 'block' : 'none');
 	}
 }
@@ -823,7 +823,7 @@ function smf_prepareScriptUrl(sUrl)
 // Alias for onload event.
 function addLoadEvent(fNewOnload)
 {
-	$(window).load(fNewOnload);
+	$(window).load(typeof(fNewOnload) == 'string' ? new Function(fNewOnload) : fNewOnload);
 }
 
 // Get the text in a code tag.
@@ -957,10 +957,10 @@ function showShim(showsh, ieid, iemenu)
 		return;
 	if (showsh)
 		$(ieshim[iem]).css({
-			'top': iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px',
-			'left': iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px',
-			'width': iemenu.offsetWidth + 'px',
-			'height': iemenu.offsetHeight + 'px'
+			top: iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px',
+			left: iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px',
+			width: iemenu.offsetWidth + 'px',
+			height: iemenu.offsetHeight + 'px'
 		});
 	ieshim[iem].style.display = showsh ? 'block' : 'none';
 }
@@ -977,8 +977,8 @@ function showMe(e)
 		if (showul.style.visibility == 'visible')
 			return hideUlUnder(this.id);
 	}
-	$(showul).css({ 'visibility': 'visible', 'opacity': 1 });
-	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
+	$(showul).css({ visibility: 'visible', opacity: 1 });
+	$(showul).css('margin' + (rtl ? 'Right' : 'Left'), (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px');
 
 	if (is_ie6)
 		showShim(true, this.id, showul);
@@ -1040,22 +1040,16 @@ function hideUlUnderLi(li)
 /* --------------------------------------------------------
    End of dropdown menu code */
 
-// This will add an extra class to any external links.
+// This will add an extra class to any external links, except those with title="-".
 // Ignored for now because it needs some improvement to the domain name detection.
 function linkMagic()
 {
-	var n = $('a'), hre, i, a;
-	for (i = 0; a = n[i]; i++)
-	{
-		// Leave a way out to external links.
-		if (a.getAttribute('title') == '-')
-			continue;
-
-		hre = a.getAttribute('href');
+	$('a[title!="-"]').each(function() {
+		hre = $(this).attr('href');
 		if (typeof hre == 'string' && hre.length > 0)
 			if ((hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
-				$(a).attr('class', 'xt').attr('className', 'xt');
-	}
+				$(this).addClass('xt');
+	});
 }
 
 function testStyle(sty)
