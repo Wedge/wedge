@@ -994,7 +994,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			'email',
 		);
 
-		// Shhhh!
+		// !!! Delete this!
 		if (!isset($disabled['color']))
 		{
 			$codes[] = array(
@@ -1009,12 +1009,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			);
 		}
 
+		// If we are not doing every tag only do ones we are interested in.
 		foreach ($codes as $code)
-		{
-			// If we are not doing every tag only do ones we are interested in.
 			if (empty($parse_tags) || in_array($code['tag'], $parse_tags))
 				$bbc_codes[substr($code['tag'], 0, 1)][] = $code;
-		}
+
 		$codes = null;
 	}
 
@@ -1033,28 +1032,10 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if ($smileys === 'print')
 	{
 		// [glow], [shadow], and [move] can't really be printed.
-		$disabled['glow'] = true;
-		$disabled['shadow'] = true;
-		$disabled['move'] = true;
-
-		// Colors can't well be displayed... supposed to be black and white.
-		$disabled['color'] = true;
-		$disabled['black'] = true;
-		$disabled['blue'] = true;
-		$disabled['white'] = true;
-		$disabled['red'] = true;
-		$disabled['green'] = true;
-		$disabled['me'] = true;
-
-		// Color coding doesn't make sense.
-		$disabled['php'] = true;
-
-		// Links are useless on paper... just show the link.
-		$disabled['ftp'] = true;
-		$disabled['url'] = true;
-		$disabled['iurl'] = true;
-		$disabled['email'] = true;
-		$disabled['flash'] = true;
+		// Colors can't be displayed well... Supposed to be B&W.
+		// And links are useless on paper... just show the link.
+		foreach	(array('glow', 'shadow', 'move', 'color', 'black', 'blue', 'white', 'red', 'green', 'me', 'php', 'ftp', 'url', 'iurl', 'email', 'flash') as $disable)
+			$disabled[$disable] = true;
 
 		// !!! Change maybe?
 		if (!isset($_GET['images']))
@@ -1332,7 +1313,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// See the comment at the end of the big loop - just eating whitespace ;).
 				if ($tag['block_level'] && substr($message, $pos, 6) == '<br />')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (in_array($tag['trim'], array('outside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if (($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 			}
 
@@ -1584,7 +1565,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// Trim or eat trailing stuff... see comment at the end of the big loop.
 				if (!empty($open_tags[$i]['block_level']) && substr($message, $pos, 6) == '<br />')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (!empty($open_tags[$i]['trim']) && in_array($tag['trim'], array('outside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if (!empty($open_tags[$i]['trim']) && ($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 
 				array_pop($open_tags);
@@ -1789,7 +1770,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 7);
 
 		// Are we trimming outside this tag?
-		if (in_array($tag['trim'], array('inside', 'both')) && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
+		if (($tag['trim'] == 'inside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 1 + strlen($matches[0]));
 	}
 
@@ -3078,7 +3059,7 @@ function template_header()
 
 		// May seem contrived, but this is done in case the body and main layer aren't there...
 		// Was there a security error for the admin?
-		if (in_array($layer, array('main', 'body')) && $context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
+		if (($layer == 'main' || $layer == 'body') && $context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
 		{
 			$showed_behav_error = true;
 			loadLanguage('Security');
@@ -3090,7 +3071,7 @@ function template_header()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 		}
-		elseif (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+		elseif (($layer == 'body' || $layer == 'main') && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
 			$checked_securityFiles = true;
 			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -3128,7 +3109,7 @@ function template_header()
 			}
 		}
 		// If the user is banned from posting inform them of it.
-		elseif (in_array($layer, array('main', 'body')) && isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+		elseif (($layer == 'main' || $layer == 'body') && isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
 		{
 			$showed_banned = true;
 			echo '
