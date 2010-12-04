@@ -616,7 +616,8 @@ function template_user_watch_post_callback($post)
 
 	$output_html .= '
 						</div>
-					</div><br />
+					</div>
+					<br />
 					<div class="smalltext">
 						&#171; ' . $txt['mc_watched_users_posted'] . ': ' . $post['poster_time'] . ' &#187;
 					</div>
@@ -758,7 +759,7 @@ function template_warn_template()
 					</dd>
 					<dt>
 						<strong><label for="template_body">', $txt['profile_warning_notify_body'], '</label>:</strong>
-						<div class="smalltext">', $txt['mc_warning_template_body_desc'], '</div>
+						<dfn>', $txt['mc_warning_template_body_desc'], '</dfn>
 					</dt>
 					<dd>
 						<textarea id="template_body" name="template_body" rows="10" cols="45" class="smalltext">', $context['template_data']['body'], '</textarea>
@@ -771,7 +772,7 @@ function template_warn_template()
 				<label for="make_personal">
 					<strong>', $txt['mc_warning_template_personal'], '</strong>
 				</label>
-				<div class="smalltext">', $txt['mc_warning_template_personal_desc'], '</div>
+				<dfn>', $txt['mc_warning_template_personal_desc'], '</dfn>
 				<br />';
 
 	echo '

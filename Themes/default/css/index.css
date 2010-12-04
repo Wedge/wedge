@@ -1078,13 +1078,7 @@ dl.settings dt {
 	padding: 0;
 	clear: both;
 }
-dl.settings dt dfn {
-	display: block;
-	padding: 3px 20px 3px 8px;
-	font-style: italic;
-	font-size: 90%;
-	color: #888;
-}
+
 /* help icons */
 dl.settings dt a img {
 	position: relative;
@@ -1114,6 +1108,15 @@ dl.settings dd {
 }
 dl.settings img {
 	margin: 0 10px 0 0;
+}
+
+/* Used mainly as <dt> descriptions, but can be used elsewhere too. */
+dfn {
+	display: block;
+	padding: 3px 20px 3px 8px;
+	font-style: italic;
+	font-size: 90%;
+	color: #888;
 }
 
 /* Styles for rounded headers.

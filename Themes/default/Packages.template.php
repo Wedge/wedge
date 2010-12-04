@@ -533,9 +533,7 @@ function template_browse()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['package_emulate'], ':</strong>
-							<div class="smalltext">
-								<a href="#" onclick="document.getElementById(\'ve\').value = \'', $forum_version, '\'; return false">', $txt['package_emulate_revert'], '</a>
-							</div>
+							<dfn><a href="#" onclick="document.getElementById(\'ve\').value = \'', $forum_version, '\'; return false">', $txt['package_emulate_revert'], '</a></dfn>
 						</dt>
 						<dd>
 							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25" class="input_text" />
@@ -738,7 +736,7 @@ function template_servers()
 						</dt>
 						<dd>
 							<input type="text" name="filename" size="50" class="input_text" />
-							<div class="smalltext">', $txt['package_download_filename_info'], '</div>
+							<dfn>', $txt['package_download_filename_info'], '</dfn>
 						</dd>
 					</dl>
 					<div class="righttext">

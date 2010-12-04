@@ -303,7 +303,7 @@ function template_addsmiley()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['smileys_add_upload_choose'], ':</strong>
-							<div class="smalltext">', $txt['smileys_add_upload_choose_desc'], '</div>
+							<dfn>', $txt['smileys_add_upload_choose_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod(\'upload\');" class="input_file" />
@@ -470,7 +470,7 @@ function template_editicon()
 	echo '
 					<dt>
 						<strong><label for="icon_filename">', $txt['smileys_filename'], '</label>: </strong>
-						<div class="smalltext">', $txt['icons_filename_all_gif'], '</div>
+						<dfn>', $txt['icons_filename_all_gif'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="icon_filename" id="icon_filename" value="', !empty($context['icon']['filename']) ? $context['icon']['filename'] . '.gif' : '', '" class="input_text" />

@@ -99,7 +99,7 @@ function template_email_members()
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_group'], ':</strong>
-						<div class="smalltext">', $txt['admin_news_select_group_desc'], '</div>
+						<dfn>', $txt['admin_news_select_group_desc'], '</dfn>
 					</dt>
 					<dd>';
 
@@ -126,14 +126,14 @@ function template_email_members()
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_email'], ':</strong>
-						<div class="smalltext">', $txt['admin_news_select_email_desc'], '</div>
+						<dfn>', $txt['admin_news_select_email_desc'], '</dfn>
 					</dt>
 					<dd>
 						<textarea name="emails" rows="5" cols="30" style="width: 98%;"></textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_members'], ':</strong>
-						<div class="smalltext">', $txt['admin_news_select_members_desc'], '</div>
+						<dfn>', $txt['admin_news_select_members_desc'], '</dfn>
 					</dt>
 					<dd>
 						<span id="members_container"></span>
@@ -144,7 +144,7 @@ function template_email_members()
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_groups'], ':</strong>
-						<div class="smalltext">', $txt['admin_news_select_excluded_groups_desc'], '</div>
+						<dfn>', $txt['admin_news_select_excluded_groups_desc'], '</dfn>
 					</dt>
 					<dd>';
 
@@ -158,7 +158,7 @@ function template_email_members()
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_members'], ':</strong>
-						<div class="smalltext">', $txt['admin_news_select_excluded_members_desc'], '</div>
+						<dfn>', $txt['admin_news_select_excluded_members_desc'], '</dfn>
 					</dt>
 					<dd>
 						<span id="exclude_members_container"></span>
@@ -169,7 +169,7 @@ function template_email_members()
 				<dl class="settings">
 					<dt>
 						<label for="email_force"><strong>', $txt['admin_news_select_override_notify'], ':</strong></label>
-						<div class="smalltext">', $txt['email_force'], '</div>
+						<dfn>', $txt['email_force'], '</dfn>
 					</dt>
 					<dd>
 						<input type="checkbox" name="email_force" id="email_force" value="1" class="input_check" />

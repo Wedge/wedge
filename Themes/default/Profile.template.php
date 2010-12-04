@@ -219,7 +219,7 @@ function template_summary()
 
 			foreach ($context['member']['bans'] as $ban)
 				echo '
-					<div class="smalltext">', $ban['explanation'], '</div>';
+					<dfn>', $ban['explanation'], '</dfn>';
 
 			echo '
 				</dt>';
@@ -635,7 +635,7 @@ function template_trackActivity()
 				<dl class="noborder">
 					<dt>
 						', $txt['most_recent_ip'], ':', (empty($context['last_ip2']) ? '' : '
-						<div class="smalltext">(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</div>'), '
+						<dfn>(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</dfn>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['last_ip'], ';u=', $context['member']['id'], '">', $context['last_ip'], '</a>';
@@ -1135,7 +1135,7 @@ function template_edit_options()
 			// Does it have any subtext to show?
 			if (!empty($field['subtext']))
 				echo '
-						<div class="smalltext">', $field['subtext'], '</div>';
+						<dfn>', $field['subtext'], '</dfn>';
 
 			echo '
 					</dt>
@@ -1212,7 +1212,7 @@ function template_edit_options()
 			echo '
 					<dt>
 						<strong>', $field['name'], ': </strong>
-						<div class="smalltext">', $field['desc'], '</div>
+						<dfn>', $field['desc'], '</dfn>
 					</dt>
 					<dd>
 						', $field['input_html'], '
@@ -1238,7 +1238,7 @@ function template_edit_options()
 				<dl>
 					<dt>
 						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
-						<div class="smalltext">', $txt['required_security_reasons'], '</div>
+						<dfn>', $txt['required_security_reasons'], '</dfn>
 					</dt>
 					<dd>
 						<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />
@@ -1633,7 +1633,7 @@ function template_groupMembership()
 				echo '
 						<td>
 							<label for="primary_', $group['id'], '"><strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '
-							<div class="smalltext">' . $group['desc'] . '</div>' : ''), '</label>
+							<dfn>' . $group['desc'] . '</dfn>' : ''), '</label>
 						</td>
 						<td style="width: 15%" class="right">';
 
@@ -1680,7 +1680,7 @@ function template_groupMembership()
 					<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td>
 							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '
-							<div class="smalltext">' . $group['desc'] . '</div>' : ''), '
+							<dfn>' . $group['desc'] . '</dfn>' : ''), '
 						</td>
 						<td style="width: 15%" class="left">';
 
@@ -2050,7 +2050,7 @@ function template_issueWarning()
 	// Is there only so much they can apply?
 	if ($context['warning_limit'])
 		echo '
-					<div class="smalltext">', sprintf($txt['profile_warning_limit_attribute'], $context['warning_limit']), '</div>';
+					<dfn>', sprintf($txt['profile_warning_limit_attribute'], $context['warning_limit']), '</dfn>';
 
 	echo '
 				</dt>
@@ -2086,7 +2086,7 @@ function template_issueWarning()
 		echo '
 				<dt>
 					<strong>', $txt['profile_warning_reason'], ':</strong>
-					<div class="smalltext">', $txt['profile_warning_reason_desc'], '</div>
+					<dfn>', $txt['profile_warning_reason_desc'], '</dfn>
 				</dt>
 				<dd>
 					<input type="text" name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%;" class="input_text" />
@@ -2288,7 +2288,7 @@ function template_profile_save()
 					<dl>
 						<dt>
 							<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
-							<div class="smalltext">', $txt['required_security_reasons'], '</div>
+							<dfn>', $txt['required_security_reasons'], '</dfn>
 						</dt>
 						<dd>
 							<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />
@@ -2332,7 +2332,7 @@ function template_profile_group_manage()
 	echo '
 							<dt>
 								<strong>', $txt['primary_membergroup'], ': </strong>
-								<div class="smalltext">(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</div>
+								<dfn>(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
 							</dt>
 							<dd>
 								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
@@ -2377,7 +2377,7 @@ function template_profile_birthdate()
 	echo '
 							<dt>
 								<strong>', $txt['dob'], ':</strong>
-								<div class="smalltext">', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</div>
+								<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
 							</dt>
 							<dd>
 								<input type="text" name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '" class="input_text" /> -
@@ -2394,7 +2394,7 @@ function template_profile_signature_modify()
 	echo '
 							<dt>
 								<strong>', $txt['signature'], ':</strong>
-								<div class="smalltext">', $txt['sig_info'], '</div>
+								<dfn>', $txt['sig_info'], '</dfn>
 								<br />';
 
 	if ($context['show_spellchecking'])
@@ -2487,9 +2487,9 @@ function template_profile_avatar_select()
 										</select>
 									</div>
 									<div>
-										<select name="file" id="file" size="10" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled="disabled"><option></option></select>
+										<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled="disabled"><option></option></select>
 									</div>
-									<div><img name="avatar" id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
+									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
 
 									<script><!-- // --><![CDATA[
 										var files = ["' . implode('", "', $context['avatar_list']) . '"];
@@ -2605,7 +2605,7 @@ function template_profile_avatar_select()
 	if (!empty($context['member']['avatar']['allow_upload']))
 		echo '
 								<div id="avatar_upload">
-									<input type="file" size="48" name="attachment" value="" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');" class="input_file" />
+									<input type="file" name="attachment" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');" class="input_file" />
 									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
 								</div>';
 
@@ -2648,10 +2648,10 @@ function template_profile_timeformat_modify()
 	echo '
 							<dt>
 								<strong>', $txt['time_format'], ':</strong>
-								<div class="smalltext">
+								<dfn>
 									<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
 									&nbsp;', $txt['date_format'], '
-								</div>
+								</dfn>
 							</dt>
 							<dd>
 								<select name="easyformat" onchange="document.forms.creator.time_format.value = this.options[this.selectedIndex].value;" style="margin-bottom: 4px;">';
@@ -2673,7 +2673,7 @@ function template_profile_timeoffset_modify()
 	echo '
 							<dt>
 								<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['time_offset'], ':</strong>
-								<div class="smalltext">', $txt['personal_time_offset'], '</div>
+								<dfn>', $txt['personal_time_offset'], '</dfn>
 							</dt>
 							<dd>
 								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); document.getElementById(\'time_offset\').value = autoDetectTimeOffset(currentDate); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
@@ -2769,7 +2769,7 @@ function template_authentication_method()
 				<dl>
 					<dt>
 						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
-						<div class="smalltext">', $txt['required_security_reasons'], '</div>
+						<dfn>', $txt['required_security_reasons'], '</dfn>
 					</dt>
 					<dd>
 						<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password" />

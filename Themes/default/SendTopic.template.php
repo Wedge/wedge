@@ -135,7 +135,7 @@ function template_custom_email()
 					</dd>
 					<dt>
 						<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
-						<div class="smalltext">', $txt['send_email_disclosed'], '</div>
+						<dfn>', $txt['send_email_disclosed'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" id="y_mail" name="y_email" size="24" maxlength="50" value="', $context['user']['email'], '" class="input_text" />
@@ -145,7 +145,7 @@ function template_custom_email()
 		echo '
 					<dt>
 						<strong>', $txt['sendtopic_sender_email'], ':</strong>
-						<div class="smalltext">', $txt['send_email_disclosed'], '</div>
+						<dfn>', $txt['send_email_disclosed'], '</dfn>
 					</dt>
 					<dd>
 						<em>', $context['user']['email'], '</em>

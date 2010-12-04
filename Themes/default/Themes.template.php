@@ -133,7 +133,7 @@ function template_main()
 						<label for="theme_gz">', $txt['theme_install_file'], '</label>:
 					</dt>
 					<dd>
-						<input type="file" name="theme_gz" id="theme_gz" value="theme_gz" size="40" onchange="this.form.copy.disabled = this.value != \'\'; this.form.theme_dir.disabled = this.value != \'\';" class="input_file" />
+						<input type="file" name="theme_gz" id="theme_gz" onchange="this.form.copy.disabled = this.value != \'\'; this.form.theme_dir.disabled = this.value != \'\';" class="input_file" />
 					</dd>';
 
 	echo '
@@ -456,7 +456,7 @@ function template_set_settings()
 
 			if (isset($setting['description']))
 				echo '
-						<div class="smalltext">', $setting['description'], '</div>';
+						<dfn>', $setting['description'], '</dfn>';
 
 			echo '
 					</dt>
@@ -475,7 +475,7 @@ function template_set_settings()
 
 			if (isset($setting['description']))
 				echo '
-						<div class="smalltext">', $setting['description'], '</div>';
+						<dfn>', $setting['description'], '</dfn>';
 
 			echo '
 					</dt>
@@ -500,7 +500,7 @@ function template_set_settings()
 
 			if (isset($setting['description']))
 				echo '
-						<div class="smalltext">', $setting['description'], '</div>';
+						<dfn>', $setting['description'], '</dfn>';
 
 			echo '
 					</dt>

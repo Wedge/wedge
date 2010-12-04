@@ -38,7 +38,7 @@ function template_edit_scheduled_tasks()
 					</dt>
 					<dd>
 						', $context['task']['name'], '
-						<div class="smalltext">', $context['task']['desc'], '</div>
+						<dfn>', $context['task']['desc'], '</dfn>
 					</dd>
 					<dt>
 						<strong>', $txt['scheduled_task_edit_interval'], ':</strong>
@@ -57,7 +57,7 @@ function template_edit_scheduled_tasks()
 					</dd>
 					<dt>
 						<strong>', $txt['scheduled_task_edit_start_time'], ':</strong>
-						<div class="smalltext">', $txt['scheduled_task_edit_start_time_desc'], '</div>
+						<dfn>', $txt['scheduled_task_edit_start_time_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="offset" value="', $context['task']['offset_formatted'], '" size="6" maxlength="5" class="input_text" />

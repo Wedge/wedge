@@ -130,14 +130,14 @@ function template_modify_category()
 	echo '
 					<dt>
 						<strong>', $txt['full_name'], ':</strong>
-						<div class="smalltext">', $txt['name_on_display'], '</div>
+						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="cat_name" value="', $context['category']['editable_name'], '" size="30" tabindex="', $context['tabindex']++, '" class="input_text" />
 					</dd>
 					<dt>
 						<strong>' . $txt['collapse_enable'] . '</strong>
-						<div class="smalltext">' . $txt['collapse_desc'] . '</div>
+						<dfn>' . $txt['collapse_desc'] . '</dfn>
 					</dt>
 					<dd>
 						<input type="checkbox" name="collapse"', $context['category']['can_collapse'] ? ' checked="checked"' : '', ' tabindex="', $context['tabindex']++, '" class="input_check" />
@@ -294,7 +294,7 @@ function template_modify_board()
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['full_name'], ':</strong>
-						<div class="smalltext">', $txt['name_on_display'], '</div>
+						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30" class="input_text" />
@@ -327,14 +327,14 @@ function template_modify_board()
 	echo '
 					<dt>
 						<strong>', $txt['mboards_description'], ':</strong>
-						<div class="smalltext">', $txt['mboards_description_desc'], '</div>
+						<dfn>', $txt['mboards_description_desc'], '</dfn>
 					</dt>
 					<dd>
 						<textarea name="desc" rows="6" cols="60" style="width: 99%">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong>
-						<div class="smalltext">', $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_var'] . '=' . $context['session_id']) : strip_tags($txt['permission_profile_desc']), '</div>
+						<dfn>', $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_var'] . '=' . $context['session_id']) : strip_tags($txt['permission_profile_desc']), '</dfn>
 					</dt>
 					<dd>
 						<select name="profile">';
@@ -352,7 +352,7 @@ function template_modify_board()
 					</dd>
 					<dt>
 						<strong>', $txt['mboards_groups'], ':</strong>
-						<div class="smalltext">', $txt['mboards_groups_desc'], '</div>
+						<dfn>', $txt['mboards_groups_desc'], '</dfn>
 					</dt>
 					<dd>';
 
@@ -375,7 +375,7 @@ function template_modify_board()
 	echo '
 					<dt>
 						<strong>', $txt['mboards_moderators'], ':</strong>
-						<div class="smalltext">', $txt['mboards_moderators_desc'], '</div>
+						<dfn>', $txt['mboards_moderators_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30" class="input_text" />
@@ -389,7 +389,7 @@ function template_modify_board()
 				<dl class="settings">
 					<dt>
 						<strong', $context['board']['topics'] ? ' style="color: gray;"' : '', '>', $txt['mboards_redirect'], ':</strong>
-						<div class="smalltext">', $txt['mboards_redirect_desc'], '</div>
+						<dfn>', $txt['mboards_redirect_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="checkbox" id="redirect_enable" name="redirect_enable"', $context['board']['topics'] ? ' disabled="disabled"' : '', $context['board']['redirect'] != '' ? ' checked="checked"' : '', ' onclick="refreshOptions();" class="input_check" />
@@ -414,7 +414,7 @@ function template_modify_board()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['mboards_redirect_url'], ':</strong>
-							<div class="smalltext">', $txt['mboards_redirect_url_desc'], '</div>
+							<dfn>', $txt['mboards_redirect_url_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="text" name="redirect_address" value="', $context['board']['redirect'], '" size="40" class="input_text" />
@@ -434,7 +434,7 @@ function template_modify_board()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['mboards_redirect_reset'], ':</strong>
-							<div class="smalltext">', $txt['mboards_redirect_reset_desc'], '</div>
+							<dfn>', $txt['mboards_redirect_reset_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="checkbox" name="reset_redirect" class="input_check" />
@@ -449,7 +449,7 @@ function template_modify_board()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['mboards_count_posts'], ':</strong>
-							<div class="smalltext">', $txt['mboards_count_posts_desc'], '</div>
+							<dfn>', $txt['mboards_count_posts_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="checkbox" name="count" ', $context['board']['count_posts'] ? ' checked="checked"' : '', ' class="input_check" />
@@ -463,7 +463,7 @@ function template_modify_board()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['mboards_theme'], ':</strong>
-							<div class="smalltext">', $txt['mboards_theme_desc'], '</div>
+							<dfn>', $txt['mboards_theme_desc'], '</dfn>
 						</dt>
 						<dd>
 							<select name="boardtheme" id="boardtheme" onchange="refreshOptions();">
@@ -485,7 +485,7 @@ function template_modify_board()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['mboards_override_theme'], ':</strong>
-							<div class="smalltext">', $txt['mboards_override_theme_desc'], '</div>
+							<dfn>', $txt['mboards_override_theme_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="checkbox" name="override_theme"', $context['board']['override_theme'] ? ' checked="checked"' : '', ' class="input_check" />

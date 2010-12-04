@@ -777,7 +777,7 @@ function template_show_settings()
 				// Some quick helpers...
 				$javascript = $config_var['javascript'];
 				$disabled = !empty($config_var['disabled']) ? ' disabled="disabled"' : '';
-				$subtext = !empty($config_var['subtext']) ? '<br /><div class="smalltext"> ' . $config_var['subtext'] . '</div>' : '';
+				$subtext = !empty($config_var['subtext']) ? '<dfn> ' . $config_var['subtext'] . '</dfn>' : '';
 
 				// Show the [?] button.
 				if ($config_var['help'])
@@ -982,7 +982,7 @@ function template_edit_profile_field()
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_profile'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_profile_desc'], '</div>
+							<dfn>', $txt['custom_edit_profile_desc'], '</dfn>
 						</dt>
 						<dd>
 							<select name="profile_area">
@@ -1022,7 +1022,7 @@ function template_edit_profile_field()
 						<dt>
 							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_enclose_desc'], '</div>
+							<dfn>', $txt['custom_edit_enclose_desc'], '</dfn>
 						</dt>
 						<dd>
 							<textarea name="enclose" rows="10" cols="50">', @$context['field']['enclose'], '</textarea>
@@ -1046,7 +1046,7 @@ function template_edit_profile_field()
 						</dd>
 						<dt id="max_length_dt">
 							<strong>', $txt['custom_edit_max_length'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_max_length_desc'], '</div>
+							<dfn>', $txt['custom_edit_max_length_desc'], '</dfn>
 						</dt>
 						<dd id="max_length_dd">
 							<input type="text" name="max_length" value="', $context['field']['max_length'], '" size="7" maxlength="6" class="input_text" />
@@ -1067,7 +1067,7 @@ function template_edit_profile_field()
 						<dt id="options_dt">
 							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
 							<strong>', $txt['custom_edit_options'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_options_desc'], '</div>
+							<dfn>', $txt['custom_edit_options_desc'], '</dfn>
 						</dt>
 						<dd id="options_dd">
 							<div>';
@@ -1095,7 +1095,7 @@ function template_edit_profile_field()
 						<dt id="mask_dt">
 							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_mask_desc'], '</div>
+							<dfn>', $txt['custom_edit_mask_desc'], '</dfn>
 						</dt>
 						<dd>
 							<select name="mask" id="mask" onchange="updateInputBoxes();">
@@ -1111,7 +1111,7 @@ function template_edit_profile_field()
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_privacy'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_privacy_desc'], '</div>
+							<dfn>', $txt['custom_edit_privacy_desc'], '</dfn>
 						</dt>
 						<dd>
 							<select name="private" id="private" onchange="updateInputBoxes();" style="width: 100%">
@@ -1123,14 +1123,14 @@ function template_edit_profile_field()
 						</dd>
 						<dt id="can_search_dt">
 							<strong>', $txt['custom_edit_can_search'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_can_search_desc'], '</div>
+							<dfn>', $txt['custom_edit_can_search_desc'], '</dfn>
 						</dt>
 						<dd id="can_search_dd">
 							<input type="checkbox" name="can_search"', $context['field']['can_search'] ? ' checked="checked"' : '', ' class="input_check" />
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_active'], ':</strong>
-							<div class="smalltext">', $txt['custom_edit_active_desc'], '</div>
+							<dfn>', $txt['custom_edit_active_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="checkbox" name="active"', $context['field']['active'] ? ' checked="checked"' : '', ' class="input_check" />

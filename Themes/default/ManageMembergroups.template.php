@@ -67,7 +67,7 @@ function template_new_group()
 		echo '
 					<dt>
 						<label for="permission_base"><strong>', $txt['membergroups_permissions'], ':</strong></label>
-						<div class="smalltext">', $txt['membergroups_can_edit_later'], '</div>
+						<dfn>', $txt['membergroups_can_edit_later'], '</dfn>
 					</dt>
 					<dd>
 						<fieldset id="permission_base">
@@ -113,7 +113,7 @@ function template_new_group()
 	echo '
 					<dt>
 						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['post_group'] ? '
-						<div class="smalltext">' . $txt['membergroups_new_board_post_groups'] . '</div>' : '', '
+						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
 					</dt>
 					<dd>
 						<fieldset id="visible_boards">
@@ -232,7 +232,7 @@ function template_edit_group()
 		echo '
 					<dt id="group_inherit_text">
 						<label for="group_inherit_input"><strong>', $txt['membergroups_edit_inherit_permissions'], '</strong></label>:
-						<div class="smalltext">', $txt['membergroups_edit_inherit_permissions_desc'], '</div>
+						<dfn>', $txt['membergroups_edit_inherit_permissions_desc'], '</dfn>
 					</dt>
 					<dd>
 						<select name="group_inherit" id="group_inherit_input">
@@ -263,7 +263,7 @@ function template_edit_group()
 	echo '
 					<dt>
 						<label for="online_color_input"><strong>', $txt['membergroups_online_color'], ':</strong></label>
-						<div class="smalltext">', $txt['membergroups_online_color_desc'], '</div>
+						<dfn>', $txt['membergroups_online_color_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="online_color" id="online_color_input" value="', $context['group']['color'], '" size="20" class="input_text" />
@@ -276,7 +276,7 @@ function template_edit_group()
 					</dd>
 					<dt>
 						<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label>
-						<div class="smalltext">', $txt['membergroups_star_image_note'], '</div>
+						<dfn>', $txt['membergroups_star_image_note'], '</dfn>
 					</dt>
 					<dd>
 						', $txt['membergroups_images_url'], '
@@ -285,7 +285,7 @@ function template_edit_group()
 					</dd>
 					<dt>
 						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label>
-						<div class="smalltext">', $txt['membergroups_max_messages_note'], '</div>
+						<dfn>', $txt['membergroups_max_messages_note'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="max_messages" id="max_messages_input" value="', $context['group']['id'] == 1 ? 0 : $context['group']['max_messages'], '" size="6"', $context['group']['id'] == 1 ? ' disabled="disabled"' : '', ' class="input_text" />
@@ -296,7 +296,7 @@ function template_edit_group()
 		echo '
 					<dt>
 						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['group']['is_post_group'] ? '
-						<div class="smalltext">' . $txt['membergroups_new_board_post_groups'] . '</div>' : '', '
+						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
 					</dt>
 					<dd>
 						<fieldset id="visible_boards" style="width: 95%;">

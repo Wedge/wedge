@@ -267,7 +267,7 @@ function template_registration_form()
 				// Does it have any subtext to show?
 				if (!empty($field['subtext']))
 					echo '
-							<div class="smalltext">', $field['subtext'], '</div>';
+							<dfn>', $field['subtext'], '</dfn>';
 
 				echo '
 						</dt>
@@ -333,7 +333,7 @@ function template_registration_form()
 			echo '
 						<dt>
 							<strong', !empty($field['is_error']) ? ' style="color: red;"' : '', '>', $field['name'], ':</strong>
-							<div class="smalltext">', $field['desc'], '</div>
+							<dfn>', $field['desc'], '</dfn>
 						</dt>
 						<dd>', $field['input_html'], '</dd>';
 	}
@@ -542,21 +542,21 @@ function template_admin_register()
 					<dl class="register_form" id="admin_register_form">
 						<dt>
 							<strong><label for="user_input">', $txt['admin_register_username'], ':</label></strong>
-							<div class="smalltext">', $txt['admin_register_username_desc'], '</div>
+							<dfn>', $txt['admin_register_username_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="text" name="user" id="user_input" tabindex="', $context['tabindex']++, '" size="30" maxlength="25" class="input_text" />
 						</dd>
 						<dt>
 							<strong><label for="email_input">', $txt['admin_register_email'], ':</label></strong>
-							<div class="smalltext">', $txt['admin_register_email_desc'], '</div>
+							<dfn>', $txt['admin_register_email_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="text" name="email" id="email_input" tabindex="', $context['tabindex']++, '" size="30" class="input_text" />
 						</dd>
 						<dt>
 							<strong><label for="password_input">', $txt['admin_register_password'], ':</label></strong>
-							<div class="smalltext">', $txt['admin_register_password_desc'], '</div>
+							<dfn>', $txt['admin_register_password_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="password" name="password" id="password_input" tabindex="', $context['tabindex']++, '" size="30" class="input_password" onchange="onCheckChange();" />
@@ -567,7 +567,7 @@ function template_admin_register()
 		echo '
 						<dt>
 							<strong><label for="group_select">', $txt['admin_register_group'], ':</label></strong>
-							<div class="smalltext">', $txt['admin_register_group_desc'], '</div>
+							<dfn>', $txt['admin_register_group_desc'], '</dfn>
 						</dt>
 						<dd>
 							<select name="group" id="group_select" tabindex="', $context['tabindex']++, '">';
@@ -584,7 +584,7 @@ function template_admin_register()
 	echo '
 						<dt>
 							<strong><label for="emailPassword_check">', $txt['admin_register_email_detail'], ':</label></strong>
-							<div class="smalltext">', $txt['admin_register_email_detail_desc'], '</div>
+							<dfn>', $txt['admin_register_email_detail_desc'], '</dfn>
 						</dt>
 						<dd>
 							<input type="checkbox" name="emailPassword" id="emailPassword_check" tabindex="', $context['tabindex']++, '" checked="checked" disabled="disabled" class="input_check" />

@@ -50,7 +50,7 @@ function template_modify_subscription()
 					</dd>
 					<dt>
 						<label for="activated_check">', $txt['paid_mod_active'], '</label>:
-						<div class="smalltext">', $txt['paid_mod_active_desc'], '</div>
+						<dfn>', $txt['paid_mod_active_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="checkbox" name="active" id="activated_check"', empty($context['sub']['active']) ? '' : ' checked="checked"', ' class="input_check" />
@@ -60,7 +60,7 @@ function template_modify_subscription()
 				<dl class="settings">
 					<dt>
 						', $txt['paid_mod_prim_group'], ':
-						<div class="smalltext">', $txt['paid_mod_prim_group_desc'], '</div>
+						<dfn>', $txt['paid_mod_prim_group_desc'], '</dfn>
 					</dt>
 					<dd>
 						<select name="prim_group" ', !empty($context['disable_groups']) ? 'disabled="disabled"' : '', '>
@@ -76,7 +76,7 @@ function template_modify_subscription()
 					</dd>
 					<dt>
 						', $txt['paid_mod_add_groups'], ':
-						<div class="smalltext">', $txt['paid_mod_add_groups_desc'], '</div>
+						<dfn>', $txt['paid_mod_add_groups_desc'], '</dfn>
 					</dt>
 					<dd>';
 
@@ -89,14 +89,14 @@ function template_modify_subscription()
 					</dd>
 					<dt>
 						', $txt['paid_mod_reminder'], ':
-						<div class="smalltext">', $txt['paid_mod_reminder_desc'], '</div>
+						<dfn>', $txt['paid_mod_reminder_desc'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="reminder" value="', $context['sub']['reminder'], '" size="6" class="input_text" />
 					</dd>
 					<dt>
 						', $txt['paid_mod_email'], ':
-						<div class="smalltext">', $txt['paid_mod_email_desc'], '</div>
+						<dfn>', $txt['paid_mod_email_desc'], '</dfn>
 					</dt>
 					<dd>
 						<textarea name="emailcomplete" rows="6" cols="40">', $context['sub']['email_complete'], '</textarea>
@@ -142,7 +142,7 @@ function template_modify_subscription()
 						<dl class="settings">
 							<dt>
 								<label for="allow_partial_check">', $txt['paid_mod_allow_partial'], '</label>:
-								<div class="smalltext">', $txt['paid_mod_allow_partial_desc'], '</div>
+								<dfn>', $txt['paid_mod_allow_partial_desc'], '</dfn>
 							</dt>
 							<dd>
 								<input type="checkbox" name="allow_partial" id="allow_partial_check"', empty($context['sub']['allow_partial']) ? '' : ' checked="checked"', ' class="input_check" />
@@ -265,7 +265,7 @@ function template_modify_user_subscription()
 		echo '
 					<dt>
 						<strong>', $txt['paid_username'], ':</strong>
-						<div class="smalltext">', $txt['one_username'], '</div>
+						<dfn>', $txt['one_username'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="name" id="name_control" value="', $context['sub']['username'], '" size="30" class="input_text" />

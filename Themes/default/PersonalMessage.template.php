@@ -1503,7 +1503,7 @@ function template_add_rule()
 			<dl class="addrules">
 				<dt class="floatleft">
 					<strong>', $txt['pm_rule_name'], ':</strong>
-					<div class="smalltext">', $txt['pm_rule_name_desc'], '</div>
+					<dfn>', $txt['pm_rule_name_desc'], '</dfn>
 				</dt>
 				<dd class="floatleft">
 					<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50" class="input_text" />
