@@ -305,7 +305,7 @@ function template_html_below()
 	// Don't modify the HTML comments, as they're placeholders for Wedge.
 
 	echo $context['footer'], '
-<div><marquee>test</marquee></div>
+
 <!-- Javascript area -->';
 
 	// Code added here through add_js_inline() will execute before jQuery
