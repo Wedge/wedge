@@ -1078,9 +1078,11 @@ dl.settings dt {
 	padding: 0;
 	clear: both;
 }
-dl.settings dt .smalltext {
+dl.settings dt dfn {
+	display: block;
 	padding: 3px 20px 3px 8px;
 	font-style: italic;
+	font-size: 90%;
 	color: #888;
 }
 /* help icons */

@@ -338,7 +338,7 @@ function template_main()
 			}
 
 			echo '
-						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return document.forms.quickModForm.qaction.value != \'\' &amp;&amp; confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="button_submit qaction" />
+						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return document.forms.quickModForm.qaction.value != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="button_submit qaction" />
 					</td>
 				</tr>';
 		}

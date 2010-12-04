@@ -7,41 +7,20 @@
 var
 	smf_formSubmitted = false,
 	lastKeepAliveCheck = new Date().getTime(),
-	smf_editorArray = new Array();
+	smf_editorArray = new Array(),
+	ajax_indicator_ele = null;
 
 // Basic browser detection
-var ua = navigator.userAgent.toLowerCase();
-
 var
-	is_opera = ua.indexOf('opera') != -1,
-	is_opera5 = is_opera6 = is_opera7 = is_opera8 = false,
-	is_opera10up = is_opera && (ua.indexOf('opera/9.8') != -1 || ua.indexOf('opera 9.8') != -1),
-	is_opera9 = is_opera && !is_opera10up && (ua.indexOf('opera/9') != -1 || ua.indexOf('opera 9') != -1),
-	is_opera95 = is_opera9 && ua.match(/opera[ \/]9\.[5-7]/),
-	is_opera105up = is_opera10up && !!ua.match(/[ \/]1(?:0\.[5-9]|[1-9]\.[0-9]+)/),
-	is_opera10 = is_opera10up && !is_opera105up,
-	is_opera95up = is_opera95 || is_opera10up;
+	ua = navigator.userAgent.toLowerCase(),
+	v = parseInt($.browser.version),
 
-var
-	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera,
-	is_gecko = !is_opera && ua.indexOf('gecko') != -1;
-
-var
-	is_chrome = ua.indexOf('chrome') != -1,
-	is_webkit = ua.indexOf('applewebkit') != -1,
-	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
-	is_android = is_webkit && ua.indexOf('android') != -1,
-	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android;
-
-var
-	is_ie4 = is_ie5 = is_ie50 = is_ie55 = false,
-	is_ie = is_ie5up = is_ie6up = ua.indexOf('msie') != -1 && !is_opera,
-	is_ie6 = is_ie6down = is_ie && ua.indexOf('msie 6') != -1,
-	is_ie7 = is_ie && ua.indexOf('msie 7') != -1, is_ie7up = is_ie && !is_ie6, is_ie7down = is_ie7 || is_ie6,
-	is_ie8 = is_ie && ua.indexOf('msie 8') != -1, is_ie8up = is_ie && !is_ie7down, is_ie8down = is_ie8 || is_ie7down,
-	is_ie9 = is_ie && ua.indexOf('msie 9') != -1, is_ie9up = is_ie && !is_ie8down;
-
-var ajax_indicator_ele = null;
+	// If you need support for more versions, just test for $.browser.version yourself...
+	is_opera = $.browser.opera, is_opera95up = is_opera && parseFloat($.browser.version) >= 9.5,
+	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera, is_gecko = !is_opera && ua.indexOf('gecko') != -1,
+	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
+	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
+	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && v == 6, is_ie7 = is_ie && v == 7, is_ie8 = is_ie && v == 8, is_ie9 = is_ie && v >= 9;
 
 if (is_ie && !('XMLHttpRequest' in window) && 'ActiveXObject' in window)
 	window.XMLHttpRequest = function () { return new ActiveXObject('MSXML2.XMLHTTP'); };
@@ -173,7 +152,7 @@ String.prototype.easyReplace = function (oReplacements)
 	return sResult;
 }
 
-var helpFrame = null;
+var helf = null;
 
 // Open a new window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
@@ -190,30 +169,25 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 
 	var aPos = typeof(from) == 'object' ? smf_itemPos(from) : [10, 10];
 
-	if (helpFrame != null)
+	if (helf != null)
 	{
-		var previousTarget = helpFrame.src;
-		document.body.removeChild(helpFrame);
-		helpFrame = null;
+		var previousTarget = helf.src;
+		document.body.removeChild(helf);
+		helf = null;
 		if (previousTarget == desktopURL)
 			return false;
 	}
 
-	helpFrame = document.createElement('iframe');
-	helpFrame.src = desktopURL;
-	helpFrame.id = 'helpFrame';
-	with (helpFrame.style)
-	{
-		if (noScrollbars)
-			overflow = 'hidden';
-		position = 'absolute';
-		width = (alternateWidth ? alternateWidth : 480) + 'px';
-		height = (alternateHeight ? alternateHeight : 220) + 'px';
-		left = (aPos[0] + 15) + 'px';
-		top = (aPos[1] + 15) + 'px';
-		border = '1px solid #999';
-	}
-	document.body.appendChild(helpFrame);
+	helf = document.createElement('iframe');
+	$(document.body).append($(helf).attr('id', 'helf').attr('src', desktopURL).css({
+		'overflow': noScrollbars ? 'hidden' : 'auto',
+		'position': 'absolute',
+		'width': (alternateWidth ? alternateWidth : 480) + 'px',
+		'height': (alternateHeight ? alternateHeight : 220) + 'px',
+		'left': (aPos[0] + 15) + 'px',
+		'top': (aPos[1] + 15) + 'px',
+		'border': '1px solid #999'
+	}));
 
 	// Return false so the click won't follow the link ;)
 	return false;
@@ -652,7 +626,7 @@ function ajax_indicator(turn_on)
 {
 	if (!ajax_indicator_ele)
 	{
-		ajax_indicator_ele = document.getElementById('ajax_in_progress');
+		ajax_indicator_ele = $('#ajax_in_progress');
 		if (!ajax_indicator_ele && ajax_notification_text !== null)
 			create_ajax_indicator_ele();
 	}
@@ -660,11 +634,8 @@ function ajax_indicator(turn_on)
 	if (ajax_indicator_ele)
 	{
 		if (is_ie6)
-		{
-			ajax_indicator_ele.style.position = 'absolute';
-			ajax_indicator_ele.style.top = (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop;
-		}
-		ajax_indicator_ele.style.display = turn_on ? 'block' : 'none';
+			$(ajax_indicator_ele).css({ 'position': 'absolute', 'top': (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
+		$(ajax_indicator_ele).css('display', turn_on ? 'block' : 'none');
 	}
 }
 
@@ -689,14 +660,10 @@ function create_ajax_indicator_ele()
 	}
 
 	// Add the cancel link and image to the indicator.
-	cancel_link.appendChild(cancel_img);
-	ajax_indicator_ele.appendChild(cancel_link);
-
-	// Set the text. (Note: you MUST append here and not overwrite.)
-	ajax_indicator_ele.innerHTML += ajax_notification_text;
-
+	// Then set the text. (Note: you MUST append here and not overwrite.)
 	// Finally, attach the element to the body.
-	document.body.appendChild(ajax_indicator_ele);
+	cancel_link.appendChild(cancel_img);
+	$(document.body).append($(ajax_indicator_ele).append(cancel_link).append(ajax_notification_text));
 }
 
 function createEventListener(oTarget)
@@ -705,21 +672,13 @@ function createEventListener(oTarget)
 	{
 		if (oTarget.attachEvent)
 		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget.attachEvent('on' + sEvent, funcHandler);
-			};
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget.detachEvent('on' + sEvent, funcHandler);
-			};
+			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) { oTarget.attachEvent('on' + sEvent, funcHandler); };
+			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) { oTarget.detachEvent('on' + sEvent, funcHandler); };
 		}
 		else
 		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget['on' + sEvent] = funcHandler;
-			};
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) {
-				oTarget['on' + sEvent] = null;
-			};
+			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) { oTarget['on' + sEvent] = funcHandler; };
+			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) { oTarget['on' + sEvent] = null; };
 		}
 	}
 }
@@ -781,9 +740,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	// Create an option that'll be above and below the category.
 	var oDashOption = document.createElement('option'), iIndexPointer = 0;
 
-	oDashOption.appendChild(document.createTextNode(this.opt.sCatSeparator));
-	oDashOption.disabled = 'disabled';
-	oDashOption.value = '';
+	$(oDashOption).append(document.createTextNode(this.opt.sCatSeparator)).attr('disabled', 'disabled').attr('value', '');
 
 	if ('onbeforeactivate' in document)
 		this.dropdownList.onbeforeactivate = null;
@@ -822,20 +779,15 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	}
 
 	// Add the remaining items after the currently selected item.
-	this.dropdownList.appendChild(oListFragment);
-
-	// Internet Explorer needs this to keep the box dropped down.
-	this.dropdownList.style.width = 'auto';
-	this.dropdownList.focus();
-
-	// Add an onchange action
-	this.dropdownList.onchange = function () {
+	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function() {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
-	};
+	});
 }
 
-// Short function for finding the actual position of an item.
+// Find the actual position of an item.
+// Alternatively: var offset = $(itemHandle).offset().left/top;
+// But it doesn't work well on floated elements in Opera. Hmm.
 function smf_itemPos(itemHandle)
 {
 	var itemX = 0, itemY = 0;
@@ -868,42 +820,17 @@ function smf_prepareScriptUrl(sUrl)
 	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
-var aOnloadEvents = new Array();
+// Alias for onload event.
 function addLoadEvent(fNewOnload)
 {
-	// If there's no event set, just set this one
-	if (typeof(fNewOnload) == 'function' && (!('onload' in window) || typeof(window.onload) != 'function'))
-		window.onload = fNewOnload;
-
-	// If there's just one event, setup the array.
-	else if (aOnloadEvents.length == 0)
-	{
-		aOnloadEvents[0] = window.onload;
-		aOnloadEvents[1] = fNewOnload;
-		window.onload = function () {
-			for (var i = 0, n = aOnloadEvents.length; i < n; i++)
-			{
-				if (typeof(aOnloadEvents[i]) == 'function')
-					aOnloadEvents[i]();
-				else if (typeof(aOnloadEvents[i]) == 'string')
-					eval(aOnloadEvents[i]);
-			}
-		};
-	}
-
-	// This isn't the first event function, add it to the list.
-	else
-		aOnloadEvents[aOnloadEvents.length] = fNewOnload;
+	$(window).load(fNewOnload);
 }
 
 // Get the text in a code tag.
 function smfSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
-	if (typeof(bActOnElement) == 'boolean' && bActOnElement)
-		var oCodeArea = document.getElementById(oCurElement);
-	else
-		var oCodeArea = oCurElement.parentNode.nextSibling;
+	var oCodeArea = (typeof(bActOnElement) == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling;
 
 	if (typeof(oCodeArea) != 'object' || oCodeArea == null)
 		return false;
@@ -942,17 +869,13 @@ function smfSelectText(oCurElement, bActOnElement)
 function smc_saveEntities(sFormName, aElementNames, sMask)
 {
 	if (typeof(sMask) == 'string')
-	{
 		for (var i = 0, n = document.forms[sFormName].elements.length; i < n; i++)
 			if (document.forms[sFormName].elements[i].id.substr(0, sMask.length) == sMask)
 				aElementNames[aElementNames.length] = document.forms[sFormName].elements[i].name;
-	}
 
 	for (var i = 0, n = aElementNames.length; i < n; i++)
-	{
 		if (aElementNames[i] in document.forms[sFormName])
 			document.forms[sFormName][aElementNames[i]].value = document.forms[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
-	}
 }
 
 /**
@@ -975,8 +898,7 @@ function initMenu(menu)
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	menu.style.opacity = 1;
-	var lis = menu.getElementsByTagName('li');
-	var h4s = menu.getElementsByTagName('h4');
+	var lis = menu.getElementsByTagName('li'), h4s = menu.getElementsByTagName('h4'), k;
 	for (var i = 0, j = h4s.length; i < j; i++)
 		if (h4s[i].innerHTML.indexOf('<a ') == -1)
 			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; showMe.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
@@ -986,18 +908,13 @@ function initMenu(menu)
 		if (lis[i].getElementsByTagName('ul').length > 0)
 		{
 			var k = baseId + i;
-			lis[i].setAttribute('id', 'li' + k);
+			$(lis[i]).attr('id', 'li' + k).mouseover(showMe).mouseout(timeoutHide).click(function() { hideAllUls(menu); }).blur(timeoutHide).focus(showMe);
 			if (is_ie6)
 			{
 				lis[i].onkeyup = showMe;
 				document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[k] = document.getElementById('shim' + k);
+				ieshim[k] = $('#shim' + k);
 			}
-			lis[i].onmouseover = showMe;
-			lis[i].onmouseout = timeoutHide;
-			lis[i].onclick = function () { hideAllUls(menu); };
-			lis[i].onblur = timeoutHide;
-			lis[i].onfocus = showMe;
 		}
 	}
 	baseId += lis.length;
@@ -1039,12 +956,12 @@ function showShim(showsh, ieid, iemenu)
 	if (!(ieshim[iem]))
 		return;
 	if (showsh)
-	{
-		ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
-		ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
-		ieshim[iem].style.width = iemenu.offsetWidth + 'px';
-		ieshim[iem].style.height = iemenu.offsetHeight + 'px';
-	}
+		$(ieshim[iem]).css({
+			'top': iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px',
+			'left': iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px',
+			'width': iemenu.offsetWidth + 'px',
+			'height': iemenu.offsetHeight + 'px'
+		});
 	ieshim[iem].style.display = showsh ? 'block' : 'none';
 }
 
@@ -1060,8 +977,7 @@ function showMe(e)
 		if (showul.style.visibility == 'visible')
 			return hideUlUnder(this.id);
 	}
-	showul.style.visibility = 'visible';
-	showul.style.opacity = 1;
+	$(showul).css({ 'visibility': 'visible', 'opacity': 1 });
 	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
@@ -1128,8 +1044,7 @@ function hideUlUnderLi(li)
 // Ignored for now because it needs some improvement to the domain name detection.
 function linkMagic()
 {
-	var i, a, hre;
-	var n = document.getElementsByTagName('a'), hre, i, a;
+	var n = $('a'), hre, i, a;
 	for (i = 0; a = n[i]; i++)
 	{
 		// Leave a way out to external links.
@@ -1138,13 +1053,8 @@ function linkMagic()
 
 		hre = a.getAttribute('href');
 		if (typeof hre == 'string' && hre.length > 0)
-		{
 			if ((hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
-			{
-				a.setAttribute('class', 'xt');
-				a.setAttribute('className', 'xt');
-			}
-		}
+				$(a).attr('class', 'xt').attr('className', 'xt');
 	}
 }
 
@@ -1165,45 +1075,44 @@ var
 
 /* Optimize:
 smf_formSubmitted = sfs
-ajax_indicator_ele = aie
-lastKeepAliveCheck = lka
-aOnloadEvents = aoe
-alternateWidth = w
-alternateHeight = h
-previousTarget = p
-helpFrame = f
-noScrollbars = n
-oReplacements = o
-sReturn = s
-oMyDoc = d
-bAsync = b
-sUrl = u
-sContent = c
-funcCallback = f
-oCaller = o
-sFrom = f
-sTo = t
-sMatch = m
-theField = f
-theValue = v
-currentNode = n
-currentLi = c
-sFormName = f
-aElementNames = e
-sMask = m
-oCurSelection = c
-oCodeArea = a
-oCurElement = e
-bActOnElement = t
-oCurRange = r
-fNewOnload = f
-itemHandle = h
 aBoardsAndCategories = b
-oDashOption = d
-sChildLevelPrefix = p
+aElementNames = e
+additional_vars = a
+ajax_indicator_ele = aie
+alternateHeight = h
+alternateWidth = w
+bActOnElement = t
+bAsync = b
 cur_session_id = s
 cur_session_var = v
-additional_vars = a
+currentLi = c
+currentNode = n
+dropdownList = dl
+fNewOnload = f
+funcCallback = f
+itemHandle = h
+lastKeepAliveCheck = lka
+noScrollbars = n
+oCaller = o
+oCodeArea = a
+oCurElement = e
+oCurRange = r
+oCurSelection = c
+oDashOption = d
+oMyDoc = d
 oRadioGroup = r
+oReplacements = o
+previousTarget = p
+sChildLevelPrefix = p
+sContent = c
+sFormName = f
+sFrom = f
+sMask = m
+sMatch = m
+sReturn = s
+sTo = t
+sUrl = u
 theArray = a
+theField = f
+theValue = v
 */

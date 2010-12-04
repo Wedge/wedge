@@ -852,25 +852,32 @@ function ob_sessrewrite($buffer)
 
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
-	$context['delayed_events'] = $context['delayed_dupes'] = array();
+	if (!isset($context['delayed_events']))
+		$context['delayed_events'] = array();
 	$cut = explode("<!-- Javascript area -->\n", $buffer);
-	$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $cut[0]) . $cut[1];
+
+	// If the placeholder isn't there, it means we're probably not in a default index template,
+	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
+	if (!empty($cut[1]))
+		$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
 	if (!empty($context['delayed_events']))
 	{
 		$thing = 'var eves = {';
 		foreach ($context['delayed_events'] as $eve)
 			$thing .= '
-		' . $eve[0] . ': ["' . $eve[1] . '", "' . $eve[2] . '"],';
+		' . $eve[0] . ': ["' . $eve[1] . '", function() { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
 	};
 	$("*[data-eve]").each(function() {
 		var elis = $(this).data("eve");
 		for (var eve in elis)
-			$(this).bind(eves[elis[eve]][0], new Function(eves[elis[eve]][1]));
+			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 	});';
 		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
 	}
+	else
+		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
 
 	// Return the changed buffer.
 	return $buffer;
@@ -880,7 +887,7 @@ function ob_sessrewrite($buffer)
 function wedge_event_delayer($match)
 {
 	global $context;
-	static $eve = 1;
+	static $eve = 1, $dupes = array();
 
 	$eve_list = array();
 	preg_match_all('~\son(\w+)="([^"]+)"~', $match[0], $insides, PREG_SET_ORDER);
@@ -888,16 +895,16 @@ function wedge_event_delayer($match)
 	{
 		$match[0] = str_replace($inside[0], '', $match[0]);
 		$dupe = serialize($inside);
-		if (!isset($context['delayed_dupes'][$dupe]))
+		if (!isset($dupes[$dupe]))
 		{
 			$context['delayed_events'][$eve] = array($eve, $inside[1], $inside[2]);
-			$context['delayed_dupes'][$dupe] = $eve;
+			$dupes[$dupe] = $eve;
 			$eve_list[] = $eve++;
 		}
 		else
-			$eve_list[] = $context['delayed_dupes'][$dupe];
+			$eve_list[] = $dupes[$dupe];
 	}
-	return substr($match[0], 0, -1) . ' data-eve="[' . implode(',', $eve_list) . ']">';
+	return rtrim($match[0], ' />') . ' data-eve="[' . implode(',', $eve_list) . ']">';
 }
 
 // Remove and save script tags

@@ -19,7 +19,7 @@ function template_popup()
 	<div class="windowbg description">
 		', $context['help_text'], '<br />
 		<br />
-		<a href="javascript:parent.document.body.removeChild(parent.window[\'helpFrame\']); parent.window[\'helpFrame\'] = null;">', $txt['close_window'], '</a>
+		<a href="#" onclick="parent.document.body.removeChild(parent[\'helf\']); parent[\'helf\'] = null; return false;">', $txt['close_window'], '</a>
 	</div>
 </body>
 </html>';

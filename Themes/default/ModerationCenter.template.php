@@ -360,7 +360,7 @@ function template_unapproved_posts()
 	echo '
 			<div class="pagesection">
 				<div class="floatright">
-					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
+					<select name="do" onchange="if (this.value != 0 && confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
 						<option value="0">', $txt['with_selected'], ':</option>
 						<option value="0">-------------------</option>
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
@@ -450,7 +450,7 @@ function template_unapproved_attachments()
 			</table>
 			<div class="pagesection">
 				<div class="floatright">
-					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
+					<select name="do" onchange="if (this.value != 0 && confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
 						<option value="0">', $txt['with_selected'], ':</option>
 						<option value="0">-------------------</option>
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
