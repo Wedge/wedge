@@ -88,12 +88,12 @@ function Login2()
 	if (!$user_info['is_guest'])
 		redirectexit();
 
+	// Are you guessing with a script that doesn't keep the session id?
+	spamProtection('login');
+
 	// Set the login_url if it's not already set (but careful not to send us to an attachment).
 	if (empty($_SESSION['login_url']) && isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
 		$_SESSION['login_url'] = $_SESSION['old_url'];
-
-	// Are you guessing with a script that doesn't keep the session id?
-	spamProtection('login');
 
 	// Been guessing a lot, haven't we?
 	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)

@@ -752,6 +752,8 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['move_to']))
 		reorderBoards();
 
+	clean_cache('data');
+
 	// Update the pretty board URLs
 	// @todo: fix all hardcoded stuff...
 	if (isset($boardOptions['pretty_url']) || isset($boardOptions['pretty_url_dom']))
@@ -902,6 +904,8 @@ function createBoard($boardOptions)
 		}
 	}
 
+	clean_cache('data');
+
 	// Created it.
 	logAction('add_board', array('board' => $board_id), 'admin');
 
@@ -1030,6 +1034,8 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 
 	// Plus reset the cache to stop people getting odd results.
 	updateSettings(array('settings_updated' => time()));
+
+	clean_cache('data');
 
 	// Let's do some serious logging.
 	foreach ($boards_to_remove as $id_board)

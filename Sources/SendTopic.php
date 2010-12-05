@@ -279,12 +279,12 @@ function CustomEmail()
 			'RECPNAME' => $context['recipient']['name'],
 		);
 
+		// Don't let them send too many!
+		spamProtection('sendmail');
+
 		// Get the template and get out!
 		$emaildata = loadEmailTemplate('send_email', $replacements);
 		sendmail($context['recipient']['email'], $emaildata['subject'], $emaildata['body'], $from_email, null, false, 1, null, true);
-
-		// Don't let them send too many!
-		spamProtection('sendmail');
 
 		// Now work out where to go!
 		if (isset($_REQUEST['uid']))

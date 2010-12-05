@@ -1598,8 +1598,8 @@ function template_groupMembership()
 				</div>
 				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
-					<textarea name="reason" rows="4" style="width: 95%"></textarea>
-					<div class="righttext">
+					<textarea name="reason" rows="4" style="width: 99%"></textarea>
+					<div class="righttext" style="margin: 0.5em 0.5% 0 0.5%;">
 						<input type="hidden" name="gid" value="', $context['group_request']['id'], '" />
 						<input type="submit" name="req" value="', $txt['submit_request'], '" class="button_submit" />
 					</div>

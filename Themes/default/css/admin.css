@@ -445,10 +445,10 @@ dl.themes_list dd {
 /* Styles for the registration center.
 ------------------------------------------------- */
 .agreement, .reserved_names {
-	padding: 0 5px;
+	padding: 0;
 }
-#agreement {
-	width: 100%;
+#agreement, #reserved {
+	width: 99%;
 }
 
 /* Styles for the moderation center.

@@ -89,9 +89,6 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 #forumposts .cat_bar h3 {
 	clear: both;
 }
-.signature {
-	padding: 0 0 0.8em 0;
-}
 
 /* Styles for the statistics center.
 ------------------------------------------------- */

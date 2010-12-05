@@ -154,7 +154,7 @@ function createMenu($menuData, $menuOptions = array())
 						if (isset($area['custom_url']))
 							$menu_context['sections'][$section_id]['areas'][$area_id]['url'] = $area['custom_url'];
 
-						// Does this area have its own an icon?
+						// Does this area have its own icon?
 						if (isset($area['icon']))
 							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '" />&nbsp;&nbsp;';
 						else

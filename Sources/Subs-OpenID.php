@@ -157,7 +157,7 @@ function smf_openID_makeAssociation($server)
 	{
 		$parameters[] = 'openid.session_type=DH-SHA1';
 		$parameters[] = 'openid.dh_consumer_public=' . urlencode(base64_encode(long_to_binary($dh_keys['public'])));
-		$parameters[] = 'openid_assoc_type=HMAC-SHA1';
+		$parameters[] = 'openid.assoc_type=HMAC-SHA1';
 	}
 
 	// The data to post to the server.

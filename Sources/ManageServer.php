@@ -329,7 +329,7 @@ function ModifyCookieSettings($return_config = false)
 		array('cookieTime', $txt['cookieTime'], 'db', 'int'),
 		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
 		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
-		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || strtolower($_SERVER['HTTPS']) != 'on'),
+		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS']) == 'on')),
 		'',
 		// Sessions
 		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),

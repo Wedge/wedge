@@ -3677,21 +3677,28 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  * Cleans some or all of the files stored in the file cache.
  *
  * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically 'data', to prune 'data_*.php' files.
+ * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
 function clean_cache($type = '')
 {
-	global $cachedir;
+	global $cachedir, $sourcedir;
 
 	// No directory = no game.
 	if (!is_dir($cachedir))
 		return;
 
+	// Remove the files in SMF's own disk cache, if any
 	$dh = scandir($cachedir);
 	foreach ($dh as $file)
 	{
 		if ($file != '.' && $file != '..' && $file != 'index.php' && $file != '.htaccess' && (!$type || substr($file, 0, strlen($type)) == $type))
 			@unlink($cachedir . '/' . $file);
 	}
+
+	// Invalidate cache, to be sure!
+	// ... as long as Load.php can be modified, anyway.
+	@touch($sourcedir . '/' . 'Load.php');
+	clearstatcache();
 }
 
 /**

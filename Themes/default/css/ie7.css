@@ -41,9 +41,6 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 #content .pagesection {
 	height: 1%;
 }
-.signature {
-	padding: 0 0 0.8em 0;
-}
 
 /* Overrides for the profile template
 ------------------------------------------------------- */
