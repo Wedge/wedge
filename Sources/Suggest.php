@@ -34,6 +34,9 @@ function Suggest($checkRegistered = null)
 		'member' => 'Member',
 	);
 
+	if (!isset($_REQUEST['search']))
+		return false;
+
 	// If we're just checking the callback function is registered return true or false.
 	if ($checkRegistered != null)
 		return function_exists('Suggest_Search_' . $checkRegistered);
@@ -44,12 +47,12 @@ function Suggest($checkRegistered = null)
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? unserialize(base64_decode($_REQUEST['search_param'])) : array();
 
-	if (isset($_REQUEST['suggest_type'], $_REQUEST['search'], $searchTypes[$_REQUEST['suggest_type']]))
-	{
-		$function = 'Suggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
-		$context['sub_template'] = 'generic_xml';
-		$context['xml_data'] = $function();
-	}
+	if (!isset($_REQUEST['suggest_type'], $searchTypes[$_REQUEST['suggest_type']]))
+		$_REQUEST['suggest_type'] = 'member';
+
+	$function = 'Suggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
+	$context['sub_template'] = 'generic_xml';
+	$context['xml_data'] = $function();
 }
 
 // Search for a member - by real_name or member_name by default.
