@@ -1442,7 +1442,7 @@ class wedgeEditor
 		);
 		$this->bbc[] = array(
 			array(
-				'image' => array(12, 1),
+				'image' => array(7, 0),
 				'code' => 'flash',
 				'before' => '[flash=200,200]',
 				'after' => '[/flash]',
@@ -1456,7 +1456,7 @@ class wedgeEditor
 				'description' => $txt['image']
 			),
 			array(
-				'image' => array(13, 0),
+				'image' => array(12, 1),
 				'code' => 'url',
 				'before' => '[url]',
 				'after' => '[/url]',
@@ -1478,29 +1478,7 @@ class wedgeEditor
 			),
 			array(),
 			array(
-				'image' => array(7, 0),
-				'code' => 'glow',
-				'before' => '[glow=red,2,300]',
-				'after' => '[/glow]',
-				'description' => $txt['glow']
-			),
-			array(
-				'image' => array(1, 0),
-				'code' => 'shadow',
-				'before' => '[shadow=red,left]',
-				'after' => '[/shadow]',
-				'description' => $txt['shadow']
-			),
-			array(
 				'image' => array(11, 0),
-				'code' => 'move',
-				'before' => '[move]',
-				'after' => '[/move]',
-				'description' => $txt['marquee']
-			),
-			array(),
-			array(
-				'image' => array(0, 1),
 				'code' => 'nb',
 				'before' => '[nb]',
 				'after' => '[/nb]',
@@ -1550,7 +1528,7 @@ class wedgeEditor
 				'description' => $txt['bbc_spoiler']
 			),
 			array(
-				'image' => array(13, 1),
+				'image' => array(1, 0),
 				'code' => 'quote',
 				'before' => '[quote]',
 				'after' => '[/quote]',
@@ -1572,7 +1550,7 @@ class wedgeEditor
 				'description' => $txt['list_ordered']
 			),
 			array(
-				'image' => array(14, 0),
+				'image' => array(0, 1),
 				'code' => 'hr',
 				'before' => '[hr]',
 				'description' => $txt['horizontal_rule']

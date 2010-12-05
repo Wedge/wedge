@@ -839,7 +839,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 		array(
 			'b', 'i', 's', 'u',
 			'email', 'ftp', 'iurl', 'url',
-			'abbr', 'acronym', 'me', 'nobbc', 'sub', 'sup', 'time',
+			'abbr', 'me', 'nobbc', 'sub', 'sup', 'time',
 			'color', 'black', 'blue', 'green', 'red', 'white'
 		)
 	);
@@ -1031,10 +1031,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 	if ($smileys === 'print')
 	{
-		// [glow], [shadow], and [move] can't really be printed.
-		// Colors can't be displayed well... Supposed to be B&W.
-		// And links are useless on paper... just show the link.
-		foreach	(array('glow', 'shadow', 'move', 'color', 'black', 'blue', 'white', 'red', 'green', 'me', 'php', 'ftp', 'url', 'iurl', 'email', 'flash') as $disable)
+		// Colors can't be displayed well... Supposed to be B&W. And show text
+		// for links, which can't be clicked on paper. (Admit you tried. We saw you.)
+		foreach	(array('color', 'black', 'blue', 'white', 'red', 'green', 'me', 'php', 'ftp', 'url', 'iurl', 'email', 'flash') as $disable)
 			$disabled[$disable] = true;
 
 		// !!! Change maybe?
