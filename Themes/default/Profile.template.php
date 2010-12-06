@@ -2490,107 +2490,105 @@ function template_profile_avatar_select()
 										<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled="disabled"><option></option></select>
 									</div>
 									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
-
-									<script><!-- // --><![CDATA[
-										var files = ["' . implode('", "', $context['avatar_list']) . '"];
-										var avatar = document.getElementById("avatar");
-										var cat = document.getElementById("cat");
-										var selavatar = "' . $context['avatar_selected'] . '";
-										var avatardir = "' . $modSettings['avatar_url'] . '/";
-										var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
-										var file = document.getElementById("file");
-
-										if (avatar.src.indexOf("blank.gif") > -1)
-											changeSel(selavatar);
-										else
-											previewExternalAvatar(avatar.src);
-
-										function changeSel(selected)
-										{
-											if (cat.selectedIndex == -1)
-												return;
-
-											if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
-											{
-												var i;
-												var count = 0;
-
-												file.style.display = "inline";
-												file.disabled = false;
-
-												for (i = file.length; i >= 0; i = i - 1)
-													file.options[i] = null;
-
-												for (i = 0; i < files.length; i++)
-													if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
-													{
-														var filename = files[i].substr(files[i].indexOf("/") + 1);
-														var showFilename = filename.substr(0, filename.lastIndexOf("."));
-														showFilename = showFilename.replace(/[_]/g, " ");
-
-														file.options[count] = new Option(showFilename, files[i]);
-
-														if (filename == selected)
-														{
-															if (file.options.defaultSelected)
-																file.options[count].defaultSelected = true;
-															else
-																file.options[count].selected = true;
-														}
-														count++;
-													}
-
-												if (file.selectedIndex == -1 && file.options[0])
-													file.options[0].selected = true;
-
-												showAvatar();
-											}
-											else
-											{
-												file.style.display = "none";
-												file.disabled = true;
-												document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
-												document.getElementById("avatar").style.width = "";
-												document.getElementById("avatar").style.height = "";
-											}
-										}
-
-										function showAvatar()
-										{
-											if (file.selectedIndex == -1)
-												return;
-
-											document.getElementById("avatar").src = avatardir + file.options[file.selectedIndex].value;
-											document.getElementById("avatar").alt = file.options[file.selectedIndex].text;
-											document.getElementById("avatar").alt += file.options[file.selectedIndex].text == size ? "!" : "";
-											document.getElementById("avatar").style.width = "";
-											document.getElementById("avatar").style.height = "";
-										}
-
-										function previewExternalAvatar(src)
-										{
-											if (!document.getElementById("avatar"))
-												return;
-
-											var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
-											var maxWidth = ', !empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0, ';
-											var tempImage = new Image();
-
-											tempImage.src = src;
-											if (maxWidth != 0 && tempImage.width > maxWidth)
-											{
-												document.getElementById("avatar").style.height = parseInt((maxWidth * tempImage.height) / tempImage.width) + "px";
-												document.getElementById("avatar").style.width = maxWidth + "px";
-											}
-											else if (maxHeight != 0 && tempImage.height > maxHeight)
-											{
-												document.getElementById("avatar").style.width = parseInt((maxHeight * tempImage.width) / tempImage.height) + "px";
-												document.getElementById("avatar").style.height = maxHeight + "px";
-											}
-											document.getElementById("avatar").src = src;
-										}
-									// ]]></script>
 								</div>';
+
+		add_js_inline('
+	var files = ["' . implode('", "', $context['avatar_list']) . '"];
+	var avatar = document.getElementById("avatar");
+	var cat = document.getElementById("cat");
+	var selavatar = "' . $context['avatar_selected'] . '";
+	var avatardir = "' . $modSettings['avatar_url'] . '/";
+	var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
+	var file = document.getElementById("file");
+
+	if (avatar.src.indexOf("blank.gif") > -1)
+		changeSel(selavatar);
+	else
+		previewExternalAvatar(avatar.src);
+
+	function changeSel(selected)
+	{
+		if (cat.selectedIndex == -1)
+			return;
+
+		if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
+		{
+			var i;
+			var count = 0;
+
+			file.style.display = "inline";
+			file.disabled = false;
+
+			for (i = file.length; i >= 0; i = i - 1)
+				file.options[i] = null;
+
+			for (i = 0; i < files.length; i++)
+				if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
+				{
+					var filename = files[i].substr(files[i].indexOf("/") + 1);
+					var showFilename = filename.substr(0, filename.lastIndexOf("."));
+					showFilename = showFilename.replace(/[_]/g, " ");
+
+					file.options[count] = new Option(showFilename, files[i]);
+
+					if (filename == selected)
+					{
+						if (file.options.defaultSelected)
+							file.options[count].defaultSelected = true;
+						else
+							file.options[count].selected = true;
+					}
+					count++;
+				}
+
+			if (file.selectedIndex == -1 && file.options[0])
+				file.options[0].selected = true;
+
+			showAvatar();
+		}
+		else
+		{
+			file.style.display = "none";
+			file.disabled = true;
+			document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
+			document.getElementById("avatar").style.width = "";
+			document.getElementById("avatar").style.height = "";
+		}
+	}
+
+	function showAvatar()
+	{
+		if (file.selectedIndex == -1)
+			return;
+
+		document.getElementById("avatar").src = avatardir + file.options[file.selectedIndex].value;
+		document.getElementById("avatar").alt = file.options[file.selectedIndex].text + (file.options[file.selectedIndex].text == size ? "!" : "");
+		document.getElementById("avatar").style.width = "";
+		document.getElementById("avatar").style.height = "";
+	}
+
+	function previewExternalAvatar(src)
+	{
+		if (!document.getElementById("avatar"))
+			return;
+
+		var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
+		var maxWidth = ', !empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0, ';
+		var tempImage = new Image();
+
+		tempImage.src = src;
+		if (maxWidth != 0 && tempImage.width > maxWidth)
+		{
+			document.getElementById("avatar").style.height = parseInt((maxWidth * tempImage.height) / tempImage.width) + "px";
+			document.getElementById("avatar").style.width = maxWidth + "px";
+		}
+		else if (maxHeight != 0 && tempImage.height > maxHeight)
+		{
+			document.getElementById("avatar").style.width = parseInt((maxHeight * tempImage.width) / tempImage.height) + "px";
+			document.getElementById("avatar").style.height = maxHeight + "px";
+		}
+		document.getElementById("avatar").src = src;
+	}');
 	}
 
 	// If the user can link to an off server avatar, show them a box to input the address.

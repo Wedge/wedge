@@ -856,7 +856,7 @@ function template_main()
 
 		$context['footer_js'] .= '
 	});
-	$(".umme").bind("mouseenter mouseleave", function () { return oUserMenu.switchMenu(this); });';
+	$(".umme").hover(function () { return oUserMenu.switchMenu(this); });';
 	}
 }
 
