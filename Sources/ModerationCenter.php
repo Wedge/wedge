@@ -263,7 +263,7 @@ function ModBlockWatchedUsers()
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
 		$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member, real_name, last_login
 			FROM {db_prefix}members
 			WHERE warning >= {int:warning_watch}
@@ -274,9 +274,9 @@ function ModBlockWatchedUsers()
 			)
 		);
 		$watched_users = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$watched_users[] = $row;
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		cache_put_data('recent_user_watches', $watched_users, 240);
 	}
@@ -311,7 +311,7 @@ function ModBlockNotes()
 		if (!empty($_POST['new_note']) && $_POST['new_note'] !== $txt['mc_click_add_note'])
 		{
 			// Insert it into the database then!
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_comments',
 				array(
 					'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',
@@ -338,7 +338,7 @@ function ModBlockNotes()
 		checkSession('get');
 
 		// Let's delete it.
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment = {int:note}
 				AND comment_type = {string:type}',
@@ -358,7 +358,7 @@ function ModBlockNotes()
 	// How many notes in total?
 	if (($moderator_notes_total = cache_get_data('moderator_notes_total', 240)) === null)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}log_comments AS lc
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
@@ -367,8 +367,8 @@ function ModBlockNotes()
 				'modnote' => 'modnote',
 			)
 		);
-		list ($moderator_notes_total) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($moderator_notes_total) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		cache_put_data('moderator_notes_total', $moderator_notes_total, 240);
 	}
@@ -377,7 +377,7 @@ function ModBlockNotes()
 	$offset = isset($_GET['notes'], $_GET['start']) ? $_GET['start'] : 0;
 	if ($offset != 0 || ($moderator_notes = cache_get_data('moderator_notes', 240)) === null)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name,
 				lc.log_time, lc.body, lc.id_comment AS id_note
 			FROM {db_prefix}log_comments AS lc
@@ -391,9 +391,9 @@ function ModBlockNotes()
 			)
 		);
 		$moderator_notes = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$moderator_notes[] = $row;
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if ($offset == 0)
 			cache_put_data('moderator_notes', $moderator_notes, 240);
@@ -434,7 +434,7 @@ function ModBlockReportedPosts()
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
 	{
 		// By George, that means we in a position to get the reports, jolly good.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject,
 				lr.num_reports, IFNULL(mem.real_name, lr.membername) AS author_name,
 				IFNULL(mem.id_member, 0) AS id_author
@@ -451,9 +451,9 @@ function ModBlockReportedPosts()
 			)
 		);
 		$reported_posts = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$reported_posts[] = $row;
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Cache it.
 		cache_put_data('reported_posts_' . $cachekey, $reported_posts, 90);
@@ -493,7 +493,7 @@ function ModBlockGroupRequests()
 		return 'group_requests_block';
 
 	// What requests are outstanding?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, mem.member_name, mg.group_name, mem.real_name
 		FROM {db_prefix}log_group_requests AS lgr
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = lgr.id_member)
@@ -504,7 +504,7 @@ function ModBlockGroupRequests()
 		array(
 		)
 	);
-	for ($i = 0; $row = wedb::fetch_assoc($request); $i ++)
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i ++)
 	{
 		$context['group_requests'][] = array(
 			'id' => $row['id_request'],
@@ -523,7 +523,7 @@ function ModBlockGroupRequests()
 			'time_submitted' => timeformat($row['time_applied']),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return 'group_requests_block';
 }
@@ -565,7 +565,7 @@ function ReportedPosts()
 		$_GET['rid'] = (int) $_GET['rid'];
 
 		// Update the report...
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}log_reported
 			SET ' . (isset($_GET['ignore']) ? 'ignore_all = {int:ignore_all}' : 'closed = {int:closed}') . '
 			WHERE id_report = {int:id_report}
@@ -592,7 +592,7 @@ function ReportedPosts()
 
 		if (!empty($toClose))
 		{
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}log_reported
 				SET closed = {int:is_closed}
 				WHERE id_report IN ({array_int:report_list})
@@ -610,7 +610,7 @@ function ReportedPosts()
 	}
 
 	// How many entries are we viewing?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported AS lr
 		WHERE lr.closed = {int:view_closed}
@@ -619,15 +619,15 @@ function ReportedPosts()
 			'view_closed' => $context['view_closed'],
 		)
 	);
-	list ($context['total_reports']) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($context['total_reports']) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	// So, that means we can page index, yes?
 	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=reports' . ($context['view_closed'] ? ';sa=closed' : ''), $_GET['start'], $context['total_reports'], 10);
 	$context['start'] = $_GET['start'];
 
 	// By George, that means we in a position to get the reports, golly good.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
 			lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
@@ -643,7 +643,7 @@ function ReportedPosts()
 	);
 	$context['reports'] = array();
 	$report_ids = array();
-	for ($i = 0; $row = wedb::fetch_assoc($request); $i++)
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i++)
 	{
 		$report_ids[] = $row['id_report'];
 		$context['reports'][$row['id_report']] = array(
@@ -667,12 +667,12 @@ function ReportedPosts()
 			'ignore' => $row['ignore_all']
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Now get all the people who reported it.
 	if (!empty($report_ids))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment,
 				IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lrc.membername) AS reporter
 			FROM {db_prefix}log_reported_comments AS lrc
@@ -682,7 +682,7 @@ function ReportedPosts()
 				'report_list' => $report_ids,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$context['reports'][$row['id_report']]['comments'][] = array(
 				'id' => $row['id_comment'],
@@ -696,7 +696,7 @@ function ReportedPosts()
 				),
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 }
 
@@ -732,7 +732,7 @@ function recountOpenReports()
 {
 	global $user_info, $context;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported
 		WHERE ' . $user_info['mod_cache']['bq'] . '
@@ -743,8 +743,8 @@ function recountOpenReports()
 			'not_ignored' => 0,
 		)
 	);
-	list ($open_reports) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($open_reports) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	$_SESSION['rc'] = array(
 		'id' => $user_info['id'],
@@ -767,7 +767,7 @@ function ModReport()
 	$_REQUEST['report'] = (int) $_REQUEST['report'];
 
 	// Get the report details, need this so we can limit access to a particular board
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
 			lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 			IFNULL(mem.real_name, lr.membername) AS author_name, IFNULL(mem.id_member, 0) AS id_author
@@ -782,12 +782,12 @@ function ModReport()
 	);
 
 	// So did we find anything?
-	if (!wedb::num_rows($request))
+	if (!wesql::num_rows($request))
 		fatal_lang_error('mc_no_modreport_found');
 
 	// Woohoo we found a report and they can see it!  Bad news is we have more work to do
-	$row = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$row = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	// If they are adding a comment then... add a comment.
 	if (isset($_POST['add_comment']) && !empty($_POST['mod_comment']))
@@ -799,7 +799,7 @@ function ModReport()
 		// In it goes.
 		if (!empty($newComment))
 		{
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_comments',
 				array(
 					'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',
@@ -843,7 +843,7 @@ function ModReport()
 	);
 
 	// So what bad things do the reporters have to say about it?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment, lrc.member_ip,
 			IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lrc.membername) AS reporter
 		FROM {db_prefix}log_reported_comments AS lrc
@@ -853,7 +853,7 @@ function ModReport()
 			'id_report' => $context['report']['id'],
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['report']['comments'][] = array(
 			'id' => $row['id_comment'],
@@ -868,10 +868,10 @@ function ModReport()
 			),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Hang about old chap, any comments from moderators on this one?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lc.id_comment, lc.id_notice, lc.log_time, lc.body,
 			IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS moderator
 		FROM {db_prefix}log_comments AS lc
@@ -883,7 +883,7 @@ function ModReport()
 			'reportc' => 'reportc',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['report']['mod_comments'][] = array(
 			'id' => $row['id_comment'],
@@ -897,7 +897,7 @@ function ModReport()
 			),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// What have the other moderators done to this message?
 	loadSource(array('Modlog', 'Subs-List'));
@@ -1023,7 +1023,7 @@ function ShowNotice()
 
 	//!!! Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT body, subject
 		FROM {db_prefix}log_member_notices
 		WHERE id_notice = {int:id_notice}',
@@ -1031,10 +1031,10 @@ function ShowNotice()
 			'id_notice' => $id_notice,
 		)
 	);
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
-	list ($context['notice_body'], $context['notice_subject']) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($context['notice_body'], $context['notice_subject']) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	$context['notice_body'] = parse_bbc($context['notice_body'], false);
 }
@@ -1253,7 +1253,7 @@ function list_getWatchedUserCount($approve_query)
 {
 	global $modSettings;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}members
 		WHERE warning >= {int:warning_watch}',
@@ -1261,8 +1261,8 @@ function list_getWatchedUserCount($approve_query)
 			'warning_watch' => $modSettings['warning_watch'],
 		)
 	);
-	list ($totalMembers) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($totalMembers) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $totalMembers;
 }
@@ -1271,7 +1271,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 {
 	global $txt, $scripturl, $modSettings, $user_info, $context;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning
 		FROM {db_prefix}members
 		WHERE warning >= {int:warning_watch}
@@ -1284,7 +1284,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 	);
 	$watched_users = array();
 	$members = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$watched_users[$row['id_member']] = array(
 			'id' => $row['id_member'],
@@ -1297,12 +1297,12 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 		);
 		$members[] = $row['id_member'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (!empty($members))
 	{
 		// First get the latest messages from these users.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT m.id_member, MAX(m.id_msg) AS last_post_id
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -1315,13 +1315,13 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			)
 		);
 		$latest_posts = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$latest_posts[$row['id_member']] = $row['last_post_id'];
 
 		if (!empty($latest_posts))
 		{
 			// Now get the time those messages were posted.
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT id_member, poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg IN ({array_int:message_list})',
@@ -1329,16 +1329,16 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 					'message_list' => $latest_posts,
 				)
 			);
-			while ($row = wedb::fetch_assoc($request))
+			while ($row = wesql::fetch_assoc($request))
 			{
 				$watched_users[$row['id_member']]['last_post'] = timeformat($row['poster_time']);
 				$watched_users[$row['id_member']]['last_post_id'] = $latest_posts[$row['id_member']];
 			}
 
-			wedb::free_result($request);
+			wesql::free_result($request);
 		}
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT MAX(m.poster_time) AS last_post, MAX(m.id_msg) AS last_post_id, m.id_member
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -1350,12 +1350,12 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 				'is_approved' => 1,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$watched_users[$row['id_member']]['last_post'] = timeformat($row['last_post']);
 			$watched_users[$row['id_member']]['last_post_id'] = $row['last_post_id'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	return $watched_users;
@@ -1365,7 +1365,7 @@ function list_getWatchedUserPostsCount($approve_query)
 {
 	global $modSettings, $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -1377,8 +1377,8 @@ function list_getWatchedUserPostsCount($approve_query)
 			'warning_watch' => $modSettings['warning_watch'],
 		)
 	);
-	list ($totalMemberPosts) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($totalMemberPosts) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $totalMemberPosts;
 }
@@ -1387,7 +1387,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 {
 	global $txt, $scripturl, $modSettings, $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
 			m.approved, mem.real_name, m.smileys_enabled
 		FROM {db_prefix}messages AS m
@@ -1403,7 +1403,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 		)
 	);
 	$member_posts = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['subject'] = censorText($row['subject']);
 		$row['body'] = censorText($row['body']);
@@ -1419,7 +1419,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 			'can_delete' => $delete_boards == array(0) || in_array($row['id_board'], $delete_boards),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $member_posts;
 }
@@ -1558,7 +1558,7 @@ function list_getWarningCount()
 {
 	global $modSettings;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:warning}',
@@ -1566,8 +1566,8 @@ function list_getWarningCount()
 			'warning' => 'warning',
 		)
 	);
-	list ($totalWarns) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($totalWarns) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $totalWarns;
 }
@@ -1576,7 +1576,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 {
 	global $txt, $scripturl, $modSettings, $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
 			IFNULL(mem2.id_member, 0) AS id_recipient, IFNULL(mem2.real_name, lc.recipient_name) AS recipient_name,
 			lc.log_time, lc.body, lc.id_notice, lc.counter
@@ -1591,7 +1591,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 		)
 	);
 	$warnings = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$warnings[] = array(
 			'issuer_link' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['member_name_col'] . '</a>') : $row['member_name_col'],
@@ -1602,7 +1602,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 			'id_notice' => $row['id_notice'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $warnings;
 }
@@ -1620,7 +1620,7 @@ function ViewWarningTemplates()
 		checkSession('post');
 
 		// Log the actions.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT recipient_name
 			FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
@@ -1633,12 +1633,12 @@ function ViewWarningTemplates()
 				'current_member' => $user_info['id'],
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			logAction('delete_warn_template', array('template' => $row['recipient_name']));
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Do the deletes.
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
 				AND comment_type = {string:warntpl}
@@ -1755,7 +1755,7 @@ function list_getWarningTemplateCount()
 {
 	global $modSettings, $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:warntpl}
@@ -1766,8 +1766,8 @@ function list_getWarningTemplateCount()
 			'current_member' => $user_info['id'],
 		)
 	);
-	list ($totalWarns) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($totalWarns) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $totalWarns;
 }
@@ -1776,7 +1776,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 {
 	global $txt, $scripturl, $modSettings, $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,
 			IFNULL(mem.real_name, lc.member_name) AS creator_name, recipient_name AS template_title,
 			lc.log_time, lc.body
@@ -1793,7 +1793,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 		)
 	);
 	$templates = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$templates[] = array(
 			'id_comment' => $row['id_comment'],
@@ -1803,7 +1803,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			'body' => westr::htmlspecialchars($row['body']),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $templates;
 }
@@ -1832,7 +1832,7 @@ function ModifyWarningTemplate()
 	// If it's an edit load it.
 	if ($context['is_edit'])
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member, id_recipient, recipient_name AS template_title, body
 			FROM {db_prefix}log_comments
 			WHERE id_comment = {int:id}
@@ -1845,7 +1845,7 @@ function ModifyWarningTemplate()
 				'current_member' => $user_info['id'],
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$context['template_data'] = array(
 				'title' => $row['template_title'],
@@ -1854,7 +1854,7 @@ function ModifyWarningTemplate()
 				'can_edit_personal' => $row['id_member'] == $user_info['id'],
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	// Wait, we are saving?
@@ -1888,7 +1888,7 @@ function ModifyWarningTemplate()
 		if ($context['is_edit'])
 		{
 			// Simple update...
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}log_comments
 				SET id_recipient = {int:personal}, recipient_name = {string:title}, body = {string:body}
 				WHERE id_comment = {int:id}
@@ -1918,7 +1918,7 @@ function ModifyWarningTemplate()
 		}
 		else
 		{
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_comments',
 				array(
 					'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int',

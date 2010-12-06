@@ -147,7 +147,7 @@ function QuickModeration()
 	if (!empty($_REQUEST['actions']))
 	{
 		// Find all topics...
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_topic, id_member_started, id_board, locked, approved, unapproved_posts
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:action_topic_ids})
@@ -156,7 +156,7 @@ function QuickModeration()
 				'action_topic_ids' => array_keys($_REQUEST['actions']),
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if (!empty($board))
 			{
@@ -182,7 +182,7 @@ function QuickModeration()
 					unset($_REQUEST['actions'][$row['id_topic']]);
 			}
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	$stickyCache = array();
@@ -227,7 +227,7 @@ function QuickModeration()
 	// Do all the stickies...
 	if (!empty($stickyCache))
 	{
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}topics
 			SET is_sticky = CASE WHEN is_sticky = {int:is_sticky} THEN 0 ELSE 1 END
 			WHERE id_topic IN ({array_int:sticky_topic_ids})',
@@ -238,7 +238,7 @@ function QuickModeration()
 		);
 
 		// Get the board IDs and Sticky status
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_topic, id_board, is_sticky
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:sticky_topic_ids})
@@ -249,19 +249,19 @@ function QuickModeration()
 		);
 		$stickyCacheBoards = array();
 		$stickyCacheStatus = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$stickyCacheBoards[$row['id_topic']] = $row['id_board'];
 			$stickyCacheStatus[$row['id_topic']] = empty($row['is_sticky']);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	// Move sucka! (this is, by the by, probably the most complicated part....)
 	if (!empty($moveCache[0]))
 	{
 		// I know - I just KNOW you're trying to beat the system.  Too bad for you... we CHECK :P.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT t.id_topic, t.id_board, b.count_posts
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
@@ -276,7 +276,7 @@ function QuickModeration()
 		$moveTos = array();
 		$moveCache2 = array();
 		$countPosts = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$to = $moveCache[1][$row['id_topic']];
 
@@ -294,7 +294,7 @@ function QuickModeration()
 			// For reporting...
 			$moveCache2[] = array($row['id_topic'], $row['id_board'], $to);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		$moveCache = $moveCache2;
 
@@ -308,7 +308,7 @@ function QuickModeration()
 		if (!empty($moveTos))
 		{
 			$topicRecounts = array();
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT id_board, count_posts
 				FROM {db_prefix}boards
 				WHERE id_board IN ({array_int:move_boards})',
@@ -317,7 +317,7 @@ function QuickModeration()
 				)
 			);
 
-			while ($row = wedb::fetch_assoc($request))
+			while ($row = wesql::fetch_assoc($request))
 			{
 				$cp = empty($row['count_posts']);
 
@@ -333,14 +333,14 @@ function QuickModeration()
 				}
 			}
 
-			wedb::free_result($request);
+			wesql::free_result($request);
 
 			if (!empty($topicRecounts))
 			{
 				$members = array();
 
 				// Get all the members who have posted in the moved topics.
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT id_member, id_topic
 					FROM {db_prefix}messages
 					WHERE id_topic IN ({array_int:moved_topic_ids})',
@@ -349,7 +349,7 @@ function QuickModeration()
 					)
 				);
 
-				while ($row = wedb::fetch_assoc($request))
+				while ($row = wesql::fetch_assoc($request))
 				{
 					if (!isset($members[$row['id_member']]))
 						$members[$row['id_member']] = 0;
@@ -360,7 +360,7 @@ function QuickModeration()
 						$members[$row['id_member']] -= 1;
 				}
 
-				wedb::free_result($request);
+				wesql::free_result($request);
 
 				// And now update them member's post counts
 				foreach ($members as $id_member => $post_adj)
@@ -374,7 +374,7 @@ function QuickModeration()
 	if (!empty($removeCache))
 	{
 		// They can only delete their own topics. (we wouldn't be here if they couldn't do that..)
-		$result = wedb::query('
+		$result = wesql::query('
 			SELECT id_topic, id_board
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:removed_topic_ids})' . (!empty($board) && !allowedTo('remove_any') ? '
@@ -388,12 +388,12 @@ function QuickModeration()
 
 		$removeCache = array();
 		$removeCacheBoards = array();
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			$removeCache[] = $row['id_topic'];
 			$removeCacheBoards[$row['id_topic']] = $row['id_board'];
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		// Maybe *none* were their own topics.
 		if (!empty($removeCache))
@@ -415,7 +415,7 @@ function QuickModeration()
 	if (!empty($approveCache))
 	{
 		// We need unapproved topic ids and their authors!
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_topic, id_member_started
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:approve_topic_ids})
@@ -428,12 +428,12 @@ function QuickModeration()
 		);
 		$approveCache = array();
 		$approveCacheMembers = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$approveCache[] = $row['id_topic'];
 			$approveCacheMembers[$row['id_topic']] = $row['id_member_started'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Any topics to approve?
 		if (!empty($approveCache))
@@ -456,7 +456,7 @@ function QuickModeration()
 		if (!empty($board) && !allowedTo('lock_any'))
 		{
 			// Make sure they started the topic AND it isn't already locked by someone with higher priv's.
-			$result = wedb::query('
+			$result = wesql::query('
 				SELECT id_topic, locked, id_board
 				FROM {db_prefix}topics
 				WHERE id_topic IN ({array_int:locked_topic_ids})
@@ -470,17 +470,17 @@ function QuickModeration()
 			);
 			$lockCache = array();
 			$lockCacheBoards = array();
-			while ($row = wedb::fetch_assoc($result))
+			while ($row = wesql::fetch_assoc($result))
 			{
 				$lockCache[] = $row['id_topic'];
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 			}
-			wedb::free_result($result);
+			wesql::free_result($result);
 		}
 		else
 		{
-			$result = wedb::query('
+			$result = wesql::query('
 				SELECT id_topic, locked, id_board
 				FROM {db_prefix}topics
 				WHERE id_topic IN ({array_int:locked_topic_ids})
@@ -490,19 +490,19 @@ function QuickModeration()
 				)
 			);
 			$lockCacheBoards = array();
-			while ($row = wedb::fetch_assoc($result))
+			while ($row = wesql::fetch_assoc($result))
 			{
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
 			}
-			wedb::free_result($result);
+			wesql::free_result($result);
 		}
 
 		// It could just be that *none* were their own topics...
 		if (!empty($lockCache))
 		{
 			// Alternate the locked value.
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}topics
 				SET locked = CASE WHEN locked = {int:is_locked} THEN ' . (allowedTo('lock_any') ? '1' : '2') . ' ELSE 0 END
 				WHERE id_topic IN ({array_int:locked_topic_ids})',
@@ -520,7 +520,7 @@ function QuickModeration()
 		foreach ($markCache as $topic)
 			$markArray[] = array($modSettings['maxMsgID'], $user_info['id'], $topic);
 
-		wedb::insert('replace',
+		wesql::insert('replace',
 			'{db_prefix}log_topics',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int'),
 			$markArray,

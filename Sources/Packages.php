@@ -205,7 +205,7 @@ function PackageInstallTest()
 		fatal_lang_error('no_access', false);
 
 	// Load up any custom themes we may want to install into...
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE (id_theme = {int:default_theme} OR id_theme IN ({array_int:known_theme_list}))
@@ -218,9 +218,9 @@ function PackageInstallTest()
 		)
 	);
 	$theme_paths = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$theme_paths[$row['id_theme']][$row['variable']] = $row['value'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Get the package info...
 	$packageInfo = getPackageInfo($context['filename']);
@@ -238,7 +238,7 @@ function PackageInstallTest()
 	$context['is_installed'] = false;
 
 	// See if it is installed?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT version, themes_installed, db_changes
 		FROM {db_prefix}log_packages
 		WHERE package_id = {string:current_package}
@@ -251,13 +251,13 @@ function PackageInstallTest()
 		)
 	);
 
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$old_themes = explode(',', $row['themes_installed']);
 		$old_version = $row['version'];
 		$db_changes = empty($row['db_changes']) ? array() : unserialize($row['db_changes']);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$context['database_changes'] = array();
 	if (!empty($db_changes))
@@ -766,7 +766,7 @@ function PackageInstall()
 	}
 
 	// Now load up the paths of the themes that we need to know about.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE id_theme IN ({array_int:custom_themes})
@@ -779,9 +779,9 @@ function PackageInstall()
 	);
 	$theme_paths = array();
 	$themes_installed = array(1);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$theme_paths[$row['id_theme']][$row['variable']] = $row['value'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Are there any theme copying that we want to take place?
 	$context['theme_copies'] = array(
@@ -825,7 +825,7 @@ function PackageInstall()
 	$context['is_installed'] = false;
 
 	// Is it actually installed?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT version, themes_installed, db_changes
 		FROM {db_prefix}log_packages
 		WHERE package_id = {string:current_package}
@@ -837,13 +837,13 @@ function PackageInstall()
 			'current_package' => $packageInfo['id'],
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$old_themes = explode(',', $row['themes_installed']);
 		$old_version = $row['version'];
 		$db_changes = empty($row['db_changes']) ? array() : unserialize($row['db_changes']);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Wait, it's not installed yet!
 	// !!! TODO: Replace with a better error message!
@@ -937,7 +937,7 @@ function PackageInstall()
 				global $db_package_log;
 
 				// We'll likely want the package specific database functionality!
-				wedb::extend('packages');
+				wesql::extend('packages');
 
 				// Let the file work its magic ;)
 				require($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']);
@@ -967,7 +967,7 @@ function PackageInstall()
 		package_put_contents($boarddir . '/Packages/installed.list', time());
 
 		// See if this is already installed, and change it's state as required.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT package_id, install_state, db_changes
 			FROM {db_prefix}log_packages
 			WHERE install_state != {int:not_installed}
@@ -982,12 +982,12 @@ function PackageInstall()
 			)
 		);
 		$is_upgrade = false;
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			// Uninstalling?
 			if ($context['uninstalling'])
 			{
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}log_packages
 					SET install_state = {int:not_installed}, member_removed = {string:member_name}, id_member_removed = {int:current_member},
 						time_removed = {int:current_time}
@@ -1047,7 +1047,7 @@ function PackageInstall()
 			// What failed steps?
 			$failed_step_insert = serialize($failed_steps);
 
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_packages',
 				array(
 					'filename' => 'string', 'name' => 'string', 'package_id' => 'string', 'version' => 'string',
@@ -1064,7 +1064,7 @@ function PackageInstall()
 				array('id_install')
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		$context['install_finished'] = true;
 	}
@@ -1073,7 +1073,7 @@ function PackageInstall()
 	if (!empty($db_changes) && !empty($_POST['do_db_changes']))
 	{
 		// We're gonna be needing the package db functions!
-		wedb::extend('packages');
+		wesql::extend('packages');
 
 		foreach ($db_changes as $change)
 		{
@@ -1193,7 +1193,7 @@ function FlushInstall()
 	package_put_contents($boarddir . '/Packages/installed.list', time());
 
 	// Set everything as uninstalled.
-	wedb::query('
+	wesql::query('
 		UPDATE {db_prefix}log_packages
 		SET install_state = {int:not_installed}',
 		array(
@@ -1467,7 +1467,7 @@ function ViewOperations()
 	}
 
 	// Load up any custom themes we may want to install into...
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE (id_theme = {int:default_theme} OR id_theme IN ({array_int:known_theme_list}))
@@ -1480,9 +1480,9 @@ function ViewOperations()
 		)
 	);
 	$theme_paths = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$theme_paths[$row['id_theme']][$row['variable']] = $row['value'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$mod_actions = parseModification(@file_get_contents($boarddir . '/Packages/temp/' . $context['base_path'] . $_REQUEST['filename']), true, $reverse, $theme_paths);
 
@@ -1692,7 +1692,7 @@ function PackagePermissions()
 	}
 
 	// Load up any custom themes.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT value
 		FROM {db_prefix}themes
 		WHERE id_theme > {int:default_theme_id}
@@ -1705,7 +1705,7 @@ function PackagePermissions()
 			'theme_dir' => 'theme_dir',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if (substr(strtolower(strtr($row['value'], array('\\' => '/'))), 0, strlen($boarddir) + 7) == strtolower(strtr($boarddir, array('\\' => '/')) . '/Themes'))
 			$context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['Themes']['contents'][substr($row['value'], strlen($boarddir) + 8)] = array(
@@ -1732,7 +1732,7 @@ function PackagePermissions()
 			);
 		}
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// If we're submitting then let's move on to another function to keep things cleaner..
 	if (isset($_POST['action_changes']))

@@ -321,7 +321,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 	global $modSettings;
 
 	// Find all the posts. Newer ones will have higher IDs.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg, m.id_board, b.name AS board_name,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
@@ -340,7 +340,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 		))
 	);
 	$posts = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -379,7 +379,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			'new_from' => $row['new_from'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Just return it.
 	if ($output_method != 'echo' || empty($posts))
@@ -434,7 +434,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		$icon_sources[$icon] = 'images_url';
 
 	// Find all the posts in distinct topics.  Newer ones will have higher IDs.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.poster_time, ms.subject, m.id_topic, m.id_member, m.id_msg, b.id_board, b.name AS board_name, t.num_replies, t.num_views,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
@@ -466,7 +466,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		)
 	);
 	$posts = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
 		if (westr::strlen($row['body']) > 128)
@@ -510,7 +510,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Just return it.
 	if ($output_method != 'echo' || empty($posts))
@@ -543,7 +543,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 	global $db_prefix, $scripturl;
 
 	// Find the latest poster.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_member, real_name, posts
 		FROM {db_prefix}members
 		ORDER BY posts DESC
@@ -552,7 +552,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 		)
 	);
 	$return = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$return[] = array(
 			'id' => $row['id_member'],
 			'name' => $row['real_name'],
@@ -560,7 +560,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
 			'posts' => $row['posts']
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Just return all the top posters.
 	if ($output_method != 'echo')
@@ -580,7 +580,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 	global $context, $settings, $db_prefix, $txt, $scripturl, $user_info, $modSettings;
 
 	// Find boards with lots of posts.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			b.name, b.num_topics, b.num_posts, b.id_board,' . (!$user_info['is_guest'] ? ' 1 AS is_read' : '
 			(IFNULL(lb.id_msg, 0) >= b.id_last_msg) AS is_read') . '
@@ -596,7 +596,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 		)
 	);
 	$boards = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$boards[] = array(
 			'id' => $row['id_board'],
 			'num_posts' => $row['num_posts'],
@@ -606,7 +606,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>'
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// If we shouldn't output or have nothing to output, just jump out.
 	if ($output_method != 'echo' || empty($boards))
@@ -638,7 +638,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 	if ($modSettings['totalMessages'] > 100000)
 	{
 		// !!! Why don't we use {query(_wanna)_see_board}?
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($modSettings['postmod_active'] ? '
@@ -651,14 +651,14 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 			)
 		);
 		$topic_ids = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$topic_ids[] = $row['id_topic'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 	else
 		$topic_ids = array();
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.subject, m.id_topic, t.num_views, t.num_replies
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -677,7 +677,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 		)
 	);
 	$topics = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		censorText($row['subject']);
 
@@ -690,7 +690,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if ($output_method != 'echo' || empty($topics))
 		return $topics;
@@ -827,7 +827,7 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 	global $modSettings, $memberContext;
 
 	// Fetch the members in question.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_member
 		FROM {db_prefix}members
 		WHERE ' . $query_where . '
@@ -837,9 +837,9 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 		))
 	);
 	$members = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$members[] = $row['id_member'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (empty($members))
 		return array();
@@ -894,23 +894,23 @@ function ssi_boardStats($output_method = 'echo')
 		'topics' => $modSettings['totalTopics']
 	);
 
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}boards',
 		array(
 		)
 	);
-	list ($totals['boards']) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($totals['boards']) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}categories',
 		array(
 		)
 	);
-	list ($totals['categories']) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($totals['categories']) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	if ($output_method != 'echo')
 		return $totals;
@@ -1038,7 +1038,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if (empty($boardsAllowed))
 		return array();
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT p.id_poll, p.question, t.id_topic, p.max_votes, p.guest_vote, p.hide_results, p.expire_time
 		FROM {db_prefix}polls AS p
 			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
@@ -1065,8 +1065,8 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'recycle_enable' => $modSettings['recycle_board'],
 		)
 	);
-	$row = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$row = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	// This user has voted on all the polls.
 	if ($row === false)
@@ -1076,7 +1076,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if ($user_info['is_guest'] && (!$row['guest_vote'] || (isset($_COOKIE['guest_poll_vote']) && in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote'])))))
 		return ssi_showPoll($row['id_topic'], $output_method);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(DISTINCT id_member)
 		FROM {db_prefix}log_polls
 		WHERE id_poll = {int:current_poll}',
@@ -1084,10 +1084,10 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'current_poll' => $row['id_poll'],
 		)
 	);
-	list ($total) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($total) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_choice, label, votes
 		FROM {db_prefix}poll_choices
 		WHERE id_poll = {int:current_poll}',
@@ -1096,13 +1096,13 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		)
 	);
 	$options = array();
-	while ($rowChoice = wedb::fetch_assoc($request))
+	while ($rowChoice = wesql::fetch_assoc($request))
 	{
 		censorText($rowChoice['label']);
 
 		$options[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Can they view it?
 	$is_expired = !empty($row['expire_time']) && $row['expire_time'] < time();
@@ -1175,7 +1175,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	else
 		$topic = (int) $topic;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			p.id_poll, p.question, p.voting_locked, p.hide_results, p.expire_time, p.max_votes, p.guest_vote, b.id_board
 		FROM {db_prefix}topics AS t
@@ -1194,11 +1194,11 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	);
 
 	// Either this topic has no poll, or the user cannot view it.
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 		return array();
 
-	$row = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$row = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	// Check if they can vote.
 	if (!empty($row['expire_time']) && $row['expire_time'] < time())
@@ -1211,7 +1211,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 		$allow_vote = false;
 	else
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member
 			FROM {db_prefix}log_polls
 			WHERE id_poll = {int:current_poll}
@@ -1222,15 +1222,15 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				'current_poll' => $row['id_poll'],
 			)
 		);
-		$allow_vote = wedb::num_rows($request) == 0;
-		wedb::free_result($request);
+		$allow_vote = wesql::num_rows($request) == 0;
+		wesql::free_result($request);
 	}
 
 	// Can they view?
 	$is_expired = !empty($row['expire_time']) && $row['expire_time'] < time();
 	$allow_view_results = allowedTo('moderate_board') || $row['hide_results'] == 0 || ($row['hide_results'] == 1 && !$allow_vote) || $is_expired;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(DISTINCT id_member)
 		FROM {db_prefix}log_polls
 		WHERE id_poll = {int:current_poll}',
@@ -1238,10 +1238,10 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'current_poll' => $row['id_poll'],
 		)
 	);
-	list ($total) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($total) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_choice, label, votes
 		FROM {db_prefix}poll_choices
 		WHERE id_poll = {int:current_poll}',
@@ -1251,14 +1251,14 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	);
 	$options = array();
 	$total_votes = 0;
-	while ($rowChoice = wedb::fetch_assoc($request))
+	while ($rowChoice = wesql::fetch_assoc($request))
 	{
 		censorText($rowChoice['label']);
 
 		$options[$rowChoice['id_choice']] = array($rowChoice['label'], $rowChoice['votes']);
 		$total_votes += $rowChoice['votes'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$return = array(
 		'id' => $row['id_poll'],
@@ -1361,7 +1361,7 @@ function ssi_pollVote()
 	$_POST['poll'] = (int) $_POST['poll'];
 
 	// Check if they have already voted, or voting is locked.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			p.id_poll, p.voting_locked, p.expire_time, p.max_votes, p.guest_vote,
 			t.id_topic,
@@ -1380,10 +1380,10 @@ function ssi_pollVote()
 			'is_approved' => 1,
 		)
 	);
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 		die;
-	$row = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$row = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	if (!empty($row['voting_locked']) || ($row['selected'] != -1 && !$user_info['is_guest']) || (!empty($row['expire_time']) && time() > $row['expire_time']))
 		redirectexit('topic=' . $row['id_topic'] . '.0');
@@ -1414,13 +1414,13 @@ function ssi_pollVote()
 	}
 
 	// Add their vote in to the tally.
-	wedb::insert('insert',
+	wesql::insert('insert',
 		$db_prefix . 'log_polls',
 		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
 		$inserts,
 		array('id_poll', 'id_member', 'id_choice')
 	);
-	wedb::query('
+	wesql::query('
 		UPDATE {db_prefix}poll_choices
 		SET votes = votes + 1
 		WHERE id_poll = {int:current_poll}
@@ -1606,7 +1606,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	$start = max(0, $start);
 
 	// Make sure guests can see this board.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_board
 		FROM {db_prefix}boards
 		WHERE ' . ($board === null ? '' : 'id_board = {int:current_board}
@@ -1616,7 +1616,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 			'current_board' => $board,
 		)
 	);
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 	{
 		if ($output_method == 'echo')
 		{
@@ -1626,8 +1626,8 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		else
 			return array();
 	}
-	list ($board) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($board) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	// Load the message icons - the usual suspects.
 	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless');
@@ -1636,7 +1636,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		$icon_sources[$icon] = 'images_url';
 
 	// Find the post ids.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_first_msg
 		FROM {db_prefix}topics
 		WHERE id_board = {int:current_board}' . ($modSettings['postmod_active'] ? '
@@ -1649,15 +1649,15 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		)
 	);
 	$posts = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$posts[] = $row['id_first_msg'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (empty($posts))
 		return array();
 
 	// Find the posts.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.icon, m.subject, m.body, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			t.num_replies, t.id_topic, m.id_member, m.smileys_enabled, m.id_msg, t.locked, t.id_last_msg
@@ -1672,7 +1672,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		)
 	);
 	$return = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// If we want to limit the length of the post.
 		if (!empty($length) && westr::strlen($row['body']) > $length)
@@ -1720,7 +1720,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 			'is_last' => false
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (empty($return))
 		return $return;
@@ -1755,7 +1755,7 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 	global $db_prefix, $user_info, $scripturl, $modSettings, $txt, $context;
 
 	// Find all events which are happening in the near future that the member can see.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			cal.id_event, cal.start_date, cal.end_date, cal.title, cal.id_member, cal.id_topic,
 			cal.id_board, t.id_first_msg, t.approved
@@ -1774,7 +1774,7 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 	);
 	$return = array();
 	$duplicates = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// Check if we've already come by an event linked to this same topic with the same title... and don't display it if we have.
 		if (!empty($duplicates[$row['title'] . $row['id_topic']]))
@@ -1807,7 +1807,7 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 		// Let's not show this one again, huh?
 		$duplicates[$row['title'] . $row['id_topic']] = true;
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	foreach ($return as $mday => $array)
 		$return[$mday][count($array) - 1]['is_last'] = true;
@@ -1839,7 +1839,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 	if ($id === null)
 		return;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT passwd, member_name, is_activated
 		FROM {db_prefix}members
 		WHERE ' . ($is_username ? 'member_name' : 'id_member') . ' = {string:id}
@@ -1848,8 +1848,8 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 			'id' => $id,
 		)
 	);
-	list ($pass, $user, $active) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($pass, $user, $active) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return sha1(strtolower($user) . $password) == $pass && $active == 1;
 }
@@ -1871,7 +1871,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 		$attachment_ext = array($attachment_ext);
 
 	// Let's build the query.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			att.id_attach, att.id_msg, att.filename, IFNULL(att.size, 0) AS filesize, att.downloads, mem.id_member,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.id_topic, m.subject, t.id_board, m.poster_time,
@@ -1900,7 +1900,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 
 	// We have something.
 	$attachments = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$filename = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($row['filename']));
 
@@ -1943,7 +1943,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 			);
 		}
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// So you just want an array?  Here you can have it.
 	if ($output_method == 'array' || empty($attachments))

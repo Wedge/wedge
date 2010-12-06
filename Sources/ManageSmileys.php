@@ -328,7 +328,7 @@ function EditSmileySets()
 				$dir->close();
 
 				// Exclude the smileys that are already in the database.
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT filename
 					FROM {db_prefix}smileys
 					WHERE filename IN ({array_string:smiley_list})',
@@ -336,10 +336,10 @@ function EditSmileySets()
 						'smiley_list' => $smileys,
 					)
 				);
-				while ($row = wedb::fetch_assoc($request))
+				while ($row = wesql::fetch_assoc($request))
 					if (isset($smileys[strtolower($row['filename'])]))
 						unset($smileys[strtolower($row['filename'])]);
-				wedb::free_result($request);
+				wesql::free_result($request);
 
 				$context['current_set']['can_import'] = count($smileys);
 				// Setup this string to look nice.
@@ -546,7 +546,7 @@ function AddSmiley()
 			fatal_lang_error('smiley_has_no_code');
 
 		// Check whether the new code has duplicates. It should be unique.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_smiley
 			FROM {db_prefix}smileys
 			WHERE code = BINARY {string:smiley_code}',
@@ -554,9 +554,9 @@ function AddSmiley()
 				'smiley_code' => $_POST['smiley_code'],
 			)
 		);
-		if (wedb::num_rows($request) > 0)
+		if (wesql::num_rows($request) > 0)
 			fatal_lang_error('smiley_not_unique');
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// If we are uploading - check all the smiley sets are writable!
 		if ($_POST['method'] != 'existing')
@@ -684,7 +684,7 @@ function AddSmiley()
 		$smiley_order = '0';
 		if ($_POST['smiley_location'] != 1)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT MAX(smiley_order) + 1
 				FROM {db_prefix}smileys
 				WHERE hidden = {int:smiley_location}
@@ -694,13 +694,13 @@ function AddSmiley()
 					'first_row' => 0,
 				)
 			);
-			list ($smiley_order) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($smiley_order) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			if (empty($smiley_order))
 				$smiley_order = '0';
 		}
-		wedb::insert('',
+		wesql::insert('',
 			'{db_prefix}smileys',
 			array(
 				'code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'hidden' => 'int', 'smiley_order' => 'int',
@@ -775,7 +775,7 @@ function EditSmileys()
 				$_POST['checked_smileys'][$id] = (int) $smiley_id;
 
 			if ($_POST['smiley_action'] == 'delete')
-				wedb::query('
+				wesql::query('
 					DELETE FROM {db_prefix}smileys
 					WHERE id_smiley IN ({array_int:checked_smileys})',
 					array(
@@ -792,7 +792,7 @@ function EditSmileys()
 					'popup' => 2
 				);
 				if (isset($displayTypes[$_POST['smiley_action']]))
-					wedb::query('
+					wesql::query('
 						UPDATE {db_prefix}smileys
 						SET hidden = {int:display_type}
 						WHERE id_smiley IN ({array_int:checked_smileys})',
@@ -809,7 +809,7 @@ function EditSmileys()
 			// Is it a delete?
 			if (!empty($_POST['deletesmiley']))
 			{
-				wedb::query('
+				wesql::query('
 					DELETE FROM {db_prefix}smileys
 					WHERE id_smiley = {int:current_smiley}',
 					array(
@@ -834,7 +834,7 @@ function EditSmileys()
 					fatal_lang_error('smiley_has_no_filename');
 
 				// Check whether the new code has duplicates. It should be unique.
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT id_smiley
 					FROM {db_prefix}smileys
 					WHERE code = BINARY {string:smiley_code}' . (empty($_POST['smiley']) ? '' : '
@@ -844,11 +844,11 @@ function EditSmileys()
 						'smiley_code' => $_POST['smiley_code'],
 					)
 				);
-				if (wedb::num_rows($request) > 0)
+				if (wesql::num_rows($request) > 0)
 					fatal_lang_error('smiley_not_unique');
-				wedb::free_result($request);
+				wesql::free_result($request);
 
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}smileys
 					SET
 						code = {string:smiley_code},
@@ -1143,7 +1143,7 @@ function EditSmileys()
 			ksort($context['filenames']);
 		}
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_smiley AS id, code, filename, description, hidden AS location, 0 AS is_new
 			FROM {db_prefix}smileys
 			WHERE id_smiley = {int:current_smiley}',
@@ -1151,10 +1151,10 @@ function EditSmileys()
 				'current_smiley' => (int) $_REQUEST['smiley'],
 			)
 		);
-		if (wedb::num_rows($request) != 1)
+		if (wesql::num_rows($request) != 1)
 			fatal_lang_error('smiley_not_found');
-		$context['current_smiley'] = wedb::fetch_assoc($request);
-		wedb::free_result($request);
+		$context['current_smiley'] = wesql::fetch_assoc($request);
+		wesql::free_result($request);
 
 		$context['current_smiley']['code'] = htmlspecialchars($context['current_smiley']['code']);
 		$context['current_smiley']['filename'] = htmlspecialchars($context['current_smiley']['filename']);
@@ -1167,7 +1167,7 @@ function EditSmileys()
 
 function list_getSmileys($start, $items_per_page, $sort)
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
 		ORDER BY ' . $sort,
@@ -1175,23 +1175,23 @@ function list_getSmileys($start, $items_per_page, $sort)
 		)
 	);
 	$smileys = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$smileys[] = $row;
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $smileys;
 }
 
 function list_getNumSmileys()
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}smileys',
 		array(
 		)
 	);
-	list($numSmileys) = wedb::fetch_row;
-	wedb::free_result($request);
+	list($numSmileys) = wesql::fetch_row;
+	wesql::free_result($request);
 
 	return $numSmileys;
 }
@@ -1215,7 +1215,7 @@ function EditSmileyOrder()
 		{
 			$_GET['after'] = (int) $_GET['after'];
 
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT smiley_row, smiley_order, hidden
 				FROM {db_prefix}smileys
 				WHERE hidden = {int:location}
@@ -1225,10 +1225,10 @@ function EditSmileyOrder()
 					'after_smiley' => $_GET['after'],
 				)
 			);
-			if (wedb::num_rows($request) != 1)
+			if (wesql::num_rows($request) != 1)
 				fatal_lang_error('smiley_not_found');
-			list ($smiley_row, $smiley_order, $smileyLocation) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($smiley_row, $smiley_order, $smileyLocation) = wesql::fetch_row($request);
+			wesql::free_result($request);
 		}
 		else
 		{
@@ -1237,7 +1237,7 @@ function EditSmileyOrder()
 			$smileyLocation = (int) $_GET['location'];
 		}
 
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}smileys
 			SET smiley_order = smiley_order + 1
 			WHERE hidden = {int:new_location}
@@ -1250,7 +1250,7 @@ function EditSmileyOrder()
 			)
 		);
 
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}smileys
 			SET
 				smiley_order = {int:smiley_order} + 1,
@@ -1269,7 +1269,7 @@ function EditSmileyOrder()
 		cache_put_data('posting_smileys', null, 480);
 	}
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
 		WHERE hidden != {int:popup}
@@ -1286,7 +1286,7 @@ function EditSmileyOrder()
 			'rows' => array(),
 		),
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$location = empty($row['hidden']) ? 'postform' : 'popup';
 		$context['smileys'][$location]['rows'][$row['smiley_row']][] = array(
@@ -1299,7 +1299,7 @@ function EditSmileyOrder()
 			'selected' => !empty($_REQUEST['move']) && $_REQUEST['move'] == $row['id_smiley'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$context['move_smiley'] = empty($_REQUEST['move']) ? 0 : (int) $_REQUEST['move'];
 
@@ -1321,7 +1321,7 @@ function EditSmileyOrder()
 			// Fix empty rows if any.
 			if ($id != $smiley_row[0]['row'])
 			{
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}smileys
 					SET smiley_row = {int:new_row}
 					WHERE smiley_row = {int:current_row}
@@ -1338,7 +1338,7 @@ function EditSmileyOrder()
 			// Make sure the smiley order is always sequential.
 			foreach ($smiley_row as $order_id => $smiley)
 				if ($order_id != $smiley['order'])
-					wedb::query('
+					wesql::query('
 						UPDATE {db_prefix}smileys
 						SET smiley_order = {int:new_order}
 						WHERE id_smiley = {int:current_smiley}',
@@ -1410,7 +1410,7 @@ function ImportSmileys($smileyPath)
 	$dir->close();
 
 	// Exclude the smileys that are already in the database.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT filename
 		FROM {db_prefix}smileys
 		WHERE filename IN ({array_string:smiley_list})',
@@ -1418,12 +1418,12 @@ function ImportSmileys($smileyPath)
 			'smiley_list' => $smileys,
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		if (isset($smileys[strtolower($row['filename'])]))
 			unset($smileys[strtolower($row['filename'])]);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT MAX(smiley_order)
 		FROM {db_prefix}smileys
 		WHERE hidden = {int:postform}
@@ -1433,8 +1433,8 @@ function ImportSmileys($smileyPath)
 			'first_row' => 0,
 		)
 	);
-	list ($smiley_order) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($smiley_order) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	$new_smileys = array();
 	foreach ($smileys as $smiley)
@@ -1443,7 +1443,7 @@ function ImportSmileys($smileyPath)
 
 	if (!empty($new_smileys))
 	{
-		wedb::insert('',
+		wesql::insert('',
 			'{db_prefix}smileys',
 			array(
 				'code' => 'string-30', 'filename' => 'string-48', 'description' => 'string-80', 'smiley_row' => 'int', 'smiley_order' => 'int',
@@ -1467,7 +1467,7 @@ function EditMessageIcons()
 
 	// Get a list of icons.
 	$context['icons'] = array();
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
 		FROM {db_prefix}message_icons AS m
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -1477,7 +1477,7 @@ function EditMessageIcons()
 	);
 	$last_icon = 0;
 	$trueOrder = 0;
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['icons'][$row['id_icon']] = array(
 			'id' => $row['id_icon'],
@@ -1492,7 +1492,7 @@ function EditMessageIcons()
 		);
 		$last_icon = $row['id_icon'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Submitting a form?
 	if (isset($_POST[$context['session_var']]))
@@ -1507,7 +1507,7 @@ function EditMessageIcons()
 				$deleteIcons[] = (int) $icon;
 
 			// Do the actual delete!
-			wedb::query('
+			wesql::query('
 				DELETE FROM {db_prefix}message_icons
 				WHERE id_icon IN ({array_int:icon_list})',
 				array(
@@ -1564,7 +1564,7 @@ function EditMessageIcons()
 			foreach ($context['icons'] as $id => $icon)
 				$iconInsert[] = array($id, $icon['board_id'], $icon['title'], $icon['filename'], $icon['true_order']);
 
-			wedb::insert('replace',
+			wesql::insert('replace',
 				'{db_prefix}message_icons',
 				array('id_icon' => 'int', 'id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
 				$iconInsert,
@@ -1573,7 +1573,7 @@ function EditMessageIcons()
 		}
 
 		// Sort by order, so it is quicker :)
-		wedb::query('
+		wesql::query('
 			ALTER TABLE {db_prefix}message_icons
 			ORDER BY icon_order',
 			array(
@@ -1710,7 +1710,7 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 {
 	global $user_info;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
 		FROM {db_prefix}message_icons AS m
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -1720,9 +1720,9 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 	);
 
 	$message_icons = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$message_icons[] = $row;
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $message_icons;
 }
@@ -1730,13 +1730,13 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 // This function sorts the smiley table by code length, it is needed as MySQL withdrew support for functions in order by.
 function sortSmileyTable()
 {
-	wedb::extend('packages');
+	wesql::extend('packages');
 
 	// Add a sorting column.
 	wedbPackages::add_column('{db_prefix}smileys', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));
 
 	// Set the contents of this column.
-	wedb::query('
+	wesql::query('
 		UPDATE {db_prefix}smileys
 		SET temp_order = LENGTH(code)',
 		array(
@@ -1744,7 +1744,7 @@ function sortSmileyTable()
 	);
 
 	// Order the table by this column.
-	wedb::query('
+	wesql::query('
 		ALTER TABLE {db_prefix}smileys
 		ORDER BY temp_order DESC',
 		array(

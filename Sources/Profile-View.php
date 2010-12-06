@@ -214,7 +214,7 @@ function summary($memID)
 		}
 
 		// So... are they banned?  Dying to know!
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT bg.id_ban_group, bg.name, bg.cannot_access, bg.cannot_post, bg.cannot_register,
 				bg.cannot_login, bg.reason
 			FROM {db_prefix}ban_items AS bi
@@ -222,7 +222,7 @@ function summary($memID)
 			WHERE (' . implode(' OR ', $ban_query) . ')',
 			$ban_query_vars
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			// Work out what restrictions we actually have.
 			$ban_restrictions = array();
@@ -248,7 +248,7 @@ function summary($memID)
 				'explanation' => $ban_explanation,
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	loadCustomFields($memID);
@@ -300,7 +300,7 @@ function showPosts($memID)
 		checkSession('get');
 
 		// We need msg info for logging.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT subject, id_member, id_topic, id_board
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}',
@@ -308,8 +308,8 @@ function showPosts($memID)
 				'id_msg' => (int) $_GET['delete'],
 			)
 		);
-		$info = wedb::fetch_row($request);
-		wedb::free_result($request);
+		$info = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		// Trying to remove a message that doesn't exist.
 		if (empty($info))
@@ -332,7 +332,7 @@ function showPosts($memID)
 		$_REQUEST['viewscount'] = '10';
 
 	if ($context['is_topics'])
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
@@ -346,7 +346,7 @@ function showPosts($memID)
 			)
 		);
 	else
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -359,10 +359,10 @@ function showPosts($memID)
 				'board' => $board,
 			)
 		);
-	list ($msgCount) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($msgCount) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
@@ -374,8 +374,8 @@ function showPosts($memID)
 			'board' => $board,
 		)
 	);
-	list ($min_msg_member, $max_msg_member) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($min_msg_member, $max_msg_member) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	$reverse = false;
 	$range_limit = '';
@@ -414,7 +414,7 @@ function showPosts($memID)
 	{
 		if ($context['is_topics'])
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, t.id_member_started, t.id_first_msg, t.id_last_msg,
 					t.approved, m.body, m.smileys_enabled, m.subject, m.poster_time, m.id_topic, m.id_msg
@@ -438,7 +438,7 @@ function showPosts($memID)
 		}
 		else
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, m.id_topic, m.id_msg,
 					t.id_member_started, t.id_first_msg, t.id_last_msg, m.body, m.smileys_enabled,
@@ -463,7 +463,7 @@ function showPosts($memID)
 		}
 
 		// Make sure we quit this loop.
-		if (wedb::num_rows($request) === $maxIndex || $looped)
+		if (wesql::num_rows($request) === $maxIndex || $looped)
 			break;
 		$looped = true;
 		$range_limit = '';
@@ -473,7 +473,7 @@ function showPosts($memID)
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = array();
 	$board_ids = array('own' => array(), 'any' => array());
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// Censor....
 		censorText($row['body']);
@@ -512,7 +512,7 @@ function showPosts($memID)
 			$board_ids['own'][$row['id_board']][] = $counter;
 		$board_ids['any'][$row['id_board']][] = $counter;
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// All posts were retrieved in reverse order, get them right again.
 	if ($reverse)
@@ -590,7 +590,7 @@ function showAttachments($memID)
 		$boardsAllowed = array(-1);
 
 	// Get the total number of attachments they have posted.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -610,8 +610,8 @@ function showAttachments($memID)
 			'board' => $board,
 		)
 	);
-	list ($attachCount) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($attachCount) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	$maxIndex = (int) $modSettings['defaultMaxMessages'];
 
@@ -631,7 +631,7 @@ function showAttachments($memID)
 	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=showposts;sa=attach;sort=' . $context['sort_order'] . ($context['sort_direction'] == 'up' ? ';asc' : ''), $context['start'], $attachCount, $maxIndex);
 
 	// Retrieve some attachments.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT a.id_attach, a.id_msg, a.filename, a.downloads, a.approved, m.id_msg, m.id_topic,
 			m.id_board, m.poster_time, m.subject, b.name
 		FROM {db_prefix}attachments AS a
@@ -658,7 +658,7 @@ function showAttachments($memID)
 		)
 	);
 	$context['attachments'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['subject'] = censorText($row['subject']);
 
@@ -675,7 +675,7 @@ function showAttachments($memID)
 			'approved' => $row['approved'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 }
 
 function statPanel($memID)
@@ -691,7 +691,7 @@ function statPanel($memID)
 	$context['num_posts'] = comma_format($user_profile[$memID]['posts']);
 
 	// Number of topics started.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics
 		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -701,11 +701,11 @@ function statPanel($memID)
 			'recycle_board' => $modSettings['recycle_board'],
 		)
 	);
-	list ($context['num_topics']) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($context['num_topics']) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	// Number polls started.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics
 		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -717,11 +717,11 @@ function statPanel($memID)
 			'no_poll' => 0,
 		)
 	);
-	list ($context['num_polls']) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($context['num_polls']) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	// Number polls voted in.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT COUNT(DISTINCT id_poll)
 		FROM {db_prefix}log_polls
 		WHERE id_member = {int:current_member}',
@@ -729,8 +729,8 @@ function statPanel($memID)
 			'current_member' => $memID,
 		)
 	);
-	list ($context['num_votes']) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($context['num_votes']) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	// Format the numbers...
 	$context['num_topics'] = comma_format($context['num_topics']);
@@ -738,7 +738,7 @@ function statPanel($memID)
 	$context['num_votes'] = comma_format($context['num_votes']);
 
 	// Grab the board this member posted in most often.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT
 			b.id_board, MAX(b.name) AS name, MAX(b.num_posts) AS num_posts, COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
@@ -755,7 +755,7 @@ function statPanel($memID)
 		)
 	);
 	$context['popular_boards'] = array();
-	while ($row = wedb::fetch_assoc($result))
+	while ($row = wesql::fetch_assoc($result))
 	{
 		$context['popular_boards'][$row['id_board']] = array(
 			'id' => $row['id_board'],
@@ -767,10 +767,10 @@ function statPanel($memID)
 			'total_posts_member' => $user_profile[$memID]['posts'],
 		);
 	}
-	wedb::free_result($result);
+	wesql::free_result($result);
 
 	// Now get the 10 boards this user has most often participated in.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT
 			b.id_board, MAX(b.name) AS name, b.num_posts, COUNT(*) AS message_count,
 			CASE WHEN COUNT(*) > MAX(b.num_posts) THEN 1 ELSE COUNT(*) / MAX(b.num_posts) END * 100 AS percentage
@@ -786,7 +786,7 @@ function statPanel($memID)
 		)
 	);
 	$context['board_activity'] = array();
-	while ($row = wedb::fetch_assoc($result))
+	while ($row = wesql::fetch_assoc($result))
 	{
 		$context['board_activity'][$row['id_board']] = array(
 			'id' => $row['id_board'],
@@ -798,10 +798,10 @@ function statPanel($memID)
 			'total_posts' => $row['num_posts'],
 		);
 	}
-	wedb::free_result($result);
+	wesql::free_result($result);
 
 	// Posting activity by time.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT
 			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
 			COUNT(*) AS post_count
@@ -817,7 +817,7 @@ function statPanel($memID)
 	);
 	$maxPosts = $realPosts = 0;
 	$context['posts_by_time'] = array();
-	while ($row = wedb::fetch_assoc($result))
+	while ($row = wesql::fetch_assoc($result))
 	{
 		// Cast as an integer to remove the leading 0.
 		$row['hour'] = (int) $row['hour'];
@@ -833,7 +833,7 @@ function statPanel($memID)
 			'is_last' => $row['hour'] == 23,
 		);
 	}
-	wedb::free_result($result);
+	wesql::free_result($result);
 
 	if ($maxPosts > 0)
 		for ($hour = 0; $hour < 24; $hour++)
@@ -991,7 +991,7 @@ function trackActivity($memID)
 	// If this is a big forum, or a large posting user, let's limit the search.
 	if ($modSettings['totalMessages'] > 50000 && $user_profile[$memID]['posts'] > 500)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT MAX(id_msg)
 			FROM {db_prefix}messages AS m
 			WHERE m.id_member = {int:current_member}',
@@ -999,8 +999,8 @@ function trackActivity($memID)
 				'current_member' => $memID,
 			)
 		);
-		list ($max_msg_member) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($max_msg_member) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		// There's no point worrying ourselves with messages made yonks ago, just get recent ones!
 		$min_msg_member = max(0, $max_msg_member - $user_profile[$memID]['posts'] * 3);
@@ -1013,7 +1013,7 @@ function trackActivity($memID)
 	);
 
 	// Get all IP addresses this user has used for his messages.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT poster_ip
 		FROM {db_prefix}messages
 		WHERE id_member = {int:current_member}
@@ -1027,15 +1027,15 @@ function trackActivity($memID)
 		)
 	);
 	$context['ips'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['poster_ip'] . ';u=' . $memID . '">' . $row['poster_ip'] . '</a>';
 		$ips[] = $row['poster_ip'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Now also get the IP addresses from the error messages.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*) AS error_count, ip
 		FROM {db_prefix}log_errors
 		WHERE id_member = {int:current_member}
@@ -1045,12 +1045,12 @@ function trackActivity($memID)
 		)
 	);
 	$context['error_ips'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['ip'] . ';u=' . $memID . '">' . $row['ip'] . '</a>';
 		$ips[] = $row['ip'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Find other users that might use the same IP.
 	$ips = array_unique($ips);
@@ -1058,7 +1058,7 @@ function trackActivity($memID)
 	if (!empty($ips))
 	{
 		// Get member ID's which are in messages...
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT mem.id_member
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -1071,14 +1071,14 @@ function trackActivity($memID)
 			)
 		);
 		$message_members = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$message_members[] = $row['id_member'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Fetch their names, cause of the GROUP BY doesn't like giving us that normally.
 		if (!empty($message_members))
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:message_members})',
@@ -1087,12 +1087,12 @@ function trackActivity($memID)
 					'ip_list' => $ips,
 				)
 			);
-			while ($row = wedb::fetch_assoc($request))
+			while ($row = wesql::fetch_assoc($request))
 				$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
-			wedb::free_result($request);
+			wesql::free_result($request);
 		}
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member != {int:current_member}
@@ -1102,22 +1102,22 @@ function trackActivity($memID)
 				'ip_list' => $ips,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 }
 
 function list_getUserErrorCount($where, $where_vars = array())
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*) AS error_count
 		FROM {db_prefix}log_errors
 		WHERE ' . $where,
 		$where_vars
 	);
-	list ($count) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($count) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $count;
 }
@@ -1127,7 +1127,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 	global $txt, $scripturl;
 
 	// Get a list of error messages from this ip (range).
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			le.log_time, le.ip, le.url, le.message, IFNULL(mem.id_member, 0) AS id_member,
 			IFNULL(mem.real_name, {string:guest_title}) AS display_name, mem.member_name
@@ -1141,7 +1141,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 		))
 	);
 	$error_messages = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$error_messages[] = array(
 			'ip' => $row['ip'],
 			'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
@@ -1150,22 +1150,22 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 			'time' => timeformat($row['log_time']),
 			'timestamp' => forum_time(true, $row['log_time']),
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $error_messages;
 }
 
 function list_getIPMessageCount($where, $where_vars = array())
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 		WHERE {query_see_board} AND ' . $where,
 		$where_vars
 	);
-	list ($count) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($count) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $count;
 }
@@ -1176,7 +1176,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 	// Get all the messages fitting this where clause.
 	// !!!SLOW This query is using a filesort.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.id_msg, m.poster_ip, IFNULL(mem.real_name, m.poster_name) AS display_name, mem.id_member,
 			m.subject, m.poster_time, m.id_topic, m.id_board
@@ -1190,7 +1190,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 		))
 	);
 	$messages = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$messages[] = array(
 			'ip' => $row['poster_ip'],
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
@@ -1204,7 +1204,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time'])
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $messages;
 }
@@ -1245,7 +1245,7 @@ function TrackIP($memID = 0)
 	if (empty($context['tracking_area']))
 		$context['page_title'] = $txt['trackIP'] . ' - ' . $context['ip'];
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_member, real_name AS display_name, member_ip
 		FROM {db_prefix}members
 		WHERE member_ip ' . $ip_string,
@@ -1254,9 +1254,9 @@ function TrackIP($memID = 0)
 		)
 	);
 	$context['ips'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['ips'][$row['member_ip']][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>';
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	ksort($context['ips']);
 
@@ -1494,19 +1494,19 @@ function trackEdits($memID)
 	loadSource('Subs-List');
 
 	// Get the names of any custom fields.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT col_name, field_name, bbc
 		FROM {db_prefix}custom_fields',
 		array(
 		)
 	);
 	$context['custom_field_titles'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['custom_field_titles']['customfield_' . $row['col_name']] = array(
 			'title' => $row['field_name'],
 			'parse_bbc' => $row['bbc'],
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Set the options for the error lists.
 	$listOptions = array(
@@ -1586,7 +1586,7 @@ function trackEdits($memID)
 // How many edits?
 function list_getProfileEditCount($memID)
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*) AS edit_count
 		FROM {db_prefix}log_actions
 		WHERE id_log = {int:log_type}
@@ -1596,8 +1596,8 @@ function list_getProfileEditCount($memID)
 			'owner' => $memID,
 		)
 	);
-	list ($edit_count) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($edit_count) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $edit_count;
 }
@@ -1607,7 +1607,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	global $txt, $scripturl, $context;
 
 	// Get a list of error messages from this ip (range).
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			id_action, id_member, ip, log_time, action, extra
 		FROM {db_prefix}log_actions
@@ -1622,7 +1622,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	);
 	$edits = array();
 	$members = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$extra = @unserialize($row['extra']);
 		if (!empty($extra['applicator']))
@@ -1654,12 +1654,12 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			'time' => timeformat($row['log_time']),
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Get any member names.
 	if (!empty($members))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT
 				id_member, real_name
 			FROM {db_prefix}members
@@ -1669,9 +1669,9 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			)
 		);
 		$members = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$members[$row['id_member']] = $row['real_name'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		foreach ($edits as $key => $value)
 			if (isset($members[$value['id_member']]))
@@ -1713,7 +1713,7 @@ function showPermissions($memID)
 	$curGroups[] = $user_profile[$memID]['id_post_group'];
 
 	// Load a list of boards for the jump box - except the defaults.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT b.id_board, b.name, b.id_profile, b.member_groups, IFNULL(mods.id_member, 0) AS is_mod
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
@@ -1724,7 +1724,7 @@ function showPermissions($memID)
 	);
 	$context['boards'] = array();
 	$context['no_access_boards'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if (count(array_intersect($curGroups, explode(',', $row['member_groups']))) === 0 && !$row['is_mod'])
 			$context['no_access_boards'][] = array(
@@ -1741,7 +1741,7 @@ function showPermissions($memID)
 				'profile_name' => $context['profiles'][$row['id_profile']]['name'],
 			);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (!empty($context['no_access_boards']))
 		$context['no_access_boards'][count($context['no_access_boards']) - 1]['is_last'] = true;
@@ -1759,7 +1759,7 @@ function showPermissions($memID)
 	$denied = array();
 
 	// Get all general permissions.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT p.permission, p.add_deny, mg.group_name, p.id_group
 		FROM {db_prefix}permissions AS p
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = p.id_group)
@@ -1770,7 +1770,7 @@ function showPermissions($memID)
 			'newbie_group' => 4,
 		)
 	);
-	while ($row = wedb::fetch_assoc($result))
+	while ($row = wesql::fetch_assoc($result))
 	{
 		// We don't know about this permission, it doesn't exist :P.
 		if (!isset($txt['permissionname_' . $row['permission']]))
@@ -1804,9 +1804,9 @@ function showPermissions($memID)
 		// Once denied is always denied.
 		$context['member']['permissions']['general'][$row['permission']]['is_denied'] |= empty($row['add_deny']);
 	}
-	wedb::free_result($result);
+	wesql::free_result($result);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			bp.add_deny, bp.permission, bp.id_group, mg.group_name' . (empty($board) ? '' : ',
 			b.id_profile, CASE WHEN mods.id_member IS NULL THEN 0 ELSE 1 END AS is_moderator') . '
@@ -1826,7 +1826,7 @@ function showPermissions($memID)
 		)
 	);
 
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// We don't know about this permission, it doesn't exist :P.
 		if (!isset($txt['permissionname_' . $row['permission']]))
@@ -1855,7 +1855,7 @@ function showPermissions($memID)
 
 		$context['member']['permissions']['board'][$row['permission']]['is_denied'] |= empty($row['add_deny']);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 }
 
 // View a members warnings?

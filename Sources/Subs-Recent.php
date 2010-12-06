@@ -36,7 +36,7 @@ function getLastPosts($latestPostOptions)
 
 	// Find all the posts.  Newer ones will have higher IDs.  (assuming the last 20 * number are accessable...)
 	// !!!SLOW This query is now slow, NEEDS to be fixed.  Maybe break into two?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, t.id_board, b.name AS board_name,
@@ -60,7 +60,7 @@ function getLastPosts($latestPostOptions)
 		)
 	);
 	$posts = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// Censor the subject and post for the preview ;).
 		censorText($row['subject']);
@@ -95,7 +95,7 @@ function getLastPosts($latestPostOptions)
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>'
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $posts;
 }

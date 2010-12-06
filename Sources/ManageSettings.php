@@ -226,7 +226,7 @@ function ModifyCoreFeatures($return_config = false)
 			'save_callback' => create_function('$value', '
 				if (!$value)
 				{
-					wedb::query(\'
+					wesql::query(\'
 						UPDATE {db_prefix}custom_fields
 						SET active = 0\');
 				}
@@ -678,7 +678,7 @@ function ModifySpamSettings($return_config = false)
 
 	// Load any question and answers!
 	$context['question_answers'] = array();
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_comment, body AS question, recipient_name AS answer
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:ver_test}',
@@ -686,7 +686,7 @@ function ModifySpamSettings($return_config = false)
 			'ver_test' => 'ver_test',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['question_answers'][$row['id_comment']] = array(
 			'id' => $row['id_comment'],
@@ -694,7 +694,7 @@ function ModifySpamSettings($return_config = false)
 			'answer' => $row['answer'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -730,7 +730,7 @@ function ModifySpamSettings($return_config = false)
 				{
 					if ($question == '' || $answer == '')
 					{
-						wedb::query('
+						wesql::query('
 							DELETE FROM {db_prefix}log_comments
 							WHERE comment_type = {string:ver_test}
 								AND id_comment = {int:id}',
@@ -742,7 +742,7 @@ function ModifySpamSettings($return_config = false)
 						$count_questions--;
 					}
 					else
-						$request = wedb::query('
+						$request = wesql::query('
 							UPDATE {db_prefix}log_comments
 							SET body = {string:question}, recipient_name = {string:answer}
 							WHERE comment_type = {string:ver_test}
@@ -770,7 +770,7 @@ function ModifySpamSettings($return_config = false)
 		// Any questions to insert?
 		if (!empty($questionInserts))
 		{
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_comments',
 				array('comment_type' => 'string', 'body' => 'string-65535', 'recipient_name' => 'string-80'),
 				$questionInserts,
@@ -875,20 +875,20 @@ function ModifySignatureSettings($return_config = false)
 		$_GET['step'] = isset($_GET['step']) ? (int) $_GET['step'] : 0;
 		$done = false;
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT MAX(id_member)
 			FROM {db_prefix}members',
 			array(
 			)
 		);
-		list ($context['max_member']) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($context['max_member']) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		while (!$done)
 		{
 			$changes = array();
 
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT id_member, signature
 				FROM {db_prefix}members
 				WHERE id_member BETWEEN ' . $_GET['step'] . ' AND ' . $_GET['step'] . ' + 49
@@ -898,7 +898,7 @@ function ModifySignatureSettings($return_config = false)
 					'admin_group' => 1,
 				)
 			);
-			while ($row = wedb::fetch_assoc($request))
+			while ($row = wesql::fetch_assoc($request))
 			{
 				// Apply all the rules we can realistically do.
 				$sig = strtr($row['signature'], array('<br />' => "\n"));
@@ -1069,15 +1069,15 @@ function ModifySignatureSettings($return_config = false)
 				if ($sig != $row['signature'])
 					$changes[$row['id_member']] = $sig;
 			}
-			if (wedb::num_rows($request) == 0)
+			if (wesql::num_rows($request) == 0)
 				$done = true;
-			wedb::free_result($request);
+			wesql::free_result($request);
 
 			// Do we need to delete what we have?
 			if (!empty($changes))
 			{
 				foreach ($changes as $id => $sig)
-					wedb::query('
+					wesql::query('
 						UPDATE {db_prefix}members
 						SET signature = {string:signature}
 						WHERE id_member = {int:id_member}',
@@ -1440,7 +1440,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 	else
 	{
 		// Load all the fields.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_field, col_name, field_name, field_desc, field_type, active, placement
 			FROM {db_prefix}custom_fields
 			ORDER BY {raw:sort}
@@ -1451,9 +1451,9 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 				'items_per_page' => $items_per_page,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$list[] = $row;
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	return $list;
@@ -1461,15 +1461,15 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 function list_getProfileFieldSize()
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}custom_fields',
 		array(
 		)
 	);
 
-	list ($numProfileFields) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($numProfileFields) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $numProfileFields;
 }
@@ -1490,7 +1490,7 @@ function EditCustomProfiles()
 
 	if ($context['fid'])
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_length, field_options,
 				show_reg, show_display, show_profile, private, active, default_value, can_search,
@@ -1502,7 +1502,7 @@ function EditCustomProfiles()
 			)
 		);
 		$context['field'] = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if ($row['field_type'] == 'textarea')
 				@list ($rows, $cols) = @explode(',', $row['default_value']);
@@ -1536,7 +1536,7 @@ function EditCustomProfiles()
 				'placement' => $row['placement'],
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	// Setup the default values as needed.
@@ -1643,7 +1643,7 @@ function EditCustomProfiles()
 			$unique = false;
 			for ($i = 0; !$unique && $i < 9; $i ++)
 			{
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT id_field
 					FROM {db_prefix}custom_fields
 					WHERE col_name = {string:current_column}',
@@ -1651,11 +1651,11 @@ function EditCustomProfiles()
 						'current_column' => $colname,
 					)
 				);
-				if (wedb::num_rows($request) == 0)
+				if (wesql::num_rows($request) == 0)
 					$unique = true;
 				else
 					$colname = $initial_colname . $i;
-				wedb::free_result($request);
+				wesql::free_result($request);
 			}
 
 			// Still not a unique colum name? Leave it up to the user, then.
@@ -1670,7 +1670,7 @@ function EditCustomProfiles()
 				|| (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && $context['field']['type'] != 'select' && $context['field']['type'] != 'radio')
 				|| ($context['field']['type'] == 'check' && $_POST['field_type'] != 'check'))
 			{
-				wedb::query('
+				wesql::query('
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND id_member > {int:no_member}',
@@ -1704,7 +1704,7 @@ function EditCustomProfiles()
 				{
 					// Just been renamed?
 					if (!in_array($k, $takenKeys) && !empty($newOptions[$k]))
-						wedb::query('
+						wesql::query('
 							UPDATE {db_prefix}themes
 							SET value = {string:new_value}
 							WHERE variable = {string:current_column}
@@ -1725,7 +1725,7 @@ function EditCustomProfiles()
 		// Do the insertion/updates.
 		if ($context['fid'])
 		{
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}custom_fields
 				SET
 					field_name = {string:field_name}, field_desc = {string:field_desc},
@@ -1759,7 +1759,7 @@ function EditCustomProfiles()
 
 			// Just clean up any old selects - these are a pain!
 			if (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && !empty($newOptions))
-				wedb::query('
+				wesql::query('
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND value NOT IN ({array_string:new_option_values})
@@ -1773,7 +1773,7 @@ function EditCustomProfiles()
 		}
 		else
 		{
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}custom_fields',
 				array(
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
@@ -1794,7 +1794,7 @@ function EditCustomProfiles()
 		}
 
 		// As there's currently no option to priorize certain fields over others, let's order them alphabetically.
-		wedb::query('
+		wesql::query('
 			ALTER TABLE {db_prefix}custom_fields
 			ORDER BY field_name',
 			array(
@@ -1808,7 +1808,7 @@ function EditCustomProfiles()
 		checkSession();
 
 		// Delete the user data first.
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}themes
 			WHERE variable = {string:current_column}
 				AND id_member > {int:no_member}',
@@ -1818,7 +1818,7 @@ function EditCustomProfiles()
 			)
 		);
 		// Finally - the field itself is gone!
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			array(
@@ -1832,7 +1832,7 @@ function EditCustomProfiles()
 	{
 		checkSession();
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT col_name, field_name, bbc, enclose, placement
 			FROM {db_prefix}custom_fields
 			WHERE show_display = {int:is_displayed}
@@ -1848,7 +1848,7 @@ function EditCustomProfiles()
 		);
 
 		$fields = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$fields[] = array(
 				'colname' => strtr($row['col_name'], array('|' => '', ';' => '')),
@@ -1858,7 +1858,7 @@ function EditCustomProfiles()
 				'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
 			);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		updateSettings(array('displayFields' => serialize($fields)));
 		redirectexit('action=admin;area=featuresettings;sa=profile');
@@ -2043,7 +2043,7 @@ function ModifyPrettyURLs()
 		);
 
 		if (isset($_REQUEST['pretty_cache']))
-			wedb::query('
+			wesql::query('
 				TRUNCATE {db_prefix}pretty_urls_cache',
 				array()
 			);

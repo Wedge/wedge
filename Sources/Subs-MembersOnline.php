@@ -80,7 +80,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		$spiders = unserialize($modSettings['spider_name_cache']);
 
 	// Load the users online right now.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			lo.id_member, lo.log_time, lo.id_spider, mem.real_name, mem.member_name, mem.show_online,
 			mg.online_color, mg.id_group, mg.group_name
@@ -91,7 +91,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 			'reg_mem_group' => 0,
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if (empty($row['real_name']))
 		{
@@ -152,7 +152,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 				'color' => $row['online_color']
 			);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// If there are spiders only and we're showing the detail, add them to the online list - at the bottom.
 	if (!empty($spider_finds) && $modSettings['show_spider_online'] > 1)
@@ -217,7 +217,7 @@ function trackStatsUsersOnline($total_users_online)
 	// No entry exists for today yet?
 	if (!isset($modSettings['mostOnlineUpdated']) || $modSettings['mostOnlineUpdated'] != $date)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT most_on
 			FROM {db_prefix}log_activity
 			WHERE date = {date:date}
@@ -228,9 +228,9 @@ function trackStatsUsersOnline($total_users_online)
 		);
 
 		// The log_activity hasn't got an entry for today?
-		if (wedb::num_rows($request) === 0)
+		if (wesql::num_rows($request) === 0)
 		{
-			wedb::insert('ignore',
+			wesql::insert('ignore',
 				'{db_prefix}log_activity',
 				array('date' => 'date', 'most_on' => 'int'),
 				array($date, $total_users_online),
@@ -240,14 +240,14 @@ function trackStatsUsersOnline($total_users_online)
 		// There's an entry in log_activity on today...
 		else
 		{
-			list ($modSettings['mostOnlineToday']) = wedb::fetch_row($request);
+			list ($modSettings['mostOnlineToday']) = wesql::fetch_row($request);
 
 			if ($total_users_online > $modSettings['mostOnlineToday'])
 				trackStats(array('most_on' => $total_users_online));
 
 			$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		$settingsToUpdate['mostOnlineUpdated'] = $date;
 		$settingsToUpdate['mostOnlineToday'] = $total_users_online;

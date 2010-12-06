@@ -46,7 +46,7 @@ class wedbExtra
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 		// First, get rid of the old table.
-		wedb::query('
+		wesql::query('
 			DROP TABLE IF EXISTS {raw:backup_table}',
 			array(
 				'backup_table' => $backup_table,
@@ -54,7 +54,7 @@ class wedbExtra
 		);
 
 		// Can we do this the quick way?
-		$result = wedb::query('
+		$result = wesql::query('
 			CREATE TABLE {raw:backup_table} LIKE {raw:table}',
 			array(
 				'backup_table' => $backup_table,
@@ -63,7 +63,7 @@ class wedbExtra
 		// If this failed, we go old school.
 		if ($result)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				INSERT INTO {raw:backup_table}
 				SELECT *
 				FROM {raw:table}',
@@ -78,14 +78,14 @@ class wedbExtra
 		}
 
 		// At this point, the quick method failed.
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW CREATE TABLE {raw:table}',
 			array(
 				'table' => $table,
 			)
 		);
-		list (, $create) = wedb::fetch_row($result);
-		wedb::free_result($result);
+		list (, $create) = wesql::fetch_row($result);
+		wesql::free_result($result);
 
 		$create = preg_split('/[\n\r]/', $create);
 
@@ -132,7 +132,7 @@ class wedbExtra
 		else
 			$create = '';
 
-		$request = wedb::query('
+		$request = wesql::query('
 			CREATE TABLE {raw:backup_table} {raw:create}
 			ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
 			SELECT *
@@ -152,7 +152,7 @@ class wedbExtra
 			if (preg_match('~\`(.+?)\`\s~', $auto_inc, $match) != 0 && substr($auto_inc, -1, 1) == ',')
 				$auto_inc = substr($auto_inc, 0, -1);
 
-			wedb::query('
+			wesql::query('
 				ALTER TABLE {raw:backup_table}
 				CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
 				array(
@@ -174,17 +174,17 @@ class wedbExtra
 		$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 		// Get how much overhead there is.
-		$request = wedb::query('
+		$request = wesql::query('
 				SHOW TABLE STATUS LIKE {string:table_name}',
 				array(
 					'table_name' => str_replace('_', '\_', $table),
 				)
 			);
-		$row = wedb::fetch_assoc($request);
-		wedb::free_result($request);
+		$row = wesql::fetch_assoc($request);
+		wesql::free_result($request);
 
 		$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
-		$request = wedb::query('
+		$request = wesql::query('
 				OPTIMIZE TABLE `{raw:table}`',
 				array(
 					'table' => $table,
@@ -194,14 +194,14 @@ class wedbExtra
 			return -1;
 
 		// How much left?
-		$request = wedb::query('
+		$request = wesql::query('
 				SHOW TABLE STATUS LIKE {string:table}',
 				array(
 					'table' => str_replace('_', '\_', $table),
 				)
 			);
-		$row = wedb::fetch_assoc($request);
-		wedb::free_result($request);
+		$row = wesql::fetch_assoc($request);
+		wesql::free_result($request);
 
 		$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
 
@@ -217,7 +217,7 @@ class wedbExtra
 		$db = trim($db);
 		$filter = $filter == false ? '' : ' LIKE \'' . $filter . '\'';
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SHOW TABLES
 			FROM `{raw:db}`
 			{raw:filter}',
@@ -227,9 +227,9 @@ class wedbExtra
 			)
 		);
 		$tables = array();
-		while ($row = wedb::fetch_row($request))
+		while ($row = wesql::fetch_row($request))
 			$tables[] = $row[0];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		return $tables;
 	}
@@ -245,7 +245,7 @@ class wedbExtra
 		$crlf = "\r\n";
 
 		// Get everything from the table.
-		$result = wedb::query('
+		$result = wesql::query('
 			SELECT /*!40001 SQL_NO_CACHE */ *
 			FROM `{raw:table}`',
 			array(
@@ -254,26 +254,26 @@ class wedbExtra
 		);
 
 		// The number of rows, just for record keeping and breaking INSERTs up.
-		$num_rows = wedb::num_rows($result);
+		$num_rows = wesql::num_rows($result);
 		$current_row = 0;
 
 		if ($num_rows == 0)
 			return '';
 
-		$fields = array_keys(wedb::fetch_assoc($result));
-		wedb::data_seek($result, 0);
+		$fields = array_keys(wesql::fetch_assoc($result));
+		wesql::data_seek($result, 0);
 
 		// Start it off with the basic INSERT INTO.
 		$data = 'INSERT INTO `' . $tableName . '`' . $crlf . "\t" . '(`' . implode('`, `', $fields) . '`)' . $crlf . 'VALUES ';
 
 		// Loop through each row.
-		while ($row = wedb::fetch_row($result))
+		while ($row = wesql::fetch_row($result))
 		{
 			$current_row++;
 
 			// Get the fields in this row...
 			$field_list = array();
-			for ($j = 0; $j < wedb::num_fields($result); $j++)
+			for ($j = 0; $j < wesql::num_fields($result); $j++)
 			{
 				// Try to figure out the type of each field. (NULL, number, or 'string'.)
 				if (!isset($row[$j]))
@@ -281,7 +281,7 @@ class wedbExtra
 				elseif (is_numeric($row[$j]) && (int) $row[$j] == $row[$j])
 					$field_list[] = $row[$j];
 				else
-					$field_list[] = '\'' . wedb::escape_string($row[$j]) . '\'';
+					$field_list[] = '\'' . wesql::escape_string($row[$j]) . '\'';
 			}
 
 			// 'Insert' the data.
@@ -297,7 +297,7 @@ class wedbExtra
 			else
 				$data .= ',' . $crlf . "\t";
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		// Return an empty string if there were no rows.
 		return $num_rows == 0 ? '' : $data;
@@ -320,14 +320,14 @@ class wedbExtra
 		$schema_create .= 'CREATE TABLE `' . $tableName . '` (' . $crlf;
 
 		// Find all the fields.
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW FIELDS
 			FROM `{raw:table}`',
 			array(
 				'table' => $tableName,
 			)
 		);
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			// Make the CREATE for this column.
 			$schema_create .= ' `' . $row['Field'] . '` ' . $row['Type'] . ($row['Null'] != 'YES' ? ' NOT NULL' : '');
@@ -345,20 +345,20 @@ class wedbExtra
 					$type = strtolower($row['Type']);
 					$isNumericColumn = strpos($type, 'int') !== false || strpos($type, 'bool') !== false || strpos($type, 'bit') !== false || strpos($type, 'float') !== false || strpos($type, 'double') !== false || strpos($type, 'decimal') !== false;
 
-					$schema_create .= ' default ' . ($isNumericColumn ? $row['Default'] : '\'' . wedb::escape_string($row['Default']) . '\'');
+					$schema_create .= ' default ' . ($isNumericColumn ? $row['Default'] : '\'' . wesql::escape_string($row['Default']) . '\'');
 				}
 			}
 
 			// And now any extra information. (such as auto_increment.)
 			$schema_create .= ($row['Extra'] != '' ? ' ' . $row['Extra'] : '') . ',' . $crlf;
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		// Take off the last comma.
 		$schema_create = substr($schema_create, 0, -strlen($crlf) - 1);
 
 		// Find the keys.
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW KEYS
 			FROM `{raw:table}`',
 			array(
@@ -366,7 +366,7 @@ class wedbExtra
 			)
 		);
 		$indexes = array();
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			// IS this a primary key, unique index, or regular index?
 			$row['Key_name'] = $row['Key_name'] == 'PRIMARY' ? 'PRIMARY KEY' : (empty($row['Non_unique']) ? 'UNIQUE ' : ($row['Comment'] == 'FULLTEXT' || (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT') ? 'FULLTEXT ' : 'KEY ')) . '`' . $row['Key_name'] . '`';
@@ -381,7 +381,7 @@ class wedbExtra
 			else
 				$indexes[$row['Key_name']][$row['Seq_in_index']] = '`' . $row['Column_name'] . '`';
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		// Build the CREATEs for the keys.
 		foreach ($indexes as $keyname => $columns)
@@ -393,15 +393,15 @@ class wedbExtra
 		}
 
 		// Now just get the comment and type... (MyISAM, etc.)
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW TABLE STATUS
 			LIKE {string:table}',
 			array(
 				'table' => strtr($tableName, array('_' => '\\_', '%' => '\\%')),
 			)
 		);
-		$row = wedb::fetch_assoc($result);
-		wedb::free_result($result);
+		$row = wesql::fetch_assoc($result);
+		wesql::free_result($result);
 
 		// Probably MyISAM.... and it might have a comment.
 		$schema_create .= $crlf . ') ENGINE=' . (isset($row['Type']) ? $row['Type'] : $row['Engine']) . ($row['Comment'] != '' ? ' COMMENT="' . $row['Comment'] . '"' : '');
@@ -412,13 +412,13 @@ class wedbExtra
 	// Get the version number.
 	public static function get_version()
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT VERSION()',
 			array(
 			)
 		);
-		list ($ver) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($ver) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		return $ver;
 	}

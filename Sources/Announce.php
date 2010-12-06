@@ -94,7 +94,7 @@ function AnnouncementSelectMembergroup()
 	}
 
 	// Get all membergroups that have access to the board the announcement was made on.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT mg.id_group, COUNT(mem.id_member) AS num_members
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_group = mg.id_group OR FIND_IN_SET(mg.id_group, mem.additional_groups) != 0 OR mg.id_group = mem.id_post_group)
@@ -105,7 +105,7 @@ function AnnouncementSelectMembergroup()
 			'newbie_id_group' => 4,
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$context['groups'][$row['id_group']] = array(
 			'id' => $row['id_group'],
@@ -113,10 +113,10 @@ function AnnouncementSelectMembergroup()
 			'member_count' => $row['num_members'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Now get the membergroup names.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
@@ -124,12 +124,12 @@ function AnnouncementSelectMembergroup()
 			'group_list' => $groups,
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['groups'][$row['id_group']]['name'] = $row['group_name'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Get the subject of the topic we're about to announce.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.subject
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -138,8 +138,8 @@ function AnnouncementSelectMembergroup()
 			'current_topic' => $topic,
 		)
 	);
-	list ($context['topic_subject']) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($context['topic_subject']) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	censorText($context['announce_topic']['subject']);
 
@@ -188,7 +188,7 @@ function AnnouncementSend()
 		$_POST['who'][$id] = in_array((int) $mg, $groups) ? (int) $mg : 0;
 
 	// Get the topic subject and censor it.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT m.id_msg, m.subject, m.body
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -197,8 +197,8 @@ function AnnouncementSend()
 			'current_topic' => $topic,
 		)
 	);
-	list ($id_msg, $context['topic_subject'], $message) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($id_msg, $context['topic_subject'], $message) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	censorText($context['topic_subject']);
 	censorText($message);
@@ -209,7 +209,7 @@ function AnnouncementSend()
 	loadSource('Subs-Post');
 
 	// Select the email addresses for this batch.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT mem.id_member, mem.email_address, mem.lngfile
 		FROM {db_prefix}members AS mem
 		WHERE mem.id_member != {int:current_member}' . (!empty($modSettings['allow_disableAnnounce']) ? '
@@ -230,7 +230,7 @@ function AnnouncementSend()
 	);
 
 	// All members have received a mail. Go to the next screen.
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 	{
 		if (!empty($_REQUEST['move']) && allowedTo('move_any'))
 			redirectexit('action=movetopic;topic=' . $topic . '.0' . (empty($_REQUEST['goback']) ? '' : ';goback'));
@@ -241,7 +241,7 @@ function AnnouncementSend()
 	}
 
 	// Loop through all members that'll receive an announcement in this batch.
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$cur_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
 
@@ -266,7 +266,7 @@ function AnnouncementSend()
 		$announcements[$cur_language]['recipients'][$row['id_member']] = $row['email_address'];
 		$context['start'] = $row['id_member'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// For each language send a different mail - low priority...
 	foreach ($announcements as $lang => $mail)

@@ -127,7 +127,7 @@ function is_already_taken($url, $id, $id_owner)
 {
 	global $context;
 
-	$query = wedb::query('
+	$query = wesql::query('
 		SELECT id_board, url, id_owner
 		FROM {db_prefix}boards AS b
 		WHERE
@@ -143,13 +143,13 @@ function is_already_taken($url, $id, $id_owner)
 	// Count that query!
 	$context['pretty']['db_count']++;
 
-	if (wedb::num_rows($query) > 0)
+	if (wesql::num_rows($query) > 0)
 	{
-		wedb::free_result($query);
+		wesql::free_result($query);
 		return true;
 	}
 
-	wedb::free_result($query);
+	wesql::free_result($query);
 	return false;
 }
 
@@ -173,7 +173,7 @@ function pretty_update_filters()
 	updateSettings(array('pretty_filter_callbacks' => serialize($filterSettings)));
 
 	// Clear the URLs cache
-	wedb::query('
+	wesql::query('
 		TRUNCATE TABLE {db_prefix}pretty_urls_cache');
 
 	// Don't rewrite anything for this page
@@ -188,15 +188,15 @@ function pretty_update_topic($subject, $topic_id)
 
 	// Is the URL already there?
 	// !!! Useless: we're storing the topic ID as well...
-/*	$query = wedb::query('
+/*	$query = wesql::query('
 		SELECT id_topic
 		FROM {db_prefix}pretty_topic_urls
 		WHERE pretty_url = {string:pretty_text}
 		LIMIT 1', array('pretty_text' => $pretty_text));
 
 	// If it's not unique we need to change it
-	$notunique = wedb::num_rows($query);
-	wedb::free_result($query);
+	$notunique = wesql::num_rows($query);
+	wesql::free_result($query);
 	// mettre le count plus bas à +2 quand on ne s'en foutra plus...
 */
 	$notunique = 0; // Pour l'instant on s'en fout, parce que les topics ont des n°s dans l'URL...
@@ -207,7 +207,7 @@ function pretty_update_topic($subject, $topic_id)
 		$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . ($pretty_text != '' ? '-t' : 't') . $topic_id;
 
 	// Update the database
-	wedb::query('
+	wesql::query('
 		REPLACE INTO {db_prefix}pretty_topic_urls (id_topic, pretty_url)
 		VALUES ({int:topic_id}, {string:pretty_text})', array(
 			'topic_id' => $topic_id,
@@ -238,18 +238,18 @@ function install_pretty_urls()
 	$pretty_board_urls = array();
 	$pretty_board_lookup = array();
 
-	$req = wedb::query('
+	$req = wesql::query('
 		SHOW COLUMNS FROM {db_prefix}boards
 		LIKE {string:url}',
 		array(
 			'url' => 'url',
 		)
 	);
-	$is_url_there = wedb::num_rows($req);
-	wedb::free_result($req);
+	$is_url_there = wesql::num_rows($req);
+	wesql::free_result($req);
 
 	if ($is_url_there == 0)
-		wedb::query('
+		wesql::query('
 			ALTER TABLE {db_prefix}boards
 			ADD `url` VARCHAR(64) NOT NULL AFTER `name`,
 			ADD INDEX url(url);',
@@ -257,13 +257,13 @@ function install_pretty_urls()
 		);
 
 	// Get the board names
-	$query = wedb::query('
+	$query = wesql::query('
 		SELECT id_board, name, url
 		FROM {db_prefix}boards',
 		array()
 	);
 
-	while ($row = wedb::fetch_assoc($query))
+	while ($row = wesql::fetch_assoc($query))
 	{
 		// Don't replace the board urls if they already exist
 		if ($row['url'] == '')
@@ -284,11 +284,11 @@ function install_pretty_urls()
 			$pretty_board_lookup[$row['url']] = $row['id_board'];
 		}
 	}
-	wedb::free_result($query);
+	wesql::free_result($query);
 	$output .= '<li>Generating board URLs</li>';
 
 	// Create the pretty_topic_urls table
-	wedb::query('
+	wesql::query('
 		CREATE TABLE IF NOT EXISTS {db_prefix}pretty_topic_urls (
 		`id_topic` mediumint(8) NOT NULL default "0",
 		`pretty_url` varchar(80) NOT NULL,
@@ -297,7 +297,7 @@ function install_pretty_urls()
 	$output .= '<li>Creating the pretty_topic_urls table</li>';
 
 	// Fix old topics by replacing ' with chr(18)
-	wedb::query('
+	wesql::query('
 		UPDATE {db_prefix}pretty_topic_urls
 		SET pretty_url = REPLACE(pretty_url, {string:quote}, {string:chr18})',
 		array(
@@ -307,12 +307,12 @@ function install_pretty_urls()
 	);
 
 	// Delete the pretty_urls_cache table
-	wedb::query('
+	wesql::query('
 		DROP TABLE IF EXISTS {db_prefix}pretty_urls_cache');
 	$output .= '<li>Clearing the URL cache</li>';
 
 	// Create or recreate it
-	wedb::query('
+	wesql::query('
 		CREATE TABLE {db_prefix}pretty_urls_cache (
 		`url_id` VARCHAR(255) NOT NULL,
 		`replacement` VARCHAR(255) NOT NULL,
@@ -367,7 +367,7 @@ function install_pretty_urls()
 	foreach ($pretty_board_urls as $url_id => $url_name)
 	{
 		if ($url_name != '')
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}boards
 				SET url = {string:url}
 				WHERE id_board = {int:url_id} AND url = {string:empty}', array(

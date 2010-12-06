@@ -62,7 +62,7 @@ function DumpDatabase2()
 	checkSession('post');
 
 	// We will need this, badly!
-	wedb::extend();
+	wesql::extend();
 
 	// Attempt to stop from dying...
 	@set_time_limit(600);

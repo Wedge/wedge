@@ -79,7 +79,7 @@ function Unreadreplies()
 			$boards[] = (int) $board;
 
 		// The easiest thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board, b.id_parent
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}
@@ -93,11 +93,11 @@ function Unreadreplies()
 			)
 		);
 
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			if (in_array($row['id_parent'], $boards))
 				$boards[] = $row['id_board'];
 
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -118,7 +118,7 @@ function Unreadreplies()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -128,9 +128,9 @@ function Unreadreplies()
 			)
 		);
 		$boards = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -145,7 +145,7 @@ function Unreadreplies()
 		foreach ($_REQUEST['c'] as $i => $c)
 			$_REQUEST['c'][$i] = (int) $c;
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -155,9 +155,9 @@ function Unreadreplies()
 			)
 		);
 		$boards = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -169,7 +169,7 @@ function Unreadreplies()
 	else
 	{
 		// Don't bother to show deleted posts!
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -179,9 +179,9 @@ function Unreadreplies()
 			)
 		);
 		$boards = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$boards[] = $row['id_board'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -223,7 +223,7 @@ function Unreadreplies()
 
 	if (!empty($_REQUEST['c']) && is_array($_REQUEST['c']) && count($_REQUEST['c']) == 1)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT name
 			FROM {db_prefix}categories
 			WHERE id_cat = {int:id_cat}
@@ -232,8 +232,8 @@ function Unreadreplies()
 				'id_cat' => (int) $_REQUEST['c'][0],
 			)
 		);
-		list ($name) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($name) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		$context['linktree'][] = array(
 			'url' => $scripturl . '#c' . (int) $_REQUEST['c'][0],
@@ -274,13 +274,13 @@ function Unreadreplies()
 
 	if ($modSettings['totalMessages'] > 100000)
 	{
-		wedb::query('
+		wesql::query('
 			DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
 			array(
 			)
 		);
 
-		wedb::query('
+		wesql::query('
 			DROP TABLE IF EXISTS {db_prefix}log_topics_posted_in',
 			array(
 			)
@@ -295,7 +295,7 @@ function Unreadreplies()
 		);
 
 		// The main benefit of this temporary table is not that it's faster; it's that it avoids locks later.
-		$have_temp_table = wedb::query('
+		$have_temp_table = wesql::query('
 			CREATE TEMPORARY TABLE {db_prefix}topics_posted_in (
 				id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 				id_board smallint(5) unsigned NOT NULL default {string:string_zero},
@@ -322,7 +322,7 @@ function Unreadreplies()
 
 		// If that worked, create a sample of the log_topics table too.
 		if ($have_temp_table)
-			$have_temp_table = wedb::query('
+			$have_temp_table = wesql::query('
 				CREATE TEMPORARY TABLE {db_prefix}log_topics_posted_in (
 					PRIMARY KEY (id_topic)
 				)
@@ -339,7 +339,7 @@ function Unreadreplies()
 
 	if (!empty($have_temp_table))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}topics_posted_in AS pi
 				LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = pi.id_topic)
@@ -348,12 +348,12 @@ function Unreadreplies()
 			array_merge($query_parameters, array(
 			))
 		);
-		list ($num_topics) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($num_topics) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 	else
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(DISTINCT t.id_topic), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic)
@@ -368,8 +368,8 @@ function Unreadreplies()
 				'is_approved' => 1,
 			))
 		);
-		list ($num_topics, $min_message) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($num_topics, $min_message) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 
 	// Make sure the starting place makes sense and construct the page index.
@@ -399,7 +399,7 @@ function Unreadreplies()
 	}
 
 	if (!empty($have_temp_table))
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT t.id_topic
 			FROM {db_prefix}topics_posted_in AS t
 				LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = t.id_topic)
@@ -414,7 +414,7 @@ function Unreadreplies()
 			))
 		);
 	else
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT DISTINCT t.id_topic
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic AND m.id_member = {int:current_member})' . (strpos($_REQUEST['sort'], 'ms.') === false ? '' : '
@@ -440,9 +440,9 @@ function Unreadreplies()
 		);
 
 	$topics = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$topics[] = $row['id_topic'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Sanity... where have you gone?
 	if (empty($topics))
@@ -455,7 +455,7 @@ function Unreadreplies()
 		return;
 	}
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT ' . $select_clause . '
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_topic = t.id_topic AND ms.id_msg = t.id_first_msg)
@@ -477,7 +477,7 @@ function Unreadreplies()
 	$context['topics'] = array();
 	$topic_ids = array();
 
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
 			continue;
@@ -619,7 +619,7 @@ function Unreadreplies()
 			)
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
 	$context['topics_to_mark'] = implode('-', $topic_ids);

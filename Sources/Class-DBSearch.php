@@ -54,7 +54,7 @@ class wedbSearch
 		else
 			$size = 'int(10)';
 
-		wedb::query('
+		wesql::query('
 			CREATE TABLE {db_prefix}log_search_words (
 				id_word {raw:size} unsigned NOT NULL default {string:string_zero},
 				id_msg int(10) unsigned NOT NULL default {string:string_zero},

@@ -244,7 +244,7 @@ class wedgeEditor
 
 				if (!empty($names))
 				{
-					$request = wedb::query('
+					$request = wesql::query('
 						SELECT code, filename
 						FROM {db_prefix}smileys
 						WHERE filename IN ({array_string:smiley_filenames})',
@@ -253,9 +253,9 @@ class wedgeEditor
 						)
 					);
 					$mappings = array();
-					while ($row = wedb::fetch_assoc($request))
+					while ($row = wesql::fetch_assoc($request))
 						$mappings[$row['filename']] = htmlspecialchars($row['code']);
-					wedb::free_result($request);
+					wesql::free_result($request);
 
 					foreach ($matches[1] as $k => $file)
 						if (isset($mappings[$file]))
@@ -1708,7 +1708,7 @@ class wedgeEditor
 		{
 			if (($temp = cache_get_data('posting_smileys', 480)) == null)
 			{
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT code, filename, description, smiley_row, hidden
 					FROM {db_prefix}smileys
 					WHERE hidden IN (0, 2)
@@ -1716,14 +1716,14 @@ class wedgeEditor
 					array(
 					)
 				);
-				while ($row = wedb::fetch_assoc($request))
+				while ($row = wesql::fetch_assoc($request))
 				{
 					$row['filename'] = htmlspecialchars($row['filename']);
 					$row['description'] = htmlspecialchars($row['description']);
 
 					$this->smileys[empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 				}
-				wedb::free_result($request);
+				wesql::free_result($request);
 
 				foreach ($this->smileys as $section => $smileyRows)
 				{

@@ -568,7 +568,7 @@ function utf8_strtoupper($string)
 // Fixes corrupted serialized strings after a character set conversion.
 function fix_serialized_columns()
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_action, extra
 		FROM {db_prefix}log_actions
 		WHERE action IN ({string:remove}, {string:delete})',
@@ -577,10 +577,10 @@ function fix_serialized_columns()
 			'delete' => 'delete',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if (@unserialize($row['extra']) === false && preg_match('~^(a:3:{s:5:"topic";i:\d+;s:7:"subject";s:)(\d+):"(.+)"(;s:6:"member";s:5:"\d+";})$~', $row['extra'], $matches) === 1)
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}log_actions
 				SET extra = {string:extra}
 				WHERE id_action = {int:current_action}',
@@ -590,7 +590,7 @@ function fix_serialized_columns()
 				)
 			);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Refresh some cached data.
 	updateSettings(array(

@@ -312,7 +312,7 @@ class paypal_payment
 		if ($_POST['txn_type'] == 'subscr_payment' && !empty($_POST['subscr_id']))
 		{
 			$_POST['subscr_id'] = $_POST['subscr_id'];
-			wedb::query('
+			wesql::query('
 				UPDATE {db_prefix}log_subscribed
 				SET vendor_ref = {string:vendor_ref}
 				WHERE id_sublog = {int:current_subscription}',
@@ -334,7 +334,7 @@ class paypal_payment
 			return false;
 
 		// Do we have this in the database?
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member, id_subscribe
 			FROM {db_prefix}log_subscribed
 			WHERE vendor_ref = {string:vendor_ref}
@@ -344,13 +344,13 @@ class paypal_payment
 			)
 		);
 		// No joy?
-		if (wedb::num_rows($request) == 0)
+		if (wesql::num_rows($request) == 0)
 		{
 			// Can we identify them by email?
 			if (!empty($_POST['payer_email']))
 			{
-				wedb::free_result($request);
-				$request = wedb::query('
+				wesql::free_result($request);
+				$request = wesql::query('
 					SELECT ls.id_member, ls.id_subscribe
 					FROM {db_prefix}log_subscribed AS ls
 						INNER JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
@@ -360,15 +360,15 @@ class paypal_payment
 						'payer_email' => $_POST['payer_email'],
 					)
 				);
-				if (wedb::num_rows($request) == 0)
+				if (wesql::num_rows($request) == 0)
 					return false;
 			}
 			else
 				return false;
 		}
-		list ($member_id, $subscription_id) = wedb::fetch_row($request);
+		list ($member_id, $subscription_id) = wesql::fetch_row($request);
 		$_POST['item_number'] = $member_id . '+' . $subscription_id;
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 }
 

@@ -72,14 +72,14 @@ function modifyCategory($category_id, $catOptions)
 			$cats[] = $category_id;
 
 		// Grab the categories sorted by cat_order.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_cat, cat_order
 			FROM {db_prefix}categories
 			ORDER BY cat_order',
 			array(
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if ($row['id_cat'] != $category_id)
 				$cats[] = $row['id_cat'];
@@ -87,12 +87,12 @@ function modifyCategory($category_id, $catOptions)
 				$cats[] = $category_id;
 			$cat_order[$row['id_cat']] = $row['cat_order'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Set the new order for the categories.
 		foreach ($cats as $index => $cat)
 			if ($index != $cat_order[$cat])
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}categories
 					SET cat_order = {int:new_order}
 					WHERE id_cat = {int:current_category}',
@@ -123,7 +123,7 @@ function modifyCategory($category_id, $catOptions)
 	// Do the updates (if any).
 	if (!empty($catUpdates))
 	{
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}categories
 			SET
 				' . implode(',
@@ -155,7 +155,7 @@ function createCategory($catOptions)
 	$catOptions['dont_log'] = true;
 
 	// Add the category to the database.
-	wedb::insert('',
+	wesql::insert('',
 		'{db_prefix}categories',
 		array(
 			'name' => 'string-48',
@@ -167,7 +167,7 @@ function createCategory($catOptions)
 	);
 
 	// Grab the new category ID.
-	$category_id = wedb::insert_id();
+	$category_id = wesql::insert_id();
 
 	// Set the given properties to the newly created category.
 	modifyCategory($category_id, $catOptions);
@@ -190,7 +190,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 	// With no category set to move the boards to, delete them all.
 	if ($moveBoardsTo === null)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_board
 			FROM {db_prefix}boards
 			WHERE id_cat IN ({array_int:category_list})',
@@ -199,9 +199,9 @@ function deleteCategories($categories, $moveBoardsTo = null)
 			)
 		);
 		$boards_inside = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$boards_inside[] = $row['id_board'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (!empty($boards_inside))
 			deleteBoards($boards_inside, null);
@@ -213,7 +213,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 
 	// Move the boards inside the categories to a safe category.
 	else
-		wedb::query('
+		wesql::query('
 			UPDATE {db_prefix}boards
 			SET id_cat = {int:new_parent_cat}
 			WHERE id_cat IN ({array_int:category_list})',
@@ -224,7 +224,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 		);
 
 	// Noone will ever be able to collapse these categories anymore.
-	wedb::query('
+	wesql::query('
 		DELETE FROM {db_prefix}collapsed_categories
 		WHERE id_cat IN ({array_int:category_list})',
 		array(
@@ -233,7 +233,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 	);
 
 	// Do the deletion of the category itself
-	wedb::query('
+	wesql::query('
 		DELETE FROM {db_prefix}categories
 		WHERE id_cat IN ({array_int:category_list})',
 		array(
@@ -255,7 +255,7 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 	// Collapse or expand the categories.
 	if ($new_status === 'collapse' || $new_status === 'expand')
 	{
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}collapsed_categories
 			WHERE id_cat IN ({array_int:category_list})' . ($members === null ? '' : '
 				AND id_member IN ({array_int:member_list})'),
@@ -266,7 +266,7 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 		);
 
 		if ($new_status === 'collapse')
-			wedb::query('
+			wesql::query('
 				INSERT INTO {db_prefix}collapsed_categories
 					(id_cat, id_member)
 				SELECT c.id_cat, mem.id_member
@@ -291,7 +291,7 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 			'insert' => array(),
 			'remove' => array(),
 		);
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT mem.id_member, c.id_cat, IFNULL(cc.id_cat, 0) AS is_collapsed, c.can_collapse
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}categories AS c ON (c.id_cat IN ({array_int:category_list}))
@@ -303,18 +303,18 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 				'member_list' => $members,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if (empty($row['is_collapsed']) && (!empty($row['can_collapse']) || !$check_collapsable))
 				$updates['insert'][] = array($row['id_member'], $row['id_cat']);
 			elseif (!empty($row['is_collapsed']))
 				$updates['remove'][] = '(id_member = ' . $row['id_member'] . ' AND id_cat = ' . $row['id_cat'] . ')';
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Collapse the ones that were originally expanded...
 		if (!empty($updates['insert']))
-			wedb::insert('replace',
+			wesql::insert('replace',
 				'{db_prefix}collapsed_categories',
 				array(
 					'id_cat' => 'int', 'id_member' => 'int',
@@ -325,7 +325,7 @@ function collapseCategories($categories, $new_status, $members = null, $check_co
 
 		// And expand the ones that were originally collapsed.
 		if (!empty($updates['remove']))
-			wedb::query('
+			wesql::query('
 				DELETE FROM {db_prefix}collapsed_categories
 				WHERE ' . implode(' OR ', $updates['remove']),
 				array(

@@ -125,7 +125,7 @@ function DoLogin()
 	unset($_SESSION['language'], $_SESSION['id_theme']);
 
 	// First login?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT last_login
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -134,17 +134,17 @@ function DoLogin()
 			'id_member' => $user_info['id'],
 		)
 	);
-	if (wedb::num_rows($request) == 1)
+	if (wesql::num_rows($request) == 1)
 		$_SESSION['first_login'] = true;
 	else
 		unset($_SESSION['first_login']);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// You've logged in, haven't you?
 	updateMemberData($user_info['id'], array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
 
 	// Get rid of the online entry for that old guest....
-	wedb::query('
+	wesql::query('
 		DELETE FROM {db_prefix}log_online
 		WHERE session = {string:session}',
 		array(

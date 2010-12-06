@@ -192,7 +192,7 @@ function MLAll()
 		// Only update the cache if something changed or no cache existed yet.
 		if (empty($memberlist_cache) || empty($modSettings['memberlist_updated']) || $memberlist_cache['last_update'] < $modSettings['memberlist_updated'])
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}
@@ -204,18 +204,18 @@ function MLAll()
 
 			$memberlist_cache = array(
 				'last_update' => time(),
-				'num_members' => wedb::num_rows($request),
+				'num_members' => wesql::num_rows($request),
 				'index' => array(),
 			);
 
-			for ($i = 0, $n = wedb::num_rows($request); $i < $n; $i += $cache_step_size)
+			for ($i = 0, $n = wesql::num_rows($request); $i < $n; $i += $cache_step_size)
 			{
-				wedb::data_seek($request, $i);
-				list($memberlist_cache['index'][$i]) = wedb::fetch_row($request);
+				wesql::data_seek($request, $i);
+				list($memberlist_cache['index'][$i]) = wesql::fetch_row($request);
 			}
-			wedb::data_seek($request, $memberlist_cache['num_members'] - 1);
-			list ($memberlist_cache['index'][$i]) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			wesql::data_seek($request, $memberlist_cache['num_members'] - 1);
+			list ($memberlist_cache['index'][$i]) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			// Now we've got the cache...store it.
 			updateSettings(array('memberlist_cache' => serialize($memberlist_cache)));
@@ -227,7 +227,7 @@ function MLAll()
 	// Without cache we need an extra query to get the amount of members.
 	else
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE is_activated = {int:is_activated}',
@@ -235,8 +235,8 @@ function MLAll()
 				'is_activated' => 1,
 			)
 		);
-		list ($context['num_members']) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($context['num_members']) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 
 	// Set defaults for sort (real_name) and start. (0)
@@ -250,7 +250,7 @@ function MLAll()
 
 		$_REQUEST['start'] = $match[0];
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE LOWER(SUBSTRING(real_name, 1, 1)) < {string:first_letter}
@@ -260,8 +260,8 @@ function MLAll()
 				'first_letter' => $_REQUEST['start'],
 			)
 		);
-		list ($_REQUEST['start']) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($_REQUEST['start']) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 
 	$context['letter_links'] = '';
@@ -380,7 +380,7 @@ function MLAll()
 	}
 
 	// Select the members from the database.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($_REQUEST['sort'] === 'is_online' ? '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'id_group' ? '
@@ -392,7 +392,7 @@ function MLAll()
 		$query_parameters
 	);
 	printMemberListRows($request);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Add anchors at the start of each letter.
 	if ($_REQUEST['sort'] == 'real_name')
@@ -420,7 +420,7 @@ function MLSearch()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Can they search custom fields?
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT col_name, field_name, field_desc
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
@@ -436,13 +436,13 @@ function MLSearch()
 		)
 	);
 	$context['custom_search_fields'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['custom_search_fields'][$row['col_name']] = array(
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 		);
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// They're searching..
 	if (isset($_REQUEST['search'], $_REQUEST['fields']))
@@ -503,7 +503,7 @@ function MLSearch()
 
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : 'LIKE {string:search}';
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT COUNT(*)
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_id_group} THEN mem.id_post_group ELSE mem.id_group END)' .
@@ -513,14 +513,14 @@ function MLSearch()
 				AND mem.is_activated = {int:is_activated}',
 			$query_parameters
 		);
-		list ($numResults) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($numResults) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!!SLOW This query is slow.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -533,7 +533,7 @@ function MLSearch()
 			$query_parameters
 		);
 		printMemberListRows($request);
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 	else
 	{
@@ -568,21 +568,21 @@ function printMemberListRows($request)
 	global $context, $settings, $memberContext;
 
 	// Get the most posts.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT MAX(posts)
 		FROM {db_prefix}members',
 		array(
 		)
 	);
-	list ($MOST_POSTS) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($MOST_POSTS) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	// Avoid division by zero...
 	if ($MOST_POSTS == 0)
 		$MOST_POSTS = 1;
 
 	$members = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$members[] = $row['id_member'];
 
 	// Load all the members for display.

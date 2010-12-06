@@ -109,7 +109,7 @@ function issueWarning($memID)
 	if ($context['warning_limit'] > 0)
 	{
 		// Make sure we cannot go outside of our limit for the day.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT SUM(counter)
 			FROM {db_prefix}log_comments
 			WHERE id_recipient = {int:selected_member}
@@ -123,8 +123,8 @@ function issueWarning($memID)
 				'warning' => 'warning',
 			)
 		);
-		list ($current_applied) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($current_applied) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		$context['min_allowed'] = max(0, $cur_profile['warning'] - $current_applied - $context['warning_limit']);
 		$context['max_allowed'] = min(100, $cur_profile['warning'] - $current_applied + $context['warning_limit']);
@@ -181,7 +181,7 @@ function issueWarning($memID)
 				sendpm(array('to' => array($memID), 'bcc' => array()), $_POST['warn_sub'], $_POST['warn_body'], false, $from);
 
 				// Log the notice!
-				wedb::insert('',
+				wesql::insert('',
 					'{db_prefix}log_member_notices',
 					array(
 						'subject' => 'string-255', 'body' => 'string-65534',
@@ -191,7 +191,7 @@ function issueWarning($memID)
 					),
 					array('id_notice')
 				);
-				$id_notice = wedb::insert_id();
+				$id_notice = wesql::insert_id();
 			}
 		}
 
@@ -206,7 +206,7 @@ function issueWarning($memID)
 		{
 			// Log what we've done!
 			if (!$context['user']['is_owner'])
-				wedb::insert('',
+				wesql::insert('',
 					'{db_prefix}log_comments',
 					array(
 						'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'id_recipient' => 'int', 'recipient_name' => 'string-255',
@@ -277,7 +277,7 @@ function issueWarning($memID)
 	// Are they warning because of a message?
 	if (isset($_REQUEST['msg']) && 0 < (int) $_REQUEST['msg'])
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT subject
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -288,12 +288,12 @@ function issueWarning($memID)
 				'message' => (int) $_REQUEST['msg'],
 			)
 		);
-		if (wedb::num_rows($request) != 0)
+		if (wesql::num_rows($request) != 0)
 		{
 			$context['warning_for_message'] = (int) $_REQUEST['msg'];
-			list ($context['warned_message_subject']) = wedb::fetch_row($request);
+			list ($context['warned_message_subject']) = wesql::fetch_row($request);
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 	}
 
@@ -307,7 +307,7 @@ function issueWarning($memID)
 	// Any custom templates?
 	$context['notification_templates'] = array();
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT recipient_name AS template_title, body
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:warntpl}
@@ -318,7 +318,7 @@ function issueWarning($memID)
 			'current_member' => $user_info['id'],
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// If we're not warning for a message skip any that are.
 		if (!$context['warning_for_message'] && strpos($row['body'], '{MESSAGE}') !== false)
@@ -329,7 +329,7 @@ function issueWarning($memID)
 			'body' => $row['body'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Setup the "default" templates.
 	foreach (array('spamming', 'offence', 'insulting') as $type)
@@ -346,7 +346,7 @@ function issueWarning($memID)
 // Get the number of warnings a user has.
 function list_getUserWarningCount($memID)
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE id_recipient = {int:selected_member}
@@ -356,8 +356,8 @@ function list_getUserWarningCount($memID)
 			'warning' => 'warning',
 		)
 	);
-	list ($total_warnings) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($total_warnings) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	return $total_warnings;
 }
@@ -367,7 +367,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 {
 	global $scripturl;
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name,
 			lc.log_time, lc.body, lc.counter, lc.id_notice
 		FROM {db_prefix}log_comments AS lc
@@ -382,7 +382,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 		)
 	);
 	$previous_warnings = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$previous_warnings[] = array(
 			'issuer' => array(
@@ -395,7 +395,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 			'id_notice' => $row['id_notice'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $previous_warnings;
 }
@@ -439,7 +439,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 		// Are you allowed to administrate the forum, as they are?
 		isAllowedTo('admin_forum');
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0)
@@ -450,8 +450,8 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 				'selected_member' => $memID,
 			)
 		);
-		list ($another) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($another) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		if (empty($another))
 			fatal_lang_error('at_least_one_admin', 'critical');
@@ -476,7 +476,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 			if ($_POST['remove_type'] == 'topics')
 			{
 				// Fetch all topics started by this user within the time period.
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT t.id_topic
 					FROM {db_prefix}topics AS t
 					WHERE t.id_member_started = {int:selected_member}',
@@ -485,9 +485,9 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 					)
 				);
 				$topicIDs = array();
-				while ($row = wedb::fetch_assoc($request))
+				while ($row = wesql::fetch_assoc($request))
 					$topicIDs[] = $row['id_topic'];
-				wedb::free_result($request);
+				wesql::free_result($request);
 
 				// Actually remove the topics.
 				// !!! This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
@@ -495,7 +495,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 			}
 
 			// Now delete the remaining messages.
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
@@ -506,9 +506,9 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 				)
 			);
 			// This could take a while... but ya know it's gonna be worth it in the end.
-			while ($row = wedb::fetch_assoc($request))
+			while ($row = wesql::fetch_assoc($request))
 				removeMessage($row['id_msg']);
-			wedb::free_result($request);
+			wesql::free_result($request);
 		}
 
 		// Only delete this poor members account if they are actually being booted out of camp.
@@ -593,7 +593,7 @@ function subscriptions($memID)
 		fatal_error($txt['paid_admin_not_setup_gateway']);
 
 	// Get the current subscriptions.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_sublog, id_subscribe, start_time, end_time, status, payments_pending, pending_details
 		FROM {db_prefix}log_subscribed
 		WHERE id_member = {int:selected_member}',
@@ -602,7 +602,7 @@ function subscriptions($memID)
 		)
 	);
 	$context['current'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// The subscription must exist!
 		if (!isset($context['subscriptions'][$row['id_subscribe']]))
@@ -623,7 +623,7 @@ function subscriptions($memID)
 		if ($row['status'] == 1)
 			$context['subscriptions'][$row['id_subscribe']]['subscribed'] = true;
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Simple "done"?
 	if (isset($_GET['done']))
@@ -651,7 +651,7 @@ function subscriptions($memID)
 				// Save the details back.
 				$pending_details = serialize($current_pending);
 
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}log_subscribed
 					SET payments_pending = payments_pending + 1, pending_details = {string:pending_details}
 					WHERE id_sublog = {int:current_subscription_id}
@@ -747,7 +747,7 @@ function subscriptions($memID)
 				$current_pending[] = $new_data;
 				$pending_details = serialize($current_pending);
 
-				wedb::query('
+				wesql::query('
 					UPDATE {db_prefix}log_subscribed
 					SET payments_pending = {int:pending_count}, pending_details = {string:pending_details}
 					WHERE id_sublog = {int:current_subscription_item}
@@ -766,7 +766,7 @@ function subscriptions($memID)
 		else
 		{
 			$pending_details = serialize(array($new_data));
-			wedb::insert('',
+			wesql::insert('',
 				'{db_prefix}log_subscribed',
 				array(
 					'id_subscribe' => 'int', 'id_member' => 'int', 'status' => 'int', 'payments_pending' => 'int', 'pending_details' => 'string-65534',

@@ -109,7 +109,7 @@ function RepairBoards()
 		loadSource('Subs-Boards');
 
 		// Get the MySQL version for future reference.
-		$mysql_version = wedb::server_info($db_connection);
+		$mysql_version = wesql::server_info($db_connection);
 
 		// Actually do the fix.
 		findForumErrors(true);
@@ -261,7 +261,7 @@ function loadForumTests()
 				}
 
 				// Make sure that no topics claim the first/last message as theirs.
-				wedb::query(\'
+				wesql::query(\'
 					UPDATE {db_prefix}topics
 					SET id_first_msg = 0
 					WHERE id_first_msg = {int:id_first_msg}\',
@@ -269,7 +269,7 @@ function loadForumTests()
 						\'id_first_msg\' => $row[\'myid_first_msg\'],
 					)
 				);
-				wedb::query(\'
+				wesql::query(\'
 					UPDATE {db_prefix}topics
 					SET id_last_msg = 0
 					WHERE id_last_msg = {int:id_last_msg}\',
@@ -281,7 +281,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
 				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
 
-				wedb::insert(\'\',
+				wesql::insert(\'\',
 					\'{db_prefix}topics\',
 					array(
 						\'id_board\' => \'int\',
@@ -302,9 +302,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newTopicID = wedb::insert_id();
+				$newTopicID = wesql::insert_id();
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}messages
 					SET id_topic = $newTopicID, id_board = $row[id_board]
 					WHERE id_topic = $row[id_topic]",
@@ -334,14 +334,14 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$topics', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
 							\'topics\' => $topics
 						)
 					);
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
@@ -377,7 +377,7 @@ function loadForumTests()
 
 				$row[\'poster_name\'] = !empty($row[\'poster_name\']) ? $row[\'poster_name\'] : $txt[\'guest\'];
 
-				wedb::insert(\'\',
+				wesql::insert(\'\',
 					\'{db_prefix}messages\',
 					array(
 						\'id_board\' => \'int\',
@@ -410,9 +410,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newMessageID = wedb::insert_id();
+				$newMessageID = wesql::insert_id();
 
-				wedb::insert(\'\',
+				wesql::insert(\'\',
 					\'{db_prefix}topics\',
 					array(
 						\'id_board\' => \'int\',
@@ -435,9 +435,9 @@ function loadForumTests()
 					array(\'id_topic\')
 				);
 
-				$newTopicID = wedb::insert_id();
+				$newTopicID = wesql::insert_id();
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}messages
 					SET id_topic = $newTopicID, id_board = $row[id_board]
 					WHERE id_msg = $newMessageID",
@@ -487,7 +487,7 @@ function loadForumTests()
 				$memberStartedID = (int) getMsgMemberID($row[\'myid_first_msg\']);
 				$memberUpdatedID = (int) getMsgMemberID($row[\'myid_last_msg\']);
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}topics
 					SET id_first_msg = $row[myid_first_msg],
 						id_member_started = $memberStartedID, id_last_msg = $row[myid_last_msg],
@@ -539,7 +539,7 @@ function loadForumTests()
 				if ($row[\'my_num_replies\'] == $row[\'num_replies\'])
 					return false;
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}topics
 					SET num_replies = $row[my_num_replies]
 					WHERE id_topic = $row[id_topic]",
@@ -580,7 +580,7 @@ function loadForumTests()
 			'fix_processing' => create_function('$row', '
 				$row[\'my_unapproved_posts\'] = (int) $row[\'my_unapproved_posts\'];
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = $row[my_unapproved_posts]
 					WHERE id_topic = $row[id_topic]",
@@ -620,22 +620,22 @@ function loadForumTests()
 				$row[\'my_num_topics\'] = (int) $row[\'my_num_topics\'];
 				$row[\'my_num_posts\'] = (int) $row[\'my_num_posts\'];
 
-				wedb::db_insert(\'\',
+				wesql::db_insert(\'\',
 					\'{db_prefix}boards\',
 					array(\'id_cat\' => \'int\', \'name\' => \'string\', \'description\' => \'string\', \'num_topics\' => \'int\', \'num_posts\' => \'int\', \'member_groups\' => \'string\'),
 					array($salvageCatID, \'Salvaged board\', \'\', $row[\'my_num_topics\'], $row[\'my_num_posts\'], \'1\'),
 					array(\'id_board\')
 				);
-				$newBoardID = wedb::insert_id();
+				$newBoardID = wesql::insert_id();
 
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}topics
 					SET id_board = $newBoardID
 					WHERE id_board = $row[id_board]",
 					array(
 					)
 				);
-				wedb::query("
+				wesql::query("
 					UPDATE {db_prefix}messages
 					SET id_board = $newBoardID
 					WHERE id_board = $row[id_board]",
@@ -658,7 +658,7 @@ function loadForumTests()
 				'process' => create_function('$cats', '
 					global $salvageCatID;
 					createSalvageArea();
-					wedb::query("
+					wesql::query("
 						UPDATE {db_prefix}boards
 						SET id_cat = $salvageCatID
 						WHERE id_cat IN ({array_int:categories})",
@@ -690,7 +690,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_msg',
 				'process' => create_function('$msgs', '
-					wedb::query("
+					wesql::query("
 						UPDATE {db_prefix}messages
 						SET id_member = 0
 						WHERE id_msg IN ({array_int:msgs})",
@@ -716,7 +716,7 @@ function loadForumTests()
 				'process' => create_function('$parents', '
 					global $salvageBoardID, $salvageCatID;
 					createSalvageArea();
-					wedb::query("
+					wesql::query("
 						UPDATE {db_prefix}boards
 						SET id_parent = $salvageBoardID, id_cat = $salvageCatID, child_level = 1
 						WHERE id_parent IN ({array_int:parents})",
@@ -745,7 +745,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_poll',
 				'process' => create_function('$polls', '
-					wedb::query("
+					wesql::query("
 						UPDATE {db_prefix}topics
 						SET id_poll = 0
 						WHERE id_poll IN ({array_int:polls})",
@@ -775,7 +775,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$events', '
-					wedb::query(\'
+					wesql::query(\'
 						UPDATE {db_prefix}calendar
 						SET id_topic = 0, id_board = 0
 						WHERE id_topic IN ({array_int:events})\',
@@ -803,7 +803,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$topics', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})",
 						array(
@@ -831,7 +831,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -859,7 +859,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_board',
 				'process' => create_function('$boards', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_board IN ({array_int:boards})",
 						array(
@@ -887,7 +887,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -915,7 +915,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_board',
 				'process' => create_function('$boards', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_board IN ({array_int:boards})",
 						array(
@@ -943,7 +943,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -971,7 +971,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_pm',
 				'process' => create_function('$pms', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_pm IN ({array_int:pms})",
 						array(
@@ -1000,7 +1000,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1028,7 +1028,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_pm',
 				'process' => create_function('$guestMessages', '
-					wedb::query("
+					wesql::query("
 						UPDATE {db_prefix}personal_messages
 						SET id_member_from = 0
 						WHERE id_pm IN ({array_int:guestMessages})",
@@ -1056,7 +1056,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_notify
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1083,13 +1083,13 @@ function loadForumTests()
 					AND lss.id_topic IS NULL',
 			'fix_full_processing' => create_function('$result', '
 				$inserts = array();
-				while ($row = wedb::fetch_assoc($result))
+				while ($row = wesql::fetch_assoc($result))
 				{
 					foreach (text2words($row[\'subject\']) as $word)
 						$inserts[] = array($word, $row[\'id_topic\']);
 					if (count($inserts) > 500)
 					{
-						wedb::insert(\'ignore\',
+						wesql::insert(\'ignore\',
 							"{db_prefix}log_search_subjects",
 							array(\'word\' => \'string\', \'id_topic\' => \'int\'),
 							$inserts,
@@ -1101,7 +1101,7 @@ function loadForumTests()
 				}
 
 				if (!empty($inserts))
-					wedb::insert(\'ignore\',
+					wesql::insert(\'ignore\',
 						"{db_prefix}log_search_subjects",
 						array(\'word\' => \'string\', \'id_topic\' => \'int\'),
 						$inserts,
@@ -1136,7 +1136,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_topic',
 				'process' => create_function('$deleteTopics', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_search_subjects
 						WHERE id_topic IN ({array_int:deleteTopics})",
 						array(
@@ -1164,7 +1164,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1191,7 +1191,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_poll',
 				'process' => create_function('$polls', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_poll IN ({array_int:polls})",
 						array(
@@ -1218,7 +1218,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_report',
 				'process' => create_function('$reports', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_reported
 						WHERE id_report IN ({array_int:reports})",
 						array(
@@ -1245,7 +1245,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_report',
 				'process' => create_function('$reports', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_reported_comments
 						WHERE id_report IN ({array_int:reports})",
 						array(
@@ -1273,7 +1273,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_member',
 				'process' => create_function('$members', '
-					wedb::query("
+					wesql::query("
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_member IN ({array_int:members})",
 						array(
@@ -1301,7 +1301,7 @@ function loadForumTests()
 			'fix_collect' => array(
 				'index' => 'id_group',
 				'process' => create_function('$groups', '
-					wedb::query(\'
+					wesql::query(\'
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_group IN ({array_int:groups})\',
 						array(
@@ -1356,15 +1356,15 @@ function findForumErrors($do_fix = false)
 		if (isset($test['substeps']))
 		{
 			$step_size = isset($test['substeps']['step_size']) ? $test['substeps']['step_size'] : 100;
-			$request = wedb::query(
+			$request = wesql::query(
 				$test['substeps']['step_max'],
 				array(
 				)
 			);
-			list ($step_max) = wedb::fetch_row($request);
+			list ($step_max) = wesql::fetch_row($request);
 
 			$total_queries++;
-			wedb::free_result($request);
+			wesql::free_result($request);
 		}
 
 		// We in theory keep doing this... the substeps.
@@ -1382,7 +1382,7 @@ function findForumErrors($do_fix = false)
 				$test_query = isset($test['fix_query']) ? 'fix_query' : 'check_query';
 
 			// Do the test...
-			$request = wedb::query(
+			$request = wesql::query(
 				isset($test['substeps']) ? strtr($test[$test_query], array('{STEP_LOW}' => $_GET['substep'], '{STEP_HIGH}' => $_GET['substep'] + $step_size - 1)) : $test[$test_query],
 				array(
 				)
@@ -1391,9 +1391,9 @@ function findForumErrors($do_fix = false)
 
 			// Does it need a fix?
 			if (!empty($test['check_type']) && $test['check_type'] == 'count')
-				list ($needs_fix) = wedb::fetch_row($request);
+				list ($needs_fix) = wesql::fetch_row($request);
 			else
-				$needs_fix = wedb::num_rows($request);
+				$needs_fix = wesql::num_rows($request);
 
 			$total_queries++;
 
@@ -1411,7 +1411,7 @@ function findForumErrors($do_fix = false)
 					// One per row!
 					elseif (isset($test['messages']))
 					{
-						while ($row = wedb::fetch_assoc($request))
+						while ($row = wesql::fetch_assoc($request))
 						{
 							$variables = $test['messages'];
 							foreach ($variables as $k => $v)
@@ -1430,7 +1430,7 @@ function findForumErrors($do_fix = false)
 					{
 						// Find out if there are actually errors.
 						$found_errors = false;
-						while ($row = wedb::fetch_assoc($request))
+						while ($row = wesql::fetch_assoc($request))
 							$found_errors |= $test['message_function']($row);
 					}
 
@@ -1446,7 +1446,7 @@ function findForumErrors($do_fix = false)
 					if (isset($test['fix_collect']))
 					{
 						$ids = array();
-						while ($row = wedb::fetch_assoc($request))
+						while ($row = wesql::fetch_assoc($request))
 							$ids[] = $row[$test['fix_collect']['index']];
 						if (!empty($ids))
 						{
@@ -1457,7 +1457,7 @@ function findForumErrors($do_fix = false)
 
 					// Simply executing a fix it query?
 					elseif (isset($test['fix_it_query']))
-						wedb::query(
+						wesql::query(
 							$test['fix_it_query'],
 							array(
 							)
@@ -1466,7 +1466,7 @@ function findForumErrors($do_fix = false)
 					// Do we have some processing to do?
 					elseif (isset($test['fix_processing']))
 					{
-						while ($row = wedb::fetch_assoc($request))
+						while ($row = wesql::fetch_assoc($request))
 							$test['fix_processing']($row);
 					}
 
@@ -1485,7 +1485,7 @@ function findForumErrors($do_fix = false)
 			}
 
 			// Free the result.
-			wedb::free_result($request);
+			wesql::free_result($request);
 			// Keep memory down.
 			$db_cache = '';
 
@@ -1549,7 +1549,7 @@ function createSalvageArea()
 	loadLanguage('Admin', $language);
 
 	// Check to see if a 'Salvage Category' exists, if not => insert one.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT id_cat
 		FROM {db_prefix}categories
 		WHERE name = {string:cat_name}
@@ -1558,30 +1558,30 @@ function createSalvageArea()
 			'cat_name' => $txt['salvaged_category_name'],
 		)
 	);
-	if (wedb::num_rows($result) != 0)
-		list ($salvageCatID) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	if (wesql::num_rows($result) != 0)
+		list ($salvageCatID) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	if (empty($salveageCatID))
 	{
-		wedb::insert('',
+		wesql::insert('',
 			'{db_prefix}categories',
 			array('name' => 'string-255', 'cat_order' => 'int'),
 			array($txt['salvaged_category_name'], -1),
 			array('id_cat')
 		);
 
-		if (wedb::affected_rows() <= 0)
+		if (wesql::affected_rows() <= 0)
 		{
 			loadLanguage('Admin');
 			fatal_lang_error('salvaged_category_error', false);
 		}
 
-		$salvageCatID = wedb::insert_id();
+		$salvageCatID = wesql::insert_id();
 	}
 
 	// Check to see if a 'Salvage Board' exists, if not => insert one.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT id_board
 		FROM {db_prefix}boards
 		WHERE id_cat = {int:id_cat}
@@ -1592,29 +1592,29 @@ function createSalvageArea()
 			'board_name' => $txt['salvaged_board_name'],
 		)
 	);
-	if (wedb::num_rows($result) != 0)
-		list ($salvageBoardID) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	if (wesql::num_rows($result) != 0)
+		list ($salvageBoardID) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	if (empty($salvageBoardID))
 	{
-		wedb::insert('',
+		wesql::insert('',
 			'{db_prefix}boards',
 			array('name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'),
 			array($txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''),
 			array('id_board')
 		);
 
-		if (wedb::affected_rows() <= 0)
+		if (wesql::affected_rows() <= 0)
 		{
 			loadLanguage('Admin');
 			fatal_lang_error('salvaged_board_error', false);
 		}
 
-		$salvageBoardID = wedb::insert_id();
+		$salvageBoardID = wesql::insert_id();
 	}
 
-	wedb::query('
+	wesql::query('
 		ALTER TABLE {db_prefix}boards
 		ORDER BY board_order',
 		array(

@@ -384,16 +384,16 @@ function EditBoard()
 	loadPermissionProfiles();
 
 	// Load available subdomains
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT url
 		FROM {db_prefix}boards
 		WHERE id_owner = {int:user_id}',
 		array('user_id' => (int) $user_info['id'])
 	);
 	$subdomains = array(0 => $_SERVER['HTTP_HOST']);
-	while ($row = wedb::fetch_row($request))
+	while ($row = wesql::fetch_row($request))
 		$subdomains[] = ($subdo = substr($row[0], 0, strpos($row[0], '/'))) ? $subdo : $row[0];
-	wedb::free_result($request);
+	wesql::free_result($request);
 	// !!! @todo: Should we allow users to create boards using their profile URL as root?
 	//	$subdomains[] = 'my.' . $_SERVER['HTTP_HOST'] . '/' . $user_info['username'];
 	$subdomains = array_unique($subdomains);
@@ -472,7 +472,7 @@ function EditBoard()
 	);
 
 	// Load membergroups.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT group_name, id_group, min_posts
 		FROM {db_prefix}membergroups
 		WHERE id_group > {int:moderator_group} OR id_group = {int:global_moderator}
@@ -482,7 +482,7 @@ function EditBoard()
 			'global_moderator' => 2,
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		if ($_REQUEST['sa'] == 'newboard' && $row['min_posts'] == -1)
 			$curBoard['member_groups'][] = $row['id_group'];
@@ -494,7 +494,7 @@ function EditBoard()
 			'is_post_group' => $row['min_posts'] != -1,
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
@@ -543,7 +543,7 @@ function EditBoard()
 			'selected' => $catID == $curBoard['category']
 		);
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT mem.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -553,9 +553,9 @@ function EditBoard()
 		)
 	);
 	$context['board']['moderators'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	$context['board']['moderator_list'] = empty($context['board']['moderators']) ? '' : '&quot;' . implode('&quot;, &quot;', $context['board']['moderators']) . '&quot;';
 
@@ -563,7 +563,7 @@ function EditBoard()
 		list ($context['board']['last_moderator_id']) = array_slice(array_keys($context['board']['moderators']), -1);
 
 	// Get all the themes...
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_theme AS id, value AS name
 		FROM {db_prefix}themes
 		WHERE variable = {string:name}',
@@ -572,14 +572,14 @@ function EditBoard()
 		)
 	);
 	$context['themes'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['themes'][$row['id']] = $row;
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Get theme dir for all themes
 	loadSource('Themes');
 
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_theme AS id, value AS dir
 		FROM {db_prefix}themes
 		WHERE variable = {string:dir}',
@@ -587,9 +587,9 @@ function EditBoard()
 			'dir' => 'theme_dir',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$context['themes'][$row['id']]['stylings'] = wedge_get_styling_list($row['dir'] . '/css');
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	if (!isset($_REQUEST['delete']))
 	{
@@ -679,7 +679,7 @@ function EditBoard2()
 		// We need to know what used to be case in terms of redirection.
 		if (!empty($_POST['boardid']))
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT redirect, num_posts
 				FROM {db_prefix}boards
 				WHERE id_board = {int:current_board}',
@@ -687,8 +687,8 @@ function EditBoard2()
 					'current_board' => $_POST['boardid'],
 				)
 			);
-			list ($oldRedirect, $numPosts) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($oldRedirect, $numPosts) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			// If we're turning redirection on check the board doesn't have posts in it - if it does don't make it a redirection board.
 			if ($boardOptions['redirect'] && empty($oldRedirect) && $numPosts)
@@ -749,7 +749,7 @@ function EditBoardSettings($return_config = false)
 
 	// Load the boards list - for the recycle bin!
 	$recycle_boards = array('');
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -758,9 +758,9 @@ function EditBoardSettings($return_config = false)
 			'empty_string' => '',
 		)
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// Here and the board settings...
 	$config_vars = array(

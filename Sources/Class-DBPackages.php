@@ -52,7 +52,7 @@ class wedbPackages
 				self::$reservedTables[$k] = strtolower($db_prefix . $table_name);
 
 			// We in turn may need the extra stuff.
-			wedb::extend('extra');
+			wesql::extend('extra');
 			$db_package_log = array();
 		}
 
@@ -98,7 +98,7 @@ class wedbPackages
 				$default = 'auto_increment';
 			}
 			elseif (isset($column['default']) && $column['default'] !== null)
-				$default = 'default \'' . wedb::escape_string($column['default']) . '\'';
+				$default = 'default \'' . wesql::escape_string($column['default']) . '\'';
 			else
 				$default = '';
 
@@ -139,7 +139,7 @@ class wedbPackages
 		$table_query .= ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci';
 
 		// Create the table!
-		wedb::query($table_query,
+		wesql::query($table_query,
 			array(
 				'security_override' => true,
 			)
@@ -166,7 +166,7 @@ class wedbPackages
 		if (in_array($full_table_name, wedbExtra::list_tables()))
 		{
 			$query = 'DROP TABLE ' . $table_name;
-			wedb::query(
+			wesql::query(
 				$query,
 				array(
 					'security_override' => true,
@@ -216,9 +216,9 @@ class wedbPackages
 		$query = '
 			ALTER TABLE ' . $table_name . '
 			ADD `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-				(!isset($column_info['default']) ? '' : 'default \'' . wedb::escape_string($column_info['default']) . '\'') . ' ' .
+				(!isset($column_info['default']) ? '' : 'default \'' . wesql::escape_string($column_info['default']) . '\'') . ' ' .
 				(empty($column_info['auto']) ? '' : 'auto_increment primary key') . ' ';
-		wedb::query($query,
+		wesql::query($query,
 			array(
 				'security_override' => true,
 			)
@@ -239,7 +239,7 @@ class wedbPackages
 		foreach ($columns as $column)
 			if ($column['name'] == $column_name)
 			{
-				wedb::query('
+				wesql::query('
 					ALTER TABLE ' . $table_name . '
 					DROP COLUMN ' . $column_name,
 					array(
@@ -296,10 +296,10 @@ class wedbPackages
 		if ($size !== null)
 			$type = $type . '(' . $size . ')';
 
-		wedb::query('
+		wesql::query('
 			ALTER TABLE ' . $table_name . '
 			CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
-				(!isset($column_info['default']) ? '' : 'default \'' . wedb::escape_string($column_info['default']) . '\'') . ' ' .
+				(!isset($column_info['default']) ? '' : 'default \'' . wesql::escape_string($column_info['default']) . '\'') . ' ' .
 				(empty($column_info['auto']) ? '' : 'auto_increment') . ' ',
 			array(
 				'security_override' => true,
@@ -352,7 +352,7 @@ class wedbPackages
 		// If we're here we know we don't have the index - so just add it.
 		if (!empty($index_info['type']) && $index_info['type'] == 'primary')
 		{
-			wedb::query('
+			wesql::query('
 				ALTER TABLE ' . $table_name . '
 				ADD PRIMARY KEY (' . $columns . ')',
 				array(
@@ -362,7 +362,7 @@ class wedbPackages
 		}
 		else
 		{
-			wedb::query('
+			wesql::query('
 				ALTER TABLE ' . $table_name . '
 				ADD ' . (isset($index_info['type']) && $index_info['type'] == 'unique' ? 'UNIQUE' : 'INDEX') . ' ' . $index_info['name'] . ' (' . $columns . ')',
 				array(
@@ -388,7 +388,7 @@ class wedbPackages
 			if ($index['type'] == 'primary' && $index_name == 'primary')
 			{
 				// Dropping primary key?
-				wedb::query('
+				wesql::query('
 					ALTER TABLE ' . $table_name . '
 					DROP PRIMARY KEY',
 					array(
@@ -401,7 +401,7 @@ class wedbPackages
 			if ($index['name'] == $index_name)
 			{
 				// Drop the bugger...
-				wedb::query('
+				wesql::query('
 					ALTER TABLE ' . $table_name . '
 					DROP INDEX ' . $index_name,
 					array(
@@ -445,7 +445,7 @@ class wedbPackages
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW FIELDS
 			FROM {raw:table_name}',
 			array(
@@ -453,7 +453,7 @@ class wedbPackages
 			)
 		);
 		$columns = array();
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			if (!$detail)
 			{
@@ -494,7 +494,7 @@ class wedbPackages
 				}
 			}
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		return $columns;
 	}
@@ -506,7 +506,7 @@ class wedbPackages
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-		$result = wedb::query('
+		$result = wesql::query('
 			SHOW KEYS
 			FROM {raw:table_name}',
 			array(
@@ -514,7 +514,7 @@ class wedbPackages
 			)
 		);
 		$indexes = array();
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			if (!$detail)
 				$indexes[] = $row['Key_name'];
@@ -547,7 +547,7 @@ class wedbPackages
 					$indexes[$row['Key_name']]['columns'][] = $row['Column_name'];
 			}
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		return $indexes;
 	}

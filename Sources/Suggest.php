@@ -64,7 +64,7 @@ function Suggest_Search_Member()
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
 
 	// Find the member.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE real_name LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
@@ -82,7 +82,7 @@ function Suggest_Search_Member()
 			'children' => array(),
 		),
 	);
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
 
@@ -93,7 +93,7 @@ function Suggest_Search_Member()
 			'value' => $row['real_name'],
 		);
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	return $xml_data;
 }

@@ -234,7 +234,7 @@ function ModifyPostSettings($return_config = false)
 		// !!! @todo: Delete? Is it not already done in Wedge...?
 		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'])
 		{
-			wedb::extend('packages');
+			wesql::extend('packages');
 
 			$colData = wedbPackages::list_columns('{db_prefix}messages', true);
 			foreach ($colData as $column)

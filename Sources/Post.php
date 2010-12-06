@@ -122,24 +122,24 @@ function Post()
 	// No message is complete without a topic.
 	if (empty($topic) && !empty($_REQUEST['msg']))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:msg}',
 			array(
 				'msg' => (int) $_REQUEST['msg'],
 		));
-		if (wedb::num_rows($request) != 1)
+		if (wesql::num_rows($request) != 1)
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
-			list ($topic) = wedb::fetch_row($request);
-		wedb::free_result($request);
+			list ($topic) = wesql::fetch_row($request);
+		wesql::free_result($request);
 	}
 
 	// Check if it's locked.  It isn't locked if no topic is specified.
 	if (!empty($topic))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT
 				t.locked, IFNULL(ln.id_topic, 0) AS notify, t.is_sticky, t.id_poll, t.id_last_msg, mf.id_member,
 				t.id_first_msg, mf.subject,
@@ -155,8 +155,8 @@ function Post()
 				'current_topic' => $topic,
 			)
 		);
-		list ($locked, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($locked, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
 		if (isset($_REQUEST['poll']) && $pollID > 0)
@@ -295,7 +295,7 @@ function Post()
 			}
 
 			// Get the current event information.
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT
 					id_member, title, MONTH(start_date) AS month, DAYOFMONTH(start_date) AS day,
 					YEAR(start_date) AS year, (TO_DAYS(end_date) - TO_DAYS(start_date)) AS span
@@ -306,8 +306,8 @@ function Post()
 					'id_event' => $context['event']['id'],
 				)
 			);
-			$row = wedb::fetch_assoc($request);
-			wedb::free_result($request);
+			$row = wesql::fetch_assoc($request);
+			wesql::free_result($request);
 
 			// Make sure the user is allowed to edit this event.
 			if ($row['id_member'] != $user_info['id'])
@@ -372,7 +372,7 @@ function Post()
 	{
 		if (empty($options['no_new_reply_warning']) && isset($_REQUEST['last_msg']) && $context['topic_last_message'] > $_REQUEST['last_msg'])
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT COUNT(*)
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
@@ -385,8 +385,8 @@ function Post()
 					'approved' => 1,
 				)
 			);
-			list ($context['new_replies']) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($context['new_replies']) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			if (!empty($context['new_replies']))
 			{
@@ -617,7 +617,7 @@ function Post()
 		if (isset($_REQUEST['msg']) && !empty($topic))
 		{
 			// Get the existing message.
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT
 					m.id_member, m.modified_time, m.smileys_enabled, m.body,
 					m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
@@ -637,14 +637,14 @@ function Post()
 			);
 			// The message they were trying to edit was most likely deleted.
 			// !!! Change this error message?
-			if (wedb::num_rows($request) == 0)
+			if (wesql::num_rows($request) == 0)
 				fatal_lang_error('no_board', false);
-			$row = wedb::fetch_assoc($request);
+			$row = wesql::fetch_assoc($request);
 
 			$attachment_stuff = array($row);
-			while ($row2 = wedb::fetch_assoc($request))
+			while ($row2 = wesql::fetch_assoc($request))
 				$attachment_stuff[] = $row2;
-			wedb::free_result($request);
+			wesql::free_result($request);
 
 			if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 			{
@@ -663,7 +663,7 @@ function Post()
 
 			if (!empty($modSettings['attachmentEnable']))
 			{
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT IFNULL(size, -1) AS filesize, filename, id_attach, approved
 					FROM {db_prefix}attachments
 					WHERE id_msg = {int:id_msg}
@@ -673,7 +673,7 @@ function Post()
 						'attachment_type' => 0,
 					)
 				);
-				while ($row = wedb::fetch_assoc($request))
+				while ($row = wesql::fetch_assoc($request))
 				{
 					if ($row['filesize'] <= 0)
 						continue;
@@ -683,13 +683,13 @@ function Post()
 						'approved' => $row['approved'],
 					);
 				}
-				wedb::free_result($request);
+				wesql::free_result($request);
 			}
 
 			// Allow moderators to change names....
 			if (allowedTo('moderate_forum') && !empty($topic))
 			{
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT id_member, poster_name, poster_email
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}
@@ -700,8 +700,8 @@ function Post()
 						'id_msg' => (int) $_REQUEST['msg'],
 					)
 				);
-				$row = wedb::fetch_assoc($request);
-				wedb::free_result($request);
+				$row = wesql::fetch_assoc($request);
+				wesql::free_result($request);
 
 				if (empty($row['id_member']))
 				{
@@ -720,7 +720,7 @@ function Post()
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
 		// Get the existing message.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT
 				m.id_member, m.modified_time, m.smileys_enabled, m.body,
 				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
@@ -740,14 +740,14 @@ function Post()
 		);
 		// The message they were trying to edit was most likely deleted.
 		// !!! Change this error message?
-		if (wedb::num_rows($request) == 0)
+		if (wesql::num_rows($request) == 0)
 			fatal_lang_error('no_board', false);
-		$row = wedb::fetch_assoc($request);
+		$row = wesql::fetch_assoc($request);
 
 		$attachment_stuff = array($row);
-		while ($row2 = wedb::fetch_assoc($request))
+		while ($row2 = wesql::fetch_assoc($request))
 			$attachment_stuff[] = $row2;
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
@@ -824,7 +824,7 @@ function Post()
 		if (!empty($topic) && !empty($_REQUEST['quote']))
 		{
 			// Make sure they _can_ quote this post, and if so get it.
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT m.subject, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
@@ -837,10 +837,10 @@ function Post()
 					'is_approved' => 1,
 				)
 			);
-			if (wedb::num_rows($request) == 0)
+			if (wesql::num_rows($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
-			list ($form_subject, $mname, $mdate, $form_message) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($form_subject, $mname, $mdate, $form_message) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
 			if (trim($context['response_prefix']) != '' && westr::strpos($form_subject, trim($context['response_prefix'])) !== 0)
@@ -914,7 +914,7 @@ function Post()
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
@@ -924,8 +924,8 @@ function Post()
 					'attachment_type' => 0,
 				)
 			);
-			list ($quantity, $total_size) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($quantity, $total_size) = wesql::fetch_row($request);
+			wesql::free_result($request);
 		}
 		else
 		{
@@ -1228,7 +1228,7 @@ function getTopic()
 		LIMIT ' . (int) $modSettings['topicSummaryPosts'];
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			m.body, m.smileys_enabled, m.id_msg, m.id_member
@@ -1245,7 +1245,7 @@ function getTopic()
 		)
 	);
 	$context['previous_posts'] = array();
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
@@ -1267,7 +1267,7 @@ function getTopic()
 		if (!empty($context['new_replies']))
 			$context['new_replies']--;
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 }
 
 ?>

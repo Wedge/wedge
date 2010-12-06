@@ -108,7 +108,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 	if (!$no_delete)
 	{
 		// Delete the already expired associations.
-		wedb::query('
+		wesql::query('
 			DELETE FROM {db_prefix}openid_assoc
 			WHERE expires <= {int:current_time}',
 			array(
@@ -118,7 +118,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 	}
 
 	// Get the association that has the longest lifetime from now.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT server_url, handle, secret, issued, expires, assoc_type
 		FROM {db_prefix}openid_assoc
 		WHERE server_url = {string:server_url}' . ($handle === null ? '' : '
@@ -130,11 +130,11 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 		)
 	);
 
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 		return null;
 
-	$return = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$return = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	return $return;
 }
@@ -195,7 +195,7 @@ function smf_openID_makeAssociation($server)
 		$secret = $assoc_data['mac_key'];
 
 	// Store the data
-	wedb::insert('replace',
+	wesql::insert('replace',
 		'{db_prefix}openid_assoc',
 		array('server_url' => 'string', 'handle' => 'string', 'secret' => 'string', 'issued' => 'int', 'expires' => 'int', 'assoc_type' => 'string'),
 		array($server, $handle, $secret, $issued, $expires, $assoc_type),
@@ -214,7 +214,7 @@ function smf_openID_makeAssociation($server)
 
 function smf_openID_removeAssociation($handle)
 {
-	wedb::query('
+	wesql::query('
 		DELETE FROM {db_prefix}openid_assoc
 		WHERE handle = {string:handle}',
 		array(
@@ -283,7 +283,7 @@ function smf_openID_return()
 	$context['openid_save_fields'] = isset($_GET['sf']) ? unserialize(base64_decode($_GET['sf'])) : array();
 
 	// Is there a user with this OpenID_uri?
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			openid_uri
 		FROM {db_prefix}members
@@ -293,7 +293,7 @@ function smf_openID_return()
 		)
 	);
 
-	$member_found = wedb::num_rows($result);
+	$member_found = wesql::num_rows($result);
 
 	if (!$member_found && isset($_GET['sa']) && $_GET['sa'] == 'change_uri' && !empty($_SESSION['new_openid_uri']) && $_SESSION['new_openid_uri'] == $openid_uri)
 	{
@@ -347,8 +347,8 @@ function smf_openID_return()
 	}
 	else
 	{
-		$user_settings = wedb::fetch_assoc($result);
-		wedb::free_result($result);
+		$user_settings = wesql::fetch_assoc($result);
+		wesql::free_result($result);
 
 		$user_settings['passwd'] = sha1(strtolower($user_settings['member_name']) . $secret);
 		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
@@ -385,7 +385,7 @@ function smf_openID_canonize($uri)
 
 function smf_openid_member_exists($url)
 {
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT mem.id_member, mem.member_name
 		FROM {db_prefix}members AS mem
 		WHERE mem.openid_uri = {string:openid_uri}',
@@ -393,8 +393,8 @@ function smf_openid_member_exists($url)
 			'openid_uri' => $url,
 		)
 	);
-	$member = wedb::fetch_assoc($request);
-	wedb::free_result($request);
+	$member = wesql::fetch_assoc($request);
+	wesql::free_result($request);
 
 	return $member;
 }

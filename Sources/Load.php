@@ -48,7 +48,7 @@ function reloadSettings()
 	global $modSettings, $boarddir, $txt, $context;
 
 	// Most database systems have not set UTF-8 as their default input charset.
-	wedb::query('
+	wesql::query('
 		SET NAMES utf8',
 		array(
 		)
@@ -57,7 +57,7 @@ function reloadSettings()
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
 	if (($modSettings = cache_get_data('modSettings', 90)) == null)
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT variable, value
 			FROM {db_prefix}settings',
 			array(
@@ -66,9 +66,9 @@ function reloadSettings()
 		$modSettings = array();
 		if (!$request)
 			show_db_error();
-		while ($row = wedb::fetch_row($request))
+		while ($row = wesql::fetch_row($request))
 			$modSettings[$row[0]] = $row[1];
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		// Do a few things to protect against missing settings or settings with invalid values...
 		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
@@ -187,7 +187,7 @@ function loadUserSettings()
 		// Is the member data cached?
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
@@ -197,8 +197,8 @@ function loadUserSettings()
 					'id_member' => $id_member,
 				)
 			);
-			$user_settings = wedb::fetch_assoc($request);
-			wedb::free_result($request);
+			$user_settings = wesql::fetch_assoc($request);
+			wesql::free_result($request);
 
 			if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 				cache_put_data('user_settings-' . $id_member, $user_settings, 60);
@@ -241,7 +241,7 @@ function loadUserSettings()
 		if (SMF != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// Do a quick query to make sure this isn't a mistake.
-			$result = wedb::query('
+			$result = wesql::query('
 				SELECT poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -250,8 +250,8 @@ function loadUserSettings()
 					'id_msg' => $user_settings['id_msg_last_visit'],
 				)
 			);
-			list ($visitTime) = wedb::fetch_row($result);
-			wedb::free_result($result);
+			list ($visitTime) = wesql::fetch_row($result);
+			wesql::free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
@@ -427,7 +427,7 @@ function loadBoard()
 		// Looking through the message table can be slow, so try using the cache first.
 		if (($topic = cache_get_data('msg_topic-' . $_REQUEST['msg'], 120)) === NULL)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT id_topic
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}
@@ -438,10 +438,10 @@ function loadBoard()
 			);
 
 			// So did it find anything?
-			if (wedb::num_rows($request))
+			if (wesql::num_rows($request))
 			{
-				list ($topic) = wedb::fetch_row($request);
-				wedb::free_result($request);
+				list ($topic) = wesql::fetch_row($request);
+				wesql::free_result($request);
 				// Save save save.
 				cache_put_data('msg_topic-' . $_REQUEST['msg'], $topic, 120);
 			}
@@ -485,7 +485,7 @@ function loadBoard()
 
 	if (empty($temp))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
@@ -503,14 +503,14 @@ function loadBoard()
 			WHERE b.id_board = {raw:board_link}',
 			array(
 				'current_topic' => $topic,
-				'board_link' => empty($topic) ? wedb::quote('{int:current_board}', array('current_board' => $board)) : 't.id_board',
+				'board_link' => empty($topic) ? wesql::quote('{int:current_board}', array('current_board' => $board)) : 't.id_board',
 				'id_member' => $user_info['id'],
 			)
 		);
 		// If there aren't any, skip.
-		if (wedb::num_rows($request) > 0)
+		if (wesql::num_rows($request) > 0)
 		{
-			$row = wedb::fetch_assoc($request);
+			$row = wesql::fetch_assoc($request);
 
 			// Set the current board.
 			if (!empty($row['id_board']))
@@ -588,15 +588,15 @@ function loadBoard()
 						'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_moderator'] . '">' . $row['real_name'] . '</a>'
 					);
 			}
-			while ($row = wedb::fetch_assoc($request));
+			while ($row = wesql::fetch_assoc($request));
 
 			// If the board only contains unapproved posts and the user isn't an approver then they can't see any topics.
 			// If that is the case do an additional check to see if they have any topics waiting to be approved.
 			if ($board_info['num_topics'] == 0 && $modSettings['postmod_active'] && !allowedTo('approve_posts'))
 			{
-				wedb::free_result($request); // Free the previous result
+				wesql::free_result($request); // Free the previous result
 
-				$request = wedb::query('
+				$request = wesql::query('
 					SELECT COUNT(id_topic)
 					FROM {db_prefix}topics
 					WHERE id_member_started={int:id_member}
@@ -609,7 +609,7 @@ function loadBoard()
 					)
 				);
 
-				list ($board_info['unapproved_user_topics']) = wedb::fetch_row($request);
+				list ($board_info['unapproved_user_topics']) = wesql::fetch_row($request);
 			}
 
 			if (!empty($modSettings['cache_enable']) && (empty($topic) || $modSettings['cache_enable'] >= 3))
@@ -631,7 +631,7 @@ function loadBoard()
 			$topic = null;
 			$board = 0;
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	if (!empty($topic))
@@ -756,7 +756,7 @@ function loadPermissions()
 	if (empty($user_info['permissions']))
 	{
 		// Get the general permissions.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT permission, add_deny
 			FROM {db_prefix}permissions
 			WHERE id_group IN ({array_int:member_groups})
@@ -767,14 +767,14 @@ function loadPermissions()
 			)
 		);
 		$removals = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (isset($cache_groups))
 			cache_put_data('permissions:' . $cache_groups, array($user_info['permissions'], $removals), 240);
@@ -787,7 +787,7 @@ function loadPermissions()
 		if (!isset($board_info['profile']))
 			fatal_lang_error('no_board');
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT permission, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE (id_group IN ({array_int:member_groups})
@@ -799,14 +799,14 @@ function loadPermissions()
 				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	// Remove all the permissions they shouldn't have ;).
@@ -920,7 +920,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	if (!empty($users))
 	{
 		// Load the member's data.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT' . $select_columns . '
 			FROM {db_prefix}members AS mem' . $select_tables . '
 			WHERE mem.' . ($is_name ? 'member_name' : 'id_member') . (count($users) == 1 ? ' = {' . ($is_name ? 'string' : 'int') . ':users}' : ' IN ({' . ($is_name ? 'array_string' : 'array_int') . ':users})'),
@@ -930,19 +930,19 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			)
 		);
 		$new_loaded_ids = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
 			$row['options'] = array();
 			$user_profile[$row['id_member']] = $row;
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	if (!empty($new_loaded_ids) && $set !== 'minimal')
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT *
 			FROM {db_prefix}themes
 			WHERE id_member' . (count($new_loaded_ids) == 1 ? ' = {int:loaded_ids}' : ' IN ({array_int:loaded_ids})'),
@@ -950,9 +950,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'loaded_ids' => count($new_loaded_ids) == 1 ? $new_loaded_ids[0] : $new_loaded_ids,
 			)
 		);
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$user_profile[$row['id_member']]['options'][$row['variable']] = $row['value'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 	}
 
 	if (!empty($new_loaded_ids) && !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 3)
@@ -966,7 +966,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	{
 		if (($row = cache_get_data('moderator_group_info', 480)) == null)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT group_name AS member_group, online_color AS member_group_color, stars
 				FROM {db_prefix}membergroups
 				WHERE id_group = {int:moderator_group}
@@ -975,8 +975,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 					'moderator_group' => 3,
 				)
 			);
-			$row = wedb::fetch_assoc($request);
-			wedb::free_result($request);
+			$row = wesql::fetch_assoc($request);
+			wesql::free_result($request);
 
 			cache_put_data('moderator_group_info', $row, 480);
 		}
@@ -1386,7 +1386,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (empty($flag))
 	{
 		// Load variables from the current or default theme, global or this user's.
-		$result = wedb::query('
+		$result = wesql::query('
 			SELECT variable, value, id_member, id_theme
 			FROM {db_prefix}themes
 			WHERE id_member' . (empty($themeData[0]) ? ' IN (-1, 0, {int:id_member})' : ' = {int:id_member}') . '
@@ -1397,7 +1397,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			)
 		);
 		// Pick between $settings and $options depending on whose data it is.
-		while ($row = wedb::fetch_assoc($result))
+		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
 			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_layers', 'theme_templates', 'theme_url')))
@@ -1411,7 +1411,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
 				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
 		}
-		wedb::free_result($result);
+		wesql::free_result($result);
 
 		if (!empty($themeData[-1]))
 			foreach ($themeData[-1] as $k => $v)
@@ -2000,7 +2000,7 @@ function getBoardParents($id_parent)
 		// Loop while the parent is non-zero.
 		while ($id_parent != 0)
 		{
-			$result = wedb::query('
+			$result = wesql::query('
 				SELECT
 					b.id_parent, b.name, {int:board_parent} AS id_board, IFNULL(mem.id_member, 0) AS id_moderator,
 					mem.real_name, b.child_level
@@ -2013,9 +2013,9 @@ function getBoardParents($id_parent)
 				)
 			);
 			// In the EXTREMELY unlikely event this happens, give an error message.
-			if (wedb::num_rows($result) == 0)
+			if (wesql::num_rows($result) == 0)
 				fatal_lang_error('parent_not_found', 'critical');
-			while ($row = wedb::fetch_assoc($result))
+			while ($row = wesql::fetch_assoc($result))
 			{
 				if (!isset($boards[$row['id_board']]))
 				{
@@ -2039,7 +2039,7 @@ function getBoardParents($id_parent)
 						);
 					}
 			}
-			wedb::free_result($result);
+			wesql::free_result($result);
 		}
 
 		cache_put_data('board_parents-' . $original_parent, $boards, 480);
@@ -2458,7 +2458,7 @@ function sessionRead($session_id)
 		return false;
 
 	// Look for it in the database.
-	$result = wedb::query('
+	$result = wesql::query('
 		SELECT data
 		FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}
@@ -2467,8 +2467,8 @@ function sessionRead($session_id)
 			'session_id' => $session_id,
 		)
 	);
-	list ($sess_data) = wedb::fetch_row($result);
-	wedb::free_result($result);
+	list ($sess_data) = wesql::fetch_row($result);
+	wesql::free_result($result);
 
 	return $sess_data;
 }
@@ -2486,7 +2486,7 @@ function sessionWrite($session_id, $data)
 		return false;
 
 	// First try to update an existing row...
-	$result = wedb::query('
+	$result = wesql::query('
 		UPDATE {db_prefix}sessions
 		SET data = {string:data}, last_update = {int:last_update}
 		WHERE session_id = {string:session_id}',
@@ -2498,8 +2498,8 @@ function sessionWrite($session_id, $data)
 	);
 
 	// If that didn't work, try inserting a new one.
-	if (wedb::affected_rows() == 0)
-		$result = wedb::insert('ignore',
+	if (wesql::affected_rows() == 0)
+		$result = wesql::insert('ignore',
 			'{db_prefix}sessions',
 			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
 			array($session_id, $data, time()),
@@ -2521,7 +2521,7 @@ function sessionDestroy($session_id)
 		return false;
 
 	// Just delete the row...
-	return wedb::query('
+	return wesql::query('
 		DELETE FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}',
 		array(
@@ -2544,7 +2544,7 @@ function sessionGC($max_lifetime)
 		$max_lifetime = max($modSettings['databaseSession_lifetime'], 60);
 
 	// Clean up ;).
-	return wedb::query('
+	return wesql::query('
 		DELETE FROM {db_prefix}sessions
 		WHERE last_update < {int:last_update}',
 		array(
@@ -2572,11 +2572,11 @@ function loadDatabase()
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
-		$con = wedb::connect($db_server, $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
+		$con = wesql::connect($db_server, $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
 
 	// Either we aren't in SSI mode, or it failed.
 	if (empty($con))
-		$con = wedb::connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('persist' => $db_persist, 'dont_select_db' => SMF == 'SSI'));
+		$con = wesql::connect($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('persist' => $db_persist, 'dont_select_db' => SMF == 'SSI'));
 
 	// Safe guard here, if there isn't a valid connection let's put a stop to it.
 	if (!$con)
@@ -2584,7 +2584,7 @@ function loadDatabase()
 
 	// If in SSI mode fix up the prefix.
 	if (SMF == 'SSI')
-		wedb::fix_prefix($db_prefix, $db_name);
+		wesql::fix_prefix($db_prefix, $db_name);
 }
 
 /**

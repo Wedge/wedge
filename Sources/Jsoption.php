@@ -103,7 +103,7 @@ function Jsoption()
 	}
 
 	// Update the option.
-	wedb::insert('replace',
+	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 		array($settings['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),

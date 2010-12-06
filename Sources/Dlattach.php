@@ -57,7 +57,7 @@ function Dlattach()
 
 	if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'avatar')
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_member
 			FROM {db_prefix}attachments
 			WHERE id_attach = {int:id_attach}
@@ -78,7 +78,7 @@ function Dlattach()
 
 		// Make sure this attachment is on this board.
 		// NOTE: We must verify that $topic is the attachment's topic, or else the permission check above is broken.
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT a.id_folder, a.filename, a.file_hash, a.fileext, a.id_attach, a.attachment_type, a.mime_type, a.approved, m.id_member
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg AND m.id_topic = {int:current_topic})
@@ -91,10 +91,10 @@ function Dlattach()
 			)
 		);
 	}
-	if (wedb::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
-	list ($id_folder, $real_filename, $file_hash, $file_ext, $id_attach, $attachment_type, $mime_type, $is_approved, $id_member) = wedb::fetch_row($request);
-	wedb::free_result($request);
+	list ($id_folder, $real_filename, $file_hash, $file_ext, $id_attach, $attachment_type, $mime_type, $is_approved, $id_member) = wesql::fetch_row($request);
+	wesql::free_result($request);
 
 	// If it isn't yet approved, do they have permission to view it?
 	if (!$is_approved && ($id_member == 0 || $user_info['id'] != $id_member) && ($attachment_type == 0 || $attachment_type == 3))
@@ -102,7 +102,7 @@ function Dlattach()
 
 	// Update the download counter (unless it's a thumbnail).
 	if ($attachment_type != 3)
-		wedb::query('
+		wesql::query('
 			UPDATE LOW_PRIORITY {db_prefix}attachments
 			SET downloads = downloads + 1
 			WHERE id_attach = {int:id_attach}',

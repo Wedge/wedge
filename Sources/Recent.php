@@ -53,7 +53,7 @@ function RecentPosts()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:id_cat}
@@ -62,8 +62,8 @@ function RecentPosts()
 					'id_cat' => $_REQUEST['c'][0],
 				)
 			);
-			list ($name) = wedb::fetch_row($request);
-			wedb::free_result($request);
+			list ($name) = wesql::fetch_row($request);
+			wesql::free_result($request);
 
 			if (empty($name))
 				fatal_lang_error('no_access', false);
@@ -74,7 +74,7 @@ function RecentPosts()
 			);
 		}
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:category_list})
@@ -85,12 +85,12 @@ function RecentPosts()
 		);
 		$total_cat_posts = 0;
 		$boards = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -114,7 +114,7 @@ function RecentPosts()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -127,12 +127,12 @@ function RecentPosts()
 		);
 		$total_posts = 0;
 		$boards = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 		{
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		wedb::free_result($request);
+		wesql::free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -152,7 +152,7 @@ function RecentPosts()
 	}
 	elseif (!empty($board))
 	{
-		$request = wedb::query('
+		$request = wesql::query('
 			SELECT num_posts
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -161,8 +161,8 @@ function RecentPosts()
 				'current_board' => $board,
 			)
 		);
-		list ($total_posts) = wedb::fetch_row($request);
-		wedb::free_result($request);
+		list ($total_posts) = wesql::fetch_row($request);
+		wesql::free_result($request);
 
 		$query_this_board = 'b.id_board = {int:board}';
 		$query_parameters['board'] = $board;
@@ -202,7 +202,7 @@ function RecentPosts()
 		{
 			// Find the 10 most recent messages they can *view*.
 			// !!!SLOW This query is really slow still, probably?
-			$request = wedb::query('
+			$request = wesql::query('
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -217,9 +217,9 @@ function RecentPosts()
 				))
 			);
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
-			if (isset($query_parameters['max_id_msg']) && wedb::num_rows($request) < 10)
+			if (isset($query_parameters['max_id_msg']) && wesql::num_rows($request) < 10)
 			{
-				wedb::free_result($request);
+				wesql::free_result($request);
 				$query_this_board = str_replace('AND m.id_msg >= {int:max_id_msg}', '', $query_this_board);
 				$cache_results = true;
 				unset($query_parameters['max_id_msg']);
@@ -228,9 +228,9 @@ function RecentPosts()
 				$done = true;
 		}
 		$messages = array();
-		while ($row = wedb::fetch_assoc($request))
+		while ($row = wesql::fetch_assoc($request))
 			$messages[] = $row['id_msg'];
-		wedb::free_result($request);
+		wesql::free_result($request);
 		if (!empty($cache_results))
 			cache_put_data($key, $messages, 120);
 	}
@@ -243,7 +243,7 @@ function RecentPosts()
 	}
 
 	// Get all the most recent posts.
-	$request = wedb::query('
+	$request = wesql::query('
 		SELECT
 			m.id_msg, m.subject, m.smileys_enabled, m.poster_time, m.body, m.id_topic, t.id_board, b.id_cat,
 			b.name AS bname, c.name AS cname, t.num_replies, m.id_member, m2.id_member AS id_first_member,
@@ -266,7 +266,7 @@ function RecentPosts()
 	$counter = $_REQUEST['start'] + 1;
 	$context['posts'] = array();
 	$board_ids = array('own' => array(), 'any' => array());
-	while ($row = wedb::fetch_assoc($request))
+	while ($row = wesql::fetch_assoc($request))
 	{
 		// Censor everything.
 		censorText($row['body']);
@@ -322,7 +322,7 @@ function RecentPosts()
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
 		$board_ids['any'][$row['id_board']][] = $row['id_msg'];
 	}
-	wedb::free_result($request);
+	wesql::free_result($request);
 
 	// There might be - and are - different permissions between any and own.
 	$permissions = array(
