@@ -590,25 +590,22 @@ function ajax_indicator(turn_on)
 	if (!ajax_indicator_ele)
 	{
 		ajax_indicator_ele = $('#ajax_in_progress');
-		if (!ajax_indicator_ele && ajax_notification_text !== null)
+		if (!(ajax_indicator_ele.length) && ajax_notification_text !== null)
 			create_ajax_indicator_ele();
 	}
 
-	if (ajax_indicator_ele)
+	if (ajax_indicator_ele.length)
 	{
 		if (is_ie6)
-			$(ajax_indicator_ele).css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
-		$(ajax_indicator_ele).css('display', turn_on ? 'block' : 'none');
+			ajax_indicator_ele.css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
+		ajax_indicator_ele.css('display', turn_on ? 'block' : 'none');
 	}
 }
 
 function create_ajax_indicator_ele()
 {
 	// Create the div for the indicator.
-	ajax_indicator_ele = document.createElement('div');
-
-	// Set the id so it'll load the style properly.
-	ajax_indicator_ele.id = 'ajax_in_progress';
+	ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress');
 
 	// Add the image in and link to turn it off.
 	var cancel_link = document.createElement('a');
@@ -622,11 +619,9 @@ function create_ajax_indicator_ele()
 		cancel_img.title = ajax_notification_cancel_text;
 	}
 
-	// Add the cancel link and image to the indicator.
-	// Then set the text. (Note: you MUST append here and not overwrite.)
-	// Finally, attach the element to the body.
+	// Add the cancel link, image and text to the indicator.
 	cancel_link.appendChild(cancel_img);
-	$(document.body).append($(ajax_indicator_ele).append(cancel_link).append(ajax_notification_text));
+	ajax_indicator_ele.append(cancel_link).append(ajax_notification_text).appendTo('body');
 }
 
 function createEventListener(oTarget)
@@ -701,9 +696,8 @@ JumpTo.prototype.showSelect = function ()
 JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 {
 	// Create an option that'll be above and below the category.
-	var oDashOption = document.createElement('option'), iIndexPointer = 0;
-
-	$(oDashOption).append(document.createTextNode(this.opt.sCatSeparator)).attr('disabled', 'disabled').attr('value', '');
+	var iIndexPointer = 0;
+	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' });
 
 	if ('onbeforeactivate' in document)
 		this.dropdownList.onbeforeactivate = null;
@@ -742,7 +736,8 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	}
 
 	// Add the remaining items after the currently selected item.
-	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function() {
+	// Internet Explorer needs css() to keep the box dropped down.
+	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 	});
@@ -861,7 +856,8 @@ function initMenu(menu)
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	menu.style.opacity = 1;
-	var lis = menu.getElementsByTagName('li'), h4s = menu.getElementsByTagName('h4'), k;
+	var lis = menu.getElementsByTagName('li');
+	var h4s = menu.getElementsByTagName('h4');
 	for (var i = 0, j = h4s.length; i < j; i++)
 		if (h4s[i].innerHTML.indexOf('<a ') == -1)
 			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; showMe.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
@@ -871,13 +867,18 @@ function initMenu(menu)
 		if (lis[i].getElementsByTagName('ul').length > 0)
 		{
 			var k = baseId + i;
-			$(lis[i]).attr('id', 'li' + k).mouseover(showMe).mouseout(timeoutHide).click(function() { hideAllUls(menu); }).blur(timeoutHide).focus(showMe);
+			lis[i].setAttribute('id', 'li' + k);
 			if (is_ie6)
 			{
 				lis[i].onkeyup = showMe;
 				document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[k] = $('#shim' + k);
+				ieshim[k] = document.getElementById('shim' + k);
 			}
+			lis[i].onmouseover = showMe;
+			lis[i].onmouseout = timeoutHide;
+			lis[i].onclick = function () { hideAllUls(menu); };
+			lis[i].onblur = timeoutHide;
+			lis[i].onfocus = showMe;
 		}
 	}
 	baseId += lis.length;
@@ -919,12 +920,12 @@ function showShim(showsh, ieid, iemenu)
 	if (!(ieshim[iem]))
 		return;
 	if (showsh)
-		$(ieshim[iem]).css({
-			top: iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px',
-			left: iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px',
-			width: iemenu.offsetWidth + 'px',
-			height: iemenu.offsetHeight + 'px'
-		});
+	{
+		ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
+		ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
+		ieshim[iem].style.width = iemenu.offsetWidth + 'px';
+		ieshim[iem].style.height = iemenu.offsetHeight + 'px';
+	}
 	ieshim[iem].style.display = showsh ? 'block' : 'none';
 }
 
@@ -940,8 +941,9 @@ function showMe(e)
 		if (showul.style.visibility == 'visible')
 			return hideUlUnder(this.id);
 	}
-	$(showul).css({ visibility: 'visible', opacity: 1 });
-	$(showul).css('margin' + (rtl ? 'Right' : 'Left'), (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px');
+	showul.style.visibility = 'visible';
+	showul.style.opacity = 1;
+	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
 		showShim(true, this.id, showul);
@@ -961,15 +963,11 @@ function showMe(e)
 		}
 	}
 	clearTimeout(timeoutli[this.id.substring(2)]);
-	hideAllOthersUls(this);
-}
 
-// Hide all ul's on the same level as this list item
-function hideAllOthersUls(currentLi)
-{
-	var lis = currentLi.parentNode;
+	// Hide all ul's on the same level as this list item
+	var lis = this.parentNode;
 	for (var i = 0, len = lis.childNodes.length; i < len; i++)
-		if (lis.childNodes[i].nodeName == 'LI' && lis.childNodes[i].id != currentLi.id)
+		if (lis.childNodes[i].nodeName == 'LI' && lis.childNodes[i].id != this.id)
 			hideUlUnderLi(lis.childNodes[i]);
 }
 
@@ -1042,7 +1040,6 @@ bActOnElement = t
 bAsync = b
 cur_session_id = s
 cur_session_var = v
-currentLi = c
 currentNode = n
 dropdownList = dl
 fNewOnload = f
