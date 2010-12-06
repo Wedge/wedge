@@ -847,45 +847,37 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
  *
  */
 
-var baseId = 0, hoverable = 0, rtl = document.dir && document.dir == 'rtl';
-var timeoutli = new Array();
-var ieshim = new Array();
+var baseId = 0, hoverable = 0, rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left');
+var timeoutli = new Array(), ieshim = new Array();
 
 function initMenu(menu)
 {
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	menu.style.opacity = 1;
-	var lis = menu.getElementsByTagName('li');
 	var h4s = menu.getElementsByTagName('h4');
 	for (var i = 0, j = h4s.length; i < j; i++)
 		if (h4s[i].innerHTML.indexOf('<a ') == -1)
-			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; showMe.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
+			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; show_me.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
 
-	for (var i = 0, j = lis.length; i < j; i++)
-	{
-		if (lis[i].getElementsByTagName('ul').length > 0)
+	var k = baseId;
+	$('li:has(>ul)', menu).each(function (i) {
+		if (is_ie6)
 		{
-			var k = baseId + i;
-			lis[i].setAttribute('id', 'li' + k);
-			if (is_ie6)
-			{
-				lis[i].onkeyup = showMe;
-				document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-				ieshim[k] = document.getElementById('shim' + k);
-			}
-			lis[i].onmouseover = showMe;
-			lis[i].onmouseout = timeoutHide;
-			lis[i].onclick = function () { hideAllUls(menu); };
-			lis[i].onblur = timeoutHide;
-			lis[i].onfocus = showMe;
+			$(this).keyup(show_me);
+			document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
+			ieshim[k] = document.getElementById('shim' + k);
 		}
-	}
-	baseId += lis.length;
+		$(this).attr('id', 'li' + k++)
+			.bind('mouseenter focus', show_me)
+			.bind('mouseleave blur', timeout_hide)
+			.click(function () { $(menu).children('li').each(function () { hide_sub_ul(this); }); });
+	});
+	baseId = k;
 }
 
 // Hide the first ul element of the current element
-function timeoutHide(e)
+function timeout_hide(e)
 {
 	if (!e) var e = window.event;
 	var insitu, targ = e.relatedTarget || e.toElement;
@@ -894,27 +886,23 @@ function timeoutHide(e)
 		insitu = targ.parentNode && targ.parentNode.className == 'menu';
 		targ = targ.parentNode;
 	}
-	insitu ? hideUlUnder(this.id) : timeoutli[this.id.substring(2)] = window.setTimeout('hideUlUnder("' + this.id + '")', 242);
+	insitu ? hide_child_ul(this.id) : timeoutli[this.id.substring(2)] = window.setTimeout('hide_child_ul("' + this.id + '")', 242);
 }
 
-// Hide the ul elements under the element identified by id
-function hideUlUnder(id)
+// Hide all children <ul>'s.
+function hide_child_ul(id)
 {
 	var eid = document.getElementById(id), eids = eid.getElementsByTagName('ul')[0];
 	eids.style.visibility = 'hidden';
 	eids.style.opacity = 0;
-	var h4s = eid.getElementsByTagName('h4');
-	if (h4s.length > 0)
-		h4s[0].className = '';
-	var as = eid.getElementsByTagName('a');
-	for (var i = 0, j = as.length; i < j; i++)
-		as[i].className = '';
+	$('h4:first', eid).attr('class', '');
+	$('a', eid).attr('class', '');
 	if (is_ie6)
-		showShim(false, id);
+		show_shim(false, id);
 }
 
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.
-function showShim(showsh, ieid, iemenu)
+function show_shim(showsh, ieid, iemenu)
 {
 	iem = ieid.substring(2);
 	if (!(ieshim[iem]))
@@ -923,30 +911,26 @@ function showShim(showsh, ieid, iemenu)
 	{
 		ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
 		ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
-		ieshim[iem].style.width = iemenu.offsetWidth + 'px';
-		ieshim[iem].style.height = iemenu.offsetHeight + 'px';
+		ieshim[iem].style.width = (iemenu.offsetWidth + 1) + 'px';
+		ieshim[iem].style.height = (iemenu.offsetHeight + 1) + 'px';
 	}
 	ieshim[iem].style.display = showsh ? 'block' : 'none';
 }
 
-// Show the first ul element found under this element
-function showMe(e)
+// Show the first child <ul> we can find.
+function show_me()
 {
-	var showul = this.getElementsByTagName('ul')[0];
-	if (hoverable)
-	{
-		if (!e) var e = window.event;
-		e.cancelBubble = true;
-		if (e.stopPropagation) e.stopPropagation();
-		if (showul.style.visibility == 'visible')
-			return hideUlUnder(this.id);
-	}
+	var showul = $('ul:first', this)[0];
+
+	if (hoverable && showul.style.visibility == 'visible')
+		return hide_child_ul(this.id);
+
 	showul.style.visibility = 'visible';
 	showul.style.opacity = 1;
-	showul.style['margin' + (rtl ? 'Right' : 'Left')] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
+	showul.style[rtl] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
 
 	if (is_ie6)
-		showShim(true, this.id, showul);
+		show_shim(true, this.id, showul);
 	var h4s = this.getElementsByTagName('h4');
 	if (h4s.length > 0)
 		h4s[0].className = 'linkOver';
@@ -964,22 +948,10 @@ function showMe(e)
 	}
 	clearTimeout(timeoutli[this.id.substring(2)]);
 
-	// Hide all ul's on the same level as this list item
-	var lis = this.parentNode;
-	for (var i = 0, len = lis.childNodes.length; i < len; i++)
-		if (lis.childNodes[i].nodeName == 'LI' && lis.childNodes[i].id != this.id)
-			hideUlUnderLi(lis.childNodes[i]);
+	$(this).siblings('li').each(function () { hide_sub_ul(this); });
 }
 
-function hideAllUls(menu)
-{
-	for (var i = 0, len = menu.childNodes.length; i < len; i++)
-		if (menu.childNodes[i].nodeName == 'LI')
-			hideUlUnderLi(menu.childNodes[i]);
-}
-
-// Hide all ul's in the li element
-function hideUlUnderLi(li)
+function hide_sub_ul(li)
 {
 	var h4s = li.getElementsByTagName('h4');
 	if (h4s.length > 0)
