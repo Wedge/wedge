@@ -959,14 +959,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (empty($modSettings['enableEmbeddedFlash']))
 			$disabled['flash'] = true;
 
-		$codes = $master_codes;
-
 		// This is mainly for the bbc manager, so it's easy to add tags above. Custom BBC should be added above this line.
 		if ($message === false)
 		{
 			if (isset($temp_bbc))
 				$bbc_codes = $temp_bbc;
-			return $codes;
+			return $master_codes;
 		}
 
 		// So the parser won't skip them.
@@ -980,11 +978,10 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			'O' => 'circle',
 			'0' => 'circle',
 		);
+
 		if (!isset($disabled['li']) && !isset($disabled['list']))
-		{
 			foreach ($itemcodes as $c => $dummy)
 				$bbc_codes[$c] = array();
-		}
 
 		// Inside these tags autolink is not recommendable.
 		$no_autolink_tags = array(
@@ -994,27 +991,10 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			'email',
 		);
 
-		// !!! Delete this!
-		if (!isset($disabled['color']))
-		{
-			$codes[] = array(
-				'tag' => 'chrissy',
-				'before' => '<span style="color: #cc0099;">',
-				'after' => ' :-*</span>',
-			);
-			$codes[] = array(
-				'tag' => 'kissy',
-				'before' => '<span style="color: #cc0099;">',
-				'after' => ' :-*</span>',
-			);
-		}
-
 		// If we are not doing every tag only do ones we are interested in.
-		foreach ($codes as $code)
+		foreach ($master_codes as &$code)
 			if (empty($parse_tags) || in_array($code['tag'], $parse_tags))
 				$bbc_codes[substr($code['tag'], 0, 1)][] = $code;
-
-		$codes = null;
 	}
 
 	// Shall we take the time to cache this?
@@ -3689,10 +3669,8 @@ function clean_cache($type = '')
 	// Remove the files in SMF's own disk cache, if any
 	$dh = scandir($cachedir);
 	foreach ($dh as $file)
-	{
 		if ($file != '.' && $file != '..' && $file != 'index.php' && $file != '.htaccess' && (!$type || substr($file, 0, strlen($type)) == $type))
 			@unlink($cachedir . '/' . $file);
-	}
 
 	// Invalidate cache, to be sure!
 	// ... as long as Load.php can be modified, anyway.

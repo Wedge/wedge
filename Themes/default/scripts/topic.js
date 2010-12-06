@@ -662,15 +662,6 @@ function expandThumb(thumbID)
 
 var current_user_menu = null;
 
-$('body').click(function() {
-	if (current_user_menu != null)
-	{
-		var menu_div = document.getElementById('userMenu' + current_user_menu);
-		menu_div.parentNode.removeChild(menu_div);
-		current_user_menu = null;
-	}
-});
-
 // *** The UserMenu
 function UserMenu(oList)
 {
@@ -684,8 +675,7 @@ UserMenu.prototype.switchMenu = function (oLink)
 
 	if (current_user_menu != null)
 	{
-		var menu_div = document.getElementById('userMenu' + current_user_menu);
-		menu_div.parentNode.removeChild(menu_div);
+		$('#userMenu' + current_user_menu).remove();
 		if (current_user_menu == iMsg)
 		{
 			current_user_menu = null;
@@ -693,23 +683,18 @@ UserMenu.prototype.switchMenu = function (oLink)
 		}
 	}
 	current_user_menu = iMsg;
-	var pos = smf_itemPos(oLink);
-	var div = document.createElement('div');
-	div.id = 'userMenu' + iMsg;
-	div.className = 'usermenu';
-	var sHTML = '';
 	if (!(this.list['user' + iUserId]))
 		return false;
-	var aLinkList = this.list['user' + iUserId];
-	for (var i = 0, j = aLinkList.length; i < j; i++)
+	for (var i = 0, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length; i < j; i++)
 	{
 		if (aLinkList[i][0].charAt[0] == '?')
 			aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
 
 		sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
 	}
-	div.innerHTML = sHTML;
-	document.body.appendChild(div);
-	$(div).css({ display: 'block', left: pos[0] + 'px', top: (pos[1] + oLink.offsetHeight) + 'px' });
+	var pos = smf_itemPos(oLink);
+	$('<div></div>', { id: 'userMenu' + iMsg, 'class': 'usermenu' }).html(sHTML).appendTo('body')
+		.css({ display: 'block', left: pos[0] + 'px', top: (pos[1] + oLink.offsetHeight) + 'px' })
+		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; });
 	return false;
 }

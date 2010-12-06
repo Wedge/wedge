@@ -230,7 +230,7 @@ function template_main()
 
 		// Show a link to the member's profile.
 		echo '
-								<a href="', $message['member']['href'], '" onmousedown="return false;" id="um', $message['id'], '_', $message['member']['id'], '" onclick="return oUserMenu.switchMenu(this);">', $message['member']['name'], '</a>
+								<a href="', $message['member']['href'], '" id="um', $message['id'], '_', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 							</h4>
 							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
 
@@ -855,7 +855,8 @@ function template_main()
 		}
 
 		$context['footer_js'] .= '
-	});';
+	});
+	$(".umme").bind("mouseenter mouseleave", function () { return oUserMenu.switchMenu(this); });';
 	}
 }
 
