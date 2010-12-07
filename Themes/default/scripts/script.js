@@ -558,15 +558,8 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 	}
 
 	// Now go through all the sections to be collapsed.
-	for (var i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
-	{
-		if (this.opt.aSwappableContainers[i] == null)
-			continue;
-
-		var oContainer = document.getElementById(this.opt.aSwappableContainers[i]);
-		if (typeof(oContainer) == 'object' && oContainer != null)
-			oContainer.style.display = bCollapse ? 'none' : '';
-	}
+	for (var o, i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
+		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.hide(300) : o.show(300);
 
 	// Update the new state.
 	this.bCollapsed = bCollapse;
