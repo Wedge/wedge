@@ -316,6 +316,9 @@ input.input_check, input.input_radio {
 input[disabled].input_text {
 	background-color: #eee;
 }
+input.input_file {
+	width: 300px;
+}
 
 /* Standard horizontal rule.. ([hr], etc.) */
 hr, .hrcolor {
@@ -820,6 +823,10 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 .spoiled {
 	border: 1px dotted #999;
 	padding: 4px 8px;
+}
+.readmore {
+	font-style: italic;
+	color: grey;
 }
 
 /* Generic, mostly color-related, classes.

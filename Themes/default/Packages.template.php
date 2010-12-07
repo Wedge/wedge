@@ -756,7 +756,7 @@ function template_servers()
 						<strong>' . $txt['package_upload_select'] . ':</strong>
 					</dt>
 					<dd>
-						<input type="file" name="package" size="38" class="input_file" />
+						<input type="file" name="package" class="input_file" />
 					</dd>
 				</dl>
 				<div class="righttext">
@@ -1124,7 +1124,7 @@ function template_control_chmod()
 		generatedButton = true;
 
 		// No XML?
-		if (!window.XMLHttpRequest || (!document.getElementById("test_ftp_placeholder") && !document.getElementById("test_ftp_placeholder_full")))
+		if (!can_ajax || (!document.getElementById("test_ftp_placeholder") && !document.getElementById("test_ftp_placeholder_full")))
 			return false;
 
 		var ftpTest = document.createElement("input");
@@ -1281,7 +1281,7 @@ function template_file_permissions()
 			return false;
 
 		// Otherwise we need to get the wicked thing.
-		else if (window.XMLHttpRequest)
+		else if (can_ajax)
 		{
 			ajax_indicator(true);
 			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);

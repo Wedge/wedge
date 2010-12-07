@@ -333,7 +333,7 @@ function template_main()
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
 						<th class="stats_month">
 							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" id="img_', $month['id'], '" />
-							<a id="m', $month['id'], '" href="', $month['href'], '" onclick="return doingExpandCollapse;">', $month['month'], ' ', $month['year'], '</a>
+							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th>', $month['new_topics'], '</th>
 						<th>', $month['new_posts'], '</th>

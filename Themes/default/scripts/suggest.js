@@ -50,7 +50,7 @@ function smc_AutoSuggest(oOptions)
 
 smc_AutoSuggest.prototype.init = function()
 {
-	if (!window.XMLHttpRequest)
+	if (!can_ajax)
 		return false;
 
 	// Create a div that'll contain the results later on.

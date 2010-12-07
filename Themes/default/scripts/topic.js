@@ -3,7 +3,7 @@ var hide_prefixes = Array();
 
 function modify_topic(topic_id, first_msg_id)
 {
-	if (!('XMLHttpRequest' in window))
+	if (!can_ajax)
 		return;
 
 	// Add backwards compatibility with old themes.
@@ -31,8 +31,8 @@ function onDocReceived_modify_topic(XMLDoc)
 {
 	cur_msg_id = XMLDoc.getElementsByTagName("message")[0].getAttribute("id");
 
-	cur_subject_div = document.getElementById('msg_' + cur_msg_id.substr(4));
-	buff_subject = cur_subject_div.innerHTML;
+	cur_subject_div = $('#msg_' + cur_msg_id.substr(4));
+	buff_subject = cur_subject_div.html();
 
 	// Here we hide any other things they want hiding on edit.
 	set_hidden_topic_areas('none');
@@ -44,7 +44,7 @@ function onDocReceived_modify_topic(XMLDoc)
 
 function modify_topic_cancel()
 {
-	cur_subject_div.innerHTML = buff_subject;
+	cur_subject_div.html(buff_subject);
 	set_hidden_topic_areas('');
 
 	in_edit_mode = 0;
@@ -105,10 +105,7 @@ function modify_topic_done(XMLDoc)
 function set_hidden_topic_areas(set_style)
 {
 	for (var i = 0; i < hide_prefixes.length; i++)
-	{
-		if (document.getElementById(hide_prefixes[i] + cur_msg_id.substr(4)) != null)
-			document.getElementById(hide_prefixes[i] + cur_msg_id.substr(4)).style.display = set_style;
-	}
+		$('#' + hide_prefixes[i] + cur_msg_id.substr(4)).css('display', set_style);
 }
 
 // *** QuickReply object.
@@ -172,7 +169,7 @@ QuickReply.prototype.switchMode = function ()
 	if (this.opt.sSmileyDiv != '')
 		document.getElementById(this.opt.sSmileyDiv).style.display = '';
 	if (this.opt.sBbcDiv != '' || this.opt.sSmileyDiv != '')
-	document.getElementById(this.opt.sSwitchMode).style.display = 'none';
+		document.getElementById(this.opt.sSwitchMode).style.display = 'none';
 	if (this.bUsingWysiwyg)
 		oEditorHandle_message.toggleView(true);
 }
@@ -187,27 +184,18 @@ function QuickModify(oOptions)
 	this.oCurSubjectDiv = null;
 	this.sMessageBuffer = '';
 	this.sSubjectBuffer = '';
-	this.bXmlHttpCapable = this.isXmlHttpCapable();
 
 	// Show the edit buttons
-	if (this.bXmlHttpCapable)
-	{
+	if (can_ajax)
 		for (var i = document.images.length - 1; i >= 0; i--)
 			if (document.images[i].id.substr(0, 14) == 'modify_button_')
 				document.images[i].style.display = '';
-	}
-}
-
-// Determine whether the quick modify can actually be used.
-QuickModify.prototype.isXmlHttpCapable = function ()
-{
-	return typeof(window.XMLHttpRequest) == 'undefined' ? false : true;
 }
 
 // Function called when a user presses the edit button.
 QuickModify.prototype.modifyMsg = function (iMessage)
 {
-	if (!this.bXmlHttpCapable)
+	if (!can_ajax)
 		return;
 
 	// iMessageId is taken from the owner ID -- modify_button_xxx
@@ -318,7 +306,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	{
 		// Mozilla will nicely tell us what's wrong.
 		if (XMLDoc && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
-			document.getElementById('error_box').innerHTML = XMLDoc.firstChild.textContent;
+			$('#error_box').html(XMLDoc.firstChild.textContent);
 		else
 			this.modifyCancel();
 		return;
@@ -346,15 +334,15 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 
 		// If this is the first message, also update the topic subject.
 		if (oSubject.getAttribute('is_first') == '1')
-			document.getElementById('top_subject').innerHTML = this.opt.sTemplateTopSubject.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
+			$('#top_subject').html(this.opt.sTemplateTopSubject.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
 
 		// Show this message as 'modified on x by y'.
 		if (this.opt.bShowModify)
-			document.getElementById('modified_' + this.sCurMessageId.substr(4)).innerHTML = message.getElementsByTagName('modified')[0].childNodes[0].nodeValue;
+			$('#modified_' + this.sCurMessageId.substr(4)).html(message.getElementsByTagName('modified')[0].childNodes[0].nodeValue);
 	}
 	else if (error)
 	{
-		document.getElementById('error_box').innerHTML = error.childNodes[0].nodeValue;
+		$('#error_box').html(error.childNodes[0].nodeValue);
 		document.forms.quickModForm.message.style.border = error.getAttribute('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
 		document.forms.quickModForm.subject.style.border = error.getAttribute('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
 	}
@@ -433,16 +421,14 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 	// Show the number of messages selected in the button.
 	if (this.opt.bCanRemove && !this.opt.bUseImageButton)
-	{
-		document.getElementById(this.opt.sSelf + '_remove_button').innerHTML = this.opt.sRemoveButtonLabel + ' [' + this.iNumSelected + ']';
-		document.getElementById(this.opt.sSelf + '_remove_button').style.display = this.iNumSelected < 1 ? "none" : "";
-	}
+		$('#' + this.opt.sSelf + '_remove_button')
+			.html(this.opt.sRemoveButtonLabel + ' [' + this.iNumSelected + ']')
+			.css('display', this.iNumSelected < 1 ? "none" : "");
 
 	if (this.opt.bCanRestore && !this.opt.bUseImageButton)
-	{
-		document.getElementById(this.opt.sSelf + '_restore_button').innerHTML = this.opt.sRestoreButtonLabel + ' [' + this.iNumSelected + ']';
-		document.getElementById(this.opt.sSelf + '_restore_button').style.display = this.iNumSelected < 1 ? "none" : "";
-	}
+		$('#' + this.opt.sSelf + '_restore_button')
+			.html(this.opt.sRestoreButtonLabel + ' [' + this.iNumSelected + ']')
+			.css('display', this.iNumSelected < 1 ? "none" : "");
 
 	// Try to restore the correct position.
 	var aItems = document.getElementById(this.opt.sButtonStrip).getElementsByTagName('span');
@@ -501,7 +487,7 @@ var aIconLists = new Array();
 // *** IconList object.
 function IconList(oOptions)
 {
-	if (!window.XMLHttpRequest)
+	if (!can_ajax)
 		return;
 
 	this.opt = oOptions;
@@ -562,8 +548,6 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 		// Start to fetch its contents.
 		ajax_indicator(true);
 		getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
-
-		createEventListener(document.body);
 	}
 
 	// Set the position of the container.
@@ -576,7 +560,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	if (this.bListLoaded)
 		this.oContainerDiv.style.display = 'block';
 
-	document.body.addEventListener('mousedown', this.onWindowMouseDown, false);
+	$(document.body).mousedown(this.onWindowMouseDown);
 }
 
 // Setup the list of icons once it is received through xmlHTTP.
@@ -624,7 +608,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 		if (oMessage.getElementsByTagName('error').length == 0)
 		{
 			if (this.opt.bShowModify && oMessage.getElementsByTagName('modified').length != 0)
-				document.getElementById('modified_' + this.iCurMessageId).innerHTML = oMessage.getElementsByTagName('modified')[0].childNodes[0].nodeValue;
+				$('#modified_' + this.iCurMessageId).html(oMessage.getElementsByTagName('modified')[0].childNodes[0].nodeValue);
 			this.oClickedIcon.getElementsByTagName('img')[0].src = oDiv.getElementsByTagName('img')[0].src;
 		}
 	}
@@ -643,7 +627,7 @@ IconList.prototype.collapseList = function()
 	this.onBoxHover(this.oClickedIcon, false);
 	this.oContainerDiv.style.display = 'none';
 	this.iCurMessageId = 0;
-	document.body.removeEventListener('mousedown', this.onWindowMouseDown, false);
+	$(document.body).mousedown(this.onWindowMouseDown);
 }
 
 

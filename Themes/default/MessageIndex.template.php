@@ -381,7 +381,7 @@ function template_main()
 			</p>';
 
 	add_js('
-	if (typeof(window.XMLHttpRequest) != "undefined")
+	if (can_ajax)
 		aJumpTo[aJumpTo.length] = new JumpTo({
 			sContainerId: "message_index_jump_to",
 			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",

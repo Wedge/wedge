@@ -52,12 +52,9 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		// Step to it!
 		if (eventHandler)
 		{
-			createEventListener(inputHandle);
-			inputHandle.addEventListener('keyup', eventHandler, false);
+			// Username will auto-check on blur!
+			$(inputHandle).keyup(eventHandler).blur(autoCheckUsername);
 			eventHandler();
-
-			// Username will auto check on blur!
-			inputHandle.addEventListener('blur', autoCheckUsername, false);
 		}
 
 		// Make the div visible!
@@ -68,11 +65,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// A button to trigger a username search?
 	function addUsernameSearchTrigger(elementID)
 	{
-		var buttonHandle = document.getElementById(elementID);
-
-		// Attach the event to this element.
-		createEventListener(buttonHandle);
-		buttonHandle.addEventListener('click', checkUsername, false);
+		$(elementID).click(checkUsername);
 	}
 
 	// This function will automatically pick up all the necessary verification fields and initialise their visual status.
@@ -92,7 +85,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 				// This is probably it - but does it contain a field type?
 				curType = 0;
 				// Username can only be done with XML.
-				if (curElement.id.indexOf('username') != -1 && window.XMLHttpRequest)
+				if (curElement.id.indexOf('username') != -1 && can_ajax)
 					curType = 'username';
 				else if (curElement.id.indexOf('pwmain') != -1)
 					curType = 'pwmain';
@@ -107,10 +100,8 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 					addVerificationField(curType, curElement.id);
 
 				// If this is the username do we also have a button to find the user?
-				if (curType == 'username' && document.getElementById(curElement.id + '_link'))
-				{
-					addUsernameSearchTrigger(curElement.id + '_link');
-				}
+				if (curType == 'username' && $('#' + curElement.id + '_link'))
+					addUsernameSearchTrigger('#' + curElement.id + '_link');
 			}
 		}
 

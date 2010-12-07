@@ -470,7 +470,7 @@ function template_results()
 		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>';
 
 	add_js('
-	if (typeof(window.XMLHttpRequest) != "undefined")
+	if (can_ajax)
 		aJumpTo[aJumpTo.length] = new JumpTo({
 			sContainerId: "search_jump_to",
 			sJumpToTemplate: ', $context['jump_to']['label'], ',

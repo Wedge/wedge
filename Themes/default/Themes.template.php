@@ -774,7 +774,7 @@ function template_edit_style()
 			// Load up a page, but apply our stylesheet.
 			function navigatePreview(url)
 			{
-				var myDoc = new XMLHttpRequest();
+				var myDoc = (is_ie && !("XMLHttpRequest" in window) && "ActiveXObject" in window) ? new ActiveXObject("MSXML2.XMLHTTP") : new XMLHttpRequest();
 				myDoc.onreadystatechange = function ()
 				{
 					if (myDoc.readyState != 4)
@@ -785,7 +785,7 @@ function template_edit_style()
 						previewData = myDoc.responseText;
 						document.getElementById("css_preview_box").style.display = "";
 
-						// Revert to the theme they actually use ;).
+						// Revert to the theme they actually use ;)
 						var tempImage = new Image();
 						tempImage.src = smf_prepareScriptUrl(smf_scripturl) + "action=admin;area=theme;sa=edit;theme=', $settings['theme_id'], ';preview;" + (new Date().getTime());
 

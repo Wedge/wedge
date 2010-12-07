@@ -20,7 +20,8 @@ var
 	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera, is_gecko = !is_opera && ua.indexOf('gecko') != -1,
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
-	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && v == 6, is_ie7 = is_ie && v == 7, is_ie8 = is_ie && v == 8, is_ie9 = is_ie && v >= 9;
+	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && v == 6, is_ie7 = is_ie && v == 7,
+	is_ie8 = is_ie && v == 8, is_ie9up = is_ie && v >= 9;
 
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
@@ -604,41 +605,11 @@ function ajax_indicator(turn_on)
 
 function create_ajax_indicator_ele()
 {
-	// Create the div for the indicator.
-	ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress');
-
-	// Add the image in and link to turn it off.
-	var cancel_link = document.createElement('a');
-	cancel_link.href = 'javascript:ajax_indicator(false)';
-	var cancel_img = document.createElement('img');
-	cancel_img.src = smf_images_url + '/icons/quick_remove.gif';
-
-	if (ajax_notification_cancel_text)
-	{
-		cancel_img.alt = ajax_notification_cancel_text;
-		cancel_img.title = ajax_notification_cancel_text;
-	}
-
-	// Add the cancel link, image and text to the indicator.
-	cancel_link.appendChild(cancel_img);
-	ajax_indicator_ele.append(cancel_link).append(ajax_notification_text).appendTo('body');
-}
-
-function createEventListener(oTarget)
-{
-	if (!('addEventListener' in oTarget))
-	{
-		if (oTarget.attachEvent)
-		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) { oTarget.attachEvent('on' + sEvent, funcHandler); };
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) { oTarget.detachEvent('on' + sEvent, funcHandler); };
-		}
-		else
-		{
-			oTarget.addEventListener = function (sEvent, funcHandler, bCapture) { oTarget['on' + sEvent] = funcHandler; };
-			oTarget.removeEventListener = function (sEvent, funcHandler, bCapture) { oTarget['on' + sEvent] = null; };
-		}
-	}
+	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
+	ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress').html(
+		'<a href="#" onclick="ajax_indicator(false);"><img src="' + smf_images_url + '/icons/quick_remove.gif"'	+ (ajax_notification_cancel_text ?
+		' alt="' + ajax_notification_cancel_text + '" title="' + ajax_notification_cancel_text + '"' : '') + ' />' + ajax_notification_text
+	).appendTo('body');
 }
 
 // This function will retrieve the contents needed for the jump to boxes.
@@ -697,7 +668,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 {
 	// Create an option that'll be above and below the category.
 	var iIndexPointer = 0;
-	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' });
+	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' })[0];
 
 	if ('onbeforeactivate' in document)
 		this.dropdownList.onbeforeactivate = null;
@@ -855,10 +826,7 @@ function initMenu(menu)
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	menu.style.opacity = 1;
-	var h4s = menu.getElementsByTagName('h4');
-	for (var i = 0, j = h4s.length; i < j; i++)
-		if (h4s[i].innerHTML.indexOf('<a ') == -1)
-			h4s[i].innerHTML = '<a href="#" onclick="hoverable = 1; show_me.call(this.parentNode.parentNode); hoverable = 0; return false;">' + h4s[i].innerHTML + '</a>';
+	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
 
 	var k = baseId;
 	$('li:has(>ul)', menu).each(function (i) {
@@ -866,7 +834,7 @@ function initMenu(menu)
 		{
 			$(this).keyup(show_me);
 			document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-			ieshim[k] = document.getElementById('shim' + k);
+			ieshim[k] = $('#shim' + k)[0];
 		}
 		$(this).attr('id', 'li' + k++)
 			.bind('mouseenter focus', show_me)
@@ -892,11 +860,11 @@ function timeout_hide(e)
 // Hide all children <ul>'s.
 function hide_child_ul(id)
 {
-	var eid = document.getElementById(id), eids = eid.getElementsByTagName('ul')[0];
-	eids.style.visibility = 'hidden';
-	eids.style.opacity = 0;
-	$('h4:first', eid).attr('class', '');
-	$('a', eid).attr('class', '');
+	var eid = $('#' + id);
+	$('ul', eid).css('visibility', 'hidden')[0].style.opacity = 0;
+	$('h4:first', eid).removeClass();
+	$('a', eid).removeClass();
+
 	if (is_ie6)
 		show_shim(false, id);
 }
@@ -907,14 +875,16 @@ function show_shim(showsh, ieid, iemenu)
 	iem = ieid.substring(2);
 	if (!(ieshim[iem]))
 		return;
+
+	var i = ieshim[iem].style, j = iemenu;
 	if (showsh)
 	{
-		ieshim[iem].style.top = iemenu.offsetTop + iemenu.offsetParent.offsetTop + 'px';
-		ieshim[iem].style.left = iemenu.offsetLeft + iemenu.offsetParent.offsetLeft + 'px';
-		ieshim[iem].style.width = (iemenu.offsetWidth + 1) + 'px';
-		ieshim[iem].style.height = (iemenu.offsetHeight + 1) + 'px';
+		i.top = j.offsetTop + j.offsetParent.offsetTop + 'px';
+		i.left = j.offsetLeft + j.offsetParent.offsetLeft + 'px';
+		i.width = (j.offsetWidth + 1) + 'px';
+		i.height = (j.offsetHeight + 1) + 'px';
 	}
-	ieshim[iem].style.display = showsh ? 'block' : 'none';
+	i.display = showsh ? 'block' : 'none';
 }
 
 // Show the first child <ul> we can find.
@@ -931,10 +901,8 @@ function show_me()
 
 	if (is_ie6)
 		show_shim(true, this.id, showul);
-	var h4s = this.getElementsByTagName('h4');
-	if (h4s.length > 0)
-		h4s[0].className = 'linkOver';
-	else
+
+	if (!($('h4:first', this).addClass('linkOver').length))
 	{
 		var currentNode = this;
 		while (currentNode)
@@ -953,21 +921,10 @@ function show_me()
 
 function hide_sub_ul(li)
 {
-	var h4s = li.getElementsByTagName('h4');
-	if (h4s.length > 0)
-		h4s[0].className = '';
-	else
-	{
-		var as = li.getElementsByTagName('a');
-		for (var i = 0, j = as.length; i < j; i++)
-			as[i].className = '';
-	}
-	var uls = li.getElementsByTagName('ul');
-	for (var i = 0, j = uls.length; i < j; i++)
-	{
-		uls[i].style.visibility = 'hidden';
-		uls[i].style.opacity = 0;
-	}
+	if (!($('h4:first', li).removeClass().length))
+		$('a', li).removeClass();
+
+	$('ul', li).css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 }
 
 /* --------------------------------------------------------
@@ -997,6 +954,7 @@ function testStyle(sty)
 // In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
 var
 	wedgerocks = document.createElement('wedgerocks'),
+	can_ajax = 'XMLHttpRequest' in window || 'ActiveXObject' in window,
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
 

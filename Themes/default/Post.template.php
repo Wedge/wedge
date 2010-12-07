@@ -6,14 +6,11 @@ function template_main()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
 
-	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes.
+	// When using Go Back due to fatal_error, allow the form to be
+	// re-submitted with changes, through a non-standard DOM event.
 	if ($context['browser']['is_firefox'])
 		add_js_inline('
-	function reActivate()
-	{
-		document.forms.postmodify.message.readOnly = false;
-	}
-	window.addEventListener("pageshow", reActivate, false);');
+	window.addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
 
 	// Start with message icons - and any missing from this theme.
 	add_js_inline('

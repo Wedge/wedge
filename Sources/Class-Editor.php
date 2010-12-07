@@ -2364,7 +2364,7 @@ class wedgeEditor
 					sName: \'sel_face\',
 					oOptions: {
 						\'\': ' . JavaScriptEscape($txt['font_face']) . ',
-						\'courier\': \'Courier\',
+						\'courier new\': \'Courier New\',
 						\'arial\': \'Arial\',
 						\'arial black\': \'Arial Black\',
 						\'impact\': \'Impact\',
@@ -2373,7 +2373,7 @@ class wedgeEditor
 						\'georgia\': \'Georgia\',
 						\'andale mono\': \'Andale Mono\',
 						\'trebuchet ms\': \'Trebuchet MS\',
-						\'comic sans ms\': \'Comic Sans MS\'
+						\'segoe ui\': \'Segoe UI\'
 					}
 				}';
 

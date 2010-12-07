@@ -1648,7 +1648,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$message = rtrim(substr($message, 0, $pos));
 				while (substr($message, -6) === '<br />')
 					$message = substr($message, 0, -6);
-				$message .= ' <span style="font-style: italic; color: grey">(Reste ' . $lent . ' caractères)</span>';
+				$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span>';
 			}
 			else
 			{
@@ -2825,7 +2825,7 @@ function wedge_cache_css($filename, $css, $target, $gzip = false, $ext = '.css')
 		$add = file_get_contents($file);
 		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}\s])\s*~'), array('', '$1'), $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
-		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', '}', "\t"), array("\n", "\n", '}', "}\n", ' '), $add);
+		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', "}\n", "\t"), array("\n", "\n", '}', '}', ' '), $add);
 		$final .= $add;
 	}
 	$dest = $settings[$target . 'dir'] . '/cache';

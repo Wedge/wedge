@@ -15,7 +15,8 @@ function smc_Editor(oOptions)
 	this.opt = oOptions;
 
 	// Create some links to the editor object.
-	this.oTextHandle = null;
+	this.oTextHandle = this.oFrameHandle = this.oFrameDocument = null;
+	this.oFrameWindow = this.oBreadHandle = null;
 	this.sCurrentText = 'sText' in this.opt ? this.opt.sText : '';
 
 	// How big?
@@ -25,14 +26,6 @@ function smc_Editor(oOptions)
 	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
 	this.bRichTextPossible = !this.opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
-
-	this.oFrameHandle = null;
-	this.oFrameDocument = null;
-	this.oFrameWindow = null;
-
-	// These hold the breadcrumb.
-	this.oBreadHandle = null;
-	this.oResizerElement = null;
 
 	// Kinda holds all the useful stuff.
 	this.aKeyboardShortcuts = new Array();
@@ -57,20 +50,20 @@ function smc_Editor(oOptions)
 		sup: 'superscript',
 		indent: 'indent',
 		outdent: 'outdent'
-	}
+	};
 
 	// Codes to call a private function
 	this.oSmfExec = {
 		unformat: 'removeFormatting',
 		toggle: 'toggleView'
-	}
+	};
 
 	// Any special breadcrumb mappings to ensure we show a consistant tag name.
 	this.breadCrumbNameTags = {
 		strike: 's',
 		strong: 'b',
 		em: 'i'
-	}
+	};
 
 	this.aBreadCrumbNameStyles = [
 		{
@@ -110,30 +103,12 @@ function smc_Editor(oOptions)
 		}
 	];
 
-	// All the fonts in the world.
-	this.aFontFaces = [
-		'Arial',
-		'Arial Black',
-		'Impact',
-		'Verdana',
-		'Times New Roman',
-		'Georgia',
-		'Andale Mono',
-		'Trebuchet MS',
-		'Comic Sans MS'
-	];
 	// Font maps (HTML => CSS size)
 	this.aFontSizes = [
-		0,
-		6,
-		8,
-		10,
-		12,
-		14,
-		18,
-		24
+		0, 6, 8, 10, 12, 14, 18, 24
 	];
-	// Color maps! (hex => name)
+
+	// Color maps!
 	this.oFontColors = {
 		black: '#000000',
 		red: '#ff0000',
@@ -149,7 +124,7 @@ function smc_Editor(oOptions)
 		navy: '#000080',
 		maroon: '#800000',
 		limegreen: '#32cd32'
-	}
+	};
 
 	this.sFormId = 'sFormId' in this.opt ? this.opt.sFormId : 'postmodify';
 	this.iArrayPosition = smf_editorArray.length;
@@ -186,40 +161,23 @@ smc_Editor.prototype.init = function()
 	if (this.bRichTextPossible)
 	{
 		// Make the iframe itself, stick it next to the current text area, and give it an ID.
-		this.oFrameHandle = document.createElement('iframe');
-		this.oFrameHandle.src = 'about:blank';
-		this.oFrameHandle.id = 'html_' + this.opt.sUniqueId;
-		this.oFrameHandle.className = 'rich_editor_frame';
-		this.oFrameHandle.style.display = 'none';
-		this.oFrameHandle.style.margin = '0px';
-		this.oFrameHandle.tabIndex = this.oTextHandle.tabIndex;
-		this.oTextHandle.parentNode.appendChild(this.oFrameHandle);
+		this.oFrameHandle = $('<iframe></iframe>', {
+			'class': 'rich_editor_frame', src: 'about:blank', id: 'html_' + this.opt.sUniqueId, tabIndex: this.oTextHandle.tabIndex
+		}).css({ display: 'none', margin: 0 }).appendTo(this.oTextHandle.parentNode)[0];
 
 		// Create some handy shortcuts.
 		this.oFrameDocument = this.oFrameHandle.contentDocument ? this.oFrameHandle.contentDocument : ('contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow.document : this.oFrameHandle.document);
 		this.oFrameWindow = 'contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow : this.oFrameHandle.document.parentWindow;
 
 		// Create the debug window... and stick this under the main frame - make it invisible by default.
-		this.oBreadHandle = document.createElement('div');
-		this.oBreadHandle.id = 'bread_' . uid;
-		this.oBreadHandle.style.visibility = 'visible';
-		this.oBreadHandle.style.display = 'none';
-		this.oFrameHandle.parentNode.appendChild(this.oBreadHandle);
+		this.oBreadHandle = $('<div></div>', { id: 'bread_' . uid }).css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
 
 		// Size the iframe dimensions to something sensible.
-		this.oFrameHandle.style.width = this.sEditWidth;
-		this.oFrameHandle.style.height = this.sEditHeight;
-		this.oFrameHandle.style.visibility = 'visible';
+		$(this.oFrameHandle).css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' });
 
 		// Only bother formatting the debug window if debug is enabled.
 		if (this.showDebug)
-		{
-			this.oBreadHandle.style.width = this.sEditWidth;
-			this.oBreadHandle.style.height = '20px';
-			this.oBreadHandle.className = 'windowbg2';
-			this.oBreadHandle.style.border = '1px black solid';
-			this.oBreadHandle.style.display = '';
-		}
+			$(this.oBreadHandle).addClass('windowbg2').css({ width: this.sEditWidth, height: '20px', border: '1px black solid', display: '' });
 
 		// Populate the editor with nothing by default.
 		if (!is_opera95up)
@@ -307,79 +265,49 @@ smc_Editor.prototype.init = function()
 			if (!bFoundSomething)
 			{
 				// Do something that is better than nothing.
-				this.oFrameDocument.body.style.color = 'black';
-				this.oFrameDocument.body.style.backgroundColor = 'white';
-				this.oFrameDocument.body.style.fontSize = '78%';
-				this.oFrameDocument.body.style.fontFamily = 'Verdana, Arial, Helvetica, sans-serif';
-				this.oFrameDocument.body.style.border = 'none';
+				$(this.oFrameDocument.body).css({
+					color: 'black', backgroundColor: 'white', fontSize: '78%', fontFamily: 'Verdana, Arial, Helvetica, sans-serif', border: 'none'
+				});
 				this.oFrameHandle.style.border = '1px solid #808080';
 				if (is_opera)
 					this.oFrameDocument.body.style.height = '99%';
 			}
 		}
 
-		// Apply the class...
-		this.oFrameDocument.body.className = 'rich_editor';
-
-		// Set the frame padding/margin inside the editor.
-		this.oFrameDocument.body.style.padding = '1px';
-		this.oFrameDocument.body.style.margin = '0';
+		// Apply the class and set the frame padding/margin inside the editor.
+		$(this.oFrameDocument.body).addClass('rich_editor').css({ padding: '1px', margin: 0 });
 
 		// Listen for input.
 		this.oFrameDocument.instanceRef = this;
 		this.oFrameHandle.instanceRef = this;
 		this.oTextHandle.instanceRef = this;
 
-		// Attach addEventListener for those browsers that don't support it.
-		createEventListener(this.oFrameHandle);
-		createEventListener(this.oFrameDocument);
-		createEventListener(this.oTextHandle);
-		createEventListener(window);
-		createEventListener(document);
-
 		// Attach functions to the key and mouse events.
-		this.oFrameDocument.addEventListener('keyup', this.aEventWrappers.editorKeyUp, true);
-		this.oFrameDocument.addEventListener('mouseup', this.aEventWrappers.editorKeyUp, true);
-		this.oFrameDocument.addEventListener('keydown', this.aEventWrappers.shortcutCheck, true);
-		this.oTextHandle.addEventListener('keydown', this.aEventWrappers.shortcutCheck, true);
+		$(this.oFrameDocument).bind('keyup mouseup', this.aEventWrappers.editorKeyUp).keydown(this.aEventWrappers.shortcutCheck);
+		$(this.oTextHandle).keydown(this.aEventWrappers.shortcutCheck);
 
 		if (is_ie)
-		{
-			this.oFrameDocument.addEventListener('blur', this.aEventWrappers.editorBlur, true);
-			this.oFrameDocument.addEventListener('focus', this.aEventWrappers.editorFocus, true);
-		}
+			$(this.oFrameDocument).blur(this.aEventWrappers.editorBlur).focus(this.aEventWrappers.editorFocus);
 
 		// Show the iframe only if wysiwyrg is on - and hide the text area.
 		this.oTextHandle.style.display = this.bRichTextEnabled ? 'none' : '';
 		this.oFrameHandle.style.display = this.bRichTextEnabled ? '' : 'none';
 		this.oBreadHandle.style.display = this.bRichTextEnabled ? '' : 'none';
 	}
-	// If we can't do advanced stuff then just do the basics.
+	// If we can't do advanced stuff, then just do the basics.
 	else
-	{
-		// Cannot have WYSIWYG anyway!
 		this.bRichTextEnabled = false;
-
-		// We need some of the event handlers.
-		createEventListener(this.oTextHandle);
-		createEventListener(window);
-		createEventListener(document);
-	}
 
 	// Make sure we set the message mode correctly.
 	document.getElementById(this.opt.sUniqueId + '_mode').value = this.bRichTextEnabled ? 1 : 0;
 
 	// Show the resizer.
-	if (document.getElementById(this.opt.sUniqueId + '_resizer') && (!is_opera || is_opera95up) && !(is_chrome && !this.bRichTextEnabled))
+	var sizer = $('#' + this.opt.sUniqueId + '_resizer');
+	if (sizer.length && (!is_opera || is_opera95up) && !(is_chrome && !this.bRichTextEnabled))
 	{
 		// Currently nothing is being resized... I assume!
 		window.smf_oCurrentResizeEditor = null;
-
-		this.oResizerElement = document.getElementById(this.opt.sUniqueId + '_resizer');
-		this.oResizerElement.style.display = '';
-
-		createEventListener(this.oResizerElement);
-		this.oResizerElement.addEventListener('mousedown', this.aEventWrappers.startResize, false);
+		sizer.css('display', '').mousedown(this.aEventWrappers.startResize);
 	}
 
 	// Set the text - if WYSIWYG is enabled that is.
@@ -445,7 +373,7 @@ smc_Editor.prototype.editorBlur = function()
 	if (!is_ie)
 		return;
 
-	// Need to do something here.
+	// !!! Need to do something here.
 }
 
 smc_Editor.prototype.editorFocus = function()
@@ -453,7 +381,7 @@ smc_Editor.prototype.editorFocus = function()
 	if (!is_ie)
 		return;
 
-	// Need to do something here.
+	// !!! Need to do something here.
 }
 
 // Rebuild the breadcrumb etc - and set things to the correct context.
@@ -915,10 +843,8 @@ smc_Editor.prototype.getSelect = function(bWantText, bWantHTMLText)
 			var oSelection = this.oFrameWindow.getSelection();
 			if (oSelection.rangeCount > 0)
 			{
-				var oRange = oSelection.getRangeAt(0);
-				var oClonedSelection = oRange.cloneContents();
 				var oDiv = this.oFrameDocument.createElement('div');
-				oDiv.appendChild(oClonedSelection);
+				oDiv.appendChild(oSelection.getRangeAt(0).cloneContents());
 				return oDiv.innerHTML;
 			}
 			else
@@ -1039,7 +965,7 @@ smc_Editor.prototype.toggleView = function(bView)
 smc_Editor.prototype.requestParsedMessage = function(bView)
 {
 	// Replace with a force reload.
-	if (!window.XMLHttpRequest)
+	if (!can_ajax)
 	{
 		alert(oEditorStrings['func_disabled']);
 		return;
@@ -1048,15 +974,13 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	// Get the text.
 	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 
-	this.tmpMethod = sendXMLDocument;
-	this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
-	delete tmpMethod;
+	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
 }
 
 smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
 {
 	var sText = '';
-	for (var i = 0; i < oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i++)
+	for (var i = 0, j = oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i < j; i++)
 		sText += oXMLDoc.getElementsByTagName('message')[0].childNodes[i].nodeValue;
 
 	// What is this new view we have?
@@ -1110,10 +1034,7 @@ smc_Editor.prototype.spellCheckStart = function()
 	if (this.bRichTextEnabled)
 	{
 		var sText = escape(this.getText(true, 1).php_to8bit());
-
-		this.tmpMethod = sendXMLDocument;
-		this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onSpellCheckDataReceived);
-		delete tmpMethod;
+		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onSpellCheckDataReceived);
 	}
 	// Otherwise start spellchecking right away.
 	else
@@ -1142,10 +1063,7 @@ smc_Editor.prototype.spellCheckEnd = function()
 	if (this.bRichTextEnabled)
 	{
 		var sText = escape(this.getText(true, 0).php_to8bit());
-
-		this.tmpMethod = sendXMLDocument;
-		this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
-		delete tmpMethod;
+		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
 	}
 	else
 		this.setFocus();
@@ -1237,10 +1155,10 @@ smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
 		return;
 
 	var oNewShortcut = {
-		code : sCodeName,
+		code: sCodeName,
 		key: sLetter.toUpperCase().charCodeAt(0),
-		alt : false,
-		ctrl : false
+		alt: false,
+		ctrl: false
 	};
 
 	var aSplitModifiers = sModifiers.split(',');
@@ -1320,30 +1238,22 @@ smc_Editor.prototype.shortcutCheck = function(oEvent)
 // This is the method called after clicking the resize bar.
 smc_Editor.prototype.startResize = function(oEvent)
 {
-	if ('event' in window)
-		oEvent = window.event;
-
 	if (!oEvent || window.smf_oCurrentResizeEditor != null)
 		return true;
 
 	window.smf_oCurrentResizeEditor = this.iArrayPosition;
 
-	var aCurCoordinates = getMousePosition(oEvent);
-	this.osmc_EditorCurrentResize.old_y = aCurCoordinates[1];
+	this.osmc_EditorCurrentResize.old_y = oEvent.pageY;
 	this.osmc_EditorCurrentResize.old_rel_y = null;
 	this.osmc_EditorCurrentResize.cur_height = parseInt(this.oTextHandle.style.height);
 
 	// Set the necessary events for resizing.
-	var oResizeEntity = is_ie ? document : window;
-	oResizeEntity.addEventListener('mousemove', this.aEventWrappers.resizeOverDocument, false);
+	$(is_ie ? document : window).mousemove(this.aEventWrappers.resizeOverDocument);
 
 	if (this.bRichTextPossible)
-		this.oFrameDocument.addEventListener('mousemove', this.aEventWrappers.resizeOverIframe, false);
+		$(this.oFrameDocument).mousemove(this.aEventWrappers.resizeOverIframe).mouseup(this.aEventWrappers.endResize);
 
-	document.addEventListener('mouseup', this.aEventWrappers.endResize, true);
-
-	if (this.bRichTextPossible)
-		this.oFrameDocument.addEventListener('mouseup', this.aEventWrappers.endResize, true);
+	$(document).mouseup(this.aEventWrappers.endResize);
 
 	return false;
 }
@@ -1351,19 +1261,14 @@ smc_Editor.prototype.startResize = function(oEvent)
 // This is kind of a cheat, as it only works over the IFRAME.
 smc_Editor.prototype.resizeOverIframe = function(oEvent)
 {
-	if ('event' in window)
-		oEvent = window.event;
-
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
 
-	var newCords = getMousePosition(oEvent);
-
 	if (this.osmc_EditorCurrentResize.old_rel_y == null)
-		this.osmc_EditorCurrentResize.old_rel_y = newCords[1];
+		this.osmc_EditorCurrentResize.old_rel_y = oEvent.pageY;
 	else
 	{
-		var iNewHeight = newCords[1] - this.osmc_EditorCurrentResize.old_rel_y + this.osmc_EditorCurrentResize.cur_height;
+		var iNewHeight = oEvent.pageY - this.osmc_EditorCurrentResize.old_rel_y + this.osmc_EditorCurrentResize.cur_height;
 		if (iNewHeight < 0)
 			this.endResize();
 		else
@@ -1376,15 +1281,10 @@ smc_Editor.prototype.resizeOverIframe = function(oEvent)
 // This resizes an editor.
 smc_Editor.prototype.resizeOverDocument = function(oEvent)
 {
-	if ('event' in window)
-		oEvent = window.event;
-
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
 
-	var newCords = getMousePosition(oEvent);
-
-	var iNewHeight = newCords[1] - this.osmc_EditorCurrentResize.old_y + this.osmc_EditorCurrentResize.cur_height;
+	var iNewHeight = oEvent.pageY - this.osmc_EditorCurrentResize.old_y + this.osmc_EditorCurrentResize.cur_height;
 	if (iNewHeight < 0)
 		this.endResize();
 	else
@@ -1395,25 +1295,21 @@ smc_Editor.prototype.resizeOverDocument = function(oEvent)
 
 smc_Editor.prototype.endResize = function(oEvent)
 {
-	if ('event' in window)
-		oEvent = window.event;
-
 	if (window.smf_oCurrentResizeEditor == null)
 		return true;
 
 	window.smf_oCurrentResizeEditor = null;
 
 	// Remove the event...
-	var oResizeEntity = is_ie ? document : window;
-	oResizeEntity.removeEventListener('mousemove', this.aEventWrappers.resizeOverDocument, false);
+	$(is_ie ? document : window).unbind('mousemove', this.aEventWrappers.resizeOverDocument);
 
 	if (this.bRichTextPossible)
-		this.oFrameDocument.removeEventListener('mousemove', this.aEventWrappers.resizeOverIframe, false);
+		$(this.oFrameDocument).unbind('mousemove', this.aEventWrappers.resizeOverIframe);
 
-	document.removeEventListener('mouseup', this.aEventWrappers.endResize, true);
+	$(document).unbind('mouseup', this.aEventWrappers.endResize);
 
 	if (this.bRichTextPossible)
-		this.oFrameDocument.removeEventListener('mouseup', this.aEventWrappers.endResize, true);
+		$(this.oFrameDocument).unbind('mouseup', this.aEventWrappers.endResize);
 
 	return false;
 }
@@ -1422,26 +1318,6 @@ smc_Editor.prototype.endResize = function(oEvent)
 	Helper functions.
 	Can safely be called by mods.
 */
-
-// Getting the mouse position on the screen.
-function getMousePosition(oEvent)
-{
-	var x = 0;
-	var y = 0;
-
-	if (oEvent.pageX)
-	{
-		y = oEvent.pageY;
-		x = oEvent.pageX;
-	}
-	else if (oEvent.clientX)
-	{
-		x = oEvent.clientX + (document.documentElement.scrollLeft ? document.documentElement : document.body).scrollLeft;
-		y = oEvent.clientY + (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop;
-	}
-
-	return [x, y];
-}
 
 // Replaces the currently selected text with the passed text.
 function replaceText(text, oTextHandle)
@@ -1926,7 +1802,8 @@ wedgeAttachSelect.prototype.addElement = function(element)
 		element.id = 'file_' + this.attachId++;
 		element.name = 'attachment[]';
 		element.multi_selector = this;
-		element.onchange = function() {
+		element.onchange = function()
+		{
 			if (element.value == '')
 				return;
 
@@ -1938,10 +1815,7 @@ wedgeAttachSelect.prototype.addElement = function(element)
 				return;
 			}
 
-			var new_element = document.createElement('input');
-			new_element.type = 'file';
-			new_element.className = 'input_file';
-			new_element.setAttribute('size', '60');
+			var new_element = $('<input type="file" class="input_file" />')[0];
 
 			// Add new element, update everything
 			this.parentNode.insertBefore(new_element, document.getElementById(wedgeAttachSelect.prototype.opts.file_container));
@@ -1949,8 +1823,7 @@ wedgeAttachSelect.prototype.addElement = function(element)
 			this.multi_selector.addListRow(this);
 
 			// Hide this: we can't use display:none because Safari doesn't like it
-			this.style.position = 'absolute';
-			this.style.left = '-1000px';
+			$(this).css({ position: 'absolute', left: '-1000px' });
 		};
 
 		this.count++;
@@ -1974,12 +1847,12 @@ wedgeAttachSelect.prototype.checkExtension = function(filename)
 	var ext = (filename.substr(dot + 1, filename.length)).toLowerCase();
 	var arr = this.opts.attachment_ext;
 	var func = Array.prototype.indexOf ?
-		function(arr, obj) { return arr.indexOf(obj) !== -1; } :
-		function(arr, obj) {
-			for(var i = -1, j = arr.length; ++i < j;)
-				if(arr[i] === obj) return true;
+		function (arr, obj) { return arr.indexOf(obj) !== -1; } :
+		function (arr, obj) {
+			for (var i = -1, j = arr.length; ++i < j;)
+				if (arr[i] === obj) return true;
 			return false;
-    };
+		};
 	var value = func(arr, ext);
 	if (!value)
 		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace('{ext}', ext);
@@ -1990,35 +1863,28 @@ wedgeAttachSelect.prototype.checkExtension = function(filename)
 wedgeAttachSelect.prototype.addListRow = function(element)
 {
 	var new_row = document.createElement('div');
-	var new_row_button = document.createElement('input');
-	new_row_button.type = 'button';
-	new_row_button.value = this.opts.message_txt_delete;
-	new_row_button.className = 'button_submit';
 	new_row.element = element;
+	new_row.innerHTML = element.value + '&nbsp; &nbsp;';
 
-	new_row_button.onclick = function() {
+	$('<input type="button" class="button_submit" value="' + this.opts.message_txt_delete + '" />').click(function() {
 		// Remove element from form
 		this.parentNode.element.parentNode.removeChild(this.parentNode.element);
 		this.parentNode.parentNode.removeChild(this.parentNode);
 		this.parentNode.element.multi_selector.count--;
 		wedgeAttachSelect.prototype.checkActive();
 		return false;
-	};
+	}).appendTo(new_row);
 
-	new_row.innerHTML = element.value + '&nbsp; &nbsp;';
-	new_row.appendChild(new_row_button);
 	document.getElementById(this.opts.file_container).appendChild(new_row);
 }
 
 wedgeAttachSelect.prototype.checkActive = function()
 {
-	var elements = document.getElementsByTagName('input');
 	var session_attach = 0;
-	for (i in elements)
-	{
-		if (elements[i] && elements[i].type == 'checkbox' && elements[i].name == 'attach_del[]' && elements[i].checked == true)
+	$('input[type="checkbox"]').each(function() {
+		if (this.name == 'attach_del[]' && this.checked == true)
 			session_attach++;
-	}
+	});
 
 	this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
 }

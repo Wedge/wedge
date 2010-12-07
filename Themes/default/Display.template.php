@@ -747,7 +747,7 @@ function template_main()
 	});');
 
 	add_js('
-	if (\'XMLHttpRequest\' in window)
+	if (can_ajax)
 	{
 		var oQuickModify = new QuickModify({
 			sScriptUrl: smf_scripturl,

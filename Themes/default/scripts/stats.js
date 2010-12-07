@@ -178,18 +178,12 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 
 	if (oToggle.opt.aSwappableContainers.length == 0)
 	{
-		// A complicated way to call getXMLDocument, but stay in scope.
-		this.tmpMethod = getXMLDocument;
-		this.oXmlRequestHandle = this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
-		delete this.tmpMethod;
-
 		if ('ajax_indicator' in window)
 			ajax_indicator(true);
-
+		this.oXmlRequestHandle = getXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
 		this.bIsLoading = true;
 	}
-
-	// Silently let SMF know this one is expanded.
+	// Silently let Wedge know this one is expanded.
 	else
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 }
