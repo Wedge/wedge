@@ -13,20 +13,23 @@ var
 // Basic browser detection
 var
 	ua = navigator.userAgent.toLowerCase(),
-	v = parseInt($.browser.version),
+	vers = parseInt($.browser.version),
 
 	// If you need support for more versions, just test for $.browser.version yourself...
 	is_opera = $.browser.opera, is_opera95up = is_opera && parseFloat($.browser.version) >= 9.5,
 	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera, is_gecko = !is_opera && ua.indexOf('gecko') != -1,
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
-	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && v == 6, is_ie7 = is_ie && v == 7,
-	is_ie8 = is_ie && v == 8, is_ie9up = is_ie && v >= 9;
+	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
+	is_ie8 = is_ie && vers == 8, is_ie9up = is_ie && vers >= 9;
 
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
 {
-	return $.ajax(typeof(funcCallback) != 'undefined' ? { url: sUrl, success: funcCallback, context: this } : { url: sUrl, async: false, context: this });
+	return $.ajax(typeof(funcCallback) != 'undefined' ?
+		{ url: sUrl, success: funcCallback, context: this } :
+		{ url: sUrl, async: false, context: this }
+	);
 }
 
 // Send a post form to the server using XMLHttpRequest.
@@ -42,19 +45,19 @@ function sendXMLDocument(sUrl, sContent, funcCallback)
 // Convert a string to an 8 bit representation (like in PHP).
 String.prototype.php_to8bit = function ()
 {
-	var n, sReturn = '';
+	var n, sReturn = '', c = String.fromCharCode;
 
 	for (var i = 0, iTextLen = this.length; i < iTextLen; i++)
 	{
 		n = this.charCodeAt(i);
 		if (n < 128)
-			sReturn += String.fromCharCode(n);
+			sReturn += c(n);
 		else if (n < 2048)
-			sReturn += String.fromCharCode(192 | n >> 6) + String.fromCharCode(128 | n & 63);
+			sReturn += c(192 | n >> 6) + c(128 | n & 63);
 		else if (n < 65536)
-			sReturn += String.fromCharCode(224 | n >> 12) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
+			sReturn += c(224 | n >> 12) + c(128 | n >> 6 & 63) + c(128 | n & 63);
 		else
-			sReturn += String.fromCharCode(240 | n >> 18) + String.fromCharCode(128 | n >> 12 & 63) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
+			sReturn += c(240 | n >> 18) + c(128 | n >> 12 & 63) + c(128 | n >> 6 & 63) + c(128 | n & 63);
 	}
 
 	return sReturn;
@@ -116,8 +119,6 @@ String.prototype.easyReplace = function (oReplacements)
 	return sResult;
 }
 
-var helf = null;
-
 // Open a new window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
@@ -133,17 +134,11 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 
 	var aPos = typeof(from) == 'object' ? smf_itemPos(from) : [10, 10];
 
-	if (helf != null)
-	{
-		var previousTarget = helf.src;
-		document.body.removeChild(helf);
-		helf = null;
-		if (previousTarget == desktopURL)
-			return false;
-	}
+	var previousTarget = $('#helf').attr('src');
+	if (previousTarget && $('#helf').remove().length && previousTarget == desktopURL)
+		return false;
 
-	helf = document.createElement('iframe');
-	$(document.body).append($(helf).attr({ id: 'helf', src: desktopURL }).css({
+	$(document.createElement('iframe')).attr({ id: 'helf', src: desktopURL }).css({
 		overflow: noScrollbars ? 'hidden' : 'auto',
 		position: 'absolute',
 		width: (alternateWidth ? alternateWidth : 480) + 'px',
@@ -151,7 +146,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 		left: (aPos[0] + 15) + 'px',
 		top: (aPos[1] + 15) + 'px',
 		border: '1px solid #999'
-	}));
+	}).appendTo('body');
 
 	// Return false so the click won't follow the link ;)
 	return false;
@@ -170,10 +165,7 @@ function isEmptyText(theField)
 	while (theValue.length > 0 && (theValue.charAt(theValue.length - 1) == ' ' || theValue.charAt(theValue.length - 1) == '\t'))
 		theValue = theValue.substring(0, theValue.length - 1);
 
-	if (theValue == '')
-		return true;
-	else
-		return false;
+	return theValue == '';
 }
 
 // Only allow form submission ONCE.
@@ -189,15 +181,8 @@ function submitonce()
 function submitThisOnce(oControl)
 {
 	// Hateful, hateful fix for Safari 1.3 beta.
-	if (is_safari)
-		return !smf_formSubmitted;
-
-	// oControl might also be a form.
-	var oForm = 'form' in oControl ? oControl.form : oControl;
-
-	var aTextareas = oForm.getElementsByTagName('textarea');
-	for (var i = 0, n = aTextareas.length; i < n; i++)
-		aTextareas[i].readOnly = true;
+	if (!is_safari || vers > 2)
+		$('textarea', 'form' in oControl ? oControl.form : oControl).attr('readOnly', true);
 
 	return !smf_formSubmitted;
 }
@@ -223,16 +208,6 @@ function in_array(variable, theArray)
 			return true;
 
 	return false;
-}
-
-// Checks for variable in theArray.
-function array_search(variable, theArray)
-{
-	for (var i in theArray)
-		if (theArray[i] == variable)
-			return i;
-
-	return null;
 }
 
 // Find a specific radio button in its group and select it.
@@ -618,7 +593,6 @@ function grabJumpToContent()
 	{
 		var items = oXMLDoc.responseXML.getElementsByTagName('smf')[0].getElementsByTagName('item');
 		for (var i = 0, n = items.length; i < n; i++)
-		{
 			aBoardsAndCategories[aBoardsAndCategories.length] = {
 				id: parseInt(items[i].getAttribute('id')),
 				isCategory: items[i].getAttribute('type') == 'category',
@@ -626,7 +600,6 @@ function grabJumpToContent()
 				is_current: false,
 				childLevel: parseInt(items[i].getAttribute('childlevel'))
 			}
-		}
 	}
 
 	ajax_indicator(false);

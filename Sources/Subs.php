@@ -3233,10 +3233,8 @@ function db_debug_junk()
 	if (!empty($db_cache))
 	{
 		foreach ($db_cache as $q => $qq)
-		{
 			if (!empty($qq['w']))
 				$warnings += count($qq['w']);
-		}
 
 		$_SESSION['debug'] = &$db_cache;
 	}
@@ -3426,12 +3424,7 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	else
 		$path = $modSettings['attachmentUploadDir'];
 
-	if (file_exists($path . '/' . $enc_name))
-		$filename = $path . '/' . $enc_name;
-	else
-		$filename = $path . '/' . $clean_name;
-
-	return $filename;
+	return $path . '/' . (file_exists($path . '/' . $enc_name) ? $enc_name : $clean_name);
 }
 
 /**

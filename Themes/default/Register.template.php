@@ -500,7 +500,7 @@ function template_verification_sound()
 		</audio>
 		<br />
 		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
-		<a href="#" onclick="parent.document.body.removeChild(parent[\'helf\']); parent[\'helf\'] = null; return false;">', $txt['visual_verification_sound_close'], '</a><br />
+		<a href="#" onclick="parent.document.body.removeChild(parent.document.getElementById(\'helf\')); return false;">', $txt['visual_verification_sound_close'], '</a><br />
 		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
 	</div>
 </body>

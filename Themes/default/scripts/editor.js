@@ -1319,6 +1319,16 @@ smc_Editor.prototype.endResize = function(oEvent)
 	Can safely be called by mods.
 */
 
+// Checks for variable in theArray.
+function array_search(variable, theArray)
+{
+	for (var i in theArray)
+		if (theArray[i] == variable)
+			return i;
+
+	return null;
+}
+
 // Replaces the currently selected text with the passed text.
 function replaceText(text, oTextHandle)
 {

@@ -13,13 +13,12 @@ function template_popup()
 	<meta name="robots" content="noindex" />
 	<title>', $context['page_title'], '</title>
 	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
-	<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
 </head>
 <body id="help_popup">
 	<div class="windowbg description">
 		', $context['help_text'], '<br />
 		<br />
-		<a href="#" onclick="parent.document.body.removeChild(parent[\'helf\']); parent[\'helf\'] = null; return false;">', $txt['close_window'], '</a>
+		<a href="#" onclick="parent.document.body.removeChild(parent.document.getElementById(\'helf\')); return false;">', $txt['close_window'], '</a>
 	</div>
 </body>
 </html>';
