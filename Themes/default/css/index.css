@@ -432,7 +432,7 @@ em {
 	-moz-transition: opacity .3s ease;
 	-webkit-transition: opacity .3s ease;
 }
-.menu > li > ul {
+.css > li > ul {
 	transition: opacity .15s ease;
 	-o-transition: opacity .15s ease;
 	-moz-transition: opacity .15s ease;
@@ -440,7 +440,7 @@ em {
 }
 .menu li li ul {
 	position: absolute;
-	margin-left: 200px;
+	margin-left: 160px;
 	margin-top: -24px;
 }
 .menu li {
@@ -459,14 +459,15 @@ em {
 }
 .menu li li li { font-size: .95em }
 
-.menu h4:hover, h4.linkOver {
-	background: #fbe2c8 url(../images/menu.gif) no-repeat 98% 2px;
+.css h4:hover, h4.linkOver {
+	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
 	background-color: rgba(128, 128, 128, .15);
 	color: #000;
 }
 .menu li.chosen h4 {
 	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
+	color: #fff;
 }
 .menu li.chosen h4 a {
 	color: #fff;
@@ -478,19 +479,19 @@ li.subsection > a {
 	padding: 6px 24px 6px 8px;
 	background: url(../images/menu.gif) no-repeat 98% -46px;
 }
-.menu > li li:hover, a.linkOver {
+.css > li li:hover, li.linkOver {
 	color: #000;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
 	-webkit-border-radius: 0 9px 9px 0;
 }
 
-li.subsection > a:hover, li.subsection > a.linkOver {
+li.subsection > a:hover {
 	background: url(../images/menu.gif) no-repeat 98% -46px !important;
 }
 
-.menu > li li:hover, a.linkOver, li.subsection > a:hover, li.subsection > a.linkOver {
-	background-color: #fbe2c8;
+.css > li li:hover, li.linkOver, li.subsection > a:hover {
+	background-color: #ebe7e2;
 	background-color: rgba(128, 128, 128, .15);
 }
 
@@ -522,6 +523,22 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 	padding-right: 6px;
 }
 
+/*	Pure CSS menu emulation... Until JS takes over
+	to add the hover timer and proper widths! */
+.css li:hover ul ul, .css li:hover ul ul ul {
+	display: none;
+	visibility: hidden;
+	opacity: 0;
+}
+.css li:hover ul, .css ul li:hover ul, .css ul ul li:hover ul {
+	display: block;
+	visibility: visible;
+	opacity: 1;
+}
+
+/*	These are the top-level menu icons. It may look complicated, but it isn't.
+	Just fetch documentation on image spriting. You can also simply use
+	single images to show icons. */
 .m_home, .m_board, .m_search, .m_admin, .m_moderate, .m_profile,
 .m_pm, .m_pm_unread, .m_calendar, .m_mlist, .m_login, .m_register, .m_logout {
 	float: left;
@@ -578,7 +595,7 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 	width: 15px;
 }
 
-/* Common classes to easy styling.
+/* Common classes to ease styling.
 ------------------------------------------------------- */
 
 .floatright {
@@ -673,7 +690,7 @@ ul.reset, ul.reset li {
 	margin: 3px 2px 3px 3px !important;
 }
 
-/* A quote, perhaps from another post. */
+/* A quote, usually from another post. */
 blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
 	font-size: 90%;
 	color: #000;
@@ -3145,10 +3162,8 @@ span.hidelink {
 	}
 }
 
-
-
-
-
+/* A few more header styles...
+------------------------------------------------------- */
 
 .table_list tbody.header td.catbg {
 	background-color: #e5eee5;

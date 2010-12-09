@@ -309,7 +309,7 @@ function template_html_below()
 <!-- Javascript area -->';
 
 	// Code added here through add_js_inline() will execute before jQuery
-	// is loaded. You may add time-critical events here.
+	// and script.js are loaded. You may add time-critical events here.
 	if (!empty($context['footer_js_inline']))
 		echo '
 
@@ -363,11 +363,10 @@ function template_html_below()
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");' : '';
 
-	// Output any postponed Javascript added by templates and mods.
+	// Output any postponed Javascript added by templates
+	// and mods, and close all outstanding tags. We're done!
 	echo $context['footer_js'], empty($footer_coding) ? '' : '
-// ]]></script>';
-
-	echo $context['browser']['is_ie6'] ? '
+// ]]></script>', $context['browser']['is_ie6'] ? '
 </div>' : '', '
 </body></html>';
 }
@@ -421,7 +420,7 @@ function template_menu()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<div id="menu_container"><ul id="main_menu" class="menu">';
+		<div id="menu_container"><ul id="main_menu" class="css menu">';
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{

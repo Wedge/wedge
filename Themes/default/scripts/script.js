@@ -559,7 +559,7 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 
 	// Now go through all the sections to be collapsed.
 	for (var o, i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
-		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.hide(300) : o.show(300);
+		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
 
 	// Update the new state.
 	this.bCollapsed = bCollapse;
@@ -822,7 +822,7 @@ function initMenu(menu)
 	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
 
 	var k = baseId;
-	$('li:has(>ul)', menu).each(function (i) {
+	$('li', menu).each(function () {
 		if (is_ie6)
 		{
 			$(this).keyup(show_me);
@@ -832,9 +832,13 @@ function initMenu(menu)
 		$(this).attr('id', 'li' + k++)
 			.bind('mouseenter focus', show_me)
 			.bind('mouseleave blur', timeout_hide)
+			.mousedown(false)
 			.click(function () { $(menu).children('li').each(function () { hide_sub_ul(this); }); });
 	});
 	baseId = k;
+
+	// Now that JS is ready to take action... Disable the pure CSS menu!
+	$('.css.menu').removeClass('css');
 }
 
 // Hide the first ul element of the current element
@@ -853,10 +857,11 @@ function timeout_hide(e)
 // Hide all children <ul>'s.
 function hide_child_ul(id)
 {
-	var eid = $('#' + id);
-	$('ul', eid).css('visibility', 'hidden')[0].style.opacity = 0;
-	$('h4:first', eid).removeClass();
-	$('a', eid).removeClass();
+	var eid = $('#' + id), eul = $('ul', eid).css('visibility', 'hidden');
+	eul.length ? eul[0].style.opacity = 0 : '';
+	$(eid).removeClass('linkOver');
+	$('h4:first', eid).removeClass('linkOver');
+	$('.linkOver', eid).removeClass('linkOver');
 
 	if (is_ie6)
 		show_shim(false, id);
@@ -883,30 +888,26 @@ function show_shim(showsh, ieid, iemenu)
 // Show the first child <ul> we can find.
 function show_me()
 {
-	var showul = $('ul:first', this)[0];
+	var showul = $('ul:first', this)[0], is_top = this.parentNode.className == 'menu';
 
-	if (hoverable && showul.style.visibility == 'visible')
+	if (hoverable && showul && showul.style.visibility == 'visible')
 		return hide_child_ul(this.id);
 
-	showul.style.visibility = 'visible';
-	showul.style.opacity = 1;
-	showul.style[rtl] = (this.parentNode.className == 'menu' ? 0 : this.parentNode.clientWidth - 5) + 'px';
-
-	if (is_ie6)
-		show_shim(true, this.id, showul);
-
-	if (!($('h4:first', this).addClass('linkOver').length))
+	if (showul)
 	{
-		var currentNode = this;
-		while (currentNode)
-		{
-			if (currentNode.nodeName == 'LI' && currentNode.parentNode.className != 'menu')
-				currentNode.getElementsByTagName('a')[0].className = 'linkOver';
-			currentNode = currentNode.parentNode;
-			if (currentNode.className == 'menu')
-				break;
-		}
+		showul.style.visibility = 'visible';
+		showul.style.opacity = 1;
+		showul.style[rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		if (is_ie6)
+			show_shim(true, this.id, showul);
 	}
+
+	if (!is_top || !($('h4:first', this).addClass('linkOver').length))
+		$(this).addClass('linkOver').parentsUntil('li:has(h4)').each(function () {
+			if (this.nodeName == 'LI')
+				$(this).addClass('linkOver');
+		});
+
 	clearTimeout(timeoutli[this.id.substring(2)]);
 
 	$(this).siblings('li').each(function () { hide_sub_ul(this); });

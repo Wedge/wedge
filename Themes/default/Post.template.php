@@ -529,12 +529,6 @@ function template_main()
 	function previewPost()
 	{');
 
-	// Firefox doesn't render <marquee>'s that have been put in using Javascript
-	if ($context['browser']['is_firefox'])
-		add_js('
-		if (document.forms.postmodify.elements[' . JavaScriptEscape($context['postbox']->id) . '].value.indexOf(\'[move]\') != -1)
-			return submitThisOnce(document.forms.postmodify);');
-
 	// !!! Currently not sending poll options and option checkboxes.
 	add_js('
 		var x = new Array();

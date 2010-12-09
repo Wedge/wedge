@@ -1644,11 +1644,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		{
 			if ($tag['tag'] == 'more' && !empty($context['current_board']) && empty($context['current_topic']))
 			{
-				$lent = strlen($message) - $pos;
-				$message = rtrim(substr($message, 0, $pos));
-				while (substr($message, -6) === '<br />')
-					$message = substr($message, 0, -6);
-				$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span>';
+				$lent = westr::strlen(substr($message, $pos));
+				if ($lent > 0)
+				{
+					$message = rtrim(substr($message, 0, $pos));
+					while (substr($message, -6) === '<br />')
+						$message = substr($message, 0, -6);
+					$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span>';
+				}
 			}
 			else
 			{

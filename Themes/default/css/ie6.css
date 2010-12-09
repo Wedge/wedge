@@ -1,10 +1,3 @@
-.menu ul, #menu_container {
-	background-image: none;
-}
-#menu_container {
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0');
-	height: 1%;
-}
 .codeheader, code.bbc_code {
 	width: 96%;
 	margin: 0 auto;
@@ -16,9 +9,67 @@
 /* The dropdown menus
 ------------------------------------------------------- */
 
+.menu ul, #menu_container {
+	background-image: none;
+}
+
+#menu_container {
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0');
+	height: 1%;
+}
+
 .menu a:hover {
 	text-decoration: none;
 }
+.menu {
+	width: 90%;
+}
+/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry that
+	has a submenu itself. It still fails, though, at making menu item anchors extend to the width of their
+	container. If you have a fix that doesn't involve setting a fixed width, please share. Curse you, IE6! */
+.menu li {
+	border-bottom: 1px solid #fff8f1;
+}
+/* IE6 also fails remembering the last correct background-color when meeting a rgba() value afterwards... */
+h4.linkOver {
+	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
+}
+li.linkOver {
+	background: #dbd7d2;
+}
+
+/* Dunno if it's worth it: show a rather ugly hover background on top level menus until JS takes over. */
+.css h4 a:hover {
+	background: #fbe2c8;
+	color: #000;
+}
+
+/* This is a dummy iframe that hides form elements when they're overlapped by a menu entry. */
+.iefs {
+	display: none;
+	z-index: 9;
+	position: absolute;
+	left: 0;
+	top: 0;
+	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0);
+}
+
+/* Sub-area non-dropdown menus in the admin area */
+#context_menus h4 {
+	padding: 0;
+}
+#context_menus a {
+	padding: 3px 5px;
+}
+#context_menus a:hover {
+	background: #ebe7e2;
+}
+#context_menus li.chosen a:hover {
+	background: none;
+}
+
+/* Miscellaneous
+------------------------------------------------------- */
 
 /* the page section */
 .pagesection {
@@ -149,33 +200,6 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 
 /* Misc hacks
 ------------- */
-.iefs {
-	display: none;
-	z-index: 9;
-	position: absolute;
-	left: 0;
-	top: 0;
-	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0);
-}
-
-.menu {
-	width: 90%;
-}
-.menu li {
-	border-bottom: 1px dotted white;
-}
-#context_menus h4 {
-	padding: 0;
-}
-#context_menus a {
-	padding: 3px 5px;
-}
-#context_menus a:hover, .menu ul a:hover, a.linkOver {
-	background: #c8e2fb
-}
-#context_menus li.chosen a:hover {
-	background: none;
-}
 
 #header, #navi, #content, #footer {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%');

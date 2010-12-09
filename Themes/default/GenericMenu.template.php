@@ -105,7 +105,7 @@ function template_generic_menu_dropdown_above()
 	<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="!" class="floatright" /></a>';
 
 	echo '
-<ul id="amen', $mid > 1 ? '_' . ($mid-1) : '', '" class="menu">';
+<ul id="amen', $mid > 1 ? '_' . ($mid-1) : '', '" class="css menu">';
 
 	// Main areas first.
 	foreach ($menu_context['sections'] as $section)

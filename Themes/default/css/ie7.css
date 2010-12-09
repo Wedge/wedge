@@ -78,3 +78,22 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 .bbc_button {
 	padding: 0 2px;
 }
+h4.linkOver {
+	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
+}
+li.linkOver {
+	background: #dbd7d2;
+}
+/* Sub-area non-dropdown menus in the admin area */
+#context_menus h4 {
+	padding: 0;
+}
+#context_menus a {
+	padding: 3px 5px;
+}
+#context_menus a:hover {
+	background: #ebe7e2;
+}
+#context_menus li.chosen a:hover {
+	background: none;
+}
