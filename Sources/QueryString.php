@@ -712,7 +712,6 @@ function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context, $db_prefix;
 	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache;
-	static $second_time_debugging = false;
 
 	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
 	if ($scripturl == '' || !defined('SID'))
@@ -728,13 +727,6 @@ function ob_sessrewrite($buffer)
 	// Rewrite the buffer with Pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
 	{
-		if (!empty($db_show_debug) && !$second_time_debugging && !WIRELESS && substr($buffer, 0, 5) != '<?xml')
-		{
-			// We're debugging, so ob_sessrewrite will be called again. Don't replace URLs this time.
-			$second_time_debugging = true;
-			return $buffer;
-		}
-
 //		$insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
 		$insideurl = preg_quote($scripturl, '~');
 		$use_cache = !empty($modSettings['pretty_enable_cache']);
