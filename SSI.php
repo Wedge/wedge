@@ -465,6 +465,54 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'is_approved' => 1,
 		)
 	);
+
+	$request = wesql::query('
+		SELECT
+			t.id_topic, b.id_board, b.name AS board_name
+		FROM {db_prefix}topics AS t
+			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
+			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+		WHERE t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
+			AND b.id_board NOT IN ({array_int:exclude_boards})') . '' . (empty($include_boards) ? '' : '
+			AND b.id_board IN ({array_int:include_boards})') . '
+			AND {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
+			AND t.approved = {int:is_approved}
+			AND ml.approved = {int:is_approved}' : '') . '
+		ORDER BY t.id_last_msg DESC
+		LIMIT ' . $num_recent,
+		array(
+			'include_boards' => empty($include_boards) ? '' : $include_boards,
+			'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
+			'min_message_id' => $modSettings['maxMsgID'] - 35 * min($num_recent, 5),
+			'is_approved' => 1,
+		)
+	);
+	$topics = array();
+	$boards = array();
+	while ($row = wesql::fetch_assoc($request))
+		$topics[$row['id_topic']] = $row;
+	wesql::free_result($request);
+
+	$request = wesql::query('
+		SELECT
+			t.id_topic, mf.poster_time, mf.subject, ml.id_topic, mf.id_member, ml.id_msg, t.num_replies, t.num_views, mg.online_color,
+			IFNULL(mem.real_name, mf.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
+			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) >= ml.id_msg_modified AS is_read,
+			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ', SUBSTRING(mf.body, 1, 384) AS body, mf.smileys_enabled, mf.icon
+		FROM {db_prefix}topics AS t
+			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
+			INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_last_msg)
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mf.id_member)' . (!$user_info['is_guest'] ? '
+			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
+			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' : '') . '
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
+		WHERE t.id_topic IN ({array_int:topic_list})',
+		array(
+			'current_member' => $user_info['id'],
+			'topic_list' => array_keys($topics),
+		)
+	);
+
 	$posts = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -482,10 +530,10 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		// Build the array.
 		$posts[] = array(
 			'board' => array(
-				'id' => $row['id_board'],
-				'name' => $row['board_name'],
-				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>'
+				'id' => $topics[$row['id_topic']]['id_board'],
+				'name' => $topics[$row['id_topic']]['board_name'],
+				'href' => $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0',
+				'link' => '<a href="' . $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0">' . $topics[$row['id_topic']]['board_name'] . '</a>'
 			),
 			'topic' => $row['id_topic'],
 			'poster' => array(
