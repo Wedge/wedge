@@ -1378,7 +1378,7 @@ form.wrc {
 .auto_suggest_div {
 	border: 1px solid #000;
 	position: absolute;
-	visibility: hidden;
+	display: none;
 	color: #000;
 }
 .auto_suggest_item {
