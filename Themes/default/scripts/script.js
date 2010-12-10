@@ -269,19 +269,12 @@ function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_va
 
 function smf_avatarResize()
 {
-	var possibleAvatars = document.getElementsByTagName('img');
-
-	for (var i = 0; i < possibleAvatars.length; i++)
-	{
-		var tempAvatars = [], j = 0;
-		if (possibleAvatars[i].className != 'avatar')
-			continue;
-
+	var tempAvatars = [], j = 0;
+	$('img.avatar').each(function () {
 		tempAvatars[j] = new Image();
-		tempAvatars[j].avatar = possibleAvatars[i];
+		tempAvatars[j].avatar = this;
 
-		tempAvatars[j].onload = function ()
-		{
+		$(tempAvatars[j++]).load(function () {
 			this.avatar.width = this.width;
 			this.avatar.height = this.height;
 			if (smf_avatarMaxWidth != 0 && this.width > smf_avatarMaxWidth)
@@ -294,16 +287,8 @@ function smf_avatarResize()
 				this.avatar.width = (smf_avatarMaxHeight * this.avatar.width) / this.avatar.height;
 				this.avatar.height = smf_avatarMaxHeight;
 			}
-		};
-		tempAvatars[j].src = possibleAvatars[i].src;
-		j++;
-	}
-
-	if (window_oldAvatarOnload)
-	{
-		window_oldAvatarOnload();
-		window_oldAvatarOnload = null;
-	}
+		}).attr('src', this.src);
+	});
 }
 
 
