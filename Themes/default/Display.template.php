@@ -639,19 +639,19 @@ function template_main()
 			<div class="tborder" id="quickreplybox">
 				<div class="cat_bar">
 					<h3>
-						<a href="javascript:oQuickReply.swap();">
+						<a href="#" onclick="oQuickReply.swap();" onmousedown="return false;">
 							<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand" />
 						</a>
-						<a href="javascript:oQuickReply.swap();">', $txt['quick_reply'], '</a>
+						<a onclick="oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 					</h3>
 				</div>
 				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
 					<div class="roundframe">
-						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>
-						', $context['is_locked'] ? '<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '',
-						$context['oldTopicError'] ? '<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', '
-						', $context['can_reply_approved'] ? '' : '<em>' . $txt['wait_for_approval'] . '</em>', '
-						', !$context['can_reply_approved'] && $context['require_verification'] ? '<br />' : '', '
+						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
+						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', $context['oldTopicError'] ? '
+						<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
+						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
+						<br />' : '', '
 						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);" style="margin: 0;">
 							<input type="hidden" name="topic" value="', $context['current_topic'], '" />
 							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '" />
@@ -678,14 +678,14 @@ function template_main()
 			echo '
 							<div class="quickReplyContent">
 								<div id="bbcBox_message" style="display:none;"></div>
-								<div id="smileyBox_message" style="display:none;"></div>
-								', $context['postbox']->outputEditor(), '
+								<div id="smileyBox_message" style="display:none;"></div>',
+								$context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
 								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit" style="display: none" onclick="oQuickReply.switchMode();" />
 							</div>
-							<div class="righttext padding">
-								', $context['postbox']->outputButtons(), '
+							<div class="righttext padding">',
+								$context['postbox']->outputButtons(), '
 							</div>
 						</form>
 					</div>

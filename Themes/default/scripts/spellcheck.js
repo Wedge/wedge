@@ -1,26 +1,24 @@
+
 // These are variables the popup is going to want to access...
 var spell_formname, spell_fieldname;
 
 // Spell check the specified field in the specified form.
 function spellCheck(formName, fieldName)
 {
-	// Grab the (hidden) spell checking form.
-	var spellform = document.forms.spell_form;
-
 	// Register the name of the editing form for future reference.
 	spell_formname = formName;
 	spell_fieldname = fieldName;
 
-	// This should match a word (most of the time).
-	var regexpWordMatch = /(?:<[^>]+>)|(?:\[[^ ][^\]]*\])|(?:&[^; ]+;)|(?:[^0-9\s\]\[{};:"\\|,<.>\/?`~!@#$%^&*()_+=]+)/g;
-
-	// These characters can appear within words.
-	var aWordCharacters = ['-', '\''];
-
-	var aWords = new Array(), aResult = new Array();
-	var sText = document.forms[formName][fieldName].value;
-	var bInCode = false;
-	var iOffset1, iOffset2;
+	var
+		// Grab the (hidden) spell checking form.
+		spellform = document.forms.spell_form,
+		// This should match a word (most of the time).
+		regexpWordMatch = /(?:<[^>]+>)|(?:\[[^ ][^\]]*\])|(?:&[^; ]+;)|(?:[^0-9\s\]\[{};:"\\|,<.>\/?`~!@#$%^&*()_+=]+)/g,
+		// These characters can appear within words.
+		aWordCharacters = ['-', '\''],
+		aWords = new Array(), aResult = new Array(),
+		sText = document.forms[formName][fieldName].value,
+		bInCode = false, iOffset1, iOffset2;
 
 	// Loop through all words.
 	while ((aResult = regexpWordMatch.exec(sText)) && typeof(aResult) != 'undefined')
@@ -68,8 +66,7 @@ function spellCheck(formName, fieldName)
 // Private functions -------------------------------
 
 // Globals...
-var wordindex = -1, offsetindex = 0;
-var ignoredWords = [];
+var wordindex = -1, offsetindex = 0, ignoredWords = [];
 
 // A "misspelled word" object.
 function misp(word, start, end, suggestions)
@@ -86,8 +83,7 @@ function misp(word, start, end, suggestions)
 // checked is evaluated with pspell.
 function replaceWord()
 {
-	var strstart = "";
-	var strend;
+	var strstart = "", strend;
 
 	// If this isn't the beginning of the string then get all of the string
 	// that is before the word we are replacing.
@@ -112,14 +108,10 @@ function replaceWord()
 
 // Replaces all instances of currently selected word with contents chosen by user.
 // Note: currently only replaces words after highlighted word.  I think we can re-index
-// all words at replacement or ignore time to have it wrap to the beginning if we want
-// to.
+// all words at replacement or ignore time to have it wrap to the beginning if we want to.
 function replaceAll()
 {
-	var strend;
-	var idx;
-	var origword;
-	var localoffsetindex = offsetindex;
+	var strend, idx, origword, localoffsetindex = offsetindex;
 
 	origword = misps[wordindex].word;
 
@@ -168,8 +160,7 @@ function replaceAll()
 // Highlight the word that was selected using the nextWord function.
 function highlightWord()
 {
-	var strstart = "";
-	var strend;
+	var strstart = "", strend;
 
 	// If this isn't the beginning of the string then get all of the string
 	// that is before the word we are replacing.
@@ -181,17 +172,19 @@ function highlightWord()
 
 	// Rebuild the string with a span wrapped around the misspelled word
 	// so we can highlight it in the div the user is viewing the string in.
-	var newValue = htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend);
-	document.getElementById("spellview").innerHTML = newValue.replace(/_\|_/g, '<br />');
+	var sv = $("#spellview").html(
+		(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br />')
+	)[0];
 
-	// We could use scrollIntoView, but it's just not that great anyway.
-	var spellview_height = typeof(document.getElementById("spellview").currentStyle) != "undefined" ? parseInt(document.getElementById("spellview").currentStyle.height) : document.getElementById("spellview").offsetHeight;
-	var word_position = document.getElementById("h1").offsetTop;
-	var current_position = document.getElementById("spellview").scrollTop;
+	var
+		// We could use scrollIntoView, but it's just not that great anyway.
+		spellview_height = typeof(sv.currentStyle) != "undefined" ? parseInt(sv.currentStyle.height) : sv.offsetHeight,
+		word_position = $("#h1")[0].offsetTop,
+		current_position = sv.scrollTop;
 
 	// The spellview is not tall enough!  Scroll down!
 	if (spellview_height <= (word_position + current_position))
-		document.getElementById("spellview").scrollTop = word_position + current_position - spellview_height + 32;
+		sv.scrollTop = word_position + current_position - spellview_height + 32;
 }
 
 // Display the next misspelled word to the user and populate the suggested spellings box.
@@ -215,12 +208,13 @@ function nextWord(ignoreall)
 	// Draw it and quit if there are no more misspelled words to evaluate.
 	if (misps.length <= wordindex)
 	{
-		document.getElementById("spellview").innerHTML = htmlspecialchars(mispstr).replace(/_\|_/g, "<br />");
+		$("#spellview").html(htmlspecialchars(mispstr).replace(/_\|_/g, "<br />"));
 
 		while (document.forms.spellingForm.suggestions.options.length > 0)
 			document.forms.spellingForm.suggestions.options[0] = null;
 
 		alert(txt['done']);
+
 		document.forms.spellingForm.change.disabled = true;
 		document.forms.spellingForm.changeall.disabled = true;
 		document.forms.spellingForm.ignore.disabled = true;
@@ -278,12 +272,7 @@ function nextWord(ignoreall)
 
 function htmlspecialchars(thetext)
 {
-	thetext = thetext.replace(/\</g, "&lt;");
-	thetext = thetext.replace(/\>/g, "&gt;");
-	thetext = thetext.replace(/\n/g, "<br />");
-	thetext = thetext.replace(/\ \ /g, " &nbsp;");
-
-	return thetext;
+	return thetext.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\n/g, "<br />").replace(/\ \ /g, " &nbsp;");
 }
 
 function openSpellWin(width, height)

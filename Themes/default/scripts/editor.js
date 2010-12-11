@@ -132,11 +132,6 @@ function smc_Editor(oOptions)
 	// Current resize state.
 	this.osmc_EditorCurrentResize = {};
 
-	this.init();
-}
-
-smc_Editor.prototype.init = function()
-{
 	// Define the event wrapper functions.
 	var oCaller = this;
 	this.aEventWrappers = {
@@ -1425,11 +1420,7 @@ function smc_SmileyBox(oOptions)
 	this.opt = oOptions;
 	this.oSmileyRowsContent = {};
 	this.oSmileyPopupWindow = null;
-	this.init();
-}
 
-smc_SmileyBox.prototype.init = function()
-{
 	// Get the HTML content of the smileys visible on the post screen.
 	this.getSmileyRowsContent('postform');
 
@@ -1562,11 +1553,7 @@ smc_SmileyBox.prototype.handleShowMoreSmileys = function()
 function smc_BBCButtonBox(oOptions)
 {
 	this.opt = oOptions;
-	this.init();
-}
 
-smc_BBCButtonBox.prototype.init = function()
-{
 	var sBbcContent = '';
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{

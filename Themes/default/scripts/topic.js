@@ -29,9 +29,9 @@ function modify_topic(topic_id, first_msg_id)
 
 function onDocReceived_modify_topic(XMLDoc)
 {
-	cur_msg_id = XMLDoc.getElementsByTagName("message")[0].getAttribute("id");
+	cur_msg_id = ($('message', XMLDoc).attr('id')[0]).substr(4);
 
-	cur_subject_div = $('#msg_' + cur_msg_id.substr(4));
+	cur_subject_div = $('#msg_' + cur_msg_id);
 	buff_subject = cur_subject_div.html();
 
 	// Here we hide any other things they want hiding on edit.
@@ -80,11 +80,11 @@ function modify_topic_done(XMLDoc)
 		return true;
 	}
 
-	var message = XMLDoc.getElementsByTagName("smf")[0].getElementsByTagName("message")[0];
-	var subject = message.getElementsByTagName("subject")[0];
-	var error = message.getElementsByTagName("error")[0];
+	var message = $('message', $('smf', XMLDoc)[0])[0];
+	var subject = $('subject', message)[0];
+	var error = $('error', message)[0];
 
-	if (typeof window.ajax_indicator == "function")
+	if (typeof window.ajax_indicator == 'function')
 		ajax_indicator(false);
 
 	if (!subject || error)
@@ -105,7 +105,7 @@ function modify_topic_done(XMLDoc)
 function set_hidden_topic_areas(set_style)
 {
 	for (var i = 0; i < hide_prefixes.length; i++)
-		$('#' + hide_prefixes[i] + cur_msg_id.substr(4)).css('display', set_style);
+		$('#' + hide_prefixes[i] + cur_msg_id).css('display', set_style);
 }
 
 // *** QuickReply object.
@@ -113,7 +113,7 @@ function QuickReply(oOptions)
 {
 	this.opt = oOptions;
 	this.bCollapsed = this.opt.bDefaultCollapsed;
-	document.getElementById(this.opt.sSwitchMode).style.display = '';
+	$('#' + this.opt.sSwitchMode).slideDown(200);
 }
 
 // When a user presses quote, put it in the quick reply box (if expanded).
@@ -142,10 +142,10 @@ QuickReply.prototype.quote = function (iMessage)
 // This is the callback function used after the XMLhttp request.
 QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 {
-	var sQuoteText = '';
+	var sQuoteText = '', o = $('quote', oXMLDoc)[0].childNodes;
 
-	for (var i = 0; i < oXMLDoc.getElementsByTagName('quote')[0].childNodes.length; i++)
-		sQuoteText += oXMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
+	for (var i = 0, j = o.length; i < j; i++)
+		sQuoteText += o[i].nodeValue;
 
 	oEditorHandle_message.insertText(sQuoteText, false, true);
 
@@ -155,21 +155,23 @@ QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 // The function handling the swapping of the quick reply.
 QuickReply.prototype.swap = function ()
 {
-	document.getElementById(this.opt.sImageId).src = this.opt.sImagesUrl + "/" + (this.bCollapsed ? this.opt.sImageCollapsed : this.opt.sImageExpanded);
-	document.getElementById(this.opt.sContainerId).style.display = this.bCollapsed ? '' : 'none';
+	$('#' + this.opt.sImageId).attr('src', this.opt.sImagesUrl + "/" + (this.bCollapsed ? this.opt.sImageCollapsed : this.opt.sImageExpanded));
+	var cont = $('#' + this.opt.sContainerId);
+	this.bCollapsed ? cont.slideDown(200) : cont.slideUp(200);
 
 	this.bCollapsed = !this.bCollapsed;
+	return false;
 }
 
 // Switch from basic to more powerful editor
 QuickReply.prototype.switchMode = function ()
 {
 	if (this.opt.sBbcDiv != '')
-		document.getElementById(this.opt.sBbcDiv).style.display = '';
+		$('#' + this.opt.sBbcDiv).slideDown(500);
 	if (this.opt.sSmileyDiv != '')
-		document.getElementById(this.opt.sSmileyDiv).style.display = '';
+		$('#' + this.opt.sSmileyDiv).slideDown(500);
 	if (this.opt.sBbcDiv != '' || this.opt.sSmileyDiv != '')
-		document.getElementById(this.opt.sSwitchMode).style.display = 'none';
+		$('#' + this.opt.sSwitchMode).slideUp(500);
 	if (this.bUsingWysiwyg)
 		oEditorHandle_message.toggleView(true);
 }
@@ -227,16 +229,17 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	ajax_indicator(false);
 
 	// Grab the message ID.
-	this.sCurMessageId = XMLDoc.getElementsByTagName('message')[0].getAttribute('id');
+	this.sCurMessageId = $('message', XMLDoc)[0].getAttribute('id');
 
 	// If this is not valid then simply give up.
 	if (!document.getElementById(this.sCurMessageId))
 		return this.modifyCancel();
 
 	// Replace the body part.
-	for (var i = 0; i < XMLDoc.getElementsByTagName("message")[0].childNodes.length; i++)
-		sBodyText += XMLDoc.getElementsByTagName("message")[0].childNodes[i].nodeValue;
-	this.oCurMessageDiv = document.getElementById(this.sCurMessageId);
+	var o = $('message', XMLDoc)[0].childNodes;
+	for (var i = 0, j = o.length; i < j; i++)
+		sBodyText += o[i].nodeValue;
+	this.oCurMessageDiv = $('#' + this.sCurMessageId)[0];
 	this.sMessageBuffer = this.oCurMessageDiv.innerHTML;
 
 	// We have to force the body to lose its dollar signs thanks to IE.
@@ -246,10 +249,10 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	this.oCurMessageDiv.innerHTML = this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	// Replace the subject part.
-	this.oCurSubjectDiv = document.getElementById('subject_' + this.sCurMessageId.substr(4));
+	this.oCurSubjectDiv = $('#subject_' + this.sCurMessageId.substr(4))[0];
 	this.sSubjectBuffer = this.oCurSubjectDiv.innerHTML;
 
-	sSubjectText = XMLDoc.getElementsByTagName('subject')[0].childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
+	sSubjectText = $('subject', XMLDoc)[0].childNodes[0].nodeValue.replace(/\$/g, '{&dollarfix;$}');
 	this.oCurSubjectDiv.innerHTML = this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$');
 
 	return true;
@@ -298,11 +301,12 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 // Callback function of the XMLhttp request sending the modified message.
 QuickModify.prototype.onModifyDone = function (XMLDoc)
 {
-	// We've finished the loading stuff.
+	// We've finished the loading part.
 	ajax_indicator(false);
 
 	// If we didn't get a valid document, just cancel.
-	if (!XMLDoc || !XMLDoc.getElementsByTagName('smf')[0])
+	var xm = $('smf', XMLDoc)[0];
+	if (!XMLDoc || xm.length < 1)
 	{
 		// Mozilla will nicely tell us what's wrong.
 		if (XMLDoc && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
@@ -312,7 +316,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 		return;
 	}
 
-	var message = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('message')[0];
+	var message = xm.getElementsByTagName('message')[0];
 	var body = message.getElementsByTagName('body')[0];
 	var error = message.getElementsByTagName('error')[0];
 
@@ -358,11 +362,6 @@ function InTopicModeration(oOptions)
 	if (typeof(this.opt.sSessionVar) == 'undefined')
 		this.opt.sSessionVar = 'sesc';
 
-	this.init();
-}
-
-InTopicModeration.prototype.init = function()
-{
 	// Add checkboxes to all the messages.
 	for (var i = 0, n = this.opt.aMessageIds.length; i < n; i++)
 	{
@@ -502,12 +501,7 @@ function IconList(oOptions)
 	if (!('sSessionVar' in this.opt))
 		this.opt.sSessionVar = 'sesc';
 
-	this.initIcons();
-}
-
-// Replace all message icons by icons with hoverable and clickable div's.
-IconList.prototype.initIcons = function ()
-{
+	// Replace all message icons by icons with hoverable and clickable div's.
 	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
 		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
 			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + ';" /></div>');
@@ -530,20 +524,16 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	if (!this.bListLoaded && this.oContainerDiv == null)
 	{
 		// Create a container div.
-		this.oContainerDiv = document.createElement('div');
-		with (this.oContainerDiv)
-		{
-			id = 'iconList';
-			style.display = 'none';
-			style.cursor = 'pointer';
-			style.position = 'absolute';
-			style.width = oDiv.offsetWidth + 'px';
-			style.background = this.opt.sContainerBackground;
-			style.border = this.opt.sContainerBorder;
-			style.padding = '1px';
-			style.textAlign = 'center';
-		}
-		document.body.appendChild(this.oContainerDiv);
+		this.oContainerDiv = $('<div></div>', { id: 'iconList' }).css({
+			display: 'none',
+			cursor: 'pointer',
+			position: 'absolute',
+			width: oDiv.offsetWidth + 'px',
+			background: this.opt.sContainerBackground,
+			border: this.opt.sContainerBorder,
+			padding: '1px',
+			textAlign: 'center'
+		}).appendTo('body')[0];
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
@@ -634,8 +624,8 @@ IconList.prototype.collapseList = function()
 // *** Other functions...
 function expandThumb(thumbID)
 {
-	var img = document.getElementById('thumb_' + thumbID);
-	var link = document.getElementById('link_' + thumbID);
+	var img = $('#thumb_' + thumbID)[0];
+	var link = $('#link_' + thumbID)[0];
 	var tmp = img.src;
 	img.src = link.href;
 	link.href = tmp;

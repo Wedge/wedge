@@ -513,6 +513,10 @@ li.subsection > a:hover {
 	background-image: none;
 	padding-right: 6px;
 }
+#context_menus h4:hover {
+	background-color: #ebe7e2;
+	background-color: rgba(128, 128, 128, .15);
+}
 #context {
 	clear: left;
 	padding-top: .5em;
@@ -1127,7 +1131,7 @@ dl.settings dt.windowbg {
 dl.settings dd {
 	width: 48%;
 	float: left;
-	margin: 0 0 3px;
+	margin: 0 0 3px 1.5%;
 	padding: 0;
 }
 dl.settings img {
@@ -1269,6 +1273,9 @@ table.table_grid thead tr.catbg th {
 
 .w100 {
 	width: 100%;
+}
+.w75 {
+	width: 75%;
 }
 .w50 {
 	width: 50%;
@@ -2021,9 +2028,6 @@ ul.post_options li {
 #postAttachment dt, #postAttachment2 dt {
 	font-weight: bold;
 }
-#postAttachment3 {
-	margin-left: 1em;
-}
 #post_confirm_strip, #shortcuts {
 	padding: 1em 0 0;
 }
@@ -2093,7 +2097,7 @@ ul.post_options li {
 	float: left;
 }
 #post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li .input_check {
-	margin: 0 1em 0 0;
+	margin: 0 0.2em 0 0;
 }
 
 /* Styles for edit poll section.

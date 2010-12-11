@@ -59,7 +59,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		setOuterHTML(document.getElementById(\'pollMoreOptions\'), ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text" /></li><li id="pollMoreOptions"></li>') . ');
+		setOuterHTML(document.getElementById(\'pollMoreOptions\'), ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li><li id="pollMoreOptions"></li>') . ');
 		return false;
 	}');
 
@@ -160,7 +160,7 @@ function template_main()
 						<span', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '', ' id="caption_guestname">', $txt['name'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="guestname" size="25" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
+						<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="input_text w50" />
 					</dd>';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -169,7 +169,7 @@ function template_main()
 						<span', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '', ' id="caption_email">', $txt['email'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="email" size="25" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
+						<input type="text" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="input_text w50" />
 					</dd>';
 	}
 
@@ -179,7 +179,7 @@ function template_main()
 						<span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" size="80" maxlength="80" class="input_text" />
+						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="input_text w75" />
 					</dd>
 					<dt class="clear_left">
 						', $txt['message_icon'], ':
@@ -206,8 +206,8 @@ function template_main()
 				<div id="post_event">
 					<fieldset id="event_main">
 						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', ' id="caption_evtitle">', $txt['calendar_event_title'], '</span></legend>
-						<input type="text" name="evtitle" maxlength="60" size="60" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text" />
-						<div class="smalltext">
+						<input type="text" name="evtitle" maxlength="60" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text w75" />
+						<div class="smalltext nowrap">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
 							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
 
@@ -305,7 +305,7 @@ function template_main()
 				<div id="edit_poll">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
-						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" size="80" class="input_text" />
+						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="input_text w75" />
 						<ul class="poll_main">';
 
 		// Loop through all the choices and print them out.
@@ -314,7 +314,7 @@ function template_main()
 			echo '
 							<li>
 								<label for="options-', $choice['id'], '">', $txt['option'], ' ', $choice['number'], '</label>:
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" size="80" maxlength="255" class="input_text" />
+								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="input_text w50" />
 							</li>';
 		}
 
@@ -390,15 +390,15 @@ function template_main()
 	// Display the check boxes for all the standard options - if they are available to the user!
 	echo '
 				<div id="postMoreOptions" class="smalltext">
-					<ul class="post_options">
-						', $context['can_notify'] ? '<li><input type="hidden" name="notify" value="0" /><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['notify_replies'] . '</label></li>' : '', '
-						', $context['can_lock'] ? '<li><input type="hidden" name="lock" value="0" /><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['lock_topic'] . '</label></li>' : '', '
-						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['back_to_topic'] . '</label></li>
-						', $context['can_sticky'] ? '<li><input type="hidden" name="sticky" value="0" /><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['sticky_after'] . '</label></li>' : '', '
-						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked="checked"', ' value="NS" class="input_check" /> ', $txt['dont_use_smileys'], '</label></li>', '
-						', $context['can_move'] ? '<li><input type="hidden" name="move" value="0" /><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" ' . (!empty($context['move']) ? 'checked="checked" ' : '') . '/> ' . $txt['move_after2'] . '</label></li>' : '', '
-						', $context['can_announce'] && $context['is_first_post'] ? '<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check" ' . (!empty($context['announce']) ? 'checked="checked" ' : '') . '/> ' . $txt['announce_topic'] . '</label></li>' : '', '
-						', $context['show_approval'] ? '<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" ' . ($context['show_approval'] === 2 ? 'checked="checked"' : '') . ' /> ' . $txt['approve_this_post'] . '</label></li>' : '', '
+					<ul class="post_options">', $context['can_notify'] ? '
+						<li><input type="hidden" name="notify" value="0" /><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
+						<li><input type="hidden" name="lock" value="0" /><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['lock_topic'] . '</label></li>' : '', '
+						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['back_to_topic'] . '</label></li>', $context['can_sticky'] ? '
+						<li><input type="hidden" name="sticky" value="0" /><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['sticky_after'] . '</label></li>' : '', '
+						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked="checked"', ' value="NS" class="input_check" /> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
+						<li><input type="hidden" name="move" value="0" /><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" ' . (!empty($context['move']) ? 'checked="checked" ' : '') . '/> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
+						<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check" ' . (!empty($context['announce']) ? 'checked="checked" ' : '') . '/> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
+						<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" ' . ($context['show_approval'] === 2 ? 'checked="checked"' : '') . ' /> ' . $txt['approve_this_post'] . '</label></li>' : '', '
 					</ul>
 				</div>';
 
@@ -480,7 +480,6 @@ function template_main()
 
 	// Is visual verification enabled?
 	if ($context['require_verification'])
-	{
 		echo '
 				<div class="post_verification">
 					<span', !empty($context['post_error']['need_qr_verification']) ? ' class="error"' : '', '>
@@ -488,7 +487,6 @@ function template_main()
 					</span>
 					', template_control_verification($context['visual_verification_id'], 'all'), '
 				</div>';
-	}
 
 	// Finally, the submit buttons.
 	echo '
@@ -686,10 +684,19 @@ function template_main()
 
 	// Code for showing and hiding additional options.
 	if (!empty($settings['additional_options_collapsable']))
+	{
+		// If we're collapsed, hide everything now and don't trigger the animation.
+		$fold = empty($context['show_additional_options']);
+		if ($fold)
+			add_js('
+	$("#postMoreOptions").hide();
+	$("#postAttachment").hide();
+	$("#postAttachment2").hide();');
+
 		add_js('
 	var oSwapAdditionalOptions = new smc_Toggle({
 		bToggleEnabled: true,
-		bCurrentlyCollapsed: ', $context['show_additional_options'] ? 'false' : 'true', ',
+		bCurrentlyCollapsed: ', $fold ? 'true' : 'false', ',
 		funcOnBeforeCollapse: function () {
 			document.getElementById(\'additional_options\').value = \'0\';
 		},
@@ -699,8 +706,7 @@ function template_main()
 		aSwappableContainers: [
 			\'postMoreOptions\',
 			\'postAttachment\',
-			\'postAttachment2\',
-			\'postAttachment3\'
+			\'postAttachment2\'
 		],
 		aSwapImages: [
 			{
@@ -719,6 +725,7 @@ function template_main()
 			}
 		]
 	});');
+	}
 
 	// If the user is replying to a topic show the previous posts.
 	if (isset($context['previous_posts']) && count($context['previous_posts']) > 0)
