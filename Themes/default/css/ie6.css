@@ -220,9 +220,15 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 table.table_grid, table.cs0, table.cs1 {
 	border-collapse: collapse;
 }
-.bbc_divider, .bbc_button, .bbc_button div {
+.bbc_button, .bbc_button div {
 	display: inline;
+	width: 21px;
+	height: 18px;
 }
 .bbc_button {
-	margin: 0 2px;
+	padding: 0 3px 0 1px;
+}
+.bbc_divider {
+	display: inline;
+	padding-right: 3px;
 }
