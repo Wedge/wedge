@@ -33,7 +33,7 @@ function template_main()
 		add_js('
 	function pollOptions()
 	{
-		var expire_time = document.getElementById(\'poll_expire\');
+		var expire_time = $("#poll_expire")[0];
 
 		if (isEmptyText(expire_time) || expire_time.value == 0)
 		{
@@ -51,7 +51,7 @@ function template_main()
 		if (pollOptionNum == 0)
 		{
 			for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
-				if (document.forms.postmodify.elements[i].id.substr(0, 8) == \'options-\')
+				if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
 				{
 					pollOptionNum++;
 					pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
@@ -59,7 +59,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		setOuterHTML(document.getElementById(\'pollMoreOptions\'), ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li><li id="pollMoreOptions"></li>') . ');
+		setOuterHTML($("#pollMoreOptions")[0], ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li><li id="pollMoreOptions"></li>') . ');
 		return false;
 	}');
 
@@ -70,7 +70,7 @@ function template_main()
 
 	function generateDays()
 	{
-		var dayElement = document.getElementById(\'day\'), yearElement = document.getElementById(\'year\'), monthElement = document.getElementById(\'month\');
+		var dayElement = $("#day")[0], yearElement = $("#year")[0], monthElement = ("#month")[0];
 		var days, selected = dayElement.selectedIndex;
 
 		var year = yearElement.options[yearElement.selectedIndex].value;
@@ -530,37 +530,35 @@ function template_main()
 	// !!! Currently not sending poll options and option checkboxes.
 	add_js('
 		var x = new Array();
-		var textFields = [\'subject\', ' . JavaScriptEscape($context['postbox']->id) . ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
+		var textFields = ["subject", ' . JavaScriptEscape($context['postbox']->id) . ', "icon", "guestname", "email", "evtitle", "question", "topic"];
 		var numericFields = [
-			\'board\', \'topic\', \'last_msg\',
-			\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
-			\'poll_max_votes\', \'poll_expire\', \'poll_change_vote\', \'poll_hide\'
+			"board", "topic", "last_msg",
+			"eventid", "calendar", "year", "month", "day",
+			"poll_max_votes", "poll_expire", "poll_change_vote", "poll_hide"
 		];
-		var checkboxFields = [
-			\'ns\'
-		];
+		var checkboxFields = ["ns"];
 
 		for (var i = 0, n = textFields.length; i < n; i++)
 			if (textFields[i] in document.forms.postmodify)
 			{
 				// Handle the WYSIWYG editor.
 				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' in window && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
-					x[x.length] = \'message_mode=1&\' + textFields[i] + \'=\' + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
+					x[x.length] = "message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 				else
-					x[x.length] = textFields[i] + \'=\' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, \'&#38;#\').php_to8bit().php_urlencode();
+					x[x.length] = textFields[i] + "=" + document.forms.postmodify[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 			}
 		for (var i = 0, n = numericFields.length; i < n; i++)
-			if (numericFields[i] in document.forms.postmodify && \'value\' in document.forms.postmodify[numericFields[i]])
-				x[x.length] = numericFields[i] + \'=\' + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
+			if (numericFields[i] in document.forms.postmodify && "value" in document.forms.postmodify[numericFields[i]])
+				x[x.length] = numericFields[i] + "=" + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
 		for (var i = 0, n = checkboxFields.length; i < n; i++)
 			if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
-				x[x.length] = checkboxFields[i] + \'=\' + document.forms.postmodify.elements[checkboxFields[i]].value;
+				x[x.length] = checkboxFields[i] + "=" + document.forms.postmodify.elements[checkboxFields[i]].value;
 
-		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=post2\' + (current_board ? \';board=\' + current_board : \'\') + (make_poll ? \';poll\' : \'\') + \';preview;xml\', x.join(\'&\'), onDocSent);
+		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
 
-		document.getElementById(\'preview_section\').style.display = \'\';
-		document.getElementById(\'preview_subject\').innerHTML = txt_preview_title;
-		document.getElementById(\'preview_body\').innerHTML = txt_preview_fetch;
+		$("#preview_section").show();
+		$("#preview_subject").html(txt_preview_title);
+		$("#preview_body").html(txt_preview_fetch);
 
 		return false;
 	}
@@ -569,91 +567,78 @@ function template_main()
 	{
 		if (!XMLDoc)
 		{
-			document.forms.postmodify.preview.onclick = function ()
-			{
-				return true;
-			}
+			document.forms.postmodify.preview.onclick = function () { return true; }
 			document.forms.postmodify.preview.click();
 		}
 
 		// Show the preview section.
-		var preview = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'preview\')[0];
-		document.getElementById(\'preview_subject\').innerHTML = preview.getElementsByTagName(\'subject\')[0].firstChild.nodeValue;
-
-		var bodyText = \'\';
-		for (var i = 0, n = preview.getElementsByTagName(\'body\')[0].childNodes.length; i < n; i++)
-			bodyText += preview.getElementsByTagName(\'body\')[0].childNodes[i].nodeValue;
-
-		document.getElementById(\'preview_body\').innerHTML = bodyText;
-		document.getElementById(\'preview_body\').className = \'post\';
+		$("#preview_subject").html($("smf preview subject", XMLDoc).text());
+		$("#preview_body").html($("smf preview body", XMLDoc).text()).attr("class", "post");
 
 		// Show a list of errors (if any).
-		var errors = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'errors\')[0];
-		var errorList = new Array();
-		for (var i = 0, numErrors = errors.getElementsByTagName(\'error\').length; i < numErrors; i++)
-			errorList[errorList.length] = errors.getElementsByTagName(\'error\')[i].firstChild.nodeValue;
-		document.getElementById(\'errors\').style.display = numErrors == 0 ? \'none\' : \'\';
-		document.getElementById(\'error_serious\').style.display = errors.getAttribute(\'serious\') == 1 ? \'\' : \'none\';
-		document.getElementById(\'error_list\').innerHTML = numErrors == 0 ? \'\' : errorList.join(\'<br />\');
+		var errors = $("smf errors", XMLDoc);
+		var errorList = new Array(), numErrors = errors.length;
+		$("error", errors).each(function () {
+			errorList[errorList.length] = $(this).text();
+		});
+		$("#errors").toggle(numErrors > 0);
+		$("#error_serious").toggle(errors.attr("serious") == 1);
+		$("#error_list").html(numErrors == 0 ? "" : errorList.join("<br />"));
 
 		// Show a warning if the topic has been locked.
-		document.getElementById(\'lock_warning\').style.display = errors.getAttribute(\'topic_locked\') == 1 ? \'\' : \'none\';
+		$("#lock_warning").toggle(errors.attr("topic_locked") == 1);
 
 		// Adjust the color of captions if the given data is erroneous.
-		var captions = errors.getElementsByTagName(\'caption\');
-		for (var i = 0, numCaptions = errors.getElementsByTagName(\'caption\').length; i < numCaptions; i++)
-			if (document.getElementById(\'caption_\' + captions[i].getAttribute(\'name\')))
-				document.getElementById(\'caption_\' + captions[i].getAttribute(\'name\')).className = captions[i].getAttribute(\'class\');
+		$("caption", errors).each(function () {
+			$("#caption_" + $(this).attr("name")).attr("class", $(this).attr("class"));
+		});
 
-		if (errors.getElementsByTagName(\'post_error\').length == 1)
-			document.forms.postmodify.' . $context['postbox']->id . '.style.border = \'1px solid red\';
-		else if (document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == \'red\' || document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == \'red red red red\')
+		if ($("post_error", errors).length)
+			document.forms.postmodify.' . $context['postbox']->id . '.style.border = "1px solid red";
+		else if (document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == "red" || document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == "red red red red")
 		{
-			if (\'runtimeStyle\' in document.forms.postmodify.' . $context['postbox']->id . ')
-				document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor = \'\';
+			if ("runtimeStyle" in document.forms.postmodify.' . $context['postbox']->id . ')
+				document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor = "";
 			else
 				document.forms.postmodify.' . $context['postbox']->id . '.style.border = null;
 		}
 
 		// Set the new last message id.
-		if (\'last_msg\' in document.forms.postmodify)
-			document.forms.postmodify.last_msg.value = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'last_msg\')[0].firstChild.nodeValue;
+		if ("last_msg" in document.forms.postmodify)
+			document.forms.postmodify.last_msg.value = $("smf last_msg", XMLDoc).text();
 
 		// Remove the new image from old-new replies!
 		for (i = 0; i < new_replies.length; i++)
-			document.getElementById(\'image_new_\' + new_replies[i]).style.display = \'none\';
+			$("#image_new_" + new_replies[i]).hide();
+
 		new_replies = new Array();
-
 		var ignored_replies = new Array(), ignoring;
-		var newPosts = XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'new_posts\')[0] ? XMLDoc.getElementsByTagName(\'smf\')[0].getElementsByTagName(\'new_posts\')[0].getElementsByTagName(\'post\') : {length: 0};
-		var numNewPosts = newPosts.length;
-		if (numNewPosts != 0)
-		{
-			var newPostsHTML = \'<span id="new_replies"><\' + \'/span>\';
-			for (var i = 0; i < numNewPosts; i++)
-			{
-				new_replies[new_replies.length] = newPosts[i].getAttribute("id");
+		var newPostsHTML = \'\', id;
 
-				ignoring = false;
-				if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue != 0)
-					ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
+		$("smf new_posts post", XMLDoc).each(function () {
+			id = $(this).attr("id");
+			new_replies[new_replies.length] = id;
 
-				newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + newPosts[i].getAttribute("id") + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + newPosts[i].getAttribute("id") + \'" /></div>\';');
+			ignoring = false;
+			if ($("is_ignored", this).text() != 0)
+				ignored_replies[ignored_replies.length] = ignoring = id;
+
+			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + id + \'" /></div>\';');
 
 	if ($context['can_quote'])
 		add_js('
-				newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + newPosts[i].getAttribute("id") + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + newPosts[i].getAttribute("id") + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
+			newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + id + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
 
 	add_js('
-				newPostsHTML += \'<br class="clear" />\';
+			newPostsHTML += \'<br class="clear" />\';
 
-				if (ignoring)
-					newPostsHTML += \'<div id="msg_\' + newPosts[i].getAttribute("id") + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + newPosts[i].getAttribute("id") + \'_ignored_link" style="display: none;">' . $txt['show_ignore_user_post'] . '</a></div>\';
+			if (ignoring)
+				newPostsHTML += \'<div id="msg_\' + id + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + id + \'_ignored_link" style="display: none;">' . $txt['show_ignore_user_post'] . '</a></div>\';
 
-				newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + newPosts[i].getAttribute("id") + \'_body">\' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + \'<\' + \'/div></div></div>\';
-			}
-			setOuterHTML(document.getElementById(\'new_replies\'), newPostsHTML);
-		}
+			newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + id + \'_body">\' + $("message", this).text() + \'<\' + \'/div></div></div>\';
+		});
+		if (newPostsHTML != "")
+			setOuterHTML($("#new_replies")[0], \'<span id="new_replies"><\' + \'/span>\' + newPostsHTML);
 
 		var numIgnoredReplies = ignored_replies.length;
 		if (numIgnoredReplies != 0)
@@ -664,13 +649,13 @@ function template_main()
 					bToggleEnabled: true,
 					bCurrentlyCollapsed: true,
 					aSwappableContainers: [
-						\'msg_\' + ignored_replies[i] + \'_body\',
-						\'msg_\' + ignored_replies[i] + \'_quote\',
+						"msg_" + ignored_replies[i] + "_body",
+						"msg_" + ignored_replies[i] + "_quote",
 					],
 					aSwapLinks: [
 						{
-							sId: \'msg_\' + ignored_replies[i] + \'_ignored_link\',
-							msgExpanded: \'\',
+							sId: "msg_" + ignored_replies[i] + "_ignored_link",
+							msgExpanded: "",
 							msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
 						}
 					]
@@ -678,7 +663,7 @@ function template_main()
 			}
 		}
 
-		if (typeof(smf_codeFix) != \'undefined\')
+		if (typeof(smf_codeFix) != "undefined")
 			smf_codeFix();
 	}');
 
@@ -697,29 +682,25 @@ function template_main()
 	var oSwapAdditionalOptions = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', $fold ? 'true' : 'false', ',
-		funcOnBeforeCollapse: function () {
-			document.getElementById(\'additional_options\').value = \'0\';
-		},
-		funcOnBeforeExpand: function () {
-			document.getElementById(\'additional_options\').value = \'1\';
-		},
+		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
+		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
 		aSwappableContainers: [
-			\'postMoreOptions\',
-			\'postAttachment\',
-			\'postAttachment2\'
+			"postMoreOptions",
+			"postAttachment",
+			"postAttachment2"
 		],
 		aSwapImages: [
 			{
-				sId: \'postMoreExpand\',
-				srcExpanded: smf_images_url + \'/collapse.gif\',
-				altExpanded: \'-\',
-				srcCollapsed: smf_images_url + \'/expand.gif\',
-				altCollapsed: \'+\'
+				sId: "postMoreExpand",
+				srcExpanded: smf_images_url + "/collapse.gif",
+				altExpanded: "-",
+				srcCollapsed: smf_images_url + "/expand.gif",
+				altCollapsed: "+"
 			}
 		],
 		aSwapLinks: [
 			{
-				sId: \'postMoreExpandLink\',
+				sId: "postMoreExpandLink",
 				msgExpanded: ' . JavaScriptEscape($txt['post_additionalopt']) . ',
 				msgCollapsed: ' . JavaScriptEscape($txt['post_additionalopt']) . '
 			}
@@ -786,13 +767,13 @@ function template_main()
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
-			\'msg_' . $post_id . '_body\',
-			\'msg_' . $post_id . '_quote\',
+			"msg_' . $post_id . '_body",
+			"msg_' . $post_id . '_quote",
 		],
 		aSwapLinks: [
 			{
-				sId: \'msg_' . $post_id . '_ignored_link\',
-				msgExpanded: \'\',
+				sId: "msg_' . $post_id . '_ignored_link",
+				msgExpanded: "",
 				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
 			}
 		]
@@ -801,15 +782,12 @@ function template_main()
 		add_js('
 	function insertQuoteFast(messageid)
 	{
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=quotefast;quote=\' + messageid + \';xml;mode=\' + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
 		return true;
 	}
 	function onDocReceived(XMLDoc)
 	{
-		var text = \'\';
-		for (var i = 0, n = XMLDoc.getElementsByTagName(\'quote\')[0].childNodes.length; i < n; i++)
-			text += XMLDoc.getElementsByTagName(\'quote\')[0].childNodes[i].nodeValue;
-		oEditorHandle_' . $context['postbox']->id . '.insertText(text, false, true);
+		oEditorHandle_' . $context['postbox']->id . '.insertText($("quote", XMLDoc).text(), false, true);
 	}');
 	}
 }
@@ -851,7 +829,7 @@ function template_spellcheck()
 			background: #ffffff;
 		}';
 
-	// As you may expect - we need a lot of javascript for this... load it form the separate files.
+	// As you may expect - we need a lot of Javascript for this... Load it from the separate files.
 	echo '
 	</style>
 	<script><!-- // --><![CDATA[

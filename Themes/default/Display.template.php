@@ -642,7 +642,7 @@ function template_main()
 						<a href="#" onclick="oQuickReply.swap();" onmousedown="return false;">
 							<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand" />
 						</a>
-						<a onclick="oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
+						<a href="#" onclick="oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 					</h3>
 				</div>
 				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
@@ -729,7 +729,7 @@ function template_main()
 	var oInTopicModeration = new InTopicModeration({
 		sSelf: \'oInTopicModeration\',
 		sCheckboxContainerMask: \'in_topic_mod_check_\',
-		aMessageIds: [\'' . implode('\', \'', $removableMessageIDs) . '\'],
+		aMessageIds: [' . implode(',', $removableMessageIDs) . '],
 		sSessionId: \'' . $context['session_id'] . '\',
 		sSessionVar: \'' . $context['session_var'] . '\',
 		sButtonStrip: \'moderationbuttons\',

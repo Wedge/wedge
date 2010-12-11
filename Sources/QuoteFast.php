@@ -131,11 +131,7 @@ function QuoteFast()
 		);
 	}
 	else
-		$context['quote'] = array(
-			'xml' => '',
-			'mozilla' => '',
-			'text' => '',
-		);
+		$context['quote']['xml'] = '';
 }
 
 ?>

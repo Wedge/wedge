@@ -290,7 +290,7 @@ textarea {
 	border: 1px solid #aaa;
 	cursor: pointer;
 	font-weight: normal;
-	padding: 4px 5px;
+	padding: 3px 4px;
 }
 input:hover, textarea:hover, button:hover, select:hover {
 	border: 1px solid #454545;
@@ -1556,6 +1556,10 @@ p.moderators {
 .nextlinks_bottom {
 	clear: right;
 	text-align: right;
+	padding-top: 1px;
+}
+.nextlinks a, .nextlinks_bottom a {
+	padding-left: 6px;
 }
 .mark_read {
 	padding: 0 .5em;
@@ -1934,6 +1938,9 @@ ul.quickbuttons li.inline_mod_check {
 	margin-right: 1.5em;
 	text-align: right;
 	clear: right;
+}
+.reportlinks img {
+	vertical-align: -3px;
 }
 #forumposts .signature, .post .signature {
 	margin: 1em 0 0 0;

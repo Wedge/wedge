@@ -230,7 +230,7 @@ function template_modify_user_subscription()
 	function generateDays(offset)
 	{
 		var days = 0, selected = 0;
-		var dayElement = document.getElementById("day" + offset), yearElement = document.getElementById("year" + offset), monthElement = document.getElementById("month" + offset);
+		var dayElement = $("#day" + offset)[0], yearElement = $("#year" + offset)[0], monthElement = ("#month" + offset)[0];
 
 		var year = yearElement.options[yearElement.selectedIndex].value;
 		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;

@@ -258,8 +258,6 @@ function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_va
 {
 	if (!cur_session_id)
 		cur_session_id = smf_session_id;
-	if (!cur_session_var)
-		cur_session_var = 'sesc';
 	if (!additional_vars)
 		additional_vars = '';
 

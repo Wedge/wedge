@@ -366,13 +366,13 @@ smc_AutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 {
 	var sQuoteText = '';
-	var aItems = oXMLDoc.getElementsByTagName('item');
+	var aItems = $('item', oXMLDoc);
 	this.aCache = [];
 	for (var i = 0; i < aItems.length; i++)
 	{
 		this.aCache[i] = {
-			sItemId: aItems[i].getAttribute('id'),
-			sItemName: aItems[i].childNodes[0].nodeValue
+			sItemId: aItems[i].attr('id'),
+			sItemName: aItems[i].text()
 		};
 
 		// If we're doing auto add and we find the exact person, then add them!
