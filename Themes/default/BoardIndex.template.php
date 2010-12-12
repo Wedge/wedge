@@ -199,7 +199,7 @@ function template_boardindex_newsfader()
 
 		// Create a news fader object and toggle.
 		add_js('
-	var oNewsFader = new smf_NewsFader({
+	var oNewsFader = new wedge_NewsFader({
 		sSelf: \'oNewsFader\',
 		sFaderControlId: \'smfFadeScroller\',
 		sItemTemplate: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
