@@ -170,6 +170,7 @@ function ManageMaintenance()
 			'activities' => array(
 				'reattribute' => 'MaintainReattributePosts',
 				'purgeinactive' => 'MaintainPurgeInactiveMembers',
+				'recountposts' => 'MaintainRecountPosts',
 			),
 		),
 		'topics' => array(
@@ -251,6 +252,9 @@ function MaintainMembers()
 		);
 	}
 	wesql::free_result($result);
+
+	if (isset($_GET['done']) && $_GET['done'] == 'recountposts')
+		$context['maintenance_finished'] = $txt['maintain_recountposts'];
 }
 
 // Supporting function for the topics maintenance area.
@@ -1579,6 +1583,135 @@ function MaintainPurgeInactiveMembers()
 	}
 
 	$context['maintenance_finished'] = $txt['maintain_members'];
+}
+
+function MaintainRecountPosts()
+{
+	global $txt, $context, $scripturl, $modSettings, $time_start;
+	
+	isAllowedTo('admin_forum');
+	checkSession('request');
+
+	// Throttling attempt. There will be this many + 2-4 queries per run of this function.
+	$items_per_request = 100;
+
+	// Set up to the context.
+	$context['page_title'] =  $txt['not_done_title'];
+	$context['continue_countdown'] = '3';
+	$context['continue_post_data'] = '';
+	$context['continue_get_data'] = '';
+	$context['sub_template'] = 'not_done';
+	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+	$context['start_time'] = time();
+
+	// This might take a while. Let's give ourselves 5 minutes this run (hopefully we won't trip the webserver timeout)
+	@set_time_limit(300);
+
+	if (($temp = cache_get_data('recount_boards_info', 600)) !== null)
+		list($boards, $member_count) = $temp;
+	else
+	{
+		// What boards are we interested in?
+		$boards = array();
+		$request = wesql::query('
+			SELECT id_board
+			FROM {db_prefix}boards AS b
+			WHERE count_posts = {int:post_count_enabled}',
+			array(
+				'post_count_enabled' => 0,
+			)
+		);
+		while ($row = wesql::fetch_row($request))
+			$boards[] = (int) $row[0];
+		wesql::free_result($request);
+
+		$request = wesql::query('
+			SELECT COUNT(DISTINCT id_member)
+			FROM {db_prefix}messages
+			WHERE id_member != 0
+				AND id_board IN ({array_int:boards})',
+			array(
+				'boards' => $boards,
+			)
+		);
+		list($member_count) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		// Interesting. There are no boards set to count posts, fine let's do this the quick way.
+		if (empty($boards))
+		{
+			wesql::query('
+				UPDATE {db_prefix}members
+				SET posts = 0');
+			clean_cache();
+			updateStats('postgroups');
+			redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
+		}
+
+		if (!empty($modSettings['cache_enable']))
+			cache_put_data('recount_boards_info', array($boards, $member_count), 600);
+	}
+
+	// Get the people we want. No sense calling upon the entire posts table every single time, eh?
+	// If we were to select member+post count from messages, we'd be making much bigger queries.
+	$request = wesql::query('
+		SELECT id_member
+		FROM {db_prefix}members
+		ORDER BY id_member
+		LIMIT {int:start}, {int:max}',
+		array(
+			'start' => $_REQUEST['start'],
+			'max' => $items_per_request,
+		));
+
+	$members = array();
+	while ($row = wesql::fetch_row($request))
+		$members[] = (int) $row[0];
+	wesql::free_result($request);
+
+	$request = wesql::query('
+		SELECT id_member, COUNT(id_msg) AS posts
+		FROM {db_prefix}messages
+		WHERE id_member IN ({array_int:members})
+			AND id_board IN ({array_int:boards})
+			AND icon != {string:moved_icon}',
+		array(
+			'members' => $members,
+			'boards' => $boards,
+			'moved_icon' => 'moved',
+		)
+	);
+
+	while ($row = wesql::fetch_assoc($request))
+	{
+		// Update the post count.
+		wesql::query('
+			UPDATE {db_prefix}members
+			SET posts = {int:posts}
+			WHERE id_member = {int:id_member}',
+			array(
+				'posts' => $row['posts'],
+				'id_member' => $row['id_member'],
+			)
+		);
+	}
+	wesql::free_result($request);
+
+	$context['start'] += $items_per_request;
+
+	// Continue?
+	if($context['start'] < $member_count)
+	{
+		$context['continue_get_data'] = '?action=admin;area=maintain;sa=members;activity=recountposts;start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+		$context['continue_percent'] = round(100 * $context['start'] / $member_count);
+
+		return;
+	}
+
+	// We've not only stored stuff in the cache, we've also updated things that may need to be uncached.
+	clean_cache();
+	updateStats('postgroups');
+	redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
 }
 
 // Removing old posts doesn't take much as we really pass through.

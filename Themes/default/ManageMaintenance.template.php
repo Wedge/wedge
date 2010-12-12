@@ -244,6 +244,16 @@ function template_maintain_members()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
+		<div class="cat_bar">
+			<h3>', $txt['maintain_recountposts'], '</h3>
+		</div>
+		<div class="windowbg2 wrc">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
+				<p>', $txt['maintain_recountposts_desc'], '</p>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit"></span>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			</form>
+		</div>
 	</div>
 	<br class="clear" />';
 
