@@ -137,7 +137,7 @@ function ScheduledTasks()
 
 		// Load up the tasks.
 		$request = wesql::query('
-			SELECT id_task, task
+			SELECT id_task, task, sourcefile
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
 			LIMIT ' . count($tasks),
@@ -151,6 +151,9 @@ function ScheduledTasks()
 		ignore_user_abort(true);
 		while ($row = wesql::fetch_assoc($request))
 		{
+			if (!empty($row['sourcefile']))
+				loadSource($row['sourcefile']);
+
 			$start_time = microtime();
 			// The functions got to exist for us to use it.
 			if (!function_exists('scheduled_' . $row['task']))

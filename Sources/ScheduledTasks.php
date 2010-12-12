@@ -79,7 +79,7 @@ function AutoTask()
 	{
 		// Select the next task to do.
 		$request = wesql::query('
-			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit
+			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, sourcefile
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
 				AND next_time <= {int:current_time}
@@ -126,6 +126,9 @@ function AutoTask()
 				)
 			);
 			$affected_rows = wesql::affected_rows();
+
+			if (!empty($row['sourcefile']))
+				loadSource($row['sourcefile']);
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
 			if (function_exists('scheduled_' . $row['task']) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
