@@ -178,8 +178,10 @@ function smf_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir;
 
+	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+
 	// Special case: session keep-alive, output a transparent pixel.
-	if (isset($_GET['action']) && $_GET['action'] == 'keepalive')
+	if ($action === 'keepalive')
 		blankGif();
 
 	// Load the user's cookie (or set as guest) and load their settings.
@@ -211,7 +213,7 @@ function smf_main()
 	loadPermissions();
 
 	// Attachments don't require the entire theme to be loaded.
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'dlattach' && (!empty($modSettings['allow_guestAccess']) && $user_info['is_guest']))
+	if ($action === 'dlattach' && (!empty($modSettings['allow_guestAccess']) && $user_info['is_guest']))
 		detectBrowser();
 	// Load the current theme.  (note that ?theme=1 will also work, may be used for guest theming.)
 	else
@@ -221,16 +223,16 @@ function smf_main()
 	is_not_banned();
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
-	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
+	if (!empty($topic) && ($action !== 'feed') && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
 		// You can only login.... otherwise, you're getting the "maintenance mode" display.
-		if (isset($_REQUEST['action']) && ($_REQUEST['action'] == 'login2' || $_REQUEST['action'] == 'logout'))
+		if ($action === 'login2' || $action === 'logout')
 		{
-			$action = $_REQUEST['action'] == 'login2' ? 'Login2' : 'Logout';
+			$action = ucfirst($action);
 			loadSource($action);
 			return $action;
 		}
@@ -242,12 +244,12 @@ function smf_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';
 	}
-	elseif (empty($_REQUEST['action']))
+	elseif (empty($action))
 	{
 		// Action and board are both empty... BoardIndex!
 		if (empty($board) && empty($topic))
@@ -270,10 +272,10 @@ function smf_main()
 	}
 
 	// Compatibility with SMF
-	if (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml')
-		$_REQUEST['action'] = 'feed';
+	if ($action === '.xml')
+		$action = 'feed';
 
-	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
+	// Here's the monstrous $action array - $action => array($file, $function).
 	$actionArray = array(
 		'activate' => array('Activate.php', 'Activate'),
 		'admin' => array('Admin.php', 'Admin'),
@@ -351,7 +353,7 @@ function smf_main()
 	call_hook('actions', array(&$actionArray));
 
 	// Get the function and file to include - if it's not there, do the board index.
-	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))
+	if (empty($action) || !isset($actionArray[$action]))
 	{
 		// Catch the action with the theme?
 		if (!empty($settings['catch_action']))
@@ -367,8 +369,8 @@ function smf_main()
 
 	// Otherwise, it was set - so let's go to that action.
 	// !!! Fix this $sourcedir for loadSource
-	require_once($sourcedir . '/' . $actionArray[$_REQUEST['action']][0]);
-	return $actionArray[$_REQUEST['action']][1];
+	require_once($sourcedir . '/' . $actionArray[$action][0]);
+	return $actionArray[$action][1];
 }
 
 ?>

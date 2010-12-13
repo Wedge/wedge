@@ -467,6 +467,9 @@ function loadBoard()
 		);
 		return;
 	}
+	// Is this a RSS feed requesting a topic?
+	elseif (empty($board) && !empty($topic) && isset($_REQUEST['action']) && $_REQUEST['action'] === 'feed')
+		return;
 
 	if (!empty($modSettings['cache_enable']) && (empty($topic) || $modSettings['cache_enable'] >= 3))
 	{

@@ -74,8 +74,8 @@ define('WEDGE_NO_LOG', 1);
 // Show an xml file representing recent information or a profile.
 function Feed()
 {
-	global $board, $board_info, $context, $scripturl, $txt, $modSettings, $user_info;
-	global $query_this_board, $forum_version, $cdata_override;
+	global $topic, $board, $board_info, $context, $scripturl, $txt, $modSettings;
+	global $query_this, $forum_version, $cdata_override, $user_info;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -83,14 +83,15 @@ function Feed()
 
 	loadLanguage('Stats');
 
-	// Default to latest 5.  No more than 255, please.
+	// Default to latest 5.  No more than 255, please. Why 255, I don't know. Because it sounds geeky?
 	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 5 : min((int) $_GET['limit'], 255);
 
-	// Handle the cases where a board, boards, or category is asked for.
-	$query_this_board = 1;
+	$query_this = 1;
 	$context['optimize_msg'] = array(
 		'highest' => 'm.id_msg <= b.id_last_msg',
 	);
+
+	// Handle the cases where a topic, board, boards, or category are asked for.
 	if (!empty($_REQUEST['c']) && empty($board))
 	{
 		$_REQUEST['c'] = explode(',', $_REQUEST['c']);
@@ -132,7 +133,7 @@ function Feed()
 		wesql::free_result($request);
 
 		if (!empty($boards))
-			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
+			$query_this = 'b.id_board IN (' . implode(', ', $boards) . ')';
 
 		// Try to limit the number of messages we look through.
 		if ($total_cat_posts > 100 && $total_cat_posts > $modSettings['totalMessages'] / 15)
@@ -173,7 +174,7 @@ function Feed()
 		wesql::free_result($request);
 
 		if (!empty($boards))
-			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
+			$query_this = 'b.id_board IN (' . implode(', ', $boards) . ')';
 
 		// The more boards, the more we're going to look through...
 		if ($total_posts > 100 && $total_posts > $modSettings['totalMessages'] / 12)
@@ -195,15 +196,41 @@ function Feed()
 
 		$feed_title = ' - ' . strip_tags($board_info['name']);
 
-		$query_this_board = 'b.id_board = ' . $board;
+		// $board is protected, so we don't need to add {query_see_board}
+		$query_this = 'b.id_board = ' . (int) $board;
 
 		// Try to look through just a few messages, if at all possible.
 		if ($total_posts > 80 && $total_posts > $modSettings['totalMessages'] / 10)
 			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 600 - $_GET['limit'] * 5);
 	}
+	elseif (!empty($topic))
+	{
+		$request = wesql::query('
+			SELECT t.num_replies, t.id_topic, m.subject
+			FROM {db_prefix}topics AS t, {db_prefix}messages AS m
+			WHERE t.id_topic = {int:current_topic}
+				AND m.id_msg = t.id_first_msg
+			LIMIT 1',
+			array(
+				'current_topic' => $topic,
+			)
+		);
+		list ($total_posts, $id_topic, $subject) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		$feed_title = ' - ' . strip_tags($subject);
+
+		// !!! Needs to be changed to {query_see_topic} once per-topic permissions are implemented.
+		$query_this = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			AND b.id_board != ' . $modSettings['recycle_board'] : '') . ' AND t.id_topic = ' . (int) $id_topic;
+
+		// Try to look through just a few messages, if at all possible.
+		if (++$total_posts > 80 && $total_posts > $modSettings['totalMessages'] / 10)
+			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 600 - $_GET['limit'] * 5);
+	}
 	else
 	{
-		$query_this_board = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		$query_this = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			AND b.id_board != ' . $modSettings['recycle_board'] : '');
 		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 100 - $_GET['limit'] * 5);
 	}
@@ -239,7 +266,7 @@ function Feed()
 	foreach (array('board', 'boards', 'c') as $var)
 		if (isset($_REQUEST[$var]))
 			$cachekey[] = $_REQUEST[$var];
-	$cachekey = md5(serialize($cachekey) . (!empty($query_this_board) ? $query_this_board : ''));
+	$cachekey = md5(serialize($cachekey) . (!empty($query_this) ? $query_this : ''));
 	$cache_t = microtime();
 
 	// Get the associative array representing the xml.
@@ -388,14 +415,14 @@ function cdata_parse($data, $ns = '')
 
 	$cdata = '<![CDATA[';
 
-	for ($pos = 0, $n = westr::strlen($data); $pos < $n; null)
+	for ($pos = 0, $n = strlen($data); $pos < $n; null)
 	{
 		$positions = array(
-			westr::strpos($data, '&', $pos),
-			westr::strpos($data, ']', $pos),
+			strpos($data, '&', $pos),
+			strpos($data, ']', $pos),
 		);
 		if ($ns != '')
-			$positions[] = westr::strpos($data, '<', $pos);
+			$positions[] = strpos($data, '<', $pos);
 		foreach ($positions as $k => $dummy)
 		{
 			if ($dummy === false)
@@ -406,37 +433,37 @@ function cdata_parse($data, $ns = '')
 		$pos = empty($positions) ? $n : min($positions);
 
 		if ($pos - $old > 0)
-			$cdata .= westr::substr($data, $old, $pos - $old);
+			$cdata .= substr($data, $old, $pos - $old);
 		if ($pos >= $n)
 			break;
 
-		if (westr::substr($data, $pos, 1) == '<')
+		if (substr($data, $pos, 1) == '<')
 		{
-			$pos2 = westr::strpos($data, '>', $pos);
+			$pos2 = strpos($data, '>', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			if (westr::substr($data, $pos + 1, 1) == '/')
-				$cdata .= ']]></' . $ns . ':' . westr::substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
+			if (substr($data, $pos + 1, 1) == '/')
+				$cdata .= ']]></' . $ns . ':' . substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
 			else
-				$cdata .= ']]><' . $ns . ':' . westr::substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
+				$cdata .= ']]><' . $ns . ':' . substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
 			$pos = $pos2 + 1;
 		}
-		elseif (westr::substr($data, $pos, 1) == ']')
+		elseif (substr($data, $pos, 1) == ']')
 		{
 			$cdata .= ']]>&#093;<![CDATA[';
 			$pos++;
 		}
-		elseif (westr::substr($data, $pos, 1) == '&')
+		elseif (substr($data, $pos, 1) == '&')
 		{
-			$pos2 = westr::strpos($data, ';', $pos);
+			$pos2 = strpos($data, ';', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
-			$ent = westr::substr($data, $pos + 1, $pos2 - $pos - 1);
+			$ent = substr($data, $pos + 1, $pos2 - $pos - 1);
 
-			if (westr::substr($data, $pos + 1, 1) == '#')
-				$cdata .= ']]>' . westr::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+			if (substr($data, $pos + 1, 1) == '#')
+				$cdata .= ']]>' . substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			elseif (in_array($ent, array('amp', 'lt', 'gt', 'quot')))
-				$cdata .= ']]>' . westr::substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
+				$cdata .= ']]>' . substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
 			// !!! ??
 
 			$pos = $pos2 + 1;
@@ -564,7 +591,7 @@ function getXmlMembers($xml_format)
 function getXmlNews($xml_format)
 {
 	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this_board, $settings, $context;
+	global $query_this, $settings, $context;
 
 	/* Find the latest posts that:
 		- are the first post in their topic.
@@ -589,14 +616,12 @@ function getXmlNews($xml_format)
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-			WHERE ' . $query_this_board . (empty($optimize_msg) ? '' : '
-				AND {raw:optimize_msg}') . (empty($board) ? '' : '
-				AND t.id_board = {int:current_board}') . ($modSettings['postmod_active'] ? '
+			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
+				AND {raw:optimize_msg}') . ($modSettings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : '') . '
 			ORDER BY t.id_first_msg DESC
 			LIMIT {int:limit}',
 			array(
-				'current_board' => $board,
 				'is_approved' => 1,
 				'limit' => $_GET['limit'],
 				'optimize_msg' => $optimize_msg,
@@ -691,7 +716,7 @@ function getXmlNews($xml_format)
 function getXmlRecent($xml_format)
 {
 	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this_board, $settings, $context;
+	global $query_this, $settings, $context;
 
 	$done = false;
 	$loops = 0;
@@ -703,15 +728,13 @@ function getXmlRecent($xml_format)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
-			WHERE ' . $query_this_board . (empty($optimize_msg) ? '' : '
-				AND {raw:optimize_msg}') . (empty($board) ? '' : '
-				AND m.id_board = {int:current_board}') . ($modSettings['postmod_active'] ? '
+			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
+				AND {raw:optimize_msg}') . ($modSettings['postmod_active'] ? '
 				AND m.approved = {int:is_approved}' : '') . '
 			ORDER BY m.id_msg DESC
 			LIMIT {int:limit}',
 			array(
 				'limit' => $_GET['limit'],
-				'current_board' => $board,
 				'is_approved' => 1,
 				'optimize_msg' => $optimize_msg,
 			)

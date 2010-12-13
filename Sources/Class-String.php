@@ -103,7 +103,7 @@ else
 
 		public static function entity_clean($string)
 		{
-			return preg_replace('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', 'westr::entity_fix(\\\'\\2\\\')', $string);
+			return preg_replace('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', 'westr::entity_fix(\'$2\')', $string);
 		}
 
 		public static function htmlspecialchars($string, $quote_style = ENT_COMPAT)
