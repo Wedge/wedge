@@ -141,7 +141,7 @@ smf_StatsCenter.prototype.init = function ()
 	// Collapse all collapsed years!
 	for (i = 0; i < this.opt.aCollapsedYears.length; i++)
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
-}
+};
 
 smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
@@ -149,7 +149,7 @@ smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 	for (var sMonth in this.oYears[oToggle.opt.sYearId].oMonths)
 		if (this.oYears[oToggle.opt.sYearId].oMonths[sMonth].oToggle.opt.aSwappableContainers.length > 0)
 			this.oYears[oToggle.opt.sYearId].oMonths[sMonth].oToggle.changeState(true);
-}
+};
 
 smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
@@ -168,7 +168,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 
 		oYearToggle.opt.aSwappableContainers = aNewContainers;
 	}
-}
+};
 
 smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 {
@@ -186,7 +186,7 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 	// Silently let Wedge know this one is expanded.
 	else
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
-}
+};
 
 smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 {
@@ -231,4 +231,4 @@ smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 	this.bIsLoading = false;
 	if (typeof(window.ajax_indicator) == 'function')
 		ajax_indicator(false);
-}
+};

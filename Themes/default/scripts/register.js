@@ -5,9 +5,9 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	this.refreshMainPassword = refreshMainPassword;
 	this.refreshVerifyPassword = refreshVerifyPassword;
 
-	var verificationFields = new Array();
+	var verificationFields = [];
 	var verificationFieldLength = 0;
-	var textStrings = regTextStrings ? regTextStrings : new Array();
+	var textStrings = regTextStrings ? regTextStrings : [];
 	var passwordLevel = passwordDifficultyLevel ? passwordDifficultyLevel : 0;
 
 	// Setup all the fields!
@@ -111,10 +111,10 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// What is the password state?
 	function refreshMainPassword(called_from_verify)
 	{
-		if (!verificationFields['pwmain'])
+		if (!verificationFields.pwmain)
 			return false;
 
-		var curPass = verificationFields['pwmain'][1].value;
+		var curPass = verificationFields.pwmain[1].value;
 		var stringIndex = '';
 
 		// Is it a valid length?
@@ -125,7 +125,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		if (passwordLevel >= 1)
 		{
 			// If there is a username check it's not in the password!
-			if (verificationFields['username'] && verificationFields['username'][1].value && curPass.indexOf(verificationFields['username'][1].value) != -1)
+			if (verificationFields.username && verificationFields.username[1].value && curPass.indexOf(verificationFields.username[1].value) != -1)
 				stringIndex = 'password_reserved';
 
 			// Any reserved fields?
@@ -150,11 +150,11 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			stringIndex = 'password_valid';
 
 		// Set the image.
-		setVerificationImage(verificationFields['pwmain'][2], isValid, textStrings[stringIndex] ? textStrings[stringIndex] : '');
-		verificationFields['pwmain'][1].className = verificationFields['pwmain'][5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
+		setVerificationImage(verificationFields.pwmain[2], isValid, textStrings[stringIndex] ? textStrings[stringIndex] : '');
+		verificationFields.pwmain[1].className = verificationFields.pwmain[5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
 
 		// As this has changed the verification one may have too!
-		if (verificationFields['pwverify'] && !called_from_verify)
+		if (verificationFields.pwverify && !called_from_verify)
 			refreshVerifyPassword();
 
 		return isValid;
@@ -164,14 +164,14 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	function refreshVerifyPassword()
 	{
 		// Can't do anything without something to check again!
-		if (!verificationFields['pwmain'])
+		if (!verificationFields.pwmain)
 			return false;
 
 		// Check and set valid status!
-		var isValid = verificationFields['pwmain'][1].value == verificationFields['pwverify'][1].value && refreshMainPassword(true);
+		var isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true);
 		var alt = textStrings[isValid == 1 ? 'password_valid' : 'password_no_match'] ? textStrings[isValid == 1 ? 'password_valid' : 'password_no_match'] : '';
-		setVerificationImage(verificationFields['pwverify'][2], isValid, alt);
-		verificationFields['pwverify'][1].className = verificationFields['pwverify'][5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
+		setVerificationImage(verificationFields.pwverify[2], isValid, alt);
+		verificationFields.pwverify[1].className = verificationFields.pwverify[5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
 
 		return true;
 	}
@@ -179,15 +179,15 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// If the username is changed just revert the status of whether it's valid!
 	function refreshUsername()
 	{
-		if (!verificationFields['username'])
+		if (!verificationFields.username)
 			return false;
 
 		// Restore the class name.
-		if (verificationFields['username'][1].className)
-			verificationFields['username'][1].className = verificationFields['username'][5];
+		if (verificationFields.username[1].className)
+			verificationFields.username[1].className = verificationFields.username[5];
 		// Check the image is correct.
-		var alt = textStrings['username_check'] ? textStrings['username_check'] : '';
-		setVerificationImage(verificationFields['username'][2], 'check', alt);
+		var alt = textStrings.username_check ? textStrings.username_check : '';
+		setVerificationImage(verificationFields.username[2], 'check', alt);
 
 		// Check the password is still OK.
 		refreshMainPassword();
@@ -204,11 +204,11 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// Check whether the username exists?
 	function checkUsername(is_auto)
 	{
-		if (!verificationFields['username'])
+		if (!verificationFields.username)
 			return false;
 
 		// Get the username and do nothing without one!
-		var curUsername = verificationFields['username'][1].value;
+		var curUsername = verificationFields.username[1].value;
 		if (!curUsername)
 			return false;
 
@@ -216,8 +216,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			ajax_indicator(true);
 
 		// Request a search on that username.
-		checkName = curUsername.php_to8bit().php_urlencode();
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=register;sa=usernamecheck;xml;username=' + checkName, checkUsernameCallback);
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_to8bit().php_urlencode(), checkUsernameCallback);
 
 		return true;
 	}
@@ -233,8 +232,8 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		// What to alt?
 		var alt = textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] ? textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] : '';
 
-		verificationFields['username'][1].className = verificationFields['username'][5] + ' ' + (isValid == 1 ? 'valid_input' : 'invalid_input');
-		setVerificationImage(verificationFields['username'][2], isValid == 1, alt);
+		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid == 1 ? 'valid_input' : 'invalid_input');
+		setVerificationImage(verificationFields.username[2], isValid == 1, alt);
 
 		ajax_indicator(false);
 	}

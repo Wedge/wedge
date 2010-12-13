@@ -7,16 +7,16 @@
 var
 	smf_formSubmitted = false,
 	lastKeepAliveCheck = new Date().getTime(),
-	smf_editorArray = new Array(),
+	smf_editorArray = [],
 	ajax_indicator_ele = null;
 
 // Basic browser detection
 var
 	ua = navigator.userAgent.toLowerCase(),
-	vers = parseInt($.browser.version),
+	vers = $.browser.version,
 
 	// If you need support for more versions, just test for $.browser.version yourself...
-	is_opera = $.browser.opera, is_opera95up = is_opera && parseFloat($.browser.version) >= 9.5,
+	is_opera = $.browser.opera, is_opera95up = is_opera && vers >= 9.5,
 	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera, is_gecko = !is_opera && ua.indexOf('gecko') != -1,
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
@@ -61,7 +61,7 @@ String.prototype.php_to8bit = function ()
 	}
 
 	return sReturn;
-}
+};
 
 // Character-level replacement function.
 String.prototype.php_strtr = function (sFrom, sTo)
@@ -69,7 +69,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 	return this.replace(new RegExp('[' + sFrom + ']', 'g'), function (sMatch) {
 		return sTo.charAt(sFrom.indexOf(sMatch));
 	});
-}
+};
 
 // Simulate PHP's strtolower (in SOME cases, PHP uses ISO-8859-1 case folding.)
 String.prototype.php_strtolower = function ()
@@ -78,37 +78,37 @@ String.prototype.php_strtolower = function ()
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZ\x8a\x8c\x8e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde',
 		'abcdefghijklmnopqrstuvwxyz\x9a\x9c\x9e\xff\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe'
 	) : this.php_strtr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
-}
+};
 
 String.prototype.php_urlencode = function ()
 {
 	return escape(this).replace(/\+/g, '%2b').replace('*', '%2a').replace('/', '%2f').replace('@', '%40');
-}
+};
 
 String.prototype.php_htmlspecialchars = function ()
 {
 	return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+};
 
 String.prototype.php_unhtmlspecialchars = function ()
 {
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
-}
+};
 
 String.prototype.php_addslashes = function ()
 {
 	return this.replace(/\\/g, '\\\\').replace(/'/g, '\\\'');
-}
+};
 
 String.prototype._replaceEntities = function (sInput, sDummy, sNum)
 {
-	return String.fromCharCode(parseInt(sNum));
-}
+	return String.fromCharCode(parseInt(sNum, 10));
+};
 
 String.prototype.removeEntities = function ()
 {
 	return this.replace(/&(amp;)?#(\d+);/g, this._replaceEntities);
-}
+};
 
 String.prototype.easyReplace = function (oReplacements)
 {
@@ -117,7 +117,7 @@ String.prototype.easyReplace = function (oReplacements)
 		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), oReplacements[sSearch]);
 
 	return sResult;
-}
+};
 
 // Open a new window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
@@ -214,11 +214,11 @@ function in_array(variable, theArray)
 function selectRadioByName(oRadioGroup, sName)
 {
 	if (!('length' in oRadioGroup))
-		return oRadioGroup.checked = true;
+		return (oRadioGroup.checked = true);
 
 	for (var i = 0, n = oRadioGroup.length; i < n; i++)
 		if (oRadioGroup[i].value == sName)
-			return oRadioGroup[i].checked = true;
+			return (oRadioGroup[i].checked = true);
 
 	return false;
 }
@@ -380,17 +380,17 @@ smc_Cookie.prototype.init = function ()
 			this.oCookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
 		}
 	}
-}
+};
 
 smc_Cookie.prototype.get = function (sKey)
 {
 	return sKey in this.oCookies ? this.oCookies[sKey] : null;
-}
+};
 
 smc_Cookie.prototype.set = function (sKey, sValue)
 {
 	document.cookie = sKey + '=' + encodeURIComponent(sValue);
-}
+};
 
 
 // *** smc_Toggle class.
@@ -425,9 +425,10 @@ smc_Toggle.prototype.init = function ()
 		this.changeState(true, true);
 
 	// Initialize the images to be clickable.
+	var i, n;
 	if ('aSwapImages' in this.opt)
 	{
-		for (var i = 0, n = this.opt.aSwapImages.length; i < n; i++)
+		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
 		{
 			var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
 			if (typeof(oImage) == 'object' && oImage != null)
@@ -452,7 +453,7 @@ smc_Toggle.prototype.init = function ()
 	// Initialize links.
 	if ('aSwapLinks' in this.opt)
 	{
-		for (var i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
+		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
 		{
 			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
 			if (typeof(oLink) == 'object' && oLink != null)
@@ -470,13 +471,14 @@ smc_Toggle.prototype.init = function ()
 			}
 		}
 	}
-}
+};
 
 // Collapse or expand the section.
 smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
+	var i, n, o;
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
@@ -489,7 +491,7 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 	// Loop through all the images that need to be toggled.
 	if ('aSwapImages' in this.opt)
 	{
-		for (var i = 0, n = this.opt.aSwapImages.length; i < n; i++)
+		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
 		{
 			var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
 			if (typeof(oImage) == 'object' && oImage != null)
@@ -506,17 +508,11 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 
 	// Loop through all the links that need to be toggled.
 	if ('aSwapLinks' in this.opt)
-	{
-		for (var i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-		{
-			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
-			if (typeof(oLink) == 'object' && oLink != null)
-				oLink.innerHTML = bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded;
-		}
-	}
+		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
+			$('#' + this.opt.aSwapLinks[i].sId).html(bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
 
 	// Now go through all the sections to be collapsed.
-	for (var o, i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
+	for (i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
 		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
 
 	// Update the new state.
@@ -528,13 +524,13 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 
 	if ('oThemeOptions' in this.opt && this.opt.oThemeOptions.bUseThemeSettings)
 		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed ? '1' : '0', 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, this.opt.oThemeOptions.sSessionId, this.opt.oThemeOptions.sSessionVar, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
-}
+};
 
+// Reverse the current state.
 smc_Toggle.prototype.toggle = function ()
 {
-	// Change the state by reversing the current state.
 	this.changeState(!this.bCollapsed);
-}
+};
 
 
 function ajax_indicator(turn_on)
@@ -563,36 +559,37 @@ function create_ajax_indicator_ele()
 	).appendTo('body');
 }
 
+
+// This'll contain all JumpTo objects on the page.
+var aJumpTo = [];
+
 // This function will retrieve the contents needed for the jump to boxes.
 function grabJumpToContent()
 {
 	var
 		oXMLDoc = getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml'),
-		aBoardsAndCategories = new Array();
+		aBoardsAndCategories = [], i, n;
 
 	ajax_indicator(true);
 
 	if (oXMLDoc.responseXML)
 	{
 		var items = oXMLDoc.responseXML.getElementsByTagName('smf')[0].getElementsByTagName('item');
-		for (var i = 0, n = items.length; i < n; i++)
+		for (i = 0, n = items.length; i < n; i++)
 			aBoardsAndCategories[aBoardsAndCategories.length] = {
-				id: parseInt(items[i].getAttribute('id')),
+				id: parseInt(items[i].getAttribute('id'), 10),
 				isCategory: items[i].getAttribute('type') == 'category',
 				name: items[i].firstChild.nodeValue.removeEntities(),
 				is_current: false,
-				childLevel: parseInt(items[i].getAttribute('childlevel'))
-			}
+				childLevel: parseInt(items[i].getAttribute('childlevel'), 10)
+			};
 	}
 
 	ajax_indicator(false);
 
-	for (var i = 0, n = aJumpTo.length; i < n; i++)
+	for (i = 0, n = aJumpTo.length; i < n; i++)
 		aJumpTo[i].fillSelect(aBoardsAndCategories);
 }
-
-// This'll contain all JumpTo objects on the page.
-var aJumpTo = new Array();
 
 // *** JumpTo class.
 function JumpTo(oJumpToOptions)
@@ -608,15 +605,20 @@ JumpTo.prototype.showSelect = function ()
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	document.getElementById(this.opt.sContainerId).innerHTML = this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select name="' + this.opt.sContainerId + '_select" id="' + this.opt.sContainerId + '_select" ' + ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board=' + this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />');
+	$('#' + this.opt.sContainerId).html(this.opt.sJumpToTemplate
+		.replace(/%select_id%/, this.opt.sContainerId + '_select')
+		.replace(/%dropdown_list%/, '<select name="' + this.opt.sContainerId + '_select" id="' + this.opt.sContainerId + '_select" '
+			+ ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board='
+			+ this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities()
+			+ '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \''
+			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />'));
 	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
-}
+};
 
 // Fill the jump to box with entries. Method of the JumpTo class.
 JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 {
 	// Create an option that'll be above and below the category.
-	var iIndexPointer = 0;
 	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' })[0];
 
 	if ('onbeforeactivate' in document)
@@ -661,7 +663,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 	});
-}
+};
 
 // Find the actual position of an item.
 // Alternatively: var offset = $(itemHandle).offset().left/top;
@@ -708,7 +710,7 @@ function addLoadEvent(fNewOnload)
 function smfSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
-	var oCodeArea = (typeof(bActOnElement) == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling;
+	var oCodeArea = (typeof(bActOnElement) == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling, oCurRange;
 
 	if (typeof(oCodeArea) != 'object' || oCodeArea == null)
 		return false;
@@ -716,7 +718,7 @@ function smfSelectText(oCurElement, bActOnElement)
 	// Start off with IE
 	if ('createTextRange' in document.body)
 	{
-		var oCurRange = document.body.createTextRange();
+		oCurRange = document.body.createTextRange();
 		oCurRange.moveToElementText(oCodeArea);
 		oCurRange.select();
 	}
@@ -732,11 +734,11 @@ function smfSelectText(oCurElement, bActOnElement)
 		}
 		else
 		{
-			var oCurRange = document.createRange();
+			oCurRange = document.createRange();
 			oCurRange.selectNodeContents(oCodeArea);
 
 			oCurSelection.removeAllRanges();
-			oCurSelection.addRange(curRange);
+			oCurSelection.addRange(oCurRange);
 		}
 	}
 
@@ -746,12 +748,13 @@ function smfSelectText(oCurElement, bActOnElement)
 // A function needed to discern HTML entities from non-western characters.
 function smc_saveEntities(sFormName, aElementNames, sMask)
 {
+	var i, n;
 	if (typeof(sMask) == 'string')
-		for (var i = 0, n = document.forms[sFormName].elements.length; i < n; i++)
+		for (i = 0, n = document.forms[sFormName].elements.length; i < n; i++)
 			if (document.forms[sFormName].elements[i].id.substr(0, sMask.length) == sMask)
 				aElementNames[aElementNames.length] = document.forms[sFormName].elements[i].name;
 
-	for (var i = 0, n = aElementNames.length; i < n; i++)
+	for (i = 0, n = aElementNames.length; i < n; i++)
 		if (aElementNames[i] in document.forms[sFormName])
 			document.forms[sFormName][aElementNames[i]].value = document.forms[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
@@ -768,7 +771,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
  */
 
 var baseId = 0, hoverable = 0, rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left');
-var timeoutli = new Array(), ieshim = new Array();
+var timeoutli = [], ieshim = [];
 
 function initMenu(menu)
 {
@@ -800,7 +803,6 @@ function initMenu(menu)
 // Hide the first ul element of the current element
 function timeout_hide(e)
 {
-	if (!e) var e = window.event;
 	var insitu, targ = e.relatedTarget || e.toElement;
 	while (targ && !insitu)
 	{
@@ -826,7 +828,7 @@ function hide_child_ul(id)
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.
 function show_shim(showsh, ieid, iemenu)
 {
-	iem = ieid.substring(2);
+	var iem = ieid.substring(2);
 	if (!(ieshim[iem]))
 		return;
 
@@ -885,7 +887,7 @@ function hide_sub_ul(li)
 function linkMagic()
 {
 	$('a[title!="-"]').each(function() {
-		hre = $(this).attr('href');
+		var hre = $(this).attr('href');
 		if (typeof hre == 'string' && hre.length > 0)
 			if ((hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
 				$(this).addClass('xt');

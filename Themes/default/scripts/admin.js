@@ -38,7 +38,7 @@ smf_AdminIndex.prototype.init = function ()
 	// Load the text box that says there's a new version available.
 	if (this.opt.bLoadUpdateNotification)
 		this.checkUpdateAvailable();
-}
+};
 
 smf_AdminIndex.prototype.setAnnouncements = function ()
 {
@@ -50,7 +50,7 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
 
 	document.getElementById(this.opt.sAnnouncementContainerId).innerHTML = this.opt.sAnnouncementTemplate.replace('%content%', sMessages);
-}
+};
 
 smf_AdminIndex.prototype.showCurrentVersion = function ()
 {
@@ -65,7 +65,7 @@ smf_AdminIndex.prototype.showCurrentVersion = function ()
 	var sCurrentVersion = oYourVersionContainer.innerHTML;
 	if (sCurrentVersion != window.smfVersion)
 		oYourVersionContainer.innerHTML = this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion);
-}
+};
 
 smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 {
@@ -92,7 +92,7 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 		document.getElementById('update_message').style.backgroundColor = '#eebbbb';
 		document.getElementById('update_message').style.color = 'black';
 	}
-}
+};
 
 
 
@@ -106,7 +106,7 @@ function smf_ViewVersions (oOptions)
 smf_ViewVersions.prototype.init = function ()
 {
 	this.determineVersions();
-}
+};
 
 smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {
@@ -117,7 +117,7 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 	// Unselect the link and return false.
 	oSendingElement.blur();
 	return false;
-}
+};
 
 smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 {
@@ -152,23 +152,23 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 		if (aCurrentDev != null || aTargetDev != null)
 		{
 			if (aCurrentDev == null)
-				return (parseInt(aCurrentVersion[i]) < parseInt(aTargetDev[1]));
+				return (parseInt(aCurrentVersion[i], 10) < parseInt(aTargetDev[1], 10));
 			else if (aTargetDev == null)
-				return (parseInt(aCurrentDev[1]) <= parseInt(aTargetVersion[i]));
+				return (parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10));
 			else if (aCurrentDev[1] != aTargetDev[1])
-				return (parseInt(aCurrentDev[1]) < parseInt(aTargetDev[1]));
+				return (parseInt(aCurrentDev[1], 10) < parseInt(aTargetDev[1], 10));
 			else if (aCurrentDev[2] != aTargetDev[2])
 				return (aTargetDev[2] == 'RC');
 			else
-				return (parseInt(aCurrentDev[3]) < parseInt(aTargetDev[3]));
+				return (parseInt(aCurrentDev[3], 10) < parseInt(aTargetDev[3], 10));
 		}
 		// Otherwise a simple comparison...
 		else
-			return (parseInt(aCurrentVersion[i]) < parseInt(aTargetVersion[i]));
+			return (parseInt(aCurrentVersion[i], 10) < parseInt(aTargetVersion[i], 10));
 	}
 
 	return false;
-}
+};
 
 smf_ViewVersions.prototype.determineVersions = function ()
 {
@@ -261,7 +261,7 @@ smf_ViewVersions.prototype.determineVersions = function ()
 
 	for (sFilename in window.smfLanguageVersions)
 	{
-		for (var i = 0; i < this.opt.aKnownLanguages.length; i++)
+		for (i = 0; i < this.opt.aKnownLanguages.length; i++)
 		{
 			if (!document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]))
 				continue;
@@ -307,4 +307,4 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	document.getElementById('currentLanguages').innerHTML = oHighCurrent.Languages;
 	if (oLowVersion.Languages)
 		document.getElementById('yourLanguages').style.color = 'red';
-}
+};

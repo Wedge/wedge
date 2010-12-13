@@ -28,7 +28,7 @@ function smc_Editor(oOptions)
 	this.bRichTextPossible = !this.opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
 	// Kinda holds all the useful stuff.
-	this.aKeyboardShortcuts = new Array();
+	this.aKeyboardShortcuts = [];
 
 	// This tracks the cursor position on IE to avoid refocus problems.
 	this.cursorX = 0;
@@ -149,7 +149,7 @@ function smc_Editor(oOptions)
 	this.oTextHandle = document.getElementById(this.opt.sUniqueId);
 
 	// Ensure the currentText is set correctly depending on the mode.
-	if (this.sCurrentText == '' && !this.bRichTextEnabled)
+	if (this.sCurrentText === '' && !this.bRichTextEnabled)
 		this.sCurrentText = this.oTextHandle.innerHTML.php_unhtmlspecialchars();
 
 	// Only try to do this if rich text is supported.
@@ -165,7 +165,7 @@ function smc_Editor(oOptions)
 		this.oFrameWindow = 'contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow : this.oFrameHandle.document.parentWindow;
 
 		// Create the debug window... and stick this under the main frame - make it invisible by default.
-		this.oBreadHandle = $('<div></div>', { id: 'bread_' . uid }).css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
+		this.oBreadHandle = $('<div></div>', { id: 'bread_' + this.opt.sUniqueId }).css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
 
 		// Size the iframe dimensions to something sensible.
 		$(this.oFrameHandle).css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' });
@@ -200,11 +200,11 @@ function smc_Editor(oOptions)
 		}
 
 		// Now we need to try and style the editor - internet explorer allows us to do the whole lot.
-		if (document.styleSheets['editor_css'] || document.styleSheets['editor_ie_css'])
+		if (document.styleSheets.editor_css || document.styleSheets.editor_ie_css)
 		{
 			var oMyStyle = this.oFrameDocument.createElement('style');
 			this.oFrameDocument.documentElement.firstChild.appendChild(oMyStyle);
-			oMyStyle.styleSheet.cssText = document.styleSheets['editor_ie_css'] ? document.styleSheets['editor_ie_css'].cssText : document.styleSheets['editor_css'].cssText;
+			oMyStyle.styleSheet.cssText = document.styleSheets.editor_ie_css ? document.styleSheets.editor_ie_css.cssText : document.styleSheets.editor_css.cssText;
 		}
 		// Otherwise we seem to have to try to rip out each of the styles one by one!
 		else if (document.styleSheets.length)
@@ -322,17 +322,17 @@ function smc_Editor(oOptions)
 // Return the current text.
 smc_Editor.prototype.getText = function(bPrepareEntities, bModeOverride)
 {
-	var bCurMode = typeof(bModeOverride) != 'undefined' ? bModeOverride : this.bRichTextEnabled;
+	var sText, bCurMode = typeof(bModeOverride) != 'undefined' ? bModeOverride : this.bRichTextEnabled;
 
-	if (!bCurMode || this.oFrameDocument == null)
+	if (!bCurMode || this.oFrameDocument === null)
 	{
-		var sText = this.oTextHandle.value;
+		sText = this.oTextHandle.value;
 		if (bPrepareEntities)
 			sText = sText.replace(/</g, '#smlt#').replace(/>/g, '#smgt#').replace(/&/g, '#smamp#');
 	}
 	else
 	{
-		var sText = this.oFrameDocument.body.innerHTML;
+		sText = this.oFrameDocument.body.innerHTML;
 		if (bPrepareEntities)
 			sText = sText.replace(/&lt;/g, '#smlt#').replace(/&gt;/g, '#smgt#').replace(/&amp;/g, '#smamp#');
 	}
@@ -343,25 +343,23 @@ smc_Editor.prototype.getText = function(bPrepareEntities, bModeOverride)
 
 	// Return it.
 	return sText;
-}
+};
 
 // Return the current text.
 smc_Editor.prototype.unprotectText = function(sText)
 {
-	var bCurMode = typeof(bModeOverride) != 'undefined' ? bModeOverride : this.bRichTextEnabled;
-
 	// This restores smlt, smgt and smamp into boring entities, to unprotect against XML'd information like quotes.
 	sText = sText.replace(/#smlt#/g, '&lt;').replace(/#smgt#/g, '&gt;').replace(/#smamp#/g, '&amp;');
 
 	// Return it.
 	return sText;
-}
+};
 
 smc_Editor.prototype.editorKeyUp = function()
 {
 	// Rebuild the breadcrumb.
 	this.updateEditorControls();
-}
+};
 
 smc_Editor.prototype.editorBlur = function()
 {
@@ -369,7 +367,7 @@ smc_Editor.prototype.editorBlur = function()
 		return;
 
 	// !!! Need to do something here.
-}
+};
 
 smc_Editor.prototype.editorFocus = function()
 {
@@ -377,7 +375,7 @@ smc_Editor.prototype.editorFocus = function()
 		return;
 
 	// !!! Need to do something here.
-}
+};
 
 // Rebuild the breadcrumb etc - and set things to the correct context.
 smc_Editor.prototype.updateEditorControls = function()
@@ -391,26 +389,23 @@ smc_Editor.prototype.updateEditorControls = function()
 		return;
 	}
 
-	var aCrumb = new Array();
-	var aAllCrumbs = new Array();
+	var aCrumb = [];
+	var aAllCrumbs = [];
 	var iMaxLength = 6;
 
 	// What is the current element?
 	var oCurTag = this.getCurElement();
 
 	var i = 0;
-	while (typeof(oCurTag) == 'object' && oCurTag != null && oCurTag.nodeName.toLowerCase() != 'body' && i < iMaxLength)
+	while (oCurTag !== null && typeof(oCurTag) == 'object' && oCurTag.nodeName.toLowerCase() != 'body' && i < iMaxLength)
 	{
 		aCrumb[i++] = oCurTag;
 		oCurTag = oCurTag.parentNode;
 	}
 
 	// Now print out the tree.
-	var sTree = '';
-	var sCurFontName = '';
-	var sCurFontSize = '';
-	var sCurFontColor = '';
-	for (var i = 0, iNumCrumbs = aCrumb.length; i < iNumCrumbs; i++)
+	var sTree = '', sCurFontName = '', sCurFontSize = '', sCurFontColor = '', iNumCrumbs;
+	for (i = 0, iNumCrumbs = aCrumb.length; i < iNumCrumbs; i++)
 	{
 		var sCrumbName = aCrumb[i].nodeName.toLowerCase();
 
@@ -512,14 +507,14 @@ smc_Editor.prototype.updateEditorControls = function()
 
 	if (this.showDebug)
 		this.oBreadHandle.innerHTML = sTree;
-}
+};
 
 // Set the HTML content to be that of the text box - if we are in wysiwyg mode.
 smc_Editor.prototype.doSubmit = function()
 {
 	if (this.bRichTextEnabled)
 		this.oTextHandle.value = this.oFrameDocument.body.innerHTML;
-}
+};
 
 // Populate the box with text.
 smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, iMoveCursorBack)
@@ -574,8 +569,7 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 				if (typeof(iMoveCursorBack) != 'undefined' && iMoveCursorBack > 0 && sText.length > iMoveCursorBack)
 				{
 					var oSelection = this.getSelect(false, false);
-					var oRange = oSelection.getRangeAt(0);
-					oRange.insertNode(this.oFrameDocument.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
+					oSelection.getRangeAt(0).insertNode(this.oFrameDocument.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 				}
 
 				this.smf_execCommand('inserthtml', false, typeof(iMoveCursorBack) == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
@@ -584,13 +578,13 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 		else
 			replaceText(sText, this.oTextHandle);
 	}
-}
+};
 
 // Special handler for WYSIWYG.
 smc_Editor.prototype.smf_execCommand = function(sCommand, bUi, sValue)
 {
 	return this.oFrameDocument.execCommand(sCommand, bUi, sValue);
-}
+};
 
 smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 {
@@ -618,7 +612,7 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 		var iUniqueSmileyId = 1000 + Math.floor(Math.random() * 100000);
 		this.insertText('<img src="' + oSmileyProperties.sSrc + '" id="smiley_' + iUniqueSmileyId + '_' + oSmileyProperties.sSrc.replace(/^.*\//, '') + '" onresizestart="return false;" class="bottom" title="' + oSmileyProperties.sDescription.php_htmlspecialchars() + '" style="padding: 0 3px 0 3px;" />');
 	}
-}
+};
 
 smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 {
@@ -631,38 +625,39 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 	else
 	{
 		// In text this is easy...
+		var sText, bbcode;
 		if (!this.bRichTextEnabled)
 		{
 			// URL popup?
 			if (oButtonProperties.sCode == 'url')
 			{
 				// Ask them where to link to.
-				var sText = prompt(oEditorStrings['prompt_text_url'], 'http://');
+				sText = prompt(oEditorStrings.prompt_text_url, 'http://');
 				if (!sText)
 					return;
 
-				var sDesc = prompt(oEditorStrings['prompt_text_desc']);
-				var bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
+				var sDesc = prompt(oEditorStrings.prompt_text_desc);
+				bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
 				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// img popup?
 			else if (oButtonProperties.sCode == 'img')
 			{
 				// Ask them where to link to.
-				var sText = prompt(oEditorStrings['prompt_text_img'], 'http://');
+				sText = prompt(oEditorStrings.prompt_text_img, 'http://');
 				if (!sText)
 					return;
 
-				var bbcode = '[img]' + sText + '[/img]';
+				bbcode = '[img]' + sText + '[/img]';
 				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// Replace?
 			else if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
-				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle)
+				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle);
 
 			// Surround!
 			else
-				surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'), this.oTextHandle)
+				surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'), this.oTextHandle);
 		}
 		else
 		{
@@ -681,7 +676,6 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 			// Everything else means doing something ourselves.
 			else if ('sBefore' in oButtonProperties)
 				this.insertCustomHTML(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'));
-
 		}
 	}
 
@@ -689,7 +683,7 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 
 	// Finally set the focus.
 	this.setFocus();
-}
+};
 
 // Changing a select box?
 smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
@@ -742,7 +736,7 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 	this.updateEditorControls();
 
 	return true;
-}
+};
 
 // Put in some custom HTML.
 smc_Editor.prototype.insertCustomHTML = function(sLeftTag, sRightTag)
@@ -760,18 +754,12 @@ smc_Editor.prototype.insertCustomHTML = function(sLeftTag, sRightTag)
 	// Wrap the tags around the cursor position.
 	else
 		this.insertText(sLeftTag + sRightTag, false, false, sRightTag.length);
-
-}
+};
 
 // Insert a URL link.
 smc_Editor.prototype.insertLink = function(sType)
 {
-	if (sType == 'email')
-		var sPromptText = oEditorStrings['prompt_text_email'];
-	else if (sType == 'ftp')
-		var sPromptText = oEditorStrings['prompt_text_ftp'];
-	else
-		var sPromptText = oEditorStrings['prompt_text_url'];
+	var sPromptText = sType == 'email' ? oEditorStrings.prompt_text_email : (sType == 'ftp' ? oEditorStrings.prompt_text_ftp : oEditorStrings.prompt_text_url);
 
 	// IE has a nice prompt for this - others don't.
 	if (sType != 'email' && sType != 'ftp' && is_ie)
@@ -798,18 +786,18 @@ smc_Editor.prototype.insertLink = function(sType)
 		else
 			this.insertText('<a href="' + sText + '">' + sText + '</a>');
 	}
-}
+};
 
 smc_Editor.prototype.insertImage = function(sSrc)
 {
 	if (!sSrc)
 	{
-		sSrc = prompt(oEditorStrings['prompt_text_img'], 'http://');
+		sSrc = prompt(oEditorStrings.prompt_text_img, 'http://');
 		if (!sSrc || sSrc.length < 10)
 			return;
 	}
 	this.smf_execCommand('insertimage', false, sSrc);
-}
+};
 
 smc_Editor.prototype.getSelect = function(bWantText, bWantHTMLText)
 {
@@ -852,7 +840,7 @@ smc_Editor.prototype.getSelect = function(bWantText, bWantHTMLText)
 
 	// If we're here it's not good.
 	return this.oFrameDocument.getSelection();
-}
+};
 
 smc_Editor.prototype.getRange = function()
 {
@@ -866,7 +854,7 @@ smc_Editor.prototype.getRange = function()
 		return oSelection.createRange();
 
 	return oSelection.rangeCount == 0 ? null : oSelection.getRangeAt(0);
-}
+};
 
 // Get the current element.
 smc_Editor.prototype.getCurElement = function()
@@ -888,7 +876,7 @@ smc_Editor.prototype.getCurElement = function()
 		var oElement = oRange.commonAncestorContainer;
 		return this.getParentElement(oElement);
 	}
-}
+};
 
 smc_Editor.prototype.getParentElement = function(oNode)
 {
@@ -905,7 +893,7 @@ smc_Editor.prototype.getParentElement = function(oNode)
 			return oNode;
 	}
 	return null;
-}
+};
 
 // Remove formatting for the selected text.
 smc_Editor.prototype.removeFormatting = function()
@@ -920,30 +908,31 @@ smc_Editor.prototype.removeFormatting = function()
 	else
 	{
 		// Get the current selection first.
+		var cText;
 		if (this.oTextHandle.caretPos)
-			var sCurrentText = this.oTextHandle.caretPos.text;
+			cText = this.oTextHandle.caretPos.text;
 
 		else if ('selectionStart' in this.oTextHandle)
-			var sCurrentText = this.oTextHandle.value.substr(this.oTextHandle.selectionStart, (this.oTextHandle.selectionEnd - this.oTextHandle.selectionStart));
+			cText = this.oTextHandle.value.substr(this.oTextHandle.selectionStart, (this.oTextHandle.selectionEnd - this.oTextHandle.selectionStart));
 
 		else
 			return;
 
 		// Do bits that are likely to have attributes.
-		sCurrentText = sCurrentText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", "g"), '');
+		cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", "g"), '');
 		// Then just anything that looks like BBC.
-		sCurrentText = sCurrentText.replace(RegExp("\\[/?[A-Za-z]+\\]", "g"), '');
+		cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", "g"), '');
 
-		replaceText(sCurrentText, this.oTextHandle);
+		replaceText(cText, this.oTextHandle);
 	}
-}
+};
 
 // Toggle wysiwyg/normal mode.
 smc_Editor.prototype.toggleView = function(bView)
 {
 	if (!this.bRichTextPossible)
 	{
-		alert(oEditorStrings['wont_work']);
+		alert(oEditorStrings.wont_work);
 		return false;
 	}
 
@@ -954,7 +943,7 @@ smc_Editor.prototype.toggleView = function(bView)
 	this.requestParsedMessage(bView);
 
 	return true;
-}
+};
 
 // Request the message in a different form.
 smc_Editor.prototype.requestParsedMessage = function(bView)
@@ -962,7 +951,7 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	// Replace with a force reload.
 	if (!can_ajax)
 	{
-		alert(oEditorStrings['func_disabled']);
+		alert(oEditorStrings.func_disabled);
 		return;
 	}
 
@@ -970,7 +959,7 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 
 	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
-}
+};
 
 smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
 {
@@ -1006,7 +995,7 @@ smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
 
 	// Rebuild the bread crumb!
 	this.updateEditorControls();
-}
+};
 
 // Set the focus for the editing window.
 smc_Editor.prototype.setFocus = function(force_both)
@@ -1017,7 +1006,7 @@ smc_Editor.prototype.setFocus = function(force_both)
 		this.oFrameHandle.focus();
 	else
 		this.oFrameWindow.focus();
-}
+};
 
 // Start up the spellchecker!
 smc_Editor.prototype.spellCheckStart = function()
@@ -1036,7 +1025,7 @@ smc_Editor.prototype.spellCheckStart = function()
 		spellCheck(this.sFormId, this.opt.sUniqueId);
 
 	return true;
-}
+};
 
 // This contains the spellcheckable text.
 smc_Editor.prototype.onSpellCheckDataReceived = function(oXMLDoc)
@@ -1049,7 +1038,7 @@ smc_Editor.prototype.onSpellCheckDataReceived = function(oXMLDoc)
 
 	this.oTextHandle.value = sText;
 	spellCheck(this.sFormId, this.opt.sUniqueId);
-}
+};
 
 // Function called when the Spellchecker is finished and ready to pass back.
 smc_Editor.prototype.spellCheckEnd = function()
@@ -1062,7 +1051,7 @@ smc_Editor.prototype.spellCheckEnd = function()
 	}
 	else
 		this.setFocus();
-}
+};
 
 // The corrected text.
 smc_Editor.prototype.onSpellCheckCompleteDataReceived = function(oXMLDoc)
@@ -1073,7 +1062,7 @@ smc_Editor.prototype.onSpellCheckCompleteDataReceived = function(oXMLDoc)
 
 	this.insertText(sText, true);
 	this.setFocus();
-}
+};
 
 smc_Editor.prototype.resizeTextArea = function(newHeight, newWidth, is_change)
 {
@@ -1097,14 +1086,13 @@ smc_Editor.prototype.resizeTextArea = function(newHeight, newWidth, is_change)
 	this.oTextHandle.style.height = newHeight;
 	if (newWidth)
 		this.oTextHandle.style.width = newWidth;
-}
+};
 
 // A utility instruction to save repetition when trying to work out what to change on a height/width.
 smc_Editor.prototype._calculateNewDimension = function(old_size, change_size)
 {
 	// We'll assume pixels but may not be.
-	changeReg = change_size.toString().match(/(-)?(\d+)(\D*)/);
-	curReg = old_size.toString().match(/(\d+)(\D*)/);
+	var new_size, changeReg = change_size.toString().match(/(-)?(\d+)(\D*)/), curReg = old_size.toString().match(/(\d+)(\D*)/);
 
 	if (!changeReg[3])
 		changeReg[3] = 'px';
@@ -1115,33 +1103,33 @@ smc_Editor.prototype._calculateNewDimension = function(old_size, change_size)
 	// Both the same type?
 	if (changeReg[3] == curReg[2])
 	{
-		new_size = parseInt(changeReg[2]) + parseInt(curReg[1]);
+		new_size = parseInt(changeReg[2], 10) + parseInt(curReg[1], 10);
 		if (new_size < 50)
 			new_size = 50;
 		new_size = new_size.toString() + changeReg[3];
 	}
 	// Is the change a percentage?
 	else if (changeReg[3] == '%')
-		new_size = (parseInt(curReg[1]) + parseInt((parseInt(changeReg[2]) * parseInt(curReg[1])) / 100)).toString() + 'px';
+		new_size = (parseInt(curReg[1], 10) + parseInt((parseInt(changeReg[2], 10) * parseInt(curReg[1], 10)) / 100, 10)).toString() + 'px';
 	// Otherwise just guess!
 	else
-		new_size = (parseInt(curReg[1]) + (parseInt(changeReg[2]) / 10)).toString() + '%';
+		new_size = (parseInt(curReg[1], 10) + (parseInt(changeReg[2], 10) / 10)).toString() + '%';
 
 	return new_size;
-}
+};
 
 // Register default keyboard shortcuts.
 smc_Editor.prototype.registerDefaultShortcuts = function()
 {
-	if (is_ff)
-	{
-		this.registerShortcut('b', 'ctrl', 'b');
-		this.registerShortcut('u', 'ctrl', 'u');
-		this.registerShortcut('i', 'ctrl', 'i');
-		this.registerShortcut('p', 'alt', 'preview');
-		this.registerShortcut('s', 'alt', 'submit');
-	}
-}
+	if (!is_ff)
+		return;
+
+	this.registerShortcut('b', 'ctrl', 'b');
+	this.registerShortcut('u', 'ctrl', 'u');
+	this.registerShortcut('i', 'ctrl', 'i');
+	this.registerShortcut('p', 'alt', 'preview');
+	this.registerShortcut('s', 'alt', 'submit');
+};
 
 // Register a keyboard shortcut.
 smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
@@ -1162,7 +1150,7 @@ smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
 			oNewShortcut[aSplitModifiers[i]] = true;
 
 	this.aKeyboardShortcuts[this.aKeyboardShortcuts.length] = oNewShortcut;
-}
+};
 
 // Check whether the key has triggered a shortcut?
 smc_Editor.prototype.checkShortcut = function(oEvent)
@@ -1182,7 +1170,7 @@ smc_Editor.prototype.checkShortcut = function(oEvent)
 	}
 
 	return sReturnCode;
-}
+};
 
 // The actual event check for the above!
 smc_Editor.prototype.shortcutCheck = function(oEvent)
@@ -1228,7 +1216,7 @@ smc_Editor.prototype.shortcutCheck = function(oEvent)
 	}
 
 	return true;
-}
+};
 
 // This is the method called after clicking the resize bar.
 smc_Editor.prototype.startResize = function(oEvent)
@@ -1240,7 +1228,7 @@ smc_Editor.prototype.startResize = function(oEvent)
 
 	this.osmc_EditorCurrentResize.old_y = oEvent.pageY;
 	this.osmc_EditorCurrentResize.old_rel_y = null;
-	this.osmc_EditorCurrentResize.cur_height = parseInt(this.oTextHandle.style.height);
+	this.osmc_EditorCurrentResize.cur_height = parseInt(this.oTextHandle.style.height, 10);
 
 	// Set the necessary events for resizing.
 	$(is_ie ? document : window).mousemove(this.aEventWrappers.resizeOverDocument);
@@ -1251,7 +1239,7 @@ smc_Editor.prototype.startResize = function(oEvent)
 	$(document).mouseup(this.aEventWrappers.endResize);
 
 	return false;
-}
+};
 
 // This is kind of a cheat, as it only works over the IFRAME.
 smc_Editor.prototype.resizeOverIframe = function(oEvent)
@@ -1271,7 +1259,7 @@ smc_Editor.prototype.resizeOverIframe = function(oEvent)
 	}
 
 	return false;
-}
+};
 
 // This resizes an editor.
 smc_Editor.prototype.resizeOverDocument = function(oEvent)
@@ -1286,7 +1274,7 @@ smc_Editor.prototype.resizeOverDocument = function(oEvent)
 		this.resizeTextArea(iNewHeight + 'px', 0, false);
 
 	return false;
-}
+};
 
 smc_Editor.prototype.endResize = function(oEvent)
 {
@@ -1307,7 +1295,7 @@ smc_Editor.prototype.endResize = function(oEvent)
 		$(this.oFrameDocument).unbind('mouseup', this.aEventWrappers.endResize);
 
 	return false;
-}
+};
 
 /*
 	Helper functions.
@@ -1471,7 +1459,7 @@ smc_SmileyBox.prototype.getSmileyRowsContent = function(sLocation)
 			smileyRow: sSmileyRowContent
 		});
 	}
-}
+};
 
 smc_SmileyBox.prototype.initSmileys = function(sLocation, oDocument)
 {
@@ -1482,13 +1470,13 @@ smc_SmileyBox.prototype.initSmileys = function(sLocation, oDocument)
 			var oSmiley = oDocument.getElementById(this.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString());
 			oSmiley.instanceRef = this;
 			oSmiley.style.cursor = 'pointer';
-			oSmiley.onclick = function() {
+			oSmiley.onclick = function () {
 				this.instanceRef.clickHandler(this);
 				return false;
 			};
 		}
 	}
-}
+};
 
 smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 {
@@ -1507,7 +1495,7 @@ smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 		eval(this.opt.sClickHandler + '(oProperties)');
 
 	return false;
-}
+};
 
 smc_SmileyBox.prototype.handleShowMoreSmileys = function()
 {
@@ -1542,7 +1530,7 @@ smc_SmileyBox.prototype.handleShowMoreSmileys = function()
 		this.instanceRef.oSmileyPopupWindow.close();
 		return false;
 	};
-}
+};
 
 /*
 	The BBC button box.
@@ -1615,9 +1603,9 @@ function smc_BBCButtonBox(oOptions)
 	var oBbcContainer = document.getElementById(this.opt.sContainerDiv);
 	oBbcContainer.innerHTML = sBbcContent;
 
-	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
+	for (iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
-		for (var iButtonIndex = 0, iButtonCount = this.opt.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
+		for (iButtonIndex = 0, iButtonCount = this.opt.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
 		{
 			var oCurControl = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
 			switch (oCurControl.sType)
@@ -1635,13 +1623,13 @@ function smc_BBCButtonBox(oOptions)
 					}
 
 					oCurControl.oImg.instanceRef = this;
-					oCurControl.oImg.onmouseover = function() {
+					oCurControl.oImg.onmouseover = function () {
 						this.instanceRef.handleButtonMouseOver(this);
 					};
-					oCurControl.oImg.onmouseout = function() {
+					oCurControl.oImg.onmouseout = function () {
 						this.instanceRef.handleButtonMouseOut(this);
 					};
-					oCurControl.oImg.onclick = function() {
+					oCurControl.oImg.onclick = function () {
 						this.instanceRef.handleButtonClick(this);
 					};
 
@@ -1666,13 +1654,13 @@ smc_BBCButtonBox.prototype.handleButtonMouseOver = function(oButtonImg)
 {
 	oButtonImg.bHover = true;
 	this.updateButtonStatus(oButtonImg);
-}
+};
 
 smc_BBCButtonBox.prototype.handleButtonMouseOut = function(oButtonImg)
 {
 	oButtonImg.bHover = false;
 	this.updateButtonStatus(oButtonImg);
-}
+};
 
 smc_BBCButtonBox.prototype.updateButtonStatus = function(oButtonImg)
 {
@@ -1688,7 +1676,7 @@ smc_BBCButtonBox.prototype.updateButtonStatus = function(oButtonImg)
 
 	if (oButtonImg.style.backgroundPosition != sNewPos && sNewPos)
 		oButtonImg.style.backgroundPosition = '-' + sNewPos[0] + 'px -' + sNewPos[1] + 'px';
-}
+};
 
 smc_BBCButtonBox.prototype.handleButtonClick = function(oButtonImg)
 {
@@ -1707,7 +1695,7 @@ smc_BBCButtonBox.prototype.handleButtonClick = function(oButtonImg)
 		eval(this.opt.sButtonClickHandler + '(oProperties)');
 
 	return false;
-}
+};
 
 smc_BBCButtonBox.prototype.handleSelectChange = function(oSelectControl)
 {
@@ -1725,7 +1713,7 @@ smc_BBCButtonBox.prototype.handleSelectChange = function(oSelectControl)
 		eval(this.opt.sSelectChangeHandler + '(oProperties)');
 
 	return true;
-}
+};
 
 smc_BBCButtonBox.prototype.setActive = function(aButtons)
 {
@@ -1741,7 +1729,7 @@ smc_BBCButtonBox.prototype.setActive = function(aButtons)
 			}
 		}
 	}
-}
+};
 
 smc_BBCButtonBox.prototype.emulateClick = function(sCode)
 {
@@ -1758,7 +1746,7 @@ smc_BBCButtonBox.prototype.emulateClick = function(sCode)
 		}
 	}
 	return false;
-}
+};
 
 smc_BBCButtonBox.prototype.setSelect = function(sSelectName, sValue)
 {
@@ -1774,7 +1762,7 @@ smc_BBCButtonBox.prototype.setSelect = function(sSelectName, sValue)
 				oCurControl.oSelect.value = sValue;
 		}
 	}
-}
+};
 
 /*
 	Attachment selector, based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
@@ -1826,8 +1814,8 @@ wedgeAttachSelect.prototype.addElement = function(element)
 		this.count++;
 		this.current_element = element;
 		this.checkActive();
-	};
-}
+	}
+};
 
 wedgeAttachSelect.prototype.checkExtension = function(filename)
 {
@@ -1855,7 +1843,7 @@ wedgeAttachSelect.prototype.checkExtension = function(filename)
 		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace('{ext}', ext);
 
 	return value;
-}
+};
 
 wedgeAttachSelect.prototype.addListRow = function(element)
 {
@@ -1873,7 +1861,7 @@ wedgeAttachSelect.prototype.addListRow = function(element)
 	}).appendTo(new_row);
 
 	document.getElementById(this.opts.file_container).appendChild(new_row);
-}
+};
 
 wedgeAttachSelect.prototype.checkActive = function()
 {
@@ -1884,4 +1872,4 @@ wedgeAttachSelect.prototype.checkActive = function()
 	});
 
 	this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
-}
+};

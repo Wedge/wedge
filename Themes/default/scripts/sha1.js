@@ -144,14 +144,13 @@ function rol(num, cnt)
  */
 function str2binb(str)
 {
-	var bin = Array();
+	var bin = [], i, n, mask = (1 << chrsz) - 1;
 
-	for (var i = 0, n = 1 + ((str.length * chrsz) >> 5); i < n; i++)
+	for (i = 0, n = 1 + ((str.length * chrsz) >> 5); i < n; i++)
 		bin[i] = 0;
-
-	var mask = (1 << chrsz) - 1;
-	for (var i = 0; i < str.length * chrsz; i += chrsz)
+	for (i = 0; i < str.length * chrsz; i += chrsz)
 		bin[i >> 5] |= (str.charCodeAt(i / chrsz) & mask) << (24 - i % 32);
+
 	return bin;
 }
 

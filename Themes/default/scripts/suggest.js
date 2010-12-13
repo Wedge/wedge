@@ -156,7 +156,7 @@ smc_AutoSuggest.prototype.handleKey = function(oEvent)
 		break;
 	}
 	return true;
-}
+};
 
 // Functions for integration.
 smc_AutoSuggest.prototype.registerCallback = function(sCallbackType, sCallback)
@@ -179,7 +179,7 @@ smc_AutoSuggest.prototype.registerCallback = function(sCallbackType, sCallback)
 			this.oCallback.onBeforeUpdate = sCallback;
 		break;
 	}
-}
+};
 
 // Positions the box correctly on the window.
 smc_AutoSuggest.prototype.positionDiv = function()
@@ -198,7 +198,7 @@ smc_AutoSuggest.prototype.positionDiv = function()
 		top: (aParentPos[1] + this.oTextHandle.offsetHeight) + 'px',
 		width: this.oTextHandle.style.width
 	});
-}
+};
 
 // Do something after clicking an item.
 smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
@@ -212,7 +212,7 @@ smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
 		this.oTextHandle.value = oCurElement.innerHTML;
 
 	this.autoSuggestActualHide();
-}
+};
 
 // Remove the last searched for name from the search box.
 smc_AutoSuggest.prototype.removeLastSearchString = function ()
@@ -241,7 +241,7 @@ smc_AutoSuggest.prototype.removeLastSearchString = function ()
 	// Just take it all.
 	else
 		this.oTextHandle.value = '';
-}
+};
 
 // Add a result if not already done.
 smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
@@ -273,7 +273,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 
 	// Update the fellow..
 	this.autoSuggestUpdate();
-}
+};
 
 // Delete an item that has been added, if at all?
 smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
@@ -288,21 +288,21 @@ smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
 	// If there's a registered callback, call it.
 	if ('oCallback' in this && 'onAfterDeleteItem' in this.oCallback && typeof(this.oCallback.onAfterDeleteItem) == 'string')
 		eval(this.oCallback.onAfterDeleteItem + '(' + this.opt.sSelf + ', ' + this.iItemCount + ');');
-}
+};
 
 // Hide the box.
 smc_AutoSuggest.prototype.autoSuggestHide = function ()
 {
 	// Delay to allow events to propagate through....
 	this.oHideTimer = setTimeout(this.opt.sSelf + '.autoSuggestActualHide();', 250);
-}
+};
 
 // Do the actual hiding after a timeout.
 smc_AutoSuggest.prototype.autoSuggestActualHide = function()
 {
 	$(this.oSuggestDivHandle).hide();
 	this.oSelectedDiv = null;
-}
+};
 
 // Show the box.
 smc_AutoSuggest.prototype.autoSuggestShow = function()
@@ -316,7 +316,7 @@ smc_AutoSuggest.prototype.autoSuggestShow = function()
 	this.positionDiv();
 
 	$(this.oSuggestDivHandle).has(':hidden').slideDown(200);
-}
+};
 
 // Populate the actual div.
 smc_AutoSuggest.prototype.populateDiv = function(aResults)
@@ -348,27 +348,26 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 	this.aDisplayData = aNewDisplayData;
 
 	return true;
-}
+};
 
 // Refocus the element.
 smc_AutoSuggest.prototype.itemMouseEnter = function (oCurElement)
 {
 	this.oSelectedDiv = oCurElement;
 	oCurElement.className = 'auto_suggest_item_hover';
-}
+};
 
 // Unfocus the element
 smc_AutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 {
 	oCurElement.className = 'auto_suggest_item';
-}
+};
 
 smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 {
-	var sQuoteText = '';
-	var aItems = $('item', oXMLDoc);
+	var aItems = $('item', oXMLDoc), i;
 	this.aCache = [];
-	for (var i = 0; i < aItems.length; i++)
+	for (i = 0; i < aItems.length; i++)
 	{
 		this.aCache[i] = {
 			sItemId: aItems[i].attr('id'),
@@ -397,7 +396,7 @@ smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 	aItems.length == 0 ? this.autoSuggestHide() : this.autoSuggestShow();
 
 	return true;
-}
+};
 
 // Get a new suggestion.
 smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
@@ -483,4 +482,4 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, smf_prepareScriptUrl(smf_scripturl)).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
 
 	return true;
-}
+};

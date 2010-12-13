@@ -16,7 +16,7 @@ function spellCheck(formName, fieldName)
 		regexpWordMatch = /(?:<[^>]+>)|(?:\[[^ ][^\]]*\])|(?:&[^; ]+;)|(?:[^0-9\s\]\[{};:"\\|,<.>\/?`~!@#$%^&*()_+=]+)/g,
 		// These characters can appear within words.
 		aWordCharacters = ['-', '\''],
-		aWords = new Array(), aResult = new Array(),
+		aWords = [], aResult = [],
 		sText = document.forms[formName][fieldName].value,
 		bInCode = false, iOffset1, iOffset2;
 
@@ -178,7 +178,7 @@ function highlightWord()
 
 	var
 		// We could use scrollIntoView, but it's just not that great anyway.
-		spellview_height = typeof(sv.currentStyle) != "undefined" ? parseInt(sv.currentStyle.height) : sv.offsetHeight,
+		spellview_height = typeof(sv.currentStyle) != "undefined" ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
 		word_position = $("#h1")[0].offsetTop,
 		current_position = sv.scrollTop;
 
@@ -213,7 +213,7 @@ function nextWord(ignoreall)
 		while (document.forms.spellingForm.suggestions.options.length > 0)
 			document.forms.spellingForm.suggestions.options[0] = null;
 
-		alert(txt['done']);
+		alert(txt.done);
 
 		document.forms.spellingForm.change.disabled = true;
 		document.forms.spellingForm.changeall.disabled = true;

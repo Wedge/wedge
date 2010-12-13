@@ -1,5 +1,6 @@
+
 var cur_topic_id, cur_msg_id, buff_subject, cur_subject_div, in_edit_mode = 0;
-var hide_prefixes = Array();
+var hide_prefixes = [];
 
 function modify_topic(topic_id, first_msg_id)
 {
@@ -52,14 +53,14 @@ function modify_topic_save(cur_session_id, cur_session_var)
 	if (!in_edit_mode)
 		return true;
 
-	var i, x = new Array();
-	x[x.length] = 'subject=' + document.forms.quickModForm['subject'].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
-	x[x.length] = 'topic=' + parseInt(document.forms.quickModForm.elements['topic'].value);
-	x[x.length] = 'msg=' + parseInt(document.forms.quickModForm.elements['msg'].value);
+	var x = [], qm = document.forms.quickModForm;
+	x[x.length] = 'subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
+	x[x.length] = 'topic=' + parseInt(qm.elements.topic.value, 10);
+	x[x.length] = 'msg=' + parseInt(qm.elements.msg.value, 10);
 
 	if (typeof window.ajax_indicator == "function")
 		ajax_indicator(true);
-	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + parseInt(document.forms.quickModForm.elements['topic'].value) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
+	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + parseInt(qm.elements.topic.value, 10) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
 }
@@ -125,7 +126,7 @@ QuickReply.prototype.quote = function (iMessage)
 
 		return false;
 	}
-}
+};
 
 // This is the callback function used after the XMLHttp request.
 QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
@@ -133,7 +134,7 @@ QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 	oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
 
 	ajax_indicator(false);
-}
+};
 
 // The function handling the swapping of the quick reply.
 QuickReply.prototype.swap = function ()
@@ -144,7 +145,7 @@ QuickReply.prototype.swap = function ()
 
 	this.bCollapsed = !this.bCollapsed;
 	return false;
-}
+};
 
 // Switch from basic to more powerful editor
 QuickReply.prototype.switchMode = function ()
@@ -157,7 +158,7 @@ QuickReply.prototype.switchMode = function ()
 		$('#' + this.opt.sSwitchMode).slideUp(500);
 	if (this.bUsingWysiwyg)
 		oEditorHandle_message.toggleView(true);
-}
+};
 
 // *** QuickModify object.
 function QuickModify(oOptions)
@@ -197,7 +198,7 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 	ajax_indicator(true);
 
 	getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
-}
+};
 
 // The callback function used for the XMLHttp request retrieving the message.
 QuickModify.prototype.onMessageReceived = function (XMLDoc)
@@ -230,7 +231,7 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	this.oCurSubjectDiv.html(this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
 
 	return true;
-}
+};
 
 // Function in case the user presses cancel (or other circumstances cause it).
 QuickModify.prototype.modifyCancel = function ()
@@ -246,7 +247,7 @@ QuickModify.prototype.modifyCancel = function ()
 	this.bInEditMode = false;
 
 	return false;
-}
+};
 
 // The function called after a user wants to save his precious message.
 QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
@@ -255,18 +256,18 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	if (!this.bInEditMode)
 		return true;
 
-	var i, x = new Array();
-	x[x.length] = 'subject=' + escape(document.forms.quickModForm['subject'].value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
-	x[x.length] = 'message=' + escape(document.forms.quickModForm['message'].value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
-	x[x.length] = 'topic=' + parseInt(document.forms.quickModForm.elements['topic'].value);
-	x[x.length] = 'msg=' + parseInt(document.forms.quickModForm.elements['msg'].value);
+	var x = [], qm = document.forms.quickModForm;
+	x[x.length] = 'subject=' + escape(qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
+	x[x.length] = 'message=' + escape(qm.message.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
+	x[x.length] = 'topic=' + parseInt(qm.elements.topic.value, 10);
+	x[x.length] = 'msg=' + parseInt(qm.elements.msg.value, 10);
 
 	// Send in the XMLHttp request and let's hope for the best.
 	ajax_indicator(true);
 	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sSessionVar + "=" + sSessionId + ";xml", x.join("&"), this.onModifyDone);
 
 	return false;
-}
+};
 
 // Callback function of the XMLHttp request sending the modified message.
 QuickModify.prototype.onModifyDone = function (XMLDoc)
@@ -313,10 +314,11 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	else if (error.length)
 	{
 		$('#error_box').html(error.text());
-		document.forms.quickModForm.message.style.border = error.attr('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
-		document.forms.quickModForm.subject.style.border = error.attr('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
+		var qm = document.forms.quickModForm;
+		qm.message.style.border = error.attr('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
+		qm.subject.style.border = error.attr('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
 	}
-}
+};
 
 function InTopicModeration(oOptions)
 {
@@ -395,7 +397,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 		aItems[aItems.length - 2].className = aItems[aItems.length - 2].className.replace(/\s*last/, 'position_holder');
 		aItems[aItems.length - 3].className = aItems[aItems.length - 3].className.replace(/\s*last/, 'position_holder');
 	}
-}
+};
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 {
@@ -426,15 +428,14 @@ InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 
 		default:
 			return false;
-		break;
 	}
 
 	oForm.submit();
 	return true;
-}
+};
 
 // A global array containing all IconList objects.
-var aIconLists = new Array();
+var aIconLists = [];
 
 // *** IconList object.
 function IconList(oOptions)
@@ -463,7 +464,7 @@ IconList.prototype.onBoxHover = function (oDiv, bMouseOver)
 	oDiv.style.border = bMouseOver ? this.opt.iBoxBorderWidthHover + 'px solid ' + this.opt.sBoxBorderColorHover : '';
 	oDiv.style.background = bMouseOver ? this.opt.sBoxBackgroundHover : this.opt.sBoxBackground;
 	oDiv.style.padding = bMouseOver ? i + 'px ' + i + 'px 0' : '3px 3px 1px';
-}
+};
 
 // Show the list of icons after the user clicked the original icon.
 IconList.prototype.openPopup = function (oDiv, iMessageId)
@@ -500,7 +501,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 		this.oContainerDiv.style.display = 'block';
 
 	$(document.body).mousedown(this.onWindowMouseDown);
-}
+};
 
 // Setup the list of icons once it is received through XMLHttp.
 IconList.prototype.onIconsReceived = function (oXMLDoc)
@@ -519,7 +520,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 		this.oContainerDiv.style.width = this.oContainerDiv.clientWidth + 'px';
 
 	ajax_indicator(false);
-}
+};
 
 // Event handler for hovering over the icons.
 IconList.prototype.onItemHover = function (oDiv, bMouseOver)
@@ -532,7 +533,7 @@ IconList.prototype.onItemHover = function (oDiv, bMouseOver)
 		this.onBoxHover(this.oClickedIcon, true);
 	else
 		this.iCurTimeout = window.setTimeout(this.opt.sBackReference + '.collapseList();', 500);
-}
+};
 
 // Event handler for clicking on one of the icons.
 IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
@@ -551,14 +552,14 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 			$('img', this.oClickedIcon).attr('src', $('img', oDiv).attr('src'));
 		}
 	}
-}
+};
 
 // Event handler for clicking outside the list (will make the list disappear).
 IconList.prototype.onWindowMouseDown = function ()
 {
 	for (var i = aIconLists.length - 1; i >= 0; i--)
 		aIconLists[i].collapseList.call(aIconLists[i].funcParent);
-}
+};
 
 // Collapse the list of icons.
 IconList.prototype.collapseList = function()
@@ -567,7 +568,7 @@ IconList.prototype.collapseList = function()
 	this.oContainerDiv.style.display = 'none';
 	this.iCurMessageId = 0;
 	$(document.body).mousedown(this.onWindowMouseDown);
-}
+};
 
 
 // *** Other functions...
@@ -638,7 +639,7 @@ UserMenu.prototype.switchMenu = function (oLink)
 		.css({ display: 'block', left: pos[0] + 'px', top: (pos[1] + oLink.offsetHeight) + 'px' })
 		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; });
 	return false;
-}
+};
 
 
 /* Optimize:

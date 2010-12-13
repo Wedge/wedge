@@ -27,7 +27,7 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 	function refreshImages()
 	{
 		// Make sure we are using a new rand code.
-		var new_url = new String(imageURL);
+		var new_url = String(imageURL);
 		new_url = new_url.substr(0, new_url.indexOf("rand=") + 5);
 
 		// Quick and dirty way of converting decimal to hex
