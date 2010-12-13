@@ -30,16 +30,7 @@
 function template_init()
 {
 	global $context, $settings, $options, $txt;
-+ Added automatic minification and gzipping of *all* Javascript files. Yay. (Class-Editor.php, QueryString.php, Subs-Editor.php, Subs.php, TEMPLATES: Admin, BoardIndex, index, Login, 
-+ Put cached JS timestamps inside the filename to help with caching, and added automatic removal of earlier cached versions. (Subs.php)
-@ todo: add support for $modSettings['obfuscateFilenames'], add a switch for JSMin/Packer use, and make sure to always save cache in the current theme.
-* Spent some quality time with JSLint, the infamous Javascript validator, and applied a good chunk of its hints. Thanks, man. (TEMPLATES: Display, 
-* Replaced time_format's default day handler with %e, because I don't see why we have to cope with extra zero padding just because Windows servers can't do it... Also, SMF kept warning people against using it, but the help file was outdated (implying there was no hack to make it work), and said hack was definitely not up to date either. Anyway... Rewrote all of that. (upgrade.php, Help language, Install language)
-- Did we actually ever use wedge_add_js? No? That's what I thought. Also optimized wedge_add_css(). (Load.php, Subs.php)
-! Quick Reply didn't return false. Oops. (Display.template.php)
-* Spacinazi. (ManageMaintenance.php)
-+ Added French translation for new Recount maintenance task. Also made a few tweaks to various translations. We use Cookie in French. Not Témoin. Stop with the silly French words. (Admin, Help, ManageMaintenance, Post, Themes languages)
-* Fix for 'More Options' animation overflow in IE6. (ie6.css)
+
 	// Add the theme-specific Javascript files to our priority cache list.
 	if (!empty($context['javascript_files']))
 	{
