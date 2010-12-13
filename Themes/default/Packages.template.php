@@ -299,7 +299,7 @@ function template_view_package()
 
 	// Toggle options.
 	add_js('
-	var aOperationElements = new Array();');
+	var aOperationElements = [];');
 
 	// Operations.
 	if (!empty($js_operations))
@@ -482,7 +482,7 @@ function template_browse()
 	window.smfVersion = "', $context['forum_version'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
-		add_js_file($scripturl . '?action=viewsmfile;filename=latest-packages.js');
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-packages.js', true);
 
 	add_js('
 	if (typeof(window.smfLatestPackages) != "undefined")

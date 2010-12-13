@@ -67,9 +67,9 @@ function Spellcheck()
 
 	// Construct a bit of Javascript code.
 	$context['spell_js'] = '
-		var txt = {"done": "' . $txt['spellcheck_done'] . '"};
-		var mispstr = window.opener.document.forms[spell_formname][spell_fieldname].value;
-		var misps = Array(';
+	var txt = { done: ' . JavaScriptEscape($txt['spellcheck_done']) . ' };
+	var mispstr = window.opener.document.forms[spell_formname][spell_fieldname].value;
+	var misps = Array(';
 
 	// Get all the words (Javascript already separated them).
 	$alphas = explode("\n", strtr($_POST['spellstring'], array("\r" => '')));
@@ -89,7 +89,7 @@ function Spellcheck()
 
 		// Add on the javascript for this misspelling.
 		$context['spell_js'] .= '
-			new misp("' . strtr($check_word[0], array('\\' => '\\\\', '"' => '\\"', '<' => '', '&gt;' => '')) . '", ' . (int) $check_word[1] . ', ' . (int) $check_word[2] . ', [';
+		new misp("' . strtr($check_word[0], array('\\' => '\\\\', '"' => '\\"', '<' => '', '&gt;' => '')) . '", ' . (int) $check_word[1] . ', ' . (int) $check_word[2] . ', [';
 
 		// If there are suggestions, add them in...
 		$suggestions = pspell_suggest($pspell_link, $check_word[0]);
@@ -112,7 +112,7 @@ function Spellcheck()
 		$context['spell_js'] = substr($context['spell_js'], 0, -1);
 
 	$context['spell_js'] .= '
-		);';
+	);';
 
 	// And instruct the template system to just show the spellcheck sub template.
 	$context['template_layers'] = array();

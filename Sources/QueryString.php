@@ -480,6 +480,7 @@ function escapestring__recursive($var)
  * - Attempts to use the UTF-8-ified function if available (for dealing with other special entities)
  *
  * @param mixed $var Either an array or string; if a string, simply return the string having entity-converted, otherwise traverse the array and calls itself on each element of the array - typically the contents will be non-array, so will be converted, and the routine will bubble back up through the recursive layers.
+ * @param int $level Maximum recursion level is set to 25. This is a counter for internal use.
  * @return mixed The effective return is a string or array whose value set will have had HTML control characters converted to entities; as a recursive function some calls will only be returning strings back to itself.
  */
 function htmlspecialchars__recursive($var, $level = 0)
@@ -500,6 +501,7 @@ function htmlspecialchars__recursive($var, $level = 0)
  * Uses two underscores to guard against overloading.
  *
  * @param mixed $var Either an array or string; if a string, simply return the string without %xx URL encoding, otherwise traverse the array and calls itself on each element of the array (and decodes any %xx URL encoding in the array keys) - typically the contents will be non-array, so will be slash-stripped, and the routine will bubble back up through the recursive layers.
+ * @param int $level Maximum recursion level is set to 25. This is a counter for internal use.
  * @return mixed The effective return is a string or array whose entire key/value pair set have had %xx URL encoding decoded; as a recursive function some calls will only be returning strings back to itself.
  */
 function urldecode__recursive($var, $level = 0)
@@ -546,6 +548,7 @@ function unescapestring__recursive($var)
  * Uses two underscores to guard against overloading.
  *
  * @param mixed $var Either an array or string; if a string, simply return the string without slashes, otherwise traverse the array and calls itself on each element of the array (and removes the slashes on the array keys) - typically the contents will be non-array, so will be slash-stripped, and the routine will bubble back up through the recursive layers.
+ * @param int $level Maximum recursion level is set to 25. This is a counter for internal use.
  * @return mixed The effective return is a string or array whose entire key/value pair set have had slashes removed; as a recursive function some calls will only be returning strings back to itself.
  */
 function stripslashes__recursive($var, $level = 0)
@@ -572,6 +575,7 @@ function stripslashes__recursive($var, $level = 0)
  * - Remove spaces (32), tabs (9), returns (13, 10, and 11), nulls (0), and hard spaces. (160)
  *
  * @param mixed $var Either an array or string; if a string, simply return the string having entity-converted, otherwise traverse the array and calls itself on each element of the array - typically the contents will be non-array, so will be converted, and the routine will bubble back up through the recursive layers.
+ * @param int $level Maximum recursion level is set to 25. This is a counter for internal use.
  * @return mixed The effective return is a string or array whose value set will have had HTML control characters converted to entities; as a recursive function some calls will only be returning strings back to itself.
  */
 function htmltrim__recursive($var, $level = 0)
@@ -650,18 +654,16 @@ function JavaScriptEscape($string)
 }
 
 // Add a string to the footer Javascript. Several strings can be passed as parameters, allowing for easier conversion.
-// !!! Document this properly. I've named it the simplest possible way but it'll probably need to be renamed later.
-// Can be done with a site-wide search & replace, as "add_js" is only used in "wedge_add_js" (which, if add_js
-// is not renamed, will need to be renamed itself... You get the point. Hopefully.)
+// !!! Document this properly.
 function add_js()
 {
 	global $context, $footer_coding;
 
 	if (empty($footer_coding))
 	{
+		$footer_coding = true;
 		$context['footer_js'] .= '
 <script><!-- // --><[!CDATA[';
-		$footer_coding = true;
 	}
 	$args = func_get_args();
 	$context['footer_js'] .= implode('', $args);
@@ -677,25 +679,75 @@ function add_js_inline()
 	$context['footer_js_inline'] .= implode('', $args);
 }
 
-// Add a file to the footer Javascript. This takes care of adding the CDATA separators around it.
-// !!! Document this properly, and maybe add support for adding ?nocache automatically, and check for the .js extension.
-// !!! For later: we may use CACHE_SUFFIX on file names, i.e. adding ?alpha to the end of every URL. Clean up first!
-function add_js_file()
+/**
+ * This function adds one or more minified, gzipped files to the footer Javascript. It takes care of everything. Good boy.
+ *
+ * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder.
+ * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
+ * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
+ * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
+ */
+function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $footer_coding;
+	global $context, $modSettings, $footer_coding, $settings;
 
-	$files = func_get_args();
-	$code = '
+	if (!is_array($files))
+		$files = (array) $files;
+
+	if ($is_direct_url)
+	{
+		if (!empty($footer_coding))
+		{
+			$footer_coding = false;
+			$context['footer_js'] .= '
+// ]]></script>';
+		}
+		$context['footer_js'] .= '
 <script src="' . implode('"></script>
 <script src="', $files) . '"></script>';
+		return;
+	}
+
+	$id = '';
+	$js = array();
+	$latest_date = 0;
+	foreach ($files as &$file)
+	{
+		$target = file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
+		if (!$target)
+			continue;
+
+		$add = $settings[$target . 'dir'] . '/' . $file;
+		$js[] = $add;
+		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
+		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+		$latest_date = max($latest_date, filemtime($add));
+	}
+	$id .= $latest_date;
+	if (!empty($modSettings['obfuscateFilenames']))
+		$id = md5($id);
+
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
+
+	$final_file = $settings['theme_dir'] . '/cache/' . $id . $ext;
+	if (!file_exists($final_file))
+		$filetime = wedge_cache_js($id, $files, $target, $can_gzip, $ext);
+
+	$final_script = $settings['theme_url'] . '/cache/' . $id . $ext;
+
+	// Do we just want the URL?
+	if ($is_out_of_flow)
+		return $final_script;
 
 	if (!empty($footer_coding))
 	{
+		$footer_coding = false;
 		$context['footer_js'] .= '
 // ]]></script>';
-		$footer_coding = false;
 	}
-	$context['footer_js'] .= $code;
+	$context['footer_js'] .= '
+<script src="' . $final_script . '"></script>';
 }
 
 /**

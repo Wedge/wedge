@@ -195,7 +195,7 @@ function template_boardindex_newsfader()
 		</ul>
 	</div>';
 
-		add_js_file($settings['default_theme_url'] . '/scripts/fader.js');
+		add_js_file('scripts/fader.js');
 
 		// Create a news fader object and toggle.
 		add_js('

@@ -523,13 +523,13 @@ function template_main()
 	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
 	var txt_preview_title = "' . $txt['preview_title'] . '";
 	var txt_preview_fetch = "' . $txt['preview_fetch'] . '";
-	var new_replies = new Array(), reply_counter = ' . (empty($counter) ? 0 : $counter) . ';
+	var new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ';
 	function previewPost()
 	{');
 
 	// !!! Currently not sending poll options and option checkboxes.
 	add_js('
-		var x = new Array();
+		var x = [];
 		var textFields = ["subject", ' . JavaScriptEscape($context['postbox']->id) . ', "icon", "guestname", "email", "evtitle", "question", "topic"];
 		var numericFields = [
 			"board", "topic", "last_msg",
@@ -576,14 +576,13 @@ function template_main()
 		$("#preview_body").html($("smf preview body", XMLDoc).text()).attr("class", "post");
 
 		// Show a list of errors (if any).
-		var errors = $("smf errors", XMLDoc);
-		var errorList = new Array(), numErrors = errors.length;
+		var errors = $("smf errors", XMLDoc), errorList = [];
 		$("error", errors).each(function () {
 			errorList[errorList.length] = $(this).text();
 		});
-		$("#errors").toggle(numErrors > 0);
+		$("#errors").toggle(errorList.length > 0);
 		$("#error_serious").toggle(errors.attr("serious") == 1);
-		$("#error_list").html(numErrors == 0 ? "" : errorList.join("<br />"));
+		$("#error_list").html(errorList.length > 0 ? errorList.join("<br />") : "");
 
 		// Show a warning if the topic has been locked.
 		$("#lock_warning").toggle(errors.attr("topic_locked") == 1);
@@ -611,8 +610,8 @@ function template_main()
 		for (i = 0; i < new_replies.length; i++)
 			$("#image_new_" + new_replies[i]).hide();
 
-		new_replies = new Array();
-		var ignored_replies = new Array(), ignoring;
+		new_replies = [];
+		var ignored_replies = [], ignoring;
 		var newPostsHTML = \'\', id;
 
 		$("smf new_posts post", XMLDoc).each(function () {
@@ -759,7 +758,7 @@ function template_main()
 		</div>';
 
 		add_js('
-	var aIgnoreToggles = new Array();');
+	var aIgnoreToggles = [];');
 
 		foreach ($ignored_posts as $post_id)
 			add_js('
@@ -827,20 +826,20 @@ function template_spellcheck()
 			height: 314px;
 			overflow: auto;
 			background: #ffffff;
-		}';
+		}
+	</style>';
 
 	// As you may expect - we need a lot of Javascript for this... Load it from the separate files.
+	add_js_cached(
+		'scripts/script.js',
+		'scripts/spellcheck.js'
+	);
+
+	add_js('
+	var spell_formname = window.opener.spell_formname;
+	var spell_fieldname = window.opener.spell_fieldname;', $context['spell_js']);
+
 	echo '
-	</style>
-	<script><!-- // --><![CDATA[
-		var spell_formname = window.opener.spell_formname;
-		var spell_fieldname = window.opener.spell_fieldname;
-	// ]]></script>
-	<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js"></script>
-	<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
-	<script><!-- // --><![CDATA[
-		', $context['spell_js'], '
-	// ]]></script>
 </head>
 <body onload="nextWord(false);">
 	<form action="#" method="post" accept-charset="UTF-8" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0;">

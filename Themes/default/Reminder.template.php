@@ -104,7 +104,7 @@ function template_set_password()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+	add_js_file('scripts/register.js');
 
 	add_js('
 	var regTextStrings = {
@@ -162,7 +162,7 @@ function template_ask()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 	</form>';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+	add_js_file('scripts/register.js');
 
 	if ($context['account_type'] == 'password')
 		add_js('

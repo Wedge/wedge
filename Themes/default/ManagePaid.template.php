@@ -355,7 +355,7 @@ function template_modify_user_subscription()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	var oAddMemberSuggest = new smc_AutoSuggest({

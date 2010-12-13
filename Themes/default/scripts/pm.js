@@ -63,14 +63,14 @@ smf_PersonalMessageSend.prototype.init = function()
 		aListItems: this.opt.aBccRecipients
 	});
 	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', this.opt.sSelf + '.callbackAddItem');
-}
+};
 
 smf_PersonalMessageSend.prototype.showBcc = function()
 {
 	// No longer hide it, show it to the world!
 	this.oBccDiv.style.display = '';
 	this.oBccDiv2.style.display = '';
-}
+};
 
 // Prevent items to be added twice or to both the 'To' and 'Bcc'.
 smf_PersonalMessageSend.prototype.callbackAddItem = function(oAutoSuggestInstance, sSuggestId)
@@ -79,4 +79,4 @@ smf_PersonalMessageSend.prototype.callbackAddItem = function(oAutoSuggestInstanc
 	this.oBccAutoSuggest.deleteAddedItem(sSuggestId);
 
 	return true;
-}
+};

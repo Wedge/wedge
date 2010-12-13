@@ -1014,10 +1014,10 @@ function template_send()
 		', $context['quoted_message']['body'], '
 	</div>';
 
-	add_js_file(
-		$settings['default_theme_url'] . '/scripts/PersonalMessage.js?rc3',
-		$settings['default_theme_url'] . '/scripts/suggest.js?rc3'
-	);
+	add_js_file(array(
+		'scripts/pm.js',
+		'scripts/suggest.js'
+	));
 
 	add_js('
 	var oPersonalMessageSend = new smf_PersonalMessageSend({
@@ -1335,10 +1335,7 @@ function template_add_rule()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	add_js('
-	var criteriaNum = 0;
-	var actionNum = 0;
-	var groups = new Array()
-	var labels = new Array()');
+	var criteriaNum = 0, actionNum = 0, groups = [], labels = [];');
 
 	foreach ($context['groups'] as $id => $title)
 		add_js('
@@ -1353,11 +1350,10 @@ function template_add_rule()
 	function addCriteriaOption()
 	{
 		if (criteriaNum == 0)
-		{
 			for (var i = 0; i < document.forms.addrule.elements.length; i++)
 				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
 					criteriaNum++;
-		}
+
 		criteriaNum++;
 
 		setOuterHTML(document.getElementById("criteriaAddHere"), \'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
@@ -1371,11 +1367,10 @@ function template_add_rule()
 	function addActionOption()
 	{
 		if (actionNum == 0)
-		{
 			for (var i = 0; i < document.forms.addrule.elements.length; i++)
 				if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
 					actionNum++;
-		}
+
 		actionNum++;
 
 		setOuterHTML(document.getElementById("actionAddHere"), \'<br /><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
@@ -1391,18 +1386,18 @@ function template_add_rule()
 	{
 		if (document.getElementById("ruletype" + optNum).value == "gid")
 		{
-			document.getElementById("defdiv" + optNum).style.display = "none";
-			document.getElementById("defseldiv" + optNum).style.display = "";
+			$("#defdiv" + optNum).hide();
+			$("#defseldiv" + optNum).show();
 		}
 		else if (document.getElementById("ruletype" + optNum).value == "bud" || document.getElementById("ruletype" + optNum).value == "")
 		{
-			document.getElementById("defdiv" + optNum).style.display = "none";
-			document.getElementById("defseldiv" + optNum).style.display = "none";
+			$("#defdiv" + optNum).hide();
+			$("#defseldiv" + optNum).hide();
 		}
 		else
 		{
-			document.getElementById("defdiv" + optNum).style.display = "";
-			document.getElementById("defseldiv" + optNum).style.display = "none";
+			$("#defdiv" + optNum).show();
+			$("#defseldiv" + optNum).hide();
 		}
 	}
 
@@ -1637,12 +1632,12 @@ function template_add_rule()
 	// If this isn't a new rule and we have JS enabled remove the JS compatibility stuff.
 	if ($context['rid'])
 		add_js('
-	document.getElementById("removeonjs1").style.display = "none";
-	document.getElementById("removeonjs2").style.display = "none";');
+	$("#removeonjs1").hide();
+	$("#removeonjs2").hide();');
 
 	add_js('
-	document.getElementById("addonjs1").style.display = "";
-	document.getElementById("addonjs2").style.display = "";');
+	$("#addonjs1").show();
+	$("#addonjs2").show();');
 }
 
 ?>

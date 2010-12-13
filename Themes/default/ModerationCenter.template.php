@@ -55,12 +55,12 @@ function template_latest_news()
 		</div>';
 
 	// This requires a lot of javascript...
-	//!!! Put this in it's own file!!
-	add_js_file(
+	//!!! Put this in its own file!!
+	add_js_file(array(
 		$scripturl . '?action=viewsmfile;filename=current-version.js',
-		$scripturl . '?action=viewsmfile;filename=latest-news.js',
-		$settings['default_theme_url'] . '/scripts/admin.js?rc3'
-	);
+		$scripturl . '?action=viewsmfile;filename=latest-news.js'
+	), true);
+	add_js_file('scripts/admin.js');
 
 	add_js('
 	var oAdminIndex = new smf_AdminIndex({

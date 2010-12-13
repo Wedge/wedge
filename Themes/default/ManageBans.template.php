@@ -228,7 +228,7 @@ function template_ban_edit()
 	</div>
 	<br class="clear" />';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js_inline('
 	function updateFormStatus()
@@ -325,7 +325,7 @@ function template_ban_edit_trigger()
 	</div>
 	<br class="clear" />';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	var oAddMemberSuggest = new smc_AutoSuggest({

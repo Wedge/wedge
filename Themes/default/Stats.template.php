@@ -376,7 +376,7 @@ function template_main()
 		</div>
 	</div>';
 
-		add_js_file($settings['default_theme_url'] . '/scripts/stats.js');
+		add_js_file('scripts/stats.js');
 
 		add_js('
 	var oStatsCenter = new smf_StatsCenter({

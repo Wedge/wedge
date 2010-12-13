@@ -185,7 +185,7 @@ function template_email_members()
 	<br class="clear" />';
 
 	// Make the javascript stuff visible.
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	document.getElementById("advanced_select_div").style.display = "";

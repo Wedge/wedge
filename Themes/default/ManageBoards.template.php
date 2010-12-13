@@ -524,7 +524,7 @@ function template_modify_board()
 	</div>
 	<br class="clear" />';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	var oModeratorSuggest = new smc_AutoSuggest({

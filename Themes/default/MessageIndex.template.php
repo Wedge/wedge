@@ -400,7 +400,7 @@ function template_main()
 	</div>';
 
 	// Javascript for inline editing.
-	add_js_file($settings['default_theme_url'] . '/scripts/topic.js');
+	add_js_file('scripts/topic.js');
 
 	add_js('
 	// Hide certain bits during topic edit.

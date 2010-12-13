@@ -686,7 +686,7 @@ function template_modify_group_simple($type)
 
 		// This function decides what to do when ANYTHING is touched!
 		echo '
-				var groupPermissions = new Array();
+				var groupPermissions = [];
 				function determineGroupState(id_group, forceState)
 				{
 					if (typeof(forceState) != "undefined")

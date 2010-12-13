@@ -139,9 +139,7 @@ function template_select()
 	<br class="clear" />';
 
 	add_js('
-	var start = new Array();
-	start[0] = ', $context['not_selected']['start'], ';
-	start[1] = ', $context['selected']['start'], ';
+	var start = [', $context['not_selected']['start'], ', ', $context['selected']['start'], '];
 
 	function select(direction, msg_id)
 	{

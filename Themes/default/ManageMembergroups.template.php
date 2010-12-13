@@ -332,7 +332,7 @@ function template_edit_group()
 
 	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
 	{
-		add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+		add_js_file('scripts/suggest.js');
 
 		add_js('
 	var oModeratorSuggest = new smc_AutoSuggest({
@@ -539,7 +539,7 @@ function template_group_members()
 
 	if (!empty($context['group']['assignable']))
 	{
-		add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+		add_js_file('scripts/suggest.js');
 
 		add_js('
 	var oAddMemberSuggest = new smc_AutoSuggest({

@@ -6,7 +6,7 @@ function template_profile_above()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	add_js_file($settings['default_theme_url'] . '/scripts/profile.js');
+	add_js_file('scripts/profile.js');
 
 	// Prevent Chrome from auto completing fields when viewing/editing other members profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
@@ -524,7 +524,7 @@ function template_editBuddies()
 		</div>
 	</form>';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	var oAddBuddySuggest = new smc_AutoSuggest({
@@ -606,7 +606,7 @@ function template_editIgnoreList()
 		</div>
 	</form>';
 
-	add_js_file($settings['default_theme_url'] . '/scripts/suggest.js?rc3');
+	add_js_file('scripts/suggest.js');
 
 	add_js('
 	var oAddIgnoreSuggest = new smc_AutoSuggest({
@@ -2420,7 +2420,7 @@ function template_profile_signature_modify()
 
 	// Load the spell checker?
 	if ($context['show_spellchecking'])
-		add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
+		add_js_file('scripts/spellcheck.js');
 
 	// Some javascript used to count how many characters have been used so far in the signature.
 	add_js_inline('
@@ -2717,7 +2717,7 @@ function template_authentication_method()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	// The main header!
-	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+	add_js_file('scripts/register.js');
 
 	echo '
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">

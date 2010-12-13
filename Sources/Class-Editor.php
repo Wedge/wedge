@@ -36,8 +36,7 @@ class wedgeEditor
 
 	public function __construct($editorOptions)
 	{
-		global $txt, $modSettings, $options;
-		global $context, $settings, $user_info, $scripturl;
+		global $txt, $modSettings, $options, $context, $settings, $user_info, $scripturl;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -85,12 +84,12 @@ class wedgeEditor
 		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
 		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
 	}');
-			add_js_file($settings['default_theme_url'] . '/scripts/editor.js?rc4');
+			add_js_file('scripts/editor.js');
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
-				add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
+				add_js_file('scripts/spellcheck.js');
 
 				// Some hidden information is needed in order to make the spell checking work.
 				if (!isset($_REQUEST['xml']))

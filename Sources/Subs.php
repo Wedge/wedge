@@ -699,7 +699,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
 	if ($context['server']['is_windows'] && strpos($str, '%e') !== false)
-		$str = str_replace('%e', ltrim(strftime('%d', $time), '0'), $str);
+		$str = str_replace('%e', '%#d', $str);
 
 	// Format any other characters..
 	return strftime($str, $time);
@@ -2783,27 +2783,7 @@ function wedge_add_css($style_sheets)
 {
 	global $context;
 
-	if (!is_array($style_sheets))
-		$style_sheets = (array) $style_sheets;
-
-	foreach ($style_sheets as $sheet)
-		$context['css_generic_files'][] = $sheet;
-}
-
-/**
- * Add a Javascript file to the list of files loaded on this page, in the form of "scripts/script.js".
- *
- * @param array $scripts List of JS file paths to add to $context['javascript_files']
- */
-function wedge_add_js($scripts)
-{
-	global $context;
-
-	if (!is_array($scripts))
-		$scripts = (array) $scripts;
-
-	foreach ($scripts as $jscript)
-		$context['javascript_files'][] = $sheet;
+	$context['css_generic_files'] = array_merge($context['css_generic_files'], (array) $style_sheets);
 }
 
 /**
@@ -2856,12 +2836,22 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 
 	$final = '';
 	$dir = $settings[$target . 'dir'] . '/';
+	$dest = $dir . 'cache';
+	if (!file_exists($dest))
+		mkdir($dest);
 
 	// Delete all duplicates.
 	$js = array_flip(array_unique(array_flip($js)));
+
+	// Delete earlier cached versions.
+	if (is_callable('glob'))
+		array_map('unlink', glob($dest . '/' . rtrim($filename, '0..9') . '*' . $ext));
+
 	foreach ($js as $file)
 	{
 		$cont = file_get_contents($dir . $file);
+
+		// Replace long variable names with shorter ones. Our own quick super-minifier!
 		if (preg_match("~/\* Optimize:\n(.*?)\n\*/~s", $cont, $match))
 		{
 			$match = explode("\n", $match[1]);
@@ -2879,10 +2869,9 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 
 	// Call the minify process. If we're saving in gzip, best have the script
 	// unpacked. Otherwise, use the compression mechanism.
-	define('JSMIN', 1);
-
-	if (defined('JSMIN'))
+	if (true)
 	{
+		// !!! Implement if (!empty($modSettings['minify']) && $modSettings['minify'] == 'jsmin'), or something.
 		loadSource('Class-JSMin');
 		$final = JSMin::minify($final);
 	}
@@ -2918,9 +2907,6 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 		}
 	}
 
-	$dest = $settings[$target . 'dir'] . '/cache';
-	if (!file_exists($dest))
-		mkdir($dest);
 	if ($gzip)
 		$final = gzencode($final, 9);
 	file_put_contents($dest . '/' . $filename . $ext, $final);
@@ -3005,30 +2991,6 @@ function template_header()
 		$filetime = wedge_cache_css($id, $css, $target, $can_gzip, $ext);
 
 	$context['cached_css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
-
-	// And now, mix JS files together!
-	$js = array();
-	$latest_date = 0;
-	foreach ($context['javascript_files'] as $file)
-	{
-		$target = file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
-		if (!$target)
-			continue;
-
-		// Unlike CSS files, we're requiring the ".js" extension
-		// to be used... Please don't look at me like that.
-		$add = $settings[$target . 'dir'] . '/' . $file;
-		$js[] = $add;
-		$latest_date = max($latest_date, filemtime($add));
-	}
-	$id = md5(implode(',', $context['javascript_files']));
-	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
-
-	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
-	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
-		$filetime = wedge_cache_js($id, $context['javascript_files'], $target, $can_gzip, $ext);
-
-	$context['cached_js'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 

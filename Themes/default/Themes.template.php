@@ -171,7 +171,7 @@ function template_main()
 	window.smfThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
 
 	if (empty($modSettings['disable_smf_js']))
-		add_js_file($scripturl . '?action=viewsmfile;filename=latest-themes.js');
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-themes.js', true);
 
 	add_js('
 	if (typeof(window.smfLatestThemes) != "undefined")

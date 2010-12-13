@@ -1700,7 +1700,7 @@ function MaintainRecountPosts()
 	$context['start'] += $items_per_request;
 
 	// Continue?
-	if($context['start'] < $member_count)
+	if ($context['start'] < $member_count)
 	{
 		$context['continue_get_data'] = '?action=admin;area=maintain;sa=members;activity=recountposts;start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
 		$context['continue_percent'] = round(100 * $context['start'] / $member_count);

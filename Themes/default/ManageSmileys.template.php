@@ -28,7 +28,7 @@ function template_editsets()
 	window.smfForum_sessionvar = "', $context['session_var'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
-		add_js_file($scripturl . '?action=viewsmfile;filename=latest-smileys.js');
+		add_js_file($scripturl . '?action=viewsmfile;filename=latest-smileys.js', true);
 
 	add_js('
 	if (typeof(window.smfLatestSmileys) != "undefined")

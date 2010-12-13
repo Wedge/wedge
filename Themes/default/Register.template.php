@@ -37,7 +37,7 @@ function template_registration_form()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	add_js_file($settings['default_theme_url'] . '/scripts/register.js');
+	add_js_file('scripts/register.js');
 
 	add_js('
 	function verifyAgree()

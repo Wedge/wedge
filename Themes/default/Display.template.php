@@ -639,10 +639,10 @@ function template_main()
 			<div class="tborder" id="quickreplybox">
 				<div class="cat_bar">
 					<h3>
-						<a href="#" onclick="oQuickReply.swap();" onmousedown="return false;">
+						<a href="#" onclick="return oQuickReply.swap();" onmousedown="return false;">
 							<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand" />
 						</a>
-						<a href="#" onclick="oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
+						<a href="#" onclick="return oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 					</h3>
 				</div>
 				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
@@ -700,10 +700,10 @@ function template_main()
 	{
 		$context['footer'] .= '
 <form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>';
-		add_js_file($settings['default_theme_url'] . '/scripts/spellcheck.js');
+		add_js_file('scripts/spellcheck.js');
 	}
 
-	add_js_file($settings['default_theme_url'] . '/scripts/topic.js');
+	add_js_file('scripts/topic.js');
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 		add_js('
@@ -810,7 +810,7 @@ function template_main()
 	if (!empty($ignoredMsgs))
 	{
 		add_js('
-	var aIgnoreToggles = new Array();');
+	var aIgnoreToggles = [];');
 
 		foreach ($ignoredMsgs as $msgid)
 		{
