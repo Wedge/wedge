@@ -22,15 +22,24 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file deals with displaying a COPPA form to the user, for users who are under 13 to get completed by their parents.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	Handles displaying a COPPA compliance form to the user.
-
-	void CoppaForm()
-		// !!!
-
-*/
+/**
+ * Displays a COPPA compliance form to the user, which includes forum contact information.
+ *
+ * - Uses the Login language file and the Register template.
+ * - Requires the user id in $_GET['member'].
+ * - Queries the user to validate they not only exist, but they are currently flagged as requiring a COPPA form.
+ * - If user requests to display the form ($_GET['form'] set), prepare the form, which includes collating contact details from $modSettings. If $_GET['dl'] is set, output the form as a forced download purely in text format, otherwise set up $context and push it to template_coppa_form.
+ * - Otherwise display the general information.
+ */
 
 // This function will display the contact information for the forum, as well a form to fill in.
 function CoppaForm()

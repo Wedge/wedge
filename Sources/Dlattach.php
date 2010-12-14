@@ -22,26 +22,38 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file deals with displaying attachments, their previews, and avatars (where not in their own directory)
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
 define('WEDGE_NO_LOG', 1);
 
-/*	This file controls attachment display.  It
-	does so with the following function:
-
-	void Download()
-		- downloads an attachment or avatar, and increments the downloads.
-		- requires the view_attachments permission. (not for avatars!)
-		- disables the session parser, and clears any previous output.
-		- depends on the attachmentUploadDir setting being correct.
-		- is accessed via the query string ?action=dlattach.
-		- views to attachments and avatars do not increase hits and are not
-		  logged in the "Who's Online" log.
-
-*/
-
-// Download an attachment.
+/**
+ * This file handles serving attachments, attachment image previews and avatars.
+ *
+ * - Hits here are not counted in the Who's Online log, and do not increase the overall 'hits' stat counter.
+ * - If serving an attachment (not an avatar), require the view_attachments permission.
+ * - Looks in $_REQUEST['id'] and $_REQUEST['attach'] for the id, flattening to $_REQUEST['attach'], and $_REQUEST['type'] for the requested type of attachment.
+ * - If requesting an avatar, check that the attachment/avatar exists and that there is a user id attached (normal attachments have no user id) - and note that the file is an image.
+ * - Check the view_attachments permission (for the current $board/$topic, as $topic is in the URL) and abort if not granted.
+ * - Validate the topic of the attachment is the one given in the URL.
+ * - If the attachment is not yet approved (attachments only), verify whether the user has permission to approve posts.
+ * - If it's not a thumbnail, update the view counter.
+ * - Get the physical filename/path of the attachment file (from {@see getAttachmentFile()})
+ * - Clear any pre-existing output, then start a new buffer. If file size is 4MB or under, output compression is on, and the file type is known to be text normally, this new buffer will be gzipped.
+ * - If the file doesn't exist, throw out a basic 404 error.
+ * - If the browser sends a 'has been modified lately' header in the request, and the file has not been updated since the time given, send back a 304 header and abort the download.
+ * - If the browser sent an ETag, check the ETag against the file, if not modified since, issue the 304 response.
+ * - Send all the headers to ensure the file is sent correctly, including re-encoding the filename if necessary.
+ * - If the file has an image extension but is not an image, prevent IE from erroneously caching.
+ * - Fix the line endings if it's a text file and that option is enabled.
+ * - Output the file and close buffers. If the file is bigger than 4MB, manually chunk the output, otherwise use whatever methods are available for quickly loading and serving the file (file_get_contents or readfile)
+ */
 function Dlattach()
 {
 	global $txt, $modSettings, $user_info, $scripturl, $context, $topic;

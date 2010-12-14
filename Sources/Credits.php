@@ -22,16 +22,25 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This file deals with keeping track of all the credits, and displaying them to everyone, or just within the admin panel.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file concerns the application credits.
-
-	void Credits(bool in_admin)
-		- prepares credit and copyright information for the credits page or the admin page
-		- if parameter is true the it will not load the sub template nor the template file
-
-*/
+/**
+ * Display the credits.
+ *
+ * - Uses the Who language file.
+ * - Builds $context['credits'] to list the different teams behind application development, and the people who contributed.
+ * - Adds $context['copyright']['mods'] where mod developers can add their copyrights without touching the footer or anything else.
+ * - Calls the 'place_credit' hook to enable modders to add to this page.
+ *
+ * @param bool $in_admin If calling from the admin panel, this should be true, to prevent loading the template that is normally loaded where this function would be called as a regular action (action=credits)
+ */
 
 function Credits($in_admin = false)
 {
