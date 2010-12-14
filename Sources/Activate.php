@@ -22,14 +22,26 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
+/**
+ * This filedeals with activating accounts of newly registered/created users, or reactivating users who have changed their email address.
+ *
+ * @package wedge
+ */
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has one job: account activations.
-
-	void Activate()
-		// !!!
-*/
+/**
+ * Handles activation of a newly created user, or an existing but unactivated users.
+ *
+ * - Requires the Login language and template files.
+ * - Expects a user id in $_REQUEST['u'] or a user name or email address in $_POST['user']. (Only one of those is ultimately required)
+ * - Queries the members table to ensure the user does exist.
+ * - If the user has changed their email address, verify their old password, check the new address isn't banned, that it is potentially valid, if all good, update the members table and leave the function.
+ * - If the user account is not yet activated and they're asking for a resend, generate and send the relevant email, and return.
+ * - If already active, or the code supplied is wrong, throw an appropriate error.
+ * - Otherwise, we're good to go, so: call the activate hook, update the user's record (is now activated, remove the old code), update the member stats, send an email to the admin if they want that, then set up to show the user a thank you/welcome page.
+ */
 
 function Activate()
 {
