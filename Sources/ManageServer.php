@@ -213,9 +213,9 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt;
+	global $scripturl, $context, $txt, $settings, $modSettings;
 
-	/* If you're writing a mod, it's a bad idea to add things here....
+	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
 		variable name, description, type (constant), size/possible values, helptext.
 	OR	an empty string for a horizontal rule.
@@ -231,6 +231,19 @@ function ModifyGeneralSettings($return_config = false)
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
+		array('obfuscate_js', $txt['obfuscate_js'], 'db', 'check', null, 'obfuscate_js'),
+		array('minify', $txt['minify'], 'db', 'select', array(
+			'none' => array('none', $txt['minify_none']),
+			'jsmin' => array('jsmin', $txt['minify_jsmin']),
+			'packer' => array('packer', $txt['minify_packer']),
+		), 'minify'),
+		array('jquery_origin', $txt['jquery_origin'], 'db', 'select', array(
+			'local' => array('local', $txt['jquery_local']),
+			'jquery' => array('jquery', $txt['jquery_jquery']),
+			'google' => array('google', $txt['jquery_google']),
+			'microsoft' => array('microsoft', $txt['jquery_microsoft']),
+		), 'jquery_origin'),
+		'',
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
 		'',
@@ -260,6 +273,19 @@ function ModifyGeneralSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
+		// Delete the JS cache in case we're changing one of these settings. Only does the current theme.
+		// Cached JS files are also cleaned up on the fly so this is just a small time saver.
+		foreach (array('enableCompressedData', 'obfuscate_js', 'minify') as $cache)
+			if (isset($_REQUEST[$cache]) && $_REQUEST[$cache] != $modSettings[$cache] && is_callable('glob'))
+			{
+				array_map('unlink', glob($settings['theme_dir'] . '/cache/*.j*'));
+				// Note: enableCompressedData should always be tested first in the array,
+				// so we can safely remove CSS files too.
+				if ($cache == 'enableCompressedData')
+					array_map('unlink', glob($settings['theme_dir'] . '/cache/*.c*'));
+				break;
+			}
+
 		saveSettings($config_vars);
 		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
 	}

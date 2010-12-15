@@ -1659,7 +1659,18 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize our JS files to cache right before we run template_init().
-	$context['javascript_files'] = empty($modSettings['jquery_remote']) ? array('scripts/jquery-1.4.4.js', 'scripts/script.js') : array('scripts/script.js');
+	if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
+		$context['javascript_files'] = array('scripts/jquery-1.4.4.js', 'scripts/script.js');
+	else
+	{
+		$remote = array(
+			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js',
+			'jquery' =>		'http://code.jquery.com/jquery-1.4.4.min.js',
+			'microsoft' =>	'http://ajax.microsoft.com/ajax/jquery/jquery-1.4.4.min.js',
+		);
+		$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
+		$context['javascript_files'] = array('scripts/script.js');
+	}
 
 	// Initialize the theme
 	loadSubTemplate('init', 'ignore');

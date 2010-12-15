@@ -723,18 +723,16 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
 		$latest_date = max($latest_date, filemtime($add));
 	}
-	$id .= $latest_date;
-	if (!empty($modSettings['obfuscateFilenames']))
-		$id = md5($id);
+	$encrypted_id = (!empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id) . $latest_date;
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $settings['theme_dir'] . '/cache/' . $id . $ext;
+	$final_file = $settings['theme_dir'] . '/cache/' . $encrypted_id . $ext;
 	if (!file_exists($final_file))
-		$filetime = wedge_cache_js($id, $files, $target, $can_gzip, $ext);
+		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 
-	$final_script = $settings['theme_url'] . '/cache/' . $id . $ext;
+	$final_script = $settings['theme_url'] . '/cache/' . $encrypted_id . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)

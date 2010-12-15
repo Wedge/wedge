@@ -2789,16 +2789,51 @@ function wedge_add_css($style_sheets)
 /**
  * Create a compact CSS file that concatenates and compresses a list of existing CSS files, also fixing relative paths.
  *
- * @param string $filename Path of the file to create
- * @param array $css List of all CSS files to concatenate
- * @param string $target Determine where we're saving the file: default theme, or custom theme?
- * @param bool $gzip Should we gzip the resulting file?
- * @param string $ext The extension... .css, .css.gz or .cgz
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_css($filename, $css, $target, $gzip = false, $ext = '.css')
+function wedge_cache_css()
 {
-	global $settings, $modSettings, $wedge_base_dir;
+	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug;
+
+	// Mix CSS files together!
+	$css = array();
+	$latest_date = 0;
+	foreach ($context['css_folders'] as $folder)
+	{
+		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
+		foreach ($context['css_generic_files'] as $file)
+		{
+			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
+			if (file_exists($add))
+			{
+				$css[] = $add;
+				if ($db_show_debug === true)
+					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+				$latest_date = max($latest_date, filemtime($add));
+			}
+		}
+	}
+	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
+
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
+	unset($context['css_generic_files'][0]);
+	if (!empty($context['css_generic_files']))
+		$id .= '-' . implode('-', $context['css_generic_files']);
+	$dest = $settings[$target . 'dir'] . '/cache';
+	$final_file = $dest . '/' . $id . '-' . $latest_date . $ext;
+	$context['cached_css'] = $settings['theme_url'] . '/cache' . substr($final_file, strlen($dest));
+
+	// Is the file already cached and not outdated? Then we're good to go.
+	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
+		return;
+
+	if (!file_exists($dest))
+		mkdir($dest);
+
+	// Delete earlier cached versions.
+	if (is_callable('glob'))
+		array_map('unlink', glob($dest . '/' . $id . '-*.*'));
 
 	$final = '';
 	$discard_dir = strlen($settings[$target . 'dir']) + 1;
@@ -2806,36 +2841,36 @@ function wedge_cache_css($filename, $css, $target, $gzip = false, $ext = '.css')
 	{
 		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
 		$add = file_get_contents($file);
+
+		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}\s])\s*~'), array('', '$1'), $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', "}\n", "\t"), array("\n", "\n", '}', '}', ' '), $add);
+
 		$final .= $add;
 	}
-	$dest = $settings[$target . 'dir'] . '/cache';
-	if (!file_exists($dest))
-		mkdir($dest);
-	if ($gzip)
+	if ($can_gzip)
 		$final = gzencode($final, 9);
-	file_put_contents($dest . '/' . $filename . $ext, $final);
-	return time();
+
+	file_put_contents($final_file, $final);
 }
 
 /**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
- * @param string $filename Path of the file to create
+ * @param string $filename Name of the file to create (unobfuscated)
+ * @param int $latest_date Date of the most recent JS file in the list, used to force recaching
+ * @param string $final_file Final name of the file to create (obfuscated, with date, etc.)
  * @param array $js List of all JS files to concatenate
- * @param string $target Determine where we're saving the file: default theme, or custom theme?
  * @param bool $gzip Should we gzip the resulting file?
- * @param string $ext The extension... .js, .js.gz or .jgz
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
+function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false)
 {
-	global $settings, $modSettings, $wedge_base_dir, $wedge_quotes;
+	global $settings, $modSettings;
 
 	$final = '';
-	$dir = $settings[$target . 'dir'] . '/';
+	$dir = $settings['theme_dir'] . '/';
 	$dest = $dir . 'cache';
 	if (!file_exists($dest))
 		mkdir($dest);
@@ -2843,9 +2878,18 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 	// Delete all duplicates.
 	$js = array_flip(array_unique(array_flip($js)));
 
-	// Delete earlier cached versions.
+	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
-		array_map('unlink', glob($dest . '/' . rtrim($filename, '0..9') . '*' . $ext));
+	{
+		foreach (glob($dest . '/' . $filename . '-*.*') as $del)
+			if (!strpos($del, $latest_date))
+				unlink($del);
+		foreach (glob($dest . '/' . md5($filename) . '-*.*') as $del)
+			if (!strpos($del, $latest_date))
+				unlink($del);
+	}
+
+	$minify = empty($modSettings['minify']) ? 'none' : $modSettings['minify'];
 
 	foreach ($js as $file)
 	{
@@ -2863,21 +2907,22 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 				$replace[] = $pair[1];
 			}
 			$cont = str_replace($search, $replace, $cont);
+			if ($minify == 'none')
+				$cont = preg_replace("~/\* Optimize:\n(.*?)\n\*/~s", '', $cont);
 		}
 		$final .= $cont;
 	}
 
-	// Call the minify process. If we're saving in gzip, best have the script
-	// unpacked. Otherwise, use the compression mechanism.
-	if (true)
+	// Call the minify process, either JSMin or Packer.
+	if ($minify === 'jsmin')
 	{
-		// !!! Implement if (!empty($modSettings['minify']) && $modSettings['minify'] == 'jsmin'), or something.
 		loadSource('Class-JSMin');
 		$final = JSMin::minify($final);
 	}
-	else
+	elseif ($minify === 'packer')
 	{
 		loadSource('Class-Minify');
+		// If gzip is disabled, use "Normal" (JS compression), otherwise use "None" (no compression, only minification.)
 		$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
 		$final = $packer->pack();
 
@@ -2909,9 +2954,8 @@ function wedge_cache_js($filename, $js, $target, $gzip = false, $ext = '.js')
 
 	if ($gzip)
 		$final = gzencode($final, 9);
-	file_put_contents($dest . '/' . $filename . $ext, $final);
 
-	return time();
+	file_put_contents($final_file, $final);
 }
 
 /**
@@ -2946,7 +2990,7 @@ function wedge_fix_relative_css($matches)
  */
 function template_header()
 {
-	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir, $db_show_debug, $board_info;
+	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
 
 	if (!isset($_REQUEST['xml']))
 		setupThemeContext();
@@ -2961,38 +3005,9 @@ function template_header()
 			header('Content-Type: text/html; charset=UTF-8');
 	}
 
-	// Mix CSS files together!
-	$css = array();
-	$latest_date = 0;
-	foreach ($context['css_folders'] as $folder)
-	{
-		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
-		foreach ($context['css_generic_files'] as $file)
-		{
-			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
-			if (file_exists($add))
-			{
-				$css[] = $add;
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
-				$latest_date = max($latest_date, filemtime($add));
-			}
-		}
-	}
-	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
-
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-	unset($context['css_generic_files'][0]);
-	if (!empty($context['css_generic_files']))
-		$id .= '-' . implode('-', $context['css_generic_files']);
-	$final_file = $settings[$target . 'dir'] . '/cache/' . $id . $ext;
-	if (!file_exists($final_file) || ($filetime = filemtime($final_file)) < $latest_date)
-		$filetime = wedge_cache_css($id, $css, $target, $can_gzip, $ext);
-
-	$context['cached_css'] = $settings[$target . 'url'] . '/cache/' . $id . $ext . '?' . $filetime;
-
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
+
+	wedge_cache_css();
 
 	$checked_securityFiles = false;
 	$showed_banned = false;
@@ -3647,7 +3662,7 @@ function clean_cache($type = '')
  */
 function setupMenuContext()
 {
-	global $context, $modSettings, $user_info, $txt, $scripturl;
+	global $context, $modSettings, $user_info, $board_info, $txt, $scripturl;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
@@ -3665,6 +3680,7 @@ function setupMenuContext()
 	// All the buttons we can possible want and then some, try pulling the final list of buttons from cache first.
 	if (($menu_buttons = cache_get_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
 	{
+		$is_b = !empty($board_info['id']);
 		$buttons = array(
 			'home' => array(
 				'title' => $txt['home'],
@@ -3672,17 +3688,19 @@ function setupMenuContext()
 				'show' => true,
 				'padding' => 16,
 				'sub_buttons' => array(
+					'root' => array(
+						'title' => $context['forum_name'],
+						'href' => $scripturl,
+						'show' => $is_b,
+					),
+					'board' => array(
+						'title' => $is_b ? $board_info['name'] : '',
+						'href' => $is_b ? $scripturl . '?board=' . $board_info['id'] . '.0' : '',
+						'show' => $is_b,
+						'is_last' => true,
+					),
 				),
 				'is_last' => $context['right_to_left'],
-			),
-			'board' => array(
-				// !!! For later: replace 'board' with $board_info['type']
-				'title' => !empty($board_info['id']) ? sprintf($txt['site_home'], 'board') : $txt['home'],
-				'href' => !empty($board_info['id']) ? $scripturl . '?board=' . $board_info['id'] . '.0' : '',
-				'show' => !empty($board_info['id']),
-				'padding' => 16,
-				'sub_buttons' => array(
-				),
 			),
 			'search' => array(
 				'title' => $txt['search'],

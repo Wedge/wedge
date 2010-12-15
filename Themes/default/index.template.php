@@ -75,7 +75,6 @@ function template_html_above()
 <!-- Powered by Wedge, (c) Wedgebox 2010 - http://wedgeforum.com -->
 <head>';
 
-	// The ?rc3 part of this link is just here to make sure browsers don't cache it wrongly.
 	echo '
 	<link rel="stylesheet" href="', $context['cached_css'], '" />
 	<title>', $context['page_title_html_safe'], '</title>
@@ -84,7 +83,7 @@ function template_html_above()
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '';
 
-	// Please don't index these Mr Robotto.
+	// Please don't index these, Mr Robotto.
 	if (!empty($context['robot_no_index']))
 		echo '
 	<meta name="robots" content="noindex" />';
@@ -316,8 +315,9 @@ function template_html_below()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo "\n", !empty($modSettings['jquery_remote']) ? '
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>' : '', '
+	echo "\n", !empty($context['remote_javascript_files']) ? '
+<script src="' . implode('"></script>
+<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
 <script src="', add_js_file($context['javascript_files'], false, true), '"></script>
 <script><!-- // --><![CDATA[
 	var smf_theme_url = "', $settings['theme_url'], '";
