@@ -1373,6 +1373,11 @@ form.wrc {
 .roundframe p {
 	padding: .5em;
 }
+#helf {
+	box-shadow: 2px 2px 8px 0 #bbb;
+	-moz-box-shadow: 2px 2px 5px 0 #bbb;
+	-webkit-box-shadow: 2px 2px 5px 0 #bbb;
+}
 
 /* The main content area.
 ------------------------------------------------------- */

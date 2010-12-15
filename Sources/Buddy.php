@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This filedeals with adding/removing users to/from buddy lists.
+ * This file deals with adding/removing users to/from buddy lists.
  *
  * @package wedge
  */

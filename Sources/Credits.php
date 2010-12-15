@@ -36,7 +36,7 @@ if (!defined('SMF'))
  *
  * - Uses the Who language file.
  * - Builds $context['credits'] to list the different teams behind application development, and the people who contributed.
- * - Adds $context['copyright']['mods'] where mod developers can add their copyrights without touching the footer or anything else.
+ * - Adds $context['copyright']['mods'] where add-on developers can add their copyrights without touching the footer or anything else.
  * - Calls the 'place_credit' hook to enable modders to add to this page.
  *
  * @param bool $in_admin If calling from the admin panel, this should be true, to prevent loading the template that is normally loaded where this function would be called as a regular action (action=credits)

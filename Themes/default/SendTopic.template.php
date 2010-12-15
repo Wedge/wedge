@@ -47,35 +47,36 @@ function template_main()
 							<label for="y_name"><strong>', $txt['sendtopic_sender_name'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_name" name="y_name" size="30" maxlength="40" value="', $context['user']['name'], '" class="input_text" />
+							<input type="text" id="y_name" name="y_name" maxlength="40" value="', $context['user']['name'], '" class="input_text w50" />
 						</dd>
 						<dt>
 							<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_email" name="y_email" size="30" maxlength="50" value="', $context['user']['email'], '" class="input_text" />
+							<input type="text" id="y_email" name="y_email" maxlength="50" value="', $context['user']['email'], '" class="input_text w50" />
 						</dd>
 						<dt>
 							<label for="comment"><strong>', $txt['sendtopic_comment'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="comment" name="comment" size="30" maxlength="100" class="input_text" />
+							<input type="text" id="comment" name="comment" maxlength="100" class="input_text w75" />
 						</dd>
 					</dl>
 				</fieldset>
+				<hr />
 				<fieldset id="recipient" class="send_topic">
 					<dl class="settings send_topic">
 						<dt>
 							<label for="r_name"><strong>', $txt['sendtopic_receiver_name'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="r_name" name="r_name" size="30" maxlength="40" class="input_text" />
+							<input type="text" id="r_name" name="r_name" maxlength="40" class="input_text w50" />
 						</dd>
 						<dt>
 							<label for="r_email"><strong>', $txt['sendtopic_receiver_email'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="r_email" name="r_email" size="30" maxlength="50" class="input_text" />
+							<input type="text" id="r_email" name="r_email" maxlength="50" class="input_text w50" />
 						</dd>
 					</dl>
 				</fieldset>

@@ -830,14 +830,15 @@ function template_spellcheck()
 	</style>';
 
 	// As you may expect - we need a lot of Javascript for this... Load it from the separate files.
-	add_js_cached(
-		'scripts/script.js',
-		'scripts/spellcheck.js'
-	);
-
-	add_js('
-	var spell_formname = window.opener.spell_formname;
-	var spell_fieldname = window.opener.spell_fieldname;', $context['spell_js']);
+	echo "\n", !empty($context['remote_javascript_files']) ? '
+	<script src="' . implode('"></script>
+	<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
+	<script src="', add_js_file($context['javascript_files'], false, true), '"></script>
+	<script src="', add_js_file('scripts/spellcheck.js', false, true), '"></script>
+	<script><!-- // --><![CDATA[
+		var spell_formname = window.opener.spell_formname;
+		var spell_fieldname = window.opener.spell_fieldname;', $context['spell_js'], '
+	// ]]></script>';
 
 	echo '
 </head>

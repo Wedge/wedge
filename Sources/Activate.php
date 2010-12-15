@@ -23,7 +23,7 @@
 **********************************************************************************/
 
 /**
- * This filedeals with activating accounts of newly registered/created users, or reactivating users who have changed their email address.
+ * This file deals with activating accounts of newly registered/created users, or reactivating users who have changed their email address.
  *
  * @package wedge
  */
@@ -32,7 +32,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * Handles activation of a newly created user, or an existing but unactivated users.
+ * Handles activation of a newly created user, or an existing but unactivated user.
  *
  * - Requires the Login language and template files.
  * - Expects a user id in $_REQUEST['u'] or a user name or email address in $_POST['user']. (Only one of those is ultimately required)
