@@ -134,19 +134,24 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 
 	var aPos = typeof(from) == 'object' ? smf_itemPos(from) : [10, 10];
 
-	var previousTarget = $('#helf').attr('src');
-	if (previousTarget && $('#helf').remove().length && previousTarget == desktopURL)
+	var helf = $('#helf'), previousTarget = helf.data('src');
+	if (previousTarget && helf.remove().length && previousTarget == desktopURL)
 		return false;
 
-	$(document.createElement('iframe')).attr({ id: 'helf', src: desktopURL }).css({
-		overflow: noScrollbars ? 'hidden' : 'auto',
-		position: 'absolute',
-		width: (alternateWidth ? alternateWidth : 480) + 'px',
-		height: (alternateHeight ? alternateHeight : 220) + 'px',
-		left: (aPos[0] + 15) + 'px',
-		top: (aPos[1] + 15) + 'px',
-		border: '1px solid #999'
-	}).appendTo('body');
+	$('<div></div>').attr('id', 'helf')
+		.addClass('windowbg wrc').data('src', desktopURL).load(desktopURL, function() {
+		$(this).css({
+			overflow: noScrollbars ? 'hidden' : 'auto',
+			position: 'absolute',
+			width: (alternateWidth ? alternateWidth : 480) + 'px',
+			padding: '10px 12px 12px',
+			left: (aPos[0] + 15) + 'px',
+			top: (aPos[1] + 15) + 'px',
+			border: '1px solid #999'
+		}).hide().appendTo('body').fadeIn(300);
+	});
+	if (alternateHeight)
+		$('#helf').css('height', alternateHeight + 'px');
 
 	// Return false so the click won't follow the link ;)
 	return false;
