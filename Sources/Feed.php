@@ -405,74 +405,11 @@ function Feed()
 	obExit(false);
 }
 
-function cdata_parse($data, $ns = '')
+function cdata_parse($data)
 {
 	global $cdata_override;
 
-	// Are we not doing it?
-	if (!empty($cdata_override))
-		return $data;
-
-	$cdata = '<![CDATA[';
-
-	for ($pos = 0, $n = strlen($data); $pos < $n; null)
-	{
-		$positions = array(
-			strpos($data, '&', $pos),
-			strpos($data, ']', $pos),
-		);
-		if ($ns != '')
-			$positions[] = strpos($data, '<', $pos);
-		foreach ($positions as $k => $dummy)
-		{
-			if ($dummy === false)
-				unset($positions[$k]);
-		}
-
-		$old = $pos;
-		$pos = empty($positions) ? $n : min($positions);
-
-		if ($pos - $old > 0)
-			$cdata .= substr($data, $old, $pos - $old);
-		if ($pos >= $n)
-			break;
-
-		if (substr($data, $pos, 1) == '<')
-		{
-			$pos2 = strpos($data, '>', $pos);
-			if ($pos2 === false)
-				$pos2 = $n;
-			if (substr($data, $pos + 1, 1) == '/')
-				$cdata .= ']]></' . $ns . ':' . substr($data, $pos + 2, $pos2 - $pos - 1) . '<![CDATA[';
-			else
-				$cdata .= ']]><' . $ns . ':' . substr($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
-			$pos = $pos2 + 1;
-		}
-		elseif (substr($data, $pos, 1) == ']')
-		{
-			$cdata .= ']]>&#093;<![CDATA[';
-			$pos++;
-		}
-		elseif (substr($data, $pos, 1) == '&')
-		{
-			$pos2 = strpos($data, ';', $pos);
-			if ($pos2 === false)
-				$pos2 = $n;
-			$ent = substr($data, $pos + 1, $pos2 - $pos - 1);
-
-			if (substr($data, $pos + 1, 1) == '#')
-				$cdata .= ']]>' . substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
-			elseif (in_array($ent, array('amp', 'lt', 'gt', 'quot')))
-				$cdata .= ']]>' . substr($data, $pos, $pos2 - $pos + 1) . '<![CDATA[';
-			// !!! ??
-
-			$pos = $pos2 + 1;
-		}
-	}
-
-	$cdata .= ']]>';
-
-	return strtr($cdata, array('<![CDATA[]]>' => ''));
+	return !empty($cdata_override) ? $data : '<![CDATA[' . str_replace(']]>', ']]>]]&gt;<![CDATA[', $data) . ']]>';
 }
 
 function dumpTags($data, $i, $tag = null, $xml_format = '')
