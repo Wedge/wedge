@@ -2881,10 +2881,10 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
 	{
-		foreach (glob($dest . '/' . $filename . '-*.*') as $del)
+		foreach (glob($dest . '/' . $filename . '*.*') as $del)
 			if (!strpos($del, $latest_date))
 				unlink($del);
-		foreach (glob($dest . '/' . md5($filename) . '-*.*') as $del)
+		foreach (glob($dest . '/' . md5($filename) . '*.*') as $del)
 			if (!strpos($del, $latest_date))
 				unlink($del);
 	}

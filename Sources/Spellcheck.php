@@ -62,8 +62,13 @@ function Spellcheck()
 	error_reporting($old);
 	ob_end_clean();
 
+	// If an error happened, just close the window and look innocent.
+	// (Why do I need to have *THIS* be valid HTML5?! I must be sick.)
 	if (!isset($_POST['spellstring']) || !$pspell_link)
-		die;
+		die('<!DOCTYPE html>
+<head><title></title><script>
+	window.close();
+</script></head>');
 
 	// Construct a bit of Javascript code.
 	$context['spell_js'] = '

@@ -697,7 +697,7 @@ function template_main()
 		echo '
 			<br class="clear" />';
 
-	if ($context['show_spellchecking'])
+	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{
 		$context['footer'] .= '
 <form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>';
