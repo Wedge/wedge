@@ -182,7 +182,7 @@ function Credits($in_admin = false)
 		You may also add credits at the end of the $context['credits'] array, following the same structure.
 
 		Copyright statements should be in the form of a value only without a array key, i.e.:
-			'Some Mod by WedgeBox &copy; 2010',
+			'Some Mod by Wedgeward &copy; 2010',
 			$txt['some_mod_copyright'],
 	*/
 

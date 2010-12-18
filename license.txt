@@ -4,7 +4,7 @@ Wedge License Agreement
 Definitions
 -------------------------------------------------------------------------------
 i. This Package is defined as all of the files within any archive file or any
-group of files released in conjunction by WedgeBox, or a derived or modified
+group of files released in conjunction by Wedgeward, or a derived or modified
 work based on such files.
 
 ii. A Modification, or a Mod, is defined as instructions, to be performed
@@ -20,9 +20,9 @@ derivative of this Package.
 v. The Software is defined as an installed copy of this Package, a Modified
 Package, or a derivative of this Package.
 
-vi. The WedgeBox Website is defined as http://www.wedgeforum.com/.
+vi. The Wedgeward Website is defined as http://www.wedgeforum.com/.
 
-vii. WedgeBox is defined as the copyright holders of the Wedge package
+vii. Wedgeward is defined as the copyright holders of the Wedge package
 (Peter Spicer and René-Gilles Deberdt), and the product of their association.
 
 Agreement
@@ -40,7 +40,9 @@ sold or released under any paid license. Copying fees for the transport of
 this Package, support fees for installation or other services, and hosting
 fees for hosting the Software may, however, be imposed.
 	d. Any Distribution of this Package, whether as a Modified Package
-or not, requires express written consent from WedgeBox.
+or not, requires express written consent from Wedgeward.
+	e. Your name is not Jonathan Valentin (aka "vbgamer45") or Alex Kühne
+(aka "Akyhne"). Yes, they're our official hall of shame.
 
 2. You may make Modifications to this Package or a derivative of it, and
 distribute your Modifications in a form that is separate from the Package,
@@ -48,23 +50,23 @@ such as patches. The following restrictions apply to Modifications:
 	a. A Modification must not alter or remove any copyright notices in
 the Software or Package, generated or otherwise.
 	b. When a Modification to the Package is released, a non-exclusive
-royalty-free right is granted to WedgeBox to distribute the Modification in
+royalty-free right is granted to Wedgeward to distribute the Modification in
 future versions of the Package provided such versions remain available under
 the terms of this Agreement in addition to any other license(s) of the
 initial developer.
 	c. Any Distribution of a Modified Package or derivative requires
-express written consent from WedgeBox.
+express written consent from Wedgeward.
 
 3. Permission is hereby also granted to distribute programs which depend on
 this Package, provided that you do not distribute any Modified Package
 without express written consent.
 
-4. WedgeBox reserves the right to change the terms of this Agreement
+4. Wedgeward reserves the right to change the terms of this Agreement
 at any time, although those changes are not retroactive to past releases.
 Changes to this document will be announced via email using the WedgeForum
 email notification list. Failure to receive notification of a change
 does not make those changes invalid. A current copy of this Agreement can be
-found on the WedgeBox Website.
+found on the Wedgeward Website.
 
 5. This Agreement will terminate automatically if you fail to comply with the
 limitations described herein. Upon termination, you must destroy all copies
@@ -78,5 +80,5 @@ EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR ANY DIRECT, INDIRECT,
 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY
 OUT OF THE USE OR MISUSE OF THIS PACKAGE.
 
-	Last Update: November 15, 2010
-	(c) 2010 by Wedgebox (Peter Spicer & René-Gilles Deberdt)
+	Last Update: December 18, 2010
+	(c) 2010 by Wedgeward (Peter Spicer & René-Gilles Deberdt)
