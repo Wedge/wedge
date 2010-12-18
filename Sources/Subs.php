@@ -2244,10 +2244,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 		if (!empty($buffers))
 			foreach ($buffers as $buffer_function)
-			{
 				if (function_exists(trim($buffer_function)))
 					ob_start(trim($buffer_function));
-			}
 
 		// Display the screen in the logical order.
 		template_header();
@@ -3007,8 +3005,6 @@ function template_header()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
-	wedge_cache_css();
-
 	$checked_securityFiles = false;
 	$showed_banned = false;
 	$showed_behav_error = false;
@@ -3108,6 +3104,36 @@ function theme_copyright()
 
 	// For SSI and other things, skip the version number.
 	echo sprintf($forum_copyright, empty($forum_version) ? 'Wedge' : $forum_version);
+}
+
+/**
+ * Shows the base CSS file, i.e. index.css and any other files added through {@link wedge_add_css()}.
+ */
+function theme_base_css()
+{
+	global $context;
+
+	// We only generate the cached file at the last moment (i.e. when first needed.)
+	if (empty($context['cached_css']))
+		wedge_cache_css();
+
+	echo '
+	<link rel="stylesheet" href="', $context['cached_css'], '" />';
+}
+
+/**
+ * Shows the base Javascript calls, i.e. including jQuery and script.js
+ * @param boolean $indenting Number of tabs on each new line. For the average anal-retentive web developer.
+ */
+function theme_base_js($indenting = 0)
+{
+	global $context;
+
+	$tab = str_repeat("\t", $indenting);
+	echo !empty($context['remote_javascript_files']) ? '
+' . $tab . '<script src="' . implode('"></script>
+' . $tab . '<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
+' . $tab . '<script src="', add_js_file($context['javascript_files'], false, true), '"></script>';
 }
 
 /**

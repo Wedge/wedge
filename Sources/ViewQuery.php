@@ -85,8 +85,8 @@ function ViewQuery()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<title>', $context['forum_name_html_safe'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $context['forum_name_html_safe'], '</title>',
+	theme_base_css(), '
 	<style>
 		body { margin: 1ex }
 		body, td, th, .normaltext { font-size: x-small }

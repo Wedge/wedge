@@ -162,13 +162,13 @@ function template_error_log()
 
 function template_show_file()
 {
-	global $context, $settings;
+	global $context;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<title>', $context['file_data']['file'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $context['file_data']['file'], '</title>',
+	theme_base_css(), '
 	<meta charset="utf-8" />
 </head>
 <body>

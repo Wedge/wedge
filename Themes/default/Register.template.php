@@ -472,8 +472,8 @@ function template_verification_sound()
 <head>
 	<meta charset="utf-8" />
 	<meta name="robots" content="noindex" />
-	<title>', $context['page_title'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $context['page_title'], '</title>',
+	theme_base_css(), '
 	<style>';
 
 	// Just show the help text and a "close window" link.

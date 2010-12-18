@@ -92,7 +92,7 @@ if (!defined('SMF'))
 
 	void VersionDetail()
 		- parses the comment headers in all files for their version information
-		  and outputs that for some javascript to check with simplemacines.org.
+		  and outputs that for some javascript to check with simplemachines.org.
 		- does not connect directly with simplemachines.org, but rather
 		  expects the client to.
 		- requires the admin_forum permission.
@@ -211,7 +211,8 @@ function ManageMaintenance()
 }
 
 // Supporting function for the database maintenance area.
-// !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
+// !!! We don't do anything here any more; there's no logic for this function any longer because the only branches it used to make are to do with
+//     setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
 	global $context, $modSettings, $txt;
@@ -699,7 +700,7 @@ function ConvertUtf8()
 	redirectexit('action=admin;area=maintain;done=convertutf8');
 }
 
-// !!! This entire function is going to be deprecated. Leaving it here for now as it will form part of the convertor later.
+// !!! This entire function is going to be deprecated. Leaving it here for now as it will form part of the converter later.
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {

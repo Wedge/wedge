@@ -3,7 +3,7 @@
 
 function template_popup()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $txt;
 
 	// Since this is a popup of its own we need to start the html, etc.
 	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
@@ -22,8 +22,8 @@ function template_popup()
 <head>
 	<meta charset="utf-8" />
 	<meta name="robots" content="noindex" />
-	<title>', $context['page_title'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $context['page_title'], '</title>',
+	theme_base_css(), '
 </head>
 <body id="help_popup">
 	<div class="windowbg description">

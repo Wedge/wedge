@@ -545,14 +545,17 @@ class wesql
 		if ($matches[1] === 'db_prefix')
 			return $db_prefix;
 
-		if ($matches[1] === 'query_see_topic')
-			return $user_info['query_see_topic'];
-
-		if ($matches[1] === 'query_see_board')
-			return $user_info['query_see_board'];
-
-		if ($matches[1] === 'query_wanna_see_board')
-			return $user_info['query_wanna_see_board'];
+		if (in_array($matches[1],
+			array(
+				'query_see_topic',
+				'query_see_board',
+				'query_wanna_see_board',
+				'query_see_album',
+				'query_see_album_nocheck',
+				'query_see_album_hidden'
+			)
+		))
+			return $user_info[$matches[1]];
 
 		if (!isset($matches[2]))
 			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);

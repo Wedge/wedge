@@ -794,15 +794,15 @@ function template_main()
 // The template for the spellchecker.
 function template_spellcheck()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $options, $txt;
 
 	// The style information that makes the spellchecker look... like the forum hopefully!
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
 	<meta charset="utf-8" />
-	<title>', $txt['spell_check'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $txt['spell_check'], '</title>',
+	theme_base_css(), '
 	<style>
 		body, td
 		{
@@ -830,10 +830,7 @@ function template_spellcheck()
 	</style>';
 
 	// As you may expect - we need a lot of Javascript for this... Load it from the separate files.
-	echo "\n", !empty($context['remote_javascript_files']) ? '
-	<script src="' . implode('"></script>
-	<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
-	<script src="', add_js_file($context['javascript_files'], false, true), '"></script>
+	echo theme_base_js(1), '
 	<script src="', add_js_file('scripts/spellcheck.js', false, true), '"></script>
 	<script><!-- // --><![CDATA[
 		var spell_formname = window.opener.spell_formname;

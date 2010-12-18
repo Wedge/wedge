@@ -75,8 +75,7 @@ function template_html_above()
 <!-- Powered by Wedge, (c) Wedgebox 2010 - http://wedgeforum.com -->
 <head>';
 
-	echo '
-	<link rel="stylesheet" href="', $context['cached_css'], '" />
+	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
 	<meta charset="utf-8" />
@@ -315,10 +314,7 @@ function template_html_below()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo "\n", !empty($context['remote_javascript_files']) ? '
-<script src="' . implode('"></script>
-<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
-<script src="', add_js_file($context['javascript_files'], false, true), '"></script>
+	echo "\n", theme_base_js(), '
 <script><!-- // --><![CDATA[
 	var smf_theme_url = "', $settings['theme_url'], '";
 	var smf_default_theme_url = "', $settings['default_theme_url'], '";
@@ -365,6 +361,7 @@ function template_html_below()
 
 	// Output any postponed Javascript added by templates
 	// and mods, and close all outstanding tags. We're done!
+	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], empty($footer_coding) ? '' : '
 // ]]></script>', $context['browser']['is_ie6'] ? '
 </div>' : '', '

@@ -710,8 +710,8 @@ function template_show_notice()
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
 	<meta charset="utf-8" />
-	<title>', $context['page_title'], '</title>
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/index.css" />
+	<title>', $context['page_title'], '</title>',
+	theme_base_css(), '
 </head>
 <body>
 	<div class="cat_bar">
@@ -732,7 +732,6 @@ function template_show_notice()
 	</div>
 </body>
 </html>';
-
 }
 
 // Add or edit a warning template.

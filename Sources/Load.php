@@ -1366,13 +1366,24 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif (!empty($modSettings['knownThemes']) && !allowedTo('admin_forum'))
 	{
 		$themes = explode(',', $modSettings['knownThemes']);
-		if (!in_array($id_theme, $themes))
-			$id_theme = $modSettings['theme_guests'];
-		else
-			$id_theme = (int) $id_theme;
+		$id_theme = in_array($id_theme, $themes) ? (int) $id_theme : $modSettings['theme_guests'];
 	}
 	else
 		$id_theme = (int) $id_theme;
+
+	// Time to determine our CSS list...
+	// First, load our requested styling folder.
+	$folders = isset($styling) ? explode('/', $styling) : array('css');
+	$context['css_folders'] = array();
+	$current_folder = $folders[0] == 'css' ? '' : '/css';
+	foreach ($folders as $folder)
+	{
+		$current_folder .= '/' . $folder;
+		$context['css_folders'][] = substr($current_folder, 1);
+	}
+
+	// Then, we need a list of generic CSS files.
+	$context['css_generic_files'] = array('index');
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 
@@ -1418,10 +1429,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 		if (!empty($themeData[-1]))
 			foreach ($themeData[-1] as $k => $v)
-			{
 				if (!isset($themeData[$member][$k]))
 					$themeData[$member][$k] = $v;
-			}
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 			cache_put_data('theme_settings-' . $id_theme . ':' . $member, $themeData, 60);
@@ -1699,21 +1708,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Set the character set from the template.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
-
-	// Time to determine our CSS list...
-
-	// First, load our requested styling folder.
-	$folders = isset($styling) ? explode('/', $styling) : array('css');
-	$context['css_folders'] = array();
-	$current_folder = $folders[0] == 'css' ? '' : '/css';
-	foreach ($folders as $folder)
-	{
-		$current_folder .= '/' . $folder;
-		$context['css_folders'][] = substr($current_folder, 1);
-	}
-
-	// Then, we need a list of generic CSS files.
-	$context['css_generic_files'] = array('index');
 
 	// Add any potential browser-based fixes.
 	if (!empty($context['browser']['agent']))
