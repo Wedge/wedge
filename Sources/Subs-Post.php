@@ -2658,4 +2658,135 @@ function user_info_callback($matches)
 	return $use_ref ? $ref : $matches[0];
 }
 
+/**
+ * If the user is saving a draft as part of action=post2, they come here.
+ *
+ * This function deals with all the saving of post drafts, regardless of anything else.
+ * - Verify that the user did actually press save draft (or that it came from auto save), that they're not a guest, that they're allowed and draft saving is on.
+ * - Sanitise it, just as we would for a post normally.
+ * - Kick the user back if the draft is empty.
+ * - If the draft id was supplied and it already exists, update it. Otherwise create a new one.
+ *
+ * @param bool $is_pm Whether we are saving a draft from a personal message or not.
+ * @param int $id_context A contextual id for the draft as a hook back to content. If it's a new PM or post, this will be 0. If a reply to a topic, the topic id, or if a reply to a PM, the conversation id.
+ * @return mixed False if the current state doesn't allow saving drafts, otherwise the saved draft id (0 if could not save), or to a fatal error in any other case.
+ */
+function saveDraft($is_pm, $id_context = 0)
+{
+	global $context, $txt, $board, $user_info, $modSettings;
+
+	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']))
+		return false;
+
+	// Clean up what we may or may not have
+	$subject = isset($_POST['subject']) ? $_POST['subject'] : '';
+	$message = isset($_POST['message']) ? $_POST['message'] : '';
+	$icon = isset($_POST['icon']) ? preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']) : 'xx';
+	$is_pm = (bool) $is_pm;
+	$id_context = (int) $id_context;
+
+	// Sanitise what we do have
+	$subject = westr::htmltrim(westr::htmlspecialchars($subject));
+	$message = westr::htmlspecialchars($message, ENT_QUOTES);
+	loadSource('Class-Editor'); // just in case
+	wedgeEditor::preparsecode($message);
+
+	if (westr::htmltrim(westr::htmlspecialchars($subject)) === '' && westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
+		fatal_lang_error('empty_draft', false);
+
+	$extra = array();
+
+	// Hrm, so is this a new draft or not?
+	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
+	if (!empty($_REQUEST['draft_id']))
+	{
+		// Does it exist already? Well, if so, we need to get its extra data because we might be updating it.
+		$query = wesql::query('
+			SELECT extra
+			FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND is_pm = {int:is_pm}
+				AND id_context = {int:draft_context}
+				AND id_member = {int:member}',
+			array(
+				'draft' => $_REQUEST['draft_id'],
+				'is_pm' => !empty($is_pm) ? 1 : 0,
+				'id_context' => $id_context,
+				'id_member' => $user_info['id'],
+			)
+		);
+
+		if ($row = wesql::fetch_row($query))
+		{
+			$extra = empty($row[0]) ? array() : unserialize($row[0]);
+			$found = true;
+		}
+		wesql::free_result($query);
+	}
+
+	// OK, so we either know it's a new draft, or we know we have the old one and have grabbed the mystical metadata. Now we update that either way.
+	if (!$is_pm)
+	{
+		$extra['post_icon'] = $icon;
+		$extra['smileys_enabled'] = !isset($_POST['ns']) ? 1 : 0;
+		// !!! Locking, sticky?
+	}
+	$extra = serialize($extra);
+
+	if (!empty($found))
+	{
+		wesql::query('
+			UPDATE {db_prefix}drafts
+			SET subject = {string:subject},
+				body = {string:body},
+				post_time = {int:post_time},
+				extra = {string:extra}
+			WHERE id_draft = {int:draft}
+				AND is_pm = {int:is_pm}
+				AND id_context = {int:draft_context}
+				AND id_member = {int:member}',
+			array(
+				'subject' => $subject,
+				'body' => $message,
+				'post_time' => time(),
+				'extra' => $extra,
+				'id_draft' => $_REQUEST['draft_id'],
+				'id_member' => $user_info['id'],
+				'is_pm' => !empty($is_pm) ? 1 : 0,
+				'id_context' => $id_context,
+			)
+		);
+
+		if (wesql::affected_rows() != 0)
+			return $_REQUEST['draft_id'];
+	}
+
+	// Guess it is a new draft after all
+	wesql::insert('insert',
+		'{db_prefix}drafts',
+		array(
+			'id_member' => 'int',
+			'subject' => 'string',
+			'body' => 'string',
+			'post_time' => 'int',
+			'is_pm' => 'int',
+			'id_board' => 'int',
+			'id_context' => 'int',
+			'extra' => 'string',
+		),
+		array(
+			$user_info['id'],
+			$subject,
+			$message,
+			time(),
+			!empty($is_pm) ? 1 : 0,
+			$board,
+			$id_context,
+			$extra,
+		),
+		array('id_draft')
+	);
+
+	return wesql::insert_id();
+}
 ?>

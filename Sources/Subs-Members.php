@@ -387,6 +387,15 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
+	// Delete drafts.
+	wesql::query('
+		DELETE FROM {db_prefix}drafts
+		WHERE id_member IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
+
 	// Delete avatar.
 	loadSource('ManageAttachments');
 	removeAttachments(array('id_member' => $users));

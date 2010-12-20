@@ -58,10 +58,11 @@ class wedgeEditor
 			'height' => isset($editorOptions['height']) ? $editorOptions['height'] : '200px',
 			'form' => isset($editorOptions['form']) ? $editorOptions['form'] : 'postmodify',
 			'bbc_level' => !empty($editorOptions['bbc_level']) ? $editorOptions['bbc_level'] : 'full',
-			'preview_type' => isset($editorOptions['preview_type']) ? (int) $editorOptions['preview_type'] : 1,
+			'buttons' => !empty($editorOptions['buttons']) ? $editorOptions['buttons'] : array(),
 			'labels' => !empty($editorOptions['labels']) ? $editorOptions['labels'] : array(),
 			'custom_bbc_div' => !empty($editorOptions['custom_bbc_div']) ? $editorOptions['custom_bbc_div'] : '',
 			'custom_smiley_div' => !empty($editorOptions['custom_smiley_div']) ? $editorOptions['custom_smiley_div'] : '',
+			'drafts' => !empty($editorOptions['drafts']) ? $editorOptions['drafts'] : 'none',
 		);
 
 		// Stuff to do once per page only.
@@ -117,7 +118,18 @@ class wedgeEditor
 		if (isset($this->editorOptions[$name]))
 			return $this->editorOptions[$name];
 		else
-			return false;
+			return NULL;
+	}
+
+	public static function add_button($name, $button_text, $onclick = '', $access_key = '')
+	{
+		// This allows us to add buttons to it from code side since we don't let users manipulate this array directly otherwise.
+		$this->editorOptions['buttons'][] = array(
+			'name' => $name,
+			'button_text' => $button_text,
+			'onclick' => $onclick,
+			'access_key' => $access_key,
+		);
 	}
 
 	public static function bbc_to_html($text)
@@ -2467,14 +2479,17 @@ class wedgeEditor
 
 	public function outputButtons()
 	{
-		global $context, $settings, $options, $txt, $modSettings, $scripturl;
+		global $context, $txt;
 
-		echo '
-		<input type="submit" value="', isset($this->labels['post_button']) ? $this->labels['post_button'] : $txt['post'], '" tabindex="', $context['tabindex']++, '" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />';
-
-		if ($this->preview_type)
+		foreach ($this->editorOptions['buttons'] as $button)
 			echo '
-		<input type="submit" name="preview" value="', isset($this->labels['preview_button']) ? $this->labels['preview_button'] : $txt['preview'], '" tabindex="', $context['tabindex']++, '" onclick="', $this->preview_type == 2 ? 'return event.ctrlKey || previewPost();' : 'return submitThisOnce(this);', '" accesskey="p" class="button_submit" />';
+		<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', (!empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : ''), (!empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : ''), ' class="button_submit" />';
+
+		// These two buttons get added semimagically rather than not.
+		if ($this->editorOptions['drafts'] != 'none')
+			echo '
+		<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '" />
+		<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && submitThisOnce(this);" accesskey="d" class="button_submit" />';
 
 		if ($context['show_spellchecking'])
 			echo '

@@ -297,6 +297,74 @@ function template_summary()
 </div>';
 }
 
+// Template for showing all the user's drafts.
+function template_showDrafts()
+{
+	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+
+	echo '
+		<div class="cat_bar">
+			<h3>
+				<img src="', $settings['images_url'], '/icons/im_newmsg.gif" />
+				', $txt['showDrafts'], ' - ', $context['member']['name'], '
+			</h3>
+		</div>
+		<div class="pagesection">
+			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		</div>';
+
+	// Button shortcuts
+	$edit_button = create_button('modify_inline.gif', 'edit_draft', 'edit_draft', 'align="middle"');
+	$remove_button = create_button('delete.gif', 'remove_draft', 'remove_draft', 'align="middle"');
+
+	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
+
+	// For every post to be displayed, give it its own subtable, and show the important details of the post.
+	foreach ($context['posts'] as $post)
+	{
+		echo '
+		<div class="topic">
+			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
+				<div class="counter">', $post['counter'], '</div>
+				<div class="topic_details">
+					<h5><strong>', $post['board']['link'], ' / ', $post['topic']['link'], '</strong></h5>
+					<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+				</div>
+				<div class="list_posts">
+					', $post['body'], '
+				</div>';
+
+		if (!empty($post['topic']['id']) && empty($post['topic']['original_topic']))
+			echo '
+				<br />
+				<span class="smalltext">', $txt['topic_no_longer_available'], '</span>';
+
+		echo '
+				<div class="floatright">
+					<ul class="reset smalltext quickbuttons">
+						<li class="reply_button"><a href="', $scripturl . '?action=post;', (empty($post['topic']['original_topic']) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic']), '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
+						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showposts;sa=drafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
+					</ul>
+				</div>
+				<br class="clear" />
+			</div>
+		</div>';
+	}
+
+	// No drafts? Just end the table with a informative message.
+	if (empty($context['posts']))
+		echo '
+		<div class="tborder windowbg2 padding centertext">
+			', $txt['show_drafts_none'], '
+		</div>';
+
+	// Show more page numbers.
+	echo '
+		<div class="pagesection" style="margin-bottom: 0;">
+			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		</div>';
+}
+
 // Template for showing all the posts of the user, in chronological order.
 function template_showPosts()
 {

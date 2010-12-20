@@ -5,6 +5,12 @@ function template_main()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
+	if ($context['draft_saved'])
+		echo '
+			<div class="windowbg" id="profile_success">
+				', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
+			</div>';
+			
 	echo '
 	<a id="top"></a>';
 

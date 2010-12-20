@@ -214,6 +214,13 @@ function Post2()
 		if (isset($_POST['sticky']) && (empty($modSettings['enableStickyTopics']) || $_POST['sticky'] == $topic_info['is_sticky'] || !allowedTo('make_sticky')))
 			unset($_POST['sticky']);
 
+		if (isset($_REQUEST['draft']))
+		{
+			$draft = saveDraft(false, $topic);
+			if (!empty($draft) && !in_array('session_timeout', $post_errors))
+				redirectexit('draftsaved;topic=' . $topic . '.msg' . $topic_info['id_last_msg'] . '#msg' . $topic_info['id_last_msg']);
+		}
+
 		// If the number of replies has changed, if the setting is enabled, go back to Post() - which handles the error.
 		if (empty($options['no_new_reply_warning']) && isset($_POST['last_msg']) && $topic_info['id_last_msg'] > $_POST['last_msg'])
 		{
@@ -254,6 +261,14 @@ function Post2()
 			unset($_POST['sticky']);
 
 		$posterIsGuest = $user_info['is_guest'];
+
+		// Are we saving a draft? If so, hand over control to the draft code -- except, in the case of a session failure
+		if (isset($_REQUEST['draft']))
+		{
+			$draft = saveDraft(false, false); // technically, it's 0 but there's something semantically feel-good about saying false here, that we don't have a 'context'/topic.
+			if (!empty($draft) && !in_array('session_timeout', $post_errors))
+				redirectexit('draftsaved;board=' . $board . '.0');
+		}
 	}
 	// Modifying an existing message?
 	elseif (isset($_REQUEST['msg']) && !empty($topic))
@@ -934,6 +949,19 @@ function Post2()
 				sendNotifications($topic, 'reply', array(), $topic_info['id_member_started']);
 		}
 	}
+
+	// Um, did this come from a draft? If so, bye bye.
+	if (!empty($_POST['draft_id']) && !empty($user_info['id']))
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+			LIMIT 1',
+			array(
+				'draft' => (int) $_POST['draft_id'],
+				'member' => $user_info['id'],
+			)
+		);
 
 	// Returning to the topic?
 	if (!empty($_REQUEST['goback']))

@@ -392,6 +392,9 @@ function Display()
 	// Did we report a post to a moderator just now?
 	$context['report_sent'] = isset($_GET['reportsent']);
 
+	// Did someone save a conventional draft?
+	$context['draft_saved'] = isset($_GET['draftsaved']);
+
 	// Let's get nosey, who is viewing this topic?
 	if (!empty($settings['display_who_viewing']))
 	{
@@ -1134,13 +1137,24 @@ function Display()
 			array(
 				'id' => 'message',
 				'value' => '',
-				'labels' => array(
-					'post_button' => $txt['post'],
+				'buttons' => array(
+					array(
+						'name' => 'post_button',
+						'button_text' => $txt['post'],
+						'onclick' => 'return submitThisOnce(this);',
+						'accesskey' => 's',
+					),
+					array(
+						'name' => 'preview',
+						'button_text' => $txt['preview'],
+						'onclick' => 'return submitThisOnce(this);',
+						'accesskey' => 'p',
+					),
 				),
 				// Add height and width for the editor
 				'height' => '100px',
 				'width' => '100%',
-				'preview_type' => 1,
+				'drafts' => (!allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts'])) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic' : 'auto'),
 				// Now, since we're custom styling these, we need our own divs. For shame!
 				'custom_bbc_div' => 'bbcBox_message',
 				'custom_smiley_div' => 'smileyBox_message',

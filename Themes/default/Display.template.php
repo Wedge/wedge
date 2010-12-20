@@ -12,6 +12,13 @@ function template_main()
 				', $txt['report_sent'], '
 			</div>';
 
+	// Or let them know if their draft was saved.
+	elseif ($context['draft_saved'])
+		echo '
+			<div class="windowbg" id="profile_success">
+				', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
+			</div>';
+
 	// Show the anchor for the top and for the first message. If the first message is new, say so.
 	echo '
 			<a id="top"></a>

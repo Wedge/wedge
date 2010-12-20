@@ -350,6 +350,13 @@ function ModifyTopicSettings($return_config = false)
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),
 			array('check', 'enablePreviousNext'),
+		'',
+			// Drafts
+			array('check', 'masterSavePostDrafts', 'subtext' => $txt['draftsave_subnote']),
+			array('check', 'masterAutoSavePostDrafts', 'subtext' => $txt['draftautosave_subnote']),
+			array('check', 'masterSavePmDrafts', 'subtext' => $txt['draftsave_subnote']),
+			array('check', 'masterAutoSavePmDrafts', 'subtext' => $txt['draftautosave_subnote']),
+			array('int', 'masterAutoSaveDraftsDelay', 'postinput' => $txt['manageposts_seconds']),
 
 	);
 

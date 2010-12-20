@@ -1111,6 +1111,39 @@ function Post()
 	$context['subject'] = addcslashes($form_subject, '"');
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 
+	// Hang on, we might be loading a draft.
+	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
+	if (!empty($_REQUEST['draft_id']) && !empty($user_info['id']) && allowedTo('save_post_draft') && empty($_POST['subject']) && empty($_POST['message']))
+	{
+		$query = wesql::query('
+			SELECT subject, body, extra
+			FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+				AND is_pm = {int:not_pm}
+			LIMIT 1',
+			array(
+				'draft' => $_REQUEST['draft_id'],
+				'member' => $user_info['id'],
+				'not_pm' => 0,
+			)
+		);
+
+		if ($row = wesql::fetch_assoc($query))
+		{
+			// OK, we have a draft in storage for this post. Let's get down and dirty with it.
+			$context['subject'] = $row['subject'];
+			$context['message'] = wedgeEditor::un_preparsecode($row['body']);
+			$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
+			$context['use_smileys'] = !empty($row['extra']['smileys_enabled']);
+			$context['icon'] = empty($row['extra']['post_icon']) ? 'xx' : $row['extra']['post_icon'];
+			
+			// !!! Locked, sticky
+		}
+
+		wesql::free_result($query);
+	}
+
 	// Now create the editor.
 	$context['postbox'] = new wedgeEditor(
 		array(
@@ -1119,11 +1152,24 @@ function Post()
 			'labels' => array(
 				'post_button' => $context['submit_label'],
 			),
+			'buttons' => array(
+				array(
+					'name' => 'post_button',
+					'button_text' => $context['submit_label'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 's',
+				),
+				array(
+					'name' => 'preview',
+					'button_text' => $txt['preview'],
+					'onclick' => 'return event.ctrlKey || previewPost();',
+					'accesskey' => 'p',
+				),
+			),
 			// add height and width for the editor
 			'height' => '175px',
 			'width' => '100%',
-			// We do XML preview here.
-			'preview_type' => 2,
+			'drafts' => (!allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts'])) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic' : 'auto'),
 		)
 	);
 

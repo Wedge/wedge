@@ -30,6 +30,9 @@ if (!defined('SMF'))
 	void summary(int id_member)
 		// !!!
 
+	void showDrafts(int id_member)
+		// !!!
+
 	void showPosts(int id_member)
 		// !!!
 
@@ -252,6 +255,141 @@ function summary($memID)
 	}
 
 	loadCustomFields($memID);
+}
+
+// View the drafts of the user.
+function viewDrafts($memID)
+{
+	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
+
+	// Attempt to load the member's profile data.
+	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
+		fatal_lang_error('not_a_user', false);
+
+	// Some initial context.
+	$context['start'] = (int) $_REQUEST['start'];
+	$context['current_member'] = $memID;
+	$context['sub_template'] = 'showDrafts';
+
+	// Are we deleting any drafts here?
+	if (!empty($_GET['delete']))
+	{
+		$draft_id = (int) $_GET['delete'];
+		checkSession('get');
+		
+		wesql::query('
+			DELETE FROM {db_prefix}post_drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+			LIMIT 1',
+			array(
+				'draft' => $draft_id,
+				'member' => $user_info['id'],
+			)
+		);
+
+		redirectexit('action=profile;u=' . $memID . ';area=showdrafts');
+	}
+
+	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
+		$_REQUEST['viewscount'] = 10;
+
+	// Get the count of applicable drafts
+	$request = wesql::query('
+		SELECT COUNT(id_draft)
+		FROM {db_prefix}drafts AS d
+		WHERE id_member = {int:member}
+			AND is_pm = {int:not_pm}',
+		array(
+			'member' => $memID,
+			'not_pm' => 0,
+		)
+	);
+	list ($msgCount) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	$reverse = false;
+	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+
+	// Make sure the starting place makes sense and construct our friend the page index.
+	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['current_page'] = $context['start'] / $maxIndex;
+
+	// Reverse the query if we're past 50% of the pages for better performance.
+	$start = $context['start'];
+	$reverse = $_REQUEST['start'] > $msgCount / 2;
+	if ($reverse)
+	{
+		$maxIndex = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $modSettings['defaultMaxMessages'];
+		$start = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $modSettings['defaultMaxMessages'];
+	}
+
+	// Find this user's drafts.
+	$request = wesql::query('
+		SELECT
+			b.id_board, b.name AS bname, t.id_topic, d.id_draft, d.subject, d.body,
+			d.post_time, d.id_context, d.extra
+		FROM {db_prefix}drafts AS d
+			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = d.id_board AND {query_see_board})
+			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = d.id_context AND t.id_board = b.id_board AND {query_see_board})
+		WHERE d.id_member = {int:current_member}
+			AND d.is_pm = {int:not_pm}
+		ORDER BY d.post_time ' . ($reverse ? 'ASC' : 'DESC') . '
+		LIMIT ' . $start . ', ' . $maxIndex,
+		array(
+			'current_member' => $memID,
+			'not_pm' => 0,
+		)
+	);
+
+	// Start counting at the number of the first message displayed.
+	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
+	$context['posts'] = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		// Censor....
+		if (empty($row['body']))
+			$row['body'] = '';
+
+		$row['subject'] = westr::htmltrim($row['subject']);
+		if (empty($row['subject']))
+			$row['subject'] = $txt['no_subject'];
+
+		$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
+
+		censorText($row['body']);
+		censorText($row['subject']);
+
+		// Do the code.
+		$row['body'] = parse_bbc($row['body'], empty($row['extra']['smileys_enabled']) ? 0 : 1, 'draft' . $row['id_draft']);
+
+		// And the array...
+		$context['posts'][$counter += $reverse ? -1 : 1] = array(
+			'id' => $row['id_draft'],
+			'subject' => $row['subject'],
+			'body' => $row['body'],
+			'counter' => $counter,
+			'alternate' => $counter % 2,
+			'board' => array(
+				'id' => $row['id_board'],
+				'name' => empty($row['bname']) ? $txt['drafts_noboard'] : $row['bname'],
+				'link' => empty($row['bname']) ? $txt['drafts_noboard'] : '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>',
+			),
+			'topic' => array(
+				'id' => $row['id_context'],
+				'original_topic' => $row['id_topic'],
+				'link' => empty($row['id_topic']) ? $row['subject'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+			),
+			'time' => timeformat($row['post_time']),
+			'timestamp' => forum_time(true, $row['post_time']),
+			'icon' => $row['extra']['post_icon'],
+		);
+	}
+	wesql::free_result($request);
+
+	// All posts were retrieved in reverse order, get them right again.
+	if ($reverse)
+		$context['posts'] = array_reverse($context['posts'], true);
 }
 
 // !!! This function needs to be split up properly.

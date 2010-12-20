@@ -1781,8 +1781,19 @@ function MessagePost()
 			'value' => $context['message'],
 			'height' => '175px',
 			'width' => '100%',
-			'labels' => array(
-				'post_button' => $txt['send_message'],
+			'buttons' => array(
+				array(
+					'name' => 'post_button',
+					'button_text' => $txt['send_message'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 's',
+				),
+				array(
+					'name' => 'preview',
+					'button_text' => $txt['preview'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 'p',
+				),
 			),
 		)
 	);
@@ -1928,8 +1939,19 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 			'id' => 'message',
 			'value' => $context['message'],
 			'width' => '90%',
-			'labels' => array(
-				'post_button' => $txt['send_message'],
+			'buttons' => array(
+				array(
+					'name' => 'post_button',
+					'button_text' => $txt['send_message'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 's',
+				),
+				array(
+					'name' => 'preview',
+					'button_text' => $txt['preview'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 'p',
+				),
 			),
 		)
 	);

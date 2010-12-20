@@ -95,6 +95,8 @@ function ModifyProfile($post_errors = array())
 				array $subsections:	Array of subsections, in order of appearance.
 				array $permission:	Array of permissions to determine who can access this area. Should contain arrays $own and $any.
 	*/
+	$temp = boardsAllowedTo('save_post_draft');
+
 	$profile_areas = array(
 		'info' => array(
 			'title' => $txt['profileInfo'],
@@ -108,13 +110,14 @@ function ModifyProfile($post_errors = array())
 						'any' => 'profile_view_any',
 					),
 				),
-				'statistics' => array(
-					'label' => $txt['statPanel'],
+				'showdrafts' => array(
+					'label' => $txt['showDrafts'],
 					'file' => 'Profile-View',
-					'function' => 'statPanel',
+					'function' => 'viewDrafts',
+					'enabled' => !empty($modSettings['masterSavePostDrafts']) && !empty($temp), // so there is at least one board this user has this permission on
 					'permission' => array(
 						'own' => 'profile_view_own',
-						'any' => 'profile_view_any',
+						'any' => array(),
 					),
 				),
 				'showposts' => array(
@@ -126,6 +129,15 @@ function ModifyProfile($post_errors = array())
 						'topics' => array($txt['showTopics'], array('profile_view_own', 'profile_view_any')),
 						'attach' => array($txt['showAttachments'], array('profile_view_own', 'profile_view_any')),
 					),
+					'permission' => array(
+						'own' => 'profile_view_own',
+						'any' => 'profile_view_any',
+					),
+				),
+				'statistics' => array(
+					'label' => $txt['statPanel'],
+					'file' => 'Profile-View',
+					'function' => 'statPanel',
 					'permission' => array(
 						'own' => 'profile_view_own',
 						'any' => 'profile_view_any',

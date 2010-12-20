@@ -59,6 +59,9 @@ function MessageIndex()
 	else
 		loadTemplate('MessageIndex');
 
+	// Did someone save a conventional draft of a new topic?
+	$context['draft_saved'] = isset($_GET['draftsaved']);
+
 	$context['name'] = $board_info['name'];
 	$context['description'] = $board_info['description'];
 	// How many topics do we have in total?
