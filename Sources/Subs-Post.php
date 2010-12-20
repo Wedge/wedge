@@ -2729,6 +2729,7 @@ function saveDraft($is_pm, $id_context = 0)
 	{
 		$extra['post_icon'] = $icon;
 		$extra['smileys_enabled'] = !isset($_POST['ns']) ? 1 : 0;
+
 		// !!! Locking, sticky?
 	}
 	$extra = serialize($extra);

@@ -95,6 +95,7 @@ function ModifyProfile($post_errors = array())
 				array $subsections:	Array of subsections, in order of appearance.
 				array $permission:	Array of permissions to determine who can access this area. Should contain arrays $own and $any.
 	*/
+
 	$temp = boardsAllowedTo('save_post_draft');
 
 	$profile_areas = array(

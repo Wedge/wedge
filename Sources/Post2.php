@@ -218,7 +218,7 @@ function Post2()
 		{
 			$draft = saveDraft(false, $topic);
 			if (!empty($draft) && !in_array('session_timeout', $post_errors))
-				redirectexit('draftsaved;topic=' . $topic . '.msg' . $topic_info['id_last_msg'] . '#msg' . $topic_info['id_last_msg']);
+				redirectexit('topic=' . $topic . '.msg' . $topic_info['id_last_msg'] . ';draftsaved#msg' . $topic_info['id_last_msg']);
 		}
 
 		// If the number of replies has changed, if the setting is enabled, go back to Post() - which handles the error.
@@ -267,7 +267,7 @@ function Post2()
 		{
 			$draft = saveDraft(false, false); // technically, it's 0 but there's something semantically feel-good about saying false here, that we don't have a 'context'/topic.
 			if (!empty($draft) && !in_array('session_timeout', $post_errors))
-				redirectexit('draftsaved;board=' . $board . '.0');
+				redirectexit('board=' . $board . '.0;draftsaved');
 		}
 	}
 	// Modifying an existing message?
