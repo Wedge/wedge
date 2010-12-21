@@ -78,10 +78,10 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 .bbc_button {
 	padding: 0 2px;
 }
-h4.linkOver {
+h4.hove {
 	background: #dbd7d2 url(../images/menu.gif) no-repeat 98% 2px;
 }
-li.linkOver {
+li.hove {
 	background: #dbd7d2;
 }
 #context_menus h4:hover {

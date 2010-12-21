@@ -480,7 +480,7 @@ class wesql
 		fatal_error($context['error_message'], false);
 	}
 
-	public static function insert($method = 'replace', $table, $columns, $data, $keys, $disable_trans = false, $connection = null)
+	public static function insert($method, $table, $columns, $data, $keys = null, $disable_trans = false, $connection = null)
 	{
 		global $db_prefix;
 
@@ -501,6 +501,12 @@ class wesql
 		$insertData = '(';
 		foreach ($columns as $columnName => $type)
 		{
+			// Didn't we bother to specify column types? (Media area... Lazy ass!)
+			if (is_int($columnName))
+			{
+				$columnName = $type;
+				$type = is_int($type) ? 'int' : 'string';
+			}
 			// Are we restricting the length?
 			if (strpos($type, 'string-') !== false)
 				$insertData .= sprintf('SUBSTRING({string:%1$s}, 1, ' . substr($type, 7) . '), ', $columnName);

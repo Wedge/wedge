@@ -118,7 +118,7 @@ class wedgeEditor
 		if (isset($this->editorOptions[$name]))
 			return $this->editorOptions[$name];
 		else
-			return NULL;
+			return null;
 	}
 
 	public static function add_button($name, $button_text, $onclick = '', $access_key = '')

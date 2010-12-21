@@ -419,34 +419,20 @@ function template_main()
 	var mouse_on_div;
 	function modify_topic_click()
 	{
-		if (in_edit_mode == 1 && mouse_on_div == 0)
+		if (is_editing() && mouse_on_div == 0)
 			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
 	}
 
-	function modify_topic_keypress(oEvent)
+	function modify_topic_keypress(e)
 	{
-		if (typeof(oEvent.keyCode) != "undefined" && oEvent.keyCode == 13)
+		if (typeof(e.keyCode) != "undefined" && e.keyCode == 13)
 		{
 			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
-			if (typeof(oEvent.preventDefault) == "undefined")
-				oEvent.returnValue = false;
+			if (typeof(e.preventDefault) == "undefined")
+				e.returnValue = false;
 			else
-				oEvent.preventDefault();
+				e.preventDefault();
 		}
-	}
-
-	// For templating, shown when an inline edit is made.
-	function modify_topic_show_edit(subject)
-	{
-		// Just template the subject.
-		cur_subject_div.innerHTML = \'<input type="text" name="subject" value="\' + subject + \'" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);" class="input_text" /><input type="hidden" name="topic" value="\' + cur_topic_id + \'" /><input type="hidden" name="msg" value="\' + cur_msg_id.substr(4) + \'" />\';
-	}
-
-	// And the reverse for hiding it.
-	function modify_topic_hide_edit(subject)
-	{
-		// Re-template the subject!
-		cur_subject_div.innerHTML = \'<a href="' . $scripturl . '?topic=\' + cur_topic_id + \'.0">\' + subject + \'<\' +\'/a>\';
 	}');
 }
 

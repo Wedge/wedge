@@ -205,20 +205,22 @@ function nextWord(ignoreall)
 	// Increment the counter for the array of misspelled words.
 	wordindex++;
 
+	var spellingForm = document.forms.spellingForm;
+
 	// Draw it and quit if there are no more misspelled words to evaluate.
 	if (misps.length <= wordindex)
 	{
 		$("#spellview").html(htmlspecialchars(mispstr).replace(/_\|_/g, "<br />"));
 
-		while (document.forms.spellingForm.suggestions.options.length > 0)
-			document.forms.spellingForm.suggestions.options[0] = null;
+		while (spellingForm.suggestions.options.length > 0)
+			spellingForm.suggestions.options[0] = null;
 
 		alert(txt.done);
 
-		document.forms.spellingForm.change.disabled = true;
-		document.forms.spellingForm.changeall.disabled = true;
-		document.forms.spellingForm.ignore.disabled = true;
-		document.forms.spellingForm.ignoreall.disabled = true;
+		spellingForm.change.disabled = true;
+		spellingForm.changeall.disabled = true;
+		spellingForm.ignore.disabled = true;
+		spellingForm.ignoreall.disabled = true;
 
 		// Put line feeds back...
 		mispstr = mispstr.replace(/_\|_/g, "\n");
@@ -242,8 +244,8 @@ function nextWord(ignoreall)
 	}
 
 	// Clear out the suggestions box!
-	while (document.forms.spellingForm.suggestions.options.length > 0)
-		document.forms.spellingForm.suggestions.options[0] = null;
+	while (spellingForm.suggestions.options.length > 0)
+		spellingForm.suggestions.options[0] = null;
 
 	// Re-populate the suggestions box if there are any suggested spellings for the word.
 	if (misps[wordindex].suggestions.length)
@@ -251,19 +253,19 @@ function nextWord(ignoreall)
 		for (var sugidx = 0; sugidx < misps[wordindex].suggestions.length; sugidx++)
 		{
 			var newopt = new Option(misps[wordindex].suggestions[sugidx], misps[wordindex].suggestions[sugidx]);
-			document.forms.spellingForm.suggestions.options[sugidx] = newopt;
+			spellingForm.suggestions.options[sugidx] = newopt;
 
 			if (sugidx == 0)
 			{
 				newopt.selected = true;
-				document.forms.spellingForm.changeto.value = newopt.value;
-				document.forms.spellingForm.changeto.select();
+				spellingForm.changeto.value = newopt.value;
+				spellingForm.changeto.select();
 			}
 		}
 	}
 
-	if (document.forms.spellingForm.suggestions.options.length == 0)
-		document.forms.spellingForm.changeto.value = "";
+	if (spellingForm.suggestions.options.length == 0)
+		spellingForm.changeto.value = "";
 
 	highlightWord();
 

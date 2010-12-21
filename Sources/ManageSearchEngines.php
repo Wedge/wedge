@@ -447,7 +447,7 @@ function SpiderCheck()
 	if (!empty($modSettings['cache_enable']))
 		$spider_data = cache_get_data('spider_search', 300);
 
-	if (!isset($spider_data) || $spider_data === NULL)
+	if (!isset($spider_data) || $spider_data === null)
 	{
 		$request = wesql::query('
 			SELECT id_spider, user_agent, ip_info

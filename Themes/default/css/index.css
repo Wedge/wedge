@@ -459,7 +459,7 @@ em {
 }
 .menu li li li { font-size: .95em }
 
-.css h4:hover, h4.linkOver {
+.css h4:hover, h4.hove {
 	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
 	background-color: rgba(128, 128, 128, .15);
 	color: #000;
@@ -479,7 +479,7 @@ li.subsection > a {
 	padding: 6px 24px 6px 8px;
 	background: url(../images/menu.gif) no-repeat 98% -46px;
 }
-.css > li li:hover, li.linkOver {
+.css > li li:hover, li.hove {
 	color: #000;
 	border-radius: 0 9px 9px 0;
 	-moz-border-radius: 0 9px 9px 0;
@@ -490,7 +490,7 @@ li.subsection > a:hover {
 	background: url(../images/menu.gif) no-repeat 98% -46px !important;
 }
 
-.css > li li:hover, li.linkOver, li.subsection > a:hover {
+.css > li li:hover, li.hove, li.subsection > a:hover {
 	background-color: #ebe7e2;
 	background-color: rgba(128, 128, 128, .15);
 }
@@ -1374,6 +1374,12 @@ form.wrc {
 	padding: .5em;
 }
 #helf {
+	max-height: 90%;
+}
+#helf a {
+	text-decoration: underline;
+}
+#helf > div {
 	box-shadow: 2px 2px 8px 0 #bbb;
 	-moz-box-shadow: 2px 2px 5px 0 #bbb;
 	-webkit-box-shadow: 2px 2px 5px 0 #bbb;

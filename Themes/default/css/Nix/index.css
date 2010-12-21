@@ -102,10 +102,10 @@ body {
 #main_menu li.nodrop h4 {
 	background-image: none;
 }
-#main_menu h4:hover, #main_menu h4.linkOver {
+#main_menu h4:hover, #main_menu h4.hove {
 	background: #5a6c85 url(../../images/menu.gif) no-repeat 98% -28px;
 }
-#main_menu h4:hover a, #main_menu h4.linkOver a {
+#main_menu h4:hover a, #main_menu h4.hove a {
 	color: white;
 }
 #main_menu li.chosen h4, #context_menus li.chosen h4 {

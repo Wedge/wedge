@@ -1,23 +1,42 @@
 
-var cur_topic_id, cur_msg_id, buff_subject, cur_subject_div, in_edit_mode = 0;
+var _cur_topic_id, _cur_msg_id, _buff_subject, _cur_subject_div, _in_edit_mode = 0;
 var hide_prefixes = [];
+
+function is_editing()
+{
+	return _in_edit_mode == 1;
+}
+
+// For templating, shown when an inline edit is made.
+function modify_topic_show_edit(subject)
+{
+	// Just template the subject.
+	_cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);" class="input_text" /><input type="hidden" name="topic" value="' + _cur_topic_id + '" /><input type="hidden" name="msg" value="' + _cur_msg_id.substr(4) + '" />');
+}
+
+// And the reverse for hiding it.
+function modify_topic_hide_edit(subject)
+{
+	// Re-template the subject!
+	_cur_subject_div.html('<a href="' + smf_prepareScriptUrl(smf_scripturl) + 'topic=' + _cur_topic_id + '.0">' + subject + '</a>');
+}
 
 function modify_topic(topic_id, first_msg_id)
 {
 	if (!can_ajax)
 		return;
 
-	if (in_edit_mode == 1)
+	if (_in_edit_mode == 1)
 	{
-		if (cur_topic_id == topic_id)
+		if (_cur_topic_id == topic_id)
 			return;
 		else
 			modify_topic_cancel();
 	}
 
-	in_edit_mode = 1;
 	mouse_on_div = 1;
-	cur_topic_id = topic_id;
+	_in_edit_mode = 1;
+	_cur_topic_id = topic_id;
 
 	if (typeof window.ajax_indicator == "function")
 		ajax_indicator(true);
@@ -26,10 +45,10 @@ function modify_topic(topic_id, first_msg_id)
 
 function onDocReceived_modify_topic(XMLDoc)
 {
-	cur_msg_id = ($('message', XMLDoc).attr('id')[0]).substr(4);
+	_cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
 
-	cur_subject_div = $('#msg_' + cur_msg_id);
-	buff_subject = cur_subject_div.html();
+	_cur_subject_div = $('#msg_' + _cur_msg_id);
+	_buff_subject = _cur_subject_div.html();
 
 	// Here we hide any other things they want hiding on edit.
 	set_hidden_topic_areas('none');
@@ -41,26 +60,26 @@ function onDocReceived_modify_topic(XMLDoc)
 
 function modify_topic_cancel()
 {
-	cur_subject_div.html(buff_subject);
+	_cur_subject_div.html(_buff_subject);
 	set_hidden_topic_areas('');
 
-	in_edit_mode = 0;
+	_in_edit_mode = 0;
 	return false;
 }
 
 function modify_topic_save(cur_session_id, cur_session_var)
 {
-	if (!in_edit_mode)
+	if (!_in_edit_mode)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
 	x[x.length] = 'subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
-	x[x.length] = 'topic=' + parseInt(qm.elements.topic.value, 10);
-	x[x.length] = 'msg=' + parseInt(qm.elements.msg.value, 10);
+	x[x.length] = 'topic=' + qm.elements.topic.value;
+	x[x.length] = 'msg=' + qm.elements.msg.value;
 
 	if (typeof window.ajax_indicator == "function")
 		ajax_indicator(true);
-	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + parseInt(qm.elements.topic.value, 10) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
+	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
 }
@@ -85,7 +104,7 @@ function modify_topic_done(XMLDoc)
 
 	modify_topic_hide_edit(subject.text());
 	set_hidden_topic_areas('');
-	in_edit_mode = 0;
+	_in_edit_mode = 0;
 
 	return false;
 }
@@ -94,7 +113,7 @@ function modify_topic_done(XMLDoc)
 function set_hidden_topic_areas(set_style)
 {
 	for (var i = 0; i < hide_prefixes.length; i++)
-		$('#' + hide_prefixes[i] + cur_msg_id).css('display', set_style);
+		$('#' + hide_prefixes[i] + _cur_msg_id).css('display', set_style);
 }
 
 // *** QuickReply object.
@@ -259,8 +278,8 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	var x = [], qm = document.forms.quickModForm;
 	x[x.length] = 'subject=' + escape(qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
 	x[x.length] = 'message=' + escape(qm.message.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
-	x[x.length] = 'topic=' + parseInt(qm.elements.topic.value, 10);
-	x[x.length] = 'msg=' + parseInt(qm.elements.msg.value, 10);
+	x[x.length] = 'topic=' + qm.elements.topic.value;
+	x[x.length] = 'msg=' + qm.elements.msg.value;
 
 	// Send in the XMLHttp request and let's hope for the best.
 	ajax_indicator(true);
@@ -330,7 +349,7 @@ function InTopicModeration(oOptions)
 	for (var i = 0, n = this.opt.aMessageIds.length; i < n; i++)
 		$('#' + this.opt.sCheckboxContainerMask + this.opt.aMessageIds[i]).append(
 			$('<input type="checkbox" class="input_check" name="msgs[]" value="' + this.opt.aMessageIds[i] + '"></input>')
-			.data('instanceRef', this).click(function () { $(this).data('instanceRef').handleClick(this); })
+			.data('that', this).click(function () { $(this).data('that').handleClick(this); })
 		).show();
 }
 
@@ -491,10 +510,10 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	}
 
 	// Set the position of the container.
-	var aPos = smf_itemPos(oDiv);
+	var aPos = $(oDiv).offset();
 
-	this.oContainerDiv.style.top = (aPos[1] + oDiv.offsetHeight) + 'px';
-	this.oContainerDiv.style.left = (aPos[0] - 1) + 'px';
+	this.oContainerDiv.style.top = (aPos.top + oDiv.offsetHeight) + 'px';
+	this.oContainerDiv.style.left = (aPos.left - 1) + 'px';
 	this.oClickedIcon = oDiv;
 
 	if (this.bListLoaded)
@@ -634,9 +653,9 @@ UserMenu.prototype.switchMenu = function (oLink)
 
 		sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
 	}
-	var pos = smf_itemPos(oLink);
+	var pos = $(oLink).offset();
 	$('<div></div>', { id: 'userMenu' + iMsg, 'class': 'usermenu' }).html(sHTML).appendTo('body')
-		.css({ display: 'block', left: pos[0] + 'px', top: (pos[1] + oLink.offsetHeight) + 'px' })
+		.css({ display: 'block', left: pos.left + 'px', top: (pos.top + oLink.offsetHeight) + 'px' })
 		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; });
 	return false;
 };

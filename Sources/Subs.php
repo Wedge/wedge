@@ -2841,7 +2841,7 @@ function wedge_cache_css()
 		$add = file_get_contents($file);
 
 		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
-		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}\s])\s*~'), array('', '$1'), $add);
+		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}>\s])\s*~'), array('', '$1'), $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', "}\n", "\t"), array("\n", "\n", '}', '}', ' '), $add);
 
@@ -2865,7 +2865,7 @@ function wedge_cache_css()
  */
 function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false)
 {
-	global $settings, $modSettings;
+	global $settings, $modSettings, $comments;
 
 	$final = '';
 	$dir = $settings['theme_dir'] . '/';
@@ -2919,10 +2919,19 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 	}
 	elseif ($minify === 'packer')
 	{
-		loadSource('Class-Minify');
-		// If gzip is disabled, use "Normal" (JS compression), otherwise use "None" (no compression, only minification.)
-		$packer = new JavaScriptPacker($final, $gzip ? 'None' : 'Normal', true, false);
-		$final = $packer->pack();
+		// We want to keep the copyright-type comments, starting with /*!, which Packer usually removes...
+		preg_match_all("~(/\*!\n.*?\*/)~s", $final, $comments);
+		if ($gzip && !empty($comments[1]))
+			$final = preg_replace("~/\*!\n.*?\*/~s", 'WEDGE_COMMENT();', $final);
+
+		loadSource('Class-Packer');
+		$packer = new Packer;
+		// If gzip is disabled, use JS compression, otherwise use only minification.
+		$final = $packer->pack($final, !$gzip /* use client-side packer */, true /* shrink variables */, true /* shrink _privates */);
+
+		if ($gzip && !empty($comments[1]))
+			foreach ($comments[1] as $comment)
+				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
 		// Adding a semicolon after } will fix a common problem in the packer.
 		$max = strlen($final);
@@ -4139,4 +4148,15 @@ function blankGif()
 	header('Content-Type: image/gif');
 	die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
 }
+
+/**
+ * Add a link (URL and title) to the linktree. Self-explained.
+ */
+function add_linktree($url, $name)
+{
+	global $context;
+
+	$context['linktree'][] = array('url' => $url, 'name' => $name);
+}
+
 ?>

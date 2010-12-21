@@ -5,10 +5,10 @@
  */
 
 var
-	smf_formSubmitted = false,
-	lastKeepAliveCheck = new Date().getTime(),
-	smf_editorArray = [],
-	ajax_indicator_ele = null;
+	_formSubmitted = false,
+	_lastKeepAliveCheck = new Date().getTime(),
+	_ajax_indicator_ele = null,
+	smf_editorArray = [];
 
 // Basic browser detection
 var
@@ -119,39 +119,53 @@ String.prototype.easyReplace = function (oReplacements)
 	return sResult;
 };
 
-// Open a new window.
+// Open a new popup window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
-	var desktopURL = typeof(from) == 'object' && from.href ? from.href : from;
-	if ((alternateWidth && self.screen.availWidth * 0.8 < alternateWidth) || (alternateHeight && self.screen.availHeight * 0.8 < alternateHeight))
+	var
+		desktopURL = typeof(from) == 'object' && from.href ? from.href : from,
+		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
+		helf = $('#helf'), previousTarget = helf.data('src');
+
+	if ((alternateWidth && vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
 	{
 		noScrollbars = false;
-		alternateWidth = Math.min(alternateWidth, self.screen.availWidth * 0.8);
-		alternateHeight = Math.min(alternateHeight, self.screen.availHeight * 0.8);
+		alternateWidth = Math.min(alternateWidth, vpw);
+		alternateHeight = Math.min(alternateHeight, vph);
 	}
 	else
-		noScrollbars = typeof(noScrollbars) == 'boolean' && noScrollbars == true;
+		noScrollbars = noScrollbars && noScrollbars === true;
 
-	var aPos = typeof(from) == 'object' ? smf_itemPos(from) : [10, 10];
-
-	var helf = $('#helf'), previousTarget = helf.data('src');
-	if (previousTarget && helf.remove().length && previousTarget == desktopURL)
+	// Clicking the help icon twice should close the popup and remove the global click event.
+	if (helf.remove().length && $('body').unbind('click.h') && previousTarget == desktopURL)
 		return false;
 
-	$('<div></div>').attr('id', 'helf')
-		.addClass('windowbg wrc').data('src', desktopURL).load(desktopURL, function() {
-		$(this).css({
-			overflow: noScrollbars ? 'hidden' : 'auto',
-			position: 'absolute',
-			width: (alternateWidth ? alternateWidth : 480) + 'px',
-			padding: '10px 12px 12px',
-			left: (aPos[0] + 15) + 'px',
-			top: (aPos[1] + 15) + 'px',
-			border: '1px solid #999'
-		}).hide().appendTo('body').fadeIn(300);
+	// We create the popup inside a dummy div to fix positioning in freakin' IE.
+	$('<div></div>').attr('id', 'helf').data('src', desktopURL).css({
+		position: is_ie6 ? 'absolute' : 'fixed',
+		width: (alternateWidth ? alternateWidth : 480) + 'px',
+		height: alternateHeight ? alternateHeight + 'px' : 'auto',
+		bottom: 10,
+		right: 10
+	}).append($('<div></div>')
+		.addClass('windowbg wrc').hide().load(desktopURL, function() {
+			$(this).css({
+				overflow: noScrollbars ? 'hidden' : 'auto',
+				padding: '10px 12px 12px',
+				border: '1px solid #999'
+			}).fadeIn(300);
+		})
+	).appendTo('body');
+
+	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
+	$('body').bind('click.h', function (e) {
+		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
+		if (!($(e.srcElement).parents('#helf').length))
+		{
+			$('#helf').remove();
+			$(this).unbind(e);
+		}
 	});
-	if (alternateHeight)
-		$('#helf').css('height', alternateHeight + 'px');
 
 	// Return false so the click won't follow the link ;)
 	return false;
@@ -176,7 +190,7 @@ function isEmptyText(theField)
 // Only allow form submission ONCE.
 function submitonce()
 {
-	smf_formSubmitted = true;
+	_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
 	for (var i = 0; i < smf_editorArray.length; i++)
@@ -189,7 +203,7 @@ function submitThisOnce(oControl)
 	if (!is_safari || vers > 2)
 		$('textarea', 'form' in oControl ? oControl.form : oControl).attr('readOnly', true);
 
-	return !smf_formSubmitted;
+	return !_formSubmitted;
 }
 
 // Set the "outer" HTML of an element.
@@ -242,21 +256,21 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 }
 
 // Keep the session alive - always!
-function smf_sessionKeepAlive()
+function _sessionKeepAlive()
 {
 	var curTime = new Date().getTime();
 
 	// Prevent a Firefox bug from hammering the server.
-	if (smf_scripturl && curTime - lastKeepAliveCheck > 900000)
+	if (smf_scripturl && curTime - _lastKeepAliveCheck > 900000)
 	{
 		var tempImage = new Image();
 		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=keepalive;time=' + curTime;
-		lastKeepAliveCheck = curTime;
+		_lastKeepAliveCheck = curTime;
 	}
 
-	window.setTimeout('smf_sessionKeepAlive();', 1200000);
+	window.setTimeout('_sessionKeepAlive();', 1200000);
 }
-window.setTimeout('smf_sessionKeepAlive();', 1200000);
+window.setTimeout('_sessionKeepAlive();', 1200000);
 
 // Set a theme option through javascript.
 function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
@@ -370,26 +384,22 @@ function smc_preCacheImage(sSrc)
 function smc_Cookie(oOptions)
 {
 	this.opt = oOptions;
-	this.oCookies = {};
-	this.init();
-}
+	this._cookies = {};
 
-smc_Cookie.prototype.init = function ()
-{
 	if ('cookie' in document && document.cookie != '')
 	{
 		var aCookieList = document.cookie.split(';');
 		for (var i = 0, n = aCookieList.length; i < n; i++)
 		{
 			var aNameValuePair = aCookieList[i].split('=');
-			this.oCookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
+			this._cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
 		}
 	}
 };
 
 smc_Cookie.prototype.get = function (sKey)
 {
-	return sKey in this.oCookies ? this.oCookies[sKey] : null;
+	return sKey in this._cookies ? this._cookies[sKey] : null;
 };
 
 smc_Cookie.prototype.set = function (sKey, sValue)
@@ -402,13 +412,9 @@ smc_Cookie.prototype.set = function (sKey, sValue)
 function smc_Toggle(oOptions)
 {
 	this.opt = oOptions;
-	this.bCollapsed = false;
-	this.oCookie = null;
-	this.init();
-}
+	this._collapsed = false;
+	this._cookie = null;
 
-smc_Toggle.prototype.init = function ()
-{
 	// The master switch can disable this toggle fully.
 	if ('bToggleEnabled' in this.opt && !this.opt.bToggleEnabled)
 		return;
@@ -417,17 +423,17 @@ smc_Toggle.prototype.init = function ()
 	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
 	{
 		// Initialize the cookie handler.
-		this.oCookie = new smc_Cookie({});
+		this._cookie = new smc_Cookie({});
 
 		// Check if the cookie is set.
-		var cookieValue = this.oCookie.get(this.opt.oCookieOptions.sCookieName);
+		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
 		if (cookieValue != null)
 			this.opt.bCurrentlyCollapsed = cookieValue == '1';
 	}
 
 	// If the init state is set to be collapsed, collapse it.
 	if (this.opt.bCurrentlyCollapsed)
-		this.changeState(true, true);
+		this._changeState(true, true);
 
 	// Initialize the images to be clickable.
 	var i, n;
@@ -435,51 +441,28 @@ smc_Toggle.prototype.init = function ()
 	{
 		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
 		{
-			var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
-			if (typeof(oImage) == 'object' && oImage != null)
-			{
-				// Display the image in case it was hidden.
-				if (oImage.style.display == 'none')
-					oImage.style.display = '';
+			$('#' + this.opt.aSwapImages[i].sId).show().data('that', this).click(function () {
+				$(this).data('that').toggle();
+				this.blur();
+			}).css('cursor', 'pointer');
 
-				oImage.instanceRef = this;
-				oImage.onclick = function () {
-					this.instanceRef.toggle();
-					this.blur();
-				};
-				oImage.style.cursor = 'pointer';
-
-				// Preload the collapsed image.
-				smc_preCacheImage(this.opt.aSwapImages[i].srcCollapsed);
-			}
+			// Preload the collapsed image.
+			smc_preCacheImage(this.opt.aSwapImages[i].srcCollapsed);
 		}
 	}
 
 	// Initialize links.
 	if ('aSwapLinks' in this.opt)
-	{
 		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-		{
-			var oLink = document.getElementById(this.opt.aSwapLinks[i].sId);
-			if (typeof(oLink) == 'object' && oLink != null)
-			{
-				// Display the link in case it was hidden.
-				if (oLink.style.display == 'none')
-					oLink.style.display = '';
-
-				oLink.instanceRef = this;
-				oLink.onclick = function () {
-					this.instanceRef.toggle();
-					this.blur();
-					return false;
-				};
-			}
-		}
-	}
+			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(function () {
+				$(this).data('that').toggle();
+				this.blur();
+				return false;
+			});
 };
 
 // Collapse or expand the section.
-smc_Toggle.prototype.changeState = function (bCollapse, bInit)
+smc_Toggle.prototype._changeState = function (bCollapse, bInit)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
@@ -521,44 +504,44 @@ smc_Toggle.prototype.changeState = function (bCollapse, bInit)
 		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
 
 	// Update the new state.
-	this.bCollapsed = bCollapse;
+	this._collapsed = bCollapse;
 
 	// Update the cookie, if desired.
 	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
-		this.oCookie.set(this.opt.oCookieOptions.sCookieName, this.bCollapsed ? '1' : '0');
+		this._cookie.set(this.opt.oCookieOptions.sCookieName, this._collapsed ? '1' : '0');
 
 	if ('oThemeOptions' in this.opt && this.opt.oThemeOptions.bUseThemeSettings)
-		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed ? '1' : '0', 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, this.opt.oThemeOptions.sSessionId, this.opt.oThemeOptions.sSessionVar, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
+		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, this.opt.oThemeOptions.sSessionId, this.opt.oThemeOptions.sSessionVar, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
 };
 
 // Reverse the current state.
 smc_Toggle.prototype.toggle = function ()
 {
-	this.changeState(!this.bCollapsed);
+	this._changeState(!this._collapsed);
 };
 
 
 function ajax_indicator(turn_on)
 {
-	if (!ajax_indicator_ele)
+	if (!_ajax_indicator_ele)
 	{
-		ajax_indicator_ele = $('#ajax_in_progress');
-		if (!(ajax_indicator_ele.length) && ajax_notification_text !== null)
+		_ajax_indicator_ele = $('#ajax_in_progress');
+		if (!(_ajax_indicator_ele.length) && ajax_notification_text !== null)
 			create_ajax_indicator_ele();
 	}
 
-	if (ajax_indicator_ele.length)
+	if (_ajax_indicator_ele.length)
 	{
 		if (is_ie6)
-			ajax_indicator_ele.css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
-		ajax_indicator_ele.css('display', turn_on ? 'block' : 'none');
+			_ajax_indicator_ele.css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
+		_ajax_indicator_ele.css('display', turn_on ? 'block' : 'none');
 	}
 }
 
 function create_ajax_indicator_ele()
 {
 	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
-	ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress').html(
+	_ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress').html(
 		'<a href="#" onclick="ajax_indicator(false);"><img src="' + smf_images_url + '/icons/quick_remove.gif"'	+ (ajax_notification_cancel_text ?
 		' alt="' + ajax_notification_cancel_text + '" title="' + ajax_notification_cancel_text + '"' : '') + ' />' + ajax_notification_text
 	).appendTo('body');
@@ -593,20 +576,15 @@ function grabJumpToContent()
 	ajax_indicator(false);
 
 	for (i = 0, n = aJumpTo.length; i < n; i++)
-		aJumpTo[i].fillSelect(aBoardsAndCategories);
+		aJumpTo[i]._fillSelect(aBoardsAndCategories);
 }
 
 // *** JumpTo class.
 function JumpTo(oJumpToOptions)
 {
 	this.opt = oJumpToOptions;
-	this.dropdownList = null;
-	this.showSelect();
-}
+	this._dropdownList = null;
 
-// Show the initial select box (onload). Method of the JumpTo class.
-JumpTo.prototype.showSelect = function ()
-{
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
@@ -617,19 +595,19 @@ JumpTo.prototype.showSelect = function ()
 			+ this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities()
 			+ '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \''
 			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />'));
-	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
+	this._dropdownList = document.getElementById(this.opt.sContainerId + '_select');
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
-JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
+JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 {
 	// Create an option that'll be above and below the category.
 	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' })[0];
 
 	if ('onbeforeactivate' in document)
-		this.dropdownList.onbeforeactivate = null;
+		this._dropdownList.onbeforeactivate = null;
 	else
-		this.dropdownList.onfocus = null;
+		this._dropdownList.onfocus = null;
 
 	// Create a document fragment that'll allowing inserting big parts at once.
 	var oListFragment = document.createDocumentFragment();
@@ -642,7 +620,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
-			this.dropdownList.insertBefore(oListFragment, this.dropdownList.options[0]);
+			this._dropdownList.insertBefore(oListFragment, this._dropdownList.options[0]);
 			oListFragment = document.createDocumentFragment();
 			continue;
 		}
@@ -664,37 +642,18 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 
 	// Add the remaining items after the currently selected item.
 	// Internet Explorer needs css() to keep the box dropped down.
-	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
+	$(this._dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 	});
 };
 
 // Find the actual position of an item.
-// Alternatively: var offset = $(itemHandle).offset().left/top;
-// But it doesn't work well on floated elements in Opera. Hmm.
+// This is a dummy replacement for add-ons -- might be removed later.
 function smf_itemPos(itemHandle)
 {
-	var itemX = 0, itemY = 0;
-
-	if ('offsetParent' in itemHandle)
-	{
-		itemX = itemHandle.offsetLeft;
-		itemY = itemHandle.offsetTop;
-		while (itemHandle.offsetParent && typeof(itemHandle.offsetParent) == 'object')
-		{
-			itemHandle = itemHandle.offsetParent;
-			itemX += itemHandle.offsetLeft;
-			itemY += itemHandle.offsetTop;
-		}
-	}
-	else if ('x' in itemHandle)
-	{
-		itemX = itemHandle.x;
-		itemY = itemHandle.y;
-	}
-
-	return [itemX, itemY];
+	var offset = $(itemHandle).offset();
+	return [offset.left, offset.top];
 }
 
 // This function takes the script URL and prepares it to allow the query string to be appended to it.
@@ -705,7 +664,7 @@ function smf_prepareScriptUrl(sUrl)
 	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
-// Alias for onload event.
+// Alias for onload() event.
 function addLoadEvent(fNewOnload)
 {
 	$(window).load(typeof(fNewOnload) == 'string' ? new Function(fNewOnload) : fNewOnload);
@@ -764,80 +723,67 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 			document.forms[sFormName][aElementNames[i]].value = document.forms[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
-/**
- *
- * Dropdown menus, Wedge style.
- * © 2008-2010 René-Gilles Deberdt (http://wedgeforum.com)
- * Released under the Wedge license, http://wedgeforum.com/license/
- *
- * Uses portions © 2004 by Batiste Bieler (http://dosimple.ch/), released
- * under the LGPL license (http://www.gnu.org/licenses/lgpl.html)
- *
- */
+// This will add an extra class to any external links, except those with title="-".
+// Ignored for now because it needs some improvement to the domain name detection.
+function linkMagic()
+{
+	$('a[title!="-"]').each(function() {
+		var hre = $(this).attr('href');
+		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
+			$(this).addClass('xt');
+	});
+}
 
-var baseId = 0, hoverable = 0, rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left');
-var timeoutli = [], ieshim = [];
+function testStyle(sty)
+{
+	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
+	for (var i in stys) if (_wedgerocks.style[stys[i]] !== undefined) return true;
+	return false;
+}
+
+/*!
+ * Dropdown menu in JS with CSS fallback, Wedge style.
+ * © 2008-2010 René-Gilles Deberdt (http://wedgeforum.com)
+ * Timeout concept inspired by Batiste Bieler (http://dosimple.ch/)
+ */
+var _baseId = 0, hoverable = 0, _rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left');
+var _delay = [], _ieshim = [];
 
 function initMenu(menu)
 {
 	menu.style.display = 'block';
 	menu.style.visibility = 'visible';
 	menu.style.opacity = 1;
-	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
+	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; _show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
 
-	var k = baseId;
+	var k = _baseId;
 	$('li', menu).each(function () {
 		if (is_ie6)
 		{
-			$(this).keyup(show_me);
+			$(this).keyup(_show_me);
 			document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-			ieshim[k] = $('#shim' + k)[0];
+			_ieshim[k] = $('#shim' + k)[0];
 		}
 		$(this).attr('id', 'li' + k++)
-			.bind('mouseenter focus', show_me)
-			.bind('mouseleave blur', timeout_hide)
+			.bind('mouseenter focus', _show_me)
+			.bind('mouseleave blur', _hide_me)
 			.mousedown(false)
-			.click(function () { $(menu).children('li').each(function () { hide_sub_ul(this); }); });
+			.click(function () { $(menu).children('li').each(function () { _hide_sub_ul(this); }); });
 	});
-	baseId = k;
+	_baseId = k;
 
 	// Now that JS is ready to take action... Disable the pure CSS menu!
 	$('.css.menu').removeClass('css');
 }
 
-// Hide the first ul element of the current element
-function timeout_hide(e)
-{
-	var insitu, targ = e.relatedTarget || e.toElement;
-	while (targ && !insitu)
-	{
-		insitu = targ.parentNode && targ.parentNode.className == 'menu';
-		targ = targ.parentNode;
-	}
-	insitu ? hide_child_ul(this.id) : timeoutli[this.id.substring(2)] = window.setTimeout('hide_child_ul("' + this.id + '")', 242);
-}
-
-// Hide all children <ul>'s.
-function hide_child_ul(id)
-{
-	var eid = $('#' + id), eul = $('ul', eid).css('visibility', 'hidden');
-	eul.length ? eul[0].style.opacity = 0 : '';
-	$(eid).removeClass('linkOver');
-	$('h4:first', eid).removeClass('linkOver');
-	$('.linkOver', eid).removeClass('linkOver');
-
-	if (is_ie6)
-		show_shim(false, id);
-}
-
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.
-function show_shim(showsh, ieid, iemenu)
+function _show_shim(showsh, ieid, iemenu)
 {
 	var iem = ieid.substring(2);
-	if (!(ieshim[iem]))
+	if (!(_ieshim[iem]))
 		return;
 
-	var i = ieshim[iem].style, j = iemenu;
+	var i = _ieshim[iem].style, j = iemenu;
 	if (showsh)
 	{
 		i.top = j.offsetTop + j.offsetParent.offsetTop + 'px';
@@ -849,34 +795,59 @@ function show_shim(showsh, ieid, iemenu)
 }
 
 // Show the first child <ul> we can find.
-function show_me()
+function _show_me()
 {
 	var showul = $('ul:first', this)[0], is_top = this.parentNode.className == 'menu';
 
 	if (hoverable && showul && showul.style.visibility == 'visible')
-		return hide_child_ul(this.id);
+		return _hide_child_ul(this.id);
 
 	if (showul)
 	{
 		showul.style.visibility = 'visible';
 		showul.style.opacity = 1;
-		showul.style[rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		showul.style[_rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
 		if (is_ie6)
-			show_shim(true, this.id, showul);
+			_show_shim(true, this.id, showul);
 	}
 
-	if (!is_top || !($('h4:first', this).addClass('linkOver').length))
-		$(this).addClass('linkOver').parentsUntil('li:has(h4)').each(function () {
+	if (!is_top || !($('h4:first', this).addClass('hove').length))
+		$(this).addClass('hove').parentsUntil('li:has(h4)').each(function () {
 			if (this.nodeName == 'LI')
-				$(this).addClass('linkOver');
+				$(this).addClass('hove');
 		});
 
-	clearTimeout(timeoutli[this.id.substring(2)]);
+	clearTimeout(_delay[this.id.substring(2)]);
 
-	$(this).siblings('li').each(function () { hide_sub_ul(this); });
+	$(this).siblings('li').each(function () { _hide_sub_ul(this); });
 }
 
-function hide_sub_ul(li)
+// Hide my top <ul>
+function _hide_me(e)
+{
+	var insitu, targ = e.relatedTarget || e.toElement;
+	while (targ && !insitu)
+	{
+		insitu = targ.parentNode && targ.parentNode.className == 'menu';
+		targ = targ.parentNode;
+	}
+	insitu ? _hide_child_ul(this.id) : _delay[this.id.substring(2)] = window.setTimeout('_hide_child_ul("' + this.id + '")', 242);
+}
+
+// Hide all children <ul>'s.
+function _hide_child_ul(id)
+{
+	var eid = $('#' + id), eul = $('ul', eid).css('visibility', 'hidden');
+	eul.length ? eul[0].style.opacity = 0 : '';
+	$(eid).removeClass('hove');
+	$('h4:first', eid).removeClass('hove');
+	$('.hove', eid).removeClass('hove');
+
+	if (is_ie6)
+		_show_shim(false, id);
+}
+
+function _hide_sub_ul(li)
 {
 	if (!($('h4:first', li).removeClass().length))
 		$('a', li).removeClass();
@@ -884,43 +855,23 @@ function hide_sub_ul(li)
 	$('ul', li).css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 }
 
-/* --------------------------------------------------------
-   End of dropdown menu code */
-
-// This will add an extra class to any external links, except those with title="-".
-// Ignored for now because it needs some improvement to the domain name detection.
-function linkMagic()
-{
-	$('a[title!="-"]').each(function() {
-		var hre = $(this).attr('href');
-		if (typeof hre == 'string' && hre.length > 0)
-			if ((hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
-				$(this).addClass('xt');
-	});
-}
-
-function testStyle(sty)
-{
-	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
-	for (var i in stys) if (wedgerocks.style[stys[i]] !== undefined) return true;
-	return false;
-}
-
 // Has your browser got the goods?
 // These variables aren't used, but you can now use them in your custom scripts.
 // In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
 var
-	wedgerocks = document.createElement('wedgerocks'),
+	_wedgerocks = document.createElement('wedgerocks'),
 	can_ajax = 'XMLHttpRequest' in window || 'ActiveXObject' in window,
 	can_borderradius = testStyle('borderRadius'),
 	can_boxshadow = testStyle('boxShadow');
 
 /* Optimize:
-smf_formSubmitted = sfs
+_formSubmitted = _f
+_ajax_indicator_ele = _a
+_lastKeepAliveCheck = _k
+_dropdownList = _d
 aBoardsAndCategories = b
 aElementNames = e
 additional_vars = a
-ajax_indicator_ele = aie
 alternateHeight = h
 alternateWidth = w
 bActOnElement = t
@@ -928,11 +879,9 @@ bAsync = b
 cur_session_id = s
 cur_session_var = v
 currentNode = n
-dropdownList = dl
 fNewOnload = f
 funcCallback = f
 itemHandle = h
-lastKeepAliveCheck = lka
 noScrollbars = n
 oCaller = o
 oCodeArea = a

@@ -1296,7 +1296,7 @@ function MergeExecute($topics = array())
 	list ($member_started) = wesql::fetch_row($request);
 	list ($member_updated) = wesql::fetch_row($request);
 	// First and last message are the same, so only row was returned.
-	if ($member_updated === NULL)
+	if ($member_updated === null)
 		$member_updated = $member_started;
 
 	wesql::free_result($request);

@@ -191,11 +191,11 @@ smc_AutoSuggest.prototype.positionDiv = function()
 	this.bPositionComplete = true;
 
 	// Put the div under the text box.
-	var aParentPos = smf_itemPos(this.oTextHandle);
+	var aParentPos = $(this.oTextHandle).offset();
 
 	$(this.oSuggestDivHandle).css({
-		left: aParentPos[0] + 'px',
-		top: (aParentPos[1] + this.oTextHandle.offsetHeight) + 'px',
+		left: aParentPos.left + 'px',
+		top: (aParentPos.top + this.oTextHandle.offsetHeight) + 'px',
 		width: this.oTextHandle.style.width
 	});
 };

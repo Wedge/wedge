@@ -31,10 +31,10 @@
 	border-bottom: 1px solid #fff8f1;
 }
 /* IE6 also fails remembering the last correct background-color when meeting a rgba() value afterwards... */
-h4.linkOver {
+h4.hove {
 	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
 }
-li.linkOver {
+li.hove {
 	background: #dbd7d2;
 }
 

@@ -465,7 +465,7 @@ function template_coppa_form()
 // Show a window containing the spoken verification code.
 function template_verification_sound()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $settings, $options, $txt;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
@@ -473,7 +473,8 @@ function template_verification_sound()
 	<meta charset="utf-8" />
 	<meta name="robots" content="noindex" />
 	<title>', $context['page_title'], '</title>',
-	theme_base_css(), '
+	theme_base_css(),
+	theme_base_js(1), '
 	<style>';
 
 	// Just show the help text and a "close window" link.
@@ -500,7 +501,7 @@ function template_verification_sound()
 		</audio>
 		<br />
 		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
-		<a href="#" onclick="parent.document.body.removeChild(parent.document.getElementById(\'helf\')); return false;">', $txt['visual_verification_sound_close'], '</a><br />
+		<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['visual_verification_sound_close'], '</a><br />
 		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
 	</div>
 </body>

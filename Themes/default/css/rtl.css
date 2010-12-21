@@ -1064,7 +1064,7 @@ ul.moderation_notes li
 	-moz-border-radius: 10px 0 0 10px;
 	-webkit-border-radius: 10px 0 0 10px;
 }
-.menu > li li:hover, a.linkOver {
+.menu > li li:hover, a.hove {
 	border-radius: 9px 0 0 9px;
 	-moz-border-radius: 9px 0 0 9px;
 	-webkit-border-radius: 9px 0 0 9px;
