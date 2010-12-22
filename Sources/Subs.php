@@ -2921,15 +2921,14 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 	{
 		// We want to keep the copyright-type comments, starting with /*!, which Packer usually removes...
 		preg_match_all("~(/\*!\n.*?\*/)~s", $final, $comments);
-		if ($gzip && !empty($comments[1]))
+		if (!empty($comments[1]))
 			$final = preg_replace("~/\*!\n.*?\*/~s", 'WEDGE_COMMENT();', $final);
 
 		loadSource('Class-Packer');
 		$packer = new Packer;
-		// If gzip is disabled, use JS compression, otherwise use only minification.
-		$final = $packer->pack($final, !$gzip /* use client-side packer */, true /* shrink variables */, true /* shrink _privates */);
+		$final = $packer->pack($final, false /* only minify */, true /* shrink variables */, true /* shrink _privates */);
 
-		if ($gzip && !empty($comments[1]))
+		if (!empty($comments[1]))
 			foreach ($comments[1] as $comment)
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 

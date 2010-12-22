@@ -555,11 +555,11 @@ function template_edit_censored()
 				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
 	add_js('
-	document.getElementById("moreCensoredWords_link").style.display = "";
+	$("#moreCensoredWords_link").show();
 
 	function addNewWord()
 	{
-		setOuterHTML(document.getElementById("moreCensoredWords"), \'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div><div id="moreCensoredWords"><\' + \'/div>\');
+		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20" class="input_text" /> => <input type="text" name="censor_proper[]" size="20" class="input_text" /><\' + \'/div>\');
 	}');
 
 	echo '
@@ -950,7 +950,7 @@ function template_edit_profile_field()
 	var startOptID = ', count($context['field']['options']), ';
 	function addOption()
 	{
-		setOuterHTML(document.getElementById("addopt"), \'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" /><span id="addopt"></span>\');
+		$("#addopt").append(\'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'" class="input_radio" /><input type="text" name="select_option[\' + startOptID + \']" value="" class="input_text" />\');
 		startOptID++;
 	}');
 

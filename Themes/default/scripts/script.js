@@ -206,19 +206,6 @@ function submitThisOnce(oControl)
 	return !_formSubmitted;
 }
 
-// Set the "outer" HTML of an element.
-function setOuterHTML(oElement, sToValue)
-{
-	if ('outerHTML' in oElement)
-		oElement.outerHTML = sToValue;
-	else
-	{
-		var range = document.createRange();
-		range.setStartBefore(oElement);
-		oElement.parentNode.replaceChild(range.createContextualFragment(sToValue), oElement);
-	}
-}
-
 // Checks for variable in theArray.
 function in_array(variable, theArray)
 {
@@ -725,7 +712,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 
 // This will add an extra class to any external links, except those with title="-".
 // Ignored for now because it needs some improvement to the domain name detection.
-function linkMagic()
+function _linkMagic()
 {
 	$('a[title!="-"]').each(function() {
 		var hre = $(this).attr('href');
@@ -734,20 +721,18 @@ function linkMagic()
 	});
 }
 
-function testStyle(sty)
+function _testStyle(sty)
 {
 	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
 	for (var i in stys) if (_wedgerocks.style[stys[i]] !== undefined) return true;
 	return false;
 }
 
-/*!
- * Dropdown menu in JS with CSS fallback, Wedge style.
- * © 2008-2010 René-Gilles Deberdt (http://wedgeforum.com)
- * Timeout concept inspired by Batiste Bieler (http://dosimple.ch/)
- */
-var _baseId = 0, hoverable = 0, _rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left');
-var _delay = [], _ieshim = [];
+// Dropdown menu in JS with CSS fallback, Wedge style.
+// It may not show, but it took years to refine it.
+var
+	_baseId = 0, hoverable = 0, _rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left'),
+	_delay = [], _ieshim = [];
 
 function initMenu(menu)
 {
@@ -768,7 +753,7 @@ function initMenu(menu)
 			.bind('mouseenter focus', _show_me)
 			.bind('mouseleave blur', _hide_me)
 			.mousedown(false)
-			.click(function () { $(menu).children('li').each(function () { _hide_sub_ul(this); }); });
+			.click(function () { $(menu).children('li').each(function () { _hide_children(this.id); }); });
 	});
 	_baseId = k;
 
@@ -777,13 +762,13 @@ function initMenu(menu)
 }
 
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.
-function _show_shim(showsh, ieid, iemenu)
+function _show_shim(showsh, ieid, j)
 {
 	var iem = ieid.substring(2);
 	if (!(_ieshim[iem]))
 		return;
 
-	var i = _ieshim[iem].style, j = iemenu;
+	var i = _ieshim[iem].style;
 	if (showsh)
 	{
 		i.top = j.offsetTop + j.offsetParent.offsetTop + 'px';
@@ -794,65 +779,50 @@ function _show_shim(showsh, ieid, iemenu)
 	i.display = showsh ? 'block' : 'none';
 }
 
-// Show the first child <ul> we can find.
+// Entering a menu entry?
 function _show_me()
 {
-	var showul = $('ul:first', this)[0], is_top = this.parentNode.className == 'menu';
+	var hasul = $('ul:first', this)[0], is_top = this.parentNode.className == 'menu';
 
-	if (hoverable && showul && showul.style.visibility == 'visible')
-		return _hide_child_ul(this.id);
+	if (hoverable && hasul && hasul.style.visibility == 'visible')
+		return _hide_children(this.id);
 
-	if (showul)
+	if (hasul)
 	{
-		showul.style.visibility = 'visible';
-		showul.style.opacity = 1;
-		showul.style[_rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		hasul.style.visibility = 'visible';
+		hasul.style.opacity = 1;
+		hasul.style[_rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
 		if (is_ie6)
-			_show_shim(true, this.id, showul);
+			_show_shim(true, this.id, hasul);
 	}
 
 	if (!is_top || !($('h4:first', this).addClass('hove').length))
-		$(this).addClass('hove').parentsUntil('li:has(h4)').each(function () {
+		$(this).addClass('hove').parentsUntil('.menu>li').each(function () {
 			if (this.nodeName == 'LI')
 				$(this).addClass('hove');
 		});
 
 	clearTimeout(_delay[this.id.substring(2)]);
 
-	$(this).siblings('li').each(function () { _hide_sub_ul(this); });
+	$(this).siblings('li').each(function () { _hide_children(this.id); });
 }
 
-// Hide my top <ul>
+// Leaving a menu entry?
 function _hide_me(e)
 {
-	var insitu, targ = e.relatedTarget || e.toElement;
-	while (targ && !insitu)
-	{
-		insitu = targ.parentNode && targ.parentNode.className == 'menu';
-		targ = targ.parentNode;
-	}
-	insitu ? _hide_child_ul(this.id) : _delay[this.id.substring(2)] = window.setTimeout('_hide_child_ul("' + this.id + '")', 242);
+	$(e.relatedTarget || e.toElement).parents('.menu').length ?
+		_hide_children(this.id) :
+		_delay[this.id.substring(2)] = setTimeout('_hide_children("' + this.id + '")', 250);
 }
 
-// Hide all children <ul>'s.
-function _hide_child_ul(id)
+// Hide all children menus.
+function _hide_children(id)
 {
-	var eid = $('#' + id), eul = $('ul', eid).css('visibility', 'hidden');
-	eul.length ? eul[0].style.opacity = 0 : '';
-	$(eid).removeClass('hove');
-	$('h4:first', eid).removeClass('hove');
-	$('.hove', eid).removeClass('hove');
+	$('#' + id).children().andSelf().removeClass('hove').find('ul')
+		.css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 
 	if (is_ie6)
 		_show_shim(false, id);
-}
-
-function _hide_sub_ul(li)
-{
-	if (!($('h4:first', li).removeClass().length))
-		$('a', li).removeClass();
-
-	$('ul', li).css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 }
 
 // Has your browser got the goods?
@@ -861,8 +831,8 @@ function _hide_sub_ul(li)
 var
 	_wedgerocks = document.createElement('wedgerocks'),
 	can_ajax = 'XMLHttpRequest' in window || 'ActiveXObject' in window,
-	can_borderradius = testStyle('borderRadius'),
-	can_boxshadow = testStyle('boxShadow');
+	can_borderradius = _testStyle('borderRadius'),
+	can_boxshadow = _testStyle('boxShadow');
 
 /* Optimize:
 _formSubmitted = _f

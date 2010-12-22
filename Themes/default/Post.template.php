@@ -28,6 +28,9 @@ function template_main()
 		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
 	}');
 
+	add_js('
+	var postmod = document.forms.postmodify;';
+
 	// If this is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
 	if ($context['make_poll'])
 		add_js('
@@ -37,12 +40,12 @@ function template_main()
 
 		if (isEmptyText(expire_time) || expire_time.value == 0)
 		{
-			document.forms.postmodify.poll_hide[2].disabled = true;
-			if (document.forms.postmodify.poll_hide[2].checked)
-				document.forms.postmodify.poll_hide[1].checked = true;
+			postmod.poll_hide[2].disabled = true;
+			if (postmod.poll_hide[2].checked)
+				postmod.poll_hide[1].checked = true;
 		}
 		else
-			document.forms.postmodify.poll_hide[2].disabled = false;
+			postmod.poll_hide[2].disabled = false;
 	}
 
 	var pollOptionNum = 0, pollTabIndex;
@@ -50,16 +53,16 @@ function template_main()
 	{
 		if (pollOptionNum == 0)
 		{
-			for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
-				if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
+			for (var i = 0, n = postmod.elements.length; i < n; i++)
+				if (postmod.elements[i].id.substr(0, 8) == "options-")
 				{
 					pollOptionNum++;
-					pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
+					pollTabIndex = postmod.elements[i].tabIndex;
 				}
 		}
 		pollOptionNum++;
 
-		setOuterHTML($("#pollMoreOptions")[0], ' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li><li id="pollMoreOptions"></li>') . ');
+		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li>') . ');
 		return false;
 	}');
 
@@ -306,7 +309,7 @@ function template_main()
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
 						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="input_text w75" />
-						<ul class="poll_main">';
+						<ul class="poll_main" id="pollMoreOptions">';
 
 		// Loop through all the choices and print them out.
 		foreach ($context['choices'] as $choice)
@@ -319,7 +322,6 @@ function template_main()
 		}
 
 		echo '
-							<li id="pollMoreOptions"></li>
 						</ul>
 						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>
@@ -539,20 +541,20 @@ function template_main()
 		var checkboxFields = ["ns"];
 
 		for (var i = 0, n = textFields.length; i < n; i++)
-			if (textFields[i] in document.forms.postmodify)
+			if (textFields[i] in postmod)
 			{
 				// Handle the WYSIWYG editor.
 				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' in window && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
 					x[x.length] = "message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 				else
-					x[x.length] = textFields[i] + "=" + document.forms.postmodify[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
+					x[x.length] = textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 			}
 		for (var i = 0, n = numericFields.length; i < n; i++)
-			if (numericFields[i] in document.forms.postmodify && "value" in document.forms.postmodify[numericFields[i]])
-				x[x.length] = numericFields[i] + "=" + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
+			if (numericFields[i] in postmod && "value" in postmod[numericFields[i]])
+				x[x.length] = numericFields[i] + "=" + parseInt(postmod.elements[numericFields[i]].value);
 		for (var i = 0, n = checkboxFields.length; i < n; i++)
-			if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
-				x[x.length] = checkboxFields[i] + "=" + document.forms.postmodify.elements[checkboxFields[i]].value;
+			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
+				x[x.length] = checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value;
 
 		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
 
@@ -567,8 +569,8 @@ function template_main()
 	{
 		if (!XMLDoc)
 		{
-			document.forms.postmodify.preview.onclick = function () { return true; }
-			document.forms.postmodify.preview.click();
+			postmod.preview.onclick = function () { return true; }
+			postmod.preview.click();
 		}
 
 		// Show the preview section.
@@ -593,18 +595,18 @@ function template_main()
 		});
 
 		if ($("post_error", errors).length)
-			document.forms.postmodify.' . $context['postbox']->id . '.style.border = "1px solid red";
-		else if (document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == "red" || document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor == "red red red red")
+			postmod.' . $context['postbox']->id . '.style.border = "1px solid red";
+		else if (postmod.' . $context['postbox']->id . '.style.borderColor == "red" || postmod.' . $context['postbox']->id . '.style.borderColor == "red red red red")
 		{
-			if ("runtimeStyle" in document.forms.postmodify.' . $context['postbox']->id . ')
-				document.forms.postmodify.' . $context['postbox']->id . '.style.borderColor = "";
+			if ("runtimeStyle" in postmod.' . $context['postbox']->id . ')
+				postmod.' . $context['postbox']->id . '.style.borderColor = "";
 			else
-				document.forms.postmodify.' . $context['postbox']->id . '.style.border = null;
+				postmod.' . $context['postbox']->id . '.style.border = null;
 		}
 
 		// Set the new last message id.
-		if ("last_msg" in document.forms.postmodify)
-			document.forms.postmodify.last_msg.value = $("smf last_msg", XMLDoc).text();
+		if ("last_msg" in postmod)
+			postmod.last_msg.value = $("smf last_msg", XMLDoc).text();
 
 		// Remove the new image from old-new replies!
 		for (i = 0; i < new_replies.length; i++)
@@ -637,7 +639,7 @@ function template_main()
 			newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + id + \'_body">\' + $("message", this).text() + \'<\' + \'/div></div></div>\';
 		});
 		if (newPostsHTML != "")
-			setOuterHTML($("#new_replies")[0], \'<span id="new_replies"><\' + \'/span>\' + newPostsHTML);
+			$("#new_replies").append(newPostsHTML);
 
 		var numIgnoredReplies = ignored_replies.length;
 		if (numIgnoredReplies != 0)
@@ -715,7 +717,7 @@ function template_main()
 			<div class="cat_bar">
 				<h3>', $txt['topic_summary'], '</h3>
 			</div>
-			<span id="new_replies"></span>';
+			<div id="new_replies"></div>';
 
 		$ignored_posts = array();
 		foreach ($context['previous_posts'] as $post)

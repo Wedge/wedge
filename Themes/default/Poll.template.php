@@ -19,7 +19,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		setOuterHTML(document.getElementById("pollMoreOptions"), \'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255" class="input_text" /></li><li id="pollMoreOptions"></li\');
+		$("#pollMoreOptions").append(\'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255" class="input_text" /></li>\');
 		return false;
 	}');
 
@@ -51,7 +51,7 @@ function template_main()
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>
 						<input type="text" name="question" size="80" value="', $context['poll']['question'], '" class="input_text" />
-						<ul class="poll_main">';
+						<ul class="poll_main" id="pollMoreOptions">';
 
 	foreach ($context['choices'] as $choice)
 	{
@@ -69,7 +69,6 @@ function template_main()
 	}
 
 	echo '
-							<li id="pollMoreOptions"></li>
 						</ul>
 						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>

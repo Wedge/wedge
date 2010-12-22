@@ -486,11 +486,7 @@ li.subsection > a {
 	-webkit-border-radius: 0 9px 9px 0;
 }
 
-li.subsection > a:hover {
-	background: url(../images/menu.gif) no-repeat 98% -46px !important;
-}
-
-.css > li li:hover, li.hove, li.subsection > a:hover {
+.css > li li:hover, li.hove {
 	background-color: #ebe7e2;
 	background-color: rgba(128, 128, 128, .15);
 }

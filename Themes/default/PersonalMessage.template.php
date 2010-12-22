@@ -375,7 +375,7 @@ function template_folder()
 
 			if (empty($context['display_mode']))
 				echo '
-					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="document.getElementById(\'deletelisting', $message['id'], '\').checked = this.checked;" class="input_check" /></li>';
+					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\')[0].checked = this.checked;" class="input_check" /></li>';
 
 			echo '
 				</ul>
@@ -520,7 +520,7 @@ function template_subject_list()
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a>
 			</th>
 			<th>
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + document.getElementById(\'selPMView\').value;">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', ($scripturl . '?action=pm;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? '' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '')), ';view=\' + $(\'#selPMView\').val();">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
@@ -574,7 +574,7 @@ function template_subject_list()
 			<td>', $message['time'], '</td>
 			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*" />' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ($scripturl . '?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" />' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
-			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if (document.getElementById(\'deletedisplay', $message['id'], '\')) document.getElementById(\'deletedisplay', $message['id'], '\').checked = this.checked;" class="input_check" /></td>
+			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if ($(\'#deletedisplay', $message['id'], '\').length) $(\'#deletedisplay', $message['id'], '\')[0].checked = this.checked;" class="input_check" /></td>
 		</tr>';
 		$next_alternate = !$next_alternate;
 	}
@@ -630,10 +630,10 @@ function template_search()
 	<script><!-- // --><![CDATA[
 		function expandCollapseLabels()
 		{
-			var current = document.getElementById("searchLabelsExpand").style.display != "none";
+			var current = $("#searchLabelsExpand").is(":visible");
 
-			document.getElementById("searchLabelsExpand").style.display = current ? "none" : "";
-			document.getElementById("expandLabelsIcon").src = smf_images_url + (current ? "/expand.gif" : "/collapse.gif");
+			$("#searchLabelsExpand").toggle(!current);
+			$("#expandLabelsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
 		}
 	// ]]></script>
 	<form action="', $scripturl, '?action=pm;sa=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
@@ -1356,12 +1356,12 @@ function template_add_rule()
 
 		criteriaNum++;
 
-		setOuterHTML(document.getElementById("criteriaAddHere"), \'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
+		$("#criteriaAddHere").append(\'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
 
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
 
-	add_js('<\' + \'/select><\' + \'/span><span id="criteriaAddHere"><\' + \'/span>\');
+	add_js('<\' + \'/select><\' + \'/span>\');
 	}
 
 	function addActionOption()
@@ -1373,23 +1373,24 @@ function template_add_rule()
 
 		actionNum++;
 
-		setOuterHTML(document.getElementById("actionAddHere"), \'<br /><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
+		$("#actionAddHere").append(\'<br /><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
 
 	foreach ($context['labels'] as $label)
 		if ($label['id'] != -1)
 			add_js('<option value="' . ($label['id'] + 1) . '">' . addslashes($label['name']) . '<\' + \'/option>');
 
-	add_js('<\' + \'/select><\' + \'/span><span id="actionAddHere"><\' + \'/span>\');
+	add_js('<\' + \'/select><\' + \'/span>\');
 	}
 
 	function updateRuleDef(optNum)
 	{
-		if (document.getElementById("ruletype" + optNum).value == "gid")
+		var va = $("#ruletype" + optNum).val();
+		if (va == "gid")
 		{
 			$("#defdiv" + optNum).hide();
 			$("#defseldiv" + optNum).show();
 		}
-		else if (document.getElementById("ruletype" + optNum).value == "bud" || document.getElementById("ruletype" + optNum).value == "")
+		else if (va == "bud" || va == "")
 		{
 			$("#defdiv" + optNum).hide();
 			$("#defseldiv" + optNum).hide();
@@ -1403,7 +1404,7 @@ function template_add_rule()
 
 	function updateActionDef(optNum)
 	{
-		document.getElementById("labdiv" + optNum).style.display = (document.getElementById("acttype" + optNum).value == "lab") ? "" : "none";
+		$("#labdiv" + optNum).toggle($("#acttype" + optNum).val() == "lab");
 	}
 
 	// Rebuild the rule description!
@@ -1423,7 +1424,7 @@ function template_add_rule()
 			if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
 			{
 				if (foundCriteria)
-					joinText = document.getElementById("logic").value == \'and\' ? ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ' : ', JavaScriptEscape(' ' . $txt['pm_readable_or'] . ' '), ';
+					joinText = $("#logic").val() == \'and\' ? ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ' : ', JavaScriptEscape(' ' . $txt['pm_readable_or'] . ' '), ';
 				else
 					joinText = \'\';
 				foundCriteria = true;
@@ -1431,9 +1432,9 @@ function template_add_rule()
 				curNum = document.forms.addrule.elements[i].id.match(/\d+/);
 				curVal = document.forms.addrule.elements[i].value;
 				if (curVal == "gid")
-					curDef = document.getElementById("ruledefgroup" + curNum).value.php_htmlspecialchars();
+					curDef = $("#ruledefgroup" + curNum).val().php_htmlspecialchars();
 				else if (curVal != "bud")
-					curDef = document.getElementById("ruledef" + curNum).value.php_htmlspecialchars();
+					curDef = $("#ruledef" + curNum).val().php_htmlspecialchars();
 				else
 					curDef = "";
 
@@ -1463,7 +1464,7 @@ function template_add_rule()
 				curNum = document.forms.addrule.elements[i].id.match(/\d+/);
 				curVal = document.forms.addrule.elements[i].value;
 				if (curVal == "lab")
-					curDef = document.getElementById("labdef" + curNum).value.php_htmlspecialchars();
+					curDef = $("#labdef" + curNum).val().php_htmlspecialchars();
 				else
 					curDef = "";
 
@@ -1486,7 +1487,7 @@ function template_add_rule()
 		}
 
 		// Set the actual HTML!
-		document.getElementById("ruletext").innerHTML = text;
+		$("#ruletext").html(text);
 	}');
 
 	echo '

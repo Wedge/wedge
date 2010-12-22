@@ -47,11 +47,11 @@ function template_edit_news()
 				<div id="moreNewsItems_link" style="display: none;"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>';
 
 	add_js('
-	document.getElementById("moreNewsItems_link").style.display = "";
+	$("#moreNewsItems_link").show();
 	function addNewsItem()
 	{
-		document.getElementById("moreNews").style.display = "";
-		setOuterHTML(document.getElementById("moreNewsItems"), \'<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="width: 85%;"><\' + \'/textarea><\' + \'/div><div id="moreNewsItems"><\' + \'/div>\');
+		$("#moreNews").show();
+		$("#moreNewsItems").append(\'<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="width: 85%;"><\' + \'/textarea><\' + \'/div>\');
 	}');
 
 	echo '
@@ -77,12 +77,9 @@ function template_email_members()
 	<script><!-- // --><![CDATA[
 		function toggleAdvanced(mode)
 		{
-			// What styles are we doing?
-			var divStyle = mode ? "" : "none";
-
-			document.getElementById("advanced_settings_div").style.display = divStyle;
-			document.getElementById("gosimple").style.display = divStyle;
-			document.getElementById("goadvanced").style.display = mode ? "none" : "";
+			$("#advanced_settings_div").toggle(mode);
+			$("#gosimple").toggle(mode);
+			$("#goadvanced").toggle(!mode);
 		}
 	// ]]></script>';
 
@@ -117,8 +114,8 @@ function template_email_members()
 
 			<div class="cat_bar">
 				<h3 id="advanced_select_div" style="display: none;">
-					<a href="#" onclick="toggleAdvanced(1); return false;" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" />&nbsp;<strong>', $txt['advanced'], '</strong></a>
-					<a href="#" onclick="toggleAdvanced(0); return false;" id="gosimple" style="display: none;"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" />&nbsp;<strong>', $txt['simple'], '</strong></a>
+					<a href="#" onclick="toggleAdvanced(true); return false;" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" />&nbsp;<strong>', $txt['advanced'], '</strong></a>
+					<a href="#" onclick="toggleAdvanced(false); return false;" id="gosimple" style="display: none;"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" />&nbsp;<strong>', $txt['simple'], '</strong></a>
 				</h3>
 			</div>
 
@@ -188,7 +185,7 @@ function template_email_members()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	document.getElementById("advanced_select_div").style.display = "";
+	$("#advanced_select_div").show();
 	var oMemberSuggest = new smc_AutoSuggest({
 		sSelf: \'oMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',

@@ -1,24 +1,27 @@
 
-var _cur_topic_id, _cur_msg_id, _buff_subject, _cur_subject_div, _in_edit_mode = 0;
-var hide_prefixes = [];
+var
+	cur_topic_id, cur_msg_id, cur_subject_div,
+	buff_subject, in_edit_mode = 0,
+	current_user_menu = null,
+	hide_prefixes = [];
 
 function is_editing()
 {
-	return _in_edit_mode == 1;
+	return in_edit_mode == 1;
 }
 
 // For templating, shown when an inline edit is made.
 function modify_topic_show_edit(subject)
 {
 	// Just template the subject.
-	_cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);" class="input_text" /><input type="hidden" name="topic" value="' + _cur_topic_id + '" /><input type="hidden" name="msg" value="' + _cur_msg_id.substr(4) + '" />');
+	cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);" class="input_text" /><input type="hidden" name="topic" value="' + cur_topic_id + '" /><input type="hidden" name="msg" value="' + cur_msg_id.substr(4) + '" />');
 }
 
 // And the reverse for hiding it.
 function modify_topic_hide_edit(subject)
 {
 	// Re-template the subject!
-	_cur_subject_div.html('<a href="' + smf_prepareScriptUrl(smf_scripturl) + 'topic=' + _cur_topic_id + '.0">' + subject + '</a>');
+	cur_subject_div.html('<a href="' + smf_prepareScriptUrl(smf_scripturl) + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
 }
 
 function modify_topic(topic_id, first_msg_id)
@@ -26,17 +29,17 @@ function modify_topic(topic_id, first_msg_id)
 	if (!can_ajax)
 		return;
 
-	if (_in_edit_mode == 1)
+	if (in_edit_mode == 1)
 	{
-		if (_cur_topic_id == topic_id)
+		if (cur_topic_id == topic_id)
 			return;
 		else
 			modify_topic_cancel();
 	}
 
 	mouse_on_div = 1;
-	_in_edit_mode = 1;
-	_cur_topic_id = topic_id;
+	in_edit_mode = 1;
+	cur_topic_id = topic_id;
 
 	if (typeof window.ajax_indicator == "function")
 		ajax_indicator(true);
@@ -45,10 +48,10 @@ function modify_topic(topic_id, first_msg_id)
 
 function onDocReceived_modify_topic(XMLDoc)
 {
-	_cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
+	cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
 
-	_cur_subject_div = $('#msg_' + _cur_msg_id);
-	_buff_subject = _cur_subject_div.html();
+	cur_subject_div = $('#msg_' + cur_msg_id);
+	buff_subject = cur_subject_div.html();
 
 	// Here we hide any other things they want hiding on edit.
 	set_hidden_topic_areas('none');
@@ -60,16 +63,16 @@ function onDocReceived_modify_topic(XMLDoc)
 
 function modify_topic_cancel()
 {
-	_cur_subject_div.html(_buff_subject);
+	cur_subject_div.html(buff_subject);
 	set_hidden_topic_areas('');
 
-	_in_edit_mode = 0;
+	in_edit_mode = 0;
 	return false;
 }
 
 function modify_topic_save(cur_session_id, cur_session_var)
 {
-	if (!_in_edit_mode)
+	if (!in_edit_mode)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
@@ -104,7 +107,7 @@ function modify_topic_done(XMLDoc)
 
 	modify_topic_hide_edit(subject.text());
 	set_hidden_topic_areas('');
-	_in_edit_mode = 0;
+	in_edit_mode = 0;
 
 	return false;
 }
@@ -113,7 +116,7 @@ function modify_topic_done(XMLDoc)
 function set_hidden_topic_areas(set_style)
 {
 	for (var i = 0; i < hide_prefixes.length; i++)
-		$('#' + hide_prefixes[i] + _cur_msg_id).css('display', set_style);
+		$('#' + hide_prefixes[i] + cur_msg_id).css('display', set_style);
 }
 
 // *** QuickReply object.
@@ -473,7 +476,7 @@ function IconList(oOptions)
 	// Replace all message icons by icons with hoverable and clickable div's.
 	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
 		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
-			setOuterHTML(document.images[i], '<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + ';" /></div>');
+			$(document.images[i]).replaceWith('<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + ';" /></div>');
 }
 
 // Event for the mouse hovering over the original icon.
@@ -621,8 +624,6 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 		.hide().appendTo($('ul', oButtonStrip)).fadeIn(300);
 }
 
-var current_user_menu = null;
-
 // *** The UserMenu
 function UserMenu(oList)
 {
@@ -662,8 +663,9 @@ UserMenu.prototype.switchMenu = function (oLink)
 
 
 /* Optimize:
-sButtonStripId = s
-oButtonStrip = b
-aItems = a
-oLastItem = o
+cur_topic_id = ct
+cur_msg_id = cm
+buff_subject = bs
+cur_subject_div = cs
+in_edit_mode = em
 */
