@@ -8,10 +8,9 @@ var
 	_formSubmitted = false,
 	_lastKeepAliveCheck = new Date().getTime(),
 	_ajax_indicator_ele = null,
-	smf_editorArray = [];
+	smf_editorArray = [],
 
-// Basic browser detection
-var
+	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
 	vers = $.browser.version,
 
@@ -174,17 +173,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 // Checks if the passed input's value is nothing.
 function isEmptyText(theField)
 {
-	// Copy the value so changes can be made..
-	var theValue = theField.value;
-
-	// Strip whitespace off the left side.
-	while (theValue.length > 0 && (theValue.charAt(0) == ' ' || theValue.charAt(0) == '\t'))
-		theValue = theValue.substring(1, theValue.length);
-	// Strip whitespace off the right side.
-	while (theValue.length > 0 && (theValue.charAt(theValue.length - 1) == ' ' || theValue.charAt(theValue.length - 1) == '\t'))
-		theValue = theValue.substring(0, theValue.length - 1);
-
-	return theValue == '';
+	return ($.trim(theField.value) == '');
 }
 
 // Only allow form submission ONCE.
@@ -206,14 +195,10 @@ function submitThisOnce(oControl)
 	return !_formSubmitted;
 }
 
-// Checks for variable in theArray.
-function in_array(variable, theArray)
+// Checks for variable in an array.
+function in_array(variable, arr)
 {
-	for (var i in theArray)
-		if (theArray[i] == variable)
-			return true;
-
-	return false;
+	return $.inArray(variable, arr) != -1;
 }
 
 // Find a specific radio button in its group and select it.
@@ -254,10 +239,9 @@ function _sessionKeepAlive()
 		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=keepalive;time=' + curTime;
 		_lastKeepAliveCheck = curTime;
 	}
-
-	window.setTimeout('_sessionKeepAlive();', 1200000);
+	setTimeout('_sessionKeepAlive();', 1200000);
 }
-window.setTimeout('_sessionKeepAlive();', 1200000);
+setTimeout('_sessionKeepAlive();', 1200000);
 
 // Set a theme option through javascript.
 function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
@@ -279,62 +263,28 @@ function smf_avatarResize()
 		tempAvatars[j].avatar = this;
 
 		$(tempAvatars[j++]).load(function () {
-			this.avatar.width = this.width;
-			this.avatar.height = this.height;
+			var ava = this.avatar;
+			ava.width = this.width;
+			ava.height = this.height;
 			if (smf_avatarMaxWidth != 0 && this.width > smf_avatarMaxWidth)
 			{
-				this.avatar.height = (smf_avatarMaxWidth * this.height) / this.width;
-				this.avatar.width = smf_avatarMaxWidth;
+				ava.height = (smf_avatarMaxWidth * this.height) / this.width;
+				ava.width = smf_avatarMaxWidth;
 			}
-			if (smf_avatarMaxHeight != 0 && this.avatar.height > smf_avatarMaxHeight)
+			if (smf_avatarMaxHeight != 0 && ava.height > smf_avatarMaxHeight)
 			{
-				this.avatar.width = (smf_avatarMaxHeight * this.avatar.width) / this.avatar.height;
-				this.avatar.height = smf_avatarMaxHeight;
+				ava.width = (smf_avatarMaxHeight * ava.width) / ava.height;
+				ava.height = smf_avatarMaxHeight;
 			}
 		}).attr('src', this.src);
 	});
 }
 
 
-function hashLoginPassword(doForm, cur_session_id)
-{
-	if (!cur_session_id)
-		cur_session_id = smf_session_id;
-	if (typeof(hex_sha1) == 'undefined')
-		return;
-	// Are they using an email address?
-	if (doForm.user.value.indexOf('@') != -1)
-		return;
-
-	// Unless the browser is Opera, the password will not save properly.
-	if (!('opera' in window))
-		doForm.passwrd.autocomplete = 'off';
-
-	doForm.hash_passwrd.value = hex_sha1(hex_sha1(doForm.user.value.php_to8bit().php_strtolower() + doForm.passwrd.value.php_to8bit()) + cur_session_id);
-
-	// It looks nicer to fill it with asterisks, but Firefox will try to save that.
-	doForm.passwrd.value = is_ff != -1 ? '' : doForm.passwrd.value.replace(/./g, '*');
-}
-
-function hashAdminPassword(doForm, username, cur_session_id)
-{
-	if (!cur_session_id)
-		cur_session_id = smf_session_id;
-	if (typeof(hex_sha1) == 'undefined')
-		return;
-
-	doForm.admin_hash_pass.value = hex_sha1(hex_sha1(username.php_to8bit().php_strtolower() + doForm.admin_pass.value.php_to8bit()) + cur_session_id);
-	doForm.admin_pass.value = doForm.admin_pass.value.replace(/./g, '*');
-}
-
 // Shows the page numbers by clicking the dots (in compact view).
 function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 {
 	var replacement = '', i, oldLastPage = 0, perPageLimit = 50;
-
-	// The dots were bold, the page numbers are not (in most cases).
-	spanNode.style.fontWeight = 'normal';
-	spanNode.onclick = '';
 
 	// Prevent too many pages to be loaded at once.
 	if ((lastPage - firstPage) / perPage > perPageLimit)
@@ -348,10 +298,10 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 		replacement += '<a class="navPages" href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
 
 	if (oldLastPage > 0)
-		replacement += '<span style="font-weight: bold; cursor: pointer;" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> ... </span> ';
+		replacement += '<span style="font-weight: bold; cursor: pointer;" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> &hellip; </span> ';
 
-	// Replace the dots by the new page links.
-	spanNode.innerHTML = replacement;
+	// The dots were bold, the page numbers are not (in most cases). Replace the dots by the new page links.
+	$(spanNode).unbind('click').css('fontWeight', 'normal').html(replacement);
 }
 
 function smc_preCacheImage(sSrc)
@@ -453,7 +403,7 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
-	var i, n, o;
+	var i, n, o, op;
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
@@ -466,39 +416,38 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit)
 	// Loop through all the images that need to be toggled.
 	if ('aSwapImages' in this.opt)
 	{
-		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
+		op = this.opt.aSwapImages;
+		for (i = 0, n = op.length; i < n; i++)
 		{
-			var oImage = document.getElementById(this.opt.aSwapImages[i].sId);
-			if (typeof(oImage) == 'object' && oImage != null)
-			{
-				// Only (re)load the image if it's changed.
-				var sTargetSource = bCollapse ? this.opt.aSwapImages[i].srcCollapsed : this.opt.aSwapImages[i].srcExpanded;
-				if (oImage.src != sTargetSource)
-					oImage.src = sTargetSource;
-
-				oImage.alt = oImage.title = bCollapse ? this.opt.aSwapImages[i].altCollapsed : this.opt.aSwapImages[i].altExpanded;
-			}
+			var
+				oImage			= $('#' + op[i].sId),
+				sTargetSource	= bCollapse ? op[i].srcCollapsed : op[i].srcExpanded,
+				sAlt			= bCollapse ? op[i].altCollapsed : op[i].altExpanded;
+			// Only (re)load the image if it's changed.
+			if (oImage.attr('src') != sTargetSource)
+				oImage.attr('src', sTargetSource);
+			oImage.attr({ alt: sAlt, title: sAlt });
 		}
 	}
 
 	// Loop through all the links that need to be toggled.
 	if ('aSwapLinks' in this.opt)
-		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-			$('#' + this.opt.aSwapLinks[i].sId).html(bCollapse ? this.opt.aSwapLinks[i].msgCollapsed : this.opt.aSwapLinks[i].msgExpanded);
+		for (i = 0, op = this.opt.aSwapLinks, n = op.length; i < n; i++)
+			$('#' + op[i].sId).html(bCollapse ? op[i].msgCollapsed : op[i].msgExpanded);
 
 	// Now go through all the sections to be collapsed.
-	for (i = 0, n = this.opt.aSwappableContainers.length; i < n; i++)
-		(o = $('#' + this.opt.aSwappableContainers[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
+	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)
+		(o = $('#' + op[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
 
 	// Update the new state.
 	this._collapsed = bCollapse;
 
 	// Update the cookie, if desired.
-	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
-		this._cookie.set(this.opt.oCookieOptions.sCookieName, this._collapsed ? '1' : '0');
+	if ('oCookieOptions' in this.opt && (op = this.opt.oCookieOptions) && op.bUseCookie)
+		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
 
-	if ('oThemeOptions' in this.opt && this.opt.oThemeOptions.bUseThemeSettings)
-		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, this.opt.oThemeOptions.sSessionId, this.opt.oThemeOptions.sSessionVar, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
+	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
+		smf_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, op.sSessionId, op.sSessionVar, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
 };
 
 // Reverse the current state.
@@ -516,13 +465,9 @@ function ajax_indicator(turn_on)
 		if (!(_ajax_indicator_ele.length) && ajax_notification_text !== null)
 			create_ajax_indicator_ele();
 	}
-
-	if (_ajax_indicator_ele.length)
-	{
-		if (is_ie6)
-			_ajax_indicator_ele.css({ position: 'absolute', top: (document.documentElement.scrollTop ? document.documentElement : document.body).scrollTop });
-		_ajax_indicator_ele.css('display', turn_on ? 'block' : 'none');
-	}
+	if (is_ie6)
+		_ajax_indicator_ele.css({ position: 'absolute', top: $(document).scrollTop() });
+	_ajax_indicator_ele.toggle(turn_on);
 }
 
 function create_ajax_indicator_ele()
@@ -541,24 +486,19 @@ var aJumpTo = [];
 // This function will retrieve the contents needed for the jump to boxes.
 function grabJumpToContent()
 {
-	var
-		oXMLDoc = getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml'),
-		aBoardsAndCategories = [], i, n;
+	var aBoardsAndCategories = [], i, n;
 
 	ajax_indicator(true);
 
-	if (oXMLDoc.responseXML)
-	{
-		var items = oXMLDoc.responseXML.getElementsByTagName('smf')[0].getElementsByTagName('item');
-		for (i = 0, n = items.length; i < n; i++)
-			aBoardsAndCategories[aBoardsAndCategories.length] = {
-				id: parseInt(items[i].getAttribute('id'), 10),
-				isCategory: items[i].getAttribute('type') == 'category',
-				name: items[i].firstChild.nodeValue.removeEntities(),
-				is_current: false,
-				childLevel: parseInt(items[i].getAttribute('childlevel'), 10)
-			};
-	}
+	$('smf item', getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml').responseXML).each(function () {
+		aBoardsAndCategories[aBoardsAndCategories.length] = {
+			id: parseInt(this.getAttribute('id'), 10),
+			isCategory: this.getAttribute('type') == 'category',
+			name: $(this).text().removeEntities(),
+			is_current: false,
+			childLevel: parseInt(this.getAttribute('childlevel'), 10)
+		};
+	});
 
 	ajax_indicator(false);
 
@@ -567,29 +507,29 @@ function grabJumpToContent()
 }
 
 // *** JumpTo class.
-function JumpTo(oJumpToOptions)
+function JumpTo(opt)
 {
-	this.opt = oJumpToOptions;
+	this.opt = opt;
 	this._dropdownList = null;
 
 	var sChildLevelPrefix = '';
-	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
-		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	$('#' + this.opt.sContainerId).html(this.opt.sJumpToTemplate
-		.replace(/%select_id%/, this.opt.sContainerId + '_select')
-		.replace(/%dropdown_list%/, '<select name="' + this.opt.sContainerId + '_select" id="' + this.opt.sContainerId + '_select" '
+	for (var i = opt.iCurBoardChildLevel; i > 0; i--)
+		sChildLevelPrefix += opt.sBoardChildLevelIndicator;
+	$('#' + opt.sContainerId).html(opt.sJumpToTemplate
+		.replace(/%select_id%/, opt.sContainerId + '_select')
+		.replace(/%dropdown_list%/, '<select name="' + opt.sContainerId + '_select" id="' + opt.sContainerId + '_select" '
 			+ ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board='
-			+ this.opt.iCurBoardId + '.0">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities()
-			+ '</option></select>&nbsp;<input type="button" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \''
-			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';" />'));
-	this._dropdownList = document.getElementById(this.opt.sContainerId + '_select');
+			+ opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities()
+			+ '</option></select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" onclick="window.location.href = \''
+			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';" />'));
+	this._dropdownList = document.getElementById(opt.sContainerId + '_select');
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
 JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 {
 	// Create an option that'll be above and below the category.
-	var oDashOption = $(document.createElement('option')).append(document.createTextNode(this.opt.sCatSeparator)).attr({ disabled: 'disabled', value: '' })[0];
+	var oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', 'disabled').val('')[0];
 
 	if ('onbeforeactivate' in document)
 		this._dropdownList.onbeforeactivate = null;
@@ -602,12 +542,12 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 	// Loop through all items to be added.
 	for (var i = 0, n = aBoardsAndCategories.length; i < n; i++)
 	{
-		var j, sChildLevelPrefix, oOption;
+		var j, sChildLevelPrefix;
 
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
-			this._dropdownList.insertBefore(oListFragment, this._dropdownList.options[0]);
+			$(this._dropdownList).prepend(oListFragment);
 			oListFragment = document.createDocumentFragment();
 			continue;
 		}
@@ -618,10 +558,10 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 			for (j = aBoardsAndCategories[i].childLevel, sChildLevelPrefix = ''; j > 0; j--)
 				sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
 
-		oOption = document.createElement('option');
-		oOption.appendChild(document.createTextNode((aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name));
-		oOption.value = aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';
-		oListFragment.appendChild(oOption);
+		oListFragment.appendChild(
+			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>');
+				.val(aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
+		);
 
 		if (aBoardsAndCategories[i].isCategory)
 			oListFragment.appendChild(oDashOption.cloneNode(true));

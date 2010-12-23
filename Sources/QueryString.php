@@ -694,6 +694,9 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	if (!is_array($files))
 		$files = (array) $files;
 
+	// Delete all duplicates.
+	$files = array_flip(array_unique(array_flip($files)));
+
 	if ($is_direct_url)
 	{
 		if (!empty($footer_coding))
@@ -709,7 +712,6 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	}
 
 	$id = '';
-	$js = array();
 	$latest_date = 0;
 	foreach ($files as &$file)
 	{
@@ -718,7 +720,6 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 			continue;
 
 		$add = $settings[$target . 'dir'] . '/' . $file;
-		$js[] = $add;
 		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
 		$latest_date = max($latest_date, filemtime($add));

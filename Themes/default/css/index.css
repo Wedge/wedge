@@ -2125,31 +2125,29 @@ ul.post_options li {
 	clear: both;
 	overflow: hidden;
 }
-#edit_poll fieldset input {
-	margin-left: 8.1em;
+#edit_poll fieldset > input {
+	margin: .8em 0 .3em 3em;
 }
-#edit_poll ul.poll_main li {
+ul.poll_main li {
 	padding-left: 1em;
+	margin: .2em 0;
 }
-#edit_poll ul.poll_main input {
-	margin-left: 1em;
+ul.poll_main input {
+	margin: .2em 0 .2em 1em;
 }
-#edit_poll ul.poll_main, dl.poll_options {
+ul.poll_main, dl.poll_options {
 	overflow: hidden;
 	padding: 0 0 .7em .7em;
 	list-style: none;
 }
-#edit_poll ul.poll_main li {
-	margin: .2em 0;
-}
-#edit_poll dl.poll_options dt {
+dl.poll_options dt {
 	width: 33%;
 	padding: 0 0 0 1em;
 }
-#edit_poll dl.poll_options dd {
+dl.poll_options dd {
 	width: 65%;
 }
-#edit_poll dl.poll_options dd input {
+dl.poll_options dd input {
 	margin-left: 0;
 }
 

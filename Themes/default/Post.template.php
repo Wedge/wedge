@@ -29,7 +29,7 @@ function template_main()
 	}');
 
 	add_js('
-	var postmod = document.forms.postmodify;';
+	var postmod = document.forms.postmodify;');
 
 	// If this is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
 	if ($context['make_poll'])
@@ -62,7 +62,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w75" /></li>') . ');
+		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w50" /></li>') . ');
 		return false;
 	}');
 

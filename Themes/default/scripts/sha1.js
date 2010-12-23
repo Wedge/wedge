@@ -1,4 +1,33 @@
-/*
+
+function hashLoginPassword(doForm, cur_session_id)
+{
+	if (!cur_session_id)
+		cur_session_id = smf_session_id;
+
+	// Are they using an email address?
+	if (doForm.user.value.indexOf('@') != -1)
+		return;
+
+	// Unless the browser is Opera, the password will not save properly.
+	if (!('opera' in window))
+		doForm.passwrd.autocomplete = 'off';
+
+	doForm.hash_passwrd.value = hex_sha1(hex_sha1(doForm.user.value.php_to8bit().php_strtolower() + doForm.passwrd.value.php_to8bit()) + cur_session_id);
+
+	// It looks nicer to fill it with asterisks, but Firefox will try to save that.
+	doForm.passwrd.value = is_ff != -1 ? '' : doForm.passwrd.value.replace(/./g, '*');
+}
+
+function hashAdminPassword(doForm, username, cur_session_id)
+{
+	if (!cur_session_id)
+		cur_session_id = smf_session_id;
+
+	doForm.admin_hash_pass.value = hex_sha1(hex_sha1(username.php_to8bit().php_strtolower() + doForm.admin_pass.value.php_to8bit()) + cur_session_id);
+	doForm.admin_pass.value = doForm.admin_pass.value.replace(/./g, '*');
+}
+
+/*!
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
  * Version 2.1 Copyright Paul Johnston 2000 - 2002.
@@ -201,4 +230,3 @@ function binb2b64(binarray)
 	}
 	return str;
 }
-

@@ -2873,9 +2873,6 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 	if (!file_exists($dest))
 		mkdir($dest);
 
-	// Delete all duplicates.
-	$js = array_flip(array_unique(array_flip($js)));
-
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
 	{
@@ -2926,13 +2923,18 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 
 		loadSource('Class-Packer');
 		$packer = new Packer;
-		$final = $packer->pack($final, false /* only minify */, true /* shrink variables */, true /* shrink _privates */);
+		$final = $packer->pack($final);
 
 		if (!empty($comments[1]))
 			foreach ($comments[1] as $comment)
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
-		// Adding a semicolon after } will fix a common problem in the packer.
+		// Adding a semicolon after a function declaration is mandatory in Packer.
+		// The original SMF code didn't bother with these, and developers are advised NOT
+		// to follow that advice. If you can't fix your scripts, uncomment the following
+		// lines, and semicolons will be added automatically.
+
+		/*
 		$max = strlen($final);
 		$i = 0;
 		$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
@@ -2956,6 +2958,7 @@ function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false
 			}
 			$i++;
 		}
+		*/
 	}
 
 	if ($gzip)
