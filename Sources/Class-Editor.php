@@ -2259,7 +2259,7 @@ class wedgeEditor
 	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
 		sUniqueId: ' . JavaScriptEscape($smileycontainer) . ',
 		sContainerDiv: ' . JavaScriptEscape($smileycontainer) . ',
-		sClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.insertSmiley') . ',
+		sClickHandler: function (o) { oEditorHandle_' . $this->id . '.insertSmiley(o); },
 		oSmileyLocations: {');
 
 			foreach ($this->smileys as $location => $smileyRows)
@@ -2330,8 +2330,8 @@ class wedgeEditor
 	var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
 		sUniqueId: ' . JavaScriptEscape($bbccontainer) . ',
 		sContainerDiv: ' . JavaScriptEscape($bbccontainer) . ',
-		sButtonClickHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleButtonClick') . ',
-		sSelectChangeHandler: ' . JavaScriptEscape('oEditorHandle_' . $this->id . '.handleSelectChange') . ',
+		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
+		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
 		sSprite: ' . JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png') . ',
 		aButtonRows: [');
 

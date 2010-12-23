@@ -124,7 +124,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	var
 		desktopURL = typeof(from) == 'object' && from.href ? from.href : from,
 		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src');
+		helf = $('#helf'), previousTarget = helf.data('src'), e = window.event;
 
 	if ((alternateWidth && vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
 	{
@@ -135,26 +135,32 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	else
 		noScrollbars = noScrollbars && noScrollbars === true;
 
+	// If the reqWin event was created on the fly, it'll bubble up to body and cancel itself...
+	e.cancelBubbling = true;
+	if (e.stopPropagation)
+		e.stopPropagation();
+
 	// Clicking the help icon twice should close the popup and remove the global click event.
-	if (helf.remove().length && $('body').unbind('click.h') && previousTarget == desktopURL)
+	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == desktopURL)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
-	$('<div></div>').attr('id', 'helf').data('src', desktopURL).css({
-		position: is_ie6 ? 'absolute' : 'fixed',
-		width: (alternateWidth ? alternateWidth : 480) + 'px',
-		height: alternateHeight ? alternateHeight + 'px' : 'auto',
-		bottom: 10,
-		right: 10
-	}).append($('<div></div>')
-		.addClass('windowbg wrc').hide().load(desktopURL, function() {
+	$('<div class="windowbg wrc"></div>').hide()
+		.load(desktopURL, function() {
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : 'auto',
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
 			}).fadeIn(300);
-		})
-	).appendTo('body');
+		}).appendTo(
+			$('<div id="helf"></div>').data('src', desktopURL).css({
+				position: is_ie6 ? 'absolute' : 'fixed',
+				width: (alternateWidth ? alternateWidth : 480) + 'px',
+				height: alternateHeight ? alternateHeight + 'px' : 'auto',
+				bottom: 10,
+				right: 10
+			}).appendTo('body')
+		);
 
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$('body').bind('click.h', function (e) {
@@ -196,9 +202,9 @@ function submitThisOnce(oControl)
 }
 
 // Checks for variable in an array.
-function in_array(variable, arr)
+function in_array(variable, theArray)
 {
-	return $.inArray(variable, arr) != -1;
+	return $.inArray(variable, theArray) != -1;
 }
 
 // Find a specific radio button in its group and select it.
@@ -528,22 +534,21 @@ function JumpTo(opt)
 // Fill the jump to box with entries. Method of the JumpTo class.
 JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 {
-	// Create an option that'll be above and below the category.
-	var oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', 'disabled').val('')[0];
+	var
+		// Create an option that'll be above and below the category.
+		oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', 'disabled').val('')[0],
+		// Create a document fragment that'll allowing inserting big parts at once.
+		oListFragment = document.createDocumentFragment(),
+		i, j, n, sChildLevelPrefix;
 
 	if ('onbeforeactivate' in document)
 		this._dropdownList.onbeforeactivate = null;
 	else
 		this._dropdownList.onfocus = null;
 
-	// Create a document fragment that'll allowing inserting big parts at once.
-	var oListFragment = document.createDocumentFragment();
-
 	// Loop through all items to be added.
-	for (var i = 0, n = aBoardsAndCategories.length; i < n; i++)
+	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
 	{
-		var j, sChildLevelPrefix;
-
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
@@ -559,7 +564,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 				sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
 
 		oListFragment.appendChild(
-			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>');
+			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>')
 				.val(aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
 		);
 
@@ -650,6 +655,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 			document.forms[sFormName][aElementNames[i]].value = document.forms[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
+/*
 // This will add an extra class to any external links, except those with title="-".
 // Ignored for now because it needs some improvement to the domain name detection.
 function _linkMagic()
@@ -660,6 +666,7 @@ function _linkMagic()
 			$(this).addClass('xt');
 	});
 }
+*/
 
 function _testStyle(sty)
 {
@@ -770,15 +777,20 @@ function _hide_children(id)
 // In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
 var
 	_wedgerocks = document.createElement('wedgerocks'),
-	can_ajax = 'XMLHttpRequest' in window || 'ActiveXObject' in window,
 	can_borderradius = _testStyle('borderRadius'),
-	can_boxshadow = _testStyle('boxShadow');
+	can_boxshadow = _testStyle('boxShadow'),
+	can_ajax = $.support.ajax;
 
 /* Optimize:
 _formSubmitted = _f
 _ajax_indicator_ele = _a
 _lastKeepAliveCheck = _k
 _dropdownList = _d
+_wedgerocks = _w
+_show_shim = _sh
+_hide_children = _h
+_hide_me = _hm
+_delay = _d
 aBoardsAndCategories = b
 aElementNames = e
 additional_vars = a

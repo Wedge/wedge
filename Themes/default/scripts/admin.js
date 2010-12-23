@@ -22,11 +22,7 @@
 function smf_AdminIndex(oOptions)
 {
 	this.opt = oOptions;
-	this.init();
-}
 
-smf_AdminIndex.prototype.init = function ()
-{
 	// Load the text box containing the latest news items.
 	if (this.opt.bLoadAnnouncements)
 		this.setAnnouncements();
@@ -96,15 +92,10 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 
 
 
-function smf_ViewVersions (oOptions)
+function smf_ViewVersions(oOptions)
 {
 	this.opt = oOptions;
 	this.oSwaps = {};
-	this.init();
-}
-
-smf_ViewVersions.prototype.init = function ()
-{
 	this.determineVersions();
 };
 

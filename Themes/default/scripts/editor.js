@@ -1492,7 +1492,7 @@ smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 	var oProperties = this.opt.oSmileyLocations[sLocation][iSmileyRowIndex][iSmileyIndex];
 
 	if ('sClickHandler' in this.opt)
-		eval(this.opt.sClickHandler + '(oProperties)');
+		this.opt.sClickHandler(oProperties);
 
 	return false;
 };
@@ -1692,7 +1692,7 @@ smc_BBCButtonBox.prototype.handleButtonClick = function(oButtonImg)
 	oProperties.bIsActive = oButtonImg.bIsActive;
 
 	if ('sButtonClickHandler' in this.opt)
-		eval(this.opt.sButtonClickHandler + '(oProperties)');
+		this.opt.sButtonClickHandler(oProperties);
 
 	return false;
 };
@@ -1710,7 +1710,7 @@ smc_BBCButtonBox.prototype.handleSelectChange = function(oSelectControl)
 	var oProperties = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
 
 	if ('sSelectChangeHandler' in this.opt)
-		eval(this.opt.sSelectChangeHandler + '(oProperties)');
+		this.opt.sSelectChangeHandler(oProperties);
 
 	return true;
 };
@@ -1740,7 +1740,7 @@ smc_BBCButtonBox.prototype.emulateClick = function(sCode)
 			var oCurControl = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
 			if (oCurControl.sType == 'button' && oCurControl.sCode == sCode)
 			{
-				eval(this.opt.sButtonClickHandler + '(oCurControl)');
+				this.opt.sButtonClickHandler(oCurControl);
 				return true;
 			}
 		}

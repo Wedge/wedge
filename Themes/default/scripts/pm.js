@@ -3,39 +3,22 @@
 function smf_PersonalMessageSend(oOptions)
 {
 	this.opt = oOptions;
-	this.oBccDiv = null;
-	this.oBccDiv2 = null;
 	this.oToAutoSuggest = null;
 	this.oBccAutoSuggest = null;
 	this.oToListContainer = null;
-	this.init();
-}
 
-smf_PersonalMessageSend.prototype.init = function()
-{
 	if (!this.opt.bBccShowByDefault)
 	{
 		// Hide the BCC control.
-		this.oBccDiv = document.getElementById(this.opt.sBccDivId);
-		this.oBccDiv.style.display = 'none';
-		this.oBccDiv2 = document.getElementById(this.opt.sBccDivId2);
-		this.oBccDiv2.style.display = 'none';
+		$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).hide();
 
 		// Show the link to bet the BCC control back.
-		var oBccLinkContainer = document.getElementById(this.opt.sBccLinkContainerId);
-		oBccLinkContainer.style.display = '';
-		oBccLinkContainer.innerHTML = this.opt.sShowBccLinkTemplate;
+		$('#' + this.opt.sBccLinkContainerId).show().html(this.opt.sShowBccLinkTemplate);
 
 		// Make the link show the BCC control.
-		var oBccLink = document.getElementById(this.opt.sBccLinkId);
-		oBccLink.instanceRef = this;
-		oBccLink.onclick = function () {
-			this.instanceRef.showBcc();
-			return false;
-		};
+		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { $(this).data('that').showBcc(); });
 	}
 
-	var oToControl = document.getElementById(this.opt.sToControlId);
 	this.oToAutoSuggest = new smc_AutoSuggest({
 		sSelf: this.opt.sSelf + '.oToAutoSuggest',
 		sSessionId: this.opt.sSessionId,
@@ -48,7 +31,7 @@ smf_PersonalMessageSend.prototype.init = function()
 		sItemListContainerId: 'to_item_list_container',
 		aListItems: this.opt.aToRecipients
 	});
-	this.oToAutoSuggest.registerCallback('onBeforeAddItem', this.opt.sSelf + '.callbackAddItem');
+	this.oToAutoSuggest.registerCallback('onBeforeAddItem', this.oToAutoSuggest.callbackAddItem);
 
 	this.oBccAutoSuggest = new smc_AutoSuggest({
 		sSelf: this.opt.sSelf + '.oBccAutoSuggest',
@@ -62,14 +45,13 @@ smf_PersonalMessageSend.prototype.init = function()
 		sItemListContainerId: 'bcc_item_list_container',
 		aListItems: this.opt.aBccRecipients
 	});
-	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', this.opt.sSelf + '.callbackAddItem');
+	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', this.oBccAutoSuggest.callbackAddItem);
 };
 
 smf_PersonalMessageSend.prototype.showBcc = function()
 {
 	// No longer hide it, show it to the world!
-	this.oBccDiv.style.display = '';
-	this.oBccDiv2.style.display = '';
+	$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).show();
 };
 
 // Prevent items to be added twice or to both the 'To' and 'Bcc'.

@@ -1,22 +1,14 @@
 function smf_StatsCenter(oOptions)
 {
-	this.opt = oOptions;
-
-	this.oTable = null;
-	this.oYears = {};
-
-	this.bIsLoading = false;
-
-	this.init();
-}
-
-smf_StatsCenter.prototype.init = function ()
-{
 	this.oTable = document.getElementById(this.opt.sTableId);
 
 	// Is the table actually present?
 	if (typeof(this.oTable) != 'object')
 		return;
+
+	this.opt = oOptions;
+	this.oYears = {};
+	this.bIsLoading = false;
 
 	// Find all months and years defined in the table.
 	var aRows = this.oTable.getElementsByTagName('tr');

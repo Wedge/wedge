@@ -163,21 +163,10 @@ smc_AutoSuggest.prototype.registerCallback = function(sCallbackType, sCallback)
 {
 	switch (sCallbackType)
 	{
-		case 'onBeforeAddItem':
-			this.oCallback.onBeforeAddItem = sCallback;
-		break;
-
-		case 'onAfterAddItem':
-			this.oCallback.onAfterAddItem = sCallback;
-		break;
-
-		case 'onAfterDeleteItem':
-			this.oCallback.onAfterDeleteItem = sCallback;
-		break;
-
-		case 'onBeforeUpdate':
-			this.oCallback.onBeforeUpdate = sCallback;
-		break;
+		case 'onBeforeAddItem':		this.oCallback.onBeforeAddItem = sCallback;		break;
+		case 'onAfterAddItem':		this.oCallback.onAfterAddItem = sCallback;		break;
+		case 'onAfterDeleteItem':	this.oCallback.onAfterDeleteItem = sCallback;	break;
+		case 'onBeforeUpdate':		this.oCallback.onBeforeUpdate = sCallback;		break;
 	}
 };
 
@@ -251,7 +240,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 
 	// If there's a callback then call it. If it returns false, the item must not be added.
 	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback && typeof(this.oCallback.onBeforeAddItem) == 'string')
-		if (!eval(this.oCallback.onBeforeAddItem + '(' + this.opt.sSelf + ', \'' + sItemId + '\');'))
+		if (!this.oCallback.onBeforeAddItem(this.opt.sSelf, sItemId))
 			return;
 
 	var eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
@@ -261,9 +250,9 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, smf_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
 	).appendTo(this.oItemList);
 
-	// If there's a registered callback, call it.
+	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
 	if ('oCallback' in this && 'onAfterAddItem' in this.oCallback && typeof(this.oCallback.onAfterAddItem) == 'string')
-		eval(this.oCallback.onAfterAddItem + '(' + this.opt.sSelf + ', \'' + eid + '\', ' + this.iItemCount + ');');
+		this.oCallback.onAfterAddItem(this.opt.sSelf, eid, this.iItemCount);
 
 	// Clear the div a bit.
 	this.removeLastSearchString();
@@ -285,9 +274,9 @@ smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
 	// Decrease the internal item count.
 	this.iItemCount--;
 
-	// If there's a registered callback, call it.
+	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
 	if ('oCallback' in this && 'onAfterDeleteItem' in this.oCallback && typeof(this.oCallback.onAfterDeleteItem) == 'string')
-		eval(this.oCallback.onAfterDeleteItem + '(' + this.opt.sSelf + ', ' + this.iItemCount + ');');
+		this.oCallback.onAfterDeleteItem(this.opt.sSelf, this.iItemCount);
 };
 
 // Hide the box.
@@ -337,13 +326,13 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 	for (var i = 0; i < (aResults.length > this.iMaxDisplayQuantity ? this.iMaxDisplayQuantity : aResults.length); i++)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
-			.data({ sItemId: aResults[i].sItemId, instanceRef: this })
+			.data({ sItemId: aResults[i].sItemId, that: this })
 			.addClass('auto_suggest_item')
 			.html(aResults[i].sItemName)
 			.appendTo(this.oSuggestDivHandle)
-			.mouseenter(function (oEvent) { $(this).data('instanceRef').itemMouseEnter(this); })
-			.mouseleave(function (oEvent) { $(this).data('instanceRef').itemMouseLeave(this); })
-			.click(function (oEvent) { $(this).data('instanceRef').itemClicked(this); })[0];
+			.mouseenter(function (oEvent) { $(this).data('that').itemMouseEnter(this); })
+			.mouseleave(function (oEvent) { $(this).data('that').itemMouseLeave(this); })
+			.click(function (oEvent) { $(this).data('that').itemClicked(this); })[0];
 
 	this.aDisplayData = aNewDisplayData;
 
@@ -365,35 +354,32 @@ smc_AutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 
 smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 {
-	var aItems = $('item', oXMLDoc), i;
-	this.aCache = [];
-	for (i = 0; i < aItems.length; i++)
-	{
-		this.aCache[i] = {
-			sItemId: aItems[i].attr('id'),
-			sItemName: aItems[i].text()
-		};
+	var aItems = $('item', oXMLDoc), i, ac = [];
 
-		// If we're doing auto add and we find the exact person, then add them!
-		if (this.bDoAutoAdd && this.sLastSearch == this.aCache[i].sItemName)
+	aItems.each(function (i) {
+		ac[i] = { sItemId: $(this).attr('id'), sItemName: $(this).text() };
+	});
+
+	// If we're doing auto add and we find the exact person, then add them!
+	if (this.bDoAutoAdd)
+		for (i in ac)
 		{
-			var oReturnValue = {
-				sItemId: this.aCache[i].sItemId,
-				sItemName: this.aCache[i].sItemName
-			};
-			this.aCache = [];
-			return this.addItemLink(oReturnValue.sItemId, oReturnValue.sItemName, true);
+			if (this.sLastSearch == ac[i].sItemName)
+			{
+				var sItemId = ac[i].sItemId, sItemName = ac[i].sItemName;
+				this.aCache = ac = [];
+				return this.addItemLink(sItemId, sItemName, true);
+			}
 		}
-	}
 
-	// Check we don't try to keep auto updating!
+	// Check we don't try to keep auto-updating!
 	this.bDoAutoAdd = false;
 
 	// Populate the div.
-	this.populateDiv(this.aCache);
+	this.populateDiv(this.aCache = ac);
 
-	// Make sure we can see it - if we can.
-	aItems.length == 0 ? this.autoSuggestHide() : this.autoSuggestShow();
+	// Make sure we can see it.
+	aItems.length ? this.autoSuggestShow() : this.autoSuggestHide();
 
 	return true;
 };
@@ -404,7 +390,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	// If there's a callback then call it.
 	if ('onBeforeUpdate' in this.oCallback && typeof(this.oCallback.onBeforeUpdate) == 'string')
 		// If it returns false, the item must not be added.
-		if (!eval(this.oCallback.onBeforeUpdate + '(' + this.opt.sSelf + ');'))
+		if (!this.oCallback.onBeforeUpdate(this.opt.sSelf))
 			return false;
 
 	if (isEmptyText(this.oTextHandle))
