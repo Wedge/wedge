@@ -468,7 +468,7 @@ function ajax_indicator(turn_on)
 	if (!_ajax_indicator_ele)
 	{
 		_ajax_indicator_ele = $('#ajax_in_progress');
-		if (!(_ajax_indicator_ele.length) && ajax_notification_text !== null)
+		if (!(_ajax_indicator_ele.length) && ajax_notification_text !== null && turn_on)
 			create_ajax_indicator_ele();
 	}
 	if (is_ie6)
@@ -729,7 +729,7 @@ function _show_shim(showsh, ieid, j)
 // Entering a menu entry?
 function _show_me()
 {
-	var hasul = $('ul:first', this)[0], is_top = this.parentNode.className == 'menu';
+	var hasul = $('ul', this).first()[0], is_top = this.parentNode.className == 'menu';
 
 	if (hoverable && hasul && hasul.style.visibility == 'visible')
 		return _hide_children(this.id);
@@ -743,7 +743,7 @@ function _show_me()
 			_show_shim(true, this.id, hasul);
 	}
 
-	if (!is_top || !($('h4:first', this).addClass('hove').length))
+	if (!is_top || !($('h4', this).first().addClass('hove').length))
 		$(this).addClass('hove').parentsUntil('.menu>li').each(function () {
 			if (this.nodeName == 'LI')
 				$(this).addClass('hove');

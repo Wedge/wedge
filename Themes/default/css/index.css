@@ -1396,14 +1396,14 @@ form.wrc {
 	color: #000;
 }
 .auto_suggest_item {
-	background-color: #ddd;
+	background-color: #fee;
 	padding: 2px 3px 1px;
 }
 .auto_suggest_item_hover {
-	background-color: #888;
+	background-color: #988;
 	padding: 2px 3px 1px;
 	cursor: pointer;
-	color: #eee;
+	color: #fff;
 }
 
 /* The dropdown menu toggle image */
@@ -1849,11 +1849,17 @@ img.new_posts {
 	float: left;
 	width: 50%;
 }
+
+/* The quick edit button */
 .modifybutton {
+	background: url(../images/icons/modify_inline.gif) no-repeat 0 0;
+	display: inline;
+	width: 20px;
+	height: 20px;
 	clear: right;
 	float: right;
 	margin: 8px 20px 10px 0;
-	text-align: right;
+	cursor: pointer;
 }
 
 /* The quick buttons */
@@ -1968,6 +1974,9 @@ ul.quickbuttons li.inline_mod_check {
 
 /* The quick-reply area. Horizontal alignments go a bit wonky in IE6 and IE7 but is it really worth worrying about? */
 
+#postmodify {
+	margin: 0;
+}
 #quickReplyOptions .roundframe, #postmodify .roundframe {
 	padding-left: 8%;
 	padding-right: 8%;

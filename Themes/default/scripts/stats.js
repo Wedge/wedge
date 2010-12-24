@@ -1,9 +1,9 @@
 function smf_StatsCenter(oOptions)
 {
-	this.oTable = document.getElementById(this.opt.sTableId);
+	this.oTable = $('#' + this.opt.sTableId);
 
 	// Is the table actually present?
-	if (typeof(this.oTable) != 'object')
+	if (!this.oTable.length)
 		return;
 
 	this.opt = oOptions;
@@ -11,57 +11,51 @@ function smf_StatsCenter(oOptions)
 	this.bIsLoading = false;
 
 	// Find all months and years defined in the table.
-	var aRows = this.oTable.getElementsByTagName('tr');
-	var aResults = [];
+	var aResults = [], sYearId = null, oCurYear = null, sMonthId = null, oCurMonth = null, opt = oOptions;
 
-	var sYearId = null;
-	var oCurYear = null;
-
-	var sMonthId = null;
-	var oCurMonth = null;
-	for (var i = 0, n = aRows.length; i < n; i++)
-	{
+	$('tr', this.oTable).data('that', this).each(function () {
+		var that = $(this).data('that');
 		// Check if the current row represents a year.
-		if ((aResults = this.opt.reYearPattern.exec(aRows[i].id)) != null)
+		if ((aResults = opt.reYearPattern.exec(this.id)) != null)
 		{
 			// The id is part of the pattern match.
 			sYearId = aResults[1];
 
 			// Setup the object that'll have the state information of the year.
-			this.oYears[sYearId] = {
-				oCollapseImage: document.getElementById(this.opt.sYearImageIdPrefix + sYearId),
+			that.oYears[sYearId] = {
+				oCollapseImage: document.getElementById(opt.sYearImageIdPrefix + sYearId),
 				oMonths: {}
 			};
 
 			// Create a shortcut, makes things more readable.
-			oCurYear = this.oYears[sYearId];
+			oCurYear = that.oYears[sYearId];
 
 			// Use the collapse image to determine the current state.
-			oCurYear.bIsCollapsed = oCurYear.oCollapseImage.src.indexOf(this.opt.sYearImageCollapsed) >= 0;
+			oCurYear.bIsCollapsed = oCurYear.oCollapseImage.src.indexOf(opt.sYearImageCollapsed) >= 0;
 
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new smc_Toggle({
 				bToggleEnabled: true,
 				bCurrentlyCollapsed: oCurYear.bIsCollapsed,
-				instanceRef: this,
+				instanceRef: that,
 				sYearId: sYearId,
 				funcOnBeforeCollapse: function () {
-					this.opt.instanceRef.onBeforeCollapseYear(this);
+					opt.instanceRef.onBeforeCollapseYear(that);
 				},
 				aSwappableContainers: [
 				],
 				aSwapImages: [
 					{
-						sId: this.opt.sYearImageIdPrefix + sYearId,
-						srcExpanded: smf_images_url + '/' + this.opt.sYearImageExpanded,
+						sId: opt.sYearImageIdPrefix + sYearId,
+						srcExpanded: smf_images_url + '/' + opt.sYearImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sYearImageCollapsed,
+						srcCollapsed: smf_images_url + '/' + opt.sYearImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sYearLinkIdPrefix + sYearId,
+						sId: opt.sYearLinkIdPrefix + sYearId,
 						msgExpanded: sYearId,
 						msgCollapsed: sYearId
 					}
@@ -70,77 +64,78 @@ function smf_StatsCenter(oOptions)
 		}
 
 		// Or maybe the current row represents a month.
-		else if ((aResults = this.opt.reMonthPattern.exec(aRows[i].id)) != null)
+		else if ((aResults = opt.reMonthPattern.exec(this.id)) != null)
 		{
 			// Set the id to the matched pattern.
 			sMonthId = aResults[1];
 
 			// Initialize the month as a child object of the year.
 			oCurYear.oMonths[sMonthId] = {
-				oCollapseImage: document.getElementById(this.opt.sMonthImageIdPrefix + sMonthId)
+				oCollapseImage: document.getElementById(opt.sMonthImageIdPrefix + sMonthId)
 			};
 
 			// Create a shortcut to the current month.
 			oCurMonth = oCurYear.oMonths[sMonthId];
 
 			// Determine whether the month is currently collapsed or expanded..
-			oCurMonth.bIsCollapsed = oCurMonth.oCollapseImage.src.indexOf(this.opt.sMonthImageCollapsed) >= 0;
+			oCurMonth.bIsCollapsed = oCurMonth.oCollapseImage.src.indexOf(opt.sMonthImageCollapsed) >= 0;
 
-			var sLinkText = document.getElementById(this.opt.sMonthLinkIdPrefix + sMonthId).innerHTML;
+			var sLinkText = $('#' + opt.sMonthLinkIdPrefix + sMonthId).html();
 
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new smc_Toggle({
 				bToggleEnabled: true,
 				bCurrentlyCollapsed: oCurMonth.bIsCollapsed,
-				instanceRef: this,
+				instanceRef: that,
 				sMonthId: sMonthId,
 				funcOnBeforeCollapse: function () {
-					this.opt.instanceRef.onBeforeCollapseMonth(this);
+					opt.instanceRef.onBeforeCollapseMonth(that);
 				},
 				funcOnBeforeExpand: function () {
-					this.opt.instanceRef.onBeforeExpandMonth(this);
+					opt.instanceRef.onBeforeExpandMonth(that);
 				},
 				aSwappableContainers: [
 				],
 				aSwapImages: [
 					{
-						sId: this.opt.sMonthImageIdPrefix + sMonthId,
-						srcExpanded: smf_images_url + '/' + this.opt.sMonthImageExpanded,
+						sId: opt.sMonthImageIdPrefix + sMonthId,
+						srcExpanded: smf_images_url + '/' + opt.sMonthImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sMonthImageCollapsed,
+						srcCollapsed: smf_images_url + '/' + opt.sMonthImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sMonthLinkIdPrefix + sMonthId,
+						sId: opt.sMonthLinkIdPrefix + sMonthId,
 						msgExpanded: sLinkText,
 						msgCollapsed: sLinkText
 					}
 				]
 			});
 
-			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = aRows[i].id;
+			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = this.id;
 		}
 
-		else if ((aResults = this.opt.reDayPattern.exec(aRows[i].id)) != null)
+		else if ((aResults = opt.reDayPattern.exec(this.id)) != null)
 		{
-			oCurMonth.oToggle.opt.aSwappableContainers[oCurMonth.oToggle.opt.aSwappableContainers.length] = aRows[i].id;
-			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = aRows[i].id;
+			oCurMonth.oToggle.opt.aSwappableContainers[oCurMonth.oToggle.opt.aSwappableContainers.length] = this.id;
+			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = this.id;
 		}
-	}
+	});
 
 	// Collapse all collapsed years!
-	for (i = 0; i < this.opt.aCollapsedYears.length; i++)
+	for (var i = 0; i < opt.aCollapsedYears.length; i++)
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
 };
 
 smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell SMF that all underlying months have disappeared.
-	for (var sMonth in this.oYears[oToggle.opt.sYearId].oMonths)
-		if (this.oYears[oToggle.opt.sYearId].oMonths[sMonth].oToggle.opt.aSwappableContainers.length > 0)
-			this.oYears[oToggle.opt.sYearId].oMonths[sMonth].oToggle.changeState(true);
+	var omon = this.oYears[oToggle.opt.sYearId].oMonths;
+	for (var sMonth in omon)
+		if (omon[sMonth].oToggle.opt.aSwappableContainers.length > 0)
+			omon[sMonth].oToggle.changeState(true);
 };
 
 smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
@@ -221,6 +216,5 @@ smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 	}
 
 	this.bIsLoading = false;
-	if (typeof(window.ajax_indicator) == 'function')
-		ajax_indicator(false);
+	ajax_indicator(false);
 };

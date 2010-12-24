@@ -258,7 +258,7 @@ function template_ban_edit()
 		document.getElementById(\'user_check\').checked = true;
 		return true;
 	}
-	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', onUpdateName);');
 }
 
 function template_ban_edit_trigger()
@@ -341,7 +341,7 @@ function template_ban_edit_trigger()
 		selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
 		return true;
 	}
-	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', \'onUpdateName\');');
+	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', onUpdateName);');
 }
 
 ?>

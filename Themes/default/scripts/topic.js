@@ -192,12 +192,6 @@ function QuickModify(oOptions)
 	this.oCurSubjectDiv = null;
 	this.sMessageBuffer = '';
 	this.sSubjectBuffer = '';
-
-	// Show the edit buttons
-	if (can_ajax)
-		for (var i = document.images.length - 1; i >= 0; i--)
-			if (document.images[i].id.substr(0, 14) == 'modify_button_')
-				document.images[i].style.display = '';
 }
 
 // Function called when a user presses the edit button.
@@ -483,9 +477,11 @@ function IconList(oOptions)
 IconList.prototype.onBoxHover = function (oDiv, bMouseOver)
 {
 	var i = (3 - this.opt.iBoxBorderWidthHover);
-	oDiv.style.border = bMouseOver ? this.opt.iBoxBorderWidthHover + 'px solid ' + this.opt.sBoxBorderColorHover : '';
-	oDiv.style.background = bMouseOver ? this.opt.sBoxBackgroundHover : this.opt.sBoxBackground;
-	oDiv.style.padding = bMouseOver ? i + 'px ' + i + 'px 0' : '3px 3px 1px';
+	$(oDiv).css({
+		border: bMouseOver ? this.opt.iBoxBorderWidthHover + 'px solid ' + this.opt.sBoxBorderColorHover : '',
+		background: bMouseOver ? this.opt.sBoxBackgroundHover : this.opt.sBoxBackground,
+		padding: bMouseOver ? i + 'px ' + i + 'px 0' : '3px 3px 1px'
+	});
 };
 
 // Show the list of icons after the user clicked the original icon.
@@ -515,12 +511,12 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	// Set the position of the container.
 	var aPos = $(oDiv).offset();
 
-	this.oContainerDiv.style.top = (aPos.top + oDiv.offsetHeight) + 'px';
-	this.oContainerDiv.style.left = (aPos.left - 1) + 'px';
-	this.oClickedIcon = oDiv;
+	$(this.oContainerDiv).css({
+		top: (aPos.top + oDiv.offsetHeight) + 'px',
+		left: (aPos.left - 1) + 'px'
+	}).toggle(this.bListLoaded);
 
-	if (this.bListLoaded)
-		this.oContainerDiv.style.display = 'block';
+	this.oClickedIcon = oDiv;
 
 	$(document.body).mousedown(this.onWindowMouseDown);
 };
@@ -534,8 +530,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false);" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\');" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '" /></div>';
 	});
 
-	this.oContainerDiv.innerHTML = sItems;
-	this.oContainerDiv.style.display = 'block';
+	$(this.oContainerDiv).html(sItems).show();
 	this.bListLoaded = true;
 
 	if (is_ie)
@@ -587,7 +582,7 @@ IconList.prototype.onWindowMouseDown = function ()
 IconList.prototype.collapseList = function()
 {
 	this.onBoxHover(this.oClickedIcon, false);
-	this.oContainerDiv.style.display = 'none';
+	$(this.oContainerDiv).hide();
 	this.iCurMessageId = 0;
 	$(document.body).mousedown(this.onWindowMouseDown);
 };

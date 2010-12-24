@@ -13,14 +13,10 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 	function autoCreate()
 	{
 		// Is there anything to cycle images with - if so attach the refresh image function?
-		var cycleHandle = document.getElementById('visual_verification' + uniqueID + '_refresh');
-		if (cycleHandle)
-			cycleHandle.onclick = refreshImages;
+		$('#visual_verification' + uniqueID + '_refresh').click(refreshImages);
 
 		// Maybe a voice is here to spread light?
-		var soundHandle = document.getElementById('visual_verification' + uniqueID + '_sound');
-		if (soundHandle)
-			soundHandle.onclick = playSound;
+		$('#visual_verification' + uniqueID + '_sound').click(playSound);
 	}
 
 	// Change the images.
@@ -35,12 +31,11 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 		for (var i = 0; i < 32; i++)
 			new_url = new_url + hexstr.substr(Math.floor(Math.random() * 16), 1);
 
-		if (useLibrary && document.getElementById("verification_image" + uniqueID))
-			document.getElementById("verification_image" + uniqueID).src = new_url;
-		else if (document.getElementById("verification_image" + uniqueID))
+		if (useLibrary)
+			$("#verification_image" + uniqueID)).attr('src', new_url);
+		else if ($("#verification_image" + uniqueID).length)
 			for (i = 1; i <= letterCount; i++)
-				if (document.getElementById("verification_image" + uniqueID + "_" + i))
-					document.getElementById("verification_image" + uniqueID + "_" + i).src = new_url + ";letter=" + i;
+				$("#verification_image" + uniqueID + "_" + i).attr('src', new_url + ";letter=" + i);
 
 		return false;
 	}

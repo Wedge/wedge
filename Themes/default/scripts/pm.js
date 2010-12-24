@@ -12,11 +12,11 @@ function smf_PersonalMessageSend(oOptions)
 		// Hide the BCC control.
 		$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).hide();
 
-		// Show the link to bet the BCC control back.
+		// Show the link to set the BCC control back.
 		$('#' + this.opt.sBccLinkContainerId).show().html(this.opt.sShowBccLinkTemplate);
 
 		// Make the link show the BCC control.
-		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { $(this).data('that').showBcc(); });
+		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { return !!$(this).data('that').showBcc(); });
 	}
 
 	this.oToAutoSuggest = new smc_AutoSuggest({
