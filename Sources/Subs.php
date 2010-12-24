@@ -2791,14 +2791,19 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug;
+	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug, $boarddir, $boardurl;
 
 	// Mix CSS files together!
 	$css = array();
 	$latest_date = 0;
+	$is_default_theme = true;
+	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+
 	foreach ($context['css_folders'] as $folder)
 	{
-		$target = file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
+		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
+		$is_default_theme &= $target === 'default_theme_';
+
 		foreach ($context['css_generic_files'] as $file)
 		{
 			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
@@ -2811,30 +2816,31 @@ function wedge_cache_css()
 			}
 		}
 	}
-	$id = $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
+
+	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id .= $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
-	$dest = $settings[$target . 'dir'] . '/cache';
-	$final_file = $dest . '/' . $id . '-' . $latest_date . $ext;
-	$context['cached_css'] = $settings['theme_url'] . '/cache' . substr($final_file, strlen($dest));
+	$final_file				= $boarddir . '/cache/' . $id . '-' . $latest_date . $ext;
+	$context['cached_css']	= $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
 
 	// Is the file already cached and not outdated? Then we're good to go.
 	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
 		return;
 
-	if (!file_exists($dest))
-		mkdir($dest);
-
-	// Delete earlier cached versions.
+	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
+	$dest = $boarddir . '/cache';
 	if (is_callable('glob'))
-		array_map('unlink', glob($dest . '/' . $id . '-*.*'));
+		foreach (glob($dest . '/' . $id . '-*.*') as $del)
+			if (!strpos($del, $latest_date))
+				unlink($del);
 
 	$final = '';
-	$discard_dir = strlen($settings[$target . 'dir']) + 1;
+	$discard_dir = strlen($boarddir) + 1;
 	foreach ($css as $file)
 	{
 		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
@@ -2863,26 +2869,19 @@ function wedge_cache_css()
  * @param bool $gzip Should we gzip the resulting file?
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_js($filename, $latest_date, $final_file, $js, $gzip = false)
+function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 {
-	global $settings, $modSettings, $comments;
+	global $settings, $modSettings, $comments, $boarddir;
 
 	$final = '';
 	$dir = $settings['theme_dir'] . '/';
-	$dest = $dir . 'cache';
-	if (!file_exists($dest))
-		mkdir($dest);
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
+	$dest = $boarddir . '/cache';
 	if (is_callable('glob'))
-	{
-		foreach (glob($dest . '/' . $filename . '*.*') as $del)
+		foreach (glob($dest . '/' . $id. '*.*') as $del)
 			if (!strpos($del, $latest_date))
 				unlink($del);
-		foreach (glob($dest . '/' . md5($filename) . '*.*') as $del)
-			if (!strpos($del, $latest_date))
-				unlink($del);
-	}
 
 	$minify = empty($modSettings['minify']) ? 'none' : $modSettings['minify'];
 

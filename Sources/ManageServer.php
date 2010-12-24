@@ -213,7 +213,7 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $settings, $modSettings;
+	global $scripturl, $context, $txt, $modSettings, $boarddir;
 
 	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
@@ -278,11 +278,11 @@ function ModifyGeneralSettings($return_config = false)
 		foreach (array('enableCompressedData', 'obfuscate_js', 'minify') as $cache)
 			if (isset($_REQUEST[$cache]) && $_REQUEST[$cache] != $modSettings[$cache] && is_callable('glob'))
 			{
-				array_map('unlink', glob($settings['theme_dir'] . '/cache/*.j*'));
+				array_map('unlink', glob($boarddir . '/cache/*.j*'));
 				// Note: enableCompressedData should always be tested first in the array,
 				// so we can safely remove CSS files too.
 				if ($cache == 'enableCompressedData')
-					array_map('unlink', glob($settings['theme_dir'] . '/cache/*.c*'));
+					array_map('unlink', glob($boarddir . '/cache/*.c*'));
 				break;
 			}
 

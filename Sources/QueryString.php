@@ -689,7 +689,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $modSettings, $footer_coding, $settings;
+	global $context, $modSettings, $footer_coding, $settings, $boarddir, $boardurl;
 
 	if (!is_array($files))
 		$files = (array) $files;
@@ -713,27 +713,33 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 	$id = '';
 	$latest_date = 0;
+	$is_default_theme = true;
+	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+
 	foreach ($files as &$file)
 	{
-		$target = file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
+		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
 		if (!$target)
 			continue;
 
+		$is_default_theme &= $target === 'default_theme_';
 		$add = $settings[$target . 'dir'] . '/' . $file;
 		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
 		$latest_date = max($latest_date, filemtime($add));
 	}
-	$encrypted_id = (!empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id) . $latest_date;
+
+	$id = $is_default_theme ? $id : substr(strrchr($settings['theme_dir'], '/'), 1) . '-' . $id;
+	$id = (!empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id) . $latest_date;
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $settings['theme_dir'] . '/cache/' . $encrypted_id . $ext;
+	$final_file = $boarddir . '/cache/' . $id . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 
-	$final_script = $settings['theme_url'] . '/cache/' . $encrypted_id . $ext;
+	$final_script = $boardurl . '/cache/' . $id . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
