@@ -309,6 +309,15 @@ function template_showDrafts()
 				', $txt['showDrafts'], ' - ', $context['member']['name'], '
 			</h3>
 		</div>
+		<p class="windowbg description">
+			', $txt['showDrafts_desc'];
+
+	if (!empty($modSettings['pruneSaveDrafts']))
+		echo '
+			<br /><br />', $modSettings['pruneSaveDrafts'] == 1 ? $txt['draftAutoPurge_1'] : sprintf($txt['draftAutoPurge_n'], $modSettings['pruneSaveDrafts']);
+
+	echo '
+		</p>
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
@@ -342,7 +351,7 @@ function template_showDrafts()
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
 						<li class="reply_button"><a href="', $scripturl . '?action=post;', empty($post['topic']['original_topic']) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
-						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showposts;sa=drafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
+						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
 				</div>
 				<br class="clear" />
@@ -361,6 +370,16 @@ function template_showDrafts()
 	echo '
 		<div class="pagesection" style="margin-bottom: 0;">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		</div>';
+
+	// A great, big, threatening button which must not be pressed under any circumstances, am I right?
+	if (!empty($context['posts']))
+		echo '
+		<div class="righttext padding">
+			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_draft_confirm']), ');">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" value="', $txt['remove_all_draft'], '" class="button_submit" />
+			</form>
 		</div>';
 }
 

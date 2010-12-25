@@ -504,6 +504,16 @@ function scheduled_daily_maintenance()
 			)
 		);
 
+	// Clear out any old drafts if appropriate.
+	if (!empty($modSettings['pruneSaveDrafts']))
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE post_time < {int:old_time}',
+			array(
+				'old_time' => time() - ($modSettings['pruneSaveDrafts'] * 86400),
+			)
+		);
+
 	// Log we've done it...
 	return true;
 }

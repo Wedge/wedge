@@ -270,15 +270,31 @@ function viewDrafts($memID)
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['current_member'] = $memID;
 	$context['sub_template'] = 'showDrafts';
+	$context['page_title'] = $txt['showDrafts'] . ' - ' . $context['member']['name'];
 
 	// Are we deleting any drafts here?
-	if (!empty($_GET['delete']))
+	if (isset($_GET['deleteall']))
+	{
+		checkSession('post');
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE is_pm = {int:not_pm}
+				AND id_member = {int:member}',
+			array(
+				'not_pm' => 0,
+				'member' => $user_info['id'],
+			)
+		);
+
+		redirectexit('action=profile;u=' . $memID . ';area=showdrafts');
+	}
+	elseif (!empty($_GET['delete']))
 	{
 		$draft_id = (int) $_GET['delete'];
 		checkSession('get');
 		
 		wesql::query('
-			DELETE FROM {db_prefix}post_drafts
+			DELETE FROM {db_prefix}drafts
 			WHERE id_draft = {int:draft}
 				AND id_member = {int:member}
 			LIMIT 1',

@@ -357,7 +357,7 @@ function ModifyTopicSettings($return_config = false)
 			array('check', 'masterSavePmDrafts', 'subtext' => $txt['draftsave_subnote']),
 			array('check', 'masterAutoSavePmDrafts', 'subtext' => $txt['draftautosave_subnote']),
 			array('int', 'masterAutoSaveDraftsDelay', 'postinput' => $txt['manageposts_seconds']),
-
+			array('int', 'pruneSaveDrafts', 'subtext' => $txt['oldTopicDays_zero']),
 	);
 
 	if ($return_config)
