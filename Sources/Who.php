@@ -75,10 +75,6 @@ function Who()
 	loadTemplate('Who');
 	loadLanguage('Who');
 
-	// Display of errors may be applicable. It's only for people with POWARZ you can't comprehend though.
-	if (allowedTo('moderate_forum'))
-		loadLanguage('Errors');
-
 	// Sort out... the column sorting.
 	$sort_methods = array(
 		'user' => 'mem.real_name',
@@ -286,6 +282,10 @@ function determineActions($urls, $preferred_prefix = false)
 	if (!allowedTo('who_view'))
 		return array();
 	loadLanguage('Who');
+
+	// Display of errors may be applicable. It's only for people with POWARZ you can't comprehend though.
+	if (allowedTo('moderate_forum'))
+		loadLanguage('Errors');
 
 	// Actions that require a specific permission level.
 	$allowedActions = array(
