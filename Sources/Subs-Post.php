@@ -2706,8 +2706,8 @@ function saveDraft($is_pm, $id_context = 0)
 			FROM {db_prefix}drafts
 			WHERE id_draft = {int:draft}
 				AND is_pm = {int:is_pm}
-				AND id_context = {int:draft_context}
-				AND id_member = {int:member}',
+				AND id_context = {int:id_context}
+				AND id_member = {int:id_member}',
 			array(
 				'draft' => $_REQUEST['draft_id'],
 				'is_pm' => !empty($is_pm) ? 1 : 0,
@@ -2742,10 +2742,10 @@ function saveDraft($is_pm, $id_context = 0)
 				body = {string:body},
 				post_time = {int:post_time},
 				extra = {string:extra}
-			WHERE id_draft = {int:draft}
+			WHERE id_draft = {int:id_draft}
 				AND is_pm = {int:is_pm}
-				AND id_context = {int:draft_context}
-				AND id_member = {int:member}',
+				AND id_context = {int:id_context}
+				AND id_member = {int:id_member}',
 			array(
 				'subject' => $subject,
 				'body' => $message,

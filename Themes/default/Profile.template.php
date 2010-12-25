@@ -343,14 +343,14 @@ function template_showDrafts()
 					', $post['body'], '
 				</div>';
 
-		if (!empty($post['topic']['id']) && empty($post['topic']['original_topic']))
+		if ($post['topic']['no_edit'])
 			echo '
 				<div class="smalltext">', $txt['topic_no_longer_available'], '</div>';
 
 		echo '
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
-						<li class="reply_button"><a href="', $scripturl . '?action=post;', empty($post['topic']['original_topic']) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
+						<li class="reply_button"><a href="', $scripturl . '?action=post;', $post['topic']['no_edit'] ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
 						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
 				</div>

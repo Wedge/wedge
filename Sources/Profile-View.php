@@ -395,6 +395,7 @@ function viewDrafts($memID)
 				'id' => $row['id_context'],
 				'original_topic' => $row['id_topic'],
 				'link' => empty($row['id_topic']) ? $row['subject'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+				'no_edit' => !empty($row['id_context']) && empty($row['original_topic']),
 			),
 			'time' => timeformat($row['post_time']),
 			'timestamp' => forum_time(true, $row['post_time']),
