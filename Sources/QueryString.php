@@ -52,7 +52,7 @@ if (!defined('SMF'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $pretty_request, $pretty_board;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board;
 
 /*	// Makes it easier to refer to things this way.
 	if (!empty($modSettings['pretty_enable_filters']))
@@ -171,7 +171,7 @@ function cleanRequest()
 	{
 		// !!! Authorize URLs like noisen.com:80
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
-		$pretty_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
+		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
 		$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
 		$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
 
@@ -182,20 +182,20 @@ function cleanRequest()
 			AND url = SUBSTRING({string:url}, 1, urllen)
 			ORDER BY urllen DESC LIMIT 1',
 			array(
-				'url' => rtrim($pretty_request, '/'),
-				'len' => ($len = strpos($pretty_request, '/')) !== false ? $len : strlen($pretty_request),
+				'url' => rtrim($full_request, '/'),
+				'len' => ($len = strpos($full_request, '/')) !== false ? $len : strlen($full_request),
 			)
 		);
 		if (wesql::num_rows($query) == 0)
 			$_GET['board'] = $board = 0;
 		else
 		{
-			$pretty_board = wesql::fetch_assoc($query);
+			$full_board = wesql::fetch_assoc($query);
 
 			// The happy place where boards are identified.
-			$_GET['board'] = $board = $pretty_board['id_board'];
-			$_SERVER['HTTP_HOST'] = $pretty_board['url'];
-			$_SERVER['REQUEST_URI'] = $ru = str_replace($pretty_board['url'], '', $pretty_request);
+			$_GET['board'] = $board = $full_board['id_board'];
+			$_SERVER['HTTP_HOST'] = $full_board['url'];
+			$_SERVER['REQUEST_URI'] = $ru = str_replace($full_board['url'], '', $full_request);
 
 			// We will now be analyzing the request URI to find our topic ID and various options...
 
@@ -244,9 +244,24 @@ function cleanRequest()
 			}
 
 			// Plug-ins may want to play with their own URL system.
-			call_hook('determine_location', array($pretty_board));
+			call_hook('determine_location', array($full_board));
 		}
 		wesql::free_result($query);
+	}
+
+	// Don't bother going further if we've come here from a *REAL* 404.
+	if (strpos($full_request, '?') === false && in_array(strtolower(substr($full_request, -4)), array('.gif', '.jpg', 'jpeg', '.png')))
+	{
+		loadLanguage('Errors');
+
+		header('HTTP/1.0 404 Not Found');
+		header('Content-Type: text/plain; charset=UTF-8');
+
+		// Webmasters might want to log the error, so they can fix any broken image links.
+		updateOnlineWithError('404 Not Found', false);
+		if (!empty($modSettings['enableErrorLogging']))
+			log_error('File not found');
+		die('404 Not Found');
 	}
 
 	// If magic quotes are on, we have some work to do...
