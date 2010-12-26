@@ -382,37 +382,28 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 	// Keep stats on how many items were selected.
 	this.iNumSelected += oCheckbox.checked ? 1 : -1;
+	var i = this.iNumSelected;
 
 	// Show the number of messages selected in the button.
 	if (this.opt.bCanRemove && !this.opt.bUseImageButton)
 		var but1 = $('#' + this.opt.sSelf + '_remove_button')
-			.html(this.opt.sRemoveButtonLabel + ' [' + this.iNumSelected + ']');
+			.html(this.opt.sRemoveButtonLabel + ' [' + i + ']');
 
 	if (this.opt.bCanRestore && !this.opt.bUseImageButton)
 		var but2 = $('#' + this.opt.sSelf + '_restore_button')
-			.html(this.opt.sRestoreButtonLabel + ' [' + this.iNumSelected + ']');
+			.html(this.opt.sRestoreButtonLabel + ' [' + i + ']');
 
-	if (but1 && this.iNumSelected < 1 && but1.is(':visible'))
+	if (but1 && i < 1 && but1.is(':visible'))
 		but1.fadeOut(300).hide();
-	if (but1 && this.iNumSelected > 0 && but1.is(':hidden'))
+	if (but1 && i > 0 && but1.is(':hidden'))
 		but1.fadeIn(300).show();
-	if (but2 && this.iNumSelected < 1 && but2.is(':visible'))
+	if (but2 && i < 1 && but2.is(':visible'))
 		but2.fadeOut(300).hide();
-	if (but2 && this.iNumSelected > 0 && but2.is(':hidden'))
+	if (but2 && i > 0 && but2.is(':hidden'))
 		but2.fadeIn(300).show();
 
 	// Try to restore the correct position.
-	var aItems = $('#' + this.opt.sButtonStrip)[0].getElementsByTagName('li');
-	if (this.iNumSelected < 1)
-	{
-		aItems[aItems.length - 3].className = aItems[aItems.length - 3].className.replace(/\s*position_holder/, 'last');
-		aItems[aItems.length - 2].className = aItems[aItems.length - 2].className.replace(/\s*position_holder/, 'last');
-	}
-	else
-	{
-		aItems[aItems.length - 2].className = aItems[aItems.length - 2].className.replace(/\s*last/, 'position_holder');
-		aItems[aItems.length - 3].className = aItems[aItems.length - 3].className.replace(/\s*last/, 'position_holder');
-	}
+	$('#' + this.opt.sButtonStrip + ' li').slice(-3, -1).toggleClass('position_holder', i > 0).toggleClass('last', i < 1);
 };
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)
@@ -545,11 +536,11 @@ IconList.prototype.onItemHover = function (oDiv, bMouseOver)
 	oDiv.style.background = bMouseOver ? this.opt.sItemBackgroundHover : this.opt.sItemBackground;
 	oDiv.style.border = bMouseOver ? this.opt.sItemBorderHover : this.opt.sItemBorder;
 	if (this.iCurTimeout != 0)
-		window.clearTimeout(this.iCurTimeout);
+		clearTimeout(this.iCurTimeout);
 	if (bMouseOver)
 		this.onBoxHover(this.oClickedIcon, true);
 	else
-		this.iCurTimeout = window.setTimeout(this.opt.sBackReference + '.collapseList();', 500);
+		this.iCurTimeout = setTimeout(this.opt.sBackReference + '.collapseList();', 500);
 };
 
 // Event handler for clicking on one of the icons.

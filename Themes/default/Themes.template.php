@@ -881,11 +881,11 @@ function template_edit_style()
 			{
 				if (previewTimeout)
 				{
-					window.clearTimeout(previewTimeout);
+					clearTimeout(previewTimeout);
 					previewTimeout = null;
 				}
 
-				previewTimeout = window.setTimeout("refreshPreview(true); previewTimeout = null;", 500);
+				previewTimeout = setTimeout("refreshPreview(true); previewTimeout = null;", 500);
 			}
 		// ]]></script>
 		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 300px" seamless="seamless"></iframe>';

@@ -1396,7 +1396,7 @@ form.wrc {
 	color: #000;
 }
 .auto_suggest_item {
-	background-color: #fee;
+	background-color: #ece8f0;
 	padding: 2px 3px 1px;
 }
 .auto_suggest_item_hover {
@@ -1578,6 +1578,7 @@ p.moderators {
 	padding: 0 2em;
 	overflow: auto;
 	margin: 1em 0;
+	display: none;
 	color: #575757; /* shouldn't be shorthand style due to a JS bug in IE! */
 }
 
@@ -2051,8 +2052,13 @@ ul.post_options li {
 #postAttachment dt, #postAttachment2 dt {
 	font-weight: bold;
 }
-#post_confirm_strip, #shortcuts {
-	padding: 1em 0 0;
+#shortcuts {
+	float: left;
+	padding: .6em 0 0;
+}
+#post_confirm_strip {
+	float: right;
+	padding: 1.2em 1em 0 0;
 }
 .post_verification {
 	margin-top: .5em;

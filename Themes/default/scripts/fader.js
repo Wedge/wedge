@@ -10,25 +10,20 @@ function wedge_NewsFader(oOptions)
 	this.iFadeDelay = 'iFadeDelay' in this.opt ? this.opt.iFadeDelay : 5000;
 	this.iFadeSpeed = 'iFadeSpeed' in this.opt ? this.opt.iFadeSpeed : 650;
 
-	// Either load the items from the array if given, or get them from the DOM.
-	if ('aFaderItems' in this.opt)
-		this.aFaderItems = this.opt.aFaderItems;
-	else
-	{
-		var aFaderItems = [];
-		$(this.sControlId + ' li').each(function (i) {
-			aFaderItems[aFaderItems.length] = $(this).html();
-		});
-		this.aFaderItems = aFaderItems;
-	}
+	// Load the items from the DOM.
+	var aFaderItems = [];
+	$(this.sControlId + ' li').each(function (i) {
+		aFaderItems[aFaderItems.length] = $(this).html();
+	});
 
-	if (this.aFaderItems.length < 1)
+	if (aFaderItems.length < 1)
 		return;
 
 	this.iFadeIndex = 0;
 
 	// Well, we are replacing the contents of a list, it *really* should be a list item we add in to it...
-	$(this.sControlId).html('<li>' + this.sItemTemplate.replace('%1$s', this.aFaderItems[0]) + '</li>');
+	$(this.sControlId).html('<li>' + this.sItemTemplate.replace('%1$s', aFaderItems[0]) + '</li>').show();
+	this.aFaderItems = aFaderItems;
 	this.fadeOut(this);
 }
 
@@ -41,13 +36,13 @@ wedge_NewsFader.prototype.fadeIn = function (obj)
 	$(obj.sControlId + ' li').html(obj.sItemTemplate.replace('%1$s', obj.aFaderItems[obj.iFadeIndex])).fadeTo(obj.iFadeSpeed, 0.99, function() {
 		obj.fadeOut(obj)
 	});
-}
+};
 
 wedge_NewsFader.prototype.fadeOut = function (obj)
 {
-	window.setTimeout(function() {
+	setTimeout(function() {
 		$(obj.sControlId + ' li').fadeTo(obj.iFadeSpeed, 0, function() {
 			obj.fadeIn(obj)
 		});
 	}, obj.iFadeDelay);
-}
+};

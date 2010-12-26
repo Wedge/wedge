@@ -1747,7 +1747,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
 	}
-	window.setTimeout("smfAutoTask();", 1);');
+	setTimeout("smfAutoTask();", 1);');
 		}
 	}
 

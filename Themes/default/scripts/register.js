@@ -5,10 +5,12 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	this.refreshMainPassword = refreshMainPassword;
 	this.refreshVerifyPassword = refreshVerifyPassword;
 
-	var verificationFields = [];
-	var verificationFieldLength = 0;
-	var textStrings = regTextStrings ? regTextStrings : [];
-	var passwordLevel = passwordDifficultyLevel ? passwordDifficultyLevel : 0;
+	var
+		v = Array(6),
+		verificationFields = [],
+		verificationFieldLength = 0,
+		textStrings = regTextStrings ? regTextStrings : [],
+		passwordLevel = passwordDifficultyLevel ? passwordDifficultyLevel : 0;
 
 	// Setup all the fields!
 	autoSetup(formID);
@@ -37,14 +39,13 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			eventHandler = refreshMainPassword;
 
 		// Store this field.
-		var vFieldIndex = fieldType == 'reserved' ? fieldType + verificationFieldLength : fieldType;
-		verificationFields[vFieldIndex] = Array(6);
-		verificationFields[vFieldIndex][0] = fieldID;
-		verificationFields[vFieldIndex][1] = inputHandle;
-		verificationFields[vFieldIndex][2] = imageHandle;
-		verificationFields[vFieldIndex][3] = divHandle;
-		verificationFields[vFieldIndex][4] = fieldType;
-		verificationFields[vFieldIndex][5] = inputHandle.className;
+		v[0] = fieldID;
+		v[1] = inputHandle;
+		v[2] = imageHandle;
+		v[3] = divHandle;
+		v[4] = fieldType;
+		v[5] = inputHandle.className;
+		verificationFields[fieldType == 'reserved' ? fieldType + verificationFieldLength : fieldType] = v;
 
 		// Keep a count to it!
 		verificationFieldLength++;

@@ -207,8 +207,9 @@ smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
 smc_AutoSuggest.prototype.removeLastSearchString = function ()
 {
 	// Remove the text we searched for from the div.
-	var sTempText = this.oTextHandle.value.toLowerCase();
-	var iStartString = sTempText.indexOf(this.sLastSearch.toLowerCase());
+	var
+		sTempText = this.oTextHandle.value.toLowerCase(),
+		iStartString = sTempText.indexOf(this.sLastSearch.toLowerCase());
 	// Just attempt to remove the bits we just searched for.
 	if (iStartString != -1)
 	{

@@ -24,18 +24,18 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 	{
 		// Make sure we are using a new rand code.
 		var new_url = String(imageURL);
-		new_url = new_url.substr(0, new_url.indexOf("rand=") + 5);
+		new_url = new_url.substr(0, new_url.indexOf('rand=') + 5);
 
 		// Quick and dirty way of converting decimal to hex
-		var hexstr = "0123456789abcdef";
+		var hexstr = '0123456789abcdef';
 		for (var i = 0; i < 32; i++)
-			new_url = new_url + hexstr.substr(Math.floor(Math.random() * 16), 1);
+			new_url += hexstr.substr(Math.floor(Math.random() * 16), 1);
 
 		if (useLibrary)
-			$("#verification_image" + uniqueID)).attr('src', new_url);
-		else if ($("#verification_image" + uniqueID).length)
+			$('#verification_image' + uniqueID)).attr('src', new_url);
+		else if ($('#verification_image' + uniqueID).length)
 			for (i = 1; i <= letterCount; i++)
-				$("#verification_image" + uniqueID + "_" + i).attr('src', new_url + ";letter=" + i);
+				$('#verification_image' + uniqueID + '_' + i).attr('src', new_url + ';letter=' + i);
 
 		return false;
 	}
