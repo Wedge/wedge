@@ -108,8 +108,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		if (!verificationFields.pwmain)
 			return false;
 
-		var curPass = verificationFields.pwmain[1].value;
-		var stringIndex = '';
+		var curPass = verificationFields.pwmain[1].value, stringIndex = '';
 
 		// Is it a valid length?
 		if ((curPass.length < 8 && passwordLevel >= 1) || curPass.length < 4)
@@ -145,7 +144,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 
 		// Set the image.
 		setVerificationImage(verificationFields.pwmain[2], isValid, textStrings[stringIndex] ? textStrings[stringIndex] : '');
-		verificationFields.pwmain[1].className = verificationFields.pwmain[5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
+		verificationFields.pwmain[1].className = verificationFields.pwmain[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		// As this has changed the verification one may have too!
 		if (verificationFields.pwverify && !called_from_verify)
@@ -162,10 +161,12 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			return false;
 
 		// Check and set valid status!
-		var isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true);
-		var alt = textStrings[isValid == 1 ? 'password_valid' : 'password_no_match'] ? textStrings[isValid == 1 ? 'password_valid' : 'password_no_match'] : '';
+		var
+			isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true),
+			alt = textStrings[isValid ? 'password_valid' : 'password_no_match'] ? textStrings[isValid ? 'password_valid' : 'password_no_match'] : '';
+
 		setVerificationImage(verificationFields.pwverify[2], isValid, alt);
-		verificationFields.pwverify[1].className = verificationFields.pwverify[5] + ' ' + (isValid ? 'valid_input' : 'invalid_input');
+		verificationFields.pwverify[1].className = verificationFields.pwverify[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		return true;
 	}
@@ -218,16 +219,13 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// Callback for getting the username data.
 	function checkUsernameCallback(XMLDoc)
 	{
-		if (XMLDoc.getElementsByTagName("username"))
-			isValid = XMLDoc.getElementsByTagName("username")[0].getAttribute("valid");
-		else
-			isValid = true;
+		var isValid = !!($('username', XMLDoc).length ? $('username', XMLDoc)[0].getAttribute('valid') : true);
 
 		// What to alt?
-		var alt = textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] ? textStrings[isValid == 1 ? 'username_valid' : 'username_invalid'] : '';
+		var alt = textStrings['username_' + (isValid ? 'valid' : 'invalid')];
 
-		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid == 1 ? 'valid_input' : 'invalid_input');
-		setVerificationImage(verificationFields.username[2], isValid == 1, alt);
+		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
+		setVerificationImage(verificationFields.username[2], isValid, alt);
 
 		ajax_indicator(false);
 	}

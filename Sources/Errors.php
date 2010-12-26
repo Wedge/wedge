@@ -43,7 +43,7 @@ if (!defined('SMF'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context;
+	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
@@ -73,13 +73,21 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$user_info['ip'] = '';
 
 	// Find the best query string we can...
-	$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
+	if (!empty($full_request))
+	{
+		$query_string = substr($scripturl, 0, strpos($scripturl, '://') + 3) . $full_request;
+		// Are we using pretty URLs here?
+		$is_pretty_url = strpos($query_string, $scripturl) === false;
+	}
+	else
+		$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
 
-	// Don't log the session hash in the url twice, it's a waste.
-	$query_string = htmlspecialchars((SMF == 'SSI' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
+	// Don't log session data in the url twice, it's a waste.
+	$query_string = preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string);
+	$query_string = htmlspecialchars((SMF == 'SSI' || $is_pretty_url ? '' : '?') . $query_string);
 
-	// Just so we know what board error messages are from.
-	if (isset($_POST['board']) && !isset($_GET['board']))
+	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.
+	if (!$is_pretty_url && isset($_POST['board']) && !isset($_GET['board']))
 		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
 
 	// What types of categories do we have?
@@ -241,6 +249,9 @@ function error_handler($error_level, $error_string, $file, $line)
 			$temporary = ob_get_contents();
 			if (substr($temporary, -2) == '="')
 				echo '"';
+			// If we're inside a tag, might as well try closing it first...
+			if (strrpos($temporary, '>') < strrpos($temporary, '<'))
+				echo '>';
 		}
 
 		// Debugging!  This should look like a PHP error message.
@@ -294,8 +305,7 @@ function setup_fatal_error_context($error_message)
 	static $level = 0;
 
 	// Attempt to prevent a recursive loop.
-	++$level;
-	if ($level > 1)
+	if (++$level > 1)
 		return false;
 
 	// Maybe they came from dlattach or similar?
