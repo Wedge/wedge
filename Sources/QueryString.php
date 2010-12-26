@@ -689,7 +689,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $modSettings, $footer_coding, $settings, $boarddir, $boardurl;
+	global $context, $modSettings, $footer_coding, $settings, $cachedir, $boardurl;
 
 	if (!is_array($files))
 		$files = (array) $files;
@@ -735,7 +735,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $boarddir . '/cache/' . $id . $ext;
+	$final_file = $cachedir . '/' . $id . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 

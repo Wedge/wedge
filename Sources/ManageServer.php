@@ -213,7 +213,7 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $modSettings, $boarddir;
+	global $scripturl, $context, $txt, $modSettings, $cachedir;
 
 	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
@@ -278,11 +278,11 @@ function ModifyGeneralSettings($return_config = false)
 		foreach (array('enableCompressedData', 'obfuscate_js', 'minify') as $cache)
 			if (isset($_REQUEST[$cache]) && $_REQUEST[$cache] != $modSettings[$cache] && is_callable('glob'))
 			{
-				array_map('unlink', glob($boarddir . '/cache/*.j*'));
+				array_map('unlink', glob($cachedir . '/*.j*'));
 				// Note: enableCompressedData should always be tested first in the array,
 				// so we can safely remove CSS files too.
 				if ($cache == 'enableCompressedData')
-					array_map('unlink', glob($boarddir . '/cache/*.c*'));
+					array_map('unlink', glob($cachedir . '/*.c*'));
 				break;
 			}
 
@@ -562,7 +562,7 @@ function ManageLanguages()
 // Interface for adding a new language
 function AddLanguage()
 {
-	global $context, $forum_version, $boarddir, $txt, $scripturl;
+	global $context, $forum_version, $txt, $scripturl;
 
 	// Are we searching for new languages courtesy of Simple Machines?
 	if (!empty($_POST['smf_add_sub']))
@@ -1981,8 +1981,7 @@ function prepareDBSettingContext(&$config_vars)
 // Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
 function saveSettings(&$config_vars)
 {
-	global $boarddir, $sc, $cookiename, $modSettings, $user_settings;
-	global $context, $cachedir;
+	global $boarddir, $sc, $cookiename, $modSettings, $user_settings, $context, $cachedir;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))

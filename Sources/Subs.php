@@ -2791,7 +2791,7 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug, $boarddir, $boardurl;
+	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
 
 	// Mix CSS files together!
 	$css = array();
@@ -2825,17 +2825,17 @@ function wedge_cache_css()
 	unset($context['css_generic_files'][0]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
-	$final_file				= $boarddir . '/cache/' . $id . '-' . $latest_date . $ext;
-	$context['cached_css']	= $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
+
+	$context['cached_css'] = $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
+	$final_file = $cachedir . '/' . $id . '-' . $latest_date . $ext;
 
 	// Is the file already cached and not outdated? Then we're good to go.
 	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
 		return;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	$dest = $boarddir . '/cache';
 	if (is_callable('glob'))
-		foreach (glob($dest . '/' . $id . '-*.*') as $del)
+		foreach (glob($cachedir . '/' . $id . '-*.*') as $del)
 			if (!strpos($del, $latest_date))
 				unlink($del);
 
@@ -2871,15 +2871,14 @@ function wedge_cache_css()
  */
 function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 {
-	global $settings, $modSettings, $comments, $boarddir;
+	global $settings, $modSettings, $comments, $cachedir;
 
 	$final = '';
 	$dir = $settings['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	$dest = $boarddir . '/cache';
 	if (is_callable('glob'))
-		foreach (glob($dest . '/' . $id. '*.*') as $del)
+		foreach (glob($cachedir . '/' . $id. '*.*') as $del)
 			if (!strpos($del, $latest_date))
 				unlink($del);
 
@@ -3191,8 +3190,8 @@ function template_footer()
  */
 function db_debug_junk()
 {
-	global $context, $scripturl, $boarddir, $modSettings, $boarddir;
-	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits, $txt;
+	global $context, $scripturl, $boarddir, $modSettings, $txt;
+	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
 	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'helpadmin')) && !WIRELESS);
