@@ -4,7 +4,7 @@
 // This is the main sidebar for the personal messages section.
 function template_pm_above()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="personal_messages">';
@@ -27,6 +27,11 @@ function template_pm_above()
 		echo '
 		<div class="windowbg" id="profile_success">
 			', $txt['pm_sent'], '
+		</div>';
+	elseif ($context['draft_saved'])
+		echo '
+		<div class="windowbg" id="profile_success">
+			', str_replace('{draft_link}', $scripturl . '?action=pm;sa=showdrafts', $txt['pm_draft_saved']), '
 		</div>';
 }
 
@@ -1639,6 +1644,89 @@ function template_add_rule()
 	add_js('
 	$("#addonjs1").show();
 	$("#addonjs2").show();');
+}
+
+// For displaying the saved drafts.
+function template_pm_drafts()
+{
+	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+
+	echo '
+		<div class="cat_bar">
+			<h3>
+				<img src="', $settings['images_url'], '/icons/im_newmsg.gif" />
+				', $txt['showDrafts'], '
+			</h3>
+		</div>
+		<p class="windowbg description">
+			', $txt['showDrafts_desc'];
+
+	if (!empty($modSettings['pruneSaveDrafts']))
+		echo '
+			<br /><br />', $modSettings['pruneSaveDrafts'] == 1 ? $txt['draftAutoPurge_1'] : sprintf($txt['draftAutoPurge_n'], $modSettings['pruneSaveDrafts']);
+
+	echo '
+		</p>
+		<div class="pagesection">
+			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		</div>';
+
+	// Button shortcuts
+	$edit_button = create_button('modify_inline.gif', 'edit_draft', 'edit_draft', 'class="middle"');
+	$remove_button = create_button('delete.gif', 'remove_draft', 'remove_draft', 'class="middle"');
+
+	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
+
+	// For every post to be displayed, give it its own subtable, and show the important details of the post.
+	foreach ($context['posts'] as $post)
+	{
+		echo '
+		<div class="topic">
+			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
+				<div class="counter">', $post['counter'], '</div>
+				<div class="topic_details">
+					<h5><strong>', $post['subject'], '</strong></h5>
+					<div class="smalltext"><strong>', $txt['pm_to'], ':</strong> ', empty($post['recipients']['to']) ? $txt['no_recipients'] : implode(', ', $post['recipients']['to']), (empty($post['recipients']['bcc']) ? '' : ', <strong>' . $txt['pm_bcc'] . ':</strong> ' . implode(', ', $post['recipients']['bcc'])), '</div>
+					<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+				</div>
+				<div class="list_posts">
+					', $post['body'], '
+				</div>';
+
+		echo '
+				<div class="floatright">
+					<ul class="reset smalltext quickbuttons">
+						<li class="reply_button"><a href="', $scripturl . '?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '"><span>', $txt['edit_draft'], '</span></a></li>
+						<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
+					</ul>
+				</div>
+				<br class="clear" />
+			</div>
+		</div>';
+	}
+
+	// No drafts? Just end the table with an informative message.
+	if (empty($context['posts']))
+		echo '
+		<div class="tborder windowbg2 padding centertext">
+			', $txt['show_drafts_none'], '
+		</div>';
+
+	// Show more page numbers.
+	echo '
+		<div class="pagesection" style="margin-bottom: 0;">
+			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		</div>';
+
+	// A great, big, threatening button which must not be pressed under any circumstances, am I right?
+	if (!empty($context['posts']))
+		echo '
+		<div class="righttext padding">
+			<form action="', $scripturl, '?action=pm;sa=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" value="', $txt['remove_all_drafts'], '" class="button_submit" />
+			</form>
+		</div>';
 }
 
 ?>

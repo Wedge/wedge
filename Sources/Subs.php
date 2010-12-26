@@ -3862,7 +3862,7 @@ function setupMenuContext()
 					),
 					'pm_draft' => array(
 						'title' => $txt['pm_menu_drafts'],
-						'href' => $scripturl . '?action=pm;sa=drafts',
+						'href' => $scripturl . '?action=pm;sa=showdrafts',
 						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($modSettings['masterSavePmDrafts']),
 						'is_last' => true,
 					),

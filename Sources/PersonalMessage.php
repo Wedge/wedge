@@ -169,6 +169,9 @@ function MessageMain()
 	if (isset($_GET['done']) && ($_GET['done'] == 'sent'))
 		$context['pm_sent'] = true;
 
+	// Did someone save a conventional draft?
+	$context['draft_saved'] = isset($_GET['draftsaved']);
+
 	// Now we have the labels, and assuming we have unsorted mail, apply our rules!
 	if ($user_settings['new_pm'])
 	{
@@ -283,6 +286,9 @@ function MessageMain()
 		'settings' => 'MessageSettings',
 	);
 
+	if (allowedTo('save_pm_draft'))
+		$subActions['showdrafts'] = 'MessageDrafts';
+
 	if (!isset($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
 		MessageFolder();
 	else
@@ -309,6 +315,11 @@ function messageIndexBar($area)
 				'inbox' => array(
 					'label' => $txt['inbox'],
 					'custom_url' => $scripturl . '?action=pm',
+				),
+				'showdrafts' => array(
+					'label' => $txt['pm_menu_drafts'],
+					'custom_url' => $scripturl . '?action=pm;sa=showdrafts',
+					'permission' => allowedTo('save_pm_draft'),
 				),
 				'sent' => array(
 					'label' => $txt['sent_items'],
@@ -3672,6 +3683,161 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 			trigger_error('Undefined validation type given', E_USER_ERROR);
 		break;
 	}
+}
+
+function MessageDrafts()
+{
+	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
+
+	loadLanguage('PersonalMessage');
+
+	// Some initial context.
+	$context['start'] = (int) $_REQUEST['start'];
+	$context['sub_template'] = 'pm_drafts';
+	$context['page_title'] = $txt['showDrafts'];
+
+	// Are we deleting any drafts here?
+	if (isset($_GET['deleteall']))
+	{
+		checkSession('post');
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE is_pm = {int:is_pm}
+				AND id_member = {int:member}',
+			array(
+				'is_pm' => 1,
+				'member' => $user_info['id'],
+			)
+		);
+
+		redirectexit('action=pm;sa=showdrafts');
+	}
+	elseif (!empty($_GET['delete']))
+	{
+		$draft_id = (int) $_GET['delete'];
+		checkSession('get');
+		
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+			LIMIT 1',
+			array(
+				'draft' => $draft_id,
+				'member' => $user_info['id'],
+			)
+		);
+
+		redirectexit('action=pm;sa=showdrafts');
+	}
+
+	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
+		$_REQUEST['viewscount'] = 10;
+
+	// Get the count of applicable drafts
+	$request = wesql::query('
+		SELECT COUNT(id_draft)
+		FROM {db_prefix}drafts AS d
+		WHERE id_member = {int:member}
+			AND is_pm = {int:is_pm}',
+		array(
+			'member' => $user_info['id'],
+			'is_pm' => 1,
+		)
+	);
+	list ($msgCount) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	$reverse = false;
+	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+
+	// Make sure the starting place makes sense and construct our friend the page index.
+	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;area=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['current_page'] = $context['start'] / $maxIndex;
+
+	// Reverse the query if we're past 50% of the pages for better performance.
+	$start = $context['start'];
+	$reverse = $_REQUEST['start'] > $msgCount / 2;
+	if ($reverse)
+	{
+		$maxIndex = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $modSettings['defaultMaxMessages'];
+		$start = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $modSettings['defaultMaxMessages'];
+	}
+
+	// Find this user's drafts.
+	$request = wesql::query('
+		SELECT
+			d.id_draft, d.subject, d.body, d.post_time, d.id_context, d.extra
+		FROM {db_prefix}drafts AS d
+		WHERE d.id_member = {int:current_member}
+			AND d.is_pm = {int:is_pm}
+		ORDER BY d.post_time ' . ($reverse ? 'ASC' : 'DESC') . '
+		LIMIT ' . $start . ', ' . $maxIndex,
+		array(
+			'current_member' => $user_info['id'],
+			'is_pm' => 1,
+		)
+	);
+
+	// Start counting at the number of the first message displayed.
+	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
+	$context['posts'] = array();
+	$users = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		// Censor....
+		if (empty($row['body']))
+			$row['body'] = '';
+
+		$row['subject'] = westr::htmltrim($row['subject']);
+		if (empty($row['subject']))
+			$row['subject'] = $txt['no_subject'];
+
+		$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
+		$row['extra']['recipients']['to'] = isset($row['extra']['recipients']['to']) ? $row['extra']['recipients']['to'] : array();
+		$row['extra']['recipients']['bcc'] = isset($row['extra']['recipients']['bcc']) ? $row['extra']['recipients']['bcc'] : array();
+		$users = array_merge($users, $row['extra']['recipients']['to'], $row['extra']['recipients']['bcc']);
+
+		censorText($row['body']);
+		censorText($row['subject']);
+
+		// Do the code.
+		$row['body'] = parse_bbc($row['body'], empty($row['extra']['smileys_enabled']) ? 0 : 1, 'draft' . $row['id_draft']);
+
+		// And the array...
+		$context['posts'][$counter += $reverse ? -1 : 1] = array(
+			'id' => $row['id_draft'],
+			'subject' => $row['subject'],
+			'body' => $row['body'],
+			'counter' => $counter,
+			'alternate' => $counter % 2,
+			'time' => timeformat($row['post_time']),
+			'timestamp' => forum_time(true, $row['post_time']),
+			'recipients' => $row['extra']['recipients'],
+			'pmsg' => $row['id_context'],
+		);
+	}
+	wesql::free_result($request);
+
+	// Now get all the users that we want to be sending to.
+	if (!empty($users))
+	{
+		$users = loadMemberData(array_unique($users));
+		foreach ($context['posts'] as $id => $post)
+		{
+			$recipients = $post['recipients'];
+			foreach ($recipients as $recType => $recList)
+			{
+				$context['posts'][$id]['recipients'][$recType] = array();
+				foreach ($recList as $recipient)
+					$context['posts'][$id]['recipients'][$recType][] = '<a href="' . $scripturl . '?action=profile;u=' . $recipient . '" target="_blank">' . $user_profile[$recipient]['real_name'] . '</a>';
+			}
+		}
+	}
+
+	// All posts were retrieved in reverse order, get them right again.
+	if ($reverse)
+		$context['posts'] = array_reverse($context['posts'], true);
 }
 
 ?>
