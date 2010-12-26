@@ -343,7 +343,7 @@ function viewDrafts($memID)
 	// Find this user's drafts.
 	$request = wesql::query('
 		SELECT
-			b.id_board, b.name AS bname, t.id_topic, d.id_draft, d.subject, d.body,
+			b.id_board, b.name AS bname, t.id_topic, t.locked, d.id_draft, d.subject, d.body,
 			d.post_time, d.id_context, d.extra
 		FROM {db_prefix}drafts AS d
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = d.id_board AND {query_see_board})
@@ -361,6 +361,7 @@ function viewDrafts($memID)
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = array();
+	$is_locked = false;
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Censor....
@@ -395,14 +396,33 @@ function viewDrafts($memID)
 				'id' => $row['id_context'],
 				'original_topic' => $row['id_topic'],
 				'link' => empty($row['id_topic']) ? $row['subject'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
-				'no_edit' => !empty($row['id_context']) && empty($row['original_topic']),
+				'locked' => !empty($row['locked']),
+				'no_edit' => !empty($row['id_context']) && empty($row['id_topic']),
 			),
 			'time' => timeformat($row['post_time']),
 			'timestamp' => forum_time(true, $row['post_time']),
 			'icon' => $row['extra']['post_icon'],
 		);
+
+		$is_locked |= !empty($row['locked']);
 	}
 	wesql::free_result($request);
+
+	// OK, were any of these posts locked? If so, fetch the boards we're allowed to moderate, such that we can override...
+	if ($is_locked)
+	{
+		$boards = boardsAllowedTo('moderate_board');
+		foreach ($context['posts'] as $id => $post)
+		{
+			if ($post['topic']['locked'])
+			{
+				if(in_array($post['board']['id'], $boards))
+					$context['posts'][$id]['topic']['locked'] = false;
+				else
+					$context['posts'][$id]['topic']['no_edit'] = true;
+			}
+		}
+	}
 
 	// All posts were retrieved in reverse order, get them right again.
 	if ($reverse)
