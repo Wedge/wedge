@@ -1530,7 +1530,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $scripturl, $modSettings;
+	global $txt, $scripturl, $modSettings, $user_profile;
 	global $context, $options, $language, $user_info;
 
 	isAllowedTo('pm_send');
@@ -1543,6 +1543,9 @@ function MessagePost()
 		$context['sub_template'] = 'send';
 	}
 
+	// Needed for the WYSIWYG editor.
+	loadSource(array('Subs-Editor', 'Class-Editor'));
+
 	// Extract out the spam settings - cause it's neat.
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
 
@@ -1550,6 +1553,7 @@ function MessagePost()
 	$context['page_title'] = $txt['send_message'];
 
 	$context['reply'] = isset($_REQUEST['pmsg']) || isset($_REQUEST['quote']);
+	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
 
 	// Check whether we've gone over the limit of messages we can send per hour.
 	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
@@ -1580,7 +1584,7 @@ function MessagePost()
 
 		// Make sure this is yours.
 		if (!isAccessiblePM($pmsg))
-			fatal_lang_error('no_access', false);
+			fatal_lang_error('pm_not_yours', false);
 
 		// Work out whether this is one you've received?
 		$request = wesql::query('
@@ -1757,6 +1761,64 @@ function MessagePost()
 	else
 		$context['to_value'] = '';
 
+	// Loading a draft?
+	if (!empty($_REQUEST['draft_id']) && allowedTo('save_pm_draft') && empty($_POST['subject']) && empty($_POST['message']))
+	{
+		$query = wesql::query('
+			SELECT subject, body, extra
+			FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+				AND is_pm = {int:is_pm}
+			LIMIT 1',
+			array(
+				'draft' => $_REQUEST['draft_id'],
+				'member' => $user_info['id'],
+				'is_pm' => 1,
+			)
+		);
+
+		if ($row = wesql::fetch_assoc($query))
+		{
+			// OK, we have a draft in storage for this message.	Let's get down and dirty with it.
+			$form_subject = $row['subject'];
+			$form_message = wedgeEditor::un_preparsecode($row['body']);
+			$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
+
+			// Get a list of all the users we're sending to, so we can load their data.
+			$row['extra']['recipients']['to'] = isset($row['extra']['recipients']['to']) ? $row['extra']['recipients']['to'] : array();
+			$row['extra']['recipients']['bcc'] = isset($row['extra']['recipients']['bcc']) ? $row['extra']['recipients']['bcc'] : array();
+			$users = array_merge($row['extra']['recipients']['to'], $row['extra']['recipients']['bcc']);
+			$users = loadMemberData($users);
+
+			$context['recipients'] = array(
+				'to' => array(),
+				'bcc' => array(),
+			);
+			// Just in case any disappeared, anything that is in the original to/bcc lists that isn't in the result new list, remove it.
+			if (!empty($users))
+			{
+				$row['extra']['recipients']['to'] = array_intersect($row['extra']['recipients']['to'], $users);
+				$row['extra']['recipients']['bcc'] = array_intersect($row['extra']['recipients']['bcc'], $users);
+			}
+
+			$names = array();
+			foreach ($row['extra']['recipients'] as $recType => $recList)
+			{
+				foreach ($recList as $recipient)
+				{
+					$context['recipients'][$recType][] = array(
+						'id' => $recipient,
+						'name' => $user_profile[$recipient]['real_name'],
+					);
+					$names[$recType][] = $user_profile[$recipient]['real_name'];
+				}
+				$context[$recType . '_value'] = empty($names[$recType]) ? '' : '&quot;' . implode('&quot;, &quot;', $names[$recType]) . '&quot;';
+			}
+		}
+		wesql::free_result($query);
+	}
+
 	// Set the defaults...
 	$context['subject'] = $form_subject != '' ? $form_subject : $txt['no_subject'];
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
@@ -1770,9 +1832,6 @@ function MessagePost()
 	);
 
 	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
-
-	// Needed for the WYSIWYG editor.
-	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// Now create the editor.
 	$context['postbox'] = new wedgeEditor(
@@ -1795,6 +1854,7 @@ function MessagePost()
 					'accesskey' => 'p',
 				),
 			),
+			'drafts' => !allowedTo('save_pm_draft') || empty($modSettings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($modSettings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
 
@@ -1953,6 +2013,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 					'accesskey' => 'p',
 				),
 			),
+			'drafts' => !allowedTo('save_pm_draft') || empty($modSettings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($modSettings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
 
@@ -1988,6 +2049,16 @@ function MessagePost2()
 
 	loadLanguage('PersonalMessage', '', false);
 
+	$session_timeout = checkSession('post', '', false) != '';
+
+	// Are we saving a draft? Sadly if we are, we have to do it here and refix everything ourselves.
+	if (isset($_REQUEST['draft']))
+	{
+		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
+		if (!empty($draft) && !$session_timeout)
+			redirectexit($context['current_label_redirect'] . ';draftsaved');
+	}
+
 	// Extract out the spam settings - it saves database space!
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
 
@@ -2020,7 +2091,7 @@ function MessagePost2()
 	$post_errors = array();
 
 	// If your session timed out, show an error, but do allow to re-submit.
-	if (checkSession('post', '', false) != '')
+	if ($session_timeout)
 		$post_errors[] = 'session_timeout';
 
 	$_REQUEST['subject'] = isset($_REQUEST['subject']) ? trim($_REQUEST['subject']) : '';
@@ -2035,66 +2106,7 @@ function MessagePost2()
 	$recipientList = array();
 	$namedRecipientList = array();
 	$namesNotFound = array();
-	foreach (array('to', 'bcc') as $recipientType)
-	{
-		// First, let's see if there's user ID's given.
-		$recipientList[$recipientType] = array();
-		if (!empty($_POST['recipient_' . $recipientType]) && is_array($_POST['recipient_' . $recipientType]))
-		{
-			foreach ($_POST['recipient_' . $recipientType] as $recipient)
-				$recipientList[$recipientType][] = (int) $recipient;
-		}
-
-		// Are there also literal names set?
-		if (!empty($_REQUEST[$recipientType]))
-		{
-			// We're going to take out the "s anyway ;).
-			$recipientString = strtr($_REQUEST[$recipientType], array('\\"' => '"'));
-
-			preg_match_all('~"([^"]+)"~', $recipientString, $matches);
-			$namedRecipientList[$recipientType] = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $recipientString))));
-
-			foreach ($namedRecipientList[$recipientType] as $index => $recipient)
-			{
-				if (strlen(trim($recipient)) > 0)
-					$namedRecipientList[$recipientType][$index] = westr::htmlspecialchars(westr::strtolower(trim($recipient)));
-				else
-					unset($namedRecipientList[$recipientType][$index]);
-			}
-
-			if (!empty($namedRecipientList[$recipientType]))
-			{
-				$foundMembers = findMembers($namedRecipientList[$recipientType]);
-
-				// Assume all are not found, until proven otherwise.
-				$namesNotFound[$recipientType] = $namedRecipientList[$recipientType];
-
-				foreach ($foundMembers as $member)
-				{
-					$testNames = array(
-						westr::strtolower($member['username']),
-						westr::strtolower($member['name']),
-						westr::strtolower($member['email']),
-					);
-
-					if (count(array_intersect($testNames, $namedRecipientList[$recipientType])) !== 0)
-					{
-						$recipientList[$recipientType][] = $member['id'];
-
-						// Get rid of this username, since we found it.
-						$namesNotFound[$recipientType] = array_diff($namesNotFound[$recipientType], $testNames);
-					}
-				}
-			}
-		}
-
-		// Selected a recipient to be deleted? Remove them now.
-		if (!empty($_POST['delete_recipient']))
-			$recipientList[$recipientType] = array_diff($recipientList[$recipientType], array((int) $_POST['delete_recipient']));
-
-		// Make sure we don't include the same name twice
-		$recipientList[$recipientType] = array_unique($recipientList[$recipientType]);
-	}
+	getPmRecipients($recipientList, $namedRecipientList, $namesNotFound);
 
 	// Are we changing the recipients some how?
 	$is_recipient_change = !empty($_POST['delete_recipient']) || !empty($_POST['to_submit']) || !empty($_POST['bcc_submit']);
@@ -2234,6 +2246,19 @@ function MessagePost2()
 		);
 	}
 
+	// Um, did this come from a draft? If so, bye bye.
+	if (!empty($_POST['draft_id']) && !empty($user_info['id']))
+		wesql::query('
+			DELETE FROM {db_prefix}drafts
+			WHERE id_draft = {int:draft}
+				AND id_member = {int:member}
+			LIMIT 1',
+			array(
+				'draft' => (int) $_POST['draft_id'],
+				'member' => $user_info['id'],
+			)
+		);
+
 	// If one or more of the recipient were invalid, go back to the post screen with the failed usernames.
 	if (!empty($context['send_log']['failed']))
 		return messagePostError($post_errors, $namesNotFound, array(
@@ -2247,6 +2272,72 @@ function MessagePost2()
 
 	// Go back to the where they sent from, if possible...
 	redirectexit($context['current_label_redirect']);
+}
+
+// Examines $_POST for auto-suggest user ids, as well as given names in quotes to see if it can match up user ids
+// All three inputs are empty arrays and made available back to the caller with references, yay :P
+function getPmRecipients(&$recipientList, &$namedRecipientList, &$namesNotFound)
+{
+	foreach (array('to', 'bcc') as $recipientType)
+	{
+		// First, let's see if there's user ID's given.
+		$recipientList[$recipientType] = array();
+		if (!empty($_POST['recipient_' . $recipientType]) && is_array($_POST['recipient_' . $recipientType]))
+		{
+			foreach ($_POST['recipient_' . $recipientType] as $recipient)
+				$recipientList[$recipientType][] = (int) $recipient;
+		}
+
+		// Are there also literal names set?
+		if (!empty($_REQUEST[$recipientType]))
+		{
+			// We're going to take out the "s anyway ;).
+			$recipientString = strtr($_REQUEST[$recipientType], array('\\"' => '"'));
+
+			preg_match_all('~"([^"]+)"~', $recipientString, $matches);
+			$namedRecipientList[$recipientType] = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $recipientString))));
+
+			foreach ($namedRecipientList[$recipientType] as $index => $recipient)
+			{
+				if (strlen(trim($recipient)) > 0)
+					$namedRecipientList[$recipientType][$index] = westr::htmlspecialchars(westr::strtolower(trim($recipient)));
+				else
+					unset($namedRecipientList[$recipientType][$index]);
+			}
+
+			if (!empty($namedRecipientList[$recipientType]))
+			{
+				$foundMembers = findMembers($namedRecipientList[$recipientType]);
+
+				// Assume all are not found, until proven otherwise.
+				$namesNotFound[$recipientType] = $namedRecipientList[$recipientType];
+
+				foreach ($foundMembers as $member)
+				{
+					$testNames = array(
+						westr::strtolower($member['username']),
+						westr::strtolower($member['name']),
+						westr::strtolower($member['email']),
+					);
+
+					if (count(array_intersect($testNames, $namedRecipientList[$recipientType])) !== 0)
+					{
+						$recipientList[$recipientType][] = $member['id'];
+
+						// Get rid of this username, since we found it.
+						$namesNotFound[$recipientType] = array_diff($namesNotFound[$recipientType], $testNames);
+					}
+				}
+			}
+		}
+
+		// Selected a recipient to be deleted? Remove them now.
+		if (!empty($_POST['delete_recipient']))
+			$recipientList[$recipientType] = array_diff($recipientList[$recipientType], array((int) $_POST['delete_recipient']));
+
+		// Make sure we don't include the same name twice
+		$recipientList[$recipientType] = array_unique($recipientList[$recipientType]);
+	}
 }
 
 // This function lists all buddies for wireless protocols.

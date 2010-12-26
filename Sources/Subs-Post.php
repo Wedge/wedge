@@ -2689,6 +2689,10 @@ function saveDraft($is_pm, $id_context = 0)
 	$subject = westr::htmltrim(westr::htmlspecialchars($subject));
 	$message = westr::htmlspecialchars($message, ENT_QUOTES);
 	loadSource('Class-Editor'); // just in case
+
+	// We would not have handled the WYSIWYG if we came from PM since that's done later in the PM workflow than we arrived here.
+	if ($is_pm)
+		wedgeEditor::preparseWYSIWYG('message');
 	wedgeEditor::preparsecode($message);
 
 	if (westr::htmltrim(westr::htmlspecialchars($subject)) === '' && westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
@@ -2710,7 +2714,7 @@ function saveDraft($is_pm, $id_context = 0)
 				AND id_member = {int:id_member}',
 			array(
 				'draft' => $_REQUEST['draft_id'],
-				'is_pm' => !empty($is_pm) ? 1 : 0,
+				'is_pm' => $is_pm ? 1 : 0,
 				'id_context' => $id_context,
 				'id_member' => $user_info['id'],
 			)
@@ -2731,6 +2735,16 @@ function saveDraft($is_pm, $id_context = 0)
 		$extra['smileys_enabled'] = !isset($_POST['ns']) ? 1 : 0;
 
 		// !!! Locking, sticky?
+	}
+	else
+	{
+		// We left PM workflow very, very early. We need more information - recipients.
+		$recipientList = array();
+		$namedRecipientList = array();
+		$namesNotFound = array();
+		getPmRecipients($recipientList, $namedRecipientList, $namesNotFound);
+		// So at this point, $recipientList is an array of 'to' and 'bcc' each containing an array of member ids, just ripe for saving.
+		$extra['recipients'] = $recipientList;
 	}
 	$extra = serialize($extra);
 
@@ -2780,7 +2794,7 @@ function saveDraft($is_pm, $id_context = 0)
 			$subject,
 			$message,
 			time(),
-			!empty($is_pm) ? 1 : 0,
+			$is_pm ? 1 : 0,
 			$board,
 			$id_context,
 			$extra,

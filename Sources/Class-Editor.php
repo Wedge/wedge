@@ -2487,9 +2487,11 @@ class wedgeEditor
 
 		// These two buttons get added semimagically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')
+		{
 			echo '
 		<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '" />
-		<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && submitThisOnce(this);" accesskey="d" class="button_submit" />';
+		<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? ' confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="button_submit" />';
+		}
 
 		if ($context['show_spellchecking'])
 			echo '

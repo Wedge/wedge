@@ -3826,6 +3826,11 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=profile',
 						'show' => true,
 					),
+					'showdrafts' => array(
+						'title' => $txt['draft_posts'],
+						'href' => $scripturl . '?action=profile;area=showdrafts',
+						'show' => allowedTo('save_post_draft') && !empty($modSettings['masterSavePostDrafts']),
+					),
 					'account' => array(
 						'title' => $txt['account'],
 						'href' => $scripturl . '?action=profile;area=account',
@@ -3854,6 +3859,12 @@ function setupMenuContext()
 						'title' => $txt['pm_menu_send'],
 						'href' => $scripturl . '?action=pm;sa=send',
 						'show' => allowedTo('pm_send'),
+						'is_last' => true,
+					),
+					'pm_draft' => array(
+						'title' => $txt['pm_menu_drafts'],
+						'href' => $scripturl . '?action=pm;sa=drafts',
+						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($modSettings['masterSavePmDrafts']),
 						'is_last' => true,
 					),
 				),
