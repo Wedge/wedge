@@ -2810,11 +2810,11 @@ function draftXmlReturn($draft, $is_pm)
 	global $txt, $context, $scripturl;
 	header('Content-Type: text/xml; charset=UTF-8');
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-	<response>
-		<info id="lastsave" draft="', $draft, '" url="', $scripturl, $is_pm ? '?action=pm;sa=showdrafts;delete=DraftId;SessVar=SessId;xml' : '?action=profile;area=showdrafts;delete=DraftId;SessVar=SessId;xml', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></info>
-	</response>';
-	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
+<response>
+	<info id="lastsave" draft="', $draft, '" url="', $scripturl, $is_pm ? '?action=pm;sa=showdrafts;delete=DraftId;SessVar=SessId;xml' : '?action=profile;area=showdrafts;delete=DraftId;SessVar=SessId;xml', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></info>
+</response>';
 
+	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
 	obExit(false);
 }
 ?>
