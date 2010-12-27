@@ -32,7 +32,7 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 			new_url += hexstr.substr(Math.floor(Math.random() * 16), 1);
 
 		if (useLibrary)
-			$('#verification_image' + uniqueID)).attr('src', new_url);
+			$('#verification_image' + uniqueID).attr('src', new_url);
 		else if ($('#verification_image' + uniqueID).length)
 			for (i = 1; i <= letterCount; i++)
 				$('#verification_image' + uniqueID + '_' + i).attr('src', new_url + ';letter=' + i);

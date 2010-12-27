@@ -990,7 +990,7 @@ function template_send()
 	echo '
 			<p id="shortcuts">
 				<label for="outbox"><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_save_outbox'], '</label>
-				<br /><span class="smalltext">', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '</span>
+				<div class="smalltext">', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '</div>
 			</p>
 			<p id="post_confirm_strip">
 				', $context['postbox']->outputButtons(), '
