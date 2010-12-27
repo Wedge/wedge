@@ -58,10 +58,8 @@ function template_event_post()
 
 	function generateDays()
 	{
-		var days = 0, selected = 0;
-		var dayElement = $("#day")[0], yearElement = $("#year")[0], monthElement = ("#month")[0];
+		var days = 0, selected = 0, dayElement = $("#day")[0], $("#year").val(), monthElement = ("#month")[0];
 
-		var year = yearElement.options[yearElement.selectedIndex].value;
 		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
 		selected = dayElement.selectedIndex;

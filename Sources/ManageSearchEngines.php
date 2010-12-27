@@ -82,13 +82,12 @@ function ManageSearchEngineSettings($return_config = false)
 	$javascript_function = '
 		function disableFields()
 		{
-			disabledState = document.getElementById(\'spider_mode\').value == 0;';
+			disabledState = $(\'#spider_mode\').val() == 0;';
 
 	foreach ($config_vars as $variable)
 		if ($variable[1] != 'spider_mode')
 			$javascript_function .= '
-			if (document.getElementById(\'' . $variable[1] . '\'))
-				document.getElementById(\'' . $variable[1] . '\').disabled = disabledState;';
+			$(\'#' . $variable[1] . '\').attr(\'disabled\', disabledState);';
 
 	$javascript_function .= '
 		}

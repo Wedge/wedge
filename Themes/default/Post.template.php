@@ -73,10 +73,9 @@ function template_main()
 
 	function generateDays()
 	{
-		var dayElement = $("#day")[0], yearElement = $("#year")[0], monthElement = ("#month")[0];
+		var dayElement = $("#day")[0], year = $("#year").val(), monthElement = ("#month")[0];
 		var days, selected = dayElement.selectedIndex;
 
-		var year = yearElement.options[yearElement.selectedIndex].value;
 		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 
 		days = monthLength[monthElement.value - 1];

@@ -575,8 +575,8 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 	// Add the remaining items after the currently selected item.
 	// Internet Explorer needs css() to keep the box dropped down.
 	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
-		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
-			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
+		if (this.selectedIndex > 0 && $(this).val())
+			window.location.href = smf_scripturl + $(this).val().substr(smf_scripturl.indexOf('?') == -1 || $(this).val().substr(0, 1) != '?' ? 0 : 1);
 	});
 };
 

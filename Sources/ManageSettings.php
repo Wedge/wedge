@@ -655,7 +655,7 @@ function ModifySpamSettings($return_config = false)
 			array('check', 'search_enable_captcha'),
 			// This, my friend, is a cheat :p
 			'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
-			array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0){ document.getElementById(\'guests_require_captcha\').checked = true; document.getElementById(\'guests_require_captcha\').disabled = true;} else {document.getElementById(\'guests_require_captcha\').disabled = false;}'),
+			array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0) $(\'#guests_require_captcha\').attr({ checked: true, disabled: true }); else $(\'#guests_require_captcha\').attr(\'disabled\', false);'),
 			array('check', 'guests_report_require_captcha'),
 		'',
 			// PM Settings
@@ -799,8 +799,7 @@ function ModifySpamSettings($return_config = false)
 	add_js('
 	function refreshImages()
 	{
-		var imageType = document.getElementById(\'visual_verification_type\').value;
-		document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
+		$(\'#verification_image\').attr(\'src\', \'' . $context['verification_image_href'] . ';type=\' + $(\'#visual_verification_type\').val());
 	}');
 
 	// Show the image itself.
@@ -816,7 +815,7 @@ function ModifySpamSettings($return_config = false)
 	// Some minor javascript for the guest post setting.
 	if ($modSettings['posts_require_captcha'])
 		add_js('
-	document.getElementById(\'guests_require_captcha\').disabled = true;');
+	$(\'#guests_require_captcha\').attr(\'disabled\', true);');
 
 	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=spam';
 	$context['settings_title'] = $txt['antispam_Settings'];
@@ -837,7 +836,7 @@ function ModifySignatureSettings($return_config = false)
 			array('int', 'signature_max_length'),
 			array('int', 'signature_max_lines'),
 			array('int', 'signature_max_font_size'),
-			array('check', 'signature_allow_smileys', 'onclick' => 'document.getElementById(\'signature_max_smileys\').disabled = !this.checked;'),
+			array('check', 'signature_allow_smileys', 'onclick' => '$(\'#signature_max_smileys\').attr(\'disabled\', !this.checked);'),
 			array('int', 'signature_max_smileys'),
 		'',
 			// Image settings.
@@ -857,7 +856,7 @@ function ModifySignatureSettings($return_config = false)
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	add_js('
-	document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;');
+	$(\'#signature_max_smileys\').attr(\'disabled\', !($(\'#signature_allow_smileys\').attr(\'checked\')));');
 
 	// Load all the signature settings.
 	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);

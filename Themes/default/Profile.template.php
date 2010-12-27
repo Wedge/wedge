@@ -213,7 +213,7 @@ function template_summary()
 		if (!empty($context['member']['bans']))
 		{
 			echo '
-				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\'; return false;">' . $txt['view_ban'] . '</a>]</dt>
+				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="$(\'#ban_info\').toggle(); return false;">' . $txt['view_ban'] . '</a>]</dt>
 				<dt class="clear" id="ban_info" style="display: none;">
 					<strong>', $txt['user_banned_by_following'], ':</strong>';
 
@@ -927,7 +927,7 @@ function template_showPermissions()
 					<div class="cat_bar">
 						<h3>
 							<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
-							<select name="board" onchange="if (this.options[this.selectedIndex].value) this.form.submit();">
+							<select name="board" onchange="if ($(this).val()) this.form.submit();">
 								<option value="0"', $context['board'] == 0 ? ' selected="selected"' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
 				if (!empty($context['boards']))
 					echo '
@@ -1384,7 +1384,7 @@ function template_profile_pm_settings()
 										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
 								</dt>
 								<dd>
-										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !document.getElementById(\'copy_to_outbox\').checked) alert(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
+										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').attr("checked"))) alert(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
 											<option value="0"', $context['display_mode'] == 0 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_all'], '</option>
 											<option value="1"', $context['display_mode'] == 1 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_one'], '</option>
 											<option value="2"', $context['display_mode'] == 2 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_linked'], '</option>
@@ -1792,8 +1792,7 @@ function template_groupMembership()
 
 		// Javascript for the selector stuff.
 		add_js_inline('
-	var prevClass = "";
-	var prevDiv = "";
+	var prevClass = "", prevDiv = "";
 	function highlightSelected(box)
 	{
 		if (prevClass != "")
@@ -1991,10 +1990,10 @@ function template_issueWarning()
 		// Are we passing the amount to change it by?
 		if (changeAmount)
 		{
-			if (document.getElementById(\'warning_level\').value == \'SAME\')
+			if ($(\'#warning_level\').val() == \'SAME\')
 				percent = ', $context['member']['warning'], ' + changeAmount;
 			else
-				percent = parseInt(document.getElementById(\'warning_level\').value) + changeAmount;
+				percent = parseInt($(\'#warning_level\').val(), 10) + changeAmount;
 		}
 		// If not then it\'s a mouse thing.
 		else
@@ -2003,9 +2002,8 @@ function template_issueWarning()
 				var curEvent = window.event;
 
 			// If it\'s a movement check the button state first!
-			if (isMove)
-				if (!curEvent.button || curEvent.button != 1)
-					return false;
+			if (isMove && (!curEvent.button || curEvent.button != 1))
+				return false;
 
 			// Get the position of the container.
 			contain = document.getElementById(\'warning_contain\');
@@ -2044,9 +2042,9 @@ function template_issueWarning()
 
 		size = barWidth * (percent/100);
 
-		document.getElementById(\'warning_text\').innerHTML = percent + "%";
-		document.getElementById(\'warning_level\').value = percent;
-		document.getElementById(\'warning_progress\').style.width = size + "px";
+		$(\'#warning_text\').html(percent + "%");
+		$(\'#warning_level\').val(percent);
+		$(\'#warning_progress\').css("width", size + "px");
 
 		// Get the right color.
 		color = "black"');
@@ -2057,7 +2055,7 @@ function template_issueWarning()
 			color = "', $color, '";');
 
 	add_js_inline('
-		document.getElementById(\'warning_progress\').style.backgroundColor = color;
+		$(\'#warning_progress\').css("backgroundColor", color);
 
 		// Also set the right effect.
 		effectText = "";');
@@ -2068,17 +2066,17 @@ function template_issueWarning()
 			effectText = "', $text, '";');
 
 	add_js_inline('
-		document.getElementById(\'cur_level_div\').innerHTML = effectText;
+		$(\'#cur_level_div\').html(effectText);
 	}
 
 	// Disable notification boxes as required.
 	function modifyWarnNotify()
 	{
-		disable = !document.getElementById(\'warn_notify\').checked;
-		document.getElementById(\'warn_sub\').disabled = disable;
-		document.getElementById(\'warn_body\').disabled = disable;
-		document.getElementById(\'warn_temp\').disabled = disable;
-		document.getElementById(\'new_template_link\').style.display = disable ? \'none\' : \'\';
+		var enable = $(\'#warn_notify\').attr("checked");
+		$(\'#warn_sub\').attr("disabled", !enable);
+		$(\'#warn_body\').attr("disabled", !enable);
+		$(\'#warn_temp\').attr("disabled", !enable);
+		$(\'#new_template_link\').toggle(enable);
 	}
 
 	function changeWarnLevel(amount)
@@ -2089,7 +2087,7 @@ function template_issueWarning()
 	// Warn template.
 	function populateNotifyTemplate()
 	{
-		index = document.getElementById(\'warn_temp\').value;
+		index = $(\'#warn_temp\').val();
 		if (index == -1)
 			return false;
 
@@ -2098,7 +2096,7 @@ function template_issueWarning()
 	foreach ($context['notification_templates'] as $k => $type)
 		add_js_inline('
 		if (index == ', $k, ')
-			document.getElementById(\'warn_body\').value = "', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '";');
+			$(\'#warn_body\').val("', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '");');
 
 	add_js_inline('
 	}');
@@ -2277,8 +2275,8 @@ function template_issueWarning()
 
 	// Do our best to get pretty javascript enabled.
 	add_js_inline('
-	document.getElementById(\'warndiv1\').style.display = "";
-	document.getElementById(\'warndiv2\').style.display = "none";');
+	$(\'#warndiv1\').show();
+	$(\'#warndiv2\').hide();');
 
 	if (!$context['user']['is_owner'])
 		add_js_inline('
@@ -2445,10 +2443,10 @@ function template_profile_group_manage()
 									<label for="additional_groups-', $member_group['id'], '"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked="checked"' : '', ' class="input_check" /> ', $member_group['name'], '</label><br />';
 		echo '
 								</span>
-								<a href="#" onclick="document.getElementById(\'additional_groupsList\').style.display = \'block\'; document.getElementById(\'additional_groupsLink\').style.display = \'none\'; return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
+								<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
 								<script><!-- // --><![CDATA[
-									document.getElementById("additional_groupsList").style.display = "none";
-									document.getElementById("additional_groupsLink").style.display = "";
+									$("#additional_groupsList").hide();
+									$("#additional_groupsLink").show();
 								// ]]></script>
 							</dd>';
 
@@ -2525,9 +2523,6 @@ function template_profile_signature_modify()
 		var maxLength = ', $context['signature_limits']['max_length'], ';
 		var oldSignature = "", currentSignature = document.forms.creator.signature.value;
 
-		if (!document.getElementById("signatureLeft"))
-			return;
-
 		if (oldSignature != currentSignature)
 		{
 			oldSignature = currentSignature;
@@ -2537,7 +2532,7 @@ function template_profile_signature_modify()
 			currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
 		}
 
-		document.getElementById("signatureLeft").innerHTML = maxLength - currentSignature.length;
+		$("#signatureLeft").html(maxLength - currentSignature.length);
 	}
 	tick();');
 }
@@ -2579,13 +2574,14 @@ function template_profile_avatar_select()
 								</div>';
 
 		add_js_inline('
-	var files = ["' . implode('", "', $context['avatar_list']) . '"];
-	var avatar = document.getElementById("avatar");
-	var cat = document.getElementById("cat");
-	var selavatar = "' . $context['avatar_selected'] . '";
-	var avatardir = "' . $modSettings['avatar_url'] . '/";
-	var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
-	var file = document.getElementById("file");
+	var
+		files = ["' . implode('", "', $context['avatar_list']) . '"],
+		avatar = $("#avatar")[0],
+		cat = $("#cat")[0],
+		file = $("#file")[0],
+		selavatar = "' . $context['avatar_selected'] . '",
+		avatardir = "' . $modSettings['avatar_url'] . '/",
+		size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 
 	if (avatar.src.indexOf("blank.gif") > -1)
 		changeSel(selavatar);
@@ -2597,19 +2593,16 @@ function template_profile_avatar_select()
 		if (cat.selectedIndex == -1)
 			return;
 
-		if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
+		var val = $(cat).val(), i, count = 0;
+		if (val.indexOf("/") > 0)
 		{
-			var i;
-			var count = 0;
+			$(file).css("display", "inline").attr("disabled", false);
 
-			file.style.display = "inline";
-			file.disabled = false;
-
-			for (i = file.length; i >= 0; i = i - 1)
+			for (i = file.length; i >= 0; i--)
 				file.options[i] = null;
 
 			for (i = 0; i < files.length; i++)
-				if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
+				if (files[i].indexOf(val) == 0)
 				{
 					var filename = files[i].substr(files[i].indexOf("/") + 1);
 					var showFilename = filename.substr(0, filename.lastIndexOf("."));
@@ -2634,11 +2627,8 @@ function template_profile_avatar_select()
 		}
 		else
 		{
-			file.style.display = "none";
-			file.disabled = true;
-			document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
-			document.getElementById("avatar").style.width = "";
-			document.getElementById("avatar").style.height = "";
+			$(file).hide().attr("disabled", true);
+			$("#avatar").attr("src", avatardir + val).css({ width: "", height: "" });
 		}
 	}
 
@@ -2647,10 +2637,13 @@ function template_profile_avatar_select()
 		if (file.selectedIndex == -1)
 			return;
 
-		document.getElementById("avatar").src = avatardir + file.options[file.selectedIndex].value;
-		document.getElementById("avatar").alt = file.options[file.selectedIndex].text + (file.options[file.selectedIndex].text == size ? "!" : "");
-		document.getElementById("avatar").style.width = "";
-		document.getElementById("avatar").style.height = "";
+		$("#avatar").attr({
+			src: avatardir + $(file).val(),
+			alt: file.options[file.selectedIndex].text + (file.options[file.selectedIndex].text == size ? "!" : "")
+		}).css({
+			width: "",
+			height: ""
+		});
 	}
 
 	function previewExternalAvatar(src)
@@ -2664,16 +2657,15 @@ function template_profile_avatar_select()
 
 		tempImage.src = src;
 		if (maxWidth != 0 && tempImage.width > maxWidth)
-		{
-			document.getElementById("avatar").style.height = parseInt((maxWidth * tempImage.height) / tempImage.width) + "px";
-			document.getElementById("avatar").style.width = maxWidth + "px";
-		}
+			$("#avatar").css({
+				height: parseInt((maxWidth * tempImage.height) / tempImage.width) + "px",
+				width: maxWidth + "px"
+			}).attr("src", src);
 		else if (maxHeight != 0 && tempImage.height > maxHeight)
-		{
-			document.getElementById("avatar").style.width = parseInt((maxHeight * tempImage.width) / tempImage.height) + "px";
-			document.getElementById("avatar").style.height = maxHeight + "px";
-		}
-		document.getElementById("avatar").src = src;
+			$("#avatar").css({
+				width: parseInt((maxHeight * tempImage.width) / tempImage.height) + "px",
+				height: maxHeight + "px"
+			}).attr("src", src);
 	}');
 	}
 
@@ -2697,28 +2689,28 @@ function template_profile_avatar_select()
 							</dd>';
 
 	add_js_inline(!empty($context['member']['avatar']['allow_server_stored']) ? '
-	document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '', !empty($context['member']['avatar']['allow_external']) ? '
-	document.getElementById("avatar_external").style.display = "' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? '' : 'none') . '";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-	document.getElementById("avatar_upload").style.display = "' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? '' : 'none') . '";' : '', '
+	$("#avatar_server_stored").' . ($context['member']['avatar']['choice'] == 'server_stored' ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_external']) ? '
+	$("#avatar_external").' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+	$("#avatar_upload").' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? 'show' : 'hide') . '();' : '', '
 
 	function swap_avatar(type)
 	{
 		switch (type.id)
 		{
 			case "avatar_choice_server_stored":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				document.getElementById("avatar_server_stored").style.display = "";' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				document.getElementById("avatar_external").style.display = "none";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				document.getElementById("avatar_upload").style.display = "none";' : '', '
+				$("#avatar_server_stored").show();' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				$("#avatar_upload").hide();' : '', '
 				break;
 			case "avatar_choice_external":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				document.getElementById("avatar_server_stored").style.display = "none";' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				document.getElementById("avatar_external").style.display = "";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				document.getElementById("avatar_upload").style.display = "none";' : '', '
+				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				$("#avatar_external").show();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				$("#avatar_upload").hide();' : '', '
 				break;
 			case "avatar_choice_upload":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				document.getElementById("avatar_server_stored").style.display = "none";' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				document.getElementById("avatar_external").style.display = "none";' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				document.getElementById("avatar_upload").style.display = "";' : '', '
+				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
+				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+				$("#avatar_upload").show();' : '', '
 				break;
 		}
 	}');
@@ -2738,7 +2730,7 @@ function template_profile_timeformat_modify()
 								</dfn>
 							</dt>
 							<dd>
-								<select name="easyformat" onchange="document.forms.creator.time_format.value = this.options[this.selectedIndex].value;" style="margin-bottom: 4px;">';
+								<select name="easyformat" onchange="document.forms.creator.time_format.value = $(this).val();" style="margin-bottom: 4px;">';
 	// Help the user by showing a list of common time formats.
 	foreach ($context['easy_timeformats'] as $time_format)
 		echo '
@@ -2760,7 +2752,7 @@ function template_profile_timeoffset_modify()
 								<dfn>', $txt['personal_time_offset'], '</dfn>
 							</dt>
 							<dd>
-								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); document.getElementById(\'time_offset\').value = autoDetectTimeOffset(currentDate); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 							</dd>';
 }
 
@@ -2788,7 +2780,7 @@ function template_profile_smiley_pick()
 								<strong>', $txt['smileys_current'], ':</strong>
 							</dt>
 							<dd>
-								<select name="smiley_set" onchange="document.getElementById(\'smileypr\').src = this.selectedIndex == 0 ? \'', $settings['images_url'], '/blank.gif\' : \'', $modSettings['smileys_url'], '/\' + (this.selectedIndex != 1 ? this.options[this.selectedIndex].value : \'', !empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'], '\') + \'/smiley.gif\';">';
+								<select name="smiley_set" onchange="$(\'#smileypr\').attr(\'src\', this.selectedIndex == 0 ? \'', $settings['images_url'], '/blank.gif\' : \'', $modSettings['smileys_url'], '/\' + (this.selectedIndex != 1 ? $(this).val() : \'', !empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'], '\') + \'/smiley.gif\');">';
 	foreach ($context['smiley_sets'] as $set)
 		echo '
 									<option value="', $set['id'], '"', $set['selected'] ? ' selected="selected"' : '', '>', $set['name'], '</option>';
@@ -2886,36 +2878,32 @@ function template_authentication_method()
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
-		if (!document.getElementById(\'auth_openid\') || !document.getElementById(\'auth_openid\').checked)
-			currentAuthMethod = \'passwd\';
-		else
-			currentAuthMethod = \'openid\';
+		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
 
 		// No openID?
 		if (!document.getElementById(\'auth_openid\'))
 			return true;
 
-		document.forms.creator.openid_url.disabled = currentAuthMethod == \'openid\' ? false : true;
-		document.forms.creator.smf_autov_pwmain.disabled = currentAuthMethod == \'passwd\' ? false : true;
-		document.forms.creator.smf_autov_pwverify.disabled = currentAuthMethod == \'passwd\' ? false : true;
-		document.getElementById(\'smf_autov_pwmain_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
-		document.getElementById(\'smf_autov_pwverify_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
+		var is_pw = currentAuthMethod == \'passwd\';
+		document.forms.creator.openid_url.disabled = is_pw;
+		document.forms.creator.smf_autov_pwmain.disabled = !is_pw;
+		document.forms.creator.smf_autov_pwverify.disabled = !is_pw;
+		$("#smf_autov_pwmain_div").toggle(is_pw);
+		$("#smf_autov_pwverify_div").toggle(is_pw);
+		$("#auth_pass_div").toggle(is_pw);
+		$("#auth_openid_div").toggle(!is_pw);
 
-		if (currentAuthMethod == \'passwd\')
+		if (is_pw)
 		{
 			verificationHandle.refreshMainPassword();
 			verificationHandle.refreshVerifyPassword();
 			document.forms.creator.openid_url.style.backgroundColor = \'\';
-			document.getElementById("auth_openid_div").style.display = "none";
-			document.getElementById("auth_pass_div").style.display = "";
 		}
 		else
 		{
 			document.forms.creator.smf_autov_pwmain.style.backgroundColor = \'\';
 			document.forms.creator.smf_autov_pwverify.style.backgroundColor = \'\';
 			document.forms.creator.openid_url.style.backgroundColor = \'#FCE184\';
-			document.getElementById("auth_openid_div").style.display = "";
-			document.getElementById("auth_pass_div").style.display = "none";
 		}
 	}
 	updateAuthMethod();');

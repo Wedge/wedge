@@ -347,9 +347,9 @@ function ModifyMailSettings($return_config = false)
 	};
 	function fetch_birthday_preview()
 	{
-		var index = document.getElementById(\'birthday_email\').value;
-		document.getElementById(\'birthday_subject\').innerHTML = bDay[index].subject;
-		document.getElementById(\'birthday_body\').innerHTML = bDay[index].body;
+		var index = $(\'#birthday_email\').val();
+		$(\'#birthday_subject\').html(bDay[index].subject);
+		$(\'#birthday_body\').html(bDay[index].body);
 	}');
 }
 

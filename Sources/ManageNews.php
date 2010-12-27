@@ -784,7 +784,7 @@ function ModifyNewsSettings($return_config = false)
 			array('permissions', 'send_mail'),
 		'',
 			// Just the remaining settings.
-			array('check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'),
+			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').attr(\'disabled\', !this.checked);'),
 			array('text', 'xmlnews_maxlen', 10),
 	);
 
@@ -803,7 +803,7 @@ function ModifyNewsSettings($return_config = false)
 
 	// Add some javascript at the bottom...
 	add_js('
-	document.getElementById("xmlnews_maxlen").disabled = !document.getElementById("xmlnews_enable").checked;');
+	$("#xmlnews_maxlen").attr("disabled", !($("#xmlnews_enable").attr("checked")));');
 
 	// Saving the settings?
 	if (isset($_GET['save']))

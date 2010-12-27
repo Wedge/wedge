@@ -327,13 +327,13 @@ function ModifyRegistrationSettings($return_config = false)
 	add_js('
 	function checkCoppa()
 	{
-		var coppaDisabled = document.getElementById(\'coppaAge\').value == 0;
-		document.getElementById(\'coppaType\').disabled = coppaDisabled;
+		var coppaDisabled = $(\'#coppaAge\').val() == 0;
+		$(\'#coppaType\').attr(\'disabled\', coppaDisabled);
 
-		var disableContacts = coppaDisabled || document.getElementById(\'coppaType\').options[document.getElementById(\'coppaType\').selectedIndex].value != 1;
-		document.getElementById(\'coppaPost\').disabled = disableContacts;
-		document.getElementById(\'coppaFax\').disabled = disableContacts;
-		document.getElementById(\'coppaPhone\').disabled = disableContacts;
+		var disableContacts = coppaDisabled || $(\'#coppaType\').val() != 1;
+		$(\'#coppaPost\').attr(\'disabled\', disableContacts);
+		$(\'#coppaFax\').attr(\'disabled\', disableContacts);
+		$(\'#coppaPhone\').attr(\'disabled\', disableContacts);
 	}
 	checkCoppa();');
 
