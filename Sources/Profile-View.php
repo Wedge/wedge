@@ -266,12 +266,6 @@ function viewDrafts($memID)
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
 		fatal_lang_error('not_a_user', false);
 
-	// Some initial context.
-	$context['start'] = (int) $_REQUEST['start'];
-	$context['current_member'] = $memID;
-	$context['sub_template'] = 'showDrafts';
-	$context['page_title'] = $txt['showDrafts'] . ' - ' . $context['member']['name'];
-
 	// Are we deleting any drafts here?
 	if (isset($_GET['deleteall']))
 	{
@@ -304,8 +298,17 @@ function viewDrafts($memID)
 			)
 		);
 
-		redirectexit('action=profile;u=' . $memID . ';area=showdrafts');
+		if (isset($_GET['xml']))
+			obExit(false);
+		else
+			redirectexit('action=profile;u=' . $memID . ';area=showdrafts');
 	}
+
+	// Some initial context.
+	$context['start'] = (int) $_REQUEST['start'];
+	$context['current_member'] = $memID;
+	$context['sub_template'] = 'showDrafts';
+	$context['page_title'] = $txt['showDrafts'] . ' - ' . $context['member']['name'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
 		$_REQUEST['viewscount'] = 10;

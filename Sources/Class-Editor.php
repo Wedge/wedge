@@ -2458,6 +2458,22 @@ class wedgeEditor
 	});');
 		}
 
+		$auto_drafts = in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm'));
+		// If we're doing it, let's add the auto saver for drafts.
+		if ($auto_drafts)
+			add_js('
+	var oAutoSave = new wedge_autoDraft({
+		sSelf: \'oAutoSave\',
+		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
+		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
+		sForm: \'postmodify\',
+		sEditor: ' . JavaScriptEscape($this->id) . ',
+		sType: ' . JavaScriptEscape($this->editorOptions['drafts']) . ',
+		sLastNote: \'draft_lastautosave\',
+		iFreq: ', (empty($modSettings['masterAutoSaveDraftsDelay']) ? 30000 : $modSettings['masterAutoSaveDraftsDelay'] * 1000), ',
+		sRemove: ', JavaScriptEscape($txt['remove_draft']), '
+	});');
+
 		// Now it's all drawn out we'll actually setup the box.
 		add_js('
 	var oEditorHandle_' . $this->id . ' = new smc_Editor({
@@ -2472,7 +2488,8 @@ class wedgeEditor
 		sEditHeight: ' . JavaScriptEscape($this->height) . ',
 		bRichEditOff: ' . (empty($modSettings['disable_wysiwyg']) ? 'false' : 'true') . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
-		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . '
+		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
+		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . '
 	});
 	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';');
 	}
@@ -2494,8 +2511,11 @@ class wedgeEditor
 		if ($context['show_spellchecking'])
 			echo '
 		<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="button_submit" />';
-	}
 
+		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
+			echo '
+		<div id="draft_lastautosave" class="clear righttext"></div>';
+	}
 }
 
 ?>

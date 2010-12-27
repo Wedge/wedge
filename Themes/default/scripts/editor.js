@@ -280,6 +280,10 @@ function smc_Editor(oOptions)
 		// Attach functions to the key and mouse events.
 		$(this.oFrameDocument).bind('keyup mouseup', this.aEventWrappers.editorKeyUp).keydown(this.aEventWrappers.shortcutCheck);
 		$(this.oTextHandle).keydown(this.aEventWrappers.shortcutCheck);
+		if (this.opt.oDrafts)
+			$(this.oTextHandle).keyup(function(oEvent){
+				oCaller.opt.oDrafts.needsUpdate(true); // this is established earlier in this function.
+			});
 
 		if (is_ie)
 			$(this.oFrameDocument).blur(this.aEventWrappers.editorBlur).focus(this.aEventWrappers.editorFocus);
@@ -291,7 +295,11 @@ function smc_Editor(oOptions)
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
+	{
 		this.bRichTextEnabled = false;
+		if (this.opt.oDrafts)
+			$(this.oTextHandle).keyup(this.opt.oDrafts.needsUpdate(true));
+	}
 
 	// Make sure we set the message mode correctly.
 	document.getElementById(this.opt.sUniqueId + '_mode').value = this.bRichTextEnabled ? 1 : 0;
@@ -357,6 +365,9 @@ smc_Editor.prototype.unprotectText = function(sText)
 
 smc_Editor.prototype.editorKeyUp = function()
 {
+	if (this.opt.oDrafts)
+		this.opt.oDrafts.needsUpdate(true);
+
 	// Rebuild the breadcrumb.
 	this.updateEditorControls();
 };
@@ -578,11 +589,17 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 		else
 			replaceText(sText, this.oTextHandle);
 	}
+
+	if (this.opt.oDrafts)
+		this.opt.oDrafts.needsUpdate(true);
 };
 
 // Special handler for WYSIWYG.
 smc_Editor.prototype.smf_execCommand = function(sCommand, bUi, sValue)
 {
+	if (this.opt.oDrafts)
+		this.opt.oDrafts.needsUpdate(true);
+
 	return this.oFrameDocument.execCommand(sCommand, bUi, sValue);
 };
 
@@ -681,6 +698,9 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 
 	this.updateEditorControls();
 
+	if (this.opt.oDrafts)
+		this.opt.oDrafts.needsUpdate(true);
+
 	// Finally set the focus.
 	this.setFocus();
 };
@@ -734,6 +754,9 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 	}
 
 	this.updateEditorControls();
+
+	if (this.opt.oDrafts)
+		this.opt.oDrafts.needsUpdate(true);
 
 	return true;
 };
@@ -1872,4 +1895,93 @@ wedgeAttachSelect.prototype.checkActive = function()
 	});
 
 	this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
+};
+
+// Handles auto saving of posts.
+function wedge_autoDraft(oOptions)
+{
+	this.opt = oOptions;
+	this.opt.needsUpdate = false;
+
+	if (this.opt.iFreq > 0)
+		setInterval(this.opt.sSelf + '.draftSend();', this.opt.iFreq);
+}
+
+wedge_autoDraft.prototype.needsUpdate = function(update)
+{
+	this.opt.needsUpdate = update;
+}
+
+wedge_autoDraft.prototype.draftSend = function()
+{
+	if (!this.opt.needsUpdate)
+		return;
+
+	var
+		sUrl = $('#' + this.opt.sForm).attr('action'),
+		draftInfo = {
+			draft: 'draft',
+			draft_id: $('#draft_id').val(),
+			subject: $('#' + this.opt.sForm + ' input[name="subject"]').val(),
+			message: $('#' + this.opt.sEditor).val(),
+			message_mode: $('#' + this.opt.sEditor + '_mode').val()
+		},
+		localVars = {
+			removeString: this.opt.sRemove,
+			lastSavedDiv: this.opt.sLastNote,
+			sessvar: this.opt.sSessionVar,
+			sessid: this.opt.sSessionId,
+			object: this
+		};
+
+	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
+	if (draftInfo.message_mode == 1)
+		draftInfo.message = $('#html_' + this.opt.sEditor).html();
+
+	// This isn't nice either, but nicer than the above, sorry.
+	draftInfo[this.opt.sSessionVar] = this.opt.sSessionId;
+
+	// Depending on what we're doing, there might be other things we need to save, like topic details or PM recipients.
+	if (this.opt.sType == 'auto_post')
+	{
+		draftInfo.topic = $('#' + this.opt.sForm + ' input[name="topic"]').val();
+		draftInfo.icon = $('#' + this.opt.sForm + ' input[name="icon"]').val();
+	}
+	else if (this.opt.sType == 'auto_pm')
+	{
+		// Since we're here, we only need to bother with the JS, since the auto suggest will be available and will have already sorted out user ids.
+		// This is not nice, though.
+		var recipients = [];
+		$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function() {
+			recipients[recipients.length] = $(this).val();
+		});
+		if (recipients.length > 0)
+			draftInfo['recipient_to[]'] = recipients;
+
+		recipients = [];
+		$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function() {
+			recipients[recipients.length] = $(this).val();
+		});
+		if (recipients.length > 0)
+			draftInfo['recipient_bcc[]'] = recipients;
+	}
+
+	$.post(sUrl + ';xml', draftInfo, function(data) {
+		$('#remove_draft').unbind('click'); // just in case of bad stuff
+		var obj = $('#lastsave', data);
+		var draft_id = obj.attr('draft');
+		var url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, localVars.sessvar).replace(/SessId/, localVars.sessid);
+		$('#draft_id').val(draft_id);
+		
+		$('#' + localVars.lastSavedDiv).html(obj.text() + ' &nbsp; <a id="remove_draft" href="#">' + localVars.removeString + '</a>');
+		$('#remove_draft').click(function() {
+			$.get(url, function() {
+				$('#' + localVars.lastSavedDiv).empty();
+				$('#draft_id').val('0');
+			});
+			return false;
+		});
+		localVars.object.needsUpdate(false);
+	});
+	return false;
 };

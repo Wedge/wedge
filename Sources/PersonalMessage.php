@@ -2067,7 +2067,10 @@ function MessagePost2()
 	{
 		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
 		if (!empty($draft) && !$session_timeout)
-			redirectexit($context['current_label_redirect'] . ';draftsaved');
+			if (isset($_GET['xml']))
+				draftXmlReturn($draft, true);
+			else
+				redirectexit($context['current_label_redirect'] . ';draftsaved');
 	}
 
 	// Extract out the spam settings - it saves database space!
@@ -3691,11 +3694,6 @@ function MessageDrafts()
 
 	loadLanguage('PersonalMessage');
 
-	// Some initial context.
-	$context['start'] = (int) $_REQUEST['start'];
-	$context['sub_template'] = 'pm_drafts';
-	$context['page_title'] = $txt['showDrafts'];
-
 	// Are we deleting any drafts here?
 	if (isset($_GET['deleteall']))
 	{
@@ -3728,8 +3726,16 @@ function MessageDrafts()
 			)
 		);
 
-		redirectexit('action=pm;sa=showdrafts');
+		if (isset($_GET['xml']))
+			obExit(false);
+		else
+			redirectexit('action=pm;sa=showdrafts');
 	}
+
+	// Some initial context.
+	$context['start'] = (int) $_REQUEST['start'];
+	$context['sub_template'] = 'pm_drafts';
+	$context['page_title'] = $txt['showDrafts'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
 		$_REQUEST['viewscount'] = 10;
