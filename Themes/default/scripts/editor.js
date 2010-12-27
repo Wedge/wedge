@@ -1910,7 +1910,7 @@ function wedge_autoDraft(oOptions)
 wedge_autoDraft.prototype.needsUpdate = function(update)
 {
 	this.opt.needsUpdate = update;
-}
+};
 
 wedge_autoDraft.prototype.draftSend = function()
 {

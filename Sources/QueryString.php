@@ -745,16 +745,16 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	}
 
 	$id = $is_default_theme ? $id : substr(strrchr($settings['theme_dir'], '/'), 1) . '-' . $id;
-	$id = (!empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id) . $latest_date;
+	$id = !empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $cachedir . '/' . $id . $ext;
+	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 
-	$final_script = $boardurl . '/cache/' . $id . $ext;
+	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
