@@ -151,7 +151,7 @@ class paypal_display
 
 				function switchPaypalRecur()
 				{
-					document.getElementById("paypal_cmd").value = document.getElementById("do_paypal_recur").checked ? "_xclick-subscriptions" : "_xclick";
+					$("#paypal_cmd").val($("#do_paypal_recur").attr("checked") ? "_xclick-subscriptions" : "_xclick");
 				}';
 
 		return $return_data;

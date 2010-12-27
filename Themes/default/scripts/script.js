@@ -25,7 +25,7 @@ var
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
 {
-	return $.ajax(typeof(funcCallback) != 'undefined' ?
+	return $.ajax(typeof funcCallback != 'undefined' ?
 		{ url: sUrl, success: funcCallback, context: this } :
 		{ url: sUrl, async: false, context: this }
 	);
@@ -34,7 +34,7 @@ function getXMLDocument(sUrl, funcCallback)
 // Send a post form to the server using XMLHttpRequest.
 function sendXMLDocument(sUrl, sContent, funcCallback)
 {
-	$.ajax(typeof(funcCallback) != 'undefined' ?
+	$.ajax(typeof funcCallback != 'undefined' ?
 		{ url: sUrl, data: sContent, type: 'POST', context: this, success: funcCallback } :
 		{ url: sUrl, data: sContent, type: 'POST', context: this }
 	);
@@ -73,7 +73,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 // Simulate PHP's strtolower (in SOME cases, PHP uses ISO-8859-1 case folding.)
 String.prototype.php_strtolower = function ()
 {
-	return typeof(smf_iso_case_folding) == 'boolean' && smf_iso_case_folding == true ? this.php_strtr(
+	return typeof smf_iso_case_folding == 'boolean' && smf_iso_case_folding == true ? this.php_strtr(
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZ\x8a\x8c\x8e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde',
 		'abcdefghijklmnopqrstuvwxyz\x9a\x9c\x9e\xff\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe'
 	) : this.php_strtr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
@@ -122,7 +122,7 @@ String.prototype.easyReplace = function (oReplacements)
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
 	var
-		desktopURL = typeof(from) == 'object' && from.href ? from.href : from,
+		desktopURL = typeof from == 'object' && from.href ? from.href : from,
 		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
 		helf = $('#helf'), previousTarget = helf.data('src'), e = window.event;
 
@@ -225,10 +225,10 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 {
 	for (var i = 0; i < oForm.length; i++)
 	{
-		if (!('name' in oForm[i]) || (typeof(sMask) == 'string' && oForm[i].name.substr(0, sMask.length) != sMask && oForm[i].id.substr(0, sMask.length) != sMask))
+		if (!('name' in oForm[i]) || (typeof sMask == 'string' && oForm[i].name.substr(0, sMask.length) != sMask && oForm[i].id.substr(0, sMask.length) != sMask))
 			continue;
 
-		if (!oForm[i].disabled || (typeof(bIgnoreDisabled) == 'boolean' && bIgnoreDisabled))
+		if (!oForm[i].disabled || (typeof bIgnoreDisabled == 'boolean' && bIgnoreDisabled))
 			oForm[i].checked = oInvertCheckbox.checked;
 	}
 }
@@ -516,7 +516,7 @@ function grabJumpToContent()
 function JumpTo(opt)
 {
 	this.opt = opt;
-	this._dropdownList = null;
+	this.dropdownList = null;
 
 	var sChildLevelPrefix = '';
 	for (var i = opt.iCurBoardChildLevel; i > 0; i--)
@@ -528,7 +528,7 @@ function JumpTo(opt)
 			+ opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities()
 			+ '</option></select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" onclick="window.location.href = \''
 			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';" />'));
-	this._dropdownList = document.getElementById(opt.sContainerId + '_select');
+	this.dropdownList = document.getElementById(opt.sContainerId + '_select');
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
@@ -542,9 +542,9 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 		i, j, n, sChildLevelPrefix;
 
 	if ('onbeforeactivate' in document)
-		this._dropdownList.onbeforeactivate = null;
+		this.dropdownList.onbeforeactivate = null;
 	else
-		this._dropdownList.onfocus = null;
+		this.dropdownList.onfocus = null;
 
 	// Loop through all items to be added.
 	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
@@ -552,7 +552,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
-			$(this._dropdownList).prepend(oListFragment);
+			$(this.dropdownList).prepend(oListFragment);
 			oListFragment = document.createDocumentFragment();
 			continue;
 		}
@@ -574,7 +574,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 
 	// Add the remaining items after the currently selected item.
 	// Internet Explorer needs css() to keep the box dropped down.
-	$(this._dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
+	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
 		if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
 			window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 	});
@@ -599,16 +599,16 @@ function smf_prepareScriptUrl(sUrl)
 // Alias for onload() event.
 function addLoadEvent(fNewOnload)
 {
-	$(window).load(typeof(fNewOnload) == 'string' ? new Function(fNewOnload) : fNewOnload);
+	$(window).load(typeof fNewOnload == 'string' ? new Function(fNewOnload) : fNewOnload);
 }
 
 // Get the text in a code tag.
 function smfSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
-	var oCodeArea = (typeof(bActOnElement) == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling, oCurRange;
+	var oCodeArea = (typeof bActOnElement == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling, oCurRange;
 
-	if (typeof(oCodeArea) != 'object' || oCodeArea == null)
+	if (typeof oCodeArea != 'object' || oCodeArea == null)
 		return false;
 
 	// Start off with IE
@@ -645,7 +645,7 @@ function smfSelectText(oCurElement, bActOnElement)
 function smc_saveEntities(sFormName, aElementNames, sMask)
 {
 	var i, n;
-	if (typeof(sMask) == 'string')
+	if (typeof sMask == 'string')
 		for (i = 0, n = document.forms[sFormName].elements.length; i < n; i++)
 			if (document.forms[sFormName].elements[i].id.substr(0, sMask.length) == sMask)
 				aElementNames[aElementNames.length] = document.forms[sFormName].elements[i].name;
@@ -671,51 +671,54 @@ function _linkMagic()
 function _testStyle(sty)
 {
 	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
-	for (var i in stys) if (_wedgerocks.style[stys[i]] !== undefined) return true;
+	for (var i in stys) if (_w.style[stys[i]] !== undefined) return true;
 	return false;
 }
 
 // Dropdown menu in JS with CSS fallback, Wedge style.
 // It may not show, but it took years to refine it.
 var
-	_baseId = 0, hoverable = 0, _rtl = 'margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left'),
-	_delay = [], _ieshim = [];
+	menu_baseId = 0, hoverable = 0, menu_delay = [], menu_ieshim = [];
 
 function initMenu(menu)
 {
-	menu.style.display = 'block';
-	menu.style.visibility = 'visible';
-	menu.style.opacity = 1;
-	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; _show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
+	menu = $('#' + menu).show().css('visibility', 'visible');
+	menu[0].style.opacity = 1;
+	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; menu_show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
 
-	var k = _baseId;
+	var k = menu_baseId;
 	$('li', menu).each(function () {
 		if (is_ie6)
 		{
-			$(this).keyup(_show_me);
+			$(this).keyup(menu_show_me);
 			document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-			_ieshim[k] = $('#shim' + k)[0];
+			menu_ieshim[k] = $('#shim' + k)[0];
 		}
 		$(this).attr('id', 'li' + k++)
-			.bind('mouseenter focus', _show_me)
-			.bind('mouseleave blur', _hide_me)
+			.bind('mouseenter focus', menu_show_me)
+			.bind('mouseleave blur', menu_hide_me)
 			.mousedown(false)
-			.click(function () { $(menu).children('li').each(function () { _hide_children(this.id); }); });
+			.click(function () {
+				menu.children().removeClass('hove').find('ul')
+					.css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+				if (is_ie6)
+					$('li', menu).each(function () { menu_show_shim(false, this.id); });
+			});
 	});
-	_baseId = k;
+	menu_baseId = k;
 
 	// Now that JS is ready to take action... Disable the pure CSS menu!
 	$('.css.menu').removeClass('css');
 }
 
 // Without this, IE6 would show form elements in front of the menu. Bad IE6.
-function _show_shim(showsh, ieid, j)
+function menu_show_shim(showsh, ieid, j)
 {
 	var iem = ieid.substring(2);
-	if (!(_ieshim[iem]))
+	if (!(menu_ieshim[iem]))
 		return;
 
-	var i = _ieshim[iem].style;
+	var i = menu_ieshim[iem].style;
 	if (showsh)
 	{
 		i.top = j.offsetTop + j.offsetParent.offsetTop + 'px';
@@ -727,20 +730,20 @@ function _show_shim(showsh, ieid, j)
 }
 
 // Entering a menu entry?
-function _show_me()
+function menu_show_me()
 {
 	var hasul = $('ul', this).first()[0], is_top = this.parentNode.className == 'menu';
 
 	if (hoverable && hasul && hasul.style.visibility == 'visible')
-		return _hide_children(this.id);
+		return menu_hide_children(this.id);
 
 	if (hasul)
 	{
 		hasul.style.visibility = 'visible';
 		hasul.style.opacity = 1;
-		hasul.style[_rtl] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		hasul.style['margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left')] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
 		if (is_ie6)
-			_show_shim(true, this.id, hasul);
+			menu_show_shim(true, this.id, hasul);
 	}
 
 	if (!is_top || !($('h4', this).first().addClass('hove').length))
@@ -749,48 +752,50 @@ function _show_me()
 				$(this).addClass('hove');
 		});
 
-	clearTimeout(_delay[this.id.substring(2)]);
+	clearTimeout(menu_delay[this.id.substring(2)]);
 
-	$(this).siblings('li').each(function () { _hide_children(this.id); });
+	$(this).siblings('li').each(function () { menu_hide_children(this.id); });
 }
 
 // Leaving a menu entry?
-function _hide_me(e)
+function menu_hide_me(e)
 {
 	$(e.relatedTarget || e.toElement).parents('.menu').length ?
-		_hide_children(this.id) :
-		_delay[this.id.substring(2)] = setTimeout('_hide_children("' + this.id + '")', 250);
+		menu_hide_children(this.id) :
+		menu_delay[this.id.substring(2)] = setTimeout('menu_hide_children("' + this.id + '")', 250);
 }
 
 // Hide all children menus.
-function _hide_children(id)
+function menu_hide_children(id)
 {
 	$('#' + id).children().andSelf().removeClass('hove').find('ul')
 		.css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 
 	if (is_ie6)
-		_show_shim(false, id);
+		menu_show_shim(false, id);
 }
 
 // Has your browser got the goods?
 // These variables aren't used, but you can now use them in your custom scripts.
 // In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
 var
-	_wedgerocks = document.createElement('wedgerocks'),
+	_w = document.createElement('wedgerocks'),
 	can_borderradius = _testStyle('borderRadius'),
 	can_boxshadow = _testStyle('boxShadow'),
 	can_ajax = $.support.ajax;
 
 /* Optimize:
-_formSubmitted = _f
 _ajax_indicator_ele = _a
+menu_baseId = _b
+_cookies = _c
+menu_delay = _d
+_formSubmitted = _f
+menu_hide_children = _h
+menu_hide_me = _hm
+menu_ieshim = _ie
 _lastKeepAliveCheck = _k
-_dropdownList = _d
-_wedgerocks = _w
-_show_shim = _sh
-_hide_children = _h
-_hide_me = _hm
-_delay = _d
+dropdownList = _l
+menu_show_shim = _sh
 aBoardsAndCategories = b
 aElementNames = e
 additional_vars = a

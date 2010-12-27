@@ -915,7 +915,7 @@ function GroupRequests()
 						<option value="reject">' . $txt['mc_groupr_reject'] . '</option>
 						<option value="reason">' . $txt['mc_groupr_reject_w_reason'] . '</option>
 					</select>
-					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = document.getElementById(\'req_action\'); if (sel.value != 0 && sel.value != \'reason\' && !confirm(' . $warning . ')) return false;" class="button_submit" />',
+					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = $(\'#req_action\').val(); if (sel != 0 && sel != \'reason\' && !confirm(' . $warning . ')) return false;" class="button_submit" />',
 				'align' => 'right',
 			),
 		),

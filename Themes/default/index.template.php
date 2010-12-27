@@ -325,7 +325,7 @@ function template_html_below()
 	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
 	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
 
-	initMenu(document.getElementById("main_menu"));
+	initMenu("main_menu");
 
 	<!-- insert inline events here -->
 
