@@ -176,7 +176,7 @@ function Login2()
 		)
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
-	if (wesql::num_rows($request) == 0)
+	if (wesql::num_rows($request) == 0 && strpos($_REQUEST['user'], '@') !== false)
 	{
 		wesql::free_result($request);
 
@@ -190,12 +190,15 @@ function Login2()
 				'user_name' => $_REQUEST['user'],
 			)
 		);
-		// Let them try again, it didn't match anything...
-		if (wesql::num_rows($request) == 0)
-		{
-			$context['login_errors'] = array($txt['username_no_exist']);
-			return;
-		}
+
+	}
+
+	// Let them try again, it didn't match anything...
+	if (wesql::num_rows($request) == 0)
+	{
+		wesql::free_result($request);
+		$context['login_errors'] = array($txt['username_no_exist']);
+		return;
 	}
 
 	$user_settings = wesql::fetch_assoc($request);
