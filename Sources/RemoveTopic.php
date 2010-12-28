@@ -288,6 +288,10 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			$recycleTopics = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
+				// !!! This isn't very nice.
+				if (function_exists('apache_reset_timeout'))
+					@apache_reset_timeout();
+
 				$recycleTopics[] = $row['id_topic'];
 
 				// Set the id_previous_board for this topic - and make it not sticky.
@@ -386,6 +390,9 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	// Decrease the posts/topics...
 	foreach ($adjustBoards as $stats)
 	{
+		if (function_exists('apache_reset_timeout'))
+			@apache_reset_timeout();
+
 		wesql::query('
 			UPDATE {db_prefix}boards
 			SET
@@ -471,6 +478,9 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
+			if (function_exists('apache_reset_timeout'))
+				@apache_reset_timeout();
+
 			$words = array_merge($words, text2words($row['body'], $customIndexSettings['bytes_per_word'], true));
 			$messages[] = $row['id_msg'];
 		}

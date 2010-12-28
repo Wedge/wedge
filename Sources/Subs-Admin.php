@@ -162,8 +162,8 @@ function getFileVersions(&$versionOptions)
 	}
 
 	// Load all the files in the Sources directory, except this file and the redirect.
-	$Sources_dir = dir($sourcedir);
-	while ($entry = $Sources_dir->read())
+	$sources_dir = dir($sourcedir);
+	while ($entry = $sources_dir->read())
 	{
 		if (substr($entry, -4) === '.php' && !is_dir($sourcedir . '/' . $entry) && $entry !== 'index.php')
 		{
@@ -180,7 +180,7 @@ function getFileVersions(&$versionOptions)
 				$version_info['file_versions'][$entry] = '??';
 		}
 	}
-	$Sources_dir->close();
+	$sources_dir->close();
 
 	// Load all the files in the default template directory - and the current theme if applicable.
 	$directories = array('default_template_versions' => $settings['default_theme_dir']);
@@ -189,8 +189,8 @@ function getFileVersions(&$versionOptions)
 
 	foreach ($directories as $type => $dirname)
 	{
-		$This_dir = dir($dirname);
-		while ($entry = $This_dir->read())
+		$this_dir = dir($dirname);
+		while ($entry = $this_dir->read())
 		{
 			if (substr($entry, -12) == 'template.php' && !is_dir($dirname . '/' . $entry))
 			{
@@ -207,12 +207,12 @@ function getFileVersions(&$versionOptions)
 					$version_info[$type][$entry] = '??';
 			}
 		}
-		$This_dir->close();
+		$this_dir->close();
 	}
 
 	// Load up all the files in the default language directory and sort by language.
-	$This_dir = dir($lang_dir);
-	while ($entry = $This_dir->read())
+	$this_dir = dir($lang_dir);
+	while ($entry = $this_dir->read())
 	{
 		if (substr($entry, -4) == '.php' && $entry != 'index.php' && !is_dir($lang_dir . '/' . $entry))
 		{
@@ -232,7 +232,7 @@ function getFileVersions(&$versionOptions)
 				$version_info['default_language_versions'][$language][$name] = '??';
 		}
 	}
-	$This_dir->close();
+	$this_dir->close();
 
 	// Sort the file versions by filename.
 	if (!empty($versionOptions['sort_results']))

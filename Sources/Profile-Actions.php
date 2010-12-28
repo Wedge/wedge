@@ -421,6 +421,9 @@ function deleteAccount($memID)
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
 	global $user_info, $context, $cur_profile, $modSettings;
+	
+	// Try get more time...
+	@set_time_limit(600);
 
 	// !!! Add a way to delete pms as well?
 
@@ -507,7 +510,13 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 			);
 			// This could take a while... but ya know it's gonna be worth it in the end.
 			while ($row = wesql::fetch_assoc($request))
+			{
+				// !!! There has to be a better way. What about using the pause/continue templates?
+				if (function_exists('apache_reset_timeout'))
+					@apache_reset_timeout();
+
 				removeMessage($row['id_msg']);
+			}
 			wesql::free_result($request);
 		}
 
