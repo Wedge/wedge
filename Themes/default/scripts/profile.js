@@ -3,7 +3,7 @@ var localTime = new Date();
 
 function autoDetectTimeOffset(currentTime)
 {
-	var serverTime = typeof(currentTime) != 'string' ? currentTime : new Date(currentTime);
+	var serverTime = typeof currentTime != 'string' ? currentTime : new Date(currentTime);
 
 	// Something wrong?
 	if (!localTime.getTime() || !serverTime.getTime())

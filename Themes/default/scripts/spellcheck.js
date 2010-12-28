@@ -21,7 +21,7 @@ function spellCheck(formName, fieldName)
 		bInCode = false, iOffset1, iOffset2;
 
 	// Loop through all words.
-	while ((aResult = regexpWordMatch.exec(sText)) && typeof(aResult) != 'undefined')
+	while ((aResult = regexpWordMatch.exec(sText)) && typeof aResult != 'undefined')
 	{
 		iOffset1 = 0;
 		iOffset2 = aResult[0].length - 1;

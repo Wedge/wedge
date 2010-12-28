@@ -422,7 +422,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 {
 	global $user_info, $context, $cur_profile, $modSettings;
 	
-	// Try get more time...
+	// Try to get more time...
 	@set_time_limit(600);
 
 	// !!! Add a way to delete pms as well?

@@ -330,7 +330,7 @@ function smc_Editor(oOptions)
 // Return the current text.
 smc_Editor.prototype.getText = function(bPrepareEntities, bModeOverride)
 {
-	var sText, bCurMode = typeof(bModeOverride) != 'undefined' ? bModeOverride : this.bRichTextEnabled;
+	var sText, bCurMode = typeof bModeOverride != 'undefined' ? bModeOverride : this.bRichTextEnabled;
 
 	if (!bCurMode || this.oFrameDocument === null)
 	{
@@ -408,7 +408,7 @@ smc_Editor.prototype.updateEditorControls = function()
 	var oCurTag = this.getCurElement();
 
 	var i = 0;
-	while (oCurTag !== null && typeof(oCurTag) == 'object' && oCurTag.nodeName.toLowerCase() != 'body' && i < iMaxLength)
+	while (oCurTag !== null && typeof oCurTag == 'object' && oCurTag.nodeName.toLowerCase() != 'body' && i < iMaxLength)
 	{
 		aCrumb[i++] = oCurTag;
 		oCurTag = oCurTag.parentNode;
@@ -431,7 +431,7 @@ smc_Editor.prototype.updateEditorControls = function()
 		{
 			var sUrlInfo = aCrumb[i].getAttribute('href');
 			sCrumbName = 'url';
-			if (typeof(sUrlInfo) == 'string')
+			if (typeof sUrlInfo == 'string')
 			{
 				if (sUrlInfo.substr(0, 3) == 'ftp')
 					sCrumbName = 'ftp';
@@ -577,13 +577,13 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 			else
 			{
 				// If the cursor needs to be positioned, insert the last fragment first.
-				if (typeof(iMoveCursorBack) != 'undefined' && iMoveCursorBack > 0 && sText.length > iMoveCursorBack)
+				if (typeof iMoveCursorBack != 'undefined' && iMoveCursorBack > 0 && sText.length > iMoveCursorBack)
 				{
 					var oSelection = this.getSelect(false, false);
 					oSelection.getRangeAt(0).insertNode(this.oFrameDocument.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 				}
 
-				this.smf_execCommand('inserthtml', false, typeof(iMoveCursorBack) == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
+				this.smf_execCommand('inserthtml', false, typeof iMoveCursorBack == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
 			}
 		}
 		else
@@ -960,7 +960,7 @@ smc_Editor.prototype.toggleView = function(bView)
 	}
 
 	// Overriding or alternating?
-	if (typeof(bView) == 'undefined')
+	if (typeof bView == 'undefined')
 		bView = !this.bRichTextEnabled;
 
 	this.requestParsedMessage(bView);
@@ -1201,7 +1201,7 @@ smc_Editor.prototype.shortcutCheck = function(oEvent)
 	var sFoundCode = this.checkShortcut(oEvent);
 
 	// Run it and exit.
-	if (typeof(sFoundCode) == 'string' && sFoundCode != '')
+	if (typeof sFoundCode == 'string' && sFoundCode != '')
 	{
 		var bCancelEvent = false;
 		if (sFoundCode == 'submit')

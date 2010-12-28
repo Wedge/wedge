@@ -122,9 +122,9 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 	for (var i = 0, n = (aCurrentVersion.length > aTargetVersion.length ? aCurrentVersion.length : aTargetVersion.length); i < n; i++)
 	{
 		// Make sure both are set.
-		if (typeof(aCurrentVersion[i]) == 'undefined')
+		if (typeof aCurrentVersion[i] == 'undefined')
 			aCurrentVersion[i] = '0';
-		else if (typeof(aTargetVersion[i]) == 'undefined')
+		else if (typeof aTargetVersion[i] == 'undefined')
 			aTargetVersion[i] = '0';
 
 		// If they are same, move to the next set.
@@ -193,12 +193,12 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	{
 		// Collapse all sections.
 		var oSection = document.getElementById(sSections[i]);
-		if (typeof(oSection) == 'object' && oSection != null)
+		if (typeof oSection == 'object' && oSection != null)
 			oSection.style.display = 'none';
 
 		// Make all section links clickable.
 		var oSectionLink = document.getElementById(sSections[i] + '-link');
-		if (typeof(oSectionLink) == 'object' && oSectionLink != null)
+		if (typeof oSectionLink == 'object' && oSectionLink != null)
 		{
 			oSectionLink.instanceRef = this;
 			oSectionLink.sSection = sSections[i];
@@ -227,7 +227,7 @@ smf_ViewVersions.prototype.determineVersions = function ()
 				break;
 			}
 
-		if (typeof(sCurVersionType) != 'undefined')
+		if (typeof sCurVersionType != 'undefined')
 		{
 			if ((this.compareVersions(oHighYour[sCurVersionType], sYourVersion) || oHighYour[sCurVersionType] == '??') && !oLowVersion[sCurVersionType])
 				oHighYour[sCurVersionType] = sYourVersion;

@@ -317,7 +317,7 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 	$(this.oSuggestDivHandle).empty();
 
 	// Something to display?
-	if (typeof(aResults) == 'undefined')
+	if (typeof aResults == 'undefined')
 	{
 		this.aDisplayData = [];
 		return true;
