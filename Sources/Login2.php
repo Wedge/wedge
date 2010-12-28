@@ -193,7 +193,7 @@ function Login2()
 
 	}
 
-	// Let them try again, it didn't match anything...
+	// It didn't match anything, so send them on their way.
 	if (wesql::num_rows($request) == 0)
 	{
 		wesql::free_result($request);
