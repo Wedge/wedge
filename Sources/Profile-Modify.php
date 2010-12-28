@@ -548,6 +548,7 @@ function loadProfileFields($force_reload = false)
 		'posts' => array(
 			'type' => 'int',
 			'label' => $txt['profile_posts'],
+			'subtext' => $txt['digits_only'],
 			'log_change' => true,
 			'size' => 7,
 			'permission' => 'moderate_forum',
