@@ -329,11 +329,7 @@ function ModifyRegistrationSettings($return_config = false)
 	{
 		var coppaDisabled = $(\'#coppaAge\').val() == 0;
 		$(\'#coppaType\').attr(\'disabled\', coppaDisabled);
-
-		var disableContacts = coppaDisabled || $(\'#coppaType\').val() != 1;
-		$(\'#coppaPost\').attr(\'disabled\', disableContacts);
-		$(\'#coppaFax\').attr(\'disabled\', disableContacts);
-		$(\'#coppaPhone\').attr(\'disabled\', disableContacts);
+		$(\'#coppaPost, #coppaFax, #coppaPhone\').attr(\'disabled\', coppaDisabled || $(\'#coppaType\').val() != 1);
 	}
 	checkCoppa();');
 

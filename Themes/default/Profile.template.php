@@ -2073,9 +2073,7 @@ function template_issueWarning()
 	function modifyWarnNotify()
 	{
 		var enable = $(\'#warn_notify\').attr("checked");
-		$(\'#warn_sub\').attr("disabled", !enable);
-		$(\'#warn_body\').attr("disabled", !enable);
-		$(\'#warn_temp\').attr("disabled", !enable);
+		$(\'#warn_sub, #warn_body, #warn_temp\').attr("disabled", !enable);
 		$(\'#new_template_link\').toggle(enable);
 	}
 
@@ -2888,9 +2886,7 @@ function template_authentication_method()
 		document.forms.creator.openid_url.disabled = is_pw;
 		document.forms.creator.smf_autov_pwmain.disabled = !is_pw;
 		document.forms.creator.smf_autov_pwverify.disabled = !is_pw;
-		$("#smf_autov_pwmain_div").toggle(is_pw);
-		$("#smf_autov_pwverify_div").toggle(is_pw);
-		$("#auth_pass_div").toggle(is_pw);
+		$("#smf_autov_pwmain_div, #smf_autov_pwverify_div, #auth_pass_div").toggle(is_pw);
 		$("#auth_openid_div").toggle(!is_pw);
 
 		if (is_pw)
