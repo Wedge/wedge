@@ -656,7 +656,7 @@ class wesql
 		foreach (debug_backtrace() as $step)
 		{
 			// Found it?
-			if (strpos($step['function'], 'query') === false && (isset($step['class']) && $step['class'] !== 'wesql') && (!in_array(substr($step['function'], 0, 5), array('preg_re', 'mysql'))))
+			if ((!isset($step['class']) || $step['class'] !== 'wesql') && strpos($step['function'], 'query') === false && (!in_array(substr($step['function'], 0, 5), array('preg_', 'mysql'))))
 			{
 				$log_message .= '<br />Function: ' . $step['function'];
 				break;
