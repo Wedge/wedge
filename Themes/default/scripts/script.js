@@ -165,7 +165,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$('body').bind('click.h', function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-		if (!($(e.srcElement).parents('#helf').length))
+		if (!$(e.srcElement).parents('#helf').length)
 		{
 			$('#helf').remove();
 			$(this).unbind(e);
@@ -746,7 +746,7 @@ function menu_show_me()
 			menu_show_shim(true, this.id, hasul);
 	}
 
-	if (!is_top || !($('h4', this).first().addClass('hove').length))
+	if (!is_top || !$('h4', this).first().addClass('hove').length)
 		$(this).addClass('hove').parentsUntil('.menu>li').each(function () {
 			if (this.nodeName == 'LI')
 				$(this).addClass('hove');
@@ -760,6 +760,12 @@ function menu_show_me()
 // Leaving a menu entry?
 function menu_hide_me(e)
 {
+	// The deepest level should hide the hover class immediately.
+	if (!$(this).children('ul').length)
+		$(this).removeClass('hove');
+
+	// Are we leaving the menu entirely, and thus triggering the time
+	// threshold, or are we just switching to another menu item?
 	$(e.relatedTarget || e.toElement).parents('.menu').length ?
 		menu_hide_children(this.id) :
 		menu_delay[this.id.substring(2)] = setTimeout('menu_hide_children("' + this.id + '")', 250);
@@ -795,6 +801,7 @@ menu_hide_me = _hm
 menu_ieshim = _ie
 _lastKeepAliveCheck = _k
 dropdownList = _l
+menu_show_me = _sm
 menu_show_shim = _sh
 aBoardsAndCategories = b
 aElementNames = e
