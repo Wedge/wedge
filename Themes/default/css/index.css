@@ -523,6 +523,11 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 	padding-right: 6px;
 }
 
+li.separator {
+	background: #ccc;
+	height: 1px;
+}
+
 /*	Pure CSS menu emulation... Until JS takes over
 	to add the hover timer and proper widths! */
 .css li:hover ul ul, .css li:hover ul ul ul {

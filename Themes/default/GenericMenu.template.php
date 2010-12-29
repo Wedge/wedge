@@ -42,7 +42,12 @@ function template_generic_menu_sidebar_above()
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
+			{
+				if ($area === '')
+					echo '
+					<li class="separator"></li>';
 				continue;
+			}
 
 			echo '
 					<li>';
@@ -120,7 +125,12 @@ function template_generic_menu_dropdown_above()
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
+			{
+				if ($area === '')
+					echo '
+			<li class="separator"></li>';
 				continue;
+			}
 
 			$class = ($i == $menu_context['current_area'] ? ' active' : '') . (!empty($area['subsections']) ? ' subsection' : '');
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';

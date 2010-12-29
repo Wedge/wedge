@@ -699,8 +699,8 @@ function initMenu(menu)
 			.bind('mouseleave blur', menu_hide_me)
 			.mousedown(false)
 			.click(function () {
-				menu.children().removeClass('hove').find('ul')
-					.css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+				$('.hove').removeClass('hove');
+				$('ul', menu).css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 				if (is_ie6)
 					$('li', menu).each(function () { menu_show_shim(false, this.id); });
 			});

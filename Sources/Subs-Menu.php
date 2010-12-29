@@ -127,6 +127,13 @@ function createMenu($menuData, $menuOptions = array())
 		// Now we cycle through the sections to pick the right area.
 		foreach ($section['areas'] as $area_id => $area)
 		{
+			// Separator?
+			if ($area === '')
+			{
+				$menu_context['sections'][$section_id]['areas'][$area_id] = '';
+				continue;
+			}
+
 			// Can we do this?
 			if ((!isset($area['enabled']) || $area['enabled'] != false) && (empty($area['permission']) || allowedTo($area['permission'])))
 			{

@@ -1,3 +1,4 @@
+
 function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 {
 	this.addVerify = addVerificationField;
@@ -22,12 +23,14 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			return;
 
 		// Get the handles.
-		var inputHandle = document.getElementById(fieldID);
-		var imageHandle = document.getElementById(fieldID + '_img') ? document.getElementById(fieldID + '_img') : false;
-		var divHandle = document.getElementById(fieldID + '_div') ? document.getElementById(fieldID + '_div') : false;
+		var
+			inputHandle = $('#' + fieldID),
+			imageHandle = $('#' + fieldID + '_img'),
+			// !!! Look like this one is never used...
+			divHandle = $('#' + fieldID + '_div'),
+			eventHandler = false;
 
 		// What is the event handler?
-		var eventHandler = false;
 		if (fieldType == 'pwmain')
 			eventHandler = refreshMainPassword;
 		else if (fieldType == 'pwverify')
@@ -38,7 +41,9 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			eventHandler = refreshMainPassword;
 
 		// Store this field.
-		verificationFields[fieldType == 'reserved' ? fieldType + verificationFieldLength : fieldType] = [fieldID, inputHandle, imageHandle, divHandle, fieldType, inputHandle.className];
+		verificationFields[fieldType == 'reserved' ? fieldType + verificationFieldLength : fieldType] = [
+			fieldID, inputHandle[0], imageHandle, divHandle[0], fieldType, inputHandle[0].className
+		];
 
 		// Keep a count to it!
 		verificationFieldLength++;
@@ -47,13 +52,12 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		if (eventHandler)
 		{
 			// Username will auto-check on blur!
-			$(inputHandle).keyup(eventHandler).blur(autoCheckUsername);
+			inputHandle.keyup(eventHandler).blur(autoCheckUsername);
 			eventHandler();
 		}
 
 		// Make the div visible!
-		if (divHandle)
-			divHandle.style.display = '';
+		divHandle.show();
 	}
 
 	// A button to trigger a username search?
@@ -68,36 +72,29 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		if (!document.getElementById(formID))
 			return false;
 
-		var curElement, curType;
-		for (var i = 0, n = document.getElementById(formID).elements.length; i < n; i++)
+		$('input[type="text"].autov, input[type="password"].autov').each(function () {
 		{
-			curElement = document.getElementById(formID).elements[i];
+			var curType = 0, id = this.id;
 
-			// Does the ID contain the keyword 'autov'?
-			if (curElement.id.indexOf('autov') != -1 && (curElement.type == 'text' || curElement.type == 'password'))
-			{
-				// This is probably it - but does it contain a field type?
-				curType = 0;
-				// Username can only be done with XML.
-				if (curElement.id.indexOf('username') != -1 && can_ajax)
-					curType = 'username';
-				else if (curElement.id.indexOf('pwmain') != -1)
-					curType = 'pwmain';
-				else if (curElement.id.indexOf('pwverify') != -1)
-					curType = 'pwverify';
-				// This means this field is reserved and cannot be contained in the password!
-				else if (curElement.id.indexOf('reserve') != -1)
-					curType = 'reserved';
+			// Username can only be done with XML.
+			if (id.indexOf('username') != -1 && can_ajax)
+				curType = 'username';
+			else if (id.indexOf('pwmain') != -1)
+				curType = 'pwmain';
+			else if (id.indexOf('pwverify') != -1)
+				curType = 'pwverify';
+			// This means this field is reserved and cannot be contained in the password!
+			else if (id.indexOf('reserve') != -1)
+				curType = 'reserved';
 
-				// If we're happy let's add this element!
-				if (curType)
-					addVerificationField(curType, curElement.id);
+			// If we're happy let's add this element!
+			if (curType)
+				addVerificationField(curType, id);
 
-				// If this is the username do we also have a button to find the user?
-				if (curType == 'username' && $('#' + curElement.id + '_link'))
-					addUsernameSearchTrigger('#' + curElement.id + '_link');
-			}
-		}
+			// If this is the username do we also have a button to find the user?
+			if (curType == 'username' && $('#' + id + '_link'))
+				addUsernameSearchTrigger('#' + id + '_link');
+		});
 
 		return true;
 	}
@@ -117,25 +114,18 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		// More than basic?
 		if (passwordLevel >= 1)
 		{
-			// If there is a username check it's not in the password!
+			// If there is a username, check it's not in the password!
 			if (verificationFields.username && verificationFields.username[1].value && curPass.indexOf(verificationFields.username[1].value) != -1)
 				stringIndex = 'password_reserved';
 
 			// Any reserved fields?
 			for (var i in verificationFields)
-			{
 				if (verificationFields[i][4] == 'reserved' && verificationFields[i][1].value && curPass.indexOf(verificationFields[i][1].value) != -1)
 					stringIndex = 'password_reserved';
-			}
 
-			// Finally - is it hard and as such requiring mixed cases and numbers?
-			if (passwordLevel > 1)
-			{
-				if (curPass == curPass.toLowerCase())
-					stringIndex = 'password_numbercase';
-				if (!curPass.match(/(\D\d|\d\D)/))
-					stringIndex = 'password_numbercase';
-			}
+			// Finally - is it hard and, as such, requiring mixed cases and numbers?
+			if ((passwordLevel > 1) && ((curPass == curPass.toLowerCase()) || (!curPass.match(/(\D\d|\d\D)/))))
+				stringIndex = 'password_numbercase';
 		}
 
 		var isValid = stringIndex == '' ? true : false;
@@ -219,10 +209,9 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// Callback for getting the username data.
 	function checkUsernameCallback(XMLDoc)
 	{
-		var isValid = !!($('username', XMLDoc).length ? $('username', XMLDoc)[0].getAttribute('valid') : true);
-
-		// What to alt?
-		var alt = textStrings['username_' + (isValid ? 'valid' : 'invalid')];
+		var
+			isValid = !!($('username', XMLDoc).attr('valid')),
+			alt = textStrings['username_' + (isValid ? 'valid' : 'invalid')];
 
 		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 		setVerificationImage(verificationFields.username[2], isValid, alt);
@@ -233,16 +222,27 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	// Set the image to be the correct type.
 	function setVerificationImage(imageHandle, imageIcon, alt)
 	{
-		if (!imageHandle)
+		if (!imageHandle.length)
 			return false;
 		if (!alt)
 			alt = '*';
 
-		var curImage = imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif';
-		imageHandle.src = smf_images_url + '/icons/' + curImage;
-		imageHandle.alt = alt;
-		imageHandle.title = alt;
+		imageHandle.attr({
+			src: smf_images_url + '/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
+			alt: alt,
+			title: alt
+		});
 
 		return true;
 	}
 }
+
+/* Optimize:
+verificationFields = v
+verificationFieldLength = vl
+textStrings = ts
+passwordLevel = pl
+inputHandle = ih
+imageHandle = mh
+divHandle = dh
+*/
