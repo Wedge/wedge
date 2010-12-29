@@ -61,10 +61,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		// Windows-style slashes don't play well, let's convert them to Unix style.
 		$file = str_replace('\\', '/', $file);
 
-	if ($line == null)
-		$line = 0;
-	else
-		$line = (int) $line;
+	$line = ($line == null) ? 0 : (int) $line;
 
 	// Just in case there's no id_member or IP set yet.
 	if (empty($user_info['id']))
@@ -74,13 +71,12 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Find the best query string we can...
 	if (!empty($full_request))
-	{
 		$query_string = substr($scripturl, 0, strpos($scripturl, '://') + 3) . $full_request;
-		// Are we using pretty URLs here?
-		$is_pretty_url = strpos($query_string, $scripturl) === false;
-	}
 	else
 		$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
+
+	// Are we using pretty URLs here?
+	$is_pretty_url = strpos($query_string, $scripturl) === false;
 
 	// Don't log session data in the url twice, it's a waste.
 	$query_string = preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string);
