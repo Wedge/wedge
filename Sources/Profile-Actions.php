@@ -611,8 +611,9 @@ function subscriptions($memID)
 			$context['subscriptions'][$id]['costs'] = $cost_array;
 		}
 
-		// If the list of the user's groups doesn't include the groups from the relevant subscription, kick 'em out if they're not special, or warn them if they are
-		$intersect = array_intersect($sub['allowed_groups'], $groups); // WTF, can't use this directly in empty()?
+		// If the user's list of groups doesn't include the relevant subscription's
+		// groups, kick 'em out if they're not special, or warn them if they are.
+		$intersect = array_intersect($sub['allowed_groups'], $groups);
 		if (empty($intersect))
 		{
 			if ($has_override)

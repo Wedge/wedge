@@ -160,23 +160,20 @@ function replaceAll()
 // Highlight the word that was selected using the nextWord function.
 function highlightWord()
 {
-	var strstart = "", strend;
-
 	// If this isn't the beginning of the string then get all of the string
 	// that is before the word we are replacing.
-	if (misps[wordindex].start != 0)
-		strstart = mispstr.slice(0, misps[wordindex].start + offsetindex);
-
-	// Get the end of the string after the word we are replacing.
-	strend = mispstr.slice(misps[wordindex].end + 1 + offsetindex);
-
-	// Rebuild the string with a span wrapped around the misspelled word
-	// so we can highlight it in the div the user is viewing the string in.
-	var sv = $("#spellview").html(
-		(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br />')
-	)[0];
-
 	var
+		strstart = (misps[wordindex].start != 0) ? mispstr.slice(0, misps[wordindex].start + offsetindex) : '',
+
+		// Get the end of the string after the word we are replacing.
+		strend = mispstr.slice(misps[wordindex].end + 1 + offsetindex),
+
+		// Rebuild the string with a span wrapped around the misspelled word
+		// so we can highlight it in the div the user is viewing the string in.
+		sv = $("#spellview").html(
+			(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br />')
+		)[0],
+
 		// We could use scrollIntoView, but it's just not that great anyway.
 		spellview_height = typeof(sv.currentStyle) != "undefined" ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
 		word_position = $("#h1")[0].offsetTop,

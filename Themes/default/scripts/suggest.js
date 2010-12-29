@@ -49,16 +49,12 @@ function smc_AutoSuggest(oOptions)
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
 
 	// Disable autocomplete in any browser by obfuscating the name.
-	$(this.oTextHandle).attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' });
-
-	this.oTextHandle.instanceRef = this;
-
-	var fOnKeyDown = function (oEvent) { return this.instanceRef.handleKey(oEvent); };
-	is_opera ? $(this.oTextHandle).keypress(fOnKeyDown) : $(this.oTextHandle).keydown(fOnKeyDown);
-
+	var that = this;
 	$(this.oTextHandle)
-		.bind('keyup change focus', function (oEvent) { return this.instanceRef.autoSuggestUpdate(oEvent); })
-		.blur(function (oEvent) { return this.instanceRef.autoSuggestHide(oEvent); });
+		.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
+		.bind(is_opera ? 'keypress' : (is_ie ? 'keypress keydown' : 'keydown'), function (oEvent) { return that.handleKey(oEvent); })
+		.bind('keyup change focus', function (oEvent) { return that.autoSuggestUpdate(oEvent); })
+		.blur(function (oEvent) { return that.autoSuggestHide(oEvent); });
 
 	if (this.bItemList)
 	{
@@ -82,92 +78,77 @@ function smc_AutoSuggest(oOptions)
 smc_AutoSuggest.prototype.handleKey = function(oEvent)
 {
 	// Get the keycode of the key that was pressed.
-	var iKeyPress = 'keyCode' in oEvent ? oEvent.keyCode : ('which' in oEvent ? oEvent.which : 0);
+	var iKeyPress = oEvent.which;
 
-	switch (iKeyPress)
+	// Tab.
+	if (iKeyPress == 9)
 	{
-		// Tab.
-		case 9:
-			if (this.aDisplayData.length > 0)
-				this.oSelectedDiv != null ? this.itemClicked(this.oSelectedDiv) : this.removeLastSearchString();
-
-			// Continue to the next control.
-			return true;
-		break;
-
-		// Enter. (Returns false to prevent submitting the form.)
-		case 13:
-			if (this.aDisplayData.length > 0 && this.oSelectedDiv != null)
-				return !!(this.itemClicked(this.oSelectedDiv));
-			else
-				return true;
-		break;
-
-		// Up/Down arrow?
-		case 38:
-		case 40:
-			if (this.aDisplayData.length && $(this.oSuggestDivHandle).is(':visible'))
-			{
-				// Loop through the display data trying to find our entry.
-				var bPrevHandle = false;
-				var oToHighlight = null;
-				for (var i = 0; i < this.aDisplayData.length; i++)
-				{
-					// If we're going up and yet the top one was already selected don't go around.
-					if (iKeyPress == 38 && i == 0 && this.oSelectedDiv != null && this.oSelectedDiv == this.aDisplayData[i])
-					{
-						oToHighlight = this.oSelectedDiv;
-						break;
-					}
-					// If nothing is selected and we are going down then we select the first one.
-					if (iKeyPress == 40 && this.oSelectedDiv == null)
-					{
-						oToHighlight = this.aDisplayData[i];
-						break;
-					}
-
-					// If the previous handle was the actual previously selected one and we're hitting down then this is the one we want.
-					if (iKeyPress == 40 && bPrevHandle != false && bPrevHandle == this.oSelectedDiv)
-					{
-						oToHighlight = this.aDisplayData[i];
-						break;
-					}
-					// If we're going up and this is the previously selected one then we want the one before, if there was one.
-					if (iKeyPress == 38 && bPrevHandle != false && this.aDisplayData[i] == this.oSelectedDiv)
-					{
-						oToHighlight = bPrevHandle;
-						break;
-					}
-					// Make the previous handle this!
-					bPrevHandle = this.aDisplayData[i];
-				}
-
-				// If we don't have one to highlight by now then it must be the last one that we're after.
-				if (oToHighlight == null)
-					oToHighlight = bPrevHandle;
-
-				// Remove any old highlighting.
-				if (this.oSelectedDiv != null)
-					this.itemMouseLeave(this.oSelectedDiv);
-				// Mark what the selected div now is.
-				this.oSelectedDiv = oToHighlight;
-				this.itemMouseEnter(this.oSelectedDiv);
-			}
-		break;
+		if (this.aDisplayData.length > 0)
+			this.oSelectedDiv != null ? this.itemClicked(this.oSelectedDiv) : this.removeLastSearchString();
 	}
+	// Enter. (Returns false to prevent submitting the form.)
+	else if (iKeyPress == 13)
+	{
+		if (this.aDisplayData.length > 0 && this.oSelectedDiv != null)
+			return !!(this.itemClicked(this.oSelectedDiv));
+	}
+	else if (iKeyPress == 38 || iKeyPress == 40)
+	{
+		// Up/Down arrow?
+		if (!(this.aDisplayData.length && $(this.oSuggestDivHandle).is(':visible')))
+			return true;
+
+		// Loop through the display data trying to find our entry.
+		var bPrevHandle = false, oToHighlight = null;
+		for (var i = 0; i < this.aDisplayData.length; i++)
+		{
+			// If we're going up and yet the top one was already selected don't go around.
+			if (iKeyPress == 38 && i == 0 && this.oSelectedDiv != null && this.oSelectedDiv == this.aDisplayData[i])
+			{
+				oToHighlight = this.oSelectedDiv;
+				break;
+			}
+			// If nothing is selected and we are going down then we select the first one.
+			if (iKeyPress == 40 && this.oSelectedDiv == null)
+			{
+				oToHighlight = this.aDisplayData[i];
+				break;
+			}
+			// If the previous handle was the actual previously selected one and we're hitting down then this is the one we want.
+			if (iKeyPress == 40 && bPrevHandle != false && bPrevHandle == this.oSelectedDiv)
+			{
+				oToHighlight = this.aDisplayData[i];
+				break;
+			}
+			// If we're going up and this is the previously selected one then we want the one before, if there was one.
+			if (iKeyPress == 38 && bPrevHandle != false && this.aDisplayData[i] == this.oSelectedDiv)
+			{
+				oToHighlight = bPrevHandle;
+				break;
+			}
+			// Turn this into the previous handle!
+			bPrevHandle = this.aDisplayData[i];
+		}
+
+		// If we don't have one to highlight by now then it must be the last one that we're after.
+		if (oToHighlight == null)
+			oToHighlight = bPrevHandle;
+
+		// Remove any old highlighting.
+		if (this.oSelectedDiv != null)
+			this.itemMouseLeave(this.oSelectedDiv);
+		// Mark what the selected div now is.
+		this.oSelectedDiv = oToHighlight;
+		this.itemMouseEnter(this.oSelectedDiv);
+	}
+
 	return true;
 };
 
 // Functions for integration.
 smc_AutoSuggest.prototype.registerCallback = function(sCallbackType, sCallback)
 {
-	switch (sCallbackType)
-	{
-		case 'onBeforeAddItem':		this.oCallback.onBeforeAddItem = sCallback;		break;
-		case 'onAfterAddItem':		this.oCallback.onAfterAddItem = sCallback;		break;
-		case 'onAfterDeleteItem':	this.oCallback.onAfterDeleteItem = sCallback;	break;
-		case 'onBeforeUpdate':		this.oCallback.onBeforeUpdate = sCallback;		break;
-	}
+	this.oCallback[sCallbackType] = sCallback;
 };
 
 // Positions the box correctly on the window.
