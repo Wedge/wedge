@@ -103,6 +103,27 @@ function template_modify_subscription()
 					</dd>
 				</dl>
 				<hr class="hrcolor" />
+				<dl class="settings">
+					<dt>
+						', $txt['paid_allowed_groups'], ':
+						<dfn>', $txt['paid_allowed_groups_desc'], '</dfn>
+					</dt>
+					<dd>';
+
+	$groups = array_merge(array(0 => $txt['membergroups_members']),	$context['groups']);
+
+	// Put a checkbox in for each group
+	foreach ($groups as $id => $name)
+		echo '
+						<label for="allowed_groups_', $id, '"><input type="checkbox" id="allowed_groups_', $id, '" name="allowed_groups[', $id, ']"', in_array($id, $context['sub']['allowed_groups']) ? ' checked="checked"' : '', ' ', !empty($context['disable_groups']) ? ' disabled="disabled"' : '', ' class="input_check allowed_groups" />&nbsp;<span class="smalltext">', $name, '</span></label><br />';
+
+	echo '
+						<div class="righttext">
+							<label for="allowed_groups_check_all"><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').attr(\'checked\', $(\'#allowed_groups_check_all\').attr(\'checked\'));" class="input_check" /> ', $txt['check_all'], '</label>
+						</div>
+					</dd>
+				</dl>
+				<hr class="hrcolor" />
 				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed" ', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? 'checked="checked"' : '', ' class="input_radio" onclick="toggleDuration(\'fixed\');" />
 				<label for="duration_type_fixed"><strong>', $txt['paid_mod_fixed_price'], '</strong></label>
 				<br />
@@ -472,11 +493,13 @@ function template_user_subscription()
 
 				echo '
 				<br />
-				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="button_submit" />';
+				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="button_submit" />', !empty($subscription['group_warning']) ? '
+				<br />' . $txt['paid_subs_admin_override'] : '';
 			}
 			else
 				echo '
-				<a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $subscription['id'], ';uid=', $context['member']['id'], (empty($context['current'][$subscription['id']]) ? '' : ';lid=' . $context['current'][$subscription['id']]['id']), '">', empty($context['current'][$subscription['id']]) ? $txt['paid_admin_add'] : $txt['paid_edit_subscription'], '</a>';
+				<a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $subscription['id'], ';uid=', $context['member']['id'], (empty($context['current'][$subscription['id']]) ? '' : ';lid=' . $context['current'][$subscription['id']]['id']), '">', empty($context['current'][$subscription['id']]) ? $txt['paid_admin_add'] : $txt['paid_edit_subscription'], '</a>', !empty($subscription['group_warning']) ? '
+				<br />' . $txt['paid_subs_admin_override'] : '';
 
 			echo '
 			</div>';

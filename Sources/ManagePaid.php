@@ -374,6 +374,14 @@ function ModifySubscription()
 			)
 		);
 
+		wesql::query('
+			DELETE FROM {db_prefix}subscriptions_groups
+			WHERE id_subscribe = {int:current_subscription}',
+			array(
+				'current_subscription' => $context['sub_id'],
+			)
+		);
+
 		redirectexit('action=admin;area=paidsubscribe;view');
 	}
 
@@ -443,6 +451,7 @@ function ModifySubscription()
 				),
 				array('id_subscribe')
 			);
+			$context['sub_id'] = wesql::insert_id();
 		}
 		// Otherwise must be editing.
 		else
@@ -485,6 +494,33 @@ function ModifySubscription()
 			);
 		}
 
+		// Let's also sort out the allowed-to-subscribe groups while we're at it. Firstly get rid of the old subscriptions.
+		wesql::query('
+			DELETE FROM {db_prefix}subscriptions_groups
+			WHERE id_subscribe = {int:current_subscription}',
+			array(
+				'current_subscription' => $context['sub_id'],
+			)
+		);
+		// Now add all the groups in.
+		if (!empty($context['sub_id']))
+		{
+			$allowed_groups = array();
+			if (!empty($_POST['allowed_groups']))
+				foreach ($_POST['allowed_groups'] as $id => $dummy)
+					$allowed_groups[] = array($context['sub_id'], (int) $id);
+
+			if (!empty($allowed_groups))
+				wesql::insert('insert',
+					'{db_prefix}subscriptions_groups',
+					array(
+						'id_subscribe' => 'int', 'id_group' => 'int',
+					),
+					$allowed_groups,
+					array('id_subscribe', 'id_group')
+				);
+		}
+
 		redirectexit('action=admin;area=paidsubscribe;view');
 	}
 
@@ -509,6 +545,7 @@ function ModifySubscription()
 			'duration' => 'fixed',
 			'email_complete' => '',
 			'reminder' => 0,
+			'allowed_groups' => array(),
 		);
 	}
 	// Otherwise load up all the details.
@@ -560,8 +597,22 @@ function ModifySubscription()
 				'duration' => $isFlexible ? 'flexible' : 'fixed',
 				'email_complete' => htmlspecialchars($row['email_complete']),
 				'reminder' => $row['reminder'],
+				'allowed_groups' => array(),
 			);
 		}
+		wesql::free_result($request);
+
+		// Load the groups allowed to access this group already.
+		$request = wesql::query('
+			SELECT id_group
+			FROM {db_prefix}subscriptions_groups
+			WHERE id_subscribe = {int:current_subscription}',
+			array(
+				'current_subscription' => $context['sub_id'],
+			)
+		);
+		while ($row = wesql::fetch_row($request))
+			$context['sub']['allowed_groups'][] = $row[0];
 		wesql::free_result($request);
 
 		// Does this have members who are active?

@@ -547,7 +547,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $modSettings, $scripturl, $user_profile, $user_info;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');
@@ -557,6 +557,30 @@ function subscriptions($memID)
 	loadSource('ManagePaid');
 	loadSubscriptions();
 	$context['member']['id'] = $memID;
+
+	// moderate_forum allows override/granting subscriptions.
+	$has_override = allowedTo('moderate_forum');
+
+	// Load the groups.
+	$request = wesql::query('
+		SELECT id_subscribe, id_group
+		FROM {db_prefix}subscriptions_groups');
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!isset($context['subscriptions'][$row['id_subscribe']]['allowed_groups']))
+			$context['subscriptions'][$row['id_subscribe']]['allowed_groups'] = array();
+
+		$context['subscriptions'][$row['id_subscribe']]['allowed_groups'][] = (int) $row['id_group'];
+	}
+	// Bizarrely, we do not actually know this user's groups at this point.
+	loadMemberData($memID);
+	$groups = array($user_profile[$memID]['id_group'], $user_profile[$memID]['id_post_group']);
+	if (!empty($user_profile[$memID]['additional_groups']))
+	{
+		$add_groups = @explode(',', $user_profile[$memID]['additional_groups']);
+		foreach ($add_groups as $group)
+			$groups[] = (int) $group;
+	}
 
 	// Remove any invalid ones.
 	foreach ($context['subscriptions'] as $id => $sub)
@@ -585,6 +609,16 @@ function subscriptions($memID)
 			$context['subscriptions'][$id]['member'] = 0;
 			$context['subscriptions'][$id]['subscribed'] = false;
 			$context['subscriptions'][$id]['costs'] = $cost_array;
+		}
+
+		// If the list of the user's groups doesn't include the groups from the relevant subscription, kick 'em out if they're not special, or warn them if they are
+		$intersect = array_intersect($sub['allowed_groups'], $groups); // WTF, can't use this directly in empty()?
+		if (empty($intersect))
+		{
+			if ($has_override)
+				$context['subscriptions'][$id]['group_warning'] = true;
+			else
+				unset($context['subscriptions'][$id]);
 		}
 	}
 
