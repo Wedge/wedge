@@ -946,11 +946,9 @@ function template_send()
 					<div id="to_item_list_container"></div>
 					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />';
 
-	// A link to add BCC, only visible with JavaScript enabled.
+	// A link to add BCC
 	echo '
-					<span class="smalltext" id="bcc_link_container" style="display: none;"></span>';
-
-	echo '
+					<span class="smalltext" id="bcc_link_container" style="display: none">&nbsp;<a href="#" id="bcc_link">', $txt['make_bcc'], '</a> <a href="', $scripturl, '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a></span>
 				</dd>';
 
 	// This BCC row will be hidden by default if JavaScript is enabled.
@@ -1059,8 +1057,7 @@ function template_send()
 		sBccDivId2: \'bcc_div2\',
 		sBccLinkId: \'bcc_link\',
 		sBccLinkContainerId: \'bcc_link_container\',
-		bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
-		sShowBccLinkTemplate: ', JavaScriptEscape(' <a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a>'), '
+		bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', '
 	});');
 }
 

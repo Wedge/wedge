@@ -41,9 +41,6 @@ if (!defined('SMF'))
 		- uses the index administrative area.
 		- can be found by going to ?action=admin.
 
-	void ManageCopyright()
-		// !!!
-
 	void AdminSearch()
 		// !!
 
@@ -88,6 +85,7 @@ function Admin()
 					'function' => 'AdminHome',
 					'icon' => 'support.gif',
 				),
+				'',
 				'news' => array(
 					'label' => $txt['news_title'],
 					'file' => 'ManageNews',
@@ -100,6 +98,7 @@ function Admin()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'',
 				'packages' => array(
 					'label' => $txt['package'],
 					'file' => 'Packages',
@@ -112,11 +111,6 @@ function Admin()
 						'perms' => array($txt['package_file_perms']),
 						'options' => array($txt['package_settings']),
 					),
-				),
-				'copyright' => array(
-					'function' => 'ManageCopyright',
-					'permission' => array('admin_forum'),
-					'select' => 'index'
 				),
 				'search' => array(
 					'function' => 'AdminSearch',
@@ -135,6 +129,7 @@ function Admin()
 					'function' => 'ModifyCoreFeatures',
 					'icon' => 'corefeatures.gif',
 				),
+				'',
 				'featuresettings' => array(
 					'label' => $txt['modSettings_title'],
 					'file' => 'ManageSettings',
@@ -159,17 +154,6 @@ function Admin()
 						'moderation' => array($txt['moderation_settings_short'], 'enabled' => substr($modSettings['warning_settings'], 0, 1) == 1),
 					),
 				),
-				'languages' => array(
-					'label' => $txt['language_configuration'],
-					'file' => 'ManageServer',
-					'function' => 'ManageLanguages',
-					'icon' => 'languages.gif',
-					'subsections' => array(
-						'edit' => array($txt['language_edit']),
-						'add' => array($txt['language_add']),
-						'settings' => array($txt['language_settings']),
-					),
-				),
 				'serversettings' => array(
 					'label' => $txt['admin_server_settings'],
 					'file' => 'ManageServer',
@@ -183,6 +167,19 @@ function Admin()
 						'loads' => array($txt['load_balancing_settings']),
 					),
 				),
+				'',
+				'languages' => array(
+					'label' => $txt['language_configuration'],
+					'file' => 'ManageServer',
+					'function' => 'ManageLanguages',
+					'icon' => 'languages.gif',
+					'subsections' => array(
+						'edit' => array($txt['language_edit']),
+						'add' => array($txt['language_add']),
+						'settings' => array($txt['language_settings']),
+					),
+				),
+				'',
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
 					'file' => 'Themes',
@@ -203,6 +200,7 @@ function Admin()
 						'edit' => array($txt['themeadmin_edit_title']),
 					),
 				),
+				'',
 				'modsettings' => array(
 					'label' => $txt['admin_modifications'],
 					'file' => 'ManageSettings',
@@ -210,9 +208,8 @@ function Admin()
 					'icon' => 'modifications.gif',
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
-						// 'shout' => array($txt['shout']),
-						// Note the comma!! The setting with automatically appear with the first mod to be added.
+						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook
+						// to automatically insert your menu entry into this spot.
 					),
 				),
 			),
@@ -247,30 +244,7 @@ function Admin()
 						'merge' => array($txt['manageposts_merge']),
 					),
 				),
-				'managecalendar' => array(
-					'label' => $txt['manage_calendar'],
-					'file' => 'ManageCalendar',
-					'function' => 'ManageCalendar',
-					'icon' => 'calendar.gif',
-					'permission' => array('admin_forum'),
-					'enabled' => in_array('cd', $context['admin_features']),
-					'subsections' => array(
-						'holidays' => array($txt['manage_holidays'], 'admin_forum', 'enabled' => !empty($modSettings['cal_enabled'])),
-						'settings' => array($txt['calendar_settings'], 'admin_forum'),
-					),
-				),
-				'managesearch' => array(
-					'label' => $txt['manage_search'],
-					'file' => 'ManageSearch',
-					'function' => 'ManageSearch',
-					'icon' => 'search.gif',
-					'permission' => array('admin_forum'),
-					'subsections' => array(
-						'weights' => array($txt['search_weights']),
-						'method' => array($txt['search_method']),
-						'settings' => array($txt['settings']),
-					),
-				),
+				'',
 				'smileys' => array(
 					'label' => $txt['smileys_manage'],
 					'file' => 'ManageSmileys',
@@ -297,6 +271,31 @@ function Admin()
 						'attachments' => array($txt['attachment_manager_settings']),
 						'avatars' => array($txt['attachment_manager_avatar_settings']),
 						'maintenance' => array($txt['attachment_manager_maintenance']),
+					),
+				),
+				'',
+				'managecalendar' => array(
+					'label' => $txt['manage_calendar'],
+					'file' => 'ManageCalendar',
+					'function' => 'ManageCalendar',
+					'icon' => 'calendar.gif',
+					'permission' => array('admin_forum'),
+					'enabled' => in_array('cd', $context['admin_features']),
+					'subsections' => array(
+						'holidays' => array($txt['manage_holidays'], 'admin_forum', 'enabled' => !empty($modSettings['cal_enabled'])),
+						'settings' => array($txt['calendar_settings'], 'admin_forum'),
+					),
+				),
+				'managesearch' => array(
+					'label' => $txt['manage_search'],
+					'file' => 'ManageSearch',
+					'function' => 'ManageSearch',
+					'icon' => 'search.gif',
+					'permission' => array('admin_forum'),
+					'subsections' => array(
+						'weights' => array($txt['search_weights']),
+						'method' => array($txt['search_method']),
+						'settings' => array($txt['settings']),
 					),
 				),
 			),
@@ -380,6 +379,7 @@ function Admin()
 						'settings' => array($txt['settings']),
 					),
 				),
+				'',
 				'sengines' => array(
 					'label' => $txt['search_engines'],
 					'enabled' => in_array('sp', $context['admin_features']),
@@ -422,6 +422,7 @@ function Admin()
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 					),
 				),
+				'',
 				'mailqueue' => array(
 					'label' => $txt['mailqueue_title'],
 					'file' => 'ManageMail',
@@ -439,6 +440,7 @@ function Admin()
 					'function' => 'ReportsMain',
 					'icon' => 'reports.gif',
 				),
+				'',
 				'logs' => array(
 					'label' => $txt['logs'],
 					'function' => 'AdminLogs',
@@ -518,31 +520,31 @@ function AdminHome()
 
 	// Find all of this forum's administrators...
 	loadSource('Subs-Membergroups');
+
+	// Add a 'more' link if there are more than 32.
 	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
-	{
-		// Add a 'more'-link if there are more than 32.
 		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
-	}
 
 	// Load the credits stuff.
 	loadSource('Credits');
 	Credits(true);
 
 	// Fill in the blanks in the support resources paragraphs.
+	// !!! Update links and figure out why they don't show up in the French version.
 	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
 		'http://docs.simplemachines.org/',
 		'http://docs.simplemachines.org/redirect/features',
 		'http://docs.simplemachines.org/redirect/settings',
 		'http://docs.simplemachines.org/redirect/themes',
 		'http://docs.simplemachines.org/redirect/packages'
-		);
+	);
 	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
 		'http://www.simplemachines.org/community/',
 		'http://www.simplemachines.org/redirect/english_support',
 		'http://www.simplemachines.org/redirect/international_support_boards',
 		'http://www.simplemachines.org/redirect/smf_support',
 		'http://www.simplemachines.org/redirect/customize_support'
-		);
+	);
 
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
@@ -702,10 +704,8 @@ function AdminSearchInternal()
 			$search_data['sections'][] = array($menu_item['label'], 'area=' . $menu_key);
 			if (!empty($menu_item['subsections']))
 				foreach ($menu_item['subsections'] as $key => $sublabel)
-				{
 					if (isset($sublabel['label']))
 						$search_data['sections'][] = array($sublabel['label'], 'area=' . $menu_key . ';sa=' . $key);
-				}
 		}
 	}
 

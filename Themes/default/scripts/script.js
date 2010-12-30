@@ -676,7 +676,7 @@ function _testStyle(sty)
 }
 
 // Dropdown menu in JS with CSS fallback, Wedge style.
-// It may not show, but it took years to refine it.
+// It may not show, but it took me years to refine it. -- Nao
 var
 	menu_baseId = 0, hoverable = 0, menu_delay = [], menu_ieshim = [];
 
@@ -793,7 +793,7 @@ var
 /* Optimize:
 _ajax_indicator_ele = _a
 menu_baseId = _b
-_cookies = _c
+_cookie = _c
 menu_delay = _d
 _formSubmitted = _f
 menu_hide_children = _h
@@ -801,6 +801,7 @@ menu_hide_me = _hm
 menu_ieshim = _ie
 _lastKeepAliveCheck = _k
 dropdownList = _l
+_collapsed = _o
 menu_show_me = _sm
 menu_show_shim = _sh
 aBoardsAndCategories = b
@@ -839,4 +840,8 @@ sUrl = u
 theArray = a
 theField = f
 theValue = v
+_fillSelect = _fs
+_changeState = _cs
+grabJumpToContent = gjtc
+_replaceEntities = _re
 */

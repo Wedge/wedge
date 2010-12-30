@@ -84,6 +84,9 @@ h4.hove {
 li.hove {
 	background: #dbd7d2;
 }
+.menu li.separator {
+	display: none;
+}
 #context_menus h4:hover {
 	background-color: #ebe7e2;
 }

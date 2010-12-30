@@ -124,15 +124,26 @@ function createMenu($menuData, $menuOptions = array())
 		if ((isset($section['enabled']) && $section['enabled'] == false) || (isset($section['permission']) && !allowedTo($section['permission'])))
 			continue;
 
+		// Delete all orphan separators.
+		while (reset($section['areas']) === '')
+			array_shift($section['areas']);
+		while (end($section['areas']) === '')
+			array_pop($section['areas']);
+		$was_separator = false;
+
 		// Now we cycle through the sections to pick the right area.
 		foreach ($section['areas'] as $area_id => $area)
 		{
-			// Separator?
+			// Separator? (Avoid having two in a row.)
 			if ($area === '')
 			{
+				if ($was_separator)
+					continue;
+				$was_separator = true;
 				$menu_context['sections'][$section_id]['areas'][$area_id] = '';
 				continue;
 			}
+			$was_separator = false;
 
 			// Can we do this?
 			if ((!isset($area['enabled']) || $area['enabled'] != false) && (empty($area['permission']) || allowedTo($area['permission'])))

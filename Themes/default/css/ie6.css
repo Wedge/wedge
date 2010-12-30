@@ -239,3 +239,6 @@ table.table_grid, table.cs0, table.cs1 {
 	width: expression(this.clientWidth < 300 ? '300px' : 'auto');
 	height: 150px;
 }
+.menu li.separator {
+	display: none;
+}
