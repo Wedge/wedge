@@ -133,7 +133,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 		alternateHeight = Math.min(alternateHeight, vph);
 	}
 	else
-		noScrollbars = noScrollbars && noScrollbars === true;
+		noScrollbars = noScrollbars && (noScrollbars === true);
 
 	// If the reqWin event was created on the fly, it'll bubble up to body and cancel itself...
 	e.cancelBubbling = true;
@@ -146,7 +146,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
 	$('<div class="windowbg wrc"></div>').hide()
-		.load(desktopURL, function() {
+		.load(desktopURL, function () {
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : 'auto',
 				padding: '10px 12px 12px',
@@ -644,15 +644,15 @@ function smfSelectText(oCurElement, bActOnElement)
 // A function needed to discern HTML entities from non-western characters.
 function smc_saveEntities(sFormName, aElementNames, sMask)
 {
-	var i, n;
+	var i, f = document.forms, e = f[sFormName].elements, n = e.length;
 	if (typeof sMask == 'string')
-		for (i = 0, n = document.forms[sFormName].elements.length; i < n; i++)
-			if (document.forms[sFormName].elements[i].id.substr(0, sMask.length) == sMask)
-				aElementNames[aElementNames.length] = document.forms[sFormName].elements[i].name;
+		for (i = 0; i < n; i++)
+			if (e[i].id.substr(0, sMask.length) == sMask)
+				aElementNames[aElementNames.length] = e[i].name;
 
 	for (i = 0, n = aElementNames.length; i < n; i++)
-		if (aElementNames[i] in document.forms[sFormName])
-			document.forms[sFormName][aElementNames[i]].value = document.forms[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
+		if (aElementNames[i] in f[sFormName])
+			f[sFormName][aElementNames[i]].value = f[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
 /*
@@ -660,7 +660,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 // Ignored for now because it needs some improvement to the domain name detection.
 function _linkMagic()
 {
-	$('a[title!="-"]').each(function() {
+	$('a[title!="-"]').each(function () {
 		var hre = $(this).attr('href');
 		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
 			$(this).addClass('xt');

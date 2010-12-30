@@ -26,9 +26,6 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /*	
-	void theme_postbox(string message)
-		- for compatibility - passes right through to the template_control_richedit function.
-
 	void create_control_verification(&array suggestOptions)
 		// !!
 
@@ -107,14 +104,6 @@ function getMessageIcons($board_id)
 	}
 
 	return array_values($icons);
-}
-
-// Compatibility function - used in 1.1 for showing a post box.
-function theme_postbox($msg)
-{
-	global $context;
-
-	return $context['postbox']->outputEditor();
 }
 
 // Create a anti-bot verification control?

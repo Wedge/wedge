@@ -1384,7 +1384,7 @@ function template_profile_pm_settings()
 										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
 								</dt>
 								<dd>
-										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').attr("checked"))) alert(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
+										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').attr(\'checked\'))) alert(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
 											<option value="0"', $context['display_mode'] == 0 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_all'], '</option>
 											<option value="1"', $context['display_mode'] == 1 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_one'], '</option>
 											<option value="2"', $context['display_mode'] == 2 ? ' selected="selected"' : '', '>', $txt['pm_display_mode_linked'], '</option>
@@ -2871,7 +2871,7 @@ function template_authentication_method()
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
 	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
-	var currentAuthMethod = \'passwd\';
+	var currentAuthMethod = "passwd";
 
 	function updateAuthMethod()
 	{
@@ -2879,10 +2879,10 @@ function template_authentication_method()
 		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
 
 		// No openID?
-		if (!document.getElementById(\'auth_openid\'))
-			return true;
+		if (!document.getElementById("auth_openid"))
+			return;
 
-		var is_pw = currentAuthMethod == \'passwd\';
+		var is_pw = currentAuthMethod == "passwd";
 		document.forms.creator.openid_url.disabled = is_pw;
 		document.forms.creator.smf_autov_pwmain.disabled = !is_pw;
 		document.forms.creator.smf_autov_pwverify.disabled = !is_pw;
@@ -2893,13 +2893,13 @@ function template_authentication_method()
 		{
 			verificationHandle.refreshMainPassword();
 			verificationHandle.refreshVerifyPassword();
-			document.forms.creator.openid_url.style.backgroundColor = \'\';
+			document.forms.creator.openid_url.style.backgroundColor = "";
 		}
 		else
 		{
-			document.forms.creator.smf_autov_pwmain.style.backgroundColor = \'\';
-			document.forms.creator.smf_autov_pwverify.style.backgroundColor = \'\';
-			document.forms.creator.openid_url.style.backgroundColor = \'#FCE184\';
+			document.forms.creator.smf_autov_pwmain.style.backgroundColor = "";
+			document.forms.creator.smf_autov_pwverify.style.backgroundColor = "";
+			document.forms.creator.openid_url.style.backgroundColor = "#FCE184";
 		}
 	}
 	updateAuthMethod();');

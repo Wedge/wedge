@@ -975,8 +975,7 @@ function template_send()
 			<hr class="clear" />';
 
 	// Show BBC buttons, smileys and textbox.
-	echo '
-			', $context['postbox']->outputEditor();
+	echo $context['postbox']->outputEditor();
 
 	// Require an image to be typed to save spamming?
 	if ($context['require_verification'])
@@ -1061,9 +1060,7 @@ function template_send()
 		sBccLinkId: \'bcc_link\',
 		sBccLinkContainerId: \'bcc_link_container\',
 		bBccShowByDefault: ', empty($context['recipients']['bcc']) && empty($context['bcc_value']) ? 'false' : 'true', ',
-		sShowBccLinkTemplate: ', JavaScriptEscape('
-			<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a>'
-		), '
+		sShowBccLinkTemplate: ', JavaScriptEscape(' <a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a>'), '
 	});');
 }
 

@@ -235,3 +235,7 @@ table.table_grid, table.cs0, table.cs1 {
 	display: inline;
 	padding-right: 3px;
 }
+.features .wrc {
+	width: expression(this.clientWidth < 300 ? '300px' : 'auto');
+	height: 150px;
+}

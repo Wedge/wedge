@@ -37,7 +37,10 @@ function template_registration_form()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	add_js_file('scripts/register.js');
+	add_js_file(array(
+		'scripts/register.js',
+		'scripts/profile.js'
+	));
 
 	add_js('
 	function verifyAgree()
@@ -51,46 +54,36 @@ function template_registration_form()
 		return true;
 	}
 
-	var currentAuthMethod = \'passwd\';
+	var currentAuthMethod = "passwd";
 
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
-		if (!document.getElementById(\'auth_openid\') || !document.getElementById(\'auth_openid\').checked)
-			currentAuthMethod = \'passwd\';
-		else
-			currentAuthMethod = \'openid\';
+		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
 
 		// No openID?
-		if (!document.getElementById(\'auth_openid\'))
-			return true;
+		if (!document.getElementById("auth_openid"))
+			return;
 
-		document.forms.registration.openid_url.disabled = currentAuthMethod == \'openid\' ? false : true;
-		document.forms.registration.smf_autov_pwmain.disabled = currentAuthMethod == \'passwd\' ? false : true;
-		document.forms.registration.smf_autov_pwverify.disabled = currentAuthMethod == \'passwd\' ? false : true;
-		document.getElementById(\'smf_autov_pwmain_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
-		document.getElementById(\'smf_autov_pwverify_div\').style.display = currentAuthMethod == \'passwd\' ? \'\' : \'none\';
+		var is_pw = currentAuthMethod == "passwd";
+		document.forms.registration.openid_url.disabled = is_pw;
+		document.forms.registration.smf_autov_pwmain.disabled = !is_pw;
+		document.forms.registration.smf_autov_pwverify.disabled = !is_pw;
+		$("#smf_autov_pwmain_div, #smf_autov_pwverify_div, #password1_group, #password2_group").toggle(is_pw);
+		$("#openid_group").toggle(!is_pw);
 
-		if (currentAuthMethod == \'passwd\')
+		if (is_pw)
 		{
 			verificationHandle.refreshMainPassword();
 			verificationHandle.refreshVerifyPassword();
-			document.forms.registration.openid_url.style.backgroundColor = \'\';
-			document.getElementById(\'password1_group\').style.display = \'\';
-			document.getElementById(\'password2_group\').style.display = \'\';
-			document.getElementById(\'openid_group\').style.display = \'none\';
+			document.forms.registration.openid_url.style.backgroundColor = "";
 		}
 		else
 		{
-			document.forms.registration.smf_autov_pwmain.style.backgroundColor = \'\';
-			document.forms.registration.smf_autov_pwverify.style.backgroundColor = \'\';
-			document.forms.registration.openid_url.style.backgroundColor = \'#FFF0F0\';
-			document.getElementById(\'password1_group\').style.display = \'none\';
-			document.getElementById(\'password2_group\').style.display = \'none\';
-			document.getElementById(\'openid_group\').style.display = \'\';
+			document.forms.registration.smf_autov_pwmain.style.backgroundColor = "";
+			document.forms.registration.smf_autov_pwverify.style.backgroundColor = "";
+			document.forms.registration.openid_url.style.backgroundColor = "#FFF0F0";
 		}
-
-		return true;
 	}
 
 	var regTextStrings = {
@@ -109,21 +102,7 @@ function template_registration_form()
 	// Update the authentication status.
 	updateAuthMethod();
 
-	function autoDetectTimeOffset()
-	{
-		var localTime = new Date();
-		var serverTime = new Date(' . $context['current_forum_time_js'] . ');
-
-		if (!localTime.getTime() || !serverTime.getTime())
-			return 0;
-
-		var diff = Math.round((localTime.getTime() - serverTime.getTime())/3600000);
-		diff %= 24;
-
-		return diff;
-	}
-
-	document.getElementById(\'time_offset\').value = autoDetectTimeOffset();');
+	$(\'#time_offset\').val(autoDetectTimeOffset(' . $context['current_forum_time_js'] . '));');
 
 	// Any errors?
 	if (!empty($context['registration_errors']))

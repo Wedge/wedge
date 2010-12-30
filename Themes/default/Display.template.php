@@ -685,8 +685,8 @@ function template_main()
 
 			echo '
 							<div class="quickReplyContent">
-								<div id="bbcBox_message" style="display:none;"></div>
-								<div id="smileyBox_message" style="display:none;"></div>',
+								<div id="bbcBox_message" style="display: none"></div>
+								<div id="smileyBox_message" style="display: none"></div>',
 								$context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">

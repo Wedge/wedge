@@ -39,10 +39,10 @@ function template_main()
 
 	echo '
 						</div>
-						<a href="#" onclick="document.getElementById(\'known_themes_list\').style.display=\'block\'; document.getElementById(\'known_themes_link\').style.display = \'none\'; return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
+						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
 						<script><!-- // --><![CDATA[
-							document.getElementById("known_themes_list").style.display = "none";
-							document.getElementById("known_themes_link").style.display = "";
+							$("#known_themes_list").hide();
+							$("#known_themes_link").show();
 						// ]]></script>
 					</dd>
 					<dt>
@@ -175,7 +175,7 @@ function template_main()
 
 	add_js('
 	if (typeof(window.smfLatestThemes) != "undefined")
-		document.getElementById("themeLatest").innerHTML = window.smfLatestThemes;');
+		$("#themeLatest").html(window.smfLatestThemes);');
 }
 
 function template_list_themes()
@@ -783,7 +783,7 @@ function template_edit_style()
 					if (myDoc.responseText != null && myDoc.status == 200)
 					{
 						previewData = myDoc.responseText;
-						document.getElementById("css_preview_box").style.display = "";
+						$("#css_preview_box").show();
 
 						// Revert to the theme they actually use ;)
 						var tempImage = new Image();

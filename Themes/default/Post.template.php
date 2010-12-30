@@ -371,7 +371,7 @@ function template_main()
 	}
 
 	// Show the actual posting area...
-	echo "\n\n", $context['postbox']->outputEditor(), "\n";
+	echo "\n", $context['postbox']->outputEditor(), "\n";
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))

@@ -220,6 +220,20 @@ function ModifyCoreFeatures($return_config = false)
 		save_callback	- Function called on save, takes state as parameter.
 	*/
 	$core_features = array(
+		// m = media gallery
+		'm' => array(
+			'url' => 'action=admin;area=media',
+			'settings' => array(
+				'gallery_enabled' => 1,
+			),
+		),
+		// e = auto-embedding
+		'e' => array(
+			'url' => 'action=admin;area=embed',
+			'settings' => array(
+				'embed_enabled' => 1,
+			),
+		),
 		// cp = custom profile fields.
 		'cp' => array(
 			'url' => 'action=admin;area=featuresettings;sa=profile',

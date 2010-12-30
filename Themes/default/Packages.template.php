@@ -486,7 +486,7 @@ function template_browse()
 
 	add_js('
 	if (typeof(window.smfLatestPackages) != "undefined")
-		document.getElementById("packagesLatest").innerHTML = window.smfLatestPackages;');
+		$("#packagesLatest").html(window.smfLatestPackages);');
 
 	echo '
 		<br />
@@ -518,7 +518,7 @@ function template_browse()
 				<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
-				<a href="#" onclick="document.getElementById(\'advanced_box\').style.display = document.getElementById(\'advanced_box\').style.display == \'\' ? \'none\' : \'\'; return false;">', $txt['package_advanced_button'], '</a>
+				<a href="#" onclick="$(\'#advanced_box\').toggle(); return false;">', $txt['package_advanced_button'], '</a>
 			</div>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=packages;sa=browse" method="get">
@@ -533,7 +533,7 @@ function template_browse()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['package_emulate'], ':</strong>
-							<dfn><a href="#" onclick="document.getElementById(\'ve\').value = \'', $forum_version, '\'; return false">', $txt['package_emulate_revert'], '</a></dfn>
+							<dfn><a href="#" onclick="$(\'#ve\').val(\'', $forum_version, '\'); return false">', $txt['package_emulate_revert'], '</a></dfn>
 						</dt>
 						<dd>
 							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25" class="input_text" />
@@ -1039,7 +1039,7 @@ function template_control_chmod()
 	if (empty($context['package_ftp']['form_elements_only']))
 	{
 		echo '
-				', sprintf($txt['package_ftp_why'], 'document.getElementById(\'need_writable_list\').style.display = \'\'; return false;'), '<br />
+				', sprintf($txt['package_ftp_why'], '$(\'#need_writable_list\').show(); return false;'), '<br />
 				<div id="need_writable_list" class="smalltext">
 					', $txt['package_ftp_why_file_list'], '
 					<ul style="display: inline;">';
@@ -1124,23 +1124,15 @@ function template_control_chmod()
 		generatedButton = true;
 
 		// No XML?
-		if (!can_ajax || (!document.getElementById("test_ftp_placeholder") && !document.getElementById("test_ftp_placeholder_full")))
+		if (!can_ajax || (!$("#test_ftp_placeholder").length && !$("#test_ftp_placeholder_full").length))
 			return false;
 
-		var ftpTest = document.createElement("input");
-		ftpTest.type = "button";
-		ftpTest.onclick = testFTP;
+		var ftpTest = $(\'<input type="button"></input>\').click(testFTP);
 
-		if (document.getElementById("test_ftp_placeholder"))
-		{
-			ftpTest.value = ', JavaScriptEscape($txt['package_ftp_test']), ';
-			document.getElementById("test_ftp_placeholder").appendChild(ftpTest);
-		}
+		if ($("#test_ftp_placeholder").length)
+			ftpTest.val(', JavaScriptEscape($txt['package_ftp_test']), ').appendTo($("#test_ftp_placeholder"));
 		else
-		{
-			ftpTest.value = ', JavaScriptEscape($txt['package_ftp_test_connection']), ';
-			document.getElementById("test_ftp_placeholder_full").appendChild(ftpTest);
-		}
+			ftpTest.val(', JavaScriptEscape($txt['package_ftp_test_connection']), ').appendTo($("#test_ftp_placeholder_full"));
 	}
 	function testFTP()
 	{
@@ -1178,10 +1170,9 @@ function template_control_chmod()
 			message = results[0].firstChild.nodeValue;
 		}
 
-		document.getElementById("ftp_error_div").style.display = "";
-		document.getElementById("ftp_error_div").style.backgroundColor = wasSuccess ? "green" : "red";
-		document.getElementById("ftp_error_innerdiv").style.backgroundColor = wasSuccess ? "#DBFDC7" : "#FDBDBD";
-		document.getElementById("ftp_error_message").innerHTML = message;
+		$("#ftp_error_div").show().css("backgroundColor", wasSuccess ? "green" : "red");
+		$("#ftp_error_innerdiv").css("backgroundColor", wasSuccess ? "#DBFDC7" : "#FDBDBD");
+		$("#ftp_error_message").html(message);
 	}
 	generateFTPTest();');
 }
@@ -1340,15 +1331,14 @@ function template_file_permissions()
 	{
 		ajax_indicator(false);
 
-		var fileItems = oXMLDoc.getElementsByTagName(\'folders\')[0].getElementsByTagName(\'folder\');
+		var fileItems = $("folders folder", oXMLDoc);
 
 		// No folders, no longer worth going further.
-		if (fileItems.length < 1)
+		if (!fileItems.length)
 		{
 			if (oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0])
 			{
-				var rootName = oXMLDoc.getElementsByTagName(\'roots\')[0].getElementsByTagName(\'root\')[0].firstChild.nodeValue;
-				var itemLink = document.getElementById(\'link_\' + rootName);
+				var itemLink = $(\'#link_\' + $("roots root", oXMLDoc).text())[0];
 
 				// Move the children up.
 				for (i = 0; i <= itemLink.childNodes.length; i++)
@@ -1471,10 +1461,7 @@ function template_file_permissions()
 		}
 
 		// Is there some more to remove?
-		if (document.getElementById("content_" + ident + "_more"))
-		{
-			document.getElementById("content_" + ident + "_more").parentNode.removeChild(document.getElementById("content_" + ident + "_more"));
-		}
+		$("#content_" + ident + "_more").remove();
 
 		// Add more?
 		if (isMore && tableHandle)
@@ -1597,7 +1584,7 @@ function template_file_permissions()
 					<dt>
 						<input type="radio" name="method" value="predefined" id="method_predefined" class="input_radio" />
 						<label for="method_predefined"><strong>', $txt['package_file_perms_predefined'], ':</strong></label>
-						<select name="predefined" onchange="document.getElementById(\'method_predefined\').checked = \'checked\';">
+						<select name="predefined" onchange="$(\'#method_predefined\').attr(\'checked\', true);">
 							<option value="restricted" selected="selected">', $txt['package_file_perms_pre_restricted'], '</option>
 							<option value="standard">', $txt['package_file_perms_pre_standard'], '</option>
 							<option value="free">', $txt['package_file_perms_pre_free'], '</option>
@@ -1819,7 +1806,7 @@ function template_action_permissions()
 		else if (countdown == -1)
 			return;
 
-		document.getElementById(\'cont\').value = ', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")";
+		$(\'#cont\').val(', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")");
 		countdown--;
 
 		setTimeout("doAutoSubmit();", 1000);
