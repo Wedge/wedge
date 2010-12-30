@@ -409,7 +409,7 @@ function loadUserSettings()
 function loadBoard()
 {
 	global $txt, $scripturl, $context, $modSettings;
-	global $board_info, $board, $topic, $user_info;
+	global $board_info, $board, $topic, $user_info, $user_settings;
 
 	// Assume they are not a moderator.
 	$user_info['is_mod'] = false;
@@ -493,7 +493,7 @@ function loadBoard()
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
-				b.styling, b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
+				b.styling, b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language,
 				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends,
 				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
@@ -551,6 +551,7 @@ function loadBoard()
 				'allowed_member' => $row['allowed'],
 				'banned_member' => $row['banned'],
 				'friends' => $row['friends'],
+				'language' => $row['language'],
 			);
 
 			// Load privacy settings.
@@ -666,6 +667,13 @@ function loadBoard()
 				'name' => $board_info['name']
 			))
 		);
+
+		// Does this board have its own language setting? If so, does the user have their own personal language set? (User preference beats board, which beats forum default)
+		if (!empty($board_info['language']) && empty($user_settings['lngfile']))
+		{
+			$user_info['language'] = $board_info['language'];
+			$user_settings['lngfile'] = $board_info['language'];
+		}
 	}
 
 	// Set the template contextual information.

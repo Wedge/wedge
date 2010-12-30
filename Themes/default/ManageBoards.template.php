@@ -4,7 +4,7 @@
 // Template for listing all the current categories and boards.
 function template_main()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $language;
 
 	// Table header.
 	echo '
@@ -57,7 +57,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $settings['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '" /></a></span>' : '</span>', '
+					<li', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><img src="', $settings['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png" /> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $settings['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '" /></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br style="clear: right;" />
@@ -225,7 +225,7 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info, $language;
 
 	// The main table header.
 	echo '
@@ -492,6 +492,41 @@ function template_modify_board()
 						</dd>
 					</dl>
 				</div>';
+
+	// Picking a language for this board. No point specifying if there's only one language.
+	if (count($context['languages']) > 1)
+	{
+		echo '
+				<dl class="settings">
+					<dt>
+						<strong>', $txt['mboards_language'], ':</strong>
+						<dfn>', $txt['mboards_language_desc'], '</dfn>
+					</dt>
+					<dd>
+						<select name="language" id="language">';
+
+		$langset = array_merge(
+			array(
+				'' => array(
+					'name' => $context['languages'][$language]['name'] . ' ' . $txt['mboards_theme_default'],
+				)
+			),
+			$context['languages']
+		);
+		foreach ($langset as $lang_id => $lang)
+		{
+			if ($lang_id == $language)
+				continue;
+
+			echo '
+							<option value="', $lang_id, '"', $context['board']['language'] == $lang_id ? ' selected="selected"' : '', '>', $lang['name'], '</option>';
+		}
+
+		echo '
+						</select>
+					</dd>
+				</dl>';
+	}
 
 	if (!empty($context['board']['is_recycle']))
 		echo '

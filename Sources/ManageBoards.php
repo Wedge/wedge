@@ -171,6 +171,7 @@ function ManageBoardsMain()
 				'child_level' => &$boards[$boardid]['level'],
 				'move' => $move_cat && ($boardid == $context['move_board'] || isChildOf($boardid, $context['move_board'])),
 				'permission_profile' => &$boards[$boardid]['profile'],
+				'language' => &$boards[$boardid]['language'],
 			);
 		}
 	}
@@ -435,6 +436,7 @@ function EditBoard()
 			'url' => $_SERVER['HTTP_HOST'] . '/' . 'enter-a-name',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
+			'language' => '',
 		);
 	}
 	else
@@ -562,6 +564,9 @@ function EditBoard()
 	if (!empty($context['board']['moderators']))
 		list ($context['board']['last_moderator_id']) = array_slice(array_keys($context['board']['moderators']), -1);
 
+	// Get all the languages
+	getLanguages(true);
+
 	// Get all the themes...
 	$request = wesql::query('
 		SELECT id_theme AS id, value AS name
@@ -657,7 +662,7 @@ function EditBoard2()
 			$boardOptions['pretty_url_dom'] = $_POST['pretty_url_dom'];
 		}
 
-		$boardOptions['moderator_string'] = $_POST['moderators'];
+		$boardOptions['moderator_string'] = !empty($_POST['moderators']) ? $_POST['moderators'] : '';
 
 		if (isset($_POST['moderator_list']) && is_array($_POST['moderator_list']))
 		{
@@ -671,6 +676,9 @@ function EditBoard2()
 		$boardOptions['redirect'] = !empty($_POST['redirect_enable']) && isset($_POST['redirect_address']) && trim($_POST['redirect_address']) != '' ? trim($_POST['redirect_address']) : '';
 		// If they are, do they want it in a new tab?
 		$boardOptions['redirect_newtab'] = $boardOptions['redirect'] && isset($_POST['redirect_newtab']);
+
+		// What about a language?
+		$boardOptions['language'] = !empty($_POST['language']) ? preg_replace('~[^a-z0-9\-\_]~i', '', $_POST['language']) : '';
 
 		// Profiles...
 		$boardOptions['profile'] = $_POST['profile'];
