@@ -52,7 +52,7 @@ function smc_AutoSuggest(oOptions)
 	var that = this;
 	$(this.oTextHandle)
 		.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
-		.bind(is_opera ? 'keypress' : (is_ie ? 'keypress keydown' : 'keydown'), function (oEvent) { return that.handleKey(oEvent); })
+		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
 		.bind('keyup change focus', function (oEvent) { return that.autoSuggestUpdate(oEvent); })
 		.blur(function (oEvent) { return that.autoSuggestHide(oEvent); });
 
@@ -90,7 +90,8 @@ smc_AutoSuggest.prototype.handleKey = function(oEvent)
 	else if (iKeyPress == 13)
 	{
 		if (this.aDisplayData.length > 0 && this.oSelectedDiv != null)
-			return !!(this.itemClicked(this.oSelectedDiv));
+			this.itemClicked(this.oSelectedDiv);
+		return false;
 	}
 	else if (iKeyPress == 38 || iKeyPress == 40)
 	{
@@ -165,7 +166,7 @@ smc_AutoSuggest.prototype.positionDiv = function()
 
 	$(this.oSuggestDivHandle).css({
 		left: aParentPos.left + 'px',
-		top: (aParentPos.top + this.oTextHandle.offsetHeight) + 'px',
+		top: (aParentPos.top + this.oTextHandle.offsetHeight + 1) + 'px',
 		width: this.oTextHandle.style.width
 	});
 };
@@ -182,6 +183,7 @@ smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
 		this.oTextHandle.value = oCurElement.innerHTML;
 
 	this.autoSuggestActualHide();
+	this.bPositionComplete = false;
 };
 
 // Remove the last searched for name from the search box.
@@ -292,8 +294,6 @@ smc_AutoSuggest.prototype.autoSuggestShow = function()
 // Populate the actual div.
 smc_AutoSuggest.prototype.populateDiv = function(aResults)
 {
-	this.autoSuggestActualHide();
-
 	// Cannot have any children yet.
 	$(this.oSuggestDivHandle).empty();
 
@@ -432,7 +432,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 			// Repopulate.
 			this.populateDiv(this.aCache);
 
-			// Check it can be seen.
+			// Can it be seen?
 			this.autoSuggestShow();
 
 			return true;
