@@ -668,7 +668,8 @@ function loadBoard()
 			))
 		);
 
-		// Does this board have its own language setting? If so, does the user have their own personal language set? (User preference beats board, which beats forum default)
+		// Does this board have its own language setting? If so, does the user have their
+		// own personal language set? (User preference beats board, which beats forum default)
 		if (!empty($board_info['language']) && empty($user_settings['lngfile']))
 		{
 			$user_info['language'] = $board_info['language'];

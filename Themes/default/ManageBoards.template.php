@@ -493,7 +493,7 @@ function template_modify_board()
 					</dl>
 				</div>';
 
-	// Picking a language for this board. No point specifying if there's only one language.
+	// Picking a language for this board. No point specifying it if there's only one language.
 	if (count($context['languages']) > 1)
 	{
 		echo '
