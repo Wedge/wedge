@@ -95,9 +95,9 @@ function modify_topic_done(XMLDoc)
 		return true;
 	}
 
-	var message = $('smf message', XMLDoc);
-	var subject = $('subject', message);
-	var error = $('error', message);
+	var
+		subject = $('smf message subject', XMLDoc),
+		error = $('smf message error', XMLDoc);
 
 	if (typeof window.ajax_indicator == 'function')
 		ajax_indicator(false);
@@ -291,9 +291,13 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	// We've finished the loading part.
 	ajax_indicator(false);
 
+	var
+		message = $('smf message', XMLDoc),
+		body = $('body', message),
+		error = $('error', message);
+
 	// If we didn't get a valid document, just cancel.
-	var xm = $('smf', XMLDoc);
-	if (!XMLDoc || !xm.length)
+	if (!XMLDoc || !message.length)
 	{
 		// Mozilla will nicely tell us what's wrong.
 		if (XMLDoc && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
@@ -302,11 +306,6 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 			this.modifyCancel();
 		return;
 	}
-
-	var
-		message = $('message', xm),
-		body = $('body', message),
-		error = $('error', message);
 
 	if (body.length)
 	{

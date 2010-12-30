@@ -22,15 +22,21 @@ ol.search_results li {
 /* Styles for the core features screen.
 ------------------------------------------------------- */
 .features {
+	overflow: visible;
+	float: left;
+	width: 50%;
+}
+.features .wrc {
 	padding: 0 1em !important;
-	overflow: auto;
+	margin: .3em;
+	min-height: 130px;
 }
 .features_image {
 	float: left;
-	margin: 0 2em 0.5em 1em;
+	margin: 2.4em 2em 0.5em 1em;
 }
 .features_switch {
-	margin: 0.2em 1em 1em 1em;
+	margin: 1.5em 1em 1em 1em;
 	float: right;
 }
 .features h4 {
@@ -39,7 +45,7 @@ ol.search_results li {
 	font-size: 1.1em;
 }
 .features p {
-	padding: 0 1em;
+	padding: 0 1em 1em;
 	margin: 0;
 }
 

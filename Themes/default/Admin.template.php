@@ -283,17 +283,15 @@ function template_credits()
 	// This sets the latest support stuff.
 	add_js('
 	if (window.smfLatestSupport)
-		document.getElementById("latestSupport").innerHTML = window.smfLatestSupport;
+		$("#latestSupport").html(window.smfLatestSupport);
 
 	if (window.smfVersion)
 	{
-		var smfVer = document.getElementById("smfVersion");
-		var yourVer = document.getElementById("yourVersion");
-		smfVer.innerHTML = window.smfVersion;
+		$("#smfVersion").html(window.smfVersion);
 
-		var currentVersion = yourVer.innerHTML;
+		var yourVer = $("#yourVersion"), currentVersion = yourVer.text();
 		if (currentVersion != window.smfVersion)
-			yourVer.innerHTML = "<span class=\"alert\">" + currentVersion + "</span>";
+			yourVer.wrap(\'<span class="alert"></span>\');
 	}');
 }
 
@@ -1235,13 +1233,15 @@ function template_core_features()
 	function toggleItem(itemID)
 	{
 		// Toggle the hidden item.
-		var itemValueHandle = document.getElementById("feature_" + itemID);
-		itemValueHandle.value = itemValueHandle.value == 1 ? 0 : 1;
+		var itemValueHandle = $("#feature_" + itemID);
+		itemValueHandle.val(itemValueHandle.val() == 1 ? 0 : 1);
 
 		// Change the image, alternative text and the title.
-		document.getElementById("switch_" + itemID).src = \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.value == 1 ? \'on\' : \'off\') + \'.png\';
-		document.getElementById("switch_" + itemID).alt = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
-		document.getElementById("switch_" + itemID).title = itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ';
+		$("#switch_" + itemID).attr({
+			src: \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.val() == 1 ? \'on\' : \'off\') + \'.png\',
+			alt: itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ',
+			title: itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, '
+		});
 
 		return false;
 	}');
@@ -1267,34 +1267,35 @@ function template_core_features()
 				<h3>
 					', $txt['core_settings_title'], '
 				</h3>
-			</div>';
+			</div>
+			<div style="overflow: hidden">';
 
-	$alternate = true;
+	$alternate = 0;
 	foreach ($context['features'] as $id => $feature)
 	{
 		echo '
-			<div class="windowbg', $alternate ? '2' : '', ' wrc">
 				<div class="features">
-					<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
-					<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
-						<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
-							<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '" /><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" id="switch_', $id, '" style="margin-top: 1.3em;" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" />
-						</a>
+					<div class="windowbg', $alternate < 2 ? '2' : '', ' wrc">
+						<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
+						<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
+							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
+								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '" /><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" id="switch_', $id, '" style="margin-top: 1.3em;" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" />
+							</a>
+						</div>
+						<h4>', ($feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title']), '</h4>
+						<p>', $feature['desc'], '</p>
+						<div id="plain_feature_', $id, '">
+							<label for="plain_feature_', $id, '_radio_on"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_on" value="1"', $feature['enabled'] ? ' checked="checked"' : '', ' class="input_radio" />', $txt['core_settings_enabled'], '</label>
+							<label for="plain_feature_', $id, '_radio_off"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_off" value="0"', !$feature['enabled'] ? ' checked="checked"' : '', ' class="input_radio" />', $txt['core_settings_disabled'], '</label>
+						</div>
 					</div>
-					<h4>', ($feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title']), '</h4>
-					<p>', $feature['desc'], '</p>
-					<div id="plain_feature_', $id, '">
-						<label for="plain_feature_', $id, '_radio_on"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_on" value="1"', $feature['enabled'] ? ' checked="checked"' : '', ' class="input_radio" />', $txt['core_settings_enabled'], '</label>
-						<label for="plain_feature_', $id, '_radio_off"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_off" value="0"', !$feature['enabled'] ? ' checked="checked"' : '', ' class="input_radio" />', $txt['core_settings_disabled'], '</label>
-					</div>
-				</div>
-				<div class="clear_right"></div>
-			</div>';
+				</div>';
 
-		$alternate = !$alternate;
+		$alternate = ($alternate + 1) % 4;
 	}
 
 	echo '
+			</div>
 			<div class="righttext">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" value="0" name="js_worked" id="js_worked" />

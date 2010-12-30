@@ -363,10 +363,8 @@ function ModifyCoreFeatures($return_config = false)
 			if (isset($feature['settings']))
 			{
 				foreach ($feature['settings'] as $key => $value)
-				{
 					if (empty($_POST[$post_var_prefix . $id]) || (!empty($_POST[$post_var_prefix . $id]) && ($value < 2 || empty($modSettings[$key]))))
 						$setting_changes[$key] = !empty($_POST[$post_var_prefix . $id]) ? $value : !$value;
-				}
 			}
 			// Is there a call back for settings?
 			if (isset($feature['setting_callback']))
@@ -389,11 +387,8 @@ function ModifyCoreFeatures($return_config = false)
 
 		// Any post save things?
 		foreach ($core_features as $id => $feature)
-		{
-			// Standard save callback?
-			if (isset($feature['save_callback']))
+			if (isset($feature['save_callback'])) // Standard save callback?
 				$feature['save_callback'](!empty($_POST[$post_var_prefix . $id]));
-		}
 
 		redirectexit('action=admin;area=corefeatures;' . $context['session_var'] . '=' . $context['session_id']);
 	}

@@ -1,3 +1,4 @@
+
 function smf_StatsCenter(oOptions)
 {
 	this.oTable = $('#' + oOptions.sTableId);
