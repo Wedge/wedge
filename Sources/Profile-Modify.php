@@ -2577,7 +2577,7 @@ function profileSaveAvatarData(&$value)
 	if ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
-		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['gravatarEmail']) == 0)
+		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || preg_match('~^[\w=+/-][\w=\'+/\.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $_POST['gravatarEmail']) == 0)
 			$profile_vars['avatar'] = 'gravatar://';
 		else
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');

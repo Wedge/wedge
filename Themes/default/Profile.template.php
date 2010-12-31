@@ -2688,7 +2688,8 @@ function template_profile_avatar_select()
 	if (!empty($context['member']['avatar']['allow_gravatar']))
 	{
 		if (empty($modSettings['gravatarAllowExtraEmail']))
-			echo '				<div id="avatar_gravatar">
+			echo '
+								<div id="avatar_gravatar">
 									<div class="smalltext">', $txt['gravatar_noAlternateEmail'], '</div>
 								</div>';
 		else
@@ -2725,25 +2726,25 @@ function template_profile_avatar_select()
 				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
 				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 				$("#avatar_gravatar").hide();' : '', '
-				break;
+			break;
 			case "avatar_choice_external":', !empty($context['member']['avatar']['allow_server_stored']) ? '
 				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
 				$("#avatar_external").show();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
 				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 				$("#avatar_gravatar").hide();' : '', '
-				break;
+			break;
 			case "avatar_choice_upload":', !empty($context['member']['avatar']['allow_server_stored']) ? '
 				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
 				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
 				$("#avatar_upload").show();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 				$("#avatar_gravatar").hide();' : '', '
-				break;
+			break;
 			case "avatar_choice_gravatar":', !empty($context['member']['avatar']['allow_server_stored']) ? '
 				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
 				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
 				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 				$("#avatar_gravatar").show();' : '', '
-				break;
+			break;
 		}
 	}');
 }

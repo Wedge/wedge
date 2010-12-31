@@ -2683,7 +2683,7 @@ function setupThemeContext($forceload = false)
 		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
 			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $modSettings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
 		// Full URL?
-		elseif (substr($user_info['avatar']['url'], 0, 7) == 'http://')
+		elseif (strpos($user_info['avatar']['url'], 'http://') === 0)
 		{
 			$context['user']['avatar']['href'] = $user_info['avatar']['url'];
 
@@ -2696,7 +2696,7 @@ function setupThemeContext($forceload = false)
 			}
 		}
 		// Gravatar?
-		elseif (substr($user_info['avatar']['url'], 0, 11) == 'gravatar://')
+		elseif (strpos($user_info['avatar']['url'], 'gravatar://') === 0)
 		{
 			if ($user_info['avatar']['url'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']))
 				$context['user']['avatar']['href'] = get_gravatar_url($user_info['email']);
