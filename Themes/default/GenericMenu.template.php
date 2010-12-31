@@ -45,7 +45,8 @@ function template_generic_menu_sidebar_above()
 			{
 				if ($area === '')
 					echo '
-					<li class="separator"></li>';
+					<li class="sep1"></li>
+					<li class="sep2"></li>';
 				continue;
 			}
 
@@ -128,7 +129,8 @@ function template_generic_menu_dropdown_above()
 			{
 				if ($area === '')
 					echo '
-			<li class="separator"></li>';
+			<li class="sep1"></li>
+			<li class="sep2"></li>';
 				continue;
 			}
 

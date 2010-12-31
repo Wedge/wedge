@@ -388,7 +388,7 @@ em {
 	padding: 0 10px;
 }
 
-.menu li a {
+.menu li a, li.sep1, li.sep2 {
 	display: block;
 	text-decoration: none;
 	border: 4px solid #fbe2c8;
@@ -523,9 +523,17 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 	padding-right: 6px;
 }
 
-li.separator {
-	background: #ccc;
-	height: 1px;
+/* Separator code. Totally non-semantic. We'll let that one go for once. */
+li.sep1.hove, li.sep2.hove {
+	background: none;
+}
+li.sep1 {
+	border-bottom: 1px solid #ccc;
+	height: 3px;
+}
+/* Add a border-top here for a 3D effect. Couldn't find anything satisfying, though. */
+li.sep2 {
+	height: 3px;
 }
 
 /*	Pure CSS menu emulation... Until JS takes over
