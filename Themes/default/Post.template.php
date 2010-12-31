@@ -433,8 +433,9 @@ function template_main()
 						', $txt['attach'], ':
 					</dt>
 					<dd class="smalltext">
-						<input type="file" name="attachment[]" id="attachment1" class="input_file" />
-						<div id="attachments_container"></div>
+						<div id="attachments_container">
+							<input type="file" name="attachment[]" id="attachment1" class="input_file" />
+						</div>
 					</dd>
 					<dd class="smalltext">';
 

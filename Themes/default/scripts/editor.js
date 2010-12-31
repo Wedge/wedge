@@ -1788,113 +1788,120 @@ smc_BBCButtonBox.prototype.setSelect = function(sSelectName, sValue)
 };
 
 /*
-	Attachment selector, based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
-	The code below is modified under the MIT licence, http://the-stickman.com/using-code-from-this-site-ie-licence/ not reproduced here for
-	convenience of users using this software (as this is an active downloaded file)
+	Attachment selector, originally based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
+	The original code is MIT licensed, as discussed on http://the-stickman.com/using-code-from-this-site-ie-licence/
+	This is quite heavily rewritten though to suit our purposes.
 */
 
 function wedgeAttachSelect(oOptions)
 {
-	wedgeAttachSelect.prototype.opts = oOptions;
-	wedgeAttachSelect.prototype.count = 0;
-	wedgeAttachSelect.prototype.attachId = 0;
-	wedgeAttachSelect.prototype.max = (oOptions.max) ? oOptions.max : -1;
-	wedgeAttachSelect.prototype.addElement(document.getElementById(wedgeAttachSelect.prototype.opts.file_item));
-}
+	this.opts = oOptions;
+	this.count = 0;
+	this.attachId = 0;
+	this.max = (oOptions.max) ? oOptions.max : -1;
 
-wedgeAttachSelect.prototype.addElement = function(element)
-{
-	// Make sure it's a file input element, ignore it if not
-	if (element.tagName == 'INPUT' && element.type == 'file')
+	// Yay for scope issues.
+	this.checkExtension = function(filename)
 	{
-		element.id = 'file_' + this.attachId++;
-		element.name = 'attachment[]';
-		element.multi_selector = this;
-		element.onchange = function()
+		if (!this.opts.attachment_ext)
+			return true; // we're not checking
+
+		var dot = filename.lastIndexOf(".");
+		if (!filename || filename.length == 0 || dot == -1)
 		{
-			if (element.value == '')
-				return;
+			this.opts.message_ext_error_final = this.opts.message_ext_error.replace(' ({ext})', '');
+			return false; // pfft, didn't specify anything, or no extension
+		}
 
-			// Check if it's a valid extension (if we're checking such things)
-			if (!wedgeAttachSelect.prototype.checkExtension(element.value))
-			{
-				alert(wedgeAttachSelect.prototype.opts.message_ext_error_final);
-				element.value = '';
-				return;
-			}
-
-			var new_element = $('<input type="file" class="input_file" />')[0];
-
-			// Add new element, update everything
-			this.parentNode.insertBefore(new_element, document.getElementById(wedgeAttachSelect.prototype.opts.file_container));
-			this.multi_selector.addElement(new_element);
-			this.multi_selector.addListRow(this);
-
-			// Hide this: we can't use display:none because Safari doesn't like it
-			$(this).css({ position: 'absolute', left: '-1000px' });
-		};
-
-		this.count++;
-		this.current_element = element;
-		this.checkActive();
-	}
-};
-
-wedgeAttachSelect.prototype.checkExtension = function(filename)
-{
-	if (!wedgeAttachSelect.prototype.opts.attachment_ext)
-		return true; // we're not checking
-
-	var dot = filename.lastIndexOf(".");
-	if (!filename || filename.length == 0 || dot == -1)
-	{
-		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace(' ({ext})', '');
-		return false; // pfft, didn't specify anything, or no extension
-	}
-
-	var ext = (filename.substr(dot + 1, filename.length)).toLowerCase();
-	var arr = this.opts.attachment_ext;
-	var func = Array.prototype.indexOf ?
-		function (arr, obj) { return arr.indexOf(obj) !== -1; } :
-		function (arr, obj) {
-			for (var i = -1, j = arr.length; ++i < j;)
-				if (arr[i] === obj) return true;
+		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
+		if ($.inArray(extension, this.opts.attachment_ext) == -1)
+		{
+			this.opts.message_ext_error_final = this.opts.message_ext_error.replace('{ext}', extension);
 			return false;
-		};
-	var value = func(arr, ext);
-	if (!value)
-		wedgeAttachSelect.prototype.opts.message_ext_error_final = wedgeAttachSelect.prototype.opts.message_ext_error.replace('{ext}', ext);
+		}
 
-	return value;
-};
+		return true;
+	};
 
-wedgeAttachSelect.prototype.addListRow = function(element)
-{
-	var new_row = document.createElement('div');
-	new_row.element = element;
-	new_row.innerHTML = element.value + '&nbsp; &nbsp;';
+	this.checkActive = function()
+	{
+		var session_attach = 0;
+		$('input[type="checkbox"]').each(function() {
+			if (this.name == 'attach_del[]' && this.checked == true)
+				session_attach++;
+		});
 
-	$('<input type="button" class="button_submit" value="' + this.opts.message_txt_delete + '" />').click(function() {
-		// Remove element from form
-		this.parentNode.element.parentNode.removeChild(this.parentNode.element);
-		this.parentNode.parentNode.removeChild(this.parentNode);
-		this.parentNode.element.multi_selector.count--;
-		wedgeAttachSelect.prototype.checkActive();
-		return false;
-	}).appendTo(new_row);
+		this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
+	};
 
-	document.getElementById(this.opts.file_container).appendChild(new_row);
-};
+	this.selectorHandler = function(event)
+	{
+		var element = event.target;
 
-wedgeAttachSelect.prototype.checkActive = function()
-{
-	var session_attach = 0;
-	$('input[type="checkbox"]').each(function() {
-		if (this.name == 'attach_del[]' && this.checked == true)
-			session_attach++;
-	});
+		if ($(element).val() == '')
+			return false;
 
-	this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
+		// We've got one!! Check it, bag it.
+		if (that.checkExtension(element.value))
+		{
+			// Hide this input.
+			$(element).css({ position: 'absolute', left: '-1000px' });
+
+			// Add a new file selector.
+			that.createFileSelector();
+
+			// Add the display entry and remove button.
+			var new_row = document.createElement('div');
+			new_row.element = element;
+			new_row.innerHTML = element.value + '&nbsp; &nbsp;';
+
+			$('<input type="button" class="button_submit" value="' + that.opts.message_txt_delete + '" />').click(function() {
+				// Remove element from form
+				this.parentNode.element.parentNode.removeChild(this.parentNode.element);
+				this.parentNode.parentNode.removeChild(this.parentNode);
+				this.parentNode.element.multi_selector.count--;
+				that.checkActive();
+				return false;
+			}).appendTo(new_row);
+
+			$('#' + that.opts.file_container).append(new_row);
+
+			that.count++;
+			that.current_element = element;
+			that.checkActive();
+		}
+		else
+		// Uh oh.
+		{
+			alert(this.opts.message_ext_error_final);
+			that.createFileSelector();
+			$(element).remove();
+		}
+	};
+
+	this.prepareFileSelector = function(element)
+	{
+		if (element.tagName != 'INPUT' || element.type != 'file')
+			return;
+
+		$(element).attr({
+			id: 'file_' + this.attachId++,
+			name: 'attachment[]'
+		});
+		element.multi_selector = this;
+		$(element).bind('change', function (event) { that.selectorHandler(event); });
+	};
+
+	this.createFileSelector = function ()
+	{
+		var new_element = $('<input type="file" class="input_file" />').prependTo('#' + this.opts.file_container);
+		this.current_element = new_element[0];
+		this.prepareFileSelector(new_element[0]);
+	};
+
+	// And finally, we begin.
+	var that = this;
+	that.prepareFileSelector($('#' + this.opts.file_item)[0]);
 };
 
 // Handles auto saving of posts.
