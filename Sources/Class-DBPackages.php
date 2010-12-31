@@ -31,24 +31,25 @@ class wedbPackages
 
 	public static function getInstance()
 	{
-		global $db_package_log;
+		global $db_package_log, $db_prefix;
 		// Quero ergo sum
 		if (self::$instance == null)
 		{
 			// Things we do on creation; it's like a constructor but not quite.
 			self::$instance = new self();
+			self::$reservedTypes = array();
 
-			self::$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
+			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
 			'board_members', 'board_permissions', 'boards', 'calendar', 'calendar_holidays', 'categories', 'collapsed_categories',
-			'custom_fields', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards', 'log_comments',
+			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards', 'log_comments',
 			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
 			'log_online', 'log_packages', 'log_polls', 'log_reported', 'log_reported_comments', 'log_scheduled_tasks',
 			'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics', 'mail_queue',
 			'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'openid_assoc', 'package_servers',
 			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
 			'pretty_topic_urls', 'pretty_urls_cache', 'scheduled_tasks', 'sessions', 'settings', 'smileys', 'spiders',
-			'subscriptions', 'themes', 'topics');
-			foreach (self::$reservedTables as $k => $table_name)
+			'subscriptions', 'subscriptions_groups', 'themes', 'topics');
+			foreach ($reservedTables as $k => $table_name)
 				self::$reservedTables[$k] = strtolower($db_prefix . $table_name);
 
 			// We in turn may need the extra stuff.
