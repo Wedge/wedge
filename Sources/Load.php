@@ -1144,12 +1144,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'real_posts' => $profile['posts'],
 		'posts' => $profile['posts'] > 500000 ? $txt['geek'] : comma_format($profile['posts']),
-		'avatar' => array(
-			'name' => $profile['avatar'],
-			'image' => $profile['avatar'] == '' ? ($profile['id_attach'] > 0 ? '<img class="avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '" />' : '') : (stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . ' />' : '<img class="avatar" src="' . $modSettings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '" />'),
-			'href' => $profile['avatar'] == '' ? ($profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) : '') : (stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar']),
-			'url' => $profile['avatar'] == '' ? '' : (stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'])
-		),
 		'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
 		'last_login_timestamp' => empty($profile['last_login']) ? 0 : forum_time(0, $profile['last_login']),
 		'ip' => htmlspecialchars($profile['member_ip']),
@@ -1178,14 +1172,58 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
 	);
 
-	// Has this user been banned? Should we remove their avatar too?
-	if (!empty($modSettings['avatar_banned_hide']) && $memberContext[$user]['is_banned'])
-		$memberContext[$user]['avatar'] = array(
-			'name' => '',
-			'image' => '',
-			'href' => '',
-			'url' => '',
-		);
+	// Avatars are tricky, so let's do them next. Start with an empty template.
+	$memberContext[$user]['avatar'] = array(
+		'name' => '',
+		'image' => '',
+		'href' => '',
+		'url' => '',
+	);
+
+	// So, they're not banned, or if they are, we're not hiding their avatar.
+	if (!$memberContext[$user]['is_banned'] || empty($modSettings['avatar_banned_hide']))
+	{
+		// So it's stored in members/avatar?
+		if (!empty($profile['avatar']))
+		{
+			if (stristr($profile['avatar'], 'gravatar://'))
+			{
+				if ($profile['avatar'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']))
+					$image = get_gravatar_url($profile['email_address']);
+				else
+					$image = get_gravatar_url(substr($profile['avatar'], 11));
+
+				$memberContext[$user]['avatar'] = array(
+					'name' => $profile['avatar'],
+					'image' => '<img class="avatar" src="' . $image . '"' . $avatar_width . $avatar_height . ' />',
+					'href' => $image,
+					'url' => $image,
+				);
+			}
+			else
+				$memberContext[$user]['avatar'] = array(
+					'name' => $profile['avatar'],
+					'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . ' />' : '<img class="avatar" src="' . $modSettings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '" />',
+					'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'],
+					'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'],
+				);
+		}
+		// It's an attachment?
+		elseif (!empty($profile['id_attach']))
+		{
+			$memberContext[$user]['avatar'] = array(
+				'name' => $profile['avatar'],
+				'image' => $profile['id_attach'] > 0 ? '<img class="avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '" />' : '',
+				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) : '',
+				'url' => '',
+			);
+		}
+		// Default avatar?
+		elseif (false)
+		{
+		
+		}
+	}
 
 	// First do a quick run through to make sure there is something to be shown.
 	$memberContext[$user]['has_messenger'] = false;

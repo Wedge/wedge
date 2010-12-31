@@ -2695,6 +2695,19 @@ function setupThemeContext($forceload = false)
 					$context['user']['avatar']['height'] = $modSettings['avatar_max_height_external'];
 			}
 		}
+		// Gravatar?
+		elseif (substr($user_info['avatar']['url'], 0, 11) == 'gravatar://')
+		{
+			if ($user_info['avatar']['url'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']))
+				$context['user']['avatar']['href'] = get_gravatar_url($user_info['email']);
+			else
+				$context['user']['avatar']['href'] = get_gravatar_url(substr($user_info['avatar']['url'], 11));
+
+			if (!empty($modSettings['avatar_max_width_external']))
+				$context['user']['avatar']['width'] = $modSettings['avatar_max_width_external'];
+			if (!empty($modSettings['avatar_max_height_external']))
+				$context['user']['avatar']['height'] = $modSettings['avatar_max_height_external'];
+		}
 		// Otherwise we assume it's server stored?
 		elseif ($user_info['avatar']['url'] != '')
 			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
@@ -4168,6 +4181,32 @@ function add_linktree($url, $name)
 	global $context;
 
 	$context['linktree'][] = array('url' => $url, 'name' => $name);
+}
+
+/**
+ * Return a Gravatar URL based on the supplied email address, the global maximum rating, and maximum sizes as set in the admin panel.
+ *
+ * @todo Add the default URL support once we have one.
+ */
+function get_gravatar_url($email_address)
+{
+	global $modSettings;
+	static $size_string = null;
+	if ($size_string === null)
+	{
+		if (!empty($modSettings['avatar_max_width_external']))
+			$size_string = (int) $modSettings['avatar_max_width_external'];
+		if (!empty($modSettings['avatar_max_height_external']) && !empty($size_string))
+			if ((int) $modSettings['avatar_max_height_external'] < $size_string)
+				$size_string = $modSettings['avatar_max_height_external'];
+
+		if (!empty($size_string))
+			$size_string = '&s=' . $size_string;
+		else
+			$size_string = '';
+	}
+	
+	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($modSettings['gravatarMaxRating']) ? '&rating=' . $modSettings['gravatarMaxRating']: '') . $size_string;
 }
 
 ?>
