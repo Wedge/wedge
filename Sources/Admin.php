@@ -529,23 +529,6 @@ function AdminHome()
 	loadSource('Credits');
 	Credits(true);
 
-	// Fill in the blanks in the support resources paragraphs.
-	// !!! Update links and figure out why they don't show up in the French version.
-	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
-		'http://docs.simplemachines.org/',
-		'http://docs.simplemachines.org/redirect/features',
-		'http://docs.simplemachines.org/redirect/settings',
-		'http://docs.simplemachines.org/redirect/themes',
-		'http://docs.simplemachines.org/redirect/packages'
-	);
-	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
-		'http://www.simplemachines.org/community/',
-		'http://www.simplemachines.org/redirect/english_support',
-		'http://www.simplemachines.org/redirect/international_support_boards',
-		'http://www.simplemachines.org/redirect/smf_support',
-		'http://www.simplemachines.org/redirect/customize_support'
-	);
-
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
 
@@ -620,6 +603,23 @@ function AdminHome()
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
 	}
+
+	// Fill in the blanks in the support resources paragraphs.
+	// !!! Update links
+	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
+		'http://docs.simplemachines.org/',
+		'http://docs.simplemachines.org/redirect/features',
+		'http://docs.simplemachines.org/redirect/settings',
+		'http://docs.simplemachines.org/redirect/themes',
+		'http://docs.simplemachines.org/redirect/packages'
+	);
+	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
+		'http://www.simplemachines.org/community/',
+		'http://www.simplemachines.org/redirect/english_support',
+		'http://www.simplemachines.org/redirect/international_support_boards',
+		'http://www.simplemachines.org/redirect/smf_support',
+		'http://www.simplemachines.org/redirect/customize_support'
+	);
 }
 
 // This allocates out all the search stuff.

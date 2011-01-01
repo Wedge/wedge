@@ -1810,11 +1810,11 @@ function wedgeAttachSelect(oOptions)
 		if (!filename || filename.length == 0 || dot == -1)
 		{
 			this.opts.message_ext_error_final = this.opts.message_ext_error.replace(' ({ext})', '');
-			return false; // pfft, didn't specify anything, or no extension
+			return false; // Pfft, didn't specify anything, or no extension
 		}
 
 		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
-		if ($.inArray(extension, this.opts.attachment_ext) == -1)
+		if (!in_array(extension, this.opts.attachment_ext))
 		{
 			this.opts.message_ext_error_final = this.opts.message_ext_error.replace('{ext}', extension);
 			return false;
