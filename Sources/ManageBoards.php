@@ -371,6 +371,9 @@ function EditCategory2()
 }
 
 // Modify a specific board...
+// !!! To do:
+//		- Make sure no one uses the default pretty URL...
+//		- Silently make a default pretty board URL if the feature is disabled (we might need it later)
 function EditBoard()
 {
 	global $txt, $context, $cat_tree, $boards, $boardList, $modSettings, $user_info;
@@ -409,7 +412,7 @@ function EditBoard()
 
 	if ($_REQUEST['sa'] == 'newboard')
 	{
-		// Category doesn't exist, man... sorry.
+		// Category doesn't exist, man... Sorry.
 		if (empty($_REQUEST['cat']))
 			redirectexit('action=admin;area=manageboards');
 
@@ -803,7 +806,7 @@ function EditBoardSettings($return_config = false)
 	$("#recycle_board").attr("disabled", !($("#recycle_enable").attr("checked")));');
 
 	// Warn the admin against selecting the recycle topic without selecting a board.
-	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').attr(\'checked\') && $(\'#recycle_board\').val() == 0) { return confirm(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . ');} return true;';
+	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').attr(\'checked\') && $(\'#recycle_board\').val() == 0) { return confirm(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . '); } return true;';
 
 	// Doing a save?
 	if (isset($_GET['save']))

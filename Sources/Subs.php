@@ -2563,14 +2563,10 @@ function url_image_size($url)
 	preg_match('~^\w+://(.+?)/(.*)$~', $url, $match);
 
 	// Can't figure it out, just try the image size.
-	if ($url == '' || $url == 'http://' || $url == 'https://')
-	{
+	if ($url == '' || $url === 'http://' || $url === 'https://')
 		return false;
-	}
 	elseif (!isset($match[1]))
-	{
 		$size = @getimagesize($url);
-	}
 	else
 	{
 		// Try to connect to the server... give it half a second.
@@ -2819,15 +2815,17 @@ function wedge_cache_css()
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+	$context['extra_styling_css'] = '';
 
 	foreach ($context['css_folders'] as $folder)
 	{
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
+		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
 		foreach ($context['css_generic_files'] as $file)
 		{
-			$add = $settings[$target . 'dir'] . '/' . $folder . '/' . $file . '.css';
+			$add = $fold . $file . '.css';
 			if (file_exists($add))
 			{
 				$css[] = $add;
@@ -2840,6 +2838,22 @@ function wedge_cache_css()
 
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
 	$id .= $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
+
+	// The last folder in the list is the deepest styling.
+	// It's the one that gets CSS/JavaScript attention.
+	// !!! Move Pastel to a sub-folder and restore the comment below.
+	if (/*$folder !== 'css' &&*/ file_exists($fold . 'settings.xml'))
+	{
+		$set = file_get_contents($fold . '/settings.xml');
+		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
+					$context['extra_styling_css'] .= rtrim($match[2], "\t");
+		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
+					add_js(rtrim($match[2], "\t"));
+	}
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
@@ -3141,7 +3155,7 @@ function theme_copyright()
  */
 function theme_base_css()
 {
-	global $context;
+	global $context, $boardurl;
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
 	if (empty($context['cached_css']))
@@ -3149,6 +3163,15 @@ function theme_base_css()
 
 	echo '
 	<link rel="stylesheet" href="', $context['cached_css'], '" />';
+
+	if (!empty($context['extra_styling_css']))
+	{
+		// Replace {root} with the forum's root URL in context, because pretty URLs complicate things in IE.
+		if (strpos($context['extra_styling_css'], '{root}') !== false)
+			$context['extra_styling_css'] = str_replace('{root}', strpos($boardurl, '://' . $_SERVER['HTTP_HOST']) !== false ? $boardurl
+				: preg_replace('~(?<=://)([^/]+)~', $_SERVER['HTTP_HOST'], $boardurl), $context['extra_styling_css']);
+		echo "\n\t<style>", $context['extra_styling_css'], "\t</style>";
+	}
 }
 
 /**

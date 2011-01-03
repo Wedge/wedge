@@ -58,12 +58,7 @@ function cleanRequest()
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
-		// !!! WIP
-/*		if (strpos($boardurl, '.noisen.com') !== false)
-			$boardurl = 'http://noisen.com';
-		elseif (strpos($boardurl, '.geeld.org') !== false)
-			$boardurl = 'http://geeld.org'; */
-/*		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 	}
 	else */
 	$scripturl = $boardurl . '/index.php';
@@ -72,10 +67,9 @@ function cleanRequest()
 	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
 
 	// Save some memory.. (since we don't use these anyway.)
-	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_VARS']);
-	unset($GLOBALS['HTTP_POST_FILES'], $GLOBALS['HTTP_POST_FILES']);
+	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_FILES']);
 
-	// These keys shouldn't be set...ever.
+	// These keys shouldn't be set... Ever.
 	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
 		die('Invalid request variable.');
 
@@ -89,7 +83,7 @@ function cleanRequest()
 		if (is_numeric($key))
 			unset($_COOKIE[$key]);
 
-	// Get the correct query string.  It may be in an environment variable...
+	// Get the correct query string. It may be in an environment variable...
 	if (!isset($_SERVER['QUERY_STRING']))
 		$_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
 
@@ -171,7 +165,7 @@ function cleanRequest()
 	{
 		// !!! Authorize URLs like noisen.com:80
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
-		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/EMPTY');
+		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 		$ph = strpos($_SERVER['HTTP_HOST'], '.noisen.com'); // !!! WIP
 		$hh = substr($_SERVER['HTTP_HOST'], 0, $ph > 0 ? $ph : strlen($_SERVER['HTTP_HOST']));
 
@@ -275,7 +269,7 @@ function cleanRequest()
 				$_FILES[$k]['name'] = $removeMagicQuoteFunction($_FILES[$k]['name']);
 	}
 
-	// Add entities to GET.  This is kinda like the slashes on everything else.
+	// Add entities to GET. This is kinda like the slashes on everything else.
 	$_GET = htmlspecialchars__recursive($_GET);
 
 	// Let's not depend on the ini settings... why even have COOKIE in there, anyway?
@@ -290,7 +284,7 @@ function cleanRequest()
 		// If there's a slash in it, we've got a start value!
 		if (strpos($_REQUEST['board'], '/') !== false && strpos($_REQUEST['board'], $_SERVER['HTTP_HOST']) === false)
 			list ($_REQUEST['board'], $_REQUEST['start']) = explode('/', $_REQUEST['board']);
-		// Same idea, but dots.  This is the currently used format - ?board=1.0...
+		// Same idea, but dots. This is the currently used format - ?board=1.0...
 		elseif (strpos($_REQUEST['board'], '.') !== false)
 		{
 			list ($reqboard, $reqstart) = explode('.', $_REQUEST['board']);
@@ -318,7 +312,7 @@ function cleanRequest()
 	else
 		$board = 0;
 
-	// If there's a threadid, it's probably an old YaBB SE link.  Flow with it.
+	// If there's a threadid, it's probably an old YaBB SE link. Flow with it.
 	if (isset($_REQUEST['threadid']) && !isset($_REQUEST['topic']))
 		$_REQUEST['topic'] = $_REQUEST['threadid'];
 
@@ -328,10 +322,10 @@ function cleanRequest()
 		// Make sure it's a string and not something else like an array
 		$_REQUEST['topic'] = (string) $_REQUEST['topic'];
 
-		// Slash means old, beta style, formatting.  That's okay though, the link should still work.
+		// Slash means old, beta style, formatting. That's okay though, the link should still work.
 		if (strpos($_REQUEST['topic'], '/') !== false)
 			list ($_REQUEST['topic'], $_REQUEST['start']) = explode('/', $_REQUEST['topic']);
-		// Dots are useful and fun ;).  This is ?topic=1.15.
+		// Dots are useful and fun ;). This is ?topic=1.15.
 		elseif (strpos($_REQUEST['topic'], '.') !== false)
 			list ($_REQUEST['topic'], $_REQUEST['start']) = explode('.', $_REQUEST['topic']);
 
@@ -377,7 +371,7 @@ function cleanRequest()
 
 	unset($_REQUEST['pretty'], $_GET['pretty']);
 
-	// There should be a $_REQUEST['start'], some at least.  If you need to default to other than 0, use $_GET['start'].
+	// There should be a $_REQUEST['start'], some at least. If you need to default to other than 0, use $_GET['start'].
 	if (empty($_REQUEST['start']) || $_REQUEST['start'] < 0)
 		$_REQUEST['start'] = 0;
 

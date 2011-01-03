@@ -87,7 +87,7 @@ function pretty_urls_actions_filter($urls)
 	$pattern = array(
 		'~.*[?;&]action=media;sa=media;in=([0-9]+);(thumba?|preview)(.*)~S',
 		'~.*[?;&]action=media;sa=(album|item|media);in=([0-9]+)(.*)~S',
-		'~.*[?;&]action=(media|pm)(.*)~S', // (media|pm|admin)
+		'~.*[?;&]action=(media|pm)(.*)~S',
 		// '~.*[?;&]action=helpdesk(.*)~S', // This is just an example for a custom action and a different subdomain name...
 	);
 	$replacement = array(
@@ -96,14 +96,13 @@ function pretty_urls_actions_filter($urls)
 		'http://$1.wedgeo.com/?$2',
 		// 'http://tracker.wedgeo.com/?$1', // See? That's easy.
 	);
-	if (isset($_POST['noh']))
-		unset($pattern[0], $pattern[1], $pattern[2], $replacement[0], $replacement[1], $replacement[2]);
 	foreach ($urls as $url_id => $url)
 		if (!isset($url['replacement']))
 			if (preg_match('~action=(?:media|pm|helpdesk)~', $url['url'])) // |admin
 				$urls[$url_id]['replacement'] = preg_replace($pattern, $replacement, $url['url']);
 	return $urls;
 
+// A much simpler version that accounts for all actions...
 /*	$pattern = '~(.*)action=([^;]+)~S';
 	$replacement = $boardurl . '/$2/$1';
 	foreach ($urls as $url_id => $url)
@@ -118,8 +117,7 @@ function pretty_urls_topic_filter($urls)
 {
 	global $context, $modSettings, $scripturl;
 
-/////////////////////////////////// .a-z ?!?! Y'a un 'blème......
-	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
+	$pattern = '~(.*[?;&])topic=([0-9\.]+)(.*)~S';
 	$query_data = array();
 	foreach ($urls as $url_id => $url)
 	{
@@ -268,7 +266,7 @@ function pretty_urls_board_filter($urls)
 {
 	global $scripturl, $modSettings, $context;
 
-	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;mois=(\d{6,8}))?(.*)~S';
+	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
 	foreach ($urls as $url_id => $url)
 		// Split out the board URLs and replace them
@@ -327,18 +325,17 @@ function pretty_profiles_filter($urls)
 	foreach ($urls as $url_id => &$url)
 	{
 		// Get the profile data ready to query the database with
-		if (!isset($url['replacement']))
-			if (preg_match($pattern, $url['url'], $matches))
-			{
-				$url['this_is_me'] = empty($matches[2]);
-				$url['profile_id'] = (int) $matches[3];
-				$url['match1'] = $matches[1];
-				$url['match3'] = $matches[4];
-				if ($url['profile_id'] > 0)
-					$query_data[] = $url['profile_id'];
-				else
-					$url['replacement'] = 'http://my.' . $_SERVER['HTTP_HOST'] . '/' . ($url['this_is_me'] ? '' : 'guest/') . ($url['match3'] == ';sites' ? 'sites/' : $url['match1'] . $url['match3']);
-			}
+		if (!isset($url['replacement']) && preg_match($pattern, $url['url'], $matches))
+		{
+			$url['this_is_me'] = empty($matches[2]);
+			$url['profile_id'] = (int) $matches[3];
+			$url['match1'] = $matches[1];
+			$url['match3'] = $matches[4];
+			if ($url['profile_id'] > 0)
+				$query_data[] = $url['profile_id'];
+			else
+				$url['replacement'] = 'http://my.' . $_SERVER['HTTP_HOST'] . '/' . ($url['this_is_me'] ? '' : 'guest/') . ($url['match3'] == ';sites' ? 'sites/' : $url['match1'] . $url['match3']);
+		}
 	}
 
 	// Query the database with these profile IDs

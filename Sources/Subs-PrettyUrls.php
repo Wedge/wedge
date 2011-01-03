@@ -186,25 +186,9 @@ function pretty_update_topic($subject, $topic_id)
 
 	$pretty_text = trimpercent(substr(pretty_generate_url($subject), 0, 80));
 
-	// Is the URL already there?
-	// !!! Useless: we're storing the topic ID as well...
-/*	$query = wesql::query('
-		SELECT id_topic
-		FROM {db_prefix}pretty_topic_urls
-		WHERE pretty_url = {string:pretty_text}
-		LIMIT 1', array('pretty_text' => $pretty_text));
-
-	// If it's not unique we need to change it
-	$notunique = wesql::num_rows($query);
-	wesql::free_result($query);
-	// mettre le count plus bas à +2 quand on ne s'en foutra plus...
-*/
-	$notunique = 0; // Pour l'instant on s'en fout, parce que les topics ont des n°s dans l'URL...
-
-	// Can't be empty, can't be a number and can't be the same as another
-	if ($pretty_text == '' || is_numeric($pretty_text) || $notunique != 0)
-		// Add suffix '-tID_TOPIC' to the pretty url
-		$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . ($pretty_text != '' ? '-t' : 't') . $topic_id;
+	// Can't be empty
+	if ($pretty_text == '')
+		$pretty_text = '-';
 
 	// Update the database
 	wesql::query('
@@ -214,7 +198,7 @@ function pretty_update_topic($subject, $topic_id)
 			'pretty_text' => $pretty_text
 		));
 
-	// Count those queries!
+	// Count this query!
 	if (isset($context))
 		$context['pretty']['db_count']++;
 }
@@ -226,7 +210,7 @@ function pretty_update_topic($subject, $topic_id)
 // - Reset filters
 // - Save new pretty board URLs
 
-// !!! @todo: Move code to SMF converter?
+// !!! @todo: Move code to SMF converter!
 function install_pretty_urls()
 {
 	global $modSettings, $boardurl;

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+	See Nix/settings.xml for descriptions.
+-->
+<styling>
+
+	<name>
+		Pastel
+	</name>
+
+	<comment><![CDATA[
+		By Nao, inspired by Bloc's Curve. Obviously.
+	]]></comment>
+
+	<css for="ie7,ie8"><![CDATA[
+		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a {
+			behavior: url({root}/Themes/default/css/PIE.htc);
+			position: relative;
+		}
+	]]></css>
+
+	<code for="ie6"><![CDATA[
+	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
+	]]></code>
+
+</styling>

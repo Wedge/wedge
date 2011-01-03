@@ -2002,6 +2002,10 @@ function ModifyGeneralModSettings($return_config = false)
 	See PrettyUrls-Filters.php for more details.
 */
 
+// !!! To-do:
+//		- Disable the area and feature, and explain why, if $boardurl has a subfolder name in it!
+//			i.e. if (preg_match('~://[^/]+/[^/]+~', $boardurl))
+
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs()
 {

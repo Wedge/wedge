@@ -75,6 +75,11 @@ function template_html_above()
 <!-- Powered by Wedge, (c) Wedgeward 2010 - http://wedgeforum.com -->
 <head>';
 
+	// Our alltime favorites don't really like HTML5...
+	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
+		echo '
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
+
 	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
@@ -86,20 +91,6 @@ function template_html_above()
 	if (!empty($context['robot_no_index']))
 		echo '
 	<meta name="robots" content="noindex" />';
-
-	if ($context['browser']['is_ie7'] || $context['browser']['is_ie8'])
-	{
-		$theme_url = empty($modSettings['pretty_enable_filters']) || empty($context['current_board']) ? $settings['default_theme_url'] : preg_replace('~(?<=//)([^/]+)~', $_SERVER['HTTP_HOST'], $settings['default_theme_url']);
-		echo '
-	<style>
-		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a { position: relative; behavior: url(', $theme_url, '/css/PIE.htc); }
-	</style>';
-	}
-
-	// Our alltime favorites don't really like HTML5...
-	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
-		echo '
-	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	// Present a canonical url for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))
@@ -322,8 +313,7 @@ function template_html_below()
 	var smf_scripturl = "', $scripturl, '";
 	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
 	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";', $context['browser']['is_ie6'] ? '
-	DD_belatedPNG.fix(\'div,#wedgelogo,#boardindex_table img\');' : '', '
+	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
 
 	initMenu("main_menu");
 
