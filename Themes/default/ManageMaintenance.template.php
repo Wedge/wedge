@@ -282,25 +282,19 @@ function template_maintain_topics()
 	</div>';
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
-	add_js_inline('
+	add_js('
 	var rotSwap = false;
 	function swapRot()
 	{
 		rotSwap = !rotSwap;
 
-		// Toggle icon
-		document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif");
-		document.getElementById("rotText").innerHTML = rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ';
-
-		// Toggle panel
-		document.getElementById("rotPanel").style.display = !rotSwap ? "none" : "";
-
-		// Toggle checkboxes
-		var rotPanel = document.getElementById(\'rotPanel\');
-		var oBoardCheckBoxes = rotPanel.getElementsByTagName(\'input\');
-		for (var i = 0; i < oBoardCheckBoxes.length; i++)
-			if (oBoardCheckBoxes[i].type.toLowerCase() == "checkbox")
-				oBoardCheckBoxes[i].checked = !rotSwap;
+		$("#rotIcon").attr("src", smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif"));
+		$("#rotText").html(rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
+		$("#rotPanel").toggle(rotSwap);
+		$("#rotPanel input").each(function () {
+			if (this.type.toLowerCase() == "checkbox")
+				this.checked = !rotSwap;
+		});
 	}');
 
 	echo '

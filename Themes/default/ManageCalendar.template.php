@@ -7,7 +7,7 @@ function template_edit_holiday()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Start with javascript for getting the calendar dates right.
-	add_js_inline('
+	add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()

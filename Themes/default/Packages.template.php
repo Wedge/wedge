@@ -324,14 +324,12 @@ function template_view_package()
 
 	// And a bit more for database changes.
 	if (!empty($context['database_changes']))
-		add_js_inline('
-	var database_changes_area = document.getElementById(\'db_changes_div\');
-	var db_vis = false;
-	database_changes_area.style.display = "none";
+		add_js('
+	var database_changes_area = $(\'#db_changes_div\');
+	database_changes_area.hide();
 	function swap_database_changes()
 	{
-		db_vis = !db_vis;
-		database_changes_area.style.display = db_vis ? "" : "none";
+		database_changes_area.toggle();
 		return false;
 	}');
 }

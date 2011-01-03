@@ -53,12 +53,12 @@ function template_event_post()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// Start the javascript for drop down boxes...
-	add_js_inline('
+	add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
 	{
-		var days = 0, selected = 0, dayElement = $("#day")[0], $("#year").val(), monthElement = ("#month")[0];
+		var days = 0, selected = 0, dayElement = $("#day")[0], year = $("#year").val(), monthElement = ("#month")[0];
 
 		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
 

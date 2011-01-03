@@ -665,21 +665,6 @@ function template_show_settings()
 {
 	global $context, $txt, $settings, $scripturl;
 
-	// If we have BBC selection we have a bit of JS.
-	if (!empty($context['bbc_sections']))
-		add_js_inline('
-	function toggleBBCDisabled(section, disable)
-	{
-		for (var i = 0; i < document.forms.bbcForm.length; i++)
-		{
-			if (typeof(document.forms.bbcForm[i].name) == "undefined" || (document.forms.bbcForm[i].name.substr(0, 11) != "enabledTags") || (document.forms.bbcForm[i].name.indexOf(section) != 11))
-				continue;
-
-			document.forms.bbcForm[i].disabled = disable;
-		}
-		document.getElementById("bbc_" + section + "_select_all").disabled = disable;
-	}');
-
 	echo '
 	<div id="admincenter">
 		<form action="', $context['post_url'], '" method="post" accept-charset="UTF-8"', !empty($context['force_form_onsubmit']) ? ' onsubmit="' . $context['force_form_onsubmit'] . '"' : '', '>';
@@ -1229,7 +1214,7 @@ function template_core_features()
 	$switch_off = JavaScriptEscape($txt['core_settings_switch_off']);
 	$switch_on = JavaScriptEscape($txt['core_settings_switch_on']);
 
-	add_js_inline('
+	add_js('
 	function toggleItem(itemID)
 	{
 		// Toggle the hidden item.
@@ -1239,8 +1224,8 @@ function template_core_features()
 		// Change the image, alternative text and the title.
 		$("#switch_" + itemID).attr({
 			src: \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.val() == 1 ? \'on\' : \'off\') + \'.png\',
-			alt: itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, ',
-			title: itemValueHandle.value == 1 ? ', $switch_off, ' : ', $switch_on, '
+			alt: itemValueHandle.val() == 1 ? ', $switch_off, ' : ', $switch_on, ',
+			title: itemValueHandle.val() == 1 ? ', $switch_off, ' : ', $switch_on, '
 		});
 
 		return false;

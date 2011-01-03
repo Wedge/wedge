@@ -7,11 +7,11 @@ function template_modify_subscription()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Javascript for the duration stuff.
-	add_js_inline('
+	add_js('
 	function toggleDuration(toChange)
 	{
-		document.getElementById("fixed_area").style.display = toChange == \'fixed\' ? "inline" : "none";
-		document.getElementById("flexible_area").style.display = toChange == \'fixed\' ? "none" : "inline";
+		$("#fixed_area").css("display", toChange == \'fixed\' ? "inline" : "none");
+		$("#flexible_area").css("display", toChange == \'fixed\' ? "none" : "inline");
 	}');
 
 	echo '
@@ -245,7 +245,7 @@ function template_modify_user_subscription()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
-	add_js_inline('
+	add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays(offset)
