@@ -76,9 +76,6 @@ h1.forumtitle {
 	float: left;
 	font-style: italic;
 }
-h1.forumtitle a {
-	text-decoration: none;
-}
 /* float these items to the right */
 #siteslogan, #wedgelogo {
 	margin: 0;
@@ -204,11 +201,11 @@ h1.forumtitle a {
 
 /* Normal, standard links. */
 a {
-	color: #346;
+	color: #568;
 	text-decoration: none;
 }
 a:hover {
-	color: #568;
+	color: #78a;
 	text-decoration: underline;
 	cursor: pointer;
 }
@@ -524,12 +521,11 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 }
 
 /* Separator code */
-li.separator > a {
+li.separator a {
 	padding: 3px 8px 4px;
 }
-li.separator > a > div {
-	border-bottom: 1px solid #ccc;
-	height: 1px;
+li.separator hr {
+	margin: 0;
 }
 li.separator.hove {
 	background: none;

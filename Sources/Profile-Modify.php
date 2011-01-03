@@ -460,7 +460,7 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => create_function('&$value', '
 				global $cur_profile;
 				// Make sure the msn one is an email address, not something like \'none\' :P.
-				if ($value != \'\' && preg_match(\'~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\\\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~\', $value) == 0)
+				if ($value != \'\' && !is_valid_email($value))
 				{
 					$value = $cur_profile[\'msn\'];
 					return false;
@@ -1262,7 +1262,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
 				//!!! We never error on this - just ignore it at the moment...
-				if ($row['mask'] == 'email' && (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $value) === 0 || strlen($value) > 255))
+				if ($row['mask'] == 'email' && (!is_valid_email($value) || strlen($value) > 255))
 					$value = '';
 				elseif ($row['mask'] == 'number')
 				{
@@ -2577,7 +2577,7 @@ function profileSaveAvatarData(&$value)
 	if ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
-		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || preg_match('~^[\w=+/-][\w=\'+/\.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $_POST['gravatarEmail']) == 0)
+		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || !is_valid_email($_POST['gravatarEmail']))
 			$profile_vars['avatar'] = 'gravatar://';
 		else
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
@@ -2924,12 +2924,12 @@ function profileValidateEmail($email, $memID = 0)
 {
 	global $context;
 
-	$email = strtr($email, array('&#039;' => '\''));
+	$email = trim(strtr($email, array('&#039;' => '\'')));
 
 	// Check the name and email for validity.
-	if (trim($email) == '')
+	if (empty($email))
 		return 'no_email';
-	if (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $email) == 0)
+	if (!is_valid_email($email))
 		return 'bad_email';
 
 	// Email addresses should be and stay unique.

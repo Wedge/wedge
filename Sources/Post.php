@@ -458,7 +458,7 @@ function Post()
 				{
 					if (!isset($_REQUEST['email']) || $_REQUEST['email'] == '')
 						$context['post_error']['no_email'] = true;
-					elseif (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_REQUEST['email']) == 0)
+					elseif (!is_valid_email($_REQUEST['email']))
 						$context['post_error']['bad_email'] = true;
 				}
 			}

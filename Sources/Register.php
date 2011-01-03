@@ -316,7 +316,7 @@ function Register2($verifiedOpenID = false)
 			$possible_strings[] = 'real_name';
 	}
 
-	if (isset($_POST['msn']) && preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['msn']) != 0)
+	if (isset($_POST['msn']) && is_valid_email($_POST['msn']))
 		$profile_strings[] = 'msn';
 
 	// Handle a string as a birthdate...
@@ -423,7 +423,7 @@ function Register2($verifiedOpenID = false)
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
 				//!!! We never error on this - just ignore it at the moment...
-				if ($row['mask'] == 'email' && (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $value) === 0 || strlen($value) > 255))
+				if ($row['mask'] == 'email' && (!is_valid_email($value) || strlen($value) > 255))
 					$custom_field_errors[] = array('custom_field_invalid_email', array($row['field_name']));
 				elseif ($row['mask'] == 'number' && preg_match('~[^\d]~', $value))
 					$custom_field_errors[] = array('custom_field_not_number', array($row['field_name']));

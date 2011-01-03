@@ -85,7 +85,10 @@ class wedgeEditor
 		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
 		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
 	}');
-			add_js_file('scripts/editor.js');
+			add_js_file(array(
+				'scripts/editor.js',
+				'scripts/post.js'
+			));
 
 			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])

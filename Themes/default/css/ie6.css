@@ -239,6 +239,21 @@ table.table_grid, table.cs0, table.cs1 {
 	width: expression(this.clientWidth < 300 ? '300px' : 'auto');
 	height: 150px;
 }
-.menu li.separator {
-	display: none;
+h4.hove {
+	background: #e2ebe7 url(../images/menu.gif) no-repeat 98% 2px;
+}
+li.hove {
+	background: #e2ebe7;
+}
+li.separator {
+	background: none;
+}
+li.separator a {
+	padding: 0 8px;
+}
+li.separator hr {
+	position: absolute;
+	margin: 6px 0 0 55px;
+	width: 50px;
+	display: block;
 }

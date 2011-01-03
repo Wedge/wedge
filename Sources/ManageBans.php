@@ -1362,7 +1362,7 @@ function BanLog()
 				)
 			);
 
-		// 'Delte selection' button was pressed.
+		// 'Delete selection' button was pressed.
 		else
 		{
 			// Make sure every entry is integer.

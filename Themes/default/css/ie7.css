@@ -79,13 +79,19 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	padding: 0 2px;
 }
 h4.hove {
-	background: #dbd7d2 url(../images/menu.gif) no-repeat 98% 2px;
+	background: #e2ebe7 url(../images/menu.gif) no-repeat 98% 2px;
 }
 li.hove {
-	background: #dbd7d2;
+	background: #e2ebe7;
 }
-.menu li.separator {
-	display: none;
+li.separator a {
+	padding: 0 8px;
+}
+li.separator hr {
+	position: absolute;
+	margin: 6px 0 0 55px;
+	width: 50px;
+	display: block;
 }
 #context_menus h4:hover {
 	background-color: #ebe7e2;

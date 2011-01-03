@@ -97,7 +97,7 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		// !!! Separate the sprintf?
-		if (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['new_email']) == 0)
+		if (!is_valid_email($_POST['new_email']))
 			fatal_error(sprintf($txt['valid_email_needed'], htmlspecialchars($_POST['new_email'])), false);
 
 		// Make sure their email isn't banned.

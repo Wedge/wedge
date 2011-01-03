@@ -1780,7 +1780,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br />', '<br /> ' => '<br />&nbsp;', '&#13;' => "\n"));
 
-	// Deal with footnotes... They're very complex, so can't be parsed like other bbcodes.
+	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
 	if (stripos($message, '[nb]') !== false && (empty($parse_tags) || in_array('nb', $parse_tags)) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor'))
 	{
 		preg_match_all('~\s*\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
@@ -2530,6 +2530,14 @@ function spamProtection($error_type)
 }
 
 /**
+ * Determines whether an email address is malformed or not.
+ */
+function is_valid_email($email)
+{
+	return !preg_match('~^[\w=+/-][\w=\'+/\.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $email);
+}
+
+/**
  * Gets the size of an image specified by a URL.
  *
  * Notes:
@@ -2940,7 +2948,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 			foreach ($comments[1] as $comment)
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
-		// Adding a semicolon after a function declaration is mandatory in Packer.
+		// Adding a semicolon after a function/prototype declaration is mandatory in Packer.
 		// The original SMF code didn't bother with these, and developers are advised NOT
 		// to follow that advice. If you can't fix your scripts, uncomment the following
 		// lines, and semicolons will be added automatically.
