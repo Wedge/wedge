@@ -9,29 +9,24 @@ function template_admin()
 	// Welcome message for the admin.
 	echo '
 	<div id="admincenter">
-		<div class="title_bar">';
+		<we:title>';
 
 	if ($context['user']['is_admin'])
 		echo '
-			<h3 id="quick_search">
-				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
-					<img src="', $settings['images_url'], '/filter.gif" />
-					<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text" />
-					<select name="search_type">
-						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_internal'], '</option>
-						<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_member'], '</option>
-						<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_online'], '</option>
-					</select>
-					<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit" />
-				</form>';
-	else
-		echo '
-			<h3>';
+			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright" id="quick_search">
+				<img src="', $settings['images_url'], '/filter.gif" />
+				<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text" />
+				<select name="search_type">
+					<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_internal'], '</option>
+					<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_member'], '</option>
+					<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected="selected"' : ''), '>', $txt['admin_search_type_online'], '</option>
+				</select>
+				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit" />
+			</form>';
 
 	echo '
-				', $txt['admin_center'], '
-			</h3>
-		</div>
+			', $txt['admin_center'], '
+		</we:title>
 		<div class="roundframe">
 			<div id="welcome">
 				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
@@ -1141,18 +1136,16 @@ function template_admin_search_results()
 	global $context, $txt, $settings, $options, $scripturl;
 
 	echo '
-	<div class="title_bar">
-		<h3>
-			<div id="quick_search" class="floatright">
-				<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;">
-					<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
-					<input type="hidden" name="search_type" value="', $context['search_type'], '" />
-					<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
-				</form>
-			</div>
-			', $txt['admin_search_results'], '
-		</h3>
-	</div>
+	<we:title>
+		<div class="floatright">
+			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
+				<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
+				<input type="hidden" name="search_type" value="', $context['search_type'], '" />
+				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
+			</form>
+		</div>
+		', $txt['admin_search_results'], '
+	</we:title>
 
 	<div class="windowbg wrc">
 		', sprintf($txt['admin_search_results_desc'], $context['search_term']);
@@ -1248,11 +1241,9 @@ function template_core_features()
 
 	echo '
 		<form action="', $scripturl, '?action=admin;area=corefeatures;" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>
-					', $txt['core_settings_title'], '
-				</h3>
-			</div>
+			<we:title>
+				', $txt['core_settings_title'], '
+			</we:title>
 			<div style="overflow: hidden">';
 
 	$alternate = 0;
@@ -1424,11 +1415,9 @@ function template_download_language()
 	// Now, all the images and the likes, hidden via javascript 'cause there are so fecking many.
 	echo '
 			<br />
-			<div class="title_bar">
-				<h3>
-					', $txt['languages_download_theme_files'], '
-				</h3>
-			</div>
+			<we:title>
+				', $txt['languages_download_theme_files'], '
+			</we:title>
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
@@ -1647,14 +1636,13 @@ function template_modify_language_entries()
 		</form>
 
 		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';entries" id="entry_form" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>
-					', $txt['edit_language_entries'], '
-				</h3>
-			</div>
+			<we:title>
+				', $txt['edit_language_entries'], '
+			</we:title>
 			<div id="taskpad" class="floatright">
 				', $txt['edit_language_entries_file'], ':
 					<select name="tfid" onchange="if (this.value != -1) document.forms.entry_form.submit();">';
+
 	foreach ($context['possible_files'] as $id_theme => $theme)
 	{
 		echo '

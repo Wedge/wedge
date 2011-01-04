@@ -1,10 +1,10 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 
-#quick_search form img {
+form#quick_search img {
 	margin-top: 2px;
 }
-#quick_search form {
+form#quick_search {
 	padding-top: 2px;
 	line-height: 0.9em;
 	font-size: 0.8em !important;

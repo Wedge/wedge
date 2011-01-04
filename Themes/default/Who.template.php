@@ -10,9 +10,9 @@ function template_main()
 	echo '
 	<div class="main_section" id="whos_online">
 		<form action="', $scripturl, '?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h4 class="margin_lower">', $txt['who_title'], '</h4>
-			</div>
+			<we:title2>
+				', $txt['who_title'], '
+			</we:title2>
 			<div class="topic_table" id="mlist">
 				<div class="pagesection">
 					<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>';

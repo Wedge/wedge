@@ -546,11 +546,9 @@ function template_editBuddies()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="title_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editBuddies'], '
-			</h3>
-		</div>
+		<we:title>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editBuddies'], '
+		</we:title>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
@@ -597,9 +595,9 @@ function template_editBuddies()
 	<br />
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="UTF-8">
 		<div class="tborder add_buddy">
-			<div class="title_bar">
-				<h3>', $txt['buddy_add'], '</h3>
-			</div>
+			<we:title>
+				', $txt['buddy_add'], '
+			</we:title>
 			<div class="roundframe">
 				<label for="new_buddy">
 					<strong>', $txt['who_member'], ':</strong>
@@ -628,11 +626,9 @@ function template_editIgnoreList()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="title_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editIgnoreList'], '
-			</h3>
-		</div>
+		<we:title>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editIgnoreList'], '
+		</we:title>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
@@ -679,9 +675,9 @@ function template_editIgnoreList()
 	<br />
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="UTF-8">
 		<div class="tborder add_buddy">
-			<div class="title_bar">
-				<h3>', $txt['ignore_add'], '</h3>
-			</div>
+			<we:title>
+				', $txt['ignore_add'], '
+			</we:title>
 			<div class="roundframe">
 				<label for="new_buddy">
 					<strong>', $txt['who_member'], ':</strong>
@@ -711,9 +707,9 @@ function template_trackActivity()
 
 	// The first table shows IP information about the user.
 	echo '
-			<div class="title_bar">
-				<h3>', $txt['view_ips_by'], ' <strong>', $context['member']['name'], '</strong></h3>
-			</div>';
+			<we:title>
+				', $txt['view_ips_by'], ' <strong>', $context['member']['name'], '</strong>
+			</we:title>';
 
 	// The last IP the user used.
 	echo '
@@ -781,9 +777,9 @@ function template_trackIP()
 	if ($context['single_ip'])
 	{
 		echo '
-			<div class="title_bar">
-				<h3>', $txt['whois_title'], ' ', $context['ip'], '</h3>
-			</div>
+			<we:title>
+				', $txt['whois_title'], ' ', $context['ip'], '
+			</we:title>
 			<div class="windowbg2 wrc">';
 			foreach ($context['whois_servers'] as $server)
 				echo '
@@ -795,9 +791,9 @@ function template_trackIP()
 
 	// The second table lists all the members who have been logged as using this IP address.
 	echo '
-		<div class="title_bar">
-			<h3>', $txt['members_from_ip'], ' ', $context['ip'], '</h3>
-		</div>';
+		<we:title>
+			', $txt['members_from_ip'], ' ', $context['ip'], '
+		</we:title>';
 	if (empty($context['ips']))
 		echo '
 		<p class="windowbg2 description"><em>', $txt['no_members_from_ip'], '</em></p>';
@@ -1930,12 +1926,10 @@ function template_viewWarning()
 	template_load_warning_variables();
 
 	echo '
-		<div class="title_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
-				', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
-			</h3>
-		</div>
+		<we:title>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
+			', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
+		</we:title>
 		<div class="windowbg wrc">
 			<dl>
 				<dt>
@@ -2289,11 +2283,9 @@ function template_deleteAccount()
 	// The main containing header.
 	echo '
 		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
-			<div class="title_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['deleteAccount'], '
-				</h3>
-			</div>';
+			<we:title>
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['deleteAccount'], '
+			</we:title>';
 	// If deleting another account give them a lovely info box.
 	if (!$context['user']['is_owner'])
 		echo '

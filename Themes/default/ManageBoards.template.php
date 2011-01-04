@@ -9,9 +9,9 @@ function template_main()
 	// Table header.
 	echo '
 	<div id="manage_boards">
-		<div class="title_bar">
-			<h3>', $txt['boardsEdit'], '</h3>
-		</div>';
+		<we:title>
+			', $txt['boardsEdit'], '
+		</we:title>';
 
 	if (!empty($context['move_board']))
 		echo '

@@ -22,19 +22,17 @@ function template_generic_menu_sidebar_above()
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
 			<div class="side_section">
-				<div class="title_bar">
-					<h4>';
+				<we:title2>';
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			echo '
-						<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>';
+					<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>';
 		else
 			echo '
-						', $section['title'];
+					', $section['title'];
 
 		echo '
-					</h4>
-				</div>
+				</we:title2>
 				<ul class="smalltext left_menu">';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)

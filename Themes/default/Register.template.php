@@ -127,9 +127,9 @@ function template_registration_form()
 			<div class="cat_bar">
 				<h3>', $txt['registration_form'], '</h3>
 			</div>
-			<div class="title_bar">
-				<h4>', $txt['required_info'], '</h4>
-			</div>
+			<we:title2>
+				', $txt['required_info'], '
+			</we:title2>
 			<div class="windowbg2 wrc">
 				<fieldset>
 					<dl class="register_form">
@@ -216,9 +216,9 @@ function template_registration_form()
 	if (!empty($context['profile_fields']) || !empty($context['custom_fields']))
 	{
 		echo '
-			<div class="title_bar">
-				<h4>', $txt['additional_information'], '</h4>
-			</div>
+			<we:title2>
+				', $txt['additional_information'], '
+			</we:title2>
 			<div class="windowbg2 wrc">
 				<fieldset>
 					<dl class="register_form" id="custom_group">';
@@ -329,9 +329,9 @@ function template_registration_form()
 	if ($context['visual_verification'])
 	{
 		echo '
-			<div class="title_bar">
-				<h4>', $txt['verification'], '</h4>
-			</div>
+			<we:title2>
+				', $txt['verification'], '
+			</we:title2>
 			<div class="windowbg2 wrc">
 				<fieldset class="centertext">
 					', template_control_verification($context['visual_verification_id'], 'all'), '
@@ -372,9 +372,9 @@ function template_coppa()
 
 	// Formulate a nice complicated message!
 	echo '
-		<div class="title_bar">
-			<h3>', $context['page_title'], '</h3>
-		</div>
+		<we:title>
+			', $context['page_title'], '
+		</we:title>
 		<div class="windowbg2 wrc">
 			<p>', $context['coppa']['body'], '</p>
 			<p>

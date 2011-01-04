@@ -416,9 +416,9 @@ function template_list()
 		<div class="cat_bar">
 			<h3>', $txt['list_file'], '</h3>
 		</div>
-		<div class="title_bar">
-			<h3>', $txt['files_archive'], ' ', $context['filename'], ':</h3>
-		</div>
+		<we:title>
+			', $txt['files_archive'], ' ', $context['filename'], ':
+		</we:title>
 		<div class="windowbg wrc">
 			<ol>';
 
@@ -444,9 +444,9 @@ function template_examine()
 		<div class="cat_bar">
 			<h3>', $txt['package_examine_file'], '</h3>
 		</div>
-		<div class="title_bar">
-			<h3>', $txt['package_file_contents'], ' ', $context['filename'], ':</h3>
-		</div>
+		<we:title>
+			', $txt['package_file_contents'], ' ', $context['filename'], ':
+		</we:title>
 		<div class="windowbg wrc">
 			<pre class="file_content">', $context['filedata'], '</pre>
 			<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $context['package'], '">[ ', $txt['list_files'], ' ]</a>
@@ -562,9 +562,9 @@ function template_sublist(&$mod_list, $mod_heading)
 
 	echo '
 		<br />
-		<div class="title_bar">
-			<h3>', $mod_heading, '</h3>
-		</div>
+		<we:title>
+			', $mod_heading, '
+		</we:title>
 
 		<table class="table_grid w100 cs0">
 		<thead>
@@ -637,9 +637,9 @@ function template_servers()
 	if ($context['package_download_broken'])
 	{
 		echo '
-		<div class="title_bar">
-			<h3>', $txt['package_ftp_necessary'], '</h3>
-		</div>
+		<we:title>
+			', $txt['package_ftp_necessary'], '
+		</we:title>
 		<div class="windowbg wrc">
 			<p>
 				', $txt['package_ftp_why_download'], '
@@ -1513,12 +1513,10 @@ function template_file_permissions()
 	</div>
 
 	<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-		<div class="title_bar">
-			<h3>
-				<span class="fperm floatright">', $txt['package_file_perms_new_status'], '</span>
-				', $txt['package_file_perms'], '
-			</h3>
-		</div>
+		<we:title>
+			<span class="fperm floatright">', $txt['package_file_perms_new_status'], '</span>
+			', $txt['package_file_perms'], '
+		</we:title>
 		<table class="table_grid w100 cs0 cp0">
 		<thead>
 			<tr class="catbg center">

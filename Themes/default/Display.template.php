@@ -129,9 +129,9 @@ function template_main()
 	{
 		echo '
 			<div class="linked_events">
-				<div class="title_bar">
-					<h3 class="headerpadding">', $txt['calendar_linked_events'], '</h3>
-				</div>
+				<we:title>
+					', $txt['calendar_linked_events'], '
+				</we:title>
 				<div class="windowbg wrc">
 					<ul class="reset">';
 

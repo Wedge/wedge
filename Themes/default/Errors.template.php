@@ -40,10 +40,10 @@ function template_error_log()
 			<script><!-- // --><![CDATA[
 				var lastClicked = "";
 			// ]]></script>
-			<div class="title_bar clear_right">
-				<h3>
+			<div class="clear_right">
+				<we:title>
 					<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['errlog'], '
-				</h3>
+				</we:title>
 			</div>
 			<table class="table_grid cs1" id="error_log">
 				<tr>

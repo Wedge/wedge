@@ -485,9 +485,7 @@ function template_viewmodreport()
 					', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
 				</h3>
 			</div>
-			<div class="title_bar">
-				<h3>
-					<span class="floatright">';
+			<we:title>';
 
 		// Make the buttons.
 		$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
@@ -495,12 +493,10 @@ function template_viewmodreport()
 		$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
 
 		echo '
-						<a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a>
-						<a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>
-					</span>
-					', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
-				</h3>
-			</div>
+				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
+				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>&nbsp;&nbsp;</span>
+				', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
+			</we:title>
 			<div class="windowbg2 wrc">
 				', $context['report']['body'], '
 			</div>
@@ -717,9 +713,9 @@ function template_show_notice()
 	<div class="cat_bar">
 		<h3>', $txt['show_notice'], '</h3>
 	</div>
-	<div class="title_bar">
-		<h3>', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
-	</div>
+	<we:title>
+		', $txt['show_notice_subject'], ': ', $context['notice_subject'], '
+	</we:title>
 	<div class="windowbg wrc">
 		<dl>
 			<dt>

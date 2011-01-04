@@ -441,9 +441,9 @@ function template_group_members()
 			</div>
 
 			<br />
-			<div class="title_bar">
-				<h4>', $txt['membergroups_members_group_members'], '</h4>
-			</div>
+			<we:title2>
+				', $txt['membergroups_members_group_members'], '
+			</we:title2>
 			<br />
 			<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>
 			<table class="table_grid w100 cs0">

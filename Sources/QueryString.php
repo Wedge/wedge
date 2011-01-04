@@ -937,6 +937,26 @@ function ob_sessrewrite($buffer)
 	else
 		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
 
+	if (strpos($buffer, '<we:') !== false)
+	{
+		// A quick proof of concept...
+		$buffer = str_replace(
+			array(
+				'<we:title>',
+				'</we:title>',
+				'<we:title2>',
+				'</we:title2>',
+			),
+			array(
+				'<div class="title_bar"><h3>',
+				'</h3></div>',
+				'<div class="title_bar"><h4>',
+				'</h4></div>',
+			),
+			$buffer
+		);
+	}
+
 	// Return the changed buffer.
 	return $buffer;
 }

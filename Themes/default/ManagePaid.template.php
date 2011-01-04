@@ -509,9 +509,9 @@ function template_user_subscription()
 	echo '
 		</form>
 		<br />
-		<div class="title_bar">
-			<h3>', $txt['paid_current'], '</h3>
-		</div>
+		<we:title>
+			', $txt['paid_current'], '
+		</we:title>
 		<div class="information">
 			', $txt['paid_current_desc'], '
 		</div>
@@ -626,9 +626,9 @@ function template_paid_done()
 
 	echo '
 	<div id="paid_subscription">
-		<div class="title_bar">
-			<h3>', $txt['paid_done'], '</h3>
-		</div>
+		<we:title>
+			', $txt['paid_done'], '
+		</we:title>
 		<div class="windowbg2 wrc">
 			<p>', $txt['paid_done_desc'], '</p>
 			<br />

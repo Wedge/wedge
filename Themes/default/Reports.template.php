@@ -9,9 +9,9 @@ function template_report_type()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $txt['generate_reports'], '</h3>
-			</div>
+			<we:title>
+				', $txt['generate_reports'], '
+			</we:title>
 			<div class="information">
 				', $txt['generate_reports_desc'], '
 			</div>
@@ -59,9 +59,9 @@ function template_main()
 
 	echo '
 	<div id="admincenter">
-		<div class="title_bar">
-			<h3>', $txt['results'], '</h3>
-		</div>
+		<we:title>
+			', $txt['results'], '
+		</we:title>
 		<div id="report_buttons">';
 
 	if (!empty($report_buttons) && !empty($settings['use_tabs']))

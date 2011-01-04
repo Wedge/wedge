@@ -195,18 +195,16 @@ function template_list_themes()
 	foreach ($context['themes'] as $theme)
 	{
 		echo '
-		<div class="title_bar">
-			<h3>';
+		<we:title>';
 
 		// You *cannot* delete the default theme. It's important!
 		if ($theme['id'] != 1)
 			echo '
-				<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', JavaScriptEscape($txt['theme_remove_confirm']), ');"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '" /></a></span>';
+			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', JavaScriptEscape($txt['theme_remove_confirm']), ');"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '" /></a></span>';
 
 		echo '
-				<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '
-			</h3>
-		</div>
+			<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '
+		</we:title>
 		<div class="windowbg wrc">
 			<dl class="settings themes_list">
 				<dt>', $txt['themeadmin_list_theme_dir'], ':</dt>
@@ -268,9 +266,9 @@ function template_reset_list()
 		$alternate = !$alternate;
 
 		echo '
-		<div class="title_bar">
-			<h3>', $theme['name'], '</h3>
-		</div>
+		<we:title>
+			', $theme['name'], '
+		</we:title>
 		<div class="windowbg', $alternate ? '' : '2',' wrc">
 			<ul class="reset">
 				<li>
@@ -371,11 +369,9 @@ function template_set_settings()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
-				</h3>
-			</div>';
+			<we:title>
+				<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
+			</we:title>';
 
 	// !!! Why can't I edit the default theme popup.
 	if ($context['theme_settings']['theme_id'] != 1)
@@ -560,8 +556,10 @@ function template_pick()
 		if ($theme['id'] !== 0 && !empty($theme['stylings']))
 		{
 			echo '
-				<div class="title_bar" style="margin-top: 8px; clear: right">
-					<h4>', $txt['theme_stylings'], '</h4>
+				<div style="margin-top: 8px; clear: right">
+					<we:title2>
+						', $txt['theme_stylings'], '
+					</we:title2>
 				</div>';
 
 			template_list_stylings($theme, $theme['id']);
@@ -641,12 +639,10 @@ function template_edit_list()
 		$alternate = !$alternate;
 
 		echo '
-		<div class="title_bar">
-			<h3>
-				<a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $theme['name'], '</a>', !empty($theme['version']) ? '
-				<em>(' . $theme['version'] . ')</em>' : '', '
-			</h3>
-		</div>
+		<we:title>
+			<a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $theme['name'], '</a>', !empty($theme['version']) ? '
+			<em>(' . $theme['version'] . ')</em>' : '', '
+		</we:title>
 		<div class="windowbg', $alternate ? '' : '2', ' wrc">
 			<ul class="reset">
 				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $theme['can_edit_style'] ? '

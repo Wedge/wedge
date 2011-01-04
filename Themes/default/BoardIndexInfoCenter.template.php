@@ -25,12 +25,10 @@ function template_info_center_recentposts()
 	if (!empty($settings['number_recent_posts']))
 	{
 		echo '
-			<div class="title_bar">
-				<h4>
-					<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '" /></a>
-					', $txt['recent_posts'], '
-				</h4>
-			</div>
+			<we:title2>
+				<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '" /></a>
+				', $txt['recent_posts'], '
+			</we:title2>
 			<div class="hslice" id="recent_posts_content">
 				<div class="entry-title" style="display: none;">', $context['forum_name_html_safe'], ' - ', $txt['recent_posts'], '</div>
 				<div class="entry-content" style="display: none;">
@@ -76,12 +74,10 @@ function template_info_center_calendar()
 	if ($context['show_calendar'])
 	{
 		echo '
-			<div class="title_bar">
-				<h4>
-					<a href="', $scripturl, '?action=calendar' . '"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
-					', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
-				</h4>
-			</div>
+			<we:title2>
+				<a href="', $scripturl, '?action=calendar' . '"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
+				', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
+			</we:title2>
 			<p class="smalltext">';
 
 		// Holidays like "Christmas", "Chanukah", and "We Love [Unknown] Day" :P.
@@ -124,12 +120,10 @@ function template_info_center_statistics()
 	if ($settings['show_stats_index'])
 	{
 		echo '
-			<div class="title_bar">
-				<h4>
-					<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
-					', $txt['forum_stats'], '
-				</h4>
-			</div>
+			<we:title2>
+				<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
+				', $txt['forum_stats'], '
+			</we:title2>
 			<p>
 				', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '. ', !empty($settings['show_latest_member']) ? $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong>' : '', '<br />
 				', (!empty($context['latest_post']) ? $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['time'] . ')<br />' : ''), '
@@ -145,12 +139,10 @@ function template_info_center_usersonline()
 
 	// "Users online" - in order of activity.
 	echo '
-			<div class="title_bar">
-				<h4>
-					', $context['show_who'] ? '<a href="' . $scripturl . '?action=who' . '">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
-					', $txt['online_users'], '
-				</h4>
-			</div>
+			<we:title2>
+				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who' . '">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
+				', $txt['online_users'], '
+			</we:title2>
 			<p class="inline stats">
 				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', comma_format($context['num_guests']), ' ', $context['num_guests'] == 1 ? $txt['guest'] : $txt['guests'], ', ' . comma_format($context['num_users_online']), ' ', $context['num_users_online'] == 1 ? $txt['user'] : $txt['users'];
 
@@ -198,12 +190,10 @@ function template_info_center_personalmsg()
 	if ($context['user']['is_logged'] && !$settings['show_stats_index'])
 	{
 		echo '
-			<div class="title_bar">
-				<h4>
-					', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '" />', $context['allow_pm'] ? '</a>' : '', '
-					', $txt['personal_message'], '
-				</h4>
-			</div>
+			<we:title2>
+				', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '" />', $context['allow_pm'] ? '</a>' : '', '
+				', $txt['personal_message'], '
+			</we:title2>
 			<p class="pminfo">
 				<strong><a href="', $scripturl, '?action=pm">', $txt['personal_message'], '</a></strong>
 				<span class="smalltext">

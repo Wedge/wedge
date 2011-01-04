@@ -152,9 +152,9 @@ function template_maintenance()
 			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '" />
 			', $context['description'], '<br class="clear" />
 		</p>
-		<div class="title_bar">
-			<h4>', $txt['admin_login'], '</h4>
-		</div>
+		<we:title2>
+			', $txt['admin_login'], '
+		</we:title2>
 		<div class="roundframe">
 			<dl>
 				<dt>', $txt['username'], ':</dt>
@@ -221,9 +221,9 @@ function template_retry_activate()
 	// Just ask them for their code so they can try it again...
 	echo '
 		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:title>
+				', $context['page_title'], '
+			</we:title>
 			<div class="roundframe">';
 
 	// You didn't even have an ID?
@@ -250,9 +250,9 @@ function template_resend()
 	// Just ask them for their code so they can try it again...
 	echo '
 		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:title>
+				', $context['page_title'], '
+			</we:title>
 			<div class="roundframe">
 				<dl>
 					<dt>', $txt['invalid_activation_username'], ':</dt>

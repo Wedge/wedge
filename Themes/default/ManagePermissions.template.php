@@ -18,9 +18,9 @@ function template_permission_index()
 
 	if (!empty($context['profile']))
 		echo '
-			<div class="title_bar">
-				<h3>', $txt['permissions_for_profile'], ': &quot;', $context['profile']['name'], '&quot;</h3>
-			</div>';
+			<we:title>
+				', $txt['permissions_for_profile'], ': &quot;', $context['profile']['name'], '&quot;
+			</we:title>';
 
 	echo '
 			<table class="table_grid w100 cs0">
@@ -253,12 +253,12 @@ function template_by_board()
 		<div class="information">
 			', $txt['permissions_boards_desc'], '
 		</div>
-		<div class="title_bar">
-			<h3 id="board_permissions" class="flow_hidden">
+		<we:title>
+			<div class="flow_hidden">
 				<span class="perm_name floatleft">', $txt['board_name'], '</span>
 				<span class="perm_profile floatleft">', $txt['permission_profile'], '</span>
-			</h3>
-		</div>';
+			</div>
+		</we:title>';
 
 	if (!$context['edit_all'])
 		echo '
@@ -343,9 +343,9 @@ function template_edit_profiles()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $txt['permissions_profile_edit'], '</h3>
-			</div>
+			<we:title>
+				', $txt['permissions_profile_edit'], '
+			</we:title>
 
 			<table class="table_grid w100 cs0">
 				<thead>
@@ -1044,9 +1044,9 @@ function template_postmod_permissions()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=postmod;', $context['session_var'], '=', $context['session_id'], '" method="post" name="postmodForm" id="postmodForm" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $txt['permissions_post_moderation'], '</h3>
-			</div>';
+			<we:title>
+				', $txt['permissions_post_moderation'], '
+			</we:title>';
 
 	// Got advanced permissions - if so warn!
 	if (!empty($modSettings['permission_enable_deny']))

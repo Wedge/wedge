@@ -431,9 +431,9 @@ function template_show_week_grid($grid_name)
 			echo '
 				<tr>
 					<td colspan="2">
-						<div class="title_bar">
-							<h4>', $txt['days'][$day['day_of_week']], '</h4>
-						</div>
+						<we:title2>
+							', $txt['days'][$day['day_of_week']], '
+						</we:title2>
 					</td>
 				</tr>
 				<tr>

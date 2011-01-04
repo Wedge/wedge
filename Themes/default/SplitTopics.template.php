@@ -338,9 +338,9 @@ function template_merge_extra_options()
 	echo '
 	<div id="merge_topics">
 		<form action="', $scripturl, '?action=mergetopics;sa=execute;" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3>', $txt['merge_topic_list'], '</h3>
-			</div>
+			<we:title>
+				', $txt['merge_topic_list'], '
+			</we:title>
 			<table class="table_grid bordercolor w100 cs0">
 				<thead>
 					<tr class="catbg">

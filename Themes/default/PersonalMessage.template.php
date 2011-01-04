@@ -12,15 +12,13 @@ function template_pm_above()
 	// Show the capacity bar, if available.
 	if (!empty($context['limit_bar']))
 		echo '
-		<div class="title_bar">
-			<h3>
-				<span class="floatleft">', $txt['pm_capacity'], ':</span>
-				<span class="floatleft capacity_bar">
-					<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em;"></span>
-				</span>
-				<span class="floatright', $context['limit_bar']['percent'] > 90 ? ' alert' : '', '">', $context['limit_bar']['text'], '</span>
-			</h3>
-		</div>';
+		<we:title>
+			<span class="floatleft">', $txt['pm_capacity'], ':</span>
+			<span class="floatleft capacity_bar">
+				<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em;"></span>
+			</span>
+			<span class="floatright', $context['limit_bar']['percent'] > 90 ? ' alert' : '', '">', $context['limit_bar']['text'], '</span>
+		</we:title>';
 
 	// Message sent? Show a small indication.
 	if (isset($context['pm_sent']))
@@ -724,11 +722,9 @@ function template_search()
 			echo '
 		<fieldset class="labels">
 			<div class="roundframe">
-				<div class="title_bar">
-					<h4>
-						<a href="#" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" /></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
-					</h4>
-				</div>
+				<we:title2>
+					<a href="#" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon" /></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
+				</we:title2>
 				<ul id="searchLabelsExpand" class="reset" ', $context['check_all'] ? 'style="display: none;"' : '', '>';
 
 			foreach ($context['search_labels'] as $label)
@@ -786,12 +782,10 @@ function template_search_results()
 		if (!empty($context['search_params']['show_complete']))
 		{
 			echo '
-			<div class="title_bar">
-				<h3>
-					<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
-					<span class="floatleft">', $message['counter'], '&nbsp;&nbsp;<a href="', $message['href'], '">', $message['subject'], '</a></span>
-				</h3>
-			</div>
+			<we:title>
+				<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
+				<span class="floatleft">', $message['counter'], '&nbsp;&nbsp;<a href="', $message['href'], '">', $message['subject'], '</a></span>
+			</we:title>
 			<div class="cat_bar">
 				<h3>', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
 
