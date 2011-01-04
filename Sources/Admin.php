@@ -191,7 +191,6 @@ function Admin()
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes',
 					'function' => 'ThemesMain',
-					'custom_url' => $scripturl . '?action=admin;area=theme;sa=admin',
 					'icon' => 'themes.gif',
 					'subsections' => array(
 						'admin' => array($txt['themeadmin_admin_title']),
@@ -661,7 +660,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $scripturl;
+	global $context, $txt, $helptxt, $scripturl, $settings_search;
 
 	// Try to get some more memory.
 	@ini_set('memory_limit', '128M');
@@ -719,7 +718,6 @@ function AdminSearchInternal()
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
 		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
 		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
-		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('ModifyCalendarSettings', 'area=managecalendar;sa=settings'),
@@ -742,6 +740,9 @@ function AdminSearchInternal()
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyPruningSettings', 'area=logs;sa=pruning'),
 	);
+
+	// It will probably never be used by anyone, but anyway...
+	call_hook('admin_search', array(&$settings_search));
 
 	foreach ($settings_search as $setting_area)
 	{

@@ -40,10 +40,6 @@ function template_main()
 	echo '
 						</div>
 						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
-						<script><!-- // --><![CDATA[
-							$("#known_themes_list").hide();
-							$("#known_themes_link").show();
-						// ]]></script>
 					</dd>
 					<dt>
 						<label for="theme_guests">', $txt['theme_guests'], ':</label>
@@ -51,6 +47,10 @@ function template_main()
 					<dd>
 						<select name="options[theme_guests]" id="theme_guests">
 							';
+
+	add_js('
+	$("#known_themes_list").hide();
+	$("#known_themes_link").show();');
 
 	$styling = empty($modSettings['theme_styling_guests']) ? 'css' : $modSettings['theme_styling_guests'];
 
