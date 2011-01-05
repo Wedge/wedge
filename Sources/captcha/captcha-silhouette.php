@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* VerificationCode.php                                                            *
+* captcha-ledicons.php                                                            *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -22,64 +22,49 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
+// Wedge CAPTCHA: silhouette
 
-define('WEDGE_NO_LOG', 1);
-
-/*	Deals with showing the CAPTCHA.
-
-	void VerificationCode()
-		// Show the verification code or let it hear.
-
-*/
-
-// Show the verification code or let it hear.
-function VerificationCode()
+class captcha_silhouette
 {
-	global $modSettings, $context, $scripturl;
+	public $is_available = true;
+	protected $image; // the internal image reference
 
-	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
-	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
-
-	// Somehow no code was generated or the session was lost.
-	if (empty($code))
-		blankGif();
-	// Show a window that will play the verification code.
-	elseif (isset($_REQUEST['sound']))
+	public function render($code)
 	{
-		loadLanguage('Login');
-		loadTemplate('Register');
+		global $settings;
 
-		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
-		$context['template_layers'] = array();
+		// Create a background
+		$width = 300;
+		$height = 100;
+		$this->image = imagecreate($width, $height);
+		$black = imagecolorallocate($this->image, 0, 0, 0);
+		$white = imagecolorallocate($this->image, 255, 255, 255);
+		imagefilledrectangle($this->image, 0, 0, $width - 1, $height - 1, $black);
 
-		obExit();
+		// Create some noise on said background
+		$noise_factor = 12; // percent
+		$noisedots = round($width * $height * ($noise_factor / 100));
+		$drawwidth = $width - 1;
+		$drawheight = $height - 1;
+		for ($i = 0; $i < $noisedots; $i++)
+		{
+			$x = mt_rand(0, $drawwidth);
+			$y = mt_rand(0, $drawheight);
+			imagesetpixel($this->image, $x, $y, $white);
+		}
+
+		for ($i = 0, $n = strlen($code); $i < $n; $i++)
+			imagettftext($this->image, 50, 0, $i * 45 + mt_rand(18, 22), mt_rand(60, 80), $black, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
+
+		return $this->image;
 	}
 
-	// Try the nice code using GD.
-	elseif (empty($_REQUEST['format']))
+	public function __destruct()
 	{
-		loadSource('Subs-Captcha');
-
-		if (!showCodeImage($code))
-			header('HTTP/1.1 400 Bad Request');
-		// You must be up to no good.
-		else
-			blankGif();
+		// Make sure we clean up the main image when we're done.
+		if (!empty($this->image))
+			@imagedestroy($this->image);
 	}
-
-	elseif ($_REQUEST['format'] === '.wav')
-	{
-		loadSource('Subs-Sound');
-
-		if (!createWaveFile($code))
-			header('HTTP/1.1 400 Bad Request');
-	}
-
-	// We all die one day...
-	die();
 }
 
 ?>

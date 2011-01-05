@@ -672,13 +672,15 @@ function ModifySpamSettings($return_config = false)
 			'pm2' => array('int', 'pm_posts_verification'),
 			'pm3' => array('int', 'pm_posts_per_hour'),
 			// Visual verification.
-			array('title', 'configure_verification_means'),
-			array('desc', 'configure_verification_means_desc'),
-			'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => 'refreshImages();'),
-			array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
+			array('title', 'configure_captcha'),
+			array('desc', 'configure_captcha_desc'),
+			array('check', 'use_captcha_images'),
+			array('check', 'use_animated_captcha', 'subtext' => $txt['use_animated_captcha_desc']),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
+			array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
+			'',
 			array('callback', 'question_answer_list'),
 	);
 
@@ -803,16 +805,6 @@ function ModifySpamSettings($return_config = false)
 	$_SESSION['visual_verification_code'] = '';
 	for ($i = 0; $i < 6; $i++)
 		$_SESSION['visual_verification_code'] .= $character_range[array_rand($character_range)];
-
-	// Some javascript for CAPTCHA.
-	add_js('
-	function refreshImages()
-	{
-		$(\'#verification_image\').attr(\'src\', \'' . $context['verification_image_href'] . ';type=\' + $(\'#visual_verification_type\').val());
-	}');
-
-	// Show the image itself.
-	$config_vars['vv']['postinput'] = '<br /><img src="' . $context['verification_image_href'] . ';type=' . (empty($modSettings['visual_verification_type']) ? 0 : $modSettings['visual_verification_type']) . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image" /><br />';
 
 	// Hack for PM spam settings.
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);

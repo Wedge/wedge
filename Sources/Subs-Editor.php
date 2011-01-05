@@ -118,7 +118,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		loadTemplate('GenericControls');
 
 		// Some javascript ma'am?
-		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
+		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['use_captcha_images']) && !isset($verificationOptions['override_visual'])))
 			add_js_file('scripts/captcha.js');
 
 		// Skip I, J, L, O, Q, S and Z.
@@ -133,7 +133,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($isNew)
 		$context['controls']['verification'][$verificationOptions['id']] = array(
 			'id' => $verificationOptions['id'],
-			'show_visual' => !empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])),
+			'show_visual' => !empty($verificationOptions['override_visual']) || (!empty($modSettings['use_captcha_images']) && !isset($verificationOptions['override_visual'])),
 			'number_questions' => isset($verificationOptions['override_qs']) ? $verificationOptions['override_qs'] : (!empty($modSettings['qa_verification_number']) ? $modSettings['qa_verification_number'] : 0),
 			'max_errors' => isset($verificationOptions['max_errors']) ? $verificationOptions['max_errors'] : 3,
 			'image_href' => $scripturl . '?action=verificationcode;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),

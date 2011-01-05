@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* VerificationCode.php                                                            *
+* captcha-grid.php                                                                *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -22,64 +22,74 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
+// Wedge CAPTCHA: recomposeanim_cycle
 
-define('WEDGE_NO_LOG', 1);
-
-/*	Deals with showing the CAPTCHA.
-
-	void VerificationCode()
-		// Show the verification code or let it hear.
-
-*/
-
-// Show the verification code or let it hear.
-function VerificationCode()
+class captcha_recomposeanim_cycle extends captcha_recomposeanim
 {
-	global $modSettings, $context, $scripturl;
+	public $is_available = true;
 
-	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
-	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
-
-	// Somehow no code was generated or the session was lost.
-	if (empty($code))
-		blankGif();
-	// Show a window that will play the verification code.
-	elseif (isset($_REQUEST['sound']))
+	public function render($code)
 	{
-		loadLanguage('Login');
-		loadTemplate('Register');
+		$this->code = $code;
 
-		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
-		$context['template_layers'] = array();
+		loadSource('Class-GifAnimator');
+		$this->anim = new GIF_Animator();
 
-		obExit();
+		$this->init();
+
+		// OK, it's showtime! Start by composing the image into place.
+		for ($i = 0; $i <= $this->frames; $i++)
+		{
+			$this->create_image();
+
+			if ($i == 0)
+				$this->background_frame();
+			else
+			{
+				$this->normal_frame_bg();
+
+				for ($n = 0; $n < $this->px_per_frame; $n++)
+				{
+					$pos = array_pop($this->ordermap);
+					if ($pos !== null)
+						imagesetpixel($this->image, $this->pixelmap[$pos][0], $this->pixelmap[$pos][1], $this->white);
+					else
+						break;
+				}
+
+				$this->anim->AddFrame($this->image, mt_rand(10, 30), $this->purple);
+				imagedestroy($this->image);
+			}
+		}
+
+		// Now we need to decompose it again.
+		$this->ordermap = range(0, count($this->pixelmap) - 1);
+		shuffle($this->ordermap);
+		$this->frames = mt_rand(20, 23);
+		$this->px_per_frame = ceil(count($this->ordermap) / $this->frames);
+
+		for ($i = 0; $i < $this->frames; $i++)
+		{
+			$this->create_image();
+			$this->normal_frame_bg();
+
+			for ($n = 0; $n < $this->px_per_frame; $n++)
+			{
+				$pos = array_pop($this->ordermap);
+				if ($pos !== null)
+					imagesetpixel($this->image, $this->pixelmap[$pos][0], $this->pixelmap[$pos][1], $this->black);
+				else
+					break;
+			}
+
+			$this->anim->AddFrame($this->image, mt_rand(10, 30), $this->purple);
+			imagedestroy($this->image);
+		}
+		
+		$this->anim->AssembleFrames(); // play through repeatedly
+		$this->anim->Output();
+		exit;
 	}
-
-	// Try the nice code using GD.
-	elseif (empty($_REQUEST['format']))
-	{
-		loadSource('Subs-Captcha');
-
-		if (!showCodeImage($code))
-			header('HTTP/1.1 400 Bad Request');
-		// You must be up to no good.
-		else
-			blankGif();
-	}
-
-	elseif ($_REQUEST['format'] === '.wav')
-	{
-		loadSource('Subs-Sound');
-
-		if (!createWaveFile($code))
-			header('HTTP/1.1 400 Bad Request');
-	}
-
-	// We all die one day...
-	die();
 }
 
 ?>

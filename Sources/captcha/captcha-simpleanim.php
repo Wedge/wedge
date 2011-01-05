@@ -1,6 +1,6 @@
 <?php
 /**********************************************************************************
-* VerificationCode.php                                                            *
+* captcha-simpleanim.php                                                          *
 ***********************************************************************************
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
@@ -22,64 +22,54 @@
 * The latest version can always be found at http://www.simplemachines.org.        *
 **********************************************************************************/
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
+// Wedge CAPTCHA: simpleanim
 
-define('WEDGE_NO_LOG', 1);
-
-/*	Deals with showing the CAPTCHA.
-
-	void VerificationCode()
-		// Show the verification code or let it hear.
-
-*/
-
-// Show the verification code or let it hear.
-function VerificationCode()
+class captcha_simpleanim
 {
-	global $modSettings, $context, $scripturl;
+	public $is_available = true;
 
-	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
-	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
-
-	// Somehow no code was generated or the session was lost.
-	if (empty($code))
-		blankGif();
-	// Show a window that will play the verification code.
-	elseif (isset($_REQUEST['sound']))
+	public function render($code)
 	{
-		loadLanguage('Login');
-		loadTemplate('Register');
+		global $settings;
 
-		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
-		$context['template_layers'] = array();
+		loadSource('Class-GifAnimator');
+		$anim = new GIF_Animator();
 
-		obExit();
+		$width = 230;
+		$height = 36;
+		$size = 26;
+
+		for ($i = 0, $n = strlen($code); $i <= $n; $i++)
+		{
+			$image = imagecreate($width, $height);
+			$black = imagecolorallocate($image, 0, 0, 0);
+			$white = imagecolorallocate($image, 255, 255, 255);
+			$purple = imagecolorallocate($image, 255, 0, 255); // this will, shortly, be our transparent colour.
+
+			if ($i == 0)
+			{
+				// Don't care what there was before, make the first frame all black, no transparency.
+				imagefilledrectangle($image, 0, 0, $width, $height, $black);
+				$anim->AddFrame($image, 10);
+				imagedestroy($image);
+			}
+			else
+			{
+				// Make the entire page purple, then make purple transparent so we get just the 'relevant' bits on our canvas
+				imagefilledrectangle($image, 0, 0, $width, $height, $purple);
+				imagecolortransparent($image, $purple);
+
+				imagettftext($image, $size, 0, ($i-1) * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), -$white, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i - 1, 1));
+				// ^^ Note the slightly odd -$white syntax above. This is because for some reason you have to do this to turn off antialiasing.
+				$anim->AddFrame($image, mt_rand(25,40), $purple);
+				imagedestroy($image);
+			}
+		}
+
+		$anim->AssembleFrames(1); // play through once, which due to the GIF format's oddities, will play twice in most cases.
+		$anim->Output();
+		exit;
 	}
-
-	// Try the nice code using GD.
-	elseif (empty($_REQUEST['format']))
-	{
-		loadSource('Subs-Captcha');
-
-		if (!showCodeImage($code))
-			header('HTTP/1.1 400 Bad Request');
-		// You must be up to no good.
-		else
-			blankGif();
-	}
-
-	elseif ($_REQUEST['format'] === '.wav')
-	{
-		loadSource('Subs-Sound');
-
-		if (!createWaveFile($code))
-			header('HTTP/1.1 400 Bad Request');
-	}
-
-	// We all die one day...
-	die();
 }
 
 ?>

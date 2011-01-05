@@ -205,6 +205,7 @@ function smf_main()
 
 	// Check the request for anything hinky.
 	checkUserBehavior();
+	call_hook('behavior');
 
 	// Load the current board's information.
 	loadBoard();
