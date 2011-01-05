@@ -26,7 +26,13 @@
 
 class captcha_simpleanim
 {
-	public $is_available = true;
+	public $is_available = false;
+
+	public function __construct()
+	{
+		global $modSettings;
+		$this->is_available = !empty($modSettings['use_animated_captcha']);
+	}
 
 	public function render($code)
 	{

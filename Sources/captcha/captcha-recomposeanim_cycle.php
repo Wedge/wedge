@@ -26,7 +26,7 @@
 
 class captcha_recomposeanim_cycle extends captcha_recomposeanim
 {
-	public $is_available = true;
+	public $is_available = false;
 
 	public function render($code)
 	{

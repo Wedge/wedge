@@ -26,7 +26,7 @@
 
 class captcha_recomposeanim
 {
-	public $is_available = true;
+	public $is_available = false;
 	protected $anim;
 	protected $pixelmap;
 	protected $ordermap;
@@ -44,6 +44,12 @@ class captcha_recomposeanim
 	protected $black;
 	protected $white;
 	protected $purple;
+
+	public function __construct()
+	{
+		global $modSettings;
+		$this->is_available = !empty($modSettings['use_animated_captcha']);
+	}
 
 	protected function init()
 	{

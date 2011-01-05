@@ -26,7 +26,7 @@
 
 class captcha_recomposeanim_shadow extends captcha_recomposeanim
 {
-	public $is_available = true;
+	public $is_available = false;
 
 	protected function init()
 	{
