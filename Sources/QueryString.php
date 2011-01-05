@@ -941,18 +941,8 @@ function ob_sessrewrite($buffer)
 	{
 		// A quick proof of concept...
 		$buffer = str_replace(
-			array(
-				'<we:title>',
-				'</we:title>',
-				'<we:title2>',
-				'</we:title2>',
-			),
-			array(
-				'<div class="title_bar"><h3>',
-				'</h3></div>',
-				'<div class="title_bar"><h4>',
-				'</h4></div>',
-			),
+			$context['blocks_to_search'],
+			$context['blocks_to_replace'],
 			$buffer
 		);
 	}

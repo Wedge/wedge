@@ -1432,6 +1432,21 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Then, we need a list of generic CSS files.
 	$context['css_generic_files'] = array('index');
 
+	// Now we initialize the search/replace pairs for template blocks.
+	// They can be overridden in a styling's settings.xml file.
+	$context['blocks_to_search'] = array(
+		'title'			=> '<we:title>',
+		'title_end'		=> '</we:title>',
+		'title2'		=> '<we:title2>',
+		'title2_end'	=> '</we:title2>',
+	);
+	$context['blocks_to_replace'] = array(
+		'title'			=> '<div class="title_bar"><h3>',
+		'title_end'		=> '</h3></div>',
+		'title2'		=> '<div class="title_bar"><h4>',
+		'title2_end'	=> '</h4></div>',
+	);
+
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $modSettings['settings_updated'])

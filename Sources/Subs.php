@@ -2845,14 +2845,26 @@ function wedge_cache_css()
 	if (/*$folder !== 'css' &&*/ file_exists($fold . 'settings.xml'))
 	{
 		$set = file_get_contents($fold . '/settings.xml');
+
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
 					$context['extra_styling_css'] .= rtrim($match[2], "\t");
+
 		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
 					add_js(rtrim($match[2], "\t"));
+
+		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)">(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+			{
+				$block = explode('|', $match[2]);
+				$context['blocks_to_search'][$match[1]] = '<we:' . $match[1] . '>';
+				$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
+				$context['blocks_to_replace'][$match[1]] = $block[0];
+				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
+			}
 	}
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
