@@ -801,7 +801,7 @@ function template_edit_style()
 		var identical = document.forms.stylesheetForm.entire_file.value == refreshPreviewCache;
 
 		// Don\'t reflow the whole thing if nothing changed!!
-$("body").prepend(document.forms.stylesheetForm.entire_file.value);		if (check && identical)
+		if (check && identical)
 			return;
 		refreshPreviewCache = document.forms.stylesheetForm.entire_file.value;
 		// Replace the paths for images.
