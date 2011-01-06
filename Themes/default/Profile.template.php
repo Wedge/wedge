@@ -2410,14 +2410,16 @@ function template_profile_group_manage()
 							</dt>
 							<dd>
 								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
-		// Fill the select box with all primary member groups that can be assigned to a member.
-		foreach ($context['member_groups'] as $member_group)
-			if (!empty($member_group['can_be_primary']))
-				echo '
+
+	// Fill the select box with all primary member groups that can be assigned to a member.
+	foreach ($context['member_groups'] as $member_group)
+		if (!empty($member_group['can_be_primary']))
+			echo '
 									<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected="selected"' : '', '>
 										', $member_group['name'], '
 									</option>';
-		echo '
+
+	echo '
 								</select>
 							</dd>
 							<dt>
@@ -2426,20 +2428,21 @@ function template_profile_group_manage()
 							<dd>
 								<span id="additional_groupsList">
 									<input type="hidden" name="additional_groups[]" value="0" />';
-		// For each membergroup show a checkbox so members can be assigned to more than one group.
-		foreach ($context['member_groups'] as $member_group)
-			if ($member_group['can_be_additional'])
-				echo '
+
+	// For each membergroup show a checkbox so members can be assigned to more than one group.
+	foreach ($context['member_groups'] as $member_group)
+		if ($member_group['can_be_additional'])
+			echo '
 									<label for="additional_groups-', $member_group['id'], '"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked="checked"' : '', ' class="input_check" /> ', $member_group['name'], '</label><br />';
-		echo '
+
+	echo '
 								</span>
 								<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
-								<script><!-- // --><![CDATA[
-									$("#additional_groupsList").hide();
-									$("#additional_groupsLink").show();
-								// ]]></script>
 							</dd>';
 
+	add_js('
+	$("#additional_groupsList").hide();
+	$("#additional_groupsLink").show();');
 }
 
 // Callback function for entering a birthdate!
@@ -2665,6 +2668,7 @@ function template_profile_avatar_select()
 		echo '
 								<div id="avatar_external">
 									<div class="smalltext">', $txt['avatar_by_url'], '</div>
+									<br />
 									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);" class="input_text" />
 								</div>';
 
@@ -2694,7 +2698,8 @@ function template_profile_avatar_select()
 
 			echo '
 								<div id="avatar_gravatar">
-									<div class="smalltext padding">', $txt['gravatar_alternateEmail'], '</div>
+									<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
+									<br />
 									<input type="text" name="gravatarEmail" size="45" value="', $textbox_value, '" class="input_text" />
 								</div>';
 		}

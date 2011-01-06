@@ -257,3 +257,7 @@ li.separator hr {
 	width: 50px;
 	display: block;
 }
+#admincenter hr {
+	display: block;
+	margin: 0;
+}
