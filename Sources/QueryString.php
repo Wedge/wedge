@@ -254,7 +254,11 @@ function cleanRequest()
 		// Webmasters might want to log the error, so they can fix any broken image links.
 		updateOnlineWithError('404 Not Found', false);
 		if (!empty($modSettings['enableErrorLogging']))
+		{
 			log_error('File not found');
+			loadSource('ManageErrors');
+			updateErrorCount();
+		}
 		die('404 Not Found');
 	}
 

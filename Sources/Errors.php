@@ -77,9 +77,15 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Are we using shortened or pretty URLs here?
 	$is_short = strpos($query_string, $scripturl);
+	$has_protocol = strpos($query_string, '://') > 0;
+
+	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.
+	if (($is_short === false && $has_protocol) && isset($_POST['board']) && !isset($_GET['board']))
+		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
+
 	if ($is_short === 0)
 		$query_string = substr($query_string, strlen($scripturl));
-	if ($is_short === false && strpos($query_string, '://') === false)
+	if ($is_short === false && !$has_protocol)
 		$is_short = 0;
 	if ($is_short === 0 && $query_string[0] === '?')
 		$is_short = false;
@@ -87,10 +93,6 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	// Don't log session data in the url twice, it's a waste.
 	$query_string = preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string);
 	$query_string = htmlspecialchars(($is_short === false ? '' : '?') . $query_string);
-
-	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.
-	if (!$is_pretty_url && isset($_POST['board']) && !isset($_GET['board']))
-		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
 
 	// What types of categories do we have?
 	$known_error_types = array(
