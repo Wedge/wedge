@@ -141,7 +141,7 @@ function template_body_above()
 	// the upshrink image, right-floated
 	echo '
 			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
-			', empty($settings['site_slogan']) ? '<img id="wedgelogo" src="' . $settings['images_url'] . '/wedgelogo.png" alt="Wedge" title="Wedge" />' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
+			', empty($settings['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
 			<div class="user">';

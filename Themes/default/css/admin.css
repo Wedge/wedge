@@ -116,7 +116,7 @@ ol.search_results li {
 
 /* Common admin center classes.
 ------------------------------------------------------- */
-hr.hrcolor {
+#admincenter hr {
 	margin: 10px 0;
 }
 .title_bar {

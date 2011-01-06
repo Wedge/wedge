@@ -280,7 +280,7 @@ function template_merge()
 
 	echo '
 				</dl>
-				<hr class="hrcolor" />
+				<hr />
 				<dl class="settings merge_topic">
 					<dt>
 						<strong>', $txt['merge_to_topic_id'], ': </strong>

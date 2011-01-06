@@ -440,7 +440,7 @@ function template_set_settings()
 		if (empty($setting))
 			echo '
 				</dl>
-				<hr class="hrcolor" />
+				<hr />
 				<dl class="settings flow_auto">';
 
 		// A checkbox?

@@ -1197,7 +1197,7 @@ function template_edit_options()
 		{
 			echo '
 				</dl>
-				<hr style="width: 100%; height: 1px" class="hrcolor" />
+				<hr />
 				<dl>';
 		}
 		elseif ($field['type'] == 'callback')
@@ -1284,7 +1284,7 @@ function template_edit_options()
 	{
 		if ($lastItem != 'hr')
 			echo '
-				<hr style="width: 100%; height: 1px" class="hrcolor" />';
+				<hr />';
 
 		echo '
 				<dl>';
@@ -1312,7 +1312,7 @@ function template_edit_options()
 				<div>', $context['profile_posthtml'], '</div>';
 	elseif ($lastItem != 'hr')
 		echo '
-				<hr style="width: 100%; height: 1px" class="hrcolor" />';
+				<hr />';
 
 	// Only show the password box if it's actually needed.
 	if ($context['require_password'])
@@ -2354,7 +2354,7 @@ function template_profile_save()
 
 	echo '
 
-					<hr style="width: 100%; height: 1px" class="hrcolor" />';
+					<hr />';
 
 	// Only show the password box if it's actually needed.
 	if ($context['require_password'])
@@ -2687,14 +2687,14 @@ function template_profile_avatar_select()
 		else
 		{
 			// Depending on other stuff, the stored value here might have some odd things in it from other areas.
-			if ($context['member']['avatar']['external'] == $context['member']['email'] || strpos($context['member']['avatar']['external'], 'gravatar://') === false)
+			if ($context['member']['avatar']['external'] == $context['member']['email'] || strpos($context['member']['avatar']['name'], 'gravatar://') === false)
 				$textbox_value = '';
 			else
 				$textbox_value = $context['member']['avatar']['external'];
 
 			echo '
 								<div id="avatar_gravatar">
-									<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
+									<div class="smalltext padding">', $txt['gravatar_alternateEmail'], '</div>
 									<input type="text" name="gravatarEmail" size="45" value="', $textbox_value, '" class="input_text" />
 								</div>';
 		}
@@ -2866,7 +2866,7 @@ function template_authentication_method()
 
 	if ($context['require_password'])
 		echo '
-				<hr style="width: 100%; height: 1px" class="hrcolor" />
+				<hr />
 				<dl>
 					<dt>
 						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>

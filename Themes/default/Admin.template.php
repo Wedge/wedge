@@ -556,7 +556,7 @@ function template_edit_censored()
 	}');
 
 	echo '
-				<hr style="width: 100%; height: 1px" class="hrcolor" />
+				<hr />
 				<dl class="settings">
 					<dt>
 						<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
@@ -837,7 +837,7 @@ function template_show_settings()
 			if ($config_var == '')
 				echo '
 				</dl>
-				<hr class="hrcolor" />
+				<hr />
 				<dl class="settings">';
 			else
 				echo '
@@ -853,7 +853,7 @@ function template_show_settings()
 
 	if (empty($context['settings_save_dont_show']))
 		echo '
-				<hr class="hrcolor" />
+				<hr />
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled="disabled"' : ''), (!empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : ''), ' class="button_submit" />
 				</div>';

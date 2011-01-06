@@ -90,6 +90,9 @@ h1.forumtitle {
 }
 /* ..so does the Wedge logo */
 #wedgelogo {
+	background: transparent url(../images/wedgelogo.png) no-repeat;
+	width: 140px;
+	height: 52px;
 	margin-top: .7em;
 	margin-left: 1em;
 }

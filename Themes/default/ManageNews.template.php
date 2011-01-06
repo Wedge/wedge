@@ -137,7 +137,7 @@ function template_email_members()
 						<input type="text" name="members" id="members" value="" size="30" class="input_text" />
 					</dd>
 				</dl>
-				<hr class="bordercolor" />
+				<hr />
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_groups'], ':</strong>
@@ -162,7 +162,7 @@ function template_email_members()
 						<input type="text" name="exclude_members" id="exclude_members" value="" size="30" class="input_text" />
 					</dd>
 				</dl>
-				<hr class="bordercolor" />
+				<hr />
 				<dl class="settings">
 					<dt>
 						<label for="email_force"><strong>', $txt['admin_news_select_override_notify'], ':</strong></label>

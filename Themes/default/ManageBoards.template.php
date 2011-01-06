@@ -382,7 +382,7 @@ function template_modify_board()
 						<div id="moderator_container"></div>
 					</dd>
 				</dl>
-				<hr class="hrcolor" />';
+				<hr />';
 
 	if (empty($context['board']['is_recycle']) && empty($context['board']['topics']))
 		echo '

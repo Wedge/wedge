@@ -1221,7 +1221,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		// Default avatar?
 		elseif (false)
 		{
-		
+			// !!! Finish this.
 		}
 	}
 
