@@ -151,7 +151,7 @@ function ViewErrorLog()
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
 			'url' => array(
-				'html' => htmlspecialchars((substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url']),
+				'html' => htmlspecialchars((strpos($row['url'], '?') === 0 ? $scripturl : '') . $row['url']),
 				'href' => base64_encode(wesql::escape_wildcard_string($row['url']))
 			),
 			'message' => array(

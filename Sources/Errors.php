@@ -75,12 +75,18 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	else
 		$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
 
-	// Are we using pretty URLs here?
-	$is_pretty_url = strpos($query_string, $scripturl) === false;
+	// Are we using shortened or pretty URLs here?
+	$is_short = strpos($query_string, $scripturl);
+	if ($is_short === 0)
+		$query_string = substr($query_string, strlen($scripturl));
+	if ($is_short === false && strpos($query_string, '://') === false)
+		$is_short = 0;
+	if ($is_short === 0 && $query_string[0] === '?')
+		$is_short = false;
 
 	// Don't log session data in the url twice, it's a waste.
 	$query_string = preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string);
-	$query_string = htmlspecialchars((SMF == 'SSI' || $is_pretty_url ? '' : '?') . $query_string);
+	$query_string = htmlspecialchars(($is_short === false ? '' : '?') . $query_string);
 
 	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.
 	if (!$is_pretty_url && isset($_POST['board']) && !isset($_GET['board']))
