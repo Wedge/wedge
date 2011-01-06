@@ -84,14 +84,14 @@ function template_select()
 
 	foreach ($context['not_selected']['messages'] as $message)
 		echo '
-					<li id="not_selected_', $message['id'], '" class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
+					<li id="not_selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
 							<a class="split_icon floatright" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=down;msg=', $message['id'], '" onclick="return select(\'down\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_select.gif" alt="-&gt;" /></a>
 							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br />
 							<em>', $message['time'], '</em>
 						</div>
 						<div class="post">', $message['body'], '</div>
-					</li>';
+					</div></li>';
 
 	echo '
 					<li class="dummy" />
@@ -114,14 +114,14 @@ function template_select()
 	if (!empty($context['selected']['messages']))
 		foreach ($context['selected']['messages'] as $message)
 			echo '
-					<li id="selected_', $message['id'], '" class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
+					<li id="selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
 							<a class="split_icon floatleft" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=up;msg=', $message['id'], '" onclick="return select(\'up\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_deselect.gif" alt="&lt;-" /></a>
 							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br />
 							<em>', $message['time'], '</em>
 						</div>
 						<div class="post">', $message['body'], '</div>
-					</li>';
+					</div></li>';
 
 	echo '
 					<li class="dummy" />
@@ -148,72 +148,67 @@ function template_select()
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
 		return false;
 	}
-	function applyWindowClasses(oList)
-	{
-		var bAlternate = false;
-		oListItems = oList.getElementsByTagName("LI");
-		for (i = 0; i < oListItems.length; i++)
-		{
-			// Skip dummies.
-			if (oListItems[i].id == "")
-				continue;
-			oListItems[i].className = "windowbg" + (bAlternate ? "2" : "") + " wrc";
-			bAlternate = !bAlternate;
-		}
-	}
 	function onDocReceived(XMLDoc)
 	{
-		var i, j, k, pageIndex;
-		for (i = 0; i < 2; i++)
-		{
-			pageIndex = XMLDoc.getElementsByTagName("pageIndex")[i];
-			document.getElementById("pageindex_" + pageIndex.getAttribute("section")).innerHTML = pageIndex.firstChild.nodeValue;
-			start[i] = pageIndex.getAttribute("startFrom");
-		}
-		var numChanges = XMLDoc.getElementsByTagName("change").length;
-		var curChange, curSection, curAction, curId, curList, curData, newItem, sInsertBeforeId;
-		for (i = 0; i < numChanges; i++)
-		{
-			curChange = XMLDoc.getElementsByTagName("change")[i];
-			curSection = curChange.getAttribute("section");
-			curAction = curChange.getAttribute("curAction");
-			curId = curChange.getAttribute("id");
-			curList = document.getElementById("messages_" + curSection);
-			if (curAction == "remove")
-				curList.removeChild(document.getElementById(curSection + "_" + curId));
+		$("pageIndex", XMLDoc).each(function (i) {
+			$("#pageindex_" + this.getAttribute("section")).html($(this).text());
+			start[i] = this.getAttribute("startFrom");
+		});
+
+		$("change", XMLDoc).each(function () {
+			var
+				curId = this.getAttribute("id"),
+				curSection = this.getAttribute("section"),
+				curList = $("#messages_" + curSection),
+				is_selected = curSection == "selected",
+				sInsertBeforeId = "";
+
+			if (this.getAttribute("curAction") === "remove")
+				$("#" + curSection + "_" + curId).remove();
+
 			// Insert a message.
 			else
 			{
-				// By default, insert the element at the end of the list.
-				sInsertBeforeId = null;
 				// Loop through the list to try and find an item to insert after.
-				oListItems = curList.getElementsByTagName("LI");
-				for (j = 0, k = oListItems.length; j < k; j++)
-				{
-					if (parseInt(oListItems[j].id.substr(curSection.length + 1)) < curId)
+				curList.find("li > div").each(function () {
+					var p = parseInt(this.parentNode.id.substr(curSection.length + 1));
+					if (p < curId)
 					{
 						// This would be a nice place to insert the row.
-						sInsertBeforeId = oListItems[j].id;
+						sInsertBeforeId = "#" + this.parentNode.id;
 						// We\'re done for now. Escape the loop.
-						j = oListItems.length + 1;
+						return false;
 					}
-				}
+				});
 
 				// Let\'s create a nice container for the message.
-				newItem = document.createElement("LI");
-				newItem.id = curSection + "_" + curId;
-				newItem.innerHTML = "<div class=\\"message_header\\"><a class=\\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (curSection == "selected" ? "up" : "down") + "\', " + curId + ");\\"><img src=\\"', $settings['images_url'], '/split_" + (curSection == "selected" ? "de" : "") + "select.gif\\" alt=\\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\\" /></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> ', $txt['by'], ' <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br /><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em></div><div class=\\"post\\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div>";
+				var newItem = $("<div></div>").html("\
+	<div class=\\"message_header\\">\
+		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(smf_scripturl) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
+			<img src=\\"', $settings['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\" />\
+		</a>\
+		<strong>" + $("subject", this).text() + "</strong> ', $txt['by'], ' <strong>" + $("poster", this).text() + "</strong>\
+		<br /><em>" + $("time", this).text() + "</em>\
+	</div>\
+	<div class=\\"post\\">" + $("body", this).text() + "</div>");
 
 				// So, where do we insert it?
-				if (typeof sInsertBeforeId == "string")
-					curList.insertBefore(newItem, document.getElementById(sInsertBeforeId));
+				if (sInsertBeforeId)
+					newItem.insertBefore(sInsertBeforeId);
+				// By default, insert the element at the end of the list.
 				else
-					curList.appendChild(newItem);
+					newItem.appendTo(curList);
+				newItem.wrap("<li id=\"" + curSection + "_" + curId + "\"></li>");
 			}
-		}
+		});
+
 		// After all changes, make sure the window backgrounds are still correct for both lists.
-		applyWindowClasses(document.getElementById("messages_selected"));
-		applyWindowClasses(document.getElementById("messages_not_selected"));
+		var bAlt, fAlt = function () {
+			this.className = "wrc windowbg" + (bAlt ? "2" : "");
+			bAlt = !bAlt;
+		};
+		bAlt = false; $("#messages_selected li > div").each(fAlt);
+		bAlt = false; $("#messages_not_selected li > div").each(fAlt);
 	}');
 }
 
