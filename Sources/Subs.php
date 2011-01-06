@@ -3599,6 +3599,9 @@ function host_from_ip($ip)
  */
 function test_ip_host($ip, $domain)
 {
+	// !!! DNS failure cannot be adequately detected due to a PHP bug. Until a solution is found, forcibly override this check.
+	return true;
+
 	$host = host_from_ip($ip);
 	$host_result = strpos(strrev($host), strrev($domain));
 	if ($host_result === false || $host_result > 0)
