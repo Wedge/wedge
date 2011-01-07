@@ -25,7 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	
+/*
 	void create_control_verification(&array suggestOptions)
 		// !!
 
@@ -36,7 +36,6 @@ if (!defined('SMF'))
 	  database.
 	- the board_id is needed for the custom message icons (which can be set for
 	  each board individually).
-
 */
 
 function getMessageIcons($board_id)

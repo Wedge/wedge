@@ -1430,7 +1430,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Then, we need a list of generic CSS files.
-	$context['css_generic_files'] = array('index');
+	$context['css_generic_files'] = array('index', 'sections');
 
 	// Now we initialize the search/replace pairs for template blocks.
 	// They can be overridden in a styling's settings.xml file.
@@ -1778,6 +1778,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])
 		$context['css_generic_files'][] = 'rtl';
+
+	// We also have a special stylesheet for sheets. Maybe become useful.
+	if ($user_info['is_guest'])
+		$context['css_generic_files'][] = 'guest';
 
 	$context['tabindex'] = 1;
 

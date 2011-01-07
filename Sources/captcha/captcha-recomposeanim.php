@@ -96,7 +96,7 @@ class captcha_recomposeanim
 				imagedestroy($this->image);
 			}
 		}
-		
+
 		$this->anim->AssembleFrames(1); // play through once
 		$this->anim->Output();
 		exit;

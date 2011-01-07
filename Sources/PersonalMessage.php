@@ -3714,7 +3714,7 @@ function MessageDrafts()
 	{
 		$draft_id = (int) $_GET['delete'];
 		checkSession('get');
-		
+
 		wesql::query('
 			DELETE FROM {db_prefix}drafts
 			WHERE id_draft = {int:draft}

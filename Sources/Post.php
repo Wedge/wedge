@@ -1137,8 +1137,8 @@ function Post()
 			$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
 			$context['use_smileys'] = !empty($row['extra']['smileys_enabled']);
 			$context['icon'] = empty($row['extra']['post_icon']) ? 'xx' : $row['extra']['post_icon'];
-			
-			// !!! Locked, sticky
+
+			// !!! Deal with locked and sticky?
 		}
 
 		wesql::free_result($query);

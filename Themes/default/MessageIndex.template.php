@@ -10,7 +10,7 @@ function template_main()
 			<div class="windowbg" id="profile_success">
 				', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
 			</div>';
-			
+
 	echo '
 	<a id="top"></a>';
 
@@ -311,7 +311,7 @@ function template_main()
 		{
 			echo '
 				<tr class="titlebg">
-					<td colspan="6" class="right">
+					<td colspan="5" class="right">
 						<select class="qaction" name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
 							<option value="">--------</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '

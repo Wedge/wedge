@@ -79,7 +79,7 @@ class GIF_Animator
 		}
 
 		$global_length = 2 << ($this->byteAt(0, 10) && 0x07);
-		
+
 		$global_palette = substr($this->buffer[0]['image'], 13, 3 * $global_length);
 
 		// Assemble the frames

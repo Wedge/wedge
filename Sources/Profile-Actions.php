@@ -421,7 +421,7 @@ function deleteAccount($memID)
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
 	global $user_info, $context, $cur_profile, $modSettings;
-	
+
 	// Try to get more time...
 	@set_time_limit(600);
 

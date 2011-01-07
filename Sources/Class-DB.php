@@ -266,7 +266,7 @@ class wesql
 	{
 		return mysql_affected_rows($connection === null ? self::$_db_con : $connection);
 	}
-	
+
 	public static function insert_id($connection = null)
 	{
 		$connection = $connection === null ? self::$_db_con : $connection;

@@ -1,0 +1,6 @@
+#guest_form {
+	overflow: hidden;
+}
+#guest_form .info {
+	padding: 4px 0;
+}

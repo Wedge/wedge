@@ -85,7 +85,7 @@ class captcha_recomposeanim_cycle extends captcha_recomposeanim
 			$this->anim->AddFrame($this->image, mt_rand(10, 30), $this->purple);
 			imagedestroy($this->image);
 		}
-		
+
 		$this->anim->AssembleFrames(); // play through repeatedly
 		$this->anim->Output();
 		exit;

@@ -1589,7 +1589,7 @@ function MaintainPurgeInactiveMembers()
 function MaintainRecountPosts()
 {
 	global $txt, $context, $scripturl, $modSettings, $time_start;
-	
+
 	isAllowedTo('admin_forum');
 	checkSession('request');
 

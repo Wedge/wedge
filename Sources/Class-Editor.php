@@ -71,7 +71,7 @@ class wedgeEditor
 			self::$editorLoaded = true;
 
 			loadLanguage('Post');
-			loadTemplate(false, $context['browser']['is_ie'] ? 'editor_ie' : 'editor'); // we don't need any templates; this class does it. But we do need CSS.
+			wedge_add_css($context['browser']['is_ie'] ? 'editor_ie' : 'editor');
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			add_js('

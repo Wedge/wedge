@@ -4259,6 +4259,7 @@ function get_gravatar_url($email_address)
 {
 	global $modSettings;
 	static $size_string = null;
+
 	if ($size_string === null)
 	{
 		if (!empty($modSettings['avatar_max_width_external']))
@@ -4268,12 +4269,12 @@ function get_gravatar_url($email_address)
 				$size_string = $modSettings['avatar_max_height_external'];
 
 		if (!empty($size_string))
-			$size_string = '&s=' . $size_string;
+			$size_string = ';s=' . $size_string;
 		else
 			$size_string = '';
 	}
-	
-	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($modSettings['gravatarMaxRating']) ? '&rating=' . $modSettings['gravatarMaxRating']: '') . $size_string;
+
+	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($modSettings['gravatarMaxRating']) ? ';rating=' . $modSettings['gravatarMaxRating']: '') . $size_string;
 }
 
 ?>
