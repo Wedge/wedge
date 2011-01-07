@@ -2782,7 +2782,7 @@ function template_profile_timeoffset_modify()
 								<dfn>', $txt['personal_time_offset'], '</dfn>
 							</dt>
 							<dd>
-								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '" class="input_text" /> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '000); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 							</dd>';
 }
 

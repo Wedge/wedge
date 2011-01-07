@@ -102,7 +102,7 @@ function template_registration_form()
 	// Update the authentication status.
 	updateAuthMethod();
 
-	$(\'#time_offset\').val(autoDetectTimeOffset(' . $context['current_forum_time_js'] . '));');
+	$(\'#time_offset\').val(autoDetectTimeOffset(' . $context['current_forum_time_js'] . '000));');
 
 	// Any errors?
 	if (!empty($context['registration_errors']))

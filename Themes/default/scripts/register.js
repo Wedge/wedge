@@ -73,7 +73,6 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			return false;
 
 		$('input[type="text"].autov, input[type="password"].autov').each(function () {
-		{
 			var curType = 0, id = this.id;
 
 			// Username can only be done with XML.
