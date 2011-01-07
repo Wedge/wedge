@@ -794,6 +794,10 @@ function ob_sessrewrite($buffer)
 	elseif (isset($_GET['debug']))
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
 
+	// If we're previewing CSS, make sure all links are handled the same way.
+	if (isset($_REQUEST['nocsscache'], $_REQUEST['theme']))
+		$buffer = str_replace($scripturl . '?', $scripturl . '?nocsscache;theme=' . $_REQUEST['theme'] . ';', $buffer);
+
 	// Rewrite the buffer with Pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
 	{

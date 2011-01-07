@@ -1815,21 +1815,20 @@ function template_ignoreboards()
 {
 	global $context, $txt, $settings, $scripturl;
 
+	add_js('
+	function selectBoards(ids)
+	{
+		var toggle = true;
+
+		for (i = 0; i < ids.length; i++)
+			toggle = toggle & document.forms.creator["ignore_brd" + ids[i]].checked;
+
+		for (i = 0; i < ids.length; i++)
+			document.forms.creator["ignore_brd" + ids[i]].checked = !toggle;
+	}');
+
 	// The main containing header.
 	echo '
-	<script><!-- // --><![CDATA[
-		function selectBoards(ids)
-		{
-			var toggle = true;
-
-			for (i = 0; i < ids.length; i++)
-				toggle = toggle & document.forms.creator["ignore_brd" + ids[i]].checked;
-
-			for (i = 0; i < ids.length; i++)
-				document.forms.creator["ignore_brd" + ids[i]].checked = !toggle;
-		}
-	// ]]></script>
-
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3>
@@ -1984,10 +1983,10 @@ function template_issueWarning()
 		// Are we passing the amount to change it by?
 		if (changeAmount)
 		{
-			if ($(\'#warning_level\').val() == \'SAME\')
+			if ($("#warning_level").val() == "SAME")
 				percent = ', $context['member']['warning'], ' + changeAmount;
 			else
-				percent = parseInt($(\'#warning_level\').val(), 10) + changeAmount;
+				percent = parseInt($("#warning_level").val(), 10) + changeAmount;
 		}
 		// If not then it\'s a mouse thing.
 		else
@@ -2036,9 +2035,9 @@ function template_issueWarning()
 
 		size = barWidth * (percent/100);
 
-		$(\'#warning_text\').html(percent + "%");
-		$(\'#warning_level\').val(percent);
-		$(\'#warning_progress\').css("width", size + "px");
+		$("#warning_text").html(percent + "%");
+		$("#warning_level").val(percent);
+		$("#warning_progress").css("width", size + "px");
 
 		// Get the right color.
 		color = "black"');
@@ -2049,7 +2048,7 @@ function template_issueWarning()
 			color = "', $color, '";');
 
 	add_js('
-		$(\'#warning_progress\').css("backgroundColor", color);
+		$("#warning_progress").css("backgroundColor", color);
 
 		// Also set the right effect.
 		effectText = "";');
@@ -2060,15 +2059,15 @@ function template_issueWarning()
 			effectText = "', $text, '";');
 
 	add_js('
-		$(\'#cur_level_div\').html(effectText);
+		$("#cur_level_div").html(effectText);
 	}
 
 	// Disable notification boxes as required.
 	function modifyWarnNotify()
 	{
-		var enable = $(\'#warn_notify\').attr("checked");
-		$(\'#warn_sub, #warn_body, #warn_temp\').attr("disabled", !enable);
-		$(\'#new_template_link\').toggle(enable);
+		var enable = $("#warn_notify").attr("checked");
+		$("#warn_sub, #warn_body, #warn_temp").attr("disabled", !enable);
+		$("#new_template_link").toggle(enable);
 	}
 
 	function changeWarnLevel(amount)
@@ -2079,7 +2078,7 @@ function template_issueWarning()
 	// Warn template.
 	function populateNotifyTemplate()
 	{
-		index = $(\'#warn_temp\').val();
+		index = $("#warn_temp").val();
 		if (index == -1)
 			return false;
 
@@ -2088,7 +2087,7 @@ function template_issueWarning()
 	foreach ($context['notification_templates'] as $k => $type)
 		add_js('
 		if (index == ', $k, ')
-			$(\'#warn_body\').val("', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '");');
+			$("#warn_body").val("', strtr($type['body'], array('"' => "'", "\n" => '\\n', "\r" => '')), '");');
 
 	add_js('
 	}');
@@ -2267,8 +2266,8 @@ function template_issueWarning()
 
 	// Do our best to get pretty javascript enabled.
 	add_js('
-	$(\'#warndiv1\').show();
-	$(\'#warndiv2\').hide();');
+	$("#warndiv1").show();
+	$("#warndiv2").hide();');
 
 	if (!$context['user']['is_owner'])
 		add_js('

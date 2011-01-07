@@ -776,7 +776,7 @@ function template_edit_style()
 
 		// Revert to the theme they actually use ;)
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + "action=admin;area=theme;sa=edit;theme=', $settings['theme_id'], ';preview;" + (new Date().getTime());
+		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['styling']) ? '_' . base64_encode($user_info['styling']) : '', ';preview;" + (new Date().getTime());
 
 		refreshPreviewCache = null;
 		refreshPreview(false);
@@ -792,20 +792,21 @@ function template_edit_style()
 			url = url.substr(0, url.indexOf("#"));
 		}
 
-		getXMLDocument(url + "theme=', $context['theme_id'], '" + anchor, navigateCallback);
+		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), ';nocsscache" + anchor, navigateCallback);
 	}
 	navigatePreview(smf_prepareScriptUrl(smf_scripturl));
 
 	function refreshPreview(check)
 	{
-		var identical = document.forms.stylesheetForm.entire_file.value == refreshPreviewCache;
+		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([\./]+images/gi, "url(" + smf_images_url) == refreshPreviewCache;
 
 		// Don\'t reflow the whole thing if nothing changed!!
 		if (check && identical)
 			return;
 		refreshPreviewCache = document.forms.stylesheetForm.entire_file.value;
+
 		// Replace the paths for images.
-		refreshPreviewCache = refreshPreviewCache.replace(/url\(\.\.\/images/gi, "url(" + smf_images_url);
+		refreshPreviewCache = refreshPreviewCache.replace(/url\([\./]+images/gi, "url(" + smf_images_url);
 
 		// Try to do it without a complete reparse.
 		if (identical)
@@ -842,8 +843,8 @@ function template_edit_style()
 			var stylesheetMatch = new RegExp(\'<link rel="stylesheet"[^>]+href="[^"]+\' + editFilename + \'[^>]*>\');
 
 			// Replace the paths for images.
-			preview_sheet = preview_sheet.replace(/url\(\.\.\/images/gi, "url(" + smf_images_url);
-			data = data.replace(stylesheetMatch, "<style type=\"text/css\" id=\"css_preview_sheet\">" + preview_sheet + "<" + "/style>");
+			preview_sheet = preview_sheet.replace(/url\([\./]+images/gi, "url(" + smf_images_url);
+			data = data.replace(stylesheetMatch, "<style id=\"css_preview_sheet\">" + preview_sheet + "<" + "/style>");
 
 			frames["css_preview_box"].document.open();
 			frames["css_preview_box"].document.write(data);
@@ -880,7 +881,7 @@ function template_edit_style()
 	}');
 
 	echo '
-		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 300px" seamless="seamless"></iframe>';
+		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 400px" seamless="seamless"></iframe>';
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '

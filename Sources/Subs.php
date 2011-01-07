@@ -2823,6 +2823,14 @@ function wedge_cache_css()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
+		// If this is a replace-type styling, erase all of the parent files.
+		if ($folder !== 'css' && file_exists($fold . 'settings.xml'))
+		{
+			$set = file_get_contents($fold . '/settings.xml');
+			if (strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
+				$css = array();
+		}
+
 		foreach ($context['css_generic_files'] as $file)
 		{
 			$add = $fold . $file . '.css';
@@ -2841,11 +2849,9 @@ function wedge_cache_css()
 
 	// The last folder in the list is the deepest styling.
 	// It's the one that gets CSS/JavaScript attention.
-	// !!! Move Pastel to a sub-folder and restore the comment below.
-	if (/*$folder !== 'css' &&*/ file_exists($fold . 'settings.xml'))
+	// !!! Right now, the default styling (Pastel) will not run this, even though it needs it. Right back at ya, IE.
+	if (!empty($set))
 	{
-		$set = file_get_contents($fold . '/settings.xml');
-
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
@@ -2865,6 +2871,21 @@ function wedge_cache_css()
 				$context['blocks_to_replace'][$match[1]] = $block[0];
 				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
 			}
+	}
+
+	// Allow admins to preview CSS in the admin area.
+	// I would use the json_decode trick for str_replace, but it's PHP 5.2+ :p
+	if (isset($_REQUEST['nocsscache']) && allowedTo('admin_forum'))
+	{
+		foreach ($css as &$file)
+			$file = str_replace(
+				array($settings['default_theme_dir'], $settings['theme_dir']),
+				array($settings['default_theme_url'], $settings['theme_url']),
+				$file
+			);
+		$context['cached_css'] = implode('" />
+	<link rel="stylesheet" href="', $css);
+		return;
 	}
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
