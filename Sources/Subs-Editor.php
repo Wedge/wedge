@@ -139,12 +139,14 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'image_href' => $scripturl . '?action=verificationcode;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
 			'text_value' => '',
 			'questions' => array(),
+			'do_empty_field' => empty($verificationsOptions['no_empty_field']),
 		);
 	$thisVerification = &$context['controls']['verification'][$verificationOptions['id']];
 
 	// Add javascript for the object.
-	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'] && !WIRELESS)
+	if ($thisVerification['show_visual'] && !WIRELESS)
 		add_js('
+	$(\'.vv_special\').remove();
 	var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');
 
 	// Is there actually going to be anything?
@@ -200,6 +202,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		// ... nor this!
 		if ($thisVerification['number_questions'] && (!isset($_SESSION[$verificationOptions['id'] . '_vv']['q']) || !isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'])))
 			fatal_lang_error('no_access', false);
+		// Nor this, really.
+		if ($thisVerification['do_empty_field'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['empty_field']))
+			fatal_lang_error('no_access', false);
 
 		if ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
 			$verification_errors[] = 'wrong_verification_code';
@@ -227,6 +232,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			if (!empty($incorrectQuestions))
 				$verification_errors[] = 'wrong_verification_answer';
 		}
+
+		if ($thisVerification['do_empty_field'] && !empty($_SESSION[$verificationOptions['id'] . '_vv']['empty_field']) && !empty($_REQUEST[$_SESSION[$verificationOptions['id'] . '_vv']['empty_field']]))
+			$verification_errors[] = 'wrong_verification_answer';
 	}
 
 	// Any errors means we refresh potentially.
@@ -250,6 +258,16 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		$_SESSION[$verificationOptions['id'] . '_vv']['errors'] = 0;
 		$_SESSION[$verificationOptions['id'] . '_vv']['did_pass'] = false;
 		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
+
+		if ($thisVerification['do_empty_field'])
+		{
+			// We're building a field that lives in the template, that we hope to be empty later. But at least we give it a believable name.
+			$terms = array('validate', 'authenticate', 'authorize', 'check', 'key', 'crypto', 'encrypt');
+			$second_terms = array('hash', 'cipher', 'field', 'name', 'id', 'code', 'key');
+			$start = mt_rand(0, 27);
+			$hash = substr(md5(time()), $start, 4);
+			$_SESSION[$verificationOptions['id'] . '_vv']['empty_field'] = $terms[array_rand($terms)] . '-' . $second_terms[array_rand($second_terms)] . '-' . $hash;
+		}
 
 		// Generating a new image.
 		if ($thisVerification['show_visual'])

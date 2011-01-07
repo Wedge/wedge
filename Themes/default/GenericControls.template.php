@@ -59,6 +59,13 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 				</div>';
 		}
 
+		if ($verify_context['do_empty_field'])
+			echo '
+				<div class="smalltext vv_special">
+					', $txt['visual_verification_hidden'], ':
+					<input type="text" name="', $_SESSION[$verify_id . '_vv']['empty_field'], '" autocomplete="off" size="30" value="" />
+				</div>';
+
 		if ($display_type != 'single')
 			echo '
 			</div>';

@@ -2371,6 +2371,10 @@ dl.register_form dd {
 	background-color: #fff0f0;
 }
 
+.vv_special {
+	display: none;
+}
+
 /* Styles for maintenance mode.
 ------------------------------------------------------- */
 #maintenance_mode {
