@@ -211,7 +211,7 @@ function MLAll()
 			for ($i = 0, $n = wesql::num_rows($request); $i < $n; $i += $cache_step_size)
 			{
 				wesql::data_seek($request, $i);
-				list($memberlist_cache['index'][$i]) = wesql::fetch_row($request);
+				list ($memberlist_cache['index'][$i]) = wesql::fetch_row($request);
 			}
 			wesql::data_seek($request, $memberlist_cache['num_members'] - 1);
 			list ($memberlist_cache['index'][$i]) = wesql::fetch_row($request);

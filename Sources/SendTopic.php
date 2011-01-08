@@ -565,7 +565,7 @@ function ReportToModerator2()
 		// Maybe they don't want to know?!
 		if (!empty($row['mod_prefs']))
 		{
-			list(,, $pref_binary) = explode('|', $row['mod_prefs']);
+			list (,, $pref_binary) = explode('|', $row['mod_prefs']);
 			if (!($pref_binary & 1) && (!($pref_binary & 2) || !in_array($row['id_member'], $real_mods)))
 				continue;
 		}

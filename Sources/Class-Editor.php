@@ -1748,7 +1748,7 @@ class wedgeEditor
 						$this->smileys[$section][count($smileyRows) - 1]['isLast'] = true;
 				}
 
-				cache_put_data('posting_smileys', $context['smileys'], 480);
+				cache_put_data('posting_smileys', $this->smileys, 480);
 			}
 			else
 				$this->smileys = $temp;
@@ -2310,14 +2310,11 @@ class wedgeEditor
 	<link rel="stylesheet" href="' . $context['cached_css'] . '" />
 </head>
 <body id="help_popup">
-	<div class="padding windowbg">
-		<div class="cat_bar">
-			<h3>' . $txt['more_smileys_pick'] . '</h3>
-			</h3>
-		</div>
-		<div class="padding">
-			%smileyRows%
-		</div>
+	<div class="cat_bar">
+		<h3>' . $txt['more_smileys_pick'] . '</h3>
+	</div>
+	<div class="windowbg wrc">
+		%smileyRows%
 		<div class="smalltext centertext">
 			<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
 		</div>

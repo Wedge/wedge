@@ -471,7 +471,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 	);
 	if (wesql::num_rows($query) != 0)
 	{
-		list($url) = wesql::fetch_row($query);
+		list ($url) = wesql::fetch_row($query);
 		$url = unserialize($url);
 
 		if ($is_lang)

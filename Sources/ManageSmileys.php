@@ -1185,7 +1185,7 @@ function list_getNumSmileys()
 		array(
 		)
 	);
-	list($numSmileys) = wesql::fetch_row;
+	list ($numSmileys) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	return $numSmileys;

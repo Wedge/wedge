@@ -422,7 +422,7 @@ function ConvertUtf8()
 		wesql::free_result($request);
 
 		// A collation looks like latin1_swedish. We only need the character set.
-		list($context['database_charset']) = explode('_', $column_info['Collation']);
+		list ($context['database_charset']) = explode('_', $column_info['Collation']);
 		$context['database_charset'] = in_array($context['database_charset'], $charsets) ? array_search($context['database_charset'], $charsets) : $context['database_charset'];
 
 		// No need to convert to UTF-8 if it already is.
@@ -606,7 +606,7 @@ function ConvertUtf8()
 				$collation = empty($column_info['Collation']) || $column_info['Collation'] === 'NULL' ? $table_info['Collation'] : $column_info['Collation'];
 				if (!empty($collation) && $collation !== 'NULL')
 				{
-					list($charset) = explode('_', $collation);
+					list ($charset) = explode('_', $collation);
 
 					if (!isset($table_charsets[$charset]))
 						$table_charsets[$charset] = array();
@@ -818,7 +818,7 @@ function ConvertEntities()
 			array(
 			)
 		);
-		list($max_value) = wesql::fetch_row($request);
+		list ($max_value) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		if (empty($max_value))
@@ -1609,7 +1609,7 @@ function MaintainRecountPosts()
 	@set_time_limit(300);
 
 	if (($temp = cache_get_data('recount_boards_info', 600)) !== null)
-		list($boards, $member_count) = $temp;
+		list ($boards, $member_count) = $temp;
 	else
 	{
 		// What boards are we interested in?
@@ -1635,7 +1635,7 @@ function MaintainRecountPosts()
 				'boards' => $boards,
 			)
 		);
-		list($member_count) = wesql::fetch_row($request);
+		list ($member_count) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// Interesting. There are no boards set to count posts, fine let's do this the quick way.

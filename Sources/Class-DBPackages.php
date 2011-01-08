@@ -27,17 +27,18 @@ if (!defined('SMF'))
 
 class wedbPackages
 {
-	protected static $reservedTypes, $instance;
+	protected static $reservedTables, $instance;
 
 	public static function getInstance()
 	{
 		global $db_package_log, $db_prefix;
+
 		// Quero ergo sum
 		if (self::$instance == null)
 		{
 			// Things we do on creation; it's like a constructor but not quite.
 			self::$instance = new self();
-			self::$reservedTypes = array();
+			self::$reservedTables = array();
 
 			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
 			'board_members', 'board_permissions', 'boards', 'calendar', 'calendar_holidays', 'categories', 'collapsed_categories',
@@ -49,6 +50,7 @@ class wedbPackages
 			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
 			'pretty_topic_urls', 'pretty_urls_cache', 'scheduled_tasks', 'sessions', 'settings', 'smileys', 'spiders',
 			'subscriptions', 'subscriptions_groups', 'themes', 'topics');
+
 			foreach ($reservedTables as $k => $table_name)
 				self::$reservedTables[$k] = strtolower($db_prefix . $table_name);
 

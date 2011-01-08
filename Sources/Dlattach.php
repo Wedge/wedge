@@ -150,7 +150,7 @@ function Dlattach()
 	// If it hasn't been modified since the last time this attachement was retrieved, there's no need to display it again.
 	if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
 	{
-		list($modified_since) = explode(';', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
+		list ($modified_since) = explode(';', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
 		if (strtotime($modified_since) >= filemtime($filename))
 		{
 			ob_end_clean();

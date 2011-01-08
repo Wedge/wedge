@@ -9,7 +9,7 @@ function template_admin()
 	// Welcome message for the admin.
 	echo '
 	<div id="admincenter">
-		<we:title>';
+		<we:cat>';
 
 	if ($context['user']['is_admin'])
 		echo '
@@ -26,7 +26,7 @@ function template_admin()
 
 	echo '
 			', $txt['admin_center'], '
-		</we:title>
+		</we:cat>
 		<div class="roundframe">
 			<div id="welcome">
 				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
@@ -42,11 +42,9 @@ function template_admin()
 	// Display the "live news" from simplemachines.org.
 	echo '
 			<div id="live_news" class="floatleft">
-				<div class="cat_bar">
-					<h3>
-						<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
-					</h3>
-				</div>
+				<we:title>
+					<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
+				</we:title>
 				<div class="windowbg wrc">
 					<div id="smfAnnouncements">', $txt['lfyi'], '</div>
 				</div>
@@ -55,11 +53,9 @@ function template_admin()
 	// Show the user version information from their server.
 	echo '
 			<div id="supportVersionsTable" class="floatright">
-				<div class="cat_bar">
-					<h3>
-						<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
-					</h3>
-				</div>
+				<we:title>
+					<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
+				</we:title>
 				<div class="windowbg wrc">
 					<div id="version_details">
 						<strong>', $txt['support_versions'], ':</strong><br />

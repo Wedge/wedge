@@ -59,7 +59,6 @@ ol.search_results li {
 
 #live_news {
 	width: 64%;
-	font-size: 0.85em;
 }
 #live_news div.wrc {
 	padding: 0;
@@ -76,6 +75,7 @@ ol.search_results li {
 	height: 9.5em;
 }
 #smfAnnouncements {
+	font-size: 0.9em;
 	height: 13.5em;
 	padding: 0 0.5em;
 	overflow: auto;
@@ -138,17 +138,8 @@ ol.search_results li {
 .additional_row div.floatleft {
 	padding: 0 0.8em;
 }
-fieldset {
-	margin-bottom: 0.5em;
-	border: 1px solid #cacdd3;
-	padding: 0.5em;
-}
 fieldset dl {
 	margin: 0;
-}
-legend {
-	font-weight: bold;
-	color: #000;
 }
 .information a {
 	font-weight: bold;

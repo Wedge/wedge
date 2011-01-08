@@ -1568,7 +1568,7 @@ function MergeExecute($topics = array())
 			'id_topic' => $id_topic,
 		)
 	);
-	list($id_board) = wesql::fetch_row($request);
+	list ($id_board) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	loadSource('Subs-Post');

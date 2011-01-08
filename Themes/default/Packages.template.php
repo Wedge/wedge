@@ -40,9 +40,9 @@ function template_view_package()
 	if (isset($context['package_readme']))
 	{
 		echo '
-		<div class="cat_bar">
-			<h3>', $txt['package_' . ($context['uninstalling'] ? 'un' : '') . 'install_readme'], '</h3>
-		</div>
+		<we:title>
+			', $txt['package_' . ($context['uninstalling'] ? 'un' : '') . 'install_readme'], '
+		</we:title>
 		<div class="windowbg2 wrc">
 			', $context['package_readme'], '
 			<span class="floatright">', $txt['package_available_readme_language'], '
@@ -61,11 +61,9 @@ function template_view_package()
 
 	echo '
 		<form action="', $scripturl, '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', $context['ftp_needed'] ? '' : '2', ';package=', $context['filename'], ';pid=', $context['install_id'], '" onsubmit="submitonce();" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $context['uninstalling'] ? $txt['package_uninstall_actions'] : $txt['package_install_actions'], ' &quot;', $context['package_name'], '&quot;
-				</h3>
-			</div>';
+			<we:title>
+				', $context['uninstalling'] ? $txt['package_uninstall_actions'] : $txt['package_install_actions'], ' &quot;', $context['package_name'], '&quot;
+			</we:title>';
 
 	// Are there data changes to be removed?
 	if ($context['uninstalling'] && !empty($context['database_changes']))
@@ -177,11 +175,9 @@ function template_view_package()
 		{
 			echo '
 			<br />
-			<div class="cat_bar">
-				<h3>
-					', $context['uninstalling'] ? $txt['package_other_themes_uninstall'] : $txt['package_other_themes'], '
-				</h3>
-			</div>
+			<we:title>
+				', $context['uninstalling'] ? $txt['package_other_themes_uninstall'] : $txt['package_other_themes'], '
+			</we:title>
 			<div id="custom_changes">
 				<div class="information">
 					', $txt['package_other_themes_desc'], '
@@ -282,9 +278,9 @@ function template_view_package()
 	elseif ($context['ftp_needed'])
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>', $txt['package_ftp_necessary'], '</h3>
-			</div>
+			<we:title>
+				', $txt['package_ftp_necessary'], '
+			<we:title>
 			<div>
 				', template_control_chmod(), '
 			</div>';
@@ -488,9 +484,9 @@ function template_browse()
 
 	echo '
 		<br />
-		<div class="cat_bar">
-			<h3>', $txt['browse_packages'], '</h3>
-		</div>';
+		<we:title>
+			', $txt['browse_packages'], '
+		</we:title>';
 
 	if (!empty($context['available_mods']))
 		template_sublist($context['available_mods'], $txt['modification_package']);
@@ -521,9 +517,9 @@ function template_browse()
 		</div>
 		<form action="', $scripturl, '?action=admin;area=packages;sa=browse" method="get">
 			<div id="advanced_box" style="display: none;">
-				<div class="cat_bar">
-					<h3>', $txt['package_advanced_options'], '</h3>
-				</div>
+				<we:title>
+					', $txt['package_advanced_options'], '
+				</we:title>
 				<div class="windowbg wrc">
 					<p>
 						', $txt['package_emulate_desc'], '
@@ -744,9 +740,9 @@ function template_servers()
 			</fieldset>
 		</div>
 		<br />
-		<div class="cat_bar">
-			<h3>' . $txt['package_upload_title'] . '</h3>
-		</div>
+		<we:title>
+			', $txt['package_upload_title'], '
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="' . $scripturl . '?action=admin;area=packages;get;sa=upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0;">
 				<dl class="settings">
@@ -1208,19 +1204,15 @@ function template_view_operations()
 </head>
 <body>
 	<div class="padding windowbg">
-		<div class="cat_bar">
-			<h3>
-				', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-			</h3>
-		</div>
+		<we:title>
+			', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+		</we:title>
 		<div class="padding">
 			<code id="find_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['position'] == 'end' ? '?&gt;' : $context['operations']['search'], '</code>
 		</div>
-		<div class="cat_bar">
-			<h3 class="topmargin">
-				', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-			</h3>
-		</div>
+		<we:title>
+			', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
+		</we:title>
 		<div class="padding">
 			<code id="replace_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['replace'], '</code>
 		</div>
@@ -1564,9 +1556,9 @@ function template_file_permissions()
 
 		</table>
 		<br />
-		<div class="cat_bar">
-			<h3>', $txt['package_file_perms_change'], '</h3>
-		</div>
+		<we:title>
+			', $txt['package_file_perms_change'], '
+		</we:title>
 		<div class="windowbg wrc">
 			<fieldset>
 				<dl>

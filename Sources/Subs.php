@@ -3145,7 +3145,7 @@ function template_header()
 		{
 			$showed_banned = true;
 			echo '
-				<div class="windowbg alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red;">
+				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
 					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
 
 			if (!empty($_SESSION['ban']['cannot_post']['reason']))
@@ -3847,11 +3847,6 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
 					),
-					'packages' => array(
-						'title' => $txt['package'],
-						'href' => $scripturl . '?action=admin;area=packages',
-						'show' => allowedTo('admin_forum'),
-					),
 					'errorlog' => array(
 						'title' => $txt['errlog'] . $error_count,
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
@@ -3862,6 +3857,11 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=permissions',
 						'show' => allowedTo('manage_permissions'),
 						'is_last' => true,
+					),
+					'packages' => array(
+						'title' => $txt['package'],
+						'href' => $scripturl . '?action=admin;area=packages',
+						'show' => allowedTo('admin_forum'),
 					),
 				),
 			),

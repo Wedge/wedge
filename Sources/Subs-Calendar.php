@@ -1015,7 +1015,7 @@ function list_getNumHolidays()
 		array(
 		)
 	);
-	list($num_items) = wesql::fetch_row($request);
+	list ($num_items) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	return $num_items;
