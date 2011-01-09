@@ -930,8 +930,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					$bbcode[$bbc_field] = explode(',', $row[$db_field]);
 			foreach ($field_list as $db_field => $bbc_field)
 				if (!empty($row[$db_field]))
-					$bbcode[$bbc_field] = trim($row[$db_field]);
-
+					$bbcode[$bbc_field] = preg_replace('~\{\{([a-z\_0-9]+)\}\}~ie', '$txt[\'$1\']', str_replace('{{scripturl}}', $scripturl, trim($row[$db_field])));
 			// Reformat it from DB structure
 			$master_codes[] = $bbcode;
 		}
