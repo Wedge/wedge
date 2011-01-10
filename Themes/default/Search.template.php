@@ -51,30 +51,23 @@ function template_main()
 	// Advanced search!
 	else
 	{
-		echo '
-		<fieldset id="advanced_search">
-			<div class="roundframe">
-				<input type="hidden" name="advanced" value="1" />
-				<span class="enhanced">
-					<strong>', $txt['search_for'], ':</strong>
-					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />';
-
 		add_js_inline('
 	if (document.forms.searchform.search.value.indexOf("%u") != -1)
 		document.forms.searchform.search.value = unescape(document.forms.searchform.search.value);');
 
 		echo '
+		<div class="roundframe">
+			<fieldset id="advanced_search">
+				<input type="hidden" name="advanced" value="1" />
+				<span class="enhanced">
+					<strong>', $txt['search_for'], ':</strong>
+					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="input_text" />
 					<select name="searchtype">
 						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['all_words'], '</option>
 						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['any_words'], '</option>
 					</select>
-				</span>';
-
-		if (empty($modSettings['search_simple_fulltext']))
-			echo '
-				<em class="smalltext">', $txt['search_example'], '</em>';
-
-		echo '
+				</span>', empty($modSettings['search_simple_fulltext']) ? '
+				<em class="smalltext">' . $txt['search_example'] . '</em>' : '', '
 				<dl id="search_options">
 					<dt>', $txt['by_user'], ':</dt>
 					<dd><input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40" class="input_text" /></dd>
@@ -114,14 +107,13 @@ function template_main()
 				<input type="hidden" name="topic" value="', $context['search_topic']['id'], '" />';
 
 		echo '
-			</div>
-		</fieldset>';
+			</fieldset>';
 
 		if (empty($context['search_params']['topic']))
 		{
 			echo '
-		<fieldset class="flow_hidden">
-			<div class="roundframe">
+			<br />
+			<fieldset class="flow_hidden">
 				<we:title2>
 					<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" /></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 				</we:title2>
@@ -129,9 +121,18 @@ function template_main()
 					<ul class="ignoreboards floatleft">';
 
 	$i = 0;
-	$limit = ceil($context['num_boards'] / 2);
+
+	// I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
+	// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
+
+	$limit = ceil(($context['num_boards'] + count($context['categories'])) / 2);
 	foreach ($context['categories'] as $category)
 	{
+		if ($i++ == $limit)
+			echo '
+					</ul>
+					<ul class="ignoreboards floatright">';
+
 		echo '
 						<li class="category">
 							<a href="#" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
@@ -139,7 +140,7 @@ function template_main()
 
 		foreach ($category['boards'] as $board)
 		{
-			if ($i == $limit)
+			if ($i++ == $limit)
 				echo '
 							</ul>
 						</li>
@@ -152,8 +153,6 @@ function template_main()
 								<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
 									<label for="brd', $board['id'], '"><input type="checkbox" id="brd', $board['id'], '" name="brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" /> ', $board['name'], '</label>
 								</li>';
-
-			$i ++;
 		}
 
 		echo '
@@ -173,15 +172,8 @@ function template_main()
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit floatright" />
 				</div>
 				<br class="clear" />
-			</div>
-		</fieldset>';
+			</fieldset>';
 		}
-
-// !!! Deleted by the SMF team after they reverted a valid fix. Will need to reintroduce. -- Nao
-//		echo '
-//		<div class="righttext padding">
-//			<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
-//		</div>';
 	}
 
 	echo '
