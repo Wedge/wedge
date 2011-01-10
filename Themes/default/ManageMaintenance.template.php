@@ -129,57 +129,50 @@ function template_maintain_members()
 				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
 			</div>';
 
-	echo '
-	<script><!-- // --><![CDATA[
-		var warningMessage = \'\';
-		var membersSwap = false;
+	add_js('
+	var membersSwap = false;
 
-		function swapMembers()
+	function swapMembers()
+	{
+		membersSwap = !membersSwap;
+
+		$("#membersIcon").attr("src", smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif"));
+		$("#membersText").html(membersSwap ? ', JavaScriptEscape($txt['maintain_members_choose']), ' : ', JavaScriptEscape($txt['maintain_members_all']), ');
+		$("#membersPanel").slideToggle(membersSwap);
+		$("#membersForm input[type=checkbox]").attr("checked", !membersSwap);
+	}
+
+	var warningMessage = \'\';
+
+	function checkAttributeValidity()
+	{
+		var valid = true, origText = ', JavaScriptEscape($txt['reattribute_confirm']), ';
+
+		if (!$("#to").val())
+			valid = false;
+		warningMessage = origText.replace(/%member_to%/, $("#to").val());
+
+		if ($("#type_email")[0].checked)
 		{
-			membersSwap = !membersSwap;
-			var membersForm = document.getElementById(\'membersForm\');
-
-			document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif");
-			document.getElementById("membersText").innerHTML = membersSwap ? ', JavaScriptEscape($txt['maintain_members_choose']), ' : ', JavaScriptEscape($txt['maintain_members_all']), ';
-			document.getElementById("membersPanel").style.display = (membersSwap ? "block" : "none");
-
-			for (var i = 0; i < membersForm.length; i++)
-			{
-				if (membersForm.elements[i].type.toLowerCase() == "checkbox")
-					membersForm.elements[i].checked = !membersSwap;
-			}
-		}
-
-		function checkAttributeValidity()
-		{
-			origText = ', JavaScriptEscape($txt['reattribute_confirm']), ';
-			valid = true;
-
-			// Do all the fields!
-			if (!document.getElementById(\'to\').value)
+			if (!$("#from_email").val())
 				valid = false;
-			warningMessage = origText.replace(/%member_to%/, document.getElementById(\'to\').value);
-
-			if (document.getElementById(\'type_email\').checked)
-			{
-				if (!document.getElementById(\'from_email\').value)
-					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, document.getElementById(\'from_email\').value);
-			}
-			else
-			{
-				if (!document.getElementById(\'from_name\').value)
-					valid = false;
-				warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, document.getElementById(\'from_name\').value);
-			}
-
-			document.getElementById(\'do_attribute\').disabled = valid ? \'\' : \'disabled\';
-
-			setTimeout("checkAttributeValidity();", 500);
-			return valid;
+			warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_email']), ').replace(/%find%/, $("#from_email").val());
 		}
+		else
+		{
+			if (!$("#from_name").val())
+				valid = false;
+			warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, $("#from_name").val());
+		}
+
+		$("#do_attribute").attr("disabled", !valid);
+
 		setTimeout("checkAttributeValidity();", 500);
-	// ]]></script>
+		return valid;
+	}
+	setTimeout("checkAttributeValidity();", 500);');
+
+	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
 			<h3>', $txt['maintain_reattribute_posts'], '</h3>
@@ -192,13 +185,13 @@ function template_maintain_members()
 						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked="checked" class="input_radio" />', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_email" id="from_email" value="" onclick="document.getElementById(\'type_email\').checked = \'checked\'; document.getElementById(\'from_name\').value = \'\';" />
+						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').attr(\'checked\', true); $(\'#from_name\').val(\'\');" />
 					</dd>
 					<dt>
 						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" class="input_radio" />', $txt['reattribute_username'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById(\'type_name\').checked = \'checked\'; document.getElementById(\'from_email\').value = \'\';" class="input_text" />
+						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').attr(\'checked\', true); $(\'#from_email\').val(\'\');" class="input_text" />
 					</dd>
 				</dl>
 				<dl class="settings">
@@ -213,7 +206,7 @@ function template_maintain_members()
 					<input type="checkbox" name="posts" id="posts" checked="checked" class="input_check" />
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit" /></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -231,7 +224,7 @@ function template_maintain_members()
 				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3" class="input_text" />', $txt['maintain_members_since3'], '</p>';
 
 	echo '
-				<p><a href="#membersLink" onclick="swapMembers();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon" /></a> <a href="#membersLink" onclick="swapMembers();" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
+				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon" /></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
 				<div style="display: none; padding: 3px" id="membersPanel">';
 
 	foreach ($context['membergroups'] as $group)
@@ -407,12 +400,22 @@ function template_maintain_topics()
 	}
 	echo '
 				</select></p>
-				<span><input type="submit" value="', $txt['move_topics_now'], '" onclick="if (document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].disabled || document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_to\').selectedIndex].disabled) return false; var confirmText = ', JavaScriptEscape($txt['move_topics_confirm']), '; return confirm(confirmText.replace(/%board_from%/, document.getElementById(\'id_board_from\').options[document.getElementById(\'id_board_from\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')).replace(/%board_to%/, document.getElementById(\'id_board_to\').options[document.getElementById(\'id_board_to\').selectedIndex].text.replace(/^=+&gt;&nbsp;/, \'\')));" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow();" class="button_submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
 	</div>
 	<br class="clear" />';
+
+	add_js('
+	function moveTopicsNow()
+	{
+		if ($("#id_board_from option:selected").attr("disabled") || $("#id_board_to option:selected").attr("disabled"))
+			return false;
+		var confirmText = ', JavaScriptEscape($txt['move_topics_confirm']), ';
+		return confirm(confirmText.replace(/%board_from%/, $("#id_board_from").val().replace(/^=+&gt;&nbsp;/, \'\'))
+			.replace(/%board_to%/, $("#id_board_to").val().replace(/^=+&gt;&nbsp;/, \'\')));
+	}');
 }
 
 // Simple template for showing results of our optimization...

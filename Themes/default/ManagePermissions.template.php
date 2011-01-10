@@ -446,20 +446,13 @@ function template_modify_group()
 		</div>';
 	}
 	else
-	{
-		echo '
-		<script><!-- // --><![CDATA[
-			window.smf_usedDeny = false;
+		add_js('
+	window.smf_usedDeny = false;
 
-			function warnAboutDeny()
-			{
-				if (window.smf_usedDeny)
-					return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
-				else
-					return true;
-			}
-		// ]]></script>';
-	}
+	function warnAboutDeny()
+	{
+		return window.smf_usedDeny ? confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ') : true;
+	}');
 
 	echo '
 	<div id="admincenter">

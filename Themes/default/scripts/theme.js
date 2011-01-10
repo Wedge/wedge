@@ -5,21 +5,20 @@
  */
 
 // The purpose of this code is to fix the height of overflow: auto blocks,
-// because some browsers can't figure it out for themselves. Opera FTW?
+// because some browsers can't figure it out for themselves. (Opera FTW!)
 function smf_codeBoxFix()
 {
 	$('code').each(function () {
-		if (is_webkit && this.offsetHeight < 20)
-			this.style.height = (this.offsetHeight + 20) + 'px';
-		else if (is_ff && (this.scrollWidth > this.clientWidth || this.clientWidth == 0))
+		var cliwid = this.clientWidth, scrwid = this.scrollWidth, offhei = this.offsetHeight, sty = this.currentStyle, hei = sty.height;
+
+		if (is_webkit && offhei < 20)
+			this.style.height = (offhei + 20) + 'px';
+
+		else if (is_ff && (scrwid > cliwid || cliwid == 0))
 			this.style.overflow = 'scroll';
-		else
-		{
-			var sty = this.currentStyle;
-			if (sty && sty.overflow == 'auto' && (sty.height == '' || sty.height == 'auto') &&
-				(this.scrollWidth > this.clientWidth || this.clientWidth == 0) && (this.offsetHeight != 0))
-			this.style.height = (this.offsetHeight + 24) + 'px';
-		}
+
+		else if (sty && sty.overflow == 'auto' && (hei == '' || hei == 'auto') && (scrwid > cliwid || cliwid == 0) && (offhei != 0))
+			this.style.height = (offhei + 24) + 'px';
 	});
 }
 

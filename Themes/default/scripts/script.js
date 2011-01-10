@@ -122,11 +122,11 @@ String.prototype.easyReplace = function (oReplacements)
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 {
 	var
-		desktopURL = typeof from == 'object' && from.href ? from.href : from,
-		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src'), e = window.event;
+		desktopURL = from && from.href ? from.href : from, vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
+		helf = $('#helf'), previousTarget = helf.data('src'), px = 'px', auto = 'auto';
 
-	if ((alternateWidth && vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
+	alternateWidth = alternateWidth ? alternateWidth : 480;
+	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
 	{
 		noScrollbars = false;
 		alternateWidth = Math.min(alternateWidth, vpw);
@@ -135,10 +135,8 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	else
 		noScrollbars = noScrollbars && (noScrollbars === true);
 
-	// If the reqWin event was created on the fly, it'll bubble up to body and cancel itself...
-	e.cancelBubbling = true;
-	if (e.stopPropagation)
-		e.stopPropagation();
+	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
+	$.event.fix(window.event).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
 	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == desktopURL)
@@ -148,15 +146,17 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	$('<div class="windowbg wrc"></div>').hide()
 		.load(desktopURL, function () {
 			$(this).css({
-				overflow: noScrollbars ? 'hidden' : 'auto',
+				overflow: noScrollbars ? 'hidden' : auto,
+				width: (alternateWidth - 25) + px,
+				height: alternateHeight ? (alternateHeight - 20) + px : auto,
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
 			}).fadeIn(300);
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', desktopURL).css({
 				position: is_ie6 ? 'absolute' : 'fixed',
-				width: (alternateWidth ? alternateWidth : 480) + 'px',
-				height: alternateHeight ? alternateHeight + 'px' : 'auto',
+				width: alternateWidth + px,
+				height: alternateHeight ? alternateHeight + px : auto,
 				bottom: 10,
 				right: 10
 			}).appendTo('body')
