@@ -74,19 +74,18 @@ function template_modify_weights()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
-		function calculateNewValues()
-		{
-			var total = 0;
-			for (var i = 1; i <= 6; i++)
-				total += parseInt(document.getElementById(\'weight\' + i + \'_val\').value);
+	<br class="clear" />';
 
-			document.getElementById(\'weighttotal\').innerHTML = total;
-			for (var i = 1; i <= 6; i++)
-				document.getElementById(\'weight\' + i).innerHTML = (Math.round(1000 * parseInt(document.getElementById(\'weight\' + i + \'_val\').value) / total) / 10) + \'%\';
-		}
-	// ]]></script>';
+	add_js('
+	function calculateNewValues()
+	{
+		for (var total = 0, i = 1; i < 7; i++)
+			total += parseInt($("#weight" + i + "_val").val());
+
+		$("#weighttotal").html(total);
+		for (i = 1; i < 7; i++)
+			$("#weight" + i).html((Math.round(1000 * parseInt($("#weight" + i + "_val").val()) / total) / 10) + "%");
+	}');
 }
 
 function template_select_search_method()

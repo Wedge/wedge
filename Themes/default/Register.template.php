@@ -491,24 +491,22 @@ function template_admin_register()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
+	add_js('
+	function onCheckChange()
+	{
+		var f = document.forms.postForm;
+		if (f.emailActivate.checked || f.password.value == "")
+			$(f.emailPassword).attr({ disabled: true, checked: true });
+		else
+			f.emailPassword.disabled = false;
+	}');
+
 	echo '
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>', $txt['admin_browse_register_new'], '</h3>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
-			<script><!-- // --><![CDATA[
-				function onCheckChange()
-				{
-					if (document.forms.postForm.emailActivate.checked || document.forms.postForm.password.value == \'\')
-					{
-						document.forms.postForm.emailPassword.disabled = true;
-						document.forms.postForm.emailPassword.checked = true;
-					}
-					else
-						document.forms.postForm.emailPassword.disabled = false;
-				}
-			// ]]></script>
 			<div class="windowbg2 wrc">
 				<div id="register_screen">';
 

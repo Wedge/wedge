@@ -629,16 +629,16 @@ function template_search()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	echo '
-	<script><!-- // --><![CDATA[
-		function expandCollapseLabels()
-		{
-			var current = $("#searchLabelsExpand").is(":visible");
+	add_js('
+	function expandCollapseLabels()
+	{
+		var current = $("#searchLabelsExpand").is(":visible");
 
-			$("#searchLabelsExpand").toggle(!current);
-			$("#expandLabelsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
-		}
-	// ]]></script>
+		$("#searchLabelsExpand").toggle(!current);
+		$("#expandLabelsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
+	}');
+
+	echo '
 	<form action="', $scripturl, '?action=pm;sa=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<div class="cat_bar">
 			<h3>', $txt['pm_search_title'], '</h3>

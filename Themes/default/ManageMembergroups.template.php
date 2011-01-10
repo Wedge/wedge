@@ -134,18 +134,14 @@ function template_new_group()
 			</div>';
 
 	if ($context['undefined_group'])
+		add_js_inline('
+	function swapPostGroup(isChecked)
 	{
-		echo '
-			<script><!-- // --><![CDATA[
-				function swapPostGroup(isChecked)
-				{
-					var min_posts_text = document.getElementById(\'min_posts_text\');
-					document.getElementById(\'min_posts_input\').disabled = !isChecked;
-					min_posts_text.style.color = isChecked ? "" : "#888888";
-				}
-				swapPostGroup(', $context['post_group'] ? 'true' : 'false', ');
-			// ]]></script>';
+		var min_posts_text = document.getElementById("min_posts_text");
+		document.getElementById("min_posts_input").disabled = !isChecked;
+		min_posts_text.style.color = isChecked ? "" : "#888888";
 	}
+	swapPostGroup(', $context['post_group'] ? 'true' : 'false', ');');
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -280,7 +276,7 @@ function template_edit_group()
 					</dt>
 					<dd>
 						', $txt['membergroups_images_url'], '
-						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; document.getElementById(\'star_preview\').src = smf_images_url + \'/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\');" size="20" class="input_text" />
+						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', smf_images_url + \'/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\'));" size="20" class="input_text" />
 						<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '" alt="*" />
 					</dd>
 					<dt>
@@ -300,7 +296,7 @@ function template_edit_group()
 					</dt>
 					<dd>
 						<fieldset id="visible_boards" style="width: 95%;">
-							<legend><a href="#" onclick="document.getElementById(\'visible_boards\').style.display = \'none\'; document.getElementById(\'visible_boards_link\').style.display = \'block\'; return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
+							<legend><a href="#" onclick="$(\'#visible_boards\').hide(); $(\'#visible_boards_link\').show(); return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
 
 		foreach ($context['boards'] as $board)
 			echo '
@@ -310,7 +306,7 @@ function template_edit_group()
 							<br />
 							<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
 						</fieldset>
-						<a href="#" onclick="document.getElementById(\'visible_boards\').style.display = \'block\'; document.getElementById(\'visible_boards_link\').style.display = \'none\'; return false;" id="visible_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
+						<a href="#" onclick="$(\'#visible_boards\').show(); $(\'#visible_boards_link\').hide(); return false;" id="visible_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
 					</dd>';
 
 		add_js_inline('
@@ -336,15 +332,15 @@ function template_edit_group()
 
 		add_js('
 	var oModeratorSuggest = new smc_AutoSuggest({
-		sSelf: \'oModeratorSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
-		sControlId: \'group_moderators\',
+		sSelf: "oModeratorSuggest",
+		sSessionId: "', $context['session_id'], '",
+		sSessionVar: "', $context['session_var'], '",
+		sControlId: "group_moderators",
 		bItemList: true,
-		sPostName: \'moderator_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
+		sPostName: "moderator_list",
+		sURLMask: "action=profile;u=%item_id%",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: \'moderator_container\',
+		sItemListContainerId: "moderator_container",
 		aListItems: [');
 
 		foreach ($context['group']['moderators'] as $id_member => $member_name)
@@ -363,10 +359,10 @@ function template_edit_group()
 		add_js_inline('
 	function swapPostGroup(isChecked)
 	{
-		var min_posts_text = document.getElementById(\'min_posts_text\');
-		var group_desc_text = document.getElementById(\'group_desc_text\');
-		var group_hidden_text = document.getElementById(\'group_hidden_text\');
-		var group_moderators_text = document.getElementById(\'group_moderators_text\');
+		var min_posts_text = document.getElementById("min_posts_text");
+		var group_desc_text = document.getElementById("group_desc_text");
+		var group_hidden_text = document.getElementById("group_hidden_text");
+		var group_moderators_text = document.getElementById("group_moderators_text");
 		document.forms.groupForm.min_posts.disabled = !isChecked;
 		min_posts_text.style.color = isChecked ? "" : "#888888";
 		document.forms.groupForm.group_desc_input.disabled = isChecked;
@@ -543,15 +539,15 @@ function template_group_members()
 
 		add_js('
 	var oAddMemberSuggest = new smc_AutoSuggest({
-		sSelf: \'oAddMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
-		sControlId: \'toAdd\',
+		sSelf: "oAddMemberSuggest",
+		sSessionId: "', $context['session_id'], '",
+		sSessionVar: "', $context['session_var'], '",
+		sControlId: "toAdd",
 		bItemList: true,
-		sPostName: \'member_add\',
-		sURLMask: \'action=profile;u=%item_id%\',
+		sPostName: "member_add",
+		sURLMask: "action=profile;u=%item_id%",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: \'toAddItemContainer\'
+		sItemListContainerId: "toAddItemContainer"
 	});');
 	}
 }

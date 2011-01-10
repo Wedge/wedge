@@ -185,30 +185,27 @@ function template_main()
 	}
 
 	echo '
-	</form>
+	</form>';
 
-	<script><!-- // --><![CDATA[
-		function selectBoards(ids)
-		{
-			var toggle = true;
+	add_js('
+	function selectBoards(ids)
+	{
+		var toggle = true;
 
-			for (i = 0; i < ids.length; i++)
-				toggle = toggle & document.forms.searchform["brd" + ids[i]].checked;
+		for (i = 0; i < ids.length; i++)
+			toggle &= document.forms.searchform["brd" + ids[i]].checked;
 
-			for (i = 0; i < ids.length; i++)
-				document.forms.searchform["brd" + ids[i]].checked = !toggle;
-		}
+		for (i = 0; i < ids.length; i++)
+			document.forms.searchform["brd" + ids[i]].checked = !toggle;
+	}
 
-		function expandCollapseBoards()
-		{
-			var current = document.getElementById("searchBoardsExpand").style.display != "none";
+	function expandCollapseBoards()
+	{
+		var current = $("#searchBoardsExpand").is(":visible");
 
-			document.getElementById("searchBoardsExpand").style.display = current ? "none" : "";
-			document.getElementById("expandBoardsIcon").src = smf_images_url + (current ? "/expand.gif" : "/collapse.gif");
-		}';
-
-	echo '
-	// ]]></script>';
+		$("#searchBoardsExpand").slideToggle(!current);
+		$("#expandBoardsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
+	}');
 }
 
 function template_results()

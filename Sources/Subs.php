@@ -2746,12 +2746,6 @@ function setupThemeContext($forceload = false)
 	// Setup the main menu items.
 	setupMenuContext();
 
-	if (empty($settings['theme_version']))
-		$context['show_vBlogin'] = $context['show_quick_login'];
-
-	// This is here because old index templates might still use it.
-	$context['show_news'] = !empty($settings['enable_news']);
-
 	// This is done to allow theme authors to customize it as they want.
 	$context['show_pm_popup'] = $context['user']['popup_messages'] && !empty($options['popup_messages']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'pm');
 
@@ -2775,12 +2769,6 @@ function setupThemeContext($forceload = false)
 		'total_members' => comma_format($modSettings['totalMembers']),
 		'latest_member' => $context['common_stats']['latest_member'],
 	);
-
-	if (empty($settings['theme_version']))
-		$context['header'] .= '
-	<script><!-- // --><![CDATA[
-		var smf_scripturl = "' . $scripturl . '";
-	// ]]></script>';
 
 	if (!isset($context['page_title']))
 		$context['page_title'] = '';

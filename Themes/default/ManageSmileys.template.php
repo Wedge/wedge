@@ -208,14 +208,13 @@ function template_modifysmiley()
 			<input type="hidden" name="smiley" value="', $context['current_smiley']['id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
-		function updatePreview()
-		{
-			var currentImage = document.getElementById("preview");
-			currentImage.src = "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value;
-		}
-	// ]]></script>';
+	<br class="clear" />';
+
+	add_js('
+	function updatePreview()
+	{
+		$("#preview").attr("src", "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+	}');
 }
 
 // Adding a new smiley.
@@ -223,27 +222,27 @@ function template_addsmiley()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
+	add_js('
+	function switchType()
+	{
+		$("#ul_settings").slideToggle(!$("#method-existing").attr("checked"));
+		$("#ex_settings").slideToggle(!$("#method-upload").attr("checked"));
+	}
+
+	function swapUploads()
+	{
+		var enabled = !$("#uploadSmiley").attr("disabled");
+		$("#uploadMore").slideToggle(enabled);
+		$("#uploadSmiley").attr("disabled", enabled);
+	}
+
+	function selectMethod(element)
+	{
+		$("#method-existing").attr("checked", element != "upload");
+		$("#method-upload").attr("checked", element == "upload");
+	}');
+
 	echo '
-	<script><!-- // --><![CDATA[
-		function switchType()
-		{
-			document.getElementById("ul_settings").style.display = document.getElementById("method-existing").checked ? "none" : "";
-			document.getElementById("ex_settings").style.display = document.getElementById("method-upload").checked ? "none" : "";
-		}
-
-		function swapUploads()
-		{
-			document.getElementById("uploadMore").style.display = document.getElementById("uploadSmiley").disabled ? "none" : "";
-			document.getElementById("uploadSmiley").disabled = !document.getElementById("uploadSmiley").disabled;
-		}
-
-		function selectMethod(element)
-		{
-			document.getElementById("method-existing").checked = element != "upload";
-			document.getElementById("method-upload").checked = element == "upload";
-		}
-	// ]]></script>
-
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
 			<div class="cat_bar">
@@ -285,7 +284,7 @@ function template_addsmiley()
 	else
 	{
 		echo '
-							<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod(\'existing\');">';
+							<select name="smiley_filename" id="smiley_filename" onchange="updatePreview(); selectMethod(\'existing\');">';
 
 		foreach ($context['filenames'] as $filename)
 			echo '
@@ -299,7 +298,7 @@ function template_addsmiley()
 						</dd>
 					</dl>
 				</fieldset>
-				<fieldset id="ul_settings" style="display: none;">
+				<fieldset id="ul_settings" style="display: none">
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['smileys_add_upload_choose'], ':</strong>
@@ -315,21 +314,20 @@ function template_addsmiley()
 							<input type="checkbox" name="sameall" id="sameall" checked="checked" class="input_check" onclick="swapUploads(); selectMethod(\'upload\');" />
 						</dd>
 					</dl>
-				</fieldset>
-
-				<dl id="uploadMore" style="display: none;" class="settings">';
+					<dl id="uploadMore" class="settings" style="display: none">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '
-					<dt>
-						', $txt['smileys_add_upload_for1'], ' <strong>', $smiley_set['name'], '</strong> ', $txt['smileys_add_upload_for2'], ':
-					</dt>
-					<dd>
-						<input type="file" name="individual_', $smiley_set['name'], '" onchange="selectMethod(\'upload\');" class="input_file" />
-					</dd>';
+						<dt>
+							', $txt['smileys_add_upload_for1'], ' <strong>', $smiley_set['name'], '</strong> ', $txt['smileys_add_upload_for2'], ':
+						</dt>
+						<dd>
+							<input type="file" name="individual_', $smiley_set['name'], '" onchange="selectMethod(\'upload\');" class="input_file" />
+						</dd>';
 
 	echo '
-				</dl>
+					</dl>
+				</fieldset>
 			</div>
 			<br />
 			<div class="cat_bar">
@@ -371,15 +369,13 @@ function template_addsmiley()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />
-	<script><!-- // --><![CDATA[
+	<br class="clear" />';
 
-		function updatePreview()
-		{
-			var currentImage = document.getElementById("preview");
-			currentImage.src = "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value;
-		}
-	// ]]></script>';
+	add_js('
+	function updatePreview()
+	{
+		$("#preview").attr("src", "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+	}');
 }
 
 // Ordering smileys.

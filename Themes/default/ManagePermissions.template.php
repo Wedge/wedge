@@ -506,10 +506,10 @@ function template_modify_group()
 			template_modify_group_simple('board');
 		else
 			template_modify_group_classic('board');
-
-		echo '
-			</div>';
 	}
+
+	echo '
+			</div>';
 
 	if ($context['profile']['can_modify'])
 		echo '
@@ -525,7 +525,7 @@ function template_modify_group()
 
 }
 
-// A javascript enabled clean permissions view.
+// A Javascript-enabled clean permissions view.
 function template_modify_group_simple($type)
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
@@ -541,6 +541,7 @@ function template_modify_group_simple($type)
 				<thead>
 					<tr class="catbg">
 						<th colspan="2" class="first_th w100 left"></th>';
+
 	if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
 		echo '
 						<th colspan="3" style="width: 9px" class="last_th">&nbsp;</th>';
@@ -651,8 +652,7 @@ function template_modify_group_simple($type)
 	}
 	echo '
 				</tbody>
-			</table>
-			<script><!-- // --><![CDATA[';
+			</table>';
 
 	if ($context['profile']['can_modify'] && empty($context['simple_javascript_displayed']))
 	{
@@ -660,84 +660,81 @@ function template_modify_group_simple($type)
 		$context['simple_javascript_displayed'] = true;
 
 		// Manually toggle the breakdown.
-		echo '
-				function toggleBreakdown(id_group, forcedisplayType)
-				{
-					displayType = document.getElementById("group_hr_div_" + id_group).style.display == "none" ? "" : "none";
-					if (typeof(forcedisplayType) != "undefined")
-						displayType = forcedisplayType;
+		add_js('
+	function toggleBreakdown(id_group, forcedisplayType)
+	{
+		var i, displayType = typeof forcedisplayType != "undefined" ? forcedisplayType : ($("#group_hr_div_" + id_group).is(":visible") ? "none" : "");
 
-					for (i = 0; i < groupPermissions[id_group].length; i++)
-					{
-						document.getElementById("perm_div_" + id_group + "_" + groupPermissions[id_group][i]).style.display = displayType
-					}
-					document.getElementById("group_hr_div_" + id_group).style.display = displayType
-					document.getElementById("group_toggle_img_" + id_group).src = "', $settings['images_url'], '/" + (displayType == "none" ? "selected" : "sort_down") + ".gif";
+		for (i = 0; i < groupPermissions[id_group].length; i++)
+				$("#perm_div_" + id_group + "_" + groupPermissions[id_group][i]).toggle(displayType == "");
 
-					return false;
-				}';
+		$("#group_hr_div_" + id_group).toggle(displayType == "");
+		$("#group_toggle_img_" + id_group).attr("src", "', $settings['images_url'], '/" + (displayType == "" ? "sort_down" : "selected") + ".gif");
+
+		return false;
+	}');
 
 		// This function decides what to do when ANYTHING is touched!
-		echo '
-				var groupPermissions = [];
-				function determineGroupState(id_group, forceState)
-				{
-					if (typeof(forceState) != "undefined")
-						thisState = forceState;
+		add_js('
+	var groupPermissions = [];
+	function determineGroupState(id_group, forceState)
+	{
+		if (typeof forceState != "undefined")
+			thisState = forceState;
 
-					// Cycle through this groups elements.
-					var curState = false, thisState;
-					for (var i = 0; i < groupPermissions[id_group].length; i++)
-					{';
+		// Cycle through this group\'s elements.
+		var i, curState = false, thisState;
+		for (i = 0; i < groupPermissions[id_group].length; i++)
+		{');
 
 		if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
-			echo '
-					if (typeof(forceState) != "undefined")
-						document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
+			add_js('
+			if (typeof forceState != "undefined")
+				$("#select_" + groupPermissions[id_group][i]).attr("checked", forceState == "on");
 
-					thisState = document.getElementById(\'select_\' + groupPermissions[id_group][i]).checked ? \'on\' : \'off\';';
+			thisState = $("#select_" + groupPermissions[id_group][i]).attr("checked") ? "on" : "off";');
 		else
-			echo '
-					if (typeof(forceState) != "undefined")
-					{
-						document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked = forceState == \'on\' ? 1 : 0;
-						document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked = forceState == \'off\' ? 1 : 0;
-						document.getElementById(\'select_deny_\' + groupPermissions[id_group][i]).checked = forceState == \'deny\' ? 1 : 0;
-					}
+			add_js('
+			if (typeof forceState != "undefined")
+			{
+				$("#select_on_" + groupPermissions[id_group][i]).attr("checked", forceState == "on");
+				$("#select_off_" + groupPermissions[id_group][i]).attr("checked", forceState == "off");
+				$("#select_deny_" + groupPermissions[id_group][i]).attr("checked", forceState == "deny");
+			}
 
-					if (document.getElementById(\'select_on_\' + groupPermissions[id_group][i]).checked)
-						thisState = \'on\';
-					else if (document.getElementById(\'select_off_\' + groupPermissions[id_group][i]).checked)
-						thisState = \'off\';
-					else
-						thisState = \'deny\';';
+			if ($("#select_on_" + groupPermissions[id_group][i]).attr("checked"))
+				thisState = "on";
+			else if ($("#select_off_" + groupPermissions[id_group][i]).attr("checked"))
+				thisState = "off";
+			else
+				thisState = "deny";');
 
-		echo '
-					// Unless this is the first element, or it\'s the same state as the last we\'re buggered.
-					if (curState == false || thisState == curState)
-						curState = thisState;
-					else
-					{
-						curState = \'fudged\';
-						i = 999;
-					}
-				}
+		// Unless this is the first element, or it's the same state as the last we're buggered.
+		add_js('
+			if (curState == false || thisState == curState)
+				curState = thisState;
+			else
+			{
+				curState = "fudged";
+				i = 999;
+			}
+		}');
 
-		// First check the right master is selected!';
+		// First, check the right master is selected!
 		if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
-			echo '
-				document.getElementById("group_select_" + id_group).checked = curState == \'on\' ? 1 : 0;';
+			add_js('
+		$("#group_select_" + id_group).attr("checked", curState == "on");');
 		else
-			echo '
-				document.getElementById("group_select_on_" + id_group).checked = curState == \'on\' ? 1 : 0;
-				document.getElementById("group_select_off_" + id_group).checked = curState == \'off\' ? 1 : 0;
-				document.getElementById("group_select_deny_" + id_group).checked = curState == \'deny\' ? 1 : 0;';
+			add_js('
+		$("#group_select_on_" + id_group).attr("checked", curState == "on");
+		$("#group_select_off_" + id_group).attr("checked", curState == "off");
+		$("#group_select_deny_" + id_group).attr("checked", curState == "deny");');
 
 		// Force the display?
-		echo '
-				if (curState != \'fudged\')
-					toggleBreakdown(id_group, "none");
-			}';
+		add_js('
+		if (curState != "fudged")
+			toggleBreakdown(id_group, "none");
+	}');
 	}
 
 	// Some more javascript to be displayed as long as we are editing.
@@ -761,17 +758,13 @@ function template_modify_group_simple($type)
 				if ($has_display_content)
 				{
 					if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
-						echo '
-			document.getElementById("group_select_div_', $id_group, '").parentNode.className = "lockedbg";
-			document.getElementById("group_select_', $id_group, '").style.display = "";';
+						add_js('
+	$("#group_select_div_', $id_group, '").parent().removeClass().addClass("lockedbg");
+	$("#group_select_', $id_group, '").show();');
 					else
-						echo '
-			document.getElementById("group_select_div_on_', $id_group, '").parentNode.className = "lockedbg";
-			document.getElementById("group_select_div_off_', $id_group, '").parentNode.className = "lockedbg";
-			document.getElementById("group_select_div_deny_', $id_group, '").parentNode.className = "lockedbg";
-			document.getElementById("group_select_on_', $id_group, '").style.display = "";
-			document.getElementById("group_select_off_', $id_group, '").style.display = "";
-			document.getElementById("group_select_deny_', $id_group, '").style.display = "";';
+						add_js('
+	$("#group_select_div_on_', $id_group, ', #group_select_div_off_', $id_group, ', #group_select_div_deny_', $id_group, '").parent().removeClass().addClass("lockedbg");
+	$("#group_select_on_', $id_group, ', #group_select_off_', $id_group, ', #group_select_deny_', $id_group, '").show();');
 				}
 
 				$perm_ids = array();
@@ -782,22 +775,20 @@ function template_modify_group_simple($type)
 						$perm_ids[] = "'$permission[id]'";
 				// Declare this group's permissions into an array.
 				if (!empty($perm_ids))
-					echo '
-			groupPermissions[\'', $id_group, '\'] = new Array(', count($perm_ids), ');';
+					add_js('
+	groupPermissions["', $id_group, '"] = new Array(', count($perm_ids), ');');
 				foreach ($perm_ids as $count => $id)
-					echo '
-			groupPermissions[\'', $id_group, '\'][', $count, '] = ', $id, ';';
+					add_js('
+	groupPermissions["', $id_group, '"][', $count, '] = ', $id, ';');
 
 				// Show the group as required.
 				if ($has_display_content)
-					echo '
-			determineGroupState(\'', $id_group, '\');';
+					add_js('
+	determineGroupState("', $id_group, '");');
 			}
 		}
 	}
 
-	echo '
-		// ]]></script>';
 }
 
 // The SMF 1.x way of looking at permissions.
@@ -966,7 +957,7 @@ function template_inline_permissions()
 
 	echo '
 		<fieldset id="', $context['current_permission'], '">
-			<legend><a href="#" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'none\'; document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'block\'; return false;">', $txt['avatar_select_permission'], '</a></legend>';
+			<legend><a href="#" onclick="$(\'#', $context['current_permission'], '\').hide(); $(\'#', $context['current_permission'], '_groups_link\').show(); return false;">', $txt['avatar_select_permission'], '</a></legend>';
 	if (empty($modSettings['permission_enable_deny']))
 		echo '
 			<ul class="permission_groups">';
@@ -1021,12 +1012,11 @@ function template_inline_permissions()
 	echo '
 		</fieldset>
 
-		<a href="#" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'block\'; document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'none\'; return false;" id="', $context['current_permission'], '_groups_link" style="display: none;">[ ', $txt['avatar_select_permission'], ' ]</a>
+		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" style="display: none;">[ ', $txt['avatar_select_permission'], ' ]</a>';
 
-		<script><!-- // --><![CDATA[
-			document.getElementById("', $context['current_permission'], '").style.display = "none";
-			document.getElementById("', $context['current_permission'], '_groups_link").style.display = "";
-		// ]]></script>';
+	add_js('
+	$("#', $context['current_permission'], '").hide();
+	$("#', $context['current_permission'], '_groups_link").show();');
 }
 
 // Edit post moderation permissions.

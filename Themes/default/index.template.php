@@ -47,10 +47,6 @@ function template_init()
 		if this is 'never' or isn't set at all, images from the default theme will not be used. */
 	$settings['use_default_images'] = 'never';
 
-	/* The version this template/theme is for.
-		This should probably be the version of SMF it was created for. */
-	$settings['theme_version'] = '2.0 RC4';
-
 	/* Set a setting that tells the theme that it can render the tabs. */
 	$settings['use_tabs'] = true;
 

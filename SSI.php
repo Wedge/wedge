@@ -1359,11 +1359,10 @@ function ssi_pollVote()
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
 		echo '<!DOCTYPE html>
-<html>
-<head>
-	<script><!-- // --><![CDATA[
+<html><head>
+	<script>
 		history.go(-1);
-	// ]]></script>
+	</script>
 </head>
 <body>&laquo;</body>
 </html>';
