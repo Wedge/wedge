@@ -85,6 +85,7 @@ function ViewQuery()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
+	<meta charset="utf-8" />
 	<title>', $context['forum_name_html_safe'], '</title>',
 	theme_base_css(), '
 	<style>
@@ -94,7 +95,7 @@ function ViewQuery()
 	</style>
 </head>
 <body id="help_popup">
-	<div class="tborder windowbg description">';
+	<div class="windowbg wrc description">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{

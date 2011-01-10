@@ -71,7 +71,7 @@ class wedgeEditor
 			self::$editorLoaded = true;
 
 			loadLanguage('Post');
-			wedge_add_css($context['browser']['is_ie'] ? 'editor_ie' : 'editor');
+			wedge_add_css('editor');
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			add_js('
@@ -2306,6 +2306,7 @@ class wedgeEditor
 		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8" />
 	<title>' . $txt['more_smileys_title'] . '</title>
 	<link rel="stylesheet" href="' . $context['cached_css'] . '" />
 </head>

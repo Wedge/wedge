@@ -644,7 +644,7 @@ function cleanXml($string)
  *
  * Multiple instances of scripts will need to be adjusted through the codebase if passed to Javascript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
  *
- * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl.
+ * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
  * @return string A transformed string with contents suitably single quoted for use in Javascript.

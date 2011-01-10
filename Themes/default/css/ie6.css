@@ -198,6 +198,32 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	word-wrap: break-word;
 }
 
+/* Editor
+------------------------------------------------------- */
+/* This is the WYSIWYG editor */
+.rich_editor
+{
+	background-color: #fff;
+	color: #000;
+	font-family: verdana;
+	font-size: x-small;
+	border: none;
+}
+
+.rich_editor p
+{
+	margin: 0;
+}
+
+.richedit_resize
+{
+	padding: 0 !important;
+}
+.rich_editor a img
+{
+	border: 0;
+}
+
 /* Misc hacks
 ------------- */
 

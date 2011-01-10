@@ -4,7 +4,7 @@
  * This is the base CSS file for the default theme.
  *
  * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
- * index.css, admin.css, editor.css, editor_ie.css, rtl.css
+ * index.css, sections.css, admin.css, editor.css, rtl.css, guest.css
  *
  * As well as browser-specific stylesheets. If you need to add a browser hack, just create one of these files into your folder:
  * opera.css, webkit.css, chrome.css, safari.css, iphone.css, android.css, gecko.css, firefox.css, ie6.css, ie7.css, ie8.css, ie9.css
@@ -48,7 +48,6 @@ body {
 	-webkit-border-radius: 12px 12px 0 0;
 }
 #header div.frame {
-	display: block;
 	padding: 5px 20px 0;
 }
 /* the content section */
@@ -58,7 +57,6 @@ body {
 	background: #faf8f6;
 }
 #content div.frame {
-	display: block;
 	padding: 0 20px 20px;
 }
 #main_content {
@@ -182,7 +180,6 @@ h1.forumtitle {
 	-webkit-border-radius: 0 0 12px 12px;
 }
 #footer div.frame {
-	display: block;
 	padding: 15px 20px;
 }
 #footer ul li, #footer p {
@@ -731,12 +728,10 @@ blockquote.bbc_alternate_quote {
 /* A code block - maybe PHP ;). */
 code.bbc_code, code.php_code {
 	display: block;
-	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
-	font-size: 8pt;
+	font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
 	background: #eef;
 	border-top: 2px solid #999;
 	border-bottom: 2px solid #999;
-	line-height: 1.5em;
 	padding: 3px 1em;
 	overflow: auto;
 	white-space: pre;
@@ -866,15 +861,11 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td {
 	color: #222;
-	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
-	font-size: 1.1em;
-	font-weight: normal;
+	font: normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS";
 }
 .catbg, tr.catbg td, tr.catbg th {
 	color: #666;
-	font-family: "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
-	font-size: 1.1em;
-	font-weight: normal;
+	font: normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS";
 }
 
 /* adjust the table versions of headers */
@@ -1180,7 +1171,7 @@ dfn {
 }
 
 .cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4 {
-	font-family: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
+	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 }
 .cat_bar h3, .cat_bar h4 {
 	letter-spacing: 1px;

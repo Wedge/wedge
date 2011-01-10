@@ -1480,7 +1480,7 @@ function MaintainReattributePosts()
 
 	// Find the member.
 	loadSource('Subs-Auth');
-	$members = findMembers($_POST['to']);
+	$members = !empty($_POST['to']) ? findMembers($_POST['to']) : 0;
 
 	if (empty($members))
 		fatal_lang_error('reattribute_cannot_find_member');

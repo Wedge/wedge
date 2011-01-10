@@ -568,10 +568,7 @@ function template_main()
 	function onDocSent(XMLDoc)
 	{
 		if (!XMLDoc)
-		{
-			postmod.preview.onclick = function () { return true; }
-			postmod.preview.click();
-		}
+			$(postmod.preview).click(function () { return true; }).click();
 
 		// Show the preview section.
 		$("#preview_subject").html($("smf preview subject", XMLDoc).text());

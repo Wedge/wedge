@@ -523,11 +523,9 @@ function template_edit_censored()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $txt['admin_censored_words'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['admin_censored_words'], '
+			</we:cat>
 			<div class="windowbg2 wrc">
 				<p>', $txt['admin_censored_where'], '</p>';
 
@@ -1132,7 +1130,7 @@ function template_admin_search_results()
 	global $context, $txt, $settings, $options, $scripturl;
 
 	echo '
-	<we:title>
+	<we:cat>
 		<div class="floatright">
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
 				<input type="text" name="search_term" value="', $context['search_term'], '" class="input_text" />
@@ -1141,7 +1139,7 @@ function template_admin_search_results()
 			</form>
 		</div>
 		', $txt['admin_search_results'], '
-	</we:title>
+	</we:cat>
 
 	<div class="windowbg wrc">
 		', sprintf($txt['admin_search_results_desc'], $context['search_term']);
@@ -1222,24 +1220,23 @@ function template_core_features()
 
 	echo '
 	<div id="admincenter">';
+
 	if ($context['is_new_install'])
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>
-					', $txt['core_settings_welcome_msg'], '
-				</h3>
-			</div>
-			<div class="information">
-				', $txt['core_settings_welcome_msg_desc'], '
-			</div>';
+		<we:cat>
+			', $txt['core_settings_welcome_msg'], '
+		</we:cat>
+		<div class="information">
+			', $txt['core_settings_welcome_msg_desc'], '
+		</div>';
 	}
 
 	echo '
 		<form action="', $scripturl, '?action=admin;area=corefeatures;" method="post" accept-charset="UTF-8">
-			<we:title>
+			<we:cat>
 				', $txt['core_settings_title'], '
-			</we:title>
+			</we:cat>
 			<div style="overflow: hidden">';
 
 	$alternate = 0;
@@ -1295,11 +1292,9 @@ function template_add_language()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $txt['add_language'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['add_language'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<fieldset>
 					<legend>', $txt['add_language_smf'], '</legend>
@@ -1367,11 +1362,9 @@ function template_download_language()
 	{
 		echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>
-				', $txt['languages_download_complete'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['languages_download_complete'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			', $context['install_complete'], '
 		</div>
@@ -1391,11 +1384,9 @@ function template_download_language()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $txt['languages_download'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['languages_download'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p>
 					', $txt['languages_download_note'], '
@@ -1570,11 +1561,9 @@ function template_modify_language_entries()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $txt['edit_languages'], '
-				</h3>
-			</div>';
+			<we:cat>
+				', $txt['edit_languages'], '
+			</we:cat>';
 
 	// Not writable?
 	if ($context['lang_file_not_writable_message'])
@@ -1826,11 +1815,9 @@ function template_repair_boards()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>',
-				$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
+		</we:cat>
 		<div class="windowbg wrc">';
 
 	// Are we actually fixing them, or is this just a prompt?
@@ -1921,9 +1908,9 @@ function template_pretty_urls()
 	if (!empty($context['pretty']['chrome']['menu']))
 	{
 		echo '
-	<div class="cat_bar">
-		<h3>', $txt['pretty_urls'], '</h3>
-	</div>
+	<we:cat>
+		', $txt['pretty_urls'], '
+	</we:cat>
 	<div class="windowbg wrc">
 		<ul>';
 
@@ -1944,9 +1931,9 @@ function template_pretty_urls()
 	</div>';
 
 	echo '
-	<div class="cat_bar">
-		<h4>', $txt['pretty_settings'], '</h4>
-	</div>
+	<we:title>
+		', $txt['pretty_settings'], '
+	</we:title>
 	<div class="windowbg2 wrc">
 		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
 			<fieldset>
@@ -1980,9 +1967,9 @@ function template_pretty_urls()
 		</form>
 	</div>
 
-	<div class="cat_bar">
-		<h4>', $txt['pretty_maintenance'], '</h4>
-	</div>
+	<we:title>
+		', $txt['pretty_maintenance'], '
+	</we:title>
 	<div class="windowbg wrc">
 		<form id="pretty_maintain_reset" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;reset" method="post" accept-charset="UTF-8">
 			<input type="submit" value="', $txt['pretty_reset'], '">

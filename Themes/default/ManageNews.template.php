@@ -73,15 +73,13 @@ function template_email_members()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	// This is some javascript for the simple/advanced toggling stuff.
-	echo '
-	<script><!-- // --><![CDATA[
-		function toggleAdvanced(mode)
-		{
-			$("#advanced_settings_div").toggle(mode);
-			$("#gosimple").toggle(mode);
-			$("#goadvanced").toggle(!mode);
-		}
-	// ]]></script>';
+	add_js('
+	function toggleAdvanced(mode)
+	{
+		$("#advanced_settings_div").toggle(mode);
+		$("#gosimple").toggle(mode);
+		$("#goadvanced").toggle(!mode);
+	}');
 
 	echo '
 	<div id="admincenter">

@@ -281,7 +281,7 @@ function template_body_below()
 		<p>', $txt['page_created'], $context['load_time'], $txt['seconds_with'], $context['load_queries'], $txt['queries'], '</p>';
 
 	echo '
-	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', $context['browser']['is_ie6'] ? '' : '
+	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
 </div>';
 }
 
@@ -353,8 +353,7 @@ function template_html_below()
 	// and mods, and close all outstanding tags. We're done!
 	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], empty($footer_coding) ? '' : '
-// ]]></script>', $context['browser']['is_ie6'] ? '
-</div>' : '', '
+// ]]></script>', '
 </body></html>';
 }
 

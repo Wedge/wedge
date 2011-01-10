@@ -185,8 +185,8 @@ function smc_Editor(oOptions)
 		// Right to left mode?
 		if (this.opt.bRTL)
 		{
-			this.oFrameDocument.dir = "rtl";
-			this.oFrameDocument.body.dir = "rtl";
+			this.oFrameDocument.dir = 'rtl';
+			this.oFrameDocument.body.dir = 'rtl';
 		}
 
 		// Mark it as editable...
@@ -199,75 +199,8 @@ function smc_Editor(oOptions)
 			this.oFrameHandle.style.display = 'none';
 		}
 
-		// Now we need to try and style the editor - internet explorer allows us to do the whole lot.
-		if (document.styleSheets.editor_css || document.styleSheets.editor_ie_css)
-		{
-			var oMyStyle = this.oFrameDocument.createElement('style');
-			this.oFrameDocument.documentElement.firstChild.appendChild(oMyStyle);
-			oMyStyle.styleSheet.cssText = document.styleSheets.editor_ie_css ? document.styleSheets.editor_ie_css.cssText : document.styleSheets.editor_css.cssText;
-		}
-		// Otherwise we seem to have to try to rip out each of the styles one by one!
-		else if (document.styleSheets.length)
-		{
-			var bFoundSomething = false;
-			// First we need to find the right style sheet.
-			for (var i = 0, iNumStyleSheets = document.styleSheets.length; i < iNumStyleSheets; i++)
-			{
-				// Start off looking for the right style sheet.
-				if (!document.styleSheets[i].href || document.styleSheets[i].href.indexOf('editor') < 1)
-					continue;
-
-				// Firefox won't allow us to get a CSS file which ain't in the right URL.
-				try
-				{
-					if (document.styleSheets[i].cssRules.length < 1)
-						continue;
-				}
-				catch (e)
-				{
-					continue;
-				}
-
-				// Manually try to find the rich_editor class.
-				for (var r = 0, iNumRules = document.styleSheets[i].cssRules.length; r < iNumRules; r++)
-				{
-					// Got the main editor?
-					if (document.styleSheets[i].cssRules[r].selectorText == '.rich_editor')
-					{
-						// Set some possible styles.
-						if (document.styleSheets[i].cssRules[r].style.color)
-							this.oFrameDocument.body.style.color = document.styleSheets[i].cssRules[r].style.color;
-						if (document.styleSheets[i].cssRules[r].style.backgroundColor)
-							this.oFrameDocument.body.style.backgroundColor = document.styleSheets[i].cssRules[r].style.backgroundColor;
-						if (document.styleSheets[i].cssRules[r].style.fontSize)
-							this.oFrameDocument.body.style.fontSize = document.styleSheets[i].cssRules[r].style.fontSize;
-						if (document.styleSheets[i].cssRules[r].style.fontFamily)
-							this.oFrameDocument.body.style.fontFamily = document.styleSheets[i].cssRules[r].style.fontFamily;
-						if (document.styleSheets[i].cssRules[r].style.border)
-							this.oFrameDocument.body.style.border = document.styleSheets[i].cssRules[r].style.border;
-						bFoundSomething = true;
-					}
-					// The frame?
-					else if (document.styleSheets[i].cssRules[r].selectorText == '.rich_editor_frame')
-					{
-						if (document.styleSheets[i].cssRules[r].style.border)
-							this.oFrameHandle.style.border = document.styleSheets[i].cssRules[r].style.border;
-					}
-				}
-			}
-
-			// Didn't find it?
-			if (!bFoundSomething)
-			{
-				// Do something that is better than nothing.
-				$(this.oFrameDocument.body).css({
-					color: 'black', backgroundColor: 'white', fontSize: '78%', fontFamily: 'Verdana, Arial, Helvetica, sans-serif', border: 'none'
-				});
-				this.oFrameHandle.style.border = '1px solid #808080';
-				if (is_opera)
-					this.oFrameDocument.body.style.height = '99%';
-			}
-		}
+		var thisFrameHead = $(this.oFrameHandle).contents().find('head');
+		$('link[rel=stylesheet]').each(function() { thisFrameHead.append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
 		$(this.oFrameDocument.body).addClass('rich_editor').css({ padding: '1px', margin: 0 });
