@@ -182,6 +182,8 @@ function createList($listOptions)
 	// The title is currently optional.
 	if (isset($listOptions['title']))
 		$list_context['title'] = $listOptions['title'];
+	if (isset($listOptions['cat']))
+		$list_context['cat'] = $listOptions['cat'];
 
 	// In case there's a form, share it with the template context.
 	if (isset($listOptions['form']))

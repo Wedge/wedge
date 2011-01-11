@@ -18,13 +18,20 @@ function template_show_list($list_id = null)
 	<form action="', $cur_list['form']['href'], '" method="post"', empty($cur_list['form']['name']) ? '' : ' name="' . $cur_list['form']['name'] . '" id="' . $cur_list['form']['name'] . '"', ' accept-charset="UTF-8">
 		<div class="generic_list">';
 
-	// Show the title of the table (if any.)
+	// Show the title or category of the table (if any.)
 	if (!empty($cur_list['title']))
 		echo '
 			<div class="clear_right">
 				<we:title>
 					', $cur_list['title'], '
 				</we:title>
+			</div>';
+	if (!empty($cur_list['cat']))
+		echo '
+			<div class="clear_right">
+				<we:cat>
+					', $cur_list['cat'], '
+				</we:cat>
 			</div>';
 	// This is for the old style menu with the arrows "> Test | Test 1"
 	if (empty($settings['use_tabs']) && isset($cur_list['list_menu'], $cur_list['list_menu']['show_on']) && ($cur_list['list_menu']['show_on'] == 'both' || $cur_list['list_menu']['show_on'] == 'top'))

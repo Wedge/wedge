@@ -117,7 +117,7 @@ function pretty_urls_topic_filter($urls)
 {
 	global $context, $modSettings, $scripturl;
 
-	$pattern = '~(.*[?;&])topic=([0-9\.]+)(.*)~S';
+	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
 	$query_data = array();
 	foreach ($urls as $url_id => $url)
 	{

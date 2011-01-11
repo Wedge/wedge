@@ -2158,7 +2158,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		if (isset($pretty_url[0]['replacement']))
 			$setLocation = $pretty_url[0]['replacement'];
 		$setLocation = str_replace(chr(18), '\'', $setLocation);
-		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|(&amp)?;#|=#~', '~\?$|(&amp)?;$|#$|=$~'), array(';', '?', '#', ''), $setLocation);
+		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[\?;=]#|&amp;#~', '~[\?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
 	}
 
 	// Maybe integrations want to change where we are heading?

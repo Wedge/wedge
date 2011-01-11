@@ -994,7 +994,7 @@ function ModifyLanguages()
 		'id' => 'language_list',
 		'items_per_page' => 20,
 		'base_href' => $scripturl . '?action=admin;area=languages',
-		'title' => $txt['edit_languages'],
+		'cat' => $txt['edit_languages'],
 		'get_items' => array(
 			'function' => 'list_getLanguages',
 		),

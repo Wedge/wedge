@@ -1022,7 +1022,7 @@ function pretty_buffer_callback($matches)
 	// Stitch everything back together, clean it up and return
 	$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
 	$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . (isset($PHPSESSID[0]) ? $PHPSESSID[0] : '') . ';' . (isset($sesc[0]) ? $sesc[0] : '') . (isset($fragment[0]) ? $fragment[0] : '');
-	$replacement = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|(&amp)?;#|=#~', '~\?$|(&amp)?;$|#$|=$~'), array(';', '?', '#', ''), $replacement);
+	$replacement = preg_replace(array('~;+|=;~', '~\?;~', '~[\?;=]#|&amp;#~', '~[\?;=#]$|&amp;$~'), array(';', '?', '#', ''), $replacement);
 
 	if (empty($replacement) || $replacement[0] == '?')
 		$replacement = $scripturl . $replacement;
