@@ -69,7 +69,8 @@ function template_html_above()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <!-- Powered by Wedge, (c) Wedgeward 2010 - http://wedgeforum.com -->
-<head>';
+<head>
+	<meta charset="utf-8" />';
 
 	// Our alltime favorites don't really like HTML5...
 	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
@@ -79,7 +80,6 @@ function template_html_above()
 	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
-	<meta charset="utf-8" />
 	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '';
 

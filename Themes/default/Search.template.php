@@ -172,7 +172,8 @@ function template_main()
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit floatright" />
 				</div>
 				<br class="clear" />
-			</fieldset>';
+			</fieldset>
+		</div>';
 		}
 	}
 
