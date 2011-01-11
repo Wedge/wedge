@@ -1931,9 +1931,9 @@ function template_pretty_urls()
 	</div>';
 
 	echo '
-	<we:title>
+	<we:cat>
 		', $txt['pretty_settings'], '
-	</we:title>
+	</we:cat>
 	<div class="windowbg2 wrc">
 		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
 			<fieldset>
@@ -1966,10 +1966,10 @@ function template_pretty_urls()
 			<input type="submit" name="save" value="', $txt['pretty_save'], '">
 		</form>
 	</div>
-
-	<we:title>
+	<br />
+	<we:cat>
 		', $txt['pretty_maintenance'], '
-	</we:title>
+	</we:cat>
 	<div class="windowbg wrc">
 		<form id="pretty_maintain_reset" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;reset" method="post" accept-charset="UTF-8">
 			<input type="submit" value="', $txt['pretty_reset'], '">

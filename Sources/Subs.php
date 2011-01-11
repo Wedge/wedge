@@ -2879,7 +2879,8 @@ function wedge_cache_css()
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-	unset($context['css_generic_files'][0]);
+	// No need to have all URLs say 'index-sections'...
+	unset($context['css_generic_files'][0], $context['css_generic_files'][1]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
 
@@ -2894,7 +2895,7 @@ function wedge_cache_css()
 	if (is_callable('glob'))
 		foreach (glob($cachedir . '/' . $id . '-*.*') as $del)
 			if (!strpos($del, $latest_date))
-				unlink($del);
+				@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
@@ -2937,7 +2938,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 	if (is_callable('glob'))
 		foreach (glob($cachedir . '/' . $id. '*.*') as $del)
 			if (!strpos($del, $latest_date))
-				unlink($del);
+				@unlink($del);
 
 	$minify = empty($modSettings['minify']) ? 'none' : $modSettings['minify'];
 

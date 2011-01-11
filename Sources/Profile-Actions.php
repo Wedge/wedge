@@ -613,8 +613,7 @@ function subscriptions($memID)
 
 		// If the user's list of groups doesn't include the relevant subscription's
 		// groups, kick 'em out if they're not special, or warn them if they are.
-		$intersect = array_intersect($sub['allowed_groups'], $groups);
-		if (empty($intersect))
+		if (empty($sub['allowed_groups']) || !array_intersect($sub['allowed_groups'], $groups))
 		{
 			if ($has_override)
 				$context['subscriptions'][$id]['group_warning'] = true;
