@@ -64,6 +64,12 @@ body {
 	min-height: 200px;
 }
 
+#top_section {
+	overflow: hidden;
+	margin: 0 -20px 6px;
+	padding: 6px 20px 10px;
+}
+
 /* the main title */
 h1.forumtitle {
 	font: italic bold 3em/1em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif;
@@ -112,42 +118,37 @@ h1.forumtitle {
 #guest_form .info {
 	padding: 4px 0;
 }
-#upper_section .user {
+#header .user {
 	width: 50%;
 	float: left;
 	overflow: auto;
 }
-#upper_section .user p {
+#header .user p {
 	float: left;
 	margin: 0 1em 1em 0;
 	padding: 0;
 }
-#upper_section .user ul {
+#header .user ul {
 	margin: 0;
 	padding-left: 10px;
 }
-#upper_section .user ul li {
+#header .user ul li {
 	margin-bottom: 2px;
 }
-#upper_section .news p {
+#header .news p {
 	display: inline;
 }
-#upper_section .news form {
+#header .news form {
 	padding-bottom: 10px;
-}
-#top_section {
-	overflow: hidden;
-	margin: 0 -20px 6px;
-	padding: 6px 20px 10px;
 }
 
 /* The navigation list (i.e. linktree) */
-.navigate_section {
+#linktree {
 	clear: both;
 	padding: .5em 20px;
 	margin: 1em 0 0;
 }
-.navigate_section ul {
+#linktree ul {
 	display: block;
 	margin: 0;
 	font-size: .9em;
@@ -157,19 +158,19 @@ h1.forumtitle {
 	clear: both;
 	width: 100%;
 }
-.navigate_section ul li {
+#linktree ul li {
 	float: left;
 	padding: 0 .5em 0 0;
-	font-size: .95em;
+	height: 21px;
+	line-height: 21px;
+	padding: 0 1.7em 0 5px;
+	background: url(../images/menu.gif) no-repeat right -49px;
 }
-.linktree {
-	display: inline-block;
-	width: 15px;
-	height: 10px;
-	background: url(../images/menu.gif) no-repeat 4px -54px;
+#linktree ul li.last {
+	background: none;
 }
 
-/* The footer wih copyright links etc. */
+/* The footer with copyright links etc. */
 #footer {
 	text-align: center;
 	background: #f4f2f3 url(../images/theme/grad250.png) 0 -180px repeat-x;

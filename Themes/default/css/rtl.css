@@ -190,28 +190,28 @@ h1.forumtitle
 	margin-top: .7em;
 	margin-right: 1em;
 }
-#upper_section .news
+#header .news
 {
 	float: left;
 	text-align: left;
 }
-#upper_section .user
+#header .user
 {
 	float: right;
 }
-#upper_section .user p
+#header .user p
 {
 	float: right;
 	margin: 0 0 1em 1em;
 }
-#upper_section .user ul
+#header .user ul
 {
 	padding-left: 0;
 	padding-right: 10px;
 }
 
 /* The navigation list (i.e. linktree) */
-.navigate_section ul li
+#linktree ul li
 {
 	float: right;
 	padding: 0 0 0 0.5em;

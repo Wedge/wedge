@@ -363,7 +363,7 @@ function theme_linktree($force_show = false)
 		return;
 
 	echo '
-		<div class="navigate_section">
+		<div id="linktree">
 			<ul>';
 
 	// Each tree item has a URL and name. Some may have extra_before and extra_after.
@@ -382,10 +382,6 @@ function theme_linktree($force_show = false)
 		// Show something after the link...?
 		if (isset($tree['extra_after']))
 			echo $tree['extra_after'];
-
-		// Don't show a separator for the last one.
-		if ($link_num != count($context['linktree']) - 1)
-			echo ' <span class="linktree"></span>';
 
 		echo '</li>';
 	}
