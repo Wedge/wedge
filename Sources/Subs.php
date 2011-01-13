@@ -2147,7 +2147,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		loadSource('PrettyUrls-Filters');
-		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation), 'url_id' => 'setLocation'));
+		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
 		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
 		foreach ($filter_callbacks as $callback)
 		{
@@ -2273,7 +2273,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			$footer_done = true;
 			template_footer();
 
-			// Since this is just debugging... it's okay that it's after </html>.
 			if (!isset($_REQUEST['xml']))
 				db_debug_junk();
 		}
@@ -3318,17 +3317,13 @@ function db_debug_junk()
 		$_SESSION['debug'] = &$db_cache;
 	}
 
-	// Gotta have valid HTML ;)
-	$temp = ob_get_contents();
-	ob_clean();
-
-	echo preg_replace('~</body>\s*</html>~', '', $temp), '
+	$temp = '
 <div class="smalltext" style="text-align: left; margin: 1ex;">
-	', $txt['debug_templates'], count($context['debug']['templates']), ': <em>', implode('</em>, <em>', $context['debug']['templates']), '</em>.<br />
-	', $txt['debug_subtemplates'], count($context['debug']['sub_templates']), ': <em>', implode('</em>, <em>', $context['debug']['sub_templates']), '</em>.<br />
-	', $txt['debug_language_files'], count($context['debug']['language_files']), ': <em>', implode('</em>, <em>', $context['debug']['language_files']), '</em>.<br />
-	', $txt['debug_stylesheets'], count($context['debug']['sheets']), ': <em>', implode('</em>, <em>', $context['debug']['sheets']), '</em>.<br />
-	', $txt['debug_files_included'], count($files), ' - ', round($total_size / 1024), $txt['debug_kb'], ' (<a href="#" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_include_info" style="display: none;"><em>', implode('</em>, <em>', $files), '</em></span>)<br />';
+	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br />
+	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br />
+	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br />
+	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br />
+	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="#" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\'; return false;">' . $txt['debug_show'] . '</a><span id="debug_include_info" style="display: none;"><em>' . implode(', ', $files) . '</em></span>)<br />';
 
 	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
 	{
@@ -3342,17 +3337,17 @@ function db_debug_junk()
 			$total_s += $cache_hit['s'];
 		}
 
-		echo '
-	', $txt['debug_cache_hits'], $cache_count, ': ', sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)), ' (<a href="#" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_cache_info" style="display: none;"><em>', implode('</em>, <em>', $entries), '</em></span>)<br />';
+		$temp .= '
+	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="#" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\'; return false;">' . $txt['debug_show'] . '</a><span id="debug_cache_info" style="display: none"><em>' . implode(', ', $entries) . '</em></span>)<br />';
 	}
 
 	if ($show_debug_query)
-		echo '
-	<a href="', $scripturl, '?action=viewquery" target="_blank" class="new_win">', $warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings), '</a><br />
+		$temp .= '
+	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br />
 	<br />';
 	else
-		echo '
-	', sprintf($txt['debug_queries_used'], (int) $db_count), '<br />
+		$temp .= '
+	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br />
 	<br />';
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
@@ -3377,26 +3372,26 @@ function db_debug_junk()
 			if (isset($qq['f']))
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
-			echo '
-	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br />
+			$temp .= '
+	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none;">' : '') . nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br />
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
-				echo sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
+				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
 
 			if (isset($qq['s'], $qq['t'], $txt['debug_query_which_took_at']))
-				echo sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br />';
+				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br />';
 			elseif (isset($qq['t']))
-				echo sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br />';
-			echo '
+				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br />';
+			$temp .= '
 	<br />';
 		}
 
 	if ($show_debug_query)
-		echo '
-	<a href="' . $scripturl . '?action=viewquery;sa=hide">', $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'], '</a>';
+		$temp .= '
+	<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 
-	echo '
-</div></body></html>';
+	$context['debugging_info'] = $temp . '
+</div>';
 }
 
 /**

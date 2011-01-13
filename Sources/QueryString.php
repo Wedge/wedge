@@ -783,7 +783,7 @@ function ob_sessrewrite($buffer)
 	global $scripturl, $modSettings, $user_info, $context, $db_prefix, $session_var;
 	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache;
 
-	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
+	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
 	if ($scripturl == '' || !defined('SID'))
 		return $buffer;
 
@@ -817,8 +817,6 @@ function ob_sessrewrite($buffer)
 		$uncached_urls = array();
 
 		// Making sure we don't execute patterns twice.
-		// !!! There's currently a bug that executes ob_sessrewrite() twice. Until I fix it,
-		// !!!       and I WILL, count($context['pretty']['search_patterns']) will return 2.
 		$context['pretty']['search_patterns'] = array_flip(array_flip($context['pretty']['search_patterns']));
 		foreach ($context['pretty']['search_patterns'] as $pattern)
 		{
@@ -946,6 +944,9 @@ function ob_sessrewrite($buffer)
 			$buffer
 		);
 	}
+
+	if (!empty($context['debugging_info']))
+		$buffer = str_replace('</body>', $context['debugging_info'] . '</body>', $buffer);
 
 	// Update the load times
 	$pattern = '~' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '~';
