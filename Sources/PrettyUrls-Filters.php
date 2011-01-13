@@ -15,7 +15,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 // Build the table of pretty topic URLs
-// This function used to do a lot more, but I kept the name the same though now it doesn't
+// This function used to do a lot more, it no longer does, but I still kept the same name.
 function pretty_synchronise_topic_urls()
 {
 	global $modSettings;
@@ -35,7 +35,6 @@ function pretty_synchronise_topic_urls()
 	);
 
 	$topicData = array();
-	$oldUrls = array();
 	$tablePretty = array();
 
 	// Fill the $topicData array
@@ -55,7 +54,7 @@ function pretty_synchronise_topic_urls()
 		// A topic in the recycle board deserves only a blank URL
 		$pretty_text = $modSettings['recycle_enable'] && $row['id_board'] == $modSettings['recycle_board'] ? '' : trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
 		// Can't be empty, can't be a number and can't be the same as another
-		if ($pretty_text == '' || is_numeric($pretty_text) /* || in_array($pretty_text, $oldUrls) CYNAMOD */)
+		if ($pretty_text == '' || is_numeric($pretty_text))
 		{
 			// Add suffix '-tID_TOPIC' to the pretty url
 			$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . ($pretty_text != '' ? '-t' : 't') . $row['id_topic'];
@@ -64,7 +63,6 @@ function pretty_synchronise_topic_urls()
 
 		// Update the arrays
 		$tablePretty[] = '(' . (int) $row['id_topic'] . ", '" . $pretty_text . "')";
-		$oldUrls[] = $pretty_text;
 	}
 
 	// Update the database
@@ -84,6 +82,7 @@ function pretty_urls_actions_filter($urls)
 {
 	global $scripturl, $boardurl;
 
+/*
 	$pattern = array(
 		'~.*[?;&]action=media;sa=media;in=([0-9]+);(thumba?|preview)(.*)~S',
 		'~.*[?;&]action=media;sa=(album|item|media);in=([0-9]+)(.*)~S',
@@ -96,20 +95,22 @@ function pretty_urls_actions_filter($urls)
 		'http://$1.wedgeo.com/?$2',
 		// 'http://tracker.wedgeo.com/?$1', // See? That's easy.
 	);
-	foreach ($urls as $url_id => $url)
-		if (!isset($url['replacement']))
-			if (preg_match('~action=(?:media|pm|helpdesk)~', $url['url'])) // |admin
-				$urls[$url_id]['replacement'] = preg_replace($pattern, $replacement, $url['url']);
-	return $urls;
 
-// A much simpler version that accounts for all actions...
-/*	$pattern = '~(.*)action=([^;]+)~S';
-	$replacement = $boardurl . '/$2/$1';
-	foreach ($urls as $url_id => $url)
-		if (!isset($url['replacement']))
-			if (preg_match($pattern, $url['url']))
-				$urls[$url_id]['replacement'] = preg_replace($pattern, $replacement, $url['url']);
-	return $urls; */
+	// A failed strpos is about twice as fast as a failed preg_match. Of course,
+	// the optimization depends on how many action-type layouts can be found on the page...
+	foreach ($urls as &$url)
+		if (!isset($url['replacement']) && strpos($url['url'], 'action=') !== false && preg_match('~action=(?:media|pm|helpdesk)~', $url['url'])) // |admin
+			$url['replacement'] = preg_replace($pattern, $replacement, $url['url']);
+	return $urls;
+*/
+
+	// A much simpler version that accounts for all actions...
+	$pattern = '~(.*)action=([^;]+)~S';
+	$replacement = $boardurl . '/do/$2/$1';
+	foreach ($urls as &$url)
+		if (!isset($url['replacement']) && strpos($url['url'], 'action=') !== false && preg_match($pattern, $url['url']))
+			$url['replacement'] = preg_replace($pattern, $replacement, $url['url']);
+	return $urls;
 }
 
 // Filter topic urls
@@ -119,24 +120,23 @@ function pretty_urls_topic_filter($urls)
 
 	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
 	$query_data = array();
-	foreach ($urls as $url_id => $url)
+	foreach ($urls as &$url)
 	{
 		// Get the topic data ready to query the database with
-		if (!isset($url['replacement']))
-			if (preg_match($pattern, $url['url'], $matches))
+		if (!isset($url['replacement']) && strpos($url['url'], 'topic=') !== false && preg_match($pattern, $url['url'], $matches))
+		{
+			if (strpos($matches[2], '.') !== false)
+				list ($url['topic_id'], $url['start']) = explode('.', $matches[2]);
+			else
 			{
-				if (strpos($matches[2], '.') !== false)
-					list ($urls[$url_id]['topic_id'], $urls[$url_id]['start']) = explode('.', $matches[2]);
-				else
-				{
-					$urls[$url_id]['topic_id'] = $matches[2];
-					$urls[$url_id]['start'] = '0';
-				}
-				$urls[$url_id]['topic_id'] = (int) $urls[$url_id]['topic_id'];
-				$urls[$url_id]['match1'] = $matches[1];
-				$urls[$url_id]['match3'] = $matches[3];
-				$query_data[] = $urls[$url_id]['topic_id'];
+				$url['topic_id'] = $matches[2];
+				$url['start'] = '0';
 			}
+			$url['topic_id'] = (int) $url['topic_id'];
+			$url['match1'] = $matches[1];
+			$url['match3'] = $matches[3];
+			$query_data[] = $url['topic_id'];
+		}
 	}
 
 	// Query the database with these topic IDs
@@ -251,11 +251,11 @@ function pretty_urls_topic_filter($urls)
 		}
 
 		// Build the replacement URLs
-		foreach ($urls as $url_id => $url)
+		foreach ($urls as &$url)
 			if (isset($url['topic_id']) && isset($topicData[$url['topic_id']]))
 			{
 				$start = ($url['start'] != '0' && $url['start'] != 'msg0') || is_numeric($topicData[$url['topic_id']]['pretty_url']) ? $url['start'] . '/' : '';
-				$urls[$url_id]['replacement'] = 'http://' . $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['match1'] . $url['match3'];
+				$url['replacement'] = 'http://' . $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['match1'] . $url['match3'];
 			}
 	}
 	return $urls;
@@ -268,30 +268,31 @@ function pretty_urls_board_filter($urls)
 
 	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
-	foreach ($urls as $url_id => $url)
+	foreach ($urls as &$url)
+	{
 		// Split out the board URLs and replace them
-		if (!isset($url['replacement']))
-			if (preg_match($pattern, $url['url'], $matches))
+		if (!isset($url['replacement']) && strpos($url['url'], 'board=') !== false && preg_match($pattern, $url['url'], $matches))
+		{
+			if (strpos($matches[2], '.') !== false)
+				list ($board_id, $start) = explode('.', $matches[2]);
+			else
 			{
-				if (strpos($matches[2], '.') !== false)
-					list ($board_id, $start) = explode('.', $matches[2]);
-				else
-				{
-					$board_id = $matches[2];
-					$start = '0';
-				}
-				$board_id = (int) $board_id;
-				$bo_list[] = $board_id;
-				$ere = $matches[5];
-				$urls[$url_id]['board_id'] = $board_id;
-				$urls[$url_id]['start'] = $start != '0' ? 'p' . $start . '/' : '';
-				$urls[$url_id]['match1'] = $matches[1];
-				$urls[$url_id]['cattag'] = !empty($matches[3]) ? $matches[3] . '/' . $matches[4] . '/' : '';
-				$urls[$url_id]['epoch'] = !empty($ere) ? substr($ere, 0, 4) . '/' : '';
-				$urls[$url_id]['epoch'] .= substr($ere, 4, 2) != '' ? substr($ere, 4, 2) . '/' : '';
-				$urls[$url_id]['epoch'] .= substr($ere, 6, 2) != '' ? substr($ere, 6, 2) . '/' : '';
-				$urls[$url_id]['match6'] = $matches[6];
+				$board_id = $matches[2];
+				$start = '0';
 			}
+			$board_id = (int) $board_id;
+			$bo_list[] = $board_id;
+			$ere = $matches[5];
+			$url['board_id'] = $board_id;
+			$url['start'] = $start != '0' ? 'p' . $start . '/' : '';
+			$url['match1'] = $matches[1];
+			$url['cattag'] = !empty($matches[3]) ? $matches[3] . '/' . $matches[4] . '/' : '';
+			$url['epoch'] = !empty($ere) ? substr($ere, 0, 4) . '/' : '';
+			$url['epoch'] .= substr($ere, 4, 2) != '' ? substr($ere, 4, 2) . '/' : '';
+			$url['epoch'] .= substr($ere, 6, 2) != '' ? substr($ere, 6, 2) . '/' : '';
+			$url['match6'] = $matches[6];
+		}
+	}
 
 	$url_list = array();
 	if (count($bo_list) > 0)
@@ -304,11 +305,11 @@ function pretty_urls_board_filter($urls)
 			$url_list[$row['id_board']] = $row['url'];
 		wesql::free_result($query);
 
-		foreach ($urls as $url_id => $url)
+		foreach ($urls as &$url)
 			if (!isset($url['replacement']) && isset($url['board_id']))
 			{
 				$board_id = $url['board_id'];
-				$urls[$url_id]['replacement'] = 'http://' . (!empty($url_list[$board_id]) ? $url_list[$board_id] : 'wedgeo.com') . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
+				$url['replacement'] = 'http://' . (!empty($url_list[$board_id]) ? $url_list[$board_id] : 'wedgeo.com') . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
 			}
 	}
 
@@ -322,10 +323,10 @@ function pretty_profiles_filter($urls)
 
 	$pattern = '~(.*)action=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();
-	foreach ($urls as $url_id => &$url)
+	foreach ($urls as &$url)
 	{
 		// Get the profile data ready to query the database with
-		if (!isset($url['replacement']) && preg_match($pattern, $url['url'], $matches))
+		if (!isset($url['replacement']) && strpos($url['url'], 'action=profile') !== false && preg_match($pattern, $url['url'], $matches))
 		{
 			$url['this_is_me'] = empty($matches[2]);
 			$url['profile_id'] = (int) $matches[3];
@@ -334,7 +335,7 @@ function pretty_profiles_filter($urls)
 			if ($url['profile_id'] > 0)
 				$query_data[] = $url['profile_id'];
 			else
-				$url['replacement'] = 'http://my.' . $_SERVER['HTTP_HOST'] . '/' . ($url['this_is_me'] ? '' : 'guest/') . ($url['match3'] == ';sites' ? 'sites/' : $url['match1'] . $url['match3']);
+				$url['replacement'] = 'http://' . $_SERVER['HTTP_HOST'] . '/~' . ($url['this_is_me'] ? '/' : 'guest/') . $url['match1'] . $url['match3'];
 		}
 	}
 
@@ -357,9 +358,9 @@ function pretty_profiles_filter($urls)
 		wesql::free_result($query);
 
 		// Build the replacement URLs
-		foreach ($urls as $url_id => &$url)
+		foreach ($urls as &$url)
 			if (isset($url['profile_id']))
-				$url['replacement'] = 'http://my.wedgeo.com/' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '' : 'guest/')) . ($url['match3'] == ';sites' ? 'sites/' : $url['match1'] . $url['match3']);
+				$url['replacement'] = 'http://' . $_SERVER['HTTP_HOST'] . '/~' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '/' : 'guest/')) . $url['match1'] . $url['match3'];
 	}
 	return $urls;
 }
