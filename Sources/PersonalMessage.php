@@ -2505,9 +2505,9 @@ function MessageActionsApply()
 			$labels = $row['labels'] == '' ? array('-1') : explode(',', trim($row['labels']));
 
 			// Already exists?  Then... unset it!
-			$ID_LABEL = array_search($to_label[$row['id_pm']], $labels);
-			if ($ID_LABEL !== false && $label_type[$row['id_pm']] !== 'add')
-				unset($labels[$ID_LABEL]);
+			$id_label = array_search($to_label[$row['id_pm']], $labels);
+			if ($id_label !== false && $label_type[$row['id_pm']] !== 'add')
+				unset($labels[$id_label]);
 			elseif ($label_type[$row['id_pm']] !== 'rem')
 				$labels[] = $to_label[$row['id_pm']];
 

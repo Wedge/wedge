@@ -1284,7 +1284,7 @@ function scheduled_fetchSMfiles()
 	loadEssentialThemeData();
 	loadLanguage('Errors', $language, false);
 
-	foreach ($js_files as $ID_FILE => $file)
+	foreach ($js_files as $id_file => $file)
 	{
 		// Create the url
 		$server = empty($file['path']) || substr($file['path'], 0, 7) != 'http://' ? 'http://www.wedgeforum.com' : '';
@@ -1306,7 +1306,7 @@ function scheduled_fetchSMfiles()
 			SET data = SUBSTRING({string:file_data}, 1, 65534)
 			WHERE id_file = {int:id_file}',
 			array(
-				'id_file' => $ID_FILE,
+				'id_file' => $id_file,
 				'file_data' => $file_data,
 			)
 		);

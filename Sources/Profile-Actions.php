@@ -716,16 +716,16 @@ function subscriptions($memID)
 	{
 		// Hopefully just one.
 		foreach ($_POST['sub_id'] as $k => $v)
-			$ID_SUB = (int) $k;
+			$id_sub = (int) $k;
 
-		if (!isset($context['subscriptions'][$ID_SUB]) || $context['subscriptions'][$ID_SUB]['active'] == 0)
+		if (!isset($context['subscriptions'][$id_sub]) || $context['subscriptions'][$id_sub]['active'] == 0)
 			fatal_lang_error('paid_sub_not_active');
 
 		// Simplify...
-		$context['sub'] = $context['subscriptions'][$ID_SUB];
+		$context['sub'] = $context['subscriptions'][$id_sub];
 		$period = 'xx';
 		if ($context['sub']['flexible'])
-			$period = isset($_POST['cur'][$ID_SUB], $context['sub']['costs'][$_POST['cur'][$ID_SUB]]) ? $_POST['cur'][$ID_SUB] : 'xx';
+			$period = isset($_POST['cur'][$id_sub], $context['sub']['costs'][$_POST['cur'][$id_sub]]) ? $_POST['cur'][$id_sub] : 'xx';
 
 		// Check we have a valid cost.
 		if ($context['sub']['flexible'] && $period == 'xx')
@@ -738,10 +738,10 @@ function subscriptions($memID)
 		if ($context['sub']['flexible'])
 		{
 			// Real cost...
-			$context['value'] = $context['sub']['costs'][$_POST['cur'][$ID_SUB]];
-			$context['cost'] = sprintf($modSettings['paid_currency_symbol'], $context['value']) . '/' . $txt[$_POST['cur'][$ID_SUB]];
+			$context['value'] = $context['sub']['costs'][$_POST['cur'][$id_sub]];
+			$context['cost'] = sprintf($modSettings['paid_currency_symbol'], $context['value']) . '/' . $txt[$_POST['cur'][$id_sub]];
 			// The period value for paypal.
-			$context['paypal_period'] = strtoupper(substr($_POST['cur'][$ID_SUB], 0, 1));
+			$context['paypal_period'] = strtoupper(substr($_POST['cur'][$id_sub], 0, 1));
 		}
 		else
 		{

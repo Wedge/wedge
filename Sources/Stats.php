@@ -558,7 +558,7 @@ function Stats()
 	$context['yearly'] = array();
 	while ($row_months = wesql::fetch_assoc($months_result))
 	{
-		$ID_MONTH = $row_months['stats_year'] . sprintf('%02d', $row_months['stats_month']);
+		$id_month = $row_months['stats_year'] . sprintf('%02d', $row_months['stats_month']);
 		$expanded = !empty($_SESSION['expanded_stats'][$row_months['stats_year']]) && in_array($row_months['stats_month'], $_SESSION['expanded_stats'][$row_months['stats_year']]);
 
 		if (!isset($context['yearly'][$row_months['stats_year']]))
@@ -576,13 +576,13 @@ function Stats()
 			);
 
 		$context['yearly'][$row_months['stats_year']]['months'][(int) $row_months['stats_month']] = array(
-			'id' => $ID_MONTH,
+			'id' => $id_month,
 			'date' => array(
 				'month' => sprintf('%02d', $row_months['stats_month']),
 				'year' => $row_months['stats_year']
 			),
-			'href' => $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $ID_MONTH . '#m' . $ID_MONTH,
-			'link' => '<a href="' . $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $ID_MONTH . '#m' . $ID_MONTH . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
+			'href' => $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month,
+			'link' => '<a href="' . $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
 			'month' => $txt['months'][(int) $row_months['stats_month']],
 			'year' => $row_months['stats_year'],
 			'new_topics' => comma_format($row_months['topics']),

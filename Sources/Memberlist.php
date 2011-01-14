@@ -574,12 +574,12 @@ function printMemberListRows($request)
 		array(
 		)
 	);
-	list ($MOST_POSTS) = wesql::fetch_row($result);
+	list ($most_posts) = wesql::fetch_row($result);
 	wesql::free_result($result);
 
 	// Avoid division by zero...
-	if ($MOST_POSTS == 0)
-		$MOST_POSTS = 1;
+	if ($most_posts == 0)
+		$most_posts = 1;
 
 	$members = array();
 	while ($row = wesql::fetch_assoc($request))
@@ -595,7 +595,7 @@ function printMemberListRows($request)
 			continue;
 
 		$context['members'][$member] = $memberContext[$member];
-		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $MOST_POSTS);
+		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $most_posts);
 		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', $context['members'][$member]['registered_timestamp']);
 	}
 }

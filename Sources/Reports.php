@@ -425,7 +425,7 @@ function BoardPermissionsReport()
 		addSeparator($txt['board_perms_permission']);
 
 		// Here cycle through all the detected permissions.
-		foreach ($permissions as $ID_PERM => $perm_info)
+		foreach ($permissions as $id_perm => $perm_info)
 		{
 			// Is this identical to the global?
 			$identicalGlobal = $board == 0 ? false : true;
@@ -444,8 +444,8 @@ function BoardPermissionsReport()
 
 				// Do we have any data for this group?
 				// Set the data for this group to be the local permission.
-				if (isset($group_permissions[$ID_PERM]))
-					$curData[$id_group] = $group_permissions[$ID_PERM];
+				if (isset($group_permissions[$id_perm]))
+					$curData[$id_group] = $group_permissions[$id_perm];
 				// Otherwise means it's set to disallow..
 				else
 					$curData[$id_group] = 'x';
@@ -459,7 +459,7 @@ function BoardPermissionsReport()
 					$curData[$id_group] = 'x';
 
 				// Embolden those permissions different from global (makes it a lot easier!)
-				if (@$board_permissions[0][$id_group][$ID_PERM] != @$group_permissions[$ID_PERM])
+				if (@$board_permissions[0][$id_group][$id_perm] != @$group_permissions[$id_perm])
 					$curData[$id_group] = '<strong>' . $curData[$id_group] . '</strong>';
 			}
 
