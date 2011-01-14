@@ -53,6 +53,7 @@ function Unreadreplies()
 	if (isset($_GET['all']))
 		redirectexit('action=unread;all');
 
+	$context['showing_all_topics'] = isset($_GET['all']);
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
 	$context['page_title'] = $txt['unread_replies'];
