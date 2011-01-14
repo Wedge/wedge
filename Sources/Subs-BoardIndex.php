@@ -40,7 +40,7 @@ if (!defined('SMF'))
 function getBoardIndex($boardIndexOptions)
 {
 	global $scripturl, $user_info, $modSettings, $txt;
-	global $settings, $context;
+	global $settings, $context, $language;
 
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
@@ -55,7 +55,7 @@ function getBoardIndex($boardIndexOptions)
 			c.id_cat, c.name AS cat_name,' : '') . '
 			b.id_board, b.name AS board_name, b.description,
 			CASE WHEN b.redirect != {string:blank_string} THEN 1 ELSE 0 END AS is_redirect, b.redirect_newtab,
-			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent,
+			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent, b.language,
 			IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
 			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name,
 			' . ($user_info['is_guest'] ? ' 1 AS is_read, 0 AS new_from,' : '
@@ -106,7 +106,7 @@ function getBoardIndex($boardIndexOptions)
 					'collapse_image' => isset($row_board['can_collapse']) ? '<img src="' . $settings['images_url'] . '/' . ($row_board['is_collapsed'] > 0 ? 'expand.gif" alt="+"' : 'collapse.gif" alt="-"') . ' />' : '',
 					'href' => $scripturl . '#c' . $row_board['id_cat'],
 					'boards' => array(),
-					'new' => false
+					'new' => false,
 				);
 				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '" href="' . (isset($row_board['can_collapse']) ? $categories[$row_board['id_cat']]['collapse_href'] : $categories[$row_board['id_cat']]['href']) . '">' . $row_board['cat_name'] . '</a>';
 			}
@@ -153,7 +153,8 @@ function getBoardIndex($boardIndexOptions)
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
 					'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
+					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
+					'language' => $row_board['language'],
 				);
 			}
 			if (!empty($row_board['id_moderator']))

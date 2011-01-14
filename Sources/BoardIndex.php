@@ -177,6 +177,9 @@ function BoardIndex()
 			sCookieName: \'upshrinkIC\'
 		}
 	});');
+
+	if (empty($modSettings['display_flags']))
+		$modSettings['display_flags'] = 'none';
 }
 
 ?>

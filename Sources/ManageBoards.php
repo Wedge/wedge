@@ -784,6 +784,8 @@ function EditBoardSettings($return_config = false)
 			array('check', 'recycle_enable', 'onclick' => '$(\'#recycle_board\').attr(\'disabled\', !this.checked);'),
 			array('select', 'recycle_board', $recycle_boards),
 			array('check', 'allow_ignore_boards'),
+		'',
+			array('select', 'display_flags', array('none' => $txt['flags_none'], 'specified' => $txt['flags_specified'], 'all' => $txt['flags_all'])),
 	);
 
 	if ($return_config)
