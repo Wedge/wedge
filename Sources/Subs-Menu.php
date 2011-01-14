@@ -118,32 +118,28 @@ function createMenu($menuData, $menuOptions = array())
 	$include_data = array();
 
 	// Now setup the context correctly.
-	foreach ($menuData as $section_id => $section)
+	foreach ($menuData as $section_id => &$section)
 	{
 		// Is this enabled - or has as permission check - which fails?
 		if ((isset($section['enabled']) && $section['enabled'] == false) || (isset($section['permission']) && !allowedTo($section['permission'])))
 			continue;
 
-		// Delete all orphan separators.
-		while (reset($section['areas']) === '')
-			array_shift($section['areas']);
-		while (end($section['areas']) === '')
-			array_pop($section['areas']);
-		$was_separator = false;
+		$was_separator = true;
 
 		// Now we cycle through the sections to pick the right area.
-		foreach ($section['areas'] as $area_id => $area)
+		foreach ($section['areas'] as $area_id => &$area)
 		{
+			$here = &$menu_context['sections'][$section_id]['areas'][$area_id];
+
 			// Separator? (Avoid having two in a row.)
 			if ($area === '')
 			{
 				if ($was_separator)
 					continue;
 				$was_separator = true;
-				$menu_context['sections'][$section_id]['areas'][$area_id] = '';
+				$here = '';
 				continue;
 			}
-			$was_separator = false;
 
 			// Can we do this?
 			if ((!isset($area['enabled']) || $area['enabled'] != false) && (empty($area['permission']) || allowedTo($area['permission'])))
@@ -161,27 +157,26 @@ function createMenu($menuData, $menuOptions = array())
 					// If this is hidden from view don't do the rest.
 					if (empty($area['hidden']))
 					{
-						// First time this section?
-						if (!isset($menu_context['sections'][$section_id]))
-							$menu_context['sections'][$section_id]['title'] = $section['title'];
+						$was_separator = false;
+						$menu_context['sections'][$section_id]['title'] = $section['title'];
 
-						$menu_context['sections'][$section_id]['areas'][$area_id] = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
+						$here = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
 						// We'll need the ID as well...
 						$menu_context['sections'][$section_id]['id'] = $section_id;
 						// Does it have a custom URL?
 						if (isset($area['custom_url']))
-							$menu_context['sections'][$section_id]['areas'][$area_id]['url'] = $area['custom_url'];
+							$here['url'] = $area['custom_url'];
 
 						// Does this area have its own icon?
 						if (isset($area['icon']))
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '" />&nbsp;&nbsp;';
+							$here['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '" />&nbsp;&nbsp;';
 						else
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '';
+							$here['icon'] = '';
 
 						// Did it have subsections?
 						if (!empty($area['subsections']))
 						{
-							$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'] = array();
+							$here['subsections'] = array();
 							$first_sa = $last_sa = null;
 							foreach ($area['subsections'] as $sa => $sub)
 							{
@@ -190,10 +185,10 @@ function createMenu($menuData, $menuOptions = array())
 									if ($first_sa == null)
 										$first_sa = $sa;
 
-									$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa] = array('label' => $sub[0]);
+									$here['subsections'][$sa] = array('label' => $sub[0]);
 									// Custom URL?
 									if (isset($sub['url']))
-										$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa]['url'] = $sub['url'];
+										$here['subsections'][$sa]['url'] = $sub['url'];
 
 									// A bit complicated - but is this set?
 									if ($menu_context['current_area'] == $area_id)
@@ -215,14 +210,14 @@ function createMenu($menuData, $menuOptions = array())
 								}
 								// Mark it as disabled...
 								else
-									$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa]['disabled'] = true;
+									$here['subsections'][$sa]['disabled'] = true;
 							}
 
 							// Set which one is first, last and selected in the group.
-							if (!empty($menu_context['sections'][$section_id]['areas'][$area_id]['subsections']))
+							if (!empty($here['subsections']))
 							{
-								$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$context['right_to_left'] ? $last_sa : $first_sa]['is_first'] = true;
-								$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$context['right_to_left'] ? $first_sa : $last_sa]['is_last'] = true;
+								$here['subsections'][$context['right_to_left'] ? $last_sa : $first_sa]['is_first'] = true;
+								$here['subsections'][$context['right_to_left'] ? $first_sa : $last_sa]['is_last'] = true;
 
 								if ($menu_context['current_area'] == $area_id && !isset($menu_context['current_subsection']))
 									$menu_context['current_subsection'] = $first_sa;
@@ -253,6 +248,10 @@ function createMenu($menuData, $menuOptions = array())
 				}
 			}
 		}
+
+		// Is the last entry a separator?
+		if ($here === '')
+			unset($here);
 	}
 
 	// Should we use a custom base url, or use the default?

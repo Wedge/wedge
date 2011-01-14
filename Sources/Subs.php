@@ -2907,6 +2907,9 @@ function wedge_cache_css()
 		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}>\s])\s*~'), array('', '$1'), $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', "}\n", "\t"), array("\n", "\n", '}', '}', ' '), $add);
+		// If we find any empty rules, we can safely remove them.
+		if (strpos($add, '{}') !== false)
+			$add = preg_replace('~[^{}]+{}~', '', $add);
 
 		$final .= $add;
 	}

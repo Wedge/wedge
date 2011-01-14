@@ -12,7 +12,8 @@ function smc_AutoSuggest(oOptions)
 	this.opt.sSearchType = 'member';
 
 	// Store the handle to the text box.
-	this.oTextHandle = document.getElementById(this.opt.sControlId);
+	var oText = document.getElementById(this.opt.sControlId);
+	this.oTextHandle = oText;
 
 	this.oSuggestDivHandle = null;
 	this.sLastSearch = '';
@@ -48,10 +49,12 @@ function smc_AutoSuggest(oOptions)
 	// Create a div that'll contain the results later on.
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
 
+	// Create a backup text input for single-entry inputs.
+	this.oRealTextHandle = $('<input />').attr({ type: "hidden", name: oText.name, value: oText.value }).appendTo(oText.form);
+
 	// Disable autocomplete in any browser by obfuscating the name.
 	var that = this;
-	$(this.oTextHandle)
-		.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
+	$(oText).attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
 		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
 		.bind('keyup change focus', function (oEvent) { return that.autoSuggestUpdate(oEvent); })
 		.blur(function (oEvent) { return that.autoSuggestHide(oEvent); });
@@ -63,7 +66,7 @@ function smc_AutoSuggest(oOptions)
 		else
 		{
 			this.oItemList = document.createElement('div');
-			this.oTextHandle.parentNode.insertBefore(this.oItemList, this.oTextHandle.nextSibling);
+			oText.parentNode.insertBefore(this.oItemList, oText.nextSibling);
 		}
 	}
 
@@ -182,6 +185,7 @@ smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
 	else
 		this.oTextHandle.value = oCurElement.innerHTML;
 
+	this.oRealTextHandle.val(this.oTextHandle.value);
 	this.autoSuggestActualHide();
 	this.bPositionComplete = false;
 };
@@ -223,7 +227,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	this.iItemCount++;
 
 	// If there's a callback then call it. If it returns false, the item must not be added.
-	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback && typeof(this.oCallback.onBeforeAddItem) == 'string')
+	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback && typeof this.oCallback.onBeforeAddItem == 'string')
 		if (!this.oCallback.onBeforeAddItem(this.opt.sSelf, sItemId))
 			return;
 
@@ -235,7 +239,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	).appendTo(this.oItemList);
 
 	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
-	if ('oCallback' in this && 'onAfterAddItem' in this.oCallback && typeof(this.oCallback.onAfterAddItem) == 'string')
+	if ('oCallback' in this && 'onAfterAddItem' in this.oCallback && typeof this.oCallback.onAfterAddItem == 'string')
 		this.oCallback.onAfterAddItem(this.opt.sSelf, eid, this.iItemCount);
 
 	// Clear the div a bit.
@@ -259,7 +263,7 @@ smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
 	this.iItemCount--;
 
 	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
-	if ('oCallback' in this && 'onAfterDeleteItem' in this.oCallback && typeof(this.oCallback.onAfterDeleteItem) == 'string')
+	if ('oCallback' in this && 'onAfterDeleteItem' in this.oCallback && typeof this.oCallback.onAfterDeleteItem == 'string')
 		this.oCallback.onAfterDeleteItem(this.opt.sSelf, this.iItemCount);
 };
 
@@ -370,10 +374,12 @@ smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 {
 	// If there's a callback then call it.
-	if ('onBeforeUpdate' in this.oCallback && typeof(this.oCallback.onBeforeUpdate) == 'string')
+	if ('onBeforeUpdate' in this.oCallback && typeof this.oCallback.onBeforeUpdate == 'string')
 		// If it returns false, the item must not be added.
 		if (!this.oCallback.onBeforeUpdate(this.opt.sSelf))
 			return false;
+
+	this.oRealTextHandle.val(this.oTextHandle.value);
 
 	if (isEmptyText(this.oTextHandle))
 	{
@@ -440,7 +446,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	}
 
 	// In progress means destroy!
-	if (typeof(this.oXmlRequestHandle) == 'object' && this.oXmlRequestHandle != null)
+	if (typeof this.oXmlRequestHandle == 'object' && this.oXmlRequestHandle != null)
 		this.oXmlRequestHandle.abort();
 
 	// Clean the text handle.
