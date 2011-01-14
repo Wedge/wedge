@@ -360,7 +360,7 @@ function pretty_profiles_filter($urls)
 		// Build the replacement URLs
 		foreach ($urls as &$url)
 			if (isset($url['profile_id']))
-				$url['replacement'] = 'http://' . $_SERVER['HTTP_HOST'] . '/~' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '/' : 'guest/')) . $url['match1'] . $url['match3'];
+				$url['replacement'] = $boardurl . '/~' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '/' : 'guest/')) . $url['match1'] . $url['match3'];
 	}
 	return $urls;
 }
