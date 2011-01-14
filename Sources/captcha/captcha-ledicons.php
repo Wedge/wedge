@@ -28,69 +28,60 @@ class captcha_ledicons
 {
 	public $is_available = true;
 	protected $font; // the font data will be in here
+	protected $colours; // the hi/lo colour pairs for LEDs
 	protected $image; // the internal image reference
-	private $leds = array(); // where we internally store the leds
+	protected $leds = array(); // where we internally store the leds
+	protected $pointwidth; // how wide the image is in LEDs
+	protected $pointheight;
+	protected $width; // size of the final image
+	protected $height;
+	protected $code;
+
+	protected function init()
+	{
+		$this->load_font();
+		$this->load_colours();
+
+		// Figure out how big this is going to be. Start by getting the height we're using.
+		$this->pointwidth = 0;
+		$this->pointheight = array_rand($this->font['A']); // ['A'] contains an array of at least 5 => and 6 =>, so pick a random key -> random size
+		for ($i = 0, $n = strlen($this->code); $i < $n; $i++)
+			$this->pointwidth += count($this->font[substr($this->code, $i, 1)][$this->pointheight]);
+
+		$this->width = ($this->pointwidth * 5) + 3;
+		$this->height = ($this->pointheight * 6) + 2;
+	}
 
 	public function render($code)
 	{
-		$this->load_font();
+		$this->code = $code;
+		$this->init();
 
-		// Figure out how big this is going to be. Start by getting the height we're using.
-		$pointwidth = 0;
-		$min_size = min(array_keys($this->font['A']));
-		$max_size = max(array_keys($this->font['A']));
-
-		$pointheight = mt_rand($min_size, $max_size);
-		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			$pointwidth += count($this->font[substr($code, $i, 1)][$pointheight]);
-
-		$width = ($pointwidth * 5) + 3;
-		$height = ($pointheight * 6) + 2;
-		$this->image = imagecreate($width, $height);
+		$this->image = imagecreate($this->width, $this->height);
 
 		// Draw the background and a border
 		$black = imagecolorallocate($this->image, 0, 0, 0);
 		$grey = imagecolorallocate($this->image, 127, 127, 127);
-		imagefilledrectangle($this->image, 0, 0, $width - 1, $height - 1, $grey);
-		imagefilledrectangle($this->image, 1, 1, $width - 2, $height - 2, $black);
+		imagefilledrectangle($this->image, 0, 0, $this->width - 1, $this->height - 1, $grey);
+		imagefilledrectangle($this->image, 1, 1, $this->width - 2, $this->height - 2, $black);
 
 		// Now pick the colours. There aren't that many combinations that really work well though.
-		$colours = array(
-			'blue' => array(
-				array(145, 145, 200),
-				array(170, 170, 255),
-			),
-			'green' => array(
-				array(64, 200, 64),
-				array(64, 255, 64),
-			),
-			'red' => array(
-				array(200, 64, 64),
-				array(255, 64, 64),
-			),
-			'orange' => array(
-				array(255, 115, 0),
-				array(255, 150, 0),
-			),
-		);
-		$colour_list = array_keys($colours);
-		$colour_num = mt_rand(0, count($colour_list) - 1);
-		$lit_colour = $colour_list[$colour_num];
+		$lit_colour = array_rand($this->colours);
 
-		$this->create_led('lit', false, $colours[$lit_colour][0], $colours[$lit_colour][1]);
+		$this->create_led('lit', false, $this->colours[$lit_colour][0], $this->colours[$lit_colour][1]);
 		$this->create_led('dull', false, array(63, 63, 63), array(100, 100, 100));
 
 		// Now go do :)
 		$xpos = 2;
-		for ($i = 0, $n = strlen($code); $i < $n; $i++)
+		for ($i = 0, $n = strlen($this->code); $i < $n; $i++)
 		{
-			$thisletter = substr($code, $i, 1);
-			foreach ($this->font[$thisletter][$pointheight] as $column)
+			$thisletter = substr($this->code, $i, 1);
+			foreach ($this->font[$thisletter][$this->pointheight] as $column)
 			{
-				for ($j = 0; $j < $pointheight; $j++)
+				for ($j = 0; $j < $this->pointheight; $j++)
 				{
 					$id = (pow(2, $j) & $column) ? 'lit' : 'dull';
-					$this->paint_led($id, $xpos, ($pointheight - $j - 1) * 6 + 2);
+					$this->paint_led($id, $xpos, ($this->pointheight - $j - 1) * 6 + 2);
 				}
 				$xpos += 5;
 			}
@@ -130,6 +121,28 @@ class captcha_ledicons
 	protected function paint_led($id, $x, $y)
 	{
 		imagecopy ($this->image, $this->leds[$id], $x, $y, 0, 0, 4, 4);
+	}
+
+	protected function load_colours()
+	{
+		$this->colours = array(
+			'blue' => array(
+				array(145, 145, 200),
+				array(170, 170, 255),
+			),
+			'green' => array(
+				array(64, 200, 64),
+				array(64, 255, 64),
+			),
+			'red' => array(
+				array(200, 64, 64),
+				array(255, 64, 64),
+			),
+			'orange' => array(
+				array(255, 115, 0),
+				array(255, 150, 0),
+			),
+		);
 	}
 
 	protected function load_font()
