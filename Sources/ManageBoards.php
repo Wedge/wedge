@@ -501,6 +501,9 @@ function EditBoard()
 	}
 	wesql::free_result($request);
 
+	if (empty($modSettings['allow_guestAccess']))
+		unset($context['groups'][-1]);
+
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
 		redirectexit('action=admin;area=manageboards');
@@ -655,6 +658,9 @@ function EditBoard2()
 		if (!empty($_POST['groups']))
 			foreach ($_POST['groups'] as $group)
 				$boardOptions['access_groups'][] = (int) $group;
+
+		if (empty($modSettings['allow_guestAccess']))
+			$boardOptions['access_groups'] = array_diff($boardOptions['access_groups'], array(-1));
 
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['board_name']);

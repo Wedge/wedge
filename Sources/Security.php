@@ -936,6 +936,10 @@ function boardsAllowedTo($permissions, $check_access = true)
 	// All groups the user is in except 'moderator'.
 	$groups = array_diff($user_info['groups'], array(3));
 
+	// Guest and guest access disabled?
+	if ($user_info['is_guest'] && empty($modSettings['allow_guestAccess']))
+		return array();
+
 	$request = wesql::query('
 		SELECT b.id_board, bp.add_deny
 		FROM {db_prefix}board_permissions AS bp

@@ -191,7 +191,7 @@ function ReportsMain()
 // Standard report about what settings the boards have.
 function BoardReport()
 {
-	global $context, $txt;
+	global $context, $txt, $modSettings;
 
 	// Load the permission profiles.
 	loadSource('ManagePermissions');
@@ -219,6 +219,8 @@ function BoardReport()
 		)
 	);
 	$groups = array(-1 => $txt['guest_title'], 0 => $txt['full_member']);
+	if (empty($modSettings['allow_guestAccess']))
+		unset($groups[-1]);
 	while ($row = wesql::fetch_assoc($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
 	wesql::free_result($request);
@@ -370,6 +372,9 @@ function BoardPermissionsReport()
 	while ($row = wesql::fetch_assoc($request))
 		$member_groups[$row['id_group']] = $row['group_name'];
 	wesql::free_result($request);
+
+	if (empty($modSettings['allow_guestAccess']))
+		unset($member_groups[-1]);
 
 	// Make sure that every group is represented - plus in rows!
 	setKeys('rows', $member_groups);
@@ -554,6 +559,9 @@ function MemberGroupsReport()
 		$rows[] = $row;
 	wesql::free_result($request);
 
+	if (empty($modSettings['allow_guestAccess']))
+		unset ($rows[0]);
+
 	foreach ($rows as $row)
 	{
 		$row['stars'] = explode('#', $row['stars']);
@@ -578,6 +586,9 @@ function MemberGroupsReport()
 function GroupPermissionsReport()
 {
 	global $context, $txt, $modSettings;
+
+	// We might need some of the other permissions strings
+	loadLanguage('ManagePermissions');
 
 	if (isset($_REQUEST['groups']))
 	{
@@ -616,6 +627,9 @@ function GroupPermissionsReport()
 		$groups[$row['id_group']] = $row['group_name'];
 	wesql::free_result($request);
 
+	if (empty($modSettings['allow_guestAccess']))
+		unset($groups[-1]);
+
 	// Make sure that every group is represented!
 	setKeys('rows', $groups);
 
@@ -652,7 +666,7 @@ function GroupPermissionsReport()
 				addData($curData);
 
 			// Add the permission name in the left column.
-			$curData = array('col' => isset($txt['group_perms_name_' . $row['permission']]) ? $txt['group_perms_name_' . $row['permission']] : $row['permission']);
+			$curData = array('col' => isset($txt['group_perms_name_' . $row['permission']]) ? $txt['group_perms_name_' . $row['permission']] : (isset($txt['permissionname_' . $row['permission']]) ? $txt['permissionname_' . $row['permission']] : $row['permission']));
 
 			$lastPermission = $row['permission'];
 		}

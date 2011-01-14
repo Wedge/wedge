@@ -151,6 +151,15 @@ loadUserSettings();
 // Load the current user's permissions....
 loadPermissions();
 
+// Enforce 'guests cannot browse the forum' if that's what the admin wants.
+// We need to remove all permissions, plus remove board access, to make sure everything in SSI behaves.
+if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+{
+	$user_info['permissions'] = array();
+	$user_info['query_see_board'] = '0=1';
+	$user_info['query_wanna_see_board'] = '0=1';
+}
+
 // Load the current or SSI theme. (just use $ssi_theme = id_theme;)
 loadTheme(isset($ssi_theme) ? (int) $ssi_theme : 0);
 
@@ -460,6 +469,10 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		$topics[$row['id_topic']] = $row;
 	wesql::free_result($request);
 
+	// Did we find anything? If not, bail.
+	if (empty($topics))
+		return array();
+
 	$request = wesql::query('
 		SELECT
 			t.id_topic, mf.poster_time, mf.subject, ml.id_topic, mf.id_member, ml.id_msg, t.num_replies, t.num_views, mg.online_color,
@@ -555,7 +568,10 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $db_prefix, $scripturl;
+	global $db_prefix, $scripturl, $context;
+
+	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+		return array();
 
 	// Find the latest poster.
 	$request = wesql::query('
@@ -742,10 +758,13 @@ function ssi_topTopicsViews($num_topics = 10, $output_method = 'echo')
 	return ssi_topTopics('views', $num_topics, $output_method);
 }
 
-// Show a link to the latest member:  Please welcome, Someone, out latest member.
+// Show a link to the latest member:  Please welcome, Someone, our latest member.
 function ssi_latestMember($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $context;
+	global $db_prefix, $txt, $scripturl, $context, $modSettings;
+
+	if ($context['user']['is_guest'] && empty($modSettings['allow_guestAccess']))
+		return '';
 
 	if ($output_method == 'echo')
 		echo '
@@ -841,6 +860,9 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
 	global $modSettings, $memberContext;
 
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
+
 	// Fetch the members in question.
 	$request = wesql::query('
 		SELECT id_member
@@ -901,7 +923,10 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $modSettings;
+	global $db_prefix, $txt, $scripturl, $modSettings, $context;
+
+	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+		return array();
 
 	$totals = array(
 		'members' => $modSettings['totalMembers'],
@@ -942,6 +967,9 @@ function ssi_boardStats($output_method = 'echo')
 function ssi_whosOnline($output_method = 'echo')
 {
 	global $user_info, $txt, $settings, $modSettings;
+
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
 
 	loadSource('Subs-MembersOnline');
 	$membersOnlineOptions = array(
@@ -1463,6 +1491,9 @@ function ssi_quickSearch($output_method = 'echo')
 {
 	global $scripturl, $txt, $context;
 
+	if (!allowedTo('search_posts'))
+		return '';
+
 	if ($output_method != 'echo')
 		return $scripturl . '?action=search';
 
@@ -1475,7 +1506,10 @@ function ssi_quickSearch($output_method = 'echo')
 // Show what would be the forum news.
 function ssi_news($output_method = 'echo')
 {
-	global $context;
+	global $context, $modSettings;
+
+	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+		return array();
 
 	if ($output_method != 'echo')
 		return $context['random_news_line'];
@@ -1487,6 +1521,9 @@ function ssi_news($output_method = 'echo')
 function ssi_todaysBirthdays($output_method = 'echo')
 {
 	global $scripturl, $modSettings, $user_info;
+
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
 
 	$eventOptions = array(
 		'include_birthdays' => true,
@@ -1507,6 +1544,9 @@ function ssi_todaysHolidays($output_method = 'echo')
 {
 	global $modSettings, $user_info;
 
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
+
 	$eventOptions = array(
 		'include_holidays' => true,
 		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
@@ -1524,6 +1564,9 @@ function ssi_todaysHolidays($output_method = 'echo')
 function ssi_todaysEvents($output_method = 'echo')
 {
 	global $modSettings, $user_info;
+
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
 
 	$eventOptions = array(
 		'include_events' => true,
@@ -1548,6 +1591,9 @@ function ssi_todaysEvents($output_method = 'echo')
 function ssi_todaysCalendar($output_method = 'echo')
 {
 	global $modSettings, $txt, $scripturl, $user_info;
+
+	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+		return array();
 
 	$eventOptions = array(
 		'include_birthdays' => true,
@@ -1592,6 +1638,9 @@ function ssi_todaysCalendar($output_method = 'echo')
 function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
 	global $scripturl, $db_prefix, $txt, $settings, $modSettings, $context;
+
+	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+		return array();
 
 	loadLanguage('Stats');
 
@@ -1767,6 +1816,9 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 {
 	global $db_prefix, $user_info, $scripturl, $modSettings, $txt, $context;
+
+	if (empty($modSettings['allow_guestAccess']))
+		return array();
 
 	// Find all events which are happening in the near future that the member can see.
 	$request = wesql::query('

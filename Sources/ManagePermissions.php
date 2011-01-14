@@ -393,6 +393,10 @@ function PermissionIndex()
 		);
 	}
 
+	// If guests can't browse the forum, no point giving them a UI for it.
+	if (empty($modSettings['allow_guestAccess']))
+		unset($context['groups'][-1]);
+
 	// We can modify any permission set apart from the read only, reply only and no polls ones as they are redefined.
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
 
@@ -470,7 +474,7 @@ function PermissionByBoard()
 
 function SetQuickGroups()
 {
-	global $context;
+	global $context, $modSettings;
 
 	checkSession();
 
@@ -488,6 +492,10 @@ function SetQuickGroups()
 	foreach ($_POST['group'] as $id => $group_id)
 		$_POST['group'][$id] = (int) $group_id;
 	$_POST['group'] = array_unique($_POST['group']);
+
+	// And if by any chance, guests can't browse the forum, make sure that wasn't selected.
+	if (empty($modSettings['allow_guestAccess']))
+		$_POST['group'] = array_diff($_POST['group'], array(-1));
 
 	if (empty($_REQUEST['pid']))
 		$_REQUEST['pid'] = 0;
@@ -729,7 +737,7 @@ function ModifyMembergroup()
 {
 	global $context, $txt, $modSettings;
 
-	if (!isset($_GET['group']))
+	if (!isset($_GET['group']) || (empty($modSettings['allow_guestAccess']) && $_GET['group'] == -1))
 		fatal_lang_error('no_access', false);
 
 	$context['group']['id'] = (int) $_GET['group'];
@@ -883,6 +891,10 @@ function ModifyMembergroup2()
 
 	$_GET['group'] = (int) $_GET['group'];
 	$_GET['pid'] = (int) $_GET['pid'];
+
+	// Disallow saving guest permissions if they're not even allowed in the forum.
+	if (empty($modSettings['allow_guestAccess']) && $_GET['group'] == -1)
+		fatal_lang_error('no_access', false);
 
 	// Cannot modify predefined profiles.
 	if ($_GET['pid'] > 1 && $_GET['pid'] < 5)
@@ -1725,6 +1737,12 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 	loadTemplate('ManagePermissions');
 	$context['can_change_permissions'] = allowedTo('manage_permissions');
 
+	if (empty($modSettings['allow_guestAccess']))
+	{
+		$excluded_groups[] = -1;
+		$excluded_groups = array_unique($excluded_groups);
+	}
+
 	// Nothing to initialize here.
 	if (!$context['can_change_permissions'])
 		return;
@@ -2177,6 +2195,8 @@ function loadIllegalPermissions()
 		$context['illegal_permissions'][] = 'manage_membergroups';
 	if (!allowedTo('manage_permissions'))
 		$context['illegal_permissions'][] = 'manage_permissions';
+
+	call_hook('illegal_perms');
 }
 
 // Load all the permissions that can not be given to guests.
@@ -2223,6 +2243,8 @@ function loadIllegalGuestPermissions()
 		'send_mail',
 		'approve_posts',
 	);
+
+	call_hook('illegal_guest_perms');
 }
 
 // Present a nice way of applying post moderation.
