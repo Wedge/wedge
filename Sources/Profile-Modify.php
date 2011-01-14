@@ -1374,7 +1374,7 @@ function editBuddies($memID)
 		updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
 
 		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
-		redirectexit('action=profile;area=lists;sa=buddies;u=' . $memID);
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
 	}
 	elseif (isset($_POST['new_buddy']))
 	{
@@ -1416,7 +1416,7 @@ function editBuddies($memID)
 		}
 
 		// Back to the buddy list!
-		redirectexit('action=profile;area=lists;sa=buddies;u=' . $memID);
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=buddies');
 	}
 
 	// Get all the users "buddies"...
@@ -1481,7 +1481,7 @@ function editIgnoreList($memID)
 		updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
 
 		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
-		redirectexit('action=profile;area=lists;sa=ignore;u=' . $memID);
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=ignore');
 	}
 	elseif (isset($_POST['new_ignore']))
 	{
@@ -1523,7 +1523,7 @@ function editIgnoreList($memID)
 		}
 
 		// Back to the list of pityful people!
-		redirectexit('action=profile;area=lists;sa=ignore;u=' . $memID);
+		redirectexit('action=profile;u=' . $memID . ';area=lists;sa=ignore');
 	}
 
 	// Initialise the list of members we're ignoring.

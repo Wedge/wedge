@@ -1091,7 +1091,7 @@ function trackActivity($memID)
 		'title' => $txt['errors_by'] . ' ' . $context['member']['name'],
 		'items_per_page' => $modSettings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_errors_from_user'],
-		'base_href' => $scripturl . '?action=profile;area=tracking;sa=user;u=' . $memID,
+		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=user',
 		'default_sort_col' => 'date',
 		'get_items' => array(
 			'function' => 'list_getUserErrors',
@@ -1114,7 +1114,7 @@ function trackActivity($memID)
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=%1$s;u=' . $memID. '">%1$s</a>',
+						'format' => '<a href="' . $scripturl . '?action=profile;u=' . $memID. ';area=tracking;sa=ip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'ip' => false,
 						),
@@ -1207,7 +1207,7 @@ function trackActivity($memID)
 	$context['ips'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['poster_ip'] . ';u=' . $memID . '">' . $row['poster_ip'] . '</a>';
+		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['poster_ip'] . '">' . $row['poster_ip'] . '</a>';
 		$ips[] = $row['poster_ip'];
 	}
 	wesql::free_result($request);
@@ -1225,7 +1225,7 @@ function trackActivity($memID)
 	$context['error_ips'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['ip'] . ';u=' . $memID . '">' . $row['ip'] . '</a>';
+		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['ip'] . '">' . $row['ip'] . '</a>';
 		$ips[] = $row['ip'];
 	}
 	wesql::free_result($request);
@@ -1407,7 +1407,7 @@ function TrackIP($memID = 0)
 	else
 	{
 		$context['ip'] = $user_profile[$memID]['member_ip'];
-		$context['base_url'] = $scripturl . '?action=profile;area=tracking;sa=ip;u=' . $memID;
+		$context['base_url'] = $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip';
 	}
 
 	// Searching?
@@ -1692,7 +1692,7 @@ function trackEdits($memID)
 		'title' => $txt['trackEdits'],
 		'items_per_page' => $modSettings['defaultMaxMessages'],
 		'no_items_label' => $txt['trackEdit_no_edits'],
-		'base_href' => $scripturl . '?action=profile;area=tracking;sa=edits;u=' . $memID,
+		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=edits',
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getProfileEdits',
@@ -2058,7 +2058,7 @@ function viewWarning($memID)
 		'title' => $txt['profile_viewwarning_previous_warnings'],
 		'items_per_page' => $modSettings['defaultMaxMessages'],
 		'no_items_label' => $txt['profile_viewwarning_no_warnings'],
-		'base_href' => $scripturl . '?action=profile;area=viewwarning;sa=user;u=' . $memID,
+		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=viewwarning;sa=user',
 		'default_sort_col' => 'log_time',
 		'get_items' => array(
 			'function' => 'list_getUserWarnings',

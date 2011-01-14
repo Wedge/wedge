@@ -121,7 +121,7 @@ blockquote.bbc_alternate_quote {
 code.bbc_code {
 	background: #eef;
 }
-#linktree {
+.linktree {
 	margin-top: 0;
 }
 
@@ -133,7 +133,7 @@ code.bbc_code {
 .windowbg, #preview_body {
 	background: #f3f3f3 url(../../images/theme/grad700.png) 0 -550px repeat-x;
 }
-.windowbg2, .windowbg2_my {
+.windowbg2 {
 	background: #f6f3f0 url(../../images/theme/grad700.png) 0 -550px repeat-x;
 }
 .windowbg3 {
@@ -163,7 +163,7 @@ code.bbc_code {
 .stickybg {
 	background: #e8d8cf;
 }
-.stickybg2, .stickybg2_my {
+.stickybg2 {
 	background: #f2e3d9;
 }
 
@@ -172,7 +172,7 @@ code.bbc_code {
 .lockedbg {
 	background: #d4dce2;
 }
-.lockedbg2, .lockedbg2_my {
+.lockedbg2 {
 	background: #d8e1e7;
 }
 

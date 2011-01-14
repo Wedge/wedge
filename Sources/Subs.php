@@ -2259,13 +2259,13 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 		// First up, did we get a main subtemplate list? Or did we only get a single template to play with, that we need to make into a list?
 		if (empty($context['sub_template']))
-			$context['sub_template'] = array('main');
+			$context['sub_template'] = array('sidebar' => array(), 'main' => array('main'));
 
 		if (!is_array($context['sub_template']))
-			$context['sub_template'] = array($context['sub_template']);
+			$context['sub_template'] = array('sidebar' => array(), 'main' => array($context['sub_template']));
 
-		foreach ($context['sub_template'] as $template)
-			loadSubTemplate($template);
+		foreach ($context['sub_template'] as $key => &$template)
+			loadSubTemplate($template, false, $key);
 
 		// Just so we don't get caught in an endless loop of errors from the footer...
 		if (!$footer_done)

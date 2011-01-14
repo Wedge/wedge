@@ -74,7 +74,7 @@ code.bbc_code
 {
 	background-color: #e7efea;
 }
-.windowbg2, .windowbg2_my
+.windowbg2
 {
 	background-color: #f0f7f4;
 }
@@ -108,7 +108,7 @@ code.bbc_code
 {
 	background: #e8d8cf;
 }
-.stickybg2, .stickybg2_my
+.stickybg2
 {
 	background: #f2e3d9;
 }
@@ -118,7 +118,7 @@ code.bbc_code
 {
 	background: #d4dce2;
 }
-.lockedbg2, .lockedbg2_my
+.lockedbg2
 {
 	background: #d8e1e7;
 }

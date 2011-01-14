@@ -386,9 +386,7 @@ function ModifyProfile($post_errors = array())
 	$menuOptions = array(
 		'disable_url_session_check' => true,
 		'current_area' => $current_area,
-		'extra_url_parameters' => array(
-			'u' => $context['id_member'],
-		),
+		'action' => 'profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID),
 	);
 
 	// Actually create the menu!

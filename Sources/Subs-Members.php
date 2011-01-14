@@ -78,12 +78,6 @@ if (!defined('SMF'))
 		- returns the number of successful reattributed posts.
 		- if add_to_post_count is set, the member's post count is increased.
 
-	void BuddyListToggle()
-		- add a member to your buddy list or remove it.
-		- requires profile_identity_own permission.
-		- called by ?action=buddy;u=x;session_id=y.
-		- redirects to ?action=profile;u=x.
-
 	void populateDuplicateMembers(&array members)
 		// !!!
 

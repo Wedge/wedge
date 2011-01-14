@@ -61,17 +61,21 @@ function BoardIndex()
 		loadTemplate('BoardIndex');
 		loadTemplate('BoardIndexInfoCenter');
 		$context['sub_template'] = array(
-			'boardindex_ministats',
-			'boardindex_newsfader',
-			'boardindex',
-			'boardindex_below',
-			'info_center_begin',
-			'info_center_recentposts',
-			'info_center_calendar',
-			'info_center_statistics',
-			'info_center_usersonline',
-			'info_center_personalmsg',
-			'info_center_end',
+			'sidebar' => array(
+				'info_center_begin',
+				'info_center_recentposts',
+				'info_center_calendar',
+				'info_center_statistics',
+				'info_center_usersonline',
+				'info_center_personalmsg',
+				'info_center_end',
+			),
+			'main' => array(
+				'boardindex_ministats',
+				'boardindex_newsfader',
+				'boardindex',
+				'boardindex_below',
+			),
 		);
 	}
 

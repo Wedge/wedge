@@ -734,7 +734,7 @@ function scheduled_daily_digest()
 		// Do the start stuff!
 		$email = array(
 			'subject' => $mbname . ' - ' . $langtxt[$lang]['subject'],
-			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$lang]['intro'] . "\n" . $scripturl . '?action=profile;area=notification;u=' . $member['id'] . "\n",
+			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$lang]['intro'] . "\n" . $scripturl . '?action=profile;u=' . $member['id'] . ";area=notification\n",
 			'email' => $member['email'],
 		);
 
@@ -1628,7 +1628,7 @@ function scheduled_paid_subscriptions()
 		$subs_reminded[] = $row['id_sublog'];
 
 		$replacements = array(
-			'PROFILE_LINK' => $scripturl . '?action=profile;area=subscriptions;u=' . $row['id_member'],
+			'PROFILE_LINK' => $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=subscriptions',
 			'REALNAME' => $row['member_name'],
 			'SUBSCRIPTION' => $row['name'],
 			'END_DATE' => strip_tags(timeformat($row['end_time'])),

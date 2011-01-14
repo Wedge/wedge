@@ -1920,9 +1920,23 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
  * @param string $sub_template_name The name of the function (without template_ prefix) to be called.
  * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
  */
-function loadSubTemplate($sub_template_name, $fatal = false)
+function loadSubTemplate($sub_template_name, $fatal = false, $key = 0)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
+
+	if (is_array($sub_template_name))
+	{
+		if (!is_numeric($key))
+			loadSubTemplate($key . '_above', 'ignore');
+
+		foreach ($sub_template_name as &$real_template)
+			loadSubTemplate($real_template);
+
+		if (!is_numeric($key))
+			loadSubTemplate($key . '_below', 'ignore');
+
+		return;
+	}
 
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;
@@ -1937,11 +1951,9 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the %s sub template!', (string) $sub_template_name), 'template'));
 
 	// Are we showing debugging for templates?  Just make sure not to do it before the doctype...
-	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && !in_array($sub_template_name, array('init', 'main_below')) && ob_get_length() > 0 && !isset($_REQUEST['xml']))
-	{
+	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $sub_template_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
 		echo '
 <div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $sub_template_name, ' ends ----</div>';
-	}
 }
 
 /**

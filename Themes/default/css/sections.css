@@ -961,7 +961,7 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 	line-height: 1.3em;
 	padding: 4px;
 }
-.topic_table td.stickybg2, .topic_table td.lockedbg2, .topic_table td.locked_sticky2, .topic_table td.stickybg2_my, .topic_table td.lockedbg2_my, .topic_table td.locked_sticky2_my {
+.topic_table td.stickybg2, .topic_table td.lockedbg2, .topic_table td.locked_sticky2 {
 	background-repeat: no-repeat;
 	background-position: 98% 4px;
 }
@@ -974,19 +974,19 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 .topic_table td.locked_sticky2 {
 	background-image: url(../images/icons/quick_sticky_lock.gif);
 }
-.topic_table td.stickybg2_my {
+.topic_table td.stickybg2.my {
 	background-image: url(../images/icons/quick_sticky_my.gif);
 }
-.topic_table td.lockedbg2_my {
+.topic_table td.lockedbg2.my {
 	background-image: url(../images/icons/quick_lock_my.gif);
 }
-.topic_table td.locked_sticky2_my {
+.topic_table td.locked_sticky2.my {
 	background-image: url(../images/icons/quick_sticky_lock_my.gif);
 }
 .topic_table td.lastpost {
 	background-image: none;
 }
-.topic_table td.windowbg2_my {
+.topic_table td.windowbg2.my {
 	background-image: url(../images/icons/quick_my.gif);
 	background-repeat: no-repeat;
 	background-position: 98% 4px;

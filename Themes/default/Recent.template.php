@@ -170,7 +170,7 @@ function template_unread()
 							<td class="', $color_class, ' icon windowbg">
 								<img src="', $topic['first_post']['icon_url'], '" />
 							</td>
-							<td class="subject ', $color_class2, $topic['is_posted_in'] ? '_my' : '', ' windowbg2">
+							<td class="subject windowbg2 ', $color_class2, $topic['is_posted_in'] ? ' my' : '', '">
 								<div>
 									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><img src="', $settings['lang_images_url'], '/new.gif" alt="', $txt['new'], '" /></a>

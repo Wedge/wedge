@@ -1336,7 +1336,7 @@ function prepareDisplayContext($reset = false)
 			if (!empty($output['member']['website']['url']))
 				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
 			if ($profile_own)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;area=showposts;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id'] . ';area=showposts') . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
 		}
 		else
 		{
@@ -1347,7 +1347,7 @@ function prepareDisplayContext($reset = false)
 			if (!empty($output['member']['website']['url']))
 				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
 			if ($profile_any)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;area=showposts;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id'] . ';area=showposts') . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
 			if ($buddy)
 				$menu[] = '[' . JavaScriptEscape('?action=buddy;u=' . $output['member']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']) . ',' . JavaScriptEscape($txt['usermenu_' . ($memberContext[$message['id_member']]['is_buddy'] ? 'removebuddy' : 'addbuddy')]) . ']';
 			if ($context['can_report_moderator'])

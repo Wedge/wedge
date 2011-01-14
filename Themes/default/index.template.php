@@ -1,29 +1,19 @@
 <?php
 // Version: 2.0 RC4; index
 
-/*	This template is, perhaps, the most important template in the theme. It
-	contains the main template layer that displays the header and footer of
-	the forum, namely with main_above and main_below. It also contains the
-	menu sub template, which appropriately displays the menu; the init sub
-	template, which is there to set the theme up; (init can be missing.) and
-	the linktree sub template, which sorts out the link tree.
+/*
+	This template is probably the most important one in the theme.
+	It contains the html and body layers, as well as the init sub-
+	template, which can be missing, and should be used to load any
+	data and set any hardcoded options. The html layer sets the HTML
+	headers, while the body layer shows the actual header, contents
+	and footer of the page, split this way:
 
-	The init sub template should load any data and set any hardcoded options.
-
-	The main_above sub template is what is shown above the main content, and
-	should contain anything that should be shown up there.
-
-	The main_below sub template, conversely, is shown after the main content.
-	It should probably contain the copyright statement and some other things.
-
-	The linktree sub template should display the link tree, using the data
-	in the $context['linktree'] variable.
-
-	The menu sub template should display all the relevant buttons the user
-	wants and or needs.
-
-	For more information on the templating system, please see the site at:
-	http://www.simplemachines.org/
+	- sidebar (a list of sub-templates that should be shown in the sidebar)
+	- main (a list of sub-templates that should be shown in the main contents area)
+	- theme_linktree (displays the link tree, using the data in the $context['linktree'] variable)
+	- template_menu (displays the menu, using the data in $context['menu_buttons'])
+	- template_button_strip (displays contextual buttons)
 */
 
 // Initialize the template... mainly little settings.
@@ -247,8 +237,38 @@ function template_body_above()
 	// The main content should go here.
 	echo '
 	</div>
-	<div id="content"><div class="frame">
+	<div id="content"><div class="frame">';
+}
+
+function template_sidebar_above()
+{
+	echo '
+		<div id="sidebar">
+			<we:title>
+				Sidebar
+			</we:title>
+			What? It\'s just a filler. It will be removed once some default contents is shown here.
+			<hr />';
+}
+
+function template_sidebar_below()
+{
+	echo '
+			<hr />
+			And some filler for the sidebarfooter.
+		</div>';
+}
+
+function template_main_above()
+{
+	echo '
 		<div id="main_content">';
+}
+
+function template_main_below()
+{
+	echo '
+		</div>';
 }
 
 function template_body_below()
@@ -256,7 +276,6 @@ function template_body_below()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-		</div>
 	</div></div>';
 
 	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
@@ -363,7 +382,7 @@ function theme_linktree($force_show = false)
 		return;
 
 	echo '
-		<div id="linktree">
+		<div class="linktree">
 			<ul>';
 
 	// Each tree item has a URL and name. Some may have extra_before and extra_after.
