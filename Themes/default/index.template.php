@@ -197,7 +197,7 @@ function template_body_above()
 	{
 		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="text" name="search" value="" class="input_text" />&nbsp;
+					<input type="search" name="search" value="" class="input_text" />&nbsp;
 					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
 					<input type="hidden" name="advanced" value="0" />';
 
@@ -247,7 +247,9 @@ function template_sidebar_above()
 			<we:title>
 				Sidebar
 			</we:title>
-			What? It\'s just a filler. It will be removed once some default contents is shown here.
+			<div class="roundframe">
+				What? It\'s just a filler. It will be removed once some default contents is shown here.
+			</div>
 			<hr />';
 }
 
@@ -255,7 +257,7 @@ function template_sidebar_below()
 {
 	echo '
 			<hr />
-			And some filler for the sidebarfooter.
+			And some filler for the sidebar footer.
 		</div>';
 }
 

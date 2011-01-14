@@ -1841,17 +1841,13 @@ function template_ignoreboards()
 				<ul class="ignoreboards floatleft">';
 
 	$i = 0;
-	$limit = ceil($context['num_boards'] / 2);
+	$limit = ceil(($context['num_boards'] + count($context['categories'])) / 2);
 	foreach ($context['categories'] as $category)
 	{
-		if ($i == $limit)
-		{
+		if ($i++ == $limit)
 			echo '
 				</ul>
 				<ul class="ignoreboards floatright">';
-
-			$i++;
-		}
 
 		echo '
 					<li class="category">
@@ -1860,7 +1856,7 @@ function template_ignoreboards()
 
 		foreach ($category['boards'] as $board)
 		{
-			if ($i == $limit)
+			if ($i++ == $limit)
 				echo '
 						</ul>
 					</li>
@@ -1873,8 +1869,6 @@ function template_ignoreboards()
 							<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
 								<label for="ignore_brd', $board['id'], '"><input type="checkbox" id="ignore_brd', $board['id'], '" name="ignore_brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" /> ', $board['name'], '</label>
 							</li>';
-
-			$i++;
 		}
 
 		echo '
@@ -1884,13 +1878,13 @@ function template_ignoreboards()
 
 	echo '
 				</ul>
-				<br class="clear" />';
+			</div>
+			<br class="clear" />';
 
 	// Show the standard "Save Settings" profile button.
 	template_profile_save();
 
 	echo '
-			</div>
 		</div>
 	</form>
 	<br />';
@@ -2699,7 +2693,7 @@ function template_profile_avatar_select()
 								<div id="avatar_gravatar">
 									<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
 									<br />
-									<input type="text" name="gravatarEmail" size="45" value="', $textbox_value, '" class="input_text" />
+									<input type="email" name="gravatarEmail" size="45" value="', $textbox_value, '" class="input_text" />
 								</div>';
 		}
 	}

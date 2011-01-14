@@ -92,13 +92,11 @@ function template_main()
 
 		// Require an image to be typed to save spamming?
 		if ($context['require_verification'])
-		{
 			echo '
 				<p>
 					<strong>', $txt['verification'], ':</strong>
 					', template_control_verification($context['visual_verification_id'], 'all'), '
 				</p>';
-		}
 
 		// If $context['search_params']['topic'] is set, that means we're searching just one topic.
 		if (!empty($context['search_params']['topic']))
@@ -120,28 +118,28 @@ function template_main()
 				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
 					<ul class="ignoreboards floatleft">';
 
-	$i = 0;
+			$i = 0;
 
-	// I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
-	// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
+			// I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
+			// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
 
-	$limit = ceil(($context['num_boards'] + count($context['categories'])) / 2);
-	foreach ($context['categories'] as $category)
-	{
-		if ($i++ == $limit)
-			echo '
+			$limit = ceil(($context['num_boards'] + count($context['categories'])) / 2);
+			foreach ($context['categories'] as $category)
+			{
+				if ($i++ == $limit)
+					echo '
 					</ul>
 					<ul class="ignoreboards floatright">';
 
-		echo '
+				echo '
 						<li class="category">
 							<a href="#" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
 							<ul>';
 
-		foreach ($category['boards'] as $board)
-		{
-			if ($i++ == $limit)
-				echo '
+				foreach ($category['boards'] as $board)
+				{
+					if ($i++ == $limit)
+						echo '
 							</ul>
 						</li>
 					</ul>
@@ -149,23 +147,21 @@ function template_main()
 						<li class="category">
 							<ul>';
 
-			echo '
+					echo '
 								<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
 									<label for="brd', $board['id'], '"><input type="checkbox" id="brd', $board['id'], '" name="brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" /> ', $board['name'], '</label>
 								</li>';
-		}
+				}
 
-		echo '
+				echo '
 							</ul>
 						</li>';
-	}
-
-	echo '
-					</ul>
-				</div>
-				<br class="clear" />';
+			}
 
 			echo '
+					</ul>
+				</div>
+				<br class="clear" />
 				<div class="padding">
 					<input type="checkbox" name="all" id="check_all" value=""', $context['boards_check_all'] ? ' checked="checked"' : '', ' onclick="invertAll(this, this.form, \'brd\');" class="input_check floatleft" />
 					<label for="check_all" class="floatleft">', $txt['check_all'], '</label>

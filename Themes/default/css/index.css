@@ -58,6 +58,7 @@ body {
 }
 #content div.frame {
 	padding: 0 20px 20px;
+	overflow: hidden;
 }
 #main_content {
 	margin-left: 275px;
