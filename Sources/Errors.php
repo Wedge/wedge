@@ -87,7 +87,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$query_string = substr($query_string, strlen($scripturl));
 	if ($is_short === false && !$has_protocol)
 		$is_short = 0;
-	if ($is_short === 0 && $query_string[0] === '?')
+	if ($is_short === 0 && !empty($query_string) && $query_string[0] === '?')
 		$is_short = false;
 
 	// Don't log session data in the url twice, it's a waste.
