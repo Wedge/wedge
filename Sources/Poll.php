@@ -34,7 +34,7 @@ if (!defined('SMF'))
 		- uses the Post language file.
 		- requires the poll_vote permission.
 		- upon successful completion of action will direct user back to topic.
-		- is accessed via ?action=vote.
+		- is accessed via ?action=poll;sa=vote.
 
 	void LockVoting()
 		- is called to lock or unlock voting on a poll.

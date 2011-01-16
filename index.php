@@ -96,6 +96,11 @@ if (isset($_GET['scheduled']))
 	loadSource('ScheduledTasks');
 	AutoTask();
 }
+elseif (isset($_GET['imperative']))
+{
+	loadSource('Subs-Scheduled');
+	ImperativeTask();
+}
 
 // Check if compressed output is enabled, supported, and not already being done.
 if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
@@ -343,7 +348,6 @@ function smf_main()
 		'unread' => array('Unread.php', 'Unread'),
 		'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
 		'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
-		'vote' => array('Poll.php', 'Vote'),
 		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
 		'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
 		'who' => array('Who.php', 'Who'),

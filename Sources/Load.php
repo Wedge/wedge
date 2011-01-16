@@ -1817,6 +1817,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
+	// What about any straggling imperative tasks
+	if (empty($modSettings['next_imperative']))
+	{
+		loadSource('Subs-Scheduled');
+		recalculateNextImperative();
+	}
+
+	if ($modSettings['next_imperative'] < time())
+		add_js('
+	function smfImperativeTask()
+	{
+		var tempImage = new Image();
+		tempImage.src = "' . $scripturl . '?imperative;ts=' . $ts . '";
+	}
+	setTimeout("smfImperativeTask();", 1);');
+
 	// Call load theme hook.
 	call_hook('load_theme');
 
