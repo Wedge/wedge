@@ -79,19 +79,13 @@ function MoveTopic()
 		isAllowedTo('approve_posts');
 
 	// Permission check!
-	// !!!
 	if (!allowedTo('move_any'))
-	{
-		if ($id_member_started == $user_info['id'])
-		{
-			isAllowedTo('move_own');
-			//$boards = array_merge(boardsAllowedTo('move_own'), boardsAllowedTo('move_any'));
-		}
-		else
-			isAllowedTo('move_any');
-	}
-	//else
-		//$boards = boardsAllowedTo('move_any');
+		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
+
+	// Where can they move it to?
+	$boards = empty($modSettings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
+	if (empty($boards))
+		$boards = array(-1); // Just so it doesn't foul the query up.
 
 	loadTemplate('MoveTopic');
 
@@ -102,10 +96,12 @@ function MoveTopic()
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
 			AND b.redirect = {string:blank_redirect}
-			AND b.id_board != {int:current_board}',
+			AND b.id_board != {int:current_board}' . ($boards != array(0) ? '
+			AND b.id_board IN ({array_int:board_list})' : ''),
 		array(
 			'blank_redirect' => '',
 			'current_board' => $board,
+			'board_list' => $boards,
 		)
 	);
 	$context['boards'] = array();
@@ -189,19 +185,14 @@ function MoveTopic2()
 	if (!$context['is_approved'])
 		isAllowedTo('approve_posts');
 
-	// Can they move topics on this board?
+	// Permission check!
 	if (!allowedTo('move_any'))
-	{
-		if ($id_member_started == $user_info['id'])
-		{
-			isAllowedTo('move_own');
-			$boards = array_merge(boardsAllowedTo('move_own'), boardsAllowedTo('move_any'));
-		}
-		else
-			isAllowedTo('move_any');
-	}
-	else
-		$boards = boardsAllowedTo('move_any');
+		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
+
+	// Where can they move it to?
+	$boards = empty($modSettings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
+	if (empty($boards))
+		$boards = array(-1); // Just so it doesn't foul the query up.
 
 	// If this topic isn't approved don't let them move it if they can't approve it!
 	if ($modSettings['postmod_active'] && !$context['is_approved'] && !allowedTo('approve_posts'))
@@ -216,6 +207,9 @@ function MoveTopic2()
 
 	// The destination board must be numeric.
 	$_POST['toboard'] = (int) $_POST['toboard'];
+
+	if ($boards != array(0) && !in_array($_POST['toboard'], $boards))
+		fatal_lang_error('no_access', false);
 
 	// Make sure they can see the board they are trying to move to (and get whether posts count in the target board).
 	$request = wesql::query('

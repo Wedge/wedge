@@ -351,6 +351,9 @@ function ModifyTopicSettings($return_config = false)
 			array('check', 'disableCustomPerPage'),
 			array('check', 'enablePreviousNext'),
 		'',
+			// Moving of topics
+			array('check', 'ignoreMoveVsNew'),
+		'',
 			// Drafts
 			array('check', 'masterSavePostDrafts', 'subtext' => $txt['draftsave_subnote']),
 			array('check', 'masterAutoSavePostDrafts', 'subtext' => $txt['draftautosave_subnote']),
