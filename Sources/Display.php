@@ -241,22 +241,6 @@ function Display()
 	else
 		$context['total_visible_posts'] = $context['num_replies'] + $topicinfo['unapproved_posts'] + ($topicinfo['approved'] ? 1 : 0);
 
-	// When was the last time this topic was replied to?  Should we warn them about it?
-	$request = wesql::query('
-		SELECT poster_time
-		FROM {db_prefix}messages
-		WHERE id_msg = {int:id_last_msg}
-		LIMIT 1',
-		array(
-			'id_last_msg' => $topicinfo['id_last_msg'],
-		)
-	);
-
-	list ($lastPostTime) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	$context['oldTopicError'] = !empty($modSettings['oldTopicDays']) && $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($sticky);
-
 	// The start isn't a number; it's information about what to do, where to go.
 	if (!is_numeric($_REQUEST['start']))
 	{
@@ -840,7 +824,7 @@ function Display()
 
 	// Get each post and poster in this topic.
 	$request = wesql::query('
-		SELECT id_msg, id_member, approved
+		SELECT id_msg, id_member, approved, poster_time
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : (!empty($modSettings['db_mysql_group_by_fix']) ? '' : '
 		GROUP BY id_msg') . '
@@ -857,14 +841,41 @@ function Display()
 
 	$messages = array();
 	$all_posters = array();
+	$times = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
 		if (!empty($row['id_member']))
 			$all_posters[$row['id_msg']] = $row['id_member'];
 		$messages[] = $row['id_msg'];
+		$times[$row['id_msg']] = $row['poster_time'];
 	}
 	wesql::free_result($request);
 	$posters = array_unique($all_posters);
+
+	// When was the last time this topic was replied to?  Should we warn them about it?
+	if (!empty($modSettings['oldTopicDays']))
+	{
+		// Did we already get the last message? If so, we already have the last poster message.
+		if (isset($times[$topicinfo['id_last_msg']]))
+			$lastPostTime = $times[$topicinfo['id_last_msg']];
+		else
+		{
+			$request = wesql::query('
+				SELECT poster_time
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:id_last_msg}
+				LIMIT 1',
+				array(
+					'id_last_msg' => $topicinfo['id_last_msg'],
+				)
+			);
+
+			list ($lastPostTime) = wesql::fetch_row($request);
+			wesql::free_result($request);
+		}
+
+		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($sticky);
+	}
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (!$user_info['is_guest'])
