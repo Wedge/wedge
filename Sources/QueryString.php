@@ -52,7 +52,7 @@ if (!defined('SMF'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board, $action_list;
 
 /*	// Makes it easier to refer to things this way.
 	if (!empty($modSettings['pretty_enable_filters']))
@@ -193,7 +193,7 @@ function cleanRequest()
 				$_REQUEST['action'] = $_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('@/do/([a-zA-Z0-9]+)@', $full_request, $m))
+			elseif (preg_match('@/do/([a-zA-Z0-9]+)@', $full_request, $m) && isset($action_list[$m[1]]))
 				$_REQUEST['action'] = $_GET['action'] = $m[1];
 		}
 		else

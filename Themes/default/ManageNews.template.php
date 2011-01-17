@@ -124,7 +124,7 @@ function template_email_members()
 						<dfn>', $txt['admin_news_select_email_desc'], '</dfn>
 					</dt>
 					<dd>
-						<textarea name="emails" rows="5" cols="30" style="width: 98%;"></textarea>
+						<textarea name="emails" rows="5" style="width: 98%"></textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_members'], ':</strong>

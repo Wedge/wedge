@@ -44,8 +44,6 @@ body {
 	border: 1px solid #999;
 	border-bottom: 0;
 	border-radius: 12px 12px 0 0;
-	-moz-border-radius: 12px 12px 0 0;
-	-webkit-border-radius: 12px 12px 0 0;
 }
 #header div.frame {
 	padding: 5px 20px 0;
@@ -178,8 +176,6 @@ h1.forumtitle {
 	border: 1px solid #999;
 	border-top: 1px solid #ccc;
 	border-radius: 0 0 12px 12px;
-	-moz-border-radius: 0 0 12px 12px;
-	-webkit-border-radius: 0 0 12px 12px;
 }
 #footer div.frame {
 	padding: 15px 20px;
@@ -205,8 +201,6 @@ h1.forumtitle {
 	padding-bottom: 32767px;
 	margin-bottom: -32752px;
 	border-radius: 8px;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
 }
 
 /* Styles for the general looks for the Curve theme.
@@ -262,15 +256,6 @@ form {
 	margin: 0;
 }
 
-/* We can style the different types of input buttons to be uniform throughout different browsers and their color themes.
-	.button_submit - covers input[type=submit], input[type=button], button[type=submit] and button[type=button] in all browsers
-	.button_reset  - covers input[type=reset] and button[type=reset] throughout all browsers
-	.input_check   - covers input[type=checkbox] throughout all browsers
-	.input_radio   - covers input[type=radio] throughout all browsers
-	.input_text    - covers input[type=text] throughout all browsers
-	.input_file    - covers input[type=file] throughout all browsers
-*/
-
 input, button, select, textarea {
 	font: 95%/115% verdana, Helvetica, sans-serif;
 	color: #000;
@@ -300,7 +285,7 @@ textarea {
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button_submit, .button_reset {
+*[type=submit], *[type=button], *[type=reset] {
 	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
 	border: 1px solid #aaa;
 	cursor: pointer;
@@ -310,7 +295,7 @@ textarea {
 input:hover, textarea:hover, button:hover, select:hover {
 	border: 1px solid #454545;
 }
-.button_submit:hover, .button_reset:hover {
+*[type=submit]:hover, *[type=button]:hover, *[type=reset]:hover {
 	border: 1px solid #aaa;
 	background: url(../images/theme/submit_bg.png) no-repeat 0 -140px #cde7ff;
 }
@@ -319,19 +304,19 @@ input:focus, textarea:focus, button:focus, select:focus {
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
-input.input_check, input.input_radio {
+input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
 }
-.cat_bar h3 input.input_check {
+.cat_bar h3 input[type=checkbox] {
 	margin: 5px -3px 0 7px;
 }
 
 /* Give disabled text input elements a different background color. */
-input[disabled].input_text {
+input[type=text][disabled] {
 	background-color: #eee;
 }
-input.input_file {
+input[type=file] {
 	width: 300px;
 }
 
@@ -434,26 +419,16 @@ em {
 	padding: 0;
 	z-index: 42;
 	box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15);
-	-moz-box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15);
-	-webkit-box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15);
 	border-radius: 0 10px 10px 0;
-	-moz-border-radius: 0 10px 10px 0;
-	-webkit-border-radius: 0 10px 10px 0;
 }
 
 .menu li ul {
 	visibility: hidden;
 	opacity: 0;
 	transition: opacity .3s ease;
-	-o-transition: opacity .3s ease;
-	-moz-transition: opacity .3s ease;
-	-webkit-transition: opacity .3s ease;
 }
 .css > li > ul {
 	transition: opacity .15s ease;
-	-o-transition: opacity .15s ease;
-	-moz-transition: opacity .15s ease;
-	-webkit-transition: opacity .15s ease;
 }
 .menu li li ul {
 	position: absolute;
@@ -499,8 +474,6 @@ li.subsection > a {
 .css > li li:hover, li.hove {
 	color: #000;
 	border-radius: 0 9px 9px 0;
-	-moz-border-radius: 0 9px 9px 0;
-	-webkit-border-radius: 0 9px 9px 0;
 }
 
 .css > li li:hover, li.hove {
@@ -510,8 +483,6 @@ li.subsection > a {
 
 .menu > li > a, .menu h4 {
 	border-radius: 6px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
 }
 
 #main_menu li.chosen h4, #context_menus li.chosen h4 {
@@ -729,8 +700,6 @@ blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
 	margin: .1em 0 .5em;
 	overflow: auto;
 	border-radius: 6px;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
 }
 
 /* Alterate blockquote stylings */
@@ -1061,8 +1030,6 @@ a.moderation_link, a.moderation_link:visited {
 	background: #f5f5f0;
 	margin: .2em 1px 1em;
 	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
 }
 .description {
 	overflow: hidden;
@@ -1170,8 +1137,6 @@ dfn {
 .cat_bar, .title_bar {
 	padding: 5px 8px;
 	overflow: auto;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 
@@ -1337,16 +1302,12 @@ table.cp4 th, table.cp4 td {
 .wrc {
 	margin-top: 2px;
 	padding: .9em 1.2em;
-	-webkit-border-radius: 12px;
-	-moz-border-radius: 12px;
 	border-radius: 12px;
 	border: 1px solid #ddd;
 	border: 1px solid rgba(0,0,0, .1);
 }
 /* Let's have a bit of fun, shall we? */
 form.wrc {
-	-webkit-box-shadow: 0 2px 8px #ccc;
-	-moz-box-shadow: 0 2px 8px #ccc;
 	box-shadow: 0 1px 5px rgba(0,0,0, .125);
 }
 
@@ -1363,8 +1324,6 @@ form.wrc {
 	background: #f5f5f5;
 	border: 1px solid #c5c5c5;
 	border: 1px solid rgba(0,0,0, .15);
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
 	border-radius: 8px;
 }
 .roundframe dl, .roundframe dt, .roundframe p {
@@ -1381,8 +1340,6 @@ form.wrc {
 }
 #helf > div {
 	box-shadow: 2px 2px 8px 0 #bbb;
-	-moz-box-shadow: 2px 2px 5px 0 #bbb;
-	-webkit-box-shadow: 2px 2px 5px 0 #bbb;
 }
 
 /* The main content area.
@@ -1449,8 +1406,6 @@ form.wrc {
 	line-height: 17px;
 	padding: 1px 7px 0;
 	margin: 0 0 0 4px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 .buttonlist a:hover {
@@ -1515,8 +1470,6 @@ table.table_list tbody.header td {
 ------------------------------------------------------- */
 .table_list tbody.header td.catbg {
 	background-color: #e5eee5;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 
@@ -1534,11 +1487,7 @@ tr.titlebg td, tr.titlebg2 td {
 }
 th.first_th {
 	border-radius: 8px 0 0 0;
-	-moz-border-radius: 8px 0 0 0;
-	-webkit-border-radius: 8px 0 0 0;
 }
 th.last_th {
 	border-radius: 0 8px 0 0;
-	-moz-border-radius: 0 8px 0 0;
-	-webkit-border-radius: 0 8px 0 0;
 }

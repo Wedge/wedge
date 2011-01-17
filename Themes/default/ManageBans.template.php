@@ -76,7 +76,7 @@ function template_ban_edit()
 							<label for="main_ip_check">', $txt['ban_on_ip'], '</label>
 						</dt>
 						<dd>
-							<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="50" onfocus="document.getElementById(\'main_ip_check\').checked = true;" class="input_text" />
+							<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="50" onfocus="$(\'#main_ip_check\').attr(\'checked\', true);" class="input_text" />
 						</dd>';
 
 		if (empty($modSettings['disableHostnameLookup']))
@@ -86,7 +86,7 @@ function template_ban_edit()
 							<label for="hostname_check">', $txt['ban_on_hostname'], '</label>
 						</dt>
 						<dd>
-							<input type="text" name="hostname" value="', $context['ban_suggestions']['hostname'], '" size="50" onfocus="document.getElementById(\'hostname_check\').checked = true;" class="input_text" />
+							<input type="text" name="hostname" value="', $context['ban_suggestions']['hostname'], '" size="50" onfocus="$(\'#hostname_check\').attr(\'checked\', true);" class="input_text" />
 						</dd>';
 
 		echo '
@@ -95,7 +95,7 @@ function template_ban_edit()
 							<label for="email_check">', $txt['ban_on_email'], '</label>
 						</dt>
 						<dd>
-							<input type="text" name="email" value="', $context['ban_suggestions']['email'], '" size="50" onfocus="document.getElementById(\'email_check\').checked = true;" class="input_text" />
+							<input type="email" name="email" value="', $context['ban_suggestions']['email'], '" size="50" onfocus="$(\'#email_check\').attr(\'checked\', true);" class="input_text" />
 						</dd>
 						<dt>
 							<input type="checkbox" name="ban_suggestion[]" id="user_check" value="user" class="input_check" />
@@ -189,14 +189,20 @@ function template_ban_edit()
 				echo '
 						<tr class="windowbg2 center">
 							<td class="left">';
+
 				if ($ban_item['type'] == 'ip')
-					echo '		<strong>', $txt['ip'], ':</strong>&nbsp;', $ban_item['ip'];
+					echo '
+								<strong>', $txt['ip'], ':</strong>&nbsp;', $ban_item['ip'];
 				elseif ($ban_item['type'] == 'hostname')
-					echo '		<strong>', $txt['hostname'], ':</strong>&nbsp;', $ban_item['hostname'];
+					echo '
+								<strong>', $txt['hostname'], ':</strong>&nbsp;', $ban_item['hostname'];
 				elseif ($ban_item['type'] == 'email')
-					echo '		<strong>', $txt['email'], ':</strong>&nbsp;', $ban_item['email'];
+					echo '
+								<strong>', $txt['email'], ':</strong>&nbsp;', $ban_item['email'];
 				elseif ($ban_item['type'] == 'user')
-					echo '		<strong>', $txt['username'], ':</strong>&nbsp;', $ban_item['user']['link'];
+					echo '
+								<strong>', $txt['username'], ':</strong>&nbsp;', $ban_item['user']['link'];
+
 				echo '
 							</td>
 							<td class="windowbg">', $ban_item['hits'], '</td>
@@ -246,19 +252,19 @@ function template_ban_edit()
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
 		add_js('
 	var oAddMemberSuggest = new smc_AutoSuggest({
-		sSelf: \'oAddMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
-		sControlId: \'user\',
+		sSelf: "oAddMemberSuggest",
+		sSessionId: "', $context['session_id'], '",
+		sSessionVar: "', $context['session_var'], '",
+		sControlId: "user",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});
 
 	function onUpdateName(oAutoSuggest)
 	{
-		document.getElementById(\'user_check\').checked = true;
+		$("#user_check").attr("checked", true);
 		return true;
 	}
-	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', onUpdateName);');
+	oAddMemberSuggest.registerCallback("onBeforeUpdate", onUpdateName);');
 }
 
 function template_ban_edit_trigger()
@@ -303,7 +309,7 @@ function template_ban_edit_trigger()
 							', $txt['ban_on_email'], '
 						</dt>
 						<dd>
-							<input type="text" name="email" value="', $context['ban_trigger']['email']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'email_ban\');" class="input_text" />
+							<input type="email" name="email" value="', $context['ban_trigger']['email']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'email_ban\');" class="input_text" />
 						</dd>
 						<dt>
 							<input type="radio" name="bantype" value="user_ban"', $context['ban_trigger']['banneduser']['selected'] ? ' checked="checked"' : '', ' class="input_radio" />

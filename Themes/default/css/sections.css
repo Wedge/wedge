@@ -623,7 +623,7 @@ ul.post_options li {
 	margin: 0;
 	float: left;
 }
-#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li .input_check {
+#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li *[type=checkbox] {
 	margin: 0 0.2em 0 0;
 }
 

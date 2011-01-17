@@ -2905,8 +2905,11 @@ function wedge_cache_css()
 
 		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}>\s])\s*~'), array('', '$1'), $add);
-		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
-		$add = str_replace(array("\r\n\r\n", "\n\n", ';}', "}\n", "\t"), array("\n", "\n", '}', '}', ' '), $add);
+		// Please don't call your styling 'css'. Please.
+		if (strpos($wedge_base_dir, '/css/') === strrpos($wedge_base_dir, '/css/'))
+			$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
+		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
+		$add = str_replace(array("\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array("\n", "\n", ';', '}', '}', ' '), $add);
 		// If we find any empty rules, we can safely remove them.
 		if (strpos($add, '{}') !== false)
 			$add = preg_replace('~[^{}]+{}~', '', $add);
@@ -3028,19 +3031,42 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 /**
  * Fix relative URLs in cached CSS files. This function is called back by a preg_replace_callback call in {@link wedge_cache_css()}.
  *
- * @param string $str The actual CSS contents
+ * @param string $matches The actual CSS contents
  * @return string Updated CSS contents with fixed URLs
  */
 function wedge_fix_relative_css($matches)
 {
 	global $wedge_base_dir;
 
-	// Example: css/Styling/Styling2/../sprite.png or css/Styling/../../images/hello.png
+	// Example: Themes/default/css/Styling/Styling2/../sprite.png
 	$fix = $wedge_base_dir . $matches[1];
-	while (strpos($fix, '../') !== false && strpos($fix, 'css/') === 0)
+	while (strpos($fix, '../') !== false && strpos($fix, '/css/') !== false)
 		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
-	// At this point, we now have css/Styling/sprite.png or images/hello.png
+	// At this point, we now have ../Themes/default/css/Styling/sprite.png
 	return 'url(../' . $fix . ')';
+}
+
+/**
+ * Add browser-specific prefixes to a few commonly used CSS attributes.
+ *
+ * @param string $matches The actual CSS contents
+ * @return string Updated CSS contents with fixed code
+ */
+function wedge_fix_browser_css($matches)
+{
+	global $context;
+
+	if ($context['browser']['is_opera'])
+		return '-o-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_webkit'])
+		return '-webkit-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_gecko'])
+		return '-moz-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_ie9'])
+		return '-ms-' . $matches[0] . ';' . $matches[0];
+	elseif ($context['browser']['is_ie'])
+		return '';
+	return $matches[0];
 }
 
 /**

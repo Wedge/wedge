@@ -104,13 +104,9 @@ table.table_list a.collapse
 }
 th.first_th {
 	border-radius: 0 8px 0 0;
-	-moz-border-radius: 0 8px 0 0;
-	-webkit-border-radius: 0 8px 0 0;
 }
 th.last_th {
 	border-radius: 8px 0 0 0;
-	-moz-border-radius: 8px 0 0 0;
-	-webkit-border-radius: 8px 0 0 0;
 }
 
 /* Styles for the standard dropdown menus.
@@ -532,7 +528,7 @@ ul.post_options li
 {
 	padding: 0 .7em .7em 0;
 }
-#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li .input_check
+#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li *[type=checkbox]
 {
 	margin: 0 0 0 1em;
 }
@@ -1061,11 +1057,7 @@ ul.moderation_notes li
 }
 .menu ul {
 	border-radius: 10px 0 0 10px;
-	-moz-border-radius: 10px 0 0 10px;
-	-webkit-border-radius: 10px 0 0 10px;
 }
 .menu > li li:hover, a.hove {
 	border-radius: 9px 0 0 9px;
-	-moz-border-radius: 9px 0 0 9px;
-	-webkit-border-radius: 9px 0 0 9px;
 }

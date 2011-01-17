@@ -2,8 +2,24 @@
 	width: 96%;
 	margin: 0 auto;
 }
-.cat_bar h3 input.input_check {
-	margin: 0 4px;
+
+/*
+	Some examples for styling inputs in IE6.
+	Basically, instead of input[type=something], use a class,
+	then add support for it through jQuery in your styling's settings.xml file.
+	(Just have a look at Pastel's for a sample. We personally don't give a damn.)
+*/
+
+.button_submit, .button_reset {
+	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	font-weight: normal;
+	padding: 3px 4px;
+}
+.button_submit:hover, .button_reset:hover {
+	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat 0 -140px;
+	border: 1px solid #aaa;
 }
 
 /* The dropdown menus

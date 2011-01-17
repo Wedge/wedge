@@ -1,4 +1,4 @@
-.cat_bar h3 input.input_check {
+.cat_bar h3 input[type=checkbox] {
 	margin: 0 4px;
 }
 
