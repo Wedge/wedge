@@ -34,7 +34,7 @@ if (!defined('SMF'))
 */
 
 // Find the ten most recent posts.
-function RecentPosts()
+function Recent()
 {
 	global $txt, $scripturl, $user_info, $context, $modSettings, $board;
 
