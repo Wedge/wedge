@@ -49,15 +49,12 @@ function Unread()
 		die;
 	}
 
-	$context['showing_all_topics'] = isset($_GET['all']);
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
-	$context['page_title'] = $context['showing_all_topics'] ? $txt['unread_topics_all'] : $txt['unread_topics_visit'];
+	$context['page_title'] = $txt['unread_topics_all'];
 
-	if ($context['showing_all_topics'] && !empty($context['load_average']) && !empty($modSettings['loadavg_allunread']) && $context['load_average'] >= $modSettings['loadavg_allunread'])
+	if (!empty($context['load_average']) && !empty($modSettings['loadavg_allunread']) && $context['load_average'] >= $modSettings['loadavg_allunread'])
 		fatal_lang_error('loadavg_allunread_disabled', false);
-	elseif (!$context['showing_all_topics'] && $_REQUEST['action'] == 'unread' && !empty($context['load_average']) && !empty($modSettings['loadavg_unread']) && $context['load_average'] >= $modSettings['loadavg_unread'])
-		fatal_lang_error('loadavg_unread_disabled', false);
 
 	// Parameters for the main query.
 	$query_parameters = array();
@@ -242,16 +239,8 @@ function Unread()
 
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
-		'name' => $txt['unread_topics_visit'],
+		'name' => $txt['unread_topics_all'],
 	);
-
-	if ($context['showing_all_topics'])
-		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
-			'name' => $txt['unread_topics_all'],
-		);
-	else
-		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
 
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_recent';
@@ -277,74 +266,71 @@ function Unread()
 				IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from, SUBSTRING(ml.body, 1, 385) AS last_body,
 				SUBSTRING(ms.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, ms.smileys_enabled AS first_smileys, t.id_first_msg, t.id_last_msg';
 
-	if ($context['showing_all_topics'])
+	if (!empty($board))
 	{
-		if (!empty($board))
+		$request = wesql::query('
+			SELECT MIN(id_msg)
+			FROM {db_prefix}log_mark_read
+			WHERE id_member = {int:current_member}
+				AND id_board = {int:current_board}',
+			array(
+				'current_board' => $board,
+				'current_member' => $user_info['id'],
+			)
+		);
+		list ($earliest_msg) = wesql::fetch_row($request);
+		wesql::free_result($request);
+	}
+	else
+	{
+		$request = wesql::query('
+			SELECT MIN(lmr.id_msg)
+			FROM {db_prefix}boards AS b
+				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
+			WHERE {query_see_board}',
+			array(
+				'current_member' => $user_info['id'],
+			)
+		);
+		list ($earliest_msg) = wesql::fetch_row($request);
+		wesql::free_result($request);
+	}
+
+	// This is needed in case of topics marked unread.
+	if (empty($earliest_msg))
+		$earliest_msg = 0;
+	else
+	{
+		// Using caching, when possible, to ignore the below slow query.
+		if (isset($_SESSION['cached_log_time']) && $_SESSION['cached_log_time'][0] + 45 > time())
+			$earliest_msg2 = $_SESSION['cached_log_time'][1];
+		else
 		{
+			// This query is pretty slow, but it's needed to ensure nothing crucial is ignored.
 			$request = wesql::query('
 				SELECT MIN(id_msg)
-				FROM {db_prefix}log_mark_read
-				WHERE id_member = {int:current_member}
-					AND id_board = {int:current_board}',
-				array(
-					'current_board' => $board,
-					'current_member' => $user_info['id'],
-				)
-			);
-			list ($earliest_msg) = wesql::fetch_row($request);
-			wesql::free_result($request);
-		}
-		else
-		{
-			$request = wesql::query('
-				SELECT MIN(lmr.id_msg)
-				FROM {db_prefix}boards AS b
-					LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
-				WHERE {query_see_board}',
+				FROM {db_prefix}log_topics
+				WHERE id_member = {int:current_member}',
 				array(
 					'current_member' => $user_info['id'],
 				)
 			);
-			list ($earliest_msg) = wesql::fetch_row($request);
+			list ($earliest_msg2) = wesql::fetch_row($request);
 			wesql::free_result($request);
+
+			// In theory this could be zero, if the first ever post is unread, so fudge it ;)
+			if ($earliest_msg2 == 0)
+				$earliest_msg2 = -1;
+
+			$_SESSION['cached_log_time'] = array(time(), $earliest_msg2);
 		}
 
-		// This is needed in case of topics marked unread.
-		if (empty($earliest_msg))
-			$earliest_msg = 0;
-		else
-		{
-			// Using caching, when possible, to ignore the below slow query.
-			if (isset($_SESSION['cached_log_time']) && $_SESSION['cached_log_time'][0] + 45 > time())
-				$earliest_msg2 = $_SESSION['cached_log_time'][1];
-			else
-			{
-				// This query is pretty slow, but it's needed to ensure nothing crucial is ignored.
-				$request = wesql::query('
-					SELECT MIN(id_msg)
-					FROM {db_prefix}log_topics
-					WHERE id_member = {int:current_member}',
-					array(
-						'current_member' => $user_info['id'],
-					)
-				);
-				list ($earliest_msg2) = wesql::fetch_row($request);
-				wesql::free_result($request);
-
-				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
-				if ($earliest_msg2 == 0)
-					$earliest_msg2 = -1;
-
-				$_SESSION['cached_log_time'] = array(time(), $earliest_msg2);
-			}
-
-			$earliest_msg = min($earliest_msg2, $earliest_msg);
-		}
+		$earliest_msg = min($earliest_msg2, $earliest_msg);
 	}
 
 	// !!! Add modified_time in for log_time check?
 
-	if ($modSettings['totalMessages'] > 100000 && $context['showing_all_topics'])
+	if ($modSettings['totalMessages'] > 100000)
 	{
 		wesql::query('
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
@@ -375,7 +361,7 @@ function Unread()
 	else
 		$have_temp_table = false;
 
-	if ($context['showing_all_topics'] && $have_temp_table)
+	if ($have_temp_table)
 	{
 		$request = wesql::query('
 			SELECT COUNT(*), MIN(t.id_last_msg)
@@ -396,14 +382,14 @@ function Unread()
 		wesql::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
-		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
+		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
-			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
+			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'up' => $scripturl,
 		);
 		$context['page_info'] = array(
@@ -461,9 +447,8 @@ function Unread()
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})') . '
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
-			WHERE t.' . $query_this_board . ($context['showing_all_topics'] && !empty($earliest_msg) ? '
-				AND t.id_last_msg > {int:earliest_msg}' : (!$context['showing_all_topics'] && empty($_SESSION['first_login']) ? '
-				AND t.id_last_msg > {int:id_msg_last_visit}' : '')) . '
+			WHERE t.' . $query_this_board . (!empty($earliest_msg) ? '
+				AND t.id_last_msg > {int:earliest_msg}' : '') . '
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($modSettings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : ''),
 			array_merge($query_parameters, array(
@@ -477,14 +462,14 @@ function Unread()
 		wesql::free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
-		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
+		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
-			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
+			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
+			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'up' => $scripturl,
 		);
 		$context['page_info'] = array(
@@ -494,13 +479,9 @@ function Unread()
 
 		if ($num_topics == 0)
 		{
-			// Is this an all topics query?
-			if ($context['showing_all_topics'])
-			{
-				// Since there are no unread topics, mark the boards as read!
-				loadSource('Subs-Boards');
-				markBoardsRead(empty($boards) ? $board : $boards);
-			}
+			// Since there are no unread topics, mark the boards as read!
+			loadSource('Subs-Boards');
+			markBoardsRead(empty($boards) ? $board : $boards);
 
 			$context['topics'] = array();
 			if ($context['querystring_board_limits'] == ';start=%d')

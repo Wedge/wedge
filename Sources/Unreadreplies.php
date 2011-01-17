@@ -53,7 +53,6 @@ function Unreadreplies()
 	if (isset($_GET['all']))
 		redirectexit('action=unread;all');
 
-	$context['showing_all_topics'] = isset($_GET['all']);
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
 	$context['page_title'] = $txt['unread_replies'];
@@ -246,8 +245,6 @@ function Unreadreplies()
 		'url' => $scripturl . '?action=unreadreplies' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
 		'name' => $txt['unread_replies'],
 	);
-
-	$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
 
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_recent';
