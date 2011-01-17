@@ -138,7 +138,7 @@ function SetCensor()
 			if (is_array($_POST['censor_vulgar']))
 			{
 				foreach ($_POST['censor_vulgar'] as $i => $value)
-					if ($value == '')
+					if (trim(strtr($value, '*', ' ')) == '')
 						unset($_POST['censor_vulgar'][$i], $_POST['censor_proper'][$i]);
 
 				$censored_vulgar = $_POST['censor_vulgar'];

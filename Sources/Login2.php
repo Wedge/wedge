@@ -260,6 +260,7 @@ function Login2()
 			$other_passwords[] = sha1($_POST['passwrd']);
 			$other_passwords[] = md5_hmac($_POST['passwrd'], strtolower($user_settings['member_name']));
 			$other_passwords[] = md5($_POST['passwrd'] . strtolower($user_settings['member_name']));
+			$other_passwords[] = md5(md5($_POST['passwrd']));
 			$other_passwords[] = $_POST['passwrd'];
 
 			// This one is a strange one... MyPHP, crypt() on the MD5 hash.
@@ -287,8 +288,6 @@ function Login2()
 			// Some common md5 ones.
 			$other_passwords[] = md5($user_settings['password_salt'] . $_POST['passwrd']);
 			$other_passwords[] = md5($_POST['passwrd'] . $user_settings['password_salt']);
-			$other_passwords[] = md5($_POST['passwrd']);
-			$other_passwords[] = md5(md5($_POST['passwrd']));
 		}
 		elseif (strlen($user_settings['passwd']) == 40)
 		{
