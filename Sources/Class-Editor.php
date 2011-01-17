@@ -410,7 +410,7 @@ class wedgeEditor
 					}
 
 					// Preserve some tags stripping the styling.
-					if (in_array($matches[2], array('a', 'font')))
+					if ($matches[2] === 'a' || $matches[2] === 'font')
 					{
 						$replacement .= $precedingStyle . $afterStyle;
 						$curCloseTags = '</' . $matches[2] . '>' . $curCloseTags;

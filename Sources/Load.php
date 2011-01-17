@@ -1817,7 +1817,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// What about any straggling imperative tasks
+	// What about any straggling imperative tasks?
 	if (empty($modSettings['next_imperative']))
 	{
 		loadSource('Subs-Scheduled');
