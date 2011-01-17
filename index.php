@@ -24,8 +24,8 @@
 
 /*	This, as you have probably guessed, is the crux on which SMF functions.
 	Everything should start here, so all the setup and security is done
-	properly.  The most interesting part of this file is the action array in
-	the smf_main() function.  It is formatted as so:
+	properly.  The most interesting part of this file is the action array.
+	It is formatted as such:
 
 		'action-in-url' => array('Source-File.php', 'FunctionToCall'),
 
@@ -81,6 +81,79 @@ reloadSettings();
 $context = array(
 	'pretty' => array('db_count' => 0),
 	'app_error_count' => 0,
+);
+
+// Here's the monstrous $action array - $action => array($file, $function).
+$action_list = array(
+	'activate' => array('Activate.php', 'Activate'),
+	'admin' => array('Admin.php', 'Admin'),
+	'announce' => array('Announce.php', 'AnnounceTopic'),
+	'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
+	'buddy' => array('Buddy.php', 'Buddy'),
+	'calendar' => array('Calendar.php', 'CalendarMain'),
+	'collapse' => array('Collapse.php', 'Collapse'),
+	'coppa' => array('CoppaForm.php', 'CoppaForm'),
+	'credits' => array('Credits.php', 'Credits'),
+	'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
+	'display' => array('Display.php', 'Display'),
+	'dlattach' => array('Dlattach.php', 'Dlattach'),
+	'emailuser' => array('SendTopic.php', 'EmailUser'),
+	'feed' => array('Feed.php', 'Feed'),
+	'findmember' => array('Findmember.php', 'Findmember'),
+	'groups' => array('Groups.php', 'Groups'),
+	'helpadmin' => array('Help.php', 'ShowAdminHelp'),
+	'im' => array('PersonalMessage.php', 'MessageMain'),
+	'jseditor' => array('Jseditor.php', 'Jseditor'),
+	'jsmodify' => array('JSModify.php', 'JSModify'),
+	'jsoption' => array('Jsoption.php', 'Jsoption'),
+	'lock' => array('Lock.php', 'Lock'),
+	'login' => array('Login.php', 'Login'),
+	'login2' => array('Login2.php', 'Login2'),
+	'logout' => array('Logout.php', 'Logout'),
+	'markasread' => array('Subs-Boards.php', 'MarkRead'),
+	'mergeposts' => array('SplitTopics.php', 'MergePosts'),
+	'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
+	'mlist' => array('Memberlist.php', 'Memberlist'),
+	'moderate' => array('ModerationCenter.php', 'ModerationMain'),
+	'movetopic' => array('MoveTopic.php', 'MoveTopic'),
+	'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
+	'notify' => array('Notify.php', 'Notify'),
+	'notifyboard' => array('Notify.php', 'BoardNotify'),
+	'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
+	'pm' => array('PersonalMessage.php', 'MessageMain'),
+	'poll' => array('Poll.php', 'Poll'),
+	'post' => array('Post.php', 'Post'),
+	'post2' => array('Post2.php', 'Post2'),
+	'printpage' => array('Printpage.php', 'PrintPage'),
+	'profile' => array('Profile.php', 'ModifyProfile'),
+	'quotefast' => array('QuoteFast.php', 'QuoteFast'),
+	'quickmod' => array('QuickMod.php', 'QuickModeration'),
+	'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
+	'recent' => array('Recent.php', 'Recent'),
+	'register' => array('Register.php', 'Register'),
+	'register2' => array('Register.php', 'Register2'),
+	'reminder' => array('Reminder.php', 'RemindMe'),
+	'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
+	'reporttm' => array('SendTopic.php', 'ReportToModerator'),
+	'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
+	'search' => array('Search.php', 'Search'),
+	'search2' => array('Search2.php', 'Search2'),
+	'sendtopic' => array('SendTopic.php', 'EmailUser'),
+	'smstats' => array('SMStats.php', 'SMStats'),
+	'suggest' => array('Suggest.php', 'Suggest'),
+	'spellcheck' => array('Spellcheck.php', 'Spellcheck'),
+	'splittopics' => array('SplitTopics.php', 'SplitTopics'),
+	'stats' => array('Stats.php', 'Stats'),
+	'sticky' => array('Sticky.php', 'Sticky'),
+	'theme' => array('Themes.php', 'ThemesMain'),
+	'trackip' => array('Profile-View.php', 'trackIP'),
+	'unread' => array('Unread.php', 'Unread'),
+	'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
+	'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
+	'viewquery' => array('ViewQuery.php', 'ViewQuery'),
+	'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
+	'who' => array('Who.php', 'Who'),
+	'xmlhttp' => array('Xmlhttp.php', 'Xmlhttp'),
 );
 
 // Clean the request variables, add slashes, etc.
@@ -181,7 +254,7 @@ if (!empty($context['app_error_count']))
 // The main controlling function.
 function smf_main()
 {
-	global $modSettings, $settings, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir;
+	global $modSettings, $settings, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
 
 	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
@@ -281,84 +354,11 @@ function smf_main()
 	if ($action === '.xml')
 		$action = 'feed';
 
-	// Here's the monstrous $action array - $action => array($file, $function).
-	$actionArray = array(
-		'activate' => array('Activate.php', 'Activate'),
-		'admin' => array('Admin.php', 'Admin'),
-		'announce' => array('Announce.php', 'AnnounceTopic'),
-		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
-		'buddy' => array('Buddy.php', 'Buddy'),
-		'calendar' => array('Calendar.php', 'CalendarMain'),
-		'collapse' => array('Collapse.php', 'Collapse'),
-		'coppa' => array('CoppaForm.php', 'CoppaForm'),
-		'credits' => array('Credits.php', 'Credits'),
-		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
-		'display' => array('Display.php', 'Display'),
-		'dlattach' => array('Dlattach.php', 'Dlattach'),
-		'emailuser' => array('SendTopic.php', 'EmailUser'),
-		'feed' => array('Feed.php', 'Feed'),
-		'findmember' => array('Findmember.php', 'Findmember'),
-		'groups' => array('Groups.php', 'Groups'),
-		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
-		'im' => array('PersonalMessage.php', 'MessageMain'),
-		'jseditor' => array('Jseditor.php', 'Jseditor'),
-		'jsmodify' => array('JSModify.php', 'JSModify'),
-		'jsoption' => array('Jsoption.php', 'Jsoption'),
-		'lock' => array('Lock.php', 'Lock'),
-		'login' => array('Login.php', 'Login'),
-		'login2' => array('Login2.php', 'Login2'),
-		'logout' => array('Logout.php', 'Logout'),
-		'markasread' => array('Subs-Boards.php', 'MarkRead'),
-		'mergeposts' => array('SplitTopics.php', 'MergePosts'),
-		'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
-		'mlist' => array('Memberlist.php', 'Memberlist'),
-		'moderate' => array('ModerationCenter.php', 'ModerationMain'),
-		'movetopic' => array('MoveTopic.php', 'MoveTopic'),
-		'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
-		'notify' => array('Notify.php', 'Notify'),
-		'notifyboard' => array('Notify.php', 'BoardNotify'),
-		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
-		'pm' => array('PersonalMessage.php', 'MessageMain'),
-		'poll' => array('Poll.php', 'Poll'),
-		'post' => array('Post.php', 'Post'),
-		'post2' => array('Post2.php', 'Post2'),
-		'printpage' => array('Printpage.php', 'PrintPage'),
-		'profile' => array('Profile.php', 'ModifyProfile'),
-		'quotefast' => array('QuoteFast.php', 'QuoteFast'),
-		'quickmod' => array('QuickMod.php', 'QuickModeration'),
-		'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
-		'recent' => array('Recent.php', 'Recent'),
-		'register' => array('Register.php', 'Register'),
-		'register2' => array('Register.php', 'Register2'),
-		'reminder' => array('Reminder.php', 'RemindMe'),
-		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
-		'reporttm' => array('SendTopic.php', 'ReportToModerator'),
-		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
-		'search' => array('Search.php', 'Search'),
-		'search2' => array('Search2.php', 'Search2'),
-		'sendtopic' => array('SendTopic.php', 'EmailUser'),
-		'smstats' => array('SMStats.php', 'SMStats'),
-		'suggest' => array('Suggest.php', 'Suggest'),
-		'spellcheck' => array('Spellcheck.php', 'Spellcheck'),
-		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
-		'stats' => array('Stats.php', 'Stats'),
-		'sticky' => array('Sticky.php', 'Sticky'),
-		'theme' => array('Themes.php', 'ThemesMain'),
-		'trackip' => array('Profile-View.php', 'trackIP'),
-		'unread' => array('Unread.php', 'Unread'),
-		'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
-		'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
-		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-		'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
-		'who' => array('Who.php', 'Who'),
-		'xmlhttp' => array('Xmlhttp.php', 'Xmlhttp'),
-	);
-
-	// Allow modifying $actionArray easily.
-	call_hook('actions', array(&$actionArray));
+	// Allow modifying $action_list easily. (It's a global by now.)
+	call_hook('actions');
 
 	// Get the function and file to include - if it's not there, do the board index.
-	if (empty($action) || !isset($actionArray[$action]))
+	if (empty($action) || !isset($action_list[$action]))
 	{
 		// Catch the action with the theme?
 		if (!empty($settings['catch_action']))
@@ -374,8 +374,8 @@ function smf_main()
 
 	// Otherwise, it was set - so let's go to that action.
 	// !!! Fix this $sourcedir for loadSource
-	require_once($sourcedir . '/' . $actionArray[$action][0]);
-	return $actionArray[$action][1];
+	require_once($sourcedir . '/' . $action_list[$action][0]);
+	return $action_list[$action][1];
 }
 
 ?>

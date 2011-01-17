@@ -62,7 +62,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="input_text w50" /></li>') . ');
+		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="w50"></li>') . ');
 		return false;
 	}');
 
@@ -111,7 +111,7 @@ function template_main()
 
 	if ($context['make_event'] && (!$context['event']['new'] || !empty($context['current_board'])))
 		echo '
-			<input type="hidden" name="eventid" value="', $context['event']['id'], '" />';
+			<input type="hidden" name="eventid" value="', $context['event']['id'], '">';
 
 	// Start the main table.
 	echo '
@@ -119,7 +119,7 @@ function template_main()
 				<h3>', $context['page_title'], '</h3>
 			</div>
 			<div class="roundframe">', isset($context['current_topic']) ? '
-				<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />' : '';
+				<input type="hidden" name="topic" value="' . $context['current_topic'] . '">' : '';
 
 	// If an error occurred, explain what happened.
 	echo '
@@ -140,7 +140,7 @@ function template_main()
 		echo '
 				<p class="information">
 					<em>', $txt['wait_for_approval'], '</em>
-					<input type="hidden" name="not_approved" value="1" />
+					<input type="hidden" name="not_approved" value="1">
 				</p>';
 	}
 
@@ -162,7 +162,7 @@ function template_main()
 						<span', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '', ' id="caption_guestname">', $txt['name'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="input_text w50" />
+						<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
 					</dd>';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -171,7 +171,7 @@ function template_main()
 						<span', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '', ' id="caption_email">', $txt['email'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="input_text w50" />
+						<input type="email" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
 					</dd>';
 	}
 
@@ -181,13 +181,13 @@ function template_main()
 						<span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span>
 					</dt>
 					<dd>
-						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="input_text w75" />
+						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
 					</dd>
 					<dt class="clear_left">
 						', $txt['message_icon'], ':
 					</dt>
 					<dd>
-						<select name="icon" id="icon" onchange="showimage()">';
+						<select name="icon" id="icon" onchange="showimage();">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
@@ -208,9 +208,9 @@ function template_main()
 				<div id="post_event">
 					<fieldset id="event_main">
 						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', ' id="caption_evtitle">', $txt['calendar_event_title'], '</span></legend>
-						<input type="text" name="evtitle" maxlength="80" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text w75" />
+						<input type="text" name="evtitle" maxlength="80" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="w75">
 						<div class="smalltext nowrap">
-							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
+							<input type="hidden" name="calendar" value="1">', $txt['calendar_year'], '
 							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
 
 		// Show a list of all the years we allow...
@@ -307,7 +307,7 @@ function template_main()
 				<div id="edit_poll">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
-						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="input_text w75" />
+						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="w75">
 						<ul class="poll_main" id="pollMoreOptions">';
 
 		// Loop through all the choices and print them out.
@@ -316,7 +316,7 @@ function template_main()
 			echo '
 							<li>
 								<label for="options-', $choice['id'], '">', $txt['option'], ' ', $choice['number'], '</label>:
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="input_text w50" />
+								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="w50">
 							</li>';
 		}
 
@@ -331,20 +331,20 @@ function template_main()
 								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
 							</dt>
 							<dd>
-								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '" class="input_text" />
+								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
 							</dd>
 							<dt>
 								<label for="poll_expire">', $txt['poll_run'], ':</label><br />
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4" class="input_text" /> ', $txt['days_word'], '
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4"> ', $txt['days_word'], '
 							</dd>
 							<dt>
 								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked="checked"' : '', ' class="input_check" />
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked="checked"' : '', '>
 							</dd>';
 
 		if ($context['poll_options']['guest_vote_enabled'])
@@ -353,7 +353,7 @@ function template_main()
 								<label for="poll_guest_vote">', $txt['poll_guest_vote'], ':</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll_options']['guest_vote']) ? ' checked="checked"' : '', ' class="input_check" />
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll_options']['guest_vote']) ? ' checked="checked"' : '', '>
 							</dd>';
 
 		echo '
@@ -361,9 +361,9 @@ function template_main()
 								', $txt['poll_results_visibility'], ':
 							</dt>
 							<dd>
-								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked="checked"' : '', ' class="input_radio" /> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br />
-								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked="checked"' : '', ' class="input_radio" /> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br />
-								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll_options']['hide'] == 2 ? ' checked="checked"' : '', empty($context['poll_options']['expire']) ? 'disabled="disabled"' : '', ' class="input_radio" /> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
+								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br />
+								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br />
+								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll_options']['hide'] == 2 ? ' checked' : '', empty($context['poll_options']['expire']) ? ' disabled' : '', '> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
 							</dd>
 						</dl>
 					</fieldset>
@@ -392,14 +392,14 @@ function template_main()
 	echo '
 				<div id="postMoreOptions" class="smalltext">
 					<ul class="post_options">', $context['can_notify'] ? '
-						<li><input type="hidden" name="notify" value="0" /><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
-						<li><input type="hidden" name="lock" value="0" /><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['lock_topic'] . '</label></li>' : '', '
-						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['back_to_topic'] . '</label></li>', $context['can_sticky'] ? '
-						<li><input type="hidden" name="sticky" value="0" /><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked="checked"' : '') . ' value="1" class="input_check" /> ' . $txt['sticky_after'] . '</label></li>' : '', '
-						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked="checked"', ' value="NS" class="input_check" /> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
-						<li><input type="hidden" name="move" value="0" /><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" ' . (!empty($context['move']) ? 'checked="checked" ' : '') . '/> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
-						<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check" ' . (!empty($context['announce']) ? 'checked="checked" ' : '') . '/> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
-						<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" ' . ($context['show_approval'] === 2 ? 'checked="checked"' : '') . ' /> ' . $txt['approve_this_post'] . '</label></li>' : '', '
+						<li><input type="hidden" name="notify" value="0" /><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked' : '') . ' value="1"> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
+						<li><input type="hidden" name="lock" value="0" /><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked' : '') . ' value="1"> ' . $txt['lock_topic'] . '</label></li>' : '', '
+						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked' : '') . ' value="1"> ' . $txt['back_to_topic'] . '</label></li>', $context['can_sticky'] ? '
+						<li><input type="hidden" name="sticky" value="0" /><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked' : '') . ' value="1"> ' . $txt['sticky_after'] . '</label></li>' : '', '
+						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked', ' value="NS"> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
+						<li><input type="hidden" name="move" value="0" /><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1"' . (!empty($context['move']) ? ' checked' : '') . '> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
+						<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1"' . (!empty($context['announce']) ? ' checked' : '') . '> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
+						<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2"' . ($context['show_approval'] === 2 ? ' checked' : '') . '> ' . $txt['approve_this_post'] . '</label></li>' : '', '
 					</ul>
 				</div>';
 
@@ -412,13 +412,13 @@ function template_main()
 						', $txt['attached'], ':
 					</dt>
 					<dd class="smalltext">
-						<input type="hidden" name="attach_del[]" value="0" />
+						<input type="hidden" name="attach_del[]" value="0">
 						', $txt['uncheck_unwatchd_attach'], ':
 					</dd>';
 		foreach ($context['current_attachments'] as $attachment)
 			echo '
 					<dd class="smalltext">
-						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id="attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked="checked"' : '', ' class="input_check" onclick="oAttach.checkActive();" /> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
+						<label for="attachment_', $attachment['id'], '"><input type="checkbox" id="attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked' : '', ' onclick="oAttach.checkActive();"> ', $attachment['name'], (empty($attachment['approved']) ? ' (' . $txt['awaiting_approval'] . ')' : ''), '</label>
 					</dd>';
 		echo '
 				</dl>';
@@ -434,7 +434,7 @@ function template_main()
 					</dt>
 					<dd class="smalltext">
 						<div id="attachments_container">
-							<input type="file" name="attachment[]" id="attachment1" class="input_file" />
+							<input type="file" name="attachment[]" id="attachment1">
 						</div>
 					</dd>
 					<dd class="smalltext">';
@@ -501,7 +501,7 @@ function template_main()
 	// Option to delete an event if user is editing one.
 	if ($context['make_event'] && !$context['event']['new'])
 		echo '
-					<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['event_delete_confirm']), ');" class="button_submit" />';
+					<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['event_delete_confirm']), ');">';
 
 	echo '
 				</p>
@@ -511,12 +511,12 @@ function template_main()
 	// Assuming this isn't a new topic pass across the last message id.
 	if (isset($context['topic_last_message']))
 		echo '
-			<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '" />';
+			<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">';
 
 	echo '
-			<input type="hidden" name="additional_options" id="additional_options" value="', $context['show_additional_options'] ? '1' : '0', '" />
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
+			<input type="hidden" name="additional_options" id="additional_options" value="', $context['show_additional_options'] ? '1' : '0', '">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">
 		</form>';
 
 	// The functions used to preview posts without loading a new page.
@@ -544,7 +544,7 @@ function template_main()
 			if (textFields[i] in postmod)
 			{
 				// Handle the WYSIWYG editor.
-				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' in window && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
+				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
 					x[x.length] = "message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 				else
 					x[x.length] = textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
@@ -839,26 +839,26 @@ function template_spellcheck()
 	echo '
 </head>
 <body onload="nextWord(false);">
-	<form action="#" method="post" accept-charset="UTF-8" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0;">
+	<form action="#" method="post" accept-charset="UTF-8" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0">
 		<div id="spellview">&nbsp;</div>
 		<table class="w100 cp4 cs0">
 			<tr class="windowbg">
 				<td class="top w50">
 					', $txt['spellcheck_change_to'], '<br />
-					<input type="text" name="changeto" style="width: 98%;" class="input_text" />
+					<input type="text" name="changeto" style="width: 98%">
 				</td>
 				<td class="w50">
 					', $txt['spellcheck_suggest'], '<br />
-					<select name="suggestions" style="width: 98%;" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
+					<select name="suggestions" style="width: 98%" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
 					</select>
 				</td>
 			</tr>
 		</table>
 		<div class="righttext" style="padding: 4px;">
-			<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();" class="button_submit" />
-			<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();" class="button_submit" />
-			<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);" class="button_submit" />
-			<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);" class="button_submit" />
+			<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();">
+			<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();">
+			<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);">
+			<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);">
 		</div>
 	</form>
 </body>

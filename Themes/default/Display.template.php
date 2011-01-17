@@ -91,8 +91,8 @@ function template_main()
 			echo '
 							</ul>
 							<div class="submitbutton">
-								<input type="submit" value="', $txt['poll_vote'], '" class="button_submit" />
-								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+								<input type="submit" value="', $txt['poll_vote'], '">
+								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 							</div>
 						</form>';
 		}
@@ -661,22 +661,22 @@ function template_main()
 						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
 						<br />' : '', '
 						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
-							<input type="hidden" name="topic" value="', $context['current_topic'], '" />
-							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '" />
-							<input type="hidden" name="icon" value="xx" />
-							<input type="hidden" name="from_qr" value="1" />
-							<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '" />
-							<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '" />
-							<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '" />
-							<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '" />
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-							<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />';
+							<input type="hidden" name="topic" value="', $context['current_topic'], '">
+							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
+							<input type="hidden" name="icon" value="xx">
+							<input type="hidden" name="from_qr" value="1">
+							<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
+							<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
+							<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
+							<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
+							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+							<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
 
 			// Guests just need more.
 			if ($context['user']['is_guest'])
 				echo '
-							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" class="input_text" tabindex="', $context['tabindex']++, '" />
-							<strong>', $txt['email'], ':</strong> <input type="text" name="email" value="', $context['email'], '" size="25" class="input_text" tabindex="', $context['tabindex']++, '" /><br />';
+							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
+							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br />';
 
 			// Is visual verification enabled?
 			if ($context['require_verification'])
@@ -690,7 +690,7 @@ function template_main()
 								$context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="button_submit" style="display: none" onclick="oQuickReply.switchMode();" />
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="oQuickReply.switchMode();">
 							</div>
 							<div class="righttext padding">',
 								$context['postbox']->outputButtons(), '
@@ -707,7 +707,7 @@ function template_main()
 	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{
 		$context['footer'] .= '
-<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value="" /></form>';
+<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
 		add_js_file('scripts/spellcheck.js');
 	}
 
@@ -765,14 +765,14 @@ function template_main()
 				<div id="quick_edit_body_container" style="width: 90%">
 					<div id="error_box" style="padding: 4px;" class="error"></div>
 					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br />
-					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
-					<input type="hidden" name="topic" value="' . $context['current_topic'] . '" />
-					<input type="hidden" name="msg" value="%msg_id%" />
+					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
+					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
+					<input type="hidden" name="msg" value="%msg_id%">
 					<div class="righttext">
-						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" class="button_submit" onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" />&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" onclick="spellCheck(\'quickModForm\', \'message\');" />&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" class="button_submit" onclick="return oQuickModify.modifyCancel();" />
+						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();">
 					</div>
 				</div>') . ',
-			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%;" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '" class="input_text" />') . ',
+			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
 			sTemplateBodyNormal: ' . JavaScriptEscape('%body%') . ',
 			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
 			sTemplateTopSubject: ' . JavaScriptEscape($txt['topic'] . ': %subject% &nbsp;(' . $txt['read'] . ' ' . $context['num_views'] . ' ' . $txt['times'] . ')') . ',
