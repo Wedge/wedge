@@ -278,7 +278,12 @@ function template_body_below()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-	</div></div>';
+	</div>';
+
+	if (!empty($context['bottom_linktree']))
+		theme_linktree(false, true);
+
+	echo '</div>';
 
 	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
 	echo '
@@ -375,7 +380,7 @@ function template_html_below()
 }
 
 // Show a linktree. This is that thing that shows "My Community | General Category | General Discussion"..
-function theme_linktree($force_show = false)
+function theme_linktree($force_show = false, $on_bottom = false)
 {
 	global $context, $settings, $options, $shown_linktree;
 
@@ -384,7 +389,7 @@ function theme_linktree($force_show = false)
 		return;
 
 	echo '
-		<div class="linktree">
+		<div class="linktree', $on_bottom ? ' bt' : '', '">
 			<ul>';
 
 	// Each tree item has a URL and name. Some may have extra_before and extra_after.

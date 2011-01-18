@@ -614,7 +614,7 @@ function template_main()
 			</div>';
 
 	// Show the lower breadcrumbs.
-	theme_linktree();
+	$context['bottom_linktree'] = true;
 
 	$mod_buttons = array(
 		'move' => array('test' => 'can_move', 'text' => 'move_topic', 'image' => 'admin_move.gif', 'lang' => true, 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),

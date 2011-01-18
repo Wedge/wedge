@@ -2909,16 +2909,10 @@ function wedge_cache_css()
 		$add = file_get_contents($file);
 
 		foreach ($plugins as $plugin)
-			$plugin->pre_process($add);
-
-		foreach ($plugins as $plugin)
 			$plugin->process($add);
 
-		foreach ($plugins as $plugin)
-			$plugin->post_process($add);
-
 		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
-		$add = preg_replace('~\s*([+:;,{}>\s])\s*~', '$1', $add);
+		$add = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
 		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);

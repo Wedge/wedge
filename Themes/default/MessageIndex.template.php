@@ -369,7 +369,7 @@ function template_main()
 	}
 
 	// Show breadcrumbs at the bottom too.
-	theme_linktree();
+	$context['bottom_linktree'] = true;
 
 	echo '
 	<div class="tborder" id="topic_icons">

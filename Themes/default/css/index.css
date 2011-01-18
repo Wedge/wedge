@@ -101,44 +101,40 @@ h1.forumtitle {
 	overflow: hidden;
 	padding: 5px;
 }
-#upper_section ul li.greeting {
-	font-size: 1.3em;
-	font-weight: bold;
-	line-height: 1.5em;
-}
-#upper_section .news {
-	width: 50%;
-	float: right;
-	text-align: right;
-}
-#guest_form {
-	overflow: hidden;
-}
-#guest_form .info {
-	padding: 4px 0;
-}
-#header .user {
-	width: 50%;
-	float: left;
-	overflow: auto;
-}
-#header .user p {
-	float: left;
-	margin: 0 1em 1em 0;
-	padding: 0;
-}
-#header .user ul {
-	margin: 0;
-	padding-left: 10px;
-}
-#header .user ul li {
-	margin-bottom: 2px;
-}
-#header .news p {
-	display: inline;
-}
-#header .news form {
-	padding-bottom: 10px;
+#header {
+	li.greeting {
+		font-size: 1.3em;
+		font-weight: bold;
+		line-height: 1.5em;
+	}
+	.news {
+		width: 50%;
+		float: right;
+		text-align: right;
+		p {
+			display: inline;
+		}
+		form {
+			padding-bottom: 10px;
+		}
+	}
+	.user {
+		width: 50%;
+		float: left;
+		overflow: auto;
+		p {
+			float: left;
+			margin: 0 1em 1em 0;
+			padding: 0;
+		}
+		ul {
+			margin: 0;
+			padding-left: 10px;
+			li {
+				margin-bottom: 2px;
+			}
+		}
+	}
 }
 
 /* The navigation list (i.e. linktree) */
@@ -176,19 +172,19 @@ h1.forumtitle {
 	border: 1px solid #999;
 	border-top: 1px solid #ccc;
 	border-radius: 0 0 12px 12px;
-}
-#footer div.frame {
-	padding: 15px 20px;
-}
-#footer ul li, #footer p {
-	font-size: .9em;
-}
-#footer ul li {
-	display: inline;
-	padding: 0 2px;
-}
-#footer ul li.copyright {
-	display: block;
+	div.frame {
+		padding: 15px 20px;
+	}
+	ul li, p {
+		font-size: .9em;
+	}
+	ul li {
+		display: inline;
+		padding: 0 2px;
+		&.copyright {
+			display: block;
+		}
+	}
 }
 
 #sidebar {
@@ -210,11 +206,11 @@ h1.forumtitle {
 a {
 	color: #568;
 	text-decoration: none;
-}
-a:hover {
-	color: #78a;
-	text-decoration: underline;
-	cursor: pointer;
+	:hover {
+		color: #78a;
+		text-decoration: underline;
+		cursor: pointer;
+	}
 }
 /* Inside a post, if you publish a link, you want it to stand out... */
 .post a {
@@ -222,12 +218,14 @@ a:hover {
 }
 
 /* Links that open in a new window. */
-a.new_win:link, a.new_win:visited {
-	color: #679;
-	text-decoration: none;
-}
-a.new_win:hover {
-	text-decoration: underline;
+a.new_win {
+	:link, :visited {
+		color: #679;
+		text-decoration: none;
+	}
+	:hover {
+		text-decoration: underline;
+	}
 }
 
 /* Tables should show empty cells. */
@@ -240,7 +238,7 @@ table {
 	padding: 1em;
 }
 
-/* use dark grey for the text, leaving #000 for headers etc */
+/* Use dark grey for the text */
 body, td, th, tr {
 	color: #444;
 }
@@ -267,11 +265,10 @@ input, button, select, textarea {
 /* Select elements look horrible with the extra padding, so leave them unpadded. */
 select {
 	padding: 0;
-}
-
-/* Add some padding to the options instead. */
-select option {
-	padding: 1px;
+	/* Add some padding to the options instead. */
+	option {
+		padding: 1px;
+	}
 }
 
 select.qaction, input.qaction {
@@ -285,22 +282,21 @@ textarea {
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
+input, textarea, button, select {
+	:hover, :focus {
+		border: 1px solid #454545;
+	}
+}
 *[type=submit], *[type=button], *[type=reset] {
 	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
 	border: 1px solid #aaa;
 	cursor: pointer;
 	font-weight: normal;
 	padding: 3px 4px;
-}
-input:hover, textarea:hover, button:hover, select:hover {
-	border: 1px solid #454545;
-}
-*[type=submit]:hover, *[type=button]:hover, *[type=reset]:hover {
-	border: 1px solid #aaa;
-	background: url(../images/theme/submit_bg.png) no-repeat 0 -140px #cde7ff;
-}
-input:focus, textarea:focus, button:focus, select:focus {
-	border: 1px solid #454545;
+	:hover {
+		border: 1px solid #aaa;
+		background: url(../images/theme/submit_bg.png) no-repeat 0 -140px #cde7ff;
+	}
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
@@ -341,10 +337,10 @@ fieldset {
 	border: 1px solid #c4c4c4;
 	padding: 1em;
 	margin: 0 0 .5em 0;
-}
-fieldset legend {
-	font-weight: bold;
-	color: #444;
+	legend {
+		font-weight: bold;
+		color: #444;
+	}
 }
 
 /* No image should have a border when linked. */
@@ -405,10 +401,10 @@ em {
 	background: url(../images/menu.gif) no-repeat 98% 2px;
 	margin-bottom: 2px;
 	margin-right: 2px;
-}
-.menu h4 a {
-	border: 0;
-	padding: 0;
+	a {
+		border: 0;
+		padding: 0;
+	}
 }
 
 .menu ul {
@@ -443,13 +439,13 @@ em {
 	float: left;
 	margin: 0;
 	padding: 0;
+	li {
+		display: block;
+		float: none;
+		white-space: nowrap;
+		li { font-size: .95em }
+	}
 }
-.menu li li {
-	display: block;
-	float: none;
-	white-space: nowrap;
-}
-.menu li li li { font-size: .95em }
 
 .css h4:hover, h4.hove {
 	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
@@ -460,9 +456,7 @@ em {
 	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
 	color: #fff;
-}
-.menu li.chosen h4 a {
-	color: #fff;
+	a { color: #fff }
 }
 li.active > a {
 	font-weight: bold;
@@ -488,15 +482,14 @@ li.subsection > a {
 #context_menus {
 	padding-left: 1em;
 	min-height: 2.5em;
-	clear: none;
-}
-#context_menus h4 {
-	background-image: none;
-	padding-right: 6px;
-}
-#context_menus h4:hover {
-	background-color: #ebe7e2;
-	background-color: rgba(0,0,0, .075);
+	h4 {
+		background-image: none;
+		padding-right: 6px;
+		:hover {
+			background-color: #ebe7e2;
+			background-color: rgba(0,0,0, .075);
+		}
+	}
 }
 #context {
 	clear: left;
@@ -509,27 +502,31 @@ li.nodrop h4, #main_menu li.nodrop h4 {
 }
 
 /* Separator code */
-li.separator a {
-	padding: 4px 8px;
-}
-li.separator hr {
-	margin: 0;
-}
-li.separator.hove {
-	background: none;
+li.separator {
+	a {
+		padding: 4px 8px;
+	}
+	hr {
+		margin: 0;
+	}
+	&.hove {
+		background: none;
+	}
 }
 
 /*	Pure CSS menu emulation... Until JS takes over
 	to add the hover timer and proper widths! */
-.css li:hover ul ul, .css li:hover ul ul ul {
-	display: none;
-	visibility: hidden;
-	opacity: 0;
-}
-.css li:hover ul, .css ul li:hover ul, .css ul ul li:hover ul {
-	display: block;
-	visibility: visible;
-	opacity: 1;
+.css {
+	li:hover ul ul, li:hover ul ul ul {
+		display: none;
+		visibility: hidden;
+		opacity: 0;
+	}
+	li:hover ul, ul li:hover ul, ul ul li:hover ul {
+		display: block;
+		visibility: visible;
+		opacity: 1;
+	}
 }
 
 /*	These are the top-level menu icons. It may look complicated, but it isn't.
@@ -606,9 +603,9 @@ li.separator.hove {
 }
 .flow_hidden {
 	overflow: hidden;
-}
-.flow_hidden .windowbg, .flow_hidden .windowbg2 {
-	margin-top: 2px;
+	.windowbg, .windowbg2 {
+		margin-top: 2px;
+	}
 }
 .clear {
 	clear: both;
@@ -622,6 +619,7 @@ li.separator.hove {
 .nowrap {
 	white-space: nowrap;
 }
+
 /* Default font sizes: small (8pt), normal (10pt), and large (14pt). */
 .smalltext, tr.smalltext th {
 	font-size: .85em;
@@ -735,8 +733,10 @@ code.bbc_code, code.php_code {
 }
 
 /* Styling for BBC tags */
-.bbc_link:link, .bbc_link:visited {
-	color: #789;
+.bbc_link {
+	:link, :visited {
+		color: #789;
+	}
 }
 .bbc_size {
 	line-height: 1.4em;
@@ -750,11 +750,11 @@ code.bbc_code, code.php_code {
 .bbc_table {
 	font: inherit;
 	color: inherit;
-}
-.bbc_table td {
-	font: inherit;
-	color: inherit;
-	vertical-align: top;
+	td {
+		font: inherit;
+		color: inherit;
+		vertical-align: top;
+	}
 }
 .bbc_u {
 	text-decoration: underline;
@@ -794,21 +794,21 @@ table.footnotes {
 	border-top: 1px solid #888;
 	margin-top: 20px;
 	padding-top: 4px;
-}
-blockquote table.footnotes {
-	margin: 8px 0 4px;
-}
-table.footnotes td {
-	font-size: smaller;
-	padding: 0 2px;
+	blockquote & {
+		margin: 8px 0 4px;
+	}
+	td {
+		font-size: smaller;
+		padding: 0 2px;
+	}
 }
 td.footnum {
 	vertical-align: top;
 	text-align: right;
 	width: 30px;
-}
-td.footnum a {
-	text-decoration: none;
+	a {
+		text-decoration: none;
+	}
 }
 a.fnotel {
 	text-decoration: none;
@@ -822,12 +822,12 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 	color: gray;
 	font-size: .9em;
 	font-style: italic;
-}
-.spoilerhint input {
-	border: 1px dotted #999;
-	padding: 2px 4px;
-	margin: 4px 8px 4px 4px;
-	font-size: 1.1em;
+	input {
+		border: 1px dotted #999;
+		padding: 2px 4px;
+		margin: 4px 8px 4px 4px;
+		font-size: 1.1em;
+	}
 }
 .spoiled {
 	border: 1px dotted #999;
@@ -895,9 +895,9 @@ tr.catbg th a {
 	padding: .2em;
 	overflow: hidden;
 	margin-bottom: 1px;
-}
-div.pagesection div.floatright input {
-	margin-top: 3px;
+	.floatright input {
+		margin-top: 3px;
+	}
 }
 
 .pagelinks {
@@ -1018,9 +1018,11 @@ div.pagesection div.floatright input {
 	color: green;
 }
 
-a.moderation_link, a.moderation_link:visited {
-	color: red;
-	font-weight: bold;
+a.moderation_link {
+	&, :visited {
+		color: red;
+		font-weight: bold;
+	}
 }
 
 .openid_login {
@@ -1053,10 +1055,10 @@ a.moderation_link, a.moderation_link:visited {
 	border: 1px solid #bbb;
 	background: #f0f6f0;
 	margin: .2em 1px 1em;
-}
-.information p {
-	padding: 1em 1em 0;
-	margin: 0;
+	p {
+		padding: 1em 1em 0;
+		margin: 0;
+	}
 }
 
 /* AJAX notification bar
@@ -1073,14 +1075,13 @@ a.moderation_link, a.moderation_link:visited {
 	position: fixed;
 	top: 0;
 	left: 0;
-}
-
-#ajax_in_progress a {
-	color: orange;
-	text-decoration: underline;
-	font-size: smaller;
-	float: right;
-	margin-right: 20px;
+	a {
+		color: orange;
+		text-decoration: underline;
+		font-size: smaller;
+		float: right;
+		margin-right: 20px;
+	}
 }
 
 /* Lists with settings use these a lot.
@@ -1090,44 +1091,42 @@ dl.settings {
 	overflow: auto;
 	margin: 0 0 10px;
 	padding: 0;
-}
-dl.settings dt {
-	width: 48%;
-	float: left;
-	margin: 0 0 10px;
-	padding: 0;
-	clear: both;
-}
-
-/* help icons */
-dl.settings dt a img {
-	position: relative;
-	top: 2px;
-}
-
-dl.settings dt.settings_title {
-	width: 100%;
-	float: none;
-	margin: 0 0 10px 0;
-	padding: 5px 0 0 0;
-	font-weight: bold;
-	clear: both;
-}
-dl.settings dt.windowbg {
-	width: 98%;
-	float: left;
-	margin: 0 0 3px 0;
-	padding: 0 0 5px 0;
-	clear: both;
-}
-dl.settings dd {
-	width: 48%;
-	float: left;
-	margin: 0 0 3px 1.5%;
-	padding: 0;
-}
-dl.settings img {
-	margin: 0 10px 0 0;
+	dt {
+		width: 48%;
+		float: left;
+		margin: 0 0 10px;
+		padding: 0;
+		clear: both;
+		/* help icons */
+		a img {
+			position: relative;
+			top: 2px;
+		}
+	}
+	dt.settings_title {
+		width: 100%;
+		float: none;
+		margin: 0 0 10px 0;
+		padding: 5px 0 0 0;
+		font-weight: bold;
+		clear: both;
+	}
+	dt.windowbg {
+		width: 98%;
+		float: left;
+		margin: 0 0 3px 0;
+		padding: 0 0 5px 0;
+		clear: both;
+	}
+	dd {
+		width: 48%;
+		float: left;
+		margin: 0 0 3px 1.5%;
+		padding: 0;
+	}
+	img {
+		margin: 0 10px 0 0;
+	}
 }
 
 /* Used mainly as <dt> descriptions, but can be used elsewhere too. */
@@ -1158,86 +1157,94 @@ dfn {
 	border: 1px solid rgba(0,0,0, .15);
 }
 
-.cat_bar h3, .title_bar h3, .cat_bar h4, .title_bar h4 {
-	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
+.cat_bar, .title_bar {
+	h3, h4 {
+		padding-right: 9px;
+		font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
+	}
+	img {
+		float: left;
+		vertical-align: middle;
+		margin-right: .5em;
+		margin-top: 2px;
+	}
 }
 .cat_bar h3, .cat_bar h4 {
 	letter-spacing: 1px;
 }
-.cat_bar h3, .cat_bar h4, .table_list tbody.header td,
-.cat_bar h3 a, .cat_bar h4 a, .table_list tbody.header td a {
-	color: #000;
+.cat_bar h3, .cat_bar h4, .table_list tbody.header td {
+	&, a {
+		color: #000;
+	}
+	a:hover {
+		color: #963;
+		text-decoration: none;
+	}
 }
-.cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover {
-	color: #963;
-	text-decoration: none;
+.title_bar h3, .title_bar h4 {
+	&, a {
+		color: #222;
+	}
+	a:hover {
+		color: #53616f;
+		text-decoration: none;
+	}
 }
-.title_bar h3, .title_bar h3 a, .title_bar h4, .title_bar h4 a {
-	color: #222;
-}
-.title_bar h3 a:hover, .title_bar h4 a:hover {
-	color: #53616f;
-	text-decoration: none;
-}
-.cat_bar img, .title_bar img {
-	float: left;
-	vertical-align: middle;
-	margin-right: .5em;
-	margin-top: 2px;
-}
-.cat_bar h4 img, .title_bar h4 img {
-	margin-top: 2px;
-}
-.cat_bar img[alt="+"], .cat_bar img[alt="-"] {
-	margin-top: 4px;
+.cat_bar img {
+	&[alt="+"], &[alt="-"] {
+		margin-top: 4px;
+	}
 }
 img[alt="!"] {
 	margin-top: 8px;
 }
-.cat_bar h4, .title_bar h4, .title_bar h3, .cat_bar h3, .table_list tbody.header td.catbg {
-	padding-right: 9px;
-}
 
-table.table_list a.unreadlink, table.table_list a.collapse {
-	float: right;
-}
-table.table_list a.collapse {
-	margin: 0 -12px 0 .8em;
+.table_list {
+	tbody.header td.catbg {
+		background-color: #e5eee5;
+		border-radius: 5px;
+		padding-right: 9px;
+	}
+	a.unreadlink {
+		float: right;
+	}
+	a.collapse {
+		float: right;
+		margin: 0 -12px 0 .8em;
+	}
 }
 
 /* The half-round header bars for some tables. */
-.table_grid tr.catbg, .table_grid tr.titlebg {
-	font-size: .95em;
-	border-bottom: 1px solid #fff;
-}
-.table_grid tr.catbg th, .table_grid tr.titlebg th {
-	height: 28px;
-	line-height: 28px;
-}
-.table_grid th.last_th input {
-	margin: 0 2px;
-}
-.table_grid th.lefttext {
-	padding: 0 .7em;
-}
-
-/* a general table class */
-table.table_grid {
+.table_grid {
 	border-collapse: separate;
 	margin-top: .1em;
-}
-table.table_grid td {
-	padding: 3px;
-	border-bottom: 1px solid #fff;
-	border-right: 1px solid #fff;
+	tr.catbg, tr.titlebg {
+		font-size: .95em;
+		border-bottom: 1px solid #fff;
+	}
+	tr.catbg th, tr.titlebg th {
+		height: 28px;
+		line-height: 28px;
+	}
+	th.last_th input {
+		margin: 0 2px;
+	}
+	th.lefttext {
+		padding: 0 .7em;
+	}
+	td {
+		padding: 3px;
+		border-bottom: 1px solid #fff;
+		border-right: 1px solid #fff;
+	}
+	tr.catbg th {
+		white-space: nowrap;
+	}
 }
 
 /* GenericList */
 .additional_row {
 	padding: .5em 0 .5em;
-}
-table.table_grid thead tr.catbg th {
-	white-space: nowrap;
 }
 
 /* HTML5 overrides for deprecated alignment/width params
@@ -1276,30 +1283,32 @@ table.center th, table tr.center th, table tr th.center,
 table.center td, table tr.center td, table tr td.center {
 	text-align: center;
 }
-table tr th.left, table tr td.left {
-	text-align: left;
-}
-table tr th.right, table tr td.right {
-	text-align: right;
-}
-table tr th.center, table tr td.center {
-	text-align: center;
-}
-table.cs0, table.cs1, table.cs3 {
-	border-collapse: separate;
-	border-spacing: 0;
-}
-table.cs1 {
-	border-spacing: 1px;
-}
-table.cs3 {
-	border-spacing: 3px;
-}
-table.cp0 th, table.cp0 td {
-	padding: 0;
-}
-table.cp4 th, table.cp4 td {
-	padding: 4px;
+table {
+	tr th, tr td {
+		&.left { text-align: left }
+		&.right { text-align: right }
+		&.center { text-align: center }
+	}
+	&.cs0, &.cs1, &.cs3 {
+		border-collapse: separate;
+		border-spacing: 0;
+	}
+	&.cs1 {
+		border-spacing: 1px;
+	}
+	&.cs3 {
+		border-spacing: 3px;
+	}
+	&.cp0 {
+		th, td {
+			padding: 0;
+		}
+	}
+	&.cp4 {
+		th, td {
+			padding: 4px;
+		}
+	}
 }
 
 /* Common styles used to add corners to divisions.
@@ -1332,21 +1341,17 @@ form.wrc {
 	border: 1px solid #c5c5c5;
 	border: 1px solid rgba(0,0,0, .15);
 	border-radius: 8px;
-}
-.roundframe dl, .roundframe dt, .roundframe p {
-	margin: 0;
-}
-.roundframe p {
-	padding: .5em;
+	dl, dt, p {
+		margin: 0;
+	}
+	p {
+		padding: .5em;
+	}
 }
 #helf {
 	max-height: 90%;
-}
-#helf a {
-	text-decoration: underline;
-}
-#helf > div {
-	box-shadow: 2px 2px 8px 0 #bbb;
+	a { text-decoration: underline }
+	> div { box-shadow: 2px 2px 8px 0 #bbb }
 }
 
 /* The main content area.
@@ -1378,10 +1383,10 @@ form.wrc {
 #menu_toggle {
 	margin-right: 10px;
 	padding-top: 3px;
-}
-#menu_toggle span {
-	position: relative;
-	right: 5000px;
+	span {
+		position: relative;
+		right: 5000px;
+	}
 }
 
 /* Styles for the standard button lists.
@@ -1389,43 +1394,43 @@ form.wrc {
 
 .buttonlist {
 	margin-right: -8px;
-}
-.buttonlist ul {
-	padding: 5px;
-	margin: 0 .2em 0 0;
-}
-.buttonlist ul li {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	float: left;
-}
-.buttonlist a {
-	display: block;
-	text-transform: uppercase;
-	text-decoration: none;
-	font-size: .8em;
-	color: #000;
-	border: 1px solid #ccc;
-	border: 1px solid rgba(0,0,0, .1);
-	background: #e8e8e8;
-	height: 17px;
-	line-height: 17px;
-	padding: 1px 7px 0;
-	margin: 0 0 0 4px;
-	border-radius: 5px;
-}
-.buttonlist a:hover {
-	background: #fd9604;
-	color: #fff;
-}
-.buttonlist a.active {
-	background: #5a6c85 !important;
-	color: #fff;
-	font-weight: bold;
-}
-.buttonlist a.active:hover {
-	color: #ddf;
+	ul {
+		padding: 5px;
+		margin: 0 .2em 0 0;
+		li {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			float: left;
+		}
+	}
+	a {
+		display: block;
+		text-transform: uppercase;
+		text-decoration: none;
+		font-size: .8em;
+		color: #000;
+		border: 1px solid #ccc;
+		border: 1px solid rgba(0,0,0, .1);
+		background: #e8e8e8;
+		height: 17px;
+		line-height: 17px;
+		padding: 1px 7px 0;
+		margin: 0 0 0 4px;
+		border-radius: 5px;
+		:hover {
+			background: #fd9604;
+			color: #fff;
+		}
+	}
+	a.active {
+		background: #5a6c85 !important;
+		color: #fff;
+		font-weight: bold;
+		:hover {
+			color: #ddf;
+		}
+	}
 }
 .align_top ul li a, .align_bottom ul li a {
 	margin: 0 12px 0 0;
@@ -1436,27 +1441,27 @@ form.wrc {
 	margin: 0;
 	font-size: .9em;
 	padding: 1em .4em;
-}
-#navigation li {
-	float: none;
-	font-size: .95em;
-	display: inline;
+	li {
+		float: none;
+		font-size: .95em;
+		display: inline;
+	}
 }
 
 /* Styles for a typical table.
 ------------------------------------------------------- */
-table.table_list {
+.table_list {
 	width: 100%;
-}
-table.table_list p {
-	padding: 0;
-	margin: 0;
-}
-table.table_list td, table.table_list th {
-	padding: 5px;
-}
-table.table_list tbody.header td {
-	padding: 0;
+	p {
+		padding: 0;
+		margin: 0;
+	}
+	td, th {
+		padding: 5px;
+	}
+	tbody.header td {
+		padding: 0;
+	}
 }
 
 /* Styles for print media.
@@ -1475,22 +1480,21 @@ table.table_list tbody.header td {
 
 /* A few more header styles...
 ------------------------------------------------------- */
-.table_list tbody.header td.catbg {
-	background-color: #e5eee5;
-	border-radius: 5px;
+tr.catbg {
+	th {
+		background: #e5eee5 url(../images/theme/grad40.png) 0 -18px repeat-x;
+	}
+	td {
+		background-color: #e5eee5;
+	}
 }
-
-tr.catbg th {
-	background: #e5eee5 url(../images/theme/grad40.png) 0 -18px repeat-x;
-}
-tr.titlebg th, tr.titlebg2 th {
-	background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
-}
-tr.catbg td {
-	background-color: #e5eee5;
-}
-tr.titlebg td, tr.titlebg2 td {
-	background-color: #e3e9ef;
+tr.titlebg, tr.titlebg2 {
+	th {
+		background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+	}
+	td {
+		background-color: #e3e9ef;
+	}
 }
 th.first_th {
 	border-radius: 8px 0 0 0;

@@ -7,14 +7,12 @@
 
 class CacheerPlugin
 {
-	function pre_process(&$css) {}
 	function process(&$css) {}
-	function post_process(&$css) {}
 }
 
 class ServerImportPlugin extends CacheerPlugin
 {
-	function pre_process(&$css)
+	function process(&$css)
 	{
 		global $relative_file, $relative_dir;
 
@@ -47,7 +45,7 @@ class ServerImportPlugin extends CacheerPlugin
 
 class ConstantsPlugin extends CacheerPlugin
 {
-	function pre_process(&$css)
+	function process(&$css)
 	{
 		$constants = array();
 		if (preg_match_all('#@constants\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
