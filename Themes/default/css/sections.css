@@ -7,36 +7,40 @@
 ------------------------------------------------- */
 
 /* the board title! */
-#board_list td.info a.subject {
-	font-weight: bold;
-	font-size: 110%;
-	color: #d97b33;
-}
-#board_list td.children {
-	color: #555;
-	font-size: 85%;
-}
-#board_list td.stats {
-	font-size: 90%;
-	width: 15%;
-	text-align: center;
-}
-#board_list td.lastpost {
-	line-height: 1.3em;
-	font-size: 85%;
-	width: 24%;
-}
-#board_list td.icon {
-	text-align: center;
-	width: 6%;
+#board_list {
+	td.info a.subject {
+		font-weight: bold;
+		font-size: 110%;
+		color: #d97b33;
+	}
+	td.children {
+		color: #555;
+		font-size: 85%;
+	}
+	td.stats {
+		font-size: 90%;
+		width: 15%;
+		text-align: center;
+	}
+	td.lastpost {
+		line-height: 1.3em;
+		font-size: 85%;
+		width: 24%;
+	}
+	td.icon {
+		text-align: center;
+		width: 6%;
+	}
 }
 p.moderators {
 	font-size: .8em;
 	font-family: verdana, sans-serif;
 }
 /* hide the table header/footer parts - but it's here for those needing to style it */
-#boardindex_table .table_list thead, #boardindex_table .table_list tfoot {
-	display: none;
+#boardindex_table .table_list {
+	thead, tfoot {
+		display: none;
+	}
 }
 
 /* the posting icons */
@@ -44,13 +48,13 @@ p.moderators {
 	padding: 0 1em .5em;
 	margin: 0 0 1em;
 	line-height: 1em;
-}
-#posting_icons ul {
-	font-size: .8em;
-}
-#posting_icons img {
-	vertical-align: -5px;
-	margin: 0 2px 0 4ex;
+	ul {
+		font-size: .8em;
+	}
+	img {
+		vertical-align: -5px;
+		margin: 0 2px 0 4ex;
+	}
 }
 #postbuttons_upper ul li a span {
 	line-height: 19px;
@@ -84,52 +88,51 @@ p.moderators {
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
-
 #upshrinkHeaderIC {
 	margin-top: 4px;
+	p {
+		margin: 0 0 .5em;
+		padding: .5em;
+		&.last {
+			margin: 0;
+			padding: .5em;
+			border-top: 2px dotted #bbb;
+		}
+		&.inline {
+			border: none;
+			margin: 0;
+			padding: .2em .5em;
+		}
+		&.stats {
+			font-size: 1.1em;
+			padding-top: 8px;
+		}
+	}
 }
 #ic_recentposts {
 	margin: 0 0 .5em;
 	padding: .5em;
 	line-height: 1.3em;
-}
-#ic_recentposts dt {
-	float: left;
-}
-#ic_recentposts dd {
-	text-align: right;
-}
-#upshrinkHeaderIC p {
-	margin: 0 0 .5em;
-	padding: .5em;
-}
-#upshrinkHeaderIC p.last {
-	margin: 0;
-	padding: .5em;
-	border-top: 2px dotted #bbb;
-}
-#upshrinkHeaderIC p.inline {
-	border: none;
-	margin: 0;
-	padding: .2em .5em;
-}
-#upshrinkHeaderIC p.stats {
-	font-size: 1.1em;
-	padding-top: 8px;
+	dt {
+		float: left;
+	}
+	dd {
+		text-align: right;
+	}
 }
 #ic_login {
 	padding: .5em;
 	height: 2em;
-}
-#ic_login ul li {
-	margin: 0;
-	padding: 0;
-	float: left;
-	width: 20%;
-	text-align: center;
-}
-#ic_login ul li label {
-	display: block;
+	ul li {
+		margin: 0;
+		padding: 0;
+		float: left;
+		width: 20%;
+		text-align: center;
+		label {
+			display: block;
+		}
+	}
 }
 
 /* the small stats */
@@ -148,15 +151,14 @@ img.new_posts {
 }
 /* Styles for the message (topic) index.
 ---------------------------------------------------- */
-
 #messageindex {
 }
 /* the page navigation area */
-#childboards .table_list thead {
-	display: none;
-}
 #childboards .table_list {
 	margin-bottom: 1em;
+	thead {
+		display: none;
+	}
 }
 .lastpost img {
 	float: right;
@@ -165,27 +167,28 @@ img.new_posts {
 
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
-
-#postbuttons div.buttons {
-	padding: .5em;
-	width: 40%;
-	float: right;
-}
-#postbuttons div.middletext {
-	width: 60%;
-}
-#postbuttons span {
-	display: block;
-	text-align: right;
-}
-#postbuttons span.lower {
-	clear: right;
-}
-#postbuttons .buttonlist {
-	float: right;
-}
-#postbuttons #pagelinks {
-	padding-top: 1em;
+#postbuttons {
+	div.buttons {
+		padding: .5em;
+		width: 40%;
+		float: right;
+	}
+	div.middletext {
+		width: 60%;
+	}
+	span {
+		display: block;
+		text-align: right;
+	}
+	span.lower {
+		clear: right;
+	}
+	.buttonlist {
+		float: right;
+	}
+	#pagelinks {
+		padding-top: 1em;
+	}
 }
 #moderationbuttons {
 	overflow: hidden;
@@ -209,57 +212,53 @@ img.new_posts {
 }
 
 /* Poll vote options */
-#poll_options ul.options {
-	border-top: 1px solid #9999aa;
-	padding: 1em 2.5em 0 2em;
-	margin: 0 0 1em;
-}
-#poll_options div.submitbutton {
-	border-bottom: 1px solid #9999aa;
-	clear: both;
-	padding: 0 0 1em 2em;
-	margin: 0 0 1em;
-}
-
-/* Poll results */
-#poll_options dl.options {
-	border: solid #9999aa;
-	border-width: 1px 0;
-	padding: 1em 2.5em 1em 2em;
-	margin: 0 1em 1em 0;
-	line-height: 1.1em !important;
-}
-
-#poll_options dl.options dt {
-	padding: .3em 0;
-	width: 30%;
-	float: left;
-	margin: 0;
-	clear: left;
-}
-
-#poll_options dl.options .voted {
-	font-weight: bold;
-}
-
-#poll_options dl.options dd {
-	margin: 0 0 0 2em;
-	padding: .1em 0 0;
-	width: 60%;
-	max-width: 450px;
-	float: left;
-}
-
-#poll_options dl.options .percentage {
-	display: block;
-	float: right;
-	padding: .2em 0 .3em;
-}
-
-/* Poll notices */
-#poll_options p {
-	margin: 0 1.5em .2em;
-	padding: 0 .5em .5em;
+#poll_options {
+	ul.options {
+		border-top: 1px solid #9999aa;
+		padding: 1em 2.5em 0 2em;
+		margin: 0 0 1em;
+	}
+	div.submitbutton {
+		border-bottom: 1px solid #9999aa;
+		clear: both;
+		padding: 0 0 1em 2em;
+		margin: 0 0 1em;
+	}
+	/* Poll results */
+	dl.options {
+		border: solid #9999aa;
+		border-width: 1px 0;
+		padding: 1em 2.5em 1em 2em;
+		margin: 0 1em 1em 0;
+		line-height: 1.1em !important;
+		dt {
+			padding: .3em 0;
+			width: 30%;
+			float: left;
+			margin: 0;
+			clear: left;
+		}
+		.voted {
+			font-weight: bold;
+		}
+		dd {
+			margin: 0 0 0 2em;
+			padding: .1em 0 0;
+			width: 60%;
+			max-width: 450px;
+			float: left;
+		}
+		.percentage {
+			display: block;
+			float: right;
+			padding: .2em 0 .3em;
+		}
+	}
+	/* Poll notices */
+	p {
+		margin: 0 1.5em .2em;
+		padding: 0 .5em .5em;
+	}
 }
 
 #poll_moderation {
@@ -270,15 +269,30 @@ img.new_posts {
 
 /* Onto the posts */
 #forumposts {
+	/* Author and topic information */
+	#author {
+		margin: 0 7.7em 0 10px;
+	}
+	.cat_bar {
+		margin-bottom: 3px;
+	}
+	.modified {
+		float: left;
+	}
+	.reportlinks {
+		margin-right: 1.5em;
+		text-align: right;
+		clear: right;
+		img {
+			vertical-align: -3px;
+		}
+	}
+	/* A post separator, useful when printing. */
+	.post_separator {
+		display: none;
+	}
 }
 
-/* Author and topic information */
-#forumposts #author {
-	margin: 0 7.7em 0 10px;
-}
-#forumposts .cat_bar {
-	margin-bottom: 3px;
-}
 #whoisviewing {
 	margin: 0;
 	padding: .5em;
@@ -305,44 +319,48 @@ img.new_posts {
 }
 
 /* Poster details and list of items */
-.poster ul {
-	padding: 0;
-	margin: 0 1em 0 1.5em;
+.poster {
+	ul {
+		padding: 0;
+		margin: 0 1em 0 1.5em;
+	}
+	h4 {
+		margin: .2em 0 .4em 1.1em;
+		font-size: 120%;
+		color: #c06002;
+		a {
+			color: #c06002;
+		}
+	}
+	ul ul {
+		margin: .3em 1em 0 0;
+		padding: 0;
+		li {
+			display: inline;
+		}
+	}
+	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul {
+		margin-top: .5em;
+	}
+	li.avatar {
+		overflow: hidden;
+	}
+	li.warning {
+		line-height: 1.2em;
+		padding-top: 1em;
+		a img {
+			vertical-align: bottom;
+			padding: 0 .2em;
+		}
+	}
 }
-.poster h4 {
-	margin: .2em 0 .4em 1.1em;
-	font-size: 120%;
-}
-.poster h4, .poster h4 a {
-	color: #c06002;
-}
-.poster ul ul {
-	margin: .3em 1em 0 0;
-	padding: 0;
-}
-.poster ul ul li {
-	display: inline;
-}
-.poster li.stars, .poster li.avatar, .poster li.blurb, li.postcount, li.im_icons ul {
-	margin-top: .5em;
-}
-.poster li.avatar {
-	overflow: hidden;
-}
-.poster li.warning {
-	line-height: 1.2em;
-	padding-top: 1em;
-}
-.poster li.warning a img {
-	vertical-align: bottom;
-	padding: 0 .2em;
-}
+
 .messageicon {
 	float: left;
 	margin: 0 .5em 0 0;
-}
-.messageicon img {
-	padding: 6px 3px;
+	img {
+		padding: 6px 3px;
+	}
 }
 .keyinfo {
 	float: left;
@@ -351,7 +369,7 @@ img.new_posts {
 
 /* The quick edit button */
 .modifybutton {
-	background: url(../images/icons/modify_inline.gif) no-repeat 0 0;
+	background: url(../../images/icons/modify_inline.gif) no-repeat 0 0;
 	display: inline;
 	width: 20px;
 	height: 20px;
@@ -375,60 +393,60 @@ ul.quickbuttons {
 	text-align: right;
 	font: normal .95em/22px "Trebuchet MS", arial, sans-serif;
 	text-transform: uppercase;
-}
-ul.quickbuttons li {
-	float: left;
-	display: inline;
-	margin: 0 0 0 10px;
-}
-ul.quickbuttons li a {
-	padding: 0 0 0 22px;
-	display: block;
-	height: 20px;
-	float: left;
-}
-ul.quickbuttons a:hover {
-	color: #a70;
-}
+	li {
+		float: left;
+		display: inline;
+		margin: 0 0 0 10px;
+	}
+	li a {
+		padding: 0 0 0 22px;
+		display: block;
+		height: 20px;
+		float: left;
+	}
+	a:hover {
+		color: #a70;
+	}
 
-/**
- * This is where you can change the reply/edit/delete etc. icons for your posts.
- * You can either modify the quickbuttons.png sprite file, or simply use another file
- * and set its coordinates to 0 0.
- */
+	/**
+	 * This is where you can change the reply/edit/delete etc. icons for your posts.
+	 * You can either modify the quickbuttons.png sprite file, or simply use another file
+	 * and set its coordinates to 0 0.
+	 */
 
-ul.quickbuttons li.mergepost_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 2px -242px;
-}
-ul.quickbuttons li.quote_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 0;
-}
-ul.quickbuttons li.remove_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -30px;
-}
-ul.quickbuttons li.modify_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -60px;
-}
-ul.quickbuttons li.approve_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -90px;
-}
-ul.quickbuttons li.restore_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -120px;
-}
-ul.quickbuttons li.split_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -150px;
-}
-ul.quickbuttons li.reply_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -180px;
-}
-ul.quickbuttons li.reply_all_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -180px;
-}
-ul.quickbuttons li.notify_button {
-	background: url(../images/theme/quickbuttons.png) no-repeat 0 -210px;
-}
-ul.quickbuttons li.inline_mod_check {
-	margin: 0 0 0 5px;
+	li.mergepost_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 2px -242px;
+	}
+	li.quote_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 0;
+	}
+	li.remove_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -30px;
+	}
+	li.modify_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -60px;
+	}
+	li.approve_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -90px;
+	}
+	li.restore_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -120px;
+	}
+	li.split_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -150px;
+	}
+	li.reply_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -180px;
+	}
+	li.reply_all_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -180px;
+	}
+	li.notify_button {
+		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -210px;
+	}
+	li.inline_mod_check {
+		margin: 0 0 0 5px;
+	}
 }
 
 .post {
@@ -439,40 +457,29 @@ ul.quickbuttons li.inline_mod_check {
 	padding: 1em 1em 0 0;
 	margin: 0 1em 0 0;
 	border-top: 1px solid #99a;
-}
-.inner img.smiley {
-	vertical-align: bottom;
-}
-#forumposts .modified {
-	float: left;
-}
-#forumposts .reportlinks {
-	margin-right: 1.5em;
-	text-align: right;
-	clear: right;
-}
-.reportlinks img {
-	vertical-align: -3px;
+	img.smiley {
+		vertical-align: bottom;
+	}
 }
 #forumposts .signature, .post .signature {
 	margin: 1em 0 0 0;
 }
-.attachments hr {
-	clear: both;
-	margin: 1em 0;
-}
+
 .attachments {
 	padding: 1em 0 2em;
-}
-.attachments div {
-	padding: 0 .5em;
+	hr {
+		clear: both;
+		margin: 1em 0;
+	}
+	div {
+		padding: 0 .5em;
+	}
 }
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
 
-/* The quick-reply area. Horizontal alignments go a bit wonky in IE6 and IE7 but is it really worth worrying about? */
-
+/* Horizontal alignments go a bit wonky in IE6 and IE7, but is it really worth worrying about? */
 #postmodify {
 	margin: 0;
 }
@@ -492,29 +499,24 @@ ul.quickbuttons li.inline_mod_check {
 	text-align: right;
 }
 
-/* Separator of posts. More useful in the print stylesheet. */
-#forumposts .post_separator {
-	display: none;
-}
-
 /* Styles for edit/new post section
 ---------------------------------------------------- */
 #post_header, .postbox {
 	padding: .5em;
 	overflow: hidden;
-}
-#post_header dt, .postbox dt {
-	float: left;
-	padding: 0;
-	width: 15%;
-	margin: .5em 0 0;
-	font-weight: bold;
-}
-#post_header dd, .postbox dd {
-	float: left;
-	padding: 0;
-	width: 83%;
-	margin: .3em 0;
+	dt {
+		float: left;
+		padding: 0;
+		width: 15%;
+		margin: .5em 0 0;
+		font-weight: bold;
+	}
+	dd {
+		float: left;
+		padding: 0;
+		width: 83%;
+		margin: .3em 0;
+	}
 }
 #post_header img {
 	vertical-align: middle;
@@ -524,11 +526,11 @@ ul.post_options {
 	padding: 0;
 	list-style: none;
 	overflow: hidden;
-}
-ul.post_options li {
-	margin: .2em 0;
-	width: 49%;
-	float: left;
+	li {
+		margin: .2em 0;
+		width: 49%;
+		float: left;
+	}
 }
 #postAdditionalOptionsHeader {
 	margin-top: 1em;
@@ -543,12 +545,12 @@ ul.post_options li {
 	padding: 0;
 	border-bottom: 1px solid #cacdd3;
 	padding: .5em;
-}
-#postAttachment dd, #postAttachment2 dd {
-	margin: .3em 0 .3em 1em;
-}
-#postAttachment dt, #postAttachment2 dt {
-	font-weight: bold;
+	dd, dd {
+		margin: .3em 0 .3em 1em;
+	}
+	dt, dt {
+		font-weight: bold;
+	}
 }
 #shortcuts {
 	float: left;
@@ -560,24 +562,24 @@ ul.post_options li {
 }
 .post_verification {
 	margin-top: .5em;
-}
-.post_verification #verification_control {
-	margin: .3em 0 .3em 1em;
+	#verification_control {
+		margin: .3em 0 .3em 1em;
+	}
 }
 /* The BBC buttons */
 #bbcBox_message {
 	margin: .75em .5em;
-}
-#bbcBox_message div {
-	margin: .2em 0;
-	vertical-align: top;
-}
-#bbcBox_message div img {
-	margin: 0 1px 0 0;
-	vertical-align: top;
-}
-#bbcBox_message select {
-	margin: 0 2px;
+	div {
+		margin: .2em 0;
+		vertical-align: top;
+		img {
+			margin: 0 1px 0 0;
+			vertical-align: top;
+		}
+	}
+	select {
+		margin: 0 2px;
+	}
 }
 /* The smiley strip */
 #smileyBox_message {
@@ -586,93 +588,104 @@ ul.post_options li {
 
 /* Styles for edit event section
 ---------------------------------------------------- */
-#post_event .roundframe {
-	padding: 10px 12%;
-}
-#post_event fieldset {
-	padding: .5em;
-	clear: both;
-}
-#post_event #event_main input {
-	margin: 0 0 1em;
-	float: left;
-}
-#post_event #event_main div.smalltext {
-	width: 33em;
-	float: right;
-}
-#post_event div.event_options {
-	float: right;
-}
-#post_event ul.event_main, ul.event_options {
-	padding: 0;
-	overflow: hidden;
-}
-#post_event ul.event_main li {
-	list-style-type: none;
-	margin: .2em 0;
-	width: 49%;
-	float: left;
-}
-#post_event ul.event_options {
-	margin: 0;
-	padding: 0 0 .7em .7em;
-}
-#post_event ul.event_options li {
-	list-style-type: none;
-	margin: 0;
-	float: left;
-}
-#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li *[type=checkbox] {
-	margin: 0 0.2em 0 0;
+#post_event {
+	.roundframe {
+		padding: 10px 12%;
+	}
+	fieldset {
+		padding: .5em;
+		clear: both;
+	}
+	#event_main {
+		input {
+			margin: 0 0 1em;
+			float: left;
+		}
+		div.smalltext {
+			width: 33em;
+			float: right;
+		}
+	}
+	div.event_options {
+		float: right;
+	}
+	ul.event_main {
+		overflow: hidden;
+		padding: 0;
+		li {
+			list-style-type: none;
+			margin: .2em 0;
+			width: 49%;
+			float: left;
+		}
+	}
+	ul.event_options {
+		overflow: hidden;
+		margin: 0;
+		padding: 0 0 .7em .7em;
+		li {
+			list-style-type: none;
+			margin: 0;
+			float: left;
+		}
+		li select, ul.event_options li *[type=checkbox] {
+			margin: 0 0.2em 0 0;
+		}
+	}
+	#event_main select {
+		margin: 0 0.2em 0 0;
+	}
 }
 
 /* Styles for edit poll section.
 ---------------------------------------------------- */
-
 #edit_poll {
 	overflow: hidden;
-}
-#edit_poll fieldset {
-	padding: .5em;
-	clear: both;
-	overflow: hidden;
-}
-#edit_poll fieldset > input {
-	margin: .8em 0 .3em 3em;
-}
-ul.poll_main li {
-	padding-left: 1em;
-	margin: .2em 0;
-}
-ul.poll_main input {
-	margin: .2em 0 .2em 1em;
+	fieldset {
+		padding: .5em;
+		clear: both;
+		overflow: hidden;
+		> input {
+			margin: .8em 0 .3em 3em;
+		}
+	}
 }
 ul.poll_main, dl.poll_options {
 	overflow: hidden;
 	padding: 0 0 .7em .7em;
 	list-style: none;
 }
-dl.poll_options dt {
-	width: 33%;
-	padding: 0 0 0 1em;
+ul.poll_main {
+	li {
+		padding-left: 1em;
+		margin: .2em 0;
+	}
+	input {
+		margin: .2em 0 .2em 1em;
+	}
 }
-dl.poll_options dd {
-	width: 65%;
-}
-dl.poll_options dd input {
-	margin-left: 0;
+dl.poll_options {
+	dt {
+		width: 33%;
+		padding: 0 0 0 1em;
+	}
+	dd {
+		width: 65%;
+		input {
+			margin-left: 0;
+		}
+	}
 }
 
 /* Styles for the recent messages section.
 ---------------------------------------------------- */
-
-#readbuttons_top .pagelinks, #readbuttons .pagelinks {
+#readbuttons_top .pagelinks {
 	padding-bottom: 1em;
 	width: 60%;
 }
 #readbuttons .pagelinks {
 	padding-top: 1em;
+	width: 60%;
 }
 #recent {
 	clear: both;
@@ -680,15 +693,14 @@ dl.poll_options dd input {
 
 /* Styles for the move topic section.
 ---------------------------------------------------- */
-
 #move_topic dl {
 	margin-bottom: 0;
-}
-#move_topic dl.settings dt {
-	width: 40%;
-}
-#move_topic dl.settings dd {
-	width: 59%;
+	&.settings dt {
+		width: 40%;
+	}
+	&.settings dd {
+		width: 59%;
+	}
 }
 .move_topic {
 	width: 710px;
@@ -701,7 +713,6 @@ div.move_topic fieldset {
 
 /* Styles for the send topic section.
 ---------------------------------------------------- */
-
 fieldset.send_topic {
 	border: none;
 	padding: .5em;
@@ -709,41 +720,43 @@ fieldset.send_topic {
 dl.send_topic {
 	margin-bottom: 0;
 }
-dl.send_mail dt {
-	width: 35%;
-}
-dl.send_mail dd {
-	width: 64%;
+dl.send_mail {
+	dt {
+		width: 35%;
+	}
+	dd {
+		width: 64%;
+	}
 }
 
 /* Styles for the report topic section.
 ---------------------------------------------------- */
-
 #report_topic dl {
 	margin-bottom: 0;
-}
-#report_topic dl.settings dt {
-	width: 20%;
-}
-#report_topic dl.settings dd {
-	width: 79%;
+	&.settings dt {
+		width: 20%;
+	}
+	&.settings dd {
+		width: 79%;
+	}
 }
 
 /* Styles for the split topic section.
 ---------------------------------------------------- */
-
 #selected, #not_selected {
 	width: 49%;
 }
-ul.split_messages li.windowbg, ul.split_messages li.windowbg2 {
-	margin: 1px;
-}
-ul.split_messages li a.split_icon {
-	padding: 0 .5em;
-}
-ul.split_messages div.post {
-	padding: 1em 0 0;
-	border-top: 1px solid #fff;
+ul.split_messages {
+	li.windowbg, li.windowbg2 {
+		margin: 1px;
+	}
+	li a.split_icon {
+		padding: 0 .5em;
+	}
+	div.post {
+		padding: 1em 0 0;
+		border-top: 1px solid #fff;
+	}
 }
 
 /* Styles for the merge topic section.
@@ -751,11 +764,13 @@ ul.split_messages div.post {
 ul.merge_topics li {
 	list-style-type: none;
 }
-dl.merge_topic dt {
-	width: 25%;
-}
-dl.merge_topic dd {
-	width: 74%;
+dl.merge_topic {
+	dt {
+		width: 25%;
+	}
+	dd {
+		width: 74%;
+	}
 }
 fieldset.merge_options {
 	clear: both;
@@ -764,45 +779,34 @@ fieldset.merge_options {
 	margin: .5em 0;
 }
 
-/* And for merging double posts, maybe...? */
-
-.mergedate {
-	font-size: 10px;
-	text-align: right;
-	color: gray;
-	padding: 5px 0 0;
-	margin: 0;
-	border-bottom: 1px dashed #999;
-}
-
 /* Styles for the login areas.
 ------------------------------------------------------- */
 .login {
 	width: 540px;
 	margin: 0 auto;
-}
-.login dl {
-	overflow: auto;
-	clear: right;
-}
-.login dt, .login dd {
-	margin: 0 0 .4em;
-	width: 44%;
-	padding: .1em;
-}
-.login dt {
-	float: left;
-	clear: both;
-	text-align: right;
-	font-weight: bold;
-}
-.login dd {
-	width: 54%;
-	float: right;
-	text-align: left;
-}
-.login p {
-	text-align: center;
+	dl {
+		overflow: auto;
+		clear: right;
+	}
+	dt, dd {
+		margin: 0 0 .4em;
+		width: 44%;
+		padding: .1em;
+	}
+	dt {
+		float: left;
+		clear: both;
+		text-align: right;
+		font-weight: bold;
+	}
+	dd {
+		width: 54%;
+		float: right;
+		text-align: left;
+	}
+	p {
+		text-align: center;
+	}
 }
 
 /* Styles for the registration section.
@@ -811,30 +815,27 @@ fieldset.merge_options {
 	border: 1px dashed red;
 	padding: 5px;
 	margin: 0 1ex 1ex 1ex;
-}
-.register_error span {
-	text-decoration: underline;
+	span {
+		text-decoration: underline;
+	}
 }
 
 /* Additional profile fields */
 dl.register_form {
 	margin: 0;
 	clear: right;
-	/* overflow: auto; */
-}
-
-dl.register_form dt {
-	font-weight: normal;
-	float: left;
-	clear: both;
-	width: 50%;
-	margin: .5em 0 0;
-}
-
-dl.register_form dd {
-	float: left;
-	width: 49%;
-	margin: .5em 0 0;
+	dt {
+		font-weight: normal;
+		float: left;
+		clear: both;
+		width: 50%;
+		margin: .5em 0 0;
+	}
+	dd {
+		float: left;
+		width: 49%;
+		margin: .5em 0 0;
+	}
 }
 
 #confirm_buttons {
@@ -868,9 +869,9 @@ dl.register_form dd {
 	width: 75%;
 	min-width: 520px;
 	text-align: left;
-}
-#maintenance_mode img.floatleft {
-	margin-right: 1em;
+	img.floatleft {
+		margin-right: 1em;
+	}
 }
 
 tr.titlebg td {
@@ -883,9 +884,9 @@ tr.titlebg td {
 }
 #admin_login .centertext {
 	padding: 1em;
-}
-#admin_login .centertext .error {
-	padding: 0 0 1em 0;
+	.error {
+		padding: 0 0 1em 0;
+	}
 }
 
 /* Styles for sidebar menus.
@@ -906,11 +907,11 @@ tr.titlebg td {
 #main_container {
 	margin-bottom: 5px;
 }
-.left_menu li {
-	padding: 0 0 0 .5em;
-}
 .left_menu {
 	margin-bottom: .5em;
+	li {
+		padding: 0 0 0 .5em;
+	}
 }
 #main_section {
 	margin-left: 172px;
@@ -927,72 +928,73 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 
 /* Styles for generic tables.
 ------------------------------------------------------- */
-.topic_table table {
-	width: 100%;
-}
-.topic_table .icon, .topic_table .stats {
-	text-align: center;
-}
 #topic_icons {
 	margin: 1em 0 0 0;
+	.description {
+		margin: 0;
+	}
+	.floatleft {
+		padding: 0 10px 0 0;
+	}
 }
-#topic_icons .description {
-	margin: 0;
-}
-#topic_icons .floatleft {
-	padding: 0 10px 0 0;
-}
-.topic_table table thead {
-	border-bottom: 1px solid #fff;
-}
-/* the subject column */
-.topic_table td {
-	font-size: 1em;
-}
-.topic_table td.subject p, .topic_table td.stats {
-	font-size: .85em;
-	padding: 0;
-	margin: 0;
-}
-.topic_table td.lastpost {
-	font-size: .85em;
-	line-height: 1.3em;
-	padding: 4px;
-}
-.topic_table td.stickybg2, .topic_table td.lockedbg2, .topic_table td.locked_sticky2 {
-	background-repeat: no-repeat;
-	background-position: 98% 4px;
-}
-.topic_table td.stickybg2 {
-	background-image: url(../images/icons/quick_sticky.gif);
-}
-.topic_table td.lockedbg2 {
-	background-image: url(../images/icons/quick_lock.gif);
-}
-.topic_table td.locked_sticky2 {
-	background-image: url(../images/icons/quick_sticky_lock.gif);
-}
-.topic_table td.stickybg2.my {
-	background-image: url(../images/icons/quick_sticky_my.gif);
-}
-.topic_table td.lockedbg2.my {
-	background-image: url(../images/icons/quick_lock_my.gif);
-}
-.topic_table td.locked_sticky2.my {
-	background-image: url(../images/icons/quick_sticky_lock_my.gif);
-}
-.topic_table td.lastpost {
-	background-image: none;
-}
-.topic_table td.windowbg2.my {
-	background-image: url(../images/icons/quick_my.gif);
-	background-repeat: no-repeat;
-	background-position: 98% 4px;
+.topic_table {
+	.icon, .stats {
+		text-align: center;
+	}
+	table {
+		width: 100%;
+		thead {
+			border-bottom: 1px solid #fff;
+		}
+	}
+	/* the subject column */
+	td {
+		font-size: 1em;
+	}
+	td.subject p, td.stats {
+		font-size: .85em;
+		padding: 0;
+		margin: 0;
+	}
+	td.lastpost {
+		font-size: .85em;
+		line-height: 1.3em;
+		padding: 4px;
+	}
+	td.stickybg2, td.lockedbg2, td.locked_sticky2 {
+		background-repeat: no-repeat;
+		background-position: 98% 4px;
+	}
+	td.stickybg2 {
+		background-image: url(../../images/icons/quick_sticky.gif);
+	}
+	td.lockedbg2 {
+		background-image: url(../../images/icons/quick_lock.gif);
+	}
+	td.locked_sticky2 {
+		background-image: url(../../images/icons/quick_sticky_lock.gif);
+	}
+	td.stickybg2.my {
+		background-image: url(../../images/icons/quick_sticky_my.gif);
+	}
+	td.lockedbg2.my {
+		background-image: url(../../images/icons/quick_lock_my.gif);
+	}
+	td.locked_sticky2.my {
+		background-image: url(../../images/icons/quick_sticky_lock_my.gif);
+	}
+	td.lastpost {
+		background-image: none;
+	}
+	td.windowbg2.my {
+		background-image: url(../../images/icons/quick_my.gif);
+		background-repeat: no-repeat;
+		background-position: 98% 4px;
+	}
 }
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */
-
 #fatal_error {
 	width: 80%;
 	margin: 0 auto;
@@ -1005,26 +1007,25 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 	color: #000;
 	background-color: #ffe4e9;
 	margin-bottom: 1em;
-}
-.errorbox h3 {
-	margin: 0;
-	font-size: 1.1em;
-	text-decoration: underline;
-}
-.errorbox p {
-	margin: 1em 0 0;
-}
-.errorbox p.alert {
-	padding: 0;
-	margin: 0;
-	float: left;
-	width: 1em;
-	font-size: 1.5em;
+	h3 {
+		margin: 0;
+		font-size: 1.1em;
+		text-decoration: underline;
+	}
+	p {
+		margin: 1em 0 0;
+	}
+	p.alert {
+		padding: 0;
+		margin: 0;
+		float: left;
+		width: 1em;
+		font-size: 1.5em;
+	}
 }
 
 /* Styles for the profile section.
 ------------------------------------------------- */
-
 dl {
 	overflow: auto;
 	margin: 0;
@@ -1036,71 +1037,73 @@ dl {
 	margin-top: 10px;
 	width: 20%;
 	float: left;
+	h4 {
+		font-size: 135%;
+		font-weight: 100;
+		line-height: 105%;
+		white-space: pre-wrap;
+		overflow: hidden;
+		span.position {
+			font-size: 80%;
+			font-weight: 100;
+			display: block;
+		}
+	}
+	img.avatar {
+		display: block;
+		margin: 10px 0 0;
+	}
+	ul {
+		list-style-type: none;
+		margin: 10px 0 0;
+		li {
+			display: block;
+			float: left;
+			margin-right: 5px;
+			height: 20px;
+		}
+	}
+}
+#userstatus {
+	display: block;
+	clear: both;
+	img {
+		vertical-align: middle;
+	}
+}
+#detailedinfo, #tracking {
+	dl, dl {
+		clear: right;
+		overflow: auto;
+		margin: 0 0 18px;
+		padding: 0 0 15px;
+		border-bottom: 1px #ccc solid;
+	}
+	dt, dt {
+		width: 35%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+		font-weight: bold;
+		clear: both;
+	}
+	dd, dd {
+		width: 65%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+	}
 }
 #detailedinfo {
 	margin-top: 10px;
 	width: 79.5%;
 	float: right;
-}
-#basicinfo h4 {
-	font-size: 135%;
-	font-weight: 100;
-	line-height: 105%;
-	white-space: pre-wrap;
-	overflow: hidden;
-}
-#basicinfo h4 span.position {
-	font-size: 80%;
-	font-weight: 100;
-	display: block;
-}
-#basicinfo img.avatar {
-	display: block;
-	margin: 10px 0 0;
-}
-#basicinfo ul {
-	list-style-type: none;
-	margin: 10px 0 0;
-}
-#basicinfo ul li {
-	display: block;
-	float: left;
-	margin-right: 5px;
-	height: 20px;
-}
-#userstatus {
-	display: block;
-	clear: both;
-}
-#userstatus img {
-	vertical-align: middle;
-}
-#detailedinfo dl, #tracking dl {
-	clear: right;
-	overflow: auto;
-	margin: 0 0 18px;
-	padding: 0 0 15px;
-	border-bottom: 1px #ccc solid;
-}
-#detailedinfo dt, #tracking dt {
-	width: 35%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
-	font-weight: bold;
-	clear: both;
-}
-#detailedinfo dd, #tracking dd {
-	width: 65%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
-}
-#detailedinfo dl.noborder {
-	border-bottom: 0;
-}
-#detailedinfo dt.clear {
-	width: 100%;
+	dl.noborder {
+		border-bottom: 0;
+	}
+	dt.clear {
+		width: 100%;
+	}
 }
 .signature, .custom_fields_above_signature {
 	border-top: 1px #ccc solid;
@@ -1118,26 +1121,30 @@ dl {
 	padding: 0 3px;
 }
 
-#main_section #basicinfo, #main_section #detailedinfo {
-	width: 100%;
-}
-#main_section #basicinfo h4 {
-	float: left;
-	width: 35%;
-}
-#main_section #basicinfo img.avatar {
-	float: right;
-	vertical-align: top;
-}
-#main_section #basicinfo ul {
-	clear: left;
-}
-#main_section #userstatus {
-	clear: left;
-}
-#main_section #infolinks {
-	display: none;
-	clear: both;
+#main_section {
+	#basicinfo, #detailedinfo {
+		width: 100%;
+	}
+	#basicinfo {
+		h4 {
+			float: left;
+			width: 35%;
+		}
+		img.avatar {
+			float: right;
+			vertical-align: top;
+		}
+		ul {
+			clear: left;
+		}
+	}
+	#userstatus {
+		clear: left;
+	}
+	#infolinks {
+		display: none;
+		clear: both;
+	}
 }
 
 /* Simple feedback messages */
@@ -1150,12 +1157,10 @@ dl {
 	border-color: red;
 	color: red;
 	background: #fee;
+	span {
+		text-decoration: underline;
+	}
 }
-
-#profile_error span {
-	text-decoration: underline;
-}
-
 #profile_success {
 	border-color: green;
 	color: green;
@@ -1163,19 +1168,21 @@ dl {
 }
 
 /* Profile statistics */
-#generalstats dt {
-	width: 50%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
-	font-weight: bold;
-	clear: both;
-}
-#generalstats dd {
-	width: 50%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
+#generalstats {
+	dt {
+		width: 50%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+		font-weight: bold;
+		clear: both;
+	}
+	dd {
+		width: 50%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+	}
 }
 
 /* Activity by time */
@@ -1186,33 +1193,33 @@ dl {
 	margin: 0;
 	padding: 0;
 	list-style: none;
-}
-.activity_stats li {
-	margin: 0;
-	padding: 0;
-	width: 4.16%;
-	float: left;
-}
-.activity_stats li span {
-	display: block;
-	border: solid #000;
-	border-width: 1px 1px 0 0;
-	text-align: center;
-}
-.activity_stats li.last span {
-	border-right: none;
-}
-.activity_stats li div.bar {
-	margin: 0 auto;
-	width: 15px;
-}
-.activity_stats li div.bar div {
-	background: #6294ce;
-}
-.activity_stats li div.bar span {
-	position: absolute;
-	top: -1000em;
-	left: -1000em;
+	li {
+		margin: 0;
+		padding: 0;
+		width: 4.16%;
+		float: left;
+		span {
+			display: block;
+			border: solid #000;
+			border-width: 1px 1px 0 0;
+			text-align: center;
+		}
+		&.last span {
+			border-right: none;
+		}
+		div.bar {
+			margin: 0 auto;
+			width: 15px;
+			div {
+				background: #6294ce;
+			}
+			span {
+				position: absolute;
+				top: -1000em;
+				left: -1000em;
+			}
+		}
+	}
 }
 
 /* Most popular boards by posts and activity */
@@ -1225,23 +1232,25 @@ dl {
 	float: right;
 }
 
-#popularposts dt, #popularactivity dt {
-	width: 65%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
-	font-weight: bold;
-	clear: both;
-}
-#popularposts dd, #popularactivity dd {
-	width: 35%;
-	float: left;
-	margin: 0 0 3px;
-	padding: 0;
+#popularposts, #popularactivity {
+	dt {
+		width: 65%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+		font-weight: bold;
+		clear: both;
+	}
+	dd {
+		width: 35%;
+		float: left;
+		margin: 0 0 3px;
+		padding: 0;
+	}
 }
 
 .profile_pie {
-	background-image: url(../images/stats_pie.png);
+	background-image: url(../../images/stats_pie.png);
 	float: left;
 	height: 20px;
 	width: 20px;
@@ -1274,20 +1283,20 @@ dl {
 	margin-bottom: 3px;
 }
 
-.topic h4 {
-	margin: 3px 0;
-}
-
-.topic .post {
-	margin: 0 1em;
-	min-height: 80px;
-	height: auto !important;
-	height: 80px;
-}
-
-.topic .mod_icons {
-	text-align: right;
-	margin-right: 1em;
+.topic {
+	h4 {
+		margin: 3px 0;
+	}
+	.post {
+		margin: 0 1em;
+		min-height: 80px;
+		height: auto !important;
+		height: 80px;
+	}
+	.mod_icons {
+		text-align: right;
+		margin-right: 1em;
+	}
 }
 
 #tracking dl {
@@ -1296,81 +1305,85 @@ dl {
 	padding: 0;
 }
 
-#creator dl {
-	margin: 0;
-}
-#creator dt {
-	width: 40%;
-	float: left;
-	clear: both;
-	margin: 0 0 10px;
-}
-#creator dd {
-	float: left;
-	width: 55%;
-	margin: 0 0 10px 2px;
+#creator {
+	dl {
+		margin: 0;
+	}
+	dt {
+		width: 40%;
+		float: left;
+		clear: both;
+		margin: 0 0 10px;
+	}
+	dd {
+		float: left;
+		width: 55%;
+		margin: 0 0 10px 2px;
+	}
 }
 
 .ignoreboards {
 	margin: 0 2%;
 	padding: 0;
 	width: 45%;
-}
-.ignoreboards a {
-	font-weight: bold;
-	border-bottom: 1px solid #c4c4c4;
-	padding: .1em 0;
-}
-.ignoreboards a:hover {
-	text-decoration: none;
-	border-bottom: 1px solid #346;
-}
-.ignoreboards ul {
-	margin: 0;
-	padding: 0;
-}
-.ignoreboards li {
-	list-style: none;
-	float: left;
-	clear: both;
-}
-.ignoreboards li.category {
-	margin: .7em 0 0;
-	width: 100%;
-}
-.ignoreboards li ul {
-	margin: .2em 0 0;
-}
-.ignoreboards li.category ul li.board {
-	width: 93%;
+	a {
+		font-weight: bold;
+		border-bottom: 1px solid #c4c4c4;
+		padding: .1em 0;
+	}
+	a:hover {
+		text-decoration: none;
+		border-bottom: 1px solid #346;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		list-style: none;
+		float: left;
+		clear: both;
+	}
+	li.category {
+		margin: .7em 0 0;
+		width: 100%;
+		ul li.board {
+			width: 93%;
+		}
+	}
+	li ul {
+		margin: .2em 0 0;
+	}
 }
 
 #theme_settings {
 	overflow: auto;
 	margin: 0;
 	padding: 0;
+	li {
+		list-style: none;
+		margin: 10px 0;
+		padding: 0;
+	}
 }
 
-#theme_settings li {
-	list-style: none;
-	margin: 10px 0;
-	padding: 0;
-}
 /* Paid Subscriptions */
 #paid_subscription {
 	width: 100%;
+	dl.settings {
+		margin-bottom: 0;
+		dd, dt {
+			margin-bottom: 4px;
+		}
+	}
 }
-#paid_subscription dl.settings {
-	margin-bottom: 0;
-}
-#paid_subscription dl.settings dd, #paid_subscription dl.settings dt {
-	margin-bottom: 4px;
-}
+
 /* Pick theme */
 #pick_theme {
 	width: 100%;
 	float: left;
 }
+
 /* Issue a warning */
 #warn_body {
 	width: 80%;
@@ -1381,19 +1394,20 @@ dl {
 ------------------------------------------------- */
 #statistics {
 	padding: .5em 0;
+	.title_bar {
+		margin: 4px 0;
+	}
+	.cat_bar h3 {
+		text-align: center;
+	}
+	dl {
+		min-height: 210px;
+	}
+	div.top_row dl {
+		min-height: 150px;
+	}
 }
-#statistics .title_bar {
-	margin: 4px 0;
-}
-#statistics .cat_bar h3 {
-	text-align: center;
-}
-#statistics dl {
-	min-height: 210px;
-}
-#statistics div.top_row dl {
-	min-height: 150px;
-}
+
 #stats_left, #top_posters, #top_topics_replies, #top_topics_starter {
 	float: left;
 	width: 49.5%;
@@ -1402,112 +1416,120 @@ dl {
 	float: right;
 	width: 49.5%;
 }
+
 #stats {
 	margin-top: 5px;
+	td {
+		text-align: center;
+	}
+	th {
+		width: 15%;
+	}
 }
-#stats td {
-	text-align: center;
-}
-#stats th {
-	width: 15%;
-}
+
 dl.stats {
 	clear: both;
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
+	dt {
+		width: 54%;
+		float: left;
+		margin: 0 0 4px;
+		line-height: 16px;
+		padding: 0;
+		clear: both;
+		font-size: 1em;
+	}
+	dd {
+		text-align: right;
+		width: 45%;
+		font-size: 1em;
+		float: right;
+		margin: 0 0 4px;
+		line-height: 16px;
+		padding: 0;
+	}
 }
-dl.stats dt {
-	width: 54%;
-	float: left;
-	margin: 0 0 4px;
-	line-height: 16px;
-	padding: 0;
-	clear: both;
-	font-size: 1em;
-}
-dl.stats dd {
-	text-align: right;
-	width: 45%;
-	font-size: 1em;
-	float: right;
-	margin: 0 0 4px;
-	line-height: 16px;
-	padding: 0;
-}
+
 .statsbar div.bar {
 	float: left;
-	background: url(../images/bar_stats.png) no-repeat;
+	background: url(../../images/bar_stats.png) no-repeat;
 	display: block;
 	margin: 0 4px;
 	height: 16px;
+	div {
+		position: relative;
+		right: -4px;
+		padding: 0 4px 0 0;
+		background: url(../../images/bar_stats.png) no-repeat 100%;
+		height: 16px;
+	}
 }
-.statsbar div.bar div {
-	position: relative;
-	right: -4px;
-	padding: 0 4px 0 0;
-	background: url(../images/bar_stats.png) no-repeat 100%;
-	height: 16px;
-}
-#stats th.stats_year, #stats th.stats_month {
-	width: 25%;
-	padding: 0.3em 0.75em;
-	text-align: left;
-}
-#stats th.stats_month {
-	padding: 0.3em 1.5em;
-}
-#stats td.stats_day {
-	padding: 0 3em;
-	text-align: left;
+
+#stats th {
+	&.stats_year, &.stats_month {
+		width: 25%;
+		padding: 0.3em 0.75em;
+		text-align: left;
+	}
+	&.stats_month {
+		padding: 0.3em 1.5em;
+	}
+	&.stats_day {
+		padding: 0 3em;
+		text-align: left;
+	}
 }
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
-#personal_messages .pm {
-	overflow: auto;
-	clear: both;
-	padding: .9em 0;
+#personal_messages {
+	.pm {
+		overflow: auto;
+		clear: both;
+		padding: .9em 0;
+	}
+	#author, #topic_title {
+		float: left;
+	}
+	#author {
+		margin: 0 0 0 .5em;
+	}
+	#topic_title {
+		margin: 0 0 0 9em;
+	}
+	div.labels {
+		padding: 0 1em 0 0;
+	}
+	.capacity_bar {
+		background: #f0f4f7;
+		display: block;
+		margin: .2em 0 0 1em;
+		height: 1em;
+		border: 1px solid #adadad;
+		width: 10em;
+		span {
+			border-right: 1px solid #adadad;
+			display: block;
+			height: 1em;
+		}
+		span.empty {
+			background: #a6d69d;
+		}
+		span.filled {
+			background: #eea800;
+		}
+		span.full {
+			background: #f10909;
+		}
+	}
+	.reportlinks {
+		padding: .5em 1.3em;
+	}
 }
 
-#personal_messages #author, #personal_messages #topic_title {
-	float: left;
-}
-#personal_messages #author {
-	margin: 0 0 0 .5em;
-}
-#personal_messages #topic_title {
-	margin: 0 0 0 9em;
-}
-#personal_messages div.labels {
-	padding: 0 1em 0 0;
-}
-#personal_messages .capacity_bar {
-	background: #f0f4f7;
-	display: block;
-	margin: .2em 0 0 1em;
-	height: 1em;
-	border: 1px solid #adadad;
-	width: 10em;
-}
-#personal_messages .capacity_bar span {
-	border-right: 1px solid #adadad;
-	display: block;
-	height: 1em;
-}
-#personal_messages .capacity_bar span.empty {
-	background: #a6d69d;
-}
-#personal_messages .capacity_bar span.filled {
-	background: #eea800;
-}
-#personal_messages .capacity_bar span.full {
-	background: #f10909;
-}
-#personal_messages .reportlinks {
-	padding: .5em 1.3em;
-}
 #searchLabelsExpand li {
 	padding: .3em .5em;
 }
@@ -1541,63 +1563,70 @@ dl.addrules dt.floatleft {
 	width: 200px;
 	text-align: center;
 	float: left;
+	table {
+		width: 200px;
+	}
 }
-#month_grid table {
-	width: 200px;
-}
-#main_grid table {
-	width: 100%;
-	padding-bottom: 4px;
-}
-#main_grid table .cat_bar h3 {
-	text-align: center;
-	border-top: 2px solid #fff;
-	border-bottom: none;
-}
-#main_grid table.weeklist td.windowbg {
-	text-align: center;
-	height: 49px;
-	width: 25px;
-	font-size: large;
-	padding: 0 7px;
-	border-bottom: 2px solid #fff;
-}
-#main_grid table.weeklist td.weekdays {
-	height: 49px;
-	width: 100%;
-	padding: 4px;
-	text-align: left;
-	vertical-align: middle;
-	border-bottom: 2px solid #fff;
-}
-#main_grid h3.weekly {
-	text-align: center;
-	padding-left: 0;
-	font-size: large;
-	height: 23px;
-}
-#main_grid h3 span.floatleft, #main_grid h3 span.floatright {
-	display: block;
-	font-weight: bold;
-}
-#main_grid table th.days {
-	width: 14%;
-	padding: 4px 0;
-}
-#main_grid table.weeklist .title_bar h4 {
-	margin: 0;
-	height: 23px;
-	line-height: 27px;
-}
-#main_grid table td.weeks {
-	vertical-align: middle;
-	text-align: center;
-	font-weight: bold;
-	font-size: large;
-}
-#main_grid table td.days {
-	vertical-align: top;
-	text-align: center;
+
+#main_grid {
+	table {
+		width: 100%;
+		padding-bottom: 4px;
+		.cat_bar h3 {
+			text-align: center;
+			border-top: 2px solid #fff;
+			border-bottom: none;
+		}
+		&.weeklist {
+			td.windowbg {
+				text-align: center;
+				height: 49px;
+				width: 25px;
+				font-size: large;
+				padding: 0 7px;
+				border-bottom: 2px solid #fff;
+			}
+			td.weekdays {
+				height: 49px;
+				width: 100%;
+				padding: 4px;
+				text-align: left;
+				vertical-align: middle;
+				border-bottom: 2px solid #fff;
+			}
+			.title_bar h3 {
+				margin: 0;
+				height: 23px;
+				line-height: 27px;
+			}
+		}
+		th.days {
+			width: 14%;
+			padding: 4px 0;
+		}
+		td.weeks {
+			vertical-align: middle;
+			text-align: center;
+			font-weight: bold;
+			font-size: large;
+		}
+		td.days {
+			vertical-align: top;
+			text-align: center;
+		}
+	}
+	h3 {
+		&.weekly {
+			text-align: center;
+			padding-left: 0;
+			font-size: large;
+			height: 23px;
+		}
+		span.floatleft, span.floatright {
+			display: block;
+			font-weight: bold;
+		}
+	}
 }
 
 a.modify_event {
@@ -1640,52 +1669,60 @@ span.hidelink {
 
 /* Styles for the advanced search section.
 ------------------------------------------------- */
-#searchform fieldset {
-	text-align: left;
-	padding: 0;
-	border: none;
+#searchform {
+	fieldset {
+		text-align: left;
+		padding: 0;
+		border: none;
+	}
+	p.clear {
+		clear: both;
+	}
 }
-#advanced_search #search_options {
-	margin: 0 auto;
-	width: 600px;
-	padding-top: 1em;
-	overflow: hidden;
-}
-#advanced_search dt {
-	clear: both;
-	float: left;
-	padding: .2em;
-	text-align: right;
-	width: 20%;
-}
-#advanced_search dd {
-	width: 75%;
-	float: left;
-	padding: .2em;
-	margin: 0 0 0 .5em;
-	text-align: left;
-}
-#searchform p.clear {
-	clear: both;
+#advanced_search {
+	#search_options {
+		margin: 0 auto;
+		width: 600px;
+		padding-top: 1em;
+		overflow: hidden;
+	}
+	dt {
+		clear: both;
+		float: left;
+		padding: .2em;
+		text-align: right;
+		width: 20%;
+	}
+	dd {
+		width: 75%;
+		float: left;
+		padding: .2em;
+		margin: 0 0 0 .5em;
+		text-align: left;
+	}
 }
 
 /* Styles for the search results page.
 ------------------------------------------------- */
-.topic_table td blockquote, .topic_table td .quoteheader {
-	margin: .5em;
+.topic_table td {
+	blockquote, .quoteheader {
+		margin: .5em;
+	}
 }
 .search_results_posts {
 	overflow: hidden;
-}
-.search_results_posts .buttons {
-	padding: 5px 1em 0 0;
+	.buttons {
+		padding: 5px 1em 0 0;
+	}
 }
 
 /* More hacks.
 ------------------------------------------------- */
-#upshrinkHeaderIC p.pminfo {
-	margin: 0;
-	padding: .5em;
+#upshrinkHeaderIC {
+	p.pminfo {
+		margin: 0;
+		padding: .5em;
+	}
 }
 #upshrink_ic {
 	float: right;
@@ -1698,7 +1735,4 @@ span.hidelink {
 }
 #mlist table tbody td.windowbg2 {
 	text-align: center;
-}
-#upshrinkHeaderIC .cat_bar h3, #upshrinkHeaderIC .title_bar h4 {
-	font-size: 1.1em;
 }

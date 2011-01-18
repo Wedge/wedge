@@ -2898,19 +2898,33 @@ function wedge_cache_css()
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
+
+	// Load Shaun Inman's nested selector parser
+	loadSource('Class-CSS');
+	$plugins = array(new ServerImportPlugin(), new ConstantsPlugin(), new BasedOnPlugin(), new NestedSelectorsPlugin());
+
 	foreach ($css as $file)
 	{
 		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
 		$add = file_get_contents($file);
 
+		foreach ($plugins as $plugin)
+			$plugin->pre_process($add);
+
+		foreach ($plugins as $plugin)
+			$plugin->process($add);
+
+		foreach ($plugins as $plugin)
+			$plugin->post_process($add);
+
 		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
-		$add = preg_replace(array('~/\*.*?\*/~s', '~\s*([+:;,{}>\s])\s*~'), array('', '$1'), $add);
-		// Please don't call your styling 'css'. Please.
-		if (strpos($wedge_base_dir, '/css/') === strrpos($wedge_base_dir, '/css/'))
-			$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
+		$add = preg_replace('~\s*([+:;,{}>\s])\s*~', '$1', $add);
+		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
-		$add = str_replace(array("\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array("\n", "\n", ';', '}', '}', ' '), $add);
-		// If we find any empty rules, we can safely remove them.
+		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);
+
+		// If we find any empty rules, we shoule be able to remove them.
+		// Obviously, don't use content: "{}" or something in your code.
 		if (strpos($add, '{}') !== false)
 			$add = preg_replace('~[^{}]+{}~', '', $add);
 
@@ -2923,9 +2937,54 @@ function wedge_cache_css()
 }
 
 /**
+ * Fix relative URLs in cached CSS files. This function is called back by a preg_replace_callback call in {@link wedge_cache_css()}.
+ *
+ * @param string $matches The actual CSS contents
+ * @return string Updated CSS contents with fixed URLs
+ */
+function wedge_fix_relative_css($matches)
+{
+	global $wedge_base_dir;
+
+	// Example: Themes/default/css/Styling/Styling2/../sprite.png
+	$fixed = '';
+	$fix = $wedge_base_dir . $matches[1];
+	while (strpos($fix, '../') !== false && $fixed !== $fix)
+	{
+		$fixed = $fix;
+		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
+	}
+	// At this point, we should have ../Themes/default/css/Styling/sprite.png
+	return 'url(../' . $fix . ')';
+}
+
+/**
+ * Add browser-specific prefixes to a few commonly used CSS attributes.
+ *
+ * @param string $matches The actual CSS contents
+ * @return string Updated CSS contents with fixed code
+ */
+function wedge_fix_browser_css($matches)
+{
+	global $context;
+
+	if ($context['browser']['is_opera'])
+		return '-o-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_webkit'])
+		return '-webkit-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_gecko'])
+		return '-moz-' . $matches[0] . ';' . $matches[0];
+	if ($context['browser']['is_ie9'])
+		return '-ms-' . $matches[0] . ';' . $matches[0];
+	elseif ($context['browser']['is_ie'])
+		return '';
+	return $matches[0];
+}
+
+/**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
- * @param string $filename Name of the file to create (unobfuscated)
+ * @param string $id Name of the file to create, unobfuscated, minus the date component
  * @param int $latest_date Date of the most recent JS file in the list, used to force recaching
  * @param string $final_file Final name of the file to create (obfuscated, with date, etc.)
  * @param array $js List of all JS files to concatenate
@@ -2991,9 +3050,9 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
 		// Adding a semicolon after a function/prototype declaration is mandatory in Packer.
-		// The original SMF code didn't bother with these, and developers are advised NOT
-		// to follow that advice. If you can't fix your scripts, uncomment the following
-		// lines, and semicolons will be added automatically.
+		// The original SMF code didn't bother with that, and developers are advised NOT to
+		// follow that 'advice'. If you can't fix your scripts, uncomment the following
+		// block and semicolons will be added automatically, at a small performance cost.
 
 		/*
 		$max = strlen($final);
@@ -3026,47 +3085,6 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 		$final = gzencode($final, 9);
 
 	file_put_contents($final_file, $final);
-}
-
-/**
- * Fix relative URLs in cached CSS files. This function is called back by a preg_replace_callback call in {@link wedge_cache_css()}.
- *
- * @param string $matches The actual CSS contents
- * @return string Updated CSS contents with fixed URLs
- */
-function wedge_fix_relative_css($matches)
-{
-	global $wedge_base_dir;
-
-	// Example: Themes/default/css/Styling/Styling2/../sprite.png
-	$fix = $wedge_base_dir . $matches[1];
-	while (strpos($fix, '../') !== false && strpos($fix, '/css/') !== false)
-		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
-	// At this point, we now have ../Themes/default/css/Styling/sprite.png
-	return 'url(../' . $fix . ')';
-}
-
-/**
- * Add browser-specific prefixes to a few commonly used CSS attributes.
- *
- * @param string $matches The actual CSS contents
- * @return string Updated CSS contents with fixed code
- */
-function wedge_fix_browser_css($matches)
-{
-	global $context;
-
-	if ($context['browser']['is_opera'])
-		return '-o-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_webkit'])
-		return '-webkit-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_gecko'])
-		return '-moz-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_ie9'])
-		return '-ms-' . $matches[0] . ';' . $matches[0];
-	elseif ($context['browser']['is_ie'])
-		return '';
-	return $matches[0];
 }
 
 /**

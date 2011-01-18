@@ -146,27 +146,27 @@ h1.forumtitle {
 	clear: both;
 	padding: .5em 20px;
 	margin: 1em 0 0;
-}
-.linktree ul {
-	display: block;
-	margin: 0;
-	font-size: .9em;
-	padding: .5em 0;
-	overflow: hidden;
-	list-style: none;
-	clear: both;
-	width: 100%;
-}
-.linktree ul li {
-	float: left;
-	padding: 0 .5em 0 0;
-	height: 21px;
-	line-height: 21px;
-	padding: 0 1.7em 0 5px;
-	background: url(../images/menu.gif) no-repeat right -49px;
-}
-.linktree ul li.last {
-	background: none;
+	ul {
+		display: block;
+		margin: 0;
+		font-size: .9em;
+		padding: .5em 0;
+		overflow: hidden;
+		list-style: none;
+		clear: both;
+		width: 100%;
+		li {
+			float: left;
+			padding: 0 .5em 0 0;
+			height: 21px;
+			line-height: 21px;
+			padding: 0 1.7em 0 5px;
+			background: url(../images/menu.gif) no-repeat right -49px;
+			&.last {
+				background: none;
+			}
+		}
+	}
 }
 
 /* The footer with copyright links etc. */
@@ -474,9 +474,6 @@ li.subsection > a {
 .css > li li:hover, li.hove {
 	color: #000;
 	border-radius: 0 9px 9px 0;
-}
-
-.css > li li:hover, li.hove {
 	background-color: #ebe7e2;
 	background-color: rgba(0,0,0, .075);
 }
@@ -839,6 +836,16 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 .readmore {
 	font-style: italic;
 	color: grey;
+}
+
+/* Merged double posts */
+.mergedate {
+	font-size: 10px;
+	text-align: right;
+	color: gray;
+	padding: 5px 0 0;
+	margin: 0;
+	border-bottom: 1px dashed #999;
 }
 
 /* Generic, mostly color-related, classes.

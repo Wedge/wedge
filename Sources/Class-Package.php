@@ -75,8 +75,8 @@ class xmlArray
 	public $array, $debug_level, $trim;
 
 	// Create an xml array.
-	//	the xml data, trim elements?, debugging output level, reserved.
-	//ie. $xml = new xmlArray(file('data.xml'));
+	// the xml data, trim elements?, debugging output level, reserved.
+	// ie. $xml = new xmlArray(file('data.xml'));
 	public function __construct($data, $auto_trim = false, $level = null, $is_clone = false)
 	{
 		// If we're using this try to get some more memory.
