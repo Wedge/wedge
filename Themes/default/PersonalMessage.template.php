@@ -466,7 +466,15 @@ function template_folder()
 			</div>
 			<br class="clear" />
 		</div>
-		<div class="moderatorbar">
+		<div class="moderatorbar">';
+
+		if (!empty($context['message_can_unread'][$message['id']]))
+			echo '
+			<div class="righttext reportlinks">
+				<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['mark_unread'], '</a>
+			</div>';
+
+		echo '
 		</div>
 	</div>';
 		}
@@ -496,7 +504,7 @@ function template_folder()
 		<br />';
 	}
 
-	// Individual messages = buttom list!
+	// Individual messages = bottom list!
 	if ($context['display_mode'] == 1)
 	{
 		template_subject_list();

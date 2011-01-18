@@ -274,6 +274,7 @@ function MessageMain()
 		'addbuddy' => 'WirelessAddBuddy',
 		'manlabels' => 'ManageLabels',
 		'manrules' => 'ManageRules',
+		'markunread' => 'MarkUnread',
 		'pmactions' => 'MessageActionsApply',
 		'prune' => 'MessagePrune',
 		'removeall' => 'MessageKillAllQuery',
@@ -460,9 +461,12 @@ function MessageFolder()
 	}
 	$context['view_select_types'] = array(
 		0 => $txt['pm_display_mode_all'],
-		1 => $txt['pm_display_mode_one'] = 'One at a time',
-		2 => $txt['pm_display_mode_linked'] = 'As a conversation',
+		1 => $txt['pm_display_mode_one'],
+		2 => $txt['pm_display_mode_linked'],
 	);
+
+	// OK, so can we potentially mark unread?
+	$context['can_unread'] = $context['display_mode'] != 0; // can't mark unread in all-at-once mode
 
 	// Make sure the starting location is valid.
 	if (isset($_GET['start']) && $_GET['start'] != 'new')
@@ -804,7 +808,8 @@ function MessageFolder()
 			if ($row['id_member_to'] == $user_info['id'] && $context['folder'] != 'sent')
 			{
 				$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
-				$context['message_unread'][$row['id_pm']] = $row['is_read'] == 0;
+				$context['message_unread'][$row['id_pm']] = ($row['is_read'] & 1) == 0; // other bits can be used for other stuff but bit 0 (value 1) = message is read.
+				$context['message_can_unread'][$row['id_pm']] = $context['can_unread'] && (!$context['message_unread'][$row['id_pm']] || (!empty($pmID) && $pmID == $row['id_pm'])); // so message is unread, or it's the one we're looking at which hasn't been marked read yet
 
 				$row['labels'] = $row['labels'] == '' ? array() : explode(',', $row['labels']);
 				foreach ($row['labels'] as $v)
@@ -1009,6 +1014,37 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	$counter++;
 
 	return $output;
+}
+
+function MarkUnread()
+{
+	global $user_info;
+
+	checkSession('get');
+
+	$id_pm = isset($_GET['pmid']) ? (int) $_GET['pmid'] : 0;
+	if (empty($id_pm))
+		redirectexit('action=pm');
+
+	// is_read does multiple things, one per bit. Whether something is read is bit 0, i.e. value 1.
+	// We need to clear that bit and only that bit, AND only if it's set already.
+	wesql::query('
+		UPDATE {db_prefix}pm_recipients
+		SET is_read = is_read & 254
+		WHERE id_member = {int:id_member}
+			AND id_pm = {int:id_pm}
+			AND is_read & 1 = 1',
+		array(
+			'id_pm' => $id_pm,
+			'id_member' => $user_info['id'],
+		)
+	);
+
+	// If something wasn't marked as read, get the number of unread messages remaining.
+	if (wesql::affected_rows() > 0)
+		recalculateUnread($user_info['id']);
+
+	redirectexit('action=pm');
 }
 
 function MessageSearch()
@@ -2784,7 +2820,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 // Mark personal messages read.
 function markMessages($personal_messages = null, $label = null, $owner = null)
 {
-	global $user_info, $context;
+	global $user_info;
 
 	if ($owner === null)
 		$owner = $user_info['id'];
@@ -2805,47 +2841,50 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 
 	// If something wasn't marked as read, get the number of unread messages remaining.
 	if (wesql::affected_rows() > 0)
+		recalculateUnread($owner);
+}
+
+function recalculateUnread($owner)
+{
+	global $context, $user_info;
+
+	if ($owner == $user_info['id'])
+		foreach ($context['labels'] as $label)
+			$context['labels'][(int) $label['id']]['unread_messages'] = 0;
+
+	$result = wesql::query('
+		SELECT labels, COUNT(*) AS num
+		FROM {db_prefix}pm_recipients
+		WHERE id_member = {int:id_member}
+			AND NOT (is_read & 1 >= 1)
+			AND deleted = {int:is_not_deleted}
+		GROUP BY labels',
+		array(
+			'id_member' => $owner,
+			'is_not_deleted' => 0,
+		)
+	);
+	$total_unread = 0;
+	while ($row = wesql::fetch_assoc($result))
 	{
-		if ($owner == $user_info['id'])
-		{
-			foreach ($context['labels'] as $label)
-				$context['labels'][(int) $label['id']]['unread_messages'] = 0;
-		}
+		$total_unread += $row['num'];
 
-		$result = wesql::query('
-			SELECT labels, COUNT(*) AS num
-			FROM {db_prefix}pm_recipients
-			WHERE id_member = {int:id_member}
-				AND NOT (is_read & 1 >= 1)
-				AND deleted = {int:is_not_deleted}
-			GROUP BY labels',
-			array(
-				'id_member' => $owner,
-				'is_not_deleted' => 0,
-			)
-		);
-		$total_unread = 0;
-		while ($row = wesql::fetch_assoc($result))
-		{
-			$total_unread += $row['num'];
+		if ($owner != $user_info['id'])
+			continue;
 
-			if ($owner != $user_info['id'])
-				continue;
-
-			$this_labels = explode(',', $row['labels']);
-			foreach ($this_labels as $this_label)
-				$context['labels'][(int) $this_label]['unread_messages'] += $row['num'];
-		}
-		wesql::free_result($result);
-
-		// Need to store all this.
-		cache_put_data('labelCounts:' . $owner, $context['labels'], 720);
-		updateMemberData($owner, array('unread_messages' => $total_unread));
-
-		// If it was for the current member, reflect this in the $user_info array too.
-		if ($owner == $user_info['id'])
-			$user_info['unread_messages'] = $total_unread;
+		$this_labels = explode(',', $row['labels']);
+		foreach ($this_labels as $this_label)
+			$context['labels'][(int) $this_label]['unread_messages'] += $row['num'];
 	}
+	wesql::free_result($result);
+
+	// Need to store all this.
+	cache_put_data('labelCounts:' . $owner, $context['labels'], 720);
+	updateMemberData($owner, array('unread_messages' => $total_unread));
+
+	// If it was for the current member, reflect this in the $user_info array too.
+	if ($owner == $user_info['id'])
+		$user_info['unread_messages'] = $total_unread;
 }
 
 // This function handles adding, deleting and editing labels on messages.

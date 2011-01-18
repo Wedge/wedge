@@ -3938,7 +3938,7 @@ function setupMenuContext()
 				),
 			),
 			'pm' => array(
-				'title' => !$user_info['is_guest'] && $context['user']['unread_messages'] > 0 ? '<span style="color: red">' . $txt['pm_short'] . '</span>&nbsp;['. $context['user']['unread_messages'] . ']' : $txt['pm_short'],
+				'title' => !$user_info['is_guest'] && $context['user']['unread_messages'] > 0 ? '<span style="color: red">' . $txt['pm_short'] . '</span>' : $txt['pm_short'],
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'padding' => 16,
@@ -4096,7 +4096,7 @@ function setupMenuContext()
 	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($context['menu_buttons']['pm']))
 	{
 		$context['menu_buttons']['pm']['alttitle'] = $context['menu_buttons']['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
-		$context['menu_buttons']['pm']['title'] .= ' [<strong>' . $context['user']['unread_messages'] . '</strong>]';
+		$context['menu_buttons']['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
 	}
 }
 
