@@ -95,7 +95,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			wesql::free_result($result);
 
 			// Are we using registration approval?
-			if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2)
+			if ((!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($modSettings['approveAccountDeletion']))
 			{
 				// Update the amount of members awaiting approval - ignoring COPPA accounts, as you can't approve them until you get permission.
 				$result = wesql::query('
