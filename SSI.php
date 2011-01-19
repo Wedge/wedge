@@ -1040,10 +1040,10 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 			<table class="ssi_table cs1 cp0">
 				<tr>
 					<td class="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
-					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '" class="input_text" /></td>
+					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '"></td>
 				</tr><tr>
 					<td class="right"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
-					<td><input type="password" name="passwrd" id="passwrd" size="9" class="input_password" /></td>
+					<td><input type="password" name="passwrd" id="passwrd" size="9"></td>
 				</tr>';
 
 	// Open ID?
@@ -1052,7 +1052,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 					<td colspan="2" class="center"><strong>&mdash;', $txt['or'], '&mdash;</strong></td>
 				</tr><tr>
 					<td class="right"><label for="openid_url">', $txt['openid'], ':</label>&nbsp;</td>
-					<td><input type="text" name="openid_identifier" id="openid_url" class="input_text openid_login" size="17" /></td>
+					<td><input type="text" name="openid_identifier" id="openid_url" class="openid_login" size="17"></td>
 				</tr>';
 
 	echo '<tr>
@@ -1174,7 +1174,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '" />'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '">'
 		);
 	}
 
@@ -1326,7 +1326,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '" />'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
 		);
 	}
 
@@ -1499,7 +1499,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="advanced" value="0" /><input type="text" name="search" size="30" class="input_text" /> <input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
+			<input type="hidden" name="advanced" value="0" /><input type="text" name="search" size="30"> <input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
 		</form>';
 }
 

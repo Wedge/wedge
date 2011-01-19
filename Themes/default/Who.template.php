@@ -22,7 +22,7 @@ function template_main()
 
 		foreach ($context['show_methods'] as $value => $label)
 			echo '
-							<option value="', $value, '" ', $value == $context['show_by'] ? ' selected="selected"' : '', '>', $label, '</option>';
+							<option value="', $value, '" ', $value == $context['show_by'] ? ' selected' : '', '>', $label, '</option>';
 		echo '
 						</select>
 						<noscript>
@@ -103,7 +103,7 @@ function template_main()
 
 	foreach ($context['show_methods'] as $value => $label)
 		echo '
-						<option value="', $value, '" ', $value == $context['show_by'] ? ' selected="selected"' : '', '>', $label, '</option>';
+						<option value="', $value, '" ', $value == $context['show_by'] ? ' selected' : '', '>', $label, '</option>';
 	echo '
 					</select>
 					<noscript>

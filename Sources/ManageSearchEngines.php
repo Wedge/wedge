@@ -273,11 +273,11 @@ function ViewSpiders()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[]" value="%1$d" class="input_check" />',
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
 						'params' => array(
 							'id_spider' => false,
 						),
@@ -833,7 +833,7 @@ function SpiderStats()
 	else
 		foreach ($date_choices as $id => $text)
 			$date_select .= '
-			<option value="' . $id . '"' . ($current_date == $id ? ' selected="selected"' : '') . '>' . $text . '</option>';
+			<option value="' . $id . '"' . ($current_date == $id ? ' selected' : '') . '>' . $text . '</option>';
 
 	$date_select .= '
 		</select>

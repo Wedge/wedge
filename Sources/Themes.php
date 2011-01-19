@@ -2007,7 +2007,7 @@ function wedge_show_stylings(&$theme, &$style, $level, $current_theme_id, $curre
 	foreach ($style as $sty)
 	{
 		$intro = '&nbsp;' . str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
-		echo '<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $theme['id'] && $current_styling == $sty['dir'] ? ' selected="selected"' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
+		echo '<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $theme['id'] && $current_styling == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
 		if (!empty($sty['stylings']))
 			wedge_show_stylings($theme, $sty['stylings'], $level + 1, $current_theme_id, $current_styling);
 		$current++;

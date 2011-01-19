@@ -177,7 +177,7 @@ function template_main()
 			// Show a "select all" box for quick moderation?
 			if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
 				echo '
-					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" /></th>';
+					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
 
 			// If it's on in "image" mode, don't show anything but the column.
 			elseif (!empty($context['can_quick_mod']))
@@ -279,7 +279,7 @@ function template_main()
 					<td class="center moderation ', $color_class, '">';
 				if ($options['display_quick_mod'] == 1)
 					echo '
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />';
+						<input type="checkbox" name="topics[]" value="', $topic['id'], '">';
 				else
 				{
 					// Check permissions on each and show only the ones they are allowed to use.
@@ -328,7 +328,7 @@ function template_main()
 			if ($context['can_move'])
 			{
 					echo '
-						<select class="qaction" id="moveItTo" name="move_to" disabled="disabled">';
+						<select class="qaction" id="moveItTo" name="move_to" disabled>';
 
 					foreach ($context['move_to_boards'] as $category)
 					{
@@ -336,7 +336,7 @@ function template_main()
 							<optgroup label="', $category['name'], '">';
 						foreach ($category['boards'] as $board)
 								echo '
-								<option value="', $board['id'], '"', $board['selected'] ? ' selected="selected"' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
 						echo '
 							</optgroup>';
 					}

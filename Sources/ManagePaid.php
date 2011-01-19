@@ -799,7 +799,7 @@ function ViewSubscribedUsers()
 					'function' => create_function('$rowData', '
 						global $context, $txt, $scripturl;
 
-						return \'<input type="checkbox" name="delsub[\' . $rowData[\'id\'] . \']" class="input_check" />\';
+						return \'<input type="checkbox" name="delsub[\' . $rowData[\'id\'] . \']">\';
 					'),
 					'style' => 'text-align: center;',
 				),
@@ -828,7 +828,7 @@ function ViewSubscribedUsers()
 						' . sprintf($txt['view_users_subscribed'], $row['name']) . '
 					</we:title>
 					<div class="floatright">
-						<input type="text" name="sub_search" value="" class="input_text" />
+						<input type="text" name="sub_search" value="">
 						<input type="submit" name="ssearch" value="' . $txt['search_sub'] . '" class="button_submit" />
 					</div>
 				',

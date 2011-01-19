@@ -565,7 +565,7 @@ function wedgeAttachSelect(oOptions)
 
 	this.createFileSelector = function ()
 	{
-		var new_element = $('<input type="file" class="input_file" />').prependTo('#' + this.opts.file_container);
+		var new_element = $('<input type="file">').prependTo('#' + this.opts.file_container);
 		this.current_element = new_element[0];
 		this.prepareFileSelector(new_element[0]);
 	};

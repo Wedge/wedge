@@ -18,7 +18,7 @@ function template_modify_weights()
 						', $txt['search_weight_frequency'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($modSettings['search_weight_frequency']) ? '0' : $modSettings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($modSettings['search_weight_frequency']) ? '0' : $modSettings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -26,7 +26,7 @@ function template_modify_weights()
 						', $txt['search_weight_age'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($modSettings['search_weight_age']) ? '0' : $modSettings['search_weight_age'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($modSettings['search_weight_age']) ? '0' : $modSettings['search_weight_age'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -34,7 +34,7 @@ function template_modify_weights()
 						', $txt['search_weight_length'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($modSettings['search_weight_length']) ? '0' : $modSettings['search_weight_length'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($modSettings['search_weight_length']) ? '0' : $modSettings['search_weight_length'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -42,7 +42,7 @@ function template_modify_weights()
 						', $txt['search_weight_subject'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($modSettings['search_weight_subject']) ? '0' : $modSettings['search_weight_subject'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($modSettings['search_weight_subject']) ? '0' : $modSettings['search_weight_subject'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -50,7 +50,7 @@ function template_modify_weights()
 						', $txt['search_weight_first_message'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($modSettings['search_weight_first_message']) ? '0' : $modSettings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($modSettings['search_weight_first_message']) ? '0' : $modSettings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -58,7 +58,7 @@ function template_modify_weights()
 						', $txt['search_weight_sticky'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_sticky" id="weight6_val" value="', empty($modSettings['search_weight_sticky']) ? '0' : $modSettings['search_weight_sticky'], '" onchange="calculateNewValues()" size="3" class="input_text" /></span>
+						<span class="search_weight"><input type="text" name="search_weight_sticky" id="weight6_val" value="', empty($modSettings['search_weight_sticky']) ? '0' : $modSettings['search_weight_sticky'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_sticky'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -126,7 +126,7 @@ function template_select_search_method()
 				<fieldset class="search_settings floatleft">
 					<legend>', $txt['search_index'], '</legend>
 					<dl>
-						<dt><input type="radio" name="search_index" value=""', empty($modSettings['search_index']) ? ' checked="checked"' : '', ' class="input_radio" />
+						<dt><input type="radio" name="search_index" value=""', empty($modSettings['search_index']) ? ' checked' : '', '>
 						', $txt['search_index_none'], '
 						</dt>';
 
@@ -134,7 +134,7 @@ function template_select_search_method()
 	{
 		echo '
 						<dt>
-							<input type="radio" name="search_index" value="fulltext"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? ' checked="checked"' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); selectRadioByName(this.form.search_index, \'fulltext\');"': '', ' class="input_radio" />
+							<input type="radio" name="search_index" value="fulltext"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); selectRadioByName(this.form.search_index, \'fulltext\');"': '', '>
 							', $txt['search_method_fulltext_index'], '
 						</dt>
 						<dd>
@@ -158,7 +158,7 @@ function template_select_search_method()
 
 	echo '
 						<dt>
-							<input type="radio" name="search_index" value="custom"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom' ? ' checked="checked"' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); selectRadioByName(this.form.search_method, \'1\');"', ' class="input_radio" />
+							<input type="radio" name="search_index" value="custom"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); selectRadioByName(this.form.search_method, \'1\');"', '>
 							', $txt['search_index_custom'], '
 						</dt>
 						<dd>
@@ -187,7 +187,7 @@ function template_select_search_method()
 
 		echo '
 						<dt>
-							<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($modSettings['search_index']) && $modSettings['search_index'] == $api['setting_index'] ? ' checked="checked"' : '', ' class="input_radio" />
+							<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($modSettings['search_index']) && $modSettings['search_index'] == $api['setting_index'] ? ' checked' : '', '>
 							', $api['label'], '
 						</dt>';
 
@@ -203,8 +203,8 @@ function template_select_search_method()
 				</fieldset>
 				<fieldset class="search_settings floatright">
 				<legend>', $txt['search_method'], '</legend>
-					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($modSettings['search_force_index']) ? '' : ' checked="checked"', ' class="input_check" /><label for="search_force_index_check">', $txt['search_force_index'], '</label><br />
-					<input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"', empty($modSettings['search_match_words']) ? '' : ' checked="checked"', ' class="input_check" /><label for="search_match_words_check">', $txt['search_match_words'], '</label>
+					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($modSettings['search_force_index']) ? '' : ' checked', '><label for="search_force_index_check">', $txt['search_force_index'], '</label><br />
+					<input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"', empty($modSettings['search_match_words']) ? '' : ' checked', '><label for="search_match_words_check">', $txt['search_match_words'], '</label>
 				</fieldset>
 				<div class="clear">
 					<input type="submit" name="save" value="', $txt['search_method_save'], '" class="button_submit" />
@@ -235,7 +235,7 @@ function template_create_index()
 					<dd>
 						<select name="bytes_per_word" id="predefine_select">
 							<option value="2">', $txt['search_predefined_small'], '</option>
-							<option value="4" selected="selected">', $txt['search_predefined_moderate'], '</option>
+							<option value="4" selected>', $txt['search_predefined_moderate'], '</option>
 							<option value="5">', $txt['search_predefined_large'], '</option>
 						</select>
 					</dd>
@@ -331,14 +331,14 @@ function template_spider_edit()
 						<dfn>', $txt['spider_name_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="spider_name" value="', $context['spider']['name'], '" class="input_text" />
+						<input type="text" name="spider_name" value="', $context['spider']['name'], '">
 					</dd>
 					<dt>
 						<strong>', $txt['spider_agent'], ':</strong>
 						<dfn>', $txt['spider_agent_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="spider_agent" value="', $context['spider']['agent'], '" class="input_text" />
+						<input type="text" name="spider_agent" value="', $context['spider']['agent'], '">
 					</dd>
 					<dt>
 						<strong>', $txt['spider_ip_info'], ':</strong>
@@ -376,7 +376,7 @@ function template_show_spider_logs()
 			<div class="windowbg wrc">
 				<p>
 					', $txt['spider_logs_delete_older'], '
-					<input type="text" name="older" id="older" value="7" size="3" class="input_text" />
+					<input type="text" name="older" id="older" value="7" size="3">
 					', $txt['spider_logs_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />

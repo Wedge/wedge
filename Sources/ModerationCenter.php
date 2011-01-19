@@ -1724,7 +1724,7 @@ function ViewWarningTemplates()
 					'function' => create_function('$rowData', '
 						global $context, $txt, $scripturl;
 
-						return \'<input type="checkbox" name="deltpl[]" value="\' . $rowData[\'id_comment\'] . \'" class="input_check" />\';
+						return \'<input type="checkbox" name="deltpl[]" value="\' . $rowData[\'id_comment\'] . \'">\';
 					'),
 					'style' => 'text-align: center;',
 				),

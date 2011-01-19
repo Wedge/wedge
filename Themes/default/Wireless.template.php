@@ -178,19 +178,19 @@ function template_wap2_login()
 
 	echo '
 			<p class="windowbg">', $txt['username'], ':</p>
-			<p class="windowbg"><input type="text" name="user" size="10" class="input_text" /></p>
+			<p class="windowbg"><input type="text" name="user" size="10" /></p>
 			<p class="windowbg">', $txt['password'], ':</p>
-			<p class="windowbg"><input type="password" name="passwrd" size="10" class="input_password" /></p>';
+			<p class="windowbg"><input type="password" name="passwrd" size="10" /></p>';
 
 	// Open ID?
 	if (!empty($modSettings['enableOpenID']))
 		echo '
 			<p class="windowbg"><strong>&mdash;', $txt['or'], '&mdash;</strong></p>
 			<p class="windowbg">', $txt['openid'], ':</p>
-			<p class="windowbg"><input type="text" name="openid_identifier" class="input_text openid_login" size="17" /></p>';
+			<p class="windowbg"><input type="text" name="openid_identifier" class="openid_login" size="17" /></p>';
 
 	echo '
-			<p class="windowbg"><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="cookieneverexp" value="1" /></p>
+			<p class="windowbg"><input type="submit" value="', $txt['login'], '" class="submit" /><input type="hidden" name="cookieneverexp" value="1" /></p>
 			<p class="catbg">', $txt['wireless_navigation'], '</p>
 			<p class="windowbg">[0] <a href="', $scripturl, '?wap2" accesskey="0">', $txt['wireless_navigation_up'], '</a></p>
 		</form>';
@@ -221,13 +221,13 @@ function template_wap2_post()
 	{
 		echo '
 			<p class="windowbg"', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) ? ' style="color: #ff0000"' : '', '>
-				', $txt['username'], ': <input type="text" name="guestname" value="', $context['name'], '" class="input_text" />
+				', $txt['username'], ': <input type="text" name="guestname" value="', $context['name'], '" />
 			</p>';
 
 		if (empty($modSettings['guest_post_no_email']))
 			echo '
 			<p class="windowbg"', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' style="color: #ff0000"' : '', '>
-				', $txt['email'], ': <input type="text" name="email" value="', $context['email'], '" class="input_text" />
+				', $txt['email'], ': <input type="text" name="email" value="', $context['email'], '" />
 			</p>';
 	}
 
@@ -239,14 +239,14 @@ function template_wap2_post()
 
 	echo '
 			<p class="windowbg"', isset($context['post_error']['no_subject']) ? ' style="color: #ff0000"' : '', '>
-				', $txt['subject'], ': <input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' maxlength="80" class="input_text" />
+				', $txt['subject'], ': <input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' maxlength="80" />
 			</p>
 			<p class="windowbg"', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? ' style="color: #ff0000;"' : '', '>
 				', $txt['message'], ': <br />
 				<textarea name="message" id="message" rows="5" cols="20">', $context['message'], '</textarea>
 			</p>
 			<p class="windowbg">
-				<input type="submit" name="post" value="', $context['submit_label'], '" class="button_submit" />
+				<input type="submit" name="post" value="', $context['submit_label'], '" class="submit" />
 				<input type="hidden" name="icon" value="wireless" />
 				<input type="hidden" name="goback" value="', $context['back_to_topic'] || !empty($options['return_to_post']) ? '1' : '0', '" />
 				<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
@@ -270,10 +270,10 @@ function template_wap2_pm()
 					<p class="titlebg">', $txt['find_members'], '</p>
 					<p class="windowbg">
 						<strong>', $txt['wireless_pm_search_name'], ':</strong>
-						<input type="text" name="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" class="input_text" />', empty($_REQUEST['u']) ? '' : '
+						<input type="text" name="search" value="', isset($context['last_search']) ? $context['last_search'] : '', '" />', empty($_REQUEST['u']) ? '' : '
 						<input type="hidden" name="u" value="' . $_REQUEST['u'] . '" />', '
 					</p>
-					<p class="windowbg"><input type="submit" value="', $txt['search'], '" class="button_submit" /></p>
+					<p class="windowbg"><input type="submit" value="', $txt['search'], '" class="submit" /></p>
 				</form>';
 		if (!empty($context['last_search']))
 		{
@@ -364,7 +364,7 @@ function template_wap2_pm()
 						<textarea name="message" id="message" rows="5" cols="20">', $context['message'], '</textarea>
 					</p>
 					<p class="windowbg">
-						<input type="submit" value="', $txt['send_message'], '" class="button_submit" />
+						<input type="submit" value="', $txt['send_message'], '" class="submit" />
 						<input type="hidden" name="outbox" value="', $context['copy_to_outbox'] ? '1' : '0', '" />
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 						<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
@@ -551,17 +551,17 @@ function template_wap2_ban_edit()
 		<p class="catbg">', $context['ban']['is_new'] ? $txt['ban_add_new'] : $txt['ban_edit'] . ' \'' . $context['ban']['name'] . '\'', '</p>
 		<p class="windowbg">
 			<strong>', $txt['ban_name'], ': </strong>
-			<input type="text" name="ban_name" value="', $context['ban']['name'], '" size="20" class="input_text" />
+			<input type="text" name="ban_name" value="', $context['ban']['name'], '" size="20" />
 		</p>
 		<p class="windowbg">
 			<strong>', $txt['ban_expiration'], ': </strong><br />
-			<input type="radio" name="expiration" value="never" ', $context['ban']['expiration']['status'] == 'never' ? ' checked="checked"' : '', ' class="input_radio" /> ', $txt['never'], '<br />
-			<input type="radio" name="expiration" value="one_day" ', $context['ban']['expiration']['status'] == 'still_active_but_we_re_counting_the_days' ? ' checked="checked"' : '', ' class="input_radio" /> ', $txt['ban_will_expire_within'], ' <input type="text" name="expire_date" size="3" value="', $context['ban']['expiration']['days'], '" /> ', $txt['ban_days'], '<br />
-			<input type="radio" name="expiration" value="expired" ', $context['ban']['expiration']['status'] == 'expired' ? ' checked="checked"' : '', ' class="input_radio" /> ', $txt['ban_expired'], '<br />
+			<input type="radio" name="expiration" value="never" ', $context['ban']['expiration']['status'] == 'never' ? ' checked="checked"' : '', ' /> ', $txt['never'], '<br />
+			<input type="radio" name="expiration" value="one_day" ', $context['ban']['expiration']['status'] == 'still_active_but_we_re_counting_the_days' ? ' checked="checked"' : '', ' /> ', $txt['ban_will_expire_within'], ' <input type="text" name="expire_date" size="3" value="', $context['ban']['expiration']['days'], '" /> ', $txt['ban_days'], '<br />
+			<input type="radio" name="expiration" value="expired" ', $context['ban']['expiration']['status'] == 'expired' ? ' checked="checked"' : '', ' /> ', $txt['ban_expired'], '<br />
 		</p>
 		<p class="windowbg">
 			<strong>', $txt['ban_reason'], ': </strong>
-			<input type="text" name="reason" value="', $context['ban']['reason'], '" size="20" class="input_text" />
+			<input type="text" name="reason" value="', $context['ban']['reason'], '" size="20" />
 		</p>
 		<p class="windowbg">
 			<strong>', $txt['ban_notes'], ': </strong><br />
@@ -569,10 +569,10 @@ function template_wap2_ban_edit()
 		</p>
 		<p class="windowbg">
 			<strong>', $txt['ban_restriction'], ': </strong><br />
-			<input type="checkbox" name="full_ban" value="1"', $context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['ban_full_ban'], '<br />
-			<input type="checkbox" name="cannot_post" value="1"', $context['ban']['cannot']['post'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['ban_cannot_post'], '<br />
-			<input type="checkbox" name="cannot_register" value="1"', $context['ban']['cannot']['register'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['ban_cannot_register'], '<br />
-			<input type="checkbox" name="cannot_login" value="1"', $context['ban']['cannot']['login'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['ban_cannot_login'], '
+			<input type="checkbox" name="full_ban" value="1"', $context['ban']['cannot']['access'] ? ' checked="checked"' : '', ' /> ', $txt['ban_full_ban'], '<br />
+			<input type="checkbox" name="cannot_post" value="1"', $context['ban']['cannot']['post'] ? ' checked="checked"' : '', ' /> ', $txt['ban_cannot_post'], '<br />
+			<input type="checkbox" name="cannot_register" value="1"', $context['ban']['cannot']['register'] ? ' checked="checked"' : '', ' /> ', $txt['ban_cannot_register'], '<br />
+			<input type="checkbox" name="cannot_login" value="1"', $context['ban']['cannot']['login'] ? ' checked="checked"' : '', ' /> ', $txt['ban_cannot_login'], '
 		</p>';
 
 	if (!empty($context['ban_suggestions']))
@@ -580,28 +580,28 @@ function template_wap2_ban_edit()
 		echo '
 		<p class="titlebg">', $txt['ban_triggers'], '</p>
 		<p class="windowbg">
-			<input type="checkbox" name="ban_suggestion[]" value="main_ip" class="input_check" /> <strong>', $txt['wireless_ban_ip'], ':</strong><br />
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="20" class="input_text" />
+			<input type="checkbox" name="ban_suggestion[]" value="main_ip" /> <strong>', $txt['wireless_ban_ip'], ':</strong><br />
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="20" />
 		</p>';
 
 		if (empty($modSettings['disableHostnameLookup']))
 			echo '
 		<p class="windowbg">
-			<input type="checkbox" name="ban_suggestion[]" value="hostname" class="input_check" /> <strong>', $txt['wireless_ban_hostname'], ':</strong><br />
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="hostname" value="', $context['ban_suggestions']['hostname'], '" size="20" class="input_text" />
+			<input type="checkbox" name="ban_suggestion[]" value="hostname" /> <strong>', $txt['wireless_ban_hostname'], ':</strong><br />
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="hostname" value="', $context['ban_suggestions']['hostname'], '" size="20" />
 		<p>';
 
 		echo '
 		<p class="windowbg">
-			<input type="checkbox" name="ban_suggestion[]" value="email" class="input_check" /> <strong>', $txt['wireless_ban_email'], ':</strong><br />
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="email" value="', $context['ban_suggestions']['email'], '" size="20" class="input_text" />
+			<input type="checkbox" name="ban_suggestion[]" value="email" /> <strong>', $txt['wireless_ban_email'], ':</strong><br />
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="email" value="', $context['ban_suggestions']['email'], '" size="20" />
 		</p>
 		<p class="windowbg">
-			<input type="checkbox" name="ban_suggestion[]" value="user" class="input_check" /> <strong>', $txt['ban_on_username'], ':</strong><br />';
+			<input type="checkbox" name="ban_suggestion[]" value="user" /> <strong>', $txt['ban_on_username'], ':</strong><br />';
 
 		if (empty($context['ban_suggestions']['member']['id']))
 			echo '
-			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="user" value="" size="20" class="input_text" />';
+			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="user" value="" size="20" />';
 		else
 			echo '
 			&nbsp;&nbsp;&nbsp;&nbsp;', $context['ban_suggestions']['member']['name'], '
@@ -613,7 +613,7 @@ function template_wap2_ban_edit()
 
 	echo '
 
-		<p class="windowbg"><input type="submit" name="', $context['ban']['is_new'] ? 'add_ban' : 'modify_ban', '" value="', $context['ban']['is_new'] ? $txt['ban_add'] : $txt['ban_modify'], '" class="button_submit" /></p>
+		<p class="windowbg"><input type="submit" name="', $context['ban']['is_new'] ? 'add_ban' : 'modify_ban', '" value="', $context['ban']['is_new'] ? $txt['ban_add'] : $txt['ban_modify'], '" class="submit" /></p>
 		<p class="titlebg">', $txt['wireless_additional_info'], '</p>
 		<p class="windowbg"><a href="', $scripturl, '?wap2">', $txt['wireless_error_home'], '.</a></p>';
 

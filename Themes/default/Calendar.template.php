@@ -28,7 +28,7 @@ function template_main()
 	// Show a select box with all the months.
 	foreach ($txt['months'] as $number => $month)
 		echo '
-					<option value="', $number, '"', $number == $context['current_month'] ? ' selected="selected"' : '', '>', $month, '</option>';
+					<option value="', $number, '"', $number == $context['current_month'] ? ' selected' : '', '>', $month, '</option>';
 	echo '
 				</select>
 				<select name="year">';
@@ -36,7 +36,7 @@ function template_main()
 	// Show a link for every year.....
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
 		echo '
-					<option value="', $year, '"', $year == $context['current_year'] ? ' selected="selected"' : '', '>', $year, '</option>';
+					<option value="', $year, '"', $year == $context['current_year'] ? ' selected' : '', '>', $year, '</option>';
 	echo '
 				</select>
 				<input type="submit" class="button_submit" value="', $txt['view'], '" />';
@@ -115,7 +115,7 @@ function template_event_post()
 				<div class="windowbg roundframe">
 					<fieldset id="event_main">
 						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', '>', $txt['calendar_event_title'], '</span></legend>
-						<input type="text" name="evtitle" maxlength="80" size="70" value="', $context['event']['title'], '" class="input_text" />
+						<input type="text" name="evtitle" maxlength="80" size="70" value="', $context['event']['title'], '">
 						<div class="smalltext">
 							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
 							<select name="year" onchange="generateDays();">';
@@ -123,7 +123,7 @@ function template_event_post()
 	// Show a list of all the years we allow...
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
 		echo '
-								<option value="', $year, '"', $year == $context['event']['year'] ? ' selected="selected"' : '', '>', $year, '&nbsp;</option>';
+								<option value="', $year, '"', $year == $context['event']['year'] ? ' selected' : '', '>', $year, '&nbsp;</option>';
 
 	echo '
 							</select>
@@ -133,7 +133,7 @@ function template_event_post()
 	// There are 12 months per year - ensure that they all get listed.
 	for ($month = 1; $month <= 12; $month++)
 		echo '
-								<option value="', $month, '"', $month == $context['event']['month'] ? ' selected="selected"' : '', '>', $txt['months'][$month], '&nbsp;</option>';
+								<option value="', $month, '"', $month == $context['event']['month'] ? ' selected' : '', '>', $txt['months'][$month], '&nbsp;</option>';
 
 	echo '
 							</select>
@@ -143,7 +143,7 @@ function template_event_post()
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
 	for ($day = 1; $day <= $context['event']['last_day']; $day++)
 		echo '
-								<option value="', $day, '"', $day == $context['event']['day'] ? ' selected="selected"' : '', '>', $day, '&nbsp;</option>';
+								<option value="', $day, '"', $day == $context['event']['day'] ? ' selected' : '', '>', $day, '&nbsp;</option>';
 
 	echo '
 							</select>
@@ -167,7 +167,7 @@ function template_event_post()
 
 		for ($days = 1; $days <= $modSettings['cal_maxspan']; $days++)
 			echo '
-										<option value="', $days, '"', $context['event']['span'] == $days ? ' selected="selected"' : '', '>', $days, '&nbsp;</option>';
+										<option value="', $days, '"', $context['event']['span'] == $days ? ' selected' : '', '>', $days, '&nbsp;</option>';
 
 		echo '
 									</select>
@@ -180,7 +180,7 @@ function template_event_post()
 		echo '
 								<li>
 									', $txt['calendar_link_event'], '
-									<input type="checkbox" style="vertical-align: middle;" class="input_check" name="link_to_board" checked="checked" onclick="toggleLinked(this.form);" />
+									<input type="checkbox" style="vertical-align: middle" name="link_to_board" checked onclick="toggleLinked(this.form);">
 								</li>
 								<li>
 									', $txt['calendar_post_in'], '
@@ -191,7 +191,7 @@ function template_event_post()
 										<optgroup label="', $category['name'], '">';
 			foreach ($category['boards'] as $board)
 				echo '
-											<option value="', $board['id'], '"', $board['selected'] ? ' selected="selected"' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
+											<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
 			echo '
 										</optgroup>';
 		}

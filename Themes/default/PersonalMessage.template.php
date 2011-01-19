@@ -378,7 +378,7 @@ function template_folder()
 
 			if (empty($context['display_mode']))
 				echo '
-					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\')[0].checked = this.checked;" class="input_check" /></li>';
+					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\')[0].checked = this.checked;"></li>';
 
 			echo '
 				</ul>
@@ -431,13 +431,13 @@ function template_folder()
 					echo '
 					<select name="pm_actions[', $message['id'], ']" onchange="if (this.options[this.selectedIndex].value) form.submit();">
 						<option value="">', $txt['pm_msg_label_title'], ':</option>
-						<option value="" disabled="disabled">---------------</option>';
+						<option value="" disabled>---------------</option>';
 
 					// Are there any labels which can be added to this?
 					if (!$message['fully_labeled'])
 					{
 						echo '
-						<option value="" disabled="disabled">', $txt['pm_msg_label_apply'], ':</option>';
+						<option value="" disabled>', $txt['pm_msg_label_apply'], ':</option>';
 						foreach ($context['labels'] as $label)
 							if (!isset($message['labels'][$label['id']]))
 								echo '
@@ -447,7 +447,7 @@ function template_folder()
 					if (!empty($message['labels']) && (count($message['labels']) > 1 || !isset($message['labels'][-1])))
 					{
 						echo '
-						<option value="" disabled="disabled">', $txt['pm_msg_label_remove'], ':</option>';
+						<option value="" disabled>', $txt['pm_msg_label_remove'], ':</option>';
 						foreach ($message['labels'] as $label)
 							echo '
 							<option value="', $label['id'], '">&nbsp;', $label['name'], '</option>';
@@ -535,7 +535,7 @@ function template_subject_list()
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
-					<option value="', $display_mode, '"', ($context['display_mode'] == $display_mode ? ' selected="selected"' : ''), '>', $display_desc, '</option>';
+					<option value="', $display_mode, '"', ($context['display_mode'] == $display_mode ? ' selected' : ''), '>', $display_desc, '</option>';
 
 	echo '
 				</select></span>
@@ -547,7 +547,7 @@ function template_subject_list()
 				<a href="', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a>
 			</th>
 			<th style="text-align: center; width: 4%" class="last_th">
-				<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />
+				<input type="checkbox" onclick="invertAll(this, this.form);">
 			</th>
 		</tr>
 	</thead>
@@ -585,7 +585,7 @@ function template_subject_list()
 			<td>', $message['time'], '</td>
 			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*" />' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ($scripturl . '?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" />' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
-			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked="checked"' : '', ' onclick="if ($(\'#deletedisplay', $message['id'], '\').length) $(\'#deletedisplay', $message['id'], '\')[0].checked = this.checked;" class="input_check" /></td>
+			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked' : '', ' onclick="if ($(\'#deletedisplay', $message['id'], '\').length) $(\'#deletedisplay', $message['id'], '\')[0].checked = this.checked;"></td>
 		</tr>';
 		$next_alternate = !$next_alternate;
 	}
@@ -604,16 +604,16 @@ function template_subject_list()
 			echo '
 				<select name="pm_action" onchange="if (this.options[this.selectedIndex].value) this.form.submit();" onfocus="loadLabelChoices();">
 					<option value="">', $txt['pm_sel_label_title'], ':</option>
-					<option value="" disabled="disabled">---------------</option>';
+					<option value="" disabled>---------------</option>';
 
 			echo '
-					<option value="" disabled="disabled">', $txt['pm_msg_label_apply'], ':</option>';
+					<option value="" disabled>', $txt['pm_msg_label_apply'], ':</option>';
 			foreach ($context['labels'] as $label)
 				if ($label['id'] != $context['current_label_id'])
 					echo '
 					<option value="add_', $label['id'], '">&nbsp;', $label['name'], '</option>';
 			echo '
-					<option value="" disabled="disabled">', $txt['pm_msg_label_remove'], ':</option>';
+					<option value="" disabled>', $txt['pm_msg_label_remove'], ':</option>';
 			foreach ($context['labels'] as $label)
 				echo '
 					<option value="rem_', $label['id'], '">&nbsp;', $label['name'], '</option>';
@@ -667,7 +667,7 @@ function template_search()
 			<div class="roundframe">
 				<div id="search_term_input">
 					<strong>', $txt['pm_search_text'], ':</strong>
-					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="input_text" />
+					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40">
 					<input type="submit" name="submit" value="', $txt['pm_search_go'], '" class="button_submit" />
 				</div>
 				<a href="', $scripturl, '?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
@@ -685,7 +685,7 @@ function template_search()
 				<input type="hidden" name="advanced" value="1" />
 				<span class="enhanced">
 					<strong>', $txt['pm_search_text'], ':</strong>
-					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="input_text" />';
+					<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40">';
 
 		add_js('
 	if (document.forms.searchform.search.value.indexOf("%u") != -1)
@@ -693,13 +693,13 @@ function template_search()
 
 		echo '
 					<select name="searchtype">
-						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['pm_search_match_all'], '</option>
-						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected="selected"' : '', '>', $txt['pm_search_match_any'], '</option>
+						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_all'], '</option>
+						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_any'], '</option>
 					</select>
 				</span>
 				<dl id="search_options">
 					<dt>', $txt['pm_search_user'], ':</dt>
-					<dd><input type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40" class="input_text" /></dd>
+					<dd><input type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
 					<dt>', $txt['pm_search_order'], ':</dt>
 					<dd>
 						<select name="sort">
@@ -710,11 +710,11 @@ function template_search()
 					</dd>
 					<dt class="options">', $txt['pm_search_options'], ':</dt>
 					<dd class="options">
-						<label for="show_complete"><input type="checkbox" name="show_complete" id="show_complete" value="1"', !empty($context['search_params']['show_complete']) ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_search_show_complete'], '</label><br />
-						<label for="subject_only"><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_search_subject_only'], '</label>
+						<label for="show_complete"><input type="checkbox" name="show_complete" id="show_complete" value="1"', !empty($context['search_params']['show_complete']) ? ' checked' : '', '> ', $txt['pm_search_show_complete'], '</label><br />
+						<label for="subject_only"><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['pm_search_subject_only'], '</label>
 					</dd>
 					<dt class="between">', $txt['pm_search_post_age'], ':</dt>
-					<dd>', $txt['pm_search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="5" class="input_text" />&nbsp;', $txt['pm_search_between_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="5" class="input_text" /> ', $txt['pm_search_between_days'], '</dd>
+					<dd>', $txt['pm_search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="5">&nbsp;', $txt['pm_search_between_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="5"> ', $txt['pm_search_between_days'], '</dd>
 				</dl>';
 		if (!$context['currently_using_labels'])
 			echo '
@@ -738,14 +738,14 @@ function template_search()
 			foreach ($context['search_labels'] as $label)
 				echo '
 					<li>
-						<label for="searchlabel_', $label['id'], '"><input type="checkbox" id="searchlabel_', $label['id'], '" name="searchlabel[', $label['id'], ']" value="', $label['id'], '" ', $label['checked'] ? 'checked="checked"' : '', ' class="input_check" />
+						<label for="searchlabel_', $label['id'], '"><input type="checkbox" id="searchlabel_', $label['id'], '" name="searchlabel[', $label['id'], ']" value="', $label['id'], '"', $label['checked'] ? ' checked' : '', '>
 						', $label['name'], '</label>
 					</li>';
 
 			echo '
 				</ul>
 				<p>
-					<span class="floatleft"><input type="checkbox" name="all" id="check_all" value="" ', $context['check_all'] ? 'checked="checked"' : '', ' onclick="invertAll(this, this.form, \'searchlabel\');" class="input_check" /><em> <label for="check_all">', $txt['check_all'], '</label></em></span>
+					<span class="floatleft"><input type="checkbox" name="all" id="check_all" value=""', $context['check_all'] ? ' checked' : '', ' onclick="invertAll(this, this.form, \'searchlabel\');"><em> <label for="check_all">', $txt['check_all'], '</label></em></span>
 					<input type="submit" name="submit" value="', $txt['pm_search_go'], '" class="button_submit floatright" />
 				</p><br class="clear" />
 			</div>
@@ -946,7 +946,7 @@ function template_send()
 	echo '
 				<dd id="pm_to" class="clear_right">
 					<div id="to_item_list_container"></div>
-					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />';
+					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">';
 
 	// A link to add BCC
 	echo '
@@ -960,7 +960,7 @@ function template_send()
 				</dt>
 				<dd id="bcc_div2">
 					<div id="bcc_item_list_container"></div>
-					<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px;" class="input_text" />
+					<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">
 				</dd>';
 
 	// The subject of the PM.
@@ -988,7 +988,7 @@ function template_send()
 	// Send, Preview, spellcheck buttons.
 	echo '
 			<p id="shortcuts">
-				<label for="outbox"><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked="checked"' : '', ' class="input_check" /> ', $txt['pm_save_outbox'], '</label>
+				<label for="outbox"><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked' : '', '> ', $txt['pm_save_outbox'], '</label>
 				<br /><span class="smalltext">', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '</span>
 			</p>
 			<p id="post_confirm_strip">
@@ -1089,7 +1089,7 @@ function template_prune()
 			<h3>', $txt['pm_prune'], '</h3>
 		</div>
 		<div class="windowbg wrc">
-			<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14" class="input_text" /> ', $txt['pm_prune_desc2'], '</p>
+			<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14"> ', $txt['pm_prune_desc2'], '</p>
 			<div class="righttext">
 				<input type="submit" value="', $txt['delete'], '" class="button_submit" />
 			</div>
@@ -1121,7 +1121,7 @@ function template_labels()
 
 	if (count($context['labels']) > 2)
 		echo '
-					<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" />';
+					<input type="checkbox" onclick="invertAll(this, this.form);">';
 
 	echo '
 				</th>
@@ -1145,9 +1145,9 @@ function template_labels()
 			echo '
 			<tr class="', $alternate ? 'windowbg2' : 'windowbg', '">
 				<td>
-					<input type="text" name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30" class="input_text" />
+					<input type="text" name="label_name[', $label['id'], ']" value="', $label['name'], '" size="30" maxlength="30">
 				</td>
-				<td style="width: 4%" class="center"><input type="checkbox" class="input_check" name="delete_label[', $label['id'], ']" /></td>
+				<td style="width: 4%" class="center"><input type="checkbox" name="delete_label[', $label['id'], ']"></td>
 			</tr>';
 
 			$alternate = !$alternate;
@@ -1177,7 +1177,7 @@ function template_labels()
 					<strong><label for="add_label">', $txt['pm_label_name'], '</label>:</strong>
 				</dt>
 				<dd>
-					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30" class="input_text" />
+					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30">
 				</dd>
 			</dl>
 			<div class="righttext">
@@ -1278,7 +1278,7 @@ function template_rules()
 
 	if (!empty($context['rules']))
 		echo '
-					<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />';
+					<input type="checkbox" onclick="invertAll(this, this.form);">';
 
 	echo '
 				</th>
@@ -1303,7 +1303,7 @@ function template_rules()
 					<a href="', $scripturl, '?action=pm;sa=manrules;add;rid=', $rule['id'], '">', $rule['name'], '</a>
 				</td>
 				<td style="width: 4%" class="center">
-					<input type="checkbox" name="delrule[', $rule['id'], ']" class="input_check" />
+					<input type="checkbox" name="delrule[', $rule['id'], ']">
 				</td>
 			</tr>';
 		$alternate = !$alternate;
@@ -1357,7 +1357,7 @@ function template_add_rule()
 
 		criteriaNum++;
 
-		$("#criteriaAddHere").append(\'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value="" class="input_text" /><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
+		$("#criteriaAddHere").append(\'<br /><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
 
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
@@ -1503,7 +1503,7 @@ function template_add_rule()
 					<dfn>', $txt['pm_rule_name_desc'], '</dfn>
 				</dt>
 				<dd class="floatleft">
-					<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50" class="input_text" />
+					<input type="text" name="rule_name" value="', empty($context['rule']['name']) ? $txt['pm_rule_name_default'] : $context['rule']['name'], '" size="50">
 				</dd>
 			</dl>
 			<fieldset>
@@ -1524,14 +1524,14 @@ function template_add_rule()
 		echo '
 				<select name="ruletype[', $k, ']" id="ruletype', $k, '" onchange="updateRuleDef(', $k, '); rebuildRuleDesc();">
 					<option value="">', $txt['pm_rule_criteria_pick'], ':</option>
-					<option value="mid" ', $criteria['t'] == 'mid' ? 'selected="selected"' : '', '>', $txt['pm_rule_mid'], '</option>
-					<option value="gid" ', $criteria['t'] == 'gid' ? 'selected="selected"' : '', '>', $txt['pm_rule_gid'], '</option>
-					<option value="sub" ', $criteria['t'] == 'sub' ? 'selected="selected"' : '', '>', $txt['pm_rule_sub'], '</option>
-					<option value="msg" ', $criteria['t'] == 'msg' ? 'selected="selected"' : '', '>', $txt['pm_rule_msg'], '</option>
-					<option value="bud" ', $criteria['t'] == 'bud' ? 'selected="selected"' : '', '>', $txt['pm_rule_bud'], '</option>
+					<option value="mid"', $criteria['t'] == 'mid' ? ' selected' : '', '>', $txt['pm_rule_mid'], '</option>
+					<option value="gid"', $criteria['t'] == 'gid' ? ' selected' : '', '>', $txt['pm_rule_gid'], '</option>
+					<option value="sub"', $criteria['t'] == 'sub' ? ' selected' : '', '>', $txt['pm_rule_sub'], '</option>
+					<option value="msg"', $criteria['t'] == 'msg' ? ' selected' : '', '>', $txt['pm_rule_msg'], '</option>
+					<option value="bud"', $criteria['t'] == 'bud' ? ' selected' : '', '>', $txt['pm_rule_bud'], '</option>
 				</select>
 				<span id="defdiv', $k, '" ', !in_array($criteria['t'], array('gid', 'bud')) ? '' : 'style="display: none;"', '>
-					<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '" class="input_text" />
+					<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '">
 				</span>
 				<span id="defseldiv', $k, '" ', $criteria['t'] == 'gid' ? '' : 'style="display: none;"', '>
 					<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">
@@ -1539,7 +1539,7 @@ function template_add_rule()
 
 		foreach ($context['groups'] as $id => $group)
 			echo '
-						<option value="', $id, '" ', $criteria['t'] == 'gid' && $criteria['v'] == $id ? 'selected="selected"' : '', '>', $group, '</option>';
+						<option value="', $id, '"', $criteria['t'] == 'gid' && $criteria['v'] == $id ? ' selected' : '', '>', $group, '</option>';
 		echo '
 					</select>
 				</span>';
@@ -1557,8 +1557,8 @@ function template_add_rule()
 				<br /><br />
 				', $txt['pm_rule_logic'], ':
 				<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
-					<option value="and" ', $context['rule']['logic'] == 'and' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_and'], '</option>
-					<option value="or" ', $context['rule']['logic'] == 'or' ? 'selected="selected"' : '', '>', $txt['pm_rule_logic_or'], '</option>
+					<option value="and"', $context['rule']['logic'] == 'and' ? ' selected' : '', '>', $txt['pm_rule_logic_and'], '</option>
+					<option value="or"', $context['rule']['logic'] == 'or' ? ' selected' : '', '>', $txt['pm_rule_logic_or'], '</option>
 				</select>
 			</fieldset>
 			<fieldset>
@@ -1579,8 +1579,8 @@ function template_add_rule()
 		echo '
 				<select name="acttype[', $k, ']" id="acttype', $k, '" onchange="updateActionDef(', $k, '); rebuildRuleDesc();">
 					<option value="">', $txt['pm_rule_sel_action'], ':</option>
-					<option value="lab" ', $action['t'] == 'lab' ? 'selected="selected"' : '', '>', $txt['pm_rule_label'], '</option>
-					<option value="del" ', $action['t'] == 'del' ? 'selected="selected"' : '', '>', $txt['pm_rule_delete'], '</option>
+					<option value="lab"', $action['t'] == 'lab' ? ' selected' : '', '>', $txt['pm_rule_label'], '</option>
+					<option value="del"', $action['t'] == 'del' ? ' selected' : '', '>', $txt['pm_rule_delete'], '</option>
 				</select>
 				<span id="labdiv', $k, '">
 					<select name="labdef[', $k, ']" id="labdef', $k, '" onchange="rebuildRuleDesc();">
@@ -1589,7 +1589,7 @@ function template_add_rule()
 		foreach ($context['labels'] as $label)
 			if ($label['id'] != -1)
 				echo '
-						<option value="', ($label['id'] + 1), '" ', $action['t'] == 'lab' && $action['v'] == $label['id'] ? 'selected="selected"' : '', '>', $label['name'], '</option>';
+						<option value="', ($label['id'] + 1), '"', $action['t'] == 'lab' && $action['v'] == $label['id'] ? ' selected' : '', '>', $label['name'], '</option>';
 
 		echo '
 					</select>

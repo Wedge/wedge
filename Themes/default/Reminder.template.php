@@ -16,7 +16,7 @@ function template_main()
 				<p class="smalltext centertext">', $txt['password_reminder_desc'], '</p>
 				<dl>
 					<dt>', $txt['user_email'], ':</dt>
-					<dd><input type="text" name="user" size="30" class="input_text" /></dd>
+					<dd><input type="text" name="user" size="30"></dd>
 				</dl>
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="button_submit" /></p>
 			</div>
@@ -39,11 +39,11 @@ function template_reminder_pick()
 			<div class="roundframe">
 				<p><strong>', $txt['authentication_options'], ':</strong></p>
 				<p>
-					<input type="radio" name="reminder_type" id="reminder_type_email" value="email" checked="checked" class="input_radio" /></dt>
+					<input type="radio" name="reminder_type" id="reminder_type_email" value="email" checked></dt>
 					<label for="reminder_type_email">', $txt['authentication_' . $context['account_type'] . '_email'], '</label></dd>
 				</p>
 				<p>
-					<input type="radio" name="reminder_type" id="reminder_type_secret" value="secret" class="input_radio" />
+					<input type="radio" name="reminder_type" id="reminder_type_secret" value="secret">
 					<label for="reminder_type_secret">', $txt['authentication_' . $context['account_type'] . '_secret'], '</label>
 				</p>
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="button_submit" /></p>
@@ -83,14 +83,14 @@ function template_set_password()
 				<dl>
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
-						<input type="password" name="passwrd1" id="smf_autov_pwmain" size="22" class="input_password" />
+						<input type="password" name="passwrd1" id="smf_autov_pwmain" size="22">
 						<span id="smf_autov_pwmain_div" style="display: none;">
 							<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
-						<input type="password" name="passwrd2" id="smf_autov_pwverify" size="22" class="input_password" />
+						<input type="password" name="passwrd2" id="smf_autov_pwverify" size="22">
 						<span id="smf_autov_pwverify_div" style="display: none;">
 							<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
 						</span>
@@ -134,20 +134,20 @@ function template_ask()
 					<dt>', $txt['secret_question'], ':</dt>
 					<dd>', $context['secret_question'], '</dd>
 					<dt>', $txt['secret_answer'], ':</dt>
-					<dd><input type="text" name="secret_answer" size="22" class="input_text" /></dd>';
+					<dd><input type="text" name="secret_answer" size="22"></dd>';
 
 	if ($context['account_type'] == 'password')
 		echo '
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
-						<input type="password" name="passwrd1" id="smf_autov_pwmain" size="22" class="input_password" />
+						<input type="password" name="passwrd1" id="smf_autov_pwmain" size="22">
 						<span id="smf_autov_pwmain_div" style="display: none;">
 							<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
-						<input type="password" name="passwrd2" id="smf_autov_pwverify" size="22" class="input_password" />
+						<input type="password" name="passwrd2" id="smf_autov_pwverify" size="22">
 						<span id="smf_autov_pwverify_div" style="display: none;">
 							<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif" alt="*" />
 						</span>

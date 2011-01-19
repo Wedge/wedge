@@ -611,13 +611,13 @@ function ViewMemberlist()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
 						global $user_info;
 
-						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'" class="input_check" \' . ($rowData[\'id_member\'] == $user_info[\'id\'] || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \'disabled="disabled"\' : \'\') . \' />\';
+						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == $user_info[\'id\'] || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
 					'),
 					'class' => 'windowbg',
 					'style' => 'text-align: center',
@@ -778,8 +778,8 @@ function MembersAwaitingActivation()
 
 	// Create an option list for actions allowed to be done with selected members.
 	$allowed_actions = '
-			<option selected="selected" value="">' . $txt['admin_browse_with_selected'] . ':</option>
-			<option value="" disabled="disabled">-----------------------------</option>';
+			<option selected value="">' . $txt['admin_browse_with_selected'] . ':</option>
+			<option value="" disabled>-----------------------------</option>';
 	foreach ($context['allowed_actions'] as $key => $desc)
 		$allowed_actions .= '
 			<option value="' . $key . '">' . $desc . '</option>';
@@ -958,11 +958,11 @@ function MembersAwaitingActivation()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="todoAction[]" value="%1$d" class="input_check" />',
+						'format' => '<input type="checkbox" name="todoAction[]" value="%1$d">',
 						'params' => array(
 							'id_member' => false,
 						),
@@ -1017,7 +1017,7 @@ function MembersAwaitingActivation()
 			<select name="filter" onchange="this.form.submit();">';
 		foreach ($context['available_filters'] as $filter)
 			$filterOptions .= '
-				<option value="' . $filter['type'] . '"' . ($filter['selected'] ? ' selected="selected"' : '') . '>' . $filter['desc'] . ' - ' . $filter['amount'] . ' ' . ($filter['amount'] == 1 ? $txt['user'] : $txt['users']) . '</option>';
+				<option value="' . $filter['type'] . '"' . ($filter['selected'] ? ' selected' : '') . '>' . $filter['desc'] . ' - ' . $filter['amount'] . ' ' . ($filter['amount'] == 1 ? $txt['user'] : $txt['users']) . '</option>';
 		$filterOptions .= '
 			</select>
 			<noscript><input type="submit" value="' . $txt['go'] . '" name="filter" class="button_submit" /></noscript>';

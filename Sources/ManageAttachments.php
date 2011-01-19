@@ -453,11 +453,11 @@ function BrowseFiles()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[%1$d]" class="input_check" />',
+						'format' => '<input type="checkbox" name="remove[%1$d]">',
 						'params' => array(
 							'id_attach' => false,
 						),
@@ -1674,7 +1674,7 @@ function ManageAttachmentPaths()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="radio" name="current_dir" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'current\'] ? \'checked="checked"\' : \'\') . \' class="input_radio" />\';
+						return \'<input type="radio" name="current_dir" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'current\'] ? \'checked\' : \'\') . \'>\';
 					'),
 					'style' => 'text-align: center; width: 15%;',
 				),
@@ -1685,7 +1685,7 @@ function ManageAttachmentPaths()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="text" size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" class="input_text" style="width: 100%" />\';
+						return \'<input type="text" size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%" />\';
 					'),
 					'style' => 'text-align: center; width: 30%;',
 				),

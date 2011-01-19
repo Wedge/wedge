@@ -135,7 +135,7 @@ function template_registration_form()
 					<dl class="register_form">
 						<dt><strong><label for="smf_autov_username">', $txt['username'], ':</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" class="input_text" />
+							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '">
 							<span id="smf_autov_username_div" style="display: none;">
 								<a id="smf_autov_username_link" href="#">
 									<img id="smf_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif" alt="*" />
@@ -144,11 +144,11 @@ function template_registration_form()
 						</dd>
 						<dt><strong><label for="smf_autov_reserve1">', $txt['email'], ':</label></strong></dt>
 						<dd>
-							<input type="text" name="email" id="smf_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" class="input_text" />
+							<input type="text" name="email" id="smf_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '">
 						</dd>
 						<dt><strong><label for="allow_email">', $txt['allow_user_email'], ':</label></strong></dt>
 						<dd>
-							<input type="checkbox" name="allow_email" id="allow_email" tabindex="', $context['tabindex']++, '" class="input_check" />
+							<input type="checkbox" name="allow_email" id="allow_email" tabindex="', $context['tabindex']++, '">
 						</dd>
 					</dl>';
 
@@ -163,11 +163,11 @@ function template_registration_form()
 						</dt>
 						<dd>
 							<label for="auth_pass" id="option_auth_pass">
-								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '" ', empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '"', empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
 								', $txt['authenticate_password'], '
 							</label>
 							<label for="auth_openid" id="option_auth_openid">
-								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '" ', !empty($context['openid']) ? 'checked="checked" ' : '', ' onclick="updateAuthMethod();" class="input_radio" />
+								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '"', !empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
 								', $txt['authenticate_openid'], '
 							</label>
 						</dd>
@@ -178,7 +178,7 @@ function template_registration_form()
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="smf_autov_pwmain">', $txt['choose_pass'], ':</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '" class="input_password" />
+							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="smf_autov_pwmain_div" style="display: none;">
 								<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
 							</span>
@@ -187,7 +187,7 @@ function template_registration_form()
 					<dl class="register_form" id="password2_group">
 						<dt><strong><label for="smf_autov_pwverify">', $txt['verify_pass'], ':</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '" class="input_password" />
+							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="smf_autov_pwverify_div" style="display: none;">
 								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif" alt="*" />
 							</span>
@@ -202,7 +202,7 @@ function template_registration_form()
 					<dl class="register_form" id="openid_group">
 						<dt><strong>', $txt['authenticate_openid_url'], ':</strong></dt>
 						<dd>
-							<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['openid']) ? $context['openid'] : '', '" class="input_text openid_login" />
+							<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['openid']) ? $context['openid'] : '', '" class="openid_login">
 						</dd>
 					</dl>';
 
@@ -265,12 +265,12 @@ function template_registration_form()
 				// Maybe it's a text box - very likely!
 				elseif (in_array($field['type'], array('int', 'float', 'text', 'password')))
 					echo '
-							<input type="', $field['type'] == 'password' ? 'password' : 'text', '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], ' class="input_', $field['type'] == 'password' ? 'password' : 'text', '" />';
+							<input type="', $field['type'] == 'password' ? 'password' : 'text', '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], '>';
 
 				// You "checking" me out? ;)
 				elseif ($field['type'] == 'check')
 					echo '
-							<input type="hidden" name="', $key, '" value="0" /><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked="checked"' : '', ' value="1" tabindex="', $context['tabindex']++, '" class="input_check" ', $field['input_attr'], ' />';
+							<input type="hidden" name="', $key, '" value="0" /><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], '>';
 
 				// Always fun - select boxes!
 				elseif ($field['type'] == 'select')
@@ -287,7 +287,7 @@ function template_registration_form()
 						if (is_array($field['options']))
 							foreach ($field['options'] as $value => $name)
 								echo '
-								<option value="', $value, '" ', $value == $field['value'] ? 'selected="selected"' : '', '>', $name, '</option>';
+								<option value="', $value, '"', $value == $field['value'] ? ' selected' : '', '>', $name, '</option>';
 					}
 
 					echo '
@@ -523,21 +523,21 @@ function template_admin_register()
 							<dfn>', $txt['admin_register_username_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="text" name="user" id="user_input" tabindex="', $context['tabindex']++, '" size="30" maxlength="25" class="input_text" />
+							<input type="text" name="user" id="user_input" tabindex="', $context['tabindex']++, '" size="30" maxlength="25">
 						</dd>
 						<dt>
 							<strong><label for="email_input">', $txt['admin_register_email'], ':</label></strong>
 							<dfn>', $txt['admin_register_email_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="text" name="email" id="email_input" tabindex="', $context['tabindex']++, '" size="30" class="input_text" />
+							<input type="text" name="email" id="email_input" tabindex="', $context['tabindex']++, '" size="30">
 						</dd>
 						<dt>
 							<strong><label for="password_input">', $txt['admin_register_password'], ':</label></strong>
 							<dfn>', $txt['admin_register_password_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="password" name="password" id="password_input" tabindex="', $context['tabindex']++, '" size="30" class="input_password" onchange="onCheckChange();" />
+							<input type="password" name="password" id="password_input" tabindex="', $context['tabindex']++, '" size="30" onchange="onCheckChange();">
 						</dd>';
 
 	if (!empty($context['member_groups']))
@@ -565,13 +565,13 @@ function template_admin_register()
 							<dfn>', $txt['admin_register_email_detail_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailPassword" id="emailPassword_check" tabindex="', $context['tabindex']++, '" checked="checked" disabled="disabled" class="input_check" />
+							<input type="checkbox" name="emailPassword" id="emailPassword_check" tabindex="', $context['tabindex']++, '" checked disabled>
 						</dd>
 						<dt>
 							<strong><label for="emailActivate_check">', $txt['admin_register_email_activate'], ':</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked="checked"' : '', ' onclick="onCheckChange();" class="input_check" />
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked' : '', ' onclick="onCheckChange();">
 						</dd>
 					</dl>
 					<div class="righttext">
@@ -616,7 +616,7 @@ function template_edit_agreement()
 
 		foreach ($context['editable_agreements'] as $file => $name)
 			echo '
-						<option value="', $file, '" ', $context['current_agreement'] == $file ? 'selected="selected"' : '', '>', $name, '</option>';
+						<option value="', $file, '"', $context['current_agreement'] == $file ? ' selected' : '', '>', $name, '</option>';
 
 		echo '
 					</select>
@@ -638,7 +638,7 @@ function template_edit_agreement()
 					<textarea cols="70" rows="20" name="agreement" id="agreement">', $context['agreement'], '</textarea>
 				</p>
 				<p>
-					<label for="requireAgreement"><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked="checked"' : '', ' tabindex="', $context['tabindex']++, '" value="1" class="input_check" /> ', $txt['admin_agreement'], '.</label>
+					<label for="requireAgreement"><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '" value="1"> ', $txt['admin_agreement'], '.</label>
 				</p>
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
@@ -666,10 +666,10 @@ function template_edit_reserved_words()
 					<textarea cols="30" rows="6" id="reserved">', implode("\n", $context['reserved_words']), '</textarea>
 				</p>
 				<ul class="reset">
-					<li><label for="matchword"><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '" ', $context['reserved_word_options']['match_word'] ? 'checked="checked"' : '', ' class="input_check" /> ', $txt['admin_match_whole'], '</label></li>
-					<li><label for="matchcase"><input type="checkbox" name="matchcase" id="matchcase" tabindex="', $context['tabindex']++, '" ', $context['reserved_word_options']['match_case'] ? 'checked="checked"' : '', ' class="input_check" /> ', $txt['admin_match_case'], '</label></li>
-					<li><label for="matchuser"><input type="checkbox" name="matchuser" id="matchuser" tabindex="', $context['tabindex']++, '" ', $context['reserved_word_options']['match_user'] ? 'checked="checked"' : '', ' class="input_check" /> ', $txt['admin_check_user'], '</label></li>
-					<li><label for="matchname"><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '" ', $context['reserved_word_options']['match_name'] ? 'checked="checked"' : '', ' class="input_check" /> ', $txt['admin_check_display'], '</label></li>
+					<li><label for="matchword"><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_word'] ? ' checked' : '', '> ', $txt['admin_match_whole'], '</label></li>
+					<li><label for="matchcase"><input type="checkbox" name="matchcase" id="matchcase" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_case'] ? ' checked' : '', '> ', $txt['admin_match_case'], '</label></li>
+					<li><label for="matchuser"><input type="checkbox" name="matchuser" id="matchuser" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_user'] ? ' checked' : '', '> ', $txt['admin_check_user'], '</label></li>
+					<li><label for="matchname"><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_name'] ? ' checked' : '', '> ', $txt['admin_check_display'], '</label></li>
 				</ul>
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '" name="save_reserved_names" tabindex="', $context['tabindex']++, '" style="margin: 1ex;" class="button_submit" />

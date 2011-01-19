@@ -136,7 +136,7 @@ function template_unread()
 								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a>
 							</th>
 							<th class="last_th">
-								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" />
+								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
 							</th>';
 		else
 			echo '
@@ -195,7 +195,7 @@ function template_unread()
 			if ($show_checkboxes)
 				echo '
 							<td class="windowbg2 middle center">
-								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
+								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
 			echo '
 						</tr>';
@@ -319,7 +319,7 @@ function template_replies()
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a>
 							</th>
 							<th class="last_th">
-								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check" />
+								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
 							</th>';
 		else
 			echo '
@@ -378,7 +378,7 @@ function template_replies()
 			if ($show_checkboxes)
 				echo '
 							<td class="windowbg2 middle center">
-								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check" />
+								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
 			echo '
 						</tr>';

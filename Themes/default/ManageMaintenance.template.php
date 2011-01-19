@@ -35,9 +35,9 @@ function template_maintain_database()
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_backup_info'], '</p>
-				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" class="input_check" checked="checked" /> ', $txt['maintain_backup_struct'], '</label><br />
-				<label for="data"><input type="checkbox" name="data" id="data" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" checked="checked" class="input_check" /> ', $txt['maintain_backup_data'], '</label><br />
-				<label for="compress"><input type="checkbox" name="compress" id="compress" value="gzip" checked="checked" class="input_check" /> ', $txt['maintain_backup_gz'], '</label></p>
+				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" checked> ', $txt['maintain_backup_struct'], '</label><br />
+				<label for="data"><input type="checkbox" name="data" id="data" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" checked> ', $txt['maintain_backup_data'], '</label><br />
+				<label for="compress"><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
 				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return document.getElementById(\'struct\').checked || document.getElementById(\'data\').checked;" class="button_submit" /></p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
@@ -182,16 +182,16 @@ function template_maintain_members()
 				<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
 				<dl class="settings">
 					<dt>
-						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked="checked" class="input_radio" />', $txt['reattribute_email'], '</label>
+						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked>', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
 						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').attr(\'checked\', true); $(\'#from_name\').val(\'\');" />
 					</dd>
 					<dt>
-						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" class="input_radio" />', $txt['reattribute_username'], '</label>
+						<label for="type_name"><input type="radio" name="type" id="type_name" value="name">', $txt['reattribute_username'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').attr(\'checked\', true); $(\'#from_email\').val(\'\');" class="input_text" />
+						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').attr(\'checked\', true); $(\'#from_email\').val(\'\');">
 					</dd>
 				</dl>
 				<dl class="settings">
@@ -199,11 +199,11 @@ function template_maintain_members()
 						<label for="to"><strong>', $txt['reattribute_current_member'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="to" id="to" value="" class="input_text" />
+						<input type="text" name="to" id="to" value="">
 					</dd>
 				</dl>
 				<p class="maintain_members">
-					<input type="checkbox" name="posts" id="posts" checked="checked" class="input_check" />
+					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
 				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="button_submit" /></span>
@@ -219,9 +219,9 @@ function template_maintain_members()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 				<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
 				<select name="del_type">
-					<option value="activated" selected="selected">', $txt['maintain_members_activated'], '</option>
+					<option value="activated" selected>', $txt['maintain_members_activated'], '</option>
 					<option value="logged">', $txt['maintain_members_logged_in'], '</option>
-				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3" class="input_text" />', $txt['maintain_members_since3'], '</p>';
+				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
 
 	echo '
 				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon" /></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
@@ -229,7 +229,7 @@ function template_maintain_members()
 
 	foreach ($context['membergroups'] as $group)
 		echo '
-					<label for="groups', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups', $group['id'], '" checked="checked" class="input_check" /> ', $group['name'], '</label><br />';
+					<label for="groups', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups', $group['id'], '" checked> ', $group['name'], '</label><br />';
 
 	echo '
 				</div>
@@ -305,15 +305,15 @@ function template_maintain_topics()
 						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3" />', $txt['maintain_old_since_days2'], '
 					</p>
 					<p>
-						<label for="delete_type_nothing"><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" class="input_radio" checked="checked" /> ', $txt['maintain_old_nothing_else'], '</label><br />
-						<label for="delete_type_moved"><input type="radio" name="delete_type" id="delete_type_moved" value="moved" class="input_radio" /> ', $txt['maintain_old_are_moved'], '</label><br />
-						<label for="delete_type_locked"><input type="radio" name="delete_type" id="delete_type_locked" value="locked" class="input_radio" /> ', $txt['maintain_old_are_locked'], '</label><br />
+						<label for="delete_type_nothing"><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" checked> ', $txt['maintain_old_nothing_else'], '</label><br />
+						<label for="delete_type_moved"><input type="radio" name="delete_type" id="delete_type_moved" value="moved"> ', $txt['maintain_old_are_moved'], '</label><br />
+						<label for="delete_type_locked"><input type="radio" name="delete_type" id="delete_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br />
 					</p>';
 
 	if (!empty($modSettings['enableStickyTopics']))
 		echo '
 					<p>
-						<label for="delete_old_not_sticky"><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" class="input_radio" checked="checked" /> ', $txt['maintain_old_are_not_stickied'], '</label><br />
+						<label for="delete_old_not_sticky"><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br />
 					</p>';
 
 		echo '
@@ -337,7 +337,7 @@ function template_maintain_topics()
 		// Display a checkbox with every board.
 		foreach ($category['boards'] as $board)
 			echo '
-									<li style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'] * 1.5, 'em;"><label for="boards_', $board['id'], '"><input type="checkbox" name="boards[', $board['id'], ']" id="boards_', $board['id'], '" checked="checked" class="input_check" />', $board['name'], '</label></li>';
+									<li style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'] * 1.5, 'em;"><label for="boards_', $board['id'], '"><input type="checkbox" name="boards[', $board['id'], ']" id="boards_', $board['id'], '" checked>', $board['name'], '</label></li>';
 
 		echo '
 								</ul>
@@ -365,15 +365,15 @@ function template_maintain_topics()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
 				<select name="id_board_from" id="id_board_from">
-					<option disabled="disabled">(', $txt['move_topics_select_board'], ')</option>';
+					<option disabled>(', $txt['move_topics_select_board'], ')</option>';
 
 	// From board
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<option disabled="disabled">--------------------------------------</option>
-					<option disabled="disabled">', $category['name'], '</option>
-					<option disabled="disabled">--------------------------------------</option>';
+					<option disabled>--------------------------------------</option>
+					<option disabled>', $category['name'], '</option>
+					<option disabled>--------------------------------------</option>';
 
 		foreach ($category['boards'] as $board)
 			echo '
@@ -384,15 +384,15 @@ function template_maintain_topics()
 				</select>
 				<label for="id_board_to">', $txt['move_topics_to'], '</label>
 				<select name="id_board_to" id="id_board_to">
-					<option disabled="disabled">(', $txt['move_topics_select_board'], ')</option>';
+					<option disabled>(', $txt['move_topics_select_board'], ')</option>';
 
 	// To board
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<option disabled="disabled">--------------------------------------</option>
-					<option disabled="disabled">', $category['name'], '</option>
-					<option disabled="disabled">--------------------------------------</option>';
+					<option disabled>--------------------------------------</option>
+					<option disabled>', $category['name'], '</option>
+					<option disabled>--------------------------------------</option>';
 
 		foreach ($category['boards'] as $board)
 			echo '
@@ -471,7 +471,7 @@ function template_convert_utf8()
 
 	foreach ($context['charset_list'] as $charset)
 		echo '
-							<option value="', $charset, '"', $charset === $context['charset_detected'] ? ' selected="selected"' : '', '>', $charset, '</option>';
+							<option value="', $charset, '"', $charset === $context['charset_detected'] ? ' selected' : '', '>', $charset, '</option>';
 
 	echo '
 						</select>

@@ -121,7 +121,7 @@ function template_modify_category()
 		// Print every existing category into a select box.
 		foreach ($context['category_order'] as $order)
 			echo '
-							<option', $order['selected'] ? ' selected="selected"' : '', ' value="', $order['id'], '">', $order['name'], '</option>';
+							<option', $order['selected'] ? ' selected' : '', ' value="', $order['id'], '">', $order['name'], '</option>';
 		echo '
 						</select>
 					</dd>';
@@ -133,14 +133,14 @@ function template_modify_category()
 						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="cat_name" value="', $context['category']['editable_name'], '" size="30" tabindex="', $context['tabindex']++, '" class="input_text" />
+						<input type="text" name="cat_name" value="', $context['category']['editable_name'], '" size="30" tabindex="', $context['tabindex']++, '">
 					</dd>
 					<dt>
 						<strong>' . $txt['collapse_enable'] . '</strong>
 						<dfn>' . $txt['collapse_desc'] . '</dfn>
 					</dt>
 					<dd>
-						<input type="checkbox" name="collapse"', $context['category']['can_collapse'] ? ' checked="checked"' : '', ' tabindex="', $context['tabindex']++, '" class="input_check" />
+						<input type="checkbox" name="collapse"', $context['category']['can_collapse'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '">
 					</dd>';
 
 	// Table footer.
@@ -200,9 +200,9 @@ function template_confirm_category_delete()
 			</div>
 			<div class="windowbg wrc">
 				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked="checked" />', $txt['mboards_delete_option1'], '</label><br />
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"', count($context['category_order']) == 1 ? ' disabled="disabled"' : '', ' />', $txt['mboards_delete_option2'], '</label>:
-					<select name="cat_to" ', count($context['category_order']) == 1 ? 'disabled="disabled"' : '', '>';
+					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" checked>', $txt['mboards_delete_option1'], '</label><br />
+					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"', count($context['category_order']) == 1 ? ' disabled' : '', '>', $txt['mboards_delete_option2'], '</label>:
+					<select name="cat_to"', count($context['category_order']) == 1 ? ' disabled' : '', '>';
 
 	foreach ($context['category_order'] as $cat)
 		if ($cat['id'] != 0)
@@ -250,7 +250,7 @@ function template_modify_board()
 
 	foreach ($context['categories'] as $category)
 		echo '
-							<option', $category['selected'] ? ' selected="selected"' : '', ' value="', $category['id'], '">', $category['name'], '</option>';
+							<option', $category['selected'] ? ' selected' : '', ' value="', $category['id'], '">', $category['name'], '</option>';
 
 	echo '
 						</select>
@@ -276,12 +276,12 @@ function template_modify_board()
 
 		// The second select box lists all the boards in the category.
 		echo '
-						<select id="board_order" name="board_order" ', isset($context['board']['is_new']) ? '' : 'disabled="disabled"', '>
+						<select id="board_order" name="board_order"', isset($context['board']['is_new']) ? '' : ' disabled', '>
 							', !isset($context['board']['is_new']) ? '<option value="">(' . $txt['mboards_unchanged'] . ')</option>' : '';
 
 		foreach ($context['board_order'] as $order)
 			echo '
-							<option', $order['selected'] ? ' selected="selected"' : '', ' value="', $order['id'], '">', $order['name'], '</option>';
+							<option', $order['selected'] ? ' selected' : '', ' value="', $order['id'], '">', $order['name'], '</option>';
 
 		echo '
 						</select>
@@ -297,7 +297,7 @@ function template_modify_board()
 						<dfn>', $txt['name_on_display'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30" class="input_text" />
+						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30">
 					</dd>';
 
 	if (!empty($modSettings['pretty_enable_filters']))
@@ -317,7 +317,7 @@ function template_modify_board()
 
 		foreach ($context['board']['subdomains'] as $subdo)
 			echo !empty($subdo) ? '
-							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected="selected"' : '') . '>' . $subdo . '</option>' : '';
+							<option value="' . $subdo . '"' . (isset($m[1], $m[2]) && ($m[1] . '.' . $m[2] == $subdo || $m[2] == $subdo) ? ' selected' : '') . '>' . $subdo . '</option>' : '';
 
 		echo '
 						</select>/<input type="text" maxlength="32" name="pretty_url" value="' . (!empty($m[3]) ? $m[3] : '') . '" size="25" />
@@ -345,7 +345,7 @@ function template_modify_board()
 
 	foreach ($context['profiles'] as $id => $profile)
 		echo '
-							<option value="', $id, '" ', $id == $context['board']['profile'] ? 'selected="selected"' : '', '>', $profile['name'], '</option>';
+							<option value="', $id, '"', $id == $context['board']['profile'] ? ' selected' : '', '>', $profile['name'], '</option>';
 
 	echo '
 						</select>
@@ -360,14 +360,14 @@ function template_modify_board()
 	foreach ($context['groups'] as $group)
 		echo '
 						<label for="groups_', $group['id'], '">
-							<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked="checked"' : '', ' class="input_check" />
+							<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked' : '', '>
 							<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
 								', $group['name'], '
 							</span>
 						</label><br />';
 
 	echo '
-						<em>', $txt['check_all'], '</em> <input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \'groups[]\');" /><br />
+						<em>', $txt['check_all'], '</em> <input type="checkbox" onclick="invertAll(this, this.form, \'groups[]\');"><br />
 						<br />
 					</dd>';
 
@@ -378,7 +378,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_moderators_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30" class="input_text" />
+						<input type="text" name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30">
 						<div id="moderator_container"></div>
 					</dd>
 				</dl>
@@ -392,7 +392,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_redirect_desc'], '</dfn>
 					</dt>
 					<dd>
-						<input type="checkbox" id="redirect_enable" name="redirect_enable"', $context['board']['topics'] ? ' disabled="disabled"' : '', $context['board']['redirect'] != '' ? ' checked="checked"' : '', ' onclick="refreshOptions();" class="input_check" />
+						<input type="checkbox" id="redirect_enable" name="redirect_enable"', $context['board']['topics'] ? ' disabled' : '', $context['board']['redirect'] != '' ? ' checked' : '', ' onclick="refreshOptions();">
 					</dd>
 				</dl>';
 
@@ -417,13 +417,13 @@ function template_modify_board()
 							<dfn>', $txt['mboards_redirect_url_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="text" name="redirect_address" value="', $context['board']['redirect'], '" size="40" class="input_text" />
+							<input type="text" name="redirect_address" value="', $context['board']['redirect'], '" size="40">
 						</dd>
 						<dt>
 							<strong>', $txt['mboards_redirect_newtab'], ':</strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="redirect_newtab"', $context['board']['redirect_newtab'] ? ' checked="checked"' : '', ' class="input_check" />
+							<input type="checkbox" name="redirect_newtab"', $context['board']['redirect_newtab'] ? ' checked' : '', '>
 						</dd>
 					</dl>
 				</div>';
@@ -437,7 +437,7 @@ function template_modify_board()
 							<dfn>', $txt['mboards_redirect_reset_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="checkbox" name="reset_redirect" class="input_check" />
+							<input type="checkbox" name="reset_redirect">
 							<em>(', sprintf($txt['mboards_current_redirects'], $context['board']['posts']), ')</em>
 						</dd>
 					</dl>
@@ -452,7 +452,7 @@ function template_modify_board()
 							<dfn>', $txt['mboards_count_posts_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="checkbox" name="count" ', $context['board']['count_posts'] ? ' checked="checked"' : '', ' class="input_check" />
+							<input type="checkbox" name="count" ', $context['board']['count_posts'] ? ' checked' : '', '>
 						</dd>
 					</dl>
 				</div>';
@@ -467,11 +467,11 @@ function template_modify_board()
 						</dt>
 						<dd>
 							<select name="boardtheme" id="boardtheme" onchange="refreshOptions();">
-								<option value="0"', $context['board']['theme'] == 0 ? ' selected="selected"' : '', '>', $txt['mboards_theme_default'], '</option>';
+								<option value="0"', $context['board']['theme'] == 0 ? ' selected' : '', '>', $txt['mboards_theme_default'], '</option>';
 
 	foreach ($context['themes'] as $theme)
 	{
-		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == 'css' ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == 'css' ? ' selected' : '', '>', $theme['name'], '</option>';
 		if (!empty($theme['stylings']))
 			wedge_show_stylings($theme, $theme['stylings'], 1, $context['board']['theme'], $context['board']['styling']);
 	}
@@ -488,7 +488,7 @@ function template_modify_board()
 							<dfn>', $txt['mboards_override_theme_desc'], '</dfn>
 						</dt>
 						<dd>
-							<input type="checkbox" name="override_theme"', $context['board']['override_theme'] ? ' checked="checked"' : '', ' class="input_check" />
+							<input type="checkbox" name="override_theme"', $context['board']['override_theme'] ? ' checked' : '', '>
 						</dd>
 					</dl>
 				</div>';
@@ -519,7 +519,7 @@ function template_modify_board()
 				continue;
 
 			echo '
-							<option value="', $lang_id, '"', $context['board']['language'] == $lang_id ? ' selected="selected"' : '', '>', $lang['name'], '</option>';
+							<option value="', $lang_id, '"', $context['board']['language'] == $lang_id ? ' selected' : '', '>', $lang['name'], '</option>';
 		}
 
 		echo '
@@ -643,9 +643,9 @@ function template_confirm_board_delete()
 			</div>
 			<div class="windowbg wrc">
 				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked="checked" />', $txt['mboards_delete_board_option1'], '</label><br />
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"', empty($context['can_move_children']) ? ' disabled="disabled"' : '', ' />', $txt['mboards_delete_board_option2'], '</label>:
-					<select name="board_to" ', empty($context['can_move_children']) ? 'disabled="disabled"' : '', '>';
+					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" checked>', $txt['mboards_delete_board_option1'], '</label><br />
+					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"', empty($context['can_move_children']) ? ' disabled' : '', '>', $txt['mboards_delete_board_option2'], '</label>:
+					<select name="board_to"', empty($context['can_move_children']) ? ' disabled' : '', '>';
 
 	foreach ($context['board_order'] as $board)
 		if ($board['id'] != $context['board']['id'] && empty($board['is_child']))

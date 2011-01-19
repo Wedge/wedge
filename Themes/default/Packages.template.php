@@ -50,7 +50,7 @@ function template_view_package()
 
 		foreach ($context['readmes'] as $a => $b)
 			echo '
-					<option value="', $b, '"', $a === 'selected' ? ' selected="selected"' : '', '>', $b == 'default' ? $txt['package_readme_default'] : ucfirst($b), '</option>';
+					<option value="', $b, '"', $a === 'selected' ? ' selected' : '', '>', $b == 'default' ? $txt['package_readme_default'] : ucfirst($b), '</option>';
 
 		echo '
 				</select>
@@ -70,7 +70,7 @@ function template_view_package()
 	{
 		echo '
 			<div class="windowbg2 wrc">
-				<label for="do_db_changes"><input type="checkbox" name="do_db_changes" id="do_db_changes" class="input_check" />', $txt['package_db_uninstall'], '</label> [<a href="#" onclick="return swap_database_changes();">', $txt['package_db_uninstall_details'], '</a>]
+				<label for="do_db_changes"><input type="checkbox" name="do_db_changes" id="do_db_changes">', $txt['package_db_uninstall'], '</label> [<a href="#" onclick="return swap_database_changes();">', $txt['package_db_uninstall_details'], '</a>]
 				<div id="db_changes_div">
 					', $txt['package_db_uninstall_actions'], ':
 					<ul>';
@@ -200,7 +200,7 @@ function template_view_package()
 					echo '
 							<input type="hidden" name="custom_theme[]" value="', $id, '" />';
 				echo '
-							<input type="checkbox" name="custom_theme[]" id="custom_theme_', $id, '" value="', $id, '" class="input_check" onclick="', (!empty($theme['has_failure']) ? 'if (this.form.custom_theme_' . $id . '.checked && !confirm(' . $failure . ')) return false;' : ''), 'invertAll(this, this.form, \'dummy_theme_', $id, '\', true);" ', !empty($context['themes_locked']) ? 'disabled="disabled" checked="checked"' : '', '/>
+							<input type="checkbox" name="custom_theme[]" id="custom_theme_', $id, '" value="', $id, '" onclick="', (!empty($theme['has_failure']) ? 'if (this.form.custom_theme_' . $id . '.checked && !confirm(' . $failure . ')) return false;' : ''), 'invertAll(this, this.form, \'dummy_theme_', $id, '\', true);"', !empty($context['themes_locked']) ? ' disabled checked' : '', '>
 						</td>
 						<td colspan="3">
 							', $theme['name'], '
@@ -213,7 +213,7 @@ function template_view_package()
 					<tr class="windowbg', $alternate ? '' : '2', '">
 						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none;" />' : '', '</td>
 						<td style="width: 30px" class="center">
-							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '" class="input_check" ', (!empty($action['not_mod']) ? '' : 'disabled="disabled"'), ' ', !empty($context['themes_locked']) ? 'checked="checked"' : '', '/>
+							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '"', (!empty($action['not_mod']) ? '' : ' disabled'), !empty($context['themes_locked']) ? ' checked' : '', '>
 						</td>
 						<td>', $action['type'], '</td>
 						<td class="w50">', $action['action'], '</td>
@@ -530,7 +530,7 @@ function template_browse()
 							<dfn><a href="#" onclick="$(\'#ve\').val(\'', $forum_version, '\'); return false">', $txt['package_emulate_revert'], '</a></dfn>
 						</dt>
 						<dd>
-							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25" class="input_text" />
+							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25">
 						</dd>
 					</dl>
 					<div class="righttext padding">
@@ -646,26 +646,26 @@ function template_servers()
 						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '" class="input_text" />
-						<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '" class="input_text" />
+						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
+						<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '">
 					</dd>
 					<dt>
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 99%">
 					</dd>
 					<dt>
 						<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
 					</dt>
 					<dd>
-						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" class="input_password" />
+						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%">
 					</dd>
 					<dt>
 						<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
 					</dd>
 				</dl>
 				<div class="righttext">
@@ -700,13 +700,13 @@ function template_servers()
 							<strong>' . $txt['server_name'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="servername" size="40" value="SMF" class="input_text" />
+							<input type="text" name="servername" size="40" value="SMF">
 						</dd>
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="serverurl" size="50" value="http://" class="input_text" />
+							<input type="text" name="serverurl" size="50" value="http://">
 						</dd>
 					</dl>
 					<div class="righttext">
@@ -723,13 +723,13 @@ function template_servers()
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="package" size="50" value="http://" class="input_text" />
+							<input type="text" name="package" size="50" value="http://">
 						</dd>
 						<dt>
 							<strong>', $txt['package_download_filename'], ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="filename" size="50" class="input_text" />
+							<input type="text" name="filename" size="50">
 							<dfn>', $txt['package_download_filename_info'], '</dfn>
 						</dd>
 					</dl>
@@ -750,7 +750,7 @@ function template_servers()
 						<strong>' . $txt['package_upload_select'] . ':</strong>
 					</dt>
 					<dd>
-						<input type="file" name="package" class="input_file" />
+						<input type="file" name="package">
 					</dd>
 				</dl>
 				<div class="righttext">
@@ -996,22 +996,22 @@ function template_install_options()
 						<label for="pack_server"><strong>', $txt['package_install_options_ftp_server'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="pack_server" id="pack_server" value="', $context['package_ftp_server'], '" size="30" class="input_text" />
+						<input type="text" name="pack_server" id="pack_server" value="', $context['package_ftp_server'], '" size="30">
 					</dd>
 					<dt>
 						<label for="pack_port"><strong>', $txt['package_install_options_ftp_port'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="pack_port" id="pack_port" size="3" value="', $context['package_ftp_port'], '" class="input_text" />
+						<input type="text" name="pack_port" id="pack_port" size="3" value="', $context['package_ftp_port'], '">
 					</dd>
 					<dt>
 						<label for="pack_user"><strong>', $txt['package_install_options_ftp_user'], ':</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="pack_user" id="pack_user" value="', $context['package_ftp_username'], '" size="30" class="input_text" />
+						<input type="text" name="pack_user" id="pack_user" value="', $context['package_ftp_username'], '" size="30">
 					</dd>
 				</dl>
-				<label for="package_make_backups"><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1" class="input_check"', $context['package_make_backups'] ? ' checked="checked"' : '', ' /> ', $txt['package_install_options_make_backups'], '</label><br /><br />
+				<label for="package_make_backups"><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label><br /><br />
 				<div class="righttext">
 					<input type="submit" name="submit" value="', $txt['save'], '" class="button_submit" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -1064,26 +1064,26 @@ function template_control_chmod()
 							<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
 						</dt>
 						<dd>
-							<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '" class="input_text" />
-							<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '" class="input_text" />
+							<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
+							<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '">
 						</dd>
 						<dt>
 							<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 						</dt>
 						<dd>
-							<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 98%;" class="input_text" />
+							<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $context['package_ftp']['username'], '" style="width: 98%">
 						</dd>
 						<dt>
 							<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
 						</dt>
 						<dd>
-							<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 98%;" class="input_password" />
+							<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 98%">
 						</dd>
 						<dt>
 							<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
 						</dt>
 						<dd>
-							<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 98%;" class="input_text" />
+							<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 98%">
 						</dd>
 					</dl>
 					</fieldset>';
@@ -1302,7 +1302,7 @@ function template_file_permissions()
 		// Try the IE way; this fails on standards-compliant browsers
 		try
 		{
-			element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
+			element = document.createElement("<" + type + \' name="\' + name + \'"\' + customFields + ">");
 		}
 		catch (e)
 		{
@@ -1424,7 +1424,7 @@ function template_file_permissions()
 					curCol.style.backgroundColor = oRadioColors[j];
 					curCol.align = "center";
 
-					var curInput = createNamedElement("input", "permStatus[" + curPath + "/" + fileItems[i].firstChild.nodeValue + "]", j == 4 ? \'checked="checked"\' : "");
+					var curInput = createNamedElement("input", "permStatus[" + curPath + "/" + fileItems[i].firstChild.nodeValue + "]", j == 4 ? \' checked\' : "");
 					curInput.type = "radio";
 					curInput.checked = "checked";
 					curInput.value = oRadioValues[j];
@@ -1540,11 +1540,11 @@ function template_file_permissions()
 					<span style="color: ', ($dir['perms']['chmod'] ? 'green' : 'red'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $name, ']" value="read" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $name, ']" value="writable" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $name, ']" value="execute" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $name, ']" value="custom" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $name, ']" value="read"></td>
+				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $name, ']" value="writable"></td>
+				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $name, ']" value="execute"></td>
+				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $name, ']" value="custom"></td>
+				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $name, ']" value="no_change" checked></td>
 			</tr>
 		</tbody>';
 
@@ -1563,17 +1563,17 @@ function template_file_permissions()
 			<fieldset>
 				<dl>
 					<dt>
-						<input type="radio" name="method" value="individual" checked="checked" id="method_individual" class="input_radio" />
+						<input type="radio" name="method" value="individual" checked id="method_individual">
 						<label for="method_individual"><strong>', $txt['package_file_perms_apply'], '</strong></label>
 					</dt>
 					<dd>
-						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5" class="input_text" />&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this);" class="help">(?)</a></em>
+						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5">&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this);" class="help">(?)</a></em>
 					</dd>
 					<dt>
-						<input type="radio" name="method" value="predefined" id="method_predefined" class="input_radio" />
+						<input type="radio" name="method" value="predefined" id="method_predefined">
 						<label for="method_predefined"><strong>', $txt['package_file_perms_predefined'], ':</strong></label>
 						<select name="predefined" onchange="$(\'#method_predefined\').attr(\'checked\', true);">
-							<option value="restricted" selected="selected">', $txt['package_file_perms_pre_restricted'], '</option>
+							<option value="restricted" selected>', $txt['package_file_perms_pre_restricted'], '</option>
 							<option value="standard">', $txt['package_file_perms_pre_standard'], '</option>
 							<option value="free">', $txt['package_file_perms_pre_free'], '</option>
 						</select>
@@ -1648,11 +1648,11 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 					<span class="', ($dir['perms']['chmod'] ? 'success' : 'error'), '">', ($dir['perms']['chmod'] ? $txt['package_file_perms_writable'] : $txt['package_file_perms_not_writable']), '</span>
 					', ($dir['perms']['perms'] ? '&nbsp;(' . $txt['package_file_perms_chmod'] . ': ' . substr(sprintf('%o', $dir['perms']['perms']), -4) . ')' : ''), '
 				</td>
-				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom" class="input_radio" /></td>
-				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked="checked" class="input_radio" /></td>
+				<td style="width: 8%" class="perm_read"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="read"></td>
+				<td style="width: 8%" class="perm_write"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="writable"></td>
+				<td style="width: 8%" class="perm_execute"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="execute"></td>
+				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom"></td>
+				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked></td>
 			</tr>
 			<tr id="insert_div_loc_' . $cur_ident . '" style="display: none;"><td></td></tr>';
 

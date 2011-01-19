@@ -168,21 +168,21 @@ function template_body_above()
 		echo '
 				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 					<div class="info">', $txt['login_or_register'], '</div>
-					<input type="text" name="user" size="10" class="input_text" />
-					<input type="password" name="passwrd" size="10" class="input_password" />
+					<input type="text" name="user" size="10">
+					<input type="password" name="passwrd" size="10">
 					<select name="cookielength">
 						<option value="60">', $txt['one_hour'], '</option>
 						<option value="1440">', $txt['one_day'], '</option>
 						<option value="10080">', $txt['one_week'], '</option>
 						<option value="43200">', $txt['one_month'], '</option>
-						<option value="-1" selected="selected">', $txt['forever'], '</option>
+						<option value="-1" selected>', $txt['forever'], '</option>
 					</select>
 					<input type="submit" value="', $txt['login'], '" class="button_submit" /><br />
 					<div class="info">', $txt['quick_login_dec'], '</div>';
 
 		if (!empty($modSettings['enableOpenID']))
 			echo '
-					<br /><input type="text" name="openid_identifier" id="openid_url" size="25" class="input_text openid_login" />';
+					<br /><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login" />';
 
 		echo '
 					<input type="hidden" name="hash_passwrd" value="" />
@@ -197,8 +197,8 @@ function template_body_above()
 	{
 		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="" class="input_text" />&nbsp;
-					<input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
+					<input type="search" name="search" value="">&nbsp;
+					<input type="submit" name="submit" value="', $txt['search'], '" class="submit" />
 					<input type="hidden" name="advanced" value="0" />';
 
 		// Search within current topic?
