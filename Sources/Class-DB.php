@@ -44,9 +44,6 @@ class wesql
 		self::$callback_values = array(
 			'db_prefix' => $db_prefix,
 			//'query_see_topic' => $user_info['query_see_topic'],
-			//'query_see_album' => $user_info['query_see_album'],
-			//'query_see_album_nocheck' => $user_info['query_see_album_nocheck'],
-			//'query_see_album_hidden' => $user_info['query_see_album_hidden'],
 		);
 	}
 

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+	See Nix/settings.xml for descriptions.
+-->
+<styling>
+
+	<name>
+		Warm
+	</name>
+
+	<type>
+		replace
+	</type>
+
+	<comment><![CDATA[
+		By Nao.
+	]]></comment>
+
+	<code for="ie6"><![CDATA[
+	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
+	]]></code>
+
+	<block name="title"><div class="title_bar"><h3>|</h3></div></block>
+	<block name="title2"><div class="title_bar"><h3>|</h3></div></block>
+	<block name="cat"><div class="cat_bar"><h3>|</h3></div></block>
+
+</styling>

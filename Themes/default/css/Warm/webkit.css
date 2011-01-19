@@ -1,0 +1,18 @@
+/*
+	Special styles for Safari (and other Webkit-based browsers like Chrome)
+	Webkit needs this otherwise the post goes off to the right.
+	Causes issues in IE browsers, and breaks cached search engines pages.
+*/
+
+.attachments {
+	clear: right;
+}
+
+.table_grid thead th {
+	height: 26px;
+	line-height: 26px;
+}
+
+.table_list tbody.header td div.cat_bar {
+	margin-bottom: -2px;
+}

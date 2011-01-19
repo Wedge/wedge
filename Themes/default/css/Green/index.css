@@ -15,28 +15,23 @@ body {
 #footer {
 	background-color: #f2f9f3;
 }
-
+#sidebar {
+	background-color: #eaf1eb;
+}
 .menu ul {
 	background: rgba(240,255,248, .9);
 }
 
-.menu h4:hover, h4.hove {
+.css h4:hover, h4.hove {
 	background: #c8e2fb url(../../images/menu.gif) no-repeat 98% 2px;
 }
 .menu li.chosen h4 {
 	background: #3fa6c3 url(../../images/menu.gif) no-repeat 98% -28px;
 }
-.menu > li li:hover, a.hove {
+.css > li li:hover, li.hove {
 	background: #d0e2fb;
 }
 
-li.subsection > a:hover, li.subsection > a.hove {
-	background: #d0e2fb url(../../images/menu.gif) no-repeat 98% -46px !important;
-}
-
-#main_menu h4:hover, #main_menu h4.hove {
-	background: #5a6c85 url(../../images/menu.gif) no-repeat 98% -28px;
-}
 #main_menu li.chosen h4, #context_menus li.chosen h4 {
 	background-color: #fd9604 !important;
 }
