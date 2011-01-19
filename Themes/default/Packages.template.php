@@ -336,7 +336,7 @@ function template_extract_package()
 
 	if (!empty($context['redirect_url']))
 		add_js_inline('
-	setTimeout("doRedirect();", ', empty($context['redirect_timeout']) ? '5000' : $context['redirect_timeout'], ');
+	setTimeout(doRedirect, ', empty($context['redirect_timeout']) ? '5000' : $context['redirect_timeout'], ');
 
 	function doRedirect()
 	{
@@ -1797,7 +1797,7 @@ function template_action_permissions()
 		$(\'#cont\').val(', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")");
 		countdown--;
 
-		setTimeout("doAutoSubmit();", 1000);
+		setTimeout(doAutoSubmit, 1000);
 	}');
 }
 

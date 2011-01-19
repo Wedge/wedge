@@ -2499,10 +2499,10 @@ function template_profile_signature_modify()
 		if (typeof(document.forms.creator) != "undefined")
 		{
 			calcCharLeft();
-			setTimeout("tick()", 1000);
+			setTimeout(tick, 1000);
 		}
 		else
-			setTimeout("tick()", 800);
+			setTimeout(tick, 800);
 	}
 	function calcCharLeft()
 	{

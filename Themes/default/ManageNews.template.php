@@ -308,7 +308,7 @@ function template_email_members_send()
 		document.forms.autoSubmit.b.value = ', JavaScriptEscape($txt['email_continue']), ' + " (" + countdown + ")";
 		countdown--;
 
-		setTimeout("doAutoSubmit();", 1000);
+		setTimeout(doAutoSubmit, 1000);
 	}');
 }
 

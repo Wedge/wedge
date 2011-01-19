@@ -1057,7 +1057,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 
 	echo '<tr>
 					<td><input type="hidden" name="cookielength" value="-1" /></td>
-					<td><input type="submit" value="', $txt['login'], '" class="button_submit" /></td>
+					<td><input type="submit" value="', $txt['login'], '" class="submit" /></td>
 				</tr>
 			</table>
 		</form>';
@@ -1195,7 +1195,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			<label for="', $option['id'], '">', $option['vote_button'], ' ', $option['option'], '</label><br />';
 
 		echo '
-			<input type="submit" value="', $txt['poll_vote'], '" class="button_submit" />
+			<input type="submit" value="', $txt['poll_vote'], '" class="submit" />
 			<input type="hidden" name="poll" value="', $return['id'], '" />
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>';
@@ -1347,7 +1347,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				<label for="', $option['id'], '">', $option['vote_button'], ' ', $option['option'], '</label><br />';
 
 		echo '
-				<input type="submit" value="', $txt['poll_vote'], '" class="button_submit" />
+				<input type="submit" value="', $txt['poll_vote'], '" class="submit" />
 				<input type="hidden" name="poll" value="', $return['id'], '" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>';
@@ -1499,7 +1499,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="advanced" value="0" /><input type="text" name="search" size="30"> <input type="submit" name="submit" value="', $txt['search'], '" class="button_submit" />
+			<input type="hidden" name="advanced" value="0" /><input type="text" name="search" size="30"> <input type="search" name="submit" value="', $txt['search'], '" class="submit" />
 		</form>';
 }
 

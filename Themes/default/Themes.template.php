@@ -876,8 +876,10 @@ function template_edit_style()
 			clearTimeout(previewTimeout);
 			previewTimeout = null;
 		}
-
-		previewTimeout = setTimeout("refreshPreview(true); previewTimeout = null;", 500);
+		previewTimeout = setTimeout(function () {
+				refreshPreview(true);
+				previewTimeout = null;
+			}, 500);
 	}');
 
 	echo '

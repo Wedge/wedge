@@ -645,7 +645,7 @@ function template_not_done()
 		document.forms.autoSubmit.cont.value = ', JavaScriptEscape($txt['not_done_continue']), ' + " (" + countdown + ")";
 		countdown--;
 
-		setTimeout("doAutoSubmit();", 1000);
+		setTimeout(doAutoSubmit, 1000);
 	}');
 }
 
@@ -1894,7 +1894,7 @@ function template_repair_boards()
 		document.forms.recount_form.recount_now.value = ', JavaScriptEscape($txt['errors_recount_now']), ' + " (" + countdown + ")";
 		countdown--;
 
-		setTimeout("doAutoSubmit();", 1000);
+		setTimeout(doAutoSubmit, 1000);
 	}');
 }
 

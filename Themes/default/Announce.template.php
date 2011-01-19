@@ -83,7 +83,7 @@ function template_announcement_send()
 		document.forms.autoSubmit.b.value = ', JavaScriptEscape($txt['announce_continue']), ' + " (" + countdown + ")";
 		countdown--;
 
-		setTimeout("doAutoSubmit();", 1000);
+		setTimeout(doAutoSubmit, 1000);
 	}');
 }
 

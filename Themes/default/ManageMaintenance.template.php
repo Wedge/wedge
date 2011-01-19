@@ -167,10 +167,10 @@ function template_maintain_members()
 
 		$("#do_attribute").attr("disabled", !valid);
 
-		setTimeout("checkAttributeValidity();", 500);
+		setTimeout(checkAttributeValidity, 500);
 		return valid;
 	}
-	setTimeout("checkAttributeValidity();", 500);');
+	setTimeout(checkAttributeValidity, 500);');
 
 	echo '
 	<div id="manage_maintenance">

@@ -1819,7 +1819,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
 	}
-	setTimeout("smfAutoTask();", 1);');
+	setTimeout(smfAutoTask, 1);');
 		}
 	}
 
@@ -1837,7 +1837,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?imperative;ts=' . $ts . '";
 	}
-	setTimeout("smfImperativeTask();", 1);');
+	setTimeout(smfImperativeTask, 1);');
 
 	// Call load theme hook.
 	call_hook('load_theme');
