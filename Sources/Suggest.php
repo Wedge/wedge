@@ -34,12 +34,14 @@ function Suggest($checkRegistered = null)
 		'member' => 'Member',
 	);
 
+	call_hook('suggest');
+
 	if (!isset($_REQUEST['search']))
 		return false;
 
 	// If we're just checking the callback function is registered return true or false.
 	if ($checkRegistered != null)
-		return function_exists('Suggest_Search_' . $checkRegistered);
+		return is_callable('Suggest_Search_' . $checkRegistered);
 
 	checkSession('get');
 	loadTemplate('Xml');
