@@ -2244,9 +2244,15 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			$buffers = array_merge($modSettings['hooks']['buffer'], $buffers);
 
 		if (!empty($buffers))
-			foreach ($buffers as $buffer_function)
-				if (function_exists(trim($buffer_function)))
-					ob_start(trim($buffer_function));
+			foreach ($buffers as $function)
+			{
+				$function = trim($function);
+				$call = strpos($function, '::') !== false ? explode('::', $function) : $function;
+
+				// Is it valid?
+				if (is_callable($call))
+					ob_start(trim($call));
+			}
 
 		// Display the screen in the logical order.
 		template_header();
