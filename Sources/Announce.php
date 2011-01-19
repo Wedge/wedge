@@ -40,7 +40,7 @@ if (!defined('SMF'))
  * - The Post language and template will also be loaded at this point.
  * - Otherwise, divert control to {@link AnnounceSelectMembergroup()} or {@link AnnouncementSend()} depending on specified subaction.
  */
-function AnnounceTopic()
+function Announce()
 {
 	global $context, $txt, $topic;
 
