@@ -3,20 +3,16 @@
  */
 
 /* Set a fontsize that will look the same in all browsers. */
-body
-{
+body {
 	background-color: #e6faef;
 }
-#header
-{
+#header {
 	background-color: #f6fff8;
 }
-#navi, #content
-{
+#navi, #content {
 	background: #f6fff8;
 }
-#footer
-{
+#footer {
 	background-color: #f2f9f3;
 }
 
@@ -45,24 +41,19 @@ li.subsection > a:hover, li.subsection > a.hove {
 	background-color: #fd9604 !important;
 }
 
-blockquote.bbc_standard_quote
-{
+blockquote.bbc_standard_quote {
 	background-color: #d7ecda;
 }
-blockquote.bbc_alternate_quote
-{
+blockquote.bbc_alternate_quote {
 	background-color: #cadfcd;
 }
-code.bbc_code
-{
+code.bbc_code {
 	background: #eef;
 }
-.highlight
-{
+.highlight {
 	background-color: #ff0;
 }
-.highlight2
-{
+.highlight2 {
 	background-color: #D1E1EF;
 }
 
@@ -70,65 +61,52 @@ code.bbc_code
 ------------------------------------------------------- */
 
 /* Alternating backgrounds for posts, and several other sections of the forum. */
-.windowbg, #preview_body
-{
+.windowbg, #preview_body {
 	background-color: #e7efea;
 }
-.windowbg2
-{
+.windowbg2 {
 	background-color: #f0f7f4;
 }
-.windowbg3
-{
+.windowbg3 {
 	background-color: #cad3cd;
 }
 
 /* Colors for background of posts requiring approval */
-.approvebg
-{
+.approvebg {
 	background-color: #ffeaea;
 }
-.approvebg2
-{
+.approvebg2 {
 	background-color: #fff2f2;
 }
 
 /* Color for background of *topics* requiring approval */
-.approvetbg
-{
+.approvetbg {
 	background-color: #e4a17c;
 }
-.approvetbg2
-{
+.approvetbg2 {
 	background-color: #f3bd9f;
 }
 
 /* Sticky topics get a different background */
-.stickybg
-{
+.stickybg {
 	background: #e8d8cf;
 }
-.stickybg2
-{
+.stickybg2 {
 	background: #f2e3d9;
 }
 
 /* Locked posts get a different shade, too! */
-.lockedbg
-{
+.lockedbg {
 	background: #d4dce2;
 }
-.lockedbg2
-{
+.lockedbg2 {
 	background: #d8e1e7;
 }
 
-.description, .description_board, .plainbox
-{
+.description, .description_board, .plainbox {
 	background: #f0f5f0;
 }
-.information
-{
+.information {
 	background: #f0f6f0;
 }
 
@@ -139,26 +117,21 @@ code.bbc_code
 	background-color: #e3efe9;
 }
 
-.roundframe
-{
+.roundframe {
 	background: #f5f5f5;
 }
 
-.buttonlist a span
-{
+.buttonlist a span {
 	background: #e8e8e8;
 }
-.buttonlist a:hover span
-{
+.buttonlist a:hover span {
 	background: #fd9604;
 }
-.buttonlist a.active span
-{
+.buttonlist a.active span {
 	background: #5a6c85;
 }
 
-.activity_stats li div.bar div
-{
+.activity_stats li div.bar div {
 	background: #6294CE;
 }
 

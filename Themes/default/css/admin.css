@@ -1,22 +1,22 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 
-form#quick_search img {
-	margin-top: 2px;
-}
 form#quick_search {
 	padding-top: 2px;
 	line-height: 0.9em;
 	font-size: 0.8em !important;
+	img {
+		margin-top: 2px;
+	}
 }
 
 ol.search_results {
 	margin-top: 0;
 	padding-top: 0;
-}
-ol.search_results li {
-	padding-top: 1em;
-	border-bottom: 1px solid #ccc;
+	li {
+		padding-top: 1em;
+		border-bottom: 1px solid #ccc;
+	}
 }
 
 /* Styles for the core features screen.
@@ -26,11 +26,20 @@ ol.search_results li {
 	float: left;
 	width: 49.9%;
 	min-width: 300px;
-}
-.features .wrc {
-	padding: 0 1em !important;
-	margin: .3em;
-	min-height: 130px;
+	.wrc {
+		padding: 0 1em !important;
+		margin: .3em;
+		min-height: 130px;
+	}
+	h4 {
+		padding: 1em 0 0.5em 0.5em;
+		margin: 0;
+		font-size: 1.1em;
+	}
+	p {
+		padding: 0 1em 1em;
+		margin: 0;
+	}
 }
 .features_image {
 	float: left;
@@ -39,15 +48,6 @@ ol.search_results li {
 .features_switch {
 	margin: 1.5em 1em 1em 1em;
 	float: right;
-}
-.features h4 {
-	padding: 1em 0 0.5em 0.5em;
-	margin: 0;
-	font-size: 1.1em;
-}
-.features p {
-	padding: 0 1em 1em;
-	margin: 0;
 }
 
 /* Styles for the admin home screen bar.
@@ -59,12 +59,12 @@ ol.search_results li {
 
 #live_news {
 	width: 64%;
-}
-#live_news div.wrc {
-	padding: 0;
-}
-#live_news div.wrc dl {
-	padding: 0.5em;
+	div.wrc {
+		padding: 0;
+		dl {
+			padding: 0.5em;
+		}
+	}
 }
 
 #supportVersionsTable {
@@ -80,12 +80,14 @@ ol.search_results li {
 	padding: 0 0.5em;
 	overflow: auto;
 }
-#smfAnnouncements dt {
-	border-bottom: 1px dashed #000;
-}
-#smfAnnouncements dd {
-	padding: 0;
-	margin: 0 0 1em 1.5em;
+#smfAnnouncements {
+	dt {
+		border-bottom: 1px dashed #000;
+	}
+	dd {
+		padding: 0;
+		margin: 0 0 1em 1.5em;
+	}
 }
 #update_section {
 	margin: 0.5em 0 0;
@@ -121,9 +123,9 @@ ol.search_results li {
 }
 .title_bar {
 	margin-bottom: 3px;
-}
-.title_bar h3 form {
-	font-size: 80%;
+	h3 form {
+		font-size: 80%;
+	}
 }
 .windowbg ol {
 	margin-top: 0;
@@ -150,25 +152,25 @@ fieldset dl {
 
 /* Styles for the package manager.
 ------------------------------------------------- */
-#package_list .tborder {
-	margin: .25em 0 .25em 26px;
-}
-#package_list ol, #package_list ol li {
-	list-style: decimal;
-	margin-left: 50px;
-	border: none;
-}
-#package_list ol ul, #package_list ol ul li {
-	margin-left: 0;
-	list-style: none;
-}
 #package_list {
 	list-style-type: none;
-}
-#package_list li {
-	border: 1px solid #cacdd3;
-	padding: 0.2em;
-	margin: 1px;
+	.tborder {
+		margin: .25em 0 .25em 26px;
+	}
+	li {
+		border: 1px solid #cacdd3;
+		padding: 0.2em;
+		margin: 1px;
+	}
+	ol, ol li {
+		list-style: decimal;
+		margin-left: 50px;
+		border: none;
+	}
+	ol ul, ol ul li {
+		margin-left: 0;
+		list-style: none;
+	}
 }
 .description {
 	font-size: 1em;
@@ -206,9 +208,9 @@ span.package_server {
 ul.package_servers {
 	margin: 0;
 	padding: 0;
-}
-ul.package_servers li {
-	list-style-type: none;
+	li {
+		list-style-type: none;
+	}
 }
 pre.file_content {
 	overflow: auto;
@@ -254,35 +256,37 @@ pre.file_content {
 
 /* Styles for the manage boards section.
 ------------------------------------------------- */
-#manage_boards ul {
-	padding: 0;
-	margin: 0 0 0.6em 0;
-	max-height: 30em;
-	overflow: auto;
-}
-#manage_boards li {
-	list-style-type: none;
-	border: 1px solid #cacdd3;
-	padding: 0.2em;
-	margin: 1px;
-	clear: right;
-}
-#manage_boards li img {
-	vertical-align: middle;
-	padding-bottom: 3px;
-}
-#manage_boards #recycle_board {
-	background-color: #dee;
+#manage_boards {
+	ul {
+		padding: 0;
+		margin: 0 0 0.6em 0;
+		max-height: 30em;
+		overflow: auto;
+	}
+	li {
+		list-style-type: none;
+		border: 1px solid #cacdd3;
+		padding: 0.2em;
+		margin: 1px;
+		clear: right;
+	}
+	li img {
+		vertical-align: middle;
+		padding-bottom: 3px;
+	}
+	#recycle_board {
+		background-color: #dee;
+	}
+	span.post_group, span.regular_members {
+		border-bottom: 1px dotted #000;
+		cursor: help;
+	}
 }
 .move_links {
 	padding: 0 13px 0 0;
 }
 .modify_boards {
 	padding: 0 0.5em;
-}
-#manage_boards span.post_group, #manage_boards span.regular_members {
-	border-bottom: 1px dotted #000;
-	cursor: help;
 }
 #boardtheme {
 	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
@@ -308,31 +312,24 @@ dl.right dt {
 	background: #efe;
 }
 
-/* Styles for the manage calendar section.
+/* Styles for the manage calendar/search sections.
 ------------------------------------------------- */
-dl.settings dt.small_caption {
-	width: 20%;
+dl.settings {
+	dt.small_caption { width: 20% }
+	dd.small_caption { width: 79% }
+	dt.large_caption { width: 70% }
+	dd.large_caption { width: 29% }
 }
-dl.settings dd.small_caption {
-	width: 79%;
-}
+
 /* Styles for the manage permissions section.
 ------------------------------------------------- */
-dl.admin_permissions dt {
-	width: 35%;
-}
-dl.admin_permissions dd {
-	width: 64%;
+dl.admin_permissions {
+	dt { width: 35% }
+	dd { width: 64% }
 }
 
 /* Styles for the manage search section.
 ------------------------------------------------- */
-dl.settings dt.large_caption {
-	width: 70%;
-}
-dl.settings dd.large_caption {
-	width: 29%;
-}
 span.search_weight {
 	width: 40px;
 	padding: 0 0.5em;
@@ -351,11 +348,9 @@ span.search_weight {
 .ban_settings {
 	width: 46%;
 }
-#manage_bans dl {
-	margin-bottom: 1em;
-}
-#manage_bans fieldset dl.settings {
-	margin-bottom: 0;
+#manage_bans {
+	dl { margin-bottom: 1em }
+	fieldset dl.settings { margin-bottom: 0 }
 }
 
 /* Styles for the manage subscriptions section.
@@ -366,9 +361,9 @@ span.search_weight {
 ul.pending_payments {
 	margin: 0;
 	padding: 0;
-}
-ul.pending_payments li {
-	list-style-type: none;
+	li {
+		list-style-type: none;
+	}
 }
 
 /* Styles for the manage permissions section.
@@ -380,12 +375,12 @@ ul.pending_payments li {
 .perm_boards {
 	padding: 0;
 	margin: 0 0 0.6em 0;
-}
-.perm_boards li {
-	list-style-type: none;
-	border: 1px solid #cacdd3;
-	padding: 0.2em;
-	margin: 1px;
+	li {
+		list-style-type: none;
+		border: 1px solid #cacdd3;
+		padding: 0.2em;
+		margin: 1px;
+	}
 }
 .perm_groups {
 	background-color: #fff;
@@ -396,11 +391,11 @@ ul.pending_payments li {
 .permission_groups {
 	padding: 0;
 	margin: 0;
-}
-.permission_groups li {
-	list-style-type: none;
-	padding: 0.2em;
-	margin: 1px;
+	li {
+		list-style-type: none;
+		padding: 0.2em;
+		margin: 1px;
+	}
 }
 .perms {
 	width: 20px;
@@ -413,10 +408,10 @@ ul.pending_payments li {
 ul.theme_options {
 	padding: 0;
 	margin: 0;
-}
-ul.theme_options li {
-	list-style: none;
-	padding: 0.4em;
+	li {
+		list-style: none;
+		padding: 0.4em;
+	}
 }
 .is_directory {
 	padding-left: 18px;
@@ -431,13 +426,13 @@ ul.theme_options li {
 
 dl.themes_list {
 	margin: 0;
-}
-dl.themes_list dt {
-	margin-bottom: 3px;
-}
-dl.themes_list dd {
-	font-style: italic;
-	white-space: nowrap;
+	dt {
+		margin-bottom: 3px;
+	}
+	dd {
+		font-style: italic;
+		white-space: nowrap;
+	}
 }
 
 /* Styles for the registration center.
@@ -478,10 +473,10 @@ ul.moderation_notes {
 	list-style: none;
 	overflow: auto;
 	height: 8.5em;
-}
-ul.moderation_notes li {
-	padding: 4px 0 4px 4px;
-	border-bottom: 1px solid #cccccc;
+	li {
+		padding: 4px 0 4px 4px;
+		border-bottom: 1px solid #cccccc;
+	}
 }
 .notes {
 	margin: 0.5em 0;
@@ -498,21 +493,21 @@ h3.grid_header {
 }
 #error_log {
 	width: 100%;
-}
-#error_log tr.windowbg td, #error_log tr.windowbg2 td {
-	padding: 8px;
-	line-height: 160%;
-}
-#error_log td.half_width {
-	width: 50%;
-}
-#error_log td.checkbox_column {
-	width: 15px;
-	vertical-align: top;
-	text-align: center;
-}
-#error_log td div.marginleft {
-	margin: 0 0 0 1ex;
+	tr.windowbg td, tr.windowbg2 td {
+		padding: 8px;
+		line-height: 160%;
+	}
+	td.half_width {
+		width: 50%;
+	}
+	td.checkbox_column {
+		width: 15px;
+		vertical-align: top;
+		text-align: center;
+	}
+	td div.marginleft {
+		margin: 0 0 0 1ex;
+	}
 }
 #admincenter .wrc, #manage_boards .wrc, #manage_maintenance .wrc, #manage_mail .wrc {
 	margin-bottom: 4px;

@@ -4,18 +4,15 @@
 	Causes issues in IE browsers, and breaks cached search engines pages.
 */
 
-.attachments
-{
+.attachments {
 	clear: right;
 }
 
-.table_grid thead th
-{
+.table_grid thead th {
 	height: 26px;
 	line-height: 26px;
 }
 
-table.table_list tbody.header td div.cat_bar
-{
+.table_list tbody.header td div.cat_bar {
 	margin-bottom: -2px;
 }

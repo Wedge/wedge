@@ -38,13 +38,22 @@ body {
 	margin: 0;
 	width: auto;
 	max-width: none;
+	div.frame {
+		max-width: 1200px;
+		margin: auto;
+	}
 }
-#content div.frame {
-	max-width: 1200px;
-	margin: auto;
-}
-#header h2 {
-	color: #ccc;
+#header {
+	h2 {
+		color: #ccc;
+	}
+	a {
+		color: #f93;
+	}
+	/* Text color for the forum title in the header */
+	h1.forumtitle a {
+		color: #fff;
+	}
 }
 
 /* The menu is inside another div that had padding applied to it, so we use
@@ -60,52 +69,44 @@ body {
 #footer {
 	border: 3px solid #fd9604;
 	border-width: 3px 0 0 0;
-}
-#header a {
-	color: #f93;
-}
-#footer a {
-	color: #fff;
+	a {
+		color: #fff;
+	}
 }
 #navi {
 	background: #f6fff8;
 	color: #999;
 }
-#main_menu h4 a {
-	color: #fff;
-}
 #main_menu {
 	border: 0;
 	padding-bottom: 0 !important;
+	h4 a {
+		color: #fff;
+	}
+	/* Specific colors for the main menu, because it's on a dark background... */
+	li.chosen h4 {
+		margin-bottom: 0;
+		padding-bottom: 5px;
+		border-radius: 6px 6px 0 0;
+	}
+	li.nodrop h4 {
+		background-image: none;
+	}
+	h4:hover, h4.hove {
+		background: #5a6c85 url(../../images/menu.gif) no-repeat 98% -28px;
+		a {
+			color: white;
+		}
+	}
 }
 #content {
 	background: #f6fff8;
 }
 
-/* Text color for the forum title in the header */
-
-#header h1.forumtitle a {
-	color: #fff;
-}
-
-/* Specific colors for the main menu, because it's on a dark background... */
-
-#main_menu li.chosen h4 {
-	margin-bottom: 0;
-	padding-bottom: 5px;
-	border-radius: 6px 6px 0 0;
-}
-#main_menu li.nodrop h4 {
-	background-image: none;
-}
-#main_menu h4:hover, #main_menu h4.hove {
-	background: #5a6c85 url(../../images/menu.gif) no-repeat 98% -28px;
-}
-#main_menu h4:hover a, #main_menu h4.hove a {
-	color: white;
-}
-#main_menu li.chosen h4, #context_menus li.chosen h4 {
-	background-color: #fd9604 !important;
+#main_menu, #context_menus {
+	li.chosen h4 {
+		background-color: #fd9604 !important;
+	}
 }
 
 blockquote.bbc_standard_quote {
@@ -192,21 +193,17 @@ code.bbc_code {
 .titlebg, .titlebg2, tr.titlebg td, tr.titlebg2 td {
 	color: #eee;
 }
-.cat_bar h3 a:hover, .cat_bar h4 a:hover, .table_list tbody.header td a:hover {
-	color: #fc8;
+.cat_bar h3, .cat_bar h4, .table_list tbody.header td {
+	a:hover { color: #fc8 }
 }
 .roundframe {
 	background: #f5f5f5;
 }
 
-.buttonlist a span {
-	background: #e8e8e8;
-}
-.buttonlist a:hover span {
-	background: #fd9604;
-}
-.buttonlist a.active span {
-	background: #5a6c85;
+.buttonlist a {
+	span { background: #e8e8e8 }
+	:hover span { background: #fd9604 }
+	&.active span { background: #5a6c85 }
 }
 
 .activity_stats li div.bar div {
@@ -216,12 +213,12 @@ code.bbc_code {
 tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
 	background: #333f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
 }
-tr.catbg td, tr.catbg th {
-	background: #623f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
-	color: #fff;
-}
-tr.catbg td a, tr.catbg th a {
-	color: #fff;
+tr.catbg {
+	td, th {
+		background: #623f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
+		color: #fff;
+		a { color: #fff }
+	}
 }
 .table_list tbody.header td.catbg {
 	background-color: #b8deca;
