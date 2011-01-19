@@ -164,6 +164,9 @@ function EditNews()
 		// Send the new news to the database.
 		updateSettings(array('news' => implode("\n", $_POST['news'])));
 
+		// We cached this, so clear the cache.
+		cache_put_data('news_lines', null);
+
 		// Log this into the moderation log.
 		logAction('news');
 	}
@@ -820,4 +823,22 @@ function ModifyNewsSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
+function cache_getNews()
+{
+	global $modSettings;
+
+	$news = explode("\n", str_replace("\r", '', trim(addslashes($modSettings['news']))));
+	$result = array();
+	foreach ($news as $key => $value)
+	{
+		$value = trim($value);
+		if ($value != '')
+			$result[] = parse_bbc(stripslashes(trim($value)), true); // really no point setting this to be cached since we're caching the entire news
+	}
+
+	return array(
+		'data' => $result,
+		'expires' => time() + 7200,
+	);
+}
 ?>
