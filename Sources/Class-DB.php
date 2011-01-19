@@ -29,11 +29,25 @@ class wesql
 {
 	protected static $instance; // container for self
 	protected static $_db_con; // store the database connection (normally)
+	protected static $callback_values; // store the special replacements for $user_info items
 
 	// What kind of class are you, anyway? One of a kind!
 	private function __clone()
 	{
 		return false;
+	}
+
+	protected function __construct()
+	{
+		global $db_prefix, $user_info;
+
+		self::$callback_values = array(
+			'db_prefix' => $db_prefix,
+			//'query_see_topic' => $user_info['query_see_topic'],
+			//'query_see_album' => $user_info['query_see_album'],
+			//'query_see_album_nocheck' => $user_info['query_see_album_nocheck'],
+			//'query_see_album_hidden' => $user_info['query_see_album_hidden'],
+		);
 	}
 
 	// Bootstrap's bootstraps
@@ -540,6 +554,11 @@ class wesql
 		);
 	}
 
+	public static function register_replacement($match, $value)
+	{
+		self::$callback_values[$match] = $value;
+	}
+
 	public static function value_replacement__callback($matches)
 	{
 		global $db_callback, $user_info, $db_prefix;
@@ -548,20 +567,8 @@ class wesql
 		if ($connection === null)
 			$connection = self::$_db_con;
 
-		if ($matches[1] === 'db_prefix')
-			return $db_prefix;
-
-		if (in_array($matches[1],
-			array(
-				'query_see_topic',
-				'query_see_board',
-				'query_wanna_see_board',
-				'query_see_album',
-				'query_see_album_nocheck',
-				'query_see_album_hidden'
-			)
-		))
-			return $user_info[$matches[1]];
+		if (isset(self::$callback_values[$matches[1]]))
+			return self::$callback_values[$matches[1]];
 
 		if (!isset($matches[2]))
 			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);

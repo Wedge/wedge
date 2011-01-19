@@ -393,6 +393,9 @@ function loadUserSettings()
 	// Ok I guess they don't want to see all the boards
 	else
 		$user_info['query_wanna_see_board'] = '(' . $user_info['query_see_board'] . ' AND b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . '))';
+
+	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
+	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
 }
 
 /**
@@ -2669,8 +2672,9 @@ function loadDatabase()
 	global $db_persist, $db_server, $db_user, $db_passwd;
 	global $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix;
 
-	// Load the file for the database.
+	// Load the database.
 	loadSource('Class-DB');
+	wesql::getInstance();
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
