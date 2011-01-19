@@ -14,14 +14,13 @@ function template_admin()
 	if ($context['user']['is_admin'])
 		echo '
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright" id="quick_search">
-				<img src="', $settings['images_url'], '/filter.gif" />
-				<input type="text" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';">
+				<input type="search" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';">
 				<select name="search_type">
 					<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
 					<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
 					<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected' : ''), '>', $txt['admin_search_type_online'], '</option>
 				</select>
-				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit" />
+				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
 			</form>';
 
 	echo '
@@ -565,7 +564,7 @@ function template_edit_censored()
 						<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($modSettings['censorIgnoreCase']) ? '' : ' checked', '>
 					</dd>
 				</dl>
-				<input type="submit" name="save_censor" value="', $txt['save'], '" class="button_submit" />
+				<input type="submit" name="save_censor" value="', $txt['save'], '" class="save">
 			</div>';
 
 	// This table lets you test out your filters by typing in rude words and seeing what comes out.
@@ -578,7 +577,7 @@ function template_edit_censored()
 			<div class="windowbg wrc">
 				<p class="centertext">
 					<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '">
-					<input type="submit" value="', $txt['censor_test_save'], '" class="button_submit" />
+					<input type="submit" value="', $txt['censor_test_save'], '" class="submit">
 				</p>
 			</div>
 
@@ -624,7 +623,7 @@ function template_not_done()
 
 	echo '
 			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" /></div>
+				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '"></div>
 				', $context['continue_post_data'], '
 			</form>
 		</div>
@@ -1133,7 +1132,7 @@ function template_admin_search_results()
 	<we:cat>
 		<div class="floatright">
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
-				<input type="text" name="search_term" value="', $context['search_term'], '">
+				<input type="search" name="search_term" value="', $context['search_term'], '">
 				<input type="hidden" name="search_type" value="', $context['search_type'], '" />
 				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
 			</form>

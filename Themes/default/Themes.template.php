@@ -900,12 +900,12 @@ function template_edit_style()
 	echo '
 				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font: 110% monospace; margin-top: 1ex; white-space: pre;" onkeyup="setPreviewTimeout();" onchange="refreshPreview(true);">', $context['entire_file'], '</textarea><br />
 				<div class="padding righttext">
-					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex;" class="button_submit" />
-					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);" class="button_submit" />
+					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="submit">
+					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
 				</div>
 			</div>
-			<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="filename" value="', $context['edit_filename'], '">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear" />';

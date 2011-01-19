@@ -700,6 +700,8 @@ function AdminSearchInternal()
 	{
 		foreach ($section['areas'] as $menu_key => $menu_item)
 		{
+			if ($menu_item === '')
+				continue;
 			$search_data['sections'][] = array($menu_item['label'], 'area=' . $menu_key);
 			if (!empty($menu_item['subsections']))
 				foreach ($menu_item['subsections'] as $key => $sublabel)

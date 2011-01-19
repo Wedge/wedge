@@ -43,4 +43,8 @@
 		Made by Nao in a few seconds.
 		<br />Seriously, now that's a nested styling.
 	]]></comment>
+
+	<block name="title"><div class="title_bar"><h3>|</h3></div></block>
+	<block name="title2"><div class="title_bar"><h4>|</h4></div></block>
+	<block name="cat"><div class="cat_bar"><h3>|</h3></div></block>
 </styling>

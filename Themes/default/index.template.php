@@ -60,7 +60,7 @@ function template_html_above()
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <!-- Powered by Wedge, (c) Wedgeward 2010 - http://wedgeforum.com -->
 <head>
-	<meta charset="utf-8" />';
+	<meta charset="utf-8">';
 
 	// Our alltime favorites don't really like HTML5...
 	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
@@ -69,40 +69,40 @@ function template_html_above()
 
 	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
-	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon" />
-	<meta name="description" content="', $context['page_title_html_safe'], '" />', !empty($context['meta_keywords']) ? '
-	<meta name="keywords" content="' . $context['meta_keywords'] . '" />' : '';
+	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">
+	<meta name="description" content="', $context['page_title_html_safe'], '">', !empty($context['meta_keywords']) ? '
+	<meta name="keywords" content="' . $context['meta_keywords'] . '">' : '';
 
 	// Please don't index these, Mr Robotto.
 	if (!empty($context['robot_no_index']))
 		echo '
-	<meta name="robots" content="noindex" />';
+	<meta name="robots" content="noindex">';
 
 	// Present a canonical url for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))
 		echo '
-	<link rel="canonical" href="', $context['canonical_url'], '" />';
+	<link rel="canonical" href="', $context['canonical_url'], '">';
 
 	// Show all the relative links, such as search, contents, and the like.
 	echo '
-	<link rel="search" href="', $scripturl, '?action=search" />
-	<link rel="contents" href="', $scripturl, '" />';
+	<link rel="search" href="', $scripturl, '?action=search">
+	<link rel="contents" href="', $scripturl, '">';
 
 	// If RSS feeds are enabled, advertise the presence of one.
 	if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
 		echo '
-	<link rel="alternate" type="application/rss+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['rss'], '" href="', $scripturl, '?action=feed;type=rss" />';
+	<link rel="alternate" type="application/rss+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['rss'], '" href="', $scripturl, '?action=feed;type=rss">';
 
 	// If we're viewing a topic, these should be the previous and next topics, respectively.
 	if (!empty($context['current_topic']))
 		echo '
-	<link rel="prev" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=prev" />
-	<link rel="next" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=next" />';
+	<link rel="prev" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=prev">
+	<link rel="next" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=next">';
 
 	// If we're in a board, or a topic for that matter, the index will be the board's index.
 	if (!empty($context['current_board']))
 		echo '
-	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0" />';
+	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0">';
 
 	// Output any remaining HTML headers. (Mods may easily add code here.)
 	echo $context['header'];
@@ -121,12 +121,12 @@ function template_body_above()
 	<div id="header"><div class="frame">
 		<div id="top_section">
 			<h1 class="forumtitle">
-				<a href="', $scripturl, '">', empty($context['header_logo_url_html_safe']) ? $context['forum_name'] : '<img src="' . $context['header_logo_url_html_safe'] . '" alt="' . $context['forum_name'] . '" />', '</a>
+				<a href="', $scripturl, '">', empty($context['header_logo_url_html_safe']) ? $context['forum_name'] : '<img src="' . $context['header_logo_url_html_safe'] . '" alt="' . $context['forum_name'] . '">', '</a>
 			</h1>';
 
 	// the upshrink image, right-floated
 	echo '
-			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
+			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;">
 			', empty($settings['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
@@ -177,15 +177,15 @@ function template_body_above()
 						<option value="43200">', $txt['one_month'], '</option>
 						<option value="-1" selected>', $txt['forever'], '</option>
 					</select>
-					<input type="submit" value="', $txt['login'], '" class="button_submit" /><br />
+					<input type="submit" value="', $txt['login'], '" class="submit"><br>
 					<div class="info">', $txt['quick_login_dec'], '</div>';
 
 		if (!empty($modSettings['enableOpenID']))
 			echo '
-					<br /><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login" />';
+					<br><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login">';
 
 		echo '
-					<input type="hidden" name="hash_passwrd" value="" />
+					<input type="hidden" name="hash_passwrd" value="">
 				</form>';
 	}
 
@@ -198,17 +198,17 @@ function template_body_above()
 		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 					<input type="search" name="search" value="">&nbsp;
-					<input type="submit" name="submit" value="', $txt['search'], '" class="submit" />
-					<input type="hidden" name="advanced" value="0" />';
+					<input type="submit" name="submit" value="', $txt['search'], '">
+					<input type="hidden" name="advanced" value="0">';
 
 		// Search within current topic?
 		if (!empty($context['current_topic']))
 			echo '
-					<input type="hidden" name="topic" value="', $context['current_topic'], '" />';
+					<input type="hidden" name="topic" value="', $context['current_topic'], '">';
 		// Or within current board?
 		elseif (!empty($context['current_board']))
 			echo '
-					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '" />';
+					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
 
 		echo '</form>';
 	}
@@ -222,7 +222,7 @@ function template_body_above()
 	echo '
 			</div>
 		</div>
-		<br class="clear" />
+		<br class="clear">
 	</div></div>';
 
 	echo '
@@ -253,13 +253,13 @@ function template_sidebar_above()
 			<div class="roundframe">
 				What? It\'s just a filler. It will be removed once some default contents is shown here.
 			</div>
-			<hr />';
+			<hr>';
 }
 
 function template_sidebar_below()
 {
 	echo '
-			<hr />
+			<hr>
 			And some filler for the sidebar footer.
 		</div>';
 }

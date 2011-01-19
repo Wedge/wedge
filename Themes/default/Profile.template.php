@@ -2469,7 +2469,7 @@ function template_profile_signature_modify()
 
 	if ($context['show_spellchecking'])
 		echo '
-								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="button_submit" />';
+								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="spell">';
 
 		echo '
 							</dt>

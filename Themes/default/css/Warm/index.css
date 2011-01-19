@@ -287,7 +287,7 @@ input, textarea, button, select {
 		border: 1px solid #454545;
 	}
 }
-*[type=submit], *[type=button], *[type=reset] {
+input[type=submit], input[type=button], input[type=reset] {
 	background: #cde7ff url(../../images/theme/submit_bg.png) no-repeat;
 	border: 1px solid #aaa;
 	cursor: pointer;
@@ -299,8 +299,8 @@ input, textarea, button, select {
 		background: #cde7ff url(../../images/theme/submit_bg.png) no-repeat 0 -140px;
 	}
 }
-
-*[type=submit] {
+/* input.spell */
+input.save, input.submit {
 	background: #edf7ff url(../../images/icons/tick.png) 4px 2px no-repeat;
 	padding-left: 24px;
 	color: #666;
@@ -308,11 +308,28 @@ input, textarea, button, select {
 		background: #edf7ff url(../../images/icons/tick.png) 4px 2px no-repeat;
 		color: #000;
 	}
-	&[name=cancel] {
+}
+input.save {
+	background-image: url(../../images/icons/save.png);
+	:hover {
+		background-image: url(../../images/icons/save.png);
+	}
+}
+input[type=search] {
+	background: #fdf7ef url(../../images/filter.gif) 5px 2px no-repeat;
+	padding-left: 24px;
+	color: #666;
+	:hover {
+		background: #fdf7ef url(../../images/filter.gif) 5px 2px no-repeat;
+		color: #000;
+	}
+}
+input[name=cancel], input[type=reset] {
+	background: #fdf7ef url(../../images/icons/cross.png) 4px 2px no-repeat;
+	padding-left: 24px;
+	color: #666;
+	:hover {
 		background: #fdf7ef url(../../images/icons/cross.png) 4px 2px no-repeat;
-		:hover {
-			background-color: #fdf7ef;
-		}
 	}
 }
 
