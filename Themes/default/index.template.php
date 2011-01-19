@@ -242,8 +242,11 @@ function template_body_above()
 
 function template_sidebar_above()
 {
+	global $has_edge;
+	$has_edge = true;
+
 	echo '
-		<div id="sidebar">
+		<div id="edge"><div id="sidebar">
 			<we:title>
 				Sidebar
 			</we:title>
@@ -269,8 +272,11 @@ function template_main_above()
 
 function template_main_below()
 {
-	echo '
-		</div>';
+	global $has_edge;
+
+	echo empty($has_edge) ? '
+		</div>' : '
+		</div></div>';
 }
 
 function template_body_below()
@@ -285,7 +291,7 @@ function template_body_below()
 
 	echo '</div>';
 
-	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
+	// Show the "Powered by" and "Valid" logos, as well as the copyright.
 	echo '
 	<div id="footer"><div class="frame">
 		<ul class="reset">

@@ -56,11 +56,16 @@ body {
 }
 #content div.frame {
 	padding: 0 20px 20px;
-	overflow: hidden;
+}
+#edge {
+	width: 100%;
+	display: table;
+	table-layout: fixed;
 }
 #main_content {
-	margin-left: 275px;
+	display: table-cell;
 	min-height: 200px;
+	padding: 12px 0 12px 30px;
 }
 
 #top_section {
@@ -188,14 +193,12 @@ h1.forumtitle {
 }
 
 #sidebar {
-	float: left;
+	display: table-cell;
 	width: 220px;
 	border: 1px solid #ccc;
 	background: #edefe6;
 	padding: 10px;
-	margin-top: 12px;
-	padding-bottom: 32767px;
-	margin-bottom: -32752px;
+	margin: 12px 0;
 	border-radius: 8px;
 }
 
@@ -296,6 +299,22 @@ input, textarea, button, select {
 	:hover {
 		border: 1px solid #aaa;
 		background: url(../images/theme/submit_bg.png) no-repeat 0 -140px #cde7ff;
+	}
+}
+
+*[type=submit] {
+	background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
+	padding-left: 24px;
+	color: #666;
+	:hover {
+		background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
+		color: #000;
+	}
+	&[name=cancel] {
+		background: #fdf7ef url(../images/icons/cross.png) 4px 2px no-repeat;
+		:hover {
+			background-color: #fdf7ef;
+		}
 	}
 }
 
