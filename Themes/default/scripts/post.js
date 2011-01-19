@@ -183,20 +183,10 @@ smc_SmileyBox.prototype.initSmileys = function(sLocation, oDocument)
 
 smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 {
-	// Dissect the id...
+	// Dissect the id to determine its exact smiley properties.
 	var aMatches = oSmileyImg.id.match(/([^_]+)_(\d+)_(\d+)$/);
-	if (aMatches.length != 4)
-		return false;
-
-	// ...to determine its exact smiley properties.
-	var
-		sLocation = aMatches[1],
-		iSmileyRowIndex = aMatches[2],
-		iSmileyIndex = aMatches[3],
-		oProperties = this.opt.oSmileyLocations[sLocation][iSmileyRowIndex][iSmileyIndex];
-
-	if ('sClickHandler' in this.opt)
-		this.opt.sClickHandler(oProperties);
+	if (aMatches.length == 4 && 'sClickHandler' in this.opt)
+		this.opt.sClickHandler(this.opt.oSmileyLocations[aMatches[1]][aMatches[2]][aMatches[3]]);
 
 	return false;
 };
