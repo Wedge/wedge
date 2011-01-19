@@ -31,64 +31,6 @@ function template_main()
 	add_js('
 	var postmod = document.forms.postmodify;');
 
-	// If this is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
-	if ($context['make_poll'])
-		add_js('
-	function pollOptions()
-	{
-		var expire_time = $("#poll_expire")[0];
-
-		if (isEmptyText(expire_time) || expire_time.value == 0)
-		{
-			postmod.poll_hide[2].disabled = true;
-			if (postmod.poll_hide[2].checked)
-				postmod.poll_hide[1].checked = true;
-		}
-		else
-			postmod.poll_hide[2].disabled = false;
-	}
-
-	var pollOptionNum = 0, pollTabIndex;
-	function addPollOption()
-	{
-		if (pollOptionNum == 0)
-		{
-			for (var i = 0, n = postmod.elements.length; i < n; i++)
-				if (postmod.elements[i].id.substr(0, 8) == "options-")
-				{
-					pollOptionNum++;
-					pollTabIndex = postmod.elements[i].tabIndex;
-				}
-		}
-		pollOptionNum++;
-
-		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="w50"></li>') . ');
-		return false;
-	}');
-
-	// If we are making a calendar event we want to ensure we show the current days in a month etc... This is done here.
-	if ($context['make_event'])
-		add_js('
-	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-	function generateDays()
-	{
-		var dayElement = $("#day")[0], year = $("#year").val(), monthElement = ("#month")[0];
-		var days, selected = dayElement.selectedIndex;
-
-		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
-
-		days = monthLength[monthElement.value - 1];
-		while (dayElement.options.length)
-			dayElement.options[0] = null;
-
-		for (i = 1; i <= days; i++)
-			dayElement.options[dayElement.length] = new Option(i, i);
-
-		if (selected < days)
-			dayElement.selectedIndex = selected;
-	}');
-
 	// Start the form and display the link tree.
 
 	echo '
@@ -202,173 +144,14 @@ function template_main()
 				<hr class="clear" />';
 
 	// Are you posting a calendar event?
+	// !!! Use the template list system for this.
 	if ($context['make_event'])
-	{
-		echo '
-				<div id="post_event">
-					<fieldset id="event_main">
-						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', ' id="caption_evtitle">', $txt['calendar_event_title'], '</span></legend>
-						<input type="text" name="evtitle" maxlength="80" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="w75">
-						<div class="smalltext nowrap">
-							<input type="hidden" name="calendar" value="1">', $txt['calendar_year'], '
-							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
-
-		// Show a list of all the years we allow...
-		for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
-			echo '
-								<option value="', $year, '"', $year == $context['event']['year'] ? ' selected="selected"' : '', '>', $year, '&nbsp;</option>';
-
-		echo '
-							</select>
-							', $txt['calendar_month'], '
-							<select name="month" id="month" onchange="generateDays();">';
-
-		// There are 12 months per year - ensure that they all get listed.
-		for ($month = 1; $month <= 12; $month++)
-			echo '
-								<option value="', $month, '"', $month == $context['event']['month'] ? ' selected="selected"' : '', '>', $txt['months'][$month], '&nbsp;</option>';
-
-		echo '
-							</select>
-							', $txt['calendar_day'], '
-							<select name="day" id="day">';
-
-		// This prints out all the days in the current month - this changes dynamically as we switch months.
-		for ($day = 1; $day <= $context['event']['last_day']; $day++)
-			echo '
-								<option value="', $day, '"', $day == $context['event']['day'] ? ' selected="selected"' : '', '>', $day, '&nbsp;</option>';
-
-		echo '
-							</select>
-						</div>
-					</fieldset>';
-
-		if (!empty($modSettings['cal_allowspan']) || ($context['event']['new'] && $context['is_new_post']))
-		{
-			echo '
-					<fieldset id="event_options">
-						<legend>', $txt['calendar_event_options'], '</legend>
-						<div class="event_options smalltext">
-							<ul class="event_options">';
-
-			// If events can span more than one day then allow the user to select how long it should last.
-			if (!empty($modSettings['cal_allowspan']))
-			{
-				echo '
-								<li>
-									', $txt['calendar_numb_days'], '
-									<select name="span">';
-
-				for ($days = 1; $days <= $modSettings['cal_maxspan']; $days++)
-					echo '
-										<option value="', $days, '"', $days == $context['event']['span'] ? ' selected="selected"' : '', '>', $days, '&nbsp;</option>';
-
-				echo '
-									</select>
-								</li>';
-			}
-
-			// If this is a new event let the user specify which board they want the linked post to be put into.
-			if ($context['event']['new'] && $context['is_new_post'])
-			{
-				echo '
-								<li>
-									', $txt['calendar_post_in'], '
-									<select name="board">';
-				foreach ($context['event']['categories'] as $category)
-				{
-					echo '
-										<optgroup label="', $category['name'], '">';
-					foreach ($category['boards'] as $board)
-						echo '
-											<option value="', $board['id'], '"', $board['selected'] ? ' selected="selected"' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
-					echo '
-										</optgroup>';
-				}
-				echo '
-									</select>
-								</li>';
-			}
-
-			echo '
-							</ul>
-						</div>
-					</fieldset>';
-		}
-
-		echo '
-				</div>';
-	}
+		template_make_event();
 
 	// If this is a poll then display all the poll options!
+	// !!! Use the template list system for this.
 	if ($context['make_poll'])
-	{
-		echo '
-				<div id="edit_poll">
-					<fieldset id="poll_main">
-						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
-						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="w75">
-						<ul class="poll_main" id="pollMoreOptions">';
-
-		// Loop through all the choices and print them out.
-		foreach ($context['choices'] as $choice)
-		{
-			echo '
-							<li>
-								<label for="options-', $choice['id'], '">', $txt['option'], ' ', $choice['number'], '</label>:
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="w50">
-							</li>';
-		}
-
-		echo '
-						</ul>
-						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
-					</fieldset>
-					<fieldset id="poll_options">
-						<legend>', $txt['poll_options'], '</legend>
-						<dl class="settings poll_options">
-							<dt>
-								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
-							</dt>
-							<dd>
-								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
-							</dd>
-							<dt>
-								<label for="poll_expire">', $txt['poll_run'], ':</label><br />
-								<em class="smalltext">', $txt['poll_run_limit'], '</em>
-							</dt>
-							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4"> ', $txt['days_word'], '
-							</dd>
-							<dt>
-								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
-							</dt>
-							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked="checked"' : '', '>
-							</dd>';
-
-		if ($context['poll_options']['guest_vote_enabled'])
-			echo '
-							<dt>
-								<label for="poll_guest_vote">', $txt['poll_guest_vote'], ':</label>
-							</dt>
-							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll_options']['guest_vote']) ? ' checked="checked"' : '', '>
-							</dd>';
-
-		echo '
-							<dt>
-								', $txt['poll_results_visibility'], ':
-							</dt>
-							<dd>
-								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br />
-								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br />
-								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll_options']['hide'] == 2 ? ' checked' : '', empty($context['poll_options']['expire']) ? ' disabled' : '', '> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
-							</dd>
-						</dl>
-					</fieldset>
-				</div>';
-	}
+		template_make_poll();
 
 	// Show the actual posting area...
 	echo "\n", $context['postbox']->outputEditor(), "\n";
@@ -707,23 +490,259 @@ function template_main()
 	}
 
 	// If the user is replying to a topic show the previous posts.
+	// !!! Use the template list system for this.
 	if (isset($context['previous_posts']) && count($context['previous_posts']) > 0)
+		template_show_previous_posts();
+}
+
+// Poll making
+function template_make_poll()
+{
+	global $context, $txt;
+
+	// This is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
+	add_js('
+	function pollOptions()
+	{
+		var expire_time = $("#poll_expire")[0];
+
+		if (isEmptyText(expire_time) || expire_time.value == 0)
+		{
+			postmod.poll_hide[2].disabled = true;
+			if (postmod.poll_hide[2].checked)
+				postmod.poll_hide[1].checked = true;
+		}
+		else
+			postmod.poll_hide[2].disabled = false;
+	}
+
+	var pollOptionNum = 0, pollTabIndex;
+	function addPollOption()
+	{
+		if (pollOptionNum == 0)
+		{
+			for (var i = 0, n = postmod.elements.length; i < n; i++)
+				if (postmod.elements[i].id.substr(0, 8) == "options-")
+				{
+					pollOptionNum++;
+					pollTabIndex = postmod.elements[i].tabIndex;
+				}
+		}
+		pollOptionNum++;
+
+		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label for="options-') . ' + pollOptionNum + ' . JavaScriptEscape('">' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape('</label>: <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" id="options-') . ' + pollOptionNum + ' . JavaScriptEscape('" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="w50"></li>') . ');
+		return false;
+	}');
+
+	echo '
+				<div id="edit_poll">
+					<fieldset id="poll_main">
+						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], '</span></legend>
+						<input type="text" name="question" value="', isset($context['question']) ? $context['question'] : '', '" tabindex="', $context['tabindex']++, '" class="w75">
+						<ul class="poll_main" id="pollMoreOptions">';
+
+	// Loop through all the choices and print them out.
+	foreach ($context['choices'] as $choice)
+		echo '
+							<li>
+								<label for="options-', $choice['id'], '">', $txt['option'], ' ', $choice['number'], '</label>:
+								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" tabindex="', $context['tabindex']++, '" maxlength="255" class="w50">
+							</li>';
+
+	echo '
+						</ul>
+						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
+					</fieldset>
+					<fieldset id="poll_options">
+						<legend>', $txt['poll_options'], '</legend>
+						<dl class="settings poll_options">
+							<dt>
+								<label for="poll_max_votes">', $txt['poll_max_votes'], ':</label>
+							</dt>
+							<dd>
+								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
+							</dd>
+							<dt>
+								<label for="poll_expire">', $txt['poll_run'], ':</label><br />
+								<em class="smalltext">', $txt['poll_run_limit'], '</em>
+							</dt>
+							<dd>
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="', $context['poll_options']['expire'], '" onchange="pollOptions();" maxlength="4"> ', $txt['days_word'], '
+							</dd>
+							<dt>
+								<label for="poll_change_vote">', $txt['poll_do_change_vote'], ':</label>
+							</dt>
+							<dd>
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"', !empty($context['poll']['change_vote']) ? ' checked="checked"' : '', '>
+							</dd>';
+
+	if ($context['poll_options']['guest_vote_enabled'])
+		echo '
+							<dt>
+								<label for="poll_guest_vote">', $txt['poll_guest_vote'], ':</label>
+							</dt>
+							<dd>
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"', !empty($context['poll_options']['guest_vote']) ? ' checked="checked"' : '', '>
+							</dd>';
+
+	echo '
+							<dt>
+								', $txt['poll_results_visibility'], ':
+							</dt>
+							<dd>
+								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br />
+								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br />
+								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll_options']['hide'] == 2 ? ' checked' : '', empty($context['poll_options']['expire']) ? ' disabled' : '', '> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
+							</dd>
+						</dl>
+					</fieldset>
+				</div>';
+}
+
+// Event making
+function template_make_event()
+{
+	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
+
+	// We want to ensure we show the current days in a month etc... This is done here.
+	if ($context['make_event'])
+		add_js('
+	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+	function generateDays()
+	{
+		var dayElement = $("#day")[0], year = $("#year").val(), monthElement = ("#month")[0];
+		var days, selected = dayElement.selectedIndex;
+
+		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
+
+		days = monthLength[monthElement.value - 1];
+		while (dayElement.options.length)
+			dayElement.options[0] = null;
+
+		for (i = 1; i <= days; i++)
+			dayElement.options[dayElement.length] = new Option(i, i);
+
+		if (selected < days)
+			dayElement.selectedIndex = selected;
+	}');
+
+	echo '
+				<div id="post_event">
+					<fieldset id="event_main">
+						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', ' id="caption_evtitle">', $txt['calendar_event_title'], '</span></legend>
+						<input type="text" name="evtitle" maxlength="80" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="w75">
+						<div class="smalltext nowrap">
+							<input type="hidden" name="calendar" value="1">', $txt['calendar_year'], '
+							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
+
+	// Show a list of all the years we allow...
+	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
+		echo '
+								<option value="', $year, '"', $year == $context['event']['year'] ? ' selected="selected"' : '', '>', $year, '&nbsp;</option>';
+
+	echo '
+							</select>
+							', $txt['calendar_month'], '
+							<select name="month" id="month" onchange="generateDays();">';
+
+	// There are 12 months per year - ensure that they all get listed.
+	for ($month = 1; $month <= 12; $month++)
+		echo '
+								<option value="', $month, '"', $month == $context['event']['month'] ? ' selected="selected"' : '', '>', $txt['months'][$month], '&nbsp;</option>';
+
+	echo '
+							</select>
+							', $txt['calendar_day'], '
+							<select name="day" id="day">';
+
+	// This prints out all the days in the current month - this changes dynamically as we switch months.
+	for ($day = 1; $day <= $context['event']['last_day']; $day++)
+		echo '
+								<option value="', $day, '"', $day == $context['event']['day'] ? ' selected="selected"' : '', '>', $day, '&nbsp;</option>';
+
+	echo '
+							</select>
+						</div>
+					</fieldset>';
+
+	if (!empty($modSettings['cal_allowspan']) || ($context['event']['new'] && $context['is_new_post']))
 	{
 		echo '
+					<fieldset id="event_options">
+						<legend>', $txt['calendar_event_options'], '</legend>
+						<div class="event_options smalltext">
+							<ul class="event_options">';
+
+		// If events can span more than one day then allow the user to select how long it should last.
+		if (!empty($modSettings['cal_allowspan']))
+		{
+			echo '
+								<li>
+									', $txt['calendar_numb_days'], '
+									<select name="span">';
+
+			for ($days = 1; $days <= $modSettings['cal_maxspan']; $days++)
+				echo '
+										<option value="', $days, '"', $days == $context['event']['span'] ? ' selected="selected"' : '', '>', $days, '&nbsp;</option>';
+
+			echo '
+									</select>
+								</li>';
+		}
+
+		// If this is a new event let the user specify which board they want the linked post to be put into.
+		if ($context['event']['new'] && $context['is_new_post'])
+		{
+			echo '
+								<li>
+									', $txt['calendar_post_in'], '
+									<select name="board">';
+			foreach ($context['event']['categories'] as $category)
+			{
+				echo '
+										<optgroup label="', $category['name'], '">';
+				foreach ($category['boards'] as $board)
+					echo '
+											<option value="', $board['id'], '"', $board['selected'] ? ' selected="selected"' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
+				echo '
+										</optgroup>';
+			}
+			echo '
+									</select>
+								</li>';
+		}
+
+		echo '
+							</ul>
+						</div>
+					</fieldset>';
+	}
+
+	echo '
+				</div>';
+}
+
+// Previous post handling
+function template_show_previous_posts()
+{
+	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
+
+	echo '
 		<div id="recent" class="flow_hidden main_section">
 			<div class="cat_bar">
 				<h3>', $txt['topic_summary'], '</h3>
 			</div>
 			<div id="new_replies"></div>';
 
-		$ignored_posts = array();
-		foreach ($context['previous_posts'] as $post)
-		{
-			$ignoring = false;
-			if (!empty($post['is_ignored']))
-				$ignored_posts[] = $ignoring = $post['id'];
+	$ignored_posts = array();
+	foreach ($context['previous_posts'] as $post)
+	{
+		$ignoring = false;
+		if (!empty($post['is_ignored']))
+			$ignored_posts[] = $ignoring = $post['id'];
 
-			echo '
+		echo '
 			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div id="msg', $post['id'], '">
 					<div class="floatleft">
@@ -731,36 +750,36 @@ function template_main()
 						<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
 					</div>';
 
-			if ($context['can_quote'])
-				echo '
+		if ($context['can_quote'])
+			echo '
 					<ul class="reset smalltext quickbuttons" id="msg_', $post['id'], '_quote">
 						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
 					</ul>';
 
-			echo '
+		echo '
 					<br class="clear" />';
 
-			if ($ignoring)
-				echo '
+		if ($ignoring)
+			echo '
 					<div id="msg_', $post['id'], '_ignored_prompt" class="smalltext">
 						', $txt['ignoring_user'], '
 						<a href="#" id="msg_', $post['id'], '_ignored_link" style="display: none;">', $txt['show_ignore_user_post'], '</a>
 					</div>';
 
-			echo '
+		echo '
 					<div class="list_posts smalltext" id="msg_', $post['id'], '_body">', $post['message'], '</div>
 				</div>
 			</div>';
-		}
+	}
 
-		echo '
+	echo '
 		</div>';
 
-		add_js('
+	add_js('
 	var aIgnoreToggles = [];');
 
-		foreach ($ignored_posts as $post_id)
-			add_js('
+	foreach ($ignored_posts as $post_id)
+		add_js('
 	aIgnoreToggles[' . $post_id . '] = new smc_Toggle({
 		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
@@ -777,7 +796,7 @@ function template_main()
 		]
 	});');
 
-		add_js('
+	add_js('
 	function insertQuoteFast(messageid)
 	{
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
@@ -787,7 +806,6 @@ function template_main()
 	{
 		oEditorHandle_' . $context['postbox']->id . '.insertText($("quote", XMLDoc).text(), false, true);
 	}');
-	}
 }
 
 // The template for the spellchecker.
