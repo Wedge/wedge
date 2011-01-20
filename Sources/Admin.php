@@ -240,6 +240,7 @@ function Admin()
 						'bbc' => array($txt['manageposts_bbc_settings']),
 						'censor' => array($txt['admin_censored_words']),
 						'topics' => array($txt['manageposts_topic_settings']),
+						'drafts' => array($txt['manageposts_draft_settings']),
 						'merge' => array($txt['manageposts_merge']),
 					),
 				),

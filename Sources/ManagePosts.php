@@ -62,6 +62,11 @@ if (!defined('SMF'))
 		- requires the admin_forum permission
 		- uses the edit_topic_settings sub template of the Admin template.
 		- accessed from ?action=admin;area=postsettings;sa=topics.
+
+	void ModifyDraftSettings()
+		- set any setting related to drafts.
+		- requires the admin_forum permission
+		- accessed from ?action=admin;area=postsettings;sa=drafts.
 */
 
 function ManagePostSettings()
@@ -76,6 +81,7 @@ function ManagePostSettings()
 		'bbc' => 'ModifyBBCSettings',
 		'censor' => 'SetCensor',
 		'topics' => 'ModifyTopicSettings',
+		'drafts' => 'ModifyDraftSettings',
 		'merge' => 'ModifyMergeSettings',
 	);
 
@@ -84,7 +90,7 @@ function ManagePostSettings()
 
 	$context['page_title'] = $txt['manageposts_title'];
 
-	// Tabs for browsing the different ban functions.
+	// Tabs for browsing the different post functions.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['manageposts_title'],
 		'help' => 'posts_and_topics',
@@ -101,6 +107,9 @@ function ManagePostSettings()
 			),
 			'topics' => array(
 				'description' => $txt['manageposts_topic_settings_description'],
+			),
+			'drafts' => array(
+				'description' => $txt['manageposts_draft_settings_description'],
 			),
 			'merge' => array(
 				// !!! @todo: Add description
@@ -353,14 +362,6 @@ function ModifyTopicSettings($return_config = false)
 		'',
 			// Moving of topics
 			array('check', 'ignoreMoveVsNew'),
-		'',
-			// Drafts
-			array('check', 'masterSavePostDrafts', 'subtext' => $txt['draftsave_subnote']),
-			array('check', 'masterAutoSavePostDrafts', 'subtext' => $txt['draftautosave_subnote']),
-			array('check', 'masterSavePmDrafts', 'subtext' => $txt['draftsave_subnote']),
-			array('check', 'masterAutoSavePmDrafts', 'subtext' => $txt['draftautosave_subnote']),
-			array('int', 'masterAutoSaveDraftsDelay', 'postinput' => $txt['manageposts_seconds']),
-			array('int', 'pruneSaveDrafts', 'subtext' => $txt['oldTopicDays_zero']),
 	);
 
 	if ($return_config)
@@ -385,6 +386,48 @@ function ModifyTopicSettings($return_config = false)
 	// Final settings...
 	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=topics';
 	$context['settings_title'] = $txt['manageposts_topic_settings'];
+
+	// Prepare the settings...
+	prepareDBSettingContext($config_vars);
+}
+
+// Function for modifying drafts settings. Not very exciting.
+function ModifyDraftSettings($return_config = false)
+{
+	global $context, $txt, $modSettings, $scripturl;
+
+	// Here are all the topic settings.
+	$config_vars = array(
+			array('check', 'masterSavePostDrafts', 'subtext' => $txt['draftsave_subnote']),
+			array('check', 'masterAutoSavePostDrafts', 'subtext' => $txt['draftautosave_subnote']),
+			array('check', 'masterSavePmDrafts', 'subtext' => $txt['draftsave_subnote']),
+			array('check', 'masterAutoSavePmDrafts', 'subtext' => $txt['draftautosave_subnote']),
+			array('int', 'masterAutoSaveDraftsDelay', 'postinput' => $txt['manageposts_seconds']),
+			array('int', 'pruneSaveDrafts', 'subtext' => $txt['oldTopicDays_zero']),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Get the settings template ready.
+	loadSource('ManageServer');
+
+	// Setup the template.
+	$context['page_title'] = $txt['manageposts_draft_settings'];
+	$context['sub_template'] = 'show_settings';
+
+	// Are we saving them - are we??
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+		redirectexit('action=admin;area=postsettings;sa=drafts');
+	}
+
+	// Final settings...
+	$context['post_url'] = $scripturl . '?action=admin;area=postsettings;save;sa=drafts';
+	$context['settings_title'] = $txt['manageposts_draft_settings'];
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
