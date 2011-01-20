@@ -157,7 +157,7 @@ class westr_base extends westr_entity
 		return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 	}
 
-	public static function truncate($string)
+	public static function truncate($string, $length)
 	{
 		preg_match('~^(' . self::westr_ENTLIST . '|.){' . self::strlen(substr($string, 0, $length)) . '}~u', self::entity_clean($string), $matches);
 		$string = $matches[0];
