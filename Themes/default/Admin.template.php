@@ -848,7 +848,7 @@ function template_show_settings()
 		echo '
 				<hr />
 				<div class="righttext">
-					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="button_submit" />
+					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit" />
 				</div>';
 
 	if ($is_open)
@@ -1108,11 +1108,11 @@ function template_edit_profile_field()
 					</dl>
 				</fieldset>
 				<div class="righttext">
-					<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />';
+					<input type="submit" name="save" value="', $txt['save'], '" class="submit">';
 
 	if ($context['fid'])
 		echo '
-					<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(', JavaScriptEscape($txt['custom_edit_delete_sure']), ');" class="button_submit" />';
+					<input type="submit" name="delete" value="', $txt['delete'], '" onclick="return confirm(', JavaScriptEscape($txt['custom_edit_delete_sure']), ');" class="delete">';
 
 	echo '
 				</div>
@@ -1134,7 +1134,7 @@ function template_admin_search_results()
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
 				<input type="search" name="search_term" value="', $context['search_term'], '">
 				<input type="hidden" name="search_type" value="', $context['search_type'], '" />
-				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit" />
+				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" />
 			</form>
 		</div>
 		', $txt['admin_search_results'], '
@@ -1267,7 +1267,7 @@ function template_core_features()
 			<div class="righttext">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" value="0" name="js_worked" id="js_worked" />
-				<input type="submit" value="', $txt['save'], '" name="save" class="button_submit" />
+				<input type="submit" value="', $txt['save'], '" name="save" class="submit" />
 			</div>
 		</form>
 	</div>
@@ -1308,7 +1308,7 @@ function template_add_language()
 				</fieldset>
 				<div class="righttext">
 					', $context['browser']['is_ie'] ? '<input type="text" name="ie_fix" style="display: none"> ' : '', '
-					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="button_submit" />
+					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="submit" />
 				</div>
 			</div>';
 
@@ -1514,7 +1514,7 @@ function template_download_language()
 	echo '
 			<div class="righttext padding">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="submit" name="do_install" value="', $txt['add_language_smf_install'], '" class="button_submit" />
+				<input type="submit" name="do_install" value="', $txt['add_language_smf_install'], '" class="submit" />
 			</div>
 		</form>
 	</div>
@@ -1607,12 +1607,12 @@ function template_modify_language_entries()
 				</fieldset>
 				<div class="righttext">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' class="button_submit" />';
+					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' class="save" />';
 
 	// English can't be deleted.
 	if ($context['lang_id'] != 'english')
 		echo '
-					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="button_submit" />';
+					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="delete" />';
 
 	echo '
 				</div>
@@ -1625,22 +1625,22 @@ function template_modify_language_entries()
 			</we:title>
 			<div id="taskpad" class="floatright">
 				', $txt['edit_language_entries_file'], ':
-					<select name="tfid" onchange="if (this.value != -1) document.forms.entry_form.submit();">';
+				<select name="tfid" onchange="if (this.value != -1) document.forms.entry_form.submit();">';
 
 	foreach ($context['possible_files'] as $id_theme => $theme)
 	{
 		echo '
-						<option value="-1">', $theme['name'], '</option>';
+					<option value="-1">', $theme['name'], '</option>';
 
 		foreach ($theme['files'] as $file)
 			echo '
-						<option value="', $id_theme, '+', $file['id'], '"', $file['selected'] ? ' selected' : '', '> =&gt; ', $file['name'], '</option>';
+					<option value="', $id_theme, '+', $file['id'], '"', $file['selected'] ? ' selected' : '', '> =&gt; ', $file['name'], '</option>';
 	}
 
 	echo '
-					</select>
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" value="', $txt['go'], '" class="button_submit" />
+				</select>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" value="', $txt['go'], '" class="submit" />
 			</div>';
 
 		// Is it not writable?
@@ -1702,7 +1702,7 @@ function template_modify_language_entries()
 
 		echo '
 				</dl>
-				<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled' : '', ' class="button_submit" />';
+				<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled' : '', ' class="save" />';
 
 		echo '
 			</div>';

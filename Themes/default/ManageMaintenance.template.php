@@ -15,30 +15,27 @@ function template_maintain_database()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['maintain_optimize'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_optimize'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_optimize_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
 
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '
-			</h3>
-		</div>
-
+		<we:cat>
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_backup_info'], '</p>
-				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" checked> ', $txt['maintain_backup_struct'], '</label><br />
-				<label for="data"><input type="checkbox" name="data" id="data" onclick="document.getElementById(\'submitDump\').disabled = !document.getElementById(\'struct\').checked && !document.getElementById(\'data\').checked;" checked> ', $txt['maintain_backup_data'], '</label><br />
+				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br />
+				<label for="data"><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br />
 				<label for="compress"><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
-				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return document.getElementById(\'struct\').checked || document.getElementById(\'data\').checked;" class="button_submit" /></p>
+				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').attr(\'checked\') || $(\'#data\').attr(\'checked\');" class="save" /></p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>';
@@ -63,53 +60,53 @@ function template_maintain_routine()
 	// Starts off with general maintenance procedures.
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['maintain_version'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_version'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_version_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['maintain_errors'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_errors'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_errors_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['maintain_recount'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_recount'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recount_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['maintain_logs'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_logs'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_logs_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['maintain_cache'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_cache'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_cache_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -174,9 +171,9 @@ function template_maintain_members()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['maintain_reattribute_posts'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_reattribute_posts'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
 				<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
@@ -206,15 +203,13 @@ function template_maintain_members()
 					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="button_submit" /></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="submit" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 				<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
@@ -233,17 +228,17 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="button_submit" /></span>
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="delete" /></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['maintain_recountposts'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_recountposts'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recountposts_desc'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit"></span>
+				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>
 		</div>
@@ -292,9 +287,9 @@ function template_maintain_topics()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['maintain_old'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_old'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<div class="flow_auto">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
@@ -353,14 +348,14 @@ function template_maintain_topics()
 	echo '
 						</div>
 					</div>
-					<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_old_confirm']), ');" class="button_submit" /></span>
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_old_confirm']), ');" class="delete">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</form>
 			</div>
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['move_topics_maintenance'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['move_topics_maintenance'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
@@ -400,8 +395,8 @@ function template_maintain_topics()
 	}
 	echo '
 				</select></p>
-				<span><input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow();" class="button_submit" /></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow();" class="submit">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 	</div>
@@ -425,9 +420,9 @@ function template_optimize()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['maintain_optimize'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['maintain_optimize'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<p>
 				', $txt['database_numb_tables'], '<br />
@@ -456,9 +451,9 @@ function template_convert_utf8()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['utf8_title'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['utf8_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
 				<p>', $txt['utf8_introduction'], '</p>
@@ -481,13 +476,13 @@ function template_convert_utf8()
 					<dt><strong>', $txt['utf8_target_charset'], ': </strong></dt>
 					<dd>', $txt['utf8_utf8'], '</dd>
 				</dl>
-				<input type="submit" value="', $txt['utf8_proceed'], '" class="button_submit" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" name="proceed" value="1" />
+				<input type="submit" value="', $txt['utf8_proceed'], '">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="hidden" name="proceed" value="1">
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_convert_entities()
@@ -496,17 +491,17 @@ function template_convert_entities()
 
 	echo '
 	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3>', $txt['entity_convert_title'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['entity_convert_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $txt['entity_convert_introduction'], '</p>
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-				<input type="submit" value="', $txt['entity_convert_proceed'], '" class="button_submit" />
+				<input type="submit" value="', $txt['entity_convert_proceed'], '">
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

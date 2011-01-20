@@ -2901,6 +2901,7 @@ function wedge_cache_css()
 	loadSource('Class-CSS');
 	$plugins = array(new ServerImportPlugin(), new ConstantsPlugin(), new BasedOnPlugin(), new NestedSelectorsPlugin());
 
+	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	foreach ($css as $file)
 	{
 		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
@@ -2909,14 +2910,14 @@ function wedge_cache_css()
 		foreach ($plugins as $plugin)
 			$plugin->process($add);
 
-		// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 		$add = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $add);
 		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
+		// Only the basic CSS3 we actually use. May add more in the future.
 		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
 		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);
 
-		// If we find any empty rules, we shoule be able to remove them.
-		// Obviously, don't use content: "{}" or something in your code.
+		// If we find any empty rules, we should be able to remove them.
+		// Obviously, don't use content: "{}" or something in your CSS. (Why would you?)
 		if (strpos($add, '{}') !== false)
 			$add = preg_replace('~[^{}]+{}~', '', $add);
 

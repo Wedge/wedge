@@ -242,11 +242,11 @@ function template_body_above()
 
 function template_sidebar_above()
 {
-	global $has_edge;
-	$has_edge = true;
+	global $context, $needs_tables;
+	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 
-	echo '
-		<div id="edge"><div id="sidebar">
+	echo $needs_tables ? '
+		<table id="edge"><tr><td id="sidebar" valign="top">' : '<div id="edge"><div id="sidebar">', '
 			<we:title>
 				Sidebar
 			</we:title>
@@ -258,25 +258,28 @@ function template_sidebar_above()
 
 function template_sidebar_below()
 {
+	global $needs_tables;
+
 	echo '
 			<hr>
 			And some filler for the sidebar footer.
-		</div>';
+		</div>', $needs_tables ? '</td>' : '';
 }
 
 function template_main_above()
 {
-	echo '
+	global $needs_tables;
+
+	echo $needs_tables ? '<td valign="top">' : '', '
 		<div id="main_content">';
 }
 
 function template_main_below()
 {
-	global $has_edge;
+	global $needs_tables;
 
-	echo empty($has_edge) ? '
-		</div>' : '
-		</div></div>';
+	echo '
+		</div>', $needs_tables ? '</td></tr></table>' : '</div>';
 }
 
 function template_body_below()

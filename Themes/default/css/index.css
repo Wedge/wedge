@@ -251,105 +251,6 @@ body, td, th, tr {
 	margin: 0 auto;
 }
 
-/* Let's give all forms zero padding/margins */
-form {
-	padding: 0;
-	margin: 0;
-}
-
-input, button, select, textarea {
-	font: 95%/115% verdana, Helvetica, sans-serif;
-	color: #000;
-	background: #fff;
-	border: 1px solid #7f9db9;
-	padding: 2px;
-}
-
-/* Select elements look horrible with the extra padding, so leave them unpadded. */
-select {
-	padding: 0;
-	/* Add some padding to the options instead. */
-	option {
-		padding: 1px;
-	}
-}
-
-select.qaction, input.qaction {
-	font-size: .85em;
-	padding: 0;
-}
-
-/* The font size of textareas should be just a little bit larger. */
-textarea {
-	font: 100%/130% verdana, Helvetica, sans-serif;
-}
-
-/* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-input, textarea, button, select {
-	:hover, :focus {
-		border: 1px solid #454545;
-	}
-}
-input[type=submit], input[type=button], input[type=reset] {
-	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
-	border: 1px solid #aaa;
-	cursor: pointer;
-	font-weight: normal;
-	padding: 3px 4px;
-	:hover {
-		border: 1px solid #aaa;
-		background: url(../images/theme/submit_bg.png) no-repeat 0 -140px #cde7ff;
-	}
-}
-/* input.spell */
-input.save, input.submit {
-	background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
-	padding-left: 24px;
-	color: #666;
-	:hover {
-		background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
-		color: #000;
-	}
-}
-input.save {
-	background-image: url(../images/icons/save.png);
-	:hover {
-		background-image: url(../images/icons/save.png);
-	}
-}
-input[type=search] {
-	background: #fdf7ef url(../images/filter.gif) 5px 2px no-repeat;
-	padding-left: 24px;
-	color: #666;
-	:hover {
-		background: #fdf7ef url(../images/filter.gif) 5px 2px no-repeat;
-		color: #000;
-	}
-}
-input[name=cancel], input[type=reset] {
-	background: #fdf7ef url(../images/icons/cross.png) 4px 2px no-repeat;
-	:hover {
-		background: #fdf7ef url(../images/icons/cross.png) 4px 2px no-repeat;
-	}
-}
-
-/* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
-input[type=checkbox], input[type=radio] {
-	border: none;
-	background: none;
-}
-.cat_bar h3 input[type=checkbox] {
-	margin: 5px -3px 0 7px;
-}
-
-/* Give disabled text input elements a different background color. */
-input[type=text][disabled] {
-	background-color: #eee;
-}
-input[type=file] {
-	width: 300px;
-}
-
 /* Standard horizontal rule.. ([hr], etc.) */
 hr {
 	height: 1px;
@@ -394,6 +295,112 @@ em {
 /* Alternative for u tag */
 .underline {
 	text-decoration: underline;
+}
+
+/* Styles for buttons and other form elements
+------------------------------------------------------- */
+
+/* Let's give all forms zero padding/margins */
+form {
+	padding: 0;
+	margin: 0;
+}
+
+input, button, select, textarea {
+	font: 95%/115% verdana, Helvetica, sans-serif;
+	color: #000;
+	background: #fff;
+	border: 1px solid #7f9db9;
+	padding: 2px;
+}
+
+/* Select elements look horrible with the extra padding, so leave them unpadded. */
+select {
+	padding: 0;
+	/* Add some padding to the options instead. */
+	option {
+		padding: 1px;
+	}
+}
+
+select.qaction, input.qaction {
+	font-size: .85em;
+	padding: 0;
+}
+
+/* The font size of textareas should be just a little bit larger. */
+textarea {
+	font: 100%/130% verdana, Helvetica, sans-serif;
+}
+
+/* Buttons should be styled a bit differently, in order to make them look more button'ish. */
+input, textarea, button, select {
+	:hover, :focus {
+		border: 1px solid #454545;
+	}
+}
+input[type=submit], input[type=button], input[type=reset] {
+	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
+	border: 1px solid #999;
+	border-top-color: #ccc;
+	border-left-color: #ccc;
+	cursor: pointer;
+	font-weight: normal;
+	padding: 3px 4px;
+	border-radius: 4px;
+	:hover {
+		border: 1px solid #aaa;
+		background: #cde7ff url(../images/theme/submit_bg.png) no-repeat 0 -140px;
+	}
+}
+/* !!! input.spell */
+input.new, input.save, input.submit {
+	&, :hover {
+		background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
+		color: #000;
+	}
+	padding-left: 24px;
+	color: #666;
+}
+input.save, input.save:hover {
+	background-image: url(../images/icons/save.png);
+}
+input.new, input.new:hover {
+	background-image: url(../images/icons/add.png);
+}
+input[type=search] {
+	&, :hover {
+		background: #fdf7ef url(../images/filter.gif) 5px 2px no-repeat;
+		color: #000;
+	}
+	padding-left: 24px;
+	color: #666;
+}
+input.delete {
+	&, :hover {
+		background: #fdf7ef url(../images/icons/cross.png) 4px 2px no-repeat;
+	}
+	padding-left: 24px;
+}
+input[name=cancel], input[type=reset] {
+	background: #fdf7ef !important;
+}
+
+/* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
+input[type=checkbox], input[type=radio] {
+	border: none;
+	background: none;
+}
+.cat_bar h3 input[type=checkbox] {
+	margin: 5px -3px 0 7px;
+}
+
+/* Give disabled text input elements a different background color. */
+input[type=text][disabled] {
+	background-color: #eee;
+}
+input[type=file] {
+	width: 300px;
 }
 
 /* Styles for the dropdown menus.
@@ -1369,6 +1376,7 @@ form.wrc {
 /* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
 .roundframe {
+	overflow: hidden;
 	margin-top: 1px;
 	padding: 10px 10px 9px;
 	background: #f5f5f5;

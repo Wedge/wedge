@@ -24,7 +24,7 @@ ol.search_results {
 .features {
 	overflow: visible;
 	float: left;
-	width: 49.9%;
+	width: 50%;
 	min-width: 300px;
 	.wrc {
 		padding: 0 1em !important;
