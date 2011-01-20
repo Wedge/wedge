@@ -356,17 +356,20 @@ input[type=submit], input[type=button], input[type=reset] {
 /* !!! input.spell */
 input.new, input.save, input.submit {
 	&, :hover {
-		background: #edf7ff url(../images/icons/tick.png) 4px 2px no-repeat;
+		background: url(../images/icons/tick.png) 4px 2px no-repeat, url(../images/theme/bevel.png) 0 0 no-repeat;
+		background-color: #e2f3ea;
 		color: #000;
 	}
 	padding-left: 24px;
 	color: #666;
 }
 input.save, input.save:hover {
-	background-image: url(../images/icons/save.png);
+	background: url(../images/theme/bevel.png) 0 0 no-repeat, url(../images/icons/save.png) 4px 2px no-repeat;
+	background-color: #dff3e8;
 }
 input.new, input.new:hover {
-	background-image: url(../images/icons/add.png);
+	background: url(../images/icons/add.png) 4px 2px no-repeat, url(../images/theme/bevel.png) 0 0 no-repeat;
+	background-color: #e0eaf6;
 }
 input[type=search] {
 	&, :hover {
@@ -378,7 +381,8 @@ input[type=search] {
 }
 input.delete {
 	&, :hover {
-		background: #fdf7ef url(../images/icons/cross.png) 4px 2px no-repeat;
+		background: url(../images/icons/cross.png) 4px 2px no-repeat, url(../images/theme/bevel.png) 0 0 no-repeat;
+		background-color: #f5efe9;
 	}
 	padding-left: 24px;
 }

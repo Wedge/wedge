@@ -8,24 +8,31 @@ function template_admin()
 
 	// Welcome message for the admin.
 	echo '
-	<div id="admincenter">
-		<we:cat>';
+	<div id="admincenter">';
 
 	if ($context['user']['is_admin'])
 		echo '
-			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright" id="quick_search">
-				<input type="search" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';">
-				<select name="search_type">
-					<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
-					<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
-					<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected' : ''), '>', $txt['admin_search_type_online'], '</option>
-				</select>
-				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
-			</form>';
+		<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8">
+			<we:cat>
+				<div id="quick_search">
+					<input type="search" name="search_term" placeholder="', $txt['admin_search'], '">
+					<select name="search_type">
+						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
+						<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
+						<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected' : ''), '>', $txt['admin_search_type_online'], '</option>
+					</select>
+					<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
+				</div>
+				', $txt['admin_center'], '
+			</we:cat>
+		</form>';
+	else
+		echo '
+		<we:cat>
+			', $txt['admin_center'], '
+		</we:cat>';
 
 	echo '
-			', $txt['admin_center'], '
-		</we:cat>
 		<div class="roundframe">
 			<div id="welcome">
 				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>

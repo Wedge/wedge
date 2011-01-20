@@ -757,6 +757,7 @@ tr.windowbg2 {
 }
 #quick_search {
 	margin-left: 5px;
+	float: left;
 }
 .features_image {
 	float: right;

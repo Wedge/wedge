@@ -2,10 +2,11 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 
-form#quick_search {
+#quick_search {
 	overflow: hidden;
 	line-height: 20px;
 	font-size: 0.8em !important;
+	float: right;
 	img {
 		padding-top: 5px;
 	}

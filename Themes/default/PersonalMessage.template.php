@@ -757,9 +757,9 @@ function template_search_results()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>', $txt['pm_search_results'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['pm_search_results'], '
+		</we:cat>
 		<div class="pagesection">
 			<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
 		</div>';
@@ -789,7 +789,7 @@ function template_search_results()
 				<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
 				<span class="floatleft">', $message['counter'], '&nbsp;&nbsp;<a href="', $message['href'], '">', $message['subject'], '</a></span>
 			</we:title>
-			<div class="cat_bar">
+			<div class="padding">
 				<h3>', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
 
 			// Show the recipients.
@@ -800,8 +800,7 @@ function template_search_results()
 			elseif ($context['folder'] != 'sent')
 				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
-			echo '
-				</h3>
+			echo '</h3>
 			</div>
 			<div class="windowbg', $alternate ? '2' : '', ' wrc">
 				', $message['body'], '
@@ -869,15 +868,16 @@ function template_send()
 	if (!empty($context['send_log']))
 	{
 		echo '
-	<div class="cat_bar">
-		<h3>', $txt['pm_send_report'], '</h3>
-	</div>
+	<we:cat>
+		', $txt['pm_send_report'], '
+	</we:cat>
 	<div class="windowbg wrc">';
 
 		if (!empty($context['send_log']['sent']))
 			foreach ($context['send_log']['sent'] as $log_entry)
 				echo '
 		<span class="error">', $log_entry, '</span><br />';
+
 		if (!empty($context['send_log']['failed']))
 			foreach ($context['send_log']['failed'] as $log_entry)
 				echo '
@@ -891,9 +891,9 @@ function template_send()
 	// Show the preview of the personal message.
 	if (isset($context['preview_message']))
 		echo '
-	<div class="cat_bar">
-		<h3>', $context['preview_subject'], '</h3>
-	</div>
+	<we:cat>
+		', $context['preview_subject'], '
+	</we:cat>
 	<div class="windowbg wrc">
 		', $context['preview_message'], '
 	</div>
@@ -901,11 +901,9 @@ function template_send()
 
 	// Main message editing box.
 	echo '
-	<div class="cat_bar">
-		<h3>
-			<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '" />&nbsp;', $txt['new_message'], '
-		</h3>
-	</div>';
+	<we:title>
+		<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '" />&nbsp;', $txt['new_message'], '
+	</we:title>';
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">
