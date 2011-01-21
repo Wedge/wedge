@@ -313,6 +313,32 @@ function template_body_below()
 
 	echo '
 	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
+
+	<script type="text/javascript"><!-- // --><![CDATA[
+		function noi_resize()
+		{
+			var d = document, t = d.getElementById("edge"),
+				f = d.getElementById("footer"),
+				s = d.getElementById("sidebar"),
+				w = t ? t.clientWidth : 0;
+			if (w && w < 728 && !wedge_side)
+			{
+				wedge_side = 1;
+				t.removeChild(s);
+				f.appendChild(s);
+			}
+			else if (w >= 952 && wedge_side)
+			{
+				wedge_side = 0;
+				f.removeChild(s);
+				t.insertBefore(s, d.getElementById("main_content"));
+			}
+		}
+		wedge_side = 0;
+		window.onresize = noi_resize;
+		noi_resize();
+	// ]]></script>
+
 </div>';
 }
 
