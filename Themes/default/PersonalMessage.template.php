@@ -142,12 +142,10 @@ function template_folder()
 		// Show the helpful titlebar - generally.
 		if ($context['display_mode'] != 1)
 			echo '
-	<div class="cat_bar">
-		<h3>
-			<span id="author">', $txt['author'], '</span>
-			<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
-		</h3>
-	</div>';
+	<we:cat>
+		<span id="author">', $txt['author'], '</span>
+		<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
+	</we:cat>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.
 		if ($context['display_mode'] == 2)
@@ -1001,9 +999,9 @@ function template_send()
 	if ($context['reply'])
 		echo '
 	<br /><br />
-	<div class="cat_bar">
-		<h3>', $txt['subject'], ': ', $context['quoted_message']['subject'], '</h3>
-	</div>
+	<we:title>
+		', $txt['subject'], ': ', $context['quoted_message']['subject'], '
+	</we:title>
 	<div class="windowbg2 wrc clear">
 		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
@@ -1062,9 +1060,9 @@ function template_ask_delete()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '</h3>
-		</div>
+		<we:cat>
+			', ($context['delete_all'] ? $txt['delete_message'] : $txt['delete_all']), '
+		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $txt['delete_all_confirm'], '</p><br />
 			<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
@@ -1098,9 +1096,9 @@ function template_labels()
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=manlabels" method="post" accept-charset="UTF-8">
-		<div class="cat_bar">
-			<h3>', $txt['pm_manage_labels'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['pm_manage_labels'], '
+		</we:cat>
 		<div class="description">
 			', $txt['pm_labels_desc'], '
 		</div>
@@ -1490,9 +1488,9 @@ function template_add_rule()
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=manrules;save;rid=', $context['rid'], '" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">
-		<div class="cat_bar">
-			<h3>', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '</h3>
-		</div>
+		<we:cat>
+			', $context['rid'] == 0 ? $txt['pm_add_rule'] : $txt['pm_edit_rule'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<dl class="addrules">
 				<dt class="floatleft">

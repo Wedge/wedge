@@ -338,54 +338,56 @@ input, textarea, button, select {
 	}
 }
 input[type=submit], input[type=button], input[type=reset] {
-	background: #cde7ff url(../../images/theme/submit_bg.png) no-repeat;
-	border: 1px solid #999;
-	border-top-color: #ccc;
-	border-left-color: #ccc;
+	background: url(../../images/theme/bevel.png) #d6e6e6;
+	border: 1px solid;
+	border-color: #ccc #999 #999 #ccc;
 	cursor: pointer;
-	font-weight: normal;
 	padding: 3px 4px;
-	border-radius: 4px;
+	color: #555;
+	border-radius: 5px;
 	:hover {
-		border: 1px solid #aaa;
-		background: #cde7ff url(../../images/theme/submit_bg.png) no-repeat 0 -140px;
+		background-color: #dee;
+		color: #000;
 	}
 }
 /* !!! input.spell */
-input.new, input.save, input.submit {
-	&, :hover {
-		background: url(../../images/icons/tick.png) 4px 2px no-repeat, url(../../images/theme/bevel.png) 0 0 no-repeat;
-		background-color: #e2f3ea;
-		color: #000;
-	}
+input.new, input.save, input.submit, input.delete {
 	padding-left: 24px;
-	color: #666;
 }
-input.save, input.save:hover {
-	background: url(../../images/theme/bevel.png) 0 0 no-repeat, url(../../images/icons/save.png) 4px 2px no-repeat;
-	background-color: #dff3e8;
-}
-input.new, input.new:hover {
-	background: url(../../images/icons/add.png) 4px 2px no-repeat, url(../../images/theme/bevel.png) 0 0 no-repeat;
-	background-color: #e0eaf6;
-}
-input[type=search] {
-	&, :hover {
-		background: #fdf7ef url(../../images/filter.gif) 5px 2px no-repeat;
-		color: #000;
+input.submit {
+	background: url(../../images/buttons.png) 4px 2px no-repeat #e2f3ea;
+	background: url(../../images/buttons.png) 4px 2px no-repeat, #e2f3ea url(../../images/theme/bevel.png);
+	:hover {
+		background-color: #e8f9f0;
 	}
-	padding-left: 24px;
-	color: #666;
 }
 input.delete {
-	&, :hover {
-		background: url(../../images/icons/cross.png) 4px 2px no-repeat, url(../../images/theme/bevel.png) 0 0 no-repeat;
-		background-color: #f5efe9;
+	background: url(../../images/buttons.png) 4px -30px no-repeat #f5efe9;
+	background: url(../../images/buttons.png) 4px -30px no-repeat, #f5efe9 url(../../images/theme/bevel.png);
+	:hover {
+		background-color: #fbf5ef;
 	}
+}
+input.save {
+	background: url(../../images/buttons.png) 4px -62px no-repeat #dff3e8;
+	background: url(../../images/buttons.png) 4px -62px no-repeat, #dff3e8 url(../../images/theme/bevel.png);
+	:hover {
+		background-color: #e5f9ed;
+	}
+}
+input.new {
+	background: url(../../images/buttons-64.png) 4px -94px no-repeat #e0eaf6;
+	background: url(../../images/buttons-128.png) 4px -94px no-repeat, #e0eaf6 url(../../images/theme/bevel.png);
+	:hover {
+		background-color: #e6f0fc;
+	}
+}
+input[type=search] {
+	background: url(../../images/filter.gif) 5px 2px no-repeat #fdf7ef;
 	padding-left: 24px;
 }
 input[name=cancel], input[type=reset] {
-	background: #fdf7ef !important;
+	background-color: #fdf7ef !important;
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
