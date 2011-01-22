@@ -14,14 +14,13 @@ function template_main()
 
 	echo '
 	<div class="main_section" id="memberlist">
-		<div class="cat_bar">
-			<h4>', !isset($context['old_search']) ? '
-				<span class="floatright">' . $context['letter_links'] . '</span>' : '', '
-				', $txt['members_list'];
+		<we:cat>
+			', !isset($context['old_search']) ? '
+			<span class="floatright">' . $context['letter_links'] . '</span>' : '', '
+			', $txt['members_list'];
 
 	echo '
-			</h4>
-		</div>
+		</we:cat>
 		<div class="pagesection">
 			', template_button_strip($memberlist_buttons, 'right'), '
 			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
@@ -44,7 +43,7 @@ function template_main()
 		elseif ($column['selected'])
 			echo '
 					<th scope="col" class="nowrap', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '>
-						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" /></a></th>';
+						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif"></a></th>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
@@ -64,14 +63,14 @@ function template_main()
 			echo '
 				<tr ', empty($member['sort_letter']) ? '' : ' id="letter' . $member['sort_letter'] . '"', '>
 					<td class="windowbg2">
-						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '" />' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
+						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
 					</td>
 					<td class="windowbg left">', $member['link'], '</td>
-					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '" /></a>', '</td>';
+					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
 
 		if (!isset($context['disabled_fields']['website']))
 			echo '
-					<td class="windowbg">', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $settings['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '" /></a>' : '', '</td>';
+					<td class="windowbg">', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $settings['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
 
 		// ICQ?
 		if (!isset($context['disabled_fields']['icq']))
@@ -162,11 +161,9 @@ function template_search()
 	echo '
 	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
-			<div class="cat_bar">
-				<h3>
-					', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif" />' : '', $txt['mlist_search'], '
-				</h3>
-			</div>
+			<we:cat>
+				', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', $txt['mlist_search'], '
+			</we:cat>
 			<div class="pagesection">
 				', template_button_strip($memberlist_buttons, 'right'), '
 			</div>';
@@ -178,7 +175,7 @@ function template_search()
 					<div id="mlist_search" class="flow_hidden">
 						<div id="search_term_input"><br>
 							<strong>', $txt['search_for'], ':</strong>
-							<input type="text" name="search" value="', $context['old_search'], '" size="35"> <input type="submit" name="submit" value="' . $txt['search'] . '" class="button_submit" />
+							<input type="search" name="search" value="', $context['old_search'], '" size="28"> <input type="submit" name="submit" value="' . $txt['search'] . '">
 						</div>
 						<span class="floatleft">';
 

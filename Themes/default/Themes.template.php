@@ -9,10 +9,10 @@ function template_main()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
-			<input type="hidden" value="0" name="options[theme_allow]" />
+			<input type="hidden" value="0" name="options[theme_allow]">
 			<div class="cat_bar">
 				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
+					<a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
 					', $txt['themeadmin_title'], '
 				</h3>
 			</div>
@@ -89,10 +89,10 @@ function template_main()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="submit" value="' . $txt['save'] . '" class="button_submit" />
+					<input type="submit" name="submit" value="' . $txt['save'] . '" class="save">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 
 	// Link to simplemachines.org for latest themes and info!
@@ -100,7 +100,7 @@ function template_main()
 		<br>
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['theme_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg wrc">
@@ -119,7 +119,7 @@ function template_main()
 		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return confirm(', JavaScriptEscape($txt['theme_install_new_confirm']), ');">
 			<div class="cat_bar">
 				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_install'], '
+					<a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['theme_install'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -156,10 +156,10 @@ function template_main()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['theme_install_go'], '" class="button_submit" />
+					<input type="submit" name="submit" value="', $txt['theme_install_go'], '" class="submit">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -200,7 +200,7 @@ function template_list_themes()
 		// You *cannot* delete the default theme. It's important!
 		if ($theme['id'] != 1)
 			echo '
-			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', JavaScriptEscape($txt['theme_remove_confirm']), ');"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '" /></a></span>';
+			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', JavaScriptEscape($txt['theme_remove_confirm']), ');"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '"></a></span>';
 
 		echo '
 			<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=settings">', $theme['name'], '</a></strong>', !empty($theme['version']) ? ' <em>(' . $theme['version'] . ')</em>' : '', '
@@ -237,8 +237,8 @@ function template_list_themes()
 						<input type="text" name="reset_url" id="reset_url" value="', $context['reset_url'], '" size="40" style="width: 80%">
 					</dd>
 				</dl>
-				<input type="submit" name="submit" value="', $txt['themeadmin_list_reset_go'], '" class="button_submit" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" name="submit" value="', $txt['themeadmin_list_reset_go'], '" class="submit">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>
@@ -296,7 +296,7 @@ function template_set_options()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '" />
+			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '">
 			<div class="cat_bar">
 				<h3>', $txt['theme_options_title'], ' - ', $context['theme_settings']['name'], '</h3>
 			</div>
@@ -321,7 +321,7 @@ function template_set_options()
 
 		if ($setting['type'] == 'checkbox')
 			echo '
-						<input type="hidden" name="' . (!empty($setting['default']) ? 'default_' : '') . 'options[' . $setting['id'] . ']" value="0" />
+						<input type="hidden" name="' . (!empty($setting['default']) ? 'default_' : '') . 'options[' . $setting['id'] . ']" value="0">
 						<label for="options_', $setting['id'], '"><input type="checkbox" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="options_', $setting['id'], '"', !empty($setting['value']) ? ' checked' : '', $context['theme_options_reset'] ? ' disabled' : '', ' value="1"> ', $setting['label'], '</label>';
 
 		elseif ($setting['type'] == 'list')
@@ -353,8 +353,8 @@ function template_set_options()
 	echo '
 				</ul>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
 		</form>
@@ -370,7 +370,7 @@ function template_set_settings()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
 			<we:title>
-				<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
+				<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
 			</we:title>';
 
 	// !!! Why can't I edit the default theme popup.
@@ -378,7 +378,7 @@ function template_set_settings()
 		echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_edit'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_edit'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -395,7 +395,7 @@ function template_set_settings()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_url_config'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_url_config'], '
 				</h3>
 			</div>
 			<div class="windowbg2 wrc">
@@ -428,7 +428,7 @@ function template_set_settings()
 			</div>
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/config_sm.gif" />', $txt['theme_options'], '
+					<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_options'], '
 				</h3>
 			</div>
 			<div class="windowbg wrc">
@@ -457,7 +457,7 @@ function template_set_settings()
 			echo '
 					</dt>
 					<dd>
-						<input type="hidden" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" value="0" />
+						<input type="hidden" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" value="0">
 						<input type="checkbox" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="', $setting['id'], '"', !empty($setting['value']) ? ' checked' : '', ' value="1">
 					</dd>';
 		}
@@ -509,10 +509,10 @@ function template_set_settings()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="button_submit" />
+					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -538,7 +538,7 @@ function template_pick()
 			</div>
 			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">
 				<div class="floatright">
-					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" class="padding" /></a>
+					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" class="padding"></a>
 				</div>
 				<p>
 					', $theme['description'], '
@@ -900,7 +900,7 @@ function template_edit_style()
 	echo '
 				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font: 110% monospace; margin-top: 1ex; white-space: pre;" onkeyup="setPreviewTimeout();" onchange="refreshPreview(true);">', $context['entire_file'], '</textarea><br>
 				<div class="padding righttext">
-					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="submit">
+					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
 				</div>
 			</div>
@@ -950,9 +950,9 @@ function template_edit_template()
 				</div>';
 
 	echo '
-				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="button_submit" />
-				<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+				<input type="hidden" name="filename" value="', $context['edit_filename'], '">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>';
@@ -984,9 +984,9 @@ function template_edit_file()
 			</div>
 			<div class="windowbg wrc">
 				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br>
-				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="button_submit" />
-				<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+				<input type="hidden" name="filename" value="', $context['edit_filename'], '">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>

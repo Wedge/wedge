@@ -52,8 +52,19 @@ div.frame {
 	display: table;
 	table-layout: fixed;
 }
+#sidebar {
+	display: table-cell;
+	vertical-align: top;
+	width: 220px;
+	border: 1px solid #ccc;
+	background: #edefe6;
+	padding: 10px;
+	margin: 12px 0;
+	border-radius: 8px;
+}
 #main_content {
 	display: table-cell;
+	vertical-align: top;
 	width: 100%;
 	min-height: 200px;
 	padding: 12px 0 12px 30px;
@@ -188,16 +199,6 @@ h1.forumtitle {
 			}
 		}
 	}
-}
-
-#sidebar {
-	display: table-cell;
-	width: 220px;
-	border: 1px solid #ccc;
-	background: #edefe6;
-	padding: 10px;
-	margin: 12px 0;
-	border-radius: 8px;
 }
 
 /* Styles for the general looks for the Curve theme.

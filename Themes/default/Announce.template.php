@@ -32,11 +32,11 @@ function template_announce()
 					</li>
 				</ul>
 				<div id="confirm_buttons">
-					<input type="submit" value="', $txt['post'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="topic" value="', $context['current_topic'], '" />
-					<input type="hidden" name="move" value="', $context['move'], '" />
-					<input type="hidden" name="goback" value="', $context['go_back'], '" />
+					<input type="submit" value="', $txt['post'], '" class="submit">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="topic" value="', $context['current_topic'], '">
+					<input type="hidden" name="move" value="', $context['move'], '">
+					<input type="hidden" name="goback" value="', $context['go_back'], '">
 				</div>
 			</div>
 		</form>
@@ -56,13 +56,13 @@ function template_announcement_send()
 				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 				<p><strong>', $context['percentage_done'], '% ', $txt['announce_done'], '</strong></p>
 				<div id="confirm_buttons">
-					<input type="submit" name="b" value="', westr::htmlspecialchars($txt['announce_continue']), '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="topic" value="', $context['current_topic'], '" />
-					<input type="hidden" name="move" value="', $context['move'], '" />
-					<input type="hidden" name="goback" value="', $context['go_back'], '" />
-					<input type="hidden" name="start" value="', $context['start'], '" />
-					<input type="hidden" name="membergroups" value="', $context['membergroups'], '" />
+					<input type="submit" name="b" value="', westr::htmlspecialchars($txt['announce_continue']), '" class="submit">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="topic" value="', $context['current_topic'], '">
+					<input type="hidden" name="move" value="', $context['move'], '">
+					<input type="hidden" name="goback" value="', $context['go_back'], '">
+					<input type="hidden" name="start" value="', $context['start'], '">
+					<input type="hidden" name="membergroups" value="', $context['membergroups'], '">
 				</div>
 			</div>
 		</form>

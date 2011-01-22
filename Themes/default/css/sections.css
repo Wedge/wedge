@@ -1616,7 +1616,7 @@ dl.addrules dt.floatleft {
 		}
 	}
 	h3 {
-		&.weekly {
+		.weekly {
 			text-align: center;
 			padding-left: 0;
 			font-size: large;

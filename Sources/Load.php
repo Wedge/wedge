@@ -1445,12 +1445,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'title_end'		=> '</we:title>',
 		'title2'		=> '<we:title2>',
 		'title2_end'	=> '</we:title2>',
+		'cat'			=> '<we:cat>',
+		'cat_end'		=> '</we:cat>',
 	);
 	$context['blocks_to_replace'] = array(
 		'title'			=> '<div class="title_bar"><h3>',
 		'title_end'		=> '</h3></div>',
 		'title2'		=> '<div class="title_bar"><h4>',
 		'title2_end'	=> '</h4></div>',
+		'cat'			=> '<div class="cat_bar"><h3>',
+		'cat_end'		=> '</h3></div>',
 	);
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];

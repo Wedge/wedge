@@ -8,9 +8,9 @@ function template_moderation_center()
 	// Show a welcome message to the user.
 	echo '
 	<div id="modcenter">
-		<div class="cat_bar">
-			<h3>', $txt['moderation_center'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['moderation_center'], '
+		</we:cat>
 		<div class="information">
 			<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
 			<p>
@@ -45,11 +45,9 @@ function template_latest_news()
 	global $settings, $options, $context, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
 		</div>';
@@ -86,11 +84,9 @@ function template_group_requests_block()
 	global $settings, $options, $context, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=groups;sa=requests">', $txt['mc_group_requests'], '</a>
+		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
 				<ul class="reset">';
@@ -120,11 +116,9 @@ function template_reported_posts_block()
 	global $settings, $options, $context, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=moderate;area=reports">', $txt['mc_recent_reports'], '</a>
+		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
 				<ul class="reset">';
@@ -153,11 +147,9 @@ function template_watched_users()
 	global $settings, $options, $context, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=moderate;area=userwatch">', $txt['mc_watched_users'], '</a>
+		</we:cat>
 		<div class="windowbg wrc">
 			<div class="modbox">
 				<ul class="reset">';
@@ -188,9 +180,9 @@ function template_notes()
 
 	echo '
 		<form action="', $scripturl, '?action=moderate;area=index" method="post">
-			<div class="cat_bar">
-				<h3>', $txt['mc_notes'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['mc_notes'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<div class="modbox">';
 
@@ -216,12 +208,12 @@ function template_notes()
 						<input type="text" name="new_note" value="', $txt['mc_click_add_note'], '" style="width: 95%;" onclick="if (this.value == \'', $txt['mc_click_add_note'], '\') this.value = \'\';">
 					</div>
 					<div class="floatright">
-						<input type="submit" name="makenote" value="', $txt['mc_add_note'], '" class="button_submit" />
+						<input type="submit" name="makenote" value="', $txt['mc_add_note'], '" class="new">
 					</div>
 					<br class="clear">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 }
 
@@ -232,11 +224,9 @@ function template_reported_posts()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=reports', $context['view_closed'] ? ';sa=closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
+			</we:cat>
 			<div class="pagesection">
 				<div class="pages">', $txt['pages'], ': ', $context['page_index'], '</div>
 			</div>';
@@ -290,10 +280,10 @@ function template_reported_posts()
 					', $txt['pages'], ': ', $context['page_index'], '
 				</div>
 				<div class="floatright">
-					', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="button_submit" />' : '', '
+					', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="delete">' : '', '
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -308,9 +298,9 @@ function template_unapproved_posts()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['mc_unapproved_posts'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['mc_unapproved_posts'], '
+			</we:cat>';
 
 	// Make up some buttons
 	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
@@ -331,13 +321,11 @@ function template_unapproved_posts()
 	foreach ($context['unapproved_items'] as $item)
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>
-					<span class="smalltext floatleft">', $item['counter'], '&nbsp;</span>
-					<span class="smalltext floatleft"><a href="', $scripturl, '#c', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
-					<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
-				</h3>
-			</div>
+			<we:title>
+				<span class="smalltext floatleft">', $item['counter'], '&nbsp;</span>
+				<span class="smalltext floatleft"><a href="', $scripturl, '#c', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
+				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
+			</we:title>
 			<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
@@ -366,7 +354,7 @@ function template_unapproved_posts()
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
 						<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>
 					</select>
-					<noscript><input type="submit" name="submit" value="', $txt['go'], '" class="button_submit" /></noscript>
+					<noscript><input type="submit" name="submit" value="', $txt['go'], '"></noscript>
 				</div>';
 
 	if (!empty($context['unapproved_items']))
@@ -392,9 +380,9 @@ function template_unapproved_attachments()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=attachmod;sa=attachments;start=', $context['start'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['mc_unapproved_attachments'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['mc_unapproved_attachments'], '
+			</we:cat>';
 
 	// The ever popular approve button, with the massively unpopular delete.
 	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
@@ -456,7 +444,7 @@ function template_unapproved_attachments()
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
 						<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>
 					</select>
-					<noscript><input type="submit" name="submit" value="', $txt['go'], '" class="button_submit" /></noscript>
+					<noscript><input type="submit" name="submit" value="', $txt['go'], '"></noscript>
 				</div>';
 
 	if (!empty($context['unapproved_items']))
@@ -480,11 +468,9 @@ function template_viewmodreport()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=reports;report=', $context['report']['id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
-				</h3>
-			</div>
+			<we:cat>
+				', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
+			</we:cat>
 			<we:title>';
 
 		// Make the buttons.
@@ -501,9 +487,9 @@ function template_viewmodreport()
 				', $context['report']['body'], '
 			</div>
 			<br>
-			<div class="cat_bar">
-				<h3>', $txt['mc_modreport_whoreported_title'], '</h3>
-			</div>';
+			<we:title>
+				', $txt['mc_modreport_whoreported_title'], '
+			</we:title>';
 
 	foreach ($context['report']['comments'] as $comment)
 		echo '
@@ -514,9 +500,9 @@ function template_viewmodreport()
 
 	echo '
 			<br>
-			<div class="cat_bar">
-				<h3>', $txt['mc_modreport_mod_comments'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['mc_modreport_mod_comments'], '
+			</we:cat>
 			<div class="windowbg2 wrc">';
 
 	if (empty($context['report']['mod_comments']))
@@ -530,7 +516,7 @@ function template_viewmodreport()
 	echo '
 				<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
 				<div>
-					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="button_submit" />
+					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="new">
 				</div>
 			</div>
 			<br>';
@@ -542,9 +528,9 @@ function template_viewmodreport()
 	if (!empty($context['entries']))
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>', $txt['mc_modreport_modactions'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['mc_modreport_modactions'], '
+			</we:cat>
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
@@ -631,9 +617,9 @@ function template_moderation_settings()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['mc_prefs_title'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['mc_prefs_title'], '
+			</we:cat>
 			<div class="information">
 				', $txt['mc_prefs_desc'], '
 			</div>
@@ -688,7 +674,7 @@ function template_moderation_settings()
 				</dl>
 				<div class="righttext">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />
+					<input type="submit" name="save" value="', $txt['save'], '" class="save">
 				</div>
 			</div>
 		</form>
@@ -710,9 +696,9 @@ function template_show_notice()
 	theme_base_css(), '
 </head>
 <body>
-	<div class="cat_bar">
-		<h3>', $txt['show_notice'], '</h3>
-	</div>
+	<we:cat>
+		', $txt['show_notice'], '
+	</we:cat>
 	<we:title>
 		', $txt['show_notice_subject'], ': ', $context['notice_subject'], '
 	</we:title>
@@ -738,9 +724,9 @@ function template_warn_template()
 	echo '
 	<div id="modcenter">
 		<form action="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>
 			<div class="information">
 				', $txt['mc_warning_template_desc'], '
 			</div>
@@ -771,7 +757,7 @@ function template_warn_template()
 				<br>';
 
 	echo '
-				<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
+				<input type="submit" name="save" value="', $context['page_title'], '" class="save">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>

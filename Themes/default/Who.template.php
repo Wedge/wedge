@@ -26,7 +26,7 @@ function template_main()
 		echo '
 						</select>
 						<noscript>
-							<input type="submit" name="btnTop" value="', $txt['go'], '" class="button_submit" />
+							<input type="submit" name="btnTop" value="', $txt['go'], '">
 						</noscript>
 					</div>
 				</div>
@@ -107,7 +107,7 @@ function template_main()
 	echo '
 					</select>
 					<noscript>
-						<input type="submit" value="', $txt['go'], '" class="button_submit" />
+						<input type="submit" value="', $txt['go'], '">
 					</noscript>
 				</div>
 			</div>

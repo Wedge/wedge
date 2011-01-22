@@ -13,7 +13,7 @@ function template_login()
 		<div class="tborder login">
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
+					<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">';
@@ -58,9 +58,9 @@ function template_login()
 					<dd><input type="checkbox" name="undelete"></dd>';
 	echo '
 				</dl>
-				<p><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
+				<p><input type="submit" value="', $txt['login'], '" class="submit"></p>
 				<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
-				<input type="hidden" name="hash_passwrd" value="" />
+				<input type="hidden" name="hash_passwrd" value="">
 			</div>
 		</div></form>';
 
@@ -95,7 +95,7 @@ function template_kick_guest()
 	echo '
 			<div class="cat_bar">
 				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
+					<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 				</h3>
 			</div>
 			<div class="roundframe">
@@ -122,10 +122,10 @@ function template_kick_guest()
 					<dt>', $txt['always_logged_in'], ':</dt>
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
-				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
+				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="submit"></p>
 				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
 			</div>
-			<input type="hidden" name="hash_passwrd" value="" />
+			<input type="hidden" name="hash_passwrd" value="">
 		</div>
 	</form>';
 
@@ -149,7 +149,7 @@ function template_maintenance()
 			<h3>', $context['title'], '</h3>
 		</div>
 		<p class="description">
-			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '" />
+			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
 			', $context['description'], '<br class="clear">
 		</p>
 		<we:title2>
@@ -166,9 +166,9 @@ function template_maintenance()
 				<dt>', $txt['always_logged_in'], ':</dt>
 				<dd><input type="checkbox" name="cookieneverexp"></dd>
 			</dl>
-			<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
+			<p class="centertext"><input type="submit" value="', $txt['login'], '" class="submit"></p>
 		</div>
-		<input type="hidden" name="hash_passwrd" value="" />
+		<input type="hidden" name="hash_passwrd" value="">
 	</div>
 </form>';
 }
@@ -186,7 +186,7 @@ function template_admin_login()
 	<div class="tborder login" id="admin_login">
 		<div class="cat_bar">
 			<h3>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif" />', $txt['login'], '
+				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 			</h3>
 		</div>
 		<div class="roundframe centertext">';
@@ -198,14 +198,14 @@ function template_admin_login()
 	echo '
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
-			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><br>
-			<input type="submit" style="margin-top: 1em;" value="', $txt['login'], '" class="button_submit" />';
+			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a><br>
+			<input type="submit" style="margin-top: 1em" value="', $txt['login'], '" class="submit">';
 
 	// Make sure to output all the old post data.
 	echo $context['post_data'], '
 		</div>
 	</div>
-	<input type="hidden" name="admin_hash_pass" value="" />
+	<input type="hidden" name="admin_hash_pass" value="">
 </form>';
 
 	// Focus on the password box.
@@ -237,7 +237,7 @@ function template_retry_activate()
 					<dt>', $txt['invalid_activation_retry'], ':</dt>
 					<dd><input type="text" name="code" size="30"></dd>
 				</dl>
-				<p><input type="submit" value="', $txt['invalid_activation_submit'], '" class="button_submit" /></p>
+				<p><input type="submit" value="', $txt['invalid_activation_submit'], '" class="submit"></p>
 			</div>
 		</form>';
 }
@@ -275,7 +275,7 @@ function template_resend()
 				</dl>';
 
 	echo '
-				<p><input type="submit" value="', $txt['invalid_activation_resend'], '" class="button_submit" /></p>
+				<p><input type="submit" value="', $txt['invalid_activation_resend'], '" class="submit"></p>
 			</div>
 		</form>';
 }

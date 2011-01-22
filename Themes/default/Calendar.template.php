@@ -39,7 +39,7 @@ function template_main()
 					<option value="', $year, '"', $year == $context['current_year'] ? ' selected' : '', '>', $year, '</option>';
 	echo '
 				</select>
-				<input type="submit" class="button_submit" value="', $txt['view'], '" />';
+				<input type="submit" value="', $txt['view'], '">';
 
 	echo '
 			</form>
@@ -85,16 +85,14 @@ function template_event_post()
 
 	if (!empty($context['event']['new']))
 		echo '
-			<input type="hidden" name="eventid" value="', $context['event']['eventid'], '" />';
+			<input type="hidden" name="eventid" value="', $context['event']['eventid'], '">';
 
 	// Start the main table.
 	echo '
 			<div id="post_event">
-				<div class="cat_bar">
-					<h3>
-						', $context['page_title'], '
-					</h3>
-				</div>';
+				<we:cat>
+					', $context['page_title'], '
+				</we:cat>';
 
 	if (!empty($context['post_error']['messages']))
 	{
@@ -117,7 +115,7 @@ function template_event_post()
 						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', '>', $txt['calendar_event_title'], '</span></legend>
 						<input type="text" name="evtitle" maxlength="80" size="70" value="', $context['event']['title'], '">
 						<div class="smalltext">
-							<input type="hidden" name="calendar" value="1" />', $txt['calendar_year'], '
+							<input type="hidden" name="calendar" value="1">', $txt['calendar_year'], '
 							<select name="year" onchange="generateDays();">';
 
 	// Show a list of all the years we allow...
@@ -208,15 +206,16 @@ function template_event_post()
 
 	echo '
 					<div class="righttext">
-						<input type="submit" value="', empty($context['event']['new']) ? $txt['save'] : $txt['post'], '" class="button_submit" />';
+						<input type="submit" value="', empty($context['event']['new']) ? $txt['save'] : $txt['post'], '" class="save">';
+
 	// Delete button?
 	if (empty($context['event']['new']))
 		echo '
-						<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['calendar_confirm_delete']), ');" class="button_submit" />';
+						<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['calendar_confirm_delete']), ');" class="delete">';
 
 	echo '
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="hidden" name="eventid" value="', $context['event']['eventid'], '" />
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						<input type="hidden" name="eventid" value="', $context['event']['eventid'], '">
 					</div>
 				</div>
 			</div>
@@ -238,16 +237,16 @@ function template_show_month_grid($grid_name)
 	if (empty($calendar_data['disable_title']))
 	{
 		echo '
-			<div class="cat_bar">
-				<h3 class="centertext" style="font-size: ', $calendar_data['size'] == 'large' ? 'large' : 'small', ';">';
-
-		if (empty($calendar_data['previous_calendar']['disabled']) && $calendar_data['show_next_prev'])
-			echo '
-					<span class="floatleft"><a href="', $calendar_data['previous_calendar']['href'], '">&#171;</a></span>';
+			<we:cat>
+				<div class="centertext" style="font-size: ', $calendar_data['size'] == 'large' ? 'large' : 'small', ';">';
 
 		if (empty($calendar_data['next_calendar']['disabled']) && $calendar_data['show_next_prev'])
 			echo '
 					<span class="floatright"><a href="', $calendar_data['next_calendar']['href'], '">&#187;</a></span>';
+
+		if (empty($calendar_data['previous_calendar']['disabled']) && $calendar_data['show_next_prev'])
+			echo '
+					<span class="floatleft"><a href="', $calendar_data['previous_calendar']['href'], '">&#171;</a></span>';
 
 		if ($calendar_data['show_next_prev'])
 			echo '
@@ -257,8 +256,8 @@ function template_show_month_grid($grid_name)
 					<a href="', $scripturl, '?action=calendar;year=', $calendar_data['current_year'], ';month=', $calendar_data['current_month'], '">', $txt['months_titles'][$calendar_data['current_month']], ' ', $calendar_data['current_year'], '</a>';
 
 		echo '
-				</h3>
-			</div>';
+				</div>
+			</we:cat>';
 	}
 
 	echo '
@@ -368,7 +367,7 @@ function template_show_month_grid($grid_name)
 						// If they can edit the event, show a star they can click on....
 						if ($event['can_edit'])
 							echo '
-							<a class="modify_event" href="', $event['modify_href'], '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="*" /></a>';
+							<a class="modify_event" href="', $event['modify_href'], '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif"></a>';
 
 						echo '
 							', $event['link'], $event['is_last'] ? '' : ', ';
@@ -405,8 +404,8 @@ function template_show_week_grid($grid_name)
 	foreach ($calendar_data['months'] as $month_data)
 	{
 		echo '
-			<div class="cat_bar">
-				<h3 class="weekly">';
+			<we:cat>
+				<div class="weekly">';
 
 		if (empty($calendar_data['previous_calendar']['disabled']) && $calendar_data['show_next_prev'] && empty($done_title))
 			echo '
@@ -418,8 +417,8 @@ function template_show_week_grid($grid_name)
 
 		echo '
 					<a href="', $scripturl, '?action=calendar;month=', $month_data['current_month'], ';year=', $month_data['current_year'], '">', $txt['months_titles'][$month_data['current_month']], ' ', $month_data['current_year'], '</a>', empty($done_title) && !empty($calendar_data['week_number']) ? (' - ' . $txt['calendar_week'] . ' ' . $calendar_data['week_number']) : '', '
-				</h3>
-			</div>';
+				</div>
+			</we:cat>';
 
 		$done_title = true;
 
@@ -486,7 +485,7 @@ function template_show_week_grid($grid_name)
 					// If they can edit the event, show a star they can click on....
 					if ($event['can_edit'])
 						echo '
-							<a href="', $event['modify_href'], '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="*" /></a> ';
+							<a href="', $event['modify_href'], '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif"></a> ';
 
 					echo '
 							', $event['link'], $event['is_last'] ? '' : ', ';
