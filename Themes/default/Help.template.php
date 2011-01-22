@@ -28,7 +28,7 @@ function template_popup()
 <body id="help_popup">
 	<div class="windowbg description">
 		', $context['help_text'], '
-		<br /><br />
+		<br><br>
 		<a href="#" onclick="history.back(); return false;">', $txt['back'], '</a>
 	</div>
 </body>

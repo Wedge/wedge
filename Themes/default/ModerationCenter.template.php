@@ -30,14 +30,14 @@ function template_moderation_center()
 
 		if (!$alternate)
 			echo '
-		<br class="clear" />';
+		<br class="clear">';
 
 		$alternate = !$alternate;
 	}
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_latest_news()
@@ -218,7 +218,7 @@ function template_notes()
 					<div class="floatright">
 						<input type="submit" name="makenote" value="', $txt['mc_add_note'], '" class="button_submit" />
 					</div>
-					<br class="clear" />
+					<br class="clear">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -260,9 +260,9 @@ function template_reported_posts()
 					</div>
 					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
 				</div>
-				<br />
+				<br>
 				<div class="smalltext">
-					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br />';
+					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
 
 		// Prepare the comments...
 		$comments = array();
@@ -272,7 +272,7 @@ function template_reported_posts()
 		echo '
 					&#171; ', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), ' &#187;
 				</div>
-				<hr />
+				<hr>
 				', $report['body'], '
 			</div>';
 	}
@@ -296,7 +296,7 @@ function template_reported_posts()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Show a list of all the unapproved posts
@@ -353,7 +353,7 @@ function template_unapproved_posts()
 
 				echo '
 				</span>
-				<br class="clear" />
+				<br class="clear">
 			</div>';
 	}
 
@@ -380,7 +380,7 @@ function template_unapproved_posts()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // List all attachments awaiting approval.
@@ -437,7 +437,7 @@ function template_unapproved_attachments()
 						', $item['poster']['link'], '
 					</td>
 					<td class="smalltext">
-						', $item['time'], '<br />', $txt['in'], ' <a href="', $item['message']['href'], '">', $item['message']['subject'], '</a>
+						', $item['time'], '<br>', $txt['in'], ' <a href="', $item['message']['href'], '">', $item['message']['subject'], '</a>
 					</td>
 					<td style="width: 4%" class="center">
 						<input type="checkbox" name="item[]" value="', $item['id'], '" checked>
@@ -470,7 +470,7 @@ function template_unapproved_attachments()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_viewmodreport()
@@ -500,7 +500,7 @@ function template_viewmodreport()
 			<div class="windowbg2 wrc">
 				', $context['report']['body'], '
 			</div>
-			<br />
+			<br>
 			<div class="cat_bar">
 				<h3>', $txt['mc_modreport_whoreported_title'], '</h3>
 			</div>';
@@ -513,7 +513,7 @@ function template_viewmodreport()
 			</div>';
 
 	echo '
-			<br />
+			<br>
 			<div class="cat_bar">
 				<h3>', $txt['mc_modreport_mod_comments'], '</h3>
 			</div>
@@ -533,7 +533,7 @@ function template_viewmodreport()
 					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="button_submit" />
 				</div>
 			</div>
-			<br />';
+			<br>';
 
 	$alt = false;
 
@@ -586,7 +586,7 @@ function template_viewmodreport()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Callback function for showing a watched users post in the table.
@@ -613,11 +613,11 @@ function template_user_watch_post_callback($post)
 	$output_html .= '
 						</div>
 					</div>
-					<br />
+					<br>
 					<div class="smalltext">
 						&#171; ' . $txt['mc_watched_users_posted'] . ': ' . $post['poster_time'] . ' &#187;
 					</div>
-					<hr />
+					<hr>
 					' . $post['body'];
 
 	return $output_html;
@@ -646,7 +646,7 @@ function template_moderation_settings()
 
 	foreach ($context['homepage_blocks'] as $k => $v)
 		echo '
-						<label for="mod_homepage_', $k, '"><input type="checkbox" id="mod_homepage_', $k, '" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked' : '', '> ', $v, '</label><br />';
+						<label for="mod_homepage_', $k, '"><input type="checkbox" id="mod_homepage_', $k, '" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked' : '', '> ', $v, '</label><br>';
 
 	echo '
 					</dd>';
@@ -693,7 +693,7 @@ function template_moderation_settings()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Show a notice sent to a user.
@@ -768,7 +768,7 @@ function template_warn_template()
 					<strong>', $txt['mc_warning_template_personal'], '</strong>
 				</label>
 				<dfn>', $txt['mc_warning_template_personal_desc'], '</dfn>
-				<br />';
+				<br>';
 
 	echo '
 				<input type="submit" name="save" value="', $context['page_title'], '" class="button_submit" />
@@ -776,7 +776,7 @@ function template_warn_template()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

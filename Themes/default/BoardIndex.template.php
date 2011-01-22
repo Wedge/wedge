@@ -95,7 +95,7 @@ function template_boardindex()
 					echo '
 					</td>
 					<td class="stats windowbg">
-						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br />
+						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br>
 						', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
 						</p>
 					</td>
@@ -107,8 +107,8 @@ function template_boardindex()
 				and member. (which has id, name, link, href, username in it.) */
 				if (!empty($board['last_post']['id']))
 					echo '
-						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br />
-						', $txt['in'], ' ', $board['last_post']['link'], '<br />
+						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br>
+						', $txt['in'], ' ', $board['last_post']['link'], '<br>
 						', $txt['on'], ' ', $board['last_post']['time'], '
 						</p>';
 				echo '

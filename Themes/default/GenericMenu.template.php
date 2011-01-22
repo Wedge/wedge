@@ -43,7 +43,7 @@ function template_generic_menu_sidebar_above()
 			{
 				if ($area === '')
 					echo '
-					<li class="separator"><a><hr /></a></li>';
+					<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 
@@ -91,7 +91,7 @@ function template_generic_menu_sidebar_below()
 
 	echo '
 		</div>
-	</div><br class="clear" />';
+	</div><br class="clear">';
 }
 
 // This contains the html for the generic dropdown menu.
@@ -126,7 +126,7 @@ function template_generic_menu_dropdown_above()
 			{
 				if ($area === '')
 					echo '
-			<li class="separator"><a><hr /></a></li>';
+			<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 

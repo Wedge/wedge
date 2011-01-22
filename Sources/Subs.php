@@ -3851,12 +3851,12 @@ function setupMenuContext()
 					'search' => array(
 						'title' => $txt['search_simple'],
 						'href' => $scripturl . '?action=search',
-						'show' => $context['allow_search'],
+						'show' => $context['allow_search'] && !empty($modSettings['simpleSearch']),
 					),
 					'advanced_search' => array(
 						'title' => $txt['search_advanced'],
 						'href' => $scripturl . '?action=search;advanced',
-						'show' => $context['allow_search'],
+						'show' => $context['allow_search'] && !empty($modSettings['simpleSearch']),
 						'is_last' => true,
 					),
 				),

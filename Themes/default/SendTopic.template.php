@@ -63,7 +63,7 @@ function template_main()
 						</dd>
 					</dl>
 				</fieldset>
-				<hr />
+				<hr>
 				<fieldset id="recipient" class="send_topic">
 					<dl class="settings send_topic">
 						<dt>
@@ -87,7 +87,7 @@ function template_main()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Send an email to a user!
@@ -122,7 +122,7 @@ function template_custom_email()
 						', $context['recipient']['email_link'], '
 					</dd>
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings send_mail">';
 
 	// If it's a guest we need their details.
@@ -179,7 +179,7 @@ function template_custom_email()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_report()
@@ -212,7 +212,7 @@ function template_report()
 
 	echo '
 				<p>', $txt['report_to_mod_func'], '</p>
-				<br />
+				<br>
 				<dl class="settings" id="report_post">';
 
 	if ($context['user']['is_guest'])
@@ -250,7 +250,7 @@ function template_report()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

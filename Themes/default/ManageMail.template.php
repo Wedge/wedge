@@ -23,7 +23,7 @@ function template_browse()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

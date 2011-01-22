@@ -32,8 +32,8 @@ function template_maintain_database()
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_backup_info'], '</p>
-				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br />
-				<label for="data"><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br />
+				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br>
+				<label for="data"><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br>
 				<label for="compress"><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
 				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').attr(\'checked\') || $(\'#data\').attr(\'checked\');" class="save" /></p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -42,7 +42,7 @@ function template_maintain_database()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Template for the routine maintenance tasks.
@@ -111,7 +111,7 @@ function template_maintain_routine()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Template for the member maintenance tasks.
@@ -224,7 +224,7 @@ function template_maintain_members()
 
 	foreach ($context['membergroups'] as $group)
 		echo '
-					<label for="groups', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups', $group['id'], '" checked> ', $group['name'], '</label><br />';
+					<label for="groups', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups', $group['id'], '" checked> ', $group['name'], '</label><br>';
 
 	echo '
 				</div>
@@ -243,7 +243,7 @@ function template_maintain_members()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js_file('scripts/suggest.js');
 
@@ -300,15 +300,15 @@ function template_maintain_topics()
 						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3" />', $txt['maintain_old_since_days2'], '
 					</p>
 					<p>
-						<label for="delete_type_nothing"><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" checked> ', $txt['maintain_old_nothing_else'], '</label><br />
-						<label for="delete_type_moved"><input type="radio" name="delete_type" id="delete_type_moved" value="moved"> ', $txt['maintain_old_are_moved'], '</label><br />
-						<label for="delete_type_locked"><input type="radio" name="delete_type" id="delete_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br />
+						<label for="delete_type_nothing"><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" checked> ', $txt['maintain_old_nothing_else'], '</label><br>
+						<label for="delete_type_moved"><input type="radio" name="delete_type" id="delete_type_moved" value="moved"> ', $txt['maintain_old_are_moved'], '</label><br>
+						<label for="delete_type_locked"><input type="radio" name="delete_type" id="delete_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br>
 					</p>';
 
 	if (!empty($modSettings['enableStickyTopics']))
 		echo '
 					<p>
-						<label for="delete_old_not_sticky"><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br />
+						<label for="delete_old_not_sticky"><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br>
 					</p>';
 
 		echo '
@@ -400,7 +400,7 @@ function template_maintain_topics()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	function moveTopicsNow()
@@ -425,24 +425,24 @@ function template_optimize()
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>
-				', $txt['database_numb_tables'], '<br />
-				', $txt['database_optimize_attempt'], '<br />';
+				', $txt['database_numb_tables'], '<br>
+				', $txt['database_optimize_attempt'], '<br>';
 
 	// List each table being optimized...
 	foreach ($context['optimized_tables'] as $table)
 		echo '
-				', sprintf($txt['database_optimizing'], $table['name'], $table['data_freed']), '<br />';
+				', sprintf($txt['database_optimizing'], $table['name'], $table['data_freed']), '<br>';
 
 	// How did we go?
 	echo '
-				<br />', $context['num_tables_optimized'] == 0 ? $txt['database_already_optimized'] : $context['num_tables_optimized'] . ' ' . $txt['database_optimized'];
+				<br>', $context['num_tables_optimized'] == 0 ? $txt['database_already_optimized'] : $context['num_tables_optimized'] . ' ' . $txt['database_optimized'];
 
 	echo '
 			</p>
 			<p><a href="', $scripturl, '?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_convert_utf8()

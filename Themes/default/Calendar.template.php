@@ -43,7 +43,7 @@ function template_main()
 
 	echo '
 			</form>
-			<br class="clear" />
+			<br class="clear">
 		</div></div>';
 }
 
@@ -105,7 +105,7 @@ function template_event_post()
 							', $context['error_type'] == 'serious' ? '<strong>' . $txt['error_while_submitting'] . '</strong>' : '', '
 						</dt>
 						<dt class="error">
-							', implode('<br />', $context['post_error']['messages']), '
+							', implode('<br>', $context['post_error']['messages']), '
 						</dt>
 					</dl>
 				</div>';
@@ -221,7 +221,7 @@ function template_event_post()
 				</div>
 			</div>
 		</form>
-		<br class="clear" />';
+		<br class="clear">';
 }
 
 // Display a monthly calendar grid.
@@ -342,7 +342,7 @@ function template_show_month_grid($grid_name)
 
 						// Stop at ten?
 						if ($count == 10 && $use_js_hide)
-							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br /><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
+							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="document.getElementById(\'bdhide_', $day['day'], '\').style.display = \'\'; document.getElementById(\'bdhidelink_', $day['day'], '\').style.display = \'none\'; return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
 
 						$count++;
 					}

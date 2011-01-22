@@ -1665,6 +1665,9 @@ span.hidelink {
 #search_term_input {
 	font-size: 115%;
 	margin: 0 0 1em;
+	input[type=search], input.submit {
+		background-position: 5px 4px;
+	}
 }
 
 /* Styles for the advanced search section.

@@ -70,7 +70,7 @@ function template_main()
 					</td>
 					<td class="stats windowbg">
 						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'],
-						$board['is_redirect'] ? '' : '<br />' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
+						$board['is_redirect'] ? '' : '<br>' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
 					</td>
 					<td class="lastpost">';
 
@@ -81,8 +81,8 @@ function template_main()
 			if (!empty($board['last_post']['id']))
 				echo '
 						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '
-						<br />', $txt['in'], ' ', $board['last_post']['link'], '
-						<br />', $txt['on'], ' ', $board['last_post']['time'], '</p>';
+						<br>', $txt['in'], ' ', $board['last_post']['link'], '
+						<br>', $txt['on'], ' ', $board['last_post']['time'], '</p>';
 
 			echo '
 					</td>
@@ -264,12 +264,12 @@ function template_main()
 					</td>
 					<td class="stats ', $color_class, '">
 						', $topic['replies'], ' ', $txt['replies'], '
-						<br />', $topic['views'], ' ', $txt['views'], '
+						<br>', $topic['views'], ' ', $txt['views'], '
 					</td>
 					<td class="lastpost ', $alternate_class, '">
 						<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" /></a>
 						', $topic['last_post']['time'], '
-						<br />', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+						<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 					</td>';
 
 			// Show the quick moderation options?
@@ -292,7 +292,7 @@ function template_main()
 						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '" /></a>';
 
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
-						echo '<br />';
+						echo '<br>';
 
 					if ($topic['quick_mod']['sticky'])
 						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=sticky;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '" /></a>';
@@ -379,11 +379,11 @@ function template_main()
 	if (!$context['no_topic_listing'])
 		echo '
 			<p class="floatleft smalltext">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br>', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br>' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
 				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle" /> ' . $txt['poll'] : '', '
 			</p>';
 

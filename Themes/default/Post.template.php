@@ -46,10 +46,10 @@ function template_main()
 				</div>
 				<div class="windowbg wrc">
 					<div class="post" id="preview_body">
-						', empty($context['preview_message']) ? '<br />' : $context['preview_message'], '
+						', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 					</div>
 				</div>
-			</div><br />';
+			</div><br>';
 
 	if ($context['make_event'] && (!$context['event']['new'] || !empty($context['current_board'])))
 		echo '
@@ -71,7 +71,7 @@ function template_main()
 							<strong style="', empty($context['error_type']) || $context['error_type'] != 'serious' ? 'display: none;' : '', '" id="error_serious">', $txt['error_while_submitting'], '</strong>
 						</dt>
 						<dd class="error" id="error_list">
-							', empty($context['post_error']['messages']) ? '' : implode('<br />', $context['post_error']['messages']), '
+							', empty($context['post_error']['messages']) ? '' : implode('<br>', $context['post_error']['messages']), '
 						</dd>
 					</dl>
 				</div>';
@@ -141,7 +141,7 @@ function template_main()
 						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px" />
 					</dd>
 				</dl>
-				<hr class="clear" />';
+				<hr class="clear">';
 
 	// Are you posting a calendar event?
 	// !!! Use the template list system for this.
@@ -225,15 +225,15 @@ function template_main()
 		// Show some useful information such as allowed extensions, maximum size and amount of attachments allowed.
 		if (!empty($modSettings['attachmentCheckExtensions']))
 			echo '
-						', $txt['allowed_types'], ': ', $context['allowed_extensions'], '<br />';
+						', $txt['allowed_types'], ': ', $context['allowed_extensions'], '<br>';
 
 		if (!empty($context['attachment_restrictions']))
 			echo '
-						', $txt['attach_restrictions'], ' ', implode(', ', $context['attachment_restrictions']), '<br />';
+						', $txt['attach_restrictions'], ' ', implode(', ', $context['attachment_restrictions']), '<br>';
 
 		if (!$context['can_post_attachment_unapproved'])
 			echo '
-						<span class="alert">', $txt['attachment_requires_approval'], '</span>', '<br />';
+						<span class="alert">', $txt['attachment_requires_approval'], '</span>', '<br>';
 
 		echo '
 					</dd>
@@ -289,7 +289,7 @@ function template_main()
 	echo '
 				</p>
 			</div>
-			<br class="clear" />';
+			<br class="clear">';
 
 	// Assuming this isn't a new topic pass across the last message id.
 	if (isset($context['topic_last_message']))
@@ -364,7 +364,7 @@ function template_main()
 		});
 		$("#errors").toggle(errorList.length > 0);
 		$("#error_serious").toggle(errors.attr("serious") == 1);
-		$("#error_list").html(errorList.length > 0 ? errorList.join("<br />") : "");
+		$("#error_list").html(errorList.length > 0 ? errorList.join("<br>") : "");
 
 		// Show a warning if the topic has been locked.
 		$("#lock_warning").toggle(errors.attr("topic_locked") == 1);
@@ -411,7 +411,7 @@ function template_main()
 			newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + id + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
 
 	add_js('
-			newPostsHTML += \'<br class="clear" />\';
+			newPostsHTML += \'<br class="clear">\';
 
 			if (ignoring)
 				newPostsHTML += \'<div id="msg_\' + id + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + id + \'_ignored_link" style="display: none;">' . $txt['show_ignore_user_post'] . '</a></div>\';
@@ -563,7 +563,7 @@ function template_make_poll()
 								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="', $context['poll_options']['max_votes'], '">
 							</dd>
 							<dt>
-								<label for="poll_expire">', $txt['poll_run'], ':</label><br />
+								<label for="poll_expire">', $txt['poll_run'], ':</label><br>
 								<em class="smalltext">', $txt['poll_run_limit'], '</em>
 							</dt>
 							<dd>
@@ -590,8 +590,8 @@ function template_make_poll()
 								', $txt['poll_results_visibility'], ':
 							</dt>
 							<dd>
-								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br />
-								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br />
+								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll_options']['hide'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br>
+								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll_options']['hide'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br>
 								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll_options']['hide'] == 2 ? ' checked' : '', empty($context['poll_options']['expire']) ? ' disabled' : '', '> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
 							</dd>
 						</dl>
@@ -757,7 +757,7 @@ function template_show_previous_posts()
 					</ul>';
 
 		echo '
-					<br class="clear" />';
+					<br class="clear">';
 
 		if ($ignoring)
 			echo '
@@ -862,11 +862,11 @@ function template_spellcheck()
 		<table class="w100 cp4 cs0">
 			<tr class="windowbg">
 				<td class="top w50">
-					', $txt['spellcheck_change_to'], '<br />
+					', $txt['spellcheck_change_to'], '<br>
 					<input type="text" name="changeto" style="width: 98%">
 				</td>
 				<td class="w50">
-					', $txt['spellcheck_suggest'], '<br />
+					', $txt['spellcheck_suggest'], '<br>
 					<select name="suggestions" style="width: 98%" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
 					</select>
 				</td>

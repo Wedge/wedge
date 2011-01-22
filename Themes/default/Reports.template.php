@@ -37,13 +37,13 @@ function template_report_type()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="continue" value="', $txt['generate_reports_continue'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="continue" value="', $txt['generate_reports_continue'], '" class="submit">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // This is the standard template for showing reports in.
@@ -139,7 +139,7 @@ function template_main()
 	}
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Header of the print page!
@@ -226,7 +226,7 @@ function template_print()
 		echo '
 		</table>
 	</div>
-	<br />';
+	<br>';
 	}
 }
 

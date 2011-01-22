@@ -35,7 +35,7 @@ function template_main()
 
 	foreach ($context['themes'] as $theme)
 		echo '
-							<label for="options-known_themes_', $theme['id'], '"><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', $theme['id'], '" value="', $theme['id'], '"', $theme['known'] ? ' checked' : '', '> ', $theme['name'], '</label><br />';
+							<label for="options-known_themes_', $theme['id'], '"><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', $theme['id'], '" value="', $theme['id'], '"', $theme['known'] ? ' checked' : '', '> ', $theme['name'], '</label><br>';
 
 	echo '
 						</div>
@@ -97,7 +97,7 @@ function template_main()
 
 	// Link to simplemachines.org for latest themes and info!
 	echo '
-		<br />
+		<br>
 		<div class="cat_bar">
 			<h3>
 				<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['theme_latest'], '
@@ -108,7 +108,7 @@ function template_main()
 				', $txt['theme_latest_fetch'], '
 			</div>
 		</div>
-		<br />';
+		<br>';
 
 	// Warn them if theme creation isn't possible!
 	if (!$context['can_create_new'])
@@ -162,7 +162,7 @@ function template_main()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	window.smfForum_scripturl = "', $scripturl, '";
@@ -242,7 +242,7 @@ function template_list_themes()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_reset_list()
@@ -286,7 +286,7 @@ function template_reset_list()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_set_options()
@@ -359,7 +359,7 @@ function template_set_options()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_set_settings()
@@ -440,7 +440,7 @@ function template_set_settings()
 		if (empty($setting))
 			echo '
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings flow_auto">';
 
 		// A checkbox?
@@ -515,7 +515,7 @@ function template_set_settings()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // This template allows for the selection of different themes ;)
@@ -543,11 +543,11 @@ function template_pick()
 				<p>
 					', $theme['description'], '
 				</p>
-				<br />
+				<br>
 				<p>
 					<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
 				</p>
-				<br />
+				<br>
 				<ul class="reset">
 					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_use_', $theme['id'], '">[', $txt['theme_set'], ']</a></li>
 					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a></li>
@@ -572,7 +572,7 @@ function template_pick()
 	echo '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_list_stylings(&$theme, $theme_id)
@@ -619,7 +619,7 @@ function template_installed()
 			</p>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_edit_list()
@@ -654,7 +654,7 @@ function template_edit_list()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_copy_template()
@@ -696,7 +696,7 @@ function template_copy_template()
 			</ul>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_edit_browse()
@@ -745,7 +745,7 @@ function template_edit_browse()
 		</tbody>
 		</table>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Wanna edit the stylesheet?
@@ -895,10 +895,10 @@ function template_edit_style()
 
 	if (!$context['allow_save'])
 		echo '
-				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br />';
+				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br>';
 
 	echo '
-				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font: 110% monospace; margin-top: 1ex; white-space: pre;" onkeyup="setPreviewTimeout();" onchange="refreshPreview(true);">', $context['entire_file'], '</textarea><br />
+				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font: 110% monospace; margin-top: 1ex; white-space: pre;" onkeyup="setPreviewTimeout();" onchange="refreshPreview(true);">', $context['entire_file'], '</textarea><br>
 				<div class="padding righttext">
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="submit">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
@@ -908,7 +908,7 @@ function template_edit_style()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // This edits the template...
@@ -940,11 +940,11 @@ function template_edit_template()
 
 	if (!$context['allow_save'])
 		echo '
-				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br />';
+				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br>';
 
 	foreach ($context['file_parts'] as $part)
 		echo '
-				<label for="on_line', $part['line'], '">', $txt['themeadmin_edit_on_line'], ' ', $part['line'], '</label>:<br />
+				<label for="on_line', $part['line'], '">', $txt['themeadmin_edit_on_line'], ' ', $part['line'], '</label>:<br>
 				<div class="centertext">
 					<textarea id="on_line', $part['line'], '" name="entire_file[]" cols="80" rows="', $part['lines'] > 14 ? '14' : $part['lines'], '" class="edit_file">', $part['data'], '</textarea>
 				</div>';
@@ -983,14 +983,14 @@ function template_edit_file()
 				<h3>', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
 			<div class="windowbg wrc">
-				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br />
+				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br>
 				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="button_submit" />
 				<input type="hidden" name="filename" value="', $context['edit_filename'], '" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

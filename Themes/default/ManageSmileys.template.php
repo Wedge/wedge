@@ -12,7 +12,7 @@ function template_editsets()
 	template_show_list('smiley_set_list');
 
 	echo '
-		<br />
+		<br>
 		<div class="cat_bar">
 			<h3>', $txt['smiley_sets_latest'], '</h3>
 		</div>
@@ -20,7 +20,7 @@ function template_editsets()
 			<div id="smileysLatest">', $txt['smiley_sets_latest_fetch'], '</div>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	window.smfForum_scripturl = "', $scripturl, '";
@@ -122,7 +122,7 @@ function template_modifyset()
 			<input type="hidden" name="set" value="', $context['current_set']['id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Editing an individual smiley
@@ -208,7 +208,7 @@ function template_modifysmiley()
 			<input type="hidden" name="smiley" value="', $context['current_smiley']['id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	function updatePreview()
@@ -257,7 +257,7 @@ function template_addsmiley()
 						<label for="method-upload"><input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload"> ', $txt['smileys_add_upload'], '</label>
 					</li>
 				</ul>
-				<br />
+				<br>
 				<fieldset id="ex_settings">
 					<dl class="settings">
 						<dt>
@@ -329,7 +329,7 @@ function template_addsmiley()
 					</dl>
 				</fieldset>
 			</div>
-			<br />
+			<br>
 			<div class="cat_bar">
 				<h3>', $txt['smiley_new'], '</h3>
 			</div>
@@ -369,7 +369,7 @@ function template_addsmiley()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	function updatePreview()
@@ -397,7 +397,7 @@ function template_setorder()
 				', $location['description'], '
 			</div>
 			<div class="windowbg wrc">
-				<strong>', empty($context['move_smiley']) ? $txt['smileys_move_select_smiley'] : $txt['smileys_move_select_destination'], '...</strong><br />';
+				<strong>', empty($context['move_smiley']) ? $txt['smileys_move_select_smiley'] : $txt['smileys_move_select_destination'], '...</strong><br>';
 
 		foreach ($location['rows'] as $row)
 		{
@@ -414,7 +414,7 @@ function template_setorder()
 			}
 
 			echo '
-				<br />';
+				<br>';
 		}
 		if (!empty($context['move_smiley']))
 			echo '
@@ -423,11 +423,11 @@ function template_setorder()
 			</div>
 			<input type="hidden" name="reorder" value="1" />
 		</form>
-		<br />';
+		<br>';
 	}
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Editing Message Icons
@@ -529,7 +529,7 @@ function template_editicon()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

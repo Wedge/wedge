@@ -64,10 +64,10 @@ body {
 }
 #main_content {
 	display: table-cell;
+	width: 100%;
 	min-height: 200px;
 	padding: 12px 0 12px 30px;
 }
-
 #top_section {
 	overflow: hidden;
 	margin: 0 -20px 6px;

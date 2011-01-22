@@ -43,7 +43,7 @@ function template_login()
 				<dl>
 					<dt>', $txt['openid'], ':</dt>
 					<dd><input type="text" name="openid_identifier" class="openid_login" size="17">&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em></dd>
-				</dl><hr />';
+				</dl><hr>';
 
 	echo '
 				<dl>
@@ -87,7 +87,7 @@ function template_kick_guest()
 	// Show the message or default message.
 	echo '
 			<p class="information centertext">
-				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br />
+				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br>
 				', $txt['login_below'], ' <a href="', $scripturl, '?action=register">', $txt['register_an_account'], '</a> ', sprintf($txt['login_with_forum'], $context['forum_name_html_safe']), '
 			</p>';
 
@@ -113,7 +113,7 @@ function template_kick_guest()
 					<dt>', $txt['openid'], ':</dt>
 					<dd><input type="text" name="openid_identifier" class="openid_login" size="17"></dd>
 				</dl>
-				<hr />
+				<hr>
 				<dl>';
 
 	echo '
@@ -150,7 +150,7 @@ function template_maintenance()
 		</div>
 		<p class="description">
 			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '" />
-			', $context['description'], '<br class="clear" />
+			', $context['description'], '<br class="clear">
 		</p>
 		<we:title2>
 			', $txt['admin_login'], '
@@ -198,7 +198,7 @@ function template_admin_login()
 	echo '
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
-			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><br />
+			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><br>
 			<input type="submit" style="margin-top: 1em;" value="', $txt['login'], '" class="button_submit" />';
 
 	// Make sure to output all the old post data.

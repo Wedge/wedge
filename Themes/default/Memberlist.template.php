@@ -176,7 +176,7 @@ function template_search()
 			<div id="memberlist_search" class="clear">
 				<div class="roundframe">
 					<div id="mlist_search" class="flow_hidden">
-						<div id="search_term_input"><br />
+						<div id="search_term_input"><br>
 							<strong>', $txt['search_for'], ':</strong>
 							<input type="text" name="search" value="', $context['old_search'], '" size="35"> <input type="submit" name="submit" value="' . $txt['search'] . '" class="button_submit" />
 						</div>
@@ -186,7 +186,7 @@ function template_search()
 	foreach ($context['search_fields'] as $id => $title)
 	{
 		echo '
-							<label for="fields-', $id, '"><input type="checkbox" name="fields[]" id="fields-', $id, '" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br />';
+							<label for="fields-', $id, '"><input type="checkbox" name="fields[]" id="fields-', $id, '" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br>';
 		// Halfway through?
 		if (round(count($context['search_fields']) / 2) == ++$count)
 			echo '

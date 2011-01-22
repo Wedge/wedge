@@ -104,7 +104,7 @@ function template_main()
 	foreach ($context['posts'] as $post)
 		echo '
 			<dt class="postheader">
-				', $txt['title'], ': <strong>', $post['subject'], '</strong><br />
+				', $txt['title'], ': <strong>', $post['subject'], '</strong><br>
 				', $txt['post_by'], ': <strong>', $post['member'], '</strong> ', $txt['search_on'], ' <strong>', $post['time'], '</strong>
 			</dt>
 			<dd class="postbody">

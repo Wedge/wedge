@@ -41,7 +41,7 @@
 	-->
 	<comment><![CDATA[
 		Made by Nao in a few seconds.
-		<br />Seriously, now that's a nested styling.
+		<br>Seriously, now that's a nested styling.
 	]]></comment>
 
 	<block name="title"><div class="title_bar"><h3>|</h3></div></block>

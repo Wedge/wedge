@@ -19,11 +19,11 @@ function template_registration_agreement()
 	// Age restriction in effect?
 	if ($context['show_coppa'])
 		echo '
-				<input type="submit" name="accept_agreement" value="', $context['coppa_agree_above'], '" class="button_submit" /><br /><br />
-				<input type="submit" name="accept_agreement_coppa" value="', $context['coppa_agree_below'], '" class="button_submit" />';
+				<input type="submit" name="accept_agreement" value="', $context['coppa_agree_above'], '" class="submit"><br><br>
+				<input type="submit" name="accept_agreement_coppa" value="', $context['coppa_agree_below'], '" class="submit">';
 	else
 		echo '
-				<input type="submit" name="accept_agreement" value="', $txt['agreement_agree'], '" class="button_submit" />';
+				<input type="submit" name="accept_agreement" value="', $txt['agreement_agree'], '" class="submit">';
 
 	echo '
 			</div>
@@ -341,10 +341,10 @@ function template_registration_form()
 
 	echo '
 			<div id="confirm_buttons">
-				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
+				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="submit">
 			</div>
-			<input type="hidden" name="step" value="2" />
-			<input type="hidden" name="time_offset" value="0" id="time_offset" />
+			<input type="hidden" name="step" value="2">
+			<input type="hidden" name="time_offset" value="0" id="time_offset">
 		</form>';
 }
 
@@ -420,16 +420,16 @@ function template_coppa_form()
 			</tr>
 			<tr>
 				<td class="right">
-					<em>', $txt['coppa_form_address'], '</em>: ', $context['ul'], '<br />
-					', $context['ul'], '<br />
-					', $context['ul'], '<br />
+					<em>', $txt['coppa_form_address'], '</em>: ', $context['ul'], '<br>
+					', $context['ul'], '<br>
+					', $context['ul'], '<br>
 					', $context['ul'], '
 				</td>
 			</tr>
 			<tr>
 				<td class="right">
 					<em>', $txt['coppa_form_date'], '</em>: ', $context['ul'], '
-					<br /><br />
+					<br><br>
 				</td>
 			</tr>
 			<tr>
@@ -438,7 +438,7 @@ function template_coppa_form()
 				</td>
 			</tr>
 		</table>
-		<br />';
+		<br>';
 }
 
 // Show a window containing the spoken verification code.
@@ -478,9 +478,9 @@ function template_verification_sound()
 
 	echo '
 		</audio>
-		<br />
-		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br />
-		<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['visual_verification_sound_close'], '</a><br />
+		<br>
+		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br>
+		<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['visual_verification_sound_close'], '</a><br>
 		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
 	</div>
 </body>
@@ -575,15 +575,15 @@ function template_admin_register()
 						</dd>
 					</dl>
 					<div class="righttext">
-						<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
-						<input type="hidden" name="sa" value="register" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+						<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="submit">
+						<input type="hidden" name="sa" value="register">
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Form for editing the agreement shown for people registering to the forum.
@@ -621,9 +621,9 @@ function template_edit_agreement()
 		echo '
 					</select>
 					<div class="righttext">
-						<input type="hidden" name="sa" value="agreement" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="submit" name="change" value="', $txt['admin_agreement_select_language_change'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
+						<input type="hidden" name="sa" value="agreement">
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						<input type="submit" name="change" value="', $txt['admin_agreement_select_language_change'], '" tabindex="', $context['tabindex']++, '" class="submit">
 					</div>
 				</form>
 			</div>';
@@ -641,14 +641,14 @@ function template_edit_agreement()
 					<label for="requireAgreement"><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '" value="1"> ', $txt['admin_agreement'], '.</label>
 				</p>
 				<div class="righttext">
-					<input type="submit" value="', $txt['save'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
-					<input type="hidden" name="agree_lang" value="', $context['current_agreement'], '" />
-					<input type="hidden" name="sa" value="agreement" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" value="', $txt['save'], '" tabindex="', $context['tabindex']++, '" class="save">
+					<input type="hidden" name="agree_lang" value="', $context['current_agreement'], '">
+					<input type="hidden" name="sa" value="agreement">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</form>
 		</div>
-		<br class="clear" />';
+		<br class="clear">';
 }
 
 function template_edit_reserved_words()
@@ -672,13 +672,13 @@ function template_edit_reserved_words()
 					<li><label for="matchname"><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_name'] ? ' checked' : '', '> ', $txt['admin_check_display'], '</label></li>
 				</ul>
 				<div class="righttext">
-					<input type="submit" value="', $txt['save'], '" name="save_reserved_names" tabindex="', $context['tabindex']++, '" style="margin: 1ex;" class="button_submit" />
-					<input type="hidden" name="sa" value="reservednames" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" value="', $txt['save'], '" name="save_reserved_names" tabindex="', $context['tabindex']++, '" style="margin: 1ex" class="save">
+					<input type="hidden" name="sa" value="reservednames">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
 		</form>
-		<br class="clear" />';
+		<br class="clear">';
 }
 
 ?>

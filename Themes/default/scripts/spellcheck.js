@@ -171,7 +171,7 @@ function highlightWord()
 		// Rebuild the string with a span wrapped around the misspelled word
 		// so we can highlight it in the div the user is viewing the string in.
 		sv = $("#spellview").html(
-			(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br />')
+			(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br>')
 		)[0],
 
 		// We could use scrollIntoView, but it's just not that great anyway.
@@ -207,7 +207,7 @@ function nextWord(ignoreall)
 	// Draw it and quit if there are no more misspelled words to evaluate.
 	if (misps.length <= wordindex)
 	{
-		$("#spellview").html(htmlspecialchars(mispstr).replace(/_\|_/g, "<br />"));
+		$("#spellview").html(htmlspecialchars(mispstr).replace(/_\|_/g, "<br>"));
 
 		while (spellingForm.suggestions.options.length > 0)
 			spellingForm.suggestions.options[0] = null;
@@ -268,7 +268,7 @@ function nextWord(ignoreall)
 
 function htmlspecialchars(thetext)
 {
-	return thetext.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\n/g, "<br />").replace(/\ \ /g, " &nbsp;");
+	return thetext.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\n/g, "<br>").replace(/\ \ /g, " &nbsp;");
 }
 
 function openSpellWin(width, height)

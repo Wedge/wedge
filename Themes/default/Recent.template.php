@@ -183,12 +183,12 @@ function template_unread()
 							</td>
 							<td class="', $color_class, ' stats windowbg">
 								', $topic['replies'], ' ', $txt['replies'], '
-								<br />
+								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
 							<td class="', $color_class2, ' lastpost windowbg2">
 								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" style="float: right;" /></a>
-								', $topic['last_post']['time'], '<br />
+								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
@@ -244,11 +244,11 @@ function template_unread()
 	echo '
 		<div class="description" id="topic_icons">
 			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br>', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br>' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
 				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle" /> ' . $txt['poll'] : '', '
 			</p>
 		</div>
@@ -366,12 +366,12 @@ function template_replies()
 							</td>
 							<td class="', $color_class, ' stats windowbg">
 								', $topic['replies'], ' ', $txt['replies'], '
-								<br />
+								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
 							<td class="', $color_class2, ' lastpost windowbg2">
 								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" style="float: right;" /></a>
-								', $topic['last_post']['time'], '<br />
+								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
@@ -420,11 +420,11 @@ function template_replies()
 	echo '
 		<div class="description flow_auto" id="topic_icons">
 			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br />', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br />' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle" /> ' . $txt['locked_topic'] . '<br>', $modSettings['enableStickyTopics'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle" /> ' . $txt['sticky_topic'] . '<br>' : '', '
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br />' : '', $modSettings['pollMode'] == '1' ? '
+				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle" /> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
 				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle" /> ' . $txt['poll'] : '', '
 			</p>
 		</div>

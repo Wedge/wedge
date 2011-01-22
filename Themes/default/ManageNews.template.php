@@ -65,7 +65,7 @@ function template_edit_news()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_email_members()
@@ -100,15 +100,15 @@ function template_email_members()
 
 	foreach ($context['groups'] as $group)
 				echo '
-						<label for="groups_', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br />';
+						<label for="groups_', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
 
 	echo '
-						<br />
+						<br>
 						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, \'groups\');"> <em>', $txt['check_all'], '</em></label>
 					</dd>
 				</dl>
 			</div>
-			<br />
+			<br>
 
 			<div class="cat_bar">
 				<h3 id="advanced_select_div" style="display: none;">
@@ -135,7 +135,7 @@ function template_email_members()
 						<input type="text" name="members" id="members" value="" size="30">
 					</dd>
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_groups'], ':</strong>
@@ -145,11 +145,11 @@ function template_email_members()
 
 	foreach ($context['groups'] as $group)
 				echo '
-						<label for="exclude_groups_', $group['id'], '"><input type="checkbox" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br />';
+						<label for="exclude_groups_', $group['id'], '"><input type="checkbox" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
 
 	echo '
-						<br />
-						<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, \'exclude_groups\');"> <em>', $txt['check_all'], '</em></label><br />
+						<br>
+						<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, \'exclude_groups\');"> <em>', $txt['check_all'], '</em></label><br>
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_members'], ':</strong>
@@ -160,7 +160,7 @@ function template_email_members()
 						<input type="text" name="exclude_members" id="exclude_members" value="" size="30">
 					</dd>
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings">
 					<dt>
 						<label for="email_force"><strong>', $txt['admin_news_select_override_notify'], ':</strong></label>
@@ -177,7 +177,7 @@ function template_email_members()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Make the javascript stuff visible.
 	add_js_file('scripts/suggest.js');
@@ -253,7 +253,7 @@ function template_email_members_compose()
 	echo '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_email_members_send()
@@ -292,7 +292,7 @@ function template_email_members_send()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js_inline('
 	var countdown = 2;

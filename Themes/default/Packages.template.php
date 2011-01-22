@@ -19,10 +19,10 @@ function template_view_package()
 
 	if ($context['is_installed'])
 		echo '
-			<strong>', $txt['package_installed_warning1'], '</strong><br />
-			<br />
-			', $txt['package_installed_warning2'], '<br />
-			<br />';
+			<strong>', $txt['package_installed_warning1'], '</strong><br>
+			<br>
+			', $txt['package_installed_warning2'], '<br>
+			<br>';
 
 	echo $txt['package_installed_warning3'], '
 		</div>';
@@ -32,7 +32,7 @@ function template_view_package()
 	{
 		echo '
 		<div class="errorbox">
-			<strong>', $txt['package_will_fail_title'], '</strong><br />
+			<strong>', $txt['package_will_fail_title'], '</strong><br>
 			', $txt['package_will_fail_warning'], '
 		</div>';
 	}
@@ -56,7 +56,7 @@ function template_view_package()
 				</select>
 			</span>
 		</div>
-		<br />';
+		<br>';
 	}
 
 	echo '
@@ -119,7 +119,7 @@ function template_view_package()
 
 			echo '
 				<tr class="windowbg', $alternate ? '' : '2', '">
-					<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none;" />' : '', '</td>
+					<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none">' : '', '</td>
 					<td>', $i++, '.</td>
 					<td>', $packageaction['type'], '</td>
 					<td>', $packageaction['action'], '</td>
@@ -145,7 +145,7 @@ function template_view_package()
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
 								<td style="width: 0"></td>
-								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" /></a></td>
+								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif"></a></td>
 								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 								<td class="w50 smalltext">', $operation['action'], '</td>
@@ -174,7 +174,7 @@ function template_view_package()
 		if (!empty($context['theme_actions']))
 		{
 			echo '
-			<br />
+			<br>
 			<we:title>
 				', $context['uninstalling'] ? $txt['package_other_themes_uninstall'] : $txt['package_other_themes'], '
 			</we:title>
@@ -198,7 +198,7 @@ function template_view_package()
 						<td class="center">';
 				if (!empty($context['themes_locked']))
 					echo '
-							<input type="hidden" name="custom_theme[]" value="', $id, '" />';
+							<input type="hidden" name="custom_theme[]" value="', $id, '">';
 				echo '
 							<input type="checkbox" name="custom_theme[]" id="custom_theme_', $id, '" value="', $id, '" onclick="', (!empty($theme['has_failure']) ? 'if (this.form.custom_theme_' . $id . '.checked && !confirm(' . $failure . ')) return false;' : ''), 'invertAll(this, this.form, \'dummy_theme_', $id, '\', true);"', !empty($context['themes_locked']) ? ' disabled checked' : '', '>
 						</td>
@@ -211,7 +211,7 @@ function template_view_package()
 				{
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
-						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none;" />' : '', '</td>
+						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none">' : '', '</td>
 						<td style="width: 30px" class="center">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '"', (!empty($action['not_mod']) ? '' : ' disabled'), !empty($context['themes_locked']) ? ' checked' : '', '>
 						</td>
@@ -238,7 +238,7 @@ function template_view_package()
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
 									<td style="width: 0"></td>
-									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif" /></a></td>
+									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif"></a></td>
 									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 									<td class="w50 smalltext">', $operation['action'], '</td>
@@ -271,7 +271,7 @@ function template_view_package()
 	if (!$context['ftp_needed'] && (!empty($context['actions']) || !empty($context['database_changes'])))
 		echo '
 			<div class="righttext padding">
-				<input type="submit" value="', $context['uninstalling'] ? $txt['package_uninstall_now'] : $txt['package_install_now'], '" onclick="return ', !empty($context['has_failure']) ? '(submitThisOnce(this) && confirm(' . JavaScriptEscape($context['uninstalling'] ? $txt['package_will_fail_popup_uninstall'] : $txt['package_will_fail_popup']) . '))' : 'submitThisOnce(this)', ';" class="button_submit" />
+				<input type="submit" value="', $context['uninstalling'] ? $txt['package_uninstall_now'] : $txt['package_install_now'], '" onclick="return ', !empty($context['has_failure']) ? '(submitThisOnce(this) && confirm(' . JavaScriptEscape($context['uninstalling'] ? $txt['package_will_fail_popup_uninstall'] : $txt['package_will_fail_popup']) . '))' : 'submitThisOnce(this)', ';" class="', $context['uninstalling'] ? 'delete' : 'submit', '">
 			</div>';
 
 	// If we need ftp information then demand it!
@@ -287,11 +287,11 @@ function template_view_package()
 	}
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />', (isset($context['form_sequence_number']) && !$context['ftp_needed']) ? '
-			<input type="hidden" name="seqnum" value="' . $context['form_sequence_number'] . '" />' : '', '
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">', (isset($context['form_sequence_number']) && !$context['ftp_needed']) ? '
+			<input type="hidden" name="seqnum" value="' . $context['form_sequence_number'] . '">' : '', '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Toggle options.
 	add_js('
@@ -365,7 +365,7 @@ function template_extract_package()
 	// If we are going to redirect we have a slightly different agenda.
 	if (!empty($context['redirect_url']))
 		echo '
-			', $context['redirect_text'], '<br /><br />
+			', $context['redirect_text'], '<br><br>
 			<a href="', $context['redirect_url'], '">', $txt['package_installed_redirect_go_now'], '</a> | <a href="', $scripturl, '?action=admin;area=packages;sa=browse">', $txt['package_installed_redirect_cancel'], '</a>';
 
 	elseif ($context['uninstalling'])
@@ -394,13 +394,13 @@ function template_extract_package()
 	// Show the "restore permissions" screen?
 	if (function_exists('template_show_list') && !empty($context['restore_file_permissions']['rows']))
 	{
-		echo '<br />';
+		echo '<br>';
 		template_show_list('restore_file_permissions');
 	}
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_list()
@@ -424,11 +424,11 @@ function template_list()
 
 	echo '
 			</ol>
-			<br />
+			<br>
 			<a href="', $scripturl, '?action=admin;area=packages">[ ', $txt['back'], ' ]</a>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_examine()
@@ -448,7 +448,7 @@ function template_examine()
 			<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $context['package'], '">[ ', $txt['list_files'], ' ]</a>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_browse()
@@ -459,7 +459,7 @@ function template_browse()
 	<div id="admincenter">
 		<div class="cat_bar">
 			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>', $txt['packages_latest'], '
+				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>', $txt['packages_latest'], '
 			</h3>
 		</div>
 		<div class="windowbg2 wrc">
@@ -483,7 +483,7 @@ function template_browse()
 		$("#packagesLatest").html(window.smfLatestPackages);');
 
 	echo '
-		<br />
+		<br>
 		<we:title>
 			', $txt['browse_packages'], '
 		</we:title>';
@@ -508,8 +508,8 @@ function template_browse()
 		<div class="flow_auto">
 			<div class="padding smalltext floatleft">
 				', $txt['package_installed_key'], '
-				<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
-				<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
+				<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
+				<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
 				<a href="#" onclick="$(\'#advanced_box\').toggle(); return false;">', $txt['package_advanced_button'], '</a>
@@ -534,16 +534,16 @@ function template_browse()
 						</dd>
 					</dl>
 					<div class="righttext padding">
-						<input type="submit" value="', $txt['package_apply'], '" class="button_submit" />
+						<input type="submit" value="', $txt['package_apply'], '" class="submit">
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="action" value="admin" />
-			<input type="hidden" name="area" value="packages" />
-			<input type="hidden" name="sa" value="browse" />
+			<input type="hidden" name="action" value="admin">
+			<input type="hidden" name="area" value="packages">
+			<input type="hidden" name="sa" value="browse">
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_sublist(&$mod_list, $mod_heading)
@@ -557,7 +557,7 @@ function template_sublist(&$mod_list, $mod_heading)
 	$context['displayed_mod_listing'] = true;
 
 	echo '
-		<br />
+		<br>
 		<we:title>
 			', $mod_heading, '
 		</we:title>
@@ -585,7 +585,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 		if ($package['is_installed'] && !$package['is_newer'])
 			echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" class="middle" style="margin-left: 2ex" />';
+					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" class="middle" style="margin-left: 2ex">';
 
 		echo '
 				</td>
@@ -669,7 +669,7 @@ function template_servers()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="submit" value="', $txt['package_proceed'], '" class="button_submit" />
+					<input type="submit" value="', $txt['package_proceed'], '" class="submit">
 				</div>
 			</form>
 		</div>';
@@ -710,8 +710,8 @@ function template_servers()
 						</dd>
 					</dl>
 					<div class="righttext">
-						<input type="submit" value="' . $txt['add_server'] . '" class="button_submit" />
-						<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+						<input type="submit" value="' . $txt['add_server'] . '" class="new">
+						<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 					</div>
 				</form>
 			</fieldset>
@@ -734,12 +734,12 @@ function template_servers()
 						</dd>
 					</dl>
 					<div class="righttext">
-						<input type="submit" value="', $txt['download'], '" class="button_submit" />
+						<input type="submit" value="', $txt['download'], '" class="save">
 					</div>
 				</form>
 			</fieldset>
 		</div>
-		<br />
+		<br>
 		<we:title>
 			', $txt['package_upload_title'], '
 		</we:title>
@@ -754,13 +754,13 @@ function template_servers()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="submit" value="' . $txt['package_upload'] . '" class="button_submit" />
-					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+					<input type="submit" value="' . $txt['package_upload'] . '" class="save">
+					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 				</div>
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_package_confirm()
@@ -777,7 +777,7 @@ function template_package_confirm()
 			<a href="', $context['proceed_href'], '">[ ', $txt['package_confirm_proceed'], ' ]</a> <a href="JavaScript:history.go(-1);">[ ', $txt['package_confirm_go_back'], ' ]</a>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_package_list()
@@ -808,7 +808,7 @@ function template_package_list()
 		{
 			echo '
 				<li>
-					<strong><img id="ps_img_', $i, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none;" /> ', $packageSection['title'], '</strong>';
+					<strong><img id="ps_img_', $i, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none"> ', $packageSection['title'], '</strong>';
 
 			if (!empty($packageSection['text']))
 				echo '
@@ -832,7 +832,7 @@ function template_package_list()
 				// This is supposed to be a rule..
 				elseif ($package['is_line'])
 					echo '
-							<hr />';
+							<hr>';
 
 				// A remote link.
 				elseif ($package['is_remote'])
@@ -849,11 +849,11 @@ function template_package_list()
 				{
 					// 1. Some mod [ Download ].
 					echo '
-							<strong><img id="ps_img_', $i, '_pkg_', $id, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none;" /> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
+							<strong><img id="ps_img_', $i, '_pkg_', $id, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none"> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
-						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" class="middle" style="margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '" />';
+						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" class="middle" style="margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '">';
 
 					echo '</strong>
 							<ul id="package_section_', $i, '_pkg_', $id, '" class="package_section">';
@@ -897,11 +897,11 @@ function template_package_list()
 		</div>
 		<div class="padding smalltext floatleft">
 			', $txt['package_installed_key'], '
-			<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex" /> ', $txt['package_installed_current'], '
-			<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex" /> ', $txt['package_installed_old'], '
+			<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
+			<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Now go through and turn off all the sections.
 	if (!empty($context['package_list']))
@@ -969,11 +969,11 @@ function template_downloaded()
 					<span class="package_server floatright">', $context['package']['install']['link'], '</span>
 				</li>
 			</ul>
-			<br /><br />
+			<br><br>
 			<p><a href="', $scripturl, '?action=admin;area=packages;get', (isset($context['package_server']) ? ';sa=browse;server=' . $context['package_server'] : ''), '">[ ', $txt['back'], ' ]</a></p>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_install_options()
@@ -1011,15 +1011,16 @@ function template_install_options()
 						<input type="text" name="pack_user" id="pack_user" value="', $context['package_ftp_username'], '" size="30">
 					</dd>
 				</dl>
-				<label for="package_make_backups"><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label><br /><br />
+				<label for="package_make_backups"><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label>
+				<br><br>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="submit" value="', $txt['save'], '" class="submit">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_control_chmod()
@@ -1033,7 +1034,7 @@ function template_control_chmod()
 	if (empty($context['package_ftp']['form_elements_only']))
 	{
 		echo '
-				', sprintf($txt['package_ftp_why'], '$(\'#need_writable_list\').show(); return false;'), '<br />
+				', sprintf($txt['package_ftp_why'], '$(\'#need_writable_list\').show(); return false;'), '<br>
 				<div id="need_writable_list" class="smalltext">
 					', $txt['package_ftp_why_file_list'], '
 					<ul style="display: inline;">';
@@ -1093,12 +1094,12 @@ function template_control_chmod()
 
 					<div class="righttext" style="margin: 1ex;">
 						<span id="test_ftp_placeholder_full"></span>
-						<input type="submit" value="', $txt['package_proceed'], '" class="button_submit" />
+						<input type="submit" value="', $txt['package_proceed'], '" class="submit">
 					</div>';
 
 	if (!empty($context['package_ftp']['destination']))
 		echo '
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</form>';
 
 	// Hide the details of the list.
@@ -1197,9 +1198,9 @@ function template_view_operations()
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
 	<title>', $txt['operation_title'], '</title>
-	<meta charset="utf-8" />',
+	<meta charset="utf-8">',
 	theme_base_css(), '
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/admin.css" />',
+	<link rel="stylesheet" href="', $settings['theme_url'], '/css/admin.css">',
 	theme_base_js(1), '
 </head>
 <body>
@@ -1531,7 +1532,7 @@ function template_file_permissions()
 
 		if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 			echo '
-					<img src="', $settings['default_images_url'], '/board.gif" alt="*" />';
+					<img src="', $settings['default_images_url'], '/board.gif">';
 
 		echo '
 					', $name, '
@@ -1555,7 +1556,7 @@ function template_file_permissions()
 	echo '
 
 		</table>
-		<br />
+		<br>
 		<we:title>
 			', $txt['package_file_perms_change'], '
 		</we:title>
@@ -1596,18 +1597,18 @@ function template_file_permissions()
 	echo '
 			<span id="test_ftp_placeholder_full"></span>
 			<div class="righttext padding">
-				<input type="hidden" name="action_changes" value="1" />
-				<input type="submit" value="', $txt['package_file_perms_go'], '" name="go" class="button_submit" />
+				<input type="hidden" name="action_changes" value="1">
+				<input type="submit" value="', $txt['package_file_perms_go'], '" name="go" class="submit">
 			</div>
 		</div>';
 
 	// Any looks fors we've already done?
 	foreach ($context['look_for'] as $path)
 		echo '
-		<input type="hidden" name="back_look[]" value="', $path, '" />';
+		<input type="hidden" name="back_look[]" value="', $path, '">';
 
 	echo '
-	</form><br />';
+	</form><br>';
 }
 
 function template_permission_show_contents($ident, $contents, $level, $has_more = false)
@@ -1638,7 +1639,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 				echo '
-					<img src="', $settings['default_images_url'], '/board.gif" alt="*" />';
+					<img src="', $settings['default_images_url'], '/board.gif">';
 
 			echo '
 					', $name, '
@@ -1734,7 +1735,7 @@ function template_action_permissions()
 		$file_progress_percent = round($context['file_offset'] / $context['total_files'] * 100, 1);
 
 		echo '
-				<br />
+				<br>
 				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
 					<strong>', $file_progress_message, '</strong>
 					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
@@ -1745,42 +1746,42 @@ function template_action_permissions()
 	}
 
 	echo '
-				<br />';
+				<br>';
 
 	// Put out the right hidden data.
 	if ($context['method'] == 'individual')
 		echo '
-				<input type="hidden" name="custom_value" value="', $context['custom_value'], '" />
-				<input type="hidden" name="totalItems" value="', $context['total_items'], '" />
-				<input type="hidden" name="toProcess" value="', base64_encode(serialize($context['to_process'])), '" />';
+				<input type="hidden" name="custom_value" value="', $context['custom_value'], '">
+				<input type="hidden" name="totalItems" value="', $context['total_items'], '">
+				<input type="hidden" name="toProcess" value="', base64_encode(serialize($context['to_process'])), '">';
 	else
 		echo '
-				<input type="hidden" name="predefined" value="', $context['predefined_type'], '" />
-				<input type="hidden" name="fileOffset" value="', $context['file_offset'], '" />
-				<input type="hidden" name="totalItems" value="', $context['total_items'], '" />
-				<input type="hidden" name="dirList" value="', base64_encode(serialize($context['directory_list'])), '" />
-				<input type="hidden" name="specialFiles" value="', base64_encode(serialize($context['special_files'])), '" />';
+				<input type="hidden" name="predefined" value="', $context['predefined_type'], '">
+				<input type="hidden" name="fileOffset" value="', $context['file_offset'], '">
+				<input type="hidden" name="totalItems" value="', $context['total_items'], '">
+				<input type="hidden" name="dirList" value="', base64_encode(serialize($context['directory_list'])), '">
+				<input type="hidden" name="specialFiles" value="', base64_encode(serialize($context['special_files'])), '">';
 
 	// Are we not using FTP for whatever reason.
 	if (!empty($context['skip_ftp']))
 		echo '
-				<input type="hidden" name="skip_ftp" value="1" />';
+				<input type="hidden" name="skip_ftp" value="1">';
 
 	// Retain state.
 	foreach ($context['back_look_data'] as $path)
 		echo '
-				<input type="hidden" name="back_look[]" value="', $path, '" />';
+				<input type="hidden" name="back_look[]" value="', $path, '">';
 
 	echo '
-				<input type="hidden" name="method" value="', $context['method'], '" />
-				<input type="hidden" name="action_changes" value="1" />
+				<input type="hidden" name="method" value="', $context['method'], '">
+				<input type="hidden" name="action_changes" value="1">
 				<div class="righttext padding">
-					<input type="submit" name="go" id="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="button_submit" />
+					<input type="submit" name="go" id="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="submit">
 				</div>
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Just the countdown stuff
 	add_js_inline('

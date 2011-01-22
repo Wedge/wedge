@@ -74,7 +74,7 @@ function template_modify_weights()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	function calculateNewValues()
@@ -148,7 +148,7 @@ function template_select_search_method()
 								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_fulltext_cannot_create'];
 	else
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removefulltext;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_method_fulltext_remove'], '</a>]<br />
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removefulltext;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_method_fulltext_remove'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['fulltext_length'];
 
 	echo '
@@ -166,11 +166,11 @@ function template_select_search_method()
 
 	if ($context['custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_remove'], '</a>]<br />
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_remove'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	elseif ($context['partial_custom_index'])
 		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_resume'], '</a>]<br />
+								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_partial'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removecustom;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_remove'], '</a>] [<a href="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;resume;', $context['session_var'], '=', $context['session_id'], '">', $txt['search_index_custom_resume'], '</a>]<br>
 								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['custom_index_length'];
 	else
 		echo '
@@ -203,7 +203,7 @@ function template_select_search_method()
 				</fieldset>
 				<fieldset class="search_settings floatright">
 				<legend>', $txt['search_method'], '</legend>
-					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($modSettings['search_force_index']) ? '' : ' checked', '><label for="search_force_index_check">', $txt['search_force_index'], '</label><br />
+					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($modSettings['search_force_index']) ? '' : ' checked', '><label for="search_force_index_check">', $txt['search_force_index'], '</label><br>
 					<input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"', empty($modSettings['search_match_words']) ? '' : ' checked', '><label for="search_match_words_check">', $txt['search_match_words'], '</label>
 				</fieldset>
 				<div class="clear">
@@ -214,7 +214,7 @@ function template_select_search_method()
 			<div class="clear"></div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_create_index()
@@ -245,7 +245,7 @@ function template_create_index()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_create_index_progress()
@@ -273,7 +273,7 @@ function template_create_index_progress()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js_inline('
 	var countdown = 10;
@@ -308,7 +308,7 @@ function template_create_index_done()
 			</p>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Add or edit a search engine spider.
@@ -353,7 +353,7 @@ function template_spider_edit()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Show... spider... logs...
@@ -368,7 +368,7 @@ function template_show_spider_logs()
 	template_show_list('spider_logs');
 
 	echo '
-		<br />
+		<br>
 		<div class="cat_bar">
 			<h3>', $txt['spider_logs_delete'], '</h3>
 		</div>
@@ -384,7 +384,7 @@ function template_show_spider_logs()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

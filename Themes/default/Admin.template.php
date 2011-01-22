@@ -64,16 +64,16 @@ function template_admin()
 				</we:title>
 				<div class="windowbg wrc">
 					<div id="version_details">
-						<strong>', $txt['support_versions'], ':</strong><br />
+						<strong>', $txt['support_versions'], ':</strong><br>
 						', $txt['support_versions_forum'], ':
-						<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em><br />
+						<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em><br>
 						', $txt['support_versions_current'], ':
-						<em id="smfVersion" class="nowrap">??</em><br />
-						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />';
+						<em id="smfVersion" class="nowrap">??</em><br>
+						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
 
 	// Display all the members who can administrate the forum.
 	echo '
-						<br />
+						<br>
 						<strong>', $txt['administrators'], ':</strong>
 						', implode(', ', $context['administrators']);
 	// If we have lots of admins... don't show them all.
@@ -104,7 +104,7 @@ function template_admin()
 			<div class="clear"></div>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
@@ -175,17 +175,17 @@ function template_credits()
 			</h3>
 		</div>
 		<div class="windowbg wrc">
-			<strong>', $txt['support_versions'], ':</strong><br />
+			<strong>', $txt['support_versions'], ':</strong><br>
 				', $txt['support_versions_forum'], ':
-			<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br />
+			<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>
 				', $txt['support_versions_current'], ':
-			<em id="smfVersion" class="nowrap">??</em><br />';
+			<em id="smfVersion" class="nowrap">??</em><br>';
 
 	// Display all the variables we have server information for.
 	foreach ($context['current_versions'] as $version)
 		echo '
 			', $version['title'], ':
-			<em>', $version['version'], '</em><br />';
+			<em>', $version['version'], '</em><br>';
 
 	echo '
 		</div>';
@@ -257,7 +257,7 @@ function template_credits()
 	echo '
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// This makes all the support information available to the support script...
 	add_js('
@@ -496,7 +496,7 @@ function template_view_versions()
 
 	echo '
 		</div>
-		<br class="clear" />';
+		<br class="clear">';
 
 	/* Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
 	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
@@ -556,7 +556,7 @@ function template_edit_censored()
 	}');
 
 	echo '
-				<hr />
+				<hr>
 				<dl class="settings">
 					<dt>
 						<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
@@ -591,7 +591,7 @@ function template_edit_censored()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Maintenance is a lovely thing, isn't it?
@@ -635,7 +635,7 @@ function template_not_done()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js_inline('
 	var countdown = ', $context['continue_countdown'], ';
@@ -759,11 +759,11 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 				else
 					echo '
-						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br /><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 
 				echo '
@@ -776,7 +776,7 @@ function template_show_settings()
 				// Escape (via htmlspecialchars.) the text box.
 				elseif ($config_var['type'] == 'password')
 					echo '
-						<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;"><br />
+						<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;"><br>
 						<input type="password" disabled id="', $config_var['name'], '" name="', $config_var['name'], '[1]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), '>';
 				// Show a selection box.
 				elseif ($config_var['type'] == 'select')
@@ -837,7 +837,7 @@ function template_show_settings()
 			if ($config_var == '')
 				echo '
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings">';
 			else
 				echo '
@@ -853,7 +853,7 @@ function template_show_settings()
 
 	if (empty($context['settings_save_dont_show']))
 		echo '
-				<hr />
+				<hr>
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit" />
 				</div>';
@@ -866,7 +866,7 @@ function template_show_settings()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Template for showing custom profile fields.
@@ -928,7 +928,7 @@ function template_edit_profile_field()
 	var startOptID = ', count($context['field']['options']), ';
 	function addOption()
 	{
-		$("#addopt").append(\'<br /><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'"><input type="text" name="select_option[\' + startOptID + \']" value="">\');
+		$("#addopt").append(\'<br><input type="radio" name="default_select" value="\' + startOptID + \'" id="\' + startOptID + \'"><input type="text" name="select_option[\' + startOptID + \']" value="">\');
 		startOptID++;
 	}');
 
@@ -1051,7 +1051,7 @@ function template_edit_profile_field()
 
 	foreach ($context['field']['options'] as $k => $option)
 		echo '
-								', $k == 0 ? '' : '<br />', '<input type="radio" name="default_select" value="', $k, '"', $context['field']['default_select'] == $option ? ' checked' : '', '><input type="text" name="select_option[', $k, ']" value="', $option, '">';
+								', $k == 0 ? '' : '<br>', '<input type="radio" name="default_select" value="', $k, '"', $context['field']['default_select'] == $option ? ' checked' : '', '><input type="text" name="select_option[', $k, ']" value="', $option, '">';
 
 	echo '
 								<span id="addopt"></span>
@@ -1081,7 +1081,7 @@ function template_edit_profile_field()
 								<option value="number"', $context['field']['mask'] == 'number' ? ' selected' : '', '>', $txt['custom_edit_mask_number'], '</option>
 								<option value="regex"', substr($context['field']['mask'], 0, 5) == 'regex' ? ' selected' : '', '>', $txt['custom_edit_mask_regex'], '</option>
 							</select>
-							<br />
+							<br>
 							<span id="regex_div">
 								<input type="text" name="regex" value="', $context['field']['regex'], '" size="30">
 							</span>
@@ -1127,7 +1127,7 @@ function template_edit_profile_field()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Results page for an admin search.
@@ -1196,7 +1196,7 @@ function template_admin_search_results()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Turn on and off certain key features.
@@ -1278,7 +1278,7 @@ function template_core_features()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Turn on the pretty javascript if we can!
 	add_js_inline('
@@ -1355,7 +1355,7 @@ function template_add_language()
 	echo '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Download a new language file?
@@ -1375,7 +1375,7 @@ function template_download_language()
 			', $context['install_complete'], '
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 		return;
 	}
 
@@ -1407,7 +1407,7 @@ function template_download_language()
 
 	// Now, all the images and the likes, hidden via javascript 'cause there are so fecking many.
 	echo '
-			<br />
+			<br>
 			<we:title>
 				', $txt['languages_download_theme_files'], '
 			</we:title>
@@ -1525,7 +1525,7 @@ function template_download_language()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// The javascript for expanding and collapsing sections.
 	// Each theme gets its own handler.
@@ -1717,7 +1717,7 @@ function template_modify_language_entries()
 	echo '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // This little beauty shows questions and answer from the captcha type feature.
@@ -1883,7 +1883,7 @@ function template_repair_boards()
 			</div>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	if (!empty($context['redirect_to_recount']))
 		add_js_inline('
@@ -1943,7 +1943,7 @@ function template_pretty_urls()
 			<fieldset>
 				<input type="checkbox" name="pretty_enable" id="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), ' />
 				<label for="pretty_enable">', $txt['pretty_enable'], '</label>
-				<br />
+				<br>
 				<input type="checkbox" name="pretty_cache" id="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), ' />
 				<label for="pretty_cache">', $txt['pretty_cache'], '</label>
 			</fieldset>';
@@ -1970,7 +1970,7 @@ function template_pretty_urls()
 			<input type="submit" name="save" value="', $txt['pretty_save'], '">
 		</form>
 	</div>
-	<br />
+	<br>
 	<we:cat>
 		', $txt['pretty_maintenance'], '
 	</we:cat>

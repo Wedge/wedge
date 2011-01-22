@@ -40,7 +40,7 @@ function template_main()
 	// Disable the reason textarea when the postRedirect checkbox is unchecked...
 	echo '
 					</dl>
-					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById(\'subjectArea\').style.display = this.checked ? \'block\' : \'none\';"> ', $txt['moveTopic2'], '.</label><br />
+					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById(\'subjectArea\').style.display = this.checked ? \'block\' : \'none\';"> ', $txt['moveTopic2'], '.</label><br>
 					<fieldset id="subjectArea" style="display: none;">
 						<dl class="settings">
 							<dt><strong>', $txt['moveTopic3'], ':</strong></dt>

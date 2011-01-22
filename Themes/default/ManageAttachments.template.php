@@ -42,7 +42,7 @@ function template_browse()
 	template_show_list('file_list');
 
 	echo '
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_maintenance()
@@ -78,25 +78,25 @@ function template_maintenance()
 		</div>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
-				', $txt['attachment_remove_old'], ' <input type="text" name="age" value="25" size="4"> ', $txt['days_word'], '<br />
-				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br />
+				', $txt['attachment_remove_old'], ' <input type="text" name="age" value="25" size="4"> ', $txt['days_word'], '<br>
+				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
 				<input type="hidden" name="type" value="attachments" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" name="sa" value="byAge" />
 			</form>
-			<hr />
+			<hr>
 			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
-				', $txt['attachment_remove_size'], ' <input type="text" name="size" id="size" value="100" size="4"> ', $txt['kilobyte'], '<br />
-				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br />
+				', $txt['attachment_remove_size'], ' <input type="text" name="size" id="size" value="100" size="4"> ', $txt['kilobyte'], '<br>
+				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
 				<input type="hidden" name="type" value="attachments" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<input type="hidden" name="sa" value="bySize" />
 			</form>
-			<hr />
+			<hr>
 			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
-				', $txt['attachment_manager_avatars_older'], ' <input type="text" name="age" value="45" size="4"> ', $txt['days_word'], '<br />
+				', $txt['attachment_manager_avatars_older'], ' <input type="text" name="age" value="45" size="4"> ', $txt['days_word'], '<br>
 				<input type="submit" name="submit" value="', $txt['remove'], '" class="button_submit" />
 				<input type="hidden" name="type" value="avatars" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
@@ -104,7 +104,7 @@ function template_maintenance()
 			</form>
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_attachment_repair()
@@ -122,7 +122,7 @@ function template_attachment_repair()
 			', $txt['repair_attachments_complete_desc'], '
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// What about if no errors were even found?
 	elseif (!$context['errors_found'])
@@ -135,7 +135,7 @@ function template_attachment_repair()
 			', $txt['repair_attachments_no_errors'], '
 		</div>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	// Otherwise, I'm sad to say, we have a problem!
 	else
@@ -155,16 +155,16 @@ function template_attachment_repair()
 			if (!empty($number))
 				echo '
 				<input type="checkbox" name="to_fix[]" id="', $error, '" value="', $error, '">
-				<label for="', $error, '">', sprintf($txt['attach_repair_' . $error], $number), '</label><br />';
+				<label for="', $error, '">', sprintf($txt['attach_repair_' . $error], $number), '</label><br>';
 		}
 
-		echo '<br />
+		echo '<br>
 				<input type="submit" value="', $txt['repair_attachments_continue'], '" class="button_submit" />
 				<input type="submit" name="cancel" value="', $txt['repair_attachments_cancel'], '" class="button_submit" />
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 	}
 }
 

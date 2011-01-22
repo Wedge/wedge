@@ -264,7 +264,7 @@ function template_main()
 				</div>
 			</div>
 		</div>
-		<br class="clear" />
+		<br class="clear">
 		<div class="flow_hidden">
 			<div class="cat_bar">
 				<h3>

@@ -146,7 +146,7 @@ function template_search_members()
 				</div>
 				<div class="clear_right"></div>
 			</div>
-			<br />
+			<br>
 			<we:title>
 				', $txt['member_part_of_these_membergroups'], '
 			</we:title>
@@ -221,13 +221,13 @@ function template_search_members()
 					</tbody>
 				</table>
 			</div>
-			<br />
+			<br>
 			<div class="righttext">
 				<input type="submit" value="', $txt['search'], '" class="button_submit" />
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_admin_browse()
@@ -262,7 +262,7 @@ function template_admin_browse()
 	}');
 
 		echo '
-		<br />
+		<br>
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
 			<div class="cat_bar">
 				<h3>', $txt['admin_browse_outstanding'], '</h3>
@@ -306,7 +306,7 @@ function template_admin_browse()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

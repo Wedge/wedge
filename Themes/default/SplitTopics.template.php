@@ -87,7 +87,7 @@ function template_select()
 					<li id="not_selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
 							<a class="split_icon floatright" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=down;msg=', $message['id'], '" onclick="return select(\'down\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_select.gif" alt="-&gt;" /></a>
-							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br />
+							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br>
 							<em>', $message['time'], '</em>
 						</div>
 						<div class="post">', $message['body'], '</div>
@@ -117,7 +117,7 @@ function template_select()
 					<li id="selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
 							<a class="split_icon floatleft" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=up;msg=', $message['id'], '" onclick="return select(\'up\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_deselect.gif" alt="&lt;-" /></a>
-							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br />
+							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br>
 							<em>', $message['time'], '</em>
 						</div>
 						<div class="post">', $message['body'], '</div>
@@ -127,7 +127,7 @@ function template_select()
 					<li class="dummy" />
 				</ul>
 			</div>
-			<br class="clear" />
+			<br class="clear">
 			<p>
 				<input type="hidden" name="topic" value="', $context['current_topic'], '" />
 				<input type="hidden" name="subname" value="', $context['new_subject'], '" />
@@ -136,7 +136,7 @@ function template_select()
 			</p>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 	add_js('
 	var start = [', $context['not_selected']['start'], ', ', $context['selected']['start'], '];
@@ -188,7 +188,7 @@ function template_select()
 			<img src=\\"', $settings['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\" />\
 		</a>\
 		<strong>" + $("subject", this).text() + "</strong> ', $txt['by'], ' <strong>" + $("poster", this).text() + "</strong>\
-		<br /><em>" + $("time", this).text() + "</em>\
+		<br><em>" + $("time", this).text() + "</em>\
 	</div>\
 	<div class=\\"post\\">" + $("body", this).text() + "</div>");
 
@@ -223,7 +223,7 @@ function template_merge_done()
 			</div>
 			<div class="windowbg wrc">
 				<p>', $txt['merge_successful'], '</p>
-				<br />
+				<br>
 				<ul class="reset">
 					<li>
 						<a href="', $scripturl, '?board=', $context['target_board'], '.0">', $txt['message_index'], '</a>
@@ -234,7 +234,7 @@ function template_merge_done()
 				</ul>
 			</div>
 		</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_merge()
@@ -280,7 +280,7 @@ function template_merge()
 
 	echo '
 				</dl>
-				<hr />
+				<hr>
 				<dl class="settings merge_topic">
 					<dt>
 						<strong>', $txt['merge_to_topic_id'], ': </strong>
@@ -297,7 +297,7 @@ function template_merge()
 		echo '
 				</dl>
 			</div>
-			<br />
+			<br>
 			<div class="cat_bar">
 				<h3>', $txt['target_topic'], '</h3>
 			</div>
@@ -323,7 +323,7 @@ function template_merge()
 				<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
 			</div>
 		</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_merge_extra_options()
@@ -371,7 +371,7 @@ function template_merge_extra_options()
 		echo '
 				</tbody>
 			</table>
-			<br />
+			<br>
 			<div class="windowbg wrc">';
 
 	echo '
@@ -384,8 +384,8 @@ function template_merge_extra_options()
 	echo '
 						<option value="0">', $txt['merge_custom_subject'], ':</option>
 					</select>
-					<br /><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject" style="display: none">
-					<br />
+					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject" style="display: none">
+					<br>
 					<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> ', $txt['merge_enforce_subject'], '</label>
 				</fieldset>';
 
@@ -425,11 +425,11 @@ function template_merge_extra_options()
 	echo '
 				<input type="submit" value="' . $txt['merge'] . '" class="button_submit floatright" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" name="sa" value="execute" /><br class="clear" />
+				<input type="hidden" name="sa" value="execute" /><br class="clear">
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

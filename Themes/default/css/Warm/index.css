@@ -54,6 +54,7 @@ div.frame {
 }
 #main_content {
 	display: table-cell;
+	width: 100%;
 	min-height: 200px;
 	padding: 12px 0 12px 30px;
 }
@@ -423,7 +424,6 @@ input[type=file] {
 	width: 100%;
 }
 
-/* background: #f2efea; */
 #menu_container {
 	background: #f7f0da;
 	border: 1px dotted #000;

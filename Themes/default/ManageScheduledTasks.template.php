@@ -76,7 +76,7 @@ function template_edit_scheduled_tasks()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

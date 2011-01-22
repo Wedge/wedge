@@ -41,7 +41,7 @@ function template_announce()
 			</div>
 		</form>
 	</div>
-	<br />';
+	<br>';
 }
 
 function template_announcement_send()
@@ -49,7 +49,7 @@ function template_announcement_send()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<br />
+	<br>
 	<div id="announcement">
 		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2 wrc">
@@ -67,7 +67,7 @@ function template_announcement_send()
 			</div>
 		</form>
 	</div>
-	<br />';
+	<br>';
 
 	add_js_inline('
 	var countdown = 2;

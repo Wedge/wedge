@@ -80,7 +80,7 @@ function template_permission_index()
 	echo '
 				</tbody>
 			</table>
-			<br />';
+			<br>';
 
 	// Advanced stuff...
 	if ($context['can_modify'])
@@ -238,7 +238,7 @@ function template_permission_index()
 	echo '
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_by_board()
@@ -332,7 +332,7 @@ function template_by_board()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</div>
 	</form>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Edit permission profiles (predefined).
@@ -396,7 +396,7 @@ function template_edit_profiles()
 				<input type="submit" name="delete" value="', $txt['quickmod_delete_selected'], '" class="button_submit" />
 			</div>
 		</form>
-		<br />
+		<br>
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3>', $txt['permissions_profile_new'], '</h3>
@@ -430,7 +430,7 @@ function template_edit_profiles()
 			</div>
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 function template_modify_group()
@@ -493,7 +493,7 @@ function template_modify_group()
 	{
 		echo '
 			</div>
-			<br />
+			<br>
 			<div class="cat_bar">
 				<h3>', $txt['permissions_board'], '</h3>
 			</div>
@@ -521,7 +521,7 @@ function template_modify_group()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</form>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 
 }
 
@@ -947,7 +947,7 @@ function template_modify_group_classic($type)
 					</table>';
 	}
 	echo '
-					<br class="clear" />
+					<br class="clear">
 				</div>';
 }
 
@@ -1122,13 +1122,13 @@ function template_postmod_permissions()
 			</div>
 		</form>
 		<p class="smalltext" style="padding-left: 10px;">
-			<strong>', $txt['permissions_post_moderation_legend'], ':</strong><br />
-			<img src="', $settings['default_images_url'], '/admin/post_moderation_allow.gif" alt="', $txt['permissions_post_moderation_allow'], '" /> - ', $txt['permissions_post_moderation_allow'], '<br />
-			<img src="', $settings['default_images_url'], '/admin/post_moderation_moderate.gif" alt="', $txt['permissions_post_moderation_moderate'], '" /> - ', $txt['permissions_post_moderation_moderate'], '<br />
+			<strong>', $txt['permissions_post_moderation_legend'], ':</strong><br>
+			<img src="', $settings['default_images_url'], '/admin/post_moderation_allow.gif" alt="', $txt['permissions_post_moderation_allow'], '" /> - ', $txt['permissions_post_moderation_allow'], '<br>
+			<img src="', $settings['default_images_url'], '/admin/post_moderation_moderate.gif" alt="', $txt['permissions_post_moderation_moderate'], '" /> - ', $txt['permissions_post_moderation_moderate'], '<br>
 			<img src="', $settings['default_images_url'], '/admin/post_moderation_deny.gif" alt="', $txt['permissions_post_moderation_disallow'], '" /> - ', $txt['permissions_post_moderation_disallow'], '
 		</p>
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 ?>

@@ -512,10 +512,10 @@ function template_main()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '" /></a><br />';
+										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '" /></a><br>';
 					else
 						echo '
-										<img src="' . $attachment['href'] . ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br />';
+										<img src="' . $attachment['href'] . ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"/><br>';
 				}
 				echo '
 										<a href="' . $attachment['href'] . '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle" alt="*" />&nbsp;' . $attachment['name'] . '</a> ';
@@ -524,7 +524,7 @@ function template_main()
 					echo '
 										[<a href="', $scripturl, '?action=attachapprove;sa=approve;aid=', $attachment['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['approve'], '</a>]&nbsp;|&nbsp;[<a href="', $scripturl, '?action=attachapprove;sa=reject;aid=', $attachment['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['delete'], '</a>] ';
 				echo '
-										(', $attachment['size'], ($attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] . ' - ' . $txt['attach_viewed'] : ' - ' . $txt['attach_downloaded']) . ' ' . $attachment['downloads'] . ' ' . $txt['attach_times'] . '.)<br />';
+										(', $attachment['size'], ($attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] . ' - ' . $txt['attach_viewed'] : ' - ' . $txt['attach_downloaded']) . ' ' . $attachment['downloads'] . ' ' . $txt['attach_times'] . '.)<br>';
 			}
 
 			// If we had unapproved attachments clean up.
@@ -597,7 +597,7 @@ function template_main()
 						</div>
 					</div>
 				</div>
-				<hr class="post_separator" />';
+				<hr class="post_separator">';
 	}
 
 	echo '
@@ -659,7 +659,7 @@ function template_main()
 						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
 						<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
 						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
-						<br />' : '', '
+						<br>' : '', '
 						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
 							<input type="hidden" name="topic" value="', $context['current_topic'], '">
 							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
@@ -676,12 +676,12 @@ function template_main()
 			if ($context['user']['is_guest'])
 				echo '
 							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
-							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br />';
+							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
 
 			// Is visual verification enabled?
 			if ($context['require_verification'])
 				echo '
-							<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br />';
+							<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br>';
 
 			echo '
 							<div class="quickReplyContent">
@@ -702,7 +702,7 @@ function template_main()
 	}
 	else
 		echo '
-			<br class="clear" />';
+			<br class="clear">';
 
 	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{
@@ -764,7 +764,7 @@ function template_main()
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
 					<div id="error_box" style="padding: 4px;" class="error"></div>
-					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br />
+					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br>
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" name="msg" value="%msg_id%">
