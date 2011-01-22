@@ -98,7 +98,7 @@ class xmlArray
 			$data = implode('', $data);
 
 		// Remove any xml declaration or doctype, and parse out comments and CDATA.
-		$data = preg_replace('/<!--.*?-->/s', '', $this->_to_cdata(preg_replace(array('/^<\?xml.+?\?' . '>/is', '/<!DOCTYPE[^>]+?' . '>/s'), '', $data)));
+		$data = preg_replace('/<!--.*?-->/s', '', $this->_to_cdata(preg_replace(array('/^<\?xml.+?\?\>/is', '/<!DOCTYPE[^>]+?\>/s'), '', $data)));
 
 		// Now parse the xml!
 		$this->array = $this->_parse($data);
@@ -336,7 +336,7 @@ class xmlArray
 		while ($data != '')
 		{
 			// Find and remove the next tag.
-			preg_match('/\A<([\w\-:]+)((?:\s+.+?)?)([\s]?\/)?' . '>/', $data, $match);
+			preg_match('/\A<([\w\-:]+)((?:\s+.+?)?)([\s]?\/)?\>/', $data, $match);
 			if (isset($match[0]))
 				$data = preg_replace('/' . preg_quote($match[0], '/') . '/s', '', $data, 1);
 

@@ -334,7 +334,7 @@ function ModifyRegistrationSettings($return_config = false)
 	checkCoppa();');
 
 	// Turn the postal address into something suitable for a textbox.
-	$modSettings['coppaPost'] = !empty($modSettings['coppaPost']) ? preg_replace('~<br ?/?' . '>~', "\n", $modSettings['coppaPost']) : '';
+	$modSettings['coppaPost'] = !empty($modSettings['coppaPost']) ? preg_replace('~<br\s*/?\>~', "\n", $modSettings['coppaPost']) : '';
 
 	prepareDBSettingContext($config_vars);
 }

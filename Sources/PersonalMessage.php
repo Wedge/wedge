@@ -1697,7 +1697,7 @@ function MessagePost()
 		if (isset($_REQUEST['quote']))
 		{
 			// Remove any nested quotes and <br />...
-			$form_message = preg_replace('~<br ?/?' . '>~i', "\n", $row_quoted['body']);
+			$form_message = preg_replace('~<br\s*/?\>~i', "\n", $row_quoted['body']);
 			if (!empty($modSettings['removeNestedQuotes']))
 				$form_message = preg_replace(array('~\n?\[quote.*?\].+?\[/quote\]\n?~is', '~^\n~', '~\[/quote\]~'), '', $form_message);
 			if (empty($row_quoted['id_member']))
@@ -3218,7 +3218,7 @@ function ReportMessage()
 		wesql::free_result($request);
 
 		// Remove the line breaks...
-		$body = preg_replace('~<br ?/?' . '>~i', "\n", $body);
+		$body = preg_replace('~<br\s*/?\>~i', "\n", $body);
 
 		// Get any other recipients of the email.
 		$request = wesql::query('

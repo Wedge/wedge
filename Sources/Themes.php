@@ -1275,7 +1275,7 @@ function ThemeInstall()
 		wesql::free_result($request);
 
 		// Let's add a theme_info.xml to this theme.
-		$xml_info = '<' . '?xml version="1.0"?' . '>
+		$xml_info = '<?xml version="1.0"?' . '>
 <theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
 	<id>smf:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
@@ -1666,7 +1666,7 @@ function EditTheme()
 
 				// !!! Use fetch_web_data()?
 				$error = @file_get_contents($theme_url . '/tmp_' . session_id() . '.php');
-				if (preg_match('~ <b>(\d+)</b><br( /)?' . '>$~i', $error) != 0)
+				if (preg_match('~ <b>\d+</b><br\s*/?\>$~i', $error) != 0)
 					$error_file = $theme_dir . '/tmp_' . session_id() . '.php';
 				else
 					unlink($theme_dir . '/tmp_' . session_id() . '.php');
@@ -1717,7 +1717,7 @@ function EditTheme()
 			$file_data = file($theme_dir . '/' . $_REQUEST['filename']);
 		else
 		{
-			if (preg_match('~(<b>.+?</b>:.+?<b>).+?(</b>.+?<b>\d+</b>)<br( /)?' . '>$~i', $error, $match) != 0)
+			if (preg_match('~(<b>.+?</b>:.+?<b>).+?(</b>.+?<b>\d+</b>)<br\s*/?\>$~i', $error, $match) != 0)
 				$context['parse_error'] = $match[1] . $_REQUEST['filename'] . $match[2];
 			$file_data = file($error_file);
 			unlink($error_file);

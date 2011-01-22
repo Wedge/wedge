@@ -99,7 +99,7 @@ class wedgeEditor
 				if (!isset($_REQUEST['xml']))
 					$context['footer'] .= '
 <form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
-	<input type="hidden" name="spellstring" value="" />
+	<input type="hidden" name="spellstring" value="">
 </form>';
 
 				// Also make sure that spell check works with rich edit.
@@ -140,7 +140,7 @@ class wedgeEditor
 		global $modSettings;
 
 		// Turn line breaks back into br's.
-		$text = strtr($text, array("\r" => '', "\n" => '<br />'));
+		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
 
 		// Prevent conversion of all bbcode inside these bbcodes.
 		// !!! Tie in with bbc permissions ?
@@ -168,7 +168,7 @@ class wedgeEditor
 		$text = parse_bbc($text, true, '', $allowed_tags);
 
 		// Fix for having a line break then a thingy.
-		$text = strtr($text, array('<br /><div' => '<div', "\n" => '', "\r" => ''));
+		$text = strtr($text, array('<br><div' => '<div', "\n" => '', "\r" => ''));
 
 		// Note that IE doesn't understand spans really - make them something "legacy"
 		$working_html = array(
@@ -182,7 +182,7 @@ class wedgeEditor
 
 		// Parse unique ID's and disable javascript into the smileys - using the double space.
 		$i = 1;
-		$text = preg_replace('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley" />~e', '\'<\' . ' . 'stripslashes(\'$1\') . \'alt="" title="" onresizestart="return false;" id="smiley_\' . ' . "\$" . 'i++ . \'_$2" style="padding: 0 3px 0 3px;" />\'', $text);
+		$text = preg_replace('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley">~e', '\'<\' . ' . 'stripslashes(\'$1\') . \'alt="" title="" onresizestart="return false;" id="smiley_\' . ' . "\$" . 'i++ . \'_$2" style="padding: 0 3px">\'', $text);
 
 		return $text;
 	}
@@ -195,20 +195,20 @@ class wedgeEditor
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);
 
 		// Though some of us love paragraphs, the parser will do better with breaks.
-		$text = preg_replace('~</p>\s*?<p~i', '</p><br /><p', $text);
-		$text = preg_replace('~</p>\s*(?!<)~i', '</p><br />', $text);
+		$text = preg_replace('~</p>\s*?<p~i', '</p><br><p', $text);
+		$text = preg_replace('~</p>\s*(?!<)~i', '</p><br>', $text);
 
 		// Safari/webkit wraps lines in Wysiwyg in <div>'s.
 		if ($context['browser']['is_webkit'])
-			$text = preg_replace(array('~<div(?:\s(?:[^<>]*?))?' . '>~i', '</div>'), array('<br />', ''), $text);
+			$text = preg_replace(array('~<div(?:\s(?:[^<>]*?))?\>~i', '</div>'), array('<br>', ''), $text);
 
 		// If there's a trailing break get rid of it - Firefox tends to add one.
-		$text = preg_replace('~<br\s?/?' . '>$~i', '', $text);
+		$text = preg_replace('~<br\s*/?\>$~i', '', $text);
 
 		// Remove any formatting within code tags.
 		if (strpos($text, '[code') !== false)
 		{
-			$text = preg_replace('~<br\s?/?' . '>~i', '#smf_br_spec_grudge_cool!#', $text);
+			$text = preg_replace('~<br\s*/?\>~i', '#wedge_br_nao_was_here#', $text);
 			$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 			// Only mess with stuff outside [code] tags.
@@ -219,12 +219,12 @@ class wedgeEditor
 					$parts[$i] = strip_tags($parts[$i]);
 			}
 
-			$text = strtr(implode('', $parts), array('#smf_br_spec_grudge_cool!#' => '<br />'));
+			$text = strtr(implode('', $parts), array('#wedge_br_nao_was_here#' => '<br>'));
 		}
 
 		// Remove scripts, style and comment blocks.
-		$text = preg_replace('~<script[^>]*[^/]?' . '>.*?</script>~i', '', $text);
-		$text = preg_replace('~<style[^>]*[^/]?' . '>.*?</style>~i', '', $text);
+		$text = preg_replace('~<script[^>]*[^/]>.*?</script>~i', '', $text);
+		$text = preg_replace('~<style[^>]*[^/]>.*?</style>~i', '', $text);
 		$text = preg_replace('~\\<\\!--.*?-->~i', '', $text);
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
@@ -726,7 +726,7 @@ class wedgeEditor
 							else
 							{
 								// Remove the trailing breaks from the list item.
-								$parts[$i] = preg_replace('~\s*<br\s*' . '/?' . '>\s*$~', '', $parts[$i]);
+								$parts[$i] = preg_replace('~\s*<br\s*/?\>\s*$~', '', $parts[$i]);
 								$parts[$i + 1] = '';
 								$parts[$i + 2] = '[/li]' . "\n";
 								$parts[$i + 3] = '';
@@ -740,7 +740,7 @@ class wedgeEditor
 				}
 
 				// If we're in the [list] space, no content is allowed.
-				if ($inList && trim(preg_replace('~\s*<br\s*' . '/?' . '>\s*~', '', $parts[$i + 4])) !== '')
+				if ($inList && trim(preg_replace('~\s*<br\s*/?\>\s*~', '', $parts[$i + 4])) !== '')
 				{
 					// Fix it by injecting an extra list item.
 					array_splice($parts, $i + 4, 0, array(
@@ -815,47 +815,47 @@ class wedgeEditor
 
 		// The final bits are the easy ones - tags which map to tags which map to tags - etc etc.
 		$tags = array(
-			'~<b(\s(.)*?)*?' . '>~i' => '[b]',
+			'~<b(?:\s.*?)*?\>~i' => '[b]',
 			'~</b>~i' => '[/b]',
-			'~<i(\s(.)*?)*?' . '>~i' => '[i]',
+			'~<i(?:\s.*?)*?\>~i' => '[i]',
 			'~</i>~i' => '[/i]',
-			'~<u(\s(.)*?)*?' . '>~i' => '[u]',
+			'~<u(?:\s.*?)*?\>~i' => '[u]',
 			'~</u>~i' => '[/u]',
-			'~<strong(\s(.)*?)*?' . '>~i' => '[b]',
+			'~<strong(?:\s.*?)*?\>~i' => '[b]',
 			'~</strong>~i' => '[/b]',
-			'~<em(\s(.)*?)*?' . '>~i' => '[i]',
+			'~<em(?:\s.*?)*?\>~i' => '[i]',
 			'~</em>~i' => '[/i]',
-			'~<s(\s(.)*?)*?' . '>~i' => "[s]",
-			'~</s>~i' => "[/s]",
-			'~<strike(\s(.)*?)*?' . '>~i' => '[s]',
+			'~<s(?:\s.*?)*?\>~i' => '[s]',
+			'~</s>~i' => '[/s]',
+			'~<strike(?:\s.*?)*?\>~i' => '[s]',
 			'~</strike>~i' => '[/s]',
-			'~<del(\s(.)*?)*?' . '>~i' => '[s]',
+			'~<del(?:\s.*?)*?\>~i' => '[s]',
 			'~</del>~i' => '[/s]',
-			'~<center(\s(.)*?)*?' . '>~i' => '[center]',
+			'~<center(?:\s.*?)*?\>~i' => '[center]',
 			'~</center>~i' => '[/center]',
-			'~<pre(\s(.)*?)*?' . '>~i' => '[pre]',
+			'~<pre(?:\s.*?)*?\>~i' => '[pre]',
 			'~</pre>~i' => '[/pre]',
-			'~<sub(\s(.)*?)*?' . '>~i' => '[sub]',
+			'~<sub(?:\s.*?)*?\>~i' => '[sub]',
 			'~</sub>~i' => '[/sub]',
-			'~<sup(\s(.)*?)*?' . '>~i' => '[sup]',
+			'~<sup(?:\s.*?)*?\>~i' => '[sup]',
 			'~</sup>~i' => '[/sup]',
-			'~<tt(\s(.)*?)*?' . '>~i' => '[tt]',
+			'~<tt(?:\s.*?)*?\>~i' => '[tt]',
 			'~</tt>~i' => '[/tt]',
-			'~<table(\s(.)*?)*?' . '>~i' => '[table]',
+			'~<table(?:\s.*?)*?\>~i' => '[table]',
 			'~</table>~i' => '[/table]',
-			'~<tr(\s(.)*?)*?' . '>~i' => '[tr]',
+			'~<tr(?:\s.*?)*?\>~i' => '[tr]',
 			'~</tr>~i' => '[/tr]',
-			'~<(td|th)\s[^<>]*?colspan="?(\d{1,2})"?.*?' . '>~ie' => 'str_repeat(\'[td][/td]\', $2 - 1) . \'[td]\'',
-			'~<(td|th)(\s(.)*?)*?' . '>~i' => '[td]',
-			'~</(td|th)>~i' => '[/td]',
-			'~<br(?:\s[^<>]*?)?' . '>~i' => "\n",
-			'~<hr[^<>]*>(\n)?~i' => "[hr]\n$1",
-			'~(\n)?\\[hr\\]~i' => "\n[hr]",
-			'~^\n\\[hr\\]~i' => "[hr]",
-			'~<blockquote(\s(.)*?)*?' . '>~i' => "&lt;blockquote&gt;",
-			'~</blockquote>~i' => "&lt;/blockquote&gt;",
-			'~<ins(\s(.)*?)*?' . '>~i' => "&lt;ins&gt;",
-			'~</ins>~i' => "&lt;/ins&gt;",
+			'~<(?:td|th)\s[^<>]*?colspan="?(\d{1,2})"?.*?\>~ie' => 'str_repeat(\'[td][/td]\', $1 - 1) . \'[td]\'',
+			'~<(?:td|th)(?:\s.*?)*?\>~i' => '[td]',
+			'~</(?:td|th)>~i' => '[/td]',
+			'~<br(?:\s[^<>]*?)?\>~i' => "\n",
+			'~<hr(?:\s[^<>]*?)?\>(\n)?~i' => "[hr]\n$1",
+			'~\n?\\[hr\\]~i' => "\n[hr]",
+			'~^\n\\[hr\\]~i' => '[hr]',
+			'~<blockquote(?:\s.*?)*?\>~i' => '&lt;blockquote&gt;',
+			'~</blockquote>~i' => '&lt;/blockquote&gt;',
+			'~<ins(?:\s.*?)*?\>~i' => '&lt;ins&gt;',
+			'~</ins>~i' => '&lt;/ins&gt;',
 		);
 		$text = preg_replace(array_keys($tags), array_values($tags), $text);
 
@@ -1967,7 +1967,7 @@ class wedgeEditor
 
 		// Put it back together!
 		if (!$previewing)
-			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\n" => '<br />', "\xC2\xA0" => '&nbsp;'));
+			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\n" => '<br>', "\xC2\xA0" => '&nbsp;'));
 		else
 			$message = strtr(implode('', $parts), array('  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;'));
 
@@ -1986,7 +1986,7 @@ class wedgeEditor
 			// If $i is a multiple of four (0, 4, 8, ...) then it's not a code section...
 			if ($i % 4 == 0)
 			{
-				$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ie', '\'[html]\' . strtr(htmlspecialchars(\'$1\', ENT_QUOTES), array(\'\\&quot;\' => \'&quot;\', \'&amp;#13;\' => \'<br />\', \'&amp;#32;\' => \' \', \'&amp;#38;\' => \'&#38;\', \'&amp;#91;\' => \'[\', \'&amp;#93;\' => \']\')) . \'[/html]\'', $parts[$i]);
+				$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ie', '\'[html]\' . strtr(htmlspecialchars(\'$1\', ENT_QUOTES), array(\'\\&quot;\' => \'&quot;\', \'&amp;#13;\' => \'<br>\', \'&amp;#32;\' => \' \', \'&amp;#38;\' => \'&#38;\', \'&amp;#91;\' => \'[\', \'&amp;#93;\' => \']\')) . \'[/html]\'', $parts[$i]);
 
 				// Attempt to un-parse the time to something less awful.
 				$parts[$i] = preg_replace('~\[time\](\d{0,10})\[/time\]~ie', '\'[time]\' . timeformat(\'$1\', false) . \'[/time]\'', $parts[$i]);
@@ -1994,7 +1994,7 @@ class wedgeEditor
 		}
 
 		// Change breaks back to \n's and &nsbp; back to spaces.
-		return preg_replace('~<br( /)?' . '>~', "\n", str_replace('&nbsp;', ' ', implode('', $parts)));
+		return preg_replace('~<br\s*/?\>~', "\n", str_replace('&nbsp;', ' ', implode('', $parts)));
 	}
 
 	// Fix any URLs posted - ie. remove 'javascript:'.
@@ -2253,7 +2253,7 @@ class wedgeEditor
 				<div id="', $this->id, '_resizer" style="display: none; width: ', $this->width, '; padding: 0 2px;" class="richedit_resize"></div>
 			</div>
 		</div>
-		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0" />';
+		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
 
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
@@ -2297,7 +2297,7 @@ class wedgeEditor
 			<div>%smileyRow%</div>
 		') . ',
 		sSmileyTemplate: ' . JavaScriptEscape('
-			<img src="%smileySource%" class="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%" />
+			<img src="%smileySource%" class="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%">
 		') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('
 			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
@@ -2306,14 +2306,14 @@ class wedgeEditor
 		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>' . $txt['more_smileys_title'] . '</title>
-	<link rel="stylesheet" href="' . $context['cached_css'] . '" />
+	<link rel="stylesheet" href="' . $context['cached_css'] . '">
 </head>
 <body id="help_popup">
-	<div class="cat_bar">
-		<h3>' . $txt['more_smileys_pick'] . '</h3>
-	</div>
+	<we:cat>
+		' . $txt['more_smileys_pick'] . '
+	</we:cat>
 	<div class="windowbg wrc">
 		%smileyRows%
 		<div class="smalltext centertext">
@@ -2506,7 +2506,7 @@ class wedgeEditor
 		// These two buttons get added semi-magically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')
 			echo '
-		<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '" />
+		<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '">
 		<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? ' confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
 
 		if ($context['show_spellchecking'])

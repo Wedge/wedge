@@ -809,7 +809,7 @@ function AdminSearchMember()
 	ViewMembers();
 }
 
-// This file allows the user to search the SM online manual for a little of help.
+// This file allows the user to search the SimpleMachines online manual for a little help.
 function AdminSearchOM()
 {
 	global $context;
@@ -834,7 +834,7 @@ function AdminSearchOM()
 	$search_results = fetch_web_data($context['doc_scripturl'] . '?action=search2&xml', $postVars);
 
 	// If we didn't get any xml back we are in trouble - perhaps the doc site is overloaded?
-	if (!$search_results || preg_match('~<' . '\?xml\sversion="\d+\.\d+"\sencoding=".+?"\?' . '>\s*(<smf>.+?</smf>)~is', $search_results, $matches) != true)
+	if (!$search_results || preg_match('~<\?xml\sversion="\d+\.\d+"\sencoding=".+?"\?\>\s*(<smf>.+?</smf>)~is', $search_results, $matches) != true)
 		fatal_lang_error('cannot_connect_doc_site');
 
 	$search_results = $matches[1];

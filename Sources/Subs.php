@@ -3787,7 +3787,7 @@ function clean_cache($type = '')
 
 	// Invalidate cache, to be sure!
 	// ... as long as Load.php can be modified, anyway.
-	@touch($sourcedir . '/' . 'Load.php');
+	@touch($sourcedir . '/Load.php');
 	clearstatcache();
 }
 

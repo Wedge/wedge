@@ -1303,7 +1303,7 @@ function Search2()
 					$main_query['select']['relevance'] = substr($relevance, 0, -3) . ') / ' . $new_weight_total . ' AS relevance';
 
 					$ignoreRequest = wesql::query('
-						INSERT IGNORE INTO ' . '{db_prefix}log_search_results
+						INSERT IGNORE INTO {db_prefix}log_search_results
 							(' . implode(', ', array_keys($main_query['select'])) . ')
 						SELECT
 							' . implode(',

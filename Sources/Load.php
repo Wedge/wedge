@@ -2367,18 +2367,18 @@ function template_include($filename, $once = false)
 				echo '
 		<hr />
 
-		<div style="margin: 0 20px;"><tt>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</tt></div>';
+		<div style="margin: 0 20px"><tt>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</tt></div>';
 
 			// Yes, this is VERY complicated... Still, it's good.
-			if (preg_match('~ <strong>(\d+)</strong><br( /)?' . '>$~i', $error, $match) != 0)
+			if (preg_match('~ <strong>\d+</strong><br\s*/?\>$~i', $error, $match) != 0)
 			{
 				$data = file($filename);
 				$data2 = highlight_php_code(implode('', $data));
-				$data2 = preg_split('~\<br( /)?\>~', $data2);
+				$data2 = preg_split('~\<br\s*/?\>~', $data2);
 
 				// Fix the PHP code stuff...
 				if (!$context['browser']['is_gecko'])
-					$data2 = str_replace("\t", '<span style="white-space: pre;">' . "\t" . '</span>', $data2);
+					$data2 = str_replace("\t", '<span style="white-space: pre">' . "\t" . '</span>', $data2);
 				else
 					$data2 = str_replace('<pre style="display: inline;">' . "\t" . '</pre>', "\t", $data2);
 
@@ -2817,7 +2817,7 @@ function cache_put_data($key, $value, $ttl = 120)
 			@unlink($cachedir . '/data_' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?' . 'php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
+			$cache_data = '<' . '?php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}?' . '>';
 			$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
 			if ($fh)
 			{

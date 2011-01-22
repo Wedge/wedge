@@ -75,7 +75,7 @@ function template_info_center_calendar()
 	{
 		echo '
 			<we:title2>
-				<a href="', $scripturl, '?action=calendar' . '"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
+				<a href="', $scripturl, '?action=calendar"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
 				', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
 			</we:title2>
 			<p class="smalltext">';
@@ -140,7 +140,7 @@ function template_info_center_usersonline()
 	// "Users online" - in order of activity.
 	echo '
 			<we:title2>
-				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who' . '">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
+				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
 				', $txt['online_users'], '
 			</we:title2>
 			<p class="inline stats">

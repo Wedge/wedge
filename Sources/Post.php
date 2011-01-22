@@ -858,12 +858,12 @@ function Post()
 				{
 					// It goes 0 = outside, 1 = begin tag, 2 = inside, 3 = close tag, repeat.
 					if ($i % 4 == 0)
-						$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ise', '\'[html]\' . preg_replace(\'~<br\s?/?' . '>~i\', \'&lt;br /&gt;<br />\', \'$1\') . \'[/html]\'', $parts[$i]);
+						$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ise', '\'[html]\' . preg_replace(\'~<br\s*/?\>~i\', \'&lt;br&gt;<br>\', \'$1\') . \'[/html]\'', $parts[$i]);
 				}
 				$form_message = implode('', $parts);
 			}
 
-			$form_message = preg_replace('~<br ?/?' . '>~i', "\n", $form_message);
+			$form_message = preg_replace('~<br\s*/?\>~i', "\n", $form_message);
 
 			// Remove any nested quotes, if necessary.
 			if (!empty($modSettings['removeNestedQuotes']))
@@ -1010,7 +1010,7 @@ function Post()
 				if (!empty($modSettings['attachmentCheckExtensions']))
 				{
 					if (!in_array(strtolower(substr(strrchr($_FILES['attachment']['name'][$n], '.'), 1)), explode(',', strtolower($modSettings['attachmentExtensions']))))
-						fatal_error($_FILES['attachment']['name'][$n] . '.<br />' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
+						fatal_error($_FILES['attachment']['name'][$n] . '.<br>' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
 				}
 
 				if (!empty($modSettings['attachmentDirSizeLimit']))
