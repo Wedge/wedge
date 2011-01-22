@@ -39,11 +39,9 @@ function template_summary()
 	// Display the basic information about the user
 	echo '
 <div id="profileview" class="flow_auto">
-	<div class="cat_bar">
-		<h3>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['summary'], '
-		</h3>
-	</div>
+	<we:cat>
+		<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['summary'], '
+	</we:cat>
 	<div id="basicinfo">
 		<div class="windowbg wrc">
 			<div class="flow_auto">
@@ -54,12 +52,12 @@ function template_summary()
 	// What about if we allow email only via the forum??
 	if ($context['member']['show_email'] === 'yes' || $context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
 		echo '
-					<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes' || $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $settings['images_url'], '/email_sm.gif" alt="', $txt['email'], '" /></a></li>';
+					<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes' || $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $settings['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
 		echo '
-					<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $context['member']['website']['title'] . '" />' : $txt['www']), '</a></li>';
+					<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $context['member']['website']['title'] . '">' : $txt['www']), '</a></li>';
 
 	// Are there any custom profile fields for the summary?
 	if (!empty($context['custom_fields']))
@@ -76,12 +74,12 @@ function template_summary()
 				', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '<li>' . $context['member']['aim']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '<li>' . $context['member']['yim']['link'] . '</li>' : '', '
 			</ul>
-			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle" />' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
+			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 
 	// Can they add this member as a buddy?
 	if (!empty($context['can_have_buddy']) && !$context['user']['is_owner'])
 		echo '
-				<br /><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_var'], '=', $context['session_id'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
+				<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_var'], '=', $context['session_id'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
 
 	echo '
 				</span>';
@@ -91,9 +89,9 @@ function template_summary()
 
 	if (!$context['user']['is_owner'] && $context['can_send_pm'])
 		echo '
-					<a href="', $scripturl, '?action=pm;sa=send;u=', $context['id_member'], '">', $txt['profile_sendpm_short'], '</a><br />';
+					<a href="', $scripturl, '?action=pm;sa=send;u=', $context['id_member'], '">', $txt['profile_sendpm_short'], '</a><br>';
 	echo '
-					<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br />
+					<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showposts">', $txt['showPosts'], '</a><br>
 					<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=statistics">', $txt['statPanel'], '</a>
 				</p>';
 
@@ -144,7 +142,7 @@ function template_summary()
 
 	echo '
 				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png" />' : ''), '</dd>';
+				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png">' : ''), '</dd>';
 
 	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
 		echo '
@@ -303,18 +301,16 @@ function template_showDrafts()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/im_newmsg.gif" />
-				', $txt['showDrafts'], ' - ', $context['member']['name'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/im_newmsg.gif">
+			', $txt['showDrafts'], ' - ', $context['member']['name'], '
+		</we:cat>
 		<p class="windowbg description">
 			', $txt['showDrafts_desc'];
 
 	if (!empty($modSettings['pruneSaveDrafts']))
 		echo '
-			<br /><br />', $modSettings['pruneSaveDrafts'] == 1 ? $txt['draftAutoPurge_1'] : sprintf($txt['draftAutoPurge_n'], $modSettings['pruneSaveDrafts']);
+			<br><br>', $modSettings['pruneSaveDrafts'] == 1 ? $txt['draftAutoPurge_1'] : sprintf($txt['draftAutoPurge_n'], $modSettings['pruneSaveDrafts']);
 
 	echo '
 		</p>
@@ -354,7 +350,7 @@ function template_showDrafts()
 						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
 				</div>
-				<br class="clear" />
+				<br class="clear">
 			</div>
 		</div>';
 	}
@@ -377,8 +373,8 @@ function template_showDrafts()
 		echo '
 		<div class="righttext padding">
 			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="submit" value="', $txt['remove_all_drafts'], '" class="button_submit" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">
 			</form>
 		</div>';
 }
@@ -389,12 +385,10 @@ function template_showPosts()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
-				', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+			', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
+		</we:cat>
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
@@ -467,7 +461,7 @@ function template_showPosts()
 				</div>';
 
 			echo '
-				<br class="clear" />
+				<br class="clear">
 			</div>
 		</div>';
 		}
@@ -481,25 +475,25 @@ function template_showPosts()
 					<th class="first_th left w25" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=filename', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'filename' ? ';asc' : ''), '">
 							', $txt['show_attach_filename'], '
-							', ($context['sort_order'] == 'filename' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
+							', ($context['sort_order'] == 'filename' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
 						</a>
 					</th>
 					<th scope="col" style="width: 12%">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=downloads', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'downloads' ? ';asc' : ''), '">
 							', $txt['show_attach_downloads'], '
-							', ($context['sort_order'] == 'downloads' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
+							', ($context['sort_order'] == 'downloads' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
 						</a>
 					</th>
 					<th class="left" scope="col" style="width: 30%">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=subject', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'subject' ? ';asc' : ''), '">
 							', $txt['message'], '
-							', ($context['sort_order'] == 'subject' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
+							', ($context['sort_order'] == 'subject' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
 						</a>
 					</th>
 					<th class="last_th left" scope="col">
 						<a href="', $scripturl, '?action=profile;u=', $context['current_member'], ';area=showposts;sa=attach;sort=posted', ($context['sort_direction'] == 'down' && $context['sort_order'] == 'posted' ? ';asc' : ''), '">
 						', $txt['show_attach_posted'], '
-						', ($context['sort_order'] == 'posted' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif" />' : ''), '
+						', ($context['sort_order'] == 'posted' ? '<img src="' . $settings['images_url'] . '/sort_' . ($context['sort_direction'] == 'down' ? 'down' : 'up') . '.gif">' : ''), '
 						</a>
 					</th>
 				</tr>
@@ -547,7 +541,7 @@ function template_editBuddies()
 
 	echo '
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editBuddies'], '
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['editBuddies'], '
 		</we:title>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
@@ -575,13 +569,13 @@ function template_editBuddies()
 		echo '
 			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
 				<td class="left">', $buddy['link'], '</td>
-				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '" /></a></td>
-				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '" /></a>'), '</td>
+				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '"></a></td>
+				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '"></a>'), '</td>
 				<td>', $buddy['icq']['link'], '</td>
 				<td>', $buddy['aim']['link'], '</td>
 				<td>', $buddy['yim']['link'], '</td>
 				<td>', $buddy['msn']['link'], '</td>
-				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '" /></a></td>
+				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '"></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -592,7 +586,7 @@ function template_editBuddies()
 
 	// Add a new buddy?
 	echo '
-	<br />
+	<br>
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="UTF-8">
 		<div class="tborder add_buddy">
 			<we:title>
@@ -603,7 +597,7 @@ function template_editBuddies()
 					<strong>', $txt['who_member'], ':</strong>
 				</label>
 				<input type="text" name="new_buddy" id="new_buddy" size="25">
-				<input type="submit" value="', $txt['buddy_add_button'], '" class="button_submit" />
+				<input type="submit" value="', $txt['buddy_add_button'], '" class="new">
 			</div>
 		</div>
 	</form>';
@@ -627,7 +621,7 @@ function template_editIgnoreList()
 
 	echo '
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['editIgnoreList'], '
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['editIgnoreList'], '
 		</we:title>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
@@ -655,13 +649,13 @@ function template_editIgnoreList()
 		echo '
 			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
 				<td class="left">', $member['link'], '</td>
-				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '" /></a></td>
-				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '" /></a>'), '</td>
+				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
+				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
 				<td>', $member['icq']['link'], '</td>
 				<td>', $member['aim']['link'], '</td>
 				<td>', $member['yim']['link'], '</td>
 				<td>', $member['msn']['link'], '</td>
-				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '" /></a></td>
+				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '"></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -672,7 +666,7 @@ function template_editIgnoreList()
 
 	// Add a new buddy?
 	echo '
-	<br />
+	<br>
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="UTF-8">
 		<div class="tborder add_buddy">
 			<we:title>
@@ -683,7 +677,7 @@ function template_editIgnoreList()
 					<strong>', $txt['who_member'], ':</strong>
 				</label>
 				<input type="text" name="new_ignore" id="new_ignore" size="25">
-				<input type="submit" value="', $txt['ignore_add_button'], '" class="button_submit" />
+				<input type="submit" value="', $txt['ignore_add_button'], '" class="new">
 			</div>
 		</div>
 	</form>';
@@ -749,7 +743,7 @@ function template_trackActivity()
 					</dd>
 				</dl>
 			</div>
-			<br />';
+			<br>';
 
 	// Show the track user list.
 	template_show_list('track_user_list');
@@ -763,30 +757,32 @@ function template_trackIP()
 	// This function always defaults to the last IP used by a member but can be set to track any IP.
 	// The first table in the template gives an input box to allow the admin to enter another IP to track.
 	echo '
-		<div class="cat_bar">
-			<h3>', $txt['trackIP'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['trackIP'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $context['base_url'], '" method="post" accept-charset="UTF-8">
-				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="text" name="searchip" value="', $context['ip'], '">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '" class="button_submit" />
+				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="search" name="searchip" value="', $context['ip'], '">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '">
 			</form>
 		</div>
-		<br />';
+		<br>';
 
 	// The table inbetween the first and second table shows links to the whois server for every region.
 	if ($context['single_ip'])
 	{
 		echo '
-			<we:title>
-				', $txt['whois_title'], ' ', $context['ip'], '
-			</we:title>
-			<div class="windowbg2 wrc">';
-			foreach ($context['whois_servers'] as $server)
-				echo '
-				<a href="', $server['url'], '" target="_blank" class="new_win"', isset($context['auto_whois_server']) && $context['auto_whois_server']['name'] == $server['name'] ? ' style="font-weight: bold;"' : '', '>', $server['name'], '</a><br />';
+		<we:title>
+			', $txt['whois_title'], ' ', $context['ip'], '
+		</we:title>
+		<div class="windowbg2 wrc">';
+
+		foreach ($context['whois_servers'] as $server)
 			echo '
-			</div>
-		<br />';
+			<a href="', $server['url'], '" target="_blank" class="new_win"', isset($context['auto_whois_server']) && $context['auto_whois_server']['name'] == $server['name'] ? ' style="font-weight: bold;"' : '', '>', $server['name'], '</a><br>';
+
+		echo '
+		</div>
+		<br>';
 	}
 
 	// The second table lists all the members who have been logged as using this IP address.
@@ -820,12 +816,12 @@ function template_trackIP()
 		echo '
 			</tbody>
 		</table>
-		<br />';
+		<br>';
 	}
 
 	template_show_list('track_message_list');
 
-	echo '<br />';
+	echo '<br>';
 
 	template_show_list('track_user_list');
 }
@@ -835,11 +831,9 @@ function template_showPermissions()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['showPermissions'], '
-			</h3>
-		</div>';
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['showPermissions'], '
+		</we:cat>';
 
 	if ($context['member']['has_all_permissions'])
 	{
@@ -855,62 +849,63 @@ function template_showPermissions()
 		if (!empty($context['no_access_boards']))
 		{
 			echo '
-				<div class="cat_bar">
-					<h3>', $txt['showPermissions_restricted_boards'], '</h3>
-				</div>
-				<div class="windowbg wrc smalltext">
-					', $txt['showPermissions_restricted_boards_desc'], ':<br />';
+			<we:cat>
+				', $txt['showPermissions_restricted_boards'], '
+			</we:cat>
+			<div class="windowbg wrc smalltext">
+				', $txt['showPermissions_restricted_boards_desc'], ':<br>';
 
 			foreach ($context['no_access_boards'] as $no_access_board)
 				echo '
-					<a href="', $scripturl, '?board=', $no_access_board['id'], '.0">', $no_access_board['name'], '</a>', $no_access_board['is_last'] ? '' : ',';
+				<a href="', $scripturl, '?board=', $no_access_board['id'], '.0">', $no_access_board['name'], '</a>', $no_access_board['is_last'] ? '' : ',';
 
 			echo '
-				</div>';
+			</div>';
 		}
 
 		// General Permissions section.
 		echo '
-				<div class="tborder">
-					<div class="cat_bar">
-						<h3>', $txt['showPermissions_general'], '</h3>
-					</div>';
+			<div class="tborder">
+				<we:cat>
+					', $txt['showPermissions_general'], '
+				</we:cat>';
+
 		if (!empty($context['member']['permissions']['general']))
 		{
 			echo '
-					<table class="table_grid w100 cs0">
-						<thead>
-							<tr class="titlebg left">
-								<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
-								<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
-							</tr>
-						</thead>
-						<tbody>';
+				<table class="table_grid w100 cs0">
+					<thead>
+						<tr class="titlebg left">
+							<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
+							<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
+						</tr>
+					</thead>
+					<tbody>';
 
 			foreach ($context['member']['permissions']['general'] as $permission)
 			{
 				echo '
-							<tr>
-								<td class="windowbg" title="', $permission['id'], '">
-									', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
-								</td>
-								<td class="windowbg2 smalltext">';
+						<tr>
+							<td class="windowbg" title="', $permission['id'], '">
+								', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
+							</td>
+							<td class="windowbg2 smalltext">';
 
 				if ($permission['is_denied'])
 					echo '
-									<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
+								<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
 				else
 					echo '
-									', $txt['showPermissions_given'], ':&nbsp;', implode(', ', $permission['groups']['allowed']);
+								', $txt['showPermissions_given'], ':&nbsp;', implode(', ', $permission['groups']['allowed']);
 
 					echo '
-								</td>
-							</tr>';
+							</td>
+						</tr>';
 			}
 			echo '
-						</tbody>
-					</table>
-				</div><br />';
+					</tbody>
+				</table>
+			</div><br>';
 		}
 		else
 			echo '
@@ -920,25 +915,25 @@ function template_showPermissions()
 		echo '
 			<div class="tborder">
 				<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="UTF-8">
-					<div class="cat_bar">
-						<h3>
-							<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
-							<select name="board" onchange="if ($(this).val()) this.form.submit();">
-								<option value="0"', $context['board'] == 0 ? ' selected' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
-				if (!empty($context['boards']))
-					echo '
-								<option value="" disabled>---------------------------</option>';
+					<we:cat>
+						<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
+						<select name="board" onchange="if ($(this).val()) this.form.submit();">
+							<option value="0"', $context['board'] == 0 ? ' selected' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
 
-				// Fill the box with any local permission boards.
-				foreach ($context['boards'] as $board)
-					echo '
-								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['name'], ' (', $board['profile_name'], ')</option>';
+		if (!empty($context['boards']))
+			echo '
+							<option value="" disabled>---------------------------</option>';
 
-				echo '
-							</select>
-						</h3>
-					</div>
+		// Fill the box with any local permission boards.
+		foreach ($context['boards'] as $board)
+			echo '
+							<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['name'], ' (', $board['profile_name'], ')</option>';
+
+		echo '
+						</select>
+					</we:cat>
 				</form>';
+
 		if (!empty($context['member']['permissions']['board']))
 		{
 			echo '
@@ -979,7 +974,7 @@ function template_showPermissions()
 		}
 		else
 			echo '
-			<p class="windowbg2 description">', $txt['showPermissions_none_board'], '</p>';
+				<p class="windowbg2 description">', $txt['showPermissions_none_board'], '</p>';
 	echo '
 			</div>
 		</div>';
@@ -995,12 +990,10 @@ function template_statPanel()
 	echo '
 	<div id="profileview">
 		<div id="generalstats">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/stats_info.gif" />
-					', $txt['statPanel_generalStats'], ' - ', $context['member']['name'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/stats_info.gif">
+				', $txt['statPanel_generalStats'], ' - ', $context['member']['name'], '
+			</we:cat>
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>', $txt['statPanel_total_time_online'], ':</dt>
@@ -1020,17 +1013,16 @@ function template_statPanel()
 	// This next section draws a graph showing what times of day they post the most.
 	echo '
 		<div id="activitytime" class="flow_hidden">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/stats_history.gif" />', $txt['statPanel_activityTime'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/stats_history.gif">', $txt['statPanel_activityTime'], '
+			</we:cat>
 			<div class="windowbg2 wrc">';
 
-	// If they haven't post at all, don't draw the graph.
+	// If they haven't posted at all, don't draw the graph.
 	if (empty($context['posts_by_time']))
 		echo '
 				<span>', $txt['statPanel_noPosts'], '</span>';
+
 	// Otherwise do!
 	else
 	{
@@ -1065,11 +1057,9 @@ function template_statPanel()
 	echo '
 		<div class="flow_hidden">
 			<div id="popularposts">
-				<div class="cat_bar">
-					<h3>
-						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['statPanel_topBoards'], '
-					</h3>
-				</div>
+				<we:cat>
+					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['statPanel_topBoards'], '
+				</we:cat>
 				<div class="windowbg2 wrc">';
 
 	if (empty($context['popular_boards']))
@@ -1102,11 +1092,9 @@ function template_statPanel()
 			</div>';
 	echo '
 			<div id="popularactivity">
-				<div class="cat_bar">
-					<h3>
-						<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['statPanel_topBoardsActivity'], '
-					</h3>
-				</div>
+				<we:cat>
+					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['statPanel_topBoardsActivity'], '
+				</we:cat>
 				<div class="windowbg2 wrc">';
 
 	if (empty($context['board_activity']))
@@ -1140,7 +1128,7 @@ function template_statPanel()
 
 	echo '
 	</div>
-	<br class="clear" />';
+	<br class="clear">';
 }
 
 // Template for editing profile options.
@@ -1151,21 +1139,19 @@ function template_edit_options()
 	// The main header!
 	echo '
 		<form action="', (!empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=' . $context['menu_item_selected'] . ';save'), '" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data" onsubmit="return checkProfileSubmit();">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />';
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">';
 
 		// Don't say "Profile" if this isn't the profile...
 		if (!empty($context['profile_header_text']))
 			echo '
-					', $context['profile_header_text'];
+				', $context['profile_header_text'];
 		else
 			echo '
-					', $txt['profile'];
+				', $txt['profile'];
 
 		echo '
-				</h3>
-			</div>';
+			</we:cat>';
 
 	// Have we some description?
 	if ($context['page_desc'])
@@ -1197,7 +1183,7 @@ function template_edit_options()
 		{
 			echo '
 				</dl>
-				<hr />
+				<hr>
 				<dl>';
 		}
 		elseif ($field['type'] == 'callback')
@@ -1241,7 +1227,7 @@ function template_edit_options()
 			// You "checking" me out? ;)
 			elseif ($field['type'] == 'check')
 				echo '
-						<input type="hidden" name="', $key, '" value="0" /><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" ', $field['input_attr'], ' />';
+						<input type="hidden" name="', $key, '" value="0"><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" ', $field['input_attr'], '>';
 
 			// Always fun - select boxes!
 			elseif ($field['type'] == 'select')
@@ -1284,7 +1270,7 @@ function template_edit_options()
 	{
 		if ($lastItem != 'hr')
 			echo '
-				<hr />';
+				<hr>';
 
 		echo '
 				<dl>';
@@ -1312,7 +1298,7 @@ function template_edit_options()
 				<div>', $context['profile_posthtml'], '</div>';
 	elseif ($lastItem != 'hr')
 		echo '
-				<hr />';
+				<hr>';
 
 	// Only show the password box if it's actually needed.
 	if ($context['require_password'])
@@ -1333,19 +1319,24 @@ function template_edit_options()
 	// The button shouldn't say "Change profile" unless we're changing the profile...
 	if (!empty($context['submit_button_text']))
 		echo '
-					<input type="submit" value="', $context['submit_button_text'], '" class="button_submit" />';
+					<input type="submit" value="', $context['submit_button_text'], '" class="submit">';
 	else
 		echo '
-					<input type="submit" value="', $txt['change_profile'], '" class="button_submit" />';
+					<input type="submit" value="', $txt['change_profile'], '" class="save">';
 
 	echo '
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="u" value="', $context['id_member'], '" />
-					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="u" value="', $context['id_member'], '">
+					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 				</div>
 			</div>
-			<br />
+			<br>
 		</form>';
+
+	// Any final spellchecking stuff?
+	if (!empty($context['show_spellchecking']))
+		echo '
+		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="', $scripturl, '?action=spellcheck"><input type="hidden" name="spellstring" value=""></form>';
 
 	// Some javascript!
 	add_js_inline('
@@ -1363,11 +1354,6 @@ function template_edit_options()
 
 	add_js_inline('
 	}');
-
-	// Any final spellchecking stuff?
-	if (!empty($context['show_spellchecking']))
-		echo '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="', $scripturl, '?action=spellcheck"><input type="hidden" name="spellstring" value="" /></form>';
 }
 
 // Personal Message settings.
@@ -1390,11 +1376,11 @@ function template_profile_pm_settings()
 										<label for="view_newest_pm_first">', $txt['recent_pms_at_top'], '</label>
 								</dt>
 								<dd>
-										<input type="hidden" name="default_options[view_newest_pm_first]" value="0" />
+										<input type="hidden" name="default_options[view_newest_pm_first]" value="0">
 										<input type="checkbox" name="default_options[view_newest_pm_first]" id="view_newest_pm_first" value="1"', !empty($context['member']['options']['view_newest_pm_first']) ? ' checked' : '', '>
 								</dd>
 						</dl>
-						<hr />
+						<hr>
 						<dl>
 								<dt>
 										<label for="pm_receive_from">', $txt['pm_receive_from'], '</label>
@@ -1431,24 +1417,24 @@ function template_profile_pm_settings()
 										<label for="popup_messages">', $txt['popup_messages'], '</label>
 								</dt>
 								<dd>
-										<input type="hidden" name="default_options[popup_messages]" value="0" />
+										<input type="hidden" name="default_options[popup_messages]" value="0">
 										<input type="checkbox" name="default_options[popup_messages]" id="popup_messages" value="1"', !empty($context['member']['options']['popup_messages']) ? ' checked' : '', '>
 								</dd>
 						</dl>
-						<hr />
+						<hr>
 						<dl>
 								<dt>
 										<label for="copy_to_outbox"> ', $txt['copy_to_outbox'], '</label>
 								</dt>
 								<dd>
-										<input type="hidden" name="default_options[copy_to_outbox]" value="0" />
+										<input type="hidden" name="default_options[copy_to_outbox]" value="0">
 										<input type="checkbox" name="default_options[copy_to_outbox]" id="copy_to_outbox" value="1"', !empty($context['member']['options']['copy_to_outbox']) ? ' checked' : '', '>
 								</dd>
 								<dt>
 										<label for="pm_remove_inbox_label">', $txt['pm_remove_inbox_label'], '</label>
 								</dt>
 								<dd>
-										<input type="hidden" name="default_options[pm_remove_inbox_label]" value="0" />
+										<input type="hidden" name="default_options[pm_remove_inbox_label]" value="0">
 										<input type="checkbox" name="default_options[pm_remove_inbox_label]" id="pm_remove_inbox_label" value="1"', !empty($context['member']['options']['pm_remove_inbox_label']) ? ' checked' : '', '>
 								</dd>';
 
@@ -1464,53 +1450,53 @@ function template_profile_theme_settings()
 						</dl>
 						<ul id="theme_settings">
 							<li>
-								<input type="hidden" name="default_options[show_board_desc]" value="0" />
+								<input type="hidden" name="default_options[show_board_desc]" value="0">
 								<label for="show_board_desc"><input type="checkbox" name="default_options[show_board_desc]" id="show_board_desc" value="1"', !empty($context['member']['options']['show_board_desc']) ? ' checked' : '', '> ', $txt['board_desc_inside'], '</label>
 							</li>
 							<li>
-								<input type="hidden" name="default_options[show_children]" value="0" />
+								<input type="hidden" name="default_options[show_children]" value="0">
 								<label for="show_children"><input type="checkbox" name="default_options[show_children]" id="show_children" value="1"', !empty($context['member']['options']['show_children']) ? ' checked' : '', '> ', $txt['show_children'], '</label>
 							</li>
 							<li>
-								<input type="hidden" name="default_options[use_sidebar_menu]" value="0" />
+								<input type="hidden" name="default_options[use_sidebar_menu]" value="0">
 								<label for="use_sidebar_menu"><input type="checkbox" name="default_options[use_sidebar_menu]" id="use_sidebar_menu" value="1"', !empty($context['member']['options']['use_sidebar_menu']) ? ' checked' : '', '> ', $txt['use_sidebar_menu'], '</label>
 							</li>
 							<li>
-								<input type="hidden" name="default_options[show_no_avatars]" value="0" />
+								<input type="hidden" name="default_options[show_no_avatars]" value="0">
 								<label for="show_no_avatars"><input type="checkbox" name="default_options[show_no_avatars]" id="show_no_avatars" value="1"', !empty($context['member']['options']['show_no_avatars']) ? ' checked' : '', '> ', $txt['show_no_avatars'], '</label>
 							</li>
 							<li>
-								<input type="hidden" name="default_options[show_no_signatures]" value="0" />
+								<input type="hidden" name="default_options[show_no_signatures]" value="0">
 								<label for="show_no_signatures"><input type="checkbox" name="default_options[show_no_signatures]" id="show_no_signatures" value="1"', !empty($context['member']['options']['show_no_signatures']) ? ' checked' : '', '> ', $txt['show_no_signatures'], '</label>
 							</li>';
 
 	if ($settings['allow_no_censored'])
 		echo '
 							<li>
-								<input type="hidden" name="default_options[show_no_censored]" value="0" />
+								<input type="hidden" name="default_options[show_no_censored]" value="0">
 								<label for="show_no_censored"><input type="checkbox" name="default_options[show_no_censored]" id="show_no_censored" value="1"' . (!empty($context['member']['options']['show_no_censored']) ? ' checked' : '') . '> ' . $txt['show_no_censored'] . '</label>
 							</li>';
 
 	echo '
 							<li>
-								<input type="hidden" name="default_options[return_to_post]" value="0" />
+								<input type="hidden" name="default_options[return_to_post]" value="0">
 								<label for="return_to_post"><input type="checkbox" name="default_options[return_to_post]" id="return_to_post" value="1"', !empty($context['member']['options']['return_to_post']) ? ' checked' : '', '> ', $txt['return_to_post'], '</label>
 							</li>
 							<li>
-								<input type="hidden" name="default_options[no_new_reply_warning]" value="0" />
+								<input type="hidden" name="default_options[no_new_reply_warning]" value="0">
 								<label for="no_new_reply_warning"><input type="checkbox" name="default_options[no_new_reply_warning]" id="no_new_reply_warning" value="1"', !empty($context['member']['options']['no_new_reply_warning']) ? ' checked' : '', '> ', $txt['no_new_reply_warning'], '</label>
 							</li>';
 
 	if (!empty($modSettings['enable_buddylist']))
 		echo '
 							<li>
-								<input type="hidden" name="default_options[posts_apply_ignore_list]" value="0" />
+								<input type="hidden" name="default_options[posts_apply_ignore_list]" value="0">
 								<label for="posts_apply_ignore_list"><input type="checkbox" name="default_options[posts_apply_ignore_list]" id="posts_apply_ignore_list" value="1"', !empty($context['member']['options']['posts_apply_ignore_list']) ? ' checked' : '', '> ', $txt['posts_apply_ignore_list'], '</label>
 							</li>';
 
 	echo '
 							<li>
-								<input type="hidden" name="default_options[view_newest_first]" value="0" />
+								<input type="hidden" name="default_options[view_newest_first]" value="0">
 								<label for="view_newest_first"><input type="checkbox" name="default_options[view_newest_first]" id="view_newest_first" value="1"', !empty($context['member']['options']['view_newest_first']) ? ' checked' : '', '> ', $txt['recent_posts_at_top'], '</label>
 							</li>';
 
@@ -1518,7 +1504,7 @@ function template_profile_theme_settings()
 	if (empty($modSettings['disable_wysiwyg']))
 		echo '
 							<li>
-								<input type="hidden" name="default_options[wysiwyg_default]" value="0" />
+								<input type="hidden" name="default_options[wysiwyg_default]" value="0">
 								<label for="wysiwyg_default"><input type="checkbox" name="default_options[wysiwyg_default]" id="wysiwyg_default" value="1"', !empty($context['member']['options']['wysiwyg_default']) ? ' checked' : '', '> ', $txt['wysiwyg_default'], '</label>
 							</li>';
 
@@ -1586,11 +1572,9 @@ function template_notification()
 
 	// The main containing header.
 	echo '
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+			</we:cat>
 			<p class="windowbg description">', $txt['notification_info'], '</p>
 			<div class="windowbg2 wrc">
 				<form action="', $scripturl, '?action=profile;area=notification;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
@@ -1598,21 +1582,21 @@ function template_notification()
 	// Allow notification on announcements to be disabled?
 	if (!empty($modSettings['allow_disableAnnounce']))
 		echo '
-					<input type="hidden" name="notify_announcements" value="0" />
-					<label for="notify_announcements"><input type="checkbox" id="notify_announcements" name="notify_announcements"', !empty($context['member']['notify_announcements']) ? ' checked' : '', '> ', $txt['notify_important_email'], '</label><br />';
+					<input type="hidden" name="notify_announcements" value="0">
+					<label for="notify_announcements"><input type="checkbox" id="notify_announcements" name="notify_announcements"', !empty($context['member']['notify_announcements']) ? ' checked' : '', '> ', $txt['notify_important_email'], '</label><br>';
 
 	// More notification options.
 	echo '
-					<input type="hidden" name="default_options[auto_notify]" value="0" />
-					<label for="auto_notify"><input type="checkbox" id="auto_notify" name="default_options[auto_notify]" value="1"', !empty($context['member']['options']['auto_notify']) ? ' checked' : '', '> ', $txt['auto_notify'], '</label><br />';
+					<input type="hidden" name="default_options[auto_notify]" value="0">
+					<label for="auto_notify"><input type="checkbox" id="auto_notify" name="default_options[auto_notify]" value="1"', !empty($context['member']['options']['auto_notify']) ? ' checked' : '', '> ', $txt['auto_notify'], '</label><br>';
 
 	if (empty($modSettings['disallow_sendBody']))
 		echo '
-					<input type="hidden" name="notify_send_body" value="0" />
-					<label for="notify_send_body"><input type="checkbox" id="notify_send_body" name="notify_send_body"', !empty($context['member']['notify_send_body']) ? ' checked' : '', '> ', $txt['notify_send_body'], '</label><br />';
+					<input type="hidden" name="notify_send_body" value="0">
+					<label for="notify_send_body"><input type="checkbox" id="notify_send_body" name="notify_send_body"', !empty($context['member']['notify_send_body']) ? ' checked' : '', '> ', $txt['notify_send_body'], '</label><br>';
 
 	echo '
-					<br />
+					<br>
 					<label for="notify_regularity">', $txt['notify_regularity'], ':</label>
 					<select name="notify_regularity" id="notify_regularity">
 						<option value="0"', $context['member']['notify_regularity'] == 0 ? ' selected' : '', '>', $txt['notify_regularity_instant'], '</option>
@@ -1620,7 +1604,7 @@ function template_notification()
 						<option value="2"', $context['member']['notify_regularity'] == 2 ? ' selected' : '', '>', $txt['notify_regularity_daily'], '</option>
 						<option value="3"', $context['member']['notify_regularity'] == 3 ? ' selected' : '', '>', $txt['notify_regularity_weekly'], '</option>
 					</select>
-					<br /><br />
+					<br><br>
 					<label for="notify_types">', $txt['notify_send_types'], ':</label>
 					<select name="notify_types" id="notify_types">
 						<option value="1"', $context['member']['notify_types'] == 1 ? ' selected' : '', '>', $txt['notify_send_type_everything'], '</option>
@@ -1628,22 +1612,22 @@ function template_notification()
 						<option value="3"', $context['member']['notify_types'] == 3 ? ' selected' : '', '>', $txt['notify_send_type_only_replies'], '</option>
 						<option value="4"', $context['member']['notify_types'] == 4 ? ' selected' : '', '>', $txt['notify_send_type_nothing'], '</option>
 					</select>
-					<br class="clear" />
+					<br class="clear">
 					<div>
-						<input id="notify_submit" type="submit" value="', $txt['notify_save'], '" class="button_submit floatright" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="hidden" name="u" value="', $context['id_member'], '" />
-						<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
+						<input id="notify_submit" type="submit" value="', $txt['notify_save'], '" class="submit floatright">
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						<input type="hidden" name="u" value="', $context['id_member'], '">
+						<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 					</div>
-					<br class="clear" />
+					<br class="clear">
 				</form>
 			</div>
-			<br />';
+			<br>';
 
 	template_show_list('topic_notification_list');
 
 	echo '
-		<br />';
+		<br>';
 
 	template_show_list('board_notification_list');
 }
@@ -1656,11 +1640,9 @@ function template_groupMembership()
 	// The main containing header.
 	echo '
 		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+			</we:cat>
 			<p class="description">', $txt['groupMembership_info'], '</p>';
 
 	// Do we have an update message?
@@ -1675,15 +1657,15 @@ function template_groupMembership()
 	{
 		echo '
 			<div class="groupmembership">
-				<div class="cat_bar">
-					<h3>', $txt['request_group_membership'], '</h3>
-				</div>
+				<we:cat>
+					', $txt['request_group_membership'], '
+				</we:cat>
 				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
 					<textarea name="reason" rows="4" style="width: 99%"></textarea>
 					<div class="righttext" style="margin: 0.5em 0.5% 0">
-						<input type="hidden" name="gid" value="', $context['group_request']['id'], '" />
-						<input type="submit" name="req" value="', $txt['submit_request'], '" class="button_submit" />
+						<input type="hidden" name="gid" value="', $context['group_request']['id'], '">
+						<input type="submit" name="req" value="', $txt['submit_request'], '" class="submit">
 					</div>
 				</div>
 			</div>';
@@ -1736,14 +1718,14 @@ function template_groupMembership()
 		if ($context['can_edit_primary'])
 			echo '
 			<div class="padding righttext">
-				<input type="submit" value="', $txt['make_primary'], '" class="button_submit" />
+				<input type="submit" value="', $txt['make_primary'], '" class="submit">
 			</div>';
 
 		// Any groups they can join?
 		if (!empty($context['groups']['available']))
 		{
 			echo '
-			<br />
+			<br>
 			<table class="table_grid w100 cs0 cp4">
 				<thead>
 					<tr class="catbg">
@@ -1806,8 +1788,8 @@ function template_groupMembership()
 	}
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-			<input type="hidden" name="u" value="', $context['id_member'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="u" value="', $context['id_member'], '">
 		</form>';
 }
 
@@ -1830,11 +1812,9 @@ function template_ignoreboards()
 	// The main containing header.
 	echo '
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['profile'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+		</we:cat>
 		<p class="description">', $txt['ignoreboards_info'], '</p>
 		<div class="windowbg2 wrc">
 			<div class="flow_hidden">
@@ -1879,7 +1859,7 @@ function template_ignoreboards()
 	echo '
 				</ul>
 			</div>
-			<br class="clear" />';
+			<br class="clear">';
 
 	// Show the standard "Save Settings" profile button.
 	template_profile_save();
@@ -1887,7 +1867,7 @@ function template_ignoreboards()
 	echo '
 		</div>
 	</form>
-	<br />';
+	<br>';
 }
 
 // Simple load some theme variables common to several warning templates.
@@ -1920,7 +1900,7 @@ function template_viewWarning()
 
 	echo '
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
 			', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
 		</we:title>
 		<div class="windowbg wrc">
@@ -2088,12 +2068,10 @@ function template_issueWarning()
 
 	echo '
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />
-				', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
-			</h3>
-		</div>';
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+			', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
+		</we:cat>';
 
 	if (!$context['user']['is_owner'])
 		echo '
@@ -2124,7 +2102,7 @@ function template_issueWarning()
 	echo '
 				</dt>
 				<dd>
-					<div id="warndiv1" style="display: none;">
+					<div id="warndiv1" style="display: none">
 						<div>
 							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(-5); return false;">[-]</a></span>
 							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;" onmousedown="setWarningBarPos(event, true);" onmousemove="setWarningBarPos(event, true);" onclick="setWarningBarPos(event);">
@@ -2134,16 +2112,16 @@ function template_issueWarning()
 							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(5); return false;">[+]</a></span>
 							<div class="clear_left smalltext">', $txt['profile_warning_impact'], ': <span id="cur_level_div">', $context['level_effects'][$context['current_level']], '</span></div>
 						</div>
-						<input type="hidden" name="warning_level" id="warning_level" value="SAME" />
+						<input type="hidden" name="warning_level" id="warning_level" value="SAME">
 					</div>
 					<div id="warndiv2">
 						<input type="text" name="warning_level_nojs" size="6" maxlength="4" value="', $context['member']['warning'], '">&nbsp;', $txt['profile_warning_max'], '
-						<div class="smalltext">', $txt['profile_warning_impact'], ':<br />';
+						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
 
 	// For non-javascript give a better list.
 	foreach ($context['level_effects'] as $limit => $effect)
 		echo '
-							', sprintf($txt['profile_warning_effect_text'], $limit, $effect), '<br />';
+							', sprintf($txt['profile_warning_effect_text'], $limit, $effect), '<br>';
 
 	echo '
 						</div>
@@ -2161,7 +2139,7 @@ function template_issueWarning()
 					<input type="text" name="warn_reason" id="warn_reason" value="', $context['warning_data']['reason'], '" size="50" style="width: 80%">
 				</dd>
 			</dl>
-			<hr />
+			<hr>
 			<dl class="settings">
 				<dt>
 					<strong>', $txt['profile_warning_notify'], ':</strong>
@@ -2189,36 +2167,35 @@ function template_issueWarning()
 
 		echo '
 					</select>
-					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">', $txt['profile_warning_new_template'], '</a>]</span><br />
+					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">', $txt['profile_warning_new_template'], '</a>]</span><br>
 					<textarea name="warn_body" id="warn_body" cols="40" rows="8">', $context['warning_data']['notify_body'], '</textarea>
 				</dd>';
 	}
 	echo '
 			</dl>
 			<div class="righttext">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="submit" name="save" value="', $context['user']['is_owner'] ? $txt['change_profile'] : $txt['profile_warning_issue'], '" class="button_submit" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" name="save" value="', $context['user']['is_owner'] ? $txt['change_profile'] : $txt['profile_warning_issue'], '" class="submit">
 			</div>
 		</div>
 	</form>';
 
 	// Previous warnings?
-	echo '<br />
-		<div class="cat_bar">
-			<h3>
-				', $txt['profile_warning_previous'], '
-			</h3>
-		</div>
-		<table class="table_grid w100 cs0 cp4">
-			<thead>
-				<tr class="titlebg left">
-					<th class="first_th" scope="col" style="width: 20%">', $txt['profile_warning_previous_issued'], '</th>
-					<th scope="col" style="width: 30%">', $txt['profile_warning_previous_time'], '</th>
-					<th scope="col">', $txt['profile_warning_previous_reason'], '</th>
-					<th class="last_th" scope="col" style="width: 6%">', $txt['profile_warning_previous_level'], '</th>
-				</tr>
-			</thead>
-			<tbody>';
+	echo '
+	<br>
+	<we:cat>
+		', $txt['profile_warning_previous'], '
+	</we:cat>
+	<table class="table_grid w100 cs0 cp4">
+		<thead>
+			<tr class="titlebg left">
+				<th class="first_th" scope="col" style="width: 20%">', $txt['profile_warning_previous_issued'], '</th>
+				<th scope="col" style="width: 30%">', $txt['profile_warning_previous_time'], '</th>
+				<th scope="col">', $txt['profile_warning_previous_reason'], '</th>
+				<th class="last_th" scope="col" style="width: 6%">', $txt['profile_warning_previous_level'], '</th>
+			</tr>
+		</thead>
+		<tbody>';
 
 	// Print the warnings.
 	$alternate = 0;
@@ -2226,37 +2203,37 @@ function template_issueWarning()
 	{
 		$alternate = !$alternate;
 		echo '
-				<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
-					<td class="smalltext">', $warning['issuer']['link'], '</td>
-					<td class="smalltext">', $warning['time'], '</td>
-					<td class="smalltext">
-						<div class="floatleft">
-							', $warning['reason'], '
-						</div>';
+			<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
+				<td class="smalltext">', $warning['issuer']['link'], '</td>
+				<td class="smalltext">', $warning['time'], '</td>
+				<td class="smalltext">
+					<div class="floatleft">
+						', $warning['reason'], '
+					</div>';
 
 		if (!empty($warning['id_notice']))
 			echo '
-						<div class="floatright">
-							<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif" /></a>
-						</div>';
+					<div class="floatright">
+						<a href="', $scripturl, '?action=moderate;area=notice;nid=', $warning['id_notice'], '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="', $txt['profile_warning_previous_notice'], '"><img src="', $settings['images_url'], '/filter.gif"></a>
+					</div>';
 		echo '
-					</td>
-					<td class="smalltext">', $warning['counter'], '</td>
-				</tr>';
+				</td>
+				<td class="smalltext">', $warning['counter'], '</td>
+			</tr>';
 	}
 
 	if (empty($context['previous_warnings']))
 		echo '
-				<tr class="windowbg2">
-					<td class="center" colspan="4">
-						', $txt['profile_warning_previous_none'], '
-					</td>
-				</tr>';
+			<tr class="windowbg2">
+				<td class="center" colspan="4">
+					', $txt['profile_warning_previous_none'], '
+				</td>
+			</tr>';
 
 	echo '
-			</tbody>
-		</table>
-		<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
+		</tbody>
+	</table>
+	<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
 
 	// Do our best to get pretty javascript enabled.
 	add_js('
@@ -2277,7 +2254,7 @@ function template_deleteAccount()
 	echo '
 		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<we:title>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['deleteAccount'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['deleteAccount'], '
 			</we:title>';
 	// If deleting another account give them a lovely info box.
 	if (!$context['user']['is_owner'])
@@ -2299,10 +2276,10 @@ function template_deleteAccount()
 				<div>
 					<strong', (isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : ''), '>', $txt['current_password'], ': </strong>
 					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
-					<input type="submit" value="', $txt['yes'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="u" value="', $context['id_member'], '" />
-					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
+					<input type="submit" value="', $txt['yes'], '" class="delete">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="u" value="', $context['id_member'], '">
+					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 				</div>';
 	}
 	// Otherwise an admin doesn't need to enter a password - but they still get a warning - plus the option to delete lovely posts!
@@ -2328,15 +2305,15 @@ function template_deleteAccount()
 					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" onclick="if (this.checked) return confirm(', JavaScriptEscape($txt['deleteAccount_confirm']), ');"> ', $txt['deleteAccount_member'], '.</label>
 				</div>
 				<div>
-					<input type="submit" value="', $txt['delete'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="u" value="', $context['id_member'], '" />
-					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
+					<input type="submit" value="', $txt['delete'], '" class="delete">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="u" value="', $context['id_member'], '">
+					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 				</div>';
 	}
 	echo '
 			</div>
-			<br />
+			<br>
 		</form>';
 }
 
@@ -2346,8 +2323,7 @@ function template_profile_save()
 	global $context, $settings, $options, $txt;
 
 	echo '
-
-					<hr />';
+					<hr>';
 
 	// Only show the password box if it's actually needed.
 	if ($context['require_password'])
@@ -2364,10 +2340,10 @@ function template_profile_save()
 
 	echo '
 					<div class="righttext">
-						<input type="submit" value="', $txt['change_profile'], '" class="button_submit" />
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-						<input type="hidden" name="u" value="', $context['id_member'], '" />
-						<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
+						<input type="submit" value="', $txt['change_profile'], '" class="save">
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						<input type="hidden" name="u" value="', $context['id_member'], '">
+						<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 					</div>';
 }
 
@@ -2420,13 +2396,13 @@ function template_profile_group_manage()
 							</dt>
 							<dd>
 								<span id="additional_groupsList">
-									<input type="hidden" name="additional_groups[]" value="0" />';
+									<input type="hidden" name="additional_groups[]" value="0">';
 
 	// For each membergroup show a checkbox so members can be assigned to more than one group.
 	foreach ($context['member_groups'] as $member_group)
 		if ($member_group['can_be_additional'])
 			echo '
-									<label for="additional_groups-', $member_group['id'], '"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', '> ', $member_group['name'], '</label><br />';
+									<label for="additional_groups-', $member_group['id'], '"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', '> ', $member_group['name'], '</label><br>';
 
 	echo '
 								</span>
@@ -2465,7 +2441,7 @@ function template_profile_signature_modify()
 							<dt>
 								<strong>', $txt['signature'], ':</strong>
 								<dfn>', $txt['sig_info'], '</dfn>
-								<br />';
+								<br>';
 
 	if ($context['show_spellchecking'])
 		echo '
@@ -2474,7 +2450,7 @@ function template_profile_signature_modify()
 		echo '
 							</dt>
 							<dd>
-								<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br />';
+								<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br>';
 
 	// If there is a limit at all!
 	if (!empty($context['signature_limits']['max_length']))
@@ -2531,9 +2507,9 @@ function template_profile_avatar_select()
 	echo '
 							<dt>
 								<strong id="personal_picture">', $txt['personal_picture'], '</strong>
-								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br />' : '', '
+								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
+								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
+								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
 								', !empty($context['member']['avatar']['allow_gravatar']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '><label for="avatar_choice_gravatar"> ' . $txt['use_gravatar'] . '</label>' : '', '
 							</dt>
 							<dd>';
@@ -2557,7 +2533,7 @@ function template_profile_avatar_select()
 									<div>
 										<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
 									</div>
-									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '" alt="Do Nothing" /></div>
+									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
 								</div>';
 
 		add_js('
@@ -2661,7 +2637,7 @@ function template_profile_avatar_select()
 		echo '
 								<div id="avatar_external">
 									<div class="smalltext">', $txt['avatar_by_url'], '</div>
-									<br />
+									<br>
 									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);">
 								</div>';
 
@@ -2670,7 +2646,7 @@ function template_profile_avatar_select()
 		echo '
 								<div id="avatar_upload">
 									<input type="file" name="attachment" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');">
-									', ($context['member']['avatar']['id_attach'] > 0 ? '<br /><br /><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '" /><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '" />' : ''), '
+									', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : ''), '
 								</div>';
 
 	// Using a Gravatar? Well, maybe there is an option for you, maybe there isn't...
@@ -2692,7 +2668,7 @@ function template_profile_avatar_select()
 			echo '
 								<div id="avatar_gravatar">
 									<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
-									<br />
+									<br>
 									<input type="email" name="gravatarEmail" size="45" value="', $textbox_value, '">
 								</div>';
 		}
@@ -2748,7 +2724,7 @@ function template_profile_timeformat_modify()
 							<dt>
 								<strong>', $txt['time_format'], ':</strong>
 								<dfn>
-									<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft" /></a>
+									<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft"></a>
 									&nbsp;', $txt['date_format'], '
 								</dfn>
 							</dt>
@@ -2759,7 +2735,7 @@ function template_profile_timeformat_modify()
 		echo '
 									<option value="', $time_format['format'], '"', $time_format['format'] == $context['member']['time_format'] ? ' selected' : '', '>', $time_format['title'], '</option>';
 	echo '
-								</select><br />
+								</select><br>
 								<input type="text" name="time_format" value="', $context['member']['time_format'], '" size="30">
 							</dd>';
 }
@@ -2775,7 +2751,7 @@ function template_profile_timeoffset_modify()
 								<dfn>', $txt['personal_time_offset'], '</dfn>
 							</dt>
 							<dd>
-								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '000); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br />', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+								<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '000); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 							</dd>';
 }
 
@@ -2808,7 +2784,7 @@ function template_profile_smiley_pick()
 		echo '
 									<option value="', $set['id'], '"', $set['selected'] ? ' selected' : '', '>', $set['name'], '</option>';
 	echo '
-								</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $modSettings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'])) . '/smiley.gif' : $settings['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px" />
+								</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $modSettings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default'])) . '/smiley.gif' : $settings['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
 							</dd>';
 }
 
@@ -2822,16 +2798,14 @@ function template_authentication_method()
 
 	echo '
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/profile_sm.gif" />', $txt['authentication'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['authentication'], '
+			</we:cat>
 			<p class="windowbg description">', $txt['change_authentication'], '</p>
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br />
+						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '><label for="auth_openid"><strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br>
 						<input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked' : '', '><label for="auth_pass"><strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>
@@ -2840,7 +2814,7 @@ function template_authentication_method()
 								<em>', $txt['authenticate_openid_url'], ':</em>
 							</dt>
 							<dd>
-								<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', $context['member']['openid_uri'], '" class="openid_login" />
+								<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', $context['member']['openid_uri'], '" class="openid_login">
 							</dd>
 						</dl>
 						<dl id="auth_pass_div">
@@ -2849,14 +2823,14 @@ function template_authentication_method()
 							</dt>
 							<dd>
 								<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwmain_div" style="display: none;"><img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" /></span>
+								<span id="smf_autov_pwmain_div" style="display: none;"><img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif"></span>
 							</dd>
 							<dt>
 								<em>', $txt['verify_pass'], ':</em>
 							</dt>
 							<dd>
 								<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwverify_div" style="display: none;"><img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif" alt="*" /></span>
+								<span id="smf_autov_pwverify_div" style="display: none;"><img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif"></span>
 							</dd>
 						</dl>
 					</dd>
@@ -2864,7 +2838,7 @@ function template_authentication_method()
 
 	if ($context['require_password'])
 		echo '
-				<hr />
+				<hr>
 				<dl>
 					<dt>
 						<strong', isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : '', '>', $txt['current_password'], ': </strong>
@@ -2877,10 +2851,10 @@ function template_authentication_method()
 
 	echo '
 				<div class="righttext">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="u" value="', $context['id_member'], '" />
-					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '" />
-					<input type="submit" value="', $txt['change_profile'], '" class="button_submit" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="hidden" name="u" value="', $context['id_member'], '">
+					<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
+					<input type="submit" value="', $txt['change_profile'], '" class="save">
 				</div>
 			</div>
 		</form>';

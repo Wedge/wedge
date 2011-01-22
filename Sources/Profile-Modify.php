@@ -1809,7 +1809,7 @@ function notification($memID)
 	$listOptions = array(
 		'id' => 'board_notification_list',
 		'width' => '100%',
-		'no_items_label' => $txt['notifications_boards_none'] . '<br /><br />' . $txt['notifications_boards_howto'],
+		'no_items_label' => $txt['notifications_boards_none'] . '<br><br>' . $txt['notifications_boards_howto'],
 		'no_items_align' => 'left',
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification',
 		'default_sort_col' => 'board_name',
@@ -1832,7 +1832,7 @@ function notification($memID)
 						$link = $board[\'link\'];
 
 						if ($board[\'new\'])
-							$link .= \' <a href="\' . $board[\'href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'" /></a>\';
+							$link .= \' <a href="\' . $board[\'href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'"></a>\';
 
 						return $link;
 					'),
@@ -1871,7 +1871,7 @@ function notification($memID)
 		'additional_rows' => array(
 			array(
 				'position' => 'bottom_of_list',
-				'value' => '<input type="submit" name="edit_notify_boards" value="' . $txt['notifications_update'] . '" class="button_submit" />',
+				'value' => '<input type="submit" name="edit_notify_boards" value="' . $txt['notifications_update'] . '" class="submit">',
 				'align' => 'right',
 			),
 		),
@@ -1885,7 +1885,7 @@ function notification($memID)
 		'id' => 'topic_notification_list',
 		'width' => '100%',
 		'items_per_page' => $modSettings['defaultMaxMessages'],
-		'no_items_label' => $txt['notifications_topics_none'] . '<br /><br />' . $txt['notifications_topics_howto'],
+		'no_items_label' => $txt['notifications_topics_none'] . '<br><br>' . $txt['notifications_topics_howto'],
 		'no_items_align' => 'left',
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification',
 		'default_sort_col' => 'last_post',
@@ -1914,7 +1914,7 @@ function notification($memID)
 						$link = $topic[\'link\'];
 
 						if ($topic[\'new\'])
-							$link .= \' <a href="\' . $topic[\'new_href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'" /></a>\';
+							$link .= \' <a href="\' . $topic[\'new_href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'"></a>\';
 
 						$link .= \'<div class="smalltext"><em>\' . $txt[\'in\'] . \' \' . $topic[\'board_link\'] . \'</em></div>\';
 
@@ -1946,7 +1946,7 @@ function notification($memID)
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<span class="smalltext">%1$s<br />' . $txt['by'] . ' %2$s</span>',
+						'format' => '<span class="smalltext">%1$s<br>' . $txt['by'] . ' %2$s</span>',
 						'params' => array(
 							'updated' => false,
 							'poster_updated_link' => false,
@@ -1987,7 +1987,7 @@ function notification($memID)
 		'additional_rows' => array(
 			array(
 				'position' => 'bottom_of_list',
-				'value' => '<input type="submit" name="edit_notify_topics" value="' . $txt['notifications_update'] . '" class="button_submit" />',
+				'value' => '<input type="submit" name="edit_notify_topics" value="' . $txt['notifications_update'] . '" class="submit">',
 				'align' => 'right',
 			),
 		),
@@ -2347,7 +2347,7 @@ function profileLoadSignatureData()
 
 	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
 
-	$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br />', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
+	$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br>', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
 
 	return true;
 }
@@ -2822,7 +2822,7 @@ function profileValidateSignature(&$value)
 		if ((!empty($sig_limits[5]) || !empty($sig_limits[6])))
 		{
 			// Get all BBC tags...
-			preg_match_all('~\[img(\s+width=([\d]+))?(\s+height=([\d]+))?(\s+width=([\d]+))?\s*\](?:<br />)*([^<">]+?)(?:<br />)*\[/img\]~i', $unparsed_signature, $matches);
+			preg_match_all('~\[img(\s+width=([\d]+))?(\s+height=([\d]+))?(\s+width=([\d]+))?\s*\](?:<br>)*([^<">]+?)(?:<br>)*\[/img\]~i', $unparsed_signature, $matches);
 			// ... and all HTML ones.
 			preg_match_all('~<img\s+src=(?:")?((?:http://|ftp://|https://|ftps://).+?)(?:")?(?:\s+alt=(?:")?(.*?)(?:")?)?(?:\s?/)?>~i', $unparsed_signature, $matches2, PREG_PATTERN_ORDER);
 			// And stick the HTML in the BBC.
