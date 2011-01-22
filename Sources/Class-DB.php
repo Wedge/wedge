@@ -474,7 +474,7 @@ class wesql
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];
 		if (allowedTo('admin_forum'))
-			$context['error_message'] = nl2br($query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
+			$context['error_message'] = nl2br($query_error, false) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
 		else
 			$context['error_message'] = $txt['try_again'];
 
@@ -484,7 +484,7 @@ class wesql
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 		{
-			$context['error_message'] .= '<br><br>' . nl2br($db_string);
+			$context['error_message'] .= '<br><br>' . nl2br($db_string, false);
 		}
 
 		// It's already been logged... don't log it again.

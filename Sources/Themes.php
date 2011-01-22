@@ -1666,7 +1666,8 @@ function EditTheme()
 
 				// !!! Use fetch_web_data()?
 				$error = @file_get_contents($theme_url . '/tmp_' . session_id() . '.php');
-				if (preg_match('~ <b>\d+</b><br\s*/?\>$~i', $error) != 0)
+				$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
+				if (preg_match('~ <strong>\d+</strong><br\s*/?\>$~i', $error) != 0)
 					$error_file = $theme_dir . '/tmp_' . session_id() . '.php';
 				else
 					unlink($theme_dir . '/tmp_' . session_id() . '.php');
@@ -1717,7 +1718,7 @@ function EditTheme()
 			$file_data = file($theme_dir . '/' . $_REQUEST['filename']);
 		else
 		{
-			if (preg_match('~(<b>.+?</b>:.+?<b>).+?(</b>.+?<b>\d+</b>)<br\s*/?\>$~i', $error, $match) != 0)
+			if (preg_match('~(<strong>.+?</strong>:.+?<strong>).+?(</strong>.+?<strong>\d+</strong>)<br\s*/?\>$~i', $error, $match) != 0)
 				$context['parse_error'] = $match[1] . $_REQUEST['filename'] . $match[2];
 			$file_data = file($error_file);
 			unlink($error_file);

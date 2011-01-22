@@ -1319,6 +1319,12 @@ img.middle, td.middle, th.middle, tr.middle td, tr.middle th {
 img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th {
 	vertical-align: bottom;
 }
+img.left {
+	float: left;
+}
+img.right {
+	float: right;
+}
 table.left th, table tr.left th, table tr th.left,
 table.left td, table tr.left td, table tr td.left {
 	text-align: left;
