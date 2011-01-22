@@ -294,7 +294,7 @@ function adminLogin_outputPostVars($k, $v)
 {
 	if (!is_array($v))
 		return '
-<input type="hidden" name="' . htmlspecialchars($k) . '" value="' . strtr($v, array('"' => '&quot;', '<' => '&lt;', '>' => '&gt;')) . '" />';
+<input type="hidden" name="' . htmlspecialchars($k) . '" value="' . strtr($v, array('"' => '&quot;', '<' => '&lt;', '>' => '&gt;')) . '">';
 	else
 	{
 		$ret = '';

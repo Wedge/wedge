@@ -468,7 +468,7 @@ function determineActions($urls, $preferred_prefix = false)
 				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
 
 			if (!empty($error_message))
-				$data[$k] = '<img src="' . $settings['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '" /> ' . $data[$k];
+				$data[$k] = '<img src="' . $settings['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 		}
 	}
 

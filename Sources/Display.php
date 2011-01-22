@@ -764,7 +764,7 @@ function Display()
 				'percent' => $bar,
 				'votes' => $option['votes'],
 				'voted_this' => $option['voted_this'] != -1,
-				'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
+				'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
 				// Note: IE < 8 requires us to set a width on the container, too.
 				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . ($bar * 3.5 + 4) . 'px;"><div style="width: ' . $bar * 3.5 . 'px;"></div></div>' : '',
 				'bar_width' => $barWide,
@@ -1262,7 +1262,7 @@ function prepareDisplayContext($reset = false)
 		// Calculating the length...
 		if (!isset($context['correct_post_length']))
 			$context['correct_post_length'] = westr::strlen(empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
-				'<br />[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br />' : '<br />');
+				'<br>[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br>' : '<br>');
 
 		$context['current_post_length'] = westr::strlen(un_htmlspecialchars($message['body']));
 		if (!isset($context['last_post_length']))

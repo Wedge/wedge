@@ -199,9 +199,9 @@ function ModifySettings()
 		$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
 
 		if ($settings_not_writable)
-			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br />';
+			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
 		elseif ($settings_backup_fail)
-			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br />';
+			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
 
 		$context['settings_not_writable'] = $settings_not_writable;
 	}
@@ -903,7 +903,7 @@ function DownloadLanguage()
 					'function' => create_function('$rowData', '
 						global $context, $txt;
 
-						return \'<strong>\' . $rowData[\'name\'] . \'</strong><div class="smalltext">\' . $txt[\'languages_download_dest\'] . \': \' . $rowData[\'destination\'] . \'</div>\' . ($rowData[\'version_compare\'] == \'older\' ? \'<br />\' . $txt[\'languages_download_older\'] : \'\');
+						return \'<strong>\' . $rowData[\'name\'] . \'</strong><div class="smalltext">\' . $txt[\'languages_download_dest\'] . \': \' . $rowData[\'destination\'] . \'</div>\' . ($rowData[\'version_compare\'] == \'older\' ? \'<br>\' . $txt[\'languages_download_older\'] : \'\');
 					'),
 				),
 			),
@@ -1049,7 +1049,7 @@ function ModifyLanguages()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" /><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="button_submit" />',
+				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="save">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1125,7 +1125,7 @@ function list_getLanguages()
 			'count' => 0,
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png" /> ' . westr::ucwords(strtr($lang['filename'], array('_' => ' '))),
+			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png"> ' . westr::ucwords(strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
@@ -1198,9 +1198,9 @@ function ModifyLanguageSettings($return_config = false)
 	$context['save_disabled'] = $settings_not_writable;
 
 	if ($settings_not_writable)
-		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br />';
+		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
 	elseif ($settings_backup_fail)
-		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br />';
+		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
 
 	// Fill the config array.
 	prepareServerSettingsContext($config_vars);

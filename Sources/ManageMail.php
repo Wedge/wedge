@@ -215,7 +215,7 @@ function BrowseMailQueue()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '[<a href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mailqueue_clear_list_warning']) . ');">' . $txt['mailqueue_clear_list'] . '</a>] <input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');" class="button_submit" />',
+				'value' => '[<a href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mailqueue_clear_list_warning']) . ');">' . $txt['mailqueue_clear_list'] . '</a>] <input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');" class="delete">',
 			),
 		),
 	);

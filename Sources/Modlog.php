@@ -172,7 +172,7 @@ function ViewModlog()
 	// This is all the information required for a watched user listing.
 	$listOptions = array(
 		'id' => 'moderation_log_list',
-		'title' => '<a href="' . $scripturl . '?action=helpadmin;help=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" class="top" /></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
+		'title' => '<a href="' . $scripturl . '?action=helpadmin;help=' . ($context['log_type'] == 3 ? 'adminlog' : 'modlog') . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" class="top"></a> ' . $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
 		'width' => '100%',
 		'items_per_page' => $context['displaypage'],
 		'no_items_label' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin_log_' : '') . 'no_entries_found'],
@@ -268,11 +268,11 @@ function ViewModlog()
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" name="all" onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" name="all" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'function' => create_function('$entry', '
-						return \'<input type="checkbox" name="delete[]" value="\' . $entry[\'id\'] . \'"\' . ($entry[\'editable\'] ? \'\' : \' disabled\') . \' />\';
+						return \'<input type="checkbox" name="delete[]" value="\' . $entry[\'id\'] . \'"\' . ($entry[\'editable\'] ? \'\' : \' disabled\') . \'>\';
 					'),
 					'style' => 'text-align: center;',
 				),
@@ -298,10 +298,10 @@ function ViewModlog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ' (' . $txt['modlog_by'] . ': ' . $context['search']['label'] . '):
-					<input type="text" name="search" size="18" value="' . $context['search']['string'] . '"> <input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" class="button_submit" />
+					<input type="search" name="search" size="18" value="' . $context['search']['string'] . '"> <input type="submit" name="is_search" value="' . $txt['modlog_go'] . '">
 					' . ($context['can_delete'] ? ' |
-						<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" class="button_submit" />
-						<input type="submit" name="removeall" value="' . $txt['modlog_removeall'] . '" class="button_submit" />' : ''),
+						<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" class="delete">
+						<input type="submit" name="removeall" value="' . $txt['modlog_removeall'] . '" class="delete">' : ''),
 			),
 		),
 	);

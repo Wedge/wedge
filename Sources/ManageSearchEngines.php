@@ -293,8 +293,8 @@ function ViewSpiders()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="addSpider" value="' . $txt['spiders_add'] . '" class="button_submit" />
-					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['spider_remove_selected_confirm']) . ');" class="button_submit" />
+					<input type="submit" name="addSpider" value="' . $txt['spiders_add'] . '" class="new">
+					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['spider_remove_selected_confirm']) . ');" class="delete">
 				',
 				'style' => 'text-align: right;',
 			),
@@ -838,7 +838,7 @@ function SpiderStats()
 	$date_select .= '
 		</select>
 		<noscript>
-			<input type="submit" name="go" value="' . $txt['go'] . '" class="button_submit" />
+			<input type="submit" name="go" value="' . $txt['go'] . '">
 		</noscript>';
 
 	// If we manually jumped to a date work out the offset.

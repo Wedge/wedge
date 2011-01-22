@@ -72,8 +72,8 @@ function CoppaForm()
 	if (isset($_GET['form']))
 	{
 		// Some simple contact stuff for the forum.
-		$context['forum_contacts'] = (!empty($modSettings['coppaPost']) ? $modSettings['coppaPost'] . '<br /><br />' : '') . (!empty($modSettings['coppaFax']) ? $modSettings['coppaFax'] . '<br />' : '');
-		$context['forum_contacts'] = !empty($context['forum_contacts']) ? $context['forum_name_html_safe'] . '<br />' . $context['forum_contacts'] : '';
+		$context['forum_contacts'] = (!empty($modSettings['coppaPost']) ? $modSettings['coppaPost'] . '<br><br>' : '') . (!empty($modSettings['coppaFax']) ? $modSettings['coppaFax'] . '<br>' : '');
+		$context['forum_contacts'] = !empty($context['forum_contacts']) ? $context['forum_name_html_safe'] . '<br>' . $context['forum_contacts'] : '';
 
 		// Showing template?
 		if (!isset($_GET['dl']))

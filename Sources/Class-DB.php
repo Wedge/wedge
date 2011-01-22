@@ -469,22 +469,22 @@ class wesql
 
 		// Nothing's defined yet... just die with it.
 		if (empty($context) || empty($txt))
-			die($db_string . '<br /><br />' . $query_error);
+			die($db_string . '<br><br>' . $query_error);
 
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];
 		if (allowedTo('admin_forum'))
-			$context['error_message'] = nl2br($query_error) . '<br />' . $txt['file'] . ': ' . $file . '<br />' . $txt['line'] . ': ' . $line;
+			$context['error_message'] = nl2br($query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
 		else
 			$context['error_message'] = $txt['try_again'];
 
 		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for Demo/CVS versions!)
 		if (allowedTo('admin_forum') && !empty($forum_version) && $forum_version != 'Wedge ' . @$modSettings['smfVersion'] && strpos($forum_version, 'Demo') === false && strpos($forum_version, 'CVS') === false)
-			$context['error_message'] .= '<br /><br />' . sprintf($txt['database_error_versions'], $forum_version, $modSettings['smfVersion']);
+			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], $forum_version, $modSettings['smfVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 		{
-			$context['error_message'] .= '<br /><br />' . nl2br($db_string);
+			$context['error_message'] .= '<br><br>' . nl2br($db_string);
 		}
 
 		// It's already been logged... don't log it again.
@@ -662,7 +662,7 @@ class wesql
 			// Found it?
 			if ((!isset($step['class']) || $step['class'] !== 'wesql') && strpos($step['function'], 'query') === false && (!in_array(substr($step['function'], 0, 5), array('preg_', 'mysql'))))
 			{
-				$log_message .= '<br />Function: ' . $step['function'];
+				$log_message .= '<br>Function: ' . $step['function'];
 				break;
 			}
 

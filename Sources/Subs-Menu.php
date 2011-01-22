@@ -169,7 +169,7 @@ function createMenu($menuData, $menuOptions = array())
 
 						// Does this area have its own icon?
 						if (isset($area['icon']))
-							$here['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '" />&nbsp;&nbsp;';
+							$here['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '">&nbsp;&nbsp;';
 						else
 							$here['icon'] = '';
 

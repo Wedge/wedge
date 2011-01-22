@@ -161,7 +161,7 @@ function ModifyHolidays()
 				'position' => 'below_table_data',
 				'value' => '
 					<a href="' . $scripturl . '?action=admin;area=managecalendar;sa=editholiday" style="margin: 0 1em">[' . $txt['holidays_add'] . ']</a>
-					<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit" />',
+					<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),

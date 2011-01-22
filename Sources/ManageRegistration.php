@@ -313,7 +313,7 @@ function ModifyRegistrationSettings($return_config = false)
 			fatal_lang_error('admin_setting_coppa_require_contact');
 
 		// Post needs to take into account line breaks.
-		$_POST['coppaPost'] = str_replace("\n", '<br />', empty($_POST['coppaPost']) ? '' : $_POST['coppaPost']);
+		$_POST['coppaPost'] = str_replace("\n", '<br>', empty($_POST['coppaPost']) ? '' : $_POST['coppaPost']);
 
 		saveDBSettings($config_vars);
 

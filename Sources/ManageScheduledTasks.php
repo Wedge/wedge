@@ -25,8 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/* /!!!
-
+/*
 	void ManageScheduledTasks()
 		// !!!
 
@@ -234,7 +233,7 @@ function ScheduledTasks()
 				'data' => array(
 					'sprintf' => array(
 						'format' =>
-							'<input type="hidden" name="enable_task[%1$d]" id="task_%1$d" value="0" /><input type="checkbox" name="enable_task[%1$d]" id="task_check_%1$d" %2$s>',
+							'<input type="hidden" name="enable_task[%1$d]" id="task_%1$d" value="0"><input type="checkbox" name="enable_task[%1$d]" id="task_check_%1$d" %2$s>',
 						'params' => array(
 							'id' => false,
 							'checked_state' => false,
@@ -267,8 +266,8 @@ function ScheduledTasks()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="save" value="' . $txt['scheduled_tasks_save_changes'] . '" class="button_submit" />
-					<input type="submit" name="run" value="' . $txt['scheduled_tasks_run_now'] . '" class="button_submit" />',
+					<input type="submit" name="save" value="' . $txt['scheduled_tasks_save_changes'] . '" class="save">
+					<input type="submit" name="run" value="' . $txt['scheduled_tasks_run_now'] . '" class="submit">',
 				'class' => 'floatright',
 				'style' => 'text-align: right;',
 			),
@@ -504,7 +503,7 @@ function TaskLog()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="removeAll" value="' . $txt['scheduled_log_empty_log'] . '" class="button_submit" />',
+					<input type="submit" name="removeAll" value="' . $txt['scheduled_log_empty_log'] . '" class="delete">',
 				'style' => 'text-align: right;',
 			),
 			array(

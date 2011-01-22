@@ -185,7 +185,7 @@ function MembergroupIndex()
 						// Otherwise repeat the image a given number of times.
 						else
 						{
-							$image = sprintf(\'<img src="%1$s/%2$s" alt="*" />\', $settings[\'images_url\'], $stars[1]);
+							$image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
 							return str_repeat($image, $stars[0]);
 						}
 					'),
@@ -289,7 +289,7 @@ function MembergroupIndex()
 							return \'\';
 						else
 						{
-							$star_image = sprintf(\'<img src="%1$s/%2$s" alt="*" />\', $settings[\'images_url\'], $stars[1]);
+							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
 							return str_repeat($star_image, $stars[0]);
 						}
 					'),

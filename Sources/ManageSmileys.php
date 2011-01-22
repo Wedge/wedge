@@ -25,8 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/* // !!!
-
+/*
 	void ManageSmileys()
 		// !!!
 
@@ -454,7 +453,7 @@ function EditSmileySets()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ');" style="float: right;" class="button_submit" /><span style="line-height: 25px">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
+				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ');" class="delete floatright"><span style="line-height: 25px">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
 			),
 		),
 	);
@@ -921,7 +920,7 @@ function EditSmileys()
 				'picture' => array(
 					'data' => array(
 						'sprintf' => array(
-							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $modSettings['smileys_url'] . '/' . $modSettings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px;" id="smiley%1$d" /><input type="hidden" name="smileys[%1$d][filename]" value="%2$s" /></a>',
+							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $modSettings['smileys_url'] . '/' . $modSettings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px;" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
 							'params' => array(
 								'id_smiley' => false,
 								'filename' => true,
@@ -1058,7 +1057,7 @@ function EditSmileys()
 							<option value="popup">' . $txt['smileys_show_on_popup'] . '</option>
 							<option value="delete">' . $txt['smileys_remove'] . '</option>
 						</select>
-						<noscript><input type="submit" name="perform_action" value="' . $txt['go'] . '" class="button_submit" /></noscript>',
+						<noscript><input type="submit" name="perform_action" value="' . $txt['go'] . '"></noscript>',
 					'style' => 'text-align: right;',
 				),
 			),
@@ -1597,7 +1596,7 @@ function EditMessageIcons()
 						global $settings;
 
 						$images_url = $settings[file_exists(sprintf(\'%1$s/images/post/%2$s.gif\', $settings[\'theme_dir\'], $rowData[\'filename\'])) ? \'actual_images_url\' : \'default_images_url\'];
-						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s" />\', $images_url, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
+						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s">\', $images_url, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
 					'),
 				),
 				'style' => 'text-align: center;',
@@ -1671,7 +1670,7 @@ function EditMessageIcons()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" style="float: right" class="button_submit" />[<a href="' . $scripturl . '?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>]',
+				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="delete floatright">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>]',
 			),
 		),
 	);

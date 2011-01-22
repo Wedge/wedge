@@ -25,8 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/* // !!!
-
+/*
 	void Packages()
 		// !!!
 
@@ -58,7 +57,7 @@ if (!defined('SMF'))
 		// !!!
 */
 
-// This is the notoriously defunct package manager..... :/.
+// This is the notoriously defunct package manager..... :/
 function Packages()
 {
 	global $txt, $scripturl, $context;
@@ -1166,7 +1165,7 @@ function ExamineFile()
 
 	// Let the unpacker do the work.... but make sure we handle images properly.
 	if (in_array(strtolower(strrchr($_REQUEST['file'], '.')), array('.bmp', '.gif', '.jpeg', '.jpg', '.png')))
-		$context['filedata'] = '<img src="' . $scripturl . '?action=admin;area=packages;sa=examine;package=' . $_REQUEST['package'] . ';file=' . $_REQUEST['file'] . ';raw" alt="' . $_REQUEST['file'] . '" />';
+		$context['filedata'] = '<img src="' . $scripturl . '?action=admin;area=packages;sa=examine;package=' . $_REQUEST['package'] . ';file=' . $_REQUEST['file'] . ';raw" alt="' . $_REQUEST['file'] . '">';
 	else
 	{
 		if (is_file($boarddir . '/Packages/' . $_REQUEST['package']))

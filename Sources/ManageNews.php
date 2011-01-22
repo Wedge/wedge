@@ -559,7 +559,7 @@ function SendMailing($clean_only = false)
 	{
 		// Prepare the message for HTML.
 		if (!empty($_POST['parse_html']))
-			$_POST['message'] = str_replace(array("\n", '  '), array('<br />' . "\n", '&nbsp; '), $_POST['message']);
+			$_POST['message'] = str_replace(array("\n", '  '), array("<br>\n", '&nbsp; '), $_POST['message']);
 
 		// This is here to prevent spam filters from tagging this as spam.
 		if (preg_match('~\<html~i', $_POST['message']) == 0)

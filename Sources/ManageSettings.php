@@ -573,7 +573,7 @@ function ModifyLayoutSettings($return_config = false)
 	$config_vars = array(
 			// Pagination stuff.
 			array('check', 'compactTopicPagesEnable'),
-			array('int', 'compactTopicPagesContiguous', null, $txt['contiguous_page_display'] . '<dfn>' . str_replace(' ', '&nbsp;', '"3" ' . $txt['to_display'] . ': <strong>1 ... 4 [5] 6 ... 9</strong>') . '<br />' . str_replace(' ', '&nbsp;', '"5" ' . $txt['to_display'] . ': <strong>1 ... 3 4 [5] 6 7 ... 9</strong>') . '</dfn>'),
+			array('int', 'compactTopicPagesContiguous', null, $txt['contiguous_page_display'] . '<dfn>' . str_replace(' ', '&nbsp;', '"3" ' . $txt['to_display'] . ': <strong>1 ... 4 [5] 6 ... 9</strong>') . '<br>' . str_replace(' ', '&nbsp;', '"5" ' . $txt['to_display'] . ': <strong>1 ... 3 4 [5] 6 7 ... 9</strong>') . '</dfn>'),
 			array('int', 'defaultMaxMembers'),
 		'',
 			// Stuff that just is everywhere - today, search, online, etc.
@@ -920,7 +920,7 @@ function ModifySignatureSettings($return_config = false)
 			while ($row = wesql::fetch_assoc($request))
 			{
 				// Apply all the rules we can realistically do.
-				$sig = strtr($row['signature'], array('<br />' => "\n"));
+				$sig = strtr($row['signature'], array('<br>' => "\n"));
 
 				// Max characters...
 				if (!empty($sig_limits[1]))
@@ -966,7 +966,7 @@ function ModifySignatureSettings($return_config = false)
 					$replaces = array();
 					$img_count = 0;
 					// Get all BBC tags...
-					preg_match_all('~\[img(\s+width=([\d]+))?(\s+height=([\d]+))?(\s+width=([\d]+))?\s*\](?:<br />)*([^<">]+?)(?:<br />)*\[/img\]~i', $sig, $matches);
+					preg_match_all('~\[img(\s+width=([\d]+))?(\s+height=([\d]+))?(\s+width=([\d]+))?\s*\](?:<br>)*([^<">]+?)(?:<br>)*\[/img\]~i', $sig, $matches);
 					// ... and all HTML ones.
 					preg_match_all('~&lt;img\s+src=(?:&quot;)?((?:http://|ftp://|https://|ftps://).+?)(?:&quot;)?(?:\s+alt=(?:&quot;)?(.*?)(?:&quot;)?)?(?:\s?/)?&gt;~i', $sig, $matches2, PREG_PATTERN_ORDER);
 					// And stick the HTML in the BBC.
@@ -1084,7 +1084,7 @@ function ModifySignatureSettings($return_config = false)
 					$sig = preg_replace('~\[/(?:' . implode('|', $disabledTags) . ')\]~i', '', $sig);
 				}
 
-				$sig = strtr($sig, array("\n" => '<br />'));
+				$sig = strtr($sig, array("\n" => '<br>'));
 				if ($sig != $row['signature'])
 					$changes[$row['id_member']] = $sig;
 			}
@@ -1283,7 +1283,7 @@ function ShowCustomProfiles()
 					'function' => create_function('$rowData', '
 						$isChecked = $rowData[\'disabled\'] ? \'\' : \' checked\';
 						$onClickHandler = $rowData[\'can_show_register\'] ? sprintf(\' onclick="document.getElementById(\\\'reg_%1$s\\\').disabled = !this.checked;"\', $rowData[\'id\']) : \'\';
-						return sprintf(\'<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s />\', $rowData[\'id\'], $isChecked, $onClickHandler);
+						return sprintf(\'<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>\', $rowData[\'id\'], $isChecked, $onClickHandler);
 					'),
 					'style' => 'width: 20%; text-align: center;',
 				),
@@ -1296,7 +1296,7 @@ function ShowCustomProfiles()
 					'function' => create_function('$rowData', '
 						$isChecked = $rowData[\'on_register\'] && !$rowData[\'disabled\'] ? \' checked\' : \'\';
 						$isDisabled = $rowData[\'can_show_register\'] ? \'\' : \' disabled\';
-						return sprintf(\'<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s />\', $rowData[\'id\'], $isChecked, $isDisabled);
+						return sprintf(\'<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s>\', $rowData[\'id\'], $isChecked, $isDisabled);
 					'),
 					'style' => 'width: 20%; text-align: center;',
 				),
@@ -1309,7 +1309,7 @@ function ShowCustomProfiles()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="save" value="' . $txt['save'] . '" class="button_submit" />',
+				'value' => '<input type="submit" name="save" value="' . $txt['save'] . '" class="save">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1426,7 +1426,7 @@ function ShowCustomProfiles()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="new" value="' . $txt['custom_profile_make_new'] . '" class="button_submit" />',
+				'value' => '<input type="submit" name="new" value="' . $txt['custom_profile_make_new'] . '" class="new">',
 				'style' => 'text-align: right;',
 			),
 		),

@@ -1222,7 +1222,7 @@ function ViewWatchedUsers()
 			array(
 				'position' => 'bottom_of_list',
 				'value' => '
-					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit" />',
+					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="delete">',
 				'align' => 'right',
 			) : array(),
 		),
@@ -1529,7 +1529,7 @@ function ViewWarningLog()
 						if (!empty($warning[\'id_notice\']))
 							$output .= \'
 							<div class="floatright">
-								<a href="\' . $scripturl . \'?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $settings[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'" /></a>
+								<a href="\' . $scripturl . \'?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $settings[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
 							</div>\';
 
 						return $output;
@@ -1737,8 +1737,8 @@ function ViewWarningTemplates()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="add" value="' . $txt['mc_warning_template_add'] . '" class="button_submit" />
-					<input type="submit" name="delete" value="' . $txt['mc_warning_template_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mc_warning_template_delete_confirm']) . ');" class="button_submit" />',
+					<input type="submit" name="add" value="' . $txt['mc_warning_template_add'] . '" class="new">
+					<input type="submit" name="delete" value="' . $txt['mc_warning_template_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mc_warning_template_delete_confirm']) . ');" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1879,7 +1879,7 @@ function ModifyWarningTemplate()
 		// Clean up BBC.
 		wedgeEditor::preparsecode($_POST['template_body']);
 		// But put line breaks back!
-		$_POST['template_body'] = strtr($_POST['template_body'], array('<br />' => "\n"));
+		$_POST['template_body'] = strtr($_POST['template_body'], array('<br>' => "\n"));
 
 		// Is this personal?
 		$recipient_id = !empty($_POST['make_personal']) ? $user_info['id'] : 0;

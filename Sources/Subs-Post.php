@@ -191,7 +191,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	if ($hotmail_fix && !$send_html)
 	{
 		$send_html = true;
-		$message = strtr($message, array($line_break => '<br />' . $line_break));
+		$message = strtr($message, array($line_break => '<br>' . $line_break));
 		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w\-_%\.,\?&;=#]+)?)~', '<a href="$1">$1</a>', $message);
 	}
 
@@ -699,7 +699,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	censorText($message);
 	censorText($subject);
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(htmlspecialchars($message), false), array('<br />' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(htmlspecialchars($message), false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	foreach ($notifications as $lang => $notification_list)
 	{
@@ -985,7 +985,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		censorText($row['subject']);
 		censorText($row['body']);
 		$row['subject'] = un_htmlspecialchars($row['subject']);
-		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($row['body'], false, $row['id_last_msg']), array('<br />' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($row['body'], false, $row['id_last_msg']), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 		$topicData[$row['id_topic']] = array(
 			'subject' => $row['subject'],
@@ -2263,7 +2263,7 @@ function sendApprovalNotifications(&$topicData)
 		censorText($topicData[$topic][$msgKey]['subject']);
 		censorText($topicData[$topic][$msgKey]['body']);
 		$topicData[$topic][$msgKey]['subject'] = un_htmlspecialchars($topicData[$topic][$msgKey]['subject']);
-		$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], false), array('<br />' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 		$topics[] = $msg['id'];
 		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', $user_info['id']);

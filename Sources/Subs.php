@@ -553,7 +553,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 		// Show the ... after the first page. (1 >...< 6 7 [8] 9 10 ... 15)
 		if ($start > $num_per_page * ($PageContiguous + 1))
-			$pageindex .= '<span style="font-weight: bold;" onclick="' . htmlspecialchars('expandPages(this, ' . JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . ', ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');') . '" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
+			$pageindex .= '<span style="font-weight: bold" onclick="' . htmlspecialchars('expandPages(this, ' . JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . ', ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');') . '" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 
 		// Show the pages before the current one. (1 ... >6 7< [8] 9 10 ... 15)
 		for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
@@ -580,7 +580,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 		// Show the '...' part near the end. (1 ... 6 7 [8] 9 10 >...< 15)
 		if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
-			$pageindex .= '<span style="font-weight: bold;" onclick="expandPages(this, \'' . ($flexible_start ? strtr($base_url, array('\'' => '\\\'')) : strtr($base_url, array('%' => '%%', '\'' => '\\\'')) . ';start=%1$d') . '\', ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
+			$pageindex .= '<span style="font-weight: bold" onclick="expandPages(this, \'' . ($flexible_start ? strtr($base_url, array('\'' => '\\\'')) : strtr($base_url, array('%' => '%%', '\'' => '\\\'')) . ';start=%1$d') . '\', ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 
 		// Show the last number in the list. (1 ... 6 7 [8] 9 10 ... >15<)
 		if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
@@ -1025,19 +1025,19 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	$open_tags = array();
-	$message = strtr($message, array("\n" => '<br />'));
+	$message = strtr($message, array("\n" => '<br>'));
 
 	// This saves time by doing our break long words checks here.
 	if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 	{
 		if ($context['browser']['is_gecko'])
-			$breaker = '<span style="margin: 0 -0.5ex 0 0;"> </span>';
+			$breaker = '<span style="margin: 0 -0.5ex 0 0"> </span>';
 		// Opera...
 		elseif ($context['browser']['is_opera'])
-			$breaker = '<span style="margin: 0 -0.65ex 0 -1px;"> </span>';
+			$breaker = '<span style="margin: 0 -0.65ex 0 -1px"> </span>';
 		// Internet Explorer...
 		else
-			$breaker = '<span style="width: 0; margin: 0 -0.6ex 0 -1px;"> </span>';
+			$breaker = '<span style="width: 0; margin: 0 -0.6ex 0 -1px"> </span>';
 
 		// PCRE will not be happy if we don't give it a short.
 		$modSettings['fixLongWords'] = (int) min(65535, $modSettings['fixLongWords']);
@@ -1068,14 +1068,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$data = preg_replace('~&lt;a\s+href=((?:&quot;)?)((?:https?://|ftps?://|mailto:)\S+?)\\1&gt;~i', '[url=$2]', $data);
 				$data = preg_replace('~&lt;/a&gt;~i', '[/url]', $data);
 
-				// <br /> should be empty.
-				$empty_tags = array('br', 'hr');
-				foreach ($empty_tags as $tag)
+				// <br> should be empty.
+				foreach (array('br', 'hr') as $tag)
 					$data = str_replace(array('&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'), '[' . $tag . ' /]', $data);
 
-				// b, u, i, s, pre... basic tags.
-				$closable_tags = array('b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote');
-				foreach ($closable_tags as $tag)
+				// b, u, i, s, pre... basic closable tags.
+				foreach (array('b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote') as $tag)
 				{
 					$diff = substr_count($data, '&lt;' . $tag . '&gt;') - substr_count($data, '&lt;/' . $tag . '&gt;');
 					$data = strtr($data, array('&lt;' . $tag . '&gt;' => '<' . $tag . '>', '&lt;/' . $tag . '&gt;' => '</' . $tag . '>'));
@@ -1084,7 +1082,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$data = substr($data, 0, -1) . str_repeat('</' . $tag . '>', $diff) . substr($data, -1);
 				}
 
-				// Do <img ... /> - with security... action= -> action-.
+				// Do <img ...> - with security... action= -> action-.
 				preg_match_all('~&lt;img\s+src=((?:&quot;)?)((?:https?://|ftps?://)\S+?)\\1(?:\s+alt=(&quot;.*?&quot;|\S*?))?(?:\s?/)?&gt;~i', $data, $matches, PREG_PATTERN_ORDER);
 				if (!empty($matches[0]))
 				{
@@ -1169,8 +1167,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					// Next, emails...
 					if (!isset($disabled['email']) && strpos($data, '@') !== false && strpos($data, '[email') === false)
 					{
-						$data = preg_replace('~(?<=[\?\s\x{A0}\[\]()*\\\;>]|^)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?,\s\x{A0}\[\]()*\\\]|$|<br />|&nbsp;|&gt;|&lt;|&quot;|&#039;|\.(?:\.|;|&nbsp;|\s|$|<br />))~u', '[email]$1[/email]', $data);
-						$data = preg_replace('~(?<=<br />)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?\.,;\s\x{A0}\[\]()*\\\]|$|<br />|&nbsp;|&gt;|&lt;|&quot;|&#039;)~u', '[email]$1[/email]', $data);
+						$data = preg_replace('~(?<=[\?\s\x{A0}\[\]()*\\\;>]|^)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?,\s\x{A0}\[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;|\.(?:\.|;|&nbsp;|\s|$|<br>))~u', '[email]$1[/email]', $data);
+						$data = preg_replace('~(?<=<br>)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?\.,;\s\x{A0}\[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;)~u', '[email]$1[/email]', $data);
 					}
 				}
 			}
@@ -1291,9 +1289,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$pos2 = $pos - 1;
 
 				// See the comment at the end of the big loop - just eating whitespace ;).
-				if ($tag['block_level'] && substr($message, $pos, 6) == '<br />')
-					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if ($tag['block_level'] && substr($message, $pos, 4) == '<br>')
+					$message = substr($message, 0, $pos) . substr($message, $pos + 4);
+				if (($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 			}
 
@@ -1473,11 +1471,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$pos += strlen($code) - 1 + 2;
 
 			// Next, find the next break (if any.) If there's more itemcode after it, keep it going - otherwise close!
-			$pos2 = strpos($message, '<br />', $pos);
+			$pos2 = strpos($message, '<br>', $pos);
 			$pos3 = strpos($message, '[/', $pos);
 			if ($pos2 !== false && ($pos2 <= $pos3 || $pos3 === false))
 			{
-				preg_match('~^(<br />|&nbsp;|\s|\[)+~', substr($message, $pos2 + 6), $matches);
+				preg_match('~^(<br>|&nbsp;|\s|\[)+~', substr($message, $pos2 + 6), $matches);
 				$message = substr($message, 0, $pos2) . "\n" . (!empty($matches[0]) && substr($matches[0], -1) == '[' ? '[/li]' : '[/li][/list]') . "\n" . substr($message, $pos2);
 
 				$open_tags[count($open_tags) - 2]['after'] = '</ul>';
@@ -1543,9 +1541,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$pos1 += strlen($open_tags[$i]['after']) + 2;
 
 				// Trim or eat trailing stuff... see comment at the end of the big loop.
-				if (!empty($open_tags[$i]['block_level']) && substr($message, $pos, 6) == '<br />')
-					$message = substr($message, 0, $pos) . substr($message, $pos + 6);
-				if (!empty($open_tags[$i]['trim']) && ($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
+				if (!empty($open_tags[$i]['block_level']) && substr($message, $pos, 4) == '<br>')
+					$message = substr($message, 0, $pos) . substr($message, $pos + 4);
+				if (!empty($open_tags[$i]['trim']) && ($tag['trim'] == 'outside' || $tag['trim'] == 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos), $matches) != 0)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 
 				array_pop($open_tags);
@@ -1569,8 +1567,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 			$data = substr($message, $pos1, $pos2 - $pos1);
 
-			if (!empty($tag['block_level']) && substr($data, 0, 6) == '<br />')
-				$data = substr($data, 6);
+			if (!empty($tag['block_level']) && substr($data, 0, 4) == '<br>')
+				$data = substr($data, 4);
 
 			if (isset($tag['validate']))
 				$tag['validate']($tag, $data, $disabled);
@@ -1588,8 +1586,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 			$data = substr($message, $pos1, $pos2 - $pos1);
 
-			if (!empty($tag['block_level']) && substr($data, 0, 6) == '<br />')
-				$data = substr($data, 6);
+			if (!empty($tag['block_level']) && substr($data, 0, 4) == '<br>')
+				$data = substr($data, 4);
 
 			if (isset($tag['validate']))
 				$tag['validate']($tag, $data, $disabled);
@@ -1629,8 +1627,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				substr($message, $pos1, $pos2 - $pos1)
 			);
 
-			if (!empty($tag['block_level']) && substr($data[0], 0, 6) == '<br />')
-				$data[0] = substr($data[0], 6);
+			if (!empty($tag['block_level']) && substr($data[0], 0, 4) == '<br>')
+				$data[0] = substr($data[0], 4);
 
 			// Validation for my parking, please!
 			if (isset($tag['validate']))
@@ -1649,8 +1647,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				if ($lent > 0)
 				{
 					$message = rtrim(substr($message, 0, $pos));
-					while (substr($message, -6) === '<br />')
-						$message = substr($message, 0, -6);
+					while (substr($message, -4) === '<br>')
+						$message = substr($message, 0, -4);
 					$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span>';
 				}
 			}
@@ -1749,11 +1747,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		}
 
 		// If this is block level, eat any breaks after it.
-		if (!empty($tag['block_level']) && substr($message, $pos + 1, 6) == '<br />')
-			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 7);
+		if (!empty($tag['block_level']) && substr($message, $pos + 1, 4) == '<br>')
+			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 5);
 
 		// Are we trimming outside this tag?
-		if (($tag['trim'] == 'inside' || $tag['trim'] == 'both') && preg_match('~(<br />|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
+		if (($tag['trim'] == 'inside' || $tag['trim'] == 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) != 0)
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 1 + strlen($matches[0]));
 	}
 
@@ -1779,7 +1777,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$message = '&nbsp;' . substr($message, 1);
 
 	// Cleanup whitespace.
-	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br />', '<br /> ' => '<br />&nbsp;', '&#13;' => "\n"));
+	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br>', '<br> ' => '<br>&nbsp;', '&#13;' => "\n"));
 
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
 	if (stripos($message, '[nb]') !== false && (empty($parse_tags) || in_array('nb', $parse_tags)) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor'))
@@ -1913,7 +1911,7 @@ function parsesmileys(&$message)
 		$searchParts = array();
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
-			$smileyCode = '<img src="' . htmlspecialchars($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/' . $smileysto[$i]) . '" alt="' . strtr(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr(htmlspecialchars($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley" />';
+			$smileyCode = '<img src="' . htmlspecialchars($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/' . $smileysto[$i]) . '" alt="' . strtr(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr(htmlspecialchars($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley">';
 
 			$smileyPregReplacements[$smileysfrom[$i]] = $smileyCode;
 			$smileyPregReplacements[htmlspecialchars($smileysfrom[$i], ENT_QUOTES)] = $smileyCode;
@@ -1941,14 +1939,14 @@ function highlight_php_code($code)
 	global $context;
 
 	// Remove special characters.
-	$code = un_htmlspecialchars(strtr($code, array('<br />' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
+	$code = un_htmlspecialchars(strtr($code, array('<br>' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
 
 	$oldlevel = error_reporting(0);
 	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
 	error_reporting($oldlevel);
 
 	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
-	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline;">' . "\t" . '</pre>', $buffer);
+	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline">' . "\t" . '</pre>', $buffer);
 
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
@@ -2715,7 +2713,7 @@ function setupThemeContext($forceload = false)
 			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
 
 		if (!empty($context['user']['avatar']))
-			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . ' class="avatar" />';
+			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . ' class="avatar">';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = array(
@@ -2869,7 +2867,7 @@ function wedge_cache_css()
 				array($settings['default_theme_url'], $settings['theme_url']),
 				$file
 			);
-		$context['cached_css'] = implode('" />
+		$context['cached_css'] = implode('">
 	<link rel="stylesheet" href="', $css);
 		return;
 	}
@@ -3153,16 +3151,16 @@ function template_header()
 				foreach ($securityFiles as $securityFile)
 				{
 					echo '
-				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br />';
+				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
 
 					if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
 						echo '
-				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br />';
+				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
 				}
 
 				if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
 					echo '
-				<strong>', $txt['cache_writable'], '</strong><br />';
+				<strong>', $txt['cache_writable'], '</strong><br>';
 
 				echo '
 			</p>
@@ -3179,7 +3177,7 @@ function template_header()
 
 			if (!empty($_SESSION['ban']['cannot_post']['reason']))
 				echo '
-					<div style="padding-left: 4ex; padding-top: 1ex;">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
+					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
 
 			if (!empty($_SESSION['ban']['expire_time']))
 				echo '
@@ -3224,7 +3222,7 @@ function theme_base_css()
 		wedge_cache_css();
 
 	echo '
-	<link rel="stylesheet" href="', $context['cached_css'], '" />';
+	<link rel="stylesheet" href="', $context['cached_css'], '">';
 
 	if (!empty($context['extra_styling_css']))
 	{
@@ -3358,12 +3356,12 @@ function db_debug_junk()
 	}
 
 	$temp = '
-<div class="smalltext" style="text-align: left; margin: 1ex;">
-	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br />
-	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br />
-	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br />
-	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br />
-	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_include_info" style="display: none;"><em>' . implode(', ', $files) . '</em></span>)<br />';
+<div class="smalltext" style="text-align: left; margin: 1ex">
+	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br>
+	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br>
+	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
+	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
+	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_include_info" style="display: none"><em>' . implode(', ', $files) . '</em></span>)<br>';
 
 	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
 	{
@@ -3378,17 +3376,17 @@ function db_debug_junk()
 		}
 
 		$temp .= '
-	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="javascript:void(0)" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_cache_info" style="display: none"><em>' . implode(', ', $entries) . '</em></span>)<br />';
+	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="javascript:void(0)" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_cache_info" style="display: none"><em>' . implode(', ', $entries) . '</em></span>)<br>';
 	}
 
 	if ($show_debug_query)
 		$temp .= '
-	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br />
-	<br />';
+	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br>
+	<br>';
 	else
 		$temp .= '
-	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br />
-	<br />';
+	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br>
+	<br>';
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
 		foreach ($db_cache as $q => $qq)
@@ -3413,17 +3411,17 @@ function db_debug_junk()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			$temp .= '
-	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none;">' : '') . nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br />
+	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
 
 			if (isset($qq['s'], $qq['t'], $txt['debug_query_which_took_at']))
-				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br />';
+				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br>';
 			elseif (isset($qq['t']))
-				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br />';
+				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br>';
 			$temp .= '
-	<br />';
+	<br>';
 		}
 
 	if ($show_debug_query)
@@ -3671,7 +3669,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	global $context;
 
 	// Step 1: Remove entities/things we don't consider words:
-	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br />' => ' ')));
+	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
 	$words = un_htmlspecialchars(westr::strtolower($words));
@@ -3760,9 +3758,9 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (!$settings['use_image_buttons'])
 		return $txt[$alt];
 	elseif (!empty($settings['use_buttons']))
-		return '<img src="' . $settings['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . ' />' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
+		return '<img src="' . $settings['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
 	else
-		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . ' />';
+		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
 }
 
 /**

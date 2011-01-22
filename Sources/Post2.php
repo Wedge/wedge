@@ -683,7 +683,7 @@ function Post2()
 				if (in_array('bad_extension', $attachmentOptions['errors']))
 				{
 					checkSubmitOnce('free');
-					fatal_error($attachmentOptions['name'] . '.<br />' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
+					fatal_error($attachmentOptions['name'] . '.<br>' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
 				}
 				if (in_array('directory_full', $attachmentOptions['errors']))
 				{
@@ -693,7 +693,7 @@ function Post2()
 				if (in_array('bad_filename', $attachmentOptions['errors']))
 				{
 					checkSubmitOnce('free');
-					fatal_error(basename($attachmentOptions['name']) . '.<br />' . $txt['restricted_filename'] . '.', 'critical');
+					fatal_error(basename($attachmentOptions['name']) . '.<br>' . $txt['restricted_filename'] . '.', 'critical');
 				}
 				if (in_array('taken_filename', $attachmentOptions['errors']))
 				{
@@ -1047,7 +1047,7 @@ function notifyMembersBoard(&$topicData)
 		censorText($topicData[$key]['body']);
 
 		$topicData[$key]['subject'] = un_htmlspecialchars($topicData[$key]['subject']);
-		$topicData[$key]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$key]['body'], false), array('<br />' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$topicData[$key]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$key]['body'], false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 	}
 
 	// Just the board numbers.

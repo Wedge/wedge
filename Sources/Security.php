@@ -428,7 +428,7 @@ function is_not_banned($forceCheck = false)
 		writeLog(true);
 
 		// You banned, sucka!
-		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br />' . $_SESSION['ban']['cannot_access']['reason']) . '<br />' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']), 'user');
+		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']), 'user');
 
 		// If we get here, something's gone wrong.... but let's try anyway.
 		trigger_error('Hacking attempt...', E_USER_ERROR);
@@ -474,7 +474,7 @@ function is_not_banned($forceCheck = false)
 		loadSource('Logout');
 		Logout(true, false);
 
-		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br />' . $_SESSION['ban']['cannot_login']['reason']) . '<br />' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br />' . $txt['ban_continue_browse'], 'user');
+		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_login']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br>' . $txt['ban_continue_browse'], 'user');
 	}
 
 	// Fix up the banning permissions.
@@ -1062,11 +1062,11 @@ function checkUserBehavior()
 
 			foreach ($context['http_headers'] as $k => $v)
 				if ($k != 'User-Agent')
-					$headers .= ($headers != '' ? '<br />' : '') . htmlspecialchars($k . '=' . $v);
+					$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
 
 			$entity = htmlspecialchars(implode("\n", $_POST));
 			foreach ($_POST as $k => $v)
-				$entity .= ($entity != '' ? '<br />' : '') . htmlspecialchars($k . '=' . $v);
+				$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
 
 			wesql::insert('insert',
 				'{db_prefix}log_intrusion',
@@ -1092,10 +1092,10 @@ function checkUserBehavior()
 			$context['robot_no_index'] = true;
 			$context['page_title'] = $txt['http_error'] . ' ' . $error;
 			$context['error_title'] = $txt['behav_' . $error];
-			$context['error_message'] = $txt['behavior_header'] . '<br /><br />' . $txt[$context['behavior_error'] . '_desc'];
+			$context['error_message'] = $txt['behavior_header'] . '<br><br>' . $txt[$context['behavior_error'] . '_desc'];
 			foreach ($error_blocks as $block)
-				$context['error_message'] .= '<br /><br />' . $txt[$block];
-			$context['error_message'] .= '<br /><br />' . $txt['behavior_footer'];
+				$context['error_message'] .= '<br><br>' . $txt[$block];
+			$context['error_message'] .= '<br><br>' . $txt['behavior_footer'];
 
 			$context['error_message'] = str_replace('{email_address}', str_replace("@", "+REMOVEME@REMOVEME.", $webmaster_email), $context['error_message']);
 			$context['error_message'] = str_replace('{incident}', '#' . $error_id, $context['error_message']);

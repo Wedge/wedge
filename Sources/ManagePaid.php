@@ -335,7 +335,7 @@ function ViewSubscriptions()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="button_submit" />
+					<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="new">
 				',
 				'style' => 'text-align: right;',
 			),
@@ -813,11 +813,11 @@ function ViewSubscribedUsers()
 				'position' => 'below_table_data',
 				'value' => '
 					<div class="floatleft">
-						<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="button_submit" />
+						<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="new">
 					</div>
 					<div class="floatright">
-						<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['complete_are_sure']) . ');" class="button_submit" />
-						<input type="submit" name="delete" value="' . $txt['delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['delete_are_sure']) . ');" class="button_submit" />
+						<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['complete_are_sure']) . ');" class="submit">
+						<input type="submit" name="delete" value="' . $txt['delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['delete_are_sure']) . ');" class="delete">
 					</div>
 				',
 			),
@@ -828,8 +828,8 @@ function ViewSubscribedUsers()
 						' . sprintf($txt['view_users_subscribed'], $row['name']) . '
 					</we:title>
 					<div class="floatright">
-						<input type="text" name="sub_search" value="">
-						<input type="submit" name="ssearch" value="' . $txt['search_sub'] . '" class="button_submit" />
+						<input type="search" name="sub_search" value="">
+						<input type="submit" name="ssearch" value="' . $txt['search_sub'] . '">
 					</div>
 				',
 			),

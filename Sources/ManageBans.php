@@ -336,7 +336,7 @@ function BanList()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ');" class="button_submit" />',
+				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ');" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -603,7 +603,7 @@ function BanEdit()
 
 		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
 		$_POST['notes'] = westr::htmlspecialchars($_POST['notes'], ENT_QUOTES);
-		$_POST['notes'] = str_replace(array("\r", "\n", '  '), array('', '<br />', '&nbsp; '), $_POST['notes']);
+		$_POST['notes'] = str_replace(array("\r", "\n", '  '), array('', '<br>', '&nbsp; '), $_POST['notes']);
 		$_POST['expiration'] = $_POST['expiration'] == 'never' ? 'NULL' : ($_POST['expiration'] == 'expired' ? '0' : ($_POST['expire_date'] != $_POST['old_expire'] ? time() + 24 * 60 * 60 * (int) $_POST['expire_date'] : 'expire_time'));
 		$_POST['full_ban'] = empty($_POST['full_ban']) ? '0' : '1';
 		$_POST['cannot_post'] = !empty($_POST['full_ban']) || empty($_POST['cannot_post']) ? '0' : '1';
@@ -1208,11 +1208,11 @@ function BanBrowseTriggers()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_column_headers',
-				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;" /> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;" /> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;" /> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;" /> ' : '') . $txt['username'] . '</a>',
+				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="remove_triggers" value="' . $txt['ban_remove_selected_triggers'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']) . ');" class="button_submit" />',
+				'value' => '<input type="submit" name="remove_triggers" value="' . $txt['ban_remove_selected_triggers'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']) . ');" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1477,8 +1477,8 @@ function BanLog()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="removeSelected" value="' . $txt['ban_log_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_selected_confirm']) . ');" class="button_submit" />
-					<input type="submit" name="removeAll" value="' . $txt['ban_log_remove_all'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_all_confirm']) . ');" class="button_submit" />',
+					<input type="submit" name="removeSelected" value="' . $txt['ban_log_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_selected_confirm']) . ');" class="delete">
+					<input type="submit" name="removeAll" value="' . $txt['ban_log_remove_all'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_all_confirm']) . ');" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),

@@ -140,7 +140,7 @@ function GroupList()
 			'color' => $row['online_color'],
 			'type' => $row['group_type'],
 			'num_members' => 0,
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '" alt="*" />', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -299,7 +299,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			'type' => $row['group_type'],
 			'num_members' => 0,
 			'moderators' => array(),
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '" alt="*" />', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -420,7 +420,7 @@ function MembergroupMembers()
 
 	// Fix the stars.
 	$context['group']['stars'] = explode('#', $context['group']['stars']);
-	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $context['group']['stars'][1] . '" alt="*" />', $context['group']['stars'][0]) : '';
+	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups');
 
 	$context['linktree'][] = array(
@@ -882,7 +882,7 @@ function GroupRequests()
 			),
 			'action' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" />',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 				),
 				'data' => array(
@@ -915,7 +915,7 @@ function GroupRequests()
 						<option value="reject">' . $txt['mc_groupr_reject'] . '</option>
 						<option value="reason">' . $txt['mc_groupr_reject_w_reason'] . '</option>
 					</select>
-					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = $(\'#req_action\').val(); if (sel != 0 && sel != \'reason\' && !confirm(' . $warning . ')) return false;" class="button_submit" />',
+					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = $(\'#req_action\').val(); if (sel != 0 && sel != \'reason\' && !confirm(' . $warning . ')) return false;">',
 				'align' => 'right',
 			),
 		),

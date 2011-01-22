@@ -25,8 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/* /!!!
-
+/*
 	void ManageAttachments()
 		- main 'Attachments and Avatars' center function.
 		- entry point for index.php?action=admin;area=manageattachments.
@@ -423,7 +422,7 @@ function BrowseFiles()
 
 						// Add a link to the topic in case of an attachment.
 						if ($context[\'browse_type\'] !== \'avatars\')
-							$date .= sprintf(\'<br />%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>\', $txt[\'in\'], $scripturl, $rowData[\'id_topic\'], $rowData[\'id_msg\'], $rowData[\'subject\']);
+							$date .= sprintf(\'<br>%1$s <a href="%2$s?topic=%3$d.0.msg%4$d#msg%4$d">%5$s</a>\', $txt[\'in\'], $scripturl, $rowData[\'id_topic\'], $rowData[\'id_msg\'], $rowData[\'subject\']);
 
 						return $date;
 						'),
@@ -477,7 +476,7 @@ function BrowseFiles()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="remove_submit" class="button_submit" value="' . $txt['quickmod_delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['confirm_delete_attachments']) . ');" />',
+				'value' => '<input type="submit" name="remove_submit" value="' . $txt['quickmod_delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['confirm_delete_attachments']) . ');" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -717,7 +716,7 @@ function RemoveAttachmentByAge()
 				WHERE id_msg IN ({array_int:messages})',
 				array(
 					'messages' => $messages,
-					'notice' => empty($_POST['notice']) ? '' : '<br /><br />' . $_POST['notice'],
+					'notice' => empty($_POST['notice']) ? '' : '<br><br>' . $_POST['notice'],
 				)
 			);
 	}
@@ -746,7 +745,7 @@ function RemoveAttachmentBySize()
 			WHERE id_msg IN ({array_int:messages})',
 			array(
 				'messages' => $messages,
-				'notice' => empty($_POST['notice']) ? '' : '<br /><br />' . $_POST['notice'],
+				'notice' => empty($_POST['notice']) ? '' : '<br><br>' . $_POST['notice'],
 			)
 		);
 
@@ -780,7 +779,7 @@ function RemoveAttachment()
 					WHERE id_msg IN ({array_int:messages_affected})',
 					array(
 						'messages_affected' => $messages,
-						'deleted_message' => '<br /><br />' . $txt['attachment_delete_admin'],
+						'deleted_message' => '<br><br>' . $txt['attachment_delete_admin'],
 					)
 				);
 		}
@@ -810,7 +809,7 @@ function RemoveAllAttachments()
 			WHERE id_msg IN ({array_int:messages})',
 			array(
 				'messages' => $messages,
-				'deleted_message' => '<br /><br />' . $_POST['notice'],
+				'deleted_message' => '<br><br>' . $_POST['notice'],
 			)
 		);
 
@@ -1685,7 +1684,7 @@ function ManageAttachmentPaths()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="text" size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%" />\';
+						return \'<input type="text" size="30" name="dirs[\' . $rowData[\'id\'] . \']" value="\' . $rowData[\'path\'] . \'" style="width: 100%">\';
 					'),
 					'style' => 'text-align: center; width: 30%;',
 				),
@@ -1724,7 +1723,7 @@ function ManageAttachmentPaths()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" /><input type="submit" name="new_path" value="' . $txt['attach_add_path'] . '" class="button_submit" />&nbsp;<input type="submit" name="save" value="' . $txt['save'] . '" class="button_submit" />',
+				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="new_path" value="' . $txt['attach_add_path'] . '" class="new">&nbsp;<input type="submit" name="save" value="' . $txt['save'] . '" class="save">',
 				'style' => 'text-align: right;',
 			),
 		),

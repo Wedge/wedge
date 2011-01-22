@@ -110,7 +110,7 @@ function QuoteFast()
 		{
 			$row['body'] = strtr($row['body'], array('&lt;' => '#smlt#', '&gt;' => '#smgt#', '&amp;' => '#smamp#'));
 			$row['body'] = wedgeEditor::bbc_to_html($row['body']);
-			$lb = '<br />';
+			$lb = '<br>';
 		}
 		else
 			$lb = "\n";

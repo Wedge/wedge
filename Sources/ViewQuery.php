@@ -85,7 +85,7 @@ function ViewQuery()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>', $context['forum_name_html_safe'], '</title>',
 	theme_base_css(), '
 	<style>
@@ -146,7 +146,7 @@ function ViewQuery()
 		<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none;">
 			', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '
 		</a>
-		<br />';
+		<br>';
 
 		if (!empty($query_data['f']) && !empty($query_data['l']))
 			echo sprintf($txt['debug_query_in_line'], $query_data['f'], $query_data['l']);

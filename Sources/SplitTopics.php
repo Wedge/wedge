@@ -1684,7 +1684,7 @@ function MergePosts($error_report = true)
 			}
 			else
 				$newbody = $msn['0']['body'] . (empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_old_time_add']) ?
-							'<br />[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]' : '') . '<br />' : '<br />') . $msn['1']['body'];
+							'<br>[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]' : '') . '<br>' : '<br>') . $msn['1']['body'];
 
 			$memberid = $msn['0']['id_member'];
 			$postcount = $msn['0']['count_posts'];

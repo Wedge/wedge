@@ -252,7 +252,7 @@ function PermissionIndex()
 			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $row['id_group'],
 			'is_post_group' => $row['min_posts'] != -1,
 			'color' => empty($row['online_color']) ? '' : $row['online_color'],
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '" alt="*" />', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 			'children' => array(),
 			'num_permissions' => array(
 				'allowed' => $row['id_group'] == 1 ? '(' . $txt['permissions_all'] . ')' : 0,
