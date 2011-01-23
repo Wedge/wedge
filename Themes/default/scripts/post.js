@@ -294,8 +294,7 @@ function smc_BBCButtonBox(oOptions)
 		});
 	}
 
-	var oBbcContainer = document.getElementById(this.opt.sContainerDiv);
-	oBbcContainer.innerHTML = sBbcContent;
+	$('#' + this.opt.sContainerDiv).html(sBbcContent);
 
 	for (iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{

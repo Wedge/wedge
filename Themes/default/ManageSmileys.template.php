@@ -32,7 +32,7 @@ function template_editsets()
 
 	add_js('
 	if (typeof(window.smfLatestSmileys) != "undefined")
-		document.getElementById("smileysLatest").innerHTML = window.smfLatestSmileys;', !empty($context['selected_set']) ? '
+		$("#smileysLatest").html(window.smfLatestSmileys);', !empty($context['selected_set']) ? '
 	changeSet("' . $context['selected_set'] . '");' : '');
 }
 

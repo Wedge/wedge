@@ -19,12 +19,12 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	function addVerificationField(fieldType, fieldID)
 	{
 		// Check the field exists.
-		if (!document.getElementById(fieldID))
+		var inputHandle = $('#' + fieldID);
+		if (!inputHandle.length)
 			return;
 
 		// Get the handles.
 		var
-			inputHandle = $('#' + fieldID),
 			imageHandle = $('#' + fieldID + '_img'),
 			// !!! Look like this one is never used...
 			divHandle = $('#' + fieldID + '_div'),
@@ -60,19 +60,10 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		divHandle.show();
 	}
 
-	// A button to trigger a username search?
-	function addUsernameSearchTrigger(elementID)
-	{
-		$(elementID).click(checkUsername);
-	}
-
-	// This function will automatically pick up all the necessary verification fields and initialise their visual status.
+	// This function will automatically pick up all the necessary verification fields and initialize their visual status.
 	function autoSetup(formID)
 	{
-		if (!document.getElementById(formID))
-			return false;
-
-		$('input[type="text"].autov, input[type="password"].autov').each(function () {
+		return !!($('#' + formID).find('input[type="text"][id*="autov"], input[type="password"][id*="autov"]').each(function () {
 			var curType = 0, id = this.id;
 
 			// Username can only be done with XML.
@@ -91,11 +82,9 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 				addVerificationField(curType, id);
 
 			// If this is the username do we also have a button to find the user?
-			if (curType == 'username' && $('#' + id + '_link'))
-				addUsernameSearchTrigger('#' + id + '_link');
-		});
-
-		return true;
+			if (curType == 'username')
+				$('#' + id + '_link').click(checkUsername);
+		}).length);
 	}
 
 	// What is the password state?

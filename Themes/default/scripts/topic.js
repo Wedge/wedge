@@ -226,10 +226,10 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	this.sCurMessageId = $('message', XMLDoc).attr('id');
 
 	// If this is not valid then simply give up.
-	if (!document.getElementById(this.sCurMessageId))
+	this.oCurMessageDiv = $('#' + this.sCurMessageId);
+	if (!this.oCurMessageDiv.length)
 		return this.modifyCancel();
 
-	this.oCurMessageDiv = $('#' + this.sCurMessageId);
 	this.sMessageBuffer = this.oCurMessageDiv.html();
 
 	// We have to force the body to lose its dollar signs thanks to IE.
@@ -354,8 +354,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	if (!this.bButtonsShown)
 	{
 		// Make sure it can go somewhere.
-		if (this.opt.sButtonStripDisplay && document.getElementById(this.opt.sButtonStripDisplay))
-			$('#' + this.opt.sButtonStripDisplay).show();
+		$('#' + this.opt.sButtonStripDisplay).show();
 
 		// Add the 'remove selected items' button.
 		if (this.opt.bCanRemove)
@@ -407,34 +406,27 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 {
-	var oForm = document.getElementById(this.opt.sFormId);
-
 	// Make sure this form isn't submitted in another way than this function.
-	var oInput = document.createElement('input');
-	oInput.type = 'hidden';
-	oInput.name = this.opt.sSessionVar;
-	oInput.value = this.opt.sSessionId;
-	oForm.appendChild(oInput);
+	var
+		oForm = $('#' + this.opt.sFormId)[0],
+		oInput = $('<input type="hidden" />', { name: this.opt.sSessionVar, value: this.opt.sSessionId }).appendTo(oForm);
 
-	switch (sSubmitType)
+	if (sSubmitType == 'remove')
 	{
-		case 'remove':
-			if (!confirm(this.opt.sRemoveButtonConfirm))
-				return false;
-
-			oForm.action = oForm.action.replace(/;restore_selected=1/, '');
-		break;
-
-		case 'restore':
-			if (!confirm(this.opt.sRestoreButtonConfirm))
-				return false;
-
-			oForm.action = oForm.action + ';restore_selected=1';
-		break;
-
-		default:
+		if (!confirm(this.opt.sRemoveButtonConfirm))
 			return false;
+
+		oForm.action = oForm.action.replace(/;restore_selected=1/, '');
 	}
+	else if (sSubmitType == 'restore')
+	{
+		if (!confirm(this.opt.sRestoreButtonConfirm))
+			return false;
+
+		oForm.action = oForm.action + ';restore_selected=1';
+	}
+	else
+		return false;
 
 	oForm.submit();
 	return true;
@@ -594,15 +586,7 @@ function expandThumb(thumbID)
 // Adds a button to a certain button strip.
 function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 {
-	var oButtonStrip = document.getElementById(sButtonStripId);
-	var aItems = oButtonStrip.getElementsByTagName('li');
-
-	// Remove the 'last' class from the last item.
-	if (aItems.length > 0)
-	{
-		var oLastItem = aItems[aItems.length - 1];
-		oLastItem.className = oLastItem.className.replace(/\s*last/, 'position_holder');
-	}
+	$('#' + sButtonStripId + ' li').last().removeClass('last').addClass('position_holder');
 
 	// Add the button.
 	$('<li></li>').html('<a href="#"' + oOptions.sCustom + ' class="last" id="' + oOptions.sId + '">' + oOptions.sText + '</a>')

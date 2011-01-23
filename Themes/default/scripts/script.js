@@ -528,7 +528,7 @@ function JumpTo(opt)
 			+ opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities()
 			+ '</option></select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" onclick="window.location.href = \''
 			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';">'));
-	this.dropdownList = document.getElementById(opt.sContainerId + '_select');
+	this.dropdownList = $('#' + opt.sContainerId + '_select')[0];
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
@@ -606,7 +606,7 @@ function addLoadEvent(fNewOnload)
 function smfSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
-	var oCodeArea = (typeof bActOnElement == 'boolean' && bActOnElement) ? document.getElementById(oCurElement) : oCurElement.parentNode.nextSibling, oCurRange;
+	var oCodeArea = (typeof bActOnElement == 'boolean' && bActOnElement) ? $('#' + oCurElement)[0] : oCurElement.parentNode.nextSibling, oCurRange;
 
 	if (typeof oCodeArea != 'object' || oCodeArea == null)
 		return false;

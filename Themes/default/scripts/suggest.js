@@ -12,7 +12,7 @@ function smc_AutoSuggest(oOptions)
 	this.opt.sSearchType = 'member';
 
 	// Store the handle to the text box.
-	var oText = document.getElementById(this.opt.sControlId);
+	var oText = $('#' + this.opt.sControlId)[0];
 	this.oTextHandle = oText;
 
 	this.oSuggestDivHandle = null;
@@ -62,7 +62,7 @@ function smc_AutoSuggest(oOptions)
 	if (this.bItemList)
 	{
 		if ('sItemListContainerId' in this.opt)
-			this.oItemList = document.getElementById(this.opt.sItemListContainerId);
+			this.oItemList = $('#' + this.opt.sItemListContainerId)[0];
 		else
 		{
 			this.oItemList = document.createElement('div');

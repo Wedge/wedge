@@ -380,7 +380,7 @@ function template_show_spider_logs()
 					', $txt['spider_logs_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="delete_entries" value="', $txt['spider_logs_delete_submit'], '" onclick="if (document.getElementById(\'older\').value < 1 && !confirm(' . JavaScriptEscape($txt['spider_logs_delete_confirm']) . ')) return false; return true;" class="delete">
+				<input type="submit" name="delete_entries" value="', $txt['spider_logs_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_logs_delete_confirm']) . ');" class="delete">
 			</div>
 		</form>
 	</div>

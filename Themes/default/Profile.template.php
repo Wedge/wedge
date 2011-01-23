@@ -1949,10 +1949,12 @@ function template_issueWarning()
 
 	template_load_warning_variables();
 
+	// !!! Should we really calculate these? jQuery should have done most of it already...
 	add_js('
 	function setWarningBarPos(curEvent, isMove, changeAmount)
 	{
-		barWidth = ', $context['warningBarWidth'], ';
+		var barWidth = ', $context['warningBarWidth'], ', percent;
+		var position = 0, mouse, size;
 
 		// Are we passing the amount to change it by?
 		if (changeAmount)
@@ -1973,8 +1975,7 @@ function template_issueWarning()
 				return false;
 
 			// Get the position of the container.
-			contain = document.getElementById(\'warning_contain\');
-			position = 0;
+			var contain = $(\'#warning_contain\')[0];
 			while (contain != null)
 			{
 				position += contain.offsetLeft;
@@ -2000,21 +2001,16 @@ function template_issueWarning()
 			percent = Math.round(percent / 5) * 5;
 		}
 
-		// What are the limits?
-		minLimit = ', $context['min_allowed'], ';
-		maxLimit = ', $context['max_allowed'], ';
-
-		percent = Math.max(percent, minLimit);
-		percent = Math.min(percent, maxLimit);
+		percent = Math.max(percent, ', $context['min_allowed'], ');
+		percent = Math.min(percent, ', $context['max_allowed'], ');
 
 		size = barWidth * (percent/100);
 
 		$("#warning_text").html(percent + "%");
 		$("#warning_level").val(percent);
-		$("#warning_progress").css("width", size + "px");
 
 		// Get the right color.
-		color = "black"');
+		var color = "black"');
 
 	foreach ($context['colors'] as $limit => $color)
 		add_js('
@@ -2022,7 +2018,7 @@ function template_issueWarning()
 			color = "', $color, '";');
 
 	add_js('
-		$("#warning_progress").css("backgroundColor", color);
+		$("#warning_progress").css({ width: size + "px", backgroundColor: color });
 
 		// Also set the right effect.
 		effectText = "";');
@@ -2611,7 +2607,7 @@ function template_profile_avatar_select()
 
 	function previewExternalAvatar(src)
 	{
-		if (!document.getElementById("avatar"))
+		if (!$("#avatar").length)
 			return;
 
 		var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
@@ -2878,7 +2874,7 @@ function template_authentication_method()
 		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
 
 		// No openID?
-		if (!document.getElementById("auth_openid"))
+		if (!$("#auth_openid").length)
 			return;
 
 		var is_pw = currentAuthMethod == "passwd";

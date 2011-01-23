@@ -16,8 +16,6 @@
 	}
 */
 
-
-
 // Handle the JavaScript surrounding the admin and moderation center.
 function smf_AdminIndex(oOptions)
 {
@@ -45,7 +43,7 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 	for (var i = 0; i < window.smfAnnouncements.length; i++)
 		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
 
-	document.getElementById(this.opt.sAnnouncementContainerId).innerHTML = this.opt.sAnnouncementTemplate.replace('%content%', sMessages);
+	$('#' + this.opt.sAnnouncementContainerId).html(this.opt.sAnnouncementTemplate.replace('%content%', sMessages));
 };
 
 smf_AdminIndex.prototype.showCurrentVersion = function ()
@@ -53,14 +51,14 @@ smf_AdminIndex.prototype.showCurrentVersion = function ()
 	if (!('smfVersion' in window))
 		return;
 
-	var oSmfVersionContainer = document.getElementById(this.opt.sSmfVersionContainerId);
-	var oYourVersionContainer = document.getElementById(this.opt.sYourVersionContainerId);
+	$('#' + this.opt.sSmfVersionContainerId).html(window.smfVersion);
 
-	oSmfVersionContainer.innerHTML = window.smfVersion;
+	var
+		oYourVersionContainer = $('#' + this.opt.sYourVersionContainerId),
+		sCurrentVersion = oYourVersionContainer.html();
 
-	var sCurrentVersion = oYourVersionContainer.innerHTML;
 	if (sCurrentVersion != window.smfVersion)
-		oYourVersionContainer.innerHTML = this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion);
+		oYourVersionContainer.html(this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion));
 };
 
 smf_AdminIndex.prototype.checkUpdateAvailable = function ()
@@ -68,25 +66,22 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 	if (!('smfUpdatePackage' in window))
 		return;
 
-	var oContainer = document.getElementById(this.opt.sUpdateNotificationContainerId);
-
 	// Are we setting a custom title and message?
-	var sTitle = 'smfUpdateTitle' in window ? window.smfUpdateTitle : this.opt.sUpdateNotificationDefaultTitle;
-	var sMessage = 'smfUpdateNotice' in window ? window.smfUpdateNotice : this.opt.sUpdateNotificationDefaultMessage;
+	var
+		sTitle = 'smfUpdateTitle' in window ? window.smfUpdateTitle : this.opt.sUpdateNotificationDefaultTitle,
+		sMessage = 'smfUpdateNotice' in window ? window.smfUpdateNotice : this.opt.sUpdateNotificationDefaultMessage;
 
-	oContainer.innerHTML = this.opt.sUpdateNotificationTemplate.replace('%title%', sTitle).replace('%message%', sMessage);
+	$('#' + this.opt.sUpdateNotificationContainerId).html(this.opt.sUpdateNotificationTemplate.replace('%title%', sTitle).replace('%message%', sMessage));
 
 	// Parse in the package download URL if it exists in the string.
-	document.getElementById('update-link').href = this.opt.sUpdateNotificationLink.replace('%package%', window.smfUpdatePackage);
+	$('#update-link').attr('href', this.opt.sUpdateNotificationLink.replace('%package%', window.smfUpdatePackage));
 
 	// If we decide to override life into "red" mode, do it.
 	if ('smfUpdateCritical' in window)
 	{
-		document.getElementById('update_table').style.backgroundColor = '#aa2222';
-		document.getElementById('update_title').style.backgroundColor = '#dd2222';
-		document.getElementById('update_title').style.color = 'white';
-		document.getElementById('update_message').style.backgroundColor = '#eebbbb';
-		document.getElementById('update_message').style.color = 'black';
+		$('#update_table').css('backgroundColor', '#aa2222');
+		$('#update_title').css({ backgroundColor: '#dd2222', color: 'white' });
+		$('#update_message').css({ backgroundColor: '#eebbbb', color: 'black' });
 	}
 };
 
@@ -103,7 +98,7 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {
 	// If it is undefined, or currently off, turn it on - otherwise off.
 	this.oSwaps[sName] = !(sName in this.oSwaps) || !this.oSwaps[sName];
-	document.getElementById(sName).style.display = this.oSwaps[sName] ? '' : 'none';
+	$('#' + sName).toggle(this.oSwaps[sName]);
 
 	// Unselect the link and return false.
 	oSendingElement.blur();
@@ -116,8 +111,7 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 	if (sCurrent == sTarget)
 		return false;
 
-	var aCurrentVersion = sCurrent.split('.');
-	var aTargetVersion = sTarget.split('.');
+	var aCurrentVersion = sCurrent.split('.'), aTargetVersion = sTarget.split('.');
 
 	for (var i = 0, n = (aCurrentVersion.length > aTargetVersion.length ? aCurrentVersion.length : aTargetVersion.length); i < n; i++)
 	{
@@ -131,8 +125,7 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 		if (aCurrentVersion[i] == aTargetVersion[i])
 			continue;
 
-		var aCurrentDev = null;
-		var aTargetDev = null;
+		var aCurrentDev = null, aTargetDev = null;
 
 		if (aCurrentVersion[i].indexOf('Beta') != -1 || aCurrentVersion[i].indexOf('RC') != -1)
 			aCurrentDev = aCurrentVersion[i].match(/(\d+)\s*(Beta|RC)\s*(\d+)/);
@@ -143,19 +136,19 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 		if (aCurrentDev != null || aTargetDev != null)
 		{
 			if (aCurrentDev == null)
-				return (parseInt(aCurrentVersion[i], 10) < parseInt(aTargetDev[1], 10));
+				return parseInt(aCurrentVersion[i], 10) < parseInt(aTargetDev[1], 10);
 			else if (aTargetDev == null)
-				return (parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10));
+				return parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10;
 			else if (aCurrentDev[1] != aTargetDev[1])
-				return (parseInt(aCurrentDev[1], 10) < parseInt(aTargetDev[1], 10));
+				return parseInt(aCurrentDev[1], 10) < parseInt(aTargetDev[1], 10);
 			else if (aCurrentDev[2] != aTargetDev[2])
-				return (aTargetDev[2] == 'RC');
+				return aTargetDev[2] == 'RC';
 			else
-				return (parseInt(aCurrentDev[3], 10) < parseInt(aTargetDev[3], 10));
+				return parseInt(aCurrentDev[3], 10) < parseInt(aTargetDev[3], 10);
 		}
 		// Otherwise a simple comparison...
 		else
-			return (parseInt(aCurrentVersion[i], 10) < parseInt(aTargetVersion[i], 10));
+			return parseInt(aCurrentVersion[i], 10) < parseInt(aTargetVersion[i], 10);
 	}
 
 	return false;
@@ -192,21 +185,17 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	for (var i = 0, n = sSections.length; i < n; i++)
 	{
 		// Collapse all sections.
-		var oSection = document.getElementById(sSections[i]);
-		if (typeof oSection == 'object' && oSection != null)
-			oSection.style.display = 'none';
+		$('#' + sSections[i]).hide();
 
 		// Make all section links clickable.
-		var oSectionLink = document.getElementById(sSections[i] + '-link');
-		if (typeof oSectionLink == 'object' && oSectionLink != null)
-		{
-			oSectionLink.instanceRef = this;
-			oSectionLink.sSection = sSections[i];
-			oSectionLink.onclick = function () {
+		$('#' + sSections[i] + '-link').each(function () {
+			this.instanceRef = this;
+			this.sSection = sSections[i];
+			this.onclick = function () {
 				this.instanceRef.swapOption(this, this.sSection);
 				return false;
 			};
-		}
+		});
 	}
 
 	if (!('smfVersions' in window))
@@ -214,12 +203,11 @@ smf_ViewVersions.prototype.determineVersions = function ()
 
 	for (var sFilename in window.smfVersions)
 	{
-		if (!document.getElementById('current' + sFilename))
+		if (!$('#current' + sFilename).length)
 			continue;
 
-		var sYourVersion = document.getElementById('your' + sFilename).innerHTML;
+		var sYourVersion = $('#your' + sFilename).html(), sCurVersionType;
 
-		var sCurVersionType;
 		for (var sVersionType in oLowVersion)
 			if (sFilename.substr(0, sVersionType.length) == sVersionType)
 			{
@@ -237,14 +225,14 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
 			{
 				oLowVersion[sCurVersionType] = sYourVersion;
-				document.getElementById('your' + sFilename).style.color = 'red';
+				$('#your' + sFilename).css('color', 'red');
 			}
 		}
 		else if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
 			oLowVersion[sCurVersionType] = sYourVersion;
 
-		document.getElementById('current' + sFilename).innerHTML = smfVersions[sFilename];
-		document.getElementById('your' + sFilename).innerHTML = sYourVersion;
+		$('#current' + sFilename).html(smfVersions[sFilename]);
+		$('#your' + sFilename).html(sYourVersion);
 	}
 
 	if (!('smfLanguageVersions' in window))
@@ -254,13 +242,10 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	{
 		for (i = 0; i < this.opt.aKnownLanguages.length; i++)
 		{
-			if (!document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]))
+			if ($('#current' + sFilename + this.opt.aKnownLanguages[i]).html(smfLanguageVersions[sFilename]).length)
 				continue;
 
-			document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]).innerHTML = smfLanguageVersions[sFilename];
-
-			sYourVersion = document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).innerHTML;
-			document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).innerHTML = sYourVersion;
+			sYourVersion = $('#your' + sFilename + this.opt.aKnownLanguages[i]).html();
 
 			if ((this.compareVersions(oHighYour.Languages, sYourVersion) || oHighYour.Languages == '??') && !oLowVersion.Languages)
 				oHighYour.Languages = sYourVersion;
@@ -270,32 +255,31 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			if (this.compareVersions(sYourVersion, smfLanguageVersions[sFilename]))
 			{
 				oLowVersion.Languages = sYourVersion;
-				document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).style.color = 'red';
+				$('#your' + sFilename + this.opt.aKnownLanguages[i]).css('color', 'red');
 			}
 		}
 	}
 
-	document.getElementById('yourSources').innerHTML = oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources;
-	document.getElementById('currentSources').innerHTML = oHighCurrent.Sources;
+	$('#yourSources').html(oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources);
+	$('#currentSources').html(oHighCurrent.Sources);
 	if (oLowVersion.Sources)
-		document.getElementById('yourSources').style.color = 'red';
+		$('#yourSources').css('color', 'red');
 
-	document.getElementById('yourDefault').innerHTML = oLowVersion.Default ? oLowVersion.Default : oHighYour.Default;
-	document.getElementById('currentDefault').innerHTML = oHighCurrent.Default;
+	$('#yourDefault').html(oLowVersion.Default ? oLowVersion.Default : oHighYour.Default);
+	$('#currentDefault').html(oHighCurrent.Default);
 	if (oLowVersion.Default)
-		document.getElementById('yourDefault').style.color = 'red';
+		$('#yourDefault').css('color', 'red');
 
-	if (document.getElementById('Templates'))
+	if ($('#Templates').length)
 	{
-		document.getElementById('yourTemplates').innerHTML = oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates;
-		document.getElementById('currentTemplates').innerHTML = oHighCurrent.Templates;
-
+		$('#yourTemplates').html(oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates);
+		$('#currentTemplates').html(oHighCurrent.Templates);
 		if (oLowVersion.Templates)
-			document.getElementById('yourTemplates').style.color = 'red';
+			$('#yourTemplates').css('color', 'red');
 	}
 
-	document.getElementById('yourLanguages').innerHTML = oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages;
-	document.getElementById('currentLanguages').innerHTML = oHighCurrent.Languages;
+	$('#yourLanguages').html(oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages);
+	$('#currentLanguages').html(oHighCurrent.Languages);
 	if (oLowVersion.Languages)
-		document.getElementById('yourLanguages').style.color = 'red';
+		$('#yourLanguages').css('color', 'red');
 };

@@ -74,7 +74,7 @@ function template_new_group()
 							<legend>', $txt['membergroups_select_permission_type'], '</legend>
 							<input type="radio" name="perm_type" id="perm_type_inherit" value="inherit" checked>
 							<label for="perm_type_inherit">', $txt['membergroups_new_as_inherit'], ':</label>
-							<select name="inheritperm" id="inheritperm_select" onclick="document.getElementById(\'perm_type_inherit\').checked = true;">
+							<select name="inheritperm" id="inheritperm_select" onclick="$(\'#perm_type_inherit\').attr(\'checked\', true);">
 								<option value="-1">', $txt['membergroups_guests'], '</option>
 								<option value="0" selected>', $txt['membergroups_members'], '</option>';
 
@@ -87,7 +87,7 @@ function template_new_group()
 
 							<input type="radio" name="perm_type" id="perm_type_copy" value="copy">
 							<label for="perm_type_copy">', $txt['membergroups_new_as_copy'], ':</label>
-							<select name="copyperm" id="copyperm_select" onclick="document.getElementById(\'perm_type_copy\').checked = true;">
+							<select name="copyperm" id="copyperm_select" onclick="$(\'#perm_type_copy\').attr(\'checked\', true);">
 								<option value="-1">', $txt['membergroups_guests'], '</option>
 								<option value="0" selected>', $txt['membergroups_members'], '</option>';
 
@@ -100,7 +100,7 @@ function template_new_group()
 
 							<input type="radio" name="perm_type" id="perm_type_predefined" value="predefined">
 							<label for="perm_type_predefined">', $txt['membergroups_new_as_type'], ':</label>
-							<select name="level" id="level_select" onclick="document.getElementById(\'perm_type_predefined\').checked = true;">
+							<select name="level" id="level_select" onclick="$(\'#perm_type_predefined\').attr(\'checked\', true);">
 								<option value="restrict">', $txt['permitgroups_restrict'], '</option>
 								<option value="standard" selected>', $txt['permitgroups_standard'], '</option>
 								<option value="moderator">', $txt['permitgroups_moderator'], '</option>
