@@ -550,17 +550,17 @@ tr.titlebg td {
 ------------------------------------------------------- */
 .topic_table {
 	td.stickybg2 {
-		background-image: url(../images/icons/quick_sticky.gif);
+		background-image: url($images/icons/quick_sticky.gif);
 		background-repeat: no-repeat;
 		background-position: 2% 4px;
 	}
 	td.lockedbg2 {
-		background-image: url(../images/icons/quick_lock.gif);
+		background-image: url($images/icons/quick_lock.gif);
 		background-repeat: no-repeat;
 		background-position: 2% 4px;
 	}
 	td.locked_sticky2 {
-		background-image: url(../images/icons/quick_sticky_lock.gif);
+		background-image: url($images/icons/quick_sticky_lock.gif);
 		background-repeat: no-repeat;
 		background-position: 2% 4px;
 	}
@@ -639,7 +639,7 @@ tr.titlebg td {
 }
 
 .profile_pie {
-	background-image: url(../images/stats_pie_rtl.png);
+	background-image: url($images/stats_pie_rtl.png);
 	float: right;
 	margin-right: 0;
 	margin-left: 1em;
@@ -822,7 +822,7 @@ span.search_weight {
 /* Themes */
 .is_directory {
 	padding-right: 18px;
-	background: url(../images/admin/boards.gif) no-repeat;
+	background: url($images/admin/boards.gif) no-repeat;
 	background-position: 100% 0;
 }
 /* Styles for the moderation center.

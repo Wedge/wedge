@@ -10,16 +10,25 @@
 	(Just have a look at Pastel's for a sample. We personally don't give a damn.)
 */
 
-.button_submit, .button_reset {
-	background: #cde7ff url(../images/theme/submit_bg.png) no-repeat;
-	border: 1px solid #aaa;
+.ie6_button {
+	background: url($images/theme/bevel.png) #d6e6e6;
+	border: 1px solid;
+	border-color: #ccc #999 #999 #ccc;
 	cursor: pointer;
-	font-weight: normal;
 	padding: 3px 4px;
+	color: #555;
+	border-radius: 5px;
 	:hover {
-		background: #cde7ff url(../images/theme/submit_bg.png) no-repeat 0 -140px;
-		border: 1px solid #aaa;
+		background-color: #dee;
+		color: #000;
 	}
+}
+.ie6_search {
+	background: url($images/filter.gif) 5px 2px no-repeat #fdf7ef;
+	padding-left: 24px;
+}
+.ie6_reset {
+	background-color: #fdf7ef;
 }
 
 /* The dropdown menus
@@ -48,7 +57,7 @@
 }
 /* IE6 also fails remembering the last correct background-color when meeting a rgba() value afterwards... */
 h4.hove {
-	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
+	background: #ebe7e2 url($images/menu.gif) no-repeat 98% 2px;
 }
 li.hove {
 	background: #dbd7d2;
@@ -275,7 +284,7 @@ table.table_grid, table.cs0, table.cs1 {
 	height: 150px;
 }
 h4.hove {
-	background: #e2ebe7 url(../images/menu.gif) no-repeat 98% 2px;
+	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 2px;
 }
 li.hove {
 	background: #e2ebe7;

@@ -14,15 +14,16 @@
 
 	<css for="ie7,ie8"><![CDATA[
 		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a {
-			behavior: url({root}/Themes/default/css/PIE.htc);
+			behavior: url($behavior/Themes/default/css/PIE.htc);
 			position: relative;
 		}
 	]]></css>
 
 	<code for="ie6"><![CDATA[
 	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
-	$('*[type=submit], *[type=button]').addClass('button_submit');
-	$('*[type=reset]').addClass('button_reset');
+	$('input[type=submit], input[type=button], input[type=reset]').addClass('ie6_button');
+	$('input[name=cancel], input[type=reset]').addClass('ie6_reset');
+	$('input[type=search]').addClass('ie6_search');
 	]]></code>
 
 	<block name="title"><div class="title_bar"><h3>|</h3></div></block>

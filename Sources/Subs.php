@@ -2792,7 +2792,7 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $wedge_base_dir, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
+	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
 
 	// Mix CSS files together!
 	$css = array();
@@ -2807,10 +2807,11 @@ function wedge_cache_css()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
-		// If this is a replace-type styling, erase all of the parent files.
+		// !!! Right now, the default styling (Pastel) will not run this, even though it needs it. Right back at ya, IE.
 		if ($folder !== 'css' && file_exists($fold . 'settings.xml'))
 		{
 			$set = file_get_contents($fold . '/settings.xml');
+			// If this is a replace-type styling, erase all of the parent files.
 			if (strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
 				$css = array();
 		}
@@ -2833,7 +2834,6 @@ function wedge_cache_css()
 
 	// The last folder in the list is the deepest styling.
 	// It's the one that gets CSS/JavaScript attention.
-	// !!! Right now, the default styling (Pastel) will not run this, even though it needs it. Right back at ya, IE.
 	if (!empty($set))
 	{
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
@@ -2897,19 +2897,27 @@ function wedge_cache_css()
 
 	// Load Shaun Inman's nested selector parser
 	loadSource('Class-CSS');
-	$plugins = array(new ServerImportPlugin(), new ConstantsPlugin(), new BasedOnPlugin(), new NestedSelectorsPlugin());
+	$plugins = array(new ServerImportPlugin(), new VarPlugin(), new BasedOnPlugin(), new NestedSelectorsPlugin());
+
+	// Default CSS variables (paths are set relative to the cache folder)
+	// !!! If subdomains are allowed, should we use absolute paths instead?
+	$css_vars = array(
+		'$images' => '..' . str_replace($boardurl, '', $settings['images_url']),
+		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
+		'$here' => '',
+		'$root' => '../',
+	);
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	foreach ($css as $file)
 	{
-		$wedge_base_dir = substr(dirname($file), $discard_dir) . '/';
+		$css_vars['$here'] = '..' . str_replace($boarddir, '', dirname($file));
 		$add = file_get_contents($file);
 
 		foreach ($plugins as $plugin)
 			$plugin->process($add);
 
 		$add = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $add);
-		$add = preg_replace_callback('~url\(["\']?(?!/|[a-zA-Z]+://)([^\)]+)["\']?\)~u', 'wedge_fix_relative_css', $add);
 		// Only the basic CSS3 we actually use. May add more in the future.
 		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
 		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);
@@ -2925,28 +2933,6 @@ function wedge_cache_css()
 		$final = gzencode($final, 9);
 
 	file_put_contents($final_file, $final);
-}
-
-/**
- * Fix relative URLs in cached CSS files. This function is called back by a preg_replace_callback call in {@link wedge_cache_css()}.
- *
- * @param string $matches The actual CSS contents
- * @return string Updated CSS contents with fixed URLs
- */
-function wedge_fix_relative_css($matches)
-{
-	global $wedge_base_dir;
-
-	// Example: Themes/default/css/Styling/Styling2/../sprite.png
-	$fixed = '';
-	$fix = $wedge_base_dir . $matches[1];
-	while (strpos($fix, '../') !== false && $fixed !== $fix)
-	{
-		$fixed = $fix;
-		$fix = preg_replace('~[^/]+/\.\./~u', '', $fix);
-	}
-	// At this point, we should have ../Themes/default/css/Styling/sprite.png
-	return 'url(../' . $fix . ')';
 }
 
 /**
@@ -3226,9 +3212,9 @@ function theme_base_css()
 
 	if (!empty($context['extra_styling_css']))
 	{
-		// Replace {root} with the forum's root URL in context, because pretty URLs complicate things in IE.
-		if (strpos($context['extra_styling_css'], '{root}') !== false)
-			$context['extra_styling_css'] = str_replace('{root}', strpos($boardurl, '://' . $_SERVER['HTTP_HOST']) !== false ? $boardurl
+		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
+		if (strpos($context['extra_styling_css'], '$behavior') !== false)
+			$context['extra_styling_css'] = str_replace('$behavior', strpos($boardurl, '://' . $_SERVER['HTTP_HOST']) !== false ? $boardurl
 				: preg_replace('~(?<=://)([^/]+)~', $_SERVER['HTTP_HOST'], $boardurl), $context['extra_styling_css']);
 		echo "\n\t<style>", $context['extra_styling_css'], "\t</style>";
 	}

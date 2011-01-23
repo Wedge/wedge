@@ -22,7 +22,7 @@
 
 		Warnings:
 			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
-			- These files should have their url() paths modified accordingly. e.g., url(../../img) instead of url(../img)
+			- These files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
 			- If you're offering nested stylings (/css/styling1/styling2/), styling2 can only be of the "add" type,
 			  otherwise it should obviously be set in a top-level folder. (/css/styling2/)
 	-->

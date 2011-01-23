@@ -417,7 +417,7 @@ ul.theme_options {
 }
 .is_directory {
 	padding-left: 18px;
-	background: url(../../images/admin/boards.gif) no-repeat;
+	background: url($images/admin/boards.gif) no-repeat;
 }
 .edit_file {
 	width: 96%;
@@ -490,9 +490,6 @@ ul.moderation_notes {
 /* Styles for the error log.
 ------------------------------------------------- */
 
-h3.grid_header {
-	height: 25px;
-}
 #error_log {
 	width: 100%;
 	tr.windowbg td, tr.windowbg2 td {

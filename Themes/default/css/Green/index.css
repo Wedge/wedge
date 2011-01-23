@@ -23,10 +23,10 @@ body {
 }
 
 .css h4:hover, h4.hove {
-	background: #c8e2fb url(../../images/menu.gif) no-repeat 98% 2px;
+	background: #c8e2fb url($images/menu.gif) no-repeat 98% 2px;
 }
 .menu li.chosen h4 {
-	background: #3fa6c3 url(../../images/menu.gif) no-repeat 98% -28px;
+	background: #3fa6c3 url($images/menu.gif) no-repeat 98% -28px;
 }
 .css > li li:hover, li.hove {
 	background: #d0e2fb;

@@ -246,7 +246,8 @@ function template_sidebar_above()
 	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 
 	echo $needs_tables ? '
-		<table id="edge"><tr><td id="sidebar" valign="top">' : '<div id="edge"><div id="sidebar">', '
+		<table id="edge"><tr><td id="sidebar" valign="top">' : '
+		<div id="edge"><div id="sidebar">', '
 			<we:title>
 				Sidebar
 			</we:title>
@@ -262,15 +263,17 @@ function template_sidebar_below()
 
 	echo '
 			<hr>
-			And some filler for the sidebar footer.
-		</div>', $needs_tables ? '</td>' : '';
+			And some filler for the sidebar footer.', $needs_tables ? '
+		</td>' : '
+		</div>';
 }
 
 function template_main_above()
 {
 	global $needs_tables;
 
-	echo $needs_tables ? '<td valign="top">' : '', '
+	echo $needs_tables ? '
+		<td id="main_content" valign="top">' : '
 		<div id="main_content">';
 }
 
@@ -278,8 +281,9 @@ function template_main_below()
 {
 	global $needs_tables;
 
-	echo '
-		</div>', $needs_tables ? '</td></tr></table>' : '</div>';
+	echo $needs_tables ? '
+		</td></tr></table>' : '
+		</div></div>';
 }
 
 function template_body_below()
@@ -317,9 +321,10 @@ function template_body_below()
 	<script type="text/javascript"><!-- // --><![CDATA[
 		function noi_resize()
 		{
-			var d = document, t = d.getElementById("edge"),
+			var d = document, m = d.getElementById("main_content"),
 				f = d.getElementById("footer"),
 				s = d.getElementById("sidebar"),
+				t = m ? m.parentNode : 0,
 				w = t ? t.clientWidth : 0;
 			if (w && w < 728 && !wedge_side)
 			{
@@ -331,7 +336,7 @@ function template_body_below()
 			{
 				wedge_side = 0;
 				f.removeChild(s);
-				t.insertBefore(s, d.getElementById("main_content"));
+				t.insertBefore(s, m);
 			}
 		}
 		wedge_side = 0;

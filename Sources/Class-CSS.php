@@ -43,25 +43,38 @@ class ServerImportPlugin extends CacheerPlugin
 	}
 }
 
-class ConstantsPlugin extends CacheerPlugin
+class VarPlugin extends CacheerPlugin
 {
 	function process(&$css)
 	{
-		$constants = array();
-		if (preg_match_all('#@constants\s*\{\s*([^\}]+)\s*\}\s*#i', $css, $matches))
-		{
-			foreach ($matches[0] as $i => $constant)
-			{
-				$css = str_replace($constant, '', $css);
-				preg_match_all('#([_a-z0-9]+)\s*:\s*([^;]+);#i', $matches[1][$i], $vars);
+		global $css_vars, $context;
 
-				foreach ($vars[1] as $var => $name)
-					$constants["const($name)"] = $vars[2][$var];
+		// Reuse CSS variables from Wedge or parent CSS files.
+		$css_vars = isset($css_vars) ? $css_vars : array();
+
+		// Authors can specific conditions for the variable to be set,
+		// depending on the browser, rtl, guest or member, i.e. anything
+		// set in $context['css_generic_files']. Like this:
+		//
+		//		$variable = rgba(2,4,6,.5);
+		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
+
+		if (preg_match_all('~^\s*(\$\w+)\s*(?:{([^}]+)}\s*)?=\s*([^;]+);[\r\n]?~m', $css, $matches))
+		{
+			foreach ($matches[0] as $i => &$dec)
+			{
+				$css = str_replace($dec, '', $css);
+				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
+					$css_vars[$matches[1][$i]] = $matches[3][$i];
 			}
+
+			// Sort the updated array by key length, to avoid conflicts.
+			$keys = array_map('strlen', array_keys($css_vars));
+			array_multisort($keys, SORT_DESC, $css_vars);
 		}
 
-		if (!empty($constants))
-			$css = str_replace(array_keys($constants), array_values($constants), $css);
+		if (!empty($css_vars))
+			$css = str_replace(array_keys($css_vars), array_values($css_vars), $css);
 	}
 }
 
@@ -142,10 +155,6 @@ class NestedSelectorsPlugin extends CacheerPlugin
 		$xml = str_replace('}', '</rule>', $xml); // Close rules
 		$xml = preg_replace('/\n/', "\r\t", $xml); // Indent everything one tab
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; // Tie it all up with a bow
-
-		// header('Content-type: text/text');
-		// echo $xml;
-		// exit();
 
 		/******************************************************************************
 		 Parse the XML into a crawlable DOM

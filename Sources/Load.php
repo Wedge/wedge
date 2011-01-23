@@ -1789,9 +1789,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if ($context['right_to_left'])
 		$context['css_generic_files'][] = 'rtl';
 
-	// We also have a special stylesheet for sheets. Maybe become useful.
-	if ($user_info['is_guest'])
-		$context['css_generic_files'][] = 'guest';
+	// We also have a special stylesheet for guests/members. May become useful.
+	$context['css_generic_files'][] = $user_info['is_guest'] ? 'guest' : 'member';
 
 	$context['tabindex'] = 1;
 

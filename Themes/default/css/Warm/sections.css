@@ -369,7 +369,7 @@ img.new_posts {
 
 /* The quick edit button */
 .modifybutton {
-	background: url(../../images/icons/modify_inline.gif) no-repeat 0 0;
+	background: url($images/icons/modify_inline.gif) no-repeat 0 0;
 	display: inline;
 	width: 20px;
 	height: 20px;
@@ -415,34 +415,34 @@ ul.quickbuttons {
 	 */
 
 	li.mergepost_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 2px -242px;
+		background: url($images/theme/quickbuttons.png) no-repeat 2px -242px;
 	}
 	li.quote_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 0;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 0;
 	}
 	li.remove_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -30px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -30px;
 	}
 	li.modify_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -60px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -60px;
 	}
 	li.approve_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -90px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -90px;
 	}
 	li.restore_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -120px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -120px;
 	}
 	li.split_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -150px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -150px;
 	}
 	li.reply_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -180px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -180px;
 	}
 	li.reply_all_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -180px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -180px;
 	}
 	li.notify_button {
-		background: url(../../images/theme/quickbuttons.png) no-repeat 0 -210px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -210px;
 	}
 	li.inline_mod_check {
 		margin: 0 0 0 5px;
@@ -966,28 +966,28 @@ tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td {
 		background-position: 98% 4px;
 	}
 	td.stickybg2 {
-		background-image: url(../../images/icons/quick_sticky.gif);
+		background-image: url($images/icons/quick_sticky.gif);
 	}
 	td.lockedbg2 {
-		background-image: url(../../images/icons/quick_lock.gif);
+		background-image: url($images/icons/quick_lock.gif);
 	}
 	td.locked_sticky2 {
-		background-image: url(../../images/icons/quick_sticky_lock.gif);
+		background-image: url($images/icons/quick_sticky_lock.gif);
 	}
 	td.stickybg2.my {
-		background-image: url(../../images/icons/quick_sticky_my.gif);
+		background-image: url($images/icons/quick_sticky_my.gif);
 	}
 	td.lockedbg2.my {
-		background-image: url(../../images/icons/quick_lock_my.gif);
+		background-image: url($images/icons/quick_lock_my.gif);
 	}
 	td.locked_sticky2.my {
-		background-image: url(../../images/icons/quick_sticky_lock_my.gif);
+		background-image: url($images/icons/quick_sticky_lock_my.gif);
 	}
 	td.lastpost {
 		background-image: none;
 	}
 	td.windowbg2.my {
-		background-image: url(../../images/icons/quick_my.gif);
+		background-image: url($images/icons/quick_my.gif);
 		background-repeat: no-repeat;
 		background-position: 98% 4px;
 	}
@@ -1250,7 +1250,7 @@ dl {
 }
 
 .profile_pie {
-	background-image: url(../../images/stats_pie.png);
+	background-image: url($images/stats_pie.png);
 	float: left;
 	height: 20px;
 	width: 20px;
@@ -1454,7 +1454,7 @@ dl.stats {
 
 .statsbar div.bar {
 	float: left;
-	background: url(../../images/bar_stats.png) no-repeat;
+	background: url($images/bar_stats.png) no-repeat;
 	display: block;
 	margin: 0 4px;
 	height: 16px;
@@ -1462,7 +1462,7 @@ dl.stats {
 		position: relative;
 		right: -4px;
 		padding: 0 4px 0 0;
-		background: url(../../images/bar_stats.png) no-repeat 100%;
+		background: url($images/bar_stats.png) no-repeat 100%;
 		height: 16px;
 	}
 }

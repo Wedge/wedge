@@ -14,10 +14,16 @@
  * @todo: Consider wireless.css as an alternative index.css and allow overriding it in subfolders?
  *
  * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
- * CSS cached files are put inside the /css/cache/ folder, so any relative URLs should be set according to that.
- * For instance, accessing /images is done through ../../images, rather than ../images.
- * If you have a file called sprite.png in your custom "css/Hello/World" css folder,
- * link to url(../Hello/World/sprite.png) rather than url(sprite.png).
+ * CSS cached files are put inside the /cache/ folder, so any relative URLs will fail unless they use it
+ * as their root, or use the available path variables.
+ *
+ * $images - current theme's image folder URL
+ * $theme - current theme's root folder URL
+ * $here - current styling's root folder URL
+ * $root - forum's root URL
+ *
+ * e.g. If you have a file called sprite.png in your custom "css/Hello/World"
+ * css folder, link to url($here/sprite.png) rather than url(sprite.png).
  *
  */
 
@@ -30,7 +36,7 @@ body {
 }
 
 #wedge {
-	background: url(../images/theme/grad700.png) repeat-x;
+	background: url($images/theme/grad700.png) repeat-x;
 	padding: 15px 0;
 }
 #header, #navi, #content, #footer {
@@ -40,7 +46,7 @@ body {
 }
 
 #header {
-	background: #faf8f6 url(../images/theme/grad250.png) 0 -50px repeat-x;
+	background: #faf8f6 url($images/theme/grad250.png) 0 -50px repeat-x;
 	border: 1px solid #999;
 	border-bottom: 0;
 	border-radius: 12px 12px 0 0;
@@ -106,7 +112,7 @@ h1.forumtitle {
 }
 /* ..so does the Wedge logo */
 #wedgelogo {
-	background: transparent url(../images/wedgelogo.png) no-repeat;
+	background: transparent url($images/wedgelogo.png) no-repeat;
 	width: 140px;
 	height: 52px;
 	margin-top: .7em;
@@ -173,7 +179,7 @@ h1.forumtitle {
 			height: 21px;
 			line-height: 21px;
 			padding: 0 1.7em 0 5px;
-			background: url(../images/menu.gif) no-repeat right -49px;
+			background: url($images/menu.gif) no-repeat right -49px;
 			&.last {
 				background: none;
 			}
@@ -184,7 +190,7 @@ h1.forumtitle {
 /* The footer with copyright links etc. */
 #footer {
 	text-align: center;
-	background: #f4f2f3 url(../images/theme/grad250.png) 0 -180px repeat-x;
+	background: #f4f2f3 url($images/theme/grad250.png) 0 -180px repeat-x;
 	border: 1px solid #999;
 	border-top: 1px solid #ccc;
 	border-radius: 0 0 12px 12px;
@@ -341,7 +347,7 @@ input, textarea, button, select {
 	}
 }
 input[type=submit], input[type=button], input[type=reset] {
-	background: url(../images/theme/bevel.png) #d6e6e6;
+	background: url($images/theme/bevel.png) #d6e6e6;
 	border: 1px solid;
 	border-color: #ccc #999 #999 #ccc;
 	cursor: pointer;
@@ -358,35 +364,35 @@ input.new, input.save, input.submit, input.delete {
 	padding-left: 24px;
 }
 input.submit {
-	background: url(../images/buttons.png) 4px 2px no-repeat #e2f3ea;
-	background: url(../images/buttons.png) 4px 2px no-repeat, #e2f3ea url(../images/theme/bevel.png);
+	background: url($images/buttons.png) 4px 2px no-repeat #e2f3ea;
+	background: url($images/buttons.png) 4px 2px no-repeat, #e2f3ea url($images/theme/bevel.png);
 	:hover {
 		background-color: #e8f9f0;
 	}
 }
 input.delete {
-	background: url(../images/buttons.png) 4px -30px no-repeat #f5efe9;
-	background: url(../images/buttons.png) 4px -30px no-repeat, #f5efe9 url(../images/theme/bevel.png);
+	background: url($images/buttons.png) 4px -30px no-repeat #f5efe9;
+	background: url($images/buttons.png) 4px -30px no-repeat, #f5efe9 url($images/theme/bevel.png);
 	:hover {
 		background-color: #fbf5ef;
 	}
 }
 input.save {
-	background: url(../images/buttons.png) 4px -62px no-repeat #dff3e8;
-	background: url(../images/buttons.png) 4px -62px no-repeat, #dff3e8 url(../images/theme/bevel.png);
+	background: url($images/buttons.png) 4px -62px no-repeat #dff3e8;
+	background: url($images/buttons.png) 4px -62px no-repeat, #dff3e8 url($images/theme/bevel.png);
 	:hover {
 		background-color: #e5f9ed;
 	}
 }
 input.new {
-	background: url(../images/buttons-64.png) 4px -94px no-repeat #e0eaf6;
-	background: url(../images/buttons-128.png) 4px -94px no-repeat, #e0eaf6 url(../images/theme/bevel.png);
+	background: url($images/buttons-64.png) 4px -94px no-repeat #e0eaf6;
+	background: url($images/buttons-128.png) 4px -94px no-repeat, #e0eaf6 url($images/theme/bevel.png);
 	:hover {
 		background-color: #e6f0fc;
 	}
 }
 input[type=search] {
-	background: url(../images/filter.gif) 5px 2px no-repeat #fdf7ef;
+	background: url($images/filter.gif) 5px 2px no-repeat #fdf7ef;
 	padding-left: 24px;
 }
 input[name=cancel], input[type=reset] {
@@ -427,7 +433,7 @@ input[type=file] {
 }
 
 #menu_container {
-	background: url(../images/theme/grad250.png) 0 -180px repeat-x;
+	background: url($images/theme/grad250.png) 0 -180px repeat-x;
 	border: 1px dotted #000;
 	border-width: 1px 0;
 	overflow: hidden;
@@ -446,7 +452,7 @@ input[type=file] {
 .menu h4 {
 	padding: 3px 19px 3px 6px;
 	font-weight: normal;
-	background: url(../images/menu.gif) no-repeat 98% 2px;
+	background: url($images/menu.gif) no-repeat 98% 2px;
 	margin-bottom: 2px;
 	margin-right: 2px;
 	a {
@@ -456,7 +462,7 @@ input[type=file] {
 }
 
 .menu ul {
-	background: #fff8f1 url(../images/theme/grad250.png) 0 -150px repeat-x;
+	background: #fff8f1 url($images/theme/grad250.png) 0 -150px repeat-x;
 	position: absolute;
 	display: block;
 	border: 1px solid #666;
@@ -496,12 +502,12 @@ input[type=file] {
 }
 
 .css h4:hover, h4.hove {
-	background: #ebe7e2 url(../images/menu.gif) no-repeat 98% 2px;
+	background: #ebe7e2 url($images/menu.gif) no-repeat 98% 2px;
 	background-color: rgba(0,0,0, .075);
 	color: #000;
 }
 .menu li.chosen h4 {
-	background: #3fa6c3 url(../images/menu.gif) no-repeat 98% -28px;
+	background: #3fa6c3 url($images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
 	color: #fff;
 	a { color: #fff }
@@ -511,7 +517,7 @@ li.active > a {
 }
 li.subsection > a {
 	padding: 6px 24px 6px 8px;
-	background: url(../images/menu.gif) no-repeat 98% -46px;
+	background: url($images/menu.gif) no-repeat 98% -46px;
 }
 .css > li li:hover, li.hove {
 	color: #000;
@@ -589,7 +595,7 @@ li.separator {
 	display: inline;
 	margin: 2px 0 0 2px;
 	background-repeat: no-repeat;
-	background-image: url(../images/icons/sprite.png);
+	background-image: url($images/icons/sprite.png);
 }
 
 .m_home {
@@ -737,7 +743,7 @@ blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
 	font-size: 90%;
 	color: #000;
 	line-height: 1.4em;
-	background: url(../images/theme/quote.png) .1em .1em no-repeat;
+	background: url($images/theme/quote.png) .1em .1em no-repeat;
 	border: 1px dotted #99A;
 	padding: 1.2em 2.2em;
 	margin: .1em 0 .5em;
@@ -1074,7 +1080,7 @@ a.moderation_link {
 }
 
 .openid_login {
-	background: white url(../images/openid.gif) no-repeat;
+	background: white url($images/openid.gif) no-repeat;
 	padding-left: 18px;
 }
 
@@ -1112,7 +1118,7 @@ a.moderation_link {
 /* AJAX notification bar
 ------------------------------------------------------- */
 #ajax_in_progress {
-	background: url(../images/theme/loadingbar.png) repeat-x;
+	background: url($images/theme/loadingbar.png) repeat-x;
 	color: #f96f00;
 	text-align: center;
 	font-size: 16pt;
@@ -1195,12 +1201,12 @@ dfn {
 }
 
 .cat_bar {
-	background: #e5eee5 url(../images/theme/grad40.png) 0 -20px repeat-x;
+	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x;
 	border: 1px solid #e0e0e0;
 	border: 1px solid rgba(160,160,160, .5);
 }
 .title_bar {
-	background: #e3e9ef url(../images/theme/grad40.png) 0 -20px repeat-x;
+	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x;
 	border: 1px solid #ddd;
 	border: 1px solid rgba(0,0,0, .15);
 }
@@ -1537,7 +1543,7 @@ form.wrc {
 ------------------------------------------------------- */
 tr.catbg {
 	th {
-		background: #e5eee5 url(../images/theme/grad40.png) 0 -18px repeat-x;
+		background: #e5eee5 url($images/theme/grad40.png) 0 -18px repeat-x;
 	}
 	td {
 		background-color: #e5eee5;
@@ -1545,7 +1551,7 @@ tr.catbg {
 }
 tr.titlebg, tr.titlebg2 {
 	th {
-		background: #e3e9ef url(../images/theme/grad40.png) 0 -18px repeat-x;
+		background: #e3e9ef url($images/theme/grad40.png) 0 -18px repeat-x;
 	}
 	td {
 		background-color: #e3e9ef;

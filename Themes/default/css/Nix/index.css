@@ -26,8 +26,8 @@ body {
 /* We're redefining all sections to use full width, and then we set a padding on them. */
 
 #header, #navi, #menu_container, #footer {
-	background: #444;
-	color: #ccc;
+	background: #693636 url($images/theme/grad700.png) 0 -100px repeat-x;
+	color: #ddc;
 	margin: 0;
 	width: auto;
 	max-width: none;
@@ -45,14 +45,15 @@ body {
 }
 #header {
 	h2 {
-		color: #ccc;
+		color: #fc9;
 	}
 	a {
-		color: #f93;
+		color: #fff; /* f93 */
 	}
 	/* Text color for the forum title in the header */
 	h1.forumtitle a {
-		color: #fff;
+		color: #fc9;
+		text-shadow: 1px 1px 1px #000;
 	}
 }
 
@@ -93,7 +94,7 @@ body {
 		background-image: none;
 	}
 	h4:hover, h4.hove {
-		background: #5a6c85 url(../../images/menu.gif) no-repeat 98% -28px;
+		background: #5a6c85 url($images/menu.gif) no-repeat 98% -28px;
 		a {
 			color: white;
 		}
@@ -128,10 +129,10 @@ code.bbc_code {
 /* Alternating backgrounds for posts, and several other sections of the forum. */
 
 .windowbg, #preview_body {
-	background: #f3f3f3 url(../../images/theme/grad700.png) 0 -550px repeat-x;
+	background: #f3f3f3 url($images/theme/grad700.png) 0 -550px repeat-x;
 }
 .windowbg2 {
-	background: #f6f3f0 url(../../images/theme/grad700.png) 0 -550px repeat-x;
+	background: #f6f3f0 url($images/theme/grad700.png) 0 -550px repeat-x;
 }
 .windowbg3 {
 	background-color: #cad3cd;
@@ -181,7 +182,7 @@ code.bbc_code {
 }
 
 .cat_bar, .title_bar {
-	background: #333f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
+	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x;
 }
 .cat_bar {
 	border-color: #fd9604;
@@ -211,11 +212,11 @@ code.bbc_code {
 }
 
 tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
-	background: #333f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
+	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x;
 }
 tr.catbg {
 	td, th {
-		background: #623f39 url(../../images/theme/grad40.png) 0 0 repeat-x;
+		background: #623f39 url($images/theme/grad40.png) 0 0 repeat-x;
 		color: #fff;
 		a { color: #fff }
 	}
