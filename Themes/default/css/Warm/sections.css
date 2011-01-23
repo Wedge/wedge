@@ -1594,7 +1594,7 @@ dl.addrules dt.floatleft {
 				vertical-align: middle;
 				border-bottom: 2px solid #fff;
 			}
-			.title_bar h4 {
+			.title_bar h3 {
 				margin: 0;
 				height: 23px;
 				line-height: 27px;
@@ -1665,6 +1665,9 @@ span.hidelink {
 #search_term_input {
 	font-size: 115%;
 	margin: 0 0 1em;
+	input[type=search], input.submit {
+		background-position: 5px 4px;
+	}
 }
 
 /* Styles for the advanced search section.
@@ -1722,9 +1725,6 @@ span.hidelink {
 	p.pminfo {
 		margin: 0;
 		padding: .5em;
-	}
-	.cat_bar h3, .title_bar h4 {
-		font-size: 1.1em;
 	}
 }
 #upshrink_ic {
