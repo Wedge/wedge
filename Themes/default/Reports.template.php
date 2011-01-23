@@ -15,9 +15,9 @@ function template_report_type()
 			<div class="information">
 				', $txt['generate_reports_desc'], '
 			</div>
-			<div class="cat_bar">
-				<h3>', $txt['generate_reports_type'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['generate_reports_type'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="generate_report">';
 
@@ -150,9 +150,9 @@ function template_print_above()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>', $context['page_title'], '</title>
-	<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/report.css" />
+	<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/report.css">
 </head>
 <body>';
 }

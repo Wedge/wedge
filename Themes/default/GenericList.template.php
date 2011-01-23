@@ -98,7 +98,7 @@ function template_show_list($list_id = null)
 				$col_header['class'] = 'last_th';
 
 			echo '
-					<th scope="col"', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <img src="' . $settings['images_url'] . '/sort_' . $col_header['sort_image'] . '.gif" />', '</th>';
+					<th scope="col"', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <img src="' . $settings['images_url'] . '/sort_' . $col_header['sort_image'] . '.gif">', '</th>';
 		}
 
 		echo '
@@ -180,7 +180,7 @@ function template_show_list($list_id = null)
 	{
 		foreach ($cur_list['form']['hidden_fields'] as $name => $value)
 			echo '
-			<input type="hidden" name="', $name, '" value="', $value, '" />';
+			<input type="hidden" name="', $name, '" value="', $value, '">';
 
 		echo '
 		</div>
@@ -293,7 +293,7 @@ function template_create_list_menu($list_menu, $direction = 'top')
 
 			$links = array();
 			foreach ($list_menu['links'] as $link)
-				$links[] = ($link['is_selected'] ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;" /> ' : '') . '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
+				$links[] = ($link['is_selected'] ? '<img src="' . $settings['images_url'] . '/selected.gif"> ' : '') . '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
 
 			echo '
 				', implode(' | ', $links), '

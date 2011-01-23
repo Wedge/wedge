@@ -21,13 +21,13 @@ function template_maintain_database()
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_optimize_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit" /></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit"></span>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_backup'], '
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_backup'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
@@ -35,8 +35,8 @@ function template_maintain_database()
 				<p><label for="struct"><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br>
 				<label for="data"><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br>
 				<label for="compress"><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
-				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').attr(\'checked\') || $(\'#data\').attr(\'checked\');" class="save" /></p>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').attr(\'checked\') || $(\'#data\').attr(\'checked\');" class="save"></p>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>';
 
@@ -67,7 +67,7 @@ function template_maintain_routine()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_version_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
@@ -77,7 +77,7 @@ function template_maintain_routine()
 			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_errors_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
@@ -87,7 +87,7 @@ function template_maintain_routine()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recount_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
@@ -97,7 +97,7 @@ function template_maintain_routine()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_logs_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
@@ -107,7 +107,7 @@ function template_maintain_routine()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_cache_info'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 	</div>
@@ -182,7 +182,7 @@ function template_maintain_members()
 						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked>', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').attr(\'checked\', true); $(\'#from_name\').val(\'\');" />
+						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').attr(\'checked\', true); $(\'#from_name\').val(\'\');">
 					</dd>
 					<dt>
 						<label for="type_name"><input type="radio" name="type" id="type_name" value="name">', $txt['reattribute_username'], '</label>
@@ -203,12 +203,12 @@ function template_maintain_members()
 					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="submit" /></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="submit"></span>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['maintain_members'], '
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_members'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
@@ -219,7 +219,7 @@ function template_maintain_members()
 				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
 
 	echo '
-				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon" /></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
+				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
 				<div style="display: none; padding: 3px" id="membersPanel">';
 
 	foreach ($context['membergroups'] as $group)
@@ -228,8 +228,8 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="delete" /></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="delete"></span>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 		<we:cat>
@@ -239,7 +239,7 @@ function template_maintain_members()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recountposts_desc'], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
 	</div>
@@ -297,7 +297,7 @@ function template_maintain_topics()
 	// The otherwise hidden "choose which boards to prune".
 	echo '
 					<p>
-						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3" />', $txt['maintain_old_since_days2'], '
+						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3">', $txt['maintain_old_since_days2'], '
 					</p>
 					<p>
 						<label for="delete_type_nothing"><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" checked> ', $txt['maintain_old_nothing_else'], '</label><br>
@@ -313,7 +313,7 @@ function template_maintain_topics()
 
 		echo '
 					<p>
-						<a href="#rotLink" onclick="swapRot();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="rotIcon" /></a> <a href="#rotLink" onclick="swapRot();" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
+						<a href="#rotLink" onclick="swapRot();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="rotIcon"></a> <a href="#rotLink" onclick="swapRot();" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
 					</p>
 					<div style="display: none;" id="rotPanel" class="flow_hidden">
 						<div class="floatleft" style="width: 49%">';

@@ -49,7 +49,7 @@ function template_admin()
 	echo '
 			<div id="live_news" class="floatleft">
 				<we:title>
-					<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['live'], '
+					<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['live'], '
 				</we:title>
 				<div class="windowbg wrc">
 					<div id="smfAnnouncements">', $txt['lfyi'], '</div>
@@ -94,7 +94,7 @@ function template_admin()
 	foreach ($context['quick_admin_tasks'] as $task)
 		echo '
 				<li>
-					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" class="home_image" /></a>' : '', '
+					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" class="home_image"></a>' : '', '
 					<h5>', $task['link'], '</h5>
 					<span class="task">', $task['description'], '</span>
 				</li>';
@@ -146,11 +146,11 @@ function template_admin()
 		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
 		sUpdateNotificationTemplate: ' . JavaScriptEscape('
-			<div class="cat_bar">
-				<h3 id="update_title">
+			<we:cat>
+				<div id="update_title">
 					%title%
-				</h3>
-			</div>
+				</div>
+			</we:cat>
 			<div class="windowbg wrc">
 				<div id="update_message" class="smalltext">
 					%message%
@@ -169,11 +169,9 @@ function template_credits()
 	echo '
 
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>
-				', $txt['support_title'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['support_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<strong>', $txt['support_versions'], ':</strong><br>
 				', $txt['support_versions_forum'], ':
@@ -192,11 +190,9 @@ function template_credits()
 
 	// Point the admin to common support resources.
 	echo '
-		<div class="cat_bar">
-			<h3>
-				', $txt['support_resources'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['support_resources'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<p>', $txt['support_resources_p1'], '</p>
 			<p>', $txt['support_resources_p2'], '</p>
@@ -204,22 +200,18 @@ function template_credits()
 
 	// Display latest support questions from simplemachines.org.
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a> ', $txt['support_latest'], '
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['support_latest'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
 		</div>';
 
 	// The most important part - the credits :P.
 	echo '
-		<div class="cat_bar">
-			<h3>
-				', $txt['admin_credits'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['admin_credits'], '
+		</we:cat>
 		<div class="windowbg wrc">';
 
 	foreach ($context['credits'] as $section)
@@ -299,11 +291,9 @@ function template_view_versions()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>
-				', $txt['admin_version_check'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['admin_version_check'], '
+		</we:cat>
 		<div class="information">', $txt['version_check_desc'], '</div>
 			<table class="table_grid w100 cs0">
 				<thead>
@@ -576,11 +566,9 @@ function template_edit_censored()
 
 	// This table lets you test out your filters by typing in rude words and seeing what comes out.
 	echo '
-			<div class="cat_bar">
-				<h3>
-					', $txt['censor_test'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['censor_test'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p class="centertext">
 					<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '">
@@ -588,7 +576,7 @@ function template_edit_censored()
 				</p>
 			</div>
 
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -601,11 +589,9 @@ function template_not_done()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>
-				', $txt['not_done_title'], '
-			</h3>
-		</div>
+		<we:cat>
+			', $txt['not_done_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			', $txt['not_done_reason'];
 
@@ -667,11 +653,9 @@ function template_show_settings()
 	// Is there a custom title?
 	if (isset($context['settings_title']))
 		echo '
-			<div class="cat_bar">
-				<h3>
-					', $context['settings_title'], '
-				</h3>
-			</div>';
+			<we:cat>
+				', $context['settings_title'], '
+			</we:cat>';
 
 	// Have we got some custom code to insert?
 	if (!empty($context['settings_message']))
@@ -700,12 +684,13 @@ function template_show_settings()
 			if ($config_var['type'] == 'title')
 				echo '
 
-			<div class="cat_bar settings_cat">
-				<h3', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
-					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '" /></a>' : ''), '
+			<div class="settings_cat"></div>
+			<we:cat>
+				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
+					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '"></a>' : ''), '
 					', $config_var['label'], '
-				</h3>
-			</div>';
+				</div>
+			</we:cat>';
 
 			// A description?
 			else
@@ -759,7 +744,7 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
 					</dt>';
 				else
 					echo '
@@ -855,7 +840,7 @@ function template_show_settings()
 		echo '
 				<hr>
 				<div class="righttext">
-					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit" />
+					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
 				</div>';
 
 	if ($is_open)
@@ -863,7 +848,7 @@ function template_show_settings()
 			</div>';
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -935,11 +920,9 @@ function template_edit_profile_field()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					', $context['page_title'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<fieldset>
 					<legend>', $txt['custom_edit_general'], '</legend>
@@ -997,7 +980,7 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt>
-							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
+							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong>
 							<dfn>', $txt['custom_edit_enclose_desc'], '</dfn>
 						</dt>
@@ -1042,7 +1025,7 @@ function template_edit_profile_field()
 							<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked' : '', '>
 						</dd>
 						<dt id="options_dt">
-							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>
+							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_options'], ':</strong>
 							<dfn>', $txt['custom_edit_options_desc'], '</dfn>
 						</dt>
@@ -1070,7 +1053,7 @@ function template_edit_profile_field()
 					<legend>', $txt['custom_edit_advanced'], '</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a>
+							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong>
 							<dfn>', $txt['custom_edit_mask_desc'], '</dfn>
 						</dt>
@@ -1124,7 +1107,7 @@ function template_edit_profile_field()
 	echo '
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -1140,8 +1123,8 @@ function template_admin_search_results()
 		<div class="floatright">
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
 				<input type="search" name="search_term" value="', $context['search_term'], '">
-				<input type="hidden" name="search_type" value="', $context['search_type'], '" />
-				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" />
+				<input type="hidden" name="search_type" value="', $context['search_type'], '">
+				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '">
 			</form>
 		</div>
 		', $txt['admin_search_results'], '
@@ -1251,10 +1234,10 @@ function template_core_features()
 		echo '
 				<div class="features">
 					<div class="windowbg', $alternate < 2 ? '2' : '', ' wrc">
-						<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '" />
+						<img class="features_image" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '">
 						<div class="features_switch" id="js_feature_', $id, '" style="display: none;">
 							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
-								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '" /><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" id="switch_', $id, '" style="margin-top: 1.3em;" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" />
+								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" id="switch_', $id, '" style="margin-top: 1.3em;" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
 							</a>
 						</div>
 						<h4>', ($feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title']), '</h4>
@@ -1272,9 +1255,9 @@ function template_core_features()
 	echo '
 			</div>
 			<div class="righttext">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" value="0" name="js_worked" id="js_worked" />
-				<input type="submit" value="', $txt['save'], '" name="save" class="submit" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="hidden" value="0" name="js_worked" id="js_worked">
+				<input type="submit" value="', $txt['save'], '" name="save" class="submit">
 			</div>
 		</form>
 	</div>
@@ -1315,7 +1298,7 @@ function template_add_language()
 				</fieldset>
 				<div class="righttext">
 					', $context['browser']['is_ie'] ? '<input type="text" name="ie_fix" style="display: none"> ' : '', '
-					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="submit" />
+					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
 			</div>';
 
@@ -1436,7 +1419,7 @@ function template_download_language()
 		echo '
 				<tr class="titlebg">
 					<td colspan="4">
-						<img src="', $settings['images_url'], '/sort_down.gif" id="toggle_image_', $theme, '" alt="*" />&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
+						<img src="', $settings['images_url'], '/sort_down.gif" id="toggle_image_', $theme, '">&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
 					</td>
 				</tr>';
 
@@ -1477,11 +1460,9 @@ function template_download_language()
 			</div>';
 
 		echo '
-			<div class="cat_bar">
-				<h3>
-					', $txt['package_ftp_necessary'], '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['package_ftp_necessary'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p>', $txt['package_ftp_why'], '</p>
 				<dl class="settings">
@@ -1520,8 +1501,8 @@ function template_download_language()
 	// Install?
 	echo '
 			<div class="righttext padding">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="submit" name="do_install" value="', $txt['add_language_smf_install'], '" class="submit" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" name="do_install" value="', $txt['add_language_smf_install'], '" class="submit">
 			</div>
 		</form>
 	</div>
@@ -1613,13 +1594,13 @@ function template_modify_language_entries()
 				</dl>
 				</fieldset>
 				<div class="righttext">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' class="save" />';
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' class="save">';
 
 	// English can't be deleted.
 	if ($context['lang_id'] != 'english')
 		echo '
-					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="delete" />';
+					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="delete">';
 
 	echo '
 				</div>
@@ -1646,8 +1627,8 @@ function template_modify_language_entries()
 
 	echo '
 				</select>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="submit" value="', $txt['go'], '" class="submit" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" value="', $txt['go'], '" class="submit">
 			</div>';
 
 		// Is it not writable?
@@ -1682,11 +1663,11 @@ function template_modify_language_entries()
 						<span class="smalltext">', $entry['key'], '</span>
 					</dd>
 					<dt>
-						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
+						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
 						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="width: 96%;">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
-						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '" />
+						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '">
 						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="width: 96%;">', $entry['value'], '</textarea>
 					</dd>';
 			$cached = array();
@@ -1701,7 +1682,7 @@ function template_modify_language_entries()
 					<dd>
 					</dd>
 					<dt>
-						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '" />
+						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
 						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="width: 96%;">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
@@ -1709,7 +1690,7 @@ function template_modify_language_entries()
 
 		echo '
 				</dl>
-				<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled' : '', ' class="save" />';
+				<input type="submit" name="save_entries" value="', $txt['save'], '"', !empty($context['entries_not_writable_message']) ? ' disabled' : '', ' class="save">';
 
 		echo '
 			</div>';
@@ -1865,8 +1846,8 @@ function template_repair_boards()
 					', $txt['errors_do_recount'], '
 				</p>
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '">
 				</form>';
 		}
 		else
@@ -1941,10 +1922,10 @@ function template_pretty_urls()
 	<div class="windowbg2 wrc">
 		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
 			<fieldset>
-				<input type="checkbox" name="pretty_enable" id="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), ' />
+				<input type="checkbox" name="pretty_enable" id="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), '>
 				<label for="pretty_enable">', $txt['pretty_enable'], '</label>
 				<br>
-				<input type="checkbox" name="pretty_cache" id="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), ' />
+				<input type="checkbox" name="pretty_cache" id="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
 				<label for="pretty_cache">', $txt['pretty_cache'], '</label>
 			</fieldset>';
 
@@ -1958,7 +1939,7 @@ function template_pretty_urls()
 		foreach ($context['pretty']['filters'] as $filter)
 			echo '
 				<div>
-					<input type="checkbox" name="pretty_filter_', $filter['id'], '" id="pretty_filter_', $filter['id'], '"', ($filter['enabled'] ? ' checked' : ''), ' />
+					<input type="checkbox" name="pretty_filter_', $filter['id'], '" id="pretty_filter_', $filter['id'], '"', ($filter['enabled'] ? ' checked' : ''), '>
 					<label for="pretty_filter_', $filter['id'], '">', $txt['pretty_filter_' . $filter['id']], '</label>
 				</div>';
 

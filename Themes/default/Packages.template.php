@@ -12,9 +12,9 @@ function template_view_package()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt[($context['uninstalling'] ? 'un' : '') . 'install_mod'], '</h3>
-		</div>
+		<we:cat>
+			', $txt[($context['uninstalling'] ? 'un' : '') . 'install_mod'], '
+		</we:cat>
 		<div class="information">';
 
 	if ($context['is_installed'])
@@ -348,16 +348,15 @@ function template_extract_package()
 
 	if (empty($context['redirect_url']))
 		echo '
-			<div class="cat_bar">
-				<h3>', $context['uninstalling'] ? $txt['uninstall'] : $txt['extracting'], '</h3>
-			</div>
-			<div class="information">', $txt['package_installed_extract'], '</div>';
-
+		<we:cat>
+			', $context['uninstalling'] ? $txt['uninstall'] : $txt['extracting'], '
+		</we:cat>
+		<div class="information">', $txt['package_installed_extract'], '</div>';
 	else
 		echo '
-			<div class="cat_bar">
-				<h3>', $txt['package_installed_redirecting'], '</h3>
-			</div>';
+		<we:cat>
+			', $txt['package_installed_redirecting'], '
+		</we:cat>';
 
 	echo '
 		<div class="windowbg wrc">';
@@ -409,9 +408,9 @@ function template_list()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt['list_file'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['list_file'], '
+		</we:cat>
 		<we:title>
 			', $txt['files_archive'], ' ', $context['filename'], ':
 		</we:title>
@@ -437,9 +436,9 @@ function template_examine()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt['package_examine_file'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['package_examine_file'], '
+		</we:cat>
 		<we:title>
 			', $txt['package_file_contents'], ' ', $context['filename'], ':
 		</we:title>
@@ -457,11 +456,9 @@ function template_browse()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>
-				<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>', $txt['packages_latest'], '
-			</h3>
-		</div>
+		<we:cat>
+			<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>', $txt['packages_latest'], '
+		</we:cat>
 		<div class="windowbg2 wrc">
 			<div id="packagesLatest">', $txt['packages_latest_fetch'], '</div>
 			<div class="clear_right"></div>
@@ -626,9 +623,9 @@ function template_servers()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt['download_new_package'], '</h3>
-		</div>';
+		<we:cat>
+			', $txt['download_new_package'], '
+		</we:cat>';
 
 	if ($context['package_download_broken'])
 	{
@@ -769,9 +766,9 @@ function template_package_confirm()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $context['page_title'], '</h3>
-		</div>
+		<we:cat>
+			', $context['page_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $context['confirm_message'], '</p>
 			<a href="', $context['proceed_href'], '">[ ', $txt['package_confirm_proceed'], ' ]</a> <a href="JavaScript:history.go(-1);">[ ', $txt['package_confirm_go_back'], ' ]</a>
@@ -786,9 +783,9 @@ function template_package_list()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>' . $context['page_title'] . '</h3>
-		</div>
+		<we:cat>
+			' . $context['page_title'] . '
+		</we:cat>
 		<div class="windowbg wrc">';
 
 	// No packages, as yet.
@@ -957,9 +954,9 @@ function template_downloaded()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $context['page_title'], '</h3>
-		</div>
+		<we:cat>
+			', $context['page_title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<p>', (empty($context['package_server']) ? $txt['package_uploaded_successfully'] : $txt['package_downloaded_successfully']), '</p>
 			<ul class="reset">
@@ -982,9 +979,9 @@ function template_install_options()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt['package_install_options'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['package_install_options'], '
+		</we:cat>
 		<div class="information">
 			', $txt['package_install_options_ftp_why'], '
 		</div>
@@ -1703,9 +1700,9 @@ function template_action_permissions()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_var'], '=', $context['session_id'], '" id="perm_submit" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['package_file_perms_applying'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['package_file_perms_applying'], '
+			</we:cat>';
 
 	if (!empty($context['skip_ftp']))
 		echo '

@@ -18,9 +18,9 @@ function template_new_group()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['membergroups_new_group'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['membergroups_new_group'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>
@@ -129,7 +129,7 @@ function template_new_group()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="submit" value="', $txt['membergroups_add_group'], '" class="button_submit" />
+					<input type="submit" value="', $txt['membergroups_add_group'], '" class="new">
 				</div>
 			</div>';
 
@@ -144,7 +144,7 @@ function template_new_group()
 	swapPostGroup(', $context['post_group'] ? 'true' : 'false', ');');
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -157,9 +157,9 @@ function template_edit_group()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
-			<div class="cat_bar">
-				<h3>', $txt['membergroups_edit_group'], ' - ', $context['group']['name'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['membergroups_edit_group'], ' - ', $context['group']['name'], '
+			</we:cat>
 			<div class="windowbg2 wrc">
 				<dl class="settings">
 					<dt>
@@ -243,7 +243,7 @@ function template_edit_group()
 
 		echo '
 						</select>
-						<input type="hidden" name="old_inherit" value="', $context['group']['inherited_from'], '" />
+						<input type="hidden" name="old_inherit" value="', $context['group']['inherited_from'], '">
 					</dd>';
 	}
 
@@ -277,7 +277,7 @@ function template_edit_group()
 					<dd>
 						', $txt['membergroups_images_url'], '
 						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', smf_images_url + \'/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\'));" size="20">
-						<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '" alt="*" />
+						<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
 					<dt>
 						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label>
@@ -317,11 +317,11 @@ function template_edit_group()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['membergroups_edit_save'], '" class="button_submit" />', $context['group']['allow_delete'] ? '
-					<input type="submit" name="delete" value="' . $txt['membergroups_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['membergroups_confirm_delete']) . ');" class="button_submit" />' : '', '
+					<input type="submit" name="submit" value="', $txt['membergroups_edit_save'], '" class="save">', $context['group']['allow_delete'] ? '
+					<input type="submit" name="delete" value="' . $txt['membergroups_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['membergroups_confirm_delete']) . ');" class="delete">' : '', '
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -386,9 +386,9 @@ function template_group_members()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=', $context['current_action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>
@@ -445,11 +445,11 @@ function template_group_members()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a></th>
-						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif" />' : '', '</a></th>';
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
 	if (!empty($context['group']['assignable']))
 		echo '
 						<td style="width: 4%" class="center"><input type="checkbox" onclick="invertAll(this, this.form);"></td>';
@@ -482,7 +482,7 @@ function template_group_members()
 		// ... otherwise it's visible - but only via an image?
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
-							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '" />' : $txt['email']), '</a>';
+							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
 		// ... otherwise it must be a 'yes', show it and show it fully.
 		else
 			echo '
@@ -508,7 +508,7 @@ function template_group_members()
 
 	if (!empty($context['group']['assignable']))
 		echo '
-				<div class="floatright"><input type="submit" name="remove" value="', $txt['membergroups_members_remove'], '" class="button_submit" /></div>';
+				<div class="floatright"><input type="submit" name="remove" value="', $txt['membergroups_members_remove'], '" class="delete"></div>';
 	echo '
 			</div>
 			<br>';
@@ -516,19 +516,19 @@ function template_group_members()
 	if (!empty($context['group']['assignable']))
 	{
 		echo '
-			<div class="cat_bar">
-				<h3>', $txt['membergroups_members_add_title'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['membergroups_members_add_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<strong>', $txt['membergroups_members_add_desc'], ':</strong>
 				<div id="toAddItemContainer"></div>
 				<input type="text" name="toAdd" id="toAdd" value="">
-				<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="button_submit" />
+				<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="new">
 			</div>';
 	}
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -561,9 +561,9 @@ function template_group_request_reason()
 	echo '
 	<div id="moderationcenter">
 		<form action="', $scripturl, '?action=groups;sa=requests" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['mc_groups_reason_title'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['mc_groups_reason_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">';
 
@@ -574,15 +574,15 @@ function template_group_request_reason()
 						<strong>', sprintf($txt['mc_groupr_reason_desc'], $request['member_link'], $request['group_link']), ':</strong>
 					</dt>
 					<dd>
-						<input type="hidden" name="groupr[]" value="', $request['id'], '" />
+						<input type="hidden" name="groupr[]" value="', $request['id'], '">
 						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="width: 96%;"></textarea>
 					</dd>';
 
 	echo '
 				</dl>
-				<input type="submit" name="go" value="', $txt['mc_groupr_submit'], '" class="button_submit" />
-				<input type="hidden" name="req_action" value="got_reason" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" name="go" value="', $txt['mc_groupr_submit'], '" class="submit">
+				<input type="hidden" name="req_action" value="got_reason">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>

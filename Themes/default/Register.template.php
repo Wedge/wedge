@@ -8,9 +8,9 @@ function template_registration_agreement()
 
 	echo '
 		<form action="', $scripturl, '?action=register" method="post" accept-charset="UTF-8" id="registration">
-			<div class="cat_bar">
-				<h3>', $txt['registration_agreement'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['registration_agreement'], '
+			</we:cat>
 			<div class="roundframe">
 				<p>', $context['agreement'], '</p>
 			</div>
@@ -27,7 +27,7 @@ function template_registration_agreement()
 
 	echo '
 			</div>
-			<input type="hidden" name="step" value="1" />
+			<input type="hidden" name="step" value="1">
 		</form>';
 
 }
@@ -124,9 +124,9 @@ function template_registration_form()
 
 	echo '
 		<form action="', $scripturl, '?action=register2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
-			<div class="cat_bar">
-				<h3>', $txt['registration_form'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['registration_form'], '
+			</we:cat>
 			<we:title2>
 				', $txt['required_info'], '
 			</we:title2>
@@ -138,7 +138,7 @@ function template_registration_form()
 							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '">
 							<span id="smf_autov_username_div" style="display: none;">
 								<a id="smf_autov_username_link" href="#">
-									<img id="smf_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif" alt="*" />
+									<img id="smf_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif">
 								</a>
 							</span>
 						</dd>
@@ -180,7 +180,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="smf_autov_pwmain_div" style="display: none;">
-								<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif" alt="*" />
+								<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
 							</span>
 						</dd>
 					</dl>
@@ -189,7 +189,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="smf_autov_pwverify_div" style="display: none;">
-								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif" alt="*" />
+								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
 							</span>
 						</dd>
 					</dl>';
@@ -270,7 +270,7 @@ function template_registration_form()
 				// You "checking" me out? ;)
 				elseif ($field['type'] == 'check')
 					echo '
-							<input type="hidden" name="', $key, '" value="0" /><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], '>';
+							<input type="hidden" name="', $key, '" value="0"><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], '>';
 
 				// Always fun - select boxes!
 				elseif ($field['type'] == 'select')
@@ -356,9 +356,9 @@ function template_after()
 	// Not much to see here, just a quick... "you're now registered!" or what have you.
 	echo '
 		<div id="registration_success">
-			<div class="cat_bar">
-				<h3>', $context['title'], '</h3>
-			</div>
+			<we:cat>
+				', $context['title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p>', $context['description'], '</p>
 			</div>
@@ -449,8 +449,8 @@ function template_verification_sound()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
-	<meta name="robots" content="noindex" />
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex">
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(),
 	theme_base_js(1), '
@@ -467,8 +467,8 @@ function template_verification_sound()
 	if ($context['browser']['is_ie'])
 		echo '
 			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
-				<param name="AutoStart" value="1" />
-				<param name="FileName" value="', $context['verification_sound_href'], '" />
+				<param name="AutoStart" value="1">
+				<param name="FileName" value="', $context['verification_sound_href'], '">
 			</object>';
 	else
 		echo '
@@ -503,9 +503,9 @@ function template_admin_register()
 
 	echo '
 	<div id="admincenter">
-		<div class="cat_bar">
-			<h3>', $txt['admin_browse_register_new'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['admin_browse_register_new'], '
+		</we:cat>
 		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
 			<div class="windowbg2 wrc">
 				<div id="register_screen">';
@@ -593,9 +593,9 @@ function template_edit_agreement()
 
 	// Just a big box to edit the text file ;).
 	echo '
-		<div class="cat_bar">
-			<h3>', $txt['registration_agreement'], '</h3>
-		</div>';
+		<we:cat>
+			', $txt['registration_agreement'], '
+		</we:cat>';
 
 	// Warning for if the file isn't writable.
 	if (!empty($context['warning']))
@@ -656,9 +656,9 @@ function template_edit_reserved_words()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<div class="cat_bar">
-			<h3>', $txt['admin_reserved_set'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['admin_reserved_set'], '
+		</we:cat>
 		<form id="registration_agreement" action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8">
 			<div class="windowbg2 wrc">
 				<h4>', $txt['admin_reserved_line'], '</h4>

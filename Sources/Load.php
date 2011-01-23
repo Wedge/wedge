@@ -2420,9 +2420,9 @@ function template_include($filename, $once = false)
 				for ($n = min($match[1] + 4, count($data2) + 1); $line <= $n; $line++)
 				{
 					if ($line == $match[1])
-						echo '</pre><div style="background-color: #ffb0b5;"><pre style="margin: 0;">';
+						echo '</pre><div style="background-color: #ffb0b5"><pre style="margin: 0">';
 
-					echo '<span style="color: black;">', sprintf('%' . strlen($n) . 's', $line), ':</span> ';
+					echo '<span style="color: black">', sprintf('%' . strlen($n) . 's', $line), ':</span> ';
 					if (isset($data2[$line]) && $data2[$line] != '')
 						echo substr($data2[$line], 0, 2) == '</' ? preg_replace('~^</[^>]+>~', '', $data2[$line]) : $last_line . $data2[$line];
 

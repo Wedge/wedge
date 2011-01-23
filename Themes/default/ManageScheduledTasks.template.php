@@ -25,9 +25,9 @@ function template_edit_scheduled_tasks()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=scheduledtasks;sa=taskedit;save;tid=', $context['task']['id'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['scheduled_task_edit'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['scheduled_task_edit'], '
+			</we:cat>
 			<div class="information">
 				<em>', sprintf($txt['scheduled_task_time_offset'], $context['server_time']), ' </em>
 			</div>
@@ -70,8 +70,8 @@ function template_edit_scheduled_tasks()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="save" value="', $txt['scheduled_tasks_save_changes'], '" class="button_submit" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					<input type="submit" name="save" value="', $txt['scheduled_tasks_save_changes'], '" class="save">
 				</div>
 			</div>
 		</form>

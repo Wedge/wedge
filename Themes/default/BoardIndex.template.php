@@ -23,22 +23,20 @@ function template_boardindex()
 			<tbody class="header" id="category_', $category['id'], '">
 				<tr>
 					<td colspan="4">
-						<div class="cat_bar">
-							<h3>';
+						<we:cat>';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
 			echo '
-								<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
+							<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
 
 		if (!$context['user']['is_guest'] && !empty($category['show_unread']))
 			echo '
-								<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
+							<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		echo '
-								', $category['link'], '
-							</h3>
-						</div>
+							', $category['link'], '
+						</we:cat>
 					</td>
 				</tr>
 			</tbody>
@@ -61,21 +59,21 @@ function template_boardindex()
 				// If the board or children is new, show an indicator.
 				if ($board['new'] || $board['children_new'])
 					echo '
-							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-							<img src="', $settings['images_url'], '/redirect.png" alt="*" title="*" />';
+							<img src="', $settings['images_url'], '/redirect.png">';
 				// No new posts at all! The agony!!
 				else
 					echo '
-							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
 
 				echo '
 						</a>
 					</td>
 					<td class="info">
-						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png" /> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
+						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
 				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
@@ -124,7 +122,7 @@ function template_boardindex()
 					foreach ($board['children'] as $child)
 					{
 						if (!$child['is_redirect'])
-							$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts" />' : '') . '</a>';
+							$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts">' : '') . '</a>';
 						else
 							$child['link'] = '<a href="' . $child['href'] . '" title="' . comma_format($child['posts']) . ' ' . $txt['redirects'] . '">' . $child['name'] . '</a>';
 
@@ -179,12 +177,10 @@ function template_boardindex_newsfader()
 	{
 		echo '
 	<div id="newsfader">
-		<div class="cat_bar">
-			<h3>
-				<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="vertical-align: bottom; display: none" />
-				', $txt['news'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '" class="bottom" style="display: none">
+			', $txt['news'], '
+		</we:cat>
 		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';
 
 			foreach ($context['news_lines'] as $news)
@@ -251,9 +247,9 @@ function template_boardindex_below()
 
 		echo '
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_some.png" /> ', $txt['new_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" /> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" /> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_some.png"> ', $txt['new_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png"> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png"> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 
@@ -266,8 +262,8 @@ function template_boardindex_below()
 		echo '
 	<div id="posting_icons" class="flow_hidden">
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png" /> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png" /> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png"> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png"> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 	}

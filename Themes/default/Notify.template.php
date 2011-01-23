@@ -6,11 +6,9 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/email_sm.gif" />', $txt['notify'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/email_sm.gif">', $txt['notify'], '
+		</we:cat>
 		<div class="roundframe centertext">
 			<p>', $context['notification_set'] ? $txt['notify_deactivate'] : $txt['notify_request'], '</p>
 			<p>
@@ -24,11 +22,9 @@ function template_notify_board()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/email_sm.gif" />', $txt['notify'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/email_sm.gif">', $txt['notify'], '
+		</we:cat>
 		<div class="roundframe centertext">
 			<p>', $context['notification_set'] ? $txt['notifyboard_turnoff'] : $txt['notifyboard_turnon'], '</p>
 			<p>

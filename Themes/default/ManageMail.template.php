@@ -7,9 +7,9 @@ function template_browse()
 
 	echo '
 	<div id="manage_mail">
-		<div class="cat_bar">
-			<h3>', $txt['mailqueue_stats'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['mailqueue_stats'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<dl class="settings">
 				<dt><strong>', $txt['mailqueue_size'], '</strong></dt>

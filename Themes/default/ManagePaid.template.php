@@ -17,9 +17,9 @@ function template_modify_subscription()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], '" method="post">
-			<div class="cat_bar">
-				<h3>', $txt['paid_' . $context['action_type'] . '_subscription'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['paid_' . $context['action_type'] . '_subscription'], '
+			</we:cat>';
 
 	if (!empty($context['disable_groups']))
 		echo '
@@ -210,8 +210,8 @@ function template_modify_subscription()
 					</fieldset>
 				</div>
 				<div class="righttext">
-					<input type="submit" name="save" value="', $txt['paid_settings_save'], '" class="button_submit" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="submit" name="save" value="', $txt['paid_settings_save'], '" class="save">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
 		</form>
@@ -226,13 +226,13 @@ function template_delete_subscription()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], ';delete" method="post">
-			<div class="cat_bar">
-				<h3>', $txt['paid_delete_subscription'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['paid_delete_subscription'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p>', $txt['paid_mod_delete_warning'], '</p>
-				<input type="submit" name="delete_confirm" value="', $txt['paid_delete_subscription'], '" class="button_submit" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" name="delete_confirm" value="', $txt['paid_delete_subscription'], '" class="delete">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>
@@ -271,12 +271,10 @@ function template_modify_user_subscription()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
-			<div class="cat_bar">
-				<h3>
-					', $txt['paid_' . $context['action_type'] . '_subscription'], ' - ', $context['current_subscription']['name'], '
-					', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
-				</h3>
-			</div>
+			<we:cat>
+				', $txt['paid_' . $context['action_type'] . '_subscription'], ' - ', $context['current_subscription']['name'], '
+				', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">';
 
@@ -370,9 +368,9 @@ function template_modify_user_subscription()
 					', $txt['hour'], ': <input type="text" name="hourend" value="', $context['sub']['end']['hour'], '" size="2">
 					', $txt['minute'], ': <input type="text" name="minuteend" value="', $context['sub']['end']['min'], '" size="2">
 				</fieldset>
-				<input type="submit" name="save_sub" value="', $txt['paid_settings_save'], '" class="button_submit" />
+				<input type="submit" name="save_sub" value="', $txt['paid_settings_save'], '" class="save">
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 
 	add_js_file('scripts/suggest.js');
@@ -389,15 +387,15 @@ function template_modify_user_subscription()
 	if (!empty($context['pending_payments']))
 	{
 		echo '
-		<div class="cat_bar">
-			<h3>', $txt['pending_payments'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['pending_payments'], '
+		</we:cat>
 		<div class="information">
 			', $txt['pending_payments_desc'], '
 		</div>
-		<div class="cat_bar">
-			<h3>', $txt['pending_payments_value'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['pending_payments_value'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			<ul class="pending_payments">';
 
@@ -429,9 +427,9 @@ function template_user_subscription()
 	echo '
 	<div id="paid_subscription">
 		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=subscriptions;confirm" method="post">
-			<div class="cat_bar">
-				<h3>', $txt['subscriptions'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['subscriptions'], '
+			</we:cat>';
 
 	if (empty($context['subscriptions']))
 	{
@@ -458,9 +456,9 @@ function template_user_subscription()
 				continue;
 
 			echo '
-			<div class="cat_bar">
-				<h3>', $subscription['name'], '</h3>
-			</div>
+			<we:cat>
+				', $subscription['name'], '
+			</we:cat>
 			<div class="windowbg', $alternate ? '' : '2', ' wrc">
 				<p><strong>', $subscription['name'], '</strong></p>
 				<p class="smalltext">', $subscription['desc'], '</p>';
@@ -493,7 +491,7 @@ function template_user_subscription()
 
 				echo '
 				<br>
-				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="button_submit" />', !empty($subscription['group_warning']) ? '
+				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="submit">', !empty($subscription['group_warning']) ? '
 				<br>' . $txt['paid_subs_admin_override'] : '';
 			}
 			else
@@ -567,9 +565,9 @@ function template_choose_payment()
 
 	echo '
 	<div id="paid_subscription">
-		<div class="cat_bar">
-			<h3>', $txt['paid_confirm_payment'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['paid_confirm_payment'], '
+		</we:cat>
 		<div class="information">
 			', $txt['paid_confirm_desc'], '
 		</div>
@@ -594,9 +592,9 @@ function template_choose_payment()
 	foreach ($context['gateways'] as $gateway)
 	{
 		echo '
-		<div class="cat_bar">
-			<h3>', $gateway['title'], '</h3>
-		</div>
+		<we:cat>
+			', $gateway['title'], '
+		</we:cat>
 		<div class="windowbg wrc">
 			', $gateway['desc'], '<br>
 			<form action="', $gateway['form'], '" method="post">';
@@ -606,10 +604,10 @@ function template_choose_payment()
 
 		foreach ($gateway['hidden'] as $name => $value)
 			echo '
-				<input type="hidden" id="', $gateway['id'], '_', $name, '" name="', $name, '" value="', $value, '" />';
+				<input type="hidden" id="', $gateway['id'], '_', $name, '" name="', $name, '" value="', $value, '">';
 
 		echo '
-				<br><input type="submit" value="', $gateway['submit'], '" class="button_submit" />
+				<br><input type="submit" value="', $gateway['submit'], '" class="submit">
 			</form>
 		</div>';
 	}

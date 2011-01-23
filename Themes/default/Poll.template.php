@@ -27,9 +27,9 @@ function template_main()
 	echo '
 	<div id="edit_poll">
 		<form action="' . $scripturl . '?action=poll;sa=editpoll2', $context['is_edit'] ? '' : ';add', ';topic=' . $context['current_topic'] . '.' . $context['start'] . '" method="post" accept-charset="UTF-8" onsubmit="submitonce(); smc_saveEntities(\'postmodify\', [\'question\'], \'options-\');" name="postmodify" id="postmodify">
-			<div class="cat_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>';
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>';
 
 	if (!empty($context['poll_error']['messages']))
 		echo '
@@ -47,7 +47,7 @@ function template_main()
 	echo '
 			<div>
 				<div class="roundframe">
-					<input type="hidden" name="poll" value="', $context['poll']['id'], '" />
+					<input type="hidden" name="poll" value="', $context['poll']['id'], '">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>
 						<input type="text" name="question" size="80" value="', $context['poll']['question'], '">
@@ -134,8 +134,8 @@ function template_main()
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
-			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">
+			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 		</form>
 	</div>
 	<br class="clear">';

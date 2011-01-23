@@ -8,9 +8,9 @@ function template_announce()
 	echo '
 	<div id="announcement">
 		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['announce_title'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['announce_title'], '
+			</we:cat>
 			<div class="information">
 				', $txt['announce_desc'], '
 			</div>

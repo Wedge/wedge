@@ -35,11 +35,9 @@ function template_main()
 	echo '
 	<div id="send_topic">
 		<form action="', $scripturl, '?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/email_sm.gif" />', $context['page_title'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
+			</we:cat>
 			<div class="windowbg2 wrc">
 				<fieldset id="sender" class="send_topic">
 					<dl class="settings send_topic">
@@ -81,10 +79,10 @@ function template_main()
 					</dl>
 				</fieldset>
 				<div class="righttext">
-					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="button_submit" />
+					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="submit">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -98,11 +96,9 @@ function template_custom_email()
 	echo '
 	<div id="send_topic">
 		<form action="', $scripturl, '?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/email_sm.gif" />', $context['page_title'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings send_mail">
 					<dt>
@@ -167,16 +163,16 @@ function template_custom_email()
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="button_submit" />
+					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="submit">
 				</div>
 			</div>';
 
 	foreach ($context['form_hidden_vars'] as $key => $value)
 		echo '
-			<input type="hidden" name="', $key, '" value="', $value, '" />';
+			<input type="hidden" name="', $key, '" value="', $value, '">';
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -189,10 +185,10 @@ function template_report()
 	echo '
 	<div id="report_topic">
 		<form action="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="msg" value="' . $context['message_id'] . '" />
-			<div class="cat_bar">
-				<h3>', $txt['report_to_mod'], '</h3>
-			</div>
+			<input type="hidden" name="msg" value="' . $context['message_id'] . '">
+			<we:cat>
+				', $txt['report_to_mod'], '
+			</we:cat>
 			<div class="windowbg wrc">';
 
 	if (!empty($context['post_errors']))
@@ -221,7 +217,7 @@ function template_report()
 						<label for="email_address">', $txt['email'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" id="email_address" name="email" value="', $context['email_address'], '" size="25" maxlength="255" />
+						<input type="text" id="email_address" name="email" value="', $context['email_address'], '" size="25" maxlength="255">
 					</dd>';
 
 	echo '
@@ -229,7 +225,7 @@ function template_report()
 						<label for="report_comment">', $txt['enter_comment'], '</label>:
 					</dt>
 					<dd>
-						<input type="text" id="report_comment" name="comment" size="50" value="', $context['comment_body'], '" maxlength="255" />
+						<input type="text" id="report_comment" name="comment" size="50" value="', $context['comment_body'], '" maxlength="255">
 					</dd>';
 
 	if ($context['require_verification'])
@@ -244,10 +240,10 @@ function template_report()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['rtm10'], '" style="margin-left: 1ex;" class="button_submit" />
+					<input type="submit" name="submit" value="', $txt['rtm10'], '" style="margin-left: 1ex" class="submit">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';

@@ -8,13 +8,11 @@ function template_info_center_begin()
 	// Here's where the "Info Center" starts...
 	echo '
 	<div class="roundframe clear">
-		<div class="cat_bar">
-			<h3>
-				<img id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
-				', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
-			</h3>
-		</div>
-		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none;"', '>';
+		<we:cat>
+			<img id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '" style="display: none">
+			', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
+		</we:cat>
+		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none"', '>';
 }
 
 function template_info_center_recentposts()
@@ -26,7 +24,7 @@ function template_info_center_recentposts()
 	{
 		echo '
 			<we:title2>
-				<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '" /></a>
+				<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '"></a>
 				', $txt['recent_posts'], '
 			</we:title2>
 			<div class="hslice" id="recent_posts_content">
@@ -75,7 +73,7 @@ function template_info_center_calendar()
 	{
 		echo '
 			<we:title2>
-				<a href="', $scripturl, '?action=calendar"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '" /></a>
+				<a href="', $scripturl, '?action=calendar"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '"></a>
 				', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
 			</we:title2>
 			<p class="smalltext">';
@@ -105,7 +103,7 @@ function template_info_center_calendar()
 					title, href, is_last, can_edit (are they allowed?), modify_href, and is_today. */
 			foreach ($context['calendar_events'] as $event)
 				echo '
-					', $event['can_edit'] ? '<a href="' . $event['modify_href'] . '" title="' . $txt['calendar_edit'] . '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif" alt="*" /></a> ' : '', $event['href'] == '' ? '' : '<a href="' . $event['href'] . '">', $event['is_today'] ? '<strong>' . $event['title'] . '</strong>' : $event['title'], $event['href'] == '' ? '' : '</a>', $event['is_last'] ? '<br>' : ', ';
+					', $event['can_edit'] ? '<a href="' . $event['modify_href'] . '" title="' . $txt['calendar_edit'] . '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif"></a> ' : '', $event['href'] == '' ? '' : '<a href="' . $event['href'] . '">', $event['is_today'] ? '<strong>' . $event['title'] . '</strong>' : $event['title'], $event['href'] == '' ? '' : '</a>', $event['is_last'] ? '<br>' : ', ';
 		}
 		echo '
 			</p>';
@@ -121,7 +119,7 @@ function template_info_center_statistics()
 	{
 		echo '
 			<we:title2>
-				<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '" /></a>
+				<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>
 				', $txt['forum_stats'], '
 			</we:title2>
 			<p>
@@ -140,7 +138,7 @@ function template_info_center_usersonline()
 	// "Users online" - in order of activity.
 	echo '
 			<we:title2>
-				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '" />', $context['show_who'] ? '</a>' : '', '
+				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<img src="', $settings['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '">', $context['show_who'] ? '</a>' : '', '
 				', $txt['online_users'], '
 			</we:title2>
 			<p class="inline stats">
@@ -191,7 +189,7 @@ function template_info_center_personalmsg()
 	{
 		echo '
 			<we:title2>
-				', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '" />', $context['allow_pm'] ? '</a>' : '', '
+				', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
 				', $txt['personal_message'], '
 			</we:title2>
 			<p class="pminfo">

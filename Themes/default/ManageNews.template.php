@@ -60,9 +60,9 @@ function template_edit_news()
 				</noscript>
 			</div>
 			<div class="floatright padding">
-				<input type="submit" name="save_items" value="', $txt['save'], '" class="button_submit" /> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="button_submit" />
+				<input type="submit" name="save_items" value="', $txt['save'], '" class="save"> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="delete">
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -84,9 +84,9 @@ function template_email_members()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $txt['admin_newsletters'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['admin_newsletters'], '
+			</we:cat>
 			<div class="information">
 				', $txt['admin_news_select_recipients'], '
 			</div>
@@ -110,11 +110,11 @@ function template_email_members()
 			</div>
 			<br>
 
-			<div class="cat_bar">
-				<h3 id="advanced_select_div" style="display: none;">
-					<a href="#" onclick="toggleAdvanced(true); return false;" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" />&nbsp;<strong>', $txt['advanced'], '</strong></a>
-					<a href="#" onclick="toggleAdvanced(false); return false;" id="gosimple" style="display: none;"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" />&nbsp;<strong>', $txt['simple'], '</strong></a>
-				</h3>
+			<div id="advanced_select_div" style="display: none">
+				<we:cat>
+					<a href="#" onclick="toggleAdvanced(true); return false;" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '">&nbsp;<strong>', $txt['advanced'], '</strong></a>
+					<a href="#" onclick="toggleAdvanced(false); return false;" id="gosimple" style="display: none;"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '">&nbsp;<strong>', $txt['simple'], '</strong></a>
+				</we:cat>
 			</div>
 
 			<div class="windowbg2 wrc" id="advanced_settings_div" style="display: none;">
@@ -172,8 +172,8 @@ function template_email_members()
 				</dl>
 			</div>
 			<div class="righttext">
-				<input type="submit" value="', $txt['admin_next'], '" class="button_submit" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="submit" value="', $txt['admin_next'], '" class="submit">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>
@@ -217,11 +217,9 @@ function template_email_members_compose()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['admin_newsletters'], '
-				</h3>
-			</div>
+			<we:cat>
+				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['admin_newsletters'], '
+			</we:cat>
 			<div class="information">
 				', $txt['email_variables'], '
 			</div>
@@ -238,17 +236,17 @@ function template_email_members_compose()
 					<li><label for="parse_html"><input type="checkbox" name="parse_html" id="parse_html" checked disabled> ', $txt['email_parsed_html'], '</label></li>
 				</ul>
 				<p>
-					<input type="submit" value="', $txt['sendtopic_send'], '" class="button_submit" />
+					<input type="submit" value="', $txt['sendtopic_send'], '" class="submit">
 				</p>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-			<input type="hidden" name="email_force" value="', $context['email_force'], '" />
-			<input type="hidden" name="total_emails" value="', $context['total_emails'], '" />
-			<input type="hidden" name="max_id_member" value="', $context['max_id_member'], '" />';
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="email_force" value="', $context['email_force'], '">
+			<input type="hidden" name="total_emails" value="', $context['total_emails'], '">
+			<input type="hidden" name="max_id_member" value="', $context['max_id_member'], '">';
 
 	foreach ($context['recipients'] as $key => $values)
 		echo '
-			<input type="hidden" name="', $key, '" value="', implode(($key == 'emails' ? ';' : ','), $values), '" />';
+			<input type="hidden" name="', $key, '" value="', implode(($key == 'emails' ? ';' : ','), $values), '">';
 
 	echo '
 		</form>
@@ -263,30 +261,28 @@ function template_email_members_send()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
-			<div class="cat_bar">
-				<h3>
-					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top" /></a> ', $txt['admin_newsletters'], '
-				</h3>
-			</div>
+			<we:cat>
+				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a> ', $txt['admin_newsletters'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<p>
 					<strong>', $context['percentage_done'], '% ', $txt['email_done'], '</strong>
 				</p>
-				<input type="submit" name="b" value="', westr::htmlspecialchars($txt['email_continue']), '" class="button_submit" />
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-				<input type="hidden" name="subject" value="', $context['subject'], '" />
-				<input type="hidden" name="message" value="', $context['message'], '" />
-				<input type="hidden" name="start" value="', $context['start'], '" />
-				<input type="hidden" name="total_emails" value="', $context['total_emails'], '" />
-				<input type="hidden" name="max_id_member" value="', $context['max_id_member'], '" />
-				<input type="hidden" name="send_pm" value="', $context['send_pm'], '" />
-				<input type="hidden" name="send_html" value="', $context['send_html'], '" />
-				<input type="hidden" name="parse_html" value="', $context['parse_html'], '" />';
+				<input type="submit" name="b" value="', westr::htmlspecialchars($txt['email_continue']), '" class="submit">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="hidden" name="subject" value="', $context['subject'], '">
+				<input type="hidden" name="message" value="', $context['message'], '">
+				<input type="hidden" name="start" value="', $context['start'], '">
+				<input type="hidden" name="total_emails" value="', $context['total_emails'], '">
+				<input type="hidden" name="max_id_member" value="', $context['max_id_member'], '">
+				<input type="hidden" name="send_pm" value="', $context['send_pm'], '">
+				<input type="hidden" name="send_html" value="', $context['send_html'], '">
+				<input type="hidden" name="parse_html" value="', $context['parse_html'], '">';
 
 	// All the things we must remember!
 	foreach ($context['recipients'] as $key => $values)
 		echo '
-				<input type="hidden" name="', $key, '" value="', implode(($key == 'emails' ? ';' : ','), $values), '" />';
+				<input type="hidden" name="', $key, '" value="', implode(($key == 'emails' ? ';' : ','), $values), '">';
 
 	echo '
 			</div>

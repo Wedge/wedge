@@ -34,7 +34,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 		if ($i == 0 && $verify_context['show_visual'])
 		{
 			echo '
-				<img src="', $verify_context['image_href'], '" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '" />';
+				<img src="', $verify_context['image_href'], '" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '">';
 
 			if (WIRELESS)
 				echo '<br>
@@ -63,7 +63,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			echo '
 				<div class="smalltext vv_special">
 					', $txt['visual_verification_hidden'], ':
-					<input type="text" name="', $_SESSION[$verify_id . '_vv']['empty_field'], '" autocomplete="off" size="30" value="" />
+					<input type="text" name="', $_SESSION[$verify_id . '_vv']['empty_field'], '" autocomplete="off" size="30" value="">
 				</div>';
 
 		if ($display_type != 'single')

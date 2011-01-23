@@ -39,11 +39,9 @@ function template_main()
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
 			<div id="preview_section"', isset($context['preview_message']) ? '' : ' style="display: none;"', '>
-				<div class="cat_bar">
-					<h3>
-						<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
-					</h3>
-				</div>
+				<we:cat>
+					<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
+				</we:cat>
 				<div class="windowbg wrc">
 					<div class="post" id="preview_body">
 						', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
@@ -57,9 +55,9 @@ function template_main()
 
 	// Start the main table.
 	echo '
-			<div class="cat_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>
 			<div class="roundframe">', isset($context['current_topic']) ? '
 				<input type="hidden" name="topic" value="' . $context['current_topic'] . '">' : '';
 
@@ -138,7 +136,7 @@ function template_main()
 
 	echo '
 						</select>
-						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px" />
+						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px">
 					</dd>
 				</dl>
 				<hr class="clear">';
@@ -168,19 +166,19 @@ function template_main()
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
 				<div id="postAdditionalOptionsHeader">
-					<img src="', $settings['images_url'], '/collapse.gif" alt="-" id="postMoreExpand" style="display: none;" /> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
+					<img src="', $settings['images_url'], '/collapse.gif" alt="-" id="postMoreExpand" style="display: none"> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
 				</div>';
 
 	// Display the check boxes for all the standard options - if they are available to the user!
 	echo '
 				<div id="postMoreOptions" class="smalltext">
 					<ul class="post_options">', $context['can_notify'] ? '
-						<li><input type="hidden" name="notify" value="0" /><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked' : '') . ' value="1"> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
-						<li><input type="hidden" name="lock" value="0" /><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked' : '') . ' value="1"> ' . $txt['lock_topic'] . '</label></li>' : '', '
+						<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify"' . ($context['notify'] || !empty($options['auto_notify']) ? ' checked' : '') . ' value="1"> ' . $txt['notify_replies'] . '</label></li>' : '', $context['can_lock'] ? '
+						<li><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"' . ($context['locked'] ? ' checked' : '') . ' value="1"> ' . $txt['lock_topic'] . '</label></li>' : '', '
 						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back"' . ($context['back_to_topic'] || !empty($options['return_to_post']) ? ' checked' : '') . ' value="1"> ' . $txt['back_to_topic'] . '</label></li>', $context['can_sticky'] ? '
-						<li><input type="hidden" name="sticky" value="0" /><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked' : '') . ' value="1"> ' . $txt['sticky_after'] . '</label></li>' : '', '
+						<li><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"' . ($context['sticky'] ? ' checked' : '') . ' value="1"> ' . $txt['sticky_after'] . '</label></li>' : '', '
 						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"', $context['use_smileys'] ? '' : ' checked', ' value="NS"> ', $txt['dont_use_smileys'], '</label></li>', $context['can_move'] ? '
-						<li><input type="hidden" name="move" value="0" /><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1"' . (!empty($context['move']) ? ' checked' : '') . '> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
+						<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1"' . (!empty($context['move']) ? ' checked' : '') . '> ' . $txt['move_after2'] . '</label></li>' : '', $context['can_announce'] && $context['is_first_post'] ? '
 						<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1"' . (!empty($context['announce']) ? ' checked' : '') . '> ' . $txt['announce_topic'] . '</label></li>' : '', $context['show_approval'] ? '
 						<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2"' . ($context['show_approval'] === 2 ? ' checked' : '') . '> ' . $txt['approve_this_post'] . '</label></li>' : '', '
 					</ul>
@@ -404,7 +402,7 @@ function template_main()
 			if ($("is_ignored", this).text() != 0)
 				ignored_replies[ignored_replies.length] = ignoring = id;
 
-			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + id + \'" /></div>\';');
+			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + id + \'"></div>\';');
 
 	if ($context['can_quote'])
 		add_js('
@@ -730,9 +728,9 @@ function template_show_previous_posts()
 
 	echo '
 		<div id="recent" class="flow_hidden main_section">
-			<div class="cat_bar">
-				<h3>', $txt['topic_summary'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['topic_summary'], '
+			</we:cat>
 			<div id="new_replies"></div>';
 
 	$ignored_posts = array();
@@ -817,7 +815,7 @@ function template_spellcheck()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>', $txt['spell_check'], '</title>',
 	theme_base_css(), '
 	<style>

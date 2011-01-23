@@ -8,9 +8,9 @@ function template_print_above()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="utf-8" />
-		<meta name="robots" content="noindex" />
-		<link rel="canonical" href="', $context['canonical_url'], '" />
+		<meta charset="utf-8">
+		<meta name="robots" content="noindex">
+		<link rel="canonical" href="', $context['canonical_url'], '">
 		<title>', $txt['print_page'], ' - ', $context['topic_subject'], '</title>
 		<style>
 			body, a

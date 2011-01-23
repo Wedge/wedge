@@ -20,8 +20,8 @@ function template_popup()
 		echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
-	<meta name="robots" content="noindex" />
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex">
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>

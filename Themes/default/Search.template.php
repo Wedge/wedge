@@ -41,7 +41,7 @@ function template_main()
 
 		echo '
 				<a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>
-				<input type="hidden" name="advanced" value="0" />
+				<input type="hidden" name="advanced" value="0">
 			</div>
 		</fieldset>';
 	}
@@ -56,7 +56,7 @@ function template_main()
 		echo '
 		<div class="roundframe">
 			<fieldset id="advanced_search">
-				<input type="hidden" name="advanced" value="1" />
+				<input type="hidden" name="advanced" value="1">
 				<span class="enhanced">
 					<strong>', $txt['search_for'], ':</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40">
@@ -100,7 +100,7 @@ function template_main()
 		if (!empty($context['search_params']['topic']))
 			echo '
 				<p>', $txt['search_specific_topic'], ' &quot;', $context['search_topic']['link'], '&quot;.</p>
-				<input type="hidden" name="topic" value="', $context['search_topic']['id'], '" />';
+				<input type="hidden" name="topic" value="', $context['search_topic']['id'], '">';
 
 		echo '
 			</fieldset>';
@@ -111,7 +111,7 @@ function template_main()
 			<br>
 			<fieldset class="flow_hidden">
 				<we:title2>
-					<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon" /></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
+					<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon"></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 				</we:title2>
 				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
 					<ul class="ignoreboards floatleft">';
@@ -203,9 +203,9 @@ function template_results()
 	{
 		echo '
 	<div id="search_results">
-		<div class="cat_bar">
-			<h3>', $txt['search_adjust_query'], '</h3>
-		</div>
+		<we:cat>
+			', $txt['search_adjust_query'], '
+		</we:cat>
 		<div class="roundframe">';
 
 		// Did they make any typos or mistakes, perhaps?
@@ -216,20 +216,20 @@ function template_results()
 		echo '
 			<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 				<strong>', $txt['search_for'], ':</strong>
-				<input type="text" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40">
-				<input type="submit" name="submit" value="', $txt['search_adjust_submit'], '" class="button_submit" />
-				<input type="hidden" name="searchtype" value="', !empty($context['search_params']['searchtype']) ? $context['search_params']['searchtype'] : 0, '" />
-				<input type="hidden" name="userspec" value="', !empty($context['search_params']['userspec']) ? $context['search_params']['userspec'] : '', '" />
-				<input type="hidden" name="show_complete" value="', !empty($context['search_params']['show_complete']) ? 1 : 0, '" />
-				<input type="hidden" name="subject_only" value="', !empty($context['search_params']['subject_only']) ? 1 : 0, '" />
-				<input type="hidden" name="minage" value="', !empty($context['search_params']['minage']) ? $context['search_params']['minage'] : '0', '" />
-				<input type="hidden" name="maxage" value="', !empty($context['search_params']['maxage']) ? $context['search_params']['maxage'] : '9999', '" />
-				<input type="hidden" name="sort" value="', !empty($context['search_params']['sort']) ? $context['search_params']['sort'] : 'relevance', '" />';
+				<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40">
+				<input type="submit" name="submit" value="', $txt['search_adjust_submit'], '">
+				<input type="hidden" name="searchtype" value="', !empty($context['search_params']['searchtype']) ? $context['search_params']['searchtype'] : 0, '">
+				<input type="hidden" name="userspec" value="', !empty($context['search_params']['userspec']) ? $context['search_params']['userspec'] : '', '">
+				<input type="hidden" name="show_complete" value="', !empty($context['search_params']['show_complete']) ? 1 : 0, '">
+				<input type="hidden" name="subject_only" value="', !empty($context['search_params']['subject_only']) ? 1 : 0, '">
+				<input type="hidden" name="minage" value="', !empty($context['search_params']['minage']) ? $context['search_params']['minage'] : '0', '">
+				<input type="hidden" name="maxage" value="', !empty($context['search_params']['maxage']) ? $context['search_params']['maxage'] : '9999', '">
+				<input type="hidden" name="sort" value="', !empty($context['search_params']['sort']) ? $context['search_params']['sort'] : 'relevance', '">';
 
 		if (!empty($context['search_params']['brd']))
 			foreach ($context['search_params']['brd'] as $board_id)
 				echo '
-				<input type="hidden" name="brd[', $board_id, ']" value="', $board_id, '" />';
+				<input type="hidden" name="brd[', $board_id, ']" value="', $board_id, '">';
 
 		echo '
 			</form>
@@ -247,12 +247,9 @@ function template_results()
 	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 		echo '
-		<div class="cat_bar">
-			<h3>';
-		echo '
-				<img src="', $settings['images_url'], '/buttons/search.gif" />', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+		</we:cat>
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
@@ -293,11 +290,11 @@ function template_results()
 					{
 						if ($topic['quick_mod']['remove'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=remove;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '" /></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=remove;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
 
 						if ($topic['quick_mod']['lock'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=lock;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '" /></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=lock;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
 
 						if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 							echo '
@@ -305,11 +302,11 @@ function template_results()
 
 						if ($topic['quick_mod']['sticky'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=sticky;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '" /></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=sticky;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '"></a>';
 
 						if ($topic['quick_mod']['move'])
 							echo '
-						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '" /></a>';
+						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
 					}
 
 					echo '
@@ -369,23 +366,21 @@ function template_results()
 			}
 
 			echo '
-					<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '" />
-					<input type="submit" style="font-size: 0.8em;" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');" class="button_submit" />
+					<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
+					<input type="submit" style="font-size: 0.8em;" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');">
 				</div>
 				<br class="clear">
 			</div>
-			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
+			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 		</form>';
 		}
 	}
 	else
 	{
 		echo '
-		<div class="cat_bar">
-			<h3>
-				<img src="' . $settings['images_url'] . '/buttons/search.gif" />&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="' . $settings['images_url'] . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+		</we:cat>
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';

@@ -11,11 +11,9 @@ function template_login()
 	echo '
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+			</we:cat>
 			<div class="roundframe">';
 
 	// Did they make a mistake last time?
@@ -80,9 +78,9 @@ function template_kick_guest()
 	echo '
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
-			<div class="cat_bar">
-				<h3>', $txt['warning'], '</h3>
-			</div>';
+			<we:cat>
+				', $txt['warning'], '
+			</we:cat>';
 
 	// Show the message or default message.
 	echo '
@@ -93,11 +91,9 @@ function template_kick_guest()
 
 	// And now the login information.
 	echo '
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
-				</h3>
-			</div>
+			<we:cat>
+				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+			</we:cat>
 			<div class="roundframe">
 				<dl>
 					<dt>', $txt['username'], ':</dt>
@@ -145,9 +141,9 @@ function template_maintenance()
 	echo '
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="tborder login" id="maintenance_mode">
-		<div class="cat_bar">
-			<h3>', $context['title'], '</h3>
-		</div>
+		<we:cat>
+			', $context['title'], '
+		</we:cat>
 		<p class="description">
 			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
 			', $context['description'], '<br class="clear">
@@ -184,11 +180,9 @@ function template_admin_login()
 	echo '
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
 	<div class="tborder login" id="admin_login">
-		<div class="cat_bar">
-			<h3>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
-			</h3>
-		</div>
+		<we:cat>
+			<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+		</we:cat>
 		<div class="roundframe centertext">';
 
 	if (!empty($context['incorrect_password']))

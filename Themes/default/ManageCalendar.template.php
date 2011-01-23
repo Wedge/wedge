@@ -33,16 +33,16 @@ function template_edit_holiday()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managecalendar;sa=editholiday" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>', $context['page_title'], '</h3>
-			</div>
+			<we:cat>
+				', $context['page_title'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt class="small_caption">
 						<strong>', $txt['holidays_title_label'], ':</strong>
 					</dt>
 					<dd class="small_caption">
-						<input type="text" name="title" value="', $context['holiday']['title'], '" size="55" maxlength="60" />
+						<input type="text" name="title" value="', $context['holiday']['title'], '" size="55" maxlength="60">
 					</dd>
 					<dt class="small_caption">
 						<strong>', $txt['calendar_year'], '</strong>
@@ -83,14 +83,14 @@ function template_edit_holiday()
 
 	if ($context['is_new'])
 		echo '
-				<input type="submit" value="', $txt['holidays_button_add'], '" class="button_submit" />';
+				<input type="submit" value="', $txt['holidays_button_add'], '" class="new">';
 	else
 		echo '
-				<input type="submit" name="edit" value="', $txt['holidays_button_edit'], '" class="button_submit" />
-				<input type="submit" name="delete" value="', $txt['holidays_button_remove'], '" class="button_submit" />
-				<input type="hidden" name="holiday" value="', $context['holiday']['id'], '" />';
+				<input type="submit" name="edit" value="', $txt['holidays_button_edit'], '" class="save">
+				<input type="submit" name="delete" value="', $txt['holidays_button_remove'], '" class="delete">
+				<input type="hidden" name="holiday" value="', $context['holiday']['id'], '">';
 	echo '
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>
 	</div>

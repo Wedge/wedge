@@ -26,7 +26,7 @@ function template_generic_menu_sidebar_above()
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			echo '
-					<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!" /></a>';
+					<a href="', $menu_context['toggle_url'], '">', $section['title'], '<img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!"></a>';
 		else
 			echo '
 					', $section['title'];
@@ -105,7 +105,7 @@ function template_generic_menu_dropdown_above()
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
-	<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="!" class="floatright" /></a>';
+	<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="!" class="floatright"></a>';
 
 	echo '
 <ul id="amen', $mid > 1 ? '_' . ($mid-1) : '', '" class="css menu">';
@@ -203,8 +203,7 @@ function template_generic_menu_tabs(&$menu_context)
 	$tab_context = &$menu_context['tab_data'];
 
 	echo '
-	<div class="cat_bar">
-		<h3>';
+	<we:cat>';
 
 	// Exactly how many tabs do we have?
 	foreach ($context['tabs'] as $id => $tab)
@@ -250,16 +249,15 @@ function template_generic_menu_tabs(&$menu_context)
 	// Show an icon and/or a help item?
 	if (!empty($selected_tab['icon']) || !empty($tab_context['icon']))
 		echo '
-			<img src="', $settings['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '" />';
+		<img src="', $settings['images_url'], '/icons/', !empty($selected_tab['icon']) ? $selected_tab['icon'] : $tab_context['icon'], '">';
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '
-			<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>';
+		<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>';
 
 	echo '
-			', $tab_context['title'], '
-		</h3>
-	</div>';
+		', $tab_context['title'], '
+	</we:cat>';
 
 	// Shall we use the tabs?
 	if (!empty($settings['use_tabs']))
@@ -299,7 +297,7 @@ function template_generic_menu_tabs(&$menu_context)
 
 			if (!empty($tab['is_selected']))
 				echo '
-		<img src="', $settings['images_url'], '/selected.gif" alt="*" /> <strong><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], '">', $tab['label'], '</a></strong>';
+		<img src="', $settings['images_url'], '/selected.gif"> <strong><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], '">', $tab['label'], '</a></strong>';
 			else
 				echo '
 		<a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], '">', $tab['label'], '</a>';

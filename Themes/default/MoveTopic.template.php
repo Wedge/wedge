@@ -9,9 +9,9 @@ function template_main()
 	echo '
 	<div id="move_topic" class="lower_padding">
 		<form action="', $scripturl, '?action=movetopic2;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8" onsubmit="submitonce();">
-			<div class="cat_bar">
-				<h3>', $txt['move_topic'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['move_topic'], '
+			</we:cat>
 			<div class="windowbg wrc centertext">
 				<div class="move_topic">
 					<dl class="settings">
@@ -60,18 +60,18 @@ function template_main()
 						</dl>
 					</fieldset>
 					<div class="righttext">
-						<input type="submit" value="', $txt['move_topic'], '" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit" />
+						<input type="submit" value="', $txt['move_topic'], '" onclick="return submitThisOnce(this);" accesskey="s" class="submit">
 					</div>
 				</div>
 			</div>';
 
 	if ($context['back_to_topic'])
 		echo '
-			<input type="hidden" name="goback" value="1" />';
+			<input type="hidden" name="goback" value="1">';
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">
 		</form>
 	</div>';
 }

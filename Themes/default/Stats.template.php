@@ -7,11 +7,11 @@ function template_main()
 
 	echo '
 	<div id="statistics" class="main_section">
-		<div class="cat_bar">
-			<h3>', $context['page_title'], '</h3>
-		</div>
+		<we:cat>
+			', $context['page_title'], '
+		</we:cat>
 		<we:title2>
-			<img src="', $settings['images_url'], '/stats_info.gif" />', $txt['general_stats'], '
+			<img src="', $settings['images_url'], '/stats_info.gif">', $txt['general_stats'], '
 		</we:title2>
 		<div class="flow_hidden">
 			<div id="stats_left">
@@ -78,7 +78,7 @@ function template_main()
 		<div class="flow_hidden">
 			<div id="top_posters">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_posters.gif" />', $txt['top_posters'], '
+					<img src="', $settings['images_url'], '/stats_posters.gif">', $txt['top_posters'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -109,7 +109,7 @@ function template_main()
 			</div>
 			<div id="top_boards">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_board.gif" />', $txt['top_boards'], '
+					<img src="', $settings['images_url'], '/stats_board.gif">', $txt['top_boards'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -141,7 +141,7 @@ function template_main()
 		<div class="flow_hidden">
 			<div id="top_topics_replies">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['top_topics_replies'], '
+					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['top_topics_replies'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -172,7 +172,7 @@ function template_main()
 
 			<div id="top_topics_views">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_views.gif" />', $txt['top_topics_views'], '
+					<img src="', $settings['images_url'], '/stats_views.gif">', $txt['top_topics_views'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -203,7 +203,7 @@ function template_main()
 		<div class="flow_hidden">
 			<div id="top_topics_starter">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_replies.gif" />', $txt['top_starters'], '
+					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['top_starters'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -234,7 +234,7 @@ function template_main()
 			</div>
 			<div id="most_online">
 				<we:title2>
-					<img src="', $settings['images_url'], '/stats_views.gif" />', $txt['most_time_online'], '
+					<img src="', $settings['images_url'], '/stats_views.gif">', $txt['most_time_online'], '
 				</we:title2>
 				<div class="windowbg2 wrc">
 					<dl class="stats">';
@@ -266,11 +266,9 @@ function template_main()
 		</div>
 		<br class="clear">
 		<div class="flow_hidden">
-			<div class="cat_bar">
-				<h3>
-					<img src="', $settings['images_url'], '/stats_history.gif" />', $txt['forum_history'], '
-				</h3>
-			</div>';
+			<we:cat>
+				<img src="', $settings['images_url'], '/stats_history.gif">', $txt['forum_history'], '
+			</we:cat>';
 
 	if (!empty($context['yearly']))
 	{
@@ -298,7 +296,7 @@ function template_main()
 			echo '
 					<tr class="windowbg2" id="year_', $id, '">
 						<th class="stats_year">
-							<img id="year_img_', $id, '" src="', $settings['images_url'], '/collapse.gif" alt="*" />
+							<img id="year_img_', $id, '" src="', $settings['images_url'], '/collapse.gif">
 							<a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
 						</th>
 						<th>', $year['new_topics'], '</th>
@@ -318,7 +316,7 @@ function template_main()
 				echo '
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
 						<th class="stats_month">
-							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" id="img_', $month['id'], '" />
+							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" id="img_', $month['id'], '">
 							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th>', $month['new_topics'], '</th>

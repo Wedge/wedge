@@ -481,7 +481,7 @@ function create_ajax_indicator_ele()
 	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
 	_ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress').html(
 		'<a href="#" onclick="ajax_indicator(false);"><img src="' + smf_images_url + '/icons/quick_remove.gif"'	+ (ajax_notification_cancel_text ?
-		' alt="' + ajax_notification_cancel_text + '" title="' + ajax_notification_cancel_text + '"' : '') + ' />' + ajax_notification_text
+		' alt="' + ajax_notification_cancel_text + '" title="' + ajax_notification_cancel_text + '"' : '') + '>' + ajax_notification_text
 	).appendTo('body');
 }
 
@@ -527,7 +527,7 @@ function JumpTo(opt)
 			+ ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board='
 			+ opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities()
 			+ '</option></select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" onclick="window.location.href = \''
-			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';" />'));
+			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';">'));
 	this.dropdownList = document.getElementById(opt.sContainerId + '_select');
 };
 

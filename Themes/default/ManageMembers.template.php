@@ -8,13 +8,11 @@ function template_search_members()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3>
-					<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
-					', $txt['search_for'], '
-				</h3>
-			</div>
-			<input type="hidden" name="sa" value="query" />
+			<we:cat>
+				<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
+				', $txt['search_for'], '
+			</we:cat>
+			<input type="hidden" name="sa" value="query">
 			<div class="windowbg wrc">
 				<div class="flow_hidden">
 					<div class="msearch_details floatleft">
@@ -223,7 +221,7 @@ function template_search_members()
 			</div>
 			<br>
 			<div class="righttext">
-				<input type="submit" value="', $txt['search'], '" class="button_submit" />
+				<input type="submit" value="', $txt['search'], '" class="submit">
 			</div>
 		</form>
 	</div>
@@ -264,9 +262,9 @@ function template_admin_browse()
 		echo '
 		<br>
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
-			<div class="cat_bar">
-				<h3>', $txt['admin_browse_outstanding'], '</h3>
-			</div>
+			<we:cat>
+				', $txt['admin_browse_outstanding'], '
+			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">
 					<dt>
@@ -292,15 +290,15 @@ function template_admin_browse()
 						</select>
 					</dd>
 				</dl>
-				<input type="submit" value="', $txt['admin_browse_outstanding_go'], '" class="button_submit" />
-				<input type="hidden" name="type" value="', $context['browse_type'], '" />
-				<input type="hidden" name="sort" value="', $context['approve_list']['sort']['id'], '" />
-				<input type="hidden" name="start" value="', $context['approve_list']['start'], '" />
-				<input type="hidden" name="orig_filter" value="', $context['current_filter'], '" />
-				<input type="hidden" name="sa" value="approve" />', !empty($context['approve_list']['sort']['desc']) ? '
-				<input type="hidden" name="desc" value="1" />' : '', '
+				<input type="submit" value="', $txt['admin_browse_outstanding_go'], '">
+				<input type="hidden" name="type" value="', $context['browse_type'], '">
+				<input type="hidden" name="sort" value="', $context['approve_list']['sort']['id'], '">
+				<input type="hidden" name="start" value="', $context['approve_list']['start'], '">
+				<input type="hidden" name="orig_filter" value="', $context['current_filter'], '">
+				<input type="hidden" name="sa" value="approve">', !empty($context['approve_list']['sort']['desc']) ? '
+				<input type="hidden" name="desc" value="1">' : '', '
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 	}
 

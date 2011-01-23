@@ -46,7 +46,7 @@ function template_latest_news()
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" /></a>', $txt['mc_latest_news'], '
+			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['mc_latest_news'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
@@ -194,7 +194,7 @@ function template_notes()
 			// Cycle through the notes.
 			foreach ($context['notes'] as $note)
 				echo '
-						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', $settings['images_url'], '/pm_recipient_delete.gif" /></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
+						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', $settings['images_url'], '/pm_recipient_delete.gif"></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
 
 			echo '
 					</ul>
@@ -365,7 +365,7 @@ function template_unapproved_posts()
 
 	echo '
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -455,7 +455,7 @@ function template_unapproved_attachments()
 
 	echo '
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -569,7 +569,7 @@ function template_viewmodreport()
 	}
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
@@ -673,7 +673,7 @@ function template_moderation_settings()
 	echo '
 				</dl>
 				<div class="righttext">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<input type="submit" name="save" value="', $txt['save'], '" class="save">
 				</div>
 			</div>
@@ -691,7 +691,7 @@ function template_show_notice()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8">
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>
@@ -759,7 +759,7 @@ function template_warn_template()
 	echo '
 				<input type="submit" name="save" value="', $context['page_title'], '" class="save">
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>
 	</div>
 	<br class="clear">';
