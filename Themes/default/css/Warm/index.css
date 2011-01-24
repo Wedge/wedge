@@ -392,7 +392,7 @@ input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
 }
-.cat_bar h3 input[type=checkbox] {
+.cat input[type=checkbox] {
 	margin: 5px -3px 0 7px;
 }
 
@@ -957,6 +957,9 @@ tr.catbg th a {
 
 .pagelinks {
 	padding: .6em 0 .4em;
+	span {
+		font-weight: bold;
+	}
 }
 
 /* Colors for background of posts requiring approval */
@@ -1194,34 +1197,28 @@ dfn {
 
 /* Styles for section headers.
 ------------------------------------------------------- */
-.cat_bar {
+.cat {
 	overflow: auto;
 	border-radius: 5px;
-	padding: 5px 8px;
+	padding: 5px 12px 5px 8px;
 	margin-bottom: 4px;
 	background: #e0ece6;
 	border: 1px solid #ddd;
 	border: 1px solid rgba(0,0,0, .15);
-	h3 {
-		padding-right: 9px;
-		font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
-	}
+	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 }
-.title_bar {
+.title {
 	overflow: auto;
-	padding: 5px 8px 3px;
+	padding: 5px 12px 3px 8px;
 	border-bottom: 1px dotted #ddd;
 	border-bottom: 1px dotted rgba(0,0,0, .5);
 	border: 0;
-	h3 {
-		padding-right: 9px;
-		font: bold 95%/20px $main_font;
-		text-transform: uppercase;
-		color: #369;
-	}
+	font: bold 95%/20px $main_font;
+	text-transform: uppercase;
+	color: #369;
 }
 
-.cat_bar h3, .title_bar h3, .table_list tbody.header td {
+.cat, .title, .table_list tbody.header td {
 	a {
 		color: #963;
 	}
@@ -1230,7 +1227,7 @@ dfn {
 		text-decoration: none;
 	}
 }
-.cat_bar, .title_bar {
+.cat, .title {
 	img {
 		float: left;
 		vertical-align: middle;
@@ -1238,7 +1235,7 @@ dfn {
 		margin-top: 1px;
 	}
 }
-.cat_bar img {
+.cat img {
 	&[alt="+"], &[alt="-"] {
 		margin-top: 4px;
 	}

@@ -944,6 +944,9 @@ tr.catbg th a {
 
 .pagelinks {
 	padding: .6em 0 .4em;
+	span {
+		font-weight: bold;
+	}
 }
 
 /* Colors for background of posts requiring approval */
