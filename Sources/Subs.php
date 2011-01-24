@@ -584,7 +584,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		// Show the '...' part near the end. (1 ... 6 7 [8] 9 10 >...< 15)
 		if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
 		{
-			if (!isset($base_page)
+			if (!isset($base_page))
 				$base_page = JavaScriptEscape($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d');
 			$pageindex .= '<span onclick="expandPages(this, \'' . $base_page . '\', ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');" onmouseover="this.style.cursor = \'pointer\';"> ... </span>';
 		}
