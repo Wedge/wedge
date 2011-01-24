@@ -51,7 +51,7 @@ div.frame {
 }
 
 #header {
-	background: darken($main_bg, 10); /* rgb(231,233,224); */
+	background: darken($main_bg, 4);
 }
 #header div.frame {
 	padding: 5px 30px 0;

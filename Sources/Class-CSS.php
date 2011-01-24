@@ -82,24 +82,37 @@ class VarPlugin extends CacheerPlugin
 	}
 }
 
+/**
+ * Various functions for the CSS parser. Currently only color-related.
+ *
+ * The following functions are inspired by Phamlp (PHP port of Sass):
+ * hue2rgb(), hsl2rgb(), rgb2hsl()
+ *
+ * @author		Chris Yates <chris.l.yates@gmail.com>
+ * @copyright 	Copyright (c) 2010 PBM Web Development
+ * @license		http://phamlp.googlecode.com/files/license.txt
+ *
+ * The rest is mine. (Ben oui, quoi.)
+ */
 class FuncPlugin extends CacheerPlugin
 {
-	// A very, very simple sample function taken and even more simplified from Noisen.com's code... ;)
-	private function lum($color, $r, $g, $b)
+	private function rgb2hex($r, $g, $b)
 	{
-		$ra = max(0, min(255, $color[0] + $r));
-		$ga = max(0, min(255, $color[1] + $g));
-		$ba = max(0, min(255, $color[2] + $b));
-		return strtolower(sprintf('%X%X%X', $ra, $ga, $ba));
+		return '#' . sprintf('%x%x%x', $r, $g, $b);
 	}
 
-	/**
-	 * Converts from hue to RGB colorspace
-	 * Taken from Phamlp (PHP port of Sass)
-	 * @author		Chris Yates <chris.l.yates@gmail.com>
-	 * @copyright 	Copyright (c) 2010 PBM Web Development
-	 * @license		http://phamlp.googlecode.com/files/license.txt
-	 */
+	// A very, very simple sample function taken and even more simplified
+	// from Noisen.com's code... Yeah, we don't really need it ;)
+	private function lum($color, $r, $g, $b)
+	{
+		return rgb2hex(
+			max(0, min(255, $color[0] + $r)),
+			max(0, min(255, $color[1] + $g)),
+			max(0, min(255, $color[2] + $b))
+		);
+	}
+
+	// Converts from hue to RGB colorspace
 	private function hue2rgb($m1, $m2, $h)
 	{
 		$h += ($h < 0 ? 1 : ($h > 1 ? -1 : 0));
@@ -117,28 +130,28 @@ class FuncPlugin extends CacheerPlugin
 
 	/**
 	 * Converts from HSL to RGB colorspace
-	 * Algorithm from Phamlp/Sass and the CSS3 spec: {@link http://www.w3.org/TR/css3-color/#hsl-color}
+	 * Algorithm from the CSS3 spec: {@link http://www.w3.org/TR/css3-color/#hsl-color}
 	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
 	 */
 	private function hsl2rgb($h, $s, $l)
 	{
 		$h = ($h % 360) / 360;
-		$s = $s / 100;
-		$l = $l / 100;
+		$s = max(0, min(1, $s / 100));
+		$l = max(0, min(1, $l / 100));
 
 		$m1 = ($l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s);
 		$m2 = $l * 2 - $m1;
 
 		return array(
-			'red'		=> $this->hue2rgb($m1, $m2, $h + 1 / 3),
-			'green'		=> $this->hue2rgb($m1, $m2, $h),
-			'blue'		=> $this->hue2rgb($m1, $m2, $h - 1 / 3),
+			'r' => $this->hue2rgb($m1, $m2, $h + 1 / 3),
+			'g' => $this->hue2rgb($m1, $m2, $h),
+			'b' => $this->hue2rgb($m1, $m2, $h - 1 / 3),
 		);
 	}
 
 	/**
-	 * Converts from RGB to HSL colourspace
-	 * Algorithm adapted from Phamlp/Sass and {@link http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV}
+	 * Converts from RGB to HSL colorspace
+	 * Algorithm adapted from {@link http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV}
 	 * $r/$g/$b are RGB values (0-255)
 	 */
 	private function rgb2hsl($r, $g, $b)
@@ -159,17 +172,18 @@ class FuncPlugin extends CacheerPlugin
 			$h = (($rgb[0] - $rgb[1])/$c) + 4;
 
 		return array(
-			'hue'			=> $h * 60,
-			'saturation'	=> $c ? ($l <= 0.5 ? $c / (2 * $l) : $c / (2 - 2 * $l)) * 100 : 0,
-			'lightness'		=> $l * 100,
+			'h' => $h * 60, // hue
+			's' => $c ? ($l <= 0.5 ? $c / (2 * $l) : $c / (2 - 2 * $l)) * 100 : 0, // saturation
+			'l' => $l * 100, // lightness
 		);
 	}
 
 	function process(&$css)
 	{
 		$nodupes = array();
+
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		if (preg_match_all('~(darken|lighten)\(((?:[^\(\)]|\([^\(\)]*\))+)\)~i', $css, $matches))
+		if (preg_match_all('~(darken|lighten|desaturize|saturize|hue)\(((?:[^\(\)]|\([^\(\)]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -203,23 +217,27 @@ class FuncPlugin extends CacheerPlugin
 				while ($m && $m[0] === '')
 					array_shift($m);
 
-				// Launch our functions
+				$arg = isset($m[0]) ? $m[0] : 5;
+				$hsl = $this->rgb2hsl($color[0], $color[1], $color[2]);
+
+				// Run our functions
 				if ($code == 'darken')
-				{
-					$m[0] = isset($m[0]) ? $m[0] : 10;
-					if (!isset($m[1], $m[2]))
-						$m[2] = $m[1] = $m[0];
-					$result = '#' . $this->lum($color, (int) -$m[0], (int) -$m[1], (int) -$m[2]);
-				}
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] - $arg);
+
 				elseif ($code == 'lighten')
-				{
-					$m[0] = isset($m[0]) ? $m[0] : 10;
-					if (!isset($m[1], $m[2]))
-						$m[2] = $m[1] = $m[0];
-					$result = '#' . $this->lum($color, (int) $m[0], (int) $m[1], (int) $m[2]);
-				}
-				if (!empty($result))
-					$css = str_replace($dec, $result, $css);
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] + $arg);
+
+				elseif ($code == 'desaturize')
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] - $arg, $hsl['l']);
+
+				elseif ($code == 'saturize')
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] + $arg, $hsl['l']);
+
+				elseif ($code == 'hue')
+					$nc = $this->hsl2rgb($hsl['h'] + $arg, $hsl['s'], $hsl['l']);
+
+				if (!empty($nc))
+					$css = str_replace($dec, $this->rgb2hex($nc['r'], $nc['g'], $nc['b']), $css);
 			}
 		}
 	}
