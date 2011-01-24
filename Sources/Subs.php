@@ -2911,7 +2911,9 @@ function wedge_cache_css()
 		new BasedOnPlugin(),		// Based-on (mixins)
 		new NestedSelectorsPlugin()	// Nested selectors (.hello { .world { color: 0 } })
 	);
-	if ($can_gzip)
+	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
+	// (Probably should use more specific browser sniffing. Also, IE8 only supports files < 32kb, which is fine in general.)
+	if ($can_gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
 		$plugins[] = new Base64Plugin();
 
 	// Default CSS variables (paths are set relative to the cache folder)
