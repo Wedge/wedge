@@ -52,11 +52,12 @@ class VarPlugin extends CacheerPlugin
 		// Reuse CSS variables from Wedge or parent CSS files.
 		$css_vars = isset($css_vars) ? $css_vars : array();
 
+		// Double quotes are only required for empty strings.
 		// Authors can specific conditions for the variable to be set,
 		// depending on the browser, rtl, guest or member, i.e. anything
 		// set in $context['css_generic_files']. Like this:
 		//
-		//		$variable = rgba(2,4,6,.5);
+		//		$variable = "rgba(2,4,6,.5)";
 		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
 
 		if (preg_match_all('~^\s*(\$\w+)\s*(?:{([^}]+)}\s*)?=\s*([^;]+);[\r\n]?~m', $css, $matches))
@@ -65,7 +66,7 @@ class VarPlugin extends CacheerPlugin
 			{
 				$css = str_replace($dec, '', $css);
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
-					$css_vars[$matches[1][$i]] = $matches[3][$i];
+					$css_vars[$matches[1][$i]] = trim($matches[3][$i], '"');
 			}
 
 			// Sort the updated array by key length, to avoid conflicts.
@@ -73,8 +74,11 @@ class VarPlugin extends CacheerPlugin
 			array_multisort($keys, SORT_DESC, $css_vars);
 		}
 
+		// Replace recursively - good for variables referencing variables
+		$count = 1;
 		if (!empty($css_vars))
-			$css = str_replace(array_keys($css_vars), array_values($css_vars), $css);
+			while ($count)
+				$css = str_replace(array_keys($css_vars), array_values($css_vars), $css, $count);
 	}
 }
 

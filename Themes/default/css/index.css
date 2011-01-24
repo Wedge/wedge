@@ -4,7 +4,7 @@
  * This is the base CSS file for the default theme.
  *
  * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
- * index.css, sections.css, admin.css, editor.css, rtl.css, guest.css
+ * index.css, sections.css, admin.css, editor.css, rtl.css, guest.css, member.css
  *
  * As well as browser-specific stylesheets. If you need to add a browser hack, just create one of these files into your folder:
  * opera.css, webkit.css, chrome.css, safari.css, iphone.css, android.css, gecko.css, firefox.css, ie6.css, ie7.css, ie8.css, ie9.css
@@ -27,10 +27,15 @@
  *
  */
 
+/* These are our CSS variable definitions */
+$main_font = "Verdana, Arial, Helvetica, sans-serif";
+$bevel = "url($images/theme/bevel.png),";
+$bevel {ie6,ie7,ie8} = "";
+
 /* Set a fontsize that will look the same in all browsers. */
 body {
 	background: #faefe6;
-	font: 78%/130% Verdana, Arial, Helvetica, sans-serif;
+	font: 78%/130% $main_font;
 	margin: 0;
 	padding: 0;
 }
@@ -124,11 +129,6 @@ h1.forumtitle {
 	padding: 5px;
 }
 #header {
-	li.greeting {
-		font-size: 1.3em;
-		font-weight: bold;
-		line-height: 1.5em;
-	}
 	.news {
 		width: 50%;
 		float: right;
@@ -314,7 +314,7 @@ form {
 }
 
 input, button, select, textarea {
-	font: 95%/115% verdana, Helvetica, sans-serif;
+	font: 95%/115% $main_font;
 	color: #000;
 	background: #fff;
 	border: 1px solid #7f9db9;
@@ -337,7 +337,7 @@ select.qaction, input.qaction {
 
 /* The font size of textareas should be just a little bit larger. */
 textarea {
-	font: 100%/130% verdana, Helvetica, sans-serif;
+	font: 100%/130% $main_font;
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
@@ -360,43 +360,31 @@ input[type=submit], input[type=button], input[type=reset] {
 	}
 }
 /* !!! input.spell */
-input.new, input.save, input.submit, input.delete {
+input.new, input.save, input.submit, input.delete, input[type=search] {
 	padding-left: 24px;
 }
 input.submit {
-	background: url($images/buttons.png) 4px 2px no-repeat #e2f3ea;
-	background: url($images/buttons.png) 4px 2px no-repeat, #e2f3ea url($images/theme/bevel.png);
-	:hover {
-		background-color: #e8f9f0;
-	}
+	background: $bevel #e2f3ea url($images/buttons.png) 4px 2px no-repeat;
+	:hover { background-color: #e8f9f0; }
 }
 input.delete {
-	background: url($images/buttons.png) 4px -30px no-repeat #f5efe9;
-	background: url($images/buttons.png) 4px -30px no-repeat, #f5efe9 url($images/theme/bevel.png);
-	:hover {
-		background-color: #fbf5ef;
-	}
+	background: $bevel #f5efe9 url($images/buttons.png) 4px -30px no-repeat;
+	:hover { background-color: #fbf5ef; }
 }
 input.save {
-	background: url($images/buttons.png) 4px -62px no-repeat #dff3e8;
-	background: url($images/buttons.png) 4px -62px no-repeat, #dff3e8 url($images/theme/bevel.png);
-	:hover {
-		background-color: #e5f9ed;
-	}
+	background: $bevel #dff3e8 url($images/buttons.png) 4px -62px no-repeat;
+	:hover { background-color: #e5f9ed; }
 }
 input.new {
-	background: url($images/buttons-64.png) 4px -94px no-repeat #e0eaf6;
-	background: url($images/buttons-128.png) 4px -94px no-repeat, #e0eaf6 url($images/theme/bevel.png);
-	:hover {
-		background-color: #e6f0fc;
-	}
+	background: $bevel #e0eaf6 url($images/buttons.png) 4px -94px no-repeat;
+	:hover { background-color: #e6f0fc; }
 }
 input[type=search] {
-	background: url($images/filter.gif) 5px 2px no-repeat #fdf7ef;
-	padding-left: 24px;
+	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
 }
 input[name=cancel], input[type=reset] {
-	background-color: #fdf7ef !important;
+	background-color: #fff0e3;
+	:hover { background-color: #fff5e8; }
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
@@ -677,12 +665,12 @@ li.separator {
 /* Default font sizes: small (8pt), normal (10pt), and large (14pt). */
 .smalltext, tr.smalltext th {
 	font-size: .85em;
-	font-family: verdana, sans-serif;
+	font-family: $main_font;
 }
 .middletext {
 	font-size: .9em;
 	line-height: 1em;
-	font-family: verdana, sans-serif;
+	font-family: $main_font;
 }
 .normaltext {
 	font-size: 1em;

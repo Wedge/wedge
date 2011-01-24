@@ -1665,8 +1665,11 @@ span.hidelink {
 #search_term_input {
 	font-size: 115%;
 	margin: 0 0 1em;
-	input[type=search], input.submit {
+	input[type=search] {
 		background-position: 5px 4px;
+	}
+	input.submit {
+		background-position: 0 0, 4px 4px;
 	}
 }
 

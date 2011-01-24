@@ -138,7 +138,7 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 			if (aCurrentDev == null)
 				return parseInt(aCurrentVersion[i], 10) < parseInt(aTargetDev[1], 10);
 			else if (aTargetDev == null)
-				return parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10;
+				return parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10);
 			else if (aCurrentDev[1] != aTargetDev[1])
 				return parseInt(aCurrentDev[1], 10) < parseInt(aTargetDev[1], 10);
 			else if (aCurrentDev[2] != aTargetDev[2])

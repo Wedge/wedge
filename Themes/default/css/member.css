@@ -1,0 +1,8 @@
+
+#header {
+	li.greeting {
+		font-size: 1.3em;
+		font-weight: bold;
+		line-height: 1.5em;
+	}
+}

@@ -27,7 +27,10 @@
  *
  */
 
-$main_font = Verdana, Arial, Helvetica, sans-serif;
+/* These are our CSS variable definitions */
+$main_font = "Verdana, Arial, Helvetica, sans-serif";
+$bevel = "url($images/theme/bevel.png),";
+$bevel {ie6,ie7,ie8} = "";
 
 /* Set a fontsize that will look the same in all browsers. */
 body {
@@ -108,11 +111,6 @@ h1.forumtitle {
 	padding: 5px;
 }
 #header {
-	li.greeting {
-		font-size: 1.3em;
-		font-weight: bold;
-		line-height: 1.5em;
-	}
 	.news {
 		width: 50%;
 		float: right;
@@ -361,43 +359,31 @@ input[type=submit], input[type=button], input[type=reset] {
 	}
 }
 /* !!! input.spell */
-input.new, input.save, input.submit, input.delete {
+input.new, input.save, input.submit, input.delete, input[type=search] {
 	padding-left: 24px;
 }
 input.submit {
-	background: url($images/buttons.png) 4px 2px no-repeat #e2f3ea;
-	background: url($images/buttons.png) 4px 2px no-repeat, #e2f3ea url($images/theme/bevel.png);
-	:hover {
-		background-color: #e8f9f0;
-	}
+	background: $bevel #e2f3ea url($images/buttons.png) 4px 2px no-repeat;
+	:hover { background-color: #e8f9f0; }
 }
 input.delete {
-	background: url($images/buttons.png) 4px -30px no-repeat #f5efe9;
-	background: url($images/buttons.png) 4px -30px no-repeat, #f5efe9 url($images/theme/bevel.png);
-	:hover {
-		background-color: #fbf5ef;
-	}
+	background: $bevel #f5efe9 url($images/buttons.png) 4px -30px no-repeat;
+	:hover { background-color: #fbf5ef; }
 }
 input.save {
-	background: url($images/buttons.png) 4px -62px no-repeat #dff3e8;
-	background: url($images/buttons.png) 4px -62px no-repeat, #dff3e8 url($images/theme/bevel.png);
-	:hover {
-		background-color: #e5f9ed;
-	}
+	background: $bevel #dff3e8 url($images/buttons.png) 4px -62px no-repeat;
+	:hover { background-color: #e5f9ed; }
 }
 input.new {
-	background: url($images/buttons.png) 4px -94px no-repeat #e0eaf6;
-	background: url($images/buttons.png) 4px -94px no-repeat, #e0eaf6 url($images/theme/bevel.png);
-	:hover {
-		background-color: #e6f0fc;
-	}
+	background: $bevel #e0eaf6 url($images/buttons.png) 4px -94px no-repeat;
+	:hover { background-color: #e6f0fc; }
 }
 input[type=search] {
-	background: url($images/filter.gif) 5px 2px no-repeat #fdf7ef;
-	padding-left: 24px;
+	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
 }
 input[name=cancel], input[type=reset] {
-	background-color: #fdf7ef !important;
+	background-color: #fff0e3;
+	:hover { background-color: #fff5e8; }
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
@@ -1332,6 +1318,12 @@ img.middle, td.middle, th.middle, tr.middle td, tr.middle th {
 }
 img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th {
 	vertical-align: bottom;
+}
+img.left {
+	float: left;
+}
+img.right {
+	float: right;
 }
 table.left th, table tr.left th, table tr th.left,
 table.left td, table tr.left td, table tr td.left {

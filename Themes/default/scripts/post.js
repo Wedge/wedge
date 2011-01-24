@@ -525,7 +525,7 @@ function wedgeAttachSelect(oOptions)
 			new_row.element = element;
 			new_row.innerHTML = element.value + '&nbsp; &nbsp;';
 
-			$('<input type="button" class="button_submit" value="' + that.opts.message_txt_delete + '" />').click(function() {
+			$('<input type="button" class="delete" style="margin-top: 4px; background-position: 0 0, 4px -31px" value="' + that.opts.message_txt_delete + '" />').click(function() {
 				// Remove element from form
 				this.parentNode.element.parentNode.removeChild(this.parentNode.element);
 				this.parentNode.parentNode.removeChild(this.parentNode);
