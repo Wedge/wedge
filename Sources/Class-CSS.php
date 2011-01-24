@@ -82,6 +82,149 @@ class VarPlugin extends CacheerPlugin
 	}
 }
 
+class FuncPlugin extends CacheerPlugin
+{
+	// A very, very simple sample function taken and even more simplified from Noisen.com's code... ;)
+	private function lum($color, $r, $g, $b)
+	{
+		$ra = max(0, min(255, $color[0] + $r));
+		$ga = max(0, min(255, $color[1] + $g));
+		$ba = max(0, min(255, $color[2] + $b));
+		return strtolower(sprintf('%X%X%X', $ra, $ga, $ba));
+	}
+
+	/**
+	 * Converts from hue to RGB colorspace
+	 * Taken from Phamlp (PHP port of Sass)
+	 * @author		Chris Yates <chris.l.yates@gmail.com>
+	 * @copyright 	Copyright (c) 2010 PBM Web Development
+	 * @license		http://phamlp.googlecode.com/files/license.txt
+	 */
+	private function hue2rgb($m1, $m2, $h)
+	{
+		$h += ($h < 0 ? 1 : ($h > 1 ? -1 : 0));
+		
+		if ($h * 6 < 1)
+			$c = $m2 + ($m1 - $m2) * $h * 6;
+		elseif ($h * 2 < 1)
+			$c = $m1;
+		elseif ($h * 3 < 2)
+			$c = $m2 + ($m1 - $m2) * (2/3 - $h) * 6;
+		else
+			$c = $m2;
+		return $c * 255; 
+	}
+
+	/**
+	 * Converts from HSL to RGB colorspace
+	 * Algorithm from Phamlp/Sass and the CSS3 spec: {@link http://www.w3.org/TR/css3-color/#hsl-color}
+	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
+	 */
+	private function hsl2rgb($h, $s, $l)
+	{
+		$h = ($h % 360) / 360;
+		$s = $s / 100;
+		$l = $l / 100;
+
+		$m1 = ($l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s);
+		$m2 = $l * 2 - $m1;
+
+		return array(
+			'red'		=> $this->hue2rgb($m1, $m2, $h + 1 / 3),
+			'green'		=> $this->hue2rgb($m1, $m2, $h),
+			'blue'		=> $this->hue2rgb($m1, $m2, $h - 1 / 3),
+		);
+	}
+
+	/**
+	 * Converts from RGB to HSL colourspace
+	 * Algorithm adapted from Phamlp/Sass and {@link http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV}
+	 * $r/$g/$b are RGB values (0-255)
+	 */
+	private function rgb2hsl($r, $g, $b)
+	{
+		$rgb = array($r/255, $g/255, $b/255);
+		$max = max($rgb);
+		$min = min($rgb);
+		$c = $max - $min;
+		$l = ($max + $min) / 2;
+
+		if ($max === $min)
+			$h = 0;
+		elseif ($max === $rgb[0])
+			$h = (($rgb[1] - $rgb[2])/$c) % 6;
+		elseif ($max === $rgb[1])
+			$h = (($rgb[2] - $rgb[0])/$c) + 2;
+		elseif ($max === $rgb[2])
+			$h = (($rgb[0] - $rgb[1])/$c) + 4;
+
+		return array(
+			'hue'			=> $h * 60,
+			'saturation'	=> $c ? ($l <= 0.5 ? $c / (2 * $l) : $c / (2 - 2 * $l)) * 100 : 0,
+			'lightness'		=> $l * 100,
+		);
+	}
+
+	function process(&$css)
+	{
+		$nodupes = array();
+		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
+		if (preg_match_all('~(darken|lighten)\(((?:[^\(\)]|\([^\(\)]*\))+)\)~i', $css, $matches))
+		{
+			foreach ($matches[0] as $i => &$dec)
+			{
+				if (isset($nodupes[$dec]))
+					continue;
+				$nodupes[$dec] = true;
+				$code = $matches[1][$i];
+				$m = $matches[2][$i];
+				if (empty($m))
+					continue;
+
+				// Extract color data
+				preg_match('~(?:rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*([\d\.]+)\s*\)|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|#([0-9a-fA-F]{6}))~', $m, $rgb);
+				if (empty($rgb[0]))
+					continue;
+				if ($rgb[1] !== '')
+					$color = array($rgb[1], $rgb[2], $rgb[3], (float) $rgb[4]);
+				elseif ($rgb[5] !== '')
+					$color = array($rgb[5], $rgb[6], $rgb[7], 1);
+				elseif ($rgb[8] !== '')
+				{
+					$ra = hexdec(substr($rgb[8], 0, 2));
+					$ga = hexdec(substr($rgb[8], 2, 2));
+					$ba = hexdec(substr($rgb[8], 4, 2));
+					$color = array($ra, $rg, $rb, 1);
+				}
+				else
+					$color = array(255, 255, 255, 1);
+
+				$m = explode(',', substr($m, strlen($rgb[0])));
+				while ($m && $m[0] === '')
+					array_shift($m);
+
+				// Launch our functions
+				if ($code == 'darken')
+				{
+					$m[0] = isset($m[0]) ? $m[0] : 10;
+					if (!isset($m[1], $m[2]))
+						$m[2] = $m[1] = $m[0];
+					$result = '#' . $this->lum($color, (int) -$m[0], (int) -$m[1], (int) -$m[2]);
+				}
+				elseif ($code == 'lighten')
+				{
+					$m[0] = isset($m[0]) ? $m[0] : 10;
+					if (!isset($m[1], $m[2]))
+						$m[2] = $m[1] = $m[0];
+					$result = '#' . $this->lum($color, (int) $m[0], (int) $m[1], (int) $m[2]);
+				}
+				if (!empty($result))
+					$css = str_replace($dec, $result, $css);
+			}
+		}
+	}
+}
+
 class BasedOnPlugin extends CacheerPlugin
 {
 	function process(&$css)

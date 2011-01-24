@@ -31,6 +31,7 @@
 $main_font = "Verdana, Arial, Helvetica, sans-serif";
 $bevel = "url($images/theme/bevel.png),";
 $bevel {ie6,ie7,ie8} = "";
+$main_bg = "rgb(241,243,234)";
 
 /* Set a fontsize that will look the same in all browsers. */
 body {
@@ -46,11 +47,11 @@ div.frame {
 
 #header, #navi, #content {
 	margin: 0 auto;
-	background: rgb(241,243,234);
+	background: $main_bg;
 }
 
 #header {
-	background: rgb(231,233,224);
+	background: darken($main_bg, 10); /* rgb(231,233,224); */
 }
 #header div.frame {
 	padding: 5px 30px 0;
