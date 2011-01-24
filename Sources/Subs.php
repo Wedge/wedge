@@ -2904,7 +2904,15 @@ function wedge_cache_css()
 
 	// Load Shaun Inman's nested selector parser
 	loadSource('Class-CSS');
-	$plugins = array(new ServerImportPlugin(), new VarPlugin(), new FuncPlugin(), new BasedOnPlugin(), new NestedSelectorsPlugin());
+	$plugins = array(
+		new ServerImportPlugin(),	// Server import (unused)
+		new VarPlugin(),			// CSS variables ($hello_world)
+		new FuncPlugin(),			// CSS functions (color transforms)
+		new BasedOnPlugin(),		// Based-on (mixins)
+		new NestedSelectorsPlugin()	// Nested selectors (.hello { .world { color: 0 } })
+	);
+	if ($can_gzip)
+		$plugins[] = new Base64Plugin();
 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?

@@ -98,7 +98,7 @@ class FuncPlugin extends CacheerPlugin
 {
 	private function rgb2hex($r, $g, $b)
 	{
-		return '#' . sprintf('%x%x%x', $r, $g, $b);
+		return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
 	}
 
 	// A very, very simple sample function taken and even more simplified
@@ -183,7 +183,7 @@ class FuncPlugin extends CacheerPlugin
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		if (preg_match_all('~(darken|lighten|desaturize|saturize|hue)\(((?:[^\(\)]|\([^\(\)]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue)\(((?:[^\(\)]|(?:rgba?|hsla?)\([^\(\)]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -204,12 +204,7 @@ class FuncPlugin extends CacheerPlugin
 				elseif ($rgb[5] !== '')
 					$color = array($rgb[5], $rgb[6], $rgb[7], 1);
 				elseif ($rgb[8] !== '')
-				{
-					$ra = hexdec(substr($rgb[8], 0, 2));
-					$ga = hexdec(substr($rgb[8], 2, 2));
-					$ba = hexdec(substr($rgb[8], 4, 2));
-					$color = array($ra, $rg, $rb, 1);
-				}
+					$color = array(hexdec(substr($rgb[8], 0, 2)), hexdec(substr($rgb[8], 2, 2)), hexdec(substr($rgb[8], 4, 2)), 1);
 				else
 					$color = array(255, 255, 255, 1);
 
@@ -297,6 +292,33 @@ class BasedOnPlugin extends CacheerPlugin
 
 				// Insert styles this is based on
 				$css = str_replace($based_on, $styles, $css);
+			}
+		}
+	}
+}
+
+class Base64Plugin extends CacheerPlugin
+{
+	function process(&$css)
+	{
+		global $boarddir;
+
+		$images = array();
+		if (preg_match_all('#url\(([^\)]+)\)#i', $css, $matches))
+		{
+			foreach ($matches[1] as $img)
+				if (preg_match('#\.(gif|jpg|png)$#', $img, $ext))
+					$images[$img] = $ext[1];
+
+			foreach ($images as $img => $img_ext)
+			{
+				$absolut = $boarddir . substr($img, 2);
+				if (file_exists($absolut))
+				{
+					$img_raw = file_get_contents($absolut);
+					$img_data = 'data:image/' . $img_ext . ';base64,' . base64_encode($img_raw);
+					$css = str_replace('url(' . $img . ')', 'url(' . $img_data . ')', $css);
+				}
 			}
 		}
 	}
@@ -423,7 +445,6 @@ class NestedSelectorsPlugin extends CacheerPlugin
 
 class SI_DomNode
 {
-	var $dom;
 	var $nodeName = '';
 	var $cdata = '';
 	var $nodeId;
