@@ -186,7 +186,6 @@ QuickReply.prototype.switchMode = function ()
 function QuickModify(oOptions)
 {
 	this.opt = oOptions;
-	this.bInEditMode = false;
 	this.sCurMessageId = '';
 	this.oCurMessageDiv = null;
 	this.oCurSubjectDiv = null;
@@ -203,12 +202,13 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 	// iMessageId is taken from the owner ID -- modify_button_xxx
 	var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(14) : '';
 
-	// First cancel if there's another message still being edited.
-	if (this.bInEditMode)
-		this.modifyCancel();
+	// Did we press the Quick Modify button by error while trying to submit? Oops.
+	if (this.sCurMessageId && this.sCurMessageId.substr(4) == iMessageId)
+		return;
 
-	// At least NOW we're in edit mode
-	this.bInEditMode = true;
+	// First cancel if there's another message still being edited.
+	if (this.sCurMessageId)
+		this.modifyCancel();
 
 	// Send out the XMLHttp request to get more info
 	ajax_indicator(true);
@@ -223,10 +223,17 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 	ajax_indicator(false);
 
 	// Grab the message ID.
-	this.sCurMessageId = $('message', XMLDoc).attr('id');
+	var sId = $('message', XMLDoc).attr('id');
+
+	if (sId == this.sCurMessageId)
+		return;
+	else if (this.sCurMessageId)
+		this.modifyCancel();
+	this.sCurMessageId = sId;
 
 	// If this is not valid then simply give up.
 	this.oCurMessageDiv = $('#' + this.sCurMessageId);
+
 	if (!this.oCurMessageDiv.length)
 		return this.modifyCancel();
 
@@ -245,8 +252,6 @@ QuickModify.prototype.onMessageReceived = function (XMLDoc)
 
 	var sSubjectText = $('subject', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}');
 	this.oCurSubjectDiv.html(this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
-
-	return true;
 };
 
 // Function in case the user presses cancel (or other circumstances cause it).
@@ -260,7 +265,7 @@ QuickModify.prototype.modifyCancel = function ()
 	}
 
 	// No longer in edit mode, that's right.
-	this.bInEditMode = false;
+	this.sCurMessageId = '';
 
 	return false;
 };
@@ -269,7 +274,7 @@ QuickModify.prototype.modifyCancel = function ()
 QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 {
 	// We cannot save if we weren't in edit mode.
-	if (!this.bInEditMode)
+	if (!this.sCurMessageId)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
