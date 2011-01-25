@@ -120,3 +120,13 @@ li.separator {
 #context_menus h4:hover {
 	background-color: #ebe7e2;
 }
+
+input[type=submit] {
+	overflow: visible;
+}
+
+/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
+input.submit	{ background-position: 4px 2px; }
+input.delete	{ background-position: 4px -30px; }
+input.save		{ background-position: 4px -62px; }
+input.new		{ background-position: 4px -94px; }

@@ -304,20 +304,22 @@ class Base64Plugin extends CacheerPlugin
 		global $boarddir;
 
 		$images = array();
-		if (preg_match_all('#url\(([^\)]+)\)#i', $css, $matches))
+		if (preg_match_all('~url\(([^\)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
-				if (preg_match('#\.(gif|jpg|png)$#', $img, $ext))
-					$images[$img] = $ext[1];
+				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))
+					$images[$img] = $ext[1] == 'jpg' ? 'jpeg' : $ext[1];
 
 			foreach ($images as $img => $img_ext)
 			{
 				$absolut = $boarddir . substr($img, 2);
-				if (file_exists($absolut))
+
+				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
+				if (file_exists($absolut) && filesize($absolut) <= 8192)
 				{
 					$img_raw = file_get_contents($absolut);
-					$img_data = 'data:image/' . $img_ext . ';base64,' . base64_encode($img_raw);
-					$css = str_replace('url(' . $img . ')', 'url(' . $img_data . ')', $css);
+					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
+					$css = str_replace('url(' . $img . ')', $img_data, $css);
 				}
 			}
 		}

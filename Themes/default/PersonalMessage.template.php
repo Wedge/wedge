@@ -665,7 +665,7 @@ function template_search()
 			<div class="roundframe">
 				<div id="search_term_input">
 					<strong>', $txt['pm_search_text'], ':</strong>
-					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40">
+					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
 					<input type="submit" name="submit" value="', $txt['pm_search_go'], '">
 				</div>
 				<a href="', $scripturl, '?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
@@ -687,7 +687,7 @@ function template_search()
 				<input type="hidden" name="advanced" value="1">
 				<span class="enhanced">
 					<strong>', $txt['pm_search_text'], ':</strong>
-					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40">
+					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
 					<select name="searchtype">
 						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_all'], '</option>
 						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_any'], '</option>

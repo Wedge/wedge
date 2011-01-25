@@ -4,34 +4,6 @@
 	margin: 0 auto;
 }
 
-/*
-	Some examples for styling inputs in IE6.
-	Basically, instead of input[type=something], use a class,
-	then add support for it through jQuery in your styling's settings.xml file.
-	(Just have a look at Pastel's for a sample. We personally don't give a damn.)
-*/
-
-.ie6_button {
-	background: url($images/theme/bevel.png) #d6e6e6;
-	border: 1px solid;
-	border-color: #ccc #999 #999 #ccc;
-	cursor: pointer;
-	padding: 3px 4px;
-	color: #555;
-	border-radius: 5px;
-	:hover {
-		background-color: #dee;
-		color: #000;
-	}
-}
-.ie6_search {
-	background: url($images/filter.gif) 5px 2px no-repeat #fdf7ef;
-	padding-left: 24px;
-}
-.ie6_reset {
-	background-color: #fdf7ef;
-}
-
 /* The dropdown menus
 ------------------------------------------------------- */
 
@@ -304,3 +276,18 @@ li.separator {
 	display: block;
 	margin: 0;
 }
+
+.ie_button {
+	overflow: visible;
+}
+input.submit, input.delete, input.save, input.new {
+	padding-right: 6px;
+	overflow: visible;
+	width: auto;
+}
+
+/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
+input.submit	{ background-position: 4px 2px; }
+input.delete	{ background-position: 4px -30px; }
+input.save		{ background-position: 4px -62px; }
+input.new		{ background-position: 4px -94px; }

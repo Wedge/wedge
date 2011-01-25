@@ -397,6 +397,10 @@ ul.quickbuttons {
 		float: left;
 		display: inline;
 		margin: 0 0 0 10px;
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px;
+	}
+	li.inline_mod_check {
+		margin-left: 5px;
 	}
 	li a {
 		padding: 0 0 0 22px;
@@ -410,43 +414,21 @@ ul.quickbuttons {
 
 	/**
 	 * This is where you can change the reply/edit/delete etc. icons for your posts.
-	 * You can either modify the quickbuttons.png sprite file, or simply use another file
-	 * and set its coordinates to 0 0.
+	 * You can either modify the quickbuttons.png sprite file (in which case you just
+	 * need to set background-position to the correction position as seen below),
+	 * or simply use another file like this: background: url($here/file) no-repeat 0 0;
 	 */
 
-	li.mergepost_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 2px -242px;
-	}
-	li.quote_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 0;
-	}
-	li.remove_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -30px;
-	}
-	li.modify_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -60px;
-	}
-	li.approve_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -90px;
-	}
-	li.restore_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -120px;
-	}
-	li.split_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -150px;
-	}
-	li.reply_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -180px;
-	}
-	li.reply_all_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -180px;
-	}
-	li.notify_button {
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -210px;
-	}
-	li.inline_mod_check {
-		margin: 0 0 0 5px;
-	}
+	li.mergepost_button	{ background-position: 2px -242px; }
+	li.quote_button		{ background-position: 0 0; }
+	li.remove_button	{ background-position: 0 -30px; }
+	li.modify_button	{ background-position: 0 -60px; }
+	li.approve_button	{ background-position: 0 -90px; }
+	li.restore_button	{ background-position: 0 -120px; }
+	li.split_button		{ background-position: 0 -150px; }
+	li.reply_button		{ background-position: 0 -180px; }
+	li.reply_all_button	{ background-position: 0 -180px; }
+	li.notify_button	{ background-position: 0 -210px; }
 }
 
 .post {
@@ -1665,10 +1647,10 @@ span.hidelink {
 #search_term_input {
 	font-size: 115%;
 	margin: 0 0 1em;
-	input[type=search] {
+	.search {
 		background-position: 5px 4px;
 	}
-	input.submit {
+	.submit {
 		background-position: 0 0, 4px 4px;
 	}
 }

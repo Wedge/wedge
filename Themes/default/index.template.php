@@ -197,7 +197,7 @@ function template_body_above()
 	{
 		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="">&nbsp;
+					<input type="search" name="search" value="" class="search">&nbsp;
 					<input type="submit" name="submit" value="', $txt['search'], '">
 					<input type="hidden" name="advanced" value="0">';
 

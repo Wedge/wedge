@@ -15,3 +15,9 @@
 .richedit_resize {
 	padding: 0 !important;
 }
+
+/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
+input.submit	{ background-position: 4px 2px; }
+input.delete	{ background-position: 4px -30px; }
+input.save		{ background-position: 4px -62px; }
+input.new		{ background-position: 4px -94px; }

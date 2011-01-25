@@ -29,7 +29,7 @@
 
 /* These are our CSS variable definitions */
 $main_font = "Verdana, Arial, Helvetica, sans-serif";
-$bevel = "url($images/theme/bevel.png),";
+$bevel = ", url($images/theme/bevel.png)";
 $bevel {ie6,ie7,ie8} = "";
 
 /* Set a fontsize that will look the same in all browsers. */
@@ -346,8 +346,8 @@ input, textarea, button, select {
 		border: 1px solid #454545;
 	}
 }
-input[type=submit], input[type=button], input[type=reset] {
-	background: url($images/theme/bevel.png) #d6e6e6;
+input[type=submit], input[type=button], .ie_button {
+	background: #d6e6e6 url($images/theme/bevel.png);
 	border: 1px solid;
 	border-color: #ccc #999 #999 #ccc;
 	cursor: pointer;
@@ -360,31 +360,36 @@ input[type=submit], input[type=button], input[type=reset] {
 	}
 }
 /* !!! input.spell */
-input.new, input.save, input.submit, input.delete, input[type=search] {
+input.submit, input.delete, input.save, input.new, input.search {
+	background: url($images/buttons.png) no-repeat $bevel;
 	padding-left: 24px;
 }
 input.submit {
-	background: $bevel #e2f3ea url($images/buttons.png) 4px 2px no-repeat;
+	background-color: #e2f3ea;
+	background-position: 4px 2px, 0 0;
 	:hover { background-color: #e8f9f0; }
 }
 input.delete {
-	background: $bevel #f5efe9 url($images/buttons.png) 4px -30px no-repeat;
+	background-color: #f5efe9;
+	background-position: 4px -30px, 0 0;
 	:hover { background-color: #fbf5ef; }
 }
 input.save {
-	background: $bevel #dff3e8 url($images/buttons.png) 4px -62px no-repeat;
+	background-color: #dff3e8;
+	background-position: 4px -62px, 0 0;
 	:hover { background-color: #e5f9ed; }
 }
 input.new {
-	background: $bevel #e0eaf6 url($images/buttons.png) 4px -94px no-repeat;
+	background-color: #e0eaf6;
+	background-position: 4px -94px, 0 0;
 	:hover { background-color: #e6f0fc; }
 }
-input[type=search] {
-	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
-}
-input[name=cancel], input[type=reset] {
+input.cancel {
 	background-color: #fff0e3;
 	:hover { background-color: #fff5e8; }
+}
+input.search {
+	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
 }
 
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */

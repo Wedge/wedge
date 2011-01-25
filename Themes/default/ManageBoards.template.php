@@ -213,7 +213,7 @@ function template_confirm_category_delete()
 				<hr>
 				<div class="righttext">
 					<input type="submit" name="delete" value="', $txt['mboards_delete_confirm'], '" class="delete">
-					<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '">
+					<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '" class="cancel">
 					<input type="hidden" name="confirmation" value="1">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -661,7 +661,7 @@ function template_confirm_board_delete()
 					</select>
 				</p>
 				<input type="submit" name="delete" value="', $txt['mboards_delete_confirm'], '" class="delete">
-				<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '">
+				<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '" class="cancel">
 				<input type="hidden" name="confirmation" value="1">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>

@@ -15,7 +15,7 @@ function template_admin()
 		<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<div id="quick_search">
-					<input type="search" name="search_term" placeholder="', $txt['admin_search'], '">
+					<input type="search" name="search_term" placeholder="', $txt['admin_search'], '" class="search">
 					<select name="search_type">
 						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
 						<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
@@ -1122,7 +1122,7 @@ function template_admin_search_results()
 	<we:cat>
 		<div class="floatright">
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
-				<input type="search" name="search_term" value="', $context['search_term'], '">
+				<input type="search" name="search_term" value="', $context['search_term'], '" class="search">
 				<input type="hidden" name="search_type" value="', $context['search_type'], '">
 				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '">
 			</form>

@@ -160,7 +160,7 @@ function template_attachment_repair()
 
 		echo '<br>
 				<input type="submit" value="', $txt['repair_attachments_continue'], '" class="submit">
-				<input type="submit" name="cancel" value="', $txt['repair_attachments_cancel'], '">
+				<input type="submit" name="cancel" value="', $txt['repair_attachments_cancel'], '" class="cancel">
 			</div>
 		</form>
 	</div>

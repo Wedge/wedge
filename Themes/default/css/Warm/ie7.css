@@ -1,5 +1,5 @@
 
-.cat_bar h3 input[type=checkbox] {
+.cat input[type=checkbox] {
 	margin: 0 4px;
 }
 
@@ -36,7 +36,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 	word-wrap: break-word;
 }
 #content {
-	#forumposts div.cat_bar {
+	#forumposts div.cat {
 		margin-top: 8px;
 		clear: both;
 	}
@@ -53,7 +53,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 
 /* Overrides for the calendar template
 ------------------------------------------------- */
-#main_grid table.weeklist .title_bar h4 {
+#main_grid table.weeklist .title {
 	margin: 2px 0 -4px 0;
 }
 
@@ -91,7 +91,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 /* Misc hacks
 ------------------------------------------------------- */
 
-.cat_bar, .title_bar {
+.cat, .title {
 	overflow: hidden;
 }
 .bbc_divider, .bbc_button, .bbc_button div {
@@ -120,3 +120,13 @@ li.separator {
 #context_menus h4:hover {
 	background-color: #ebe7e2;
 }
+
+input[type=submit] {
+	overflow: visible;
+}
+
+/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
+input.submit	{ background-position: 4px 2px; }
+input.delete	{ background-position: 4px -30px; }
+input.save		{ background-position: 4px -62px; }
+input.new		{ background-position: 4px -94px; }

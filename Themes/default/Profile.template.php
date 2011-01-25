@@ -762,7 +762,7 @@ function template_trackIP()
 		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $context['base_url'], '" method="post" accept-charset="UTF-8">
-				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="search" name="searchip" value="', $context['ip'], '">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '">
+				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="search" name="searchip" value="', $context['ip'], '" class="search">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '">
 			</form>
 		</div>
 		<br>';

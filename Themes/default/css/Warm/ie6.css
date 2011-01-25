@@ -81,10 +81,8 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 }
 
 /* overflow: hidden doesn't help in IE6. */
-.title_bar {
-	h3 a, h3, h4, h4 a {
-		display: inline-block;
-	}
+.title, .title a {
+	display: inline-block;
 }
 
 #upper_section {
@@ -110,7 +108,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 		margin-right: 0;
 		float: right;
 	}
-	.cat_bar h3 {
+	.cat {
 		clear: both;
 	}
 }
@@ -212,7 +210,7 @@ dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.
 div.frame {
 	width: expression(this.clientWidth > 1200 ? '1200px' : '100%');
 }
-.cat_bar h3 a {
+.cat a {
 	color: black !important;
 }
 .wrc {
@@ -267,3 +265,18 @@ li.separator {
 	display: block;
 	margin: 0;
 }
+
+.ie_button {
+	overflow: visible;
+}
+input.submit, input.delete, input.save, input.new {
+	padding-right: 6px;
+	overflow: visible;
+	width: auto;
+}
+
+/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
+input.submit	{ background-position: 4px 2px; }
+input.delete	{ background-position: 4px -30px; }
+input.save		{ background-position: 4px -62px; }
+input.new		{ background-position: 4px -94px; }

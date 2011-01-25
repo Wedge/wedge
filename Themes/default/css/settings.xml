@@ -21,9 +21,7 @@
 
 	<code for="ie6"><![CDATA[
 	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
-	$('input[type=submit], input[type=button], input[type=reset]').addClass('ie6_button');
-	$('input[name=cancel], input[type=reset]').addClass('ie6_reset');
-	$('input[type=search]').addClass('ie6_search');
+	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
 	<block name="title"><div class="title_bar"><h3>|</h3></div></block>

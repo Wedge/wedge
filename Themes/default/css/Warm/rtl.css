@@ -69,12 +69,10 @@ dl.settings {
 /* Styles for rounded headers.
 ------------------------------------------------------- */
 
-.title_bar {
-	h3, h4 {
-		padding-right: 9px;
-		padding-left: 0;
-	}
-	h4 img {
+.title {
+	padding-right: 9px;
+	padding-left: 0;
+	img {
 		float: right;
 	}
 }
@@ -516,7 +514,7 @@ dl.register_form {
 	}
 }
 /* common for all admin sections */
-.title_bar h3 img {
+.title img {
 	margin-left: 0.5em;
 }
 tr.titlebg td {
@@ -835,7 +833,7 @@ ul.moderation_notes li {
 }
 
 /* Various Wedge fixes */
-.cat_bar img, .title_bar img {
+.cat img, .title img {
 	float: right;
 	margin-left: 0.5em;
 	margin-right: 0;
