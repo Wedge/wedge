@@ -1,6 +1,10 @@
 
+/*!
+ * Pastel styling for Wedge
+ * (c) 2011, Wedgeward (http://wedgeforum.com)
+ */
+
 /**
- *
  * This is the base CSS file for the default theme.
  *
  * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
@@ -24,7 +28,6 @@
  *
  * e.g. If you have a file called sprite.png in your custom "css/Hello/World"
  * css folder, link to url($here/sprite.png) rather than url(sprite.png).
- *
  */
 
 /* These are our CSS variable definitions */
@@ -359,8 +362,7 @@ input[type=submit], input[type=button], .ie_button {
 		color: #000;
 	}
 }
-/* !!! input.spell */
-input.submit, input.delete, input.save, input.new, input.search {
+input.submit, input.delete, input.save, input.new, input.spell, input.search {
 	background: url($images/buttons.png) no-repeat $bevel;
 	padding-left: 24px;
 }
@@ -382,6 +384,11 @@ input.save {
 input.new {
 	background-color: #e0eaf6;
 	background-position: 4px -94px, 0 0;
+	:hover { background-color: #e6f0fc; }
+}
+input.spell {
+	background-color: #e0eaf6;
+	background-position: 4px -126px, 0 0;
 	:hover { background-color: #e6f0fc; }
 }
 input.cancel {

@@ -362,8 +362,7 @@ input[type=submit], input[type=button], .ie_button {
 		color: #000;
 	}
 }
-/* !!! input.spell */
-input.submit, input.delete, input.save, input.new, input.search {
+input.submit, input.delete, input.save, input.new, input.spell, input.search {
 	background: url($images/buttons.png) no-repeat $bevel;
 	padding-left: 24px;
 }
@@ -385,6 +384,11 @@ input.save {
 input.new {
 	background-color: #e0eaf6;
 	background-position: 4px -94px, 0 0;
+	:hover { background-color: #e6f0fc; }
+}
+input.spell {
+	background-color: #e0eaf6;
+	background-position: 4px -126px, 0 0;
 	:hover { background-color: #e6f0fc; }
 }
 input.cancel {
