@@ -2930,6 +2930,9 @@ function wedge_cache_css()
 	{
 		$css_vars['$here'] = '..' . str_replace($boarddir, '', dirname($file));
 		$add = file_get_contents($file);
+		$add = preg_replace('~/\*(?!!).*?\*/~s', '', $add); // Strip comments except...
+		preg_match_all('~/\*!(.*?)\*/~s', $add, $comments); // ...for /*! Copyrights */
+		$add = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $add);
 
 		foreach ($plugins as $plugin)
 			$plugin->process($add);
@@ -2938,13 +2941,16 @@ function wedge_cache_css()
 		// Only the basic CSS3 we actually use. May add more in the future.
 		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
 		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);
+		// Restore comments as requested.
+		foreach ($comments[0] as $comment)
+			$add = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $add, 1);
 
 		// If we find any empty rules, we should be able to remove them.
 		// Obviously, don't use content: "{}" or something in your CSS. (Why would you?)
 		if (strpos($add, '{}') !== false)
 			$add = preg_replace('~[^{}]+{}~', '', $add);
 
-		$final .= $add;
+		$final .= ltrim($add, "\n");
 	}
 	if ($can_gzip)
 		$final = gzencode($final, 9);
@@ -2962,7 +2968,7 @@ function wedge_fix_browser_css($matches)
 {
 	global $context;
 
-	if ($context['browser']['is_opera'])
+	if ($context['browser']['is_opera'] && strpos($matches[0], 'bo') !== 0)
 		return '-o-' . $matches[0] . ';' . $matches[0];
 	if ($context['browser']['is_webkit'])
 		return '-webkit-' . $matches[0] . ';' . $matches[0];

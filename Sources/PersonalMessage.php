@@ -803,25 +803,25 @@ function MessageFolder()
 		$context['message_replied'] = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
-			if ($context['folder'] == 'sent')
-			{
-				if (empty($row['bcc']))
-					$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+			$id =& $row['id_pm'];
+			if ($context['folder'] == 'sent' || empty($row['bcc']))
+				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-				if ($user_info['id'] == $posters[$row['id_pm']])
-					$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
+			if ($context['folder'] == 'sent' && $user_info['id'] == $posters[$id])
+			{
+				$context['message_replied'][$id] = (isset($context['message_replied'][$id]) ? $context['message_replied'][$id] : 0) + (($row['is_read'] & 2) >> 1);
 			}
 			elseif ($user_info['id'] == $row['id_member_to'])
 			{
-				$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
-				$context['message_unread'][$row['id_pm']] = ($row['is_read'] & 1) == 0; // other bits can be used for other stuff but bit 0 (value 1) = message is read.
-				$context['message_can_unread'][$row['id_pm']] = $context['can_unread'] && (!$context['message_unread'][$row['id_pm']] || (!empty($pmID) && $pmID == $row['id_pm'])); // so message is unread, or it's the one we're looking at which hasn't been marked read yet
+				$context['message_replied'][$id] = $row['is_read'] & 2;
+				$context['message_unread'][$id] = ($row['is_read'] & 1) == 0; // other bits can be used for other stuff but bit 0 (value 1) = message is read.
+				$context['message_can_unread'][$id] = $context['can_unread'] && (!$context['message_unread'][$id] || (!empty($pmID) && $pmID == $id)); // so message is unread, or it's the one we're looking at which hasn't been marked read yet
 
 				$row['labels'] = $row['labels'] == '' ? array() : explode(',', $row['labels']);
 				foreach ($row['labels'] as $v)
 				{
 					if (isset($context['labels'][(int) $v]))
-						$context['message_labels'][$row['id_pm']][(int) $v] = array('id' => $v, 'name' => $context['labels'][(int) $v]['name']);
+						$context['message_labels'][$id][(int) $v] = array('id' => $v, 'name' => $context['labels'][(int) $v]['name']);
 				}
 			}
 		}
@@ -948,6 +948,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 			'is_unread' => &$context['message_unread'][$subject['id_pm']],
 			'is_selected' => !empty($temp_pm_selected) && in_array($subject['id_pm'], $temp_pm_selected),
 		);
+		wedge_checkReplied($output, $subject['id_pm']);
 
 		return $output;
 	}
@@ -1016,10 +1017,25 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		'is_unread' => &$context['message_unread'][$message['id_pm']],
 		'is_selected' => !empty($temp_pm_selected) && in_array($message['id_pm'], $temp_pm_selected),
 	);
+	wedge_checkReplied($output, $message['id_pm']);
 
 	$counter++;
 
 	return $output;
+}
+
+function wedge_checkReplied(&$output, $id)
+{
+	if (!$output['is_replied_to'])
+		return;
+
+	global $context, $txt;
+
+	$nb = &$context['message_replied'][$id];
+	if ($nb == 1 || $context['folder'] != 'sent')
+		$output['replied_msg'] = $txt['pm_is_replied_to' . ($context['folder'] == 'sent' ? '_sent_1' : '')];
+	else
+		$output['replied_msg'] = sprintf($txt['pm_is_replied_to_sent_n'], $nb);
 }
 
 function MarkUnread()

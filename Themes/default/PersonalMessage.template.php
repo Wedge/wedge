@@ -345,7 +345,7 @@ function template_folder()
 
 			if (!empty($message['is_replied_to']))
 				echo '
-					<div class="smalltext">&#171; ', $txt['pm' . ($context['folder'] == 'sent' ? '_sent' : '') . '_is_replied_to'], ' &#187;</div>';
+					<div class="smalltext">&#171; ', $message['replied_msg'], ' &#187;</div>';
 
 			echo '
 				</div>

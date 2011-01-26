@@ -1,6 +1,10 @@
 
+/*!
+ * Warm styling for Wedge
+ * (c) 2011, Wedgeward (http://wedgeforum.com)
+ */
+
 /**
- *
  * This is the base CSS file for the default theme.
  *
  * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
@@ -24,7 +28,6 @@
  *
  * e.g. If you have a file called sprite.png in your custom "css/Hello/World"
  * css folder, link to url($here/sprite.png) rather than url(sprite.png).
- *
  */
 
 /* These are our CSS variable definitions */

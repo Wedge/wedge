@@ -1,9 +1,10 @@
 <?php
-/******************************************************************************
- CSS Cacheer library, originally written by Shaun Inman
- http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
- The Wedge version merges all useful classes together and fixes a few bugs.
- ******************************************************************************/
+/**
+ * CSS file parser, written by Nao for Wedge.
+ * Partly based on the CSS Cacheer library written by Shaun Inman
+ * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
+ * The Wedge version merges all classes together, adds features and fixes bugs.
+ */
 
 class CacheerPlugin
 {
@@ -98,18 +99,15 @@ class FuncPlugin extends CacheerPlugin
 {
 	private function rgb2hex($r, $g, $b)
 	{
-		return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+		function cint($c) { return max(0, min(255, round($c))); }
+		return '#' . sprintf('%02x%02x%02x', cint($r), cint($g), cint($b));
 	}
 
 	// A very, very simple sample function taken and even more simplified
 	// from Noisen.com's code... Yeah, we don't really need it ;)
 	private function lum($color, $r, $g, $b)
 	{
-		return rgb2hex(
-			max(0, min(255, $color[0] + $r)),
-			max(0, min(255, $color[1] + $g)),
-			max(0, min(255, $color[2] + $b))
-		);
+		return rgb2hex($color[0] + $r, $color[1] + $g, $color[2] + $b);
 	}
 
 	// Converts from hue to RGB colorspace
@@ -337,7 +335,6 @@ class NestedSelectorsPlugin extends CacheerPlugin
 		// Transform the CSS into XML
 		// does not like the data: protocol
 		$xml = trim($css);
-		$xml = preg_replace('#(/\*[^*]*\*+([^/*][^*]*\*+)*/)#', '', $xml); // Strip comments to prevent parsing errors
 		$xml = str_replace('"', '#SI-CSSC-QUOTE#', $xml);
 		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{]+);?\s*(?=[\r\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
 		$xml = preg_replace('/^(\s*)([\+>&#*@:.a-z][^{]+)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
