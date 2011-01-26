@@ -2864,21 +2864,6 @@ function wedge_cache_css()
 			}
 	}
 
-	// Allow admins to preview CSS in the admin area.
-	// I would use the json_decode trick for str_replace, but it's PHP 5.2+ :p
-	if (isset($_REQUEST['nocsscache']) && allowedTo('admin_forum'))
-	{
-		foreach ($css as &$file)
-			$file = str_replace(
-				array($settings['default_theme_dir'], $settings['theme_dir']),
-				array($settings['default_theme_url'], $settings['theme_url']),
-				$file
-			);
-		$context['cached_css'] = implode('">
-	<link rel="stylesheet" href="', $css);
-		return;
-	}
-
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 	// No need to have all URLs say 'index-sections'...

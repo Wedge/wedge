@@ -376,7 +376,7 @@ function smc_Toggle(oOptions)
 
 	// If the init state is set to be collapsed, collapse it.
 	if (this.opt.bCurrentlyCollapsed)
-		this._changeState(true, true);
+		this._changeState(true, true, true);
 
 	// Initialize the images to be clickable.
 	var i, n;
@@ -405,11 +405,11 @@ function smc_Toggle(oOptions)
 };
 
 // Collapse or expand the section.
-smc_Toggle.prototype._changeState = function (bCollapse, bInit)
+smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
-	var i, n, o, op;
+	var i, n, o, op, iSpeed = bNow ? 0 : 300;
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
@@ -443,7 +443,7 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit)
 
 	// Now go through all the sections to be collapsed.
 	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)
-		(o = $('#' + op[i])) && bCollapse ? o.slideUp(300) : o.slideDown(300);
+		(o = $('#' + op[i])) && bCollapse ? o.slideUp(iSpeed) : o.slideDown(iSpeed);
 
 	// Update the new state.
 	this._collapsed = bCollapse;
