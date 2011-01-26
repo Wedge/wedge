@@ -163,7 +163,8 @@ function template_main()
 			<div class="pagesection">
 				<div class="nextlinks">', $context['previous_next'], '</div>', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
-			</div>';
+			</div>', $context['browser']['is_ie6'] ? '
+			<div class="clear"></div>' : '';
 
 	// Show the topic information - icon, subject, etc.
 	echo '
@@ -191,7 +192,7 @@ function template_main()
 	}
 
 	echo '
-				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;" onsubmit="return oQuickModify.bInEditMode ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
+				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -415,7 +416,7 @@ function template_main()
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
-									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" id="quote_button_', $message['id'], '" onclick="return oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
+									<li class="quote_button"><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
 		// So... quick reply is off, but they *can* reply?
 		elseif ($context['can_quote'])
@@ -478,7 +479,7 @@ function template_main()
 		// Can the user modify the contents of this post?  Show the modify inline image.
 		if ($message['can_modify'])
 			echo '
-							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="oQuickModify.modifyMsg(this);">&nbsp;</div>';
+							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);">&nbsp;</div>';
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
@@ -642,10 +643,10 @@ function template_main()
 			<a id="quickreply"></a>
 			<div class="tborder" id="quickreplybox">
 				<we:cat>
-					<a href="#" onclick="return oQuickReply.swap();" onmousedown="return false;">
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">
 						<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand">
 					</a>
-					<a href="#" onclick="return oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 				</we:cat>
 				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
 					<div class="roundframe">
@@ -684,7 +685,7 @@ function template_main()
 								$context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="oQuickReply.switchMode();">
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 							</div>
 							<div class="righttext padding">',
 								$context['postbox']->outputButtons(), '
@@ -763,7 +764,7 @@ function template_main()
 					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" name="msg" value="%msg_id%">
 					<div class="righttext">
-						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();">
+						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
 				</div>') . ',
 			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',

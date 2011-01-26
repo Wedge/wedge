@@ -164,7 +164,7 @@ function markBoardsRead($boards, $unread = false)
 	if (empty($lowest_topic))
 		return;
 
-	// !!!SLOW This query seems to eat it sometimes.
+	// !!! SLOW This query seems to eat it sometimes.
 	$result = wesql::query('
 		SELECT lt.id_topic
 		FROM {db_prefix}log_topics AS lt

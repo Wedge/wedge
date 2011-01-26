@@ -34,8 +34,8 @@ function getLastPosts($latestPostOptions)
 {
 	global $scripturl, $txt, $user_info, $modSettings, $context;
 
-	// Find all the posts.  Newer ones will have higher IDs.  (assuming the last 20 * number are accessable...)
-	// !!!SLOW This query is now slow, NEEDS to be fixed.  Maybe break into two?
+	// Find all the posts. Newer ones will have higher IDs. (Assuming the last 20 * number are accessible...)
+	// !!! SLOW This query is now slow, NEEDS to be fixed. Maybe break into two?
 	$request = wesql::query('
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg,

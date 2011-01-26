@@ -201,7 +201,7 @@ function Recent()
 		while (!$done)
 		{
 			// Find the 10 most recent messages they can *view*.
-			// !!!SLOW This query is really slow still, probably?
+			// !!! SLOW This query is really slow still, probably?
 			$request = wesql::query('
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m

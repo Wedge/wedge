@@ -1353,7 +1353,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	global $txt, $scripturl;
 
 	// Get all the messages fitting this where clause.
-	// !!!SLOW This query is using a filesort.
+	// !!! SLOW This query is using a filesort.
 	$request = wesql::query('
 		SELECT
 			m.id_msg, m.poster_ip, IFNULL(mem.real_name, m.poster_name) AS display_name, mem.id_member,

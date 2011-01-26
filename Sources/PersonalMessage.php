@@ -512,10 +512,6 @@ function MessageFolder()
 
 	$context['sort_direction'] = $descending ? 'down' : 'up';
 
-	// Why would you want access to your sent items if you're not allowed to send anything?
-	if ($context['folder'] == 'sent')
-		isAllowedTo('pm_send');
-
 	// Set the text to resemble the current folder.
 	$pmbox = $context['folder'] != 'sent' ? $txt['inbox'] : $txt['sent_items'];
 	$txt['delete_all'] = str_replace('PMBOX', $pmbox, $txt['delete_all']);
@@ -561,6 +557,10 @@ function MessageFolder()
 	list ($max_messages) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
+	// Why would you want to access an empty outbox if you're not allowed to send anything anyway?
+	if ($context['folder'] == 'sent' && $max_messages == 0)
+		isAllowedTo('pm_send');
+
 	// Only show the button if there are messages to delete.
 	$context['show_delete'] = $max_messages > 0;
 
@@ -584,6 +584,7 @@ function MessageFolder()
 		// With only one page of PM's we're gonna want page 1.
 		if ($max_messages <= $modSettings['defaultMaxMessages'])
 			$_GET['start'] = 0;
+
 		// If we pass kstart we assume we're in the right place.
 		elseif (!isset($_GET['kstart']))
 		{
@@ -679,7 +680,7 @@ function MessageFolder()
 	// This is kinda simple!
 	else
 	{
-		// !!!SLOW This query uses a filesort. (inbox only.)
+		// !!! SLOW This query uses a filesort. (inbox only.)
 		$request = wesql::query('
 			SELECT pm.id_pm, pm.id_pm_head, pm.id_member_from
 			FROM {db_prefix}personal_messages AS pm' . ($context['folder'] == 'sent' ? '' . ($context['sort_by'] == 'name' ? '
@@ -798,14 +799,19 @@ function MessageFolder()
 			)
 		);
 		$context['message_labels'] = array();
-		$context['message_replied'] = array();
 		$context['message_unread'] = array();
+		$context['message_replied'] = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
-			if ($context['folder'] == 'sent' || empty($row['bcc']))
-				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+			if ($context['folder'] == 'sent')
+			{
+				if (empty($row['bcc']))
+					$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-			if ($row['id_member_to'] == $user_info['id'] && $context['folder'] != 'sent')
+				if ($user_info['id'] == $posters[$row['id_pm']])
+					$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
+			}
+			elseif ($user_info['id'] == $row['id_member_to'])
 			{
 				$context['message_replied'][$row['id_pm']] = $row['is_read'] & 2;
 				$context['message_unread'][$row['id_pm']] = ($row['is_read'] & 1) == 0; // other bits can be used for other stuff but bit 0 (value 1) = message is read.

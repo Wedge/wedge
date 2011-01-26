@@ -519,7 +519,7 @@ function MLSearch()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
-		// !!!SLOW This query is slow.
+		// !!! SLOW This query is slow.
 		$request = wesql::query('
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem
