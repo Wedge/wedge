@@ -909,14 +909,13 @@ function ob_sessrewrite($buffer)
 
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
-	if (!isset($context['delayed_events']))
-		$context['delayed_events'] = array();
+	$context['delayed_events'] = array();
 	$cut = explode("<!-- Javascript area -->\n", $buffer);
 
 	// If the placeholder isn't there, it means we're probably not in a default index template,
 	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
 	if (!empty($cut[1]))
-		$buffer = preg_replace_callback('~<[^>]+?\son\w+="[^">]*"[^>]*>~', 'wedge_event_delayer', $cut[0]) . $cut[1];
+		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
 	if (!empty($context['delayed_events']))
 	{
@@ -980,7 +979,10 @@ function wedge_event_delayer($match)
 		$dupe = serialize($inside);
 		if (!isset($dupes[$dupe]))
 		{
-			$context['delayed_events'][$eve] = array($eve, $inside[1], $inside[2]);
+			// Build the inline event array. Because inline events are more of a hassle to work with, we replace &quot; with
+			// double quotes, because that's how " is shown in an inline event to avoid conflicting with the surrounding quotes.
+			// !!! @todo: maybe &amp; should be turned into &, too.
+			$context['delayed_events'][$eve] = array($eve, $inside[1], str_replace(array('&quot;', '\\\\n'), array('"', '\\n'), $inside[2]));
 			$dupes[$dupe] = $eve;
 			$eve_list[] = $eve++;
 		}

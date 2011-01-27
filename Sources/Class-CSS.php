@@ -97,24 +97,31 @@ class VarPlugin extends CacheerPlugin
  */
 class FuncPlugin extends CacheerPlugin
 {
-	private function rgb2hex($r, $g, $b)
+	private function cint($c)
 	{
-		function cint($c) { return max(0, min(255, round($c))); }
-		return '#' . sprintf('%02x%02x%02x', cint($r), cint($g), cint($b));
+		return max(0, min(255, round($c)));
+	}
+
+	private function rgb_output($r, $g, $b, $a)
+	{
+		global $context;
+		return $a === 0 || ($context['browser']['is_ie'] && !$context['browser']['is_ie9']) ?
+			'#' . sprintf('%02x%02x%02x', $this->cint($r), $this->cint($g), $this->cint($b)) :
+			'rgba(' . $this->cint($r) . ', ' . $this->cint($g) . ', ' . $this->cint($b) . ', ' . max(0, min(1, $a)) . ')';
 	}
 
 	// A very, very simple sample function taken and even more simplified
 	// from Noisen.com's code... Yeah, we don't really need it ;)
-	private function lum($color, $r, $g, $b)
+	private function lum($color, $r, $g, $b, $a)
 	{
-		return rgb2hex($color[0] + $r, $color[1] + $g, $color[2] + $b);
+		return rgb_output($color[0] + $r, $color[1] + $g, $color[2] + $b, $a);
 	}
 
 	// Converts from hue to RGB colorspace
 	private function hue2rgb($m1, $m2, $h)
 	{
 		$h += ($h < 0 ? 1 : ($h > 1 ? -1 : 0));
-		
+
 		if ($h * 6 < 1)
 			$c = $m2 + ($m1 - $m2) * $h * 6;
 		elseif ($h * 2 < 1)
@@ -131,7 +138,7 @@ class FuncPlugin extends CacheerPlugin
 	 * Algorithm from the CSS3 spec: {@link http://www.w3.org/TR/css3-color/#hsl-color}
 	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
 	 */
-	private function hsl2rgb($h, $s, $l)
+	private function hsl2rgb($h, $s, $l, $a)
 	{
 		$h = ($h % 360) / 360;
 		$s = max(0, min(1, $s / 100));
@@ -144,6 +151,7 @@ class FuncPlugin extends CacheerPlugin
 			'r' => $this->hue2rgb($m1, $m2, $h + 1 / 3),
 			'g' => $this->hue2rgb($m1, $m2, $h),
 			'b' => $this->hue2rgb($m1, $m2, $h - 1 / 3),
+			'a' => $a
 		);
 	}
 
@@ -152,7 +160,7 @@ class FuncPlugin extends CacheerPlugin
 	 * Algorithm adapted from {@link http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV}
 	 * $r/$g/$b are RGB values (0-255)
 	 */
-	private function rgb2hsl($r, $g, $b)
+	private function rgb2hsl($r, $g, $b, $a)
 	{
 		$rgb = array($r/255, $g/255, $b/255);
 		$max = max($rgb);
@@ -173,15 +181,24 @@ class FuncPlugin extends CacheerPlugin
 			'h' => $h * 60, // hue
 			's' => $c ? ($l <= 0.5 ? $c / (2 * $l) : $c / (2 - 2 * $l)) * 100 : 0, // saturation
 			'l' => $l * 100, // lightness
+			'a' => $a
 		);
 	}
 
 	function process(&$css)
 	{
 		$nodupes = array();
+		$colors = array(
+			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
+			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
+			'grey'		=> '808080', 'lime'		=> '00ff00', 'maroon'	=> '800000',
+			'navy'		=> '000080', 'olive'	=> '808000', 'purple'	=> '800080',
+			'red'		=> 'ff0000', 'silver'	=> 'c0c0c0', 'teal'		=> '008080',
+			'white'		=> 'ffffff', 'yellow'	=> 'ffff00'
+		);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue)\(((?:[^\(\)]|(?:rgba?|hsla?)\([^\(\)]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -189,20 +206,30 @@ class FuncPlugin extends CacheerPlugin
 					continue;
 				$nodupes[$dec] = true;
 				$code = $matches[1][$i];
-				$m = $matches[2][$i];
+				$m = strtolower(trim($matches[2][$i]));
 				if (empty($m))
 					continue;
 
 				// Extract color data
-				preg_match('~(?:rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*([\d\.]+)\s*\)|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|#([0-9a-fA-F]{6}))~', $m, $rgb);
+				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*\,\s*([\d\.]+))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
 				if (empty($rgb[0]))
+				{
+					// Syntax error? We just replace with red. Otherwise we'll end up in an infinite loop.
+					$css = str_replace($dec, 'red', $css);
 					continue;
-				if ($rgb[1] !== '')
-					$color = array($rgb[1], $rgb[2], $rgb[3], (float) $rgb[4]);
-				elseif ($rgb[5] !== '')
-					$color = array($rgb[5], $rgb[6], $rgb[7], 1);
-				elseif ($rgb[8] !== '')
-					$color = array(hexdec(substr($rgb[8], 0, 2)), hexdec(substr($rgb[8], 2, 2)), hexdec(substr($rgb[8], 4, 2)), 1);
+				}
+
+				$color = $hsl = $nc = 0;
+				if (isset($colors[$m]))
+					$color = array(hexdec(substr($colors[$m], 0, 2)), hexdec(substr($colors[$m], 2, 2)), hexdec(substr($colors[$m], -2)), 1);
+				elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
+					$color = array($rgb[2], $rgb[3], $rgb[4], !isset($rgb[5]) || $rgb[5] === '' ? 1 : (float) $rgb[5]);
+				elseif ($rgb[2] !== '')
+					$hsl = array('h' => $rgb[2], 's' => $rgb[3], 'l' => $rgb[4], 'a' => $rgb[5] === '' ? 1 : (float) $rgb[5]);
+				elseif ($rgb[6] !== '' && isset($rgb[6][3]))
+					$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
+				elseif ($rgb[6] !== '')
+					$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
 				else
 					$color = array(255, 255, 255, 1);
 
@@ -211,26 +238,29 @@ class FuncPlugin extends CacheerPlugin
 					array_shift($m);
 
 				$arg = isset($m[0]) ? $m[0] : 5;
-				$hsl = $this->rgb2hsl($color[0], $color[1], $color[2]);
+				$hsl = $hsl ? $hsl : $this->rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
 				// Run our functions
-				if ($code == 'darken')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] - $arg);
+				if ($code == 'alpha')
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] + $arg);
+
+				elseif ($code == 'darken')
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] - $arg, $hsl['a']);
 
 				elseif ($code == 'lighten')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] + $arg);
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] + $arg, $hsl['a']);
 
 				elseif ($code == 'desaturize')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] - $arg, $hsl['l']);
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] - $arg, $hsl['l'], $hsl['a']);
 
 				elseif ($code == 'saturize')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] + $arg, $hsl['l']);
+					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] + $arg, $hsl['l'], $hsl['a']);
 
 				elseif ($code == 'hue')
-					$nc = $this->hsl2rgb($hsl['h'] + $arg, $hsl['s'], $hsl['l']);
+					$nc = $this->hsl2rgb($hsl['h'] + $arg, $hsl['s'], $hsl['l'], $hsl['a']);
 
-				if (!empty($nc))
-					$css = str_replace($dec, $this->rgb2hex($nc['r'], $nc['g'], $nc['b']), $css);
+				if ($nc)
+					$css = str_replace($dec, $this->rgb_output($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
 	}
