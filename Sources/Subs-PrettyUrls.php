@@ -145,8 +145,9 @@ function is_already_taken($url, $id, $id_owner)
 
 	if (wesql::num_rows($query) > 0)
 	{
+		list ($board) = wesql::fetch_row($query);
 		wesql::free_result($query);
-		return true;
+		return $board;
 	}
 
 	wesql::free_result($query);

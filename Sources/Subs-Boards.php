@@ -802,7 +802,8 @@ function modifyBoard($board_id, &$boardOptions)
 			$new_name .= ($pretty_url != '' ? '-b' : 'b') . $board_id;
 
 		// Can't be already in use
-		if (is_already_taken($new_name, $board_id, $id_owner))
+		$in_use = is_already_taken($new_name, $board_id, $id_owner);
+		if ($in_use && $in_use != $board_id)
 			fatal_lang_error('pretty_duplicateboard', false);
 
 		// Save to the database
