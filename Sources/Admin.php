@@ -165,6 +165,7 @@ function Admin()
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'cache' => array($txt['caching_settings']),
 						'loads' => array($txt['load_balancing_settings']),
+						'proxy' => array($txt['proxy_settings']),
 					),
 				),
 				'',

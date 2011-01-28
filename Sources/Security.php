@@ -993,6 +993,9 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
  *
  * Part of the anti-spam measures include whitelist and blacklist items to be screened against. This is where such are processed.
  *
+ * Much of the functionality is derived from Bad Behavior, http://www.bad-behavior.ioerror.us/ which is licensed under the GNU LGPL 3.0 and used herein under clause 4.
+ * As such, we are required to make reference to the GNU GPL 3.0 - http://www.gnu.org/licenses/gpl-3.0.html - and its child licence GNU LGPL 3.0 - http://www.gnu.org/licenses/lgpl-3.0.html - it is acknowledged that we have not included the full licence text with the package, because the core package is not itself GPL/LGPL licensed and we believe it would lead to confusion if multiple licence documents were provided. We will seek to provide clarification where this is necessary.
+ *
  * @return mixed Returns true if whitelisted, or not confirmed as spammer in any way; false if matching any rules but the current user is an administrator (so they receive an alternate warning), otherwise execution will be suspended and the request directed to an appropriate error page.
  */
 function checkUserBehavior()
@@ -1000,6 +1003,9 @@ function checkUserBehavior()
 	global $context, $modSettings, $user_info, $txt, $webmaster_email;
 
 	$context['http_headers'] = get_http_headers();
+	// Did we get any additional headers that wouldn't normally be picked up for any reason?
+	if (isset($context['additional_headers']))
+		$context['http_headers'] = array_merge($context['http_headers'], $context['additional_headers']);
 
 	// Some administrators may wish to whitelist specific IPs (like their own), specific user-agents or specific actions from being processed.
 	// Use with caution. A spurious whitelist match will override any other measure.
@@ -1243,10 +1249,10 @@ function checkUserRequest_request()
 	global $context, $modSettings;
 
 	// Is this from CloudFlare? (requires hostname lookups enabled)
-	if (isset($context['http_headers']['Cf-Connecting-Ip']) && empty($modSettings['disableHostnameLookup']))
+	if (isset($context['http_headers']['Cf-Connecting-Ip'], $context['http_headers']['X-Detected-Remote-Address']) && empty($modSettings['disableHostnameLookup']))
 	{
-		// Remember, we did some work on this back in QueryString.php, so $_SERVER['HTTP_CF_IP'] should exist and be the value for CloudFlare. Let's see if it is.
-		if (!test_ip_host($_SERVER['HTTP_CF_IP'], 'cloudflare.com'))
+		// Remember, we did some work on this back in QueryString.php, so we should have the value for CloudFlare. Let's see if it is.
+		if (!test_ip_host($context['http_headers']['X-Detected-Remote-Address'], 'cloudflare.com'))
 			return $context['behavior_error'] = 'behav_not_cloudflare';
 	}
 
@@ -1364,16 +1370,22 @@ function checkUserRequest_useragent()
 		if (!isset($context['http_headers']['Accept']) && (stripos($context['http_headers']['User-Agent'], 'YahooSeeker/CafeKelsa') === false || match_cidr($_SERVER['REMOTE_ADDR'], '209.73.160.0/19') === false))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
-	// Is it claiming to be MSN's bot? (requires hostname lookups enabled)
-	elseif ((stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false) && empty($modSettings['disableHostnameLookup']))
+	// Is it claiming to be Yahoo's bot?
+	elseif (stripos($context['http_headers']['User-Agent'], 'Yahoo! Slurp') !== false || stripos($context['http_headers']['User-Agent'], 'Yahoo! SearchMonkey') !== false)
 	{
-		if (!test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com'))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
+			return $context['behavior_error'] = 'behav_not_yahoobot';
+	}
+	// Is it claiming to be MSN's bot?
+	elseif (stripos($context['http_headers']['User-Agent'], 'bingbot') !== false || stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false)
+	{
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('207.46.0.0/16', '65.52.0.0/14', '207.68.128.0/18', '207.68.192.0/20', '64.4.0.0/18', '157.54.0.0/15', '157.60.0.0/16', '157.56.0.0/14'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
-	// Is it claiming to be Googlebot, even? (requires hostname lookups enabled)
-	elseif ((stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Wireless') !== false) && empty($modSettings['disableHostnameLookup']))
+	// Is it claiming to be Googlebot, even?
+	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Wireless') !== false)
 	{
-		if (!test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com'))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
 	// OK, so presumably this is some kind of Mozilla derivative? (No guarantee it's actually Firefox, mind. All main browsers cite Mozilla. :/)
@@ -1408,6 +1420,7 @@ function checkUserRequest_post()
 	}
 
 	// What about forms? Any form posting into our forum should really be inside our forum. Providing an option to disable (hidden for now)
+	// !!! Check whether this is relevant in subdomain boards or not.
 	if (empty($modSettings['allow_external_forms']) && isset($context['http_headers']['Referer']) && stripos($context['http_headers']['Referer'], $context['http_headers']['Host']) === false)
 		return $context['behavior_error'] = 'behav_offsite_form';
 
@@ -1457,6 +1470,7 @@ function userBehaviorResponse()
 			break;
 		case 'behav_te_not_msie':
 		case 'behav_not_msnbot':
+		case 'behav_not_yahoobot':
 		case 'behav_not_googlebot':
 			$error_blocks = array('behavior_false_ua', 'behavior_misconfigured_privacy');
 			break;

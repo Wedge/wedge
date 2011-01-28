@@ -185,6 +185,7 @@ function ModifySettings()
 		'cookie' => 'ModifyCookieSettings',
 		'cache' => 'ModifyCacheSettings',
 		'loads' => 'ModifyLoadBalancingSettings',
+		'proxy' => 'ModifyProxySettings',
 	);
 
 	// By default we're editing the core settings
@@ -524,6 +525,46 @@ function ModifyLoadBalancingSettings($return_config = false)
 		redirectexit('action=admin;area=serversettings;sa=loads;' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
+	prepareDBSettingContext($config_vars);
+}
+
+function ModifyProxySettings($return_config = false)
+{
+	global $context, $scripturl, $txt, $helptxt, $modSettings;
+
+	// Define the variables we want to edit.
+	$config_vars = array(
+		// Only a couple of settings, but they are important
+		array('check', 'reverse_proxy'),
+		array('text', 'reverse_proxy_header'),
+		array('large_text', 'reverse_proxy_ips', 'subtext' => $txt['reverse_proxy_one_per_line']),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving again?
+	if (isset($_GET['save']))
+	{
+		$_POST['reverse_proxy_ips'] = !empty($_POST['reverse_proxy_ips']) ? array_map('trim', explode("\n", $_POST['reverse_proxy_ips'])) : '';
+		foreach ($_POST['reverse_proxy_ips'] as $k => $v)
+			if (empty($v))
+				unset($_POST['reverse_proxy_ips'][$k]);
+		$_POST['reverse_proxy_ips'] = implode(',', $_POST['reverse_proxy_ips']);
+
+		saveDBSettings($config_vars);
+
+		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
+		$modSettings['cache_enable'] = 1;
+		cache_put_data('modSettings', null, 90);
+
+		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_var'] . '=' . $context['session_id']);
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=proxy;save';
+	$context['settings_title'] = $txt['proxy_settings'];
+
+	// Prepare the template.
 	prepareDBSettingContext($config_vars);
 }
 

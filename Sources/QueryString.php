@@ -398,14 +398,23 @@ function cleanRequest()
 	elseif (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['REMOTE_ADDR']) === 0)
 		$_SERVER['REMOTE_ADDR'] = 'unknown';
 
-	// If they're coming through CloudFlare, the REMOTE_ADDR will be CloudFlare's, and a different value is sent by CloudFlare, so use that instead.
-	if (!empty($_SERVER['HTTP_CF_CONNECTING_IP']))
+	// Are they using a reverse proxy that's hiding the IP address (e.g. CloudFlare)?
+	if (!empty($modSettings['reverse_proxy']))
 	{
-		$_SERVER['HTTP_CF_IP'] = $_SERVER['REMOTE_ADDR'];
-		$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+		// We already check for X-Forwarded-For anyway in Wedge. But if we happen to have something else, let's use that.
+		if (!empty($modSettings['reverse_proxy_header']) && $modSettings['reverse_proxy_header'] != 'X-Forwarded-For')
+		{
+			$header = 'HTTP_' . strtoupper($modSettings['reverse_proxy_header']);
+			if (!empty($_SERVER[$header]))
+				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
+		}
+		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
+		$header = !empty($modSettings['reverse_proxy_header']) ? $modSettings['reverse_proxy_header'] : 'X-Forwarded-For';
+		if (!empty($modSettings['reverse_proxy_ips']))
+			$reverse_proxies = explode(',', $modSettings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
 
-	// Try to calculate their most likely IP for those people behind proxies (And the like).
+	// Try to calculate their most likely IP for those people behind proxies (and the like).
 	$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 
 	// Find the user's IP address. (but don't let it give you 'unknown'!)
@@ -437,6 +446,10 @@ function cleanRequest()
 			{
 				// Make sure it's in a valid range...
 				if (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $ip) != 0 && preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) == 0)
+					continue;
+
+				// Is it on our list of reverse proxies? If so, we don't want it.
+				if (isset($reverse_proxies) && match_cidr($ip, $reverse_proxies))
 					continue;
 
 				// Otherwise, we've got an IP!
@@ -617,7 +630,10 @@ function htmltrim__recursive($var, $level = 0)
 function get_http_headers()
 {
 	if (is_callable('apache_request_headers'))
-		return apache_request_headers();
+	{
+		$var = apache_request_headers();
+		
+	}
 
 	$headers = array();
 	foreach ($_SERVER as $key => $value)
