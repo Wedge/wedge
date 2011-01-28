@@ -1387,7 +1387,7 @@ function template_profile_pm_settings()
 								</dt>
 								<dd>
 										<select name="pm_receive_from" id="pm_receive_from">
-												<option value="0"', empty($context['receive_from']) || (empty($modSettings['enable_buddylist']) && $context['receive_from'] < 3) ? ' selected="selected"' : '', '>', $txt['pm_receive_from_everyone'], '</option>';
+												<option value="0"', empty($context['receive_from']) || (empty($modSettings['enable_buddylist']) && $context['receive_from'] < 3) ? ' selected' : '', '>', $txt['pm_receive_from_everyone'], '</option>';
 
 	if (!empty($modSettings['enable_buddylist']))
 		echo '
@@ -1395,7 +1395,7 @@ function template_profile_pm_settings()
 												<option value="2"', !empty($context['receive_from']) && $context['receive_from'] == 2 ? ' selected' : '', '>', $txt['pm_receive_from_buddies'], '</option>';
 
 	echo '
-												<option value="3"', !empty($context['receive_from']) && $context['receive_from'] > 2 ? ' selected="selected"' : '', '>', $txt['pm_receive_from_admins'], '</option>
+												<option value="3"', !empty($context['receive_from']) && $context['receive_from'] > 2 ? ' selected' : '', '>', $txt['pm_receive_from_admins'], '</option>
 										</select>
 								</dd>
 								<dt>
