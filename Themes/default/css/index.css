@@ -506,7 +506,7 @@ input[type=file] {
 	background-color: rgba(0,0,0, .075);
 	color: #000;
 }
-.menu li.chosen h4 {
+.menu .chosen h4 {
 	background: #3fa6c3 url($images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
 	color: #fff;
@@ -530,7 +530,7 @@ li.subsection > a {
 	border-radius: 6px;
 }
 
-#main_menu li.chosen h4, #context_menus li.chosen h4 {
+#main_menu .chosen h4, #context_menus .chosen h4 {
 	background-color: #fd9604;
 }
 #context_menus {

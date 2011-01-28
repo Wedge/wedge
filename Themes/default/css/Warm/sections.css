@@ -567,6 +567,9 @@ ul.post_options {
 #smileyBox_message {
 	margin: .5em;
 }
+#preview_body {
+	base: .windowbg;
+}
 
 /* Styles for edit event section
 ---------------------------------------------------- */
@@ -610,7 +613,7 @@ ul.post_options {
 			margin: 0;
 			float: left;
 		}
-		li select, ul.event_options li *[type=checkbox] {
+		li select, li *[type=checkbox] {
 			margin: 0 0.2em 0 0;
 		}
 	}

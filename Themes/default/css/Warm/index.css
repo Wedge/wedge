@@ -362,31 +362,33 @@ input[type=submit], input[type=button], .ie_button {
 		color: #000;
 	}
 }
-input.submit, input.delete, input.save, input.new, input.spell, input.search {
+input.submit {
 	background: url($images/buttons.png) no-repeat $bevel;
 	padding-left: 24px;
-}
-input.submit {
 	background-color: #e2f3ea;
 	background-position: 4px 2px, 0 0;
 	:hover { background-color: #e8f9f0; }
 }
 input.delete {
+	base: input.submit;
 	background-color: #f5efe9;
 	background-position: 4px -30px, 0 0;
 	:hover { background-color: #fbf5ef; }
 }
 input.save {
+	base: input.submit;
 	background-color: #dff3e8;
 	background-position: 4px -62px, 0 0;
 	:hover { background-color: #e5f9ed; }
 }
 input.new {
+	base: input.submit;
 	background-color: #e0eaf6;
 	background-position: 4px -94px, 0 0;
 	:hover { background-color: #e6f0fc; }
 }
 input.spell {
+	base: input.submit;
 	background-color: #e0eaf6;
 	background-position: 4px -126px, 0 0;
 	:hover { background-color: #e6f0fc; }
@@ -396,6 +398,7 @@ input.cancel {
 	:hover { background-color: #fff5e8; }
 }
 input.search {
+	base: input.submit;
 	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
 }
 
@@ -508,7 +511,7 @@ input[type=file] {
 	background-color: rgba(0,0,0, .075);
 	color: #000;
 }
-.menu li.chosen h4 {
+.menu .chosen h4 {
 	background: #3fa6c3 url($images/menu.gif) no-repeat 98% -28px;
 	font-weight: bold;
 	color: #fff;
@@ -532,7 +535,7 @@ li.subsection > a {
 	border-radius: 6px;
 }
 
-#main_menu li.chosen h4, #context_menus li.chosen h4 {
+#main_menu .chosen h4, #context_menus .chosen h4 {
 	background-color: #fd9604;
 }
 #context_menus {
@@ -552,7 +555,7 @@ li.subsection > a {
 	padding-top: .5em;
 }
 
-li.nodrop h4, #main_menu li.nodrop h4 {
+.nodrop h4, #main_menu .nodrop h4 {
 	background-image: none;
 	padding-right: 6px;
 }
@@ -588,8 +591,7 @@ li.separator {
 /*	These are the top-level menu icons. It may look complicated, but it isn't.
 	Just fetch documentation on image spriting. You can also simply use
 	single images to show icons. */
-.m_home, .m_board, .m_search, .m_admin, .m_moderate, .m_profile,
-.m_pm, .m_pm_unread, .m_calendar, .m_mlist, .m_login, .m_register, .m_logout {
+.m_home {
 	float: left;
 	width: 16px;
 	height: 16px;
@@ -598,48 +600,58 @@ li.separator {
 	margin: 2px 0 0 2px;
 	background-repeat: no-repeat;
 	background-image: url($images/icons/sprite.png);
-}
-
-.m_home {
 	background-position: -64px 0;
 }
+
 .m_board {
+	base: .m_home;
 	background-position: -64px 0;
 }
 .m_search {
+	base: .m_home;
 	background-position: -112px 0;
 }
 .m_admin {
+	base: .m_home;
 	background-position: -32px 0;
 }
 .m_moderate {
+	base: .m_home;
 	background-position: -48px 0;
 }
 .m_profile {
+	base: .m_home;
 	background-position: 0 0;
 }
 .m_pm {
+	base: .m_home;
 	background-position: -80px 0;
 }
 .m_pm_unread {
+	base: .m_home;
 	background-position: -96px 0;
 }
 .m_calendar {
+	base: .m_home;
 	background-position: -176px 0;
 	width: 14px;
 }
 .m_mlist {
+	base: .m_home;
 	background-position: -17px 0;
 	width: 14px;
 }
 .m_login {
+	base: .m_home;
 	background-position: -144px 0;
 	width: 15px;
 }
 .m_register {
+	base: .m_home;
 	background-position: -160px 0;
 }
 .m_logout {
+	base: .m_home;
 	background-position: -128px 0;
 	width: 15px;
 }
@@ -741,11 +753,11 @@ ul.reset, ul.reset li {
 }
 
 /* A quote, usually from another post. */
-blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
+blockquote.bbc_standard_quote {
 	font-size: 90%;
 	color: #000;
 	line-height: 1.4em;
-	background: url($images/theme/quote.png) .1em .1em no-repeat;
+	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat;
 	border: 1px dotted #99A;
 	padding: 1.2em 2.2em;
 	margin: .1em 0 .5em;
@@ -754,10 +766,8 @@ blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
 }
 
 /* Alterate blockquote stylings */
-blockquote.bbc_standard_quote {
-	background-color: #e7eafc;
-}
 blockquote.bbc_alternate_quote {
+	base: blockquote.bbc_standard_quote;
 	background-color: #daddef;
 }
 
@@ -934,7 +944,7 @@ tr.catbg th a {
 }
 
 /* Alternating backgrounds for posts, and several other sections of the forum. */
-.windowbg, #preview_body {
+.windowbg {
 	color: #000;
 	background-color: #e9e8de; /* f0f0e5 */
 }

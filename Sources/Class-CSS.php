@@ -6,12 +6,12 @@
  * The Wedge version merges all classes together, adds features and fixes bugs.
  */
 
-class CacheerPlugin
+class CSSCache
 {
 	function process(&$css) {}
 }
 
-class ServerImportPlugin extends CacheerPlugin
+class CSS_ServerImport extends CSSCache
 {
 	function process(&$css)
 	{
@@ -44,7 +44,7 @@ class ServerImportPlugin extends CacheerPlugin
 	}
 }
 
-class VarPlugin extends CacheerPlugin
+class CSS_Var extends CSSCache
 {
 	function process(&$css)
 	{
@@ -95,7 +95,7 @@ class VarPlugin extends CacheerPlugin
  *
  * The rest is mine. (Ben oui, quoi.)
  */
-class FuncPlugin extends CacheerPlugin
+class CSS_Func extends CSSCache
 {
 	private function cint($c)
 	{
@@ -266,7 +266,7 @@ class FuncPlugin extends CacheerPlugin
 	}
 }
 
-class BasedOnPlugin extends CacheerPlugin
+class CSS_BasedOn extends CSSCache
 {
 	function process(&$css)
 	{
@@ -304,7 +304,7 @@ class BasedOnPlugin extends CacheerPlugin
 				$styles = '';
 				$base_names = array();
 				// Determine bases
-				$base_names = preg_split('/[\s,]+/', $matches[1][$key]);
+				$base_names = preg_split('~[\s,]+~', $matches[1][$key]);
 				// Loop through bases
 				foreach ($base_names as $base_name)
 				{
@@ -325,7 +325,7 @@ class BasedOnPlugin extends CacheerPlugin
 	}
 }
 
-class Base64Plugin extends CacheerPlugin
+class CSS_Base64 extends CSSCache
 {
 	function process(&$css)
 	{
@@ -354,14 +354,17 @@ class Base64Plugin extends CacheerPlugin
 	}
 }
 
-class NestedSelectorsPlugin extends CacheerPlugin
+class CSS_NestedSelectors extends CSSCache
 {
 	var $DOM;
+
 	function process(&$css)
 	{
 		/******************************************************************************
 		 Process nested selectors
 		 ******************************************************************************/
+		global $seen_nodes, $bases;
+
 		// Transform the CSS into XML
 		// does not like the data: protocol
 		$xml = trim($css);
@@ -383,9 +386,19 @@ class NestedSelectorsPlugin extends CacheerPlugin
 		 ******************************************************************************/
 		$css = '';
 		$standard_nest = '';
+
+		// Look for base: inheritance.
+		$bases = $seen_nodes = array();
+		foreach ($rule_nodes as $node)
+			if (!isset($seen_nodes[$node->nodeId]))
+				$this->searchProperty($node, 'base');
+		unset($seen_nodes);
+
+		// Do the proper nesting
+		$basestr = 'base';
 		foreach ($rule_nodes as $node)
 		{
-			if (preg_match('#^@media#', $node->selector))
+			if (strpos($node->selector, '@media') === 0)
 			{
 				$standard_nest = $node->selector;
 				$css .= $node->selector . ' {';
@@ -396,6 +409,17 @@ class NestedSelectorsPlugin extends CacheerPlugin
 			{
 				$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
 
+				foreach ($bases as &$base)
+				{
+					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
+					if (strpos($selector, $base[0]) !== false)
+					{
+						$selectors = array_map('trim', explode(',', $selector));
+						foreach ($selectors as &$snippet)
+							if (strpos($snippet, $base[0]) !== false)
+								$selector .= ', ' . str_replace($base[0], $base[1], $snippet); // And our magic trick happens here.
+					}
+				}
 				if (!empty($standard_nest))
 				{
 					if (substr_count($selector, $standard_nest))
@@ -410,7 +434,7 @@ class NestedSelectorsPlugin extends CacheerPlugin
 				$css .= $selector . ' {';
 
 				foreach ($properties as $property)
-					$css .= $property->name.': '.$property->value.';';
+					$css .= $property->name . ': ' . $property->value . ';';
 
 				$css .= '}';
 			}
@@ -423,14 +447,39 @@ class NestedSelectorsPlugin extends CacheerPlugin
 		}
 	}
 
+	function searchProperty($here, $nodeName)
+	{
+		global $bases, $seen_nodes;
+
+		$property = 'property';
+		foreach ($here->childNodes as $i => &$node)
+		{
+			// Trying to avoid browsing through referenced objects.
+			if (isset($seen_nodes[$node->nodeId]))
+				continue;
+			$seen_nodes[$node->nodeId] = true;
+
+			$hereName = strtolower($node->nodeName);
+			if ($hereName === $property && $node->name === $nodeName)
+			{
+				$bases[] = array(
+					$node->value, // Add to this class in the tree...
+					$this->parseAncestorSelectors($this->getAncestorSelectors($node)) // ...The current position
+				);
+				unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
+			}
+			elseif ($hereName === 'rule')
+				$this->searchProperty($node, $nodeName);
+		}
+	}
+
 	function getAncestorSelectors($node)
 	{
 		$selectors = array();
 
 		if (!empty($node->selector))
-		{
 			$selectors[] = $node->selector;
-		}
+
 		if (!empty($node->parentNodeId))
 		{
 			$parentNode = $this->DOM->nodeLookUp[$node->parentNodeId];
@@ -494,19 +543,18 @@ class SI_DomNode
 		}
 	}
 
-	function &getNodesByNodeName($nodeNames, $childrenOnly = false)
+	function &getNodesByNodeName($nodeName, $childrenOnly = false)
 	{
-		$nodeNamesArray = explode('|', strtolower($nodeNames));
 		$nodes = array();
 
-		foreach ($this->childNodes as $node)
+		foreach ($this->childNodes as &$node)
 		{
-			if (in_array(strtolower($node->nodeName), $nodeNamesArray))
+			if (strtolower($node->nodeName) === $nodeName)
 				array_push($nodes, $node);
 
 			if (!$childrenOnly)
 			{
-				$nestedNodes = $node->getNodesByNodeName($nodeNames);
+				$nestedNodes = $node->getNodesByNodeName($nodeName);
 				$nodes = array_merge($nodes, $nestedNodes);
 			}
 		}
