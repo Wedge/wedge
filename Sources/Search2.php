@@ -1142,7 +1142,7 @@ function Search2()
 					{
 						$main_query['weights']['subject'] = 'CASE WHEN MAX(lst.id_topic) IS NULL THEN 0 ELSE 1 END';
 						$main_query['left_join'][] = '{db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics AS lst ON (' . ($createTemporary ? '' : 'lst.id_search = {int:id_search} AND ') . 'lst.id_topic = t.id_topic)';
-						if ($createTemporary)
+						if (!$createTemporary)
 							$main_query['parameters']['id_search'] = $_SESSION['search_cache']['id_search'];
 					}
 				}
@@ -1170,6 +1170,7 @@ function Search2()
 						)
 					) !== false;
 
+					// Clear, all clear!
 					if (!$createTemporary)
 						wesql::query('
 							DELETE FROM {db_prefix}log_search_messages
@@ -1343,8 +1344,9 @@ function Search2()
 							t.id_first_msg,
 							1
 						FROM {db_prefix}topics AS t
-							INNER JOIN {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics AS lst ON (lst.id_topic = t.id_topic)
-						' . (empty($modSettings['search_max_results']) ? '' : '
+							INNER JOIN {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics AS lst ON (lst.id_topic = t.id_topic)'
+						. ($createTemporary ? '' : 'WHERE lst.id_search = {int:id_search}')
+						. (empty($modSettings['search_max_results']) ? '' : '
 						LIMIT ' . ($modSettings['search_max_results'] - $_SESSION['search_cache']['num_results'])),
 						array(
 							'id_search' => $_SESSION['search_cache']['id_search'],

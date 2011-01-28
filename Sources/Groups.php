@@ -401,10 +401,9 @@ function MembergroupMembers()
 	// Load up the group details.
 	$request = wesql::query('
 		SELECT id_group AS id, group_name AS name, CASE WHEN min_posts = {int:min_posts} THEN 1 ELSE 0 END AS assignable, hidden, online_color,
-			stars, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group
+			stars, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group, group_type
 		FROM {db_prefix}membergroups
-		WHERE id_group = {int:id_group}' . (allowedTo('admin_forum') ? '' : '
-			AND group_type != {int:is_protected}') . '
+		WHERE id_group = {int:id_group}
 		LIMIT 1',
 		array(
 			'min_posts' => -1,
@@ -421,7 +420,7 @@ function MembergroupMembers()
 	// Fix the stars.
 	$context['group']['stars'] = explode('#', $context['group']['stars']);
 	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
-	$context['group']['can_moderate'] = allowedTo('manage_membergroups');
+	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
 
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=groups;sa=members;group=' . $context['group']['id'],
@@ -446,7 +445,7 @@ function MembergroupMembers()
 			'name' => $row['real_name']
 		);
 
-		if ($user_info['id'] == $row['id_member'])
+		if ($user_info['id'] == $row['id_member'] && $context['group']['group_type'] != 1)
 			$context['group']['can_moderate'] = true;
 	}
 	wesql::free_result($request);
