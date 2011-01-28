@@ -2914,29 +2914,30 @@ function wedge_cache_css()
 	foreach ($css as $file)
 	{
 		$css_vars['$here'] = '..' . str_replace($boarddir, '', dirname($file));
-		$add = file_get_contents($file);
-		$add = preg_replace('~/\*(?!!).*?\*/~s', '', $add); // Strip comments except...
-		preg_match_all('~/\*!(.*?)\*/~s', $add, $comments); // ...for /*! Copyrights */
-		$add = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $add);
-
-		foreach ($plugins as $plugin)
-			$plugin->process($add);
-
-		$add = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $add);
-		// Only the basic CSS3 we actually use. May add more in the future.
-		$add = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $add);
-		$add = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $add);
-		// Restore comments as requested.
-		foreach ($comments[0] as $comment)
-			$add = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $add, 1);
-
-		// If we find any empty rules, we should be able to remove them.
-		// Obviously, don't use content: "{}" or something in your CSS. (Why would you?)
-		if (strpos($add, '{}') !== false)
-			$add = preg_replace('~[^{}]+{}~', '', $add);
-
-		$final .= ltrim($add, "\n");
+		$final .= file_get_contents($file);
 	}
+
+	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
+	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */
+	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final);
+
+	foreach ($plugins as $plugin)
+		$plugin->process($final);
+
+	$final = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $final);
+	// Only the basic CSS3 we actually use. May add more in the future.
+	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $final);
+	$final = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $final);
+	// Restore comments as requested.
+	foreach ($comments[0] as $comment)
+		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
+	$final = ltrim($final, "\n");
+
+	// If we find any empty rules, we should be able to remove them.
+	// Obviously, don't use content: "{}" or something in your CSS. (Why would you?)
+	if (strpos($final, '{}') !== false)
+		$final = preg_replace('~[^{}]+{}~', '', $final);
+
 	if ($can_gzip)
 		$final = gzencode($final, 9);
 

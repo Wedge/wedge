@@ -471,19 +471,19 @@ function template_viewmodreport()
 			<we:cat>
 				', sprintf($txt['mc_viewmodreport'], $context['report']['message_link'], $context['report']['author']['link']), '
 			</we:cat>
-			<we:title>';
+			<div class="windowbg2 wrc">';
 
-		// Make the buttons.
-		$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
-		$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
-		$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
+	// Make the buttons.
+	$close_button = create_button('close.gif', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['report']['closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', 'class="middle"');
+	$ignore_button = create_button('ignore.gif', 'mc_reportedp_ignore', 'mc_reportedp_ignore', 'class="middle"');
+	$unignore_button = create_button('ignore.gif', 'mc_reportedp_unignore', 'mc_reportedp_unignore', 'class="middle"');
 
-		echo '
+	echo '
 				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;ignore=', (int) !$context['report']['ignore'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '" ', !$context['report']['ignore'] ? 'onclick="return confirm(' . JavaScriptEscape($txt['mc_reportedp_ignore_confirm']) . ');"' : '', '>', $context['report']['ignore'] ? $unignore_button : $ignore_button, '</a></span>
 				<span class="floatright"><a href="', $scripturl, '?action=moderate;area=reports;close=', (int) !$context['report']['closed'], ';rid=', $context['report']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $close_button, '</a>&nbsp;&nbsp;</span>
 				', sprintf($txt['mc_modreport_summary'], $context['report']['num_reports'], $context['report']['last_updated']), '
-			</we:title>
-			<div class="windowbg2 wrc">
+			</div>
+			<div class="windowbg wrc">
 				', $context['report']['body'], '
 			</div>
 			<br>
@@ -500,9 +500,9 @@ function template_viewmodreport()
 
 	echo '
 			<br>
-			<we:cat>
+			<we:title>
 				', $txt['mc_modreport_mod_comments'], '
-			</we:cat>
+			</we:title>
 			<div class="windowbg2 wrc">';
 
 	if (empty($context['report']['mod_comments']))
@@ -514,8 +514,8 @@ function template_viewmodreport()
 				<p>', $comment['member']['link'], ': ', $comment['message'], ' <em class="smalltext">(', $comment['time'], ')</em></p>';
 
 	echo '
-				<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
-				<div>
+				<textarea rows="3" style="width: 88%; margin: 0 5%" name="mod_comment"></textarea>
+				<div style="padding: 8px 7% 0 0; text-align: right">
 					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="new">
 				</div>
 			</div>

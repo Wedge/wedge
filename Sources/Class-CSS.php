@@ -61,7 +61,7 @@ class VarPlugin extends CacheerPlugin
 		//		$variable = "rgba(2,4,6,.5)";
 		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
 
-		if (preg_match_all('~^\s*(\$\w+)\s*(?:{([^}]+)}\s*)?=\s*([^;]+);[\r\n]?~m', $css, $matches))
+		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*([^;]+);[\r\n]?~m', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -343,7 +343,7 @@ class Base64Plugin extends CacheerPlugin
 				$absolut = $boarddir . substr($img, 2);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-				if (file_exists($absolut) && filesize($absolut) <= 8192)
+				if (file_exists($absolut) && filesize($absolut) <= 4096)
 				{
 					$img_raw = file_get_contents($absolut);
 					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
