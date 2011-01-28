@@ -765,7 +765,7 @@ blockquote.bbc_standard_quote {
 	border-radius: 6px;
 }
 
-/* Alterate blockquote stylings */
+/* Alternate blockquote stylings */
 blockquote.bbc_alternate_quote {
 	base: blockquote.bbc_standard_quote;
 	background-color: #daddef;
@@ -1105,13 +1105,8 @@ a.moderation_link {
 	}
 }
 
-.openid_login {
-	background: white url($images/openid.gif) no-repeat;
-	padding-left: 18px;
-}
-
 /* a descriptive style */
-.description, .description_board, .plainbox {
+.plainbox {
 	padding: .5em 1em;
 	font-size: .9em;
 	line-height: 1.4em;
@@ -1121,9 +1116,11 @@ a.moderation_link {
 	border-radius: 4px;
 }
 .description {
+	base: .plainbox;
 	overflow: hidden;
 }
 .description_board {
+	base: .plainbox;
 	margin-top: 0;
 }
 
@@ -1249,36 +1246,20 @@ dfn {
 		text-decoration: none;
 	}
 }
-.cat, .title {
-	img {
-		float: left;
-		vertical-align: middle;
-		margin-right: .5em;
-		margin-top: 1px;
-	}
+.title img {
+	float: left;
+	vertical-align: middle;
+	margin-right: .5em;
+	margin-top: 1px;
 }
 .cat img {
+	base: .title img;
 	&[alt="+"], &[alt="-"] {
 		margin-top: 4px;
 	}
 }
 img[alt="!"] {
 	margin-top: 8px;
-}
-
-.table_list {
-	tbody.header td.catbg {
-		background-color: #e5eee5;
-		border-radius: 5px;
-		padding-right: 9px;
-	}
-	a.unreadlink {
-		float: right;
-	}
-	a.collapse {
-		float: right;
-		margin: 0 -12px 0 .8em;
-	}
 }
 
 /* A general table class */
@@ -1345,23 +1326,18 @@ img.left {
 img.right {
 	float: right;
 }
-table.left th, table tr.left th, table tr th.left,
-table.left td, table tr.left td, table tr td.left {
-	text-align: left;
-}
-table.right th, table tr.right th, table tr th.right,
-table.right td, table tr.right td, table tr td.right {
-	text-align: right;
-}
-table.center th, table tr.center th, table tr th.center,
-table.center td, table tr.center td, table tr td.center {
-	text-align: center;
-}
 table {
-	tr th, tr td {
-		&.left { text-align: left }
-		&.right { text-align: right }
-		&.center { text-align: center }
+	&.left th, tr.left th, tr th.left,
+	&.left td, tr.left td, tr td.left {
+		text-align: left;
+	}
+	&.right th, tr.right th, tr th.right,
+	&.right td, tr.right td, tr td.right {
+		text-align: right;
+	}
+	&.center th, tr.center th, tr th.center,
+	&.center td, tr.center td, tr td.center {
+		text-align: center;
 	}
 	&.cs0, &.cs1, &.cs3 {
 		border-collapse: separate;
@@ -1524,15 +1500,23 @@ table {
 ------------------------------------------------------- */
 .table_list {
 	width: 100%;
-	p {
-		padding: 0;
-		margin: 0;
-	}
+
 	td, th {
 		padding: 5px;
 	}
 	tbody.header td {
 		padding: 0;
+	}
+	a.unreadlink {
+		float: right;
+	}
+	a.collapse {
+		float: right;
+		margin: 0 -12px 0 .8em;
+	}
+	p {
+		padding: 0;
+		margin: 0;
 	}
 }
 

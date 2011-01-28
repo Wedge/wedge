@@ -1056,7 +1056,7 @@ dl {
 		vertical-align: middle;
 	}
 }
-#detailedinfo, #tracking {
+#tracking {
 	dl, dl {
 		clear: right;
 		overflow: auto;
@@ -1080,6 +1080,7 @@ dl {
 	}
 }
 #detailedinfo {
+	base: #tracking;
 	margin-top: 10px;
 	width: 79.5%;
 	float: right;
@@ -1211,13 +1212,6 @@ dl {
 #popularposts {
 	width: 49.5%;
 	float: left;
-}
-#popularactivity {
-	width: 49.5%;
-	float: right;
-}
-
-#popularposts, #popularactivity {
 	dt {
 		width: 65%;
 		float: left;
@@ -1232,6 +1226,10 @@ dl {
 		margin: 0 0 3px;
 		padding: 0;
 	}
+}
+#popularactivity {
+	base: #popularposts;
+	float: right;
 }
 
 .profile_pie {

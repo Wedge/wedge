@@ -2893,8 +2893,7 @@ function wedge_cache_css()
 		new CSS_ServerImport(),		// Server import (unused)
 		new CSS_Var(),				// CSS variables ($hello_world)
 		new CSS_Func(),				// CSS functions (color transforms)
-		new CSS_BasedOn(),			// Based-on (mixins)
-		new CSS_NestedSelectors()	// Nested selectors (.hello { .world { color: 0 } })
+		new CSS_NestedSelectors()	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 	);
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)

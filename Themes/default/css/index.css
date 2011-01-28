@@ -362,31 +362,33 @@ input[type=submit], input[type=button], .ie_button {
 		color: #000;
 	}
 }
-input.submit, input.delete, input.save, input.new, input.spell, input.search {
+input.submit {
 	background: url($images/buttons.png) no-repeat $bevel;
 	padding-left: 24px;
-}
-input.submit {
 	background-color: #e2f3ea;
 	background-position: 4px 2px, 0 0;
 	:hover { background-color: #e8f9f0; }
 }
 input.delete {
+	base: input.submit;
 	background-color: #f5efe9;
 	background-position: 4px -30px, 0 0;
 	:hover { background-color: #fbf5ef; }
 }
 input.save {
+	base: input.submit;
 	background-color: #dff3e8;
 	background-position: 4px -62px, 0 0;
 	:hover { background-color: #e5f9ed; }
 }
 input.new {
+	base: input.submit;
 	background-color: #e0eaf6;
 	background-position: 4px -94px, 0 0;
 	:hover { background-color: #e6f0fc; }
 }
 input.spell {
+	base: input.submit;
 	background-color: #e0eaf6;
 	background-position: 4px -126px, 0 0;
 	:hover { background-color: #e6f0fc; }
@@ -396,6 +398,7 @@ input.cancel {
 	:hover { background-color: #fff5e8; }
 }
 input.search {
+	base: input.submit;
 	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat;
 }
 
@@ -550,7 +553,7 @@ li.subsection > a {
 	padding-top: .5em;
 }
 
-li.nodrop h4, #main_menu li.nodrop h4 {
+.nodrop h4, #main_menu .nodrop h4 {
 	background-image: none;
 	padding-right: 6px;
 }
@@ -586,8 +589,7 @@ li.separator {
 /*	These are the top-level menu icons. It may look complicated, but it isn't.
 	Just fetch documentation on image spriting. You can also simply use
 	single images to show icons. */
-.m_home, .m_board, .m_search, .m_admin, .m_moderate, .m_profile,
-.m_pm, .m_pm_unread, .m_calendar, .m_mlist, .m_login, .m_register, .m_logout {
+.m_home {
 	float: left;
 	width: 16px;
 	height: 16px;
@@ -596,48 +598,58 @@ li.separator {
 	margin: 2px 0 0 2px;
 	background-repeat: no-repeat;
 	background-image: url($images/icons/sprite.png);
-}
-
-.m_home {
 	background-position: -64px 0;
 }
+
 .m_board {
+	base: .m_home;
 	background-position: -64px 0;
 }
 .m_search {
+	base: .m_home;
 	background-position: -112px 0;
 }
 .m_admin {
+	base: .m_home;
 	background-position: -32px 0;
 }
 .m_moderate {
+	base: .m_home;
 	background-position: -48px 0;
 }
 .m_profile {
+	base: .m_home;
 	background-position: 0 0;
 }
 .m_pm {
+	base: .m_home;
 	background-position: -80px 0;
 }
 .m_pm_unread {
+	base: .m_home;
 	background-position: -96px 0;
 }
 .m_calendar {
+	base: .m_home;
 	background-position: -176px 0;
 	width: 14px;
 }
 .m_mlist {
+	base: .m_home;
 	background-position: -17px 0;
 	width: 14px;
 }
 .m_login {
+	base: .m_home;
 	background-position: -144px 0;
 	width: 15px;
 }
 .m_register {
+	base: .m_home;
 	background-position: -160px 0;
 }
 .m_logout {
+	base: .m_home;
 	background-position: -128px 0;
 	width: 15px;
 }
@@ -739,11 +751,11 @@ ul.reset, ul.reset li {
 }
 
 /* A quote, usually from another post. */
-blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
+blockquote.bbc_standard_quote {
 	font-size: 90%;
 	color: #000;
 	line-height: 1.4em;
-	background: url($images/theme/quote.png) .1em .1em no-repeat;
+	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat;
 	border: 1px dotted #99A;
 	padding: 1.2em 2.2em;
 	margin: .1em 0 .5em;
@@ -751,11 +763,9 @@ blockquote.bbc_standard_quote, blockquote.bbc_alternate_quote {
 	border-radius: 6px;
 }
 
-/* Alterate blockquote stylings */
-blockquote.bbc_standard_quote {
-	background-color: #e7eafc;
-}
+/* Alternate blockquote stylings */
 blockquote.bbc_alternate_quote {
+	base: blockquote.bbc_standard_quote;
 	background-color: #daddef;
 }
 
@@ -930,7 +940,7 @@ tr.catbg th a {
 }
 
 /* Alternating backgrounds for posts, and several other sections of the forum. */
-.windowbg, #preview_body {
+.windowbg {
 	color: #000;
 	background-color: #e7eaef;
 }
@@ -1082,13 +1092,8 @@ a.moderation_link {
 	}
 }
 
-.openid_login {
-	background: white url($images/openid.gif) no-repeat;
-	padding-left: 18px;
-}
-
 /* a descriptive style */
-.description, .description_board, .plainbox {
+.plainbox {
 	padding: .5em 1em;
 	font-size: .9em;
 	line-height: 1.4em;
@@ -1098,9 +1103,11 @@ a.moderation_link {
 	border-radius: 4px;
 }
 .description {
+	base: .plainbox;
 	overflow: hidden;
 }
 .description_board {
+	base: .plainbox;
 	margin-top: 0;
 }
 
@@ -1256,25 +1263,11 @@ img[alt="!"] {
 	margin-top: 8px;
 }
 
-.table_list {
-	tbody.header td.catbg {
-		background-color: #e5eee5;
-		border-radius: 5px;
-		padding-right: 9px;
-	}
-	a.unreadlink {
-		float: right;
-	}
-	a.collapse {
-		float: right;
-		margin: 0 -12px 0 .8em;
-	}
-}
-
-/* The half-round header bars for some tables. */
+/* A general table class */
 .table_grid {
 	border-collapse: separate;
 	margin-top: .1em;
+	/* The header bars for some tables. */
 	tr.catbg, tr.titlebg {
 		font-size: .95em;
 		border-bottom: 1px solid #fff;
@@ -1334,23 +1327,18 @@ img.left {
 img.right {
 	float: right;
 }
-table.left th, table tr.left th, table tr th.left,
-table.left td, table tr.left td, table tr td.left {
-	text-align: left;
-}
-table.right th, table tr.right th, table tr th.right,
-table.right td, table tr.right td, table tr td.right {
-	text-align: right;
-}
-table.center th, table tr.center th, table tr th.center,
-table.center td, table tr.center td, table tr td.center {
-	text-align: center;
-}
 table {
-	tr th, tr td {
-		&.left { text-align: left }
-		&.right { text-align: right }
-		&.center { text-align: center }
+	&.left th, tr.left th, tr th.left,
+	&.left td, tr.left td, tr td.left {
+		text-align: left;
+	}
+	&.right th, tr.right th, tr th.right,
+	&.right td, tr.right td, tr td.right {
+		text-align: right;
+	}
+	&.center th, tr.center th, tr th.center,
+	&.center td, tr.center td, tr td.center {
+		text-align: center;
 	}
 	&.cs0, &.cs1, &.cs3 {
 		border-collapse: separate;
@@ -1516,15 +1504,23 @@ form.wrc {
 ------------------------------------------------------- */
 .table_list {
 	width: 100%;
-	p {
-		padding: 0;
-		margin: 0;
-	}
+
 	td, th {
 		padding: 5px;
 	}
 	tbody.header td {
 		padding: 0;
+	}
+	a.unreadlink {
+		float: right;
+	}
+	a.collapse {
+		float: right;
+		margin: 0 -12px 0 .8em;
+	}
+	p {
+		padding: 0;
+		margin: 0;
 	}
 }
 
