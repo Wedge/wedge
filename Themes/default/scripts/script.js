@@ -732,7 +732,7 @@ function menu_show_shim(showsh, ieid, j)
 // Entering a menu entry?
 function menu_show_me()
 {
-	var hasul = $('ul', this).first()[0], is_top = this.parentNode.className == 'menu';
+	var hasul = $('ul', this).first()[0], is_top = this.parentNode.className == 'menu', d = document.dir;
 
 	if (hoverable && hasul && hasul.style.visibility == 'visible')
 		return menu_hide_children(this.id);
@@ -741,7 +741,7 @@ function menu_show_me()
 	{
 		hasul.style.visibility = 'visible';
 		hasul.style.opacity = 1;
-		hasul.style['margin' + (document.dir && document.dir == 'rtl' ? 'Right' : 'Left')] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		hasul.style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
 		if (is_ie6)
 			menu_show_shim(true, this.id, hasul);
 	}
