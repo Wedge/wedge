@@ -86,14 +86,10 @@ class CSS_Var extends CSSCache
 /**
  * Various functions for the CSS parser. Currently only color-related.
  *
- * The following functions are inspired by Phamlp (PHP port of Sass):
- * hue2rgb(), hsl2rgb(), rgb2hsl()
+ * The HSL to RGB and RGB to HSL functions are based on ABC algorithms from the CWI,
+ * based on 'Fundamentals of Interactive Computer Graphics' (J.D. Foley, 1982.)
  *
- * @author		Chris Yates <chris.l.yates@gmail.com>
- * @copyright 	Copyright (c) 2010 PBM Web Development
- * @license		http://phamlp.googlecode.com/files/license.txt
- *
- * The rest is mine. (Ben oui, quoi.)
+ * The rest isn't as good, but it's mine. Ben oui.
  */
 class CSS_Func extends CSSCache
 {
@@ -108,70 +104,77 @@ class CSS_Func extends CSSCache
 			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
-	// Converts from hue to RGB colorspace
+	// Converts from hue to RGB
 	private function hue2rgb($m1, $m2, $h)
 	{
-		$h += ($h < 0 ? 1 : ($h > 1 ? -1 : 0));
+		$h < 0 ? $h++ : ($h > 1 ? $h-- : '');
 
 		if ($h * 6 < 1)
-			$c = $m2 + ($m1 - $m2) * $h * 6;
-		elseif ($h * 2 < 1)
-			$c = $m1;
-		elseif ($h * 3 < 2)
-			$c = $m2 + ($m1 - $m2) * (2/3 - $h) * 6;
-		else
-			$c = $m2;
-		return $c * 255; 
+			return $m2 + ($m1 - $m2) * $h * 6;
+		if ($h * 2 < 1)
+			return $m1;
+		if ($h * 3 < 2)
+			return $m2 + ($m1 - $m2) * (2 / 3 - $h) * 6;
+		return $m2;
 	}
 
 	/**
-	 * Converts from HSL to RGB colorspace
-	 * Algorithm from the CSS3 spec: {@link http://www.w3.org/TR/css3-color/#hsl-color}
+	 * Converts from HSL to RGB
+	 * Algorithm from the CSS3 spec: http://www.w3.org/TR/css3-color/
 	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
 	 */
 	private function hsl2rgb($h, $s, $l, $a)
 	{
-		$h = ($h % 360) / 360;
+		while ($h < 0)
+			$h += 360;
+		$h = fmod($h, 360) / 360;
 		$s = max(0, min(1, $s / 100));
 		$l = max(0, min(1, $l / 100));
 
-		$m1 = ($l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s);
+		$m1 = $l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s;
 		$m2 = $l * 2 - $m1;
 
 		return array(
-			'r' => $this->hue2rgb($m1, $m2, $h + 1 / 3),
-			'g' => $this->hue2rgb($m1, $m2, $h),
-			'b' => $this->hue2rgb($m1, $m2, $h - 1 / 3),
+			'r' => $this->hue2rgb($m1, $m2, $h + 1 / 3) * 255,
+			'g' => $this->hue2rgb($m1, $m2, $h) * 255,
+			'b' => $this->hue2rgb($m1, $m2, $h - 1 / 3) * 255,
 			'a' => $a
 		);
 	}
 
 	/**
-	 * Converts from RGB to HSL colorspace
-	 * Algorithm adapted from {@link http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV}
+	 * Converts from RGB to HSL
 	 * $r/$g/$b are RGB values (0-255)
 	 */
 	private function rgb2hsl($r, $g, $b, $a)
 	{
-		$rgb = array($r/255, $g/255, $b/255);
-		$max = max($rgb);
-		$min = min($rgb);
+		$r /= 255;
+		$g /= 255;
+		$b /= 255;
+		$max = max($r, $g, $b);
+		$min = min($r, $g, $b);
 		$c = $max - $min;
 		$l = ($max + $min) / 2;
 
 		if ($max === $min)
-			$h = 0;
-		elseif ($max === $rgb[0])
-			$h = (($rgb[1] - $rgb[2])/$c) % 6;
-		elseif ($max === $rgb[1])
-			$h = (($rgb[2] - $rgb[0])/$c) + 2;
-		elseif ($max === $rgb[2])
-			$h = (($rgb[0] - $rgb[1])/$c) + 4;
+			return array('h' => 0, 's' => 0, 'l' => $l * 100, 'a' => $a);
+
+		if ($max === $r)
+		{
+			$h = ($g - $b) / $c;
+			while ($h < 0)
+				$h += 6;
+			$h = fmod($h, 6);
+		}
+		elseif ($max === $g)
+			$h = (($b - $r) / $c) + 2;
+		else
+			$h = (($r - $g) / $c) + 4;
 
 		return array(
-			'h' => $h * 60, // hue
-			's' => $c ? ($l <= 0.5 ? $c / (2 * $l) : $c / (2 - 2 * $l)) * 100 : 0, // saturation
-			'l' => $l * 100, // lightness
+			'h' => $h * 60,
+			's' => $c / ($l <= 0.5 ? $l + $l : 2 - $l - $l) * 100,
+			'l' => $l * 100,
 			'a' => $a
 		);
 	}

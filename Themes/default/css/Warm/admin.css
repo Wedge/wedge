@@ -492,7 +492,7 @@ ul.moderation_notes {
 
 #error_log {
 	width: 100%;
-	tr.windowbg td, tr.windowbg2 td {
+	tr.windowbg td {
 		padding: 8px;
 		line-height: 160%;
 	}

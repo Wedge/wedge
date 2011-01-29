@@ -35,6 +35,7 @@ $main_font = "Verdana, Arial, Helvetica, sans-serif";
 $bevel = ", url($images/theme/bevel.png)";
 $bevel {ie6,ie7,ie8} = "";
 $main_bg = "rgb(241,243,234)";
+$menu_bg = "#f7f0da";
 
 /* Set a fontsize that will look the same in all browsers. */
 body {
@@ -153,35 +154,33 @@ h1.forumtitle {
 /* The navigation list (i.e. linktree) */
 .linktree {
 	clear: both;
-	padding: 3px 20px 1em;
+	padding: 0 0 1.5em;
 	a {
 		color: #963;
 	}
 	ul {
-		display: block;
+		padding: 0 20px;
 		margin: 0;
 		font: 105% Tahoma, Verdana;
-		padding: .5em 0;
 		overflow: hidden;
 		list-style: none;
-		clear: both;
-		width: 100%;
-		border-bottom: 1px dashed #999;
+		border-bottom: 1px dotted #999;
+		background: hue($menu_bg, -5%);
 		li {
 			float: left;
 			height: 20px;
 			line-height: 20px;
-			padding: 0 1.5em 0 3px;
-			background: url($images/menu.gif) no-repeat right -49px;
+			padding: .5em 1.5em .5em 3px;
+			background: url($images/menu.gif) no-repeat right -42px;
 			&.last {
 				background: none;
 			}
 		}
 	}
 	&.bt {
-		padding: 1.5em 20px 3px;
+		padding: 0;
 		ul {
-			border-top: 1px dashed #999;
+			border-top: 1px dotted #999;
 			border-bottom: 0;
 		}
 	}
@@ -436,7 +435,7 @@ input[type=file] {
 }
 
 #menu_container {
-	background: #f7f0da;
+	background: $menu_bg;
 	border: 1px dotted #000;
 	border-width: 1px 0;
 	overflow: hidden;
@@ -671,7 +670,7 @@ li.separator {
 }
 .flow_hidden {
 	overflow: hidden;
-	.windowbg, .windowbg2 {
+	.windowbg {
 		margin-top: 2px;
 	}
 }
@@ -726,7 +725,7 @@ li.separator {
 .padding {
 	padding: .7em;
 }
-.main_section, .lower_padding {
+.main_section {
 	padding-bottom: .5em;
 }
 /* a quick reset list class. */
@@ -949,11 +948,11 @@ tr.catbg th a {
 	background-color: #e9e8de; /* f0f0e5 */
 }
 .windowbg2 {
-	color: #000;
+	base: .windowbg;
 	background-color: #e4edeb; /* f0f4f7 */
 }
 .windowbg3 {
-	color: #000;
+	base: .windowbg;
 	background-color: #cacdd3;
 }
 .post {
@@ -962,7 +961,7 @@ tr.catbg th a {
 		font: italic 90% Verdana;
 	}
 }
-.windowbg a, .windowbg2 a {
+.windowbg a {
 	color: #47a;
 }
 
@@ -1339,14 +1338,16 @@ table {
 	&.center td, tr.center td, tr td.center {
 		text-align: center;
 	}
-	&.cs0, &.cs1, &.cs3 {
+	&.cs0 {
 		border-collapse: separate;
 		border-spacing: 0;
 	}
 	&.cs1 {
+		base: table.cs0;
 		border-spacing: 1px;
 	}
 	&.cs3 {
+		base: table.cs0;
 		border-spacing: 3px;
 	}
 	&.cp0 {

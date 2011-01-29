@@ -669,7 +669,7 @@ li.separator {
 }
 .flow_hidden {
 	overflow: hidden;
-	.windowbg, .windowbg2 {
+	.windowbg {
 		margin-top: 2px;
 	}
 }
@@ -724,7 +724,7 @@ li.separator {
 .padding {
 	padding: .7em;
 }
-.main_section, .lower_padding {
+.main_section {
 	padding-bottom: .5em;
 }
 /* a quick reset list class. */
@@ -915,13 +915,14 @@ td.footnum a:target, a.fnotel:target { background-color: #def !important }
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
+$subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS";
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td {
 	color: #222;
-	font: normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS";
+	font: $subcat_font;
 }
-.catbg, tr.catbg td, tr.catbg th {
+.catbg, tr.catbg td, tr.catbg th, tr.catbg th a {
 	color: #666;
-	font: normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS";
+	font: $subcat_font;
 }
 
 /* adjust the table versions of headers */
@@ -930,9 +931,6 @@ tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, td.catbg {
 }
 tr.titlebg th a, tr.titlebg2 td a {
 	color: #222;
-}
-tr.catbg th a {
-	color: #666;
 }
 .catbg select {
 	height: 1.5em;
@@ -945,11 +943,11 @@ tr.catbg th a {
 	background-color: #e7eaef;
 }
 .windowbg2 {
-	color: #000;
+	base: .windowbg;
 	background-color: #f0f4f7;
 }
 .windowbg3 {
-	color: #000;
+	base: .windowbg;
 	background-color: #cacdd3;
 }
 
