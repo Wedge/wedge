@@ -899,9 +899,9 @@ function template_send()
 
 	// Main message editing box.
 	echo '
-	<we:title>
+	<we:cat>
 		<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '">&nbsp;', $txt['new_message'], '
-	</we:title>';
+	</we:cat>';
 
 	echo '
 	<form action="', $scripturl, '?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'message\']);">

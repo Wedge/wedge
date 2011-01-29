@@ -1652,7 +1652,7 @@ span.hidelink {
 		background-position: 5px 4px;
 	}
 	.submit {
-		background-position: 0 0, 4px 4px;
+		background-position: 4px 4px;
 	}
 }
 
