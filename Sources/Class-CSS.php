@@ -97,24 +97,15 @@ class CSS_Var extends CSSCache
  */
 class CSS_Func extends CSSCache
 {
-	private function cint($c)
-	{
-		return max(0, min(255, round($c)));
-	}
-
 	private function rgb_output($r, $g, $b, $a)
 	{
 		global $context;
-		return $a === 0 || ($context['browser']['is_ie'] && !$context['browser']['is_ie9']) ?
-			'#' . sprintf('%02x%02x%02x', $this->cint($r), $this->cint($g), $this->cint($b)) :
-			'rgba(' . $this->cint($r) . ', ' . $this->cint($g) . ', ' . $this->cint($b) . ', ' . max(0, min(1, $a)) . ')';
-	}
-
-	// A very, very simple sample function taken and even more simplified
-	// from Noisen.com's code... Yeah, we don't really need it ;)
-	private function lum($color, $r, $g, $b, $a)
-	{
-		return rgb_output($color[0] + $r, $color[1] + $g, $color[2] + $b, $a);
+		$r = max(0, min(255, round($r)));
+		$g = max(0, min(255, round($g)));
+		$b = max(0, min(255, round($b)));
+		$a = max(0, min(1, $a));
+		return $a === 1 || ($context['browser']['is_ie'] && !$context['browser']['is_ie9']) ?
+			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
 	// Converts from hue to RGB colorspace
@@ -198,7 +189,7 @@ class CSS_Func extends CSSCache
 		);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -211,7 +202,7 @@ class CSS_Func extends CSSCache
 					continue;
 
 				// Extract color data
-				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*\,\s*([\d\.]+))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
+				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*\,\s*(\d*(?:\.\d+)?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
 				if (empty($rgb[0]))
 				{
 					// Syntax error? We just replace with red. Otherwise we'll end up in an infinite loop.
@@ -233,34 +224,52 @@ class CSS_Func extends CSSCache
 				else
 					$color = array(255, 255, 255, 1);
 
-				$m = explode(',', substr($m, strlen($rgb[0])));
-				while ($m && $m[0] === '')
-					array_shift($m);
+				$arg = explode(',', substr($m, strlen($rgb[0])));
+				$parg = array();
+				while ($arg && $arg[0] === '')
+					array_shift($arg);
 
-				$arg = isset($m[0]) ? $m[0] : 5;
+				$arg[0] = isset($arg[0]) ? $arg[0] : 5;
+				foreach ($arg as $i => &$a)
+					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
 				$hsl = $hsl ? $hsl : $this->rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
 				// Run our functions
 				if ($code == 'alpha')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a'] + $arg);
+					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
 
 				elseif ($code == 'darken')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] - $arg, $hsl['a']);
+					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				elseif ($code == 'lighten')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'] + $arg, $hsl['a']);
+					$hsl['l'] =+ $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				elseif ($code == 'desaturize')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] - $arg, $hsl['l'], $hsl['a']);
+					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
 				elseif ($code == 'saturize')
-					$nc = $this->hsl2rgb($hsl['h'], $hsl['s'] + $arg, $hsl['l'], $hsl['a']);
+					$hsl['s'] += $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
 				elseif ($code == 'hue')
-					$nc = $this->hsl2rgb($hsl['h'] + $arg, $hsl['s'], $hsl['l'], $hsl['a']);
+					$hsl['h'] += $parg[0] ? $parg[0] * 360 : $arg[0];
 
-				if ($nc)
-					$css = str_replace($dec, $this->rgb_output($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
+				elseif ($code == 'channels')
+				{
+					if ($color === 0)
+						$color = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+					$nc = array(
+						'r' => $color[0] + ($parg[0] ? $color[0] * $parg[0] : $arg[0]),
+						'g' => $color[1] + ($parg[1] ? $color[1] * $parg[1] : $arg[1]),
+						'b' => $color[2] + ($parg[2] ? $color[2] * $parg[2] : $arg[2]),
+						'a' => $color[3] + ($parg[3] ? $color[3] * $parg[3] : $arg[3])
+					);
+				}
+
+				else
+					continue;
+
+				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+				$css = str_replace($dec, $this->rgb_output($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
 	}
