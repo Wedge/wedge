@@ -187,10 +187,11 @@ h1.forumtitle {
 }
 
 /* The footer with copyright links etc. */
+$footer_bg = #e8e3cb;
 #footer {
 	margin: 0 auto;
-	border-top: 2px solid #fff;
-	background: #e8e3cb;
+	border-top: 2px solid darken($footer_bg, 20%);
+	background: $footer_bg;
 	div.frame {
 		padding: 15px 20px 5px;
 	}

@@ -382,15 +382,15 @@ class CSS_NestedSelectors extends CSSCache
 			{
 				$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
 
-				foreach ($bases as &$base)
+				foreach ($bases as $i => &$base)
 				{
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
 					if (strpos($selector, $base[0]) !== false)
 					{
 						$selectors = array_map('trim', explode(',', $selector));
 						foreach ($selectors as &$snippet)
-							if (strpos($snippet, $base[0]) !== false)
-								$selector .= ', ' . str_replace($base[0], $base[1], $snippet); // And our magic trick happens here.
+							if (preg_match('~[^\s,]' . $base[1] . '[\s,$]~', $snippet) !== false)
+								$selector .= ', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
 					}
 				}
 				if (!empty($standard_nest))
@@ -437,6 +437,7 @@ class CSS_NestedSelectors extends CSSCache
 			{
 				$bases[] = array(
 					$node->value, // Add to this class in the tree...
+					preg_quote($node->value),
 					$this->parseAncestorSelectors($this->getAncestorSelectors($node)) // ...The current position
 				);
 				unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
