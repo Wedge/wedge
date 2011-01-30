@@ -20,7 +20,7 @@ var
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
-	is_ie8 = is_ie && vers == 8, is_ie9up = is_ie && vers >= 9;
+	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down;
 
 // Load an XML document using XMLHttpRequest.
 function getXMLDocument(sUrl, funcCallback)
@@ -700,7 +700,7 @@ function initMenu(menu)
 			.mousedown(false)
 			.click(function () {
 				$('.hove').removeClass('hove');
-				$('ul', menu).css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+				$('ul', menu).css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 				if (is_ie6)
 					$('li', menu).each(function () { menu_show_shim(false, this.id); });
 			});
@@ -775,7 +775,7 @@ function menu_hide_me(e)
 function menu_hide_children(id)
 {
 	$('#' + id).children().andSelf().removeClass('hove').find('ul')
-		.css(is_ie && !is_ie9up ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+		.css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 
 	if (is_ie6)
 		menu_show_shim(false, id);

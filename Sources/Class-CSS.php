@@ -95,12 +95,14 @@ class CSS_Func extends CSSCache
 {
 	private function rgb_output($r, $g, $b, $a)
 	{
-		global $context;
+		global $browser;
+
 		$r = max(0, min(255, round($r)));
 		$g = max(0, min(255, round($g)));
 		$b = max(0, min(255, round($b)));
 		$a = max(0, min(1, $a));
-		return $a === 1 || ($context['browser']['is_ie'] && !$context['browser']['is_ie9']) ?
+
+		return $a === 1 || $browser['is_ie8down'] ?
 			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
@@ -181,6 +183,8 @@ class CSS_Func extends CSSCache
 
 	function process(&$css)
 	{
+		global $browser;
+
 		$nodupes = array();
 		$colors = array(
 			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
@@ -190,6 +194,19 @@ class CSS_Func extends CSSCache
 			'red'		=> 'ff0000', 'silver'	=> 'c0c0c0', 'teal'		=> '008080',
 			'white'		=> 'ffffff', 'yellow'	=> 'ffff00'
 		);
+
+		if (!function_exists('to_max'))
+		{
+			function to_max($d, $max = 255)
+			{
+				return substr($d, -1) === '%' ? (int) substr($d, 0, -1) / 100 * $max : $d;
+			}
+		}
+
+		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
+		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
+		if ($browser['is_ie8down'])
+			$css = preg_replace('~(?:rgba|hsla?)\([^\(\)]*\)~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
@@ -205,7 +222,7 @@ class CSS_Func extends CSSCache
 					continue;
 
 				// Extract color data
-				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*\,\s*(\d*(?:\.\d+)?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
+				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
 				if (empty($rgb[0]))
 				{
 					// Syntax error? We just replace with red. Otherwise we'll end up in an infinite loop.
@@ -217,9 +234,9 @@ class CSS_Func extends CSSCache
 				if (isset($colors[$m]))
 					$color = array(hexdec(substr($colors[$m], 0, 2)), hexdec(substr($colors[$m], 2, 2)), hexdec(substr($colors[$m], -2)), 1);
 				elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
-					$color = array($rgb[2], $rgb[3], $rgb[4], !isset($rgb[5]) || $rgb[5] === '' ? 1 : (float) $rgb[5]);
+					$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
 				elseif ($rgb[2] !== '')
-					$hsl = array('h' => $rgb[2], 's' => $rgb[3], 'l' => $rgb[4], 'a' => $rgb[5] === '' ? 1 : (float) $rgb[5]);
+					$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
 				elseif ($rgb[6] !== '' && isset($rgb[6][3]))
 					$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
 				elseif ($rgb[6] !== '')
@@ -233,30 +250,33 @@ class CSS_Func extends CSSCache
 					array_shift($arg);
 
 				$arg[0] = isset($arg[0]) ? $arg[0] : 5;
+				if ($code === 'channels' && !isset($arg[3]))
+					for ($i = 1; $i < 3; $i++)
+						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
 				foreach ($arg as $i => &$a)
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
 				$hsl = $hsl ? $hsl : $this->rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
 				// Run our functions
-				if ($code == 'alpha')
+				if ($code === 'alpha')
 					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
 
-				elseif ($code == 'darken')
+				elseif ($code === 'darken')
 					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
-				elseif ($code == 'lighten')
+				elseif ($code === 'lighten')
 					$hsl['l'] =+ $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
-				elseif ($code == 'desaturize')
+				elseif ($code === 'desaturize')
 					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
-				elseif ($code == 'saturize')
+				elseif ($code === 'saturize')
 					$hsl['s'] += $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
-				elseif ($code == 'hue')
+				elseif ($code === 'hue')
 					$hsl['h'] += $parg[0] ? $parg[0] * 360 : $arg[0];
 
-				elseif ($code == 'channels')
+				elseif ($code === 'channels')
 				{
 					if ($color === 0)
 						$color = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);

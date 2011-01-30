@@ -1299,48 +1299,52 @@ function loadMemberContext($user, $display_custom_fields = false)
  */
 function detectBrowser()
 {
-	global $context, $user_info;
+	global $context, $browser, $user_info;
 
 	// The following determines the user agent (browser) as best it can.
-	$context['browser'] = array(
+	$browser = array(
 		'ua' => $ua = $_SERVER['HTTP_USER_AGENT'],
 		'is_opera' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false
 	);
 
 	// Detect Webkit and related
-	$context['browser']['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
-	$context['browser']['is_chrome'] = $is_webkit && strpos($ua, 'Chrome') !== false;
-	$context['browser']['is_safari'] = $is_webkit && !$context['browser']['is_chrome'] && strpos($ua, 'Safari') !== false;
-	$context['browser']['is_iphone'] = $is_webkit && (strpos($ua, 'iPhone') !== false || strpos($ua, 'iPod') !== false);
-	$context['browser']['is_android'] = $is_webkit && strpos($ua, 'Android') !== false;
+	$browser['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
+	$browser['is_chrome'] = $is_webkit && strpos($ua, 'Chrome') !== false;
+	$browser['is_safari'] = $is_webkit && !$browser['is_chrome'] && strpos($ua, 'Safari') !== false;
+	$browser['is_iphone'] = $is_webkit && (strpos($ua, 'iPhone') !== false || strpos($ua, 'iPod') !== false);
+	$browser['is_android'] = $is_webkit && strpos($ua, 'Android') !== false;
 
 	// Detect Firefox versions
-	$context['browser']['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
-	$context['browser']['is_firefox'] = strpos($ua, 'Gecko/') === 1;					// Firefox says "Gecko/20xx", not "like Gecko"
+	$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
+	$browser['is_firefox'] = strpos($ua, 'Gecko/') === 1;					// Firefox says "Gecko/20xx", not "like Gecko"
 
 	// Internet Explorer is often "emulated".
-	$context['browser']['is_ie'] = $is_ie = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && strpos($ua, 'MSIE') !== false;
+	$browser['is_ie'] = $is_ie = !$browser['is_opera'] && !$browser['is_gecko'] && strpos($ua, 'MSIE') !== false;
 	$is_ie ? preg_match('~MSIE (\d+)~', $ua, $ie_ver) : '';
 	for ($i = 6; $i <= 9; $i++)
-		$context['browser']['is_ie' . $i] = $is_ie && $ie_ver[1] == $i;
+		$browser['is_ie' . $i] = $is_ie && $ie_ver[1] == $i;
+	$browser['is_ie8down'] = $is_ie && !$browser['is_ie9'];
 
 	// Store our browser name...
-	$context['browser']['agent'] = '';
-	foreach (array('opera', 'webkit', 'chrome', 'safari', 'iphone', 'android', 'gecko', 'firefox', 'ie6', 'ie7', 'ie8', 'ie9') as $browser)
+	$browser['agent'] = '';
+	foreach (array('opera', 'webkit', 'chrome', 'safari', 'iphone', 'android', 'gecko', 'firefox', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
 	{
-		if ($context['browser']['is_' . $browser])
+		if ($browser['is_' . $agent])
 		{
-			$context['browser']['agent'] = $browser;
+			$browser['agent'] = $agent;
 			break;
 		}
 	}
 
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
-	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
+	$browser['possibly_robot'] = !empty($user_info['possibly_robot']);
 
 	// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
 	if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || !$user_info['is_guest'])
-		$context['browser']['possibly_robot'] = false;
+		$browser['possibly_robot'] = false;
+
+	// A small reference to the usual place...
+	$context['browser'] =& $browser;
 }
 
 /**

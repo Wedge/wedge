@@ -2961,7 +2961,7 @@ function wedge_fix_browser_css($matches)
 		return '-moz-' . $matches[0] . ';' . $matches[0];
 	if ($context['browser']['is_ie9'])
 		return '-ms-' . $matches[0] . ';' . $matches[0];
-	elseif ($context['browser']['is_ie'])
+	elseif ($context['browser']['is_ie8down'])
 		return '';
 	return $matches[0];
 }

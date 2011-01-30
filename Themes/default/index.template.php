@@ -63,7 +63,7 @@ function template_html_above()
 	<meta charset="utf-8">';
 
 	// Our alltime favorites don't really like HTML5...
-	if ($context['browser']['is_ie'] && !$context['browser']['is_ie9'])
+	if ($context['browser']['is_ie8down'])
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
