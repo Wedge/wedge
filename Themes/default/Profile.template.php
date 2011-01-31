@@ -1220,9 +1220,9 @@ function template_edit_options()
 						', $field['value'];
 
 			// Maybe it's a text box - very likely!
-			elseif (in_array($field['type'], array('int', 'float', 'text', 'password')))
+			elseif (in_array($field['type'], array('int', 'float', 'text', 'password', 'url', 'email')))
 				echo '
-						<input type="', $field['type'] == 'password' ? 'password' : 'text', '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" ', $field['input_attr'], '>';
+						<input type="', $field['type'] == 'int' || $field['type'] == 'float' ? 'text' : $field['type'], '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" ', $field['input_attr'], '>';
 
 			// You "checking" me out? ;)
 			elseif ($field['type'] == 'check')
