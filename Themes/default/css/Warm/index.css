@@ -36,6 +36,10 @@ $bevel = ", url($images/theme/bevel.png)";
 $bevel {ie6,ie7,ie8} = "";
 $main_bg = "rgb(241,243,234)";
 $menu_bg = "#f7f0da";
+/* $alpha_matte is a RGB value that should stand for your main area's background.
+   You only need it if you're using alpha values in your CSS. Don't use a variable
+   name in it, it's already complicated enough to calculate... */
+$alpha_matte = "rgb(241,243,234)";
 
 /* Set a fontsize that will look the same in all browsers. */
 body {
@@ -466,7 +470,6 @@ input[type=file] {
 }
 
 .menu ul {
-	background: #fff8f1;
 	background: rgba(255, 248, 240, .92);
 	position: absolute;
 	display: block;
@@ -507,8 +510,7 @@ input[type=file] {
 }
 
 .css h4:hover, h4.hove {
-	background: #ebe7e2 url($images/menu.gif) no-repeat 98% 2px;
-	background-color: rgba(0,0,0, .075);
+	background: rgba(0,0,0, .075) url($images/menu.gif) no-repeat 98% 2px;
 	color: #000;
 }
 .menu .chosen h4 {
@@ -527,7 +529,6 @@ li.subsection > a {
 .css > li li:hover, li.hove {
 	color: #000;
 	border-radius: 0 9px 9px 0;
-	background-color: #ebe7e2;
 	background-color: rgba(0,0,0, .075);
 }
 
@@ -545,7 +546,6 @@ li.subsection > a {
 		background-image: none;
 		padding-right: 6px;
 		:hover {
-			background-color: #ebe7e2;
 			background-color: rgba(0,0,0, .075);
 		}
 	}
@@ -1222,14 +1222,12 @@ dfn {
 	padding: 5px 12px 5px 8px;
 	margin-bottom: 4px;
 	background: #e0ece6;
-	border: 1px solid #ddd;
 	border: 1px solid rgba(0,0,0, .15);
 	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif;
 }
 .title {
 	overflow: auto;
 	padding: 5px 12px 3px 8px;
-	border-bottom: 1px dotted #ddd;
 	border-bottom: 1px dotted rgba(0,0,0, .5);
 	border: 0;
 	font: bold 95%/20px $main_font;
@@ -1371,7 +1369,6 @@ table {
 	margin-top: 2px;
 	padding: .9em 1.2em;
 	border-radius: 12px;
-	border: 1px solid #ddd;
 	border: 1px solid rgba(0,0,0, .1);
 }
 
@@ -1386,9 +1383,7 @@ table {
 	overflow: hidden;
 	margin-top: 1px;
 	padding: 10px 10px 9px;
-	background: #f5f5f5;
 	background: rgba(0,0,0, .02);
-	border: 1px solid #c5c5c5;
 	border: 1px solid rgba(0,0,0, .15);
 	border-radius: 8px;
 	dl, dt, p {
@@ -1460,7 +1455,6 @@ table {
 		text-decoration: none;
 		font-size: .8em;
 		color: #000;
-		border: 1px solid #ccc;
 		border: 1px solid rgba(0,0,0, .1);
 		background: #e8e8e8;
 		height: 17px;

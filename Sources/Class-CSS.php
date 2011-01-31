@@ -11,44 +11,11 @@ class CSSCache
 	function process(&$css) {}
 }
 
-class CSS_ServerImport extends CSSCache
-{
-	function process(&$css)
-	{
-		global $relative_file, $relative_dir;
-
-		$imported = array($relative_file);
-		$context = $relative_dir;
-
-		while (preg_match_all('#@server\s+import\s+url\(([^\)]+)+\);#i', $css, $matches))
-		{
-			foreach($matches[1] as $i => $include)
-			{
-				$include = preg_replace('#^("|\')|("|\')$#', '', $include);
-
-				// import each file once, only import css
-				if (!in_array($include, $imported) && substr($include, -3) == 'css')
-				{
-					$imported[] = $include;
-					if (file_exists($include))
-					{
-						$include_css = file_get_contents($include);
-						$css = str_replace($matches[0][$i], $include_css, $css);
-					}
-					else
-						$css .= "\r\nerror { -si-missing: url('{$include}'); }";
-				}
-				$css = str_replace($matches[0][$i], '', $css);
-			}
-		}
-	}
-}
-
 class CSS_Var extends CSSCache
 {
 	function process(&$css)
 	{
-		global $css_vars, $context;
+		global $css_vars, $context, $matte;
 
 		// Reuse CSS variables from Wedge or parent CSS files.
 		$css_vars = isset($css_vars) ? $css_vars : array();
@@ -68,6 +35,9 @@ class CSS_Var extends CSSCache
 				$css = str_replace($dec, '', $css);
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
 					$css_vars[$matches[1][$i]] = trim($matches[3][$i], '"');
+				// We need to keep this one for later...
+				if ($matches[1][$i] === '$alpha_matte')
+					$matte = trim($matches[3][$i], '"');
 			}
 
 			// Sort the updated array by key length, to avoid conflicts.
@@ -93,16 +63,38 @@ class CSS_Var extends CSSCache
  */
 class CSS_Func extends CSSCache
 {
-	private function rgb_output($r, $g, $b, $a)
+	// Converts from a RGBA color to a string
+	private function color2string($r, $g, $b, $a)
 	{
-		global $browser;
+		global $browser, $matte;
+
+		$a = max(0, min(1, $a));
+
+		if ($browser['is_ie8down'] && $a !== 1)
+		{
+			// Old IE doesn't support RGBA, and we want to turn it into RGB.
+			// We're going to assume the matte color is white, otherwise, well, too bad.
+			if (isset($matte) && !is_array($matte))
+			{
+				$rgb = $this->string2color($matte);
+				if (empty($rgb[1]) && !empty($rgb[2]))
+					$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
+				$matte = $rgb[1];
+			}
+			elseif (!isset($matte))
+				$matte = array(255, 255, 255);
+			$ma = 1 - $a;
+			$r = $a * $r + $ma * $matte[0];
+			$g = $a * $g + $ma * $matte[1];
+			$b = $a * $b + $ma * $matte[2];
+			$a = 1;
+		}
 
 		$r = max(0, min(255, round($r)));
 		$g = max(0, min(255, round($g)));
 		$b = max(0, min(255, round($b)));
-		$a = max(0, min(1, $a));
 
-		return $a === 1 || $browser['is_ie8down'] ?
+		return $a === 1 ?
 			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
@@ -181,12 +173,10 @@ class CSS_Func extends CSSCache
 		);
 	}
 
-	function process(&$css)
+	// Converts from a string to a RGBA or HSLA color
+	function string2color($data)
 	{
-		global $browser;
-
-		$nodupes = array();
-		$colors = array(
+		static $colors = array(
 			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
 			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
 			'grey'		=> '808080', 'lime'		=> '00ff00', 'maroon'	=> '800000',
@@ -202,6 +192,40 @@ class CSS_Func extends CSSCache
 				return substr($d, -1) === '%' ? (int) substr($d, 0, -1) / 100 * $max : $d;
 			}
 		}
+
+		// Extract color data
+		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
+
+		$color = $hsl = 0;
+		if (empty($rgb[0]))
+		{
+			$data = explode(',', $data);
+			$rgb[0] = $data[0];
+			$data = trim($data[0]);
+			if (!isset($colors[$data]))
+				return false;
+			$color = array(hexdec(substr($colors[$data], 0, 2)), hexdec(substr($colors[$data], 2, 2)), hexdec(substr($colors[$data], -2)), 1);
+		}
+		elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
+			$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+		elseif ($rgb[2] !== '')
+			$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+		elseif ($rgb[6] !== '' && isset($rgb[6][3]))
+			$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
+		elseif ($rgb[6] !== '')
+			$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
+		else
+			$color = array(255, 255, 255, 1);
+
+		return array($rgb[0], $color, $hsl);
+	}
+
+	// Now, go with the actual color parsing.
+	function process(&$css)
+	{
+		global $browser, $matte;
+
+		$nodupes = array();
 
 		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
 		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
@@ -221,29 +245,17 @@ class CSS_Func extends CSSCache
 				if (empty($m))
 					continue;
 
-				// Extract color data
-				preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $m, $rgb);
-				if (empty($rgb[0]))
+				$rgb = $this->string2color($m);
+				if ($rgb === false)
 				{
 					// Syntax error? We just replace with red. Otherwise we'll end up in an infinite loop.
 					$css = str_replace($dec, 'red', $css);
 					continue;
 				}
 
-				$color = $hsl = $nc = 0;
-				if (isset($colors[$m]))
-					$color = array(hexdec(substr($colors[$m], 0, 2)), hexdec(substr($colors[$m], 2, 2)), hexdec(substr($colors[$m], -2)), 1);
-				elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
-					$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
-				elseif ($rgb[2] !== '')
-					$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
-				elseif ($rgb[6] !== '' && isset($rgb[6][3]))
-					$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
-				elseif ($rgb[6] !== '')
-					$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
-				else
-					$color = array(255, 255, 255, 1);
-
+				$nc = 0;
+				$color = $rgb[1];
+				$hsl = $rgb[2];
 				$arg = explode(',', substr($m, strlen($rgb[0])));
 				$parg = array();
 				while ($arg && $arg[0] === '')
@@ -292,7 +304,7 @@ class CSS_Func extends CSSCache
 					continue;
 
 				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-				$css = str_replace($dec, $this->rgb_output($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
+				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
 	}
