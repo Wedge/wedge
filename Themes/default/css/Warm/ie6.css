@@ -19,13 +19,6 @@
 		border-bottom: 1px solid #fff8f1;
 	}
 }
-/* IE6 also fails remembering the last correct background-color when meeting a rgba() value afterwards... */
-h4.hove {
-	background: #ebe7e2 url($images/menu.gif) no-repeat 98% 2px;
-}
-li.hove {
-	background: #dbd7d2;
-}
 
 /* Dunno if it's worth it: show a rather ugly hover background on top level menus until JS takes over. */
 .css h4 a:hover {
@@ -245,11 +238,8 @@ table.table_grid, table.cs0, table.cs1 {
 	width: expression(this.clientWidth < 300 ? '300px' : 'auto');
 	height: 150px;
 }
-h4.hove {
-	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 2px;
-}
 li.hove {
-	background: #e2ebe7;
+	background-color: #e2ebe7;
 }
 li.separator {
 	background: none;

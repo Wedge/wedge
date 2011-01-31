@@ -155,6 +155,11 @@ h1.forumtitle {
 	}
 }
 
+.menu_arrows {
+	background-image: url($images/menu.gif);
+	background-repeat: no-repeat;
+}
+
 /* The navigation list (i.e. linktree) */
 .linktree {
 	clear: both;
@@ -171,11 +176,12 @@ h1.forumtitle {
 		border-bottom: 1px dotted #999;
 		background: hue($menu_bg, -5%);
 		li {
+			base: .menu_arrows;
+			background-position: right -42px;
 			float: left;
 			height: 20px;
 			line-height: 20px;
 			padding: .5em 1.5em .5em 3px;
-			background: url($images/menu.gif) no-repeat right -42px;
 			&.last {
 				background: none;
 			}
@@ -458,9 +464,10 @@ input[type=file] {
 }
 
 .menu h4 {
+	base: .menu_arrows;
+	background-position: 98% 2px;
 	padding: 3px 19px 3px 6px;
 	font-weight: normal;
-	background: url($images/menu.gif) no-repeat 98% 2px;
 	margin-bottom: 2px;
 	margin-right: 2px;
 	a {
@@ -510,11 +517,15 @@ input[type=file] {
 }
 
 .css h4:hover, h4.hove {
-	background: rgba(0,0,0, .075) url($images/menu.gif) no-repeat 98% 2px;
+	base: .menu_arrows;
+	background-color: rgba(0,0,0, .075);
+	background-position: 98% 2px;
 	color: #000;
 }
 .menu .chosen h4 {
-	background: #3fa6c3 url($images/menu.gif) no-repeat 98% -28px;
+	base: .menu_arrows;
+	background-color: #3fa6c3;
+	background-position: 98% -28px;
 	font-weight: bold;
 	color: #fff;
 	a { color: #fff }
@@ -523,8 +534,9 @@ li.active > a {
 	font-weight: bold;
 }
 li.subsection > a {
+	base: .menu_arrows;
+	background-position: 98% -46px;
 	padding: 6px 24px 6px 8px;
-	background: url($images/menu.gif) no-repeat 98% -46px;
 }
 .css > li li:hover, li.hove {
 	color: #000;
