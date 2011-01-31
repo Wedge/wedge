@@ -46,8 +46,8 @@ function template_main()
 					<div class="post" id="preview_body">
 						', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 					</div>
-				</div>
-			</div><br>';
+				</div><br>
+			</div>';
 
 	if ($context['make_event'] && (!$context['event']['new'] || !empty($context['current_board'])))
 		echo '

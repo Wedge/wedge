@@ -2311,9 +2311,6 @@ class wedgeEditor
 	<link rel="stylesheet" href="' . $context['cached_css'] . '">
 </head>
 <body id="help_popup">
-	<we:cat>
-		' . $txt['more_smileys_pick'] . '
-	</we:cat>
 	<div class="windowbg wrc">
 		%smileyRows%
 		<div class="smalltext centertext">

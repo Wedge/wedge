@@ -962,7 +962,7 @@ function ob_sessrewrite($buffer)
 	}
 
 	if (!empty($context['debugging_info']))
-		$buffer = str_replace('</body>', $context['debugging_info'] . '</body>', $buffer);
+		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
 
 	// Update the load times
 	$pattern = '~' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '~';

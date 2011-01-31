@@ -351,7 +351,7 @@ class CSS_NestedSelectors extends CSSCache
 		/******************************************************************************
 		 Parse the XML into a crawlable DOM
 		 ******************************************************************************/
-		$this->DOM = new SI_Dom($xml);
+		$this->DOM = new CSS_Dom($xml);
 		$rule_nodes =& $this->DOM->getNodesByNodeName('rule');
 
 		/******************************************************************************
@@ -495,7 +495,7 @@ class CSS_NestedSelectors extends CSSCache
 	}
 }
 
-class SI_DomNode
+class CSS_DomNode
 {
 	var $nodeName = '';
 	var $cdata = '';
@@ -503,7 +503,7 @@ class SI_DomNode
 	var $parentNodeId;
 	var $childNodes = array();
 
-	function SI_DomNode($nodeId, $nodeName = '', $attrs = array())
+	function CSS_DomNode($nodeId, $nodeName = '', $attrs = array())
 	{
 		$this->nodeId = $nodeId;
 		$this->nodeName = $nodeName;
@@ -541,12 +541,12 @@ class SI_DomNode
 	}
 }
 
-class SI_Dom extends SI_DomNode
+class CSS_Dom extends CSS_DomNode
 {
 	var $xmlObj;
 	var $nodeLookUp = array();
 
-	function SI_Dom($xml = '')
+	function CSS_Dom($xml = '')
 	{
 		$this->name = 'DOM';
 		$this->xmlObj = xml_parser_create();
@@ -571,7 +571,7 @@ class SI_Dom extends SI_DomNode
 	function tagOpen($parser, $nodeName, $attrs)
 	{
 		unset($node);
-		$node = new SI_DomNode(count($this->nodeLookUp), $nodeName, $attrs);
+		$node = new CSS_DomNode(count($this->nodeLookUp), $nodeName, $attrs);
 		$this->nodeLookUp[] = $node;
 		array_push($this->childNodes, $node);
 	}
