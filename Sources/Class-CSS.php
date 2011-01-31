@@ -206,7 +206,7 @@ class CSS_Func extends CSSCache
 		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
 		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
 		if ($browser['is_ie8down'])
-			$css = preg_replace('~(?:rgba|hsla?)\([^\(\)]*\)~i', 'channels($1,0,0,0,0)', $css);
+			$css = preg_replace('~((?:rgba|hsla?)\([^\(\)]*\))~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
@@ -343,7 +343,7 @@ class CSS_NestedSelectors extends CSSCache
 		$xml = trim($css);
 		$xml = str_replace('"', '#SI-CSSC-QUOTE#', $xml);
 		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{]+);?\s*(?=[\r\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
-		$xml = preg_replace('/^(\s*)([\+>&#*@:.a-z][^{]+)\{/me', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
+		$xml = preg_replace('/^(\s*)([+>&#*@:\.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
 		$xml = str_replace('}', '</rule>', $xml); // Close rules
 		$xml = preg_replace('/\n/', "\r\t", $xml); // Indent everything one tab
 		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; // Tie it all up with a bow
@@ -368,7 +368,6 @@ class CSS_NestedSelectors extends CSSCache
 		unset($seen_nodes);
 
 		// Do the proper nesting
-		$basestr = 'base';
 		foreach ($rule_nodes as $node)
 		{
 			if (strpos($node->selector, '@media') === 0)
@@ -381,13 +380,15 @@ class CSS_NestedSelectors extends CSSCache
 			if (!empty($properties))
 			{
 				$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
+				$selectors = array();
 
 				foreach ($bases as $i => &$base)
 				{
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
 					if (strpos($selector, $base[0]) !== false)
 					{
-						$selectors = array_map('trim', explode(',', $selector));
+						if (empty($selectors))
+							$selectors = array_map('trim', explode(',', $selector));
 						foreach ($selectors as &$snippet)
 							if (preg_match('~[^\s,]' . $base[1] . '[\s,$]~', $snippet) !== false)
 								$selector .= ', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
