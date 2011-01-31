@@ -11,7 +11,7 @@
 		This will only be shown to anyone who can change a styling.
 	-->
 	<name>
-		Nix
+		Wine
 	</name>
 	<!--
 		Styling type.
@@ -40,7 +40,7 @@
 		Technical information is best posted wherever you upload the file.
 	-->
 	<comment><![CDATA[
-		Made by Nao, inspired by Eren's Phoenix theme for yourasoft.org
+		Made by Nao, inspired by Eren's theme for yourasoft.org
 	]]></comment>
 
 	<block name="title"><div class="title_bar"><h3>|</h3></div></block>

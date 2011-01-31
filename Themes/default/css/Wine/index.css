@@ -1,7 +1,7 @@
 
 /**
  *
- * This is the main CSS file for the default theme's Nix styling.
+ * This is the main CSS file for the default theme's Wine styling.
  * Basically, if you want to make your own stylesheet, just create a new folder in /css/,
  * create an index.css file in it, and add a settings.xml file if you need to override default settings.
  * If you don't specify anything, the default name will be the folder's name, and the type will be set to "add".
@@ -75,7 +75,7 @@ body {
 	}
 }
 #navi {
-	background: #f6fff8;
+	background: #fffdfa;
 	color: #999;
 }
 #main_menu {
@@ -101,7 +101,7 @@ body {
 	}
 }
 #content {
-	background: #f6fff8;
+	background: #fffdfa;
 }
 
 #main_menu, #context_menus {
@@ -181,22 +181,30 @@ code.bbc_code {
 	background: #f0f6f0;
 }
 
-.cat_bar, .title_bar {
-	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x;
-}
-.cat_bar {
-	border-color: #fd9604;
-	border-width: 2px 0 0 0;
-}
 .cat_bar h3, .cat_bar h4, .title_bar h3, .title_bar h4, .table_list tbody.header td,
 .cat_bar h3 a, .cat_bar h4 a, .title_bar h3 a, .title_bar h4 a, .table_list tbody.header td a,
 .catbg, .catbg2, tr.catbg th, tr.catbg td, tr.catbg2 th, tr.catbg2 td,
 .titlebg, .titlebg2, tr.titlebg td, tr.titlebg2 td {
-	color: #eee;
+	color: #fff;
 }
 .cat_bar h3, .cat_bar h4, .table_list tbody.header td {
 	a:hover { color: #fc8 }
 }
+
+.cat_bar, .title_bar {
+	background: #b3afa9 url($images/theme/grad40.png) repeat-x;
+	h3 {
+		font: bold 10pt Verdana;
+		letter-spacing: 0;
+		line-height: 18px;
+	}
+}
+.cat_bar {
+	background-color: #c3b9c3;
+	border-color: #fd9604;
+	border-width: 2px 0 0 0;
+}
+
 .roundframe {
 	background: #f5f5f5;
 }
