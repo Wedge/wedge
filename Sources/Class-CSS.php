@@ -4,6 +4,7 @@
  * Partly based on the CSS Cacheer library written by Shaun Inman
  * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
  * The Wedge version merges all classes together, adds features and fixes bugs.
+ * It also implements concepts and ideas from Sass (http://sass-lang.com)
  */
 
 class CSSCache
@@ -15,7 +16,7 @@ class CSS_Var extends CSSCache
 {
 	function process(&$css)
 	{
-		global $css_vars, $context, $matte;
+		global $css_vars, $context, $alpha_matte;
 
 		// Reuse CSS variables from Wedge or parent CSS files.
 		$css_vars = isset($css_vars) ? $css_vars : array();
@@ -28,16 +29,16 @@ class CSS_Var extends CSSCache
 		//		$variable = "rgba(2,4,6,.5)";
 		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
 
-		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*([^;]+);[\r\n]?~m', $css, $matches))
+		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*(.*);?$~m', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
 				$css = str_replace($dec, '', $css);
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
-					$css_vars[$matches[1][$i]] = trim($matches[3][$i], '"');
+					$css_vars[$matches[1][$i]] = trim(rtrim($matches[3][$i], ';'), '"');
 				// We need to keep this one for later...
 				if ($matches[1][$i] === '$alpha_matte')
-					$matte = trim($matches[3][$i], '"');
+					$alpha_matte = trim($matches[3][$i], '"');
 			}
 
 			// Sort the updated array by key length, to avoid conflicts.
@@ -66,7 +67,7 @@ class CSS_Func extends CSSCache
 	// Converts from a RGBA color to a string
 	private function color2string($r, $g, $b, $a)
 	{
-		global $browser, $matte;
+		global $browser, $alpha_matte;
 
 		$a = max(0, min(1, $a));
 
@@ -74,19 +75,19 @@ class CSS_Func extends CSSCache
 		{
 			// Old IE doesn't support RGBA, and we want to turn it into RGB.
 			// We're going to assume the matte color is white, otherwise, well, too bad.
-			if (isset($matte) && !is_array($matte))
+			if (isset($alpha_matte) && !is_array($alpha_matte))
 			{
-				$rgb = $this->string2color($matte);
+				$rgb = $this->string2color($alpha_matte);
 				if (empty($rgb[1]) && !empty($rgb[2]))
 					$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-				$matte = $rgb[1];
+				$alpha_matte = $rgb[1];
 			}
-			elseif (!isset($matte))
-				$matte = array(255, 255, 255);
+			elseif (!isset($alpha_matte))
+				$alpha_matte = array(255, 255, 255);
 			$ma = 1 - $a;
-			$r = $a * $r + $ma * $matte[0];
-			$g = $a * $g + $ma * $matte[1];
-			$b = $a * $b + $ma * $matte[2];
+			$r = $a * $r + $ma * $alpha_matte[0];
+			$g = $a * $g + $ma * $alpha_matte[1];
+			$b = $a * $b + $ma * $alpha_matte[2];
 			$a = 1;
 		}
 
@@ -223,7 +224,7 @@ class CSS_Func extends CSSCache
 	// Now, go with the actual color parsing.
 	function process(&$css)
 	{
-		global $browser, $matte;
+		global $browser;
 
 		$nodupes = array();
 
@@ -310,36 +311,7 @@ class CSS_Func extends CSSCache
 	}
 }
 
-class CSS_Base64 extends CSSCache
-{
-	function process(&$css)
-	{
-		global $boarddir;
-
-		$images = array();
-		if (preg_match_all('~url\(([^\)]+)\)~i', $css, $matches))
-		{
-			foreach ($matches[1] as $img)
-				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))
-					$images[$img] = $ext[1] == 'jpg' ? 'jpeg' : $ext[1];
-
-			foreach ($images as $img => $img_ext)
-			{
-				$absolut = $boarddir . substr($img, 2);
-
-				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-				if (file_exists($absolut) && filesize($absolut) <= 4096)
-				{
-					$img_raw = file_get_contents($absolut);
-					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
-					$css = str_replace('url(' . $img . ')', $img_data, $css);
-				}
-			}
-		}
-	}
-}
-
-class CSS_NestedSelectors extends CSSCache
+class CSS_Nesting extends CSSCache
 {
 	var $DOM;
 
@@ -354,11 +326,54 @@ class CSS_NestedSelectors extends CSSCache
 		// does not like the data: protocol
 		$xml = trim($css);
 		$xml = str_replace('"', '#SI-CSSC-QUOTE#', $xml);
-		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{]+);?\s*(?=[\r\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
+		// Does this file use the regular CSS syntax?
+		$css_syntax = strpos($xml, "{\n") !== false && strpos($xml, "\n}") !== false;
+		if (!$css_syntax)
+		{
+			// Nope? Then let's have fun with our simplified syntax.
+			$xml = preg_replace("~\n\s*\n~", "\n", $xml); // Delete blank lines
+			$xml = preg_replace('~^([\t ]*)~me', "strlen('$1').':'", $xml);
+			$tree = explode("\n", $xml);
+			$level = 0;
+			$xml = '';
+			foreach ($tree as &$line)
+			{
+				$l = explode(':', $line, 2);
+				if (!isset($indent) && !empty($l[0]))
+					$indent = $l[0];
+				if (!isset($indent))
+				{
+					$xml .= $l[1] . "\n";
+					continue;
+				}
+				if ($level == $l[0] && substr($ex_string, -1) !== ',')
+					$xml .= ";\n";
+				elseif ($level < $l[0])
+					$xml .= " {\n";
+				else
+				{
+					while ($level > $l[0])
+					{
+						$xml .= "}\n";
+						$level -= $indent;
+					}
+				}
+
+				$level = $l[0];
+				$xml .= $l[1];
+				$ex_string = $l[1];
+			}
+			while ($level > 0)
+			{
+				$xml .= '}';
+				$level -= $indent;
+			}
+		}
+		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);?\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
 		$xml = preg_replace('/^(\s*)([+>&#*@:\.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
 		$xml = str_replace('}', '</rule>', $xml); // Close rules
-		$xml = preg_replace('/\n/', "\r\t", $xml); // Indent everything one tab
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r"; // Tie it all up with a bow
+		$xml = str_replace("\n", "\n\t", $xml); // Indent everything one tab
+		$xml = '<?xml version="1.0" ?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
 
 		/******************************************************************************
 		 Parse the XML into a crawlable DOM
@@ -399,6 +414,8 @@ class CSS_NestedSelectors extends CSSCache
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
 					if (strpos($selector, $base[0]) !== false)
 					{
+						// !!! This will fail on multiple attributes in attribute selectors, or any strings with commas.
+						// !!! Just avoid using such complicated selectors on top of extends, can you?
 						if (empty($selectors))
 							$selectors = array_map('trim', explode(',', $selector));
 						foreach ($selectors as &$snippet)
@@ -437,7 +454,29 @@ class CSS_NestedSelectors extends CSSCache
 	{
 		global $bases, $seen_nodes;
 
-		$property = 'property';
+		// Replaces ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
+		if (strpos($here->selector, 'extends') !== false)
+		{
+			preg_match_all('~([+>&#*@:\.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $here->selector, $matches, PREG_SET_ORDER);
+			foreach ($matches as $m)
+			{
+				$save_selector = $here->selector;
+				$here->selector = $m[1];
+				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($here));
+				if (strpos($m[2], '&') !== false)
+					$m[2] = str_replace('&', $this->parseAncestorSelectors($this->getAncestorSelectors($here)), $m[2]);
+
+				$bases[] = array(
+					$m[2], // Add to this class in the tree...
+					preg_quote($m[2]),
+					$path // ...The current selector
+				);
+				$here->selector = str_replace($m[0], $m[1], $save_selector);
+			}
+		}
+
+		$property = 'property'; // Supposedly a tad faster?
+		$rule = 'rule';
 		foreach ($here->childNodes as $i => &$node)
 		{
 			// Trying to avoid browsing through referenced objects.
@@ -446,16 +485,21 @@ class CSS_NestedSelectors extends CSSCache
 			$seen_nodes[$node->nodeId] = true;
 
 			$hereName = strtolower($node->nodeName);
-			if ($hereName === $property && $node->name === $nodeName)
+			if ($hereName === $property)
 			{
-				$bases[] = array(
-					$node->value, // Add to this class in the tree...
-					preg_quote($node->value),
-					$this->parseAncestorSelectors($this->getAncestorSelectors($node)) // ...The current position
-				);
-				unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
+				if ($node->name === $nodeName)
+				{
+					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
+					$target = str_replace('&', $path, $node->value);
+					$bases[] = array(
+						$target, // Add to this class in the tree...
+						preg_quote($target),
+						$path // ...The current selector
+					);
+					unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
+				}
 			}
-			elseif ($hereName === 'rule')
+			elseif ($hereName === $rule)
 				$this->searchProperty($node, $nodeName);
 		}
 	}
@@ -612,6 +656,35 @@ class CSS_Dom extends CSS_DomNode
 			$node->parentNodeId = $this->childNodes[$parentId]->nodeId;
 			$this->childNodes[$parentId]->childNodes[] =& $node;
 			$this->nodeLookUp[$node->nodeId] =& $node;
+		}
+	}
+}
+
+class CSS_Base64 extends CSSCache
+{
+	function process(&$css)
+	{
+		global $boarddir;
+
+		$images = array();
+		if (preg_match_all('~url\(([^\)]+)\)~i', $css, $matches))
+		{
+			foreach ($matches[1] as $img)
+				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))
+					$images[$img] = $ext[1] == 'jpg' ? 'jpeg' : $ext[1];
+
+			foreach ($images as $img => $img_ext)
+			{
+				$absolut = $boarddir . substr($img, 2);
+
+				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
+				if (file_exists($absolut) && filesize($absolut) <= 4096)
+				{
+					$img_raw = file_get_contents($absolut);
+					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
+					$css = str_replace('url(' . $img . ')', $img_data, $css);
+				}
+			}
 		}
 	}
 }

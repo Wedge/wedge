@@ -2890,9 +2890,9 @@ function wedge_cache_css()
 	// Load Shaun Inman's nested selector parser
 	loadSource('Class-CSS');
 	$plugins = array(
-		new CSS_Var(),				// CSS variables ($hello_world)
-		new CSS_Func(),				// CSS functions (color transforms)
-		new CSS_NestedSelectors()	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new CSS_Var(),		// CSS variables ($hello_world)
+		new CSS_Func(),		// CSS functions (color transforms)
+		new CSS_Nesting()	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 	);
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
@@ -2915,17 +2915,19 @@ function wedge_cache_css()
 		$final .= file_get_contents($file);
 	}
 
+	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
-	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */
-	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final);
+	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */...
+	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final); // Which we save.
+	$final = preg_replace('~//[^\n]*~s', '', $final); // Strip comments like me. OMG does this mean I'm gonn
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
 
 	$final = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $final);
 	// Only the basic CSS3 we actually use. May add more in the future.
-	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\r\n;]+[\r\n;]~', 'wedge_fix_browser_css', $final);
-	$final = str_replace(array('#SI-CSSC-QUOTE#', "\r\n\r\n", "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", "\n", ';', '}', '}', ' '), $final);
+	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = str_replace(array('#SI-CSSC-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", ';', '}', '}', ' '), $final);
 	// Restore comments as requested.
 	foreach ($comments[0] as $comment)
 		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
