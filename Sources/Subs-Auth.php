@@ -311,7 +311,7 @@ function construct_query_string($get)
 
 	$query_string = '';
 
-	// Awww, darn.  The $scripturl contains GET stuff!
+	// Awww, darn. The $scripturl contains GET stuff!
 	$q = strpos($scripturl, '?');
 	if ($q !== false)
 	{
@@ -333,6 +333,10 @@ function construct_query_string($get)
 		foreach ($get as $k => $v)
 			$query_string .= urlencode($k) . '=' . urlencode($v) . ';';
 	}
+
+	preg_match('~;(action=[^;$]+)~i', $query_string, $match);
+	if (!empty($match))
+		$query_string = $match[1] . ';' . str_replace($match[0], '', $query_string);
 
 	$query_string = substr($query_string, 0, -1);
 	return $query_string;

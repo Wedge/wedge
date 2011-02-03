@@ -178,6 +178,11 @@ class westr_base extends westr_entity
 			$words[$i] = self::ucfirst($words[$i]);
 		return implode('', $words);
 	}
+
+	public static function nl2br($string)
+	{
+		return preg_replace('~(\r\n|\r|\n)~', '<br>$1', $string);
+	}
 }
 
 if (is_callable('mb_strtolower'))
@@ -212,4 +217,5 @@ else
 		}
 	}
 }
+
 ?>

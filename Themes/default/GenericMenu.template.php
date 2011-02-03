@@ -113,6 +113,10 @@ function template_generic_menu_dropdown_above()
 	// Main areas first.
 	foreach ($menu_context['sections'] as $section)
 	{
+		// Is this a section you can't see?
+		if (empty($section['id']))
+			continue;
+
 		echo '
 	<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
 		<h4>', $section['title'], '</h4>', !empty($section['areas']) ? '

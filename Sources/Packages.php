@@ -356,7 +356,7 @@ function PackageInstallTest()
 			if (!empty($action['parse_bbc']))
 				$context['package_readme'] = parse_bbc($context['package_readme']);
 			else
-				$context['package_readme'] = nl2br($context['package_readme'], false);
+				$context['package_readme'] = westr::nl2br($context['package_readme']);
 
 			continue;
 		}

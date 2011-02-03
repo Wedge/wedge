@@ -2864,7 +2864,7 @@ function wedge_cache_css()
 			}
 	}
 
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 	// No need to have all URLs say 'index-sections'...
 	unset($context['css_generic_files'][0], $context['css_generic_files'][1]);
@@ -3406,7 +3406,7 @@ function db_debug_junk()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			$temp .= '
-	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r"))), false) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);

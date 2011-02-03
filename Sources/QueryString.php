@@ -181,7 +181,8 @@ function cleanRequest()
 		if (wesql::num_rows($query) == 0)
 		{
 			$full_board = array();
-			$_GET['board'] = $board = 0;
+			$board = 0;
+			unset($_GET['board']);
 
 			// If URL has the form domain.com/~User, it's a profile request.
 			if (preg_match('@/~([^/]*)@', $full_request, $m))

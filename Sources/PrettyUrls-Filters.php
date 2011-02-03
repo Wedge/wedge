@@ -80,7 +80,7 @@ function pretty_synchronise_topic_urls()
 // Filter miscellaneous action urls
 function pretty_urls_actions_filter($urls)
 {
-	global $scripturl, $boardurl;
+	global $boardurl, $scripturl;
 
 /*
 	$pattern = array(
@@ -116,7 +116,7 @@ function pretty_urls_actions_filter($urls)
 // Filter topic urls
 function pretty_urls_topic_filter($urls)
 {
-	global $context, $modSettings, $scripturl;
+	global $boardurl, $scripturl, $modSettings, $context;
 
 	$pattern = '~(.*[?;&])topic=([\.a-zA-Z0-9]+)(.*)~S';
 	$query_data = array();
@@ -158,7 +158,7 @@ function pretty_urls_topic_filter($urls)
 		while ($row = wesql::fetch_assoc($query))
 			if (isset($row['pretty_url']))
 				$topicData[$row['id_topic']] = array(
-					'pretty_board' => !empty($row['url']) ? $row['url'] : 'wedgeo.com',
+					'pretty_board' => !empty($row['url']) ? 'http://' . $row['url'] : $boardurl,
 					'pretty_url' => $row['pretty_url'],
 				);
 			else
@@ -238,7 +238,7 @@ function pretty_urls_topic_filter($urls)
 				$add_new[] = array($row['id_topic'], $pretty_text);
 				// Add to the original array of topic URLs
 				$topicData[$row['id_topic']] = array(
-					'pretty_board' => !empty($row['board_url']) ? $row['board_url'] : $row['id_board'],
+					'pretty_board' => 'http://' . (!empty($row['board_url']) ? $row['board_url'] : $row['id_board']),
 					'pretty_url' => $pretty_text,
 				);
 			}
@@ -255,7 +255,7 @@ function pretty_urls_topic_filter($urls)
 			if (isset($url['topic_id']) && isset($topicData[$url['topic_id']]))
 			{
 				$start = ($url['start'] != '0' && $url['start'] != 'msg0') || is_numeric($topicData[$url['topic_id']]['pretty_url']) ? $url['start'] . '/' : '';
-				$url['replacement'] = 'http://' . $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['match1'] . $url['match3'];
+				$url['replacement'] = $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['match1'] . $url['match3'];
 			}
 	}
 	return $urls;
@@ -264,7 +264,7 @@ function pretty_urls_topic_filter($urls)
 // Filter board urls
 function pretty_urls_board_filter($urls)
 {
-	global $scripturl, $modSettings, $context;
+	global $boardurl, $scripturl, $modSettings, $context;
 
 	$pattern = '~(.*[?;&])board=([\.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
@@ -309,7 +309,7 @@ function pretty_urls_board_filter($urls)
 			if (!isset($url['replacement']) && isset($url['board_id']))
 			{
 				$board_id = $url['board_id'];
-				$url['replacement'] = 'http://' . (!empty($url_list[$board_id]) ? $url_list[$board_id] : 'wedgeo.com') . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
+				$url['replacement'] = (!empty($url_list[$board_id]) ? 'http://' . $url_list[$board_id] : $boardurl) . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
 			}
 	}
 
@@ -319,7 +319,7 @@ function pretty_urls_board_filter($urls)
 // Filter profiles
 function pretty_profiles_filter($urls)
 {
-	global $boardurl, $modSettings, $scripturl;
+	global $boardurl, $scripturl, $modSettings;
 
 	$pattern = '~(.*)action=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();
@@ -335,7 +335,7 @@ function pretty_profiles_filter($urls)
 			if ($url['profile_id'] > 0)
 				$query_data[] = $url['profile_id'];
 			else
-				$url['replacement'] = 'http://' . $_SERVER['HTTP_HOST'] . '/~' . ($url['this_is_me'] ? '/' : 'guest/') . $url['match1'] . $url['match3'];
+				$url['replacement'] = $boardurl . '/~' . ($url['this_is_me'] ? '/' : 'guest/') . $url['match1'] . $url['match3'];
 		}
 	}
 

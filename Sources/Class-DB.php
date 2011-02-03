@@ -240,10 +240,10 @@ class wesql
 			$clean .= substr($db_string, $old_pos);
 			$clean = trim(strtolower(preg_replace($allowed_comments_from, $allowed_comments_to, $clean)));
 
-			// We don't use UNION in SMF, at least so far.  But it's useful for injections.
+			// We don't use UNION in SMF, at least so far. But it's useful for injections.
 			if (strpos($clean, 'union') !== false && preg_match('~(^|[^a-z])union($|[^[a-z])~s', $clean) != 0)
 				$fail = true;
-			// Comments?  We don't use comments in our queries, we leave 'em outside!
+			// Comments? We don't use comments in our queries, we leave 'em outside!
 			elseif (strpos($clean, '/*') > 2 || strpos($clean, '--') !== false || strpos($clean, ';') !== false)
 				$fail = true;
 			// Trying to change passwords, slow us down, or something?
@@ -251,7 +251,7 @@ class wesql
 				$fail = true;
 			elseif (strpos($clean, 'benchmark') !== false && preg_match('~(^|[^a-z])benchmark($|[^[a-z])~s', $clean) != 0)
 				$fail = true;
-			// Sub selects?  We don't use those either, except in one case.
+			// Sub selects? We don't use those either, except in one case.
 			elseif (preg_match('~\([^)]*?select(?! f\.friend_id)~s', $clean) != 0)
 				$fail = true;
 
@@ -347,7 +347,7 @@ class wesql
 
 			if (@$db_last_error < time() - 3600 * 24 * 3)
 			{
-				// We know there's a problem... but what?  Try to auto detect.
+				// We know there's a problem... but what? Try to auto detect.
 				if ($query_errno == 1030 && strpos($query_error, ' 127 ') !== false)
 				{
 					preg_match_all('~(?:[\n\r]|^)[^\']+?(?:FROM|JOIN|UPDATE|TABLE) ((?:[^\n\r(]+?(?:, )?)*)~s', $db_string, $matches);
@@ -356,23 +356,21 @@ class wesql
 					foreach ($matches[1] as $tables)
 					{
 						$tables = array_unique(explode(',', $tables));
+						// Now, it's still theoretically possible this could be an injection. So backtick it!
 						foreach ($tables as $table)
-						{
-							// Now, it's still theoretically possible this could be an injection.  So backtick it!
 							if (trim($table) != '')
 								$fix_tables[] = '`' . strtr(trim($table), array('`' => '')) . '`';
-						}
 					}
 
 					$fix_tables = array_unique($fix_tables);
 				}
-				// Table crashed.  Let's try to fix it.
+				// Table crashed. Let's try to fix it.
 				elseif ($query_errno == 1016)
 				{
 					if (preg_match('~\'([^\.\']+)~', $query_error, $match) != 0)
 						$fix_tables = array('`' . $match[1] . '`');
 				}
-				// Indexes crashed.  Should be easy to fix!
+				// Indexes crashed. Should be easy to fix!
 				elseif ($query_errno == 1034 || $query_errno == 1035)
 				{
 					preg_match('~\'([^\']+?)\'~', $query_error, $match);
@@ -414,7 +412,7 @@ class wesql
 			{
 				if (in_array($query_errno, array(2006, 2013)) && self::$_db_con == $connection)
 				{
-					// Are we in SSI mode?  If so try that username and password first
+					// Are we in SSI mode? If so try that username and password first
 					if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 					{
 						if (empty($db_persist))
@@ -474,7 +472,7 @@ class wesql
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];
 		if (allowedTo('admin_forum'))
-			$context['error_message'] = nl2br($query_error, false) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
+			$context['error_message'] = preg_replace('~(\r\n|\r|\n)~', '<br>$1', $query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
 		else
 			$context['error_message'] = $txt['try_again'];
 
@@ -483,9 +481,7 @@ class wesql
 			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], $forum_version, $modSettings['smfVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
-		{
-			$context['error_message'] .= '<br><br>' . nl2br($db_string, false);
-		}
+			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);
 
 		// It's already been logged... don't log it again.
 		fatal_error($context['error_message'], false);
