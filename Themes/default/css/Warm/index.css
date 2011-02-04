@@ -678,7 +678,7 @@ blockquote.bbc_standard_quote
 blockquote.bbc_alternate_quote extends blockquote.bbc_standard_quote
 	background-color: #daddef
 
-// A code block - maybe PHP ;).
+// A code block - maybe PHP ;)
 code.bbc_code, code.php_code
 	display: block
 	font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
@@ -1259,7 +1259,6 @@ table
 			padding: 0
 			list-style: none
 			float: left
-
 	a
 		display: block
 		text-transform: uppercase
@@ -1277,7 +1276,6 @@ table
 		:hover
 			background: #fd9604
 			color: #fff
-
 	a.active
 		background: #5a6c85 !important
 		color: #fff
@@ -1321,7 +1319,6 @@ table
 @media print
 	#headerarea
 		display: none
-
 	.tborder
 		border: none
 
@@ -1345,7 +1342,7 @@ th.first_th
 th.last_th
 	border-radius: 0 8px 0 0
 
-/* These are our CSS variable definitions.
+/* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
 /* They can be put anywhere, they'll be considered as globals.
@@ -1368,3 +1365,24 @@ $greenish = "rgb(231,233,184)"
    name in it, it's already complicated enough to calculate... */
 
 $alpha_matte = "rgb(241,243,234)"
+
+/* And our mixins... Well, I have no idea where to use them, so here are just a
+   few examples, commented out, for you to see how powerful they can be... */
+
+/*
+mixin example($border: 1px solid black, $width: 777px, $co = #888)
+	font-size: 1em
+	background: $main_bg
+	border: $border
+	width: $width
+	color: $co
+
+mixin no_params
+	color: #fff
+
+.class
+	mixin: example
+	mixin: no_params
+	mixin: example(1px dotted white)
+	mixin: example(,, #fff)
+*/

@@ -12,6 +12,69 @@ class CSSCache
 	function process(&$css) {}
 }
 
+class CSS_Mixin extends CSSCache
+{
+	function process(&$css)
+	{
+		$mix = $def = array();
+		if (preg_match_all('~\smixin\s+([\w-]+)(?:\(([^()]+)\))?((?:[\t ]*\n[\t ]+[^\n]*)*)~i', $css, $mixins, PREG_SET_ORDER))
+		{
+			// We start by building an array of mixins...
+			foreach ($mixins as &$mixin)
+			{
+				// Remove the mixin declaration
+				$css = str_replace($mixin[0], '', $css);
+
+				// Create our mixin entry...
+				$mix[$mixin[1]] = $mixin[3];
+
+				// Do we have variables to set?
+				if (!empty($mixin[2]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[2], $variables, PREG_SET_ORDER))
+				{
+					foreach ($variables as $i => &$var)
+					{
+						$mix[$mixin[1]] = str_replace($var[1], '$%' . $i . '%', $mix[$mixin[1]]);
+						$def[$mixin[1]][$i] = trim($var[2], '" ');
+					}
+				}
+			}
+
+			// ...And then we apply them to the CSS file.
+			if (preg_match_all('~\smixin\s*:\s*([\w-]+)(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+			{
+				$repa = array();
+				foreach ($targets as &$mixin)
+				{
+					$rep = '';
+					$tg = $mixin[1];
+					if (isset($mix[$tg]))
+					{
+						$rep = $mix[$tg];
+						if (!empty($mixin[2]))
+						{
+							$variables = explode(',', $mixin[2]);
+							$i = 0;
+							foreach ($variables as $i => &$var)
+								if (!empty($var))
+									$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+						}
+
+						// Replace all missing variables with their default value.
+						if (!empty($def[$tg]))
+							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+					}
+					$repa[$mixin[0]] = $rep;
+				}
+			}
+			// Sort the updated array by key length, to avoid conflicts.
+			$keys = array_map('strlen', array_keys($repa));
+			array_multisort($keys, SORT_DESC, $repa);
+
+			$css = str_replace(array_keys($repa), array_values($repa), $css);
+		}
+	}
+}
+
 class CSS_Var extends CSSCache
 {
 	function process(&$css)

@@ -2895,6 +2895,7 @@ function wedge_cache_css()
 	// Load Shaun Inman's nested selector parser
 	loadSource('Class-CSS');
 	$plugins = array(
+		new CSS_Mixin(),	// CSS mixins (mixin hello($world: 0))
 		new CSS_Var(),		// CSS variables ($hello_world)
 		new CSS_Func(),		// CSS functions (color transforms)
 		new CSS_Nesting()	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
