@@ -327,19 +327,16 @@ function construct_query_string($get)
 				$query_string .= urlencode($k) . '=' . urlencode($v) . '&amp;';
 		}
 	}
+	// Add up all the data from $_GET into get_data.
 	else
-	{
-		// Add up all the data from $_GET into get_data.
 		foreach ($get as $k => $v)
 			$query_string .= urlencode($k) . '=' . urlencode($v) . ';';
-	}
 
-	preg_match('~;(action=[^;$]+)~i', $query_string, $match);
+	preg_match('~;(action=[^;]+)~i', $query_string, $match);
 	if (!empty($match))
 		$query_string = $match[1] . ';' . str_replace($match[0], '', $query_string);
 
-	$query_string = substr($query_string, 0, -1);
-	return $query_string;
+	return substr($query_string, 0, -1);
 }
 
 // Find members by email address, username, or real name.

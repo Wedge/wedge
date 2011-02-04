@@ -1,23 +1,28 @@
 
 /* Editor
 ------------------------------------------------------- */
-/* This is the WYSIWYG editor */
-.rich_editor {
-	background-color: #fff;
-	color: #000;
-	font-family: verdana;
-	font-size: x-small;
-	border: none;
-	p { margin: 0 }
-	a img { border: 0 }
-}
 
-.richedit_resize {
-	padding: 0 !important;
-}
+// This is the WYSIWYG editor
+.rich_editor
+	background-color: #fff
+	color: #000
+	font-family: verdana
+	font-size: x-small
+	border: none
+	p
+		margin: 0
+	a img
+		border: 0
 
-/* Old IEs reset background-position to 0 if you provide them with multiples values :-\ */
-input.submit	{ background-position: 4px 2px; }
-input.delete	{ background-position: 4px -30px; }
-input.save		{ background-position: 4px -62px; }
-input.new		{ background-position: 4px -94px; }
+.richedit_resize
+	padding: 0 !important
+
+// Old IEs reset background-position to 0 if you provide them with multiples values :-\
+input.submit
+	background-position: 4px 2px
+input.delete
+	background-position: 4px -30px
+input.save
+	background-position: 4px -62px
+input.new
+	background-position: 4px -94px

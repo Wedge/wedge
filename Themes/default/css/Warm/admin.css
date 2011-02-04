@@ -2,518 +2,485 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 
-#quick_search {
-	overflow: hidden;
-	line-height: 20px;
-	font-size: 0.8em !important;
-	float: right;
-	img {
-		padding-top: 5px;
-	}
-}
+#quick_search
+	overflow: hidden
+	line-height: 20px
+	font-size: 0.8em !important
+	float: right
+	img
+		padding-top: 5px
 
-ol.search_results {
-	margin-top: 0;
-	padding-top: 0;
-	li {
-		padding-top: 1em;
-		border-bottom: 1px solid #ccc;
-	}
-}
+ol.search_results
+	margin-top: 0
+	padding-top: 0
+	li
+		padding-top: 1em
+		border-bottom: 1px solid #ccc
 
 /* Styles for the core features screen.
 ------------------------------------------------------- */
-.features {
-	overflow: visible;
-	float: left;
-	width: 50%;
-	min-width: 300px;
-	.wrc {
-		padding: 0 1em !important;
-		margin: .3em;
-		min-height: 130px;
-	}
-	h4 {
-		padding: 1em 0 0.5em 0.5em;
-		margin: 0;
-		font-size: 1.1em;
-	}
-	p {
-		padding: 0 1em 1em;
-		margin: 0;
-	}
-}
-.features_image {
-	float: left;
-	margin: 2.4em 2em 0.5em 1em;
-}
-.features_switch {
-	margin: 1.5em 1em 1em 1em;
-	float: right;
-}
+.features
+	overflow: visible
+	float: left
+	width: 50%
+	min-width: 300px
+	.wrc
+		padding: 0 1em !important
+		margin: .3em
+		min-height: 130px
+	h4
+		padding: 1em 0 0.5em 0.5em
+		margin: 0
+		font-size: 1.1em
+	p
+		padding: 0 1em 1em
+		margin: 0
+
+.features_image
+	float: left
+	margin: 2.4em 2em 0.5em 1em
+
+.features_switch
+	margin: 1.5em 1em 1em 1em
+	float: right
+
 
 /* Styles for the admin home screen bar.
 ------------------------------------------------------- */
-#admin_main_section {
-	overflow: hidden;
-	margin: 1em 0;
-}
+#admin_main_section
+	overflow: hidden
+	margin: 1em 0
 
-#live_news {
-	width: 64%;
-	div.wrc {
-		padding: 0;
-		dl {
-			padding: 0.5em;
-		}
-	}
-}
+#live_news
+	width: 64%
+	div.wrc
+		padding: 0
+		dl
+			padding: 0.5em
 
-#supportVersionsTable {
-	width: 34%;
-}
-#version_details {
-	overflow: auto;
-	height: 9.5em;
-}
-#smfAnnouncements {
-	font-size: 0.9em;
-	height: 13.5em;
-	padding: 0 0.5em;
-	overflow: auto;
-}
-#smfAnnouncements {
-	dt {
-		border-bottom: 1px dashed #000;
-	}
-	dd {
-		padding: 0;
-		margin: 0 0 1em 1.5em;
-	}
-}
-#update_section {
-	margin: 0.5em 0 0;
-}
+#supportVersionsTable
+	width: 34%
 
-#quick_tasks, #quick_tasks ul {
-	margin: 0;
-	padding: 0;
-}
-#quick_tasks li {
-	float: left;
-	list-style-type: none;
-	margin: 0;
-	padding: 0.5em 0;
-	width: 49.5%;
-	height: 4.5em;
-}
-.quick_task {
-	display: block;
-	width: 100%;
-	margin: 0 1em;
-	padding: 0;
-}
-.home_image {
-	float: left;
-	margin: 0 1em 1em 1em;
-}
+#version_details
+	overflow: auto
+	height: 9.5em
+
+#smfAnnouncements
+	font-size: 0.9em
+	height: 13.5em
+	padding: 0 0.5em
+	overflow: auto
+
+#smfAnnouncements
+	dt
+		border-bottom: 1px dashed #000
+	dd
+		padding: 0
+		margin: 0 0 1em 1.5em
+
+#update_section
+	margin: 0.5em 0 0
+
+#quick_tasks, #quick_tasks ul
+	margin: 0
+	padding: 0
+
+#quick_tasks li
+	float: left
+	list-style-type: none
+	margin: 0
+	padding: 0.5em 0
+	width: 49.5%
+	height: 4.5em
+
+.quick_task
+	display: block
+	width: 100%
+	margin: 0 1em
+	padding: 0
+
+.home_image
+	float: left
+	margin: 0 1em 1em 1em
+
 
 /* Common admin center classes.
 ------------------------------------------------------- */
-#admincenter hr {
-	margin: 10px 0;
-}
-.title {
-	margin-bottom: 3px;
-	form {
-		font-size: 80%;
-	}
-}
-.windowbg ol {
-	margin-top: 0;
-	margin-bottom: 0;
-}
+#admincenter hr
+	margin: 10px 0
 
-.table_caption, tr.table_caption td {
-	color: #000;
-	font-size: 10px;
-	font-weight: bold;
-}
-.additional_row div.floatleft {
-	padding: 0 0.8em;
-}
-fieldset dl {
-	margin: 0;
-}
-.information a {
-	font-weight: bold;
-}
-.settings_cat {
-	margin-top: 12px;
-}
+.title
+	margin-bottom: 3px
+	form
+		font-size: 80%
+
+.windowbg ol
+	margin-top: 0
+	margin-bottom: 0
+
+.table_caption, tr.table_caption td
+	color: #000
+	font-size: 10px
+	font-weight: bold
+
+.additional_row div.floatleft
+	padding: 0 0.8em
+
+fieldset dl
+	margin: 0
+
+.information a
+	font-weight: bold
+
+.settings_cat
+	margin-top: 12px
+
 
 /* Styles for the package manager.
 ------------------------------------------------- */
-#package_list {
-	list-style-type: none;
-	.tborder {
-		margin: .25em 0 .25em 26px;
-	}
-	li {
-		border: 1px solid #cacdd3;
-		padding: 0.2em;
-		margin: 1px;
-	}
-	ol, ol li {
-		list-style: decimal;
-		margin-left: 50px;
-		border: none;
-	}
-	ol ul, ol ul li {
-		margin-left: 0;
-		list-style: none;
-	}
-}
-.description {
-	font-size: 1em;
-	max-height: 15em;
-	overflow: auto;
-	padding-bottom: .5em;
-}
-.information {
-	max-height: 15em;
-	overflow: auto;
-	padding-bottom: .5em;
-}
-.package_section {
-	border: 1px solid #cacdd3;
-}
-ul.packages li {
-	border: none !important;
-	list-style-type: none;
-}
-#find_code, #replace_code {
-	display: block;
-	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
-	font-size: x-small;
-	background: #eef;
-	line-height: 1.5em;
-	padding: 3px 1em;
-	overflow: auto;
-	white-space: pre;
-	/* Show a scrollbar after about 24 lines. */
-	max-height: 24em;
-}
-span.package_server {
-	padding: 0 3em;
-}
-ul.package_servers {
-	margin: 0;
-	padding: 0;
-	li {
-		list-style-type: none;
-	}
-}
-pre.file_content {
-	overflow: auto;
-	width: 100%;
-	padding-bottom: 1em;
-}
-.operation {
-	padding: 0 1em;
-}
+#package_list
+	list-style-type: none
+	.tborder
+		margin: .25em 0 .25em 26px
+	li
+		border: 1px solid #cacdd3
+		padding: 0.2em
+		margin: 1px
+	ol, ol li
+		list-style: decimal
+		margin-left: 50px
+		border: none
+	ol ul, ol ul li
+		margin-left: 0
+		list-style: none
+
+.description
+	font-size: 1em
+	max-height: 15em
+	overflow: auto
+	padding-bottom: .5em
+
+.information
+	max-height: 15em
+	overflow: auto
+	padding-bottom: .5em
+
+.package_section
+	border: 1px solid #cacdd3
+
+ul.packages li
+	border: none !important
+	list-style-type: none
+
+#find_code, #replace_code
+	display: block
+	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+	font-size: x-small
+	background: #eef
+	line-height: 1.5em
+	padding: 3px 1em
+	overflow: auto
+	white-space: pre
+	// Show a scrollbar after about 24 lines.
+	max-height: 24em
+
+span.package_server
+	padding: 0 3em
+
+ul.package_servers
+	margin: 0
+	padding: 0
+	li
+		list-style-type: none
+
+pre.file_content
+	overflow: auto
+	width: 100%
+	padding-bottom: 1em
+
+.operation
+	padding: 0 1em
+
 
 /* Styles for the file permissions section.
 ------------------------------------------------- */
-.filepermissions {
-	font-size: 0.8em;
-	white-space: nowrap;
-}
-.fperm {
-	display: block;
-	width: 35%;
-	text-align: center;
-}
-.perm_read {
-	background-color: #d1f7bf;
-}
-.perm_write {
-	background-color: #ffbbbb;
-}
-.perm_execute {
-	background-color: #fdd7af;
-}
-.perm_custom {
-	background-color: #c2c6c0;
-}
-.perm_nochange {
-	background-color: #eee;
-}
+.filepermissions
+	font-size: 0.8em
+	white-space: nowrap
+
+.fperm
+	display: block
+	width: 35%
+	text-align: center
+
+.perm_read
+	background-color: #d1f7bf
+
+.perm_write
+	background-color: #ffbbbb
+
+.perm_execute
+	background-color: #fdd7af
+
+.perm_custom
+	background-color: #c2c6c0
+
+.perm_nochange
+	background-color: #eee
+
 
 /* Styles for the BBC permissions
 ------------------------------------------------- */
-.list_bbc {
-	width: 33%;
-}
+.list_bbc
+	width: 33%
+
 
 /* Styles for the manage boards section.
 ------------------------------------------------- */
-#manage_boards {
-	ul {
-		padding: 0;
-		margin: 0 0 0.6em 0;
-		max-height: 30em;
-		overflow: auto;
-	}
-	li {
-		list-style-type: none;
-		border: 1px solid #cacdd3;
-		padding: 0.2em;
-		margin: 1px;
-		clear: right;
-	}
-	li img {
-		vertical-align: middle;
-		padding-bottom: 3px;
-	}
-	#recycle_board {
-		background-color: #dee;
-	}
-	span.post_group, span.regular_members {
-		border-bottom: 1px dotted #000;
-		cursor: help;
-	}
-}
-.move_links {
-	padding: 0 13px 0 0;
-}
-.modify_boards {
-	padding: 0 0.5em;
-}
-#boardtheme {
-	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace;
-}
+#manage_boards
+	ul
+		padding: 0
+		margin: 0 0 0.6em 0
+		max-height: 30em
+		overflow: auto
+	li
+		list-style-type: none
+		border: 1px solid #cacdd3
+		padding: 0.2em
+		margin: 1px
+		clear: right
+	li img
+		vertical-align: middle
+		padding-bottom: 3px
+	#recycle_board
+		background-color: #dee
+	span.post_group, span.regular_members
+		border-bottom: 1px dotted #000
+		cursor: help
+
+.move_links
+	padding: 0 13px 0 0
+
+.modify_boards
+	padding: 0 0.5em
+
+#boardtheme
+	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+
 
 /* Styles for the manage members section.
 ------------------------------------------------- */
-.msearch_details {
-	display: block;
-	width: 49%;
-}
-dl.right dt {
-	padding-right: 10px;
-}
+.msearch_details
+	display: block
+	width: 49%
+
+dl.right dt
+	padding-right: 10px
+
 
 /* Styles for the manage maintenance section.
 ------------------------------------------------- */
-.maintenance_finished, #task_completed {
-	margin: 1ex;
-	padding: 1ex 2ex;
-	border: 1px dashed green;
-	color: green;
-	background: #efe;
-}
+.maintenance_finished, #task_completed
+	margin: 1ex
+	padding: 1ex 2ex
+	border: 1px dashed green
+	color: green
+	background: #efe
+
 
 /* Styles for the manage calendar/search sections.
 ------------------------------------------------- */
-dl.settings {
-	dt.small_caption { width: 20% }
-	dd.small_caption { width: 79% }
-	dt.large_caption { width: 70% }
-	dd.large_caption { width: 29% }
-}
+dl.settings
+	dt.small_caption
+		width: 20%
+	dd.small_caption
+		width: 79%
+	dt.large_caption
+		width: 70%
+	dd.large_caption
+		width: 29%
+
 
 /* Styles for the manage permissions section.
 ------------------------------------------------- */
-dl.admin_permissions {
-	dt { width: 35% }
-	dd { width: 64% }
-}
+dl.admin_permissions
+	dt
+		width: 35%
+	dd
+		width: 64%
+
 
 /* Styles for the manage search section.
 ------------------------------------------------- */
-span.search_weight {
-	width: 40px;
-	padding: 0 0.5em;
-	text-align: right;
-	display: inline-block;
-}
-.search_settings {
-	width: 47%;
-}
+span.search_weight
+	width: 40px
+	padding: 0 0.5em
+	text-align: right
+	display: inline-block
+
+.search_settings
+	width: 47%
+
 
 /* Styles for the manage bans section.
 ------------------------------------------------- */
-.ban_restriction {
-	margin: 0.2em 0 0.2em 2.2em;
-}
-.ban_settings {
-	width: 46%;
-}
-#manage_bans {
-	dl { margin-bottom: 1em }
-	fieldset dl.settings { margin-bottom: 0 }
-}
+.ban_restriction
+	margin: 0.2em 0 0.2em 2.2em
+
+.ban_settings
+	width: 46%
+
+#manage_bans
+	dl
+		margin-bottom: 1em
+	fieldset dl.settings
+		margin-bottom: 0
+
 
 /* Styles for the manage subscriptions section.
 ------------------------------------------------- */
-#fixed_area {
-	width: 97%;
-}
-ul.pending_payments {
-	margin: 0;
-	padding: 0;
-	li {
-		list-style-type: none;
-	}
-}
+#fixed_area
+	width: 97%
+
+ul.pending_payments
+	margin: 0
+	padding: 0
+	li
+		list-style-type: none
+
 
 /* Styles for the manage permissions section.
 ------------------------------------------------- */
-.perm_name, .perm_profile, .perm_board {
-	display: block;
-	width: 40%;
-}
-.perm_boards {
-	padding: 0;
-	margin: 0 0 0.6em 0;
-	li {
-		list-style-type: none;
-		border: 1px solid #cacdd3;
-		padding: 0.2em;
-		margin: 1px;
-	}
-}
-.perm_groups {
-	background-color: #fff;
-}
-.perm_classic {
-	margin: 0.2em;
-}
-.permission_groups {
-	padding: 0;
-	margin: 0;
-	li {
-		list-style-type: none;
-		padding: 0.2em;
-		margin: 1px;
-	}
-}
-.perms {
-	width: 20px;
-	display: inline-block;
-	text-align: center;
-}
+.perm_name, .perm_profile, .perm_board
+	display: block
+	width: 40%
+
+.perm_boards
+	padding: 0
+	margin: 0 0 0.6em 0
+	li
+		list-style-type: none
+		border: 1px solid #cacdd3
+		padding: 0.2em
+		margin: 1px
+
+.perm_groups
+	background-color: #fff
+
+.perm_classic
+	margin: 0.2em
+
+.permission_groups
+	padding: 0
+	margin: 0
+	li
+		list-style-type: none
+		padding: 0.2em
+		margin: 1px
+
+.perms
+	width: 20px
+	display: inline-block
+	text-align: center
+
 
 /* Styles for the themes section.
 ------------------------------------------------- */
-ul.theme_options {
-	padding: 0;
-	margin: 0;
-	li {
-		list-style: none;
-		padding: 0.4em;
-	}
-}
-.is_directory {
-	padding-left: 18px;
-	background: url($images/admin/boards.gif) no-repeat;
-}
-.edit_file {
-	width: 96%;
-	font-family: monospace;
-	margin-top: 1ex;
-	white-space: pre;
-}
+ul.theme_options
+	padding: 0
+	margin: 0
+	li
+		list-style: none
+		padding: 0.4em
 
-dl.themes_list {
-	margin: 0;
-	dt {
-		margin-bottom: 3px;
-	}
-	dd {
-		font-style: italic;
-		white-space: nowrap;
-	}
-}
+.is_directory
+	padding-left: 18px
+	background: url($images/admin/boards.gif) no-repeat
+
+.edit_file
+	width: 96%
+	font-family: monospace
+	margin-top: 1ex
+	white-space: pre
+
+dl.themes_list
+	margin: 0
+	dt
+		margin-bottom: 3px
+	dd
+		font-style: italic
+		white-space: nowrap
+
 
 /* Styles for the registration center.
 ------------------------------------------------- */
-.agreement, .reserved_names {
-	padding: 0;
-}
-#agreement, #reserved {
-	width: 99%;
-}
+.agreement, .reserved_names
+	padding: 0
+
+#agreement, #reserved
+	width: 99%
+
 
 /* Styles for the moderation center.
 ------------------------------------------------- */
-#modcenter {
-	display: block;
-	width: 100%;
-}
-.modblock_left {
-	width: 49%;
-	float: left;
-	clear: right;
-	margin: 0 0 1em 0;
-}
-.modblock_right {
-	width: 49%;
-	float: right;
-	margin: 0 0 1em 0;
-}
+#modcenter
+	display: block
+	width: 100%
 
-.modbox {
-	height: 150px;
-	overflow: auto;
-}
-/* Moderation Notes */
-ul.moderation_notes {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	overflow: auto;
-	height: 8.5em;
-	li {
-		padding: 4px 0 4px 4px;
-		border-bottom: 1px solid #cccccc;
-	}
-}
-.notes {
-	margin: 0.5em 0;
-}
-.post_note {
-	width: 85%;
-}
+.modblock_left
+	width: 49%
+	float: left
+	clear: right
+	margin: 0 0 1em 0
+
+.modblock_right
+	width: 49%
+	float: right
+	margin: 0 0 1em 0
+
+.modbox
+	height: 150px
+	overflow: auto
+
+// Moderation Notes
+ul.moderation_notes
+	margin: 0
+	padding: 0
+	list-style: none
+	overflow: auto
+	height: 8.5em
+	li
+		padding: 4px 0 4px 4px
+		border-bottom: 1px solid #cccccc
+
+.notes
+	margin: 0.5em 0
+
+.post_note
+	width: 85%
+
 
 /* Styles for the error log.
 ------------------------------------------------- */
 
-#error_log {
-	width: 100%;
-	tr.windowbg td {
-		padding: 8px;
-		line-height: 160%;
-	}
-	td.half_width {
-		width: 50%;
-	}
-	td.checkbox_column {
-		width: 15px;
-		vertical-align: top;
-		text-align: center;
-	}
-	td div.marginleft {
-		margin: 0 0 0 1ex;
-	}
-}
-#admincenter .wrc, #manage_boards .wrc, #manage_maintenance .wrc, #manage_mail .wrc {
-	margin-bottom: 4px;
-}
+#error_log
+	width: 100%
+	tr.windowbg td
+		padding: 8px
+		line-height: 160%
+	td.half_width
+		width: 50%
+	td.checkbox_column
+		width: 15px
+		vertical-align: top
+		text-align: center
+	td div.marginleft
+		margin: 0 0 0 1ex
 
-.pretty_filter {
-	color: #888;
-	font-size: 0.9em;
-	padding: 0.5em 0 0.5em 4.2em;
-}
+#admincenter .wrc, #manage_boards .wrc, #manage_maintenance .wrc, #manage_mail .wrc
+	margin-bottom: 4px
+
+.pretty_filter
+	color: #888
+	font-size: 0.9em
+	padding: 0.5em 0 0.5em 4.2em

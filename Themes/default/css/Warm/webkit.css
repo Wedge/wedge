@@ -5,20 +5,16 @@
 	Causes issues in IE browsers, and breaks cached search engines pages.
 */
 
-.attachments {
-	clear: right;
-}
+.attachments
+	clear: right
 
-.table_grid thead th {
-	height: 26px;
-	line-height: 26px;
-}
+.table_grid thead th
+	height: 26px
+	line-height: 26px
 
-.table_list tbody.header td div.cat {
-	margin-bottom: -2px;
-}
+.table_list tbody.header td div.cat
+	margin-bottom: -2px
 
-/* Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers. */
-input[type=search] {
-	-webkit-appearance: textfield;
-}
+// Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers.
+input[type=search]
+	-webkit-appearance: textfield

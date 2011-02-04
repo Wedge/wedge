@@ -369,7 +369,7 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
-		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);?\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
+		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);*\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
 		$xml = preg_replace('/^(\s*)([+>&#*@:\.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
 		$xml = str_replace('}', '</rule>', $xml); // Close rules
 		$xml = str_replace("\n", "\n\t", $xml); // Indent everything one tab
