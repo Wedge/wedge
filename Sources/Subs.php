@@ -2268,14 +2268,19 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			fatal_lang_error('wireless_error_notyet', false);
 
 		// First up, did we get a main subtemplate list? Or did we only get a single template to play with, that we need to make into a list?
-		if (empty($context['sub_template']))
-			$context['sub_template'] = array('sidebar' => array(), 'main' => array('main'));
+		if (empty($context['is_ajax']))
+		{
+			if (empty($context['sub_template']))
+				$context['sub_template'] = array('sidebar' => array(), 'main' => array('main'));
 
-		if (!is_array($context['sub_template']))
-			$context['sub_template'] = array('sidebar' => array(), 'main' => array($context['sub_template']));
+			if (!is_array($context['sub_template']))
+				$context['sub_template'] = array('sidebar' => array(), 'main' => array($context['sub_template']));
 
-		foreach ($context['sub_template'] as $key => &$template)
-			loadSubTemplate($template, false, $key);
+			foreach ($context['sub_template'] as $key => &$template)
+				loadSubTemplate($template, false, $key);
+		}
+		else
+			loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
 
 		// Just so we don't get caught in an endless loop of errors from the footer...
 		if (!$footer_done)
@@ -2283,7 +2288,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			$footer_done = true;
 			template_footer();
 
-			if (!isset($_REQUEST['xml']))
+			if (!isset($_REQUEST['xml']) && empty($context['is_ajax']))
 				db_debug_junk();
 		}
 	}

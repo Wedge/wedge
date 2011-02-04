@@ -5,8 +5,8 @@ function template_popup()
 {
 	global $context, $txt;
 
-	// Since this is a popup of its own we need to start the html, etc.
-	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+	// Since this is a popup of its own we need to start the html, unless we're coming from jQuery.
+	if (!empty($context['is_ajax']))
 	{
 		echo '<div class="windowbg2 wrc smalltext">
 	', $context['help_text'], '

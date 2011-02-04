@@ -198,7 +198,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 	function checkUsernameCallback(XMLDoc)
 	{
 		var
-			isValid = !!($('username', XMLDoc).attr('valid')),
+			isValid = $('username', XMLDoc).attr('valid') == 1,
 			alt = textStrings['username_' + (isValid ? 'valid' : 'invalid')];
 
 		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';

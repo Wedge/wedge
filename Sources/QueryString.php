@@ -463,6 +463,10 @@ function cleanRequest()
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
 	}
 
+	// Is this a page requested through jQuery?
+	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+		$context['is_ajax'] = true;
+
 	// Make sure we know the URL of the current request.
 	if (empty($_SERVER['REQUEST_URI']))
 		$_SERVER['REQUEST_URL'] = $scripturl . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
