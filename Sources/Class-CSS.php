@@ -460,12 +460,16 @@ class CSS_Nesting extends CSSCache
 		$css = '';
 		$standard_nest = '';
 
-		// Look for base: inheritance.
+		// Look for base:/extends inheritance.
 		$bases = $seen_nodes = array();
 		foreach ($rule_nodes as $node)
 			if (!isset($seen_nodes[$node->nodeId]))
 				$this->searchProperty($node, 'base');
 		unset($seen_nodes);
+
+		// Sort the bases array by the first argument's length.
+		$cmp = function($a, $b) { return strlen($a[0]) < strlen($b[0]); };
+		usort($bases, $cmp);
 
 		// Do the proper nesting
 		foreach ($rule_nodes as $node)
@@ -496,7 +500,7 @@ class CSS_Nesting extends CSSCache
 								$selectors = explode(',', $selector);
 							foreach ($selectors as &$snippet)
 							{
-								$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%)~';
+								$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w)~';
 								if (preg_match($from, $snippet))
 								{
 									$selector = preg_replace($from, '%done%$1%done%', $selector) .
