@@ -67,7 +67,8 @@ class CSS_Mixin extends CSSCache
 					$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
 				}
 			}
-			// Sort the updated array by key length, to avoid conflicts.
+
+			// Sort the array by key length, to avoid conflicts.
 			$keys = array_map('strlen', array_keys($repa));
 			array_multisort($keys, SORT_DESC, $repa);
 
@@ -96,10 +97,10 @@ class CSS_Var extends CSSCache
 		// The only reason we're not accepting ":" in declarations is that
 		// we want to be able to do this: (Check the last line carefully)
 		//
-		//	$border = right
-		//	$border {rtl} = left // and yes, it doesn't support 'rtl' yet
-		//	.class
-		//		border-$border: 0;
+		// (index.css)	$border-pos = right
+		// (rtl.css)	$border-pos = left
+		// (index.css)	.class
+		//					border-$border-pos: 1px solid $border-col;
 
 		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*(.*);?$~m', $css, $matches))
 		{
@@ -113,7 +114,7 @@ class CSS_Var extends CSSCache
 					$alpha_matte = trim($matches[3][$i], '"');
 			}
 
-			// Sort the updated array by key length, to avoid conflicts.
+			// Sort the array by key length, to avoid conflicts.
 			$keys = array_map('strlen', array_keys($css_vars));
 			array_multisort($keys, SORT_DESC, $css_vars);
 		}
@@ -480,21 +481,36 @@ class CSS_Nesting extends CSSCache
 			{
 				$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
 				$selectors = array();
+				$changed = true;
 
-				foreach ($bases as $i => &$base)
+				while ($changed)
 				{
-					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
-					if (strpos($selector, $base[0]) !== false)
+					$changed = false;
+					foreach ($bases as $i => &$base)
 					{
-						// !!! This will fail on multiple attributes in attribute selectors, or any strings with commas.
-						// !!! Just avoid using such complicated selectors on top of extends, can you?
-						if (empty($selectors))
-							$selectors = array_map('trim', explode(',', $selector));
-						foreach ($selectors as &$snippet)
-							if (preg_match('~[^\s,]' . $base[1] . '[\s,$]~', $snippet) !== false)
-								$selector .= ', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
+						// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
+						if (strpos($selector, $base[0]) !== false)
+						{
+							// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
+							if (empty($selectors))
+								$selectors = explode(',', $selector);
+							foreach ($selectors as &$snippet)
+							{
+								$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%)~';
+								if (preg_match($from, $snippet))
+								{
+									$selector = preg_replace($from, '%done%$1%done%', $selector) .
+												', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
+									$changed = true; // Restart the process to handle inherited extends.
+								}
+							}
+						}
 					}
+					if ($changed)
+						$selectors = explode(',', $selector);
 				}
+				$selector = str_replace('%done%', '', $selector);
+
 				if (!empty($standard_nest))
 				{
 					if (substr_count($selector, $standard_nest))
@@ -536,7 +552,7 @@ class CSS_Nesting extends CSSCache
 				$here->selector = $m[1];
 				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($here));
 				if (strpos($m[2], '&') !== false)
-					$m[2] = str_replace('&', $this->parseAncestorSelectors($this->getAncestorSelectors($here)), $m[2]);
+					$m[2] = str_replace('&', $this->parseAncestorSelectors($this->getAncestorSelectors($this->DOM->nodeLookUp[$here->parentNodeId])), $m[2]);
 
 				$bases[] = array(
 					$m[2], // Add to this class in the tree...
