@@ -427,7 +427,7 @@ function Search2()
 	}
 
 	// Change non-word characters into spaces.
-	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
+	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
 	$stripped_query = un_htmlspecialchars(westr::strtolower($stripped_query));
@@ -1603,7 +1603,7 @@ function prepareSearchContext($reset = false)
 				{
 					$keyword = preg_replace('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~e', '$GLOBALS[\'smcFunc\'][\'entity_fix\'](\'\\1\')', strtr($keyword, array('\\\'' => '\'', '&' => '&amp;')));
 
-					if (preg_match('~[\'\.,/@%&;:(){}\[\]_\-+\\\\]$~', $keyword) != 0 || preg_match('~^[\'\.,/@%&;:(){}\[\]_\-+\\\\]~', $keyword) != 0)
+					if (preg_match('~[\'.,/@%&;:(){}[\]_+\\\\-]$~', $keyword) != 0 || preg_match('~^[\'.,/@%&;:(){}[\]_+\\\\-]~', $keyword) != 0)
 						$force_partial_word = true;
 					$matchString .= strtr(preg_quote($keyword, '/'), array('\*' => '.+?')) . '|';
 				}

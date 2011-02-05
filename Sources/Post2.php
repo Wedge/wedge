@@ -756,7 +756,7 @@ function Post2()
 		'id' => empty($_REQUEST['msg']) ? 0 : (int) $_REQUEST['msg'],
 		'subject' => $_POST['subject'],
 		'body' => $_POST['message'],
-		'icon' => preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']),
+		'icon' => preg_replace('~[./\\\\*:"\'<>]~', '', $_POST['icon']),
 		'smileys_enabled' => !isset($_POST['ns']),
 		'attachments' => empty($attachIDs) ? array() : $attachIDs,
 		'approved' => $becomesApproved,

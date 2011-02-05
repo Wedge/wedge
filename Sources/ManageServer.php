@@ -1689,7 +1689,7 @@ function cleanLangString($string, $to_display = true)
 			elseif ($in_string == 0 && $string{$i} == '$')
 			{
 				// Find the whole of it!
-				preg_match('~([\$A-Za-z0-9\'\[\]_-]+)~', substr($string, $i), $matches);
+				preg_match('~([$\w\'[\]-]+)~', substr($string, $i), $matches);
 				if (!empty($matches[1]))
 				{
 					// Come up with some pseudo thing to indicate this is a var.
@@ -1761,7 +1761,7 @@ function cleanLangString($string, $to_display = true)
 			if ($string{$i} == '{' && $string{$i + 1} == '%' && $string{$i + 2} == '$')
 			{
 				// Grab the variable.
-				preg_match('~\{%([\$A-Za-z0-9\'\[\]_-]+)%\}~', substr($string, $i), $matches);
+				preg_match('~\{%([$\'[\]-]+)%\}~', substr($string, $i), $matches);
 				if (!empty($matches[1]))
 				{
 					if ($in_string == 1)
@@ -2026,7 +2026,7 @@ function saveSettings(&$config_vars)
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))
-		$_POST['cookiename'] = preg_replace('~[,;\s\.$]+~u', '', $_POST['cookiename']);
+		$_POST['cookiename'] = preg_replace('~[,;\s.$]+~u', '', $_POST['cookiename']);
 
 	// Fix the forum's URL if necessary.
 	if (isset($_POST['boardurl']))

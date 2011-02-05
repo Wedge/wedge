@@ -1320,7 +1320,7 @@ function ThemeInstall()
 
 		// Set the default settings...
 		$theme_name = strtok(basename(isset($_FILES['theme_gz']) ? $_FILES['theme_gz']['name'] : $_REQUEST['theme_gz']), '.');
-		$theme_name = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $theme_name);
+		$theme_name = preg_replace(array('/\s/', '/\.{2,}/', '/[^\w.-]/'), array('_', '.', ''), $theme_name);
 		$theme_dir = $boarddir . '/Themes/' . $theme_name;
 
 		if (isset($_FILES['theme_gz']) && is_uploaded_file($_FILES['theme_gz']['tmp_name']) && (@ini_get('open_basedir') != '' || file_exists($_FILES['theme_gz']['tmp_name'])))
@@ -1328,7 +1328,7 @@ function ThemeInstall()
 		elseif (isset($_REQUEST['theme_gz']))
 		{
 			// Check that the theme is from simplemachines.org, for now... maybe add mirroring later.
-			if (preg_match('~^http://[\w_\-]+\.simplemachines\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
+			if (preg_match('~^http://[\w-]+\.simplemachines\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
 				fatal_lang_error('not_on_simplemachines');
 
 			$extracted = read_tgz_file($_REQUEST['theme_gz'], $boarddir . '/Themes/' . $theme_name, false, true);
@@ -1587,7 +1587,7 @@ function EditTheme()
 				$_GET['directory'] = '';
 			else
 			{
-				$_GET['directory'] = preg_replace(array('~^[\./\\:\0\n\r]+~', '~[\\\\]~', '~/[\./]+~'), array('', '/', '/'), $_GET['directory']);
+				$_GET['directory'] = preg_replace(array('~^[./\\:\0\n\r]+~', '~[\\\\]~', '~/[./]+~'), array('', '/', '/'), $_GET['directory']);
 
 				$temp = realpath($theme_dir . '/' . $_GET['directory']);
 				if (empty($temp) || substr($temp, 0, strlen(realpath($theme_dir))) != realpath($theme_dir))
@@ -1624,7 +1624,7 @@ function EditTheme()
 			$_REQUEST['filename'] = '';
 		else
 		{
-			$_REQUEST['filename'] = preg_replace(array('~^[\./\\:\0\n\r]+~', '~[\\\\]~', '~/[\./]+~'), array('', '/', '/'), $_REQUEST['filename']);
+			$_REQUEST['filename'] = preg_replace(array('~^[./\\:\0\n\r]+~', '~[\\\\]~', '~/[./]+~'), array('', '/', '/'), $_REQUEST['filename']);
 
 			$temp = realpath($theme_dir . '/' . $_REQUEST['filename']);
 			if (empty($temp) || substr($temp, 0, strlen(realpath($theme_dir))) != realpath($theme_dir))
@@ -1840,7 +1840,7 @@ function CopyTemplate()
 	list ($theme_dir, $context['theme_id'], $base_theme_dir) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (isset($_REQUEST['template']) && preg_match('~[\./\\\\:\0]~', $_REQUEST['template']) == 0)
+	if (isset($_REQUEST['template']) && preg_match('~[./\\\\:\0]~', $_REQUEST['template']) == 0)
 	{
 		if (!empty($base_theme_dir) && file_exists($base_theme_dir . '/' . $_REQUEST['template'] . '.template.php'))
 			$filename = $base_theme_dir . '/' . $_REQUEST['template'] . '.template.php';
@@ -1855,7 +1855,7 @@ function CopyTemplate()
 
 		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=copy');
 	}
-	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^\./\\\\:\0]\.[^\./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
+	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^./\\\\:\0]\.[^./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
 	{
 		if (!empty($base_theme_dir) && file_exists($base_theme_dir . '/languages/' . $_REQUEST['lang_file'] . '.php'))
 			$filename = $base_theme_dir . '/languages/' . $_REQUEST['template'] . '.php';
@@ -1882,7 +1882,7 @@ function CopyTemplate()
 
 	$dir = dir($settings['default_theme_dir'] . '/languages');
 	while ($entry = $dir->read())
-		if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches))
+		if (preg_match('~^([^.]+\.[^.]+)\.php$~', $entry, $matches))
 			$lang_files[] = $matches[1];
 	$dir->close();
 
@@ -1898,7 +1898,7 @@ function CopyTemplate()
 		{
 			$dir = dir($base_theme_dir . '/languages');
 			while ($entry = $dir->read())
-				if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches) && !in_array($matches[1], $lang_files))
+				if (preg_match('~^([^.]+\.[^.]+)\.php$~', $entry, $matches) && !in_array($matches[1], $lang_files))
 					$lang_files[] = $matches[1];
 			$dir->close();
 		}
@@ -1940,7 +1940,7 @@ function CopyTemplate()
 		$dir = dir($theme_dir . '/languages');
 		while ($entry = $dir->read())
 		{
-			if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches) && isset($context['available_language_files'][$matches[1]]))
+			if (preg_match('~^([^.]+\.[^.]+)\.php$~', $entry, $matches) && isset($context['available_language_files'][$matches[1]]))
 			{
 				$context['available_language_files'][$matches[1]]['already_exists'] = true;
 				$context['available_language_files'][$matches[1]]['can_copy'] = is_writable($theme_dir . '/languages/' . $entry);

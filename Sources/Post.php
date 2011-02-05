@@ -607,7 +607,7 @@ function Post()
 		$context['notify'] = !empty($_REQUEST['notify']);
 		$context['use_smileys'] = !isset($_REQUEST['ns']);
 
-		$context['icon'] = isset($_REQUEST['icon']) ? preg_replace('~[\./\\\\*\':"<>]~', '', $_REQUEST['icon']) : 'xx';
+		$context['icon'] = isset($_REQUEST['icon']) ? preg_replace('~[./\\\\*\':"<>]~', '', $_REQUEST['icon']) : 'xx';
 
 		// Set the destination action for submission.
 		$context['destination'] = 'post2;start=' . $_REQUEST['start'] . (isset($_REQUEST['msg']) ? ';msg=' . $_REQUEST['msg'] . ';' . $context['session_var'] . '=' . $context['session_id'] : '') . (isset($_REQUEST['poll']) ? ';poll' : '');

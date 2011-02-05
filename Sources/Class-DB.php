@@ -367,7 +367,7 @@ class wesql
 				// Table crashed. Let's try to fix it.
 				elseif ($query_errno == 1016)
 				{
-					if (preg_match('~\'([^\.\']+)~', $query_error, $match) != 0)
+					if (preg_match('~\'([^.\']+)~', $query_error, $match) != 0)
 						$fix_tables = array('`' . $match[1] . '`');
 				}
 				// Indexes crashed. Should be easy to fix!

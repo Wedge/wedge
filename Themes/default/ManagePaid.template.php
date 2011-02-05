@@ -180,7 +180,7 @@ function template_modify_subscription()
 								<strong>', $txt['paid_duration'], '</strong>
 							</dt>
 							<dd>
-								<strong>', $txt['paid_cost'], ' (', preg_replace('~%[df\.\d]+~', '', $modSettings['paid_currency_symbol']), ')</strong>
+								<strong>', $txt['paid_cost'], ' (', preg_replace('~%[df.\d]+~', '', $modSettings['paid_currency_symbol']), ')</strong>
 							</dd>
 							<dt>
 								', $txt['paid_per_day'], ':

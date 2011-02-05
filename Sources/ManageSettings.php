@@ -940,7 +940,7 @@ function ModifySignatureSettings($return_config = false)
 					}
 				}
 
-				if (!empty($sig_limits[7]) && preg_match_all('~\[size=([\d\.]+)?(px|pt|em|x-large|larger)~i', $sig, $matches) !== false && isset($matches[2]))
+				if (!empty($sig_limits[7]) && preg_match_all('~\[size=([\d.]+)?(px|pt|em|x-large|larger)~i', $sig, $matches) !== false && isset($matches[2]))
 				{
 					foreach ($matches[1] as $ind => $size)
 					{

@@ -702,13 +702,13 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		// Are global cookies on?  If so, let's check them ;).
 		if (!empty($modSettings['globalCookies']))
 		{
-			if (preg_match('~(?:[^\.]+\.)?([^\.]{3,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
+			if (preg_match('~(?:[^.]+\.)?([^.]{3,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
 				$parsed_url['host'] = $parts[1];
 
-			if (preg_match('~(?:[^\.]+\.)?([^\.]{3,}\..+)\z~i', $referrer['host'], $parts) == 1)
+			if (preg_match('~(?:[^.]+\.)?([^.]{3,}\..+)\z~i', $referrer['host'], $parts) == 1)
 				$referrer['host'] = $parts[1];
 
-			if (preg_match('~(?:[^\.]+\.)?([^\.]{3,}\..+)\z~i', $real_host, $parts) == 1)
+			if (preg_match('~(?:[^.]+\.)?([^.]{3,}\..+)\z~i', $real_host, $parts) == 1)
 				$real_host = $parts[1];
 		}
 

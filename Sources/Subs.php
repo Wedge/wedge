@@ -1158,9 +1158,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 						// Only do this if the preg survives.
 						if (is_string($result = preg_replace(array(
-							'~(?<=[\s>\.(;\'"]|^)((?:http|https)://[\w\-_%@:|]+(?:\.[\w\-_%]+)*(?::\d+)?(?:/[\w\-_\~%\.@,\?&;=#(){}+:\'\\\\]*)*[/\w\-_\~%@\?;=#}\\\\])~i',
-							'~(?<=[\s>\.(;\'"]|^)((?:ftp|ftps)://[\w\-_%@:|]+(?:\.[\w\-_%]+)*(?::\d+)?(?:/[\w\-_\~%\.@,\?&;=#(){}+:\'\\\\]*)*[/\w\-_\~%@\?;=#}\\\\])~i',
-							'~(?<=[\s>(\'<]|^)(www(?:\.[\w\-_]+)+(?::\d+)?(?:/[\w\-_\~%\.@,\?&;=#(){}+:\'\\\\]*)*[/\w\-_\~%@\?;=#}\\\\])~i'
+							'~(?<=[\s>.(;\'"]|^)((?:http|https)://[\w\-_%@:|]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
+							'~(?<=[\s>.(;\'"]|^)((?:ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
+							'~(?<=[\s>(\'<]|^)(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w\~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i'
 						), array(
 							'[url]$1[/url]',
 							'[ftp]$1[/ftp]',
@@ -1174,8 +1174,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					// Next, emails...
 					if (!isset($disabled['email']) && strpos($data, '@') !== false && strpos($data, '[email') === false)
 					{
-						$data = preg_replace('~(?<=[\?\s\x{A0}\[\]()*\\\;>]|^)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?,\s\x{A0}\[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;|\.(?:\.|;|&nbsp;|\s|$|<br>))~u', '[email]$1[/email]', $data);
-						$data = preg_replace('~(?<=<br>)([\w\-\.]{1,80}@[\w\-]+\.[\w\-\.]+[\w\-])(?=[?\.,;\s\x{A0}\[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;)~u', '[email]$1[/email]', $data);
+						$data = preg_replace('~(?<=[?\s\x{A0}[\]()*\\\;>]|^)([\w.-]{1,80}@[\w-]+\.[\w-]+[\w-])(?=[?,\s\x{A0}[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;|\.(?:\.|;|&nbsp;|\s|$|<br>))~u', '[email]$1[/email]', $data);
+						$data = preg_replace('~(?<=<br>)([\w.-]{1,80}@[\w-]+\.[\w.-]+[\w-])(?=[?.,;\s\x{A0}[\]()*\\\]|$|<br>|&nbsp;|&gt;|&lt;|&quot;|&#039;)~u', '[email]$1[/email]', $data);
 					}
 				}
 			}
@@ -1190,7 +1190,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => "\xC2\xA0"));
 					$data = preg_replace(
-						'~(?<=[>;:!? \x{A0}\]()]|^)([\w\pL\.]{' . $modSettings['fixLongWords'] . ',})~eu',
+						'~(?<=[>;:!? \x{A0}\]()]|^)([\w\pL.]{' . $modSettings['fixLongWords'] . ',})~eu',
 						'preg_replace(\'/(.{' . ($modSettings['fixLongWords'] - 1) . '})/u\', \'\\$1< >\', \'$1\')',
 						$data);
 					$data = strtr($data, array('< >' => $breaker, "\xC2\xA0" => '&nbsp;'));
@@ -1926,7 +1926,7 @@ function parsesmileys(&$message)
 			$searchParts[] = preg_quote(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), '~');
 		}
 
-		$smileyPregSearch = '~(?<=[>:\?\.\s\x{A0}[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~eu';
+		$smileyPregSearch = '~(?<=[>:?.\s\x{A0}[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~eu';
 	}
 
 	// Replace away!
@@ -2163,7 +2163,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		if (isset($pretty_url[0]['replacement']))
 			$setLocation = $pretty_url[0]['replacement'];
 		$setLocation = str_replace(chr(18), '\'', $setLocation);
-		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[\?;=]#|&amp;#~', '~[\?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
+		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
 	}
 
 	// Maybe integrations want to change where we are heading?
@@ -2549,7 +2549,7 @@ function spamProtection($error_type)
  */
 function is_valid_email($email)
 {
-	return preg_match('~^[\w=+/-][\w=\'+/\.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $email);
+	return preg_match('~^[\w=+/-][\w=\'+/.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $email);
 }
 
 /**
@@ -2898,7 +2898,8 @@ function wedge_cache_css()
 		new CSS_Mixin(),	// CSS mixins (mixin hello($world: 0))
 		new CSS_Var(),		// CSS variables ($hello_world)
 		new CSS_Func(),		// CSS functions (color transforms)
-		new CSS_Nesting()	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new CSS_Nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new CSS_Math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
 	);
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
@@ -2930,7 +2931,7 @@ function wedge_cache_css()
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
 
-	$final = preg_replace('~\s*([+:;,>{}\[\]\s])\s*~', '$1', $final);
+	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 	// Only the basic CSS3 we actually use. May add more in the future.
 	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 	$final = str_replace(array('#SI-CSSC-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", ';', '}', '}', ' '), $final);
@@ -3517,10 +3518,10 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	}
 
 	// Sorry, no spaces, dots, or anything else but letters allowed.
-	$clean_name = preg_replace(array('/\s/', '/[^\w_\.\-]/'), array('_', ''), $filename);
+	$clean_name = preg_replace(array('/\s/', '/[^\w.-]/'), array('_', ''), $filename);
 
 	$enc_name = $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
-	$clean_name = preg_replace('~\.[\.]+~', '.', $clean_name);
+	$clean_name = preg_replace('~\.{2,}~', '.', $clean_name);
 
 	if ($attachment_id == false || ($new && empty($modSettings['attachmentEncryptFilenames'])))
 		return $clean_name;
@@ -3670,7 +3671,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	global $context;
 
 	// Step 1: Remove entities/things we don't consider words:
-	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
+	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
 	$words = un_htmlspecialchars(westr::strtolower($words));

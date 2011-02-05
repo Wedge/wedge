@@ -438,7 +438,7 @@ function PackageGBrowse()
 					if (!empty($package['author']['email']))
 					{
 						// Only put the "mailto:" if it looks like a valid email address.  Some may wish to put a link to an SMF IM Form or other web mail form.
-						$package['author']['href'] = preg_match('~^[\w\.\-]+@[\w][\w\-\.]+[\w]$~', $package['author']['email']) != 0 ? 'mailto:' . $package['author']['email'] : $package['author']['email'];
+						$package['author']['href'] = preg_match('~^[\w.-]+@\w[\w.-]+\w$~', $package['author']['email']) != 0 ? 'mailto:' . $package['author']['email'] : $package['author']['email'];
 						$package['author']['link'] = '<a href="' . $package['author']['href'] . '">' . $package['author']['name'] . '</a>';
 					}
 				}
@@ -606,7 +606,7 @@ function PackageDownload()
 	package_put_contents($boarddir . '/Packages/' . $package_name, fetch_web_data($url . $_REQUEST['package']));
 
 	// Done!  Did we get this package automatically?
-	if (preg_match('~^http://[\w_\-]+\.simplemachines\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))
+	if (preg_match('~^http://[\w-]+\.simplemachines\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))
 		redirectexit('action=admin;area=packages;sa=install;package=' . $package_name);
 
 	// You just downloaded a mod from SERVER_NAME_GOES_HERE.
@@ -651,7 +651,7 @@ function PackageUpload()
 		fatal_lang_error('package_upload_error_failure');
 
 	// Make sure it has a sane filename.
-	$_FILES['package']['name'] = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $_FILES['package']['name']);
+	$_FILES['package']['name'] = preg_replace(array('/\s/', '/\.{2,}/', '/[^\w.-]/'), array('_', '.', ''), $_FILES['package']['name']);
 
 	if (strtolower(substr($_FILES['package']['name'], -4)) != '.zip' && strtolower(substr($_FILES['package']['name'], -4)) != '.tgz' && strtolower(substr($_FILES['package']['name'], -7)) != '.tar.gz')
 		fatal_lang_error('package_upload_error_supports', false, array('zip, tgz, tar.gz'));

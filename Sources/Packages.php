@@ -133,7 +133,7 @@ function PackageInstallTest()
 	// You have to specify a file!!
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
 		redirectexit('action=admin;area=packages');
-	$context['filename'] = preg_replace('~[\.]+~', '.', $_REQUEST['package']);
+	$context['filename'] = preg_replace('~\.{2,}~', '.', $_REQUEST['package']);
 
 	// Do we have an existing id, for uninstalls and the like.
 	$context['install_id'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 0;
@@ -1139,8 +1139,8 @@ function ExamineFile()
 	if (!isset($_REQUEST['file']) || $_REQUEST['file'] == '')
 		redirectexit('action=admin;area=packages');
 
-	$_REQUEST['package'] = preg_replace('~[\.]+~', '.', strtr($_REQUEST['package'], array('/' => '_', '\\' => '_')));
-	$_REQUEST['file'] = preg_replace('~[\.]+~', '.', $_REQUEST['file']);
+	$_REQUEST['package'] = preg_replace('~\.{2,}~', '.', strtr($_REQUEST['package'], array('/' => '_', '\\' => '_')));
+	$_REQUEST['file'] = preg_replace('~\.{2,}~', '.', $_REQUEST['file']);
 
 	if (isset($_REQUEST['raw']))
 	{
@@ -1214,7 +1214,7 @@ function PackageRemove()
 	// Ack, don't allow deletion of arbitrary files here, could become a security hole somehow!
 	if (!isset($_GET['package']) || $_GET['package'] == 'index.php' || $_GET['package'] == 'installed.list' || $_GET['package'] == 'backups')
 		redirectexit('action=admin;area=packages;sa=browse');
-	$_GET['package'] = preg_replace('~[\.]+~', '.', strtr($_GET['package'], array('/' => '_', '\\' => '_')));
+	$_GET['package'] = preg_replace('~\.{2,}~', '.', strtr($_GET['package'], array('/' => '_', '\\' => '_')));
 
 	// Can't delete what's not there.
 	if (file_exists($boarddir . '/Packages/' . $_GET['package']) && (substr($_GET['package'], -4) == '.zip' || substr($_GET['package'], -4) == '.tgz' || substr($_GET['package'], -7) == '.tar.gz' || is_dir($boarddir . '/Packages/' . $_GET['package'])) && $_GET['package'] != 'backups' && substr($_GET['package'], 0, 1) != '.')
@@ -1440,7 +1440,7 @@ function ViewOperations()
 	$reverse = isset($_REQUEST['reverse']) ? true : false;
 
 	// Get the base name.
-	$context['filename'] = preg_replace('~[\.]+~', '.', $_REQUEST['package']);
+	$context['filename'] = preg_replace('~\.{2,}~', '.', $_REQUEST['package']);
 
 	// We need to extract this again.
 	if (is_file($boarddir . '/Packages/' . $context['filename']))

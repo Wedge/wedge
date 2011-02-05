@@ -303,7 +303,7 @@ function template_modify_board()
 	{
 		$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
 		if (isset($context['board']['url']))
-			preg_match('~(?:([a-z0-9-]+)\.)?([^\.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $context['board']['url'], $m);
+			preg_match('~(?:([a-z0-9-]+)\.)?([^.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $context['board']['url'], $m);
 
 		// Options for board name and description.
 		echo '

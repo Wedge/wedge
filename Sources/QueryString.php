@@ -849,10 +849,10 @@ function ob_sessrewrite($buffer)
 				// !!! base64_encode sometimes finishes strings with '=' gaps IIRC. Should check whether they're not going to be ripped by this.
 				// !!! Also, '~=?;+~' (in various places) should probably be rewritten as '~=;+|;{2,}~'
 				if ($use_cache)
-					$match = preg_replace(array('~^["\']|PHPSESSID=[^&;]+|' . $session_var . '=[^;]+~', '~"~', '~=?;+~', '~\?;|\?&amp;~', '~[\?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+					$match = preg_replace(array('~^["\']|PHPSESSID=[^&;]+|' . $session_var . '=[^;]+~', '~"~', '~=?;+~', '~\?;|\?&amp;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
 				else
 					// !!! This can easily be optimized into a simple str_replace by adding placeholders for ^ and $.
-					$match = preg_replace(array('~^["\']~', '~"~', '~=?;+~', '~\?;~', '~[\?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+					$match = preg_replace(array('~^["\']~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
 				$url_id = $match;
 				$urls_query[] = $url_id;
 				$uncached_urls[$match] = array(
@@ -906,7 +906,7 @@ function ob_sessrewrite($buffer)
 					if (!isset($url['replacement']))
 						$url['replacement'] = $url['url'];
 					$url['replacement'] = str_replace(chr(18), "'", $url['replacement']);
-					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~', '~[\?;=]+$~'), array('%22', ';', '?', ''), $url['replacement']);
+					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('%22', ';', '?', ''), $url['replacement']);
 					$cached_urls[$url_id] = $url['replacement'];
 					if ($use_cache && strlen($url_id) < 256)
 						$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
@@ -1040,19 +1040,19 @@ function pretty_buffer_callback($matches)
 		preg_match('~PHPSESSID=[^;#&]+~', $matches[2], $PHPSESSID);
 		preg_match('~' . $session_var . '=[^;#]+~', $matches[2], $sesc);
 		preg_match('~#.*~', $matches[2], $fragment);
-		$url_id = preg_replace(array('~PHPSESSID=[^;#]+|' . $session_var . '=[^;#]+|#.*$~', '~"~', '~=?;+~', '~\?;~', '~[\?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+		$url_id = preg_replace(array('~PHPSESSID=[^;#]+|' . $session_var . '=[^;#]+|#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
 	}
 	else
 	{
 		preg_match('~#.*~', $matches[2], $fragment);
 		// Rip out everything that won't have been cached
-		$url_id = preg_replace(array('~#.*$~', '~"~', '~=?;+~', '~\?;~', '~[\?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+		$url_id = preg_replace(array('~#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
 	}
 
 	// Stitch everything back together, clean it up and return
 	$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
 	$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . (isset($PHPSESSID[0]) ? $PHPSESSID[0] : '') . ';' . (isset($sesc[0]) ? $sesc[0] : '') . (isset($fragment[0]) ? $fragment[0] : '');
-	$replacement = preg_replace(array('~=?;+~', '~\?;~', '~[\?;=]+#|&amp;#~', '~[\?;=#]+$|&amp;$~'), array(';', '?', '#', ''), $replacement);
+	$replacement = preg_replace(array('~=?;+~', '~\?;~', '~[?;=]+#|&amp;#~', '~[?;=#]+$|&amp;$~'), array(';', '?', '#', ''), $replacement);
 
 	if (empty($replacement) || $replacement[0] == '?')
 		$replacement = $scripturl . $replacement;

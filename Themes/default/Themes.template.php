@@ -779,13 +779,13 @@ function template_edit_style()
 			url = url.substr(0, url.indexOf("#"));
 		}
 
-		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), ';nocsscache" + anchor, navigateCallback);
+		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor, navigateCallback);
 	}
 	navigatePreview(smf_prepareScriptUrl(smf_scripturl));
 
 	function refreshPreview(check)
 	{
-		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([\./]+images/gi, "url(" + smf_images_url) == refreshPreviewCache;
+		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([./]+images/gi, "url(" + smf_images_url) == refreshPreviewCache;
 
 		// Don\'t reflow the whole thing if nothing changed!!
 		if (check && identical)
@@ -793,7 +793,7 @@ function template_edit_style()
 		refreshPreviewCache = document.forms.stylesheetForm.entire_file.value;
 
 		// Replace the paths for images.
-		refreshPreviewCache = refreshPreviewCache.replace(/url\([\./]+images/gi, "url(" + smf_images_url);
+		refreshPreviewCache = refreshPreviewCache.replace(/url\([./]+images/gi, "url(" + smf_images_url);
 
 		// Try to do it without a complete reparse.
 		if (identical)
@@ -830,7 +830,7 @@ function template_edit_style()
 			var stylesheetMatch = new RegExp(\'<link rel="stylesheet"[^>]+href="[^"]+\' + editFilename + \'[^>]*>\');
 
 			// Replace the paths for images.
-			preview_sheet = preview_sheet.replace(/url\([\./]+images/gi, "url(" + smf_images_url);
+			preview_sheet = preview_sheet.replace(/url\([./]+images/gi, "url(" + smf_images_url);
 			data = data.replace(stylesheetMatch, "<style id=\"css_preview_sheet\">" + preview_sheet + "<" + "/style>");
 
 			frames["css_preview_box"].document.open();
@@ -853,20 +853,6 @@ function template_edit_style()
 				}
 			};
 		}
-	}
-
-	// The idea here is simple: don\'t refresh the preview on every keypress, but do refresh after they type.
-	function setPreviewTimeout()
-	{
-		if (previewTimeout)
-		{
-			clearTimeout(previewTimeout);
-			previewTimeout = null;
-		}
-		previewTimeout = setTimeout(function () {
-				refreshPreview(true);
-				previewTimeout = null;
-			}, 500);
 	}');
 
 	echo '
@@ -885,8 +871,8 @@ function template_edit_style()
 				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br>';
 
 	echo '
-				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font: 110% monospace; margin-top: 1ex; white-space: pre;" onkeyup="setPreviewTimeout();" onchange="refreshPreview(true);">', $context['entire_file'], '</textarea><br>
-				<div class="padding righttext">
+				<textarea name="entire_file" cols="80" rows="20" style="width: 97%; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
+				<div class="righttext" style="margin: 4px 5% 0">
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
 				</div>
@@ -937,9 +923,11 @@ function template_edit_template()
 				</div>';
 
 	echo '
-				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
-				<input type="hidden" name="filename" value="', $context['edit_filename'], '">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<div class="righttext" style="margin: 8px 5% 0">
+					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				</div>
 			</div>
 		</form>
 	</div>';
@@ -971,9 +959,11 @@ function template_edit_file()
 			</we:cat>
 			<div class="windowbg wrc">
 				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br>
-				<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
-				<input type="hidden" name="filename" value="', $context['edit_filename'], '">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<div class="righttext" style="margin: 8px 5% 0">
+					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				</div>
 			</div>
 		</form>
 	</div>

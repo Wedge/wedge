@@ -163,7 +163,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		$hotmail_to = array();
 		foreach ($to_array as $i => $to_address)
 		{
-			if (preg_match('~@(att|comcast|bellsouth)\.[a-zA-Z\.]{2,6}$~i', $to_address) === 1)
+			if (preg_match('~@(att|comcast|bellsouth)\.[a-zA-Z.]{2,6}$~i', $to_address) === 1)
 			{
 				$hotmail_to[] = $to_address;
 				$to_array = array_diff($to_array, array($to_address));
@@ -192,7 +192,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	{
 		$send_html = true;
 		$message = strtr($message, array($line_break => '<br>' . $line_break));
-		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w\-_%\.,\?&;=#]+)?)~', '<a href="$1">$1</a>', $message);
+		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w%.,?&;=#-]+)?)~', '<a href="$1">$1</a>', $message);
 	}
 
 	list (, $from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $line_break);
@@ -2681,7 +2681,7 @@ function saveDraft($is_pm, $id_context = 0)
 	// Clean up what we may or may not have
 	$subject = isset($_POST['subject']) ? $_POST['subject'] : '';
 	$message = isset($_POST['message']) ? $_POST['message'] : '';
-	$icon = isset($_POST['icon']) ? preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']) : 'xx';
+	$icon = isset($_POST['icon']) ? preg_replace('~[./\\\\*:"\'<>]~', '', $_POST['icon']) : 'xx';
 	$is_pm = (bool) $is_pm;
 	$id_context = (int) $id_context;
 

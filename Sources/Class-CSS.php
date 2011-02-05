@@ -304,10 +304,10 @@ class CSS_Func extends CSSCache
 		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
 		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
 		if ($browser['is_ie8down'])
-			$css = preg_replace('~((?:rgba|hsla?)\([^\(\)]*\))~i', 'channels($1,0,0,0,0)', $css);
+			$css = preg_replace('~((?:rgba|hsla?)\([^()]*\))~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^\(\)]|(?:rgb|hsl)a?\([^\(\)]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -442,8 +442,8 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
-		$xml = preg_replace('/([-a-z]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);*\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
-		$xml = preg_replace('/^(\s*)([+>&#*@:\.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
+		$xml = preg_replace('/([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);*\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
+		$xml = preg_replace('/^(\s*)([+>&#*@:.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
 		$xml = str_replace('}', '</rule>', $xml); // Close rules
 		$xml = str_replace("\n", "\n\t", $xml); // Indent everything one tab
 		$xml = '<?xml version="1.0" ?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
@@ -549,7 +549,7 @@ class CSS_Nesting extends CSSCache
 		// Replaces ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		if (strpos($here->selector, 'extends') !== false)
 		{
-			preg_match_all('~([+>&#*@:\.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $here->selector, $matches, PREG_SET_ORDER);
+			preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $here->selector, $matches, PREG_SET_ORDER);
 			foreach ($matches as $m)
 			{
 				$save_selector = $here->selector;
@@ -752,6 +752,31 @@ class CSS_Dom extends CSS_DomNode
 	}
 }
 
+class CSS_Math extends CSSCache
+{
+	function process(&$css)
+	{
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(?:em|px|pt))+)\)~i', $css, $matches))
+			return;
+
+		foreach ($matches[1] as $i => $math)
+		{
+			$em = strpos($math, 'em') ? 1 : 0;
+			$px = strpos($math, 'px') ? 1 : 0;
+			$pt = strpos($math, 'pt') ? 1 : 0;
+
+			// Are we mixing units? Nah. Write the routine yourself. Have fun.
+			if ($em + $px + $pt > 1)
+				continue;
+
+			if ($em | $px | $pt)
+				$math = str_replace(array('em', 'px', 'pt'), '', $math);
+
+			$matches[0][$i] = eval('return (' . $math . ');') . ($em ? 'em' : ($px ? 'px' : ($pt ? 'pt' : '')));
+		}
+	}
+}
+
 class CSS_Base64 extends CSSCache
 {
 	function process(&$css)
@@ -759,7 +784,7 @@ class CSS_Base64 extends CSSCache
 		global $boarddir;
 
 		$images = array();
-		if (preg_match_all('~url\(([^\)]+)\)~i', $css, $matches))
+		if (preg_match_all('~url\(([^)]+)\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $img)
 				if (preg_match('~\.(gif|png|jpe?g)$~', $img, $ext))
