@@ -1371,18 +1371,20 @@ $alpha_matte = "rgb(241,243,234)"
 
 /*
 mixin example($border: 1px solid black, $width: 777px, $co = #888)
+	width: $width
 	font-size: 1em
 	background: $main_bg
-	border: $border
-	width: $width
-	color: $co
+	a
+		border: $border
+		color: $co
 
 mixin no_params
 	color: #fff
 
 .class
-	mixin: example
-	mixin: no_params
-	mixin: example(1px dotted white)
-	mixin: example(,, #fff)
+	.thing
+		mixin: no_params
+		mixin: example
+		mixin: example(1px dotted white)
+		mixin: example(,, #fff)
 */

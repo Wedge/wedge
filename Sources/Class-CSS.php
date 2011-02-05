@@ -17,7 +17,8 @@ class CSS_Mixin extends CSSCache
 	function process(&$css)
 	{
 		$mix = $def = array();
-		if (preg_match_all('~\smixin\s+([\w-]+)(?:\(([^()]+)\))?((?:[\t ]*\n[\t ]+[^\n]*)*)~i', $css, $mixins, PREG_SET_ORDER))
+		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
+		if (preg_match_all('~\nmixin\s+([\w-]+)(?:\(([^()]+)\))?[\t ]*\n([\t ]+)((?:[^\n]*\n[\t ]+)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as &$mixin)
@@ -26,7 +27,7 @@ class CSS_Mixin extends CSSCache
 				$css = str_replace($mixin[0], '', $css);
 
 				// Create our mixin entry...
-				$mix[$mixin[1]] = $mixin[3];
+				$mix[$mixin[1]] = str_replace("\n" . $mixin[3], "\n", $mixin[4]);
 
 				// Do we have variables to set?
 				if (!empty($mixin[2]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[2], $variables, PREG_SET_ORDER))
@@ -40,19 +41,19 @@ class CSS_Mixin extends CSSCache
 			}
 
 			// ...And then we apply them to the CSS file.
-			if (preg_match_all('~\smixin\s*:\s*([\w-]+)(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+			if (preg_match_all('~(?<=\n)(\s*)mixin\s*:\s*([\w-]+)(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 			{
 				$repa = array();
 				foreach ($targets as &$mixin)
 				{
 					$rep = '';
-					$tg = $mixin[1];
+					$tg = $mixin[2];
 					if (isset($mix[$tg]))
 					{
 						$rep = $mix[$tg];
-						if (!empty($mixin[2]))
+						if (!empty($mixin[3]))
 						{
-							$variables = explode(',', $mixin[2]);
+							$variables = explode(',', $mixin[3]);
 							$i = 0;
 							foreach ($variables as $i => &$var)
 								if (!empty($var))
@@ -63,7 +64,7 @@ class CSS_Mixin extends CSSCache
 						if (!empty($def[$tg]))
 							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 					}
-					$repa[$mixin[0]] = $rep;
+					$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
 				}
 			}
 			// Sort the updated array by key length, to avoid conflicts.
@@ -81,7 +82,7 @@ class CSS_Var extends CSSCache
 	{
 		global $css_vars, $context, $alpha_matte;
 
-		// Reuse CSS variables from Wedge or parent CSS files.
+		// Reuse CSS variables from Wedge.
 		$css_vars = isset($css_vars) ? $css_vars : array();
 
 		// Double quotes are only required for empty strings.
@@ -91,6 +92,14 @@ class CSS_Var extends CSSCache
 		//
 		//		$variable = "rgba(2,4,6,.5)";
 		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
+		//
+		// The only reason we're not accepting ":" in declarations is that
+		// we want to be able to do this: (Check the last line carefully)
+		//
+		//	$border = right
+		//	$border {rtl} = left // and yes, it doesn't support 'rtl' yet
+		//	.class
+		//		border-$border: 0;
 
 		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*(.*);?$~m', $css, $matches))
 		{
