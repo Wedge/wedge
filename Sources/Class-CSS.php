@@ -448,9 +448,9 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
-		$xml = preg_replace('/([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])/i', '<property name="$1" value="$2" />', $xml); // Transform properties
-		$xml = preg_replace('/^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{/mi', '$1<rule selector="$2">', $xml); // Transform selectors
-		$xml = preg_replace('/ {2,}/', ' ', $xml); // Extra spaces
+		$xml = preg_replace('~([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
+		$xml = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $xml); // Transform selectors
+		$xml = preg_replace(array('~ {2,}~', '~<(?!rule|property)~'), array(' ', '&lt;'), $xml); // Escape < and remove extra spaces
 		$xml = str_replace(array('&', '}', "\n"), array('&amp;', '</rule>', "\n\t"), $xml); // Escape ampersands, close rules and indent everything one tab
 		$xml = '<?xml version="1.0"?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
 
@@ -725,7 +725,13 @@ class CSS_Dom extends CSS_DomNode
 	function parse($data)
 	{
 		if (!xml_parse($this->xmlObj, $data, true))
-			printf("XML error: %s at line %d", xml_error_string(xml_get_error_code($this->xmlObj)), xml_get_current_line_number($this->xmlObj));
+		{
+			// Show the parser error.
+			$line = xml_get_current_line_number($this->xmlObj);
+			printf('XML error: %s at line %d<br><br>', xml_error_string(xml_get_error_code($this->xmlObj)), xml_get_current_line_number($this->xmlObj));
+			$lines = array_slice(explode("\n", $data), $line  - 2, 3);
+			echo htmlspecialchars($lines[0]), '<br><strong>', htmlspecialchars($lines[1]), '</strong><br>', htmlspecialchars($lines[2]);
+		}
 	}
 
 	function tagOpen($parser, $nodeName, $attrs)

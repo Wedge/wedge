@@ -1480,11 +1480,9 @@ dl.stats {
 	margin-bottom: 4px;
 }
 #month_grid {
-	width: 200px;
 	text-align: center;
-	float: left;
 	table {
-		width: 200px;
+		width: 100%;
 	}
 }
 

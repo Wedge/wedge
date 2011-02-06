@@ -242,8 +242,8 @@ function template_body_above()
 
 function template_sidebar_above()
 {
-	global $context, $needs_tables;
-	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
+	global $browser, $needs_tables;
+	$needs_tables = $browser['is_ie6'] || $browser['is_ie7'];
 
 	echo $needs_tables ? '
 		<table id="edge"><tr><td id="sidebar" valign="top">' : '

@@ -7,11 +7,8 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
-		<div id="calendar"><div id="month_grid">',
-			template_show_month_grid('prev'), template_show_month_grid('current'), template_show_month_grid('next'), '
-		</div>
-		<div id="main_grid" style="', $context['browser']['is_ie'] && !$context['browser']['is_ie8'] ? 'float: ' . ($context['right_to_left'] ? 'right; padding-right' : 'left; padding-left') . ': 20px;' : 'margin-' . ($context['right_to_left'] ? 'right' : 'left') . ': 220px; ', '">',
-			$context['view_week'] ? template_show_week_grid('main') : template_show_month_grid('main');
+		<div id="calendar">
+			<div id="main_grid">', $context['view_week'] ? template_show_week_grid('main') : template_show_month_grid('main');
 
 	// Build the calendar button array.
 	$calendar_buttons = array(
@@ -22,29 +19,36 @@ function template_main()
 
 	// Show some controls to allow easy calendar navigation.
 	echo '
-			<form id="calendar_navigation" action="', $scripturl, '?action=calendar" method="post" accept-charset="UTF-8">
-				<select name="month">';
+				<form id="calendar_navigation" action="', $scripturl, '?action=calendar" method="post" accept-charset="UTF-8">
+					<select name="month">';
 
 	// Show a select box with all the months.
 	foreach ($txt['months'] as $number => $month)
 		echo '
-					<option value="', $number, '"', $number == $context['current_month'] ? ' selected' : '', '>', $month, '</option>';
+						<option value="', $number, '"', $number == $context['current_month'] ? ' selected' : '', '>', $month, '</option>';
 	echo '
-				</select>
-				<select name="year">';
+					</select>
+					<select name="year">';
 
 	// Show a link for every year.....
 	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
 		echo '
-					<option value="', $year, '"', $year == $context['current_year'] ? ' selected' : '', '>', $year, '</option>';
+						<option value="', $year, '"', $year == $context['current_year'] ? ' selected' : '', '>', $year, '</option>';
 	echo '
-				</select>
-				<input type="submit" value="', $txt['view'], '">';
+					</select>
+					<input type="submit" value="', $txt['view'], '">
+				</form>
+				<br class="clear">
+			</div>
+		</div>';
+}
 
+function template_sidebar()
+{
 	echo '
-			</form>
-			<br class="clear">
-		</div></div>';
+			<div id="month_grid">',
+				template_show_month_grid('prev'), template_show_month_grid('current'), template_show_month_grid('next'), '
+			</div>';
 }
 
 // Template for posting a calendar event.

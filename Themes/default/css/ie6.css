@@ -77,15 +77,7 @@ li.hove {
 	height: 1%;
 }
 
-/* the tabled definition lists */
-/* Changing float: left; to float: right; sorts the settings dd class in index.css*/
-/* All the others seem fine too.*/
-/*dl.settings dd, #creator dd, dl.stats dd, dl.register_form dd, #poll_options dl.options dd, .login dd {
-	float: none !important;
-	width: auto;
-}*/
-/* generic lists header */
-/* Side paddings must NOT be defined here.*/
+/* Generic lists header. Side paddings must NOT be defined here. */
 .table_grid thead th {
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
