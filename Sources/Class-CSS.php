@@ -389,7 +389,7 @@ class CSS_Nesting extends CSSCache
 	var $DOM;
 
 	// Sort the bases array by the first argument's length.
-	private function lensort($a, $b)
+	private static function lensort($a, $b)
 	{
 		return strlen($a[0]) < strlen($b[0]);
 	}
