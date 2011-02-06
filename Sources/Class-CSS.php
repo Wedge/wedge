@@ -448,11 +448,11 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
-		$xml = preg_replace('/([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+);*\s*(?=[\n}])/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim(str_replace(array('&','>','<'),array('&amp;','&gt;','&lt;'),'$2')).'\" />'", $xml); // Transform properties
-		$xml = preg_replace('/^(\s*)([+>&#*@:.a-z][^{]+)\{/mei', "'$1<rule selector=\"'.preg_replace('/\s+/', ' ', trim(str_replace(array('&','>'),array('&amp;','&gt;'),'$2'))).'\">'", $xml); // Transform selectors
-		$xml = str_replace('}', '</rule>', $xml); // Close rules
-		$xml = str_replace("\n", "\n\t", $xml); // Indent everything one tab
-		$xml = '<?xml version="1.0" ?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
+		$xml = preg_replace('/([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])/i', '<property name="$1" value="$2" />', $xml); // Transform properties
+		$xml = preg_replace('/^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{/mi', '$1<rule selector="$2">', $xml); // Transform selectors
+		$xml = preg_replace('/ {2,}/', ' ', $xml); // Extra spaces
+		$xml = str_replace(array('&', '}', "\n"), array('&amp;', '</rule>', "\n\t"), $xml); // Escape ampersands, close rules and indent everything one tab
+		$xml = '<?xml version="1.0"?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
 
 		/******************************************************************************
 		 Parse the XML into a crawlable DOM
@@ -470,11 +470,11 @@ class CSS_Nesting extends CSSCache
 		$bases = $seen_nodes = array();
 		foreach ($rule_nodes as $node)
 			if (!isset($seen_nodes[$node->nodeId]))
-				$this->searchProperty($node, 'base');
+				$this->searchExtends($node);
 		unset($seen_nodes);
 
 		// Sort the bases array by the first argument's length.
-		usort($bases, $this->lensort);
+		usort($bases, 'CSS_Nesting::lensort');
 
 		// Do the proper nesting
 		foreach ($rule_nodes as $node)
@@ -547,12 +547,17 @@ class CSS_Nesting extends CSSCache
 		}
 	}
 
-	function searchProperty($here, $nodeName)
+	function searchExtends(&$here)
 	{
 		global $bases, $seen_nodes;
 
+		$extends = 'extends'; // Supposedly a tad faster?
+		$base = 'base';
+		$property = 'property';
+		$rule = 'rule';
+
 		// Replaces ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
-		if (strpos($here->selector, 'extends') !== false)
+		if (strpos($here->selector, $extends) !== false)
 		{
 			preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $here->selector, $matches, PREG_SET_ORDER);
 			foreach ($matches as $m)
@@ -561,19 +566,20 @@ class CSS_Nesting extends CSSCache
 				$here->selector = $m[1];
 				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($here));
 				if (strpos($m[2], '&') !== false)
-					$m[2] = str_replace('&', $this->parseAncestorSelectors($this->getAncestorSelectors($this->DOM->nodeLookUp[$here->parentNodeId])), $m[2]);
+				{
+					$parent = isset($parent) ? $parent : $this->parseAncestorSelectors($this->getAncestorSelectors($this->DOM->nodeLookUp[$here->parentNodeId]));
+					$m[2] = str_replace('&', $parent, $m[2]);
+				}
 
 				$bases[] = array(
-					$m[2], // Add to this class in the tree...
-					preg_quote($m[2]),
+					rtrim($m[2]), // Add to this class in the tree...
+					preg_quote(rtrim($m[2])),
 					$path // ...The current selector
 				);
 				$here->selector = str_replace($m[0], $m[1], $save_selector);
 			}
 		}
 
-		$property = 'property'; // Supposedly a tad faster?
-		$rule = 'rule';
 		foreach ($here->childNodes as $i => &$node)
 		{
 			// Trying to avoid browsing through referenced objects.
@@ -584,7 +590,7 @@ class CSS_Nesting extends CSSCache
 			$hereName = strtolower($node->nodeName);
 			if ($hereName === $property)
 			{
-				if ($node->name === $nodeName)
+				if ($node->name === $base)
 				{
 					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
 					$target = str_replace('&', $path, $node->value);
@@ -597,7 +603,7 @@ class CSS_Nesting extends CSSCache
 				}
 			}
 			elseif ($hereName === $rule)
-				$this->searchProperty($node, $nodeName);
+				$this->searchExtends($node);
 		}
 	}
 

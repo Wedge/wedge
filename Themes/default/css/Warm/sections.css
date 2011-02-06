@@ -913,27 +913,33 @@ dl
 	img
 		vertical-align: middle
 
-#tracking
-	dl, dl
+#profile_box
+	dl
 		clear: right
 		overflow: auto
 		margin: 0 0 18px
 		padding: 0 0 15px
 		border-bottom: 1px #ccc solid
-	dt, dt
+	dt
 		width: 35%
 		float: left
 		margin: 0 0 3px
 		padding: 0
 		font-weight: bold
 		clear: both
-	dd, dd
+	dd
 		width: 65%
 		float: left
 		margin: 0 0 3px
 		padding: 0
 
-#detailedinfo extends #tracking
+#tracking extends #profile_box
+	dl
+		border-bottom: 0
+		margin: 0
+		padding: 0
+
+#detailedinfo extends #profile_box
 	margin-top: 10px
 	width: 79.5%
 	float: right
@@ -1099,11 +1105,6 @@ dl
 	.mod_icons
 		text-align: right
 		margin-right: 1em
-
-#tracking dl
-	border-bottom: 0
-	margin: 0
-	padding: 0
 
 #creator
 	dl
