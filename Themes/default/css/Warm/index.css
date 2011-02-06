@@ -1101,6 +1101,9 @@ dfn
 	&[alt="+"], &[alt="-"]
 		margin-top: 4px
 
+.title2 extends .title
+	font-size: .9em;
+
 img[alt="!"]
 	margin-top: 8px
 

@@ -17,6 +17,7 @@ class CSS_Mixin extends CSSCache
 	function process(&$css)
 	{
 		$mix = $def = array();
+
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
 		if (preg_match_all('~\nmixin\s+([\w-]+)(?:\(([^()]+)\))?[\t ]*\n([\t ]+)((?:[^\n]*\n[\t ]+)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
@@ -402,9 +403,8 @@ class CSS_Nesting extends CSSCache
 		global $seen_nodes, $bases;
 
 		// Transform the CSS into XML
-		// does not like the data: protocol
-		$xml = trim($css);
-		$xml = str_replace('"', '#SI-CSSC-QUOTE#', $xml);
+		$xml = str_replace('"', '#SI-CSSC-QUOTE#', trim($css));
+
 		// Does this file use the regular CSS syntax?
 		$css_syntax = strpos($xml, "{\n") !== false && strpos($xml, "\n}") !== false;
 		if (!$css_syntax)
@@ -454,9 +454,7 @@ class CSS_Nesting extends CSSCache
 		$xml = str_replace(array('&', '}', "\n"), array('&amp;', '</rule>', "\n\t"), $xml); // Escape ampersands, close rules and indent everything one tab
 		$xml = '<?xml version="1.0"?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
 
-		/******************************************************************************
-		 Parse the XML into a crawlable DOM
-		 ******************************************************************************/
+		 // Parse the XML into a crawlable DOM
 		$this->DOM = new CSS_Dom($xml);
 		$rule_nodes =& $this->DOM->getNodesByNodeName('rule');
 
@@ -587,8 +585,7 @@ class CSS_Nesting extends CSSCache
 				continue;
 			$seen_nodes[$node->nodeId] = true;
 
-			$hereName = strtolower($node->nodeName);
-			if ($hereName === $property)
+			if ($node->nodeName === $property)
 			{
 				if ($node->name === $base)
 				{
@@ -602,7 +599,7 @@ class CSS_Nesting extends CSSCache
 					unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
 				}
 			}
-			elseif ($hereName === $rule)
+			elseif ($node->nodeName === $rule)
 				$this->searchExtends($node);
 		}
 	}
@@ -658,33 +655,29 @@ class CSS_Nesting extends CSSCache
 class CSS_DomNode
 {
 	var $nodeName = '';
-	var $cdata = '';
 	var $nodeId;
 	var $parentNodeId;
-	var $childNodes = array();
 
 	function CSS_DomNode($nodeId, $nodeName = '', $attrs = array())
 	{
 		$this->nodeId = $nodeId;
 		$this->nodeName = $nodeName;
 		if (!empty($attrs))
-		{
-			foreach ($attrs as $attr => $value)
-			{
-				$attr = strtolower($attr);
+			foreach ($attrs as $attr => &$value)
 				$this->$attr = $value;
-			}
-		}
 	}
 
 	function &getNodesByNodeName($nodeName, $childrenOnly = false)
 	{
 		$nodes = array();
 
+		if (empty($this->childNodes))
+			return $nodes;
+
 		foreach ($this->childNodes as &$node)
 		{
-			if (strtolower($node->nodeName) === $nodeName)
-				array_push($nodes, $node);
+			if ($node->nodeName === $nodeName)
+				$nodes[] = $node;
 
 			if (!$childrenOnly)
 			{
@@ -708,15 +701,14 @@ class CSS_Dom extends CSS_DomNode
 
 	function CSS_Dom($xml = '')
 	{
-		$this->name = 'DOM';
 		$this->xmlObj = xml_parser_create();
 		xml_set_object($this->xmlObj, $this);
+		xml_parser_set_option($this->xmlObj, XML_OPTION_CASE_FOLDING, 0);
 		xml_set_element_handler($this->xmlObj, 'tagOpen', 'tagClose');
-		xml_set_character_data_handler($this->xmlObj, "cdata");
 
 		if (!empty($xml))
 		{
-			$this->nodeId = count($this->nodeLookUp);
+			$this->nodeId = 0;
 			$this->nodeLookUp[] =& $this;
 			$this->parse($xml);
 		}
@@ -736,16 +728,11 @@ class CSS_Dom extends CSS_DomNode
 
 	function tagOpen($parser, $nodeName, $attrs)
 	{
+		static $node_count = 0;
 		unset($node);
-		$node = new CSS_DomNode(count($this->nodeLookUp), $nodeName, $attrs);
+		$node = new CSS_DomNode($node_count++, $nodeName, $attrs);
+		$this->childNodes[] = $node;
 		$this->nodeLookUp[] = $node;
-		array_push($this->childNodes, $node);
-	}
-
-	function cdata($parser, $cdata)
-	{
-		$parentId = count($this->childNodes) - 1;
-		$this->childNodes[$parentId]->cdata = $cdata;
 	}
 
 	function tagClose($parser, $nodeName)
@@ -755,10 +742,10 @@ class CSS_Dom extends CSS_DomNode
 		{
 			$node =& $this->childNodes[0];
 			$node->parentNodeId = 0;
-			$container = strtolower($node->nodeName);
+			$container = $node->nodeName;
 			$this->$container =& $node;
 		}
-		else if($totalNodes > 1)
+		elseif ($totalNodes > 1)
 		{
 			$node = array_pop($this->childNodes);
 			$parentId = count($this->childNodes) - 1;
