@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; Announce
+// Version: 2.0 RC5; Announce
 
 function template_announce()
 {

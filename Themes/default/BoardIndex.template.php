@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; BoardIndex
+// Version: 2.0 RC5; BoardIndex
 
 function template_boardindex()
 {

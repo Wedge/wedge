@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; Admin
+// Version: 2.0 RC5; Admin
 
 // This is the administration center home.
 function template_admin()

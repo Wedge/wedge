@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; ManageNews
+// Version: 2.0 RC5; ManageNews
 
 // Form for editing current news on the site.
 function template_edit_news()

@@ -5,7 +5,7 @@
 * SMF: Simple Machines Forum                                                      *
 * Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
 * =============================================================================== *
-* Software Version:           SMF 2.0 RC4                                         *
+* Software Version:           SMF 2.0 RC5                                         *
 * Software by:                Simple Machines (http://www.simplemachines.org)     *
 * Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
 *           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
@@ -33,8 +33,8 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'Wedge 0.1 (SMF 2.0 RC4)';
-define('WEDGE_VERSION', '0.1 (SMF 2.0 RC4)');
+$forum_version = 'Wedge 0.1 (SMF 2.0 RC5)';
+define('WEDGE_VERSION', '0.1 (SMF 2.0 RC5)');
 
 // Knock knock! We're entering through the front door.
 define('SMF', 1);

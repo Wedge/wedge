@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; PersonalMessage
+// Version: 2.0 RC5; PersonalMessage
 
 // This is the main sidebar for the personal messages section.
 function template_pm_above()

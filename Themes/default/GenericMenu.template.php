@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; GenericMenu
+// Version: 2.0 RC5; GenericMenu
 
 // This contains the html for the generic sidebar.
 function template_generic_menu_sidebar_above()

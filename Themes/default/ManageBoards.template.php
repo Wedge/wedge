@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; ManageBoards
+// Version: 2.0 RC5; ManageBoards
 
 // Template for listing all the current categories and boards.
 function template_main()

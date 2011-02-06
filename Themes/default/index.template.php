@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; index
+// Version: 2.0 RC5; index
 
 /*
 	This template is probably the most important one in the theme.

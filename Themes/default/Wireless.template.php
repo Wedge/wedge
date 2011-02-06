@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; Wireless
+// Version: 2.0 RC5; Wireless
 
 // XHTMLMP (XHTML Mobile Profile) templates used for WAP 2.0 start here
 function template_wap2_above()

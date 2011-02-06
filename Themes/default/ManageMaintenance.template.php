@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; ManageMaintenance
+// Version: 2.0 RC5; ManageMaintenance
 
 // Template for the database maintenance tasks.
 function template_maintain_database()

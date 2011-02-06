@@ -1,5 +1,5 @@
 <?php
-// Version: 2.0 RC4; Login
+// Version: 2.0 RC5; Login
 
 // This is just the basic "login" form.
 function template_login()
