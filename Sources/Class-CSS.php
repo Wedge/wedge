@@ -388,6 +388,12 @@ class CSS_Nesting extends CSSCache
 {
 	var $DOM;
 
+	// Sort the bases array by the first argument's length.
+	private function lensort($a, $b)
+	{
+		return strlen($a[0]) < strlen($b[0]);
+	}
+
 	function process(&$css)
 	{
 		/******************************************************************************
@@ -468,8 +474,7 @@ class CSS_Nesting extends CSSCache
 		unset($seen_nodes);
 
 		// Sort the bases array by the first argument's length.
-		$cmp = function($a, $b) { return strlen($a[0]) < strlen($b[0]); };
-		usort($bases, $cmp);
+		usort($bases, $this->lensort);
 
 		// Do the proper nesting
 		foreach ($rule_nodes as $node)
