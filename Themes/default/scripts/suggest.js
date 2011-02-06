@@ -183,7 +183,7 @@ smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
 
 	// Otherwise clear things down.
 	else
-		this.oTextHandle.value = oCurElement.innerHTML;
+		this.oTextHandle.value = oCurElement.innerHTML.php_unhtmlspecialchars();
 
 	this.oRealTextHandle.val(this.oTextHandle.value);
 	this.autoSuggestActualHide();

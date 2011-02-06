@@ -458,6 +458,9 @@ function PermissionByBoard()
 		);
 		foreach ($boardList[$catid] as $boardid)
 		{
+			if (!isset($context['profiles'][$boards[$boardid]['profile']]))
+				$boards[$boardid]['profile'] = 1;
+
 			$context['categories'][$catid]['boards'][$boardid] = array(
 				'id' => &$boards[$boardid]['id'],
 				'name' => &$boards[$boardid]['name'],

@@ -352,21 +352,7 @@ function determineActions($urls, $preferred_prefix = false)
 			}
 			// It's the board index!!  It must be!
 			else
-			{
 				$data[$k] = $txt['who_index'];
-				// ...or maybe it's just integrated into another system...
-				if (count($hook_actions = call_hook('whos_online', array($actions))) > 0)
-				{
-					foreach ($hook_actions as $hook_action)
-					{
-						if (!empty($hook_action))
-						{
-							$data[$k] = $hook_action;
-							break;
-						}
-					}
-				}
-			}
 		}
 		// Probably an error or some goon?
 		elseif ($actions['action'] == '')
@@ -453,6 +439,19 @@ function determineActions($urls, $preferred_prefix = false)
 			// Unlisted or unknown action.
 			else
 				$data[$k] = $txt['who_unknown'];
+		}
+
+		// Maybe the action is integrated into another system?
+		if (count($hook_actions = call_hook('whos_online', array($actions))) > 0)
+		{
+			foreach ($hook_actions as $hook_action)
+			{
+				if (!empty($hook_action))
+				{
+					$data[$k] = $hook_action;
+					break;
+				}
+			}
 		}
 
 		if (allowedTo('moderate_forum'))
