@@ -122,7 +122,7 @@ function ManageSearch()
 
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context, $scripturl, $sourcedir, $modSettings;
 
 	// What are we editing anyway?
 	$config_vars = array(
@@ -136,6 +136,17 @@ function EditSearchSettings($return_config = false)
 			// Some limitations.
 			array('int', 'search_floodcontrol_time', 'subtext' => $txt['search_floodcontrol_time_desc']),
 	);
+
+	// Perhaps the search method wants to add some settings?
+	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
+	if (file_exists($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php'))
+	{
+		loadSource('SearchAPI-' . ucwords($modSettings['search_index']));
+
+		$method_call = array($modSettings['search_index'] . '_search', 'searchSettings');
+		if (is_callable($method_call))
+			call_user_func_array($method_call, array(&$config_vars));
+	}
 
 	if ($return_config)
 		return $config_vars;
@@ -678,7 +689,7 @@ function loadSearchAPIs()
 	{
 		foreach ($dh as $file)
 		{
-			if (!is_dir($file) && preg_match('~SearchAPI-([A-Za-z\d_]+)\.php~', $file, $matches))
+			if (is_file($sourcedir . '/' . $file) && preg_match('~SearchAPI-([A-Za-z\d_]+)\.php~', $file, $matches))
 			{
 				// Check this is definitely a valid API!
 				$fp = fopen($sourcedir . '/' . $file, 'rb');

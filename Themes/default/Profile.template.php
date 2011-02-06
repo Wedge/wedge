@@ -1904,7 +1904,7 @@ function template_viewWarning()
 			', sprintf($txt['profile_viewwarning_for_user'], $context['member']['name']), '
 		</we:title>
 		<div class="windowbg wrc">
-			<dl>
+			<dl class="settings">
 				<dt>
 					<strong>', $txt['profile_warning_name'], ':</strong>
 				</dt>

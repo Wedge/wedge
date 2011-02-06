@@ -659,6 +659,7 @@ function SpiderLogs()
 	$listOptions = array(
 		'id' => 'spider_logs',
 		'items_per_page' => 20,
+		'title' => $txt['spider_logs'],
 		'no_items_label' => $txt['spider_logs_empty'],
 		'base_href' => $context['admin_area'] == 'sengines' ? $scripturl . '?action=admin;area=sengines;sa=logs' : $scripturl . '?action=admin;area=logs;sa=spiderlog',
 		'default_sort_col' => 'log_time',
@@ -706,7 +707,7 @@ function SpiderLogs()
 		),
 		'additional_rows' => array(
 			array(
-				'position' => 'above_column_headers',
+				'position' => 'after_title',
 				'value' => $txt['spider_logs_info'],
 				'class' => 'smalltext',
 			),

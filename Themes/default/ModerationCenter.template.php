@@ -395,6 +395,7 @@ function template_unapproved_attachments()
 				<p class="centertext">', $txt['mc_unapproved_attachments_none_found'], '</p>
 			</div>';
 	else
+	{
 		echo '
 			<div class="pagesection">
 				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
@@ -411,9 +412,8 @@ function template_unapproved_attachments()
 			</thead>
 			<tbody>';
 
-	foreach ($context['unapproved_items'] as $item)
-	{
-		echo '
+		foreach ($context['unapproved_items'] as $item)
+			echo '
 				<tr class="', $item['alternate'] ? 'windowbg' : 'windowbg2', '">
 					<td>
 						', $item['filename'], '
@@ -431,11 +431,13 @@ function template_unapproved_attachments()
 						<input type="checkbox" name="item[]" value="', $item['id'], '" checked>
 					</td>
 				</tr>';
+
+		echo '
+			</tbody>
+			</table>';
 	}
 
 	echo '
-			</tbody>
-			</table>
 			<div class="pagesection">
 				<div class="floatright">
 					<select name="do" onchange="if (this.value != 0 && confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">

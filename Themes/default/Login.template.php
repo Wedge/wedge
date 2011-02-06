@@ -14,7 +14,7 @@ function template_login()
 			<we:cat>
 				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 			</we:cat>
-			<div class="roundframe">';
+			<div class="roundframe"><br class="clear">';
 
 	// Did they make a mistake last time?
 	if (!empty($context['login_errors']))

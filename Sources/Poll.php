@@ -505,7 +505,7 @@ function EditPoll()
 			'is_last' => true
 		);
 
-		if (allowedTo('moderate_board'))
+		if ($context['can_moderate_poll'])
 			$context['poll']['expiration'] = $_POST['poll_expire'];
 
 		// Check the question/option count for errors.

@@ -59,7 +59,7 @@ dl.settings {
 		float: right;
 	}
 	dd {
-		float: right;
+		float: left;
 	}
 	img {
 		margin: 0 0 0 10px;
@@ -124,7 +124,6 @@ th.last_th {
 .buttonlist ul {
 	margin: 0 0 0 0.2em;
 	li {
-		float: right;
 		a {
 			margin-left: 0;
 			margin-right: 12px;

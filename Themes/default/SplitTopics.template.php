@@ -42,7 +42,7 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<div id="split_topic">
+	<div id="split_topics">
 		<we:cat>
 			', $txt['split'], '
 		</we:cat>
@@ -215,7 +215,7 @@ function template_merge_done()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-		<div id="split_topics">
+		<div id="merge_topics">
 			<we:cat>
 				', $txt['merge'], '
 			</we:cat>

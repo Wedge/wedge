@@ -83,7 +83,7 @@ function template_email_members()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" class="flow_hidden" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['admin_newsletters'], '
 			</we:cat>
@@ -106,7 +106,7 @@ function template_email_members()
 						<br>
 						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, \'groups\');"> <em>', $txt['check_all'], '</em></label>
 					</dd>
-				</dl>
+				</dl><br class="clear">
 			</div>
 			<br>
 
@@ -169,7 +169,7 @@ function template_email_members()
 					<dd>
 						<input type="checkbox" name="email_force" id="email_force" value="1">
 					</dd>
-				</dl>
+				</dl><br class="clear">
 			</div>
 			<div class="righttext">
 				<input type="submit" value="', $txt['admin_next'], '" class="submit">

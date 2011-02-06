@@ -1043,22 +1043,13 @@ function GeneralPermissionSettings($return_config = false)
 
 		// Clear all deny permissions...if we want that.
 		if (empty($modSettings['permission_enable_deny']))
-		{
 			wesql::query('
-				DELETE FROM {db_prefix}permissions
+				DELETE FROM {db_prefix}permissions, {db_prefix}board_permissions
 				WHERE add_deny = {int:denied}',
 				array(
 					'denied' => 0,
 				)
 			);
-			wesql::query('
-				DELETE FROM {db_prefix}board_permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
-		}
 
 		// Make sure there are no postgroup based permissions left.
 		if (empty($modSettings['permission_enable_postgroups']))

@@ -99,6 +99,7 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_consultants'],
 					'members' => array(
+						'Brett Flannigan',
 						'Ren&eacute;-Gilles &quot;Nao &#23578;&quot; Deberdt',
 					),
 				),
@@ -124,6 +125,11 @@ function Credits($in_admin = false)
 				),
 				array(
 					'title' => $txt['credits_groups_internationalizers'],
+					'members' => array(
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_servers'],
 					'members' => array(
 					),
 				),
