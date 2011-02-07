@@ -1,10 +1,11 @@
 <?php
 /**
- * CSS file parser, written by Nao for Wedge.
- * Partly based on the CSS Cacheer library written by Shaun Inman
+ * CSS file parser, written by Nao for Wedge. (c) 2011 Wedgeward
+ * Released under the Wedge license.
+ *
+ * Uses some code and ideas from Shaun Inman's CSS Cacheer library
  * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
- * The Wedge version merges all classes together, adds features and fixes bugs.
- * It also implements concepts and ideas from Sass (http://sass-lang.com)
+ * Also implements concepts and ideas from Sass (http://sass-lang.com)
  */
 
 class CSSCache
@@ -387,7 +388,8 @@ class CSS_Func extends CSSCache
 
 class CSS_Nesting extends CSSCache
 {
-	var $DOM;
+	var $rules;
+	var $props;
 
 	// Sort the bases array by the first argument's length.
 	private static function lensort($a, $b)
@@ -400,10 +402,9 @@ class CSS_Nesting extends CSSCache
 		/******************************************************************************
 		 Process nested selectors
 		 ******************************************************************************/
-		global $seen_nodes, $bases;
 
 		// Transform the CSS into XML
-		$xml = str_replace('"', '#SI-CSSC-QUOTE#', trim($css));
+		$xml = str_replace('"', '#WEDGE-QUOTE#', trim($css));
 
 		// Does this file use the regular CSS syntax?
 		$css_syntax = strpos($xml, "{\n") !== false && strpos($xml, "\n}") !== false;
@@ -450,177 +451,139 @@ class CSS_Nesting extends CSSCache
 		}
 		$xml = preg_replace('~([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
 		$xml = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $xml); // Transform selectors
-		$xml = preg_replace(array('~ {2,}~', '~<(?!rule|property)~'), array(' ', '&lt;'), $xml); // Escape < and remove extra spaces
-		$xml = str_replace(array('&', '}', "\n"), array('&amp;', '</rule>', "\n\t"), $xml); // Escape ampersands, close rules and indent everything one tab
+		$xml = preg_replace(array('~ {2,}~'), array(' '), $xml); // Remove extra spaces
+		$xml = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $xml); // Close rules and indent everything one tab
 		$xml = '<?xml version="1.0"?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
 
 		 // Parse the XML into a crawlable DOM
-		$this->DOM = new CSS_Dom($xml);
-		$rule_nodes =& $this->DOM->getNodesByNodeName('rule');
+		$this->pierce($xml);
 
 		/******************************************************************************
 		 Rebuild parsed CSS
 		 ******************************************************************************/
-		$css = '';
-		$standard_nest = '';
+		$css = $standard_nest = '';
 
-		// Look for base:/extends inheritance.
-		$bases = $seen_nodes = array();
-		foreach ($rule_nodes as $node)
-			if (!isset($seen_nodes[$node->nodeId]))
-				$this->searchExtends($node);
-		unset($seen_nodes);
+		$bases = array();
+		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
+		foreach ($this->rules as &$node)
+		{
+			if (strpos($node['selector'], 'extends') !== false)
+			{
+				preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				foreach ($matches as $m)
+				{
+					$save_selector = $node['selector'];
+					$node['selector'] = $m[1];
+					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
+					if (strpos($m[2], '&') !== false)
+					{
+						$parent = isset($parent) ? $parent : $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
+						$m[2] = str_replace('&', $parent, $m[2]);
+					}
+
+					$bases[] = array(
+						rtrim($m[2]), // Add to this class in the tree...
+						preg_quote(rtrim($m[2])),
+						$path // ...The current selector
+					);
+					$node['selector'] = str_replace($m[0], $m[1], $save_selector);
+				}
+			}
+		}
+
+		// Look for base: property inheritance
+		foreach ($this->props as &$node)
+		{
+			if ($node['name'] === 'base')
+			{
+				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
+				$target = str_replace('&', $path, $node['value']);
+				$bases[] = array(
+					$target, // Add to this class in the tree...
+					preg_quote($target),
+					$path // ...The current selector
+				);
+				if (isset($this->rules[$node['parent']]))
+					unset($this->rules[$node['parent']]['props'][$node['id']]);
+				unset($this->props[$node['id']], $node);
+			}
+		}
 
 		// Sort the bases array by the first argument's length.
 		usort($bases, 'CSS_Nesting::lensort');
+		$prop = 'property';
 
 		// Do the proper nesting
-		foreach ($rule_nodes as $node)
+		foreach ($this->rules as &$node)
 		{
-			if (strpos($node->selector, '@media') === 0)
+			if (strpos($node['selector'], '@media') === 0)
 			{
-				$standard_nest = $node->selector;
-				$css .= $node->selector . ' {';
+				$standard_nest = $node['selector'];
+				$css .= $node['selector'] . ' {';
+				continue;
 			}
 
-			$properties = $node->getChildNodesByNodeName('property');
-			if (!empty($properties))
-			{
-				$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
-				$selectors = array();
-				$changed = true;
+			$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
+			$selectors = array();
+			$changed = true;
 
-				while ($changed)
+			while ($changed)
+			{
+				$changed = false;
+				foreach ($bases as $i => &$base)
 				{
-					$changed = false;
-					foreach ($bases as $i => &$base)
+					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
+					if (strpos($selector, $base[0]) !== false)
 					{
-						// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
-						if (strpos($selector, $base[0]) !== false)
+						// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
+						if (empty($selectors))
+							$selectors = explode(',', $selector);
+						foreach ($selectors as &$snippet)
 						{
-							// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
-							if (empty($selectors))
-								$selectors = explode(',', $selector);
-							foreach ($selectors as &$snippet)
+							$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w)~';
+							if (preg_match($from, $snippet))
 							{
-								$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w)~';
-								if (preg_match($from, $snippet))
-								{
-									$selector = preg_replace($from, '%done%$1%done%', $selector) .
-												', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
-									$changed = true; // Restart the process to handle inherited extends.
-								}
+								$selector = preg_replace($from, '%done%$1%done%', $selector) .
+											', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
+								$changed = true; // Restart the process to handle inherited extends.
 							}
 						}
 					}
-					if ($changed)
-						$selectors = explode(',', $selector);
 				}
-				$selector = str_replace('%done%', '', $selector);
-
-				if (!empty($standard_nest))
-				{
-					if (substr_count($selector, $standard_nest))
-						$selector = trim(str_replace($standard_nest, '', $selector));
-					else
-					{
-						$css .= '}';
-						$standard_nest = '';
-					}
-				}
-
-				$css .= $selector . ' {';
-
-				foreach ($properties as $property)
-					$css .= $property->name . ': ' . $property->value . ';';
-
-				$css .= '}';
+				if ($changed)
+					$selectors = explode(',', $selector);
 			}
+			$selector = str_replace('%done%', '', $selector);
+
+			if (!empty($standard_nest))
+			{
+				if (substr_count($selector, $standard_nest))
+					$selector = trim(str_replace($standard_nest, '', $selector));
+				else
+				{
+					$css .= '}';
+					$standard_nest = '';
+				}
+			}
+
+			$css .= $selector . ' {';
+
+			foreach ($node['props'] as &$prop)
+				$css .= $prop['name'] . ': ' . $prop['value'] . ';';
+
+			$css .= '}';
 		}
 
 		if (!empty($standard_nest))
-		{
 			$css .= '}';
-			$standard_nest = '';
-		}
 	}
 
-	function searchExtends(&$here)
+	function getAncestorSelectors(&$node)
 	{
-		global $bases, $seen_nodes;
+		if (empty($node['parent']))
+			return (array) $node['selector'];
 
-		$extends = 'extends'; // Supposedly a tad faster?
-		$base = 'base';
-		$property = 'property';
-		$rule = 'rule';
-
-		// Replaces ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
-		if (strpos($here->selector, $extends) !== false)
-		{
-			preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $here->selector, $matches, PREG_SET_ORDER);
-			foreach ($matches as $m)
-			{
-				$save_selector = $here->selector;
-				$here->selector = $m[1];
-				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($here));
-				if (strpos($m[2], '&') !== false)
-				{
-					$parent = isset($parent) ? $parent : $this->parseAncestorSelectors($this->getAncestorSelectors($this->DOM->nodeLookUp[$here->parentNodeId]));
-					$m[2] = str_replace('&', $parent, $m[2]);
-				}
-
-				$bases[] = array(
-					rtrim($m[2]), // Add to this class in the tree...
-					preg_quote(rtrim($m[2])),
-					$path // ...The current selector
-				);
-				$here->selector = str_replace($m[0], $m[1], $save_selector);
-			}
-		}
-
-		foreach ($here->childNodes as $i => &$node)
-		{
-			// Trying to avoid browsing through referenced objects.
-			if (isset($seen_nodes[$node->nodeId]))
-				continue;
-			$seen_nodes[$node->nodeId] = true;
-
-			if ($node->nodeName === $property)
-			{
-				if ($node->name === $base)
-				{
-					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
-					$target = str_replace('&', $path, $node->value);
-					$bases[] = array(
-						$target, // Add to this class in the tree...
-						preg_quote($target),
-						$path // ...The current selector
-					);
-					unset($here->childNodes[$i]); // !!! Tried unset($node) but it doesn't work...?
-				}
-			}
-			elseif ($node->nodeName === $rule)
-				$this->searchExtends($node);
-		}
-	}
-
-	function getAncestorSelectors($node)
-	{
-		$selectors = array();
-
-		if (!empty($node->selector))
-			$selectors[] = $node->selector;
-
-		if (!empty($node->parentNodeId))
-		{
-			$parentNode = $this->DOM->nodeLookUp[$node->parentNodeId];
-			if (isset($parentNode->selector))
-			{
-				$recursiveSelectors = $this->getAncestorSelectors($parentNode);
-				$selectors = array_merge($selectors, $recursiveSelectors);
-			}
-		}
-		return $selectors;
+		return array_merge((array) $node['selector'], $this->getAncestorSelectors($this->rules[$node['parent']]));
 	}
 
 	function parseAncestorSelectors($ancestors = array())
@@ -650,109 +613,50 @@ class CSS_Nesting extends CSSCache
 		}
 		return implode(',', $growth);
 	}
-}
 
-class CSS_DomNode
-{
-	var $nodeName = '';
-	var $nodeId;
-	var $parentNodeId;
-
-	function CSS_DomNode($nodeId, $nodeName = '', $attrs = array())
+	function pierce(&$data)
 	{
-		$this->nodeId = $nodeId;
-		$this->nodeName = $nodeName;
-		if (!empty($attrs))
-			foreach ($attrs as $attr => &$value)
-				$this->$attr = $value;
-	}
+		preg_match_all('~<(/?)([a-z]+)\s*(?:name="([^"]*)"\s*)?(?:(?:value|selector)="([^"]*)")?[^>]*>~s', $data, $tags, PREG_SET_ORDER);
 
-	function &getNodesByNodeName($nodeName, $childrenOnly = false)
-	{
-		$nodes = array();
+		$id = 1;
+		$parent = array(0);
+		$level = 0;
+		$rules = $props = array();
+		$rule = 'rule';
+		$prop = 'property';
 
-		if (empty($this->childNodes))
-			return $nodes;
-
-		foreach ($this->childNodes as &$node)
+		foreach ($tags as &$tag)
 		{
-			if ($node->nodeName === $nodeName)
-				$nodes[] = $node;
-
-			if (!$childrenOnly)
+			if (empty($tag[1]))
 			{
-				$nestedNodes = $node->getNodesByNodeName($nodeName);
-				$nodes = array_merge($nodes, $nestedNodes);
+				if ($tag[2] === $rule)
+				{
+					$rules[$id] = array(
+						'selector' => $tag[4],
+						'parent' => $parent[$level],
+						'props' => array(),
+					);
+					$parent[++$level] = $id++;
+				}
+				elseif ($tag[2] === $prop)
+				{
+					$props[$id++] = array(
+						'name' => $tag[3],
+						'value' => $tag[4],
+						'id' => $id - 1,
+						'parent' => $parent[$level],
+					);
+				}
 			}
+			else
+				$level--;
 		}
-		return $nodes;
-	}
 
-	function &getChildNodesByNodeName($nodeNames)
-	{
-		return $this->getNodesByNodeName($nodeNames, true);
-	}
-}
+		foreach ($props as $id => &$node)
+			$rules[$node['parent']]['props'][$id] =& $node;
 
-class CSS_Dom extends CSS_DomNode
-{
-	var $xmlObj;
-	var $nodeLookUp = array();
-
-	function CSS_Dom($xml = '')
-	{
-		$this->xmlObj = xml_parser_create();
-		xml_set_object($this->xmlObj, $this);
-		xml_parser_set_option($this->xmlObj, XML_OPTION_CASE_FOLDING, 0);
-		xml_set_element_handler($this->xmlObj, 'tagOpen', 'tagClose');
-
-		if (!empty($xml))
-		{
-			$this->nodeId = 0;
-			$this->nodeLookUp[] =& $this;
-			$this->parse($xml);
-		}
-	}
-
-	function parse($data)
-	{
-		if (!xml_parse($this->xmlObj, $data, true))
-		{
-			// Show the parser error.
-			$line = xml_get_current_line_number($this->xmlObj);
-			printf('XML error: %s at line %d<br><br>', xml_error_string(xml_get_error_code($this->xmlObj)), xml_get_current_line_number($this->xmlObj));
-			$lines = array_slice(explode("\n", $data), $line  - 2, 3);
-			echo htmlspecialchars($lines[0]), '<br><strong>', htmlspecialchars($lines[1]), '</strong><br>', htmlspecialchars($lines[2]);
-		}
-	}
-
-	function tagOpen($parser, $nodeName, $attrs)
-	{
-		static $node_count = 0;
-		unset($node);
-		$node = new CSS_DomNode($node_count++, $nodeName, $attrs);
-		$this->childNodes[] = $node;
-		$this->nodeLookUp[] = $node;
-	}
-
-	function tagClose($parser, $nodeName)
-	{
-		$totalNodes = count($this->childNodes);
-		if ($totalNodes == 1)
-		{
-			$node =& $this->childNodes[0];
-			$node->parentNodeId = 0;
-			$container = $node->nodeName;
-			$this->$container =& $node;
-		}
-		elseif ($totalNodes > 1)
-		{
-			$node = array_pop($this->childNodes);
-			$parentId = count($this->childNodes) - 1;
-			$node->parentNodeId = $this->childNodes[$parentId]->nodeId;
-			$this->childNodes[$parentId]->childNodes[] =& $node;
-			$this->nodeLookUp[$node->nodeId] =& $node;
-		}
+		$this->rules =& $rules;
+		$this->props =& $props;
 	}
 }
 

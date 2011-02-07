@@ -26,7 +26,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /*	The following functions are all within the xmlArray class, which is the xml
-	parser.  There are more functions, but these are the ones that should be
+	parser. There are more functions, but these are the ones that should be
 	used from outside the class:
 
 	class xmlArray(string data, bool auto_trim = false,
@@ -68,15 +68,15 @@ if (!defined('SMF'))
 		- returns the specified path as an xml file.
 */
 
-// An xml array.  Reads in xml, allows you to access it simply.  Version 1.1.
+// An xml array. Reads in xml, allows you to access it simply. Version 1.1.
 class xmlArray
 {
 	// The array and debugging output level.
 	public $array, $debug_level, $trim;
 
 	// Create an xml array.
-	// the xml data, trim elements?, debugging output level, reserved.
-	// ie. $xml = new xmlArray(file('data.xml'));
+	// Args: the xml data, trim elements?, debugging output level, reserved.
+	// e.g. $xml = new xmlArray(file('data.xml'));
 	public function __construct($data, $auto_trim = false, $level = null, $is_clone = false)
 	{
 		// If we're using this try to get some more memory.
@@ -105,15 +105,14 @@ class xmlArray
 	}
 
 	// Get the root element's name.
-	//ie. echo $element->name();
+	// e.g. echo $element->name();
 	public function name()
 	{
 		return isset($this->array['name']) ? $this->array['name'] : '';
 	}
 
 	// Get a specified element's value or attribute by path.
-	//	the path to the element to fetch, whether to include elements?
-	//ie. $data = $xml->fetch('html/head/title');
+	// e.g. $data = $xml->fetch('html/head/title');
 	public function fetch($path, $get_elements = false)
 	{
 		// Get the element, in array form.
@@ -144,8 +143,8 @@ class xmlArray
 	}
 
 	// Get an element, returns a new xmlArray.
-	//	the path to the element to get, always return full result set? (ie. don't contract a single item.)
-	//ie. $element = $xml->path('html/body');
+	// Args: path to the element to get, always return full result set? (ie. don't contract a single item.)
+	// e.g. $element = $xml->path('html/body');
 	public function path($path, $return_full = false)
 	{
 		// Split up the path.
@@ -202,8 +201,7 @@ class xmlArray
 	}
 
 	// Check if an element exists.
-	//	the path to the element to get.
-	//ie. echo $xml->exists('html/body') ? 'y' : 'n';
+	// e.g. echo $xml->exists('html/body') ? 'y' : 'n';
 	public function exists($path)
 	{
 		// Split up the path.
@@ -234,9 +232,8 @@ class xmlArray
 		return $array !== false;
 	}
 
-	// Count the number of occurances of a path.
-	//	the path to search for.
-	//ie. echo $xml->count('html/head/meta');
+	// Count the number of occurrences of a path.
+	// e.g. echo $xml->count('html/head/meta');
 	public function count($path)
 	{
 		// Get the element, always returning a full set.
@@ -254,8 +251,7 @@ class xmlArray
 	}
 
 	// Get an array of xmlArray's for use with foreach.
-	//	the path to search for.
-	//ie. foreach ($xml->set('html/body/p') as $p)
+	// e.g. foreach ($xml->set('html/body/p') as $p)
 	public function set($path)
 	{
 		// None as yet, just get the path.
@@ -279,11 +275,10 @@ class xmlArray
 	}
 
 	// Create an xml file from an xml array.
-	//	the path to the element. (optional)
-	//ie. echo $this->create_xml()
+	// e.g. echo $this->create_xml()
 	public function create_xml($path = null)
 	{
-		// Was a path specified?  If so, use that array.
+		// Was a path specified? If so, use that array.
 		if ($path !== null)
 		{
 			$path = $this->path($path);
@@ -303,8 +298,7 @@ class xmlArray
 	}
 
 	// Output the xml in an array form.
-	//	the path to output.
-	//ie. print_r($xml->to_array());
+	// e.g. print_r($xml->to_array());
 	public function to_array($path = null)
 	{
 		// Are we doing a specific path?
@@ -340,7 +334,7 @@ class xmlArray
 			if (isset($match[0]))
 				$data = preg_replace('/' . preg_quote($match[0], '/') . '/s', '', $data, 1);
 
-			// Didn't find a tag?  Keep looping....
+			// Didn't find a tag? Keep looping....
 			if (!isset($match[1]) || $match[1] == '')
 			{
 				// If there's no <, the rest is data.
@@ -394,7 +388,7 @@ class xmlArray
 					}
 				}
 
-				// Wait for an actual occurance of an element.
+				// Wait for an actual occurrence of an element.
 				continue;
 			}
 
@@ -469,11 +463,10 @@ class xmlArray
 		return $current;
 	}
 
-	// Get a specific element's xml. (privately used...)
+	// Get a specific element's xml. (Privately used...)
 	protected function _xml($array, $indent)
 	{
-		$indentation = $indent !== null ? '
-' . str_repeat('	', $indent) : '';
+		$indentation = $indent !== null ? "\n" . str_repeat("\t", $indent) : '';
 
 		// This is a set of elements, with no name...
 		if (is_array($array) && !isset($array['name']))
@@ -584,7 +577,7 @@ class xmlArray
 		return $this->trim ? trim($data) : $data;
 	}
 
-	// Given an array, return the text from that array. (recursive and privately used.)
+	// Given an array, return the text from that array. (Recursive and privately used.)
 	protected function _fetch($array)
 	{
 		// Don't return anything if this is just a string.
@@ -610,10 +603,10 @@ class xmlArray
 		return $temp;
 	}
 
-	// Get a specific array by path, one level down. (privately used...)
+	// Get a specific array by path, one level down. (Privately used...)
 	protected function _path($array, $path, $level, $no_error = false)
 	{
-		// Is $array even an array?  It might be false!
+		// Is $array even an array? It might be false!
 		if (!is_array($array))
 			return false;
 
@@ -827,7 +820,7 @@ if (!class_exists('ftp_connection'))
 				return false;
 			}
 
-			// This is pretty simple - store it for later use ;).
+			// This is pretty simple - store it for later use ;)
 			$this->pasv = array('ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]);
 
 			return true;
@@ -846,7 +839,7 @@ if (!class_exists('ftp_connection'))
 			// Seems logical enough, so far...
 			fwrite($this->connection, 'STOR ' . $ftp_file . "\r\n");
 
-			// Okay, now we connect to the data port.  If it doesn't work out, it's probably "file already exists", etc.
+			// Okay, now we connect to the data port. If it doesn't work out, it's probably "file already exists", etc.
 			$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
 			if (!$fp || !$this->check_response(150))
 			{

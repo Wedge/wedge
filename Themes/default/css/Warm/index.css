@@ -45,7 +45,7 @@ div.frame
 	background: $main_bg
 
 #header
-	background: darken($main_bg, 4)
+	background: $head_bg
 
 #header div.frame
 	padding: 5px 30px 0
@@ -1355,19 +1355,21 @@ th.last_th
 $main_font = "Verdana, Arial, Helvetica, sans-serif"
 $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
-$main_bg = "rgb(241,243,234)"
-$menu_bg = "#f7f0da"
+$main_bg = rgb(241,243,234)
+$main_bg = rgb(246,248,239)
+$head_bg = rgb(232,226,231)
+$head_bg = rgb(233,235,186)
+$menu_bg = #f7f0da
 
 // These are unused for now, but I like 'em...
-$other_bg = "#e7e9b8"
+$other_bg = #e7e9b8
 $reddish = "#cc6600"
-$greenish = "rgb(231,233,184)"
 
 /* $alpha_matte is a RGB value that should stand for your main area's background.
    You only need it if you're using alpha values in your CSS. Don't use a variable
    name in it, it's already complicated enough to calculate... */
 
-$alpha_matte = "rgb(241,243,234)"
+$alpha_matte = rgb(241,243,234)
 
 /* And our mixins... Well, I have no idea where to use them, so here are just a
    few examples, commented out, for you to see how powerful they can be... */

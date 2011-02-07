@@ -2881,7 +2881,7 @@ function wedge_cache_css()
 
 	// Is the file already cached and not outdated? Then we're good to go.
 	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
-		return;
+;//		return;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
@@ -2934,7 +2934,7 @@ function wedge_cache_css()
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 	// Only the basic CSS3 we actually use. May add more in the future.
 	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
-	$final = str_replace(array('#SI-CSSC-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", ';', '}', '}', ' '), $final);
+	$final = str_replace(array('#WEDGE-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", ';', '}', '}', ' '), $final);
 	// Restore comments as requested.
 	foreach ($comments[0] as $comment)
 		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
