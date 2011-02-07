@@ -353,7 +353,7 @@ class CSS_Func extends CSSCache
 					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				elseif ($code === 'lighten')
-					$hsl['l'] =+ $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
+					$hsl['l'] += $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
 				elseif ($code === 'desaturize')
 					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
@@ -449,7 +449,7 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
-		$xml = preg_replace('~([a-z-]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
+		$xml = preg_replace('~([a-z-, ]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
 		$xml = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $xml); // Transform selectors
 		$xml = preg_replace(array('~ {2,}~'), array(' '), $xml); // Remove extra spaces
 		$xml = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $xml); // Close rules and indent everything one tab
@@ -569,7 +569,13 @@ class CSS_Nesting extends CSSCache
 			$css .= $selector . ' {';
 
 			foreach ($node['props'] as &$prop)
-				$css .= $prop['name'] . ': ' . $prop['value'] . ';';
+			{
+				if (!strpos($prop['name'], ','))
+					$css .= $prop['name'] . ': ' . $prop['value'] . ';';
+				else
+					foreach (explode(',', $prop['name']) as $names)
+						$css .= $names . ': ' . $prop['value'] . ';';
+			}
 
 			$css .= '}';
 		}

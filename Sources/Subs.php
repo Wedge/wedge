@@ -2881,7 +2881,7 @@ function wedge_cache_css()
 
 	// Is the file already cached and not outdated? Then we're good to go.
 	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
-;//		return;
+		return;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
