@@ -7,11 +7,11 @@ function template_info_center_begin()
 
 	// Here's where the "Info Center" starts...
 	echo '
-	<div class="roundframe clear">
-		<we:cat>
-			<img id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '" style="display: none">
-			', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
-		</we:cat>
+	<we:title>
+		<img id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '">
+		', $txt['info_center_title'], '
+	</we:title>
+	<div class="roundframe">
 		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none"', '>';
 }
 

@@ -338,8 +338,8 @@ class CSS_Func extends CSSCache
 					array_shift($arg);
 
 				$arg[0] = isset($arg[0]) ? $arg[0] : 5;
-				if ($code === 'channels' && !isset($arg[3]))
-					for ($i = 1; $i < 3; $i++)
+				if ($code === 'channels' && !isset($arg[0], $arg[1], $arg[2], $arg[3]))
+					for ($i = 1; $i < 4; $i++)
 						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
 				foreach ($arg as $i => &$a)
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;

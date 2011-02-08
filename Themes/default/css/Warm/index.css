@@ -37,20 +37,15 @@ body
 	margin: 0
 	padding: 0
 
-div.frame
-	max-width: 1200px
-
 #header, #navi, #content
 	margin: 0 auto
 	background: $main_bg
 
-#header
-	background: $head_bg
-
 #header div.frame
-	padding: 5px 30px 0
+	padding: 0
 
 #content div.frame
+	max-width: 1200px
 	padding: 0 40px 20px
 
 #edge
@@ -63,7 +58,7 @@ div.frame
 	vertical-align: top
 	width: 220px
 	border: 1px solid #ccc
-	background: #edefe6
+	background: darken($main_bg, 2%)
 	padding: 10px
 	margin: 12px 0
 	border-radius: 8px
@@ -76,16 +71,20 @@ div.frame
 	padding: 12px 0 12px 30px
 
 #top_section
+	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
 	overflow: hidden
-	margin: 0 -20px 6px
-	padding: 6px 20px 10px
+	margin: 0
+	padding: 6px 30px 10px
 
 // The main title
 h1.forumtitle
-	font: italic bold 3em/1em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-	margin: 20px 0 0 10px
+	font: italic bold 2.8em/1.25em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+	margin: 10px 0 0 10px
 	padding: 0
 	float: left
+	a
+		text-shadow: white 0 1px 2px
+		color: #999
 
 // Float these items to the right
 #siteslogan
@@ -101,12 +100,17 @@ h1.forumtitle
 
 // The upper_section, float the two each way
 #upper_section
+	background: url($images/theme/bg.jpg)
+	border-top, border-bottom: 3px solid $reddish
+	margin, padding: 0
+	width: 100%
+	height: 100px
 	overflow: hidden
-	padding: 5px
-
-#header
 	.news
+		position: absolute
 		width: 50%
+		top: 20px
+		right: 30px
 		float: right
 		text-align: right
 		p
@@ -114,17 +118,22 @@ h1.forumtitle
 		form
 			padding-bottom: 10px
 	.user
-		width: 50%
+		width: 100%
 		float: left
 		overflow: auto
+		background-color: $head_bg
+		padding: 10px 30px
 		a
 			color: #600
 			border-bottom: 1px dotted #600
 			text-decoration: none
 		p
 			float: left
-			margin: 0 1em 1em 0
+			margin: .5em 1em 1em 0
 			padding: 0
+			img
+				height: 70px
+				width: auto
 		ul
 			margin: 0
 			padding-left: 10px
@@ -233,8 +242,7 @@ hr
 h1, h2, h3, h4, h5, h6
 	color: #000
 	font-size: 1em
-	margin: 0
-	padding: 0
+	margin, padding: 0
 
 // Fieldsets are used to group elements.
 fieldset
@@ -402,12 +410,10 @@ input[type=file]
 	margin-bottom: 2px
 	margin-right: 2px
 	a
-		border: 0
-		padding: 0
+		border, padding: 0
 
 .menu ul
-	// !!! background: #fff8f1
-	background: rgba(255, 248, 240, .92)
+	background: rgba(255, 248, 240, .92) // !!! background: #fff8f1
 	position: absolute
 	display: block
 	border: 1px solid #666
@@ -435,8 +441,7 @@ input[type=file]
 	height: auto
 	display: block
 	float: left
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	li
 		display: block
 		float: none
@@ -522,8 +527,7 @@ li.separator
 	single images to show icons. */
 .m_home
 	float: left
-	width: 16px
-	height: 16px
+	width, height: 16px
 	padding: 0
 	display: inline
 	margin: 2px 0 0 2px
@@ -535,7 +539,8 @@ li.separator
 	background-position: -64px 0
 
 .m_search extends .m_home
-	background-position: -112px 0
+	background-position: -112px 1px
+	height: 17px
 
 .m_admin extends .m_home
 	background-position: -32px 0
@@ -643,8 +648,7 @@ li.separator
 
 // a quick reset list class.
 ul.reset, ul.reset li
-	padding: 0
-	margin: 0
+	padding, margin: 0
 	list-style: none
 
 /* Some BBC related styles.
@@ -717,11 +721,9 @@ code.bbc_code, code.php_code
 	border: 0
 
 .bbc_table
-	font: inherit
-	color: inherit
+	font, color: inherit
 	td
-		font: inherit
-		color: inherit
+		font, color: inherit
 		vertical-align: top
 
 .bbc_u
@@ -757,11 +759,11 @@ table.footnotes
 	border-top: 1px solid #888
 	margin-top: 20px
 	padding-top: 4px
-	blockquote &
-		margin: 8px 0 4px
 	td
 		font-size: smaller
 		padding: 0 2px
+	blockquote &
+		margin: 8px 0 4px
 
 td.footnum
 	vertical-align: top
@@ -870,8 +872,7 @@ tr.catbg th a
 	color: #000
 	background-color: #ffeaea
 
-.approvebg2
-	color: #000
+.approvebg2 extends .approvebg
 	background-color: #fff2f2
 
 // Color for background of *topics* requiring approval
@@ -879,15 +880,14 @@ tr.catbg th a
 	color: #000
 	background-color: #e4a17c
 
-.approvetbg2
-	color: #000
+.approvetbg2 extends .approvetbg
 	background-color: #f3bd9f
 
 // Sticky topics get a different background
 .stickybg
 	background: #e8d8cf
 
-.stickybg2
+.stickybg2 extends .stickybg
 	background: #f2e3d9
 
 // Locked posts get a different shade, too!
@@ -895,9 +895,8 @@ tr.catbg th a
 	background: #d4dce2
 	font-style: italic
 
-.lockedbg2
+.lockedbg2 extends .lockedbg
 	background: #d8e1e7
-	font-style: italic
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -1008,8 +1007,7 @@ a.moderation_link
 	height: 66px
 	line-height: 25px
 	position: fixed
-	top: 0
-	left: 0
+	top, left: 0
 	a
 		color: orange
 		text-decoration: underline
@@ -1064,45 +1062,46 @@ dfn
 
 /* Styles for section headers.
 ------------------------------------------------------- */
-.cat
+.cat, .title
 	overflow: auto
 	border-radius: 5px
 	padding: 5px 12px 5px 8px
 	margin-bottom: 4px
-	background: #e0ece6
-	// !!! border: 1px solid #ddd
+	background: rgba(0,0,0, .03)
 	border: 1px solid rgba(0,0,0, .15)
-	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	text-shadow: white 0 1px 2px
+	color: grey;
 
 .title
-	overflow: auto
+	color: channels(grey,30%)
+	font-size: 1.2em
+	background: none
 	padding: 5px 12px 3px 8px
-	// !!! border-bottom: 1px dotted #ddd
-	border-bottom: 1px dotted rgba(0,0,0, .5)
-	border: 0
-	font: bold 95%/20px $main_font
-	text-transform: uppercase
-	color: #369
+	border, margin: 0
+	img
+		float: left
+		vertical-align: middle
+		margin-right: .5em
+		margin-top: 1px
 
 .cat, .title, .table_list tbody.header td
 	a
-		color: #963
+		letter-spacing: -1px
+		font-weight: 400
+		color: darken(grey, 10%)
+		text-decoration: underline
 	a:hover
-		color: #b85
-		text-decoration: none
-
-.title img
-	float: left
-	vertical-align: middle
-	margin-right: .5em
-	margin-top: 1px
+		color: $board_col
 
 .cat img extends .title img
 	&[alt="+"], &[alt="-"]
 		margin-top: 4px
 
 .title2 extends .title
-	font-size: .9em;
+	font-size: 1.1em
+	color: channels(grey,0,0,30%)
+	border-bottom: 1px dotted rgba(0,0,0, .5)
 
 img[alt="!"]
 	margin-top: 8px
@@ -1112,22 +1111,20 @@ img[alt="!"]
 	border-collapse: separate
 	margin-top: .1em
 	// The header bars for some tables.
+	tr.catbg th
+		white-space: nowrap
 	tr.catbg, tr.titlebg
 		font-size: 10pt
 		border-bottom: 1px solid #fff
-	tr.catbg th, tr.titlebg th
-		height: 28px
-		line-height: 28px
+		th
+			height, line-height: 28px
 	th.last_th input
 		margin: 0 2px
 	th.lefttext
 		padding: 0 .7em
 	td
 		padding: 3px
-		border-bottom: 1px solid #fff
-		border-right: 1px solid #fff
-	tr.catbg th
-		white-space: nowrap
+		border-bottom, border-right: 1px solid #fff
 
 // GenericList
 .additional_row
@@ -1188,12 +1185,10 @@ table
 	margin-top: 2px
 	padding: .9em 1.2em
 	border-radius: 12px
-	// !!! border: 1px solid #ddd
-	border: 1px solid rgba(0,0,0, .1)
+	border: 1px solid rgba(0,0,0, .1) // !!! border: 1px solid #ddd
 
 .postbg
-	border-left: 1px solid #7f7f7f
-	border-right: 1px solid #7f7f7f
+	border-left, border-right: 1px solid #7f7f7f
 
 /* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
@@ -1201,10 +1196,8 @@ table
 	overflow: hidden
 	margin-top: 1px
 	padding: 10px 10px 9px
-	// !!! background: #f5f5f5
-	background: rgba(0,0,0, .02)
-	// !!! border: 1px solid #c5c5c5
-	border: 1px solid rgba(0,0,0, .15)
+	background: rgba(0,0,0, .02)		// !!! background: #f5f5f5
+	border: 1px solid rgba(0,0,0, .15)	// !!! border: 1px solid #c5c5c5
 	border-radius: 8px
 	dl, dt, p
 		margin: 0
@@ -1258,8 +1251,7 @@ table
 		padding: 5px
 		margin: 0 .2em 0 0
 		li
-			margin: 0
-			padding: 0
+			margin, padding: 0
 			list-style: none
 			float: left
 	a
@@ -1271,8 +1263,7 @@ table
 		// !!! border: 1px solid #ccc
 		border: 1px solid rgba(0,0,0, .1)
 		background: #e8e8e8
-		height: 17px
-		line-height: 17px
+		height, line-height: 17px
 		padding: 1px 7px 0
 		margin: 0 0 0 4px
 		border-radius: 5px
@@ -1303,7 +1294,6 @@ table
 ------------------------------------------------------- */
 .table_list
 	width: 100%
-
 	td, th
 		padding: 5px
 	tbody.header td
@@ -1314,8 +1304,7 @@ table
 		float: right
 		margin: 0 -12px 0 .8em
 	p
-		padding: 0
-		margin: 0
+		padding, margin: 0
 
 /* Styles for print media.
 ------------------------------------------------------- */
@@ -1358,8 +1347,9 @@ $bevel {ie6,ie7,ie8} = ""
 $main_bg = rgb(241,243,234)
 $main_bg = rgb(246,248,239)
 $head_bg = rgb(232,226,231)
-$head_bg = rgb(233,235,186)
+$head_bg = rgba(233,235,186,.66)
 $menu_bg = #f7f0da
+$board_col = #d97b33
 
 // These are unused for now, but I like 'em...
 $other_bg = #e7e9b8

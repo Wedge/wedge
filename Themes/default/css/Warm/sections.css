@@ -11,7 +11,7 @@
 	td.info a.subject
 		font-weight: bold
 		font-size: 110%
-		color: #d97b33
+		color: $board_col
 	td.children
 		color: #555
 		font-size: 85%
@@ -78,7 +78,6 @@ p.moderators
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
 #upshrinkHeaderIC
-	margin-top: 4px
 	p
 		margin: 0 0 .5em
 		padding: .5em
@@ -93,6 +92,9 @@ p.moderators
 		&.stats
 			font-size: 1.1em
 			padding-top: 8px
+		&.pminfo
+			margin: 0
+			padding: .5em
 
 #ic_recentposts
 	margin: 0 0 .5em
@@ -1359,12 +1361,13 @@ span.hidelink
 	p.clear
 		clear: both
 
+#search_options
+	margin: 0 auto
+	width: 600px
+	padding-top: 1em
+	overflow: hidden
+
 #advanced_search
-	#search_options
-		margin: 0 auto
-		width: 600px
-		padding-top: 1em
-		overflow: hidden
 	dt
 		clear: both
 		float: left
@@ -1391,13 +1394,9 @@ span.hidelink
 
 /* More hacks.
 ------------------------------------------------- */
-#upshrinkHeaderIC
-	p.pminfo
-		margin: 0
-		padding: .5em
-
 #upshrink_ic
 	float: right
+	display: none
 	margin: 4px -5px 0 0
 
 // table_grid styles for Profile > Show Permissions.

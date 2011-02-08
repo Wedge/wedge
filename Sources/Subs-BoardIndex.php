@@ -108,7 +108,7 @@ function getBoardIndex($boardIndexOptions)
 					'boards' => array(),
 					'new' => false,
 				);
-				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '" href="' . (isset($row_board['can_collapse']) ? $categories[$row_board['id_cat']]['collapse_href'] : $categories[$row_board['id_cat']]['href']) . '">' . $row_board['cat_name'] . '</a>';
+				$categories[$row_board['id_cat']]['link'] = $row_board['cat_name'];
 			}
 
 			// If this board has new posts in it (and isn't the recycle bin!) then the category is new.
