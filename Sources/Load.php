@@ -45,7 +45,7 @@ if (!defined('SMF'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $txt, $context;
+	global $modSettings, $boarddir, $txt, $context, $sourcedir;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wesql::query('
@@ -123,7 +123,7 @@ function reloadSettings()
 	if (!empty($modSettings['hooks']['pre_include']))
 	{
 		foreach ($modSettings['hooks']['pre_include'] as $include)
-			if (file_exists($inc = strtr(trim($include), array('$boarddir' => $boarddir))))
+			if (file_exists($inc = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir))))
 				require_once($inc);
 			else
 				remove_hook('pre_include', $include);
@@ -223,7 +223,7 @@ function loadUserSettings()
 			$id_member = 0;
 
 		// If we no longer have the member maybe they're being all hackey, stop brute force!
-		if (!$id_member || !empty($user_settings['passwd_flood']))
+		if (!$id_member)
 		{
 			loadSource('Subs-Login');
 			validatePasswordFlood(!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member, !empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false, $id_member != 0);
@@ -1369,7 +1369,7 @@ function detectBrowser()
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_info, $user_settings, $board_info, $sc, $footer_coding;
+	global $user_info, $user_settings, $board_info, $sc, $boarddir, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
 	global $context, $settings, $options, $ssi_theme;
 
@@ -1673,6 +1673,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['server'] = array(
 		'is_iis' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false,
 		'is_apache' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false,
+		'is_litespeed' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false,
 		'is_lighttpd' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false,
 		'is_nginx' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false,
 		'is_cgi' => isset($_SERVER['SERVER_SOFTWARE']) && strpos(php_sapi_name(), 'cgi') !== false,
@@ -1845,6 +1846,18 @@ function loadTheme($id_theme = 0, $initialize = true)
 		tempImage.src = "' . $scripturl . '?imperative;ts=' . $ts . '";
 	}
 	setTimeout(smfImperativeTask, 1);');
+
+	// Any files to include at this point?
+	if (!empty($modSettings['integrate_theme_include']))
+	{
+		$theme_includes = explode(',', $modSettings['integrate_theme_include']);
+		foreach ($theme_includes as $include)
+		{
+			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
+			if (file_exists($include))
+				require_once($include);
+		}
+	}
 
 	// Call load theme hook.
 	call_hook('load_theme');

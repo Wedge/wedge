@@ -893,7 +893,7 @@ function Post2()
 				AND id_board IN ({array_int:board_list})',
 			array(
 				'current_member' => $user_info['id'],
-				'board_list' => array_keys($board_info['parent_boards']),
+				'board_list' => empty($_REQUEST['goback']) ? array_keys($board_info['parent_boards']) : array_merge(array_keys($board_info['parent_boards']), array($board)),
 				'id_msg' => $modSettings['maxMsgID'],
 			)
 		);
@@ -968,23 +968,6 @@ function Post2()
 				'member' => $user_info['id'],
 			)
 		);
-
-	// Returning to the topic?
-	if (!empty($_REQUEST['goback']))
-	{
-		// Mark the board as read.... because it might get confusing otherwise.
-		wesql::query('
-			UPDATE {db_prefix}log_boards
-			SET id_msg = {int:maxMsgID}
-			WHERE id_member = {int:current_member}
-				AND id_board = {int:current_board}',
-			array(
-				'current_board' => $board,
-				'current_member' => $user_info['id'],
-				'maxMsgID' => $modSettings['maxMsgID'],
-			)
-		);
-	}
 
 	if ($board_info['num_topics'] == 0)
 		cache_put_data('board-' . $board, null, 120);

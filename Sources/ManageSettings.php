@@ -202,6 +202,9 @@ function ModifyModSettings()
 		),
 	);
 
+	// Make it easier for mods to add new areas.
+	call_hook('modify_modifications', array(&$subActions, &$context[$context['admin_menu_name']]['tab_data']['tabs']));
+
 	// Call the right function for this sub-acton.
 	$subActions[$_REQUEST['sa']]();
 }
@@ -363,6 +366,9 @@ function ModifyCoreFeatures($return_config = false)
 			'),
 		),
 	);
+
+	// Anyone who would like to add a core feature?
+	call_hook('core_features', array(&$core_features));
 
 	// Are we getting info for the help section.
 	if ($return_config)

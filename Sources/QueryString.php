@@ -313,6 +313,8 @@ function cleanRequest()
 		else
 			$board = 0;
 
+		$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+
 		// This is for "Who's Online" because it might come via POST - and it should be an int here.
 		$_GET['board'] = $board;
 	}
@@ -380,7 +382,7 @@ function cleanRequest()
 	unset($_REQUEST['pretty'], $_GET['pretty']);
 
 	// There should be a $_REQUEST['start'], some at least. If you need to default to other than 0, use $_GET['start'].
-	if (empty($_REQUEST['start']) || $_REQUEST['start'] < 0)
+	if (empty($_REQUEST['start']) || $_REQUEST['start'] < 0 || (int) $_REQUEST['start'] > 2147473647)
 		$_REQUEST['start'] = 0;
 
 	// The action needs to be a string and not an array or anything else

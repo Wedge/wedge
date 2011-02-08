@@ -55,7 +55,7 @@ if (!defined('SMF'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
 
 	// Load the language and templates....
 	loadLanguage('Admin');
@@ -467,6 +467,18 @@ function Admin()
 		),
 	);
 
+	// Any files to include for administration?
+	if (!empty($modSettings['integrate_admin_include']))
+	{
+		$admin_includes = explode(',', $modSettings['integrate_admin_include']);
+		foreach ($admin_includes as $include)
+		{
+			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
+			if (file_exists($include))
+				require_once($include);
+		}
+	}
+
 	// Let them modify admin areas easily.
 	call_hook('admin_areas', array(&$admin_areas));
 
@@ -604,23 +616,6 @@ function AdminHome()
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
 	}
-
-	// Fill in the blanks in the support resources paragraphs.
-	// !!! Update links
-	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
-		'http://docs.simplemachines.org/',
-		'http://docs.simplemachines.org/redirect/features',
-		'http://docs.simplemachines.org/redirect/settings',
-		'http://docs.simplemachines.org/redirect/themes',
-		'http://docs.simplemachines.org/redirect/packages'
-	);
-	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
-		'http://www.simplemachines.org/community/',
-		'http://www.simplemachines.org/redirect/english_support',
-		'http://www.simplemachines.org/redirect/international_support_boards',
-		'http://www.simplemachines.org/redirect/smf_support',
-		'http://www.simplemachines.org/redirect/customize_support'
-	);
 }
 
 // This allocates out all the search stuff.

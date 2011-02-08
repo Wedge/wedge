@@ -506,6 +506,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	global $modSettings;
 
 	// Save whether $start was less than 0 or not.
+	$start = (int) $start;
 	$start_invalid = $start < 0;
 
 	// Make sure $start is a proper variable - not less than 0.

@@ -42,7 +42,8 @@ fees for hosting the Software may, however, be imposed.
 	d. Any Distribution of this Package, whether as a Modified Package
 or not, requires express written consent from Wedgeward.
 	e. Your name is not Jonathan Valentin (aka "vbgamer45") or Alex Kühne
-(aka "Akyhne"). Yes, they're our official hall of shame.
+(aka "Akyhne") or you work with Samson Software of Bloomingdale, Illinois.
+Yes, they're our official hall of shame.
 
 2. You may make Modifications to this Package or a derivative of it, and
 distribute your Modifications in a form that is separate from the Package,

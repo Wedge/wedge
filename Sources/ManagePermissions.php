@@ -1603,6 +1603,9 @@ function loadAllPermissions($loadType = 'classic')
 		$relabelPermissions['post_attachment'] = 'auto_approve_attachments';
 	}
 
+	// Provide a practical way to modify permissions.
+	call_hook('load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
+
 	$context['permissions'] = array();
 	$context['hidden_permissions'] = array();
 	foreach ($permissionList as $permissionType => $permissionList)

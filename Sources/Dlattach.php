@@ -113,7 +113,7 @@ function Dlattach()
 		isAllowedTo('approve_posts');
 
 	// Update the download counter (unless it's a thumbnail).
-	if ($attachment_type != 3)
+	if (!$user_info['possibly_robot'] && $attachment_type != 3)
 		wesql::query('
 			UPDATE LOW_PRIORITY {db_prefix}attachments
 			SET downloads = downloads + 1
