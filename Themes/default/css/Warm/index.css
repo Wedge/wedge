@@ -59,7 +59,7 @@ body
 	width: 220px
 	border: 1px solid #ccc
 	background: darken($main_bg, 2%)
-	padding: 10px
+	padding: 5px 10px 10px
 	margin: 12px 0
 	border-radius: 8px
 
@@ -1071,28 +1071,32 @@ dfn
 	border: 1px solid rgba(0,0,0, .15)
 	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	text-shadow: white 0 1px 2px
-	color: grey;
+	color: grey
+
+.cat, .title, .table_list tbody.header td
+	a
+		letter-spacing: -1px
+		color: lighten(grey, 10%)
+		text-decoration: underline
+	a:hover
+		color: $board_col
 
 .title
-	color: channels(grey,30%)
+	color: channels(grey, 30%)
 	font-size: 1.2em
 	background: none
 	padding: 5px 12px 3px 8px
 	border, margin: 0
+	a
+		color: lighten(channels(grey, 30%), 10%)
 	img
 		float: left
 		vertical-align: middle
 		margin-right: .5em
 		margin-top: 1px
 
-.cat, .title, .table_list tbody.header td
-	a
-		letter-spacing: -1px
-		font-weight: 400
-		color: darken(grey, 10%)
-		text-decoration: underline
-	a:hover
-		color: $board_col
+.cat a
+	font-size: .92em
 
 .cat img extends .title img
 	&[alt="+"], &[alt="-"]
@@ -1371,7 +1375,7 @@ mixin example($border: 1px solid black, $width: 777px, $co = #888)
 	background: $main_bg
 	a
 		border: $border
-		color: $co
+		color: $board_col
 
 mixin no_params
 	color: #fff

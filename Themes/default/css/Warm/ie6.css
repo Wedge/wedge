@@ -181,7 +181,7 @@
 
 /* Misc hacks
 ------------- */
-div.frame
+#content div.frame
 	width: expression(this.clientWidth > 1200 ? '1200px' : '100%')
 
 .cat a

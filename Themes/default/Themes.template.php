@@ -513,6 +513,9 @@ function template_pick()
 
 	echo '
 	<div id="pick_theme">
+		<we:cat>
+			', $txt['theme_pick'], '
+		</we:cat>
 		<form action="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">';
 
 	// Just go through each theme and show its information - thumbnail, etc.
@@ -520,9 +523,9 @@ function template_pick()
 	{
 		echo '
 			<div style="margin: 8px 0"></div>
-			<we:cat>
+			<we:title>
 				<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
-			</we:cat>
+			</we:title>
 			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">
 				<div class="floatright">
 					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" class="padding"></a>

@@ -61,6 +61,7 @@ body {
 }
 #header div.frame {
 	padding: 5px 20px 0;
+	overflow: hidden;
 }
 /* the content section */
 #navi, #content {

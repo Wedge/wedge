@@ -20,7 +20,7 @@ class CSS_Mixin extends CSSCache
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~\nmixin\s+([\w-]+)(?:\(([^()]+)\))?[\t ]*\n([\t ]+)((?:[^\n]*\n[\t ]+)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~\nmixin\s+([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\3[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as &$mixin)
@@ -29,7 +29,7 @@ class CSS_Mixin extends CSSCache
 				$css = str_replace($mixin[0], '', $css);
 
 				// Create our mixin entry...
-				$mix[$mixin[1]] = str_replace("\n" . $mixin[3], "\n", $mixin[4]);
+				$mix[$mixin[1]] = rtrim(str_replace("\n" . $mixin[3], "\n", $mixin[4] . $mixin[5]));
 
 				// Do we have variables to set?
 				if (!empty($mixin[2]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[2], $variables, PREG_SET_ORDER))
@@ -397,6 +397,11 @@ class CSS_Nesting extends CSSCache
 		return strlen($a[0]) < strlen($b[0]);
 	}
 
+	private static function indentation($a)
+	{
+		return strlen($a[1]) . ':';
+	}
+
 	function process(&$css)
 	{
 		/******************************************************************************
@@ -412,7 +417,7 @@ class CSS_Nesting extends CSSCache
 		{
 			// Nope? Then let's have fun with our simplified syntax.
 			$xml = preg_replace("~\n\s*\n~", "\n", $xml); // Delete blank lines
-			$xml = preg_replace('~^([\t ]*)~me', "strlen('$1').':'", $xml);
+			$xml = preg_replace_callback('~^([\t ]*)~m', 'CSS_Nesting::indentation', $xml);
 			$tree = explode("\n", $xml);
 			$level = 0;
 			$xml = '';
