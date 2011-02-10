@@ -734,7 +734,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$files = (array) $files;
 
 	// Delete all duplicates.
-	$files = array_flip(array_unique(array_flip($files)));
+	$files = array_keys(array_flip($files));
 
 	if ($is_direct_url)
 	{
@@ -792,6 +792,72 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	}
 	$context['footer_js'] .= '
 <script src="' . $final_script . '"></script>';
+}
+
+/**
+ * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
+ *
+ * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder.
+ * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
+ * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the CSS flow.
+ * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
+ */
+function add_css_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
+{
+	global $context, $modSettings, $settings, $cachedir, $boardurl;
+
+	if (!is_array($files))
+		$files = (array) $files;
+
+	// Delete all duplicates.
+	$files = array_keys(array_flip($files));
+
+	if ($is_direct_url)
+	{
+		$context['header_css'] .= '
+<link rel="stylesheet" src="' . implode('">
+<link rel="stylesheet" src="', $files) . '">';
+		return;
+	}
+
+	$id = '';
+	$latest_date = 0;
+	$is_default_theme = true;
+	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+
+	foreach ($files as &$file)
+	{
+		if (strpos($file, '.css') === false)
+			$file = 'css/' . $file . '.css';
+		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
+		if (!$target)
+			continue;
+
+		$is_default_theme &= $target === 'default_theme_';
+		// Turn css/name.css into 'name', and othertheme/file.css into 'othertheme_css' for the final filename.
+		$id .= str_replace(array('css/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -4)) . '-';
+		$file = $settings[$target . 'dir'] . '/' . $file;
+		$latest_date = max($latest_date, filemtime($file));
+	}
+
+	$id = $is_default_theme ? $id : substr(strrchr($settings['theme_dir'], '/'), 1) . '-' . $id;
+	$id = !empty($modSettings['obfuscate_js']) ? md5(substr($id, 0, -1)) . '-' : $id;
+
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
+
+	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	if (!file_exists($final_file))
+		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext);
+
+	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+
+	// Do we just want the URL?
+	if ($is_out_of_flow)
+		return $final_script;
+
+	echo '
+<link rel="stylesheet" src="' . $final_script . '">';
 }
 
 /**

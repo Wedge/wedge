@@ -18,7 +18,7 @@ function template_wap2_above()
 		<link rel="canonical" href="', $context['canonical_url'], '" />';
 
 	echo '
-		<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/wireless.css" type="text/css" />
+		<link rel="stylesheet" href="', add_css_file('wireless', false, true), '" type="text/css" />
 	</head>
 	<body>';
 }

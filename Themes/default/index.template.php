@@ -317,14 +317,11 @@ function template_body_below()
 	echo '
 	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
 
-	<script type="text/javascript"><!-- // --><![CDATA[
+	<script><!-- // --><![CDATA[
 		function noi_resize()
 		{
-			var d = document, m = d.getElementById("main_content"),
-				f = d.getElementById("footer"),
-				s = d.getElementById("sidebar"),
-				t = m ? m.parentNode : 0,
-				w = t ? t.clientWidth : 0;
+			var d = document, m = d.getElementById("main_content"), f = d.getElementById("footer"),
+				s = d.getElementById("sidebar"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
 			if (w && w < 728 && !wedge_side)
 			{
 				wedge_side = 1;

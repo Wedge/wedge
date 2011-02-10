@@ -826,7 +826,7 @@ function permute($array)
 /**
  * Returns the given string, parsed for inline bbcode, i.e. a limited set of bbcode that can be safely parsed and shown in areas where the user doesn't want layout to be potentially broken, such as board descriptions or profile fields.
  *
- * Notes:
+ * !!! Notes:
  * - This is currently handled by passing an array to parse_bbc().
  * - This should be written with performance in mind, i.e. use regular expressions for most tags.
  *
@@ -878,7 +878,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if ($message === '')
 		return '';
 
-	// Never show smileys for wireless clients. More bytes, can't see it anyway :P.
+	// Never show smileys for wireless clients. More bytes, and may not see them anyway :P
 	if (WIRELESS)
 		$smileys = false;
 	elseif ($smileys !== null && ($smileys == '1' || $smileys == '0'))
@@ -2860,6 +2860,7 @@ function wedge_cache_css()
 					add_js(rtrim($match[2], "\t"));
 
 		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)">(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
+		{
 			foreach ($matches as $match)
 			{
 				$block = explode('|', $match[2]);
@@ -2868,6 +2869,7 @@ function wedge_cache_css()
 				$context['blocks_to_replace'][$match[1]] = $block[0];
 				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
 			}
+		}
 	}
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -2880,9 +2882,14 @@ function wedge_cache_css()
 	$context['cached_css'] = $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
 	$final_file = $cachedir . '/' . $id . '-' . $latest_date . $ext;
 
-	// Is the file already cached and not outdated? Then we're good to go.
-	if (file_exists($final_file) && filemtime($final_file) >= $latest_date)
-		return;
+	// Is the file already cached and not outdated? If not, recache it.
+	if (!file_exists($final_file) || filemtime($final_file) < $latest_date)
+		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext);
+}
+
+function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext)
+{
+	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
@@ -2893,8 +2900,9 @@ function wedge_cache_css()
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
 
-	// Load Shaun Inman's nested selector parser
+	// Load our sweet, short and fast CSS parser
 	loadSource('Class-CSS');
+
 	$plugins = array(
 		new CSS_Mixin(),	// CSS mixins (mixin hello($world: 0))
 		new CSS_Var(),		// CSS variables ($hello_world)
