@@ -1451,6 +1451,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'title2_end'	=> '</we:title2>',
 		'cat'			=> '<we:cat>',
 		'cat_end'		=> '</we:cat>',
+		'logo'			=> '<we:logo>',
 	);
 	$context['blocks_to_replace'] = array(
 		'title'			=> '<div class="title_bar"><h3>',
@@ -1459,6 +1460,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'title2_end'	=> '</h4></div>',
 		'cat'			=> '<div class="cat_bar"><h3>',
 		'cat_end'		=> '</h3></div>',
+		'logo'			=> '', // We'll fill this one below
 	);
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
@@ -1660,11 +1662,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
-	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? '' : westr::htmlspecialchars($settings['header_logo_url']);
+	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? $context['forum_name_html_safe']
+		: '<img src="' . westr::htmlspecialchars($settings['header_logo_url']) . '" alt="' . $context['forum_name'] . '">';
+	$context['site_slogan'] = empty($settings['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $settings['site_slogan'] . '</div>';
 	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
 	if (isset($modSettings['load_average']))
 		$context['load_average'] = $modSettings['load_average'];
+
+	$context['blocks_to_replace']['logo'] =
+		'<div id="top_section">
+			<h1 class="forumtitle">
+				<a href="' . $scripturl . '">' . $context['header_logo_url_html_safe'] . '</a>
+			</h1>
+			<img id="upshrink" src="' . $settings['images_url'] . '/upshrink.png" alt="*" title="' . $txt['upshrink_description'] . '" style="display: none">
+			' . $context['site_slogan'] . '
+		</div>';
 
 	// Set some permission related settings
 	$context['show_login_bar'] = $user_info['is_guest'] && !empty($modSettings['enableVBStyleLogin']);

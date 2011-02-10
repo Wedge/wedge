@@ -27,5 +27,12 @@
 	<block name="title"><div class="title_bar"><h3>|</h3></div></block>
 	<block name="title2"><div class="title_bar"><h4>|</h4></div></block>
 	<block name="cat"><div class="cat_bar"><h3>|</h3></div></block>
+	<block name="logo"><div id="top_section">
+			<h1 class="forumtitle">
+				<a href="$scripturl">$logo</a>
+			</h1>
+			<img id="upshrink" src="$images/upshrink.png" alt="*" title="$txt[upshrink_description]" style="display: none">
+			$site_slogan
+		</div></block>
 
 </styling>

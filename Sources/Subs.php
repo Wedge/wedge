@@ -2805,7 +2805,7 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
+	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl, $scripturl;
 
 	// Mix CSS files together!
 	$css = array();
@@ -2863,11 +2863,18 @@ function wedge_cache_css()
 		{
 			foreach ($matches as $match)
 			{
+				$match[2] = str_replace(
+					array('$scripturl', '$images', '$theme', '$logo', '$slogan'),
+					array($scripturl, $settings['images_url'], $settings['theme_url'], $context['header_logo_url_html_safe'], $context['site_slogan']),
+					preg_replace('~\$txt\[(\w+)]~e', '$txt[\'$1\']', $match[2])
+				);
 				$block = explode('|', $match[2]);
 				$context['blocks_to_search'][$match[1]] = '<we:' . $match[1] . '>';
-				$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
+				if (isset($block[1]))
+					$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
 				$context['blocks_to_replace'][$match[1]] = $block[0];
-				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
+				if (isset($block[1]))
+					$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
 			}
 		}
 	}
@@ -2884,7 +2891,7 @@ function wedge_cache_css()
 
 	// Is the file already cached and not outdated? If not, recache it.
 	if (!file_exists($final_file) || filemtime($final_file) < $latest_date)
-		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext);
+		wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext);
 }
 
 function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext)
