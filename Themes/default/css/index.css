@@ -97,7 +97,7 @@ body {
 #top_section {
 	overflow: hidden;
 	margin: 0 -20px 6px;
-	padding: 6px 20px 10px;
+	padding: 0 20px 10px;
 }
 
 /* the main title */
@@ -145,6 +145,7 @@ h1.forumtitle {
 		}
 	}
 	.user {
+		padding-bottom: 10px;
 		width: 50%;
 		float: left;
 		overflow: auto;

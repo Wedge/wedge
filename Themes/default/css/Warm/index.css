@@ -101,7 +101,7 @@ h1.forumtitle
 // The upper_section, float the two each way
 #upper_section
 	background: url($images/theme/bg.jpg)
-	border-top, border-bottom: 3px solid $reddish
+	border-top, border-bottom: 3px solid lighten($reddish, 3%)
 	margin, padding: 0
 	width: 100%
 	height: 100px
@@ -109,7 +109,7 @@ h1.forumtitle
 	.news
 		position: absolute
 		width: 50%
-		top: 20px
+		top: 100px
 		right: 30px
 		float: right
 		text-align: right
@@ -119,6 +119,7 @@ h1.forumtitle
 			padding-bottom: 10px
 	.user
 		width: 100%
+		height: 100px
 		float: left
 		overflow: auto
 		background-color: $head_bg
@@ -191,7 +192,7 @@ $footer_bg = #e8e3cb
 			&.copyright
 				display: block
 
-/* Styles for the general looks for the Curve theme.
+/* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
 
 // Normal, standard links.
@@ -353,9 +354,11 @@ input.cancel
 	:hover
 		background-color: #fff5e8
 
-input.search extends input.submit
-	background: #fdf7ef url($images/filter.gif) 5px 2px no-repeat
-
+input.search
+	background: #fdfaf9 url($images/filter.gif) 5px 2px no-repeat
+	padding-left: 24px
+	#header &
+		background: rgb(235,235,215) url($images/filter.gif) 5px 2px no-repeat
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
@@ -390,7 +393,7 @@ input[type=file]
 #menu_container
 	background: $menu_bg
 	border: 1px dotted #000
-	border-width: 1px 0
+	border-width: 0 0 1px 0
 	overflow: hidden
 	padding: 0 30px
 
@@ -671,7 +674,7 @@ blockquote.bbc_standard_quote
 	font-size: 90%
 	color: #000
 	line-height: 1.4em
-	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat
+	background: #e8eee8 url($images/theme/quote.png) .1em .1em no-repeat
 	border: 1px dotted #99A
 	padding: 1.2em 2.2em
 	margin: .1em 0 .5em
@@ -680,13 +683,13 @@ blockquote.bbc_standard_quote
 
 // Alternate blockquote stylings
 blockquote.bbc_alternate_quote extends blockquote.bbc_standard_quote
-	background-color: #daddef
+	background-color: #e3eae3
 
 // A code block - maybe PHP ;)
 code.bbc_code, code.php_code
 	display: block
 	font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
-	background: #eef
+	background: #eef5ec
 	border-top: 2px solid #999
 	border-bottom: 2px solid #999
 	padding: 3px 1em
@@ -837,13 +840,13 @@ tr.catbg th a
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg
 	color: #000
-	background-color: #e9e8de // f0f0e5
+	background-color: rgba(75%, 50%, 50%, .1) // #e9e8de
 
 .windowbg2 extends .windowbg
-	background-color: #e4edeb // f0f4f7
+	background-color: rgba(50%, 50%, 75%, .1) // #e4edeb
 
 .windowbg3 extends .windowbg
-	background-color: #cacdd3
+	background-color: rgba(50%, 75%, 50%, .1) // #cacdd3
 
 .post
 	font: 105% Tahoma
@@ -1039,7 +1042,7 @@ dl.settings
 		padding: 5px 0 0 0
 		font-weight: bold
 		clear: both
-	dt.windowbg
+	dt.windowbg final
 		width: 98%
 		float: left
 		margin: 0 0 3px 0
@@ -1063,7 +1066,7 @@ dfn
 /* Styles for section headers.
 ------------------------------------------------------- */
 .cat, .title
-	overflow: auto
+	overflow: hidden
 	border-radius: 5px
 	padding: 5px 12px 5px 8px
 	margin-bottom: 4px
@@ -1157,16 +1160,10 @@ img.left
 img.right
 	float: right
 
+/* It's important to repeat left/right/center statements to
+   respect child priority when setting multiple classes in a table
+   <table><tr class="center"><td class="left"> should be left-aligned. */
 table
-	&.left th, tr.left th, tr th.left,
-	&.left td, tr.left td, tr td.left
-		text-align: left
-	&.right th, tr.right th, tr th.right,
-	&.right td, tr.right td, tr td.right
-		text-align: right
-	&.center th, tr.center th, tr th.center,
-	&.center td, tr.center td, tr td.center
-		text-align: center
 	&.cs0
 		border-collapse: separate
 		border-spacing: 0
@@ -1180,6 +1177,25 @@ table
 	&.cp4
 		th, td
 			padding: 4px
+	&.left th, &.left td
+		text-align: left
+	&.right th, &.right td
+		text-align: right
+	&.center th, &.center td
+		text-align: center
+	tr
+		&.left th, &.left td
+			text-align: left
+		&.right th, &.right td
+			text-align: right
+		&.center th, &.center td
+			text-align: center
+		th.left, td.left
+			text-align: left
+		th.right, td.right
+			text-align: right
+		th.center, td.center
+			text-align: center
 
 /* Common styles used to add corners to divisions.
 ------------------------------------------------------- */
@@ -1214,6 +1230,8 @@ table
 		text-decoration: underline
 	> div
 		box-shadow: 2px 2px 8px 0 #bbb
+	.windowbg final
+		background-color: #f0f0f0
 
 /* The main content area.
 ------------------------------------------------------- */

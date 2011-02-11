@@ -2805,7 +2805,7 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl, $scripturl;
+	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
 
 	// Mix CSS files together!
 	$css = array();
@@ -2863,18 +2863,11 @@ function wedge_cache_css()
 		{
 			foreach ($matches as $match)
 			{
-				$match[2] = str_replace(
-					array('$scripturl', '$images', '$theme', '$logo', '$slogan'),
-					array($scripturl, $settings['images_url'], $settings['theme_url'], $context['header_logo_url_html_safe'], $context['site_slogan']),
-					preg_replace('~\$txt\[(\w+)]~e', '$txt[\'$1\']', $match[2])
-				);
 				$block = explode('|', $match[2]);
 				$context['blocks_to_search'][$match[1]] = '<we:' . $match[1] . '>';
-				if (isset($block[1]))
-					$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
+				$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
 				$context['blocks_to_replace'][$match[1]] = $block[0];
-				if (isset($block[1]))
-					$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
+				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
 			}
 		}
 	}
@@ -2950,7 +2943,9 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 	// Only the basic CSS3 we actually use. May add more in the future.
 	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
-	$final = str_replace(array('#WEDGE-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t"), array('"', "\n", ';', '}', '}', ' '), $final);
+
+	// Remove double quote hacks, remaining whitespace, and the 'final' keyword in its compact form.
+	$final = str_replace(array('#WEDGE-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t", ' final{', ' final,'), array('"', "\n", ';', '}', '}', ' ', '{', ','), $final);
 	// Restore comments as requested.
 	foreach ($comments[0] as $comment)
 		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);

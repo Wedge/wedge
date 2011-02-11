@@ -454,6 +454,7 @@ class CSS_Nesting extends CSSCache
 				$level -= $indent;
 			}
 		}
+
 		$xml = preg_replace('~([a-z-, ]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
 		$xml = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $xml); // Transform selectors
 		$xml = preg_replace(array('~ {2,}~'), array(' '), $xml); // Remove extra spaces
@@ -474,7 +475,7 @@ class CSS_Nesting extends CSSCache
 		{
 			if (strpos($node['selector'], 'extends') !== false)
 			{
-				preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)\s+extends\s+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
@@ -545,12 +546,12 @@ class CSS_Nesting extends CSSCache
 							$selectors = explode(',', $selector);
 						foreach ($selectors as &$snippet)
 						{
-							$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w)~';
+							$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w|[^\n]*[\t ]+final(?:[,\s]|$))~i';
 							if (preg_match($from, $snippet))
 							{
-								$selector = preg_replace($from, '%done%$1%done%', $selector) .
-											', ' . str_replace($base[0], $base[2], $snippet); // And our magic trick happens here.
-								$changed = true; // Restart the process to handle inherited extends.
+								// And our magic trick happens here. Then we restart the process to handle inherited extends.
+								$selector = preg_replace($from, '%done%$1%done%', $selector) . ', ' . str_replace($base[0], $base[2], $snippet);
+								$changed = true;
 							}
 						}
 					}

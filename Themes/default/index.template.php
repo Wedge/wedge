@@ -104,10 +104,8 @@ function template_html_above()
 		echo '
 	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0">';
 
-	// Output any remaining HTML headers. (Mods may easily add code here.)
-	echo $context['header'];
-
-	echo '
+	// Output any remaining HTML headers. (Mods may easily add code there.)
+	echo $context['header'], '
 </head>
 <body>';
 }
@@ -119,6 +117,13 @@ function template_body_above()
 	echo '
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
+		<div id="top_section">
+			<h1 class="forumtitle">
+				<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
+			</h1>
+			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none">
+			', $context['site_slogan'], '
+		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
 			<div class="user">';
 
@@ -187,7 +192,7 @@ function template_body_above()
 	{
 		echo '
 				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="" class="search">&nbsp;
+					<input type="search" name="search" value="" class="search">
 					<input type="submit" name="submit" value="', $txt['search'], '">
 					<input type="hidden" name="advanced" value="0">';
 
@@ -212,10 +217,8 @@ function template_body_above()
 	echo '
 			</div>
 		</div>
-		<we:logo>
-	</div></div>';
+	</div></div>
 
-	echo '
 	<div id="navi">';
 
 	// Show the menu here, according to the menu sub template.
@@ -227,6 +230,7 @@ function template_body_above()
 	// The main content should go here.
 	echo '
 	</div>
+
 	<div id="content"><div class="frame">';
 }
 
