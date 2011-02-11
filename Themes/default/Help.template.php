@@ -8,7 +8,7 @@ function template_popup()
 	// Since this is a popup of its own we need to start the html, unless we're coming from jQuery.
 	if (!empty($context['is_ajax']))
 	{
-		echo '<div class="windowbg2 wrc smalltext">
+		echo '<div class="windowbg2 wrc smalltext nodrag">
 	', $context['help_text'], '
 </div>
 <div class="smalltext centertext" style="padding: 8px 0 0">

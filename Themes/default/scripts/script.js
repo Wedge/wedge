@@ -128,7 +128,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
 	{
-		noScrollbars = false;
+		noScrollbars = 0;
 		alternateWidth = Math.min(alternateWidth, vpw);
 		alternateHeight = Math.min(alternateHeight, vph);
 	}
@@ -152,6 +152,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
 			}).fadeIn(300);
+			$('#helf').dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', desktopURL).css({
 				position: is_ie6 ? 'absolute' : 'fixed',
@@ -163,7 +164,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 		);
 
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
-	$('body').bind('click.h', function (e) {
+	$(document).bind('click.h', function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
 		if (!$(e.srcElement).parents('#helf').length)
 		{
@@ -655,6 +656,58 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 			f[sFormName][aElementNames[i]].value = f[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
+(function ($) {
+	var origMouse, currentPos, is_moving = 0, is_fixed, currentDrag = 0;
+
+	// You may set an area as non-draggable by adding the nodrag class to it.
+	// This way, you can drag the element, but still access UI elements within it.
+	$.fn.dragslide = function () {
+		return this.each(function () {
+			$(this).css("cursor", "move").find(".nodrag").each(function () {
+				$(this).css("cursor", "default");
+			});
+
+			// Start the dragging process
+			$(this).mousedown(function (e) {
+				if ($(e.target).parentsUntil("#helf").andSelf().hasClass("nodrag"))
+					return true;
+				is_fixed = this.style.position == "fixed";
+
+				// Position it to absolute, except if it's already fixed
+				$(this).css({ position: is_fixed ? "fixed" : "absolute", "z-index": 999 });
+
+				origMouse = { X: e.pageX, Y: e.pageY };
+				currentPos = { X: parseInt(is_fixed ? this.style.right : this.offsetLeft, 10), Y: parseInt(is_fixed ? this.style.bottom : this.offsetTop, 10) };
+				currentDrag = this;
+
+				return false;
+			});
+		});
+	};
+
+	// Updates the position during the dragging process
+	$(document).mousemove(function (e) {
+		if (currentDrag)
+		{
+			// If it's in a fixed position, it's a bottom-right aligned popup.
+			$(currentDrag).css(is_fixed ? {
+				right: currentPos.X - e.pageX + origMouse.X,
+				bottom: currentPos.Y - e.pageY + origMouse.Y
+			} : {
+				left: currentPos.X + e.pageX - origMouse.X,
+				top: currentPos.Y + e.pageY - origMouse.Y
+			});
+			return false;
+		}
+	}).mouseup(function () {
+		if (currentDrag)
+		{
+			currentDrag = 0;
+			return false;
+		}
+	});
+})(jQuery);
+
 /*
 // This will add an extra class to any external links, except those with title="-".
 // Ignored for now because it needs some improvement to the domain name detection.
@@ -675,8 +728,10 @@ function _testStyle(sty)
 	return false;
 }
 
-// Dropdown menu in JS with CSS fallback, Wedge style.
-// It may not show, but it took me years to refine it. -- Nao
+/*!
+ * Dropdown menu in JS with CSS fallback, Wedge style.
+ * It may not show, but it took me years to refine it. -- Nao
+ */
 var
 	menu_baseId = 0, hoverable = 0, menu_delay = [], menu_ieshim = [];
 
@@ -804,40 +859,6 @@ dropdownList = _l
 _collapsed = _o
 menu_show_me = _sm
 menu_show_shim = _sh
-aBoardsAndCategories = b
-aElementNames = e
-additional_vars = a
-alternateHeight = h
-alternateWidth = w
-bActOnElement = t
-bAsync = b
-cur_session_id = s
-cur_session_var = v
-currentNode = n
-fNewOnload = f
-funcCallback = f
-itemHandle = h
-noScrollbars = n
-oCaller = o
-oCodeArea = a
-oCurElement = e
-oCurRange = r
-oCurSelection = c
-oDashOption = d
-oMyDoc = d
-oRadioGroup = r
-oReplacements = o
-previousTarget = p
-sChildLevelPrefix = p
-sContent = c
-sMask = m
-sMatch = m
-sReturn = s
-sTo = t
-sUrl = u
-theArray = a
-theField = f
-theValue = v
 _fillSelect = _fs
 _changeState = _cs
 grabJumpToContent = gjtc

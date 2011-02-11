@@ -163,15 +163,15 @@ function template_show_file()
 {
 	global $context;
 
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
+	echo $context['is_ajax'] ? '' : '<!DOCTYPE html>
+<html' . ($context['right_to_left'] ? ' dir="rtl"' : '') . '>
 <head>
 	<meta charset="utf-8">
-	<title>', $context['file_data']['file'], '</title>',
-	theme_base_css(), '
+	<title>' . $context['file_data']['file'] . '</title>' .
+	theme_base_css() . '
 </head>
-<body>
-	<table class="cp0 cs3">';
+<body>', '
+	<table class="nodrag cp0 cs3">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
@@ -185,7 +185,7 @@ function template_show_file()
 	}
 
 	echo '
-	</table>
+	</table>', $context['is_ajax'] ? '' : '
 </body>
 </html>';
 }
