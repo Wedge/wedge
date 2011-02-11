@@ -1399,6 +1399,10 @@ span.hidelink
 	display: none
 	margin: 4px -5px 0 0
 
+// !!! Remove this once we implement class="openclose" on toggles...
+#newsupshrink
+	margin-top: 4px
+
 // table_grid styles for Profile > Show Permissions.
 #permissions table.table_grid td
 	padding: .4em .8em

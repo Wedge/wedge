@@ -232,7 +232,7 @@ function ModifyGeneralSettings($return_config = false)
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
-		array('obfuscate_js', $txt['obfuscate_js'], 'db', 'check', null, 'obfuscate_js'),
+		array('obfuscate_filenames', $txt['obfuscate_filenames'], 'db', 'check', null, 'obfuscate_filenames'),
 		array('minify', $txt['minify'], 'db', 'select', array(
 			'none' => array('none', $txt['minify_none']),
 			'jsmin' => array('jsmin', $txt['minify_jsmin']),
@@ -276,7 +276,7 @@ function ModifyGeneralSettings($return_config = false)
 	{
 		// Delete the JS cache in case we're changing one of these settings. Only does the current theme.
 		// Cached JS files are also cleaned up on the fly so this is just a small time saver.
-		foreach (array('enableCompressedData', 'obfuscate_js', 'minify') as $cache)
+		foreach (array('enableCompressedData', 'obfuscate_filenames', 'minify') as $cache)
 			if (isset($_REQUEST[$cache]) && $_REQUEST[$cache] != $modSettings[$cache] && is_callable('glob'))
 			{
 				array_map('unlink', glob($cachedir . '/*.j*'));

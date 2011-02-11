@@ -9,15 +9,15 @@ function template_maintain_database()
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
 		echo '
-			<div class="maintenance_finished">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
+	<div class="maintenance_finished">
+		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
+	</div>';
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['maintain_optimize'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_optimize_info'], '</p>
@@ -26,9 +26,9 @@ function template_maintain_database()
 			</form>
 		</div>
 
-		<we:cat>
+		<we:title>
 			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_backup'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_backup_info'], '</p>
@@ -53,16 +53,16 @@ function template_maintain_routine()
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
 		echo '
-			<div class="maintenance_finished">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
+	<div class="maintenance_finished">
+		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
+	</div>';
 
 	// Starts off with general maintenance procedures.
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['maintain_version'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_version_info'], '</p>
@@ -70,9 +70,9 @@ function template_maintain_routine()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['maintain_errors'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_errors_info'], '</p>
@@ -80,9 +80,9 @@ function template_maintain_routine()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['maintain_recount'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recount_info'], '</p>
@@ -90,9 +90,9 @@ function template_maintain_routine()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['maintain_logs'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_logs_info'], '</p>
@@ -100,9 +100,9 @@ function template_maintain_routine()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['maintain_cache'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_cache_info'], '</p>
@@ -122,9 +122,9 @@ function template_maintain_members()
 	// If maintenance has finished tell the user.
 	if (!empty($context['maintenance_finished']))
 		echo '
-			<div class="maintenance_finished">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
+	<div class="maintenance_finished">
+		', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
+	</div>';
 
 	add_js('
 	var membersSwap = false;
@@ -171,9 +171,9 @@ function template_maintain_members()
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['maintain_reattribute_posts'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
 				<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
@@ -207,9 +207,9 @@ function template_maintain_members()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_members'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 				<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
@@ -232,9 +232,9 @@ function template_maintain_members()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['maintain_recountposts'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recountposts_desc'], '</p>
@@ -287,9 +287,9 @@ function template_maintain_topics()
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['maintain_old'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<div class="flow_auto">
 				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
@@ -353,9 +353,9 @@ function template_maintain_topics()
 				</form>
 			</div>
 		</div>
-		<we:cat>
+		<we:title>
 			', $txt['move_topics_maintenance'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
@@ -420,9 +420,9 @@ function template_optimize()
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['maintain_optimize'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<p>
 				', $txt['database_numb_tables'], '<br>
@@ -451,9 +451,9 @@ function template_convert_utf8()
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['utf8_title'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
 				<p>', $txt['utf8_introduction'], '</p>
@@ -491,9 +491,9 @@ function template_convert_entities()
 
 	echo '
 	<div id="manage_maintenance">
-		<we:cat>
+		<we:title>
 			', $txt['entity_convert_title'], '
-		</we:cat>
+		</we:title>
 		<div class="windowbg wrc">
 			<p>', $txt['entity_convert_introduction'], '</p>
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">

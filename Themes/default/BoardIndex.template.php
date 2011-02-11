@@ -13,6 +13,7 @@ function template_boardindex()
 	id, href, link, name, is_collapsed (is it collapsed?), can_collapse (is it okay if it is?),
 	new (is it new?), collapse_href (href to collapse/expand), collapse_image (up/down image),
 	and boards. (see below.) */
+	$alt = false;
 	foreach ($context['categories'] as $category)
 	{
 		// If there are no parent boards we can see, avoid showing an empty category (unless it's collapsed)
@@ -51,8 +52,10 @@ function template_boardindex()
 			topics (# of), posts (# of), link, href, and last_post. (see below.) */
 			foreach ($category['boards'] as $board)
 			{
+				$alt = !$alt;
+
 				echo '
-				<tr id="board_', $board['id'], '" class="windowbg2">
+				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
 					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
 						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
 
@@ -136,7 +139,7 @@ function template_boardindex()
 					}
 					echo '
 					<tr id="board_', $board['id'], '_children">
-						<td colspan="3" class="children windowbg">
+						<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
 							<strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '
 						</td>
 					</tr>';

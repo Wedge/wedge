@@ -388,7 +388,7 @@ function smc_Toggle(oOptions)
 			$('#' + this.opt.aSwapImages[i].sId).show().data('that', this).click(function () {
 				$(this).data('that').toggle();
 				this.blur();
-			}).css('cursor', 'pointer');
+			}).css('cursor', 'pointer').mousedown(false);
 
 			// Preload the collapsed image.
 			smc_preCacheImage(this.opt.aSwapImages[i].srcCollapsed);
