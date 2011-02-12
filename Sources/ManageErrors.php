@@ -292,7 +292,7 @@ function ViewErrorLog()
 	// And this is pretty basic ;).
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
-	$context['sub_template'] = 'error_log';
+	showSubTemplate('error_log');
 	// Don't rewrite any URLs, we need them to remain exact!
 	$modSettings['pretty_enable_filters'] = false;
 }
@@ -397,7 +397,7 @@ function ViewFile()
 
 	loadTemplate('Errors');
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'show_file';
+	showSubTemplate('show_file');
 
 }
 

@@ -401,7 +401,7 @@ function PermissionIndex()
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
 
 	// Load the proper template.
-	$context['sub_template'] = 'permission_index';
+	showSubTemplate('permission_index');
 }
 
 function PermissionByBoard()
@@ -472,7 +472,7 @@ function PermissionByBoard()
 		}
 	}
 
-	$context['sub_template'] = 'by_board';
+	showSubTemplate('by_board');
 }
 
 function SetQuickGroups()
@@ -880,7 +880,7 @@ function ModifyMembergroup()
 			}
 		}
 	}
-	$context['sub_template'] = 'modify_group';
+	showSubTemplate('modify_group');
 	$context['page_title'] = $txt['permissions_modify_group'];
 }
 
@@ -1029,7 +1029,7 @@ function GeneralPermissionSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['permission_settings_title'];
-	$context['sub_template'] = 'show_settings';
+	showSubTemplate('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.
 	loadSource('ManageServer');
@@ -1922,7 +1922,7 @@ function EditPermissionProfiles()
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
-	$context['sub_template'] = 'edit_profiles';
+	showSubTemplate('edit_profiles');
 
 	// If we're creating a new one do it first.
 	if (isset($_POST['create']))
@@ -2253,7 +2253,7 @@ function ModifyPostModeration()
 	checkSession('get');
 
 	$context['page_title'] = $txt['permissions_post_moderation'];
-	$context['sub_template'] = 'postmod_permissions';
+	showSubTemplate('postmod_permissions');
 	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
 
 	// Load all the permission profiles.

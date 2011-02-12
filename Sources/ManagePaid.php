@@ -166,7 +166,7 @@ function ModifySubscriptionSettings($return_config = false)
 
 	// Some important context stuff
 	$context['page_title'] = $txt['settings'];
-	$context['sub_template'] = 'show_settings';
+	showSubTemplate('show_settings');
 	$context['settings_message'] = '<span class="smalltext">' . $txt['paid_note'] . '</span>';
 	$context[$context['admin_menu_name']]['current_subsection'] = 'settings';
 
@@ -345,7 +345,7 @@ function ViewSubscriptions()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'subscription_list';
 }
 
@@ -358,7 +358,7 @@ function ModifySubscription()
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = $context['action_type'] == 'delete' ? 'delete_subscription' : 'modify_subscription';
+	showSubTemplate($context['action_type'] == 'delete' ? 'delete_subscription' : 'modify_subscription');
 	$context['page_title'] = $txt['paid_' . $context['action_type'] . '_subscription'];
 
 	// Delete it?
@@ -839,7 +839,7 @@ function ViewSubscribedUsers()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'subscribed_users_list';
 }
 
@@ -914,7 +914,7 @@ function ModifyUserSubscription()
 	$context['action_type'] = $context['log_id'] ? 'edit' : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = 'modify_user_subscription';
+	showSubTemplate('modify_user_subscription');
 	$context['page_title'] = $txt[$context['action_type'] . '_subscriber'];
 
 	// If we haven't been passed the subscription ID get it.

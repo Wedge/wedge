@@ -529,23 +529,13 @@ tr.titlebg td {
 #amen {
 	padding-right: 0;
 }
-#context {
-	clear: right;
-}
+
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
-#left_section {
-	float: right;
-	padding-right: 0;
-	padding-left: 10px;
-}
 .left_menu li {
 	padding: 0 0.5em 0 0;
 }
-#main_section {
-	margin-right: 172px;
-	margin-left: 0;
-}
+
 /* Styles for generic tables.
 ------------------------------------------------------- */
 .topic_table {
@@ -574,6 +564,7 @@ tr.titlebg td {
 .errorbox p.alert {
 	float: right;
 }
+
 /* Styles for the profile section.
 ------------------------------------------------- */
 #basicinfo {
@@ -588,19 +579,28 @@ tr.titlebg td {
 	float: left;
 }
 #detailedinfo, #tracking {
-	dl { clear: left }
-	dt { float: right }
-	dd { float: right }
+	dl {
+		clear: left
+	}
+	dt, dd {
+		float: right
+	}
 }
 #avatar_server_stored div {
 	float: right;
 }
 
-#main_section {
+@media all and (max-width: 1000px) {
 	#basicinfo {
-		h4 { float: right }
-		img.avatar { float: left }
-		ul { clear: right }
+		h4 {
+			float: right
+		}
+		img.avatar {
+			float: left
+		}
+		ul {
+			clear: right
+		}
 	}
 	#userstatus {
 		clear: right;

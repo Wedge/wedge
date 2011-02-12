@@ -40,7 +40,7 @@ function Findmember()
 	loadSource('Subs-Auth');
 
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_pm';
+		showSubTemplate(WIRELESS_PROTOCOL . '_pm');
 
 	if (isset($_REQUEST['search']))
 		$context['last_search'] = westr::htmlspecialchars($_REQUEST['search'], ENT_QUOTES);

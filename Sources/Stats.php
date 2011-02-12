@@ -73,7 +73,7 @@ function Stats()
 		if (!empty($_REQUEST['collapse']))
 			obExit(false);
 
-		$context['sub_template'] = 'stats';
+		showSubTemplate('stats');
 		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', array('year' => $year, 'month' => $month));
 		$context['yearly'][$year]['months'][$month]['date'] = array(
 			'month' => sprintf('%02d', $month),

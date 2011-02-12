@@ -247,11 +247,11 @@ function Unreadreplies()
 	);
 
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_recent';
+		showSubTemplate(WIRELESS_PROTOCOL . '_recent');
 	else
 	{
 		loadTemplate('Recent');
-		$context['sub_template'] = 'replies';
+		showSubTemplate('replies');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)

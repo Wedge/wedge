@@ -309,12 +309,12 @@ function EditCategory()
 	}
 	if (!isset($_REQUEST['delete']))
 	{
-		$context['sub_template'] = 'modify_category';
+		showSubTemplate('modify_category');
 		$context['page_title'] = $_REQUEST['sa'] == 'newcat' ? $txt['mboards_new_cat_name'] : $txt['catEdit'];
 	}
 	else
 	{
-		$context['sub_template'] = 'confirm_category_delete';
+		showSubTemplate('confirm_category_delete');
 		$context['page_title'] = $txt['mboards_delete_cat'];
 	}
 }
@@ -604,12 +604,12 @@ function EditBoard()
 
 	if (!isset($_REQUEST['delete']))
 	{
-		$context['sub_template'] = 'modify_board';
+		showSubTemplate('modify_board');
 		$context['page_title'] = $txt['boardsEdit'];
 	}
 	else
 	{
-		$context['sub_template'] = 'confirm_board_delete';
+		showSubTemplate('confirm_board_delete');
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
 }
@@ -807,7 +807,7 @@ function EditBoardSettings($return_config = false)
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
 	loadTemplate('ManageBoards');
-	$context['sub_template'] = 'show_settings';
+	showSubTemplate('show_settings');
 
 	// Add some javascript stuff for the recycle box.
 	add_js('

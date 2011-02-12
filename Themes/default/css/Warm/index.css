@@ -52,6 +52,7 @@ body
 	width: 100%
 	display: table
 	table-layout: fixed
+	padding-top: 6px
 
 #sidebar
 	display: table-cell
@@ -68,7 +69,7 @@ body
 	vertical-align: top
 	width: 100%
 	min-height: 200px
-	padding: 12px 0 12px 30px
+	padding: 4px 0 12px 30px
 
 #top_section
 	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
@@ -174,7 +175,6 @@ h1.forumtitle
 			border-bottom: 0
 
 // The footer with copyright links etc.
-$footer_bg = #e8e3cb
 #footer
 	margin: 0 auto
 	border-top: 2px solid darken($footer_bg, 20%)
@@ -278,7 +278,7 @@ form
 	padding: 0
 	margin: 0
 
-input, button, select, textarea
+input, select, textarea
 	font: 95%/115% $main_font
 	color: #000
 	background: #fff
@@ -301,7 +301,8 @@ textarea
 	font: 100%/130% $main_font
 
 // Buttons should be styled a bit differently, in order to make them look more button'ish.
-input, textarea, button, select
+input, textarea, select
+	max-width: 95%
 	:hover, :focus
 		border: 1px solid #454545
 
@@ -482,9 +483,6 @@ li.subsection > a extends .menu_arrows
 .menu > li > a, .menu h4
 	border-radius: 6px
 
-#main_menu .chosen h4, #context_menus .chosen h4
-	background-color: #fd9604
-
 #context_menus
 	padding-left: 1em
 	min-height: 2.5em
@@ -492,12 +490,10 @@ li.subsection > a extends .menu_arrows
 		background-image: none
 		padding-right: 6px
 		:hover
-			// !!! background-color: #ebe7e2
 			background-color: rgba(0,0,0, .075)
 
-#context
-	clear: left
-	padding-top: .5em
+#main_menu .chosen h4, #context_menus .chosen h4
+	background-color: #fd9604
 
 .nodrop h4, #main_menu .nodrop h4
 	background-image: none
@@ -524,6 +520,9 @@ li.separator
 		display: block
 		visibility: visible
 		opacity: 1
+
+#main_content .menu
+	margin-bottom: 8px
 
 /*	These are the top-level menu icons. It may look complicated, but it isn't.
 	Just fetch documentation on image spriting. You can also simply use
@@ -1081,8 +1080,8 @@ dfn
 		letter-spacing: -1px
 		color: lighten(grey, 10%)
 		text-decoration: underline
-	a:hover
-		color: $board_col
+		:hover
+			color: $board_col
 
 .title
 	color: channels(grey, 30%)
@@ -1098,12 +1097,12 @@ dfn
 		margin-right: .5em
 		margin-top: 1px
 
-.cat a
-	font-size: .92em
-
-.cat img extends .title img
-	&[alt="+"], &[alt="-"]
-		margin-top: 4px
+.cat
+	a
+		font-size: .92em
+	img extends .title img
+		&[alt="+"], &[alt="-"]
+			margin-top: 4px
 
 .title2 extends .title
 	font-size: 1.1em
@@ -1112,6 +1111,9 @@ dfn
 
 img[alt="!"]
 	margin-top: 8px
+	#sidebar &
+		float: right
+		margin: 3px 0 0 7px
 
 // A general table class
 .table_grid
@@ -1372,6 +1374,7 @@ $head_bg = rgb(232,226,231)
 $head_bg = rgba(233,235,186,.66)
 $menu_bg = #f7f0da
 $board_col = #d97b33
+$footer_bg = #e8e3cb
 
 // These are unused for now, but I like 'em...
 $other_bg = #e7e9b8

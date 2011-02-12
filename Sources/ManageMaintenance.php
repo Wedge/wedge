@@ -196,7 +196,8 @@ function ManageMaintenance()
 	// Set a few things.
 	$context['page_title'] = $txt['maintain_title'];
 	$context['sub_action'] = $subAction;
-	$context['sub_template'] = !empty($subActions[$subAction]['template']) ? $subActions[$subAction]['template'] : '';
+	if (!empty($subActions[$subAction]['template']))
+		showSubTemplate($subActions[$subAction]['template']);
 
 	// Finally fall through to what we are doing.
 	$subActions[$subAction]['function']();
@@ -447,7 +448,7 @@ function ConvertUtf8()
 		$context['charset_list'] = array_keys($charsets);
 
 		$context['page_title'] = $txt['utf8_title'];
-		$context['sub_template'] = 'convert_utf8';
+		showSubTemplate('convert_utf8');
 		return;
 	}
 
@@ -718,11 +719,11 @@ function ConvertEntities()
 	// The first step is just a text screen with some explanation.
 	if ($context['first_step'])
 	{
-		$context['sub_template'] = 'convert_entities';
+		showSubTemplate('convert_entities');
 		return;
 	}
 	// Otherwise use the generic "not done" template.
-	$context['sub_template'] = 'not_done';
+	showSubTemplate('not_done');
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
@@ -907,7 +908,7 @@ function OptimizeTables()
 	$opttab = 0;
 
 	$context['page_title'] = $txt['database_optimize'];
-	$context['sub_template'] = 'optimize';
+	showSubTemplate('optimize');
 
 	// Only optimize the tables related to this smf install, not all the tables in the db
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
@@ -959,7 +960,7 @@ function AdminBoardRecount()
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '3';
-	$context['sub_template'] = 'not_done';
+	showSubTemplate('not_done');
 
 	// Try for as much time as possible.
 	@set_time_limit(600);
@@ -1461,7 +1462,7 @@ function VersionDetail()
 	// Make it easier to manage for the template.
 	$context['forum_version'] = $forum_version;
 
-	$context['sub_template'] = 'view_versions';
+	showSubTemplate('view_versions');
 	$context['page_title'] = $txt['admin_version_check'];
 }
 
@@ -1595,7 +1596,7 @@ function MaintainRecountPosts()
 	$context['continue_countdown'] = '3';
 	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';
-	$context['sub_template'] = 'not_done';
+	showSubTemplate('not_done');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 	$context['start_time'] = time();
 
@@ -1731,7 +1732,7 @@ function MaintainMassMoveTopics()
 	$context['continue_countdown'] = '3';
 	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';
-	$context['sub_template'] = 'not_done';
+	showSubTemplate('not_done');
 	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['start_time'] = time();
 

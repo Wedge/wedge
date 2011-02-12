@@ -486,7 +486,7 @@ function ModifyProfile($post_errors = array())
 		);
 
 	// Set the template for this area and add the profile layer.
-	$context['sub_template'] = $profile_include_data['function'];
+	showSubTemplate($profile_include_data['function']);
 	$context['template_layers'][] = 'profile';
 
 	// All the subactions that require a user password in order to validate.
@@ -494,7 +494,7 @@ function ModifyProfile($post_errors = array())
 	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
 
 	// If we're in wireless then we have a cut down template...
-	if (WIRELESS && $context['sub_template'] == 'summary')
+	if (WIRELESS && in_array('summary', $context['sub_template']))
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_profile';
 
 	// These will get populated soon!

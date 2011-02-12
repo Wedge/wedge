@@ -569,7 +569,7 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	$context['sub_template'] = $context['admin_area'] == 'credits' ? 'credits' : 'admin';
+	showSubTemplate($context['admin_area'] == 'credits' ? 'credits' : 'admin');
 	$context['page_title'] = $context['admin_area'] == 'credits' ? $txt['support_credits_title'] : $txt['admin_center'];
 
 	// The format of this array is: permission, action, title, description, icon.
@@ -635,7 +635,7 @@ function AdminSearch()
 	$context['search_type'] = !isset($_REQUEST['search_type']) || !isset($subactions[$_REQUEST['search_type']]) ? 'internal' : $_REQUEST['search_type'];
 	$context['search_term'] = isset($_REQUEST['search_term']) ? westr::htmlspecialchars($_REQUEST['search_term'], ENT_QUOTES) : '';
 
-	$context['sub_template'] = 'admin_search_results';
+	showSubTemplate('admin_search_results');
 	$context['page_title'] = $txt['admin_search_results'];
 
 	// Keep track of what the admin wants.

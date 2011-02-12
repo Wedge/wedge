@@ -114,14 +114,6 @@
 		height: 150px
 
 
-/* Overrides for the admin template
-------------------------------------------------------- */
-#main_section
-	height: 655px
-	table
-		width: 99%
-
-
 /* Overrides for the profile template
 ------------------------------------------------------- */
 #basicinfo h4

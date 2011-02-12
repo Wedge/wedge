@@ -199,7 +199,7 @@ function SplitIndex()
 		'id' => $_GET['at'],
 		'subject' => $_REQUEST['subname']
 	);
-	$context['sub_template'] = 'ask';
+	showSubTemplate('ask');
 	$context['page_title'] = $txt['split'];
 }
 
@@ -285,7 +285,7 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" sub template.
-	$context['sub_template'] = isset($_REQUEST['xml']) ? 'split' : 'select';
+	showSubTemplate(isset($_REQUEST['xml']) ? 'split' : 'select');
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
@@ -981,7 +981,7 @@ function MergeIndex()
 	if (empty($context['topics']) && count($context['boards']) <= 1)
 		fatal_lang_error('merge_need_more_topics');
 
-	$context['sub_template'] = 'merge';
+	showSubTemplate('merge');
 }
 
 // Now that the topic IDs are known, do the proper merging.
@@ -1182,7 +1182,7 @@ function MergeExecute($topics = array())
 			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
-		$context['sub_template'] = 'merge_extra_options';
+		showSubTemplate('merge_extra_options');
 		return;
 	}
 
@@ -1597,7 +1597,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	$context['sub_template'] = 'merge_done';
+	showSubTemplate('merge_done');
 }
 
 function MergePosts($error_report = true)

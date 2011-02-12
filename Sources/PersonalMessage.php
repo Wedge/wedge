@@ -124,7 +124,7 @@ function MessageMain()
 	loadLanguage('PersonalMessage');
 
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_pm';
+		showSubTemplate(WIRELESS_PROTOCOL . '_pm');
 	else
 		loadTemplate('PersonalMessage');
 
@@ -884,7 +884,7 @@ function MessageFolder()
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	if (!WIRELESS)
-		$context['sub_template'] = 'folder';
+		showSubTemplate('folder');
 	$context['page_title'] = $txt['pm_inbox'];
 
 	// Finally mark the relevant messages as read.
@@ -1134,7 +1134,7 @@ function MessageSearch()
 
 	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($modSettings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search';
+	showSubTemplate('search');
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
@@ -1588,7 +1588,7 @@ function MessageSearch2()
 
 	// Finish off the context.
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search_results';
+	showSubTemplate('search_results');
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
@@ -1609,7 +1609,7 @@ function MessagePost()
 	if (!WIRELESS)
 	{
 		loadTemplate('PersonalMessage');
-		$context['sub_template'] = 'send';
+		showSubTemplate('send');
 	}
 
 	// Needed for the WYSIWYG editor.
@@ -1952,7 +1952,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
 	if (!WIRELESS)
-		$context['sub_template'] = 'send';
+		showSubTemplate('send');
 
 	$context['page_title'] = $txt['send_message'];
 
@@ -2613,7 +2613,7 @@ function MessageKillAllQuery()
 	global $txt, $context;
 
 	// Only have to set up the template....
-	$context['sub_template'] = 'ask_delete';
+	showSubTemplate('ask_delete');
 	$context['page_title'] = $txt['delete_all'];
 	$context['delete_all'] = $_REQUEST['f'] == 'all';
 
@@ -2703,7 +2703,7 @@ function MessagePrune()
 		'name' => $txt['pm_prune']
 	);
 
-	$context['sub_template'] = 'prune';
+	showSubTemplate('prune');
 	$context['page_title'] = $txt['pm_prune'];
 }
 
@@ -2921,7 +2921,7 @@ function ManageLabels()
 	);
 
 	$context['page_title'] = $txt['pm_manage_labels'];
-	$context['sub_template'] = 'labels';
+	showSubTemplate('labels');
 
 	$the_labels = array();
 	// Add all existing labels to the array to save, slashing them as necessary...
@@ -3190,7 +3190,7 @@ function ReportMessage()
 	// If we're here, just send the user to the template, with a few useful context bits.
 	if (!isset($_POST['report']))
 	{
-		$context['sub_template'] = 'report_message';
+		showSubTemplate('report_message');
 
 		// !!! I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
 		// Now, get all the administrators.
@@ -3332,7 +3332,7 @@ function ReportMessage()
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
-		$context['sub_template'] = 'report_message_complete';
+		showSubTemplate('report_message_complete');
 	}
 }
 
@@ -3348,7 +3348,7 @@ function ManageRules()
 	);
 
 	$context['page_title'] = $txt['pm_manage_rules'];
-	$context['sub_template'] = 'rules';
+	showSubTemplate('rules');
 
 	// Load them... load them!!
 	LoadRules();
@@ -3392,7 +3392,7 @@ function ManageRules()
 	if (isset($_GET['add']))
 	{
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
-		$context['sub_template'] = 'add_rule';
+		showSubTemplate('add_rule');
 
 		// Current rule information...
 		if ($context['rid'])
@@ -3795,7 +3795,7 @@ function MessageDrafts()
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['sub_template'] = 'pm_drafts';
+	showSubTemplate('pm_drafts');
 	$context['page_title'] = $txt['showDrafts'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))

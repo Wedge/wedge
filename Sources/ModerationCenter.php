@@ -210,7 +210,7 @@ function ModerationHome()
 	loadTemplate('ModerationCenter');
 
 	$context['page_title'] = $txt['moderation_center'];
-	$context['sub_template'] = 'moderation_center';
+	showSubTemplate('moderation_center');
 
 	// Load what blocks the user actually can see...
 	$valid_blocks = array(
@@ -553,7 +553,7 @@ function ReportedPosts()
 
 	// Set up the comforting bits...
 	$context['page_title'] = $txt['mc_reported_posts'];
-	$context['sub_template'] = 'reported_posts';
+	showSubTemplate('reported_posts');
 
 	// Are we viewing open or closed reports?
 	$context['view_closed'] = isset($_GET['sa']) && $_GET['sa'] == 'closed' ? 1 : 0;
@@ -1007,7 +1007,7 @@ function ModReport()
 	// Finally we are done :P
 	loadTemplate('ModerationCenter');
 	$context['page_title'] = sprintf($txt['mc_viewmodreport'], $context['report']['subject'], $context['report']['author']['name']);
-	$context['sub_template'] = 'viewmodreport';
+	showSubTemplate('viewmodreport');
 }
 
 // Show a notice sent to a user.
@@ -1016,7 +1016,7 @@ function ShowNotice()
 	global $txt, $context;
 
 	$context['page_title'] = $txt['show_notice'];
-	$context['sub_template'] = 'show_notice';
+	showSubTemplate('show_notice');
 	$context['template_layers'] = array();
 
 	loadTemplate('ModerationCenter');
@@ -1245,7 +1245,7 @@ function ViewWatchedUsers()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'watch_user_list';
 }
 
@@ -1550,7 +1550,7 @@ function ViewWarningLog()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'warning_list';
 }
 
@@ -1747,7 +1747,7 @@ function ViewWarningTemplates()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'warning_template_list';
 }
 
@@ -1818,7 +1818,7 @@ function ModifyWarningTemplate()
 
 	// Standard template things.
 	$context['page_title'] = $context['is_edit'] ? $txt['mc_warning_template_modify'] : $txt['mc_warning_template_add'];
-	$context['sub_template'] = 'warn_template';
+	showSubTemplate('warn_template');
 	$context[$context['moderation_menu_name']]['current_subsection'] = 'templates';
 
 	// Defaults.
@@ -1947,7 +1947,7 @@ function ModerationSettings()
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');
 	$context['page_title'] = $txt['mc_settings'];
-	$context['sub_template'] = 'moderation_settings';
+	showSubTemplate('moderation_settings');
 
 	// What blocks can this user see?
 	$context['homepage_blocks'] = array(

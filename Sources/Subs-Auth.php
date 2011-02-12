@@ -225,7 +225,7 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
-	$context['sub_template'] = 'kick_guest';
+	showSubTemplate('kick_guest');
 	$context['page_title'] = $txt['login'];
 }
 
@@ -241,7 +241,7 @@ function InMaintenance()
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
 
 	// Basic template stuff..
-	$context['sub_template'] = 'maintenance';
+	showSubTemplate('maintenance');
 	$context['title'] = &$mtitle;
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
@@ -278,7 +278,7 @@ function adminLogin()
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	$context['sub_template'] = 'admin_login';
+	showSubTemplate('admin_login');
 
 	// And title the page something like "Login".
 	if (!isset($context['page_title']))

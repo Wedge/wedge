@@ -154,7 +154,7 @@ function ReportsMain()
 	// If they haven't choosen a report type which is valid, send them off to the report type chooser!
 	if (empty($_REQUEST['rt']) || !isset($context['report_types'][$_REQUEST['rt']]))
 	{
-		$context['sub_template'] = 'report_type';
+		showSubTemplate('report_type');
 		return;
 	}
 	$context['report_type'] = $_REQUEST['rt'];
@@ -172,7 +172,7 @@ function ReportsMain()
 	// Specific template? Use that instead of main!
 	if (isset($_REQUEST['st'], $reportTemplates[$_REQUEST['st']]))
 	{
-		$context['sub_template'] = $_REQUEST['st'];
+		showSubTemplate($_REQUEST['st']);
 
 		// Are we disabling the other layers - print friendly for example?
 		if ($reportTemplates[$_REQUEST['st']]['layers'] !== null)

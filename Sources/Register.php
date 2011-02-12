@@ -102,7 +102,7 @@ function Register($reg_errors = array())
 		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'registration_agreement' : 'registration_form';
+	showSubTemplate($current_step == 1 ? 'registration_agreement' : 'registration_form');
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	$context['current_forum_time_js'] = time() + $modSettings['time_offset'] * 3600;
@@ -500,11 +500,10 @@ function Register2($verifiedOpenID = false)
 	elseif (!empty($modSettings['registration_method']))
 	{
 		loadTemplate('Register');
-
+		showSubTemplate('after');
 		$context += array(
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
-			'sub_template' => 'after',
 			'description' => $modSettings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
 		);
 	}
@@ -525,7 +524,7 @@ function RegisterCheckUsername()
 
 	// This is XML!
 	loadTemplate('Xml');
-	$context['sub_template'] = 'check_username';
+	showSubTemplate('check_username');
 	$context['checked_username'] = isset($_GET['username']) ? $_GET['username'] : '';
 	$context['valid_username'] = true;
 

@@ -81,7 +81,7 @@ function CoppaForm()
 			// Shortcut for producing underlines.
 			$context['ul'] = '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>';
 			$context['template_layers'] = array();
-			$context['sub_template'] = 'coppa_form';
+			showSubTemplate('coppa_form');
 			$context['page_title'] = $txt['coppa_form_title'];
 			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
 		}
@@ -106,10 +106,8 @@ function CoppaForm()
 	}
 	else
 	{
-		$context += array(
-			'page_title' => $txt['coppa_title'],
-			'sub_template' => 'coppa',
-		);
+		showSubTemplate('coppa');
+		$context['page_title'] = $txt['coppa_title'];
 
 		$context['coppa'] = array(
 			'body' => str_replace('{MINIMUM_AGE}', $modSettings['coppaAge'], $txt['coppa_after_registration']),

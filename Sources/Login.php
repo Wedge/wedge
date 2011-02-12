@@ -48,13 +48,13 @@ function Login()
 
 	// In wireless?  If so, use the correct sub template.
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_login';
+		showSubTemplate(WIRELESS_PROTOCOL . '_login');
 	// Otherwise, we need to load the Login template/language file.
 	else
 	{
 		loadLanguage('Login');
 		loadTemplate('Login');
-		$context['sub_template'] = 'login';
+		showSubTemplate('login');
 	}
 
 	// Get the template ready.... not really much else to do.

@@ -167,7 +167,7 @@ function RemindPick()
 			updateMemberData($row['id_member'], array('validation_code' => substr(md5($password), 0, 10)));
 
 		// Set up the template.
-		$context['sub_template'] = 'sent';
+		showSubTemplate('sent');
 
 		// Dont really.
 		return;
@@ -179,7 +179,7 @@ function RemindPick()
 	}
 
 	// No we're here setup the context for template number 2!
-	$context['sub_template'] = 'reminder_pick';
+	showSubTemplate('reminder_pick');
 	$context['current_member'] = array(
 		'id' => $row['id_member'],
 		'name' => $row['member_name'],
@@ -198,9 +198,9 @@ function setPassword()
 		fatal_lang_error('no_access', false);
 
 	// Fill the context array.
+	showSubTemplate('set_password');
 	$context += array(
 		'page_title' => $txt['reminder_set_password'],
-		'sub_template' => 'set_password',
 		'code' => $_REQUEST['code'],
 		'memID' => (int) $_REQUEST['u']
 	);
@@ -273,9 +273,9 @@ function setPassword2()
 	call_hook('reset_pass', array($username, $username, $_POST['passwrd1']));
 
 	loadTemplate('Login');
+	showSubTemplate('login');
 	$context += array(
 		'page_title' => $txt['reminder_password_set'],
-		'sub_template' => 'login',
 		'default_username' => $username,
 		'default_password' => $_POST['passwrd1'],
 		'never_expire' => false,
@@ -324,7 +324,7 @@ function SecretAnswerInput()
 	$context['remind_type'] = '';
 	$context['secret_question'] = $row['secret_question'];
 
-	$context['sub_template'] = 'ask';
+	showSubTemplate('ask');
 }
 
 function SecretAnswer2()
@@ -365,7 +365,7 @@ function SecretAnswer2()
 	// If it's OpenID this is where the music ends.
 	if (!empty($row['openid_uri']))
 	{
-		$context['sub_template'] = 'sent';
+		showSubTemplate('sent');
 		$context['description'] = sprintf($txt['reminder_openid_is'], $row['openid_uri']);
 		return;
 	}
@@ -393,9 +393,9 @@ function SecretAnswer2()
 
 	// Tell them it went fine.
 	loadTemplate('Login');
+	showSubTemplate('login');
 	$context += array(
 		'page_title' => $txt['reminder_password_set'],
-		'sub_template' => 'login',
 		'default_username' => $row['member_name'],
 		'default_password' => $_POST['passwrd1'],
 		'never_expire' => false,

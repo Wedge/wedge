@@ -305,9 +305,9 @@ function viewDrafts($memID)
 	}
 
 	// Some initial context.
+	showSubTemplate('showDrafts');
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['current_member'] = $memID;
-	$context['sub_template'] = 'showDrafts';
 	$context['page_title'] = $txt['showDrafts'] . ' - ' . $context['member']['name'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))
@@ -1068,7 +1068,7 @@ function tracking($memID)
 	$context['page_title'] = $txt['trackUser'] . ' - ' . $subActions[$context['tracking_area']][1] . ' - ' . $user_profile[$memID]['real_name'];
 
 	// Pass on to the actual function.
-	$context['sub_template'] = $subActions[$context['tracking_area']][0];
+	showSubTemplate($subActions[$context['tracking_area']][0]);
 	$subActions[$context['tracking_area']][0]($memID);
 }
 
@@ -1400,7 +1400,7 @@ function TrackIP($memID = 0)
 		$context['ip'] = $user_info['ip'];
 		loadTemplate('Profile');
 		loadLanguage('Profile');
-		$context['sub_template'] = 'trackIP';
+		showSubTemplate('trackIP');
 		$context['page_title'] = $txt['profile'];
 		$context['base_url'] = $scripturl . '?action=trackip';
 	}
@@ -1757,7 +1757,7 @@ function trackEdits($memID)
 	// Create the error list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'edit_list';
 }
 

@@ -1343,7 +1343,7 @@ function editBuddyIgnoreLists($memID)
 	);
 
 	// Pass on to the actual function.
-	$context['sub_template'] = $subActions[$context['list_area']][0];
+	showSubTemplate($subActions[$context['list_area']][0]);
 	$subActions[$context['list_area']][0]($memID);
 }
 
@@ -1569,7 +1569,7 @@ function account($memID)
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any')))
 		loadCustomFields($memID, 'account');
 
-	$context['sub_template'] = 'edit_options';
+	showSubTemplate('edit_options');
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
@@ -1591,7 +1591,7 @@ function forumProfile($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'forumProfile');
 
-	$context['sub_template'] = 'edit_options';
+	showSubTemplate('edit_options');
 	$context['page_desc'] = $txt['forumProfile_info'];
 
 	setupProfileContext(
@@ -1613,7 +1613,7 @@ function pmprefs($memID)
 	loadThemeOptions($memID);
 	loadCustomFields($memID, 'pmprefs');
 
-	$context['sub_template'] = 'edit_options';
+	showSubTemplate('edit_options');
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	setupProfileContext(
@@ -1708,7 +1708,7 @@ function theme($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'theme');
 
-	$context['sub_template'] = 'edit_options';
+	showSubTemplate('edit_options');
 	$context['page_desc'] = $txt['theme_info'];
 
 	setupProfileContext(
@@ -1794,7 +1794,7 @@ function authentication($memID, $saving = false)
 	// Some stuff.
 	$context['member']['openid_uri'] = $cur_profile['openid_uri'];
 	$context['auth_method'] = empty($cur_profile['openid_uri']) ? 'password' : 'openid';
-	$context['sub_template'] = 'authentication_method';
+	showSubTemplate('authentication_method');
 }
 
 // Display the notifications and settings for changes.
@@ -3010,8 +3010,8 @@ function profileSendActivation()
 	// Send them to the done-with-registration-login screen.
 	loadTemplate('Register');
 
+	showSubTemplate('after');
 	$context['page_title'] = $txt['profile'];
-	$context['sub_template'] = 'after';
 	$context['title'] = $txt['activate_changed_email_title'];
 	$context['description'] = $txt['activate_changed_email_desc'];
 

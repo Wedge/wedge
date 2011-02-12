@@ -55,28 +55,26 @@ function BoardIndex()
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_boardindex';
+		showSubTemplate(WIRELESS_PROTOCOL . '_boardindex');
 	else
 	{
 		loadTemplate('BoardIndex');
 		loadTemplate('BoardIndexInfoCenter');
-		$context['sub_template'] = array(
-			'sidebar' => array(
-				'info_center_begin',
-				'info_center_recentposts',
-				'info_center_calendar',
-				'info_center_statistics',
-				'info_center_usersonline',
-				'info_center_personalmsg',
-				'info_center_end',
-			),
-			'main' => array(
-				'boardindex_ministats',
-				'boardindex_newsfader',
-				'boardindex',
-				'boardindex_below',
-			),
-		);
+		showSubTemplate(array(
+			'info_center_begin',
+			'info_center_recentposts',
+			'info_center_calendar',
+			'info_center_statistics',
+			'info_center_usersonline',
+			'info_center_personalmsg',
+			'info_center_end',
+		), 'sidebar');
+		showSubTemplate(array(
+			'boardindex_ministats',
+			'boardindex_newsfader',
+			'boardindex',
+			'boardindex_below',
+		));
 	}
 
 	// Set a canonical URL for this page.

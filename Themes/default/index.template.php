@@ -37,9 +37,6 @@ function template_init()
 		if this is 'never' or isn't set at all, images from the default theme will not be used. */
 	$settings['use_default_images'] = 'never';
 
-	/* Set a setting that tells the theme that it can render the tabs. */
-	$settings['use_tabs'] = true;
-
 	/* Use plain buttons - as opposed to text buttons? */
 	$settings['use_buttons'] = true;
 
@@ -311,31 +308,30 @@ function template_body_below()
 
 	echo '
 	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
+</div>
 
-	<script><!-- // --><![CDATA[
-		function noi_resize()
+<script><!-- // --><![CDATA[
+	function noi_resize()
+	{
+		var d = document, m = d.getElementById("main_content"), f = d.getElementById("footer"),
+			s = d.getElementById("sidebar"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
+		if (w && w < 728 && !wedge_side)
 		{
-			var d = document, m = d.getElementById("main_content"), f = d.getElementById("footer"),
-				s = d.getElementById("sidebar"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
-			if (w && w < 728 && !wedge_side)
-			{
-				wedge_side = 1;
-				t.removeChild(s);
-				f.appendChild(s);
-			}
-			else if (w >= 952 && wedge_side)
-			{
-				wedge_side = 0;
-				f.removeChild(s);
-				t.insertBefore(s, m);
-			}
+			wedge_side = 1;
+			t.removeChild(s);
+			f.appendChild(s);
 		}
-		wedge_side = 0;
-		window.onresize = noi_resize;
-		noi_resize();
-	// ]]></script>
-
-</div>';
+		else if (w >= 952 && wedge_side)
+		{
+			wedge_side = 0;
+			f.removeChild(s);
+			t.insertBefore(s, m);
+		}
+	}
+	wedge_side = 0;
+	window.onresize = noi_resize;
+	noi_resize();
+// ]]></script>';
 }
 
 function template_html_below()
@@ -347,7 +343,6 @@ function template_html_below()
 	// Don't modify the HTML comments, as they're placeholders for Wedge.
 
 	echo $context['footer'], '
-
 <!-- Javascript area -->';
 
 	// Code added here through add_js_inline() will execute before jQuery

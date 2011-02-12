@@ -109,8 +109,7 @@ p.moderators
 	padding: .5em
 	height: 2em
 	ul li
-		margin: 0
-		padding: 0
+		margin, padding: 0
 		float: left
 		width: 20%
 		text-align: center
@@ -203,9 +202,8 @@ img.new_posts
 		dt
 			padding: .3em 0
 			width: 30%
-			float: left
+			float, clear: left
 			margin: 0
-			clear: left
 		dd
 			margin: 0 0 0 2em
 			padding: .1em 0 0
@@ -750,10 +748,6 @@ dl.register_form
 tr.titlebg td
 	padding-left: .7em
 
-// Custom profile fields like to play with us some times.
-#context .custom_field
-	margin-bottom: 15px
-
 #admin_login .centertext
 	padding: 1em
 	.error
@@ -763,28 +757,16 @@ tr.titlebg td
 ------------------------------------------------------- */
 .left_menu
 	&, ul, li
-		padding: 0
-		margin: 0
+		padding, margin: 0
 		list-style: none
-
-#left_section
-	width: 160px
-	float: left
-	padding-right: 10px
-
-.side_section .title
-	margin-bottom: 5px
-
-#main_container
-	margin-bottom: 5px
-
-.left_menu
 	margin-bottom: .5em
 	li
 		padding: 0 0 0 .5em
+	li.separator
+		display: none // alternatively, line-height: 3px
 
-#main_section
-	margin-left: 172px
+.side_section .title
+	margin-bottom: 5px
 
 tr.windowbg td,
 tr.approvebg td,
@@ -965,7 +947,7 @@ dl
 	float: left
 	padding: 0 3px
 
-#main_section
+@media all and (max-width: 1000px)
 	#basicinfo, #detailedinfo
 		width: 100%
 	#basicinfo

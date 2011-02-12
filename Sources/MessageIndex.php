@@ -55,7 +55,7 @@ function MessageIndex()
 	}
 
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_messageindex';
+		showSubTemplate(WIRELESS_PROTOCOL . '_messageindex');
 	else
 		loadTemplate('MessageIndex');
 

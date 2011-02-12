@@ -2268,20 +2268,26 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		if (WIRELESS && !isset($context['sub_template']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		// First up, did we get a main subtemplate list? Or did we only get a single template to play with, that we need to make into a list?
+		// We can either get sidebar and/or main sub-templates, either as a string or an array of strings.
+		if (empty($context['sidebar_template']))
+			$context['sidebar_template'] = array();
+
+		if (empty($context['sub_template']))
+			$context['sub_template'] = array('main');
+
+		// If we're calling from jQuery, don't show the sidebar
 		if (empty($context['is_ajax']))
 		{
-			if (empty($context['sub_template']))
-				$context['sub_template'] = array('sidebar' => array(), 'main' => array('main'));
-
-			if (!is_array($context['sub_template']))
-				$context['sub_template'] = array('sidebar' => array(), 'main' => array($context['sub_template']));
-
-			foreach ($context['sub_template'] as $key => &$template)
-				loadSubTemplate($template, false, $key);
+			loadSubTemplate('sidebar_above', 'ignore');
+			foreach ((array) $context['sidebar_template'] as $key => $template)
+				loadSubTemplate($template);
+			loadSubTemplate('sidebar_below', 'ignore');
 		}
-		else
-			loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+
+		loadSubTemplate('main_above', 'ignore');
+		foreach ((array) $context['sub_template'] as $template)
+			loadSubTemplate($template);
+		loadSubTemplate('main_below', 'ignore');
 
 		// Just so we don't get caught in an endless loop of errors from the footer...
 		if (!$footer_done)

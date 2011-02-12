@@ -75,7 +75,7 @@ function template_unread()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
-	<div id="recent" class="main_content">';
+	<div id="recent">';
 
 	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
 
@@ -107,7 +107,7 @@ function template_unread()
 		echo '
 			<div class="pagesection">';
 
-		if (!empty($mark_read) && !empty($settings['use_tabs']))
+		if (!empty($mark_read))
 			template_button_strip($mark_read, 'right');
 
 		echo '
@@ -201,16 +201,7 @@ function template_unread()
 
 		if (!empty($context['topics']))
 			$mark_read['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.gif', 'lang' => true, 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true);
-
-		if (empty($settings['use_tabs']) && !empty($mark_read))
-			echo '
-						<tr class="catbg">
-							<td colspan="', $show_checkboxes ? '6' : '5', '" class="right">
-								', template_button_strip($mark_read, 'top'), '
-							</td>
-						</tr>';
-
-		if (empty($context['topics']))
+		else
 			echo '
 					<tr style="display: none;"><td></td></tr>';
 
@@ -220,7 +211,7 @@ function template_unread()
 			</div>
 			<div class="pagesection" id="readbuttons">';
 
-		if (!empty($settings['use_tabs']) && !empty($mark_read))
+		if (!empty($mark_read))
 			template_button_strip($mark_read, 'right');
 
 		echo '
@@ -290,7 +281,7 @@ function template_replies()
 		echo '
 			<div class="pagesection">';
 
-		if (!empty($mark_read) && !empty($settings['use_tabs']))
+		if (!empty($mark_read))
 			template_button_strip($mark_read, 'right');
 
 		echo '
@@ -382,24 +373,11 @@ function template_replies()
 						</tr>';
 		}
 
-		if (empty($settings['use_tabs']) && !empty($mark_read))
-			echo '
-						<tr class="catbg">
-							<td colspan="', $show_checkboxes ? '6' : '5', '" class="right">
-								', template_button_strip($mark_read, 'top'), '
-							</td>
-						</tr>';
-
 		echo '
 					</tbody>
 				</table>
 			</div>
-			<div class="pagesection">';
-
-		if (!empty($settings['use_tabs']) && !empty($mark_read))
-			template_button_strip($mark_read, 'right');
-
-		echo '
+			<div class="pagesection">', !empty($mark_read) ? template_button_strip($mark_read, 'right') : '', '
 				<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 			</div>';
 	}

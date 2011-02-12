@@ -1964,23 +1964,9 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
  * @param string $sub_template_name The name of the function (without template_ prefix) to be called.
  * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
  */
-function loadSubTemplate($sub_template_name, $fatal = false, $key = 0)
+function loadSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
-
-	if (is_array($sub_template_name))
-	{
-		if (!is_numeric($key))
-			loadSubTemplate($key . '_above', 'ignore');
-
-		foreach ($sub_template_name as &$real_template)
-			loadSubTemplate($real_template);
-
-		if (!is_numeric($key))
-			loadSubTemplate($key . '_below', 'ignore');
-
-		return;
-	}
 
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;
@@ -1998,6 +1984,22 @@ function loadSubTemplate($sub_template_name, $fatal = false, $key = 0)
 	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $sub_template_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
 		echo '
 <div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $sub_template_name, ' ends ----</div>';
+}
+
+/**
+ * Add a function to the list of sub-templates.
+ *
+ * @param string $sub_templates The name of the function (without template_ prefix) to be called.
+ * @param string $target Which flow to load this function in. Can either be 'main' (main contents), or 'sidebar' (sidebar area).
+ */
+function showSubTemplate($sub_templates, $target = 'main')
+{
+	global $context;
+
+	if ($target === 'main')
+		$context['sub_template'] = array_merge(isset($context['sub_template']) ? (array) $context['sub_template'] : array(), (array) $sub_templates);
+	else // Sidebar, maybe?
+		$context['sidebar_template'] = array_merge(isset($context['sidebar_template']) ? (array) $context['sidebar_template'] : array(), (array) $sub_templates);
 }
 
 /**

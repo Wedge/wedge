@@ -157,7 +157,7 @@ function BoardNotify()
 		$context['board_href'] = $scripturl . '?board=' . $board . '.' . $_REQUEST['start'];
 		$context['start'] = $_REQUEST['start'];
 		$context['page_title'] = $txt['notification'];
-		$context['sub_template'] = 'notify_board';
+		showSubTemplate('notify_board');
 
 		return;
 	}

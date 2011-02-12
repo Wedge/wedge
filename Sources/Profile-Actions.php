@@ -708,7 +708,7 @@ function subscriptions($memID)
 			}
 		}
 
-		$context['sub_template'] = 'paid_done';
+		showSubTemplate('paid_done');
 		return;
 	}
 	// If this is confirmation then it's simpler...
@@ -824,13 +824,13 @@ function subscriptions($memID)
 		}
 
 		// Change the template.
-		$context['sub_template'] = 'choose_payment';
+		showSubTemplate('choose_payment');
 
 		// Quit.
 		return;
 	}
 	else
-		$context['sub_template'] = 'user_subscription';
+		showSubTemplate('user_subscription');
 }
 
 ?>

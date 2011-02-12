@@ -83,7 +83,7 @@ function Display()
 
 	// Load the proper template and/or sub template.
 	if (WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_display';
+		showSubTemplate(WIRELESS_PROTOCOL . '_display');
 	else
 		loadTemplate('Display');
 

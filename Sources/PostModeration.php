@@ -306,7 +306,7 @@ function UnapprovedPosts()
 	}
 	wesql::free_result($request);
 
-	$context['sub_template'] = 'unapproved_posts';
+	showSubTemplate('unapproved_posts');
 }
 
 // View all unapproved attachments.
@@ -461,7 +461,7 @@ function UnapprovedAttachments()
 	}
 	wesql::free_result($request);
 
-	$context['sub_template'] = 'unapproved_attachments';
+	showSubTemplate('unapproved_attachments');
 }
 
 // Approve a post, just the one.

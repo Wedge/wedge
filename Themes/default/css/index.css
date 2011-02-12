@@ -318,7 +318,7 @@ form {
 	margin: 0;
 }
 
-input, button, select, textarea {
+input, select, textarea {
 	font: 95%/115% $main_font;
 	color: #000;
 	background: #fff;
@@ -346,7 +346,8 @@ textarea {
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-input, textarea, button, select {
+input, textarea, select {
+	mad-width: 95%;
 	:hover, :focus {
 		border: 1px solid #454545;
 	}
@@ -535,9 +536,6 @@ li.subsection > a {
 	border-radius: 6px;
 }
 
-#main_menu .chosen h4, #context_menus .chosen h4 {
-	background-color: #fd9604;
-}
 #context_menus {
 	padding-left: 1em;
 	min-height: 2.5em;
@@ -550,9 +548,9 @@ li.subsection > a {
 		}
 	}
 }
-#context {
-	clear: left;
-	padding-top: .5em;
+
+#main_menu .chosen h4, #context_menus .chosen h4 {
+	background-color: #fd9604;
 }
 
 .nodrop h4, #main_menu .nodrop h4 {

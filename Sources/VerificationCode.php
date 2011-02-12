@@ -52,7 +52,7 @@ function VerificationCode()
 		loadTemplate('Register');
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
+		showSubTemplate('verification_sound');
 		$context['template_layers'] = array();
 
 		obExit();

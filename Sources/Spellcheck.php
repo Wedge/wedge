@@ -121,7 +121,7 @@ function Spellcheck()
 
 	// And instruct the template system to just show the spellcheck sub template.
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'spellcheck';
+	showSubTemplate('spellcheck');
 }
 
 ?>

@@ -197,7 +197,7 @@ function Credits($in_admin = false)
 	if (!$in_admin)
 	{
 		loadTemplate('Who');
-		$context['sub_template'] = 'credits';
+		showSubTemplate('credits');
 		$context['robot_no_index'] = true;
 		$context['page_title'] = $txt['credits'];
 	}

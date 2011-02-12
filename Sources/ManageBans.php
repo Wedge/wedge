@@ -338,7 +338,7 @@ function BanList()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'ban_list';
 }
 
@@ -1004,20 +1004,20 @@ function BanEdit()
 	// If we're in wireless mode remove the admin template layer and use a special template.
 	if (WIRELESS)
 	{
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_ban_edit';
+		showSubTemplate(WIRELESS_PROTOCOL . '_ban_edit');
 		foreach ($context['template_layers'] as $k => $v)
 			if (strpos($v, 'generic_menu') === 0)
 				unset($context['template_layers'][$k]);
 	}
 	else
-		$context['sub_template'] = 'ban_edit';
+		showSubTemplate('ban_edit');
 }
 
 function BanEditTrigger()
 {
 	global $context;
 
-	$context['sub_template'] = 'ban_edit_trigger';
+	showSubTemplate('ban_edit_trigger');
 
 	if (empty($_REQUEST['bg']))
 		fatal_lang_error('ban_not_found', false);
@@ -1280,7 +1280,7 @@ function BanBrowseTriggers()
 	createList($listOptions);
 
 	// The list is the only thing to show, so make it the default sub template.
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'ban_trigger_list';
 }
 
@@ -1481,7 +1481,7 @@ function BanLog()
 	createList($listOptions);
 
 	$context['page_title'] = $txt['ban_log'];
-	$context['sub_template'] = 'show_list';
+	showSubTemplate('show_list');
 	$context['default_list'] = 'ban_log';
 }
 

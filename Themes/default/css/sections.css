@@ -863,10 +863,6 @@ tr.titlebg td {
 	padding-left: .7em;
 }
 
-/* Custom profile fields like to play with us some times. */
-#context .custom_field {
-	margin-bottom: 15px;
-}
 #admin_login .centertext {
 	padding: 1em;
 	.error {
@@ -876,30 +872,19 @@ tr.titlebg td {
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
-.left_menu, .left_menu ul, .left_menu li {
-	padding: 0;
-	margin: 0;
-	list-style: none;
-}
-#left_section {
-	width: 160px;
-	float: left;
-	padding-right: 10px;
-}
-.side_section .title_bar {
-	margin-bottom: 5px;
-}
-#main_container {
-	margin-bottom: 5px;
-}
-.left_menu {
+.left_menu
+	&, ul, li {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
 	margin-bottom: .5em;
 	li {
 		padding: 0 0 0 .5em;
 	}
 }
-#main_section {
-	margin-left: 172px;
+.side_section .title_bar {
+	margin-bottom: 5px;
 }
 
 tr.windowbg td, tr.approvebg td, tr.highlight2 td {
@@ -1056,7 +1041,7 @@ dl {
 		vertical-align: middle;
 	}
 }
-#tracking {
+#profile_box {
 	dl, dl {
 		clear: right;
 		overflow: auto;
@@ -1079,8 +1064,11 @@ dl {
 		padding: 0;
 	}
 }
+#tracking {
+	base: #profile_box;
+}
 #detailedinfo {
-	base: #tracking;
+	base: #profile_box;
 	margin-top: 10px;
 	width: 79.5%;
 	float: right;
@@ -1107,7 +1095,7 @@ dl {
 	padding: 0 3px;
 }
 
-#main_section {
+@media all and (max-width: 1000px) {
 	#basicinfo, #detailedinfo {
 		width: 100%;
 	}

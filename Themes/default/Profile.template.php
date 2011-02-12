@@ -8,7 +8,7 @@ function template_profile_above()
 
 	add_js_file('scripts/profile.js');
 
-	// Prevent Chrome from auto completing fields when viewing/editing other members profiles
+	// Prevent Chrome from auto completing fields when viewing/editing other members' profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
 		add_js('
 	disableAutoComplete();');
@@ -68,11 +68,11 @@ function template_summary()
 					<li class="custom_field">', $field['output_html'], '</li>';
 	}
 
-	echo '
-				', !isset($context['disabled_fields']['icq']) && !empty($context['member']['icq']['link']) ? '<li>' . $context['member']['icq']['link'] . '</li>' : '', '
-				', !isset($context['disabled_fields']['msn']) && !empty($context['member']['msn']['link']) ? '<li>' . $context['member']['msn']['link'] . '</li>' : '', '
-				', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '<li>' . $context['member']['aim']['link'] . '</li>' : '', '
-				', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '<li>' . $context['member']['yim']['link'] . '</li>' : '', '
+	echo !isset($context['disabled_fields']['icq']) && !empty($context['member']['icq']['link']) ? '
+					<li>' . $context['member']['icq']['link'] . '</li>' : '', !isset($context['disabled_fields']['msn']) && !empty($context['member']['msn']['link']) ? '
+					<li>' . $context['member']['msn']['link'] . '</li>' : '', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '
+					<li>' . $context['member']['aim']['link'] . '</li>' : '', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '
+					<li>' . $context['member']['yim']['link'] . '</li>' : '', '
 			</ul>
 			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 

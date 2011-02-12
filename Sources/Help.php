@@ -63,7 +63,7 @@ function ShowAdminHelp()
 
 	// Don't show any template layers, just the popup sub template.
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'popup';
+	showSubTemplate('popup');
 
 	// What help string should be used?
 	if (isset($helptxt[$_GET['help']]))

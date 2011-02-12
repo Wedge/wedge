@@ -139,7 +139,7 @@ function AdminRegister()
 	}
 
 	// Basic stuff.
-	$context['sub_template'] = 'admin_register';
+	showSubTemplate('admin_register');
 	$context['page_title'] = $txt['registration_center'];
 
 	// Load the assignable member groups.
@@ -222,7 +222,7 @@ function EditAgreement()
 	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
 	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
 
-	$context['sub_template'] = 'edit_agreement';
+	showSubTemplate('edit_agreement');
 	$context['page_title'] = $txt['registration_agreement'];
 }
 
@@ -264,7 +264,7 @@ function SetReserve()
 	$context['reserved_word_options']['match_name'] = $modSettings['reserveName'] == '1';
 
 	// Ready the template......
-	$context['sub_template'] = 'edit_reserved_words';
+	showSubTemplate('edit_reserved_words');
 	$context['page_title'] = $txt['admin_reserved_set'];
 }
 
@@ -301,7 +301,7 @@ function ModifyRegistrationSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template
-	$context['sub_template'] = 'show_settings';
+	showSubTemplate('show_settings');
 	$context['page_title'] = $txt['registration_center'];
 
 	if (isset($_GET['save']))

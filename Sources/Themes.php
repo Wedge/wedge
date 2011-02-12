@@ -373,7 +373,7 @@ function ThemeList()
 	$context['reset_dir'] = realpath($boarddir . '/Themes');
 	$context['reset_url'] = $boardurl . '/Themes';
 
-	$context['sub_template'] = 'list_themes';
+	showSubTemplate('list_themes');
 }
 
 // Administrative global settings.
@@ -458,7 +458,7 @@ function SetThemeOptions()
 				unset($context['themes'][$k]);
 
 		loadTemplate('Themes');
-		$context['sub_template'] = 'reset_list';
+		showSubTemplate('reset_list');
 
 		return;
 	}
@@ -681,7 +681,7 @@ function SetThemeOptions()
 	loadTemplate('Settings');
 	loadSubTemplate('options');
 
-	$context['sub_template'] = 'set_options';
+	showSubTemplate('set_options');
 	$context['page_title'] = $txt['theme_settings'];
 
 	$context['options'] = $context['theme_options'];
@@ -845,7 +845,7 @@ function SetThemeSettings()
 		redirectexit('action=admin;area=theme;sa=settings;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
-	$context['sub_template'] = 'set_settings';
+	showSubTemplate('set_settings');
 	$context['page_title'] = $txt['theme_settings'];
 
 	foreach ($settings as $setting => $dummy)
@@ -1163,7 +1163,7 @@ function PickTheme()
 	ksort($context['available_themes']);
 
 	$context['page_title'] = $txt['theme_pick'];
-	$context['sub_template'] = 'pick';
+	showSubTemplate('pick');
 }
 
 function ThemeInstall()
@@ -1197,7 +1197,7 @@ function ThemeInstall()
 		list ($theme_name) = wesql::fetch_row($result);
 		wesql::free_result($result);
 
-		$context['sub_template'] = 'installed';
+		showSubTemplate('installed');
 		$context['page_title'] = $txt['theme_installed'];
 		$context['installed_theme'] = array(
 			'id' => (int) $_GET['theme_id'],
@@ -1451,7 +1451,8 @@ function ThemeInstall()
 	redirectexit('action=admin;area=theme;sa=install;theme_id=' . $id_theme . ';' . $context['session_var'] . '=' . $context['session_id']);
 }
 
-// Possibly the simplest and best example of how to ues the template system.
+// Possibly the simplest and best example of how to use the template system.
+// !!! Note: this is totally undocumented... Way to go! <rolleyes>
 function WrapAction()
 {
 	global $context, $settings, $sourcedir;
@@ -1459,7 +1460,7 @@ function WrapAction()
 	// Load any necessary template(s)?
 	if (isset($settings['catch_action']['template']))
 	{
-		// Load both the template and language file. (but don't fret if the language file isn't there...)
+		// Load both the template and language file. (But don't fret if the language file isn't there...)
 		loadTemplate($settings['catch_action']['template']);
 		loadLanguage($settings['catch_action']['template'], '', false);
 	}
@@ -1478,18 +1479,16 @@ function WrapAction()
 	}
 	// And finally, the main sub template ;).
 	elseif (isset($settings['catch_action']['sub_template']))
-		$context['sub_template'] = $settings['catch_action']['sub_template'];
+		showSubTemplate($settings['catch_action']['sub_template']);
 }
 
 function EditTheme()
 {
 	global $context, $settings, $scripturl, $boarddir;
 
+	// !!! Should this be removed?
 	if (isset($_REQUEST['preview']))
-	{
-		// !!! Should this be removed?
 		die;
-	}
 
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');
@@ -1557,7 +1556,7 @@ function EditTheme()
 			}
 		}
 
-		$context['sub_template'] = 'edit_list';
+		showSubTemplate('edit_list');
 
 		return 'no_themes';
 	}
@@ -1614,7 +1613,7 @@ function EditTheme()
 		else
 			$context['theme_files'] = get_file_listing($theme_dir, '');
 
-		$context['sub_template'] = 'edit_browse';
+		showSubTemplate('edit_browse');
 
 		return;
 	}
@@ -1688,7 +1687,7 @@ function EditTheme()
 			loadLanguage('Errors');
 
 			$context['session_error'] = true;
-			$context['sub_template'] = 'edit_file';
+			showSubTemplate('edit_file');
 
 			// Recycle the submitted data.
 			$context['entire_file'] = htmlspecialchars($_POST['entire_file']);
@@ -1706,13 +1705,13 @@ function EditTheme()
 
 	if (substr($_REQUEST['filename'], -4) == '.css')
 	{
-		$context['sub_template'] = 'edit_style';
+		showSubTemplate('edit_style');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
 	elseif (substr($_REQUEST['filename'], -13) == '.template.php')
 	{
-		$context['sub_template'] = 'edit_template';
+		showSubTemplate('edit_template');
 
 		if (!isset($error_file))
 			$file_data = file($theme_dir . '/' . $_REQUEST['filename']);
@@ -1746,7 +1745,7 @@ function EditTheme()
 	}
 	else
 	{
-		$context['sub_template'] = 'edit_file';
+		showSubTemplate('edit_file');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
@@ -1949,7 +1948,7 @@ function CopyTemplate()
 		$dir->close();
 	}
 
-	$context['sub_template'] = 'copy_template';
+	showSubTemplate('copy_template');
 }
 
 /**

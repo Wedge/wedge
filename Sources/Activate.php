@@ -56,7 +56,7 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		$context['member_id'] = 0;
-		$context['sub_template'] = 'resend';
+		showSubTemplate('resend');
 		$context['page_title'] = $txt['invalid_activation_resend'];
 		$context['can_activate'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] == 1;
 		$context['default_username'] = isset($_GET['user']) ? $_GET['user'] : '';
@@ -80,7 +80,7 @@ function Activate()
 	// Does this user exist at all?
 	if (wesql::num_rows($request) == 0)
 	{
-		$context['sub_template'] = 'retry_activate';
+		showSubTemplate('retry_activate');
 		$context['page_title'] = $txt['invalid_userid'];
 		$context['member_id'] = 0;
 
@@ -161,7 +161,7 @@ function Activate()
 			fatal_error($txt['registration_not_approved'] . ' <a href="' . $scripturl . '?action=activate;user=' . $row['member_name'] . '">' . $txt['here'] . '</a>.', false);
 		}
 
-		$context['sub_template'] = 'retry_activate';
+		showSubTemplate('retry_activate');
 		$context['page_title'] = $txt['invalid_activation_code'];
 		$context['member_id'] = $row['id_member'];
 
@@ -184,9 +184,9 @@ function Activate()
 		adminNotify('activation', $row['id_member'], $row['member_name']);
 	}
 
+	showSubTemplate('login');
 	$context += array(
 		'page_title' => $txt['registration_successful'],
-		'sub_template' => 'login',
 		'default_username' => $row['member_name'],
 		'default_password' => '',
 		'never_expire' => false,
