@@ -1,7 +1,6 @@
 
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
-
 #quick_search
 	overflow: hidden
 	line-height: 20px
@@ -16,6 +15,7 @@ ol.search_results
 	li
 		padding-top: 1em
 		border-bottom: 1px solid #ccc
+
 
 /* Styles for the core features screen.
 ------------------------------------------------------- */
@@ -462,7 +462,6 @@ ul.moderation_notes
 
 /* Styles for the error log.
 ------------------------------------------------- */
-
 #error_log
 	width: 100%
 	tr.windowbg td

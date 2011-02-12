@@ -505,7 +505,8 @@ class CSS_Nesting extends CSSCache
 				$selectors = preg_split('/,\s*/', $this->rules[$node['parent']]['selector']);
 				foreach ($selectors as &$here)
 				{
-					$path = $this->parseAncestorSelectors(array_merge((array) $here, $this->getAncestorSelectors($this->rules[$node['parent']]['parent'])));
+					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->getAncestorSelectors($this->rules[$this->rules[$node['parent']]['parent']]);
+					$path = $this->parseAncestorSelectors(array_merge((array) $here, $parent));
 					$target = str_replace('&', $path, $node['value']);
 					$bases[] = array(
 						$target, // Add to this class in the tree...
