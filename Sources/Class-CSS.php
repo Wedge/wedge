@@ -409,7 +409,7 @@ class CSS_Nesting extends CSSCache
 		 ******************************************************************************/
 
 		// Transform the CSS into XML
-		$xml = str_replace('"', '#WEDGE-QUOTE#', trim($css));
+		$xml = str_replace('"', '#wedge-quote#', trim($css));
 
 		// Does this file use the regular CSS syntax?
 		$css_syntax = strpos($xml, "{\n") !== false && strpos($xml, "\n}") !== false;
@@ -502,13 +502,17 @@ class CSS_Nesting extends CSSCache
 		{
 			if ($node['name'] === 'base')
 			{
-				$path = $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
-				$target = str_replace('&', $path, $node['value']);
-				$bases[] = array(
-					$target, // Add to this class in the tree...
-					preg_quote($target),
-					$path // ...The current selector
-				);
+				$selectors = preg_split('/,\s*/', $this->rules[$node['parent']]['selector']);
+				foreach ($selectors as &$here)
+				{
+					$path = $this->parseAncestorSelectors(array_merge((array) $here, $this->getAncestorSelectors($this->rules[$node['parent']]['parent'])));
+					$target = str_replace('&', $path, $node['value']);
+					$bases[] = array(
+						$target, // Add to this class in the tree...
+						preg_quote($target),
+						$path // ...The current selector
+					);
+				}
 				if (isset($this->rules[$node['parent']]))
 					unset($this->rules[$node['parent']]['props'][$node['id']]);
 				unset($this->props[$node['id']], $node);
@@ -518,6 +522,7 @@ class CSS_Nesting extends CSSCache
 		// Sort the bases array by the first argument's length.
 		usort($bases, 'CSS_Nesting::lensort');
 		$prop = 'property';
+		$alpha = array_flip(array_merge(range('a', 'z'), range('A', 'Z')));
 
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
@@ -530,11 +535,12 @@ class CSS_Nesting extends CSSCache
 			}
 
 			$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
-			$selectors = array();
+			$selectors = $done = array();
 			$changed = true;
 
 			while ($changed)
 			{
+				$done_temp = array();
 				$changed = false;
 				foreach ($bases as $i => &$base)
 				{
@@ -544,22 +550,26 @@ class CSS_Nesting extends CSSCache
 						// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
 						if (empty($selectors))
 							$selectors = explode(',', $selector);
+						$beginning = isset($alpha[$base[0][0]]) ? '(?<!\w)' : '';
+
 						foreach ($selectors as &$snippet)
 						{
-							$from = '~(?<!%done%)(' . $base[1] . ')(?!%done%|\w|[^\n]*[\t ]+final(?:[,\s]|$))~i';
-							if (preg_match($from, $snippet))
+							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?!\w|.*[\t ]+final(?:\s|$))~i', $snippet))
 							{
 								// And our magic trick happens here. Then we restart the process to handle inherited extends.
-								$selector = preg_replace($from, '%done%$1%done%', $selector) . ', ' . str_replace($base[0], $base[2], $snippet);
+								$selector .= ', ' . str_replace($base[0], $base[2], $snippet);
+								$done_temp[$snippet] = true;
 								$changed = true;
 							}
 						}
 					}
 				}
 				if ($changed)
+				{
 					$selectors = explode(',', $selector);
+					$done = array_merge($done, $done_temp);
+				}
 			}
-			$selector = str_replace('%done%', '', $selector);
 
 			if (!empty($standard_nest))
 			{
