@@ -2268,10 +2268,11 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		if (WIRELESS && !isset($context['sub_template']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		// We can either get sidebar and/or main sub-templates, either as a string or an array of strings.
+		// We can either get side, top and/or main sub-templates, either as a string or an array of strings.
 		if (empty($context['sidebar_template']))
 			$context['sidebar_template'] = array();
-
+		if (empty($context['top_template']))
+			$context['top_template'] = array();
 		if (empty($context['sub_template']))
 			$context['sub_template'] = array('main');
 
@@ -2285,6 +2286,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		}
 
 		loadSubTemplate('main_above', 'ignore');
+		foreach ((array) $context['top_template'] as $template)
+			loadSubTemplate($template);
 		foreach ((array) $context['sub_template'] as $template)
 			loadSubTemplate($template);
 		loadSubTemplate('main_below', 'ignore');
@@ -2951,7 +2954,11 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace_callback('~(?:border-radius|box-shadow|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, and the 'final' keyword in its compact form.
-	$final = str_replace(array('#WEDGE-QUOTE#', "\n\n", ';;', ';}', "}\n", "\t", ' final{', ' final,'), array('"', "\n", ';', '}', '}', ' ', '{', ','), $final);
+	$final = str_replace(
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' final{', ' final,', ' final '),
+		array('"', "\n", ';', '}', '}', ' ', '{', ',', ' '),
+		$final
+	);
 	// Restore comments as requested.
 	foreach ($comments[0] as $comment)
 		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);

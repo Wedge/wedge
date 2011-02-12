@@ -328,12 +328,12 @@ function setup_fatal_error_context($error_message)
 
 	// Display the error message - wireless?
 	if (defined('WIRELESS') && WIRELESS)
-		$context['sub_template'] = WIRELESS_PROTOCOL . '_error';
+		showSubTemplate(WIRELESS_PROTOCOL . '_error');
 	// Load the template and set the sub template.
 	else
 	{
 		loadTemplate('Errors');
-		$context['sub_template'] = 'fatal_error';
+		showSubTemplate('fatal_error');
 	}
 
 	// If this is SSI, what do they want us to do?

@@ -1093,7 +1093,7 @@ function checkUserBehavior()
 			loadLanguage('Security');
 
 			// Figure out what we're going to tell the user
-			$context['sub_template'] = 'fatal_error';
+			showSubTemplate('fatal_error');
 			$context['no_back_link'] = true;
 			$context['robot_no_index'] = true;
 			$context['page_title'] = $txt['http_error'] . ' ' . $error;

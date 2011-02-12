@@ -1990,16 +1990,28 @@ function loadSubTemplate($sub_template_name, $fatal = false)
  * Add a function to the list of sub-templates.
  *
  * @param string $sub_templates The name of the function (without template_ prefix) to be called.
- * @param string $target Which flow to load this function in. Can either be 'main' (main contents), or 'sidebar' (sidebar area).
+ * @param string $target Which flow to load this function in. Can either be 'main' (main contents), 'top' (above the main area), or 'sidebar' (sidebar area).
+ * @param boolean $overwrite Overwrite existing sub-templates. Useful if you provide a default sub-template and then override it.
  */
-function showSubTemplate($sub_templates, $target = 'main')
+function showSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 {
 	global $context;
 
+	$sub_templates = (array) $sub_templates;
+
+	// Is it a regular sub-template?
 	if ($target === 'main')
-		$context['sub_template'] = array_merge(isset($context['sub_template']) ? (array) $context['sub_template'] : array(), (array) $sub_templates);
-	else // Sidebar, maybe?
-		$context['sidebar_template'] = array_merge(isset($context['sidebar_template']) ? (array) $context['sidebar_template'] : array(), (array) $sub_templates);
+		$context['sub_template'] = $overwrite ? $sub_templates :
+			array_merge(isset($context['sub_template']) ? $context['sub_template'] : array('main'), $sub_templates);
+
+	// Or a protected sub-template at the top?
+	elseif ($target === 'top')
+		$context['top_template'] = $overwrite ? $sub_templates :
+			array_merge(isset($context['top_template']) ? $context['top_template'] : array(), $sub_templates);
+
+	// A sidebar block, maybe?
+	else
+		$context['sidebar_template'] = array_merge(isset($context['sidebar_template']) ? $context['sidebar_template'] : array(), $sub_templates);
 }
 
 /**

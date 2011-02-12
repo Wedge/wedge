@@ -289,8 +289,8 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
-		showSubTemplate($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'main' : 'sidebar');
-		showSubTemplate('generic_tabs');
+		showSubTemplate($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', false);
+		showSubTemplate('generic_tabs', 'top', false);
 	}
 
 	// Check we had something - for sanity sake.
@@ -318,14 +318,11 @@ function destroyMenu($menu_id = 'last')
 		return false;
 
 	$name = $context[$menu_name]['template_name'];
+	$location = strpos($name, '_sidebar') !== false ? 'sidebar' : 'top';
 
-	$layer_index = array_search($name, $context['sub_template']);
+	$layer_index = array_search($name, $context[$location . '_template']);
 	if ($layer_index !== false)
-		unset($context['sub_template'][$layer_index]);
-
-	$layer_index = array_search($name, $context['sidebar_template']);
-	if ($layer_index !== false)
-		unset($context['sidebar_template'][$layer_index]);
+		unset($context[$location . '_template'][$layer_index]);
 
 	unset($context[$menu_name]);
 }

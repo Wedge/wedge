@@ -360,13 +360,6 @@ function smf_main()
 	// Get the function and file to include - if it's not there, do the board index.
 	if (empty($action) || !isset($action_list[$action]))
 	{
-		// Catch the action with the theme?
-		if (!empty($settings['catch_action']))
-		{
-			loadSource('Themes');
-			return 'WrapAction';
-		}
-
 		// Fall through to the board index then...
 		loadSource('BoardIndex');
 		return 'BoardIndex';

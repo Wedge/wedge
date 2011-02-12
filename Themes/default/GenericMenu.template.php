@@ -165,7 +165,7 @@ function template_generic_tabs()
 		return;
 
 	// Which menu are we rendering?
-	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 0)];
+	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 1)];
 
 	// Handy shortcut.
 	$tab_context =& $menu_context['tab_data'];

@@ -76,12 +76,6 @@ if (!defined('SMF'))
 		- assumes the gzip has a root directory in it. (ie default.)
 		- accessed with ?action=admin;area=theme;sa=install.
 
-	void WrapAction()
-		- allows the theme to take care of actions.
-		- happens if $settings['catch_action'] is set and action isn't found
-		  in the action array.
-		- can use a template, layers, sub_template, filename, and/or function.
-
 	void EditTheme()
 		- shows an interface for editing the templates.
 		- uses the Themes template and edit_template/edit_style sub template.
@@ -1449,37 +1443,6 @@ function ThemeInstall()
 	}
 
 	redirectexit('action=admin;area=theme;sa=install;theme_id=' . $id_theme . ';' . $context['session_var'] . '=' . $context['session_id']);
-}
-
-// Possibly the simplest and best example of how to use the template system.
-// !!! Note: this is totally undocumented... Way to go! <rolleyes>
-function WrapAction()
-{
-	global $context, $settings, $sourcedir;
-
-	// Load any necessary template(s)?
-	if (isset($settings['catch_action']['template']))
-	{
-		// Load both the template and language file. (But don't fret if the language file isn't there...)
-		loadTemplate($settings['catch_action']['template']);
-		loadLanguage($settings['catch_action']['template'], '', false);
-	}
-
-	// Any special layers?
-	if (isset($settings['catch_action']['layers']))
-		$context['template_layers'] = $settings['catch_action']['layers'];
-
-	// Just call a function?
-	if (isset($settings['catch_action']['function']))
-	{
-		if (isset($settings['catch_action']['filename']))
-			template_include($sourcedir . '/' . $settings['catch_action']['filename'], true);
-
-		$settings['catch_action']['function']();
-	}
-	// And finally, the main sub template ;).
-	elseif (isset($settings['catch_action']['sub_template']))
-		showSubTemplate($settings['catch_action']['sub_template']);
 }
 
 function EditTheme()

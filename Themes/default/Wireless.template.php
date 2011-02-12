@@ -54,10 +54,11 @@ function template_wap2_boardindex()
 	{
 		if ($context['allow_pm'])
 			echo '
-			<p class="windowbg"><a href="', $scripturl, '?action=pm;wap2">', empty($context['user']['unread_messages']) ? $txt['wireless_pm_inbox'] : sprintf($txt['wireless_pm_inbox_new'], $context['user']['unread_messages']), '</a></p>';
+		<p class="windowbg"><a href="', $scripturl, '?action=pm;wap2">', empty($context['user']['unread_messages']) ? $txt['wireless_pm_inbox'] : sprintf($txt['wireless_pm_inbox_new'], $context['user']['unread_messages']), '</a></p>';
 		echo '
 		<p class="windowbg"><a href="', $scripturl, '?action=unread;wap2">', $txt['wireless_recent_unread_posts'], '</a></p>
 		<p class="windowbg"><a href="', $scripturl, '?action=unreadreplies;wap2">', $txt['wireless_recent_unread_replies'], '</a></p>
+		<hr />
 		<p class="windowbg"><a href="', $scripturl, '?action=logout;', $context['session_var'], '=', $context['session_id'], ';wap2">', $txt['wireless_options_logout'], '</a></p>';
 	}
 }
@@ -629,7 +630,7 @@ function template_wap2_below()
 	global $context, $settings, $options, $txt;
 
 	echo '
-		<a href="', $context['linktree'][count($context['linktree']) - 1]['url'], count($context['linktree']) > 1 ? ';' : '?', 'nowap" rel="nofollow">', $txt['wireless_go_to_full_version'], '</a>
+		<p><a href="', $context['linktree'][count($context['linktree']) - 1]['url'], count($context['linktree']) > 1 ? ';' : '?', 'nowap" rel="nofollow">', $txt['wireless_go_to_full_version'], '</a></p>
 	</body>
 </html>';
 }
