@@ -35,7 +35,7 @@ function template_generic_menu_sidebar()
 			// Not supposed to be printed?
 			if (empty($area['label']))
 			{
-				if ($area === '')
+				if (empty($area))
 					echo '
 				<li class="separator"><a><hr></a></li>';
 				continue;
@@ -102,7 +102,7 @@ function template_generic_menu_dropdown()
 			// Not supposed to be printed?
 			if (empty($area['label']))
 			{
-				if ($area === '')
+				if (empty($area))
 					echo '
 			<li class="separator"><a><hr></a></li>';
 				continue;

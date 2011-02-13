@@ -96,7 +96,7 @@ function createMenu($menuData, $menuOptions = array())
 
 	// This will be all the data for this menu - and we'll make a shortcut to it to aid readability here.
 	$context['menu_data_' . $context['max_menu_id']] = array();
-	$menu_context = &$context['menu_data_' . $context['max_menu_id']];
+	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
 
 	// What is the general action of this menu (i.e. $scripturl?action=XXXX.
 	$menu_context['current_action'] = isset($menuOptions['action']) ? $menuOptions['action'] : $context['current_action'];
@@ -124,22 +124,12 @@ function createMenu($menuData, $menuOptions = array())
 		if ((isset($section['enabled']) && $section['enabled'] == false) || (isset($section['permission']) && !allowedTo($section['permission'])))
 			continue;
 
-		$was_separator = true;
-
 		// Now we cycle through the sections to pick the right area.
 		foreach ($section['areas'] as $area_id => &$area)
 		{
-			$here = &$menu_context['sections'][$section_id]['areas'][$area_id];
-
-			// Separator? (Avoid having two in a row.)
-			if ($area === '')
-			{
-				if ($was_separator)
-					continue;
-				$was_separator = true;
-				$here = '';
+			$here =& $menu_context['sections'][$section_id]['areas'][$area_id];
+			if (is_numeric($area_id))
 				continue;
-			}
 
 			// Can we do this?
 			if ((!isset($area['enabled']) || $area['enabled'] != false) && (empty($area['permission']) || allowedTo($area['permission'])))
@@ -157,7 +147,6 @@ function createMenu($menuData, $menuOptions = array())
 					// If this is hidden from view don't do the rest.
 					if (empty($area['hidden']))
 					{
-						$was_separator = false;
 						$menu_context['sections'][$section_id]['title'] = $section['title'];
 
 						$here = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
@@ -247,11 +236,9 @@ function createMenu($menuData, $menuOptions = array())
 					$include_data = $area;
 				}
 			}
+			if (empty($here))
+				unset($menu_context['sections'][$section_id]['areas'][$area_id]);
 		}
-
-		// Is the last entry a separator?
-		if ($here === '')
-			unset($here);
 	}
 
 	// Should we use a custom base url, or use the default?
@@ -273,6 +260,22 @@ function createMenu($menuData, $menuOptions = array())
 			unset($context['max_menu_id']);
 
 		return false;
+	}
+
+	foreach ($menu_context['sections'] as &$section)
+	{
+		$areas =& $section['areas'];
+		while (reset($areas) == '')
+			array_shift($areas);
+		while (end($areas) == '')
+			array_pop($areas);
+		reset($areas);
+		foreach ($areas as $id => &$area)
+		{
+			if (!empty($ex) && is_numeric($id))
+				unset($areas[$id]);
+			$ex = is_numeric($id);
+		}
 	}
 
 	// What type of menu is this?

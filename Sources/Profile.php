@@ -111,6 +111,7 @@ function ModifyProfile($post_errors = array())
 						'any' => 'profile_view_any',
 					),
 				),
+				'',
 				'showdrafts' => array(
 					'label' => $txt['showDrafts'],
 					'file' => 'Profile-View',
@@ -153,6 +154,7 @@ function ModifyProfile($post_errors = array())
 						'any' => 'manage_permissions',
 					),
 				),
+				'',
 				'tracking' => array(
 					'label' => $txt['trackUser'],
 					'file' => 'Profile-View',
@@ -214,6 +216,7 @@ function ModifyProfile($post_errors = array())
 						'any' => array('profile_extra_any'),
 					),
 				),
+				'',
 				'authentication' => array(
 					'label' => $txt['authentication'],
 					'file' => 'Profile-Modify',
@@ -227,6 +230,7 @@ function ModifyProfile($post_errors = array())
 						'any' => array('profile_identity_any'),
 					),
 				),
+				'',
 				'notification' => array(
 					'label' => $txt['notification'],
 					'file' => 'Profile-Modify',
@@ -299,6 +303,27 @@ function ModifyProfile($post_errors = array())
 						'any' => array('pm_send'),
 					),
 				),
+				'subscriptions' => array(
+					'label' => $txt['subscriptions'],
+					'file' => 'Profile-Actions',
+					'function' => 'subscriptions',
+					'enabled' => !empty($modSettings['paid_enabled']),
+					'permission' => array(
+						'own' => array('profile_view_own'),
+						'any' => array('moderate_forum'),
+					),
+				),
+				'',
+				'activateaccount' => array(
+					'file' => 'Profile-Actions',
+					'function' => 'activateAccount',
+					'sc' => 'get',
+					'select' => 'summary',
+					'permission' => array(
+						'own' => array(),
+						'any' => array('moderate_forum'),
+					),
+				),
 				'issuewarning' => array(
 					'label' => $txt['profile_issue_warning'],
 					'enabled' => in_array('w', $context['admin_features']) && $modSettings['warning_settings'][0] == 1 && (!$context['user']['is_owner'] || $context['user']['is_admin']),
@@ -318,16 +343,6 @@ function ModifyProfile($post_errors = array())
 						'any' => array('manage_bans'),
 					),
 				),
-				'subscriptions' => array(
-					'label' => $txt['subscriptions'],
-					'file' => 'Profile-Actions',
-					'function' => 'subscriptions',
-					'enabled' => !empty($modSettings['paid_enabled']),
-					'permission' => array(
-						'own' => array('profile_view_own'),
-						'any' => array('moderate_forum'),
-					),
-				),
 				'deleteaccount' => array(
 					'label' => $txt['deleteAccount'],
 					'file' => 'Profile-Actions',
@@ -337,16 +352,6 @@ function ModifyProfile($post_errors = array())
 					'permission' => array(
 						'own' => array('profile_remove_any', 'profile_remove_own'),
 						'any' => array('profile_remove_any'),
-					),
-				),
-				'activateaccount' => array(
-					'file' => 'Profile-Actions',
-					'function' => 'activateAccount',
-					'sc' => 'get',
-					'select' => 'summary',
-					'permission' => array(
-						'own' => array(),
-						'any' => array('moderate_forum'),
 					),
 				),
 			),
@@ -365,6 +370,8 @@ function ModifyProfile($post_errors = array())
 		// Do a bit of spring cleaning so to speak.
 		foreach ($section['areas'] as $area_id => $area)
 		{
+			if (is_numeric($area_id))
+				continue;
 			// If it said no permissions that meant it wasn't valid!
 			if (empty($area['permission'][$context['user']['is_owner'] ? 'own' : 'any']))
 				$profile_areas[$section_id]['areas'][$area_id]['enabled'] = false;

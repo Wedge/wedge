@@ -2286,8 +2286,10 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		}
 
 		loadSubTemplate('main_above', 'ignore');
-		foreach ((array) $context['top_template'] as $template)
-			loadSubTemplate($template);
+		// If we're calling from jQuery, don't show the menus/tabs
+		if (empty($context['is_ajax']))
+			foreach ((array) $context['top_template'] as $template)
+				loadSubTemplate($template);
 		foreach ((array) $context['sub_template'] as $template)
 			loadSubTemplate($template);
 		loadSubTemplate('main_below', 'ignore');
