@@ -875,11 +875,11 @@ function writeLog($force = false)
 
 		wesql::query('
 			UPDATE {db_prefix}log_online
-			SET log_time = {int:log_time}, ip = IFNULL(INET_ATON({string:ip}), 0), url = {string:url}
+			SET log_time = {int:log_time}, ip = {int:ip}, url = {string:url}
 			WHERE session = {string:session}',
 			array(
 				'log_time' => time(),
-				'ip' => $user_info['ip'],
+				'ip' => get_ip_identifier($user_info['ip']),
 				'url' => $serialized,
 				'session' => $session_id,
 			)
@@ -907,8 +907,8 @@ function writeLog($force = false)
 
 		wesql::insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
-			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'raw', 'url' => 'string'),
-			array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), 'IFNULL(INET_ATON(\'' . $user_info['ip'] . '\'), 0)', $serialized),
+			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string'),
+			array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier($user_info['ip']), $serialized),
 			array('session')
 		);
 	}
@@ -1259,11 +1259,11 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 	wesql::insert('',
 		'{db_prefix}log_actions',
 		array(
-			'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'string-16', 'action' => 'string',
+			'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'int', 'action' => 'string',
 			'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 		),
 		array(
-			time(), $log_types[$log_type], $user_info['id'], $user_info['ip'], $action,
+			time(), $log_types[$log_type], $user_info['id'], get_ip_identifier($user_info['ip']), $action,
 			$board_id, $topic_id, $msg_id, serialize($extra),
 		),
 		array('id_action')
@@ -1373,8 +1373,8 @@ function spamProtection($error_type)
 	// Add a new entry, deleting the old if necessary.
 	wesql::insert('replace',
 		'{db_prefix}log_floodcontrol',
-		array('ip' => 'string-16', 'log_time' => 'int', 'log_type' => 'string'),
-		array($user_info['ip'], time(), $error_type),
+		array('ip' => 'int', 'log_time' => 'int', 'log_type' => 'string'),
+		array(get_ip_identifier($user_info['ip']), time(), $error_type),
 		array('ip', 'log_type')
 	);
 

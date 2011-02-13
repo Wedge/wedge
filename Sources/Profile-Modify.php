@@ -1281,7 +1281,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 				'id_log' => 2,
 				'log_time' => time(),
 				'id_member' => $memID,
-				'ip' => $user_info['ip'],
+				'ip' => get_ip_identifier($user_info['ip']),
 				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => $user_info['id'])),
 			);
 			$changes[] = array(1, $row['col_name'], $value, $memID);
@@ -1300,10 +1300,10 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			array('id_theme', 'variable', 'id_member')
 		);
 		if (!empty($log_changes) && !empty($modSettings['modlog_enabled']))
-			wesql::insert('',
+			wesql::insert('insert',
 				'{db_prefix}log_actions',
 				array(
-					'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'string-16',
+					'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'int',
 					'extra' => 'string-65534',
 				),
 				$log_changes,

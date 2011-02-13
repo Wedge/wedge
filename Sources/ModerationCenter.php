@@ -844,10 +844,11 @@ function ModReport()
 
 	// So what bad things do the reporters have to say about it?
 	$request = wesql::query('
-		SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment, lrc.member_ip,
+		SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment, li.member_ip,
 			IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lrc.membername) AS reporter
 		FROM {db_prefix}log_reported_comments AS lrc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lrc.id_member)
+			LEFT JOIN {db_prefix}log_ips AS li ON (lrc.member_ip = li.id_ip)
 		WHERE lrc.id_report = {int:id_report}',
 		array(
 			'id_report' => $context['report']['id'],
@@ -864,7 +865,7 @@ function ModReport()
 				'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
 				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
 				'href' => $row['id_member'] ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>' : '',
+				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="' . $scripturl . '?action=trackip;searchip=' . format_ip($row['member_ip']) . '">' . format_ip($row['member_ip']) . '</a>' : '',
 			),
 		);
 	}

@@ -168,11 +168,12 @@ function Who()
 	// Look for people online, provided they don't mind if you see they are.
 	$request = wesql::query('
 		SELECT
-			lo.log_time, lo.id_member, lo.url, INET_NTOA(lo.ip) AS ip, mem.real_name,
+			lo.log_time, lo.id_member, lo.url, li.member_ip AS ip, mem.real_name,
 			lo.session, mg.online_color, IFNULL(mem.show_online, 1) AS show_online,
 			lo.id_spider
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
+			LEFT JOIN {db_prefix}log_ips AS li ON (lo.ip = li.id_ip)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)' . (!empty($conditions) ? '
 		WHERE ' . implode(' AND ', $conditions) : '') . '
 		ORDER BY {raw:sort_method} {raw:sort_direction}
@@ -197,7 +198,7 @@ function Who()
 		// Send the information to the template.
 		$context['members'][$row['session']] = array(
 			'id' => $row['id_member'],
-			'ip' => allowedTo('view_ip_address_any') || ($row['id_member'] == $context['user']['id'] && allowedTo('view_ip_address_own')) ? $row['ip'] : '',
+			'ip' => allowedTo('view_ip_address_any') || ($row['id_member'] == $context['user']['id'] && allowedTo('view_ip_address_own')) ? format_ip($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
 			'timestamp' => forum_time(true, $row['log_time']),

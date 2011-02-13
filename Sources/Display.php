@@ -1031,10 +1031,11 @@ function Display()
 			loadMemberData($posters);
 		$messages_request = wesql::query('
 			SELECT
-				id_msg, icon, subject, poster_time, poster_ip, id_member, modified_time, modified_name, body,
+				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member, modified_time, modified_name, body,
 				smileys_enabled, poster_name, poster_email, approved,
 				id_msg_modified < {int:new_from} AS is_read
-			FROM {db_prefix}messages
+			FROM {db_prefix}messages AS m
+				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 			WHERE id_msg IN ({array_int:message_list})
 			ORDER BY id_msg' . (empty($options['view_newest_first']) ? '' : ' DESC'),
 			array(
@@ -1248,7 +1249,7 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (($context['user']['can_mod'] || !empty($modSettings['warning_show'])) || ($memberContext[$message['id_member']]['id'] == $context['user']['id'] && !empty($modSettings['warning_show']) && $modSettings['warning_show'] == 1));
 	}
 
-	$memberContext[$message['id_member']]['ip'] = $message['poster_ip'];
+	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
 
 	// Do the censor thang.
 	censorText($message['body']);

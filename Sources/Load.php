@@ -950,6 +950,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
 			$row['options'] = array();
+			$row['member_ip'] = format_ip($row['member_ip']);
+			$row['member_ip2'] = format_ip($row['member_ip2']);
 			$user_profile[$row['id_member']] = $row;
 		}
 		wesql::free_result($request);
@@ -1340,7 +1342,7 @@ function detectBrowser()
 	$browser['possibly_robot'] = !empty($user_info['possibly_robot']);
 
 	// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
-	if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || !$user_info['is_guest'])
+	if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || empty($user_info['is_guest']))
 		$browser['possibly_robot'] = false;
 
 	// A small reference to the usual place...

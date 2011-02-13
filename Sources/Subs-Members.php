@@ -169,7 +169,7 @@ function deleteMembers($users, $check_not_admin = false)
 
 		// Add it to the administration log for future reference.
 		$log_inserts[] = array(
-			time(), 3, $user_info['id'], $user_info['ip'], 'delete_member',
+			time(), 3, $user_info['id'], get_ip_identifier($user_info['ip']), 'delete_member',
 			0, 0, 0, serialize(array('member' => $user[0], 'name' => $user[1], 'member_acted' => $user_info['name'])),
 		);
 
@@ -183,7 +183,7 @@ function deleteMembers($users, $check_not_admin = false)
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
-				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'string-16', 'action' => 'string',
+				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'int', 'action' => 'string',
 				'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 			),
 			$log_inserts,
@@ -1183,7 +1183,11 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 
 	$members = array();
 	while ($row = wesql::fetch_assoc($request))
+	{
+		$row['member_ip'] = format_ip($row['member_ip']);
+		$row['member_ip2'] = format_ip($row['member_ip2']);
 		$members[] = $row;
+	}
 	wesql::free_result($request);
 
 	// If we want duplicates pass the members array off.

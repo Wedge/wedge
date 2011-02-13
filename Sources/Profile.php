@@ -626,13 +626,13 @@ function ModifyProfile($post_errors = array())
 						'id_log' => 2,
 						'log_time' => time(),
 						'id_member' => $memID,
-						'ip' => $user_info['ip'],
+						'ip' => get_ip_identifier($user_info['ip']),
 						'extra' => serialize(array_merge($v, array('applicator' => $user_info['id']))),
 					);
 				wesql::insert('',
 					'{db_prefix}log_actions',
 					array(
-						'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'string-16',
+						'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'int',
 						'extra' => 'string-65534',
 					),
 					$log_changes,

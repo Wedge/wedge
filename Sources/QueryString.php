@@ -54,6 +54,8 @@ function cleanRequest()
 {
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board, $action_list;
 
+	define('INVALID_IP', '00000000000000000000000000000000');
+
 /*	// Makes it easier to refer to things this way.
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
@@ -398,8 +400,6 @@ function cleanRequest()
 		// A new magic variable to indicate we think this is command line.
 		$_SERVER['is_cli'] = true;
 	}
-	elseif (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['REMOTE_ADDR']) === 0)
-		$_SERVER['REMOTE_ADDR'] = 'unknown';
 
 	// Are they using a reverse proxy that's hiding the IP address (e.g. CloudFlare)?
 	if (!empty($modSettings['reverse_proxy']))
@@ -417,19 +417,25 @@ function cleanRequest()
 			$reverse_proxies = explode(',', $modSettings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
 
+	// OK, whatever we have in our default place, let's turn it into our default format.
+	$_SERVER['REMOTE_ADDR'] = expand_ip($_SERVER['REMOTE_ADDR']);
+
 	// Try to calculate their most likely IP for those people behind proxies (and the like).
 	$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 
-	// Find the user's IP address. (but don't let it give you 'unknown'!)
-	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_CLIENT_IP']) && (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['HTTP_CLIENT_IP']) == 0 || preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) != 0))
+	// Try and find the user's IP address.
+	// !!! I can't get my head round this for the moment. Needs to be done, of course, and needs to be totally rewritten since it should reflect the known-to-us proxies first.
+	/*
+	$internal_subnet = match_internal_subnets($_SERVER['REMOTE_ADDR']);
+	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_CLIENT_IP']) && (!match_internal_subnets(expand_ip($_SERVER['HTTP_CLIENT_IP'])) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
 	{
 		// We have both forwarded for AND client IP... check the first forwarded for as the block - only switch if it's better that way.
-		if (strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') != strtok($_SERVER['HTTP_CLIENT_IP'], '.') && '.' . strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') == strrchr($_SERVER['HTTP_CLIENT_IP'], '.') && (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['HTTP_X_FORWARDED_FOR']) == 0 || preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) != 0))
+		if (strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') != strtok($_SERVER['HTTP_CLIENT_IP'], '.') && '.' . strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') == strrchr($_SERVER['HTTP_CLIENT_IP'], '.') && (!match_internal_subnets($_SERVER['HTTP_X_FORWARDED_FOR']) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
 			$_SERVER['BAN_CHECK_IP'] = implode('.', array_reverse(explode('.', $_SERVER['HTTP_CLIENT_IP'])));
 		else
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_CLIENT_IP'];
 	}
-	if (!empty($_SERVER['HTTP_CLIENT_IP']) && (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['HTTP_CLIENT_IP']) == 0 || preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) != 0))
+	if (!empty($_SERVER['HTTP_CLIENT_IP']) && (!match_internal_subnets(expand_ip($_SERVER['HTTP_CLIENT_IP'])) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
 	{
 		// Since they are in different blocks, it's probably reversed.
 		if (strtok($_SERVER['REMOTE_ADDR'], '.') != strtok($_SERVER['HTTP_CLIENT_IP'], '.'))
@@ -442,13 +448,14 @@ function cleanRequest()
 		// If there are commas, get the last one.. probably.
 		if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') !== false)
 		{
-			$ips = array_reverse(explode(', ', $_SERVER['HTTP_X_FORWARDED_FOR']));
+			$ips = array_reverse(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
 
 			// Go through each IP...
 			foreach ($ips as $i => $ip)
 			{
+				$ip = expand_ip(trim($ip));
 				// Make sure it's in a valid range...
-				if (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $ip) != 0 && preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) == 0)
+				if (match_internal_subnets($ip) && !match_internal_subnets($_SERVER['REMOTE_ADDR']))
 					continue;
 
 				// Is it on our list of reverse proxies? If so, we don't want it.
@@ -456,14 +463,14 @@ function cleanRequest()
 					continue;
 
 				// Otherwise, we've got an IP!
-				$_SERVER['BAN_CHECK_IP'] = trim($ip);
+				$_SERVER['BAN_CHECK_IP'] = $ip;
 				break;
 			}
 		}
 		// Otherwise just use the only one.
-		elseif (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['HTTP_X_FORWARDED_FOR']) == 0 || preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown)~', $_SERVER['REMOTE_ADDR']) != 0)
+		elseif (!match_internal_subnets(expand_ip($_SERVER['HTTP_X_FORWARDED_FOR'])) || match_internal_subnets($_SERVER['REMOTE_ADDR']))
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	}
+	}*/
 
 	// Is this a page requested through jQuery?
 	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
@@ -479,10 +486,12 @@ function cleanRequest()
 	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars(wesql::unescape_string($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
 
 	// Some final checking.
+	// !!! This is irrelevant now or at the very least, in need of updating.
+	/*
 	if (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['BAN_CHECK_IP']) === 0)
 		$_SERVER['BAN_CHECK_IP'] = '';
 	if ($_SERVER['REMOTE_ADDR'] == 'unknown')
-		$_SERVER['REMOTE_ADDR'] = '';
+		$_SERVER['REMOTE_ADDR'] = '';*/
 }
 
 /**
@@ -965,6 +974,198 @@ function pretty_scripts_restore($match)
 	global $context;
 
 	return $context['pretty']['scripts'][(int) $match[1]];
+}
+
+/**
+ * Returns whether the supplied IP address is within an internal subnet, e.g. IPv4's 127.*
+ *
+ * @param string $ip Expanded form IP address (see {@link expand_ip()} for more)
+ * @return bool Whether the IP is within the designated ranges.
+ * @todo Update this function if more IPv6 ranges become an issue.
+ */
+function match_internal_subnets($ip)
+{
+	// IPv6 loopback, or invalid IP? Treat 'em the same. (It's 31 hex digits, last octet can be any value and still be a loopback.
+	if (strpos($ip, '000000000000000000000000000000') === 0)
+		return true;
+
+	// OK, IPv4 subnets right now?
+	if (strpos($ip, '00000000000000000000ffff') === 0)
+	{
+		$first = substr($ip, 24, 2);
+		// Most common IPv4 subnets, 127.*, 255.*, 10.*, 0.*, 192.168.*
+		if ($first === '7f' || $first === 'ff' || $first === '0a' || $first === '00' || ($first === 'c0' && substr($ip, 26, 2) === 'a8'))
+			return true;
+		// Or, 172.16-31
+		if ($first === 'ac')
+		{
+			$second = hexdec(substr($ip, 26, 2));
+			if ($second >= 16 && $second <= 31)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Converts an IP address from either IPv4, or IPv6 form into the 32 hexdigit string used internally.
+ *
+ * @param string $ip An IP address in IPv4 (x.y.z.a), IPv4 over IPv6 (::ffff:x.y.z.a) or IPv6 (x:y:z:a::b) type formats
+ * @return string A 32 hexcharacter string, all 0 if the incoming address was not valid.
+ */
+function expand_ip($ip)
+{
+	static $ip_array = array();
+	if (isset($ip_array[$ip]))
+		return $ip_array[$ip];
+
+	// OK, so what are we dealing with?
+	$contains_v4 = strpos($ip, '.') !== false;
+	$contains_v6 = strpos($ip, ':') !== false;
+
+	if ($contains_v4)
+	{
+		// So it's IPv4 in some form. Is it x.y.z.a or ::ffff:x.y.z.a ?
+		if ($contains_v6)
+		{
+			// OK, so it's probably ::ffff:x.y.z.a format, let's do something about that.
+			if (strpos($ip, '::ffff:') !== 0)
+				return INVALID_IP; // oops, it wasn't valid since this is the only valid prefix for this format.
+			$ip = substr($ip, 7);
+		}
+
+		if (!preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $ip))
+			return INVALID_IP; // oops, not a valid IPv4 either
+
+		// It's just x.y.z.a
+		$ipv6 = '00000000000000000000ffff';
+		$ipv4 = explode('.', $ip);
+		foreach ($ipv4 as $octet)
+			$ipv6 .= str_pad(dechex($octet), 2, '0', STR_PAD_LEFT);
+		return $ip_array[$ip] = $ipv6;
+	}
+	elseif ($contains_v6)
+	{
+		if (strpos($ip, '::') !== false)
+		{
+			$pieces = explode('::', $ip);
+			if (count($pieces) !== 2)
+				return INVALID_IP; // can't be valid!
+
+			// OK, so how many blocks do we have that are actual blocks?
+			$before_pieces = explode(':', $pieces[0]);
+			$after_pieces = explode(':', $pieces[1]);
+			foreach ($before_pieces as $k => $v)
+				if ($v == '')
+					unset($before_pieces[$k]);
+			foreach ($after_pieces as $k => $v)
+				if ($v == '')
+					unset($after_pieces[$k]);
+			// Glue everything back together.
+			$ip = preg_replace('~((?<!\:):$)~', '', $pieces[0] . (count($before_pieces) ? ':' : '') . str_repeat('0:', 8 - (count($before_pieces) + count($after_pieces))) . $pieces[1]);
+		}
+
+		$ipv6 = explode(':', $ip);
+		foreach ($ipv6 as $k => $v)
+			$ipv6[$k] = str_pad($v, 4, '0', STR_PAD_LEFT);
+		return $ip_array[$ip] = implode('', $ipv6);
+	}
+
+	// Just in case we don't know what this is, return *something* (if it contains neither IPv4 nor IPv6, bye)
+	return INVALID_IP;
+}
+
+/**
+ * Converts a 32 hexdigit string into human readable IP address format.
+ *
+ * @param string $ip An IP address in 32 hexdigit (IPv6 long without : characters)
+ * @return string A human readable IP address, in IPv4 dotted notation or shortened IPv6 as appropriate. If not a suitable format incoming, empty string will be returned.
+ */
+function format_ip($ip)
+{
+	static $ip_array = array();
+
+	$ip = strtolower($ip);
+
+	if (strlen($ip) != 32 || !preg_match('~[0-9a-f]{32}~', $ip))
+		return '';
+
+	if (isset($ip_array[$ip]))
+		return $ip_array[$ip];
+
+	// OK, folks, this is an address we haven't done before this page. Is it IPv4? (The first 5 double-octets will be 0, followed by 2 octets of ff, equal to ::ffff:)
+	if (strpos($ip, '00000000000000000000ffff') === 0)
+	{
+		// It's IPv4. Grab each octet, convert to decimal, then amalgamate it before storing and returning.
+		$ipv4 = array();
+		for ($i = 0; $i <= 3; $i++)
+			$ipv4[] = hexdec(substr($ip, 24 + $i * 2, 2));
+		return $ip_array[$ip] = implode('.', $ipv4);
+	}
+	else
+	{
+		// It's IPv6. Part 1: re-separate the string, careful to strip any leading zeroes as we go but leaving a 0 behind if the octet were all zeroes.
+		$ipv6 = str_split($ip, 4);
+		$last_0 = false;
+		foreach ($ipv6 as $k => $v)
+			$ipv6[$k] = $v === '0000' ? '0' : ltrim($v);
+		$ipv6 = implode(':', $ipv6);
+		// Part 2: if possible truncate a single run of 0 double octets to a single ::. To simplify matching :0:, add : to the start and end
+		$ipv6 = preg_replace('~(\:0)+\:~', '::', ':' . $ipv6 . ':', 1);
+		// Part 3: we may have additional : we're not meant to, leading and trailing, so let's fix that too.
+		$ipv6 = preg_replace('~(^\:(?!\:))|((?<!\:):$)~', '', $ipv6);
+		return $ip_array[$ip] = $ipv6;
+	}
+}
+
+/**
+ * Obtains an IP address from the central IP address log, or alternatively, adds it to the log and returns the identifier for it.
+ *
+ * @param string $ip A 32 hex-character string indicating IPv6 style address in longform, without the separator colons.
+ * @return int The id used in the log for this IP address. Will return 0 if the IP address was invalid, or could not be added to the log.
+ */
+function get_ip_identifier($ip)
+{
+	static $ip_array = array();
+
+	$ip = strtolower($ip);
+
+	if (strlen($ip) != 32 || !preg_match('~[0-9a-f]{32}~', $ip) || $ip == INVALID_IP)
+		return 0;
+
+	if (isset($ip_array[$ip]))
+		return $ip_array[$ip];
+
+	$query = wesql::query('
+		SELECT id_ip
+		FROM {db_prefix}log_ips
+		WHERE member_ip = {string:ip}',
+		array(
+			'ip' => $ip,
+		)
+	);
+	if ($row = wesql::fetch_row($query))
+	{
+		wesql::free_result($query);
+		return $ip_array[$ip] = $row[0];
+	}
+
+	// Oops, not in the log, so cleanup then add to log.
+	wesql::free_result($query);
+	wesql::insert('insert',
+		'{db_prefix}log_ips',
+		array(
+			'member_ip' => 'string',
+		),
+		array(
+			$ip,
+		),
+		array(
+			'id_ip',
+		)
+	);
+	return wesql::insert_id();
 }
 
 ?>

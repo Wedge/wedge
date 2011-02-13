@@ -122,8 +122,9 @@ function ViewErrorLog()
 
 	// Find and sort out the errors.
 	$request = wesql::query('
-		SELECT id_error, id_member, ip, url, log_time, message, session, error_type, file, line
-		FROM {db_prefix}log_errors' . (isset($filter) ? '
+		SELECT id_error, id_member, ip, li.member_ip AS display_ip, url, log_time, message, session, error_type, file, line
+		FROM {db_prefix}log_errors AS le
+			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
 		ORDER BY id_error ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
 		LIMIT ' . $_GET['start'] . ', ' . $modSettings['defaultMaxMessages'],
@@ -146,6 +147,7 @@ function ViewErrorLog()
 			'member' => array(
 				'id' => $row['id_member'],
 				'ip' => $row['ip'],
+				'display_ip' => format_ip($row['display_ip']),
 				'session' => $row['session']
 			),
 			'time' => timeformat($row['log_time']),
@@ -178,6 +180,9 @@ function ViewErrorLog()
 				'search' => base64_encode($row['file']),
 			);
 		}
+
+		if ($filter['variable'] == 'ip')
+			$context['filtering_ip'] = format_ip($row['display_ip']);
 
 		// Make a list of members to load later.
 		$members[$row['id_member']] = $row['id_member'];
@@ -241,6 +246,10 @@ function ViewErrorLog()
 		elseif ($filter['variable'] == 'error_type')
 		{
 			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+		}
+		elseif ($filter['variable'] == 'ip')
+		{
+			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
 		}
 		else
 			$context['filter']['value']['html'] = &$filter['value']['sql'];

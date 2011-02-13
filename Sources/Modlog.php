@@ -360,13 +360,14 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	// Here we have the query getting the log details.
 	$result = wesql::query('
 		SELECT
-			lm.id_action, lm.id_member, lm.ip, lm.log_time, lm.action, lm.id_board, lm.id_topic, lm.id_msg, lm.extra,
+			lm.id_action, lm.id_member, li.member_ip AS ip, lm.log_time, lm.action, lm.id_board, lm.id_topic, lm.id_msg, lm.extra,
 			mem.real_name, mg.group_name
 		FROM {db_prefix}log_actions AS lm
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lm.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_group_id} THEN mem.id_post_group ELSE mem.id_group END)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = lm.id_board)
 			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = lm.id_topic)
+			LEFT JOIN {db_prefix}log_ips AS li ON (lm.ip = li.id_ip)
 			WHERE id_log = {int:log_type}
 				AND {raw:modlog_query}'
 			. (!empty($query_string) ? '
@@ -440,7 +441,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 
 		// IP Info?
 		if (isset($row['extra']['ip_range']))
-			if ($seeIP)
+			if ($see_anyIP || ($see_ownIP && $row['id_member'] == $context['user']['id']))
 				$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
 			else
 				$row['extra']['ip_range'] = $txt['logged'];
@@ -461,7 +462,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		// The array to go to the template. Note here that action is set to a "default" value of the action doesn't match anything in the descriptions. Allows easy adding of logging events with basic details.
 		$entries[$row['id_action']] = array(
 			'id' => $row['id_action'],
-			'ip' => $see_anyIP || ($see_ownIP && $row['id_member'] == $context['user']['id']) ? $row['ip'] : $txt['logged'],
+			'ip' => $see_anyIP || ($see_ownIP && $row['id_member'] == $context['user']['id']) ? format_ip($row['ip']) : $txt['logged'],
 			'position' => empty($row['real_name']) && empty($row['group_name']) ? $txt['guest'] : $row['group_name'],
 			'moderator_link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : (empty($row['real_name']) ? ($txt['guest'] . (!empty($row['extra']['member_acted']) ? ' (' . $row['extra']['member_acted'] . ')' : '')) : $row['real_name']),
 			'time' => timeformat($row['log_time']),

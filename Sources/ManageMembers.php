@@ -1273,14 +1273,14 @@ function AdminApprove()
 		foreach ($member_info as $member)
 		{
 			$log_inserts[] = array(
-				time(), 3, $user_info['id'], $user_info['ip'], $log_action,
+				time(), 3, $user_info['id'], get_ip_identifier($user_info['ip']), $log_action,
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
-				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'string-16', 'action' => 'string',
+				'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'int', 'action' => 'string',
 				'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 			),
 			$log_inserts,

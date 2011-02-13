@@ -273,11 +273,11 @@ function ReportToModerator2()
 				'{db_prefix}log_reported_comments',
 				array(
 					'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string', 'email_address' => 'string',
-					'member_ip' => 'string', 'comment' => 'string', 'time_sent' => 'int',
+					'member_ip' => 'int', 'comment' => 'string', 'time_sent' => 'int',
 				),
 				array(
 					$id_report, $user_info['id'], $user_info['name'], $user_info['email'],
-					$user_info['ip'], $poster_comment, time(),
+					get_ip_identifier($user_info['ip']), $poster_comment, time(),
 				),
 				array('id_comment')
 			);

@@ -955,42 +955,72 @@ function BanEdit()
 				// Default the ban name to the name of the banned member.
 				$context['ban']['name'] = $context['ban_suggestions']['member']['name'];
 
-				// Would be nice if we could also ban the hostname.
-				if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $context['ban_suggestions']['main_ip']) == 1 && empty($modSettings['disableHostnameLookup']))
-					$context['ban_suggestions']['hostname'] = host_from_ip($context['ban_suggestions']['main_ip']);
+				// Would be nice if we could also ban the hostname. Make sure we pass the normal IP address to the lookup function, rather than our magic format.
+				if ($context['ban_suggestions']['main_ip']) != INVALID_IP && empty($modSettings['disableHostnameLookup']))
+					$context['ban_suggestions']['hostname'] = host_from_ip(format_ip($context['ban_suggestions']['main_ip']));
 
 				// Find some additional IP's used by this member.
 				$context['ban_suggestions']['message_ips'] = array();
+				$ip_ids = array();
 				$request = wesql::query('
 					SELECT DISTINCT poster_ip
 					FROM {db_prefix}messages
 					WHERE id_member = {int:current_user}
-						AND poster_ip RLIKE {string:poster_ip_regex}
-					ORDER BY poster_ip',
+						AND poster_ip != 0',
 					array(
 						'current_user' => (int) $_REQUEST['u'],
-						'poster_ip_regex' => '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$',
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
-					$context['ban_suggestions']['message_ips'][] = $row['poster_ip'];
+					$ip_ids[] = $row['poster_ip'];
 				wesql::free_result($request);
 
+				if (!empty($ip_ids))
+				{
+					$request = wesql::query('
+						SELECT member_ip
+						FROM {db_prefix}log_ips
+						WHERE id_ip IN ({array_int:ips})
+						ORDER BY member_ip',
+						array(
+							'ips' => $ip_ids,
+						)
+					}
+					while ($row = wesql::fetch_assoc($request))
+						$context['ban_suggestions']['message_ips'][] = format_ip($row['member_ip']);
+					wesql::free_result($request);
+				}
+
 				$context['ban_suggestions']['error_ips'] = array();
+				$ip_ids = array();
 				$request = wesql::query('
 					SELECT DISTINCT ip
 					FROM {db_prefix}log_errors
 					WHERE id_member = {int:current_user}
-						AND ip RLIKE {string:poster_ip_regex}
-					ORDER BY ip',
+						AND ip != 0',
 					array(
 						'current_user' => (int) $_REQUEST['u'],
-						'poster_ip_regex' => '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$',
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
-					$context['ban_suggestions']['error_ips'][] = $row['ip'];
+					$ip_ids[] = $row['ip'];
 				wesql::free_result($request);
+
+				if (!empty($ip_ids))
+				{
+					$request = wesql::query('
+						SELECT member_ip
+						FROM {db_prefix}log_ips
+						WHERE id_ip IN ({array_int:ips})
+						ORDER BY member_ip',
+						array(
+							'ips' => $ip_ids,
+						)
+					}
+					while ($row = wesql::fetch_assoc($request))
+						$context['ban_suggestions']['error_ips'][] = format_ip($row['member_ip']);
+					wesql::free_result($request);
+				}
 
 				// Borrowing a few language strings from profile.
 				loadLanguage('Profile');
@@ -1488,7 +1518,7 @@ function BanLog()
 function list_getBanLogEntries($start, $items_per_page, $sort)
 {
 	$request = wesql::query('
-		SELECT lb.id_ban_log, lb.id_member, IFNULL(lb.ip, {string:dash}) AS ip, IFNULL(lb.email, {string:dash}) AS email, lb.log_time, IFNULL(mem.real_name, {string:blank_string}) AS real_name
+		SELECT lb.id_ban_log, lb.id_member, lb.ip, IFNULL(lb.email, {string:dash}) AS email, lb.log_time, IFNULL(mem.real_name, {string:blank_string}) AS real_name
 		FROM {db_prefix}log_banned AS lb
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lb.id_member)
 		ORDER BY ' . $sort . '
@@ -1500,7 +1530,10 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 	);
 	$log_entries = array();
 	while ($row = wesql::fetch_assoc($request))
+	{
+		$row['ip'] = format_ip($row);
 		$log_entries[] = $row;
+	}
 	wesql::free_result($request);
 
 	return $log_entries;

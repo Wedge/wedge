@@ -1074,6 +1074,7 @@ function tracking($memID)
 
 function trackActivity($memID)
 {
+	// !!! THIS IS VERY BROKEN RIGHT NOW! Stopped after trying to get my head round the complexity of changes for this.
 	global $scripturl, $txt, $modSettings;
 	global $user_profile, $context;
 
@@ -1192,10 +1193,11 @@ function trackActivity($memID)
 
 	// Get all IP addresses this user has used for his messages.
 	$request = wesql::query('
-		SELECT poster_ip
-		FROM {db_prefix}messages
+		SELECT poster_ip, li.member_ip
+		FROM {db_prefix}messages AS m
+			LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 		WHERE id_member = {int:current_member}
-		' . (isset($min_msg_member) ? '
+			AND poster_ip != 0' . (isset($min_msg_member) ? '
 			AND id_msg >= {int:min_msg_member} AND id_msg <= {int:max_msg_member}' : '') . '
 		GROUP BY poster_ip',
 		array(
@@ -1205,18 +1207,21 @@ function trackActivity($memID)
 		)
 	);
 	$context['ips'] = array();
+	$context['ip_ids'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['poster_ip'] . '">' . $row['poster_ip'] . '</a>';
+		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . format_ip($row['poster_ip']) . '">' . format_ip($row['poster_ip']) . '</a>';
 		$ips[] = $row['poster_ip'];
 	}
 	wesql::free_result($request);
 
 	// Now also get the IP addresses from the error messages.
 	$request = wesql::query('
-		SELECT COUNT(*) AS error_count, ip
-		FROM {db_prefix}log_errors
+		SELECT COUNT(*) AS error_count, li.member_ip
+		FROM {db_prefix}log_errors AS le
+			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)
 		WHERE id_member = {int:current_member}
+			AND le.ip != 0
 		GROUP BY ip',
 		array(
 			'current_member' => $memID,
@@ -1225,6 +1230,7 @@ function trackActivity($memID)
 	$context['error_ips'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
+		$row['ip'] = format_ip($row['member_ip']);
 		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $row['ip'] . '">' . $row['ip'] . '</a>';
 		$ips[] = $row['ip'];
 	}
@@ -1822,7 +1828,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 
 		$edits[] = array(
 			'id' => $row['id_action'],
-			'ip' => $row['ip'],
+			'ip' => format_ip($row['ip']),
 			'id_member' => !empty($extra['applicator']) ? $extra['applicator'] : 0,
 			'member_link' => $txt['trackEdit_deleted_member'],
 			'action' => $row['action'],
