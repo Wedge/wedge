@@ -313,18 +313,20 @@ function messageIndexBar($area)
 					'custom_url' => $scripturl . '?action=pm;sa=send',
 					'permission' => allowedTo('pm_send'),
 				),
+				'',
 				'inbox' => array(
 					'label' => $txt['inbox'],
 					'custom_url' => $scripturl . '?action=pm',
 				),
+				'sent' => array(
+					'label' => $txt['sent_items'],
+					'custom_url' => $scripturl . '?action=pm;f=sent',
+				),
+				'',
 				'showdrafts' => array(
 					'label' => $txt['pm_menu_drafts'],
 					'custom_url' => $scripturl . '?action=pm;sa=showdrafts',
 					'permission' => allowedTo('save_pm_draft'),
-				),
-				'sent' => array(
-					'label' => $txt['sent_items'],
-					'custom_url' => $scripturl . '?action=pm;f=sent',
 				),
 			),
 		),
@@ -356,6 +358,7 @@ function messageIndexBar($area)
 					'label' => $txt['pm_manage_rules'],
 					'custom_url' => $scripturl . '?action=pm;sa=manrules',
 				),
+				'',
 				'settings' => array(
 					'label' => $txt['pm_settings'],
 					'custom_url' => $scripturl . '?action=pm;sa=settings',

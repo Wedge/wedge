@@ -2254,48 +2254,6 @@ function getLanguages($use_cache = true)
 }
 
 /**
- * Handles censoring of provided text, subject to whether the current board can be disabled and it is disabled by the current user.
- *
- * Like a number of functions, this works by modifying the text in place through accepting the text by reference. The word censoring is based on two lists, held in $modSettings['censor_vulgar'] and $modSettings['censor_proper'], which are new-line delineated lists of search/replace pairs.
- *
- * @param string &$text The string to be censored, by reference (so updating this string, the master string will be updated too)
- * @param bool $force Whether to force it to be censored, even if user and theme settings might indicate otherwise.
- * @return string The censored text is also returned by reference and as such can be safely used in assignments as well as its more common use.
- */
-function &censorText(&$text, $force = false)
-{
-	global $modSettings, $options, $settings, $txt;
-	static $censor_vulgar = null, $censor_proper;
-
-	if ((!empty($options['show_no_censored']) && $settings['allow_no_censored'] && !$force) || empty($modSettings['censor_vulgar']))
-		return $text;
-
-	// If they haven't yet been loaded, load them.
-	if ($censor_vulgar == null)
-	{
-		$censor_vulgar = explode("\n", $modSettings['censor_vulgar']);
-		$censor_proper = explode("\n", $modSettings['censor_proper']);
-
-		// Quote them for use in regular expressions.
-		for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
-		{
-			$censor_vulgar[$i] = strtr(preg_quote($censor_vulgar[$i], '/'), array('\\\\\\*' => '[*]', '\\*' => '[^\s]*?', '&' => '&amp;'));
-			$censor_vulgar[$i] = (empty($modSettings['censorWholeWord']) ? '/' . $censor_vulgar[$i] . '/' : '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/') . (empty($modSettings['censorIgnoreCase']) ? '' : 'i') . 'u';
-
-			if (strpos($censor_vulgar[$i], '\'') !== false)
-			{
-				$censor_proper[count($censor_vulgar)] = $censor_proper[$i];
-				$censor_vulgar[count($censor_vulgar)] = strtr($censor_vulgar[$i], array('\'' => '&#039;'));
-			}
-		}
-	}
-
-	// Censoring isn't so very complicated :P.
-	$text = preg_replace($censor_vulgar, $censor_proper, $text);
-	return $text;
-}
-
-/**
  * Manage the process of loading a template file. This should not normally be called directly (instead, use {@link loadTemplate()} which invokes this function)
  *
  * This function ultimately handles the physical loading of a template or language file, and if $modSettings['disableTemplateEval'] is off, it also loads it in such a way as to parse it first - to be able to produce a different output to highlight where the error is (which is also not cached)
