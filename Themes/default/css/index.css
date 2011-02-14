@@ -87,6 +87,20 @@ body {
 	margin: 12px 0;
 	border-radius: 8px;
 }
+#edgehide {
+	base: #edge;
+	position: relative;
+	#sidebar {
+		position: absolute;
+		left: -260px;
+		transition: left .3s ease;
+		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15);
+		:hover {
+			left: -40px;
+		}
+	}
+}
+
 #main_content {
 	display: table-cell;
 	vertical-align: top;

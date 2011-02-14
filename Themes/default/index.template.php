@@ -313,19 +313,17 @@ function template_body_below()
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{
-		var d = document, m = d.getElementById("main_content"), f = d.getElementById("footer"),
-			s = d.getElementById("sidebar"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
-		if (w && w < 728 && !wedge_side)
+		var d = document, s = d.getElementById("sidebar"), e1 = d.getElementById("edge"), e2 = d.getElementById("edgehide"),
+			m = d.getElementById("main_content"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
+		if (w && w < 728 && !wedge_side && e1)
 		{
 			wedge_side = 1;
-			t.removeChild(s);
-			f.appendChild(s);
+			e1.id = "edgehide";
 		}
-		else if (w >= 952 && wedge_side)
+		else if (w >= 952 && wedge_side && e2)
 		{
 			wedge_side = 0;
-			f.removeChild(s);
-			t.insertBefore(s, m);
+			e2.id = "edge";
 		}
 	}
 	wedge_side = 0;
@@ -410,35 +408,39 @@ function theme_linktree($force_show = false, $on_bottom = false)
 {
 	global $context, $settings, $options, $shown_linktree;
 
-	// If linktree is empty, just return - also allow an override.
-	if (empty($context['linktree']) || (!empty($context['dont_default_linktree']) && !$force_show))
-		return;
-
 	echo '
-		<div class="linktree', $on_bottom ? ' bt' : '', '">
-			<ul>';
+		<div class="linktree', $on_bottom ? ' bt' : '', '">';
 
-	// Each tree item has a URL and name. Some may have extra_before and extra_after.
-	foreach ($context['linktree'] as $link_num => $tree)
+	// If linktree is empty, just return - also allow an override.
+	if (!empty($context['linktree']) && count($context['linktree']) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
 		echo '
-				<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
+			<ul>';
 
-		// Show something before the link?
-		if (isset($tree['extra_before']))
-			echo $tree['extra_before'];
+		// Each tree item has a URL and name. Some may have extra_before and extra_after.
+		foreach ($context['linktree'] as $link_num => $tree)
+		{
+			echo '
+					<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
 
-		// Show the link, including a URL if it should have one.
-		echo $settings['linktree_link'] && isset($tree['url']) ? '<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
+			// Show something before the link?
+			if (isset($tree['extra_before']))
+				echo $tree['extra_before'];
 
-		// Show something after the link...?
-		if (isset($tree['extra_after']))
-			echo $tree['extra_after'];
+			// Show the link, including a URL if it should have one.
+			echo $settings['linktree_link'] && isset($tree['url']) ? '<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
 
-		echo '</li>';
+			// Show something after the link...?
+			if (isset($tree['extra_after']))
+				echo $tree['extra_after'];
+
+			echo '</li>';
+		}
+		echo '
+				</ul>';
 	}
+
 	echo '
-			</ul>
 		</div>';
 
 	$shown_linktree = true;

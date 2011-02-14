@@ -34,8 +34,7 @@
 body
 	background: #efead2
 	font: 78%/130% $main_font
-	margin: 0
-	padding: 0
+	margin, padding: 0
 
 #header, #navi, #content
 	margin: 0 auto
@@ -64,6 +63,16 @@ body
 	margin: 12px 0
 	border-radius: 8px
 
+#edgehide extends #edge
+	position: relative
+	#sidebar
+		position: absolute
+		left: -260px
+		transition: left .3s ease
+		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
+		:hover
+			left: -40px
+
 #main_content
 	display: table-cell
 	vertical-align: top
@@ -89,8 +98,7 @@ h1.forumtitle
 
 // Float these items to the right
 #siteslogan
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	float: right
 	line-height: 3em
 
@@ -275,8 +283,7 @@ em
 
 // Let's give all forms zero padding/margins
 form
-	padding: 0
-	margin: 0
+	margin, padding: 0
 
 input, select, textarea
 	font: 95%/115% $main_font
@@ -378,6 +385,7 @@ input[type=file]
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
+
 .menu
 	font: 105% "Tahoma", Verdana
 	min-height: 2em
@@ -999,6 +1007,7 @@ a.moderation_link
 
 /* AJAX notification bar
 ------------------------------------------------------- */
+
 #ajax_in_progress
 	background: url($images/theme/loadingbar.png) repeat-x
 	color: #f96f00
@@ -1019,6 +1028,7 @@ a.moderation_link
 
 /* Lists with settings use these a lot.
 ------------------------------------------------------- */
+
 dl.settings
 	clear: right
 	overflow: auto
@@ -1064,6 +1074,7 @@ dfn
 
 /* Styles for section headers.
 ------------------------------------------------------- */
+
 .cat, .title
 	overflow: hidden
 	border-radius: 5px
@@ -1214,6 +1225,7 @@ table
 
 /* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
+
 .roundframe
 	overflow: hidden
 	margin-top: 1px
@@ -1237,11 +1249,13 @@ table
 
 /* The main content area.
 ------------------------------------------------------- */
+
 .wrc p
 	margin: 0 0 .5em
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
+
 .auto_suggest_div
 	border: 1px solid #000
 	position: absolute
@@ -1316,6 +1330,7 @@ table
 
 /* Styles for a typical table.
 ------------------------------------------------------- */
+
 .table_list
 	width: 100%
 	td, th
@@ -1332,6 +1347,7 @@ table
 
 /* Styles for print media.
 ------------------------------------------------------- */
+
 @media print
 	#headerarea
 		display: none
@@ -1340,6 +1356,7 @@ table
 
 /* A few more header styles...
 ------------------------------------------------------- */
+
 tr.catbg
 	th
 		background: #e5eeee
