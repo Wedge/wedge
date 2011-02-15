@@ -687,11 +687,16 @@ class CSS_Math extends CSSCache
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(?:em|px|pt))+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(?:em|px|pt)|\b(?:round|ceil|floor|abs|fmod)\()+)\)~i', $css, $matches))
 			return;
 
+		$done = array();
 		foreach ($matches[1] as $i => $math)
 		{
+			if (isset($done[$math]))
+				continue;
+			$done[$math] = true;
+
 			$em = strpos($math, 'em') ? 1 : 0;
 			$px = strpos($math, 'px') ? 1 : 0;
 			$pt = strpos($math, 'pt') ? 1 : 0;
@@ -703,7 +708,7 @@ class CSS_Math extends CSSCache
 			if ($em | $px | $pt)
 				$math = str_replace(array('em', 'px', 'pt'), '', $math);
 
-			$matches[0][$i] = eval('return (' . $math . ');') . ($em ? 'em' : ($px ? 'px' : ($pt ? 'pt' : '')));
+			$css = str_replace($matches[0][$i], eval('return (' . $math . ');') . ($em ? 'em' : ($px ? 'px' : ($pt ? 'pt' : ''))), $css);
 		}
 	}
 }

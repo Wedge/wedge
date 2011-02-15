@@ -426,14 +426,11 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		op = this.opt.aSwapImages;
 		for (i = 0, n = op.length; i < n; i++)
 		{
-			var
-				oImage			= $('#' + op[i].sId),
-				sTargetSource	= bCollapse ? op[i].srcCollapsed : op[i].srcExpanded,
-				sAlt			= bCollapse ? op[i].altCollapsed : op[i].altExpanded;
+			var oImg = $('#' + op[i].sId), sTarget = bCollapse ? op[i].srcCollapsed : op[i].srcExpanded, sAlt = bCollapse ? op[i].altCollapsed : op[i].altExpanded;
 			// Only (re)load the image if it's changed.
-			if (oImage.attr('src') != sTargetSource)
-				oImage.attr('src', sTargetSource);
-			oImage.attr({ alt: sAlt, title: sAlt });
+			if (oImg.attr('src') != sTarget)
+				oImg.attr('src', sTarget);
+			oImg.attr({ alt: sAlt, title: sAlt });
 		}
 	}
 

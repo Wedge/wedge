@@ -23,6 +23,9 @@
 .updated {
 	color: red;
 }
+p {
+	margin: .5em 0;
+}
 
 /* Resize our post area as needed */
 #message {
