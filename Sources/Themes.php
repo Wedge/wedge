@@ -205,7 +205,7 @@ function ThemeAdmin()
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
-			$context['themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['dir'] . '/css');
+			$context['themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['dir'] . '/styles');
 		wesql::free_result($request);
 
 		// Can we create a new theme?
@@ -238,7 +238,7 @@ function ThemeAdmin()
 		updateSettings(array(
 			'theme_allow' => $_POST['options']['theme_allow'],
 			'theme_guests' => $arrh[0],
-			'theme_styling_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'css',
+			'theme_styling_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'styles',
 			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
 		if (!empty($_POST['theme_reset']))
@@ -247,7 +247,7 @@ function ThemeAdmin()
 			if ((int) $reset[0] == 0 || in_array($reset[0], $_POST['options']['known_themes']))
 				updateMemberData(null, array(
 					'id_theme' => (int) $_POST['theme_reset'],
-					'styling' => isset($reset[1]) ? base64_decode($reset[1]) : 'css'
+					'styling' => isset($reset[1]) ? base64_decode($reset[1]) : 'styles'
 				));
 		}
 
@@ -963,7 +963,7 @@ function PickTheme()
 
 		$th = explode('_', $_GET['th']);
 		$id = (int) $th[0];
-		$css = isset($th[1]) ? base64_decode($th[1]) : 'css';
+		$css = isset($th[1]) ? base64_decode($th[1]) : 'styles';
 
 		// Save for this user.
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
@@ -1016,7 +1016,7 @@ function PickTheme()
 	{
 		$context['current_member'] = 0;
 		$context['current_theme'] = 0;
-		$context['current_styling'] = 'css';
+		$context['current_styling'] = 'styles';
 	}
 	// Guests and such...
 	elseif ($_REQUEST['u'] == '-1')
@@ -1074,7 +1074,7 @@ function PickTheme()
 				);
 			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
 			if ($row['variable'] == 'theme_dir')
-				$context['available_themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['value'] . '/css');
+				$context['available_themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['value'] . '/styles');
 		}
 		wesql::free_result($request);
 	}
@@ -1224,11 +1224,11 @@ function ThemeInstall()
 			@apache_reset_timeout();
 
 		// Create subdirectories for css and javascript files.
-		mkdir($theme_dir . '/css', 0777);
+		mkdir($theme_dir . '/styles', 0777);
 		mkdir($theme_dir . '/scripts', 0777);
 
 		// Copy over the default non-theme files.
-		$to_copy = array('/index.php', '/index.template.php', '/css/index.css', '/css/rtl.css', '/scripts/theme.js');
+		$to_copy = array('/index.php', '/index.template.php', '/styles/index.css', '/styles/rtl.css', '/scripts/theme.js');
 		foreach ($to_copy as $file)
 		{
 			copy($settings['default_theme_dir'] . $file, $theme_dir . $file);
@@ -1489,7 +1489,7 @@ function EditTheme()
 		foreach ($context['themes'] as $key => $theme)
 		{
 			// There has to be a Settings template!
-			if (!file_exists($theme['theme_dir'] . '/index.template.php') && !file_exists($theme['theme_dir'] . '/css/index.css'))
+			if (!file_exists($theme['theme_dir'] . '/index.template.php') && !file_exists($theme['theme_dir'] . '/styles/index.css'))
 				unset($context['themes'][$key]);
 			else
 			{
@@ -1515,7 +1515,7 @@ function EditTheme()
 						}
 					}
 
-				$context['themes'][$key]['can_edit_style'] = file_exists($theme['theme_dir'] . '/css/index.css');
+				$context['themes'][$key]['can_edit_style'] = file_exists($theme['theme_dir'] . '/styles/index.css');
 			}
 		}
 
@@ -1948,7 +1948,7 @@ function wedge_get_styling_list($dir, $files = array())
 				'type' => 'add',
 				'comment' => '',
 			);
-		$minus_this = strpos($this_dir, '/css/') + ($style['type'] == 'add' ? 1 : 5);
+		$minus_this = strpos($this_dir, '/styles/') + ($style['type'] == 'add' ? 1 : 8);
 		$style['dir'] = substr($this_dir, $minus_this);
 		$styles[$this_dir] = $style;
 		$sub_styles = wedge_get_styling_list($this_dir, $these_files);

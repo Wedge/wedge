@@ -329,10 +329,8 @@ function template_generic_xml_recursive($xml_data, $parent_ident, $child_ident, 
 
 function template_webslice_header_above()
 {
-	global $settings;
-
 	echo '
-	<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/wireless.css" type="text/css" />';
+	<link rel="stylesheet" href="', add_css_file('wireless'), '" type="text/css" />';
 }
 
 function template_webslice_header_below()

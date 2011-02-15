@@ -2,7 +2,7 @@
 /**
  *
  * This is the main CSS file for the default theme's Wine styling.
- * Basically, if you want to make your own stylesheet, just create a new folder in /css/,
+ * Basically, if you want to make your own stylesheet, just create a new folder in /styles/,
  * create an index.css file in it, and add a settings.xml file if you need to override default settings.
  * If you don't specify anything, the default name will be the folder's name, and the type will be set to "add".
  *

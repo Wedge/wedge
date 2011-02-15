@@ -141,12 +141,11 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 /**
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
- * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder.
- * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
- * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the CSS flow.
+ * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current styling.
+ * @param boolean $to_header Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
+function add_css_file($files = array(), $add_link = false)
 {
 	global $context, $modSettings, $settings, $cachedir, $boardurl;
 
@@ -156,14 +155,6 @@ function add_css_file($files = array(), $is_direct_url = false, $is_out_of_flow 
 	// Delete all duplicates.
 	$files = array_keys(array_flip($files));
 
-	if ($is_direct_url)
-	{
-		$context['header_css'] .= '
-<link rel="stylesheet" src="' . implode('">
-<link rel="stylesheet" src="', $files) . '">';
-		return;
-	}
-
 	$id = '';
 	$latest_date = 0;
 	$is_default_theme = true;
@@ -172,14 +163,24 @@ function add_css_file($files = array(), $is_direct_url = false, $is_out_of_flow 
 	foreach ($files as &$file)
 	{
 		if (strpos($file, '.css') === false)
-			$file = 'css/' . $file . '.css';
+		{
+			$dir = $context['styling'];
+			$ofile = $file;
+			$file = $dir . '/' . $ofile . '.css';
+			// Does this file at least exist in the current styling...? If not, try the parent styling.
+			while (!file_exists($settings['theme_dir'] . '/' . $ofile) && !file_exists($settings['default_theme_dir'] . '/' . $ofile))
+			{
+				$dir = dirname($dir);
+				$file = $dir . '/' . $ofile . '.css';
+			}
+		}
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
 		if (!$target)
 			continue;
 
 		$is_default_theme &= $target === 'default_theme_';
-		// Turn css/name.css into 'name', and othertheme/file.css into 'othertheme_css' for the final filename.
-		$id .= str_replace(array('css/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -4)) . '-';
+		// Turn styles/name.css into 'name', and othertheme/file.css into 'othertheme_css' for the final filename.
+		$id .= str_replace(array('styles/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -4)) . '-';
 		$file = $settings[$target . 'dir'] . '/' . $file;
 		$latest_date = max($latest_date, filemtime($file));
 	}
@@ -197,11 +198,11 @@ function add_css_file($files = array(), $is_direct_url = false, $is_out_of_flow 
 	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
 
 	// Do we just want the URL?
-	if ($is_out_of_flow)
+	if (!$to_header)
 		return $final_script;
 
-	echo '
-<link rel="stylesheet" src="' . $final_script . '">';
+	$context['header'] .= '
+	<link rel="stylesheet" src="' . $final_script . '">';
 }
 
 /**
@@ -239,7 +240,7 @@ function wedge_cache_css()
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
 		// !!! Right now, the default styling (Pastel) will not run this, even though it needs it. Right back at ya, IE.
-		if ($folder !== 'css' && file_exists($fold . 'settings.xml'))
+		if ($folder !== 'styles' && file_exists($fold . 'settings.xml'))
 		{
 			$set = file_get_contents($fold . '/settings.xml');
 			// If this is a replace-type styling, erase all of the parent files.
@@ -261,7 +262,7 @@ function wedge_cache_css()
 	}
 
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id .= $folder === 'css' ? 'Wedge' : str_replace('/', '-', substr($folder, 0, 4) === 'css/' ? substr($folder, 4) : $folder);
+	$id .= $folder === 'styles' ? 'Wedge' : str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
 
 	// The last folder in the list is the deepest styling.
 	// It's the one that gets CSS/JavaScript attention.
@@ -539,6 +540,7 @@ function theme_base_css()
 
 /**
  * Shows the base Javascript calls, i.e. including jQuery and script.js
+ *
  * @param boolean $indenting Number of tabs on each new line. For the average anal-retentive web developer.
  */
 function theme_base_js($indenting = 0)

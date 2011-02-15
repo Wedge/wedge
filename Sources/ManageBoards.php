@@ -431,7 +431,7 @@ function EditBoard()
 			'posts' => 0,
 			'topics' => 0,
 			'theme' => 0,
-			'styling' => 'css',
+			'styling' => 'styles',
 			'profile' => 1,
 			'override_theme' => 0,
 			'redirect' => '',
@@ -599,7 +599,7 @@ function EditBoard()
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-		$context['themes'][$row['id']]['stylings'] = wedge_get_styling_list($row['dir'] . '/css');
+		$context['themes'][$row['id']]['stylings'] = wedge_get_styling_list($row['dir'] . '/styles');
 	wesql::free_result($request);
 
 	if (!isset($_REQUEST['delete']))
@@ -648,7 +648,7 @@ function EditBoard2()
 
 		$theme_array = explode('_', $_POST['boardtheme']);
 		$boardOptions['board_theme'] = (int) $theme_array[0];
-		$boardOptions['board_styling'] = empty($theme_array[1]) ? 'css' : base64_decode($theme_array[1]);
+		$boardOptions['board_styling'] = empty($theme_array[1]) ? 'styles' : base64_decode($theme_array[1]);
 
 		// Checkboxes....
 		$boardOptions['posts_count'] = isset($_POST['count']);

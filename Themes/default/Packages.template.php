@@ -1197,7 +1197,7 @@ function template_view_operations()
 	<title>', $txt['operation_title'], '</title>
 	<meta charset="utf-8">',
 	theme_base_css(), '
-	<link rel="stylesheet" href="', $settings['theme_url'], '/css/admin.css">',
+	<link rel="stylesheet" href="', add_css_file('admin'), '">',
 	theme_base_js(1), '
 </head>
 <body>

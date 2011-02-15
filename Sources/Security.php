@@ -1278,16 +1278,16 @@ function checkUserRequest_request()
 	}
 
 	// Check for oddities in the Connection header. Various bad things happen here; mostly stupid bots.
-	if (isset($context['html_headers']['Connection']))
+	if (isset($context['http_headers']['Connection']))
 	{
 		// Can't have both Connection: keep-alive and Connection: close, or more than one of either at a time. No being greedy.
-		$ka = preg_match_all('~\bkeep-alive\b~i', $context['html_headers']['Connection']);
-		$c = preg_match_all('~\bclose\b~i', $context['html_headers']['Connection']);
+		$ka = preg_match_all('~\bkeep-alive\b~i', $context['http_headers']['Connection']);
+		$c = preg_match_all('~\bclose\b~i', $context['http_headers']['Connection']);
 		if (($ka > 0 && $c > 0) || $ka > 1 || $c > 1)
 			return $context['behavior_error'] = 'behav_alive_close';
 
 		// Does Keep-Alive conform to spec?
-		if (stripos($context['html_headers']['Connection'], 'Keep-Alive: ') !== false)
+		if (stripos($context['http_headers']['Connection'], 'Keep-Alive: ') !== false)
 			return $context['behavior_error'] = 'behav_wrong_keep_alive';
 	}
 
@@ -1296,7 +1296,7 @@ function checkUserRequest_request()
 		return $context['behavior_error'] = 'behav_rogue_chars';
 
 	// Should not use lowercase 'via' header (only known if on Apache). Clearswift does, though they shouldn't.
-	if (isset($context['html_headers']['via']) && strpos($context['html_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
+	if (isset($context['http_headers']['via']) && strpos($context['http_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
 		return $context['behavior_error'] = 'behav_invalid_via';
 
 	// A known referrer spammer

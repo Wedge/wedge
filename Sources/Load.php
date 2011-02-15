@@ -327,7 +327,7 @@ function loadUserSettings()
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
-		'styling' => empty($user_settings['styling']) ? 'css' : $user_settings['styling'],
+		'styling' => empty($user_settings['styling']) ? 'styles' : $user_settings['styling'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -466,7 +466,7 @@ function loadBoard()
 	{
 		$board_info = array(
 			'moderators' => array(),
-			'styling' => 'css',
+			'styling' => 'styles',
 		);
 		return;
 	}
@@ -632,7 +632,7 @@ function loadBoard()
 			// Otherwise the topic is invalid, there are no moderators, etc.
 			$board_info = array(
 				'moderators' => array(),
-				'styling' => 'css',
+				'styling' => 'styles',
 				'error' => 'exist',
 			);
 			$topic = null;
@@ -1383,7 +1383,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		$th = explode('_', $_REQUEST['theme']);
 		$id_theme = (int) $th[0];
-		$styling = isset($th[1]) ? base64_decode($th[1]) : 'css';
+		$styling = isset($th[1]) ? base64_decode($th[1]) : '';
 		$_SESSION['id_theme'] = $id_theme;
 		$_SESSION['styling'] = $styling;
 	}
@@ -1391,7 +1391,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif (!empty($_SESSION['id_theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$id_theme = (int) $_SESSION['id_theme'];
-		$styling = !empty($_SESSION['styling']) ? $_SESSION['styling'] : 'css';
+		$styling = !empty($_SESSION['styling']) ? $_SESSION['styling'] : '';
 	}
 	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
 	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
@@ -1403,7 +1403,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif (!empty($board_info['theme']))
 	{
 		$id_theme = $board_info['theme'];
-		$styling = isset($board_info['styling']) ? $board_info['styling'] : 'css';
+		$styling = isset($board_info['styling']) ? $board_info['styling'] : '';
 	}
 	// The theme is the forum's default.
 	else
@@ -1417,7 +1417,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!empty($board_info['theme']) && $board_info['override_theme'])
 	{
 		$id_theme = $board_info['theme'];
-		$styling = isset($board_info['styling']) ? $board_info['styling'] : 'css';
+		$styling = isset($board_info['styling']) ? $board_info['styling'] : '';
 	}
 	// If they have specified a particular theme to use with SSI allow it to be used.
 	elseif (!empty($ssi_theme) && $id_theme == $ssi_theme)
@@ -1432,9 +1432,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Time to determine our CSS list...
 	// First, load our requested styling folder.
-	$folders = isset($styling) ? explode('/', $styling) : array('css');
+	$context['styling'] = empty($styling) ? 'styles' : $styling;
+	$folders = explode('/', $context['styling']);
 	$context['css_folders'] = array();
-	$current_folder = $folders[0] == 'css' ? '' : '/css';
+	// !!! Shouldn't this simply be set to ''...?
+	$current_folder = $folders[0] == 'styles' ? '' : '/styles';
 	foreach ($folders as $folder)
 	{
 		$current_folder .= '/' . $folder;

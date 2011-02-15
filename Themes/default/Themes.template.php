@@ -50,12 +50,12 @@ function template_main()
 	$("#known_themes_list").hide();
 	$("#known_themes_link").show();');
 
-	$styling = empty($modSettings['theme_styling_guests']) ? 'css' : $modSettings['theme_styling_guests'];
+	$styling = empty($modSettings['theme_styling_guests']) ? 'styles' : $modSettings['theme_styling_guests'];
 
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'] as $theme)
 	{
-		echo '<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] && $styling == 'css' ? ' selected' : '', '>', $theme['name'], '</option>';
+		echo '<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] && $styling == 'styles' ? ' selected' : '', '>', $theme['name'], '</option>';
 		if (!empty($theme['stylings']))
 			wedge_show_stylings($theme, $theme['stylings'], 1, $modSettings['theme_guests'], $styling);
 	}
@@ -379,7 +379,7 @@ function template_set_settings()
 						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit;filename=index.template.php">', $txt['theme_edit_index'], '</a>
 					</li>
 					<li>
-						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit;directory=css">', $txt['theme_edit_style'], '</a>
+						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit;directory=styles">', $txt['theme_edit_style'], '</a>
 					</li>
 				</ul>
 			</div>';
@@ -636,7 +636,7 @@ function template_edit_list()
 		<div class="windowbg', $alternate ? '' : '2', ' wrc">
 			<ul class="reset">
 				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $theme['can_edit_style'] ? '
-				<li><a href="' . $scripturl . '?action=admin;area=theme;th=' . $theme['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;directory=css">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
+				<li><a href="' . $scripturl . '?action=admin;area=theme;th=' . $theme['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;directory=styles">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
 				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=copy">', $txt['themeadmin_edit_copy_template'], '</a></li>
 			</ul>
 		</div>';
@@ -749,7 +749,6 @@ function template_edit_style()
 		', $txt['error_session_timeout'], '
 	</div>';
 
-	// From now on no one can complain that editing css is difficult. If you disagree, go to www.w3schools.com.
 	echo '
 	<div id="admincenter">';
 
@@ -840,7 +839,7 @@ function template_edit_style()
 			frames["css_preview_box"].document.write(data);
 			frames["css_preview_box"].document.close();
 
-			// Next, fix all its links so we can handle them and reapply the new css!
+			// Next, fix all its links so we can handle them and reapply the new CSS!
 			frames["css_preview_box"].onload = function ()
 			{
 				var fixLinks = frames["css_preview_box"].document.getElementsByTagName("a");

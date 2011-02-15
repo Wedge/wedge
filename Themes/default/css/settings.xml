@@ -14,7 +14,7 @@
 
 	<css for="ie7,ie8"><![CDATA[
 		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a {
-			behavior: url($behavior/Themes/default/css/PIE.htc);
+			behavior: url($behavior/Themes/default/styles/PIE.htc);
 			position: relative;
 		}
 	]]></css>

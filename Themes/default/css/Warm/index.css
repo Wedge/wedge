@@ -26,8 +26,8 @@
  * $here - current styling's root folder URL
  * $root - forum's root URL
  *
- * e.g. If you have a file called sprite.png in your custom "css/Hello/World"
- * css folder, link to url($here/sprite.png) rather than url(sprite.png).
+ * e.g. If you have a file called sprite.png in your custom "styles/Hello/World"
+ * styling folder, link to url($here/sprite.png) rather than url(sprite.png).
  */
 
 // Set a fontsize that will look the same in all browsers.

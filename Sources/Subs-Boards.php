@@ -847,7 +847,7 @@ function createBoard($boardOptions)
 		'posts_count' => true,
 		'override_theme' => false,
 		'board_theme' => 0,
-		'board_styling' => 'css',
+		'board_styling' => 'styles',
 		'access_groups' => array(),
 		'board_description' => '',
 		'profile' => 1,

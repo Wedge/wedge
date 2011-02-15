@@ -472,7 +472,7 @@ function template_modify_board()
 
 	foreach ($context['themes'] as $theme)
 	{
-		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == 'css' ? ' selected' : '', '>', $theme['name'], '</option>';
+		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['styling'] == 'styles' ? ' selected' : '', '>', $theme['name'], '</option>';
 		if (!empty($theme['stylings']))
 			wedge_show_stylings($theme, $theme['stylings'], 1, $context['board']['theme'], $context['board']['styling']);
 	}
