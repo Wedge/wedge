@@ -36,7 +36,6 @@ if (!defined('SMF'))
  *
  * This function takes the current topic status and reverts it; so sticky topics become unstickied, and vice versa.
  * - It requires the make_sticky permission, which is not a any/own permission (so users cannot just, even accidentally, gain the power to sticky only their own topics)
- * - It can be disabled from the admin panel (and this is stored in $modSettings['enableStickyTopics'])
  * - Session validation is done based on the URL containing the normal session identifiers.
  * - The action will be logged in the moderation log (if enabled, see {@link logAction()})
  * - Send notifications to relevant users.
@@ -48,10 +47,6 @@ function Sticky()
 
 	// Make sure the user can sticky it, and they are stickying *something*.
 	isAllowedTo('make_sticky');
-
-	// You shouldn't be able to (un)sticky a topic if the setting is disabled.
-	if (empty($modSettings['enableStickyTopics']))
-		fatal_lang_error('cannot_make_sticky', false);
 
 	// You can't sticky a board or something!
 	if (empty($topic))

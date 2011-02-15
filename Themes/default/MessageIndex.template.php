@@ -379,8 +379,8 @@ function template_main()
 	if (!$context['no_topic_listing'])
 		echo '
 			<p class="floatleft smalltext">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ' . $txt['locked_topic'] . '<br>', $modSettings['enableStickyTopics'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ' . $txt['sticky_topic'] . '<br>' : '', '
+				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ' . $txt['locked_topic'] . '<br>
+				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ' . $txt['sticky_topic'] . '<br>
 			</p>
 			<p class="smalltext">', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
 				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '

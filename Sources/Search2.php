@@ -1419,7 +1419,7 @@ function Search2()
 			$boards_can['merge_any'] = boardsAllowedTo('merge_any');
 
 			$context['can_lock'] = in_array(0, $boards_can['lock_any']);
-			$context['can_sticky'] = in_array(0, $boards_can['make_sticky']) && !empty($modSettings['enableStickyTopics']);
+			$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
 			$context['can_move'] = in_array(0, $boards_can['move_any']);
 			$context['can_remove'] = in_array(0, $boards_can['remove_any']);
 			$context['can_merge'] = in_array(0, $boards_can['merge_any']);
@@ -1662,7 +1662,7 @@ function prepareSearchContext($reset = false)
 
 	$output = array_merge($context['topics'][$message['id_msg']], array(
 		'id' => $message['id_topic'],
-		'is_sticky' => !empty($modSettings['enableStickyTopics']) && !empty($message['is_sticky']),
+		'is_sticky' => !empty($message['is_sticky']),
 		'is_locked' => !empty($message['locked']),
 		'is_poll' => $modSettings['pollMode'] == '1' && $message['id_poll'] > 0,
 		'posted_in' => !empty($participants[$message['id_topic']]),
@@ -1726,7 +1726,7 @@ function prepareSearchContext($reset = false)
 
 		$output['quick_mod'] = array(
 			'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-			'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])) && !empty($modSettings['enableStickyTopics']),
+			'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
 			'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
 			'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
 		);
