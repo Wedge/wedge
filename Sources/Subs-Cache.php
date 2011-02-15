@@ -168,7 +168,7 @@ function add_css_file($files = array(), $add_link = false)
 			$ofile = $file;
 			$file = $dir . '/' . $ofile . '.css';
 			// Does this file at least exist in the current styling...? If not, try the parent styling.
-			while (!file_exists($settings['theme_dir'] . '/' . $ofile) && !file_exists($settings['default_theme_dir'] . '/' . $ofile))
+			while (!file_exists($settings['theme_dir'] . '/' . $file) && !file_exists($settings['default_theme_dir'] . '/' . $file))
 			{
 				$dir = dirname($dir);
 				$file = $dir . '/' . $ofile . '.css';
@@ -198,7 +198,7 @@ function add_css_file($files = array(), $add_link = false)
 	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
 
 	// Do we just want the URL?
-	if (!$to_header)
+	if (!$add_link)
 		return $final_script;
 
 	$context['header'] .= '

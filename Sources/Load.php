@@ -379,23 +379,85 @@ function loadUserSettings()
 
 	// Just build this here, it makes it easier to change/use - administrators can see all boards.
 	if ($user_info['is_admin'])
+	{
+		$user_info['query_see_only_board'] = '1=1';
 		$user_info['query_see_board'] = '1=1';
+	}
 	// Otherwise just the groups in $user_info['groups'].
 	else
-		$user_info['query_see_board'] = '(FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $user_info['groups']) . ', b.member_groups) != 0' . (isset($user_info['mod_cache']) ? ' OR ' . $user_info['mod_cache']['mq'] : '') . ')';
+	{
+		$cache_groups = $user_info['groups'];
+		asort($cache_groups);
+		$cache_groups = implode(',', $cache_groups);
+		
+		$temp = cache_get_data('board_access_' . $cache_groups, 300);
+		if ($temp === null || time() - 240 > $modSettings['settings_updated'])
+		{
+			$request = wesql::query('
+				SELECT id_board, view_perm, enter_perm
+				FROM {db_prefix}board_groups
+				WHERE id_group IN ({array_int:groups})',
+				array(
+					'groups' => $user_info['groups'],
+				)
+			);
+			$access = array(
+				'view_allow' => array(),
+				'view_deny' => array(),
+				'enter_allow' => array(),
+				'enter_deny' => array(),
+			);
+			while ($row = wesql::fetch_assoc($request))
+			{
+				$access['view_' . $row['view_perm']][] = $row['id_board'];
+				$access['enter_' . $row['enter_perm']][] = $row['id_board'];
+			}
+			$access['view_allow'] = array_diff($access['view_allow'], $access['view_deny']);
+			$access['enter_allow'] = array_diff($access['enter_allow'], $access['enter_deny']);
+			$user_info['query_see_only_board'] = empty($access['view_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['view_allow']) . ')';
+			$user_info['query_see_board'] = empty($access['enter_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['enter_allow']) . ')';
+
+			$cache = array(
+				'query_see_only_board' => $user_info['query_see_only_board'],
+				'query_see_board' => $user_info['query_see_board'],
+				'qsob_boards' => $access['view_allow'],
+				'qsb_boards' => $access['enter_allow'],
+			);
+			cache_put_data('board_access_' . $cache_groups, $cache, 300);
+		}
+		else
+			$user_info += $temp;
+	}
 
 	// Build the list of boards they WANT to see.
 	// This will take the place of query_see_boards in certain spots, so it better include the boards they can see also
 
 	// If they aren't ignoring any boards then they want to see all the boards they can see
 	if (empty($user_info['ignoreboards']))
+	{
 		$user_info['query_wanna_see_board'] = $user_info['query_see_board'];
+		$user_info['query_wanna_see_only_board'] = $user_info['query_see_only_board'];
+	}
 	// Ok I guess they don't want to see all the boards
 	else
-		$user_info['query_wanna_see_board'] = '(' . $user_info['query_see_board'] . ' AND b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . '))';
+	{
+		if ($user_info['is_admin'])
+		{
+			// Admin can implicitly see and enter every board. If they want to ignore boards, make sure we clear both of the 'wanna see' options.
+			$user_info['query_wanna_see_only_board'] = 'b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . ')';
+			$user_info['query_wanna_see_board'] = $user_info['query_wanna_see_only_board'];
+		}
+		else
+		{
+			$user_info['query_wanna_see_board'] = 'b.id_board IN (' . implode(',', array_diff($user_info['qsb_boards'], $user_info['ignoreboards'])) . ')';
+			$user_info['query_wanna_see_only_board'] = 'b.id_board IN (' . implode(',', array_diff($user_info['qsob_boards'], $user_info['ignoreboards'])) . ')';
+		}
+	}
 
 	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
+	wesql::register_replacement('query_see_only_board', $user_info['query_see_only_board']);
 	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
+	wesql::register_replacement('query_wanna_see_only_board', $user_info['query_wanna_see_only_board']);
 }
 
 /**
