@@ -80,12 +80,14 @@ body {
 #sidebar {
 	display: table-cell;
 	vertical-align: top;
-	width: 220px;
-	border: 1px solid #ccc;
-	background: #edefe6;
-	padding: 10px;
-	margin: 12px 0;
-	border-radius: 8px;
+	width: 242px;
+	.column {
+		margin: 6px 0 0 3px;
+		border: 1px solid #ccc;
+		background: #edefe6;
+		padding: 12px;
+		border-radius: 8px;
+	}
 }
 #edgehide {
 	base: #edge;
@@ -106,7 +108,7 @@ body {
 	vertical-align: top;
 	width: 100%;
 	min-height: 200px;
-	padding: 12px 0 12px 30px;
+	padding: 4px 4px 12px 25px;
 }
 #top_section {
 	overflow: hidden;

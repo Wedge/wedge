@@ -238,7 +238,7 @@ function template_sidebar_above()
 
 	echo $needs_tables ? '
 		<table id="edge"><tr><td id="sidebar" valign="top">' : '
-		<div id="edge"><div id="sidebar">', '
+		<div id="edge"><div id="sidebar">', '<div class="column">
 			<we:title>
 				Sidebar
 			</we:title>
@@ -256,7 +256,7 @@ function template_sidebar_below()
 			<hr>
 			And some filler for the sidebar footer.', $needs_tables ? '
 		</td>' : '
-		</div>';
+		</div>', '</div>';
 }
 
 function template_main_above()
@@ -313,8 +313,8 @@ function template_body_below()
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{
-		var d = document, s = d.getElementById("sidebar"), e1 = d.getElementById("edge"), e2 = d.getElementById("edgehide"),
-			m = d.getElementById("main_content"), t = m ? m.parentNode : 0, w = t ? t.clientWidth : 0;
+		var d = document, e1 = d.getElementById("edge"), e2 = d.getElementById("edgehide"),
+			s = d.getElementById("sidebar"), m = d.getElementById("main_content"), w = m ? m.clientWidth : 0;
 		if (w && w < 728 && !wedge_side && e1)
 		{
 			wedge_side = 1;
