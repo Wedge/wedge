@@ -1281,8 +1281,8 @@ function checkUserRequest_request()
 	if (isset($context['http_headers']['Connection']))
 	{
 		// Can't have both Connection: keep-alive and Connection: close, or more than one of either at a time. No being greedy.
-		$ka = preg_match_all('~\bkeep-alive\b~i', $context['http_headers']['Connection']);
-		$c = preg_match_all('~\bclose\b~i', $context['http_headers']['Connection']);
+		$ka = preg_match_all('~\bkeep-alive\b~i', $context['http_headers']['Connection'], $dummy);
+		$c = preg_match_all('~\bclose\b~i', $context['http_headers']['Connection'], $dummy);
 		if (($ka > 0 && $c > 0) || $ka > 1 || $c > 1)
 			return $context['behavior_error'] = 'behav_alive_close';
 
