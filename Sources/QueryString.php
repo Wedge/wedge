@@ -1142,7 +1142,7 @@ function format_ip($ip)
  */
 function is_ipv4($ip)
 {
-	return strpos($_SERVER['HTTP_X_FORWARDED_FOR'], '00000000000000000000ffff') === 0;
+	return strpos($ip, '00000000000000000000ffff') === 0;
 }
 
 /**

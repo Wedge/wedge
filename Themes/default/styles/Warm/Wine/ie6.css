@@ -1,0 +1,14 @@
+
+/*
+	Why does this need 'important', will you ask, given that it isn't recognized by IE6?
+	Don't ask me. I noticed that !important fixes it. It's probably an engine hiccup or something on my setup.
+*/
+
+.cat a
+	color: white !important
+
+.windowbg
+	background-image: none
+
+.title
+	border-bottom-style: solid

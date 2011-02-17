@@ -142,7 +142,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
  * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current styling.
- * @param boolean $to_header Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
+ * @param boolean $add_link Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
 function add_css_file($files = array(), $add_link = false)
@@ -159,16 +159,17 @@ function add_css_file($files = array(), $add_link = false)
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+	$styling = empty($context['styling']) ? 'styles' : $context['styling'];
 
 	foreach ($files as &$file)
 	{
 		if (strpos($file, '.css') === false)
 		{
-			$dir = $context['styling'];
+			$dir = $styling;
 			$ofile = $file;
 			$file = $dir . '/' . $ofile . '.css';
-			// Does this file at least exist in the current styling...? If not, try the parent styling.
-			while (!file_exists($settings['theme_dir'] . '/' . $file) && !file_exists($settings['default_theme_dir'] . '/' . $file))
+			// Does this file at least exist in the current styling...? If not, try the parent styling, until our hands are empty.
+			while (!empty($dir) && !file_exists($settings['theme_dir'] . '/' . $file) && !file_exists($settings['default_theme_dir'] . '/' . $file))
 			{
 				$dir = dirname($dir);
 				$file = $dir . '/' . $ofile . '.css';

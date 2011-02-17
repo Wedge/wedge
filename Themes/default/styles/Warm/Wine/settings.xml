@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+	This file can be ommitted from your styling, in which case it will use
+	the folder name as the styling name, and "add" as the styling type.
+	Make sure to save the file as UTF-8 if you're using special characters in it.
+-->
+<styling>
+	<!--
+		Styling name.
+
+		This will only be shown to anyone who can change a styling.
+	-->
+	<name>
+		WarmWine
+	</name>
+	<!--
+		Styling type.
+
+		Possible values:
+			add (default, add this styling to the root style)
+			replace (discard the root style and consider this as the basic style)
+
+		Warnings:
+			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
+			- These files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
+			- If you're offering nested stylings (/styles/styling1/styling2/), styling2 can only be of the "add" type,
+			  otherwise it should obviously be set in a top-level folder. (/styles/styling2/)
+	-->
+	<type>
+		add
+	</type>
+	<!--
+		Styling comment.
+
+		This HTML text will only be shown to users when selecting a styling,
+		either for the default forum theme (admins), board theme (board
+		owners) and default theme override (regular users, if allowed.)
+
+		Use the opportunity to communicate credits or details to users.
+		Technical information is best posted wherever you upload the file.
+	-->
+	<comment><![CDATA[
+		Made by Nao, inspired by Eren's theme for yourasoft.org
+	]]></comment>
+
+	<code for="ie6"><![CDATA[
+	DD_belatedPNG.fix('div,#boardindex_table img');
+	$('input[type=submit], input[type=button]').addClass('ie_button');
+	]]></code>
+
+	<block name="title"><div class="title">|</div></block>
+	<block name="title2"><div class="title2">|</div></block>
+	<block name="cat"><div class="cat">|</div></block>
+</styling>
