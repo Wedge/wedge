@@ -412,7 +412,6 @@ function cleanRequest()
 				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
 		}
 		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
-		$header = !empty($modSettings['reverse_proxy_header']) ? $modSettings['reverse_proxy_header'] : 'X-Forwarded-For';
 		if (!empty($modSettings['reverse_proxy_ips']))
 			$reverse_proxies = explode(',', $modSettings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
@@ -423,39 +422,56 @@ function cleanRequest()
 	// Try to calculate their most likely IP for those people behind proxies (and the like).
 	$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 
-	// Try and find the user's IP address.
-	// !!! I can't get my head round this for the moment. Needs to be done, of course, and needs to be totally rewritten since it should reflect the known-to-us proxies first.
-	/*
+	// Try and find the user's IP address. First make sure everything's in the right format.
 	$internal_subnet = match_internal_subnets($_SERVER['REMOTE_ADDR']);
-	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_CLIENT_IP']) && (!match_internal_subnets(expand_ip($_SERVER['HTTP_CLIENT_IP'])) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
+	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
 	{
-		// We have both forwarded for AND client IP... check the first forwarded for as the block - only switch if it's better that way.
-		if (strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') != strtok($_SERVER['HTTP_CLIENT_IP'], '.') && '.' . strtok($_SERVER['HTTP_X_FORWARDED_FOR'], '.') == strrchr($_SERVER['HTTP_CLIENT_IP'], '.') && (!match_internal_subnets($_SERVER['HTTP_X_FORWARDED_FOR']) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
-			$_SERVER['BAN_CHECK_IP'] = implode('.', array_reverse(explode('.', $_SERVER['HTTP_CLIENT_IP'])));
-		else
-			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_CLIENT_IP'];
+		$_SERVER['HTTP_X_FORWARDED_FOR_ORIGINAL'] = $_SERVER['HTTP_X_FORWARDED_FOR']; // this might actually be a funky list of IPs.
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = expand_ip($_SERVER['HTTP_X_FORWARDED_FOR']);
 	}
-	if (!empty($_SERVER['HTTP_CLIENT_IP']) && (!match_internal_subnets(expand_ip($_SERVER['HTTP_CLIENT_IP'])) || match_internal_subnets($_SERVER['REMOTE_ADDR'])))
+	if (!empty($_SERVER['HTTP_CLIENT_IP']))
+		$_SERVER['HTTP_CLIENT_IP'] = expand_ip($_SERVER['HTTP_CLIENT_IP']);
+
+	if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_CLIENT_IP']))
 	{
-		// Since they are in different blocks, it's probably reversed.
-		if (strtok($_SERVER['REMOTE_ADDR'], '.') != strtok($_SERVER['HTTP_CLIENT_IP'], '.'))
-			$_SERVER['BAN_CHECK_IP'] = implode('.', array_reverse(explode('.', $_SERVER['HTTP_CLIENT_IP'])));
-		else
+		// We have both forwarded-for and client IP, this could be interesting.
+		// Is the supplied CLIENT_IP potentially usable? Or, is the supplied REMOTE_ADDR non-routable?
+		if (!match_internal_subnets($_SERVER['HTTP_CLIENT_IP']) || $internal_subnet)
+		{
+			// OK, now for some cleverness, the CLIENT_IP might be usable, but might be reversed in order. At least for IPv4, no information available for IPv6.
+			// So, check for IPv4, then if the first octet of IPv4 matches or not, and if not, see if XFF's first octet matches CLIENT_IP's last - and if so, reverse the octets.
+			if (is_ipv4($_SERVER['HTTP_X_FORWARDED_FOR']) && is_ipv4($_SERVER['HTTP_CLIENT_IP']))
+			{
+				$xff_octet = substr($_SERVER['HTTP_X_FORWARDED_FOR'], 24, 2);
+				if ($xff_octet !== substr($_SERVER['HTTP_CLIENT_IP'], 24, 2) && $xff_octet === substr($SERVER['HTTP_CLIENT_IP'], -2))
+					$_SERVER['HTTP_CLIENT_IP'] = '00000000000000000000ffff' . implode('', array_reverse(str_split(substr($_SERVER['HTTP_CLIENT_IP'], -8), 2)));
+			}
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_CLIENT_IP'];
+		}
+	}
+	if (!empty($_SERVER['HTTP_CLIENT_IP']) && (!match_internal_subnets($_SERVER['HTTP_CLIENT_IP']) || $internal_subnet))
+	{
+		// Since they are in different blocks, it's probably reversed. Again, this is IPv4 specific for the present time.
+		if (is_ipv4($_SERVER['HTTP_CLIENT_IP']) && is_ipv4($_SERVER['REMOTE_ADDR']))
+		{
+			if (substr($_SERVER['REMOTE_ADDR'], 24, 2) !== substr($_SERVER['HTTP_CLIENT_IP'], 24, 2))
+				$_SERVER['HTTP_CLIENT_IP'] = '00000000000000000000ffff' . implode('', array_reverse(str_split(substr($_SERVER['HTTP_CLIENT_IP'], -8), 2)));
+		}
+		$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_CLIENT_IP'];
 	}
 	elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
 	{
 		// If there are commas, get the last one.. probably.
-		if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') !== false)
+		if (strpos($_SERVER['HTTP_X_FORWARDED_FOR_ORIGINAL'], ',') !== false)
 		{
-			$ips = array_reverse(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
+			$ips = array_reverse(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR_ORIGINAL']));
 
 			// Go through each IP...
 			foreach ($ips as $i => $ip)
 			{
 				$ip = expand_ip(trim($ip));
 				// Make sure it's in a valid range...
-				if (match_internal_subnets($ip) && !match_internal_subnets($_SERVER['REMOTE_ADDR']))
+				if (match_internal_subnets($ip) && !$internal_subnet)
 					continue;
 
 				// Is it on our list of reverse proxies? If so, we don't want it.
@@ -468,9 +484,9 @@ function cleanRequest()
 			}
 		}
 		// Otherwise just use the only one.
-		elseif (!match_internal_subnets(expand_ip($_SERVER['HTTP_X_FORWARDED_FOR'])) || match_internal_subnets($_SERVER['REMOTE_ADDR']))
+		elseif (!match_internal_subnets($_SERVER['HTTP_X_FORWARDED_FOR']) || $internal_subnet)
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	}*/
+	}
 
 	// Is this a page requested through jQuery?
 	if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
@@ -646,10 +662,7 @@ function htmltrim__recursive($var, $level = 0)
 function get_http_headers()
 {
 	if (is_callable('apache_request_headers'))
-	{
-		$var = apache_request_headers();
-		
-	}
+		return apache_request_headers();
 
 	$headers = array();
 	foreach ($_SERVER as $key => $value)
@@ -990,7 +1003,7 @@ function match_internal_subnets($ip)
 		return true;
 
 	// OK, IPv4 subnets right now?
-	if (strpos($ip, '00000000000000000000ffff') === 0)
+	if (is_ipv4($ip))
 	{
 		$first = substr($ip, 24, 2);
 		// Most common IPv4 subnets, 127.*, 255.*, 10.*, 0.*, 192.168.*
@@ -1094,8 +1107,8 @@ function format_ip($ip)
 	if (isset($ip_array[$ip]))
 		return $ip_array[$ip];
 
-	// OK, folks, this is an address we haven't done before this page. Is it IPv4? (The first 5 double-octets will be 0, followed by 2 octets of ff, equal to ::ffff:)
-	if (strpos($ip, '00000000000000000000ffff') === 0)
+	// OK, folks, this is an address we haven't done before this page. Is it IPv4?
+	if (is_ipv4($ip))
 	{
 		// It's IPv4. Grab each octet, convert to decimal, then amalgamate it before storing and returning.
 		$ipv4 = array();
@@ -1117,6 +1130,19 @@ function format_ip($ip)
 		$ipv6 = preg_replace('~(^\:(?!\:))|((?<!\:):$)~', '', $ipv6);
 		return $ip_array[$ip] = $ipv6;
 	}
+}
+
+/**
+ * Shortcut test (for readability) to confirm whether a given IP address is IPv4 or IPv6
+ *
+ * The first 5 double-octets will be 0, followed by 2 octets of ff, equal to ::ffff:
+ *
+ * @param string $ip A 32 hex-character string indicating IPv6 style address in longform, without the separator colons.
+ * @return bool Whether the address falls into the ::ffff: subnet or not (and is therefore IPv4 or not)
+ */
+function is_ipv4($ip)
+{
+	return strpos($_SERVER['HTTP_X_FORWARDED_FOR'], '00000000000000000000ffff') === 0;
 }
 
 /**
