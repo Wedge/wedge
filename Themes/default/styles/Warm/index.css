@@ -172,8 +172,7 @@ h1.forumtitle
 		li extends .menu_arrows
 			background-position: right -42px
 			float: left
-			height: 20px
-			line-height: 20px
+			height, line-height: 20px
 			padding: .5em 1.5em .5em 3px
 			&.last
 				background: none
@@ -616,7 +615,7 @@ li.separator
 .nowrap
 	white-space: nowrap
 
-// Default font sizes: small (8pt), normal (10pt), and large (14pt).
+// Default font sizes: small (8pt), normal (10pt), and large (14pt)
 .smalltext, tr.smalltext th
 	font-size: .85em
 	font-family: $main_font
@@ -650,14 +649,14 @@ li.separator
 .double_height
 	line-height: 2em
 
-// some common padding styles
+// Some common padding styles
 .padding
 	padding: .7em
 
 .main_section
 	padding-bottom: .5em
 
-// a quick reset list class.
+// A quick reset list class.
 ul.reset, ul.reset li
 	padding, margin: 0
 	list-style: none
@@ -978,7 +977,7 @@ a.moderation_link
 		color: red
 		font-weight: bold
 
-// a descriptive style
+// A descriptive style
 .plainbox
 	padding: .5em 1em
 	font-size: .9em
@@ -994,7 +993,7 @@ a.moderation_link
 .description_board extends .plainbox
 	margin-top: 0
 
-// an informative style
+// An informative style
 .information
 	padding: .5em 1em
 	font-size: .9em

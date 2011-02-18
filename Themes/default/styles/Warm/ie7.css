@@ -71,8 +71,10 @@
 	font-family: verdana
 	font-size: x-small
 	border: none
-	p { margin: 0 }
-	a img { border: 0 }
+	p
+		margin: 0
+	a img
+		border: 0
 
 .richedit_resize
 	padding: 0 !important

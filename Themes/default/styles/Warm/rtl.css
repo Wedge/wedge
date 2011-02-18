@@ -33,8 +33,7 @@
 	margin-left: 0
 	margin-right: 1em
 
-// All the signatures used in the forum.
-// You might wanna add max-height here ;)
+// All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
 	clear: left
 
@@ -100,8 +99,7 @@ th.last_th
 		left: 0
 
 .menu
-	float: right
-	clear: right
+	float, clear: right
 
 
 /* Styles for the standard button lists.
@@ -123,7 +121,7 @@ th.last_th
 	padding-left: 0
 	padding-right: 2em
 
-// The main title, always stay at 45 pixels in height!
+// The main title
 h1.forumtitle
 	float: right
 
@@ -156,7 +154,6 @@ h1.forumtitle
 
 /* Styles for the board index.
 ------------------------------------------------- */
-
 // The posting icons
 #posting_icons
 	padding: 0 1em 0.5em 1em
@@ -481,18 +478,12 @@ tr.titlebg td
 .topic_table
 
 	td.stickybg2
-		background-image: url($images/icons/quick_sticky.gif)
-		background-repeat: no-repeat
 		background-position: 2% 4px
 
 	td.lockedbg2
-		background-image: url($images/icons/quick_lock.gif)
-		background-repeat: no-repeat
 		background-position: 2% 4px
 
 	td.locked_sticky2
-		background-image: url($images/icons/quick_sticky_lock.gif)
-		background-repeat: no-repeat
 		background-position: 2% 4px
 
 	td.lastpost
@@ -550,7 +541,6 @@ tr.titlebg td
 	float: right
 	span
 		border-width: 1px 0 0 1px
-
 	&.last span
 		border-left: none
 
@@ -725,7 +715,6 @@ tr.windowbg2
 		margin-left: 0
 		margin-right: 50px
 
-// Manage Boards area
 #manage_boards
 	ul, li
 		overflow: hidden
@@ -743,7 +732,6 @@ span.search_weight
 // Themes
 .is_directory
 	padding-right: 18px
-	background: url($images/admin/boards.gif) no-repeat
 	background-position: 100% 0
 
 

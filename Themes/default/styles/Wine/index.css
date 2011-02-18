@@ -10,225 +10,200 @@
 
 /* Set a fontsize that will look the same in all browsers. */
 
-body {
-	background: #444;
-	color: #ccc;
-}
-#wedge {
-	background-image: none;
-	padding: 0;
-}
-#header, #navi, #menu_container, #content, #footer {
-	border: 0;
-	border-radius: 0;
-}
+body
+	background: #444
+	color: #ccc
 
-/* We're redefining all sections to use full width, and then we set a padding on them. */
+#wedge
+	background-image: none
+	padding: 0
 
-#header, #navi, #menu_container, #footer {
-	background: #693636 url($images/theme/grad700.png) 0 -100px repeat-x;
-	color: #ddc;
-	margin: 0;
-	width: auto;
-	max-width: none;
-	padding: 0 63px;
-}
-#content {
-	color: #444;
-	margin: 0;
-	width: auto;
-	max-width: none;
-	div.frame {
-		max-width: 1200px;
-		margin: auto;
-	}
-}
-#header {
-	h2 {
-		color: #fc9;
-	}
-	a {
-		color: #fff; /* f93 */
-	}
-	/* Text color for the forum title in the header */
-	h1.forumtitle a {
-		color: #fc9;
-		text-shadow: 1px 1px 1px #000;
-	}
-}
+#header, #navi, #menu_container, #content, #footer
+	border: 0
+	border-radius: 0
+
+// We're redefining all sections to use full width, and then we set a padding on them.
+
+#header, #navi, #menu_container, #footer
+	background: #693636 url($images/theme/grad700.png) 0 -100px repeat-x
+	color: #ddc
+	margin: 0
+	width: auto
+	max-width: none
+	padding: 0 63px
+
+#content
+	color: #444
+	margin: 0
+	width: auto
+	max-width: none
+	div.frame
+		max-width: 1200px
+		margin: auto
+
+#header
+	h2
+		color: #fc9
+	a
+		color: #fff /* f93 */
+	// Text color for the forum title in the header
+	h1.forumtitle a
+		color: #fc9
+		text-shadow: 1px 1px 1px #000
 
 /* The menu is inside another div that had padding applied to it, so we use
    a negative margin to make it cancel the padding and use the full width.
    Without that, the background would be cut off on the sides.
    We don't need to set a padding again since it's already set above. */
 
-#menu_container {
-	border: 3px solid #fd9604;
-	border-width: 0 0 3px 0;
-	margin: 0 -63px;
-}
-#footer {
-	border: 3px solid #fd9604;
-	border-width: 3px 0 0 0;
-	a {
-		color: #fff;
-	}
-}
-#navi {
-	background: #fffdfa;
-	color: #999;
-}
-#main_menu {
-	border: 0;
-	padding-bottom: 0 !important;
-	h4 a {
-		color: #fff;
-	}
-	/* Specific colors for the main menu, because it's on a dark background... */
-	li.chosen h4 {
-		margin-bottom: 0;
-		padding-bottom: 5px;
-		border-radius: 6px 6px 0 0;
-	}
-	li.nodrop h4 {
-		background-image: none;
-	}
-	h4:hover, h4.hove {
-		background: #5a6c85 url($images/menu.gif) no-repeat 98% -28px;
-		a {
-			color: white;
-		}
-	}
-}
-#content {
-	background: #fffdfa;
-}
+#menu_container
+	border: 3px solid #fd9604
+	border-width: 0 0 3px 0
+	margin: 0 -63px
 
-#main_menu, #context_menus {
-	li.chosen h4 {
-		background-color: #fd9604 !important;
-	}
-}
+#footer
+	border: 3px solid #fd9604
+	border-width: 3px 0 0 0
+	a
+		color: #fff
 
-blockquote.bbc_standard_quote {
-	background-color: #d7ecda;
-}
-blockquote.bbc_alternate_quote {
-	background-color: #cadfcd;
-}
-code.bbc_code {
-	background: #eef;
-}
-.linktree {
-	margin-top: 0;
-}
+#navi
+	background: #fffdfa
+	color: #999
+
+#main_menu
+	border: 0
+	padding-bottom: 0 !important
+	h4 a
+		color: #fff
+	// Specific colors for the main menu, because it's on a dark background...
+	li.chosen h4
+		margin-bottom: 0
+		padding-bottom: 5px
+		border-radius: 6px 6px 0 0
+	li.nodrop h4
+		background-image: none
+	h4:hover, h4.hove
+		background: #5a6c85 url($images/menu.gif) no-repeat 98% -28px
+		a
+			color: white
+
+#content
+	background: #fffdfa
+
+#main_menu, #context_menus
+	li.chosen h4
+		background-color: #fd9604 !important
+
+blockquote.bbc_standard_quote
+	background-color: #d7ecda
+
+blockquote.bbc_alternate_quote
+	background-color: #cadfcd
+
+code.bbc_code
+	background: #eef
+
+.linktree
+	margin-top: 0
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-/* Alternating backgrounds for posts, and several other sections of the forum. */
+// Alternating backgrounds for posts, and several other sections of the forum.
 
-.windowbg, #preview_body {
-	background: #f3f3f3 url($images/theme/grad700.png) 0 -550px repeat-x;
-}
-.windowbg2 {
-	background: #f6f3f0 url($images/theme/grad700.png) 0 -550px repeat-x;
-}
-.windowbg3 {
-	background-color: #cad3cd;
-}
+.windowbg, #preview_body
+	background: #f3f3f3 url($images/theme/grad700.png) 0 -550px repeat-x
 
-/* Colors for background of posts requiring approval */
+.windowbg2
+	background: #f6f3f0 url($images/theme/grad700.png) 0 -550px repeat-x
 
-.approvebg {
-	background-color: #ffeaea;
-}
-.approvebg2 {
-	background-color: #fff2f2;
-}
+.windowbg3
+	background-color: #cad3cd
 
-/* Color for background of *topics* requiring approval */
+// Colors for background of posts requiring approval
 
-.approvetbg {
-	background-color: #e4a17c;
-}
-.approvetbg2 {
-	background-color: #f3bd9f;
-}
+.approvebg
+	background-color: #ffeaea
 
-/* Sticky topics get a different background */
+.approvebg2
+	background-color: #fff2f2
 
-.stickybg {
-	background: #e8d8cf;
-}
-.stickybg2 {
-	background: #f2e3d9;
-}
+// Color for background of *topics* requiring approval
 
-/* Locked posts get a different shade, too! */
+.approvetbg
+	background-color: #e4a17c
 
-.lockedbg {
-	background: #d4dce2;
-}
-.lockedbg2 {
-	background: #d8e1e7;
-}
+.approvetbg2
+	background-color: #f3bd9f
 
-.description, .description_board, .plainbox {
-	background: #f0f5f0;
-}
-.information {
-	background: #f0f6f0;
-}
+// Sticky topics get a different background
+
+.stickybg
+	background: #e8d8cf
+
+.stickybg2
+	background: #f2e3d9
+
+// Locked posts get a different shade, too!
+
+.lockedbg
+	background: #d4dce2
+
+.lockedbg2
+	background: #d8e1e7
+
+.description, .description_board, .plainbox
+	background: #f0f5f0
+
+.information
+	background: #f0f6f0
 
 .cat_bar h3, .cat_bar h4, .title_bar h3, .title_bar h4, .table_list tbody.header td,
 .cat_bar h3 a, .cat_bar h4 a, .title_bar h3 a, .title_bar h4 a, .table_list tbody.header td a,
 .catbg, .catbg2, tr.catbg th, tr.catbg td, tr.catbg2 th, tr.catbg2 td,
-.titlebg, .titlebg2, tr.titlebg td, tr.titlebg2 td {
-	color: #fff;
-}
-.cat_bar h3, .cat_bar h4, .table_list tbody.header td {
-	a:hover { color: #fc8 }
-}
+.titlebg, .titlebg2, tr.titlebg td, tr.titlebg2 td
+	color: #fff
 
-.cat_bar, .title_bar {
-	background: #b3afa9 url($images/theme/grad40.png) repeat-x;
-	h3 {
-		font: bold 10pt Verdana;
-		letter-spacing: 0;
-		line-height: 18px;
-	}
-}
-.cat_bar {
-	background-color: #c3b9c3;
-	border-color: #fd9604;
-	border-width: 2px 0 0 0;
-}
+.cat_bar h3, .cat_bar h4, .table_list tbody.header td
+	a:hover
+		color: #fc8
 
-.roundframe {
-	background: #f5f5f5;
-}
+.cat_bar, .title_bar
+	background: #b3afa9 url($images/theme/grad40.png) repeat-x
+	h3
+		font: bold 10pt Verdana
+		letter-spacing: 0
+		line-height: 18px
 
-.buttonlist a {
-	span { background: #e8e8e8 }
-	:hover span { background: #fd9604 }
-	&.active span { background: #5a6c85 }
-}
+.cat_bar
+	background-color: #c3b9c3
+	border-color: #fd9604
+	border-width: 2px 0 0 0
 
-.activity_stats li div.bar div {
-	background: #6294CE;
-}
+.roundframe
+	background: #f5f5f5
 
-tr.titlebg th, tr.titlebg td, tr.titlebg2 td {
-	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x;
-}
-tr.catbg {
-	td, th {
-		background: #623f39 url($images/theme/grad40.png) 0 0 repeat-x;
-		color: #fff;
-		a { color: #fff }
-	}
-}
-.table_list tbody.header td.catbg {
-	background-color: #b8deca;
-}
+.buttonlist a
+	span
+		background: #e8e8e8
+	:hover span
+		background: #fd9604
+	&.active span
+		background: #5a6c85
+
+.activity_stats li div.bar div
+	background: #6294CE
+
+tr.titlebg th, tr.titlebg td, tr.titlebg2 td
+	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x
+
+tr.catbg
+	td, th
+		background: #623f39 url($images/theme/grad40.png) 0 0 repeat-x
+		color: #fff
+		a
+			color: #fff
+
+.table_list tbody.header td.catbg
+	background-color: #b8deca

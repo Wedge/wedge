@@ -756,12 +756,11 @@ tr.titlebg td
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
 .left_menu
-	&, ul, li
-		padding, margin: 0
-		list-style: none
-	margin-bottom: .5em
+	list-style: none
+	margin: .5em 0
+	padding: 0
 	li
-		padding: 0 0 0 .5em
+		padding: 0 0 0 1em
 	li.separator
 		display: none // alternatively, line-height: 3px
 

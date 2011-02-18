@@ -559,9 +559,10 @@ function theme_base_js($indenting = 0)
  * Cleans some or all of the files stored in the file cache.
  *
  * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically 'data', to prune 'data_*.php' files.
+ * @param string $extensions Optional, a comma-separated list of 3-char file extensions that should be pruned. 'php' by default. Use '.js' instead of 'js' for JavaScript files.
  * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
-function clean_cache($type = '')
+function clean_cache($type = '', $extensions = 'php')
 {
 	global $cachedir, $sourcedir;
 
@@ -571,8 +572,10 @@ function clean_cache($type = '')
 
 	// Remove the files in SMF's own disk cache, if any
 	$dh = scandir($cachedir);
+	$ext = array_flip(explode(',', $extensions));
+	$len = strlen($type);
 	foreach ($dh as $file)
-		if ($file != '.' && $file != '..' && $file != 'index.php' && $file != '.htaccess' && (!$type || substr($file, 0, strlen($type)) == $type))
+		if ($file === '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type) && isset($exts[substr($file, -3)]))
 			@unlink($cachedir . '/' . $file);
 
 	// Invalidate cache, to be sure!
