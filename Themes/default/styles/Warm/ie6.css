@@ -54,14 +54,10 @@
 // Generic lists header
 // Side paddings must NOT be defined here.
 .table_grid thead th
-	padding-top: 0 !important
-	padding-bottom: 0 !important
+	padding-top, padding-bottom: 0 !important
 
 // overflow: hidden doesn't help in IE6.
-.title, .title a
-	display: inline-block
-
-#upper_section
+.title, .title a, #upper_section
 	display: inline-block
 
 
@@ -128,8 +124,7 @@
 /* Overrides for the personal messages template
 ------------------------------------------------------- */
 #personal_messages .postarea
-	margin-left: 0
-	margin-right: 0
+	margin-left, margin-right: 0
 	float: right
 
 
@@ -236,7 +231,7 @@ input.submit, input.delete, input.save, input.new
 	overflow: visible
 	width: auto
 
-// Old IEs reset background-position to 0 if you provide them with multiples values :-\
+// Old IEs reset background-position to 0 if you provide them with multiples values :-/
 input.submit
 	background-position: 4px 2px
 input.delete

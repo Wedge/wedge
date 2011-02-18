@@ -5,8 +5,8 @@
 // Generic lists header
 // Side paddings must NOT be defined here.
 .table_grid thead th
-	padding-top: 0 !important
-	padding-bottom: 0 !important
+	padding-top, padding-bottom: 0 !important
+
 
 /* Overrides for the messageindex template
 ------------------------------------------------------- */

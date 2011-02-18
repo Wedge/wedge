@@ -742,6 +742,12 @@ function ob_sessrewrite($buffer)
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
+	if (!allowedTo('profile_view_any'))
+		$buffer = preg_replace(
+			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'$1', $buffer
+		);
+
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
 	{

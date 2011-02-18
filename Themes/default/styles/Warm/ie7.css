@@ -5,8 +5,7 @@
 // Generic lists header
 // Side paddings must NOT be defined here.
 .table_grid thead th
-	padding-top: 0 !important
-	padding-bottom: 0 !important
+	padding-top, padding-bottom: 0 !important
 
 
 /* Overrides for the messageindex template
@@ -63,7 +62,6 @@
 
 /* Editor
 ------------------------------------------------------- */
-
 // This is the WYSIWYG editor
 .rich_editor
 	background-color: #fff
@@ -112,7 +110,7 @@ li.separator
 input[type=submit]
 	overflow: visible
 
-// Old IEs reset background-position to 0 if you provide them with multiples values :-\
+// Old IEs reset background-position to 0 if you provide them with multiples values :-/
 input.submit
 	background-position: 4px 2px
 input.delete

@@ -140,8 +140,7 @@ h1.forumtitle
 
 #header
 	.news
-		float: left
-		text-align: left
+		text-align, float: left
 	.user
 		float: right
 		p
@@ -273,17 +272,13 @@ span.percent
 	float: right
 
 .modifybutton
-	clear: left
-	float: left
+	clear, float, text-align: left
 	margin: 8px 0 10px 20px
-	text-align: left
 
 // The quick buttons
 ul.quickbuttons
 	margin: 0.9em 0 0 11px
-	clear: left
-	float: left
-	text-align: left
+	clear, float, text-align: left
 	li
 		float: left
 		margin: 0 11px 0 0
@@ -442,8 +437,7 @@ ul.post_options
 	dt
 		float: right
 	dd
-		float: right
-		text-align: right
+		float, text-align: right
 	h3 img
 		margin: 0 0 0.5em
 
@@ -631,13 +625,11 @@ tr.windowbg2
 
 #main_grid table.weeklist
 	td.windowbg
-		border-left: 2px solid #fff
-		border-bottom: 2px solid #fff
+		border-left, border-bottom: 2px solid #fff
 	td.weekdays
 		text-align: left
 		vertical-align: middle
-		border-right: 2px solid #fff
-		border-bottom: 2px solid #fff
+		border-right, border-bottom: 2px solid #fff
 
 
 /* Styles for the advanced search section.

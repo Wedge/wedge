@@ -24,13 +24,6 @@
 	li
 		border-bottom: 1px solid #fff8f1
 
-// IE6 also fails remembering the last correct background-color when meeting a rgba() value afterwards...
-h4.hove
-	background: #ebe7e2 url($images/menu.gif) no-repeat 98% 2px
-
-li.hove
-	background: #dbd7d2
-
 // Dunno if it's worth it: show a rather ugly hover background on top level menus until JS takes over.
 .css h4 a:hover
 	background: #fbe2c8
@@ -45,8 +38,7 @@ li.hove
 	top: 0
 	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0)
 
-
-/* Sub-area non-dropdown menus in the admin area */
+// Sub-area non-dropdown menus in the admin area
 #context_menus
 	h4
 		padding: 0
@@ -68,8 +60,7 @@ li.hove
 
 // Generic lists header. Side paddings must NOT be defined here.
 .table_grid thead th
-	padding-top: 0 !important
-	padding-bottom: 0 !important
+	padding-top, padding-bottom: 0 !important
 
 
 // overflow: hidden doesn't help in IE6.
@@ -144,8 +135,7 @@ li.hove
 /* Overrides for the personal messages template
 ------------------------------------------------------- */
 #personal_messages .postarea
-	margin-left: 0
-	margin-right: 0
+	margin-left, margin-right: 0
 	float: right
 
 
