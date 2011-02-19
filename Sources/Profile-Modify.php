@@ -1589,7 +1589,7 @@ function forumProfile($memID)
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
-		loadCustomFields($memID, 'forumProfile');
+		loadCustomFields($memID, 'forumprofile');
 
 	showSubTemplate('edit_options');
 	$context['page_desc'] = $txt['forumProfile_info'];

@@ -403,7 +403,7 @@ function read_zip_data($data, $destination, $single_file = false, $overwrite = f
 			return false;
 
 		// Get the actual compressed data.
-		$file_info['data'] = substr($data, $file_info['offset'] + 30 + $file_info['filename_len'] + $file_info['extra_len'], $file_info['compressed_size']);
+		$file_info['data'] = substr($data, $file_info['offset'] + 30 + $file_info['filename_len'], $file_info['compressed_size']);
 
 		// Only inflate it if we need to ;).
 		if ($file_info['compressed_size'] != $file_info['size'])
