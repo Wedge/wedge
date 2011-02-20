@@ -62,10 +62,11 @@ dl.settings
 
 /* Styles for rounded headers.
 ------------------------------------------------------- */
-.title
-	padding-right: 9px
-	padding-left: 0
-	img
+.title_bar
+	h3, h4
+		padding-right: 9px
+		padding-left: 0
+	h4 img
 		float: right
 
 .table_list
@@ -107,7 +108,6 @@ th.last_th
 .buttonlist ul
 	margin: 0 0 0 0.2em
 	li
-		float: right
 		a
 			margin-left: 0
 			margin-right: 12px
@@ -132,6 +132,11 @@ h1.forumtitle
 // The upshrink image needs some tweaking
 #upshrink
 	float: left
+
+// ...So does the Wedge logo
+#wedgelogo
+	margin-top: .7em
+	margin-right: 1em
 
 #header
 	.news
@@ -451,7 +456,7 @@ dl.register_form
 		margin-left: 1em
 
 // Common for all admin sections
-.title img
+.title_bar h3 img
 	margin-left: 0.5em
 
 tr.titlebg td
@@ -742,7 +747,7 @@ ul.moderation_notes li
 
 /* Various Wedge fixes
 ------------------------------------------------- */
-.cat img, .title img
+.cat_bar img, .title_bar img
 	float: right
 	margin-left: 0.5em
 	margin-right: 0

@@ -46,7 +46,7 @@ body
 		color: #fc9
 	a
 		color: #fff /* f93 */
-	/* Text color for the forum title in the header */
+	// Text color for the forum title in the header
 	h1.forumtitle a
 		color: #fc9
 		text-shadow: 1px 1px 1px #000
@@ -98,7 +98,7 @@ body
 	padding-bottom: 0 !important
 	h4 a
 		color: #fff
-	/* Specific colors for the main menu, because it's on a dark background... */
+	// Specific colors for the main menu, because it's on a dark background...
 	li.chosen h4
 		margin-bottom: 0
 		padding-bottom: 5px
@@ -119,10 +119,13 @@ body
 
 blockquote.bbc_standard_quote
 	background-color: #d7ecda
+
 blockquote.bbc_alternate_quote
 	background-color: #cadfcd
+
 code.bbc_code
 	background: #eef
+
 .linktree
 	margin-top: 0
 	ul
@@ -131,45 +134,52 @@ code.bbc_code
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-/* Alternating backgrounds for posts, and several other sections of the forum. */
+// Alternating backgrounds for posts, and several other sections of the forum.
 
 .windowbg, #preview_body
 	background: #f3f3f3 url($images/theme/grad700.png) 0 -550px repeat-x
+
 .windowbg2
 	background: #f6f3f0 url($images/theme/grad700.png) 0 -550px repeat-x
+
 .windowbg3
 	background-color: #cad3cd
 
-/* Colors for background of posts requiring approval */
+// Colors for background of posts requiring approval
 
 .approvebg
 	background-color: #ffeaea
+
 .approvebg2
 	background-color: #fff2f2
 
-/* Color for background of *topics* requiring approval */
+// Color for background of *topics* requiring approval
 
 .approvetbg
 	background-color: #e4a17c
+
 .approvetbg2
 	background-color: #f3bd9f
 
-/* Sticky topics get a different background */
+// Sticky topics get a different background
 
 .stickybg
 	background: #e8d8cf
+
 .stickybg2
 	background: #f2e3d9
 
-/* Locked posts get a different shade, too! */
+// Locked posts get a different shade, too!
 
 .lockedbg
 	background: #d4dce2
+
 .lockedbg2
 	background: #d8e1e7
 
 .description, .description_board, .plainbox
 	background: #f0f5f0
+
 .information
 	background: #f0f6f0
 

@@ -1,8 +1,20 @@
 
+.codeheader, code.bbc_code
+	width: 96%
+	margin: 0 auto
+
+
 /* The dropdown menus
 ------------------------------------------------------- */
+.menu ul, #menu_container
+	background-image: none
+
+#menu_container
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0')
+	height: 1%
+
 .menu
-	width: 100%
+	width: 90%
 	a:hover
 		text-decoration: none
 
@@ -40,24 +52,23 @@
 
 /* Miscellaneous
 ------------------------------------------------------- */
-.codeheader, code.bbc_code
-	width: 96%
-	margin: 0 auto
-
-// The page section
 .pagesection
 	overflow: auto
 
 #top_section
 	height: 1%
 
-// Generic lists header
-// Side paddings must NOT be defined here.
+// Generic lists header. Side paddings must NOT be defined here.
 .table_grid thead th
 	padding-top, padding-bottom: 0 !important
 
+
 // overflow: hidden doesn't help in IE6.
-.title, .title a, #upper_section
+.title_bar
+	h3 a, h3, h4, h4 a
+		display: inline-block
+
+#upper_section
 	display: inline-block
 
 
@@ -80,7 +91,7 @@
 		margin-left: 0
 		margin-right: 0
 		float: right
-	.cat
+	.cat_bar h3
 		clear: both
 
 .keyinfo
@@ -168,10 +179,11 @@
 
 /* Misc hacks
 ------------- */
-#content div.frame
-	width: expression(this.clientWidth > 1200 ? '1200px' : '100%')
 
-.cat a
+#header, #navi, #content, #footer
+	width: expression(this.clientWidth > 1200 ? '1200px' : '95%')
+
+.cat_bar h3 a
 	color: black !important
 
 .wrc
@@ -206,8 +218,11 @@ table.table_grid, table.cs0, table.cs1
 	width: expression(this.clientWidth < 300 ? '300px' : 'auto')
 	height: 150px
 
+h4.hove
+	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 2px
+
 li.hove
-	background-color: #e2ebe7
+	background: #e2ebe7
 
 li.separator
 	background: none

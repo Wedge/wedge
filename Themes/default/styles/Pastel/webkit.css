@@ -11,7 +11,7 @@
 .table_grid thead th
 	height, line-height: 26px
 
-.table_list tbody.header td div.cat
+.table_list tbody.header td div.cat_bar
 	margin-bottom: -2px
 
 // Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers.

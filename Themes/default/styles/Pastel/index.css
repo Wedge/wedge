@@ -1,6 +1,6 @@
 
 /*!
- * Warm styling for Wedge
+ * Pastel styling for Wedge
  * (c) 2011, Wedgeward (http://wedgeforum.com)
  */
 
@@ -32,36 +32,51 @@
 
 // Set a fontsize that will look the same in all browsers.
 body
-	background: #efead2
+	background: #faefe6
 	font: 78%/130% $main_font
 	margin, padding: 0
 
-#header, #navi, #content
-	margin: 0 auto
-	background: $main_bg
+#wedge
+	background: url($images/theme/grad700.png) repeat-x
+	padding: 15px 0
+
+#header, #navi, #content, #footer
+	margin: auto
+	width: 95%
+	max-width: 1200px
+
+#header
+	background: #faf8f6 url($images/theme/grad250.png) 0 -50px repeat-x
+	border: 1px solid #999
+	border-bottom: 0
+	border-radius: 12px 12px 0 0
 
 #header div.frame
-	padding: 0
+	padding: 5px 20px 0
+	overflow: hidden
+
+#navi, #content
+	border: 1px solid #999
+	border-width: 0 1px
+	background: #faf8f6
 
 #content div.frame
-	max-width: 1200px
-	padding: 0 40px 20px
+	padding: 0 20px 20px
 
 #edge
 	width: 100%
 	display: table
 	table-layout: fixed
-	padding-top: 6px
 
 #sidebar
 	display: table-cell
 	vertical-align: top
 	width: 242px
 	.column
-		margin: 6px 0
+		margin: 6px 0 0 3px
 		border: 1px solid #ccc
-		background: darken($main_bg, 2%)
-		padding: 5px 15px 10px
+		background: #edefe6
+		padding: 12px
 		border-radius: 8px
 
 #edgehide extends #edge
@@ -79,26 +94,22 @@ body
 	vertical-align: top
 	width: 100%
 	min-height: 200px
-	padding: 4px 0 12px 30px
+	padding: 4px 4px 12px 25px
 
 #top_section
-	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
 	overflow: hidden
-	margin: 0
-	padding: 6px 30px 10px
+	margin: 0 -20px 6px
+	padding: 0 20px 10px
 
 // The main title
 h1.forumtitle
-	font: italic bold 2.8em/1.25em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-	margin: 10px 0 0 10px
+	font: italic bold 3em/1em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+	margin: 20px 0 0 10px
 	padding: 0
 	float: left
-	a
-		text-shadow: white 0 1px 2px
-		color: #999
 
 // Float these items to the right
-#siteslogan
+#siteslogan, #wedgelogo
 	margin, padding: 0
 	float: right
 	line-height: 3em
@@ -108,19 +119,20 @@ h1.forumtitle
 	float: right
 	margin: 1em
 
+// ...So does the Wedge logo
+#wedgelogo
+	background: transparent url($images/wedgelogo.png) no-repeat
+	width: 140px
+	height: 52px
+	margin-top: .7em
+	margin-left: 1em
+
 // The upper_section, float the two each way
 #upper_section
-	background: url($images/theme/bg.jpg)
-	border-top, border-bottom: 3px solid lighten($reddish, 3%)
-	margin, padding: 0
-	width: 100%
-	height: 100px
 	overflow: hidden
+	padding: 5px
 	.news
-		position: absolute
 		width: 50%
-		top: 100px
-		right: 30px
 		float: right
 		text-align: right
 		p
@@ -128,23 +140,14 @@ h1.forumtitle
 		form
 			padding-bottom: 10px
 	.user
-		width: 100%
-		height: 100px
+		padding-bottom: 10px
+		width: 50%
 		float: left
 		overflow: auto
-		background-color: $head_bg
-		padding: 10px 30px
-		a
-			color: #600
-			border-bottom: 1px dotted #600
-			text-decoration: none
 		p
 			float: left
-			margin: .5em 1em 1em 0
+			margin: 0 1em 1em 0
 			padding: 0
-			img
-				height: 70px
-				width: auto
 		ul
 			margin: 0
 			padding-left: 10px
@@ -158,57 +161,52 @@ h1.forumtitle
 // The navigation list (i.e. linktree)
 .linktree
 	clear: both
-	padding: 0 0 1.5em
-	a
-		color: #963
+	padding: .5em 20px
+	margin: 1em 0 0
 	ul
-		padding: 0 20px
+		display: block
 		margin: 0
-		font: 105% Tahoma, Verdana
+		font-size: .9em
+		padding: .5em 0
 		overflow: hidden
 		list-style: none
-		border-bottom: 1px dotted #999
-		background: hue($menu_bg, -5%)
+		clear: both
+		width: 100%
 		li extends .menu_arrows
-			background-position: right -42px
+			background-position: right -49px
 			float: left
-			height, line-height: 20px
-			padding: .5em 1.5em .5em 3px
+			padding: 0 .5em 0 0
+			height, line-height: 21px
+			padding: 0 1.7em 0 5px
 			&.last
 				background: none
-	&.bt
-		padding: 0
-		ul
-			border-top: 1px dotted #999
-			border-bottom: 0
 
 // The footer with copyright links etc.
 #footer
-	margin: 0 auto
-	border-top: 2px solid darken($footer_bg, 20%)
-	background: $footer_bg
+	text-align: center
+	background: #f4f2f3 url($images/theme/grad250.png) 0 -180px repeat-x
+	border: 1px solid #999
+	border-top: 1px solid #ccc
+	border-radius: 0 0 12px 12px
 	div.frame
-		padding: 15px 20px 5px
+		padding: 15px 20px
 	ul li, p
 		font-size: .9em
-	ul
-		background: transparent url($images/minilogo.png) 0 7px no-repeat
-		padding-left: 90px
-		li
-			display: inline
-			padding: 0 2px
-			&.copyright
-				display: block
+	ul li
+		display: inline
+		padding: 0 2px
+		&.copyright
+			display: block
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
 
 // Normal, standard links.
 a
-	color: #de874d // b96f17, c06002
+	color: #568
 	text-decoration: none
 	:hover
-		color: #a54
+		color: #78a
 		text-decoration: underline
 		cursor: pointer
 
@@ -234,7 +232,7 @@ table
 
 // Use dark grey for the text
 body, td, th, tr
-	color: #333
+	color: #444
 
 // Wraps the entire forum when a forum width is set.
 #wrapper
@@ -258,10 +256,9 @@ fieldset
 	border: 1px solid #c4c4c4
 	padding: 1em
 	margin: 0 0 .5em 0
-	border-radius: 10px
 	legend
 		font-weight: bold
-		color: #666
+		color: #444
 
 // No image should have a border when linked.
 a img
@@ -366,14 +363,14 @@ input.search
 	background: #fdfaf9 url($images/filter.gif) 5px 2px no-repeat
 	padding-left: 24px
 	#header &
-		background: rgb(235,235,215) url($images/filter.gif) 5px 2px no-repeat
+		background: rgb(235,225,215) url($images/filter.gif) 5px 2px no-repeat
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
 	border: none
 	background: none
 
-.cat input[type=checkbox]
+.cat_bar h3 input[type=checkbox]
 	margin: 5px -3px 0 7px
 
 // Give disabled text input elements a different background color.
@@ -387,11 +384,11 @@ input[type=file]
 ------------------------------------------------------- */
 
 .menu
-	font: 105% "Tahoma", Verdana
 	min-height: 2em
 	display: block
 	margin: 0
 	padding: 5px 5px 2px !important
+	clear: left
 
 #main_menu
 	min-height: 0
@@ -400,15 +397,14 @@ input[type=file]
 	width: 100%
 
 #menu_container
-	background: $menu_bg
+	background: url($images/theme/grad250.png) 0 -180px repeat-x
 	border: 1px dotted #000
-	border-width: 0 0 1px 0
+	border-width: 1px 0
 	overflow: hidden
-	padding: 0 30px
+	padding: 0 10px
 
 .menu li a
 	display: block
-	color: #300
 	text-decoration: none
 	border: 4px solid #fbe2c8
 	border-width: 0 0 0 4px
@@ -422,16 +418,17 @@ input[type=file]
 	margin-bottom: 2px
 	margin-right: 2px
 	a
-		border, padding: 0
+		border: 0
+		padding: 0
 
 .menu ul
-	background: rgba(255, 248, 240, .92) // !!! background: #fff8f1
+	background: #fff8f1 url($images/theme/grad250.png) 0 -150px repeat-x
 	position: absolute
 	display: block
 	border: 1px solid #666
 	padding: 0
 	z-index: 42
-	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
+	box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
 	border-radius: 0 10px 10px 0
 
 .menu li ul
@@ -485,7 +482,7 @@ li.subsection > a extends .menu_arrows
 .css > li li:hover, li.hove
 	color: #000
 	border-radius: 0 9px 9px 0
-	// !!! background-color: #ebe7e2
+	background-color: #ebe7e2
 	background-color: rgba(0,0,0, .075)
 
 .menu > li > a, .menu h4
@@ -523,14 +520,10 @@ li.separator
 		display: none
 		visibility: hidden
 		opacity: 0
-
 	li:hover ul, ul li:hover ul, ul ul li:hover ul
 		display: block
 		visibility: visible
 		opacity: 1
-
-#main_content .menu
-	margin-bottom: 8px
 
 /*	These are the top-level menu icons. It may look complicated, but it isn't.
 	Just fetch documentation on image spriting. You can also simply use
@@ -681,7 +674,7 @@ blockquote.bbc_standard_quote
 	font-size: 90%
 	color: #000
 	line-height: 1.4em
-	background: #e8eee8 url($images/theme/quote.png) .1em .1em no-repeat
+	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat
 	border: 1px dotted #99A
 	padding: 1.2em 2.2em
 	margin: .1em 0 .5em
@@ -690,18 +683,18 @@ blockquote.bbc_standard_quote
 
 // Alternate blockquote stylings
 blockquote.bbc_alternate_quote extends blockquote.bbc_standard_quote
-	background-color: #e3eae3
+	background-color: #daddef
 
 // A code block - maybe PHP ;)
 code.bbc_code, code.php_code
 	display: block
 	font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
-	background: #eef5ec
+	background: #eef
 	border-top: 2px solid #999
 	border-bottom: 2px solid #999
 	padding: 3px 1em
 	overflow: auto
-	white-space: nowrap
+	white-space: pre
 	// Show a scrollbar after about 24 lines.
 	max-height: 24em
 
@@ -821,13 +814,13 @@ td.footnum a:target, a.fnotel:target
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-.titlebg, .titlebg2
-	&, tr& th, tr& td
-		color: #222
-
-.catbg
-	&, tr& td, tr& th
-		color: #666
+$subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS"
+.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td
+	color: #222
+	font: $subcat_font
+.catbg, tr.catbg td, tr.catbg th, tr.catbg th a
+	color: #666
+	font: $subcat_font
 
 // Adjust the table versions of headers
 tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, td.catbg
@@ -835,10 +828,6 @@ tr.titlebg th, tr.titlebg2 th, td.titlebg, td.titlebg2, tr.catbg th, td.catbg
 
 tr.titlebg th a, tr.titlebg2 td a
 	color: #222
-
-tr.catbg th a
-	color: #666
-
 .catbg select
 	height: 1.5em
 	font-size: .85em
@@ -847,21 +836,13 @@ tr.catbg th a
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg
 	color: #000
-	background-color: rgba(75%, 50%, 50%, .1) // #e9e8de
-
-.windowbg2 extends .windowbg
-	background-color: rgba(50%, 50%, 75%, .1) // #e4edeb
-
-.windowbg3 extends .windowbg
-	background-color: rgba(50%, 75%, 50%, .1) // #cacdd3
-
-.post
-	font: 105% Tahoma
-	em
-		font: italic 90% Verdana
-
-.windowbg a
-	color: #47a
+	background-color: #e7eaef
+.windowbg2
+	base: .windowbg
+	background-color: #f0f4f7
+.windowbg3
+	base: .windowbg
+	background-color: #cacdd3
 
 // The page navigation area
 .pagesection
@@ -1069,62 +1050,58 @@ dl.settings
 dfn
 	display: block
 	padding: 3px 20px 3px 8px
-	font: italic 85% Verdana
+	font-style: italic
+	font-size: 90%
 	color: #888
 
 /* Styles for section headers.
 ------------------------------------------------------- */
-
-.cat, .title
-	overflow: hidden
+.cat_bar, .title_bar
+	padding: 5px 8px
+	overflow: auto
 	border-radius: 5px
-	padding: 5px 12px 5px 8px
-	margin-bottom: 4px
-	background: rgba(0,0,0, .03)
+
+.cat_bar
+	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x
+	border: 1px solid #e0e0e0
+	border: 1px solid rgba(160,160,160, .5)
+.title_bar
+	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x
+	border: 1px solid #ddd
 	border: 1px solid rgba(0,0,0, .15)
-	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
-	text-shadow: white 0 1px 2px
-	color: grey
 
-.cat, .title, .table_list tbody.header td
-	a
-		letter-spacing: -1px
-		color: lighten(grey, 10%)
-		text-decoration: underline
-		:hover
-			color: $board_col
-
-.title
-	color: channels(grey, 30%)
-	font-size: 1.2em
-	background: none
-	padding: 5px 12px 3px 8px
-	border, margin: 0
-	a
-		color: lighten(channels(grey, 30%), 10%)
+.cat_bar, .title_bar
+	h3, h4
+		padding-right: 9px
+		font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	img
 		float: left
 		vertical-align: middle
 		margin-right: .5em
-		margin-top: 1px
+		margin-top: 2px
 
-.cat
-	a
-		font-size: .92em
-	img extends .title img
-		&[alt="+"], &[alt="-"]
-			margin-top: 4px
+.cat_bar h3, .cat_bar h4
+	letter-spacing: 1px
+.cat_bar h3, .cat_bar h4, .table_list tbody.header td
+	&, a
+		color: #000
+	a:hover
+		color: #963
+		text-decoration: none
 
-.title2 extends .title
-	font-size: 1.1em
-	color: channels(grey,0,0,30%)
-	border-bottom: 1px dotted rgba(0,0,0, .5)
+.title_bar h3, .title_bar h4
+	&, a
+		color: #222
+	a:hover
+		color: #53616f
+		text-decoration: none
+
+.cat_bar img
+	&[alt="+"], &[alt="-"]
+		margin-top: 3px
 
 img[alt="!"]
-	margin-top: 8px
-	#sidebar &
-		float: right
-		margin: 3px 0 0 7px
+	margin-top: 4px
 
 // A general table class
 .table_grid
@@ -1134,7 +1111,7 @@ img[alt="!"]
 	tr.catbg th
 		white-space: nowrap
 	tr.catbg, tr.titlebg
-		font-size: 10pt
+		font-size: .95em
 		border-bottom: 1px solid #fff
 		th
 			height, line-height: 28px
@@ -1219,6 +1196,9 @@ table
 	padding: .9em 1.2em
 	border-radius: 12px
 	border: 1px solid rgba(0,0,0, .1) // !!! border: 1px solid #ddd
+/* Let's have a bit of fun, shall we? */
+form.wrc
+	box-shadow: 0 1px 5px rgba(0,0,0, .125)
 
 .postbg
 	border-left, border-right: 1px solid #7f7f7f
@@ -1230,7 +1210,7 @@ table
 	overflow: hidden
 	margin-top: 1px
 	padding: 10px 10px 9px
-	background: rgba(0,0,0, .02)		// !!! background: #f5f5f5
+	background: #f5f5f5
 	border: 1px solid rgba(0,0,0, .15)	// !!! border: 1px solid #c5c5c5
 	border-radius: 8px
 	dl, dt, p
@@ -1244,8 +1224,6 @@ table
 		text-decoration: underline
 	> div
 		box-shadow: 2px 2px 8px 0 #bbb
-	.windowbg final
-		background-color: #f0f0f0
 
 /* The main content area.
 ------------------------------------------------------- */
@@ -1359,13 +1337,13 @@ table
 
 tr.catbg
 	th
-		background: #e5eeee
+		background: #e5eee5 url($images/theme/grad40.png) 0 -18px repeat-x
 	td
 		background-color: #e5eee5
 
 tr.titlebg, tr.titlebg2
 	th
-		background: #e3e9ef
+		background: #e3e9ef url($images/theme/grad40.png) 0 -18px repeat-x
 	td
 		background-color: #e3e9ef
 
@@ -1378,50 +1356,6 @@ th.last_th
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-/* They can be put anywhere, they'll be considered as globals.
-   They can even be redefined later in the source code, even in a
-   satellite stylesheet, and will take effect in parent files as well. */
-
 $main_font = "Verdana, Arial, Helvetica, sans-serif"
 $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
-$main_bg = rgb(241,243,234)
-$main_bg = rgb(246,248,239)
-$head_bg = rgb(232,226,231)
-$head_bg = rgba(233,235,186,.66)
-$menu_bg = #f7f0da
-$board_col = #d97b33
-$footer_bg = #e8e3cb
-
-// These are unused for now, but I like 'em...
-$other_bg = #e7e9b8
-$reddish = "#cc6600"
-
-/* $alpha_matte is a RGB value that should stand for your main area's background.
-   You only need it if you're using alpha values in your CSS. Don't use a variable
-   name in it, it's already complicated enough to calculate... */
-
-$alpha_matte = rgb(241,243,234)
-
-/* And our mixins... Well, I have no idea where to use them, so here are just a
-   few examples, commented out, for you to see how powerful they can be... */
-
-/*
-mixin example($border: 1px solid black, $width: 777px, $co = #888)
-	width: $width
-	font-size: 1em
-	background: $main_bg
-	a
-		border: $border
-		color: $board_col
-
-mixin no_params
-	color: #fff
-
-.class
-	.thing
-		mixin: no_params
-		mixin: example
-		mixin: example(1px dotted white)
-		mixin: example(,, #fff)
-*/

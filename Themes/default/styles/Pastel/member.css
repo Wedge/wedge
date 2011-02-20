@@ -1,0 +1,57 @@
+
+#header
+	li.greeting
+		font-size: 1.3em
+		font-weight: bold
+		line-height: 1.5em
+
+
+/* Styles for the personal messages section.
+------------------------------------------------- */
+
+#personal_messages
+	.pm
+		overflow: auto
+		clear: both
+		padding: .9em 0
+	#author, #topic_title
+		float: left
+	#author
+		margin: 0 0 0 .5em
+	#topic_title
+		margin: 0 0 0 9em
+	div.labels
+		padding: 0 1em 0 0
+	.capacity_bar
+		background: #f0f4f7
+		display: block
+		margin: .2em 0 0 1em
+		height: 1em
+		border: 1px solid #adadad
+		width: 10em
+		span
+			border-right: 1px solid #adadad
+			display: block
+			height: 1em
+		span.empty
+			background: #a6d69d
+		span.filled
+			background: #eea800
+		span.full
+			background: #f10909
+	.reportlinks
+		padding: .5em 1.3em
+
+#searchLabelsExpand li
+	padding: .3em .5em
+
+#manrules div.righttext
+	padding: .3em .1em
+
+dl.addrules dt.floatleft
+	width: 15em
+	color: #333
+	padding: 0 1.25em .5em
+
+#addrule fieldset
+	clear: both

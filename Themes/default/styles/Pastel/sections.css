@@ -11,18 +11,22 @@
 	td.info a.subject
 		font-weight: bold
 		font-size: 110%
-		color: $board_col
+		color: #d97b33
+
 	td.children
 		color: #555
 		font-size: 85%
+
 	td.stats
 		font-size: 90%
 		width: 15%
 		text-align: center
+
 	td.lastpost
 		line-height: 1.3em
 		font-size: 85%
 		width: 24%
+
 	td.icon
 		text-align: center
 		width: 6%
@@ -31,7 +35,7 @@ p.moderators
 	font-size: .8em
 	font-family: verdana, sans-serif
 
-// Hide the table header/footer parts - but it's here for those needing to style it
+// Hide the table header/footer parts - but it's here for those needing to style it.
 #boardindex_table .table_list
 	thead, tfoot
 		display: none
@@ -73,11 +77,12 @@ p.moderators
 	overflow: auto
 	margin: 1em 0
 	display: none
-	color: #575757; // shouldn't be shorthand style due to a JS bug in IE!
+	color: #575757 /* shouldn't be shorthand style due to a JS bug in IE! */
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
 #upshrinkHeaderIC
+	margin-top: 4px
 	p
 		margin: 0 0 .5em
 		padding: .5em
@@ -92,9 +97,6 @@ p.moderators
 		&.stats
 			font-size: 1.1em
 			padding-top: 8px
-		&.pminfo
-			margin: 0
-			padding: .5em
 
 #ic_recentposts
 	margin: 0 0 .5em
@@ -109,7 +111,8 @@ p.moderators
 	padding: .5em
 	height: 2em
 	ul li
-		margin, padding: 0
+		margin: 0
+		padding: 0
 		float: left
 		width: 20%
 		text-align: center
@@ -130,8 +133,8 @@ img.new_posts
 	padding: 0 .1em
 
 /* Styles for the message (topic) index.
-   You can target the page with #messageindex
 ---------------------------------------------------- */
+// #messageindex
 
 // The page navigation area
 #childboards .table_list
@@ -143,6 +146,7 @@ img.new_posts
 	float: right
 	padding: 4px
 
+
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
 #postbuttons
@@ -150,17 +154,23 @@ img.new_posts
 		padding: .5em
 		width: 40%
 		float: right
+
 	div.middletext
 		width: 60%
+
 	span
 		display: block
 		text-align: right
+
 	span.lower
 		clear: right
+
 	.buttonlist
 		float: right
+
 	#pagelinks
 		padding-top: 1em
+
 
 #moderationbuttons
 	overflow: hidden
@@ -186,6 +196,7 @@ img.new_posts
 		border-top: 1px solid #9999aa
 		padding: 1em 2.5em 0 2em
 		margin: 0 0 1em
+
 	div.submitbutton
 		border-bottom: 1px solid #9999aa
 		clear: both
@@ -202,16 +213,17 @@ img.new_posts
 		dt
 			padding: .3em 0
 			width: 30%
-			float, clear: left
+			float: left
 			margin: 0
+			clear: left
+		.voted
+			font-weight: bold
 		dd
 			margin: 0 0 0 2em
 			padding: .1em 0 0
 			width: 60%
 			max-width: 450px
 			float: left
-		.voted
-			font-weight: bold
 		.percentage
 			display: block
 			float: right
@@ -227,15 +239,19 @@ img.new_posts
 	padding: 0
 	overflow: auto
 
+
 // Onto the posts
 #forumposts
 	// Author and topic information
 	#author
 		margin: 0 7.7em 0 10px
-	.cat
+
+	.cat_bar
 		margin-bottom: 3px
+
 	.modified
 		float: left
+
 	.reportlinks
 		margin-right: 1.5em
 		text-align: right
@@ -274,13 +290,12 @@ img.new_posts
 	ul
 		padding: 0
 		margin: 0 1em 0 1.5em
-
 	h4
 		margin: .2em 0 .4em 1.1em
 		font-size: 120%
-		a, &
+		color: #c06002
+		a
 			color: #c06002
-
 	ul ul
 		margin: .3em 1em 0 0
 		padding: 0
@@ -289,10 +304,8 @@ img.new_posts
 
 	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
 		margin-top: .5em
-
 	li.avatar
 		overflow: hidden
-
 	li.warning
 		line-height: 1.2em
 		padding-top: 1em
@@ -339,13 +352,13 @@ ul.quickbuttons
 		display: inline
 		margin: 0 0 0 10px
 		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
-		a
-			padding: 0 0 0 22px
-			display: block
-			height: 20px
-			float: left
 	li.inline_mod_check
 		margin-left: 5px
+	li a
+		padding: 0 0 0 22px
+		display: block
+		height: 20px
+		float: left
 	a:hover
 		color: #a70
 
@@ -356,6 +369,8 @@ ul.quickbuttons
 	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
 	 */
 
+	li.mergepost_button
+		background-position: 2px -242px
 	li.quote_button
 		background-position: 0 0
 	li.remove_button
@@ -374,8 +389,6 @@ ul.quickbuttons
 		background-position: 0 -180px
 	li.notify_button
 		background-position: 0 -210px
-	li.mergepost_button
-		background-position: 2px -242px
 
 .post
 	margin-top: .5em
@@ -388,9 +401,8 @@ ul.quickbuttons
 	img.smiley
 		vertical-align: bottom
 
-.signature
-	#forumposts &, .post &
-		margin: 1em 0 0 0
+#forumposts .signature, .post .signature
+	margin: 1em 0 0 0
 
 .attachments
 	padding: 1em 0 2em
@@ -400,22 +412,20 @@ ul.quickbuttons
 	div
 		padding: 0 .5em
 
+
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
-
 // Horizontal alignments go a bit wonky in IE6 and IE7, but is it really worth worrying about?
 #postmodify
 	margin: 0
-	.roundframe
-		padding-left: 8%
-		padding-right: 8%
 
-#quickReplyOptions
-	form textarea
-		height: 100px
-		margin: .25em 0 0
-	.roundframe
-		base: #postmodify .roundframe
+#quickReplyOptions .roundframe, #postmodify .roundframe
+	padding-left: 8%
+	padding-right: 8%
+
+#quickReplyOptions form textarea
+	height: 100px
+	margin: .25em 0 0
 
 // The jump to box
 #display_jump_to
@@ -424,9 +434,10 @@ ul.quickbuttons
 	margin-top: 5px
 	text-align: right
 
+
 /* Styles for edit/new post section
 ---------------------------------------------------- */
-.postbox
+#post_header, .postbox
 	padding: .5em
 	overflow: hidden
 	dt
@@ -441,9 +452,8 @@ ul.quickbuttons
 		width: 83%
 		margin: .3em 0
 
-#post_header extends .postbox
-	img
-		vertical-align: middle
+#post_header img
+	vertical-align: middle
 
 ul.post_options
 	margin: 0 0 0 1em
@@ -505,10 +515,10 @@ ul.post_options
 #preview_body
 	base: .windowbg
 
+
 /* Styles for edit event section
 ---------------------------------------------------- */
 #post_event
-
 	.roundframe
 		padding: 10px 12%
 
@@ -550,6 +560,7 @@ ul.post_options
 	#event_main select
 		margin: 0 0.2em 0 0
 
+
 /* Styles for edit poll section.
 ---------------------------------------------------- */
 #edit_poll
@@ -582,6 +593,7 @@ dl.poll_options
 		input
 			margin-left: 0
 
+
 /* Styles for the recent messages section.
 ---------------------------------------------------- */
 #readbuttons_top .pagelinks
@@ -595,14 +607,16 @@ dl.poll_options
 #recent
 	clear: both
 
+
 /* Styles for the move topic section.
 ---------------------------------------------------- */
 #move_topic dl
 	margin-bottom: 0
-	&.settings dt
-		width: 40%
-	&.settings dd
-		width: 59%
+	&.settings
+		dt
+			width: 40%
+		dd
+			width: 59%
 
 .move_topic
 	width: 710px
@@ -611,6 +625,7 @@ dl.poll_options
 
 div.move_topic fieldset
 	padding: .5em
+
 
 /* Styles for the send topic section.
 ---------------------------------------------------- */
@@ -627,14 +642,17 @@ dl.send_mail
 	dd
 		width: 64%
 
+
 /* Styles for the report topic section.
 ---------------------------------------------------- */
 #report_topic dl
 	margin-bottom: 0
-	&.settings dt
-		width: 20%
-	&.settings dd
-		width: 79%
+	&.settings
+		dt
+			width: 20%
+		dd
+			width: 79%
+
 
 /* Styles for the split topic section.
 ---------------------------------------------------- */
@@ -644,11 +662,14 @@ dl.send_mail
 ul.split_messages
 	li.windowbg
 		margin: 1px
+
 	li a.split_icon
 		padding: 0 .5em
+
 	div.post
 		padding: 1em 0 0
 		border-top: 1px solid #fff
+
 
 /* Styles for the merge topic section.
 ---------------------------------------------------- */
@@ -666,6 +687,7 @@ fieldset.merge_options
 
 .custom_subject
 	margin: .5em 0
+
 
 /* Styles for the login areas.
 ------------------------------------------------------- */
@@ -690,6 +712,7 @@ fieldset.merge_options
 		text-align: left
 	p
 		text-align: center
+
 
 /* Styles for the registration section.
 ------------------------------------------------------- */
@@ -736,6 +759,7 @@ dl.register_form
 .vv_special
 	display: none
 
+
 /* Styles for maintenance mode.
 ------------------------------------------------------- */
 #maintenance_mode
@@ -753,6 +777,7 @@ tr.titlebg td
 	.error
 		padding: 0 0 1em 0
 
+
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
 .left_menu
@@ -764,12 +789,10 @@ tr.titlebg td
 	li.separator
 		display: none // alternatively, line-height: 3px
 
-.side_section .title
+.side_section .title_bar
 	margin-bottom: 5px
 
-tr.windowbg td,
-tr.approvebg td,
-tr.highlight2 td
+tr.windowbg td, tr.approvebg td, tr.highlight2 td
 	padding: .3em .7em
 
 #credits p
@@ -777,18 +800,22 @@ tr.highlight2 td
 	font-style: italic
 	margin: 0
 
+
 /* Styles for generic tables.
 ------------------------------------------------------- */
 #topic_icons
 	margin: 1em 0 0 0
 	.description
 		margin: 0
+
 	.floatleft
 		padding: 0 10px 0 0
+
 
 .topic_table
 	.icon, .stats
 		text-align: center
+
 	table
 		width: 100%
 		thead
@@ -797,20 +824,21 @@ tr.highlight2 td
 	// The subject column
 	td
 		font-size: 1em
-	td.subject p,
-	td.stats
+
+	td.subject p, td.stats
 		font-size: .85em
 		padding: 0
 		margin: 0
+
 	td.lastpost
 		font-size: .85em
 		line-height: 1.3em
 		padding: 4px
-	td.stickybg2,
-	td.lockedbg2,
-	td.locked_sticky2
+
+	td.stickybg2, td.lockedbg2, td.locked_sticky2
 		background-repeat: no-repeat
 		background-position: 98% 4px
+
 	td.stickybg2
 		background-image: url($images/icons/quick_sticky.gif)
 	td.lockedbg2
@@ -825,10 +853,12 @@ tr.highlight2 td
 		background-image: url($images/icons/quick_sticky_lock_my.gif)
 	td.lastpost
 		background-image: none
+
 	td.windowbg2.my
 		background-image: url($images/icons/quick_my.gif)
 		background-repeat: no-repeat
 		background-position: 98% 4px
+
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */
@@ -847,14 +877,17 @@ tr.highlight2 td
 		margin: 0
 		font-size: 1.1em
 		text-decoration: underline
+
 	p
 		margin: 1em 0 0
+
 	p.alert
 		padding: 0
 		margin: 0
 		float: left
 		width: 1em
 		font-size: 1.5em
+
 
 /* Styles for the profile section.
 ------------------------------------------------- */
@@ -878,6 +911,7 @@ dl
 			font-size: 80%
 			font-weight: 100
 			display: block
+
 	img.avatar
 		display: block
 		margin: 10px 0 0
@@ -916,13 +950,11 @@ dl
 		margin: 0 0 3px
 		padding: 0
 
-#tracking extends #profile_box
-	dl
-		border-bottom: 0
-		margin: 0
-		padding: 0
+#tracking
+	base: #profile_box
 
-#detailedinfo extends #profile_box
+#detailedinfo
+	base: #profile_box
 	margin-top: 10px
 	width: 79.5%
 	float: right
@@ -946,20 +978,27 @@ dl
 	float: left
 	padding: 0 3px
 
+
+// If the screen is too small, show the avatar on top
 @media all and (max-width: 1000px)
 	#basicinfo, #detailedinfo
 		width: 100%
+
 	#basicinfo
 		h4
 			float: left
 			width: 35%
+
 		img.avatar
 			float: right
 			vertical-align: top
+
 		ul
 			clear: left
+
 	#userstatus
 		clear: left
+
 	#infolinks
 		display: none
 		clear: both
@@ -1005,18 +1044,22 @@ dl
 	margin: 0
 	padding: 0
 	list-style: none
+
 	li
 		margin: 0
 		padding: 0
 		width: 4.16%
 		float: left
+
 		span
 			display: block
 			border: solid #000
 			border-width: 1px 1px 0 0
 			text-align: center
+
 		&.last span
 			border-right: none
+
 		div.bar
 			margin: 0 auto
 			width: 15px
@@ -1044,7 +1087,8 @@ dl
 		margin: 0 0 3px
 		padding: 0
 
-#popularactivity extends #popularposts
+#popularactivity
+	base: #popularposts
 	float: right
 
 .profile_pie
@@ -1080,14 +1124,21 @@ dl
 .topic
 	h4
 		margin: 3px 0
+
 	.post
 		margin: 0 1em
 		min-height: 80px
 		height: auto !important
 		height: 80px
+
 	.mod_icons
 		text-align: right
 		margin-right: 1em
+
+#tracking dl
+	border-bottom: 0
+	margin: 0
+	padding: 0
 
 #creator
 	dl
@@ -1155,13 +1206,14 @@ dl
 	width: 80%
 	font-size: .9em
 
+
 /* Styles for the statistics center.
 ------------------------------------------------- */
 #statistics
 	padding: .5em 0
-	.title
+	.title_bar
 		margin: 4px 0
-	.cat
+	.cat_bar h3
 		text-align: center
 	dl
 		min-height: 210px
@@ -1223,11 +1275,14 @@ dl.stats
 		width: 25%
 		padding: 0.3em 0.75em
 		text-align: left
+
 	&.stats_month
 		padding: 0.3em 1.5em
+
 	&.stats_day
 		padding: 0 3em
 		text-align: left
+
 
 /* Styles for the calendar section.
 ------------------------------------------------- */
@@ -1238,7 +1293,7 @@ dl.stats
 .calendar_today
 	background-color: #fff
 
-#calendar .cat
+#calendar .cat_bar
 	margin-bottom: 4px
 
 #month_grid
@@ -1250,10 +1305,11 @@ dl.stats
 	table
 		width: 100%
 		padding-bottom: 4px
-		.cat
+		.cat_bar h3
 			text-align: center
 			border-top: 2px solid #fff
 			border-bottom: none
+
 		&.weeklist
 			td.windowbg
 				text-align: center
@@ -1262,6 +1318,7 @@ dl.stats
 				font-size: large
 				padding: 0 7px
 				border-bottom: 2px solid #fff
+
 			td.weekdays
 				height: 49px
 				width: 100%
@@ -1269,29 +1326,34 @@ dl.stats
 				text-align: left
 				vertical-align: middle
 				border-bottom: 2px solid #fff
-			.title
+
+			.title_bar h4
 				margin: 0
 				height: 23px
 				line-height: 27px
+
 		th.days
 			width: 14%
 			padding: 4px 0
+
 		td.weeks
 			vertical-align: middle
 			text-align: center
 			font-weight: bold
 			font-size: large
+
 		td.days
 			vertical-align: top
 			text-align: center
+
 	h3
 		.weekly
 			text-align: center
 			padding-left: 0
 			font-size: large
 			height: 23px
-		span.floatleft,
-		span.floatright
+
+		span.floatleft, span.floatright
 			display: block
 			font-weight: bold
 
@@ -1304,11 +1366,13 @@ span.hidelink
 #calendar_navigation
 	text-align: center
 
+
 /* Styles for the memberlist section.
 ------------------------------------------------- */
 #mlist_search
 	margin: auto
 	width: 520px
+
 
 /* Styles for the basic search section.
 ------------------------------------------------- */
@@ -1332,6 +1396,7 @@ span.hidelink
 	.submit
 		background-position: 4px 4px
 
+
 /* Styles for the advanced search section.
 ------------------------------------------------- */
 #searchform
@@ -1339,28 +1404,32 @@ span.hidelink
 		text-align: left
 		padding: 0
 		border: none
+
 	p.clear
 		clear: both
 
-#search_options
-	margin: 0 auto
-	width: 600px
-	padding-top: 1em
-	overflow: hidden
 
 #advanced_search
+	#search_options
+		margin: 0 auto
+		width: 600px
+		padding-top: 1em
+		overflow: hidden
+
 	dt
 		clear: both
 		float: left
 		padding: .2em
 		text-align: right
 		width: 20%
+
 	dd
 		width: 75%
 		float: left
 		padding: .2em
 		margin: 0 0 0 .5em
 		text-align: left
+
 
 /* Styles for the search results page.
 ------------------------------------------------- */
@@ -1373,18 +1442,22 @@ span.hidelink
 	.buttons
 		padding: 5px 1em 0 0
 
+
 /* More hacks.
 ------------------------------------------------- */
+#upshrinkHeaderIC
+	p.pminfo
+		margin: 0
+		padding: .5em
+
+	.cat_bar h3, .title_bar h4
+		font-size: 1.1em
+
 #upshrink_ic
 	float: right
-	display: none
 	margin: 4px -5px 0 0
 
-// !!! Remove this once we implement class="openclose" on toggles...
-#newsupshrink
-	margin-top: 4px
-
-// table_grid styles for Profile > Show Permissions.
+/* table_grid styles for Profile > Show Permissions. */
 #permissions table.table_grid td
 	padding: .4em .8em
 	cursor: default

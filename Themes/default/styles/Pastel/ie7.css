@@ -1,5 +1,5 @@
 
-.cat input[type=checkbox]
+.cat_bar h3 input[type=checkbox]
 	margin: 0 4px
 
 // Generic lists header
@@ -28,7 +28,7 @@
 	word-wrap: break-word
 
 #content
-	#forumposts div.cat
+	#forumposts div.cat_bar
 		margin-top: 8px
 		clear: both
 	.pagesection
@@ -43,7 +43,7 @@
 
 /* Overrides for the calendar template
 ------------------------------------------------- */
-#main_grid table.weeklist .title
+#main_grid table.weeklist .title_bar h4
 	margin: 2px 0 -4px 0
 
 
@@ -80,7 +80,7 @@
 
 /* Misc hacks
 ------------------------------------------------------- */
-.cat, .title
+.cat_bar, .title_bar
 	overflow: hidden
 
 .bbc_divider, .bbc_button, .bbc_button div

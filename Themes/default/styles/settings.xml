@@ -5,27 +5,24 @@
 <styling>
 
 	<name>
-		Pastel
+		Warm
 	</name>
 
+	<type>
+		replace
+	</type>
+
 	<comment><![CDATA[
-		By Nao, inspired by Bloc's Curve. Obviously.
+		By Nao.
 	]]></comment>
 
-	<css for="ie7,ie8"><![CDATA[
-		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a {
-			behavior: url($behavior/Themes/default/styles/PIE.htc);
-			position: relative;
-		}
-	]]></css>
-
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
+	DD_belatedPNG.fix('div,#boardindex_table img');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
-	<block name="title"><div class="title_bar"><h3>|</h3></div></block>
-	<block name="title2"><div class="title_bar"><h4>|</h4></div></block>
-	<block name="cat"><div class="cat_bar"><h3>|</h3></div></block>
+	<block name="title"><div class="title">|</div></block>
+	<block name="title2"><div class="title2">|</div></block>
+	<block name="cat"><div class="cat">|</div></block>
 
 </styling>
