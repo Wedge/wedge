@@ -528,7 +528,7 @@ class wecss_nesting extends wecss
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
 		{
-			if (strpos($node['selector'], '@media') === 0)
+			if ($node['selector'][0] === '@' && (strpos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector'])))
 			{
 				$standard_nest = $node['selector'];
 				$css .= $node['selector'] . ' {';
