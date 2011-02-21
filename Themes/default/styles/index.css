@@ -306,10 +306,10 @@ select.qaction, input.qaction
 // The font size of textareas should be just a little bit larger.
 textarea
 	font: 100%/130% $main_font
+	max-width: 95%
 
 // Buttons should be styled a bit differently, in order to make them look more button'ish.
 input, textarea, select
-	max-width: 95%
 	:hover, :focus
 		border: 1px solid #454545
 

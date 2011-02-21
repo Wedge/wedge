@@ -8,12 +8,12 @@
  * Also implements concepts and ideas from Sass (http://sass-lang.com)
  */
 
-class CSSCache
+class wecss
 {
 	function process(&$css) {}
 }
 
-class CSS_Mixin extends CSSCache
+class wecss_mixin extends wecss
 {
 	function process(&$css)
 	{
@@ -79,7 +79,7 @@ class CSS_Mixin extends CSSCache
 	}
 }
 
-class CSS_Var extends CSSCache
+class wecss_var extends wecss
 {
 	function process(&$css)
 	{
@@ -137,7 +137,7 @@ class CSS_Var extends CSSCache
  *
  * The rest isn't as good, but it's mine. Ben oui.
  */
-class CSS_Func extends CSSCache
+class wecss_func extends wecss
 {
 	// Converts from a RGBA color to a string
 	private function color2string($r, $g, $b, $a)
@@ -386,7 +386,7 @@ class CSS_Func extends CSSCache
 	}
 }
 
-class CSS_Nesting extends CSSCache
+class wecss_nesting extends wecss
 {
 	var $rules;
 	var $props;
@@ -417,7 +417,7 @@ class CSS_Nesting extends CSSCache
 		{
 			// Nope? Then let's have fun with our simplified syntax.
 			$xml = preg_replace("~\n\s*\n~", "\n", $xml); // Delete blank lines
-			$xml = preg_replace_callback('~^([\t ]*)~m', 'CSS_Nesting::indentation', $xml);
+			$xml = preg_replace_callback('~^([\t ]*)~m', 'wecss_nesting::indentation', $xml);
 			$tree = explode("\n", $xml);
 			$level = 0;
 			$xml = '';
@@ -521,7 +521,7 @@ class CSS_Nesting extends CSSCache
 		}
 
 		// Sort the bases array by the first argument's length.
-		usort($bases, 'CSS_Nesting::lensort');
+		usort($bases, 'wecss_nesting::lensort');
 		$prop = 'property';
 		$alpha = array_flip(array_merge(range('a', 'z'), range('A', 'Z')));
 
@@ -683,7 +683,7 @@ class CSS_Nesting extends CSSCache
 	}
 }
 
-class CSS_Math extends CSSCache
+class wecss_math extends wecss
 {
 	function process(&$css)
 	{
@@ -713,7 +713,7 @@ class CSS_Math extends CSSCache
 	}
 }
 
-class CSS_Base64 extends CSSCache
+class wecss_base64 extends wecss
 {
 	function process(&$css)
 	{

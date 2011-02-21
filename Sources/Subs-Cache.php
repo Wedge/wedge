@@ -240,7 +240,6 @@ function wedge_cache_css()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
-		// !!! Right now, the default styling (Pastel) will not run this, even though it needs it. Right back at ya, IE.
 		if ($folder !== 'styles' && file_exists($fold . 'settings.xml'))
 		{
 			$set = file_get_contents($fold . '/settings.xml');
@@ -324,16 +323,16 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	loadSource('Class-CSS');
 
 	$plugins = array(
-		new CSS_Mixin(),	// CSS mixins (mixin hello($world: 0))
-		new CSS_Var(),		// CSS variables ($hello_world)
-		new CSS_Func(),		// CSS functions (color transforms)
-		new CSS_Nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
-		new CSS_Math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wecss_mixin(),		// CSS mixins (mixin hello($world: 0))
+		new wecss_var(),		// CSS variables ($hello_world)
+		new wecss_func(),		// CSS functions (color transforms)
+		new wecss_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new wecss_math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
 	);
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
 	if ($can_gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
-		$plugins[] = new CSS_Base64();
+		$plugins[] = new wecss_base64();
 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
