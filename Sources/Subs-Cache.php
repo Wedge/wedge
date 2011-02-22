@@ -354,7 +354,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
 	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */...
 	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final); // Which we save.
-	$final = preg_replace('~//[^\n]*~s', '', $final); // Strip comments like me. OMG does this mean I'm gonn
+	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip comments like me. OMG does this mean I'm gonn
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);

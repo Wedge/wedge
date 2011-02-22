@@ -188,12 +188,11 @@ h1.forumtitle
 	border-top: 2px solid darken($footer_bg, 20%)
 	background: $footer_bg
 	div.frame
-		padding: 15px 20px 5px
+		background: transparent url($images/minilogo.png) 99% 17px no-repeat
+		padding: 10px 20px
 	ul li, p
 		font-size: .9em
 	ul
-		background: transparent url($images/minilogo.png) 0 7px no-repeat
-		padding-left: 90px
 		li
 			display: inline
 			padding: 0 2px
