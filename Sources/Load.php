@@ -560,7 +560,7 @@ function loadBoard()
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
 				b.styling, b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language,
 				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends,
-				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
+				b.wedge_type, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -617,6 +617,7 @@ function loadBoard()
 				'banned_member' => $row['banned'],
 				'friends' => $row['friends'],
 				'language' => $row['language'],
+				'type' => $row['wedge_type'],
 			);
 
 			// Load privacy settings.
