@@ -509,7 +509,7 @@ function updateSettings($changeArray, $update = false, $debug = false)
  */
 function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false)
 {
-	global $modSettings;
+	global $modSettings, $txt;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -552,11 +552,15 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		// If they didn't enter an odd value, pretend they did.
 		$PageContiguous = (int) ($modSettings['compactTopicPagesContiguous'] - ($modSettings['compactTopicPagesContiguous'] % 2)) / 2;
 
+		$pageindex = '';
+
+		// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
+		if ($start >= $num_per_page)
+			$pageindex .= sprintf($base_link, $start - $num_per_page, $txt['previous_next_back']);
+
 		// Show the first page. (>1< ... 6 7 [8] 9 10 ... 15)
 		if ($start > $num_per_page * $PageContiguous)
-			$pageindex = sprintf($base_link, 0, '1');
-		else
-			$pageindex = '';
+			$pageindex .= sprintf($base_link, 0, '1');
 
 		// Show the ... after the first page. (1 >...< 6 7 [8] 9 10 ... 15)
 		if ($start > $num_per_page * ($PageContiguous + 1))
@@ -570,7 +574,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 			if ($start >= $num_per_page * $nCont)
 			{
 				$tmpStart = $start - $num_per_page * $nCont;
-				$pageindex.= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
+				$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
 			}
 
 		// Show the current page. (1 ... 6 7 >[8]< 9 10 ... 15)
@@ -599,6 +603,10 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		// Show the last number in the list. (1 ... 6 7 [8] 9 10 ... >15<)
 		if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
 			$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
+
+		// Finally, the next link.
+		if ($start + $num_per_page < $max_value)
+			$pageindex .= sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']);
 	}
 
 	return $pageindex;
