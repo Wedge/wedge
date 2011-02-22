@@ -583,7 +583,14 @@ function getXmlNews($xml_format)
 	{
 		// Limit the length of the message, if the option is set.
 		if (!empty($modSettings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		{
+			// Is there a [more]? If there is, check to see how long the truncated part is. If it's too long, we'll use the admin settings anyway.
+			// !!! Is 20% variance too much?
+			$body = str_replace('<br />', "\n", $row['body']);
+			$more_pos = stripos($body, '[more');
+			if ($more_pos === false || $more_pos > $modSettings['xmlnews_maxlen'] * 1.2)
+				$row['body'] = strtr(westr::substr($body, 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		}
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 

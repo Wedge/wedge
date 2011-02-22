@@ -1385,7 +1385,7 @@ class wedgeEditor
 
 	public function LoadBBC()
 	{
-		global $modSettings, $txt, $settings;
+		global $modSettings, $txt, $settings, $board_info;
 
 		if ($this->bbc !== null)
 			return;
@@ -1568,6 +1568,12 @@ class wedgeEditor
 				'code' => 'hr',
 				'before' => '[hr]',
 				'description' => $txt['horizontal_rule']
+			),
+			array(
+				'image' => array(13, 0),
+				'code' => 'more',
+				'before' => '[more]',
+				'description' => $txt['more_bbc'],
 			),
 		);
 

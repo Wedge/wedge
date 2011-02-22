@@ -860,7 +860,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// A closed tag, with no content or value.
 		elseif ($tag['type'] == 'closed')
 		{
-			if ($tag['tag'] == 'more' && !empty($context['current_board']) && empty($context['current_topic']))
+			if ($tag['tag'] == 'more' && empty($context['current_topic']))
 			{
 				$lent = westr::strlen(substr($message, $pos));
 				if ($lent > 0)
