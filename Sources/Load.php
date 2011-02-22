@@ -557,10 +557,10 @@ function loadBoard()
 			SELECT
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
-				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
-				b.styling, b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language,
-				bm.permission = \'deny\' AS banned, bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends,
-				b.wedge_type, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
+				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.styling,
+				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
+				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends, b.wedge_type, b.sort_method,
+				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
 				LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -618,6 +618,8 @@ function loadBoard()
 				'friends' => $row['friends'],
 				'language' => $row['language'],
 				'type' => $row['wedge_type'],
+				'sort_method' => $row['sort_method'],
+				'sort_override' => $row['sort_override'],
 			);
 
 			// Load privacy settings.

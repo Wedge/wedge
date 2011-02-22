@@ -247,19 +247,29 @@ function MessageIndex()
 		'last_post' => 't.id_last_msg'
 	);
 
-	// They didn't pick one, default to by last post descending.
-	if (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]))
+	// So, what ordering are we going with? Are we, first of all, forcing the board to bend to our will?
+	if ($board_info['sort_override'] == 'force_desc' || $board_info['sort_override'] == 'force_asc')
 	{
-		$context['sort_by'] = 'last_post';
-		$_REQUEST['sort'] = 'id_last_msg';
-		$ascending = isset($_REQUEST['asc']);
+		$context['sort_by'] = $board_info['sort_method'];
+		$_REQUEST['sort'] = $sort_methods[$board_info['sort_method']];
+		$ascending = $board_info['sort_override'] == 'force_asc';
+		$context['can_reorder'] = false;
 	}
-	// Otherwise default to ascending.
+	// So the user *could*, but they didn't this time around. Or they were naughty.
+	elseif (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]))
+	{
+		$context['sort_by'] = $board_info['sort_method'];
+		$_REQUEST['sort'] = $sort_methods[$board_info['sort_method']];
+		$ascending = $board_info['sort_override'] === 'natural_asc' || isset($_REQUEST['asc']);
+		$context['can_reorder'] = true;
+	}
+	// The user did pick one, and we're cool with that.
 	else
 	{
 		$context['sort_by'] = $_REQUEST['sort'];
 		$_REQUEST['sort'] = $sort_methods[$_REQUEST['sort']];
 		$ascending = !isset($_REQUEST['desc']);
+		$context['can_reorder'] = true;
 	}
 
 	$context['sort_direction'] = $ascending ? 'up' : 'down';
@@ -298,7 +308,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' : '') . '
 			WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
-			ORDER BY ' . ('is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ') . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
+			ORDER BY is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
 			LIMIT {int:start}, {int:maxindex}',
 			array(
 				'current_board' => $board,
