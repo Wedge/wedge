@@ -234,6 +234,7 @@ function MessageIndex()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
+		showSubTemplate('messageindex_whoviewing', 'sidebar');
 	}
 
 	// Default sort methods.

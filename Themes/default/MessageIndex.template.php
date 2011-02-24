@@ -93,20 +93,6 @@ function template_main()
 			</thead>
 			<tbody>';
 
-		if (!empty($settings['display_who_viewing']))
-		{
-			echo '
-				<tr class="windowbg2 whos_viewing">
-					<td colspan="', !empty($context['can_quick_mod']) ? '5' : '4', '" class="smalltext">';
-			if ($settings['display_who_viewing'] == 1)
-				echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
-			else
-				echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
-			echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_board'], '
-					</td>
-				</tr>';
-		}
-
 		// If this person can approve items and we have some awaiting approval tell them.
 		if (!empty($context['unapproved_posts_message']))
 		{
@@ -441,6 +427,25 @@ function template_messageindex_childboards()
 		</div>
 	</div>';
 	}
+}
+
+function template_messageindex_whoviewing()
+{
+	global $txt, $context, $settings;
+
+	echo '
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+		</we:title>
+		<p>';
+
+	if ($settings['display_who_viewing'] == 1)
+		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
+	else
+		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+
+	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_board'], '
+		</p>';
 }
 
 function template_messageindex_sortlink($sort, $caption)
