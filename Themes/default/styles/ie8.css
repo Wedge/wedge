@@ -28,3 +28,7 @@ input.save
 	background-position: 4px -62px
 input.new
 	background-position: 4px -94px
+
+#upper_section .frame
+	background: none
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$head_bg/hex, endColorstr=$head_bg/hex)

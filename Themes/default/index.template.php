@@ -438,7 +438,7 @@ function theme_linktree($force_show = false, $on_bottom = false)
 		foreach ($context['linktree'] as $link_num => $tree)
 		{
 			echo '
-					<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
+				<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
 
 			// Show something before the link?
 			if (isset($tree['extra_before']))
@@ -454,7 +454,7 @@ function theme_linktree($force_show = false, $on_bottom = false)
 			echo '</li>';
 		}
 		echo '
-				</ul>';
+			</ul>';
 	}
 
 	echo '

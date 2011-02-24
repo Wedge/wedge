@@ -51,17 +51,14 @@ p.moderators
 	line-height: 19px
 	padding: 0 0 0 6px
 
-.nextlinks
-	text-align: right
-	margin-top: -1px
+.prevnext_prev
+	float: left
 
-.nextlinks_bottom
-	clear: right
-	text-align: right
-	padding-top: 1px
+.prevnext_next
+	float: right
 
-.nextlinks a, .nextlinks_bottom a
-	padding-left: 6px
+#top_subject
+	text-align: center
 
 .mark_read
 	padding: 0 .5em
@@ -164,6 +161,7 @@ img.new_posts
 
 #moderationbuttons
 	overflow: hidden
+	margin-bottom: 6px
 
 // Events
 .linked_events
@@ -419,10 +417,10 @@ ul.quickbuttons
 
 // The jump to box
 #display_jump_to
-	clear: both
-	padding: 5px
-	margin-top: 5px
-	text-align: right
+	text-align: center
+	select, input
+		font-size: 8pt
+		padding: 2px 2px 0
 
 /* Styles for edit/new post section
 ---------------------------------------------------- */

@@ -158,10 +158,13 @@ function template_main()
 	// Allow adding new buttons easily.
 	call_hook('display_buttons', array(&$normal_buttons));
 
-	// Show the page index... "Pages: [1]".
+	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
-			<div class="pagesection">
-				<div class="nextlinks">', $context['previous_next'], '</div>', template_button_strip($normal_buttons, 'right'), '
+			<we:cat>
+				', $context['previous_next'], '
+				<div id="top_subject">', $txt['topic'], ': ', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>
+			</we:cat>
+			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
 			</div>', $context['browser']['is_ie6'] ? '
 			<div class="clear"></div>' : '';
@@ -169,12 +172,6 @@ function template_main()
 	// Show the topic information - icon, subject, etc.
 	echo '
 			<div id="forumposts">
-				<we:cat>
-					<span id="author">', $txt['author'], '</span>
-					<span id="top_subject">', $txt['topic'], ': ', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</span>
-				</we:cat>';
-
-	echo '
 				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
 
 	$ignoredMsgs = array();
@@ -590,7 +587,6 @@ function template_main()
 			<div class="pagesection">
 				', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
-				<div class="nextlinks_bottom">', $context['previous_next'], '</div>
 			</div>';
 
 	// Show the lower breadcrumbs.
@@ -618,7 +614,10 @@ function template_main()
 
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
-			<div class="plainbox" id="display_jump_to">&nbsp;</div>';
+			<we:cat>
+				', $context['previous_next'], '
+				<div id="display_jump_to"></div>
+			</we:cat>';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{
@@ -759,7 +758,7 @@ function template_main()
 
 		aJumpTo[aJumpTo.length] = new JumpTo({
 			sContainerId: "display_jump_to",
-			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
+			sJumpToTemplate: "<label for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
 			iCurBoardId: ' . $context['current_board'] . ',
 			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
 			sCurBoardName: "' . $context['jump_to']['board_name'] . '",

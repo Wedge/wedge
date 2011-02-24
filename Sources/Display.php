@@ -340,7 +340,9 @@ function Display()
 	}
 
 	// Create a previous next string if the selected theme has it as a selected option.
-	$context['previous_next'] = $modSettings['enablePreviousNext'] ? '<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=prev#new">' . $txt['previous_next_back'] . '</a> <a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=next#new">' . $txt['previous_next_forward'] . '</a>' : '';
+	$context['previous_next'] = $modSettings['enablePreviousNext'] ? '
+				<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=prev#new" class="prevnext_prev">' . $txt['previous_next_back'] . '</a>
+				<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=next#new" class="prevnext_next">' . $txt['previous_next_forward'] . '</a>' : '';
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
 	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
