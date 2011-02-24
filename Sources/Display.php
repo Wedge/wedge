@@ -379,6 +379,7 @@ function Display()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
+		showSubTemplate('display_whoviewing', 'sidebar');
 	}
 
 	// If all is set, but not allowed... just unset it.
