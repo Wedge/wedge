@@ -109,7 +109,7 @@ function template_html_above()
 
 function template_body_above()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info;
 
 	echo '
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
@@ -137,6 +137,23 @@ function template_body_above()
 
 		echo '
 				</form>';
+	}
+
+	$languages = glob($settings['theme_dir'] . '/languages/Flag.*.png');
+	if (count($languages) > 1)
+	{
+		$lng = $user_info['url'];
+		$lng .= strpos($lng, '?') !== false ? ';' : '?';
+		if (strpos($lng, 'language=') !== false)
+			$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
+
+		echo '
+				<p>';
+		foreach (array_map('basename', $languages) as $language)
+			echo '
+					<a href="' . $lng . 'language=' . substr($language, 5, -4) . '" title="Français"><img src="' . $settings['theme_url'] . '/languages/' . $language . '"></a>';
+		echo '
+				</p>';
 	}
 
 	// Show a random news item? (or you could pick one from news_lines...)

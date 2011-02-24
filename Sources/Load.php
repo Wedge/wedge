@@ -1857,7 +1857,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// Add Webkit fixes -- there are so many popular browsers based on it.
-	if ($context['browser']['is_webkit'])
+	if ($context['browser']['is_webkit'] && !empty($context['browser']['agent']) && $context['browser']['agent'] !== 'webkit')
 		$context['css_generic_files'][] = 'webkit';
 
 	// Add any potential browser-based fixes.
