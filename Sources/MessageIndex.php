@@ -341,7 +341,7 @@ function MessageIndex()
 				mf.poster_time AS first_poster_time, mf.subject AS first_subject, mf.icon AS first_icon,
 				mf.poster_name AS first_member_name, mf.id_member AS first_id_member,
 				IFNULL(memf.real_name, mf.poster_name) AS first_display_name, SUBSTRING(ml.body, 1, 385) AS last_body,
-				SUBSTRING(mf.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, mf.smileys_enabled AS first_smileys
+				{raw:first_body}, ml.smileys_enabled AS last_smileys, mf.smileys_enabled AS first_smileys
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
@@ -354,6 +354,7 @@ function MessageIndex()
 			ORDER BY ' . ($pre_query ? 'FIND_IN_SET(t.id_topic, {string:find_set_topics})' : ('is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ') . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
 			LIMIT ' . ($pre_query ? '' : '{int:start}, ') . '{int:maxindex}',
 			array(
+				'first_body' => $board_info['type'] == 'blog' ? 'mf.body AS first_body' : 'SUBSTRING(mf.body, 1, 385) AS first_body',
 				'current_board' => $board,
 				'current_member' => $user_info['id'],
 				'topic_list' => $topic_ids,
@@ -373,16 +374,30 @@ function MessageIndex()
 			if (!$pre_query)
 				$topic_ids[] = $row['id_topic'];
 
-			if (!empty($settings['message_index_preview']))
+			// If it's a blog board, we need to parse the first post fully for bbcode
+			if ($board_info['type'] == 'blog')
 			{
-				// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
-				$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
-				if (westr::strlen($row['first_body']) > 128)
-					$row['first_body'] = westr::substr($row['first_body'], 0, 128) . '...';
-				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
-				if (westr::strlen($row['last_body']) > 128)
-					$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
+				// Censor the subject and message. Unlike elsewhere, here they are implicitly different (by design)
+				censorText($row['first_subject']);
+				censorText($row['first_body']);
+				$row['first_body'] = parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']);
+				
+				// Is the theme requesting previews? Better set up the last post for them too. Not likely, but hey.
+				if (!empty($settings['message_index_preview']))
+				{
+					censorText($row['last_subject']);
+					censorText($row['last_body']);
 
+					$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
+					if (westr::strlen($row['last_body']) > 128)
+						$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
+				}
+				else
+					$row['last_body'] = '';
+			}
+			// So it's a forum board, do they still want previews?
+			elseif (!empty($settings['message_index_preview']))
+			{
 				// Censor the subject and message preview.
 				censorText($row['first_subject']);
 				censorText($row['first_body']);
@@ -398,7 +413,17 @@ function MessageIndex()
 					censorText($row['last_subject']);
 					censorText($row['last_body']);
 				}
+
+				// Limit them to 128 characters
+				if (westr::strlen($row['first_body']) > 128)
+					$row['first_body'] = westr::substr($row['first_body'], 0, 128) . '...';
+				$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
+
+				if (westr::strlen($row['last_body']) > 128)
+					$row['last_body'] = westr::substr($row['last_body'], 0, 128) . '...';
+				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
 			}
+			// Huh, guess not.
 			else
 			{
 				$row['first_body'] = '';

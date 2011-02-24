@@ -14,110 +14,7 @@ function template_main()
 	echo '
 	<a id="top"></a>';
 
-	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
-	{
-		echo '
-	<div class="tborder childboards" id="board_', $context['current_board'], '_childboards">
-		<we:cat>
-			', $txt['parent_boards'], '
-		</we:cat>
-		<div class="table_frame">
-			<table id="board_list" class="table_list">
-				<tbody id="board_', $context['current_board'], '_children">';
-
-		foreach ($context['boards'] as $board)
-		{
-			echo '
-				<tr id="board_', $board['id'], '" class="windowbg2">
-					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
-
-			// If the board or children is new, show an indicator.
-			if ($board['new'] || $board['children_new'])
-				echo '
-							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
-			// Is it a redirection board?
-			elseif ($board['is_redirect'])
-				echo '
-							<img src="', $settings['images_url'], '/redirect.png">';
-			// No new posts at all! The agony!!
-			else
-				echo '
-							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
-
-			echo '
-						</a>
-					</td>
-					<td class="info">
-						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
-
-			// Has it outstanding posts for approval?
-			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
-				echo '
-						<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_var'], '=', $context['session_id'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
-
-			echo '
-
-						<p>', $board['description'], '</p>';
-
-			// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
-			if (!empty($board['moderators']))
-				echo '
-						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
-
-			// Show some basic information about the number of posts, etc.
-			echo '
-					</td>
-					<td class="stats windowbg">
-						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'],
-						$board['is_redirect'] ? '' : '<br>' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
-					</td>
-					<td class="lastpost">';
-
-			/* The board's and children's 'last_post's have:
-			time, timestamp (a number that represents the time), id (of the post), topic (topic id),
-			link, href, subject, start (where they should go for the first unread post),
-			and member (which has id, name, link, href, username in it.) */
-			if (!empty($board['last_post']['id']))
-				echo '
-						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '
-						<br>', $txt['in'], ' ', $board['last_post']['link'], '
-						<br>', $txt['on'], ' ', $board['last_post']['time'], '</p>';
-
-			echo '
-					</td>
-				</tr>';
-
-			// Show the "Child Boards: ". (there's a link_children but we're going to bold the new ones...)
-			if (!empty($board['children']))
-			{
-				// Sort the links into an array with new boards bold so it can be imploded.
-				$children = array();
-				/* Each child in each board's children has:
-						id, name, description, new (is it new?), topics (#), posts (#), href, link, and last_post. */
-				foreach ($board['children'] as $child)
-				{
-					if (!$child['is_redirect'])
-						$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts">' : '') . '</a>';
-					else
-						$child['link'] = '<a href="' . $child['href'] . '" title="' . comma_format($child['posts']) . ' ' . $txt['redirects'] . '">' . $child['name'] . '</a>';
-
-					// Has it posts awaiting approval?
-					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
-						$child['link'] .= ' <a href="' . $scripturl . '?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
-
-					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
-				}
-				echo '
-				<tr id="board_', $board['id'], '_children"><td colspan="3" class="children windowbg"><strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '</td></tr>';
-			}
-		}
-		echo '
-				</tbody>
-			</table>
-		</div>
-	</div>';
-	}
+	template_messageindex_childboards();
 
 	if (!empty($options['show_board_desc']) && $context['description'] != '')
 		echo '
@@ -327,20 +224,20 @@ function template_main()
 			// Show a list of boards they can move the topic to.
 			if ($context['can_move'])
 			{
-					echo '
+				echo '
 						<select class="qaction" id="moveItTo" name="move_to" disabled>';
 
-					foreach ($context['move_to_boards'] as $category)
-					{
-						echo '
-							<optgroup label="', $category['name'], '">';
-						foreach ($category['boards'] as $board)
-								echo '
-								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
-						echo '
-							</optgroup>';
-					}
+				foreach ($context['move_to_boards'] as $category)
+				{
 					echo '
+							<optgroup label="', $category['name'], '">';
+					foreach ($category['boards'] as $board)
+						echo '
+								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+					echo '
+							</optgroup>';
+				}
+				echo '
 						</select>';
 			}
 
@@ -434,6 +331,116 @@ function template_main()
 				e.preventDefault();
 		}
 	}');
+}
+
+function template_messageindex_childboards()
+{
+	global $context, $settings, $options, $scripturl, $modSettings, $txt, $language;
+
+	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
+	{
+		echo '
+	<div class="tborder childboards" id="board_', $context['current_board'], '_childboards">
+		<we:cat>
+			', $txt['parent_boards'], '
+		</we:cat>
+		<div class="table_frame">
+			<table id="board_list" class="table_list">
+				<tbody id="board_', $context['current_board'], '_children">';
+
+		foreach ($context['boards'] as $board)
+		{
+			echo '
+				<tr id="board_', $board['id'], '" class="windowbg2">
+					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
+
+			// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+				echo '
+							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+				echo '
+							<img src="', $settings['images_url'], '/redirect.png">';
+			// No new posts at all! The agony!!
+			else
+				echo '
+							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
+
+			echo '
+						</a>
+					</td>
+					<td class="info">
+						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
+
+			// Has it outstanding posts for approval?
+			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
+				echo '
+						<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_var'], '=', $context['session_id'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+
+			echo '
+
+						<p>', $board['description'], '</p>';
+
+			// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
+			if (!empty($board['moderators']))
+				echo '
+						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
+
+			// Show some basic information about the number of posts, etc.
+			echo '
+					</td>
+					<td class="stats windowbg">
+						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'],
+						$board['is_redirect'] ? '' : '<br>' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
+					</td>
+					<td class="lastpost">';
+
+			/* The board's and children's 'last_post's have:
+			time, timestamp (a number that represents the time), id (of the post), topic (topic id),
+			link, href, subject, start (where they should go for the first unread post),
+			and member (which has id, name, link, href, username in it.) */
+			if (!empty($board['last_post']['id']))
+				echo '
+						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '
+						<br>', $txt['in'], ' ', $board['last_post']['link'], '
+						<br>', $txt['on'], ' ', $board['last_post']['time'], '</p>';
+
+			echo '
+					</td>
+				</tr>';
+
+			// Show the "Child Boards: ". (there's a link_children but we're going to bold the new ones...)
+			if (!empty($board['children']))
+			{
+				// Sort the links into an array with new boards bold so it can be imploded.
+				$children = array();
+				/* Each child in each board's children has:
+						id, name, description, new (is it new?), topics (#), posts (#), href, link, and last_post. */
+				foreach ($board['children'] as $child)
+				{
+					if (!$child['is_redirect'])
+						$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><img src="' . $settings['lang_images_url'] . '/new.gif" class="new_posts">' : '') . '</a>';
+					else
+						$child['link'] = '<a href="' . $child['href'] . '" title="' . comma_format($child['posts']) . ' ' . $txt['redirects'] . '">' . $child['name'] . '</a>';
+
+					// Has it posts awaiting approval?
+					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
+						$child['link'] .= ' <a href="' . $scripturl . '?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
+
+					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
+				}
+				echo '
+				<tr id="board_', $board['id'], '_children"><td colspan="3" class="children windowbg"><strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '</td></tr>';
+			}
+		}
+		echo '
+				</tbody>
+			</table>
+		</div>
+	</div>';
+	}
 }
 
 function template_messageindex_sortlink($sort, $caption)
