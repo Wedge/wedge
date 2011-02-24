@@ -20,28 +20,12 @@ function template_main()
 		echo '
 	<p class="description_board">', $context['description'], '</p>';
 
-	// Create the button set...
-	$normal_buttons = array(
-		'new_topic' => array('test' => 'can_post_new', 'text' => 'new_topic', 'image' => 'new_topic.gif', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0', 'active' => true),
-		'post_poll' => array('test' => 'can_post_poll', 'text' => 'new_poll', 'image' => 'new_poll.gif', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0;poll'),
-		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($context['is_marked_notify'] ? $txt['notification_disable_board'] : $txt['notification_enable_board']) . ');"', 'url' => $scripturl . '?action=notifyboard;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';board=' . $context['current_board'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-		'rss' => array('test' => 'can_mark_notify', 'text' => 'rss', 'image' => 'rss.gif', 'lang' => true, 'url' => $scripturl . '?board=' . $context['current_board'] . ';action=feed;type=rss'),
-		'markread' => array('text' => 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_var'] . '=' . $context['session_id']),
-	);
-
-	// They can only mark read if they are logged in and it's enabled!
-	if (!$context['user']['is_logged'] || !$settings['show_mark_read'])
-		unset($normal_buttons['markread']);
-
-	// Allow adding new buttons easily.
-	call_hook('messageindex_buttons', array(&$normal_buttons));
-
 	if (!$context['no_topic_listing'])
 	{
 		echo '
 	<div class="pagesection">
 		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] .
-		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', template_button_strip($normal_buttons, 'right'), '
+		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', template_button_strip($context['button_list'], 'right'), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -246,7 +230,7 @@ function template_main()
 	</form>';
 
 		echo '
-	<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
+	<div class="pagesection">', template_button_strip($context['button_list'], 'right'), '
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
@@ -258,17 +242,6 @@ function template_main()
 	<div class="tborder" id="topic_icons">
 		<div class="description">
 			<p class="floatright" id="message_index_jump_to">&nbsp;</p>';
-
-	if (!$context['no_topic_listing'])
-		echo '
-			<p class="floatleft smalltext">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ' . $txt['locked_topic'] . '<br>
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ' . $txt['sticky_topic'] . '<br>
-			</p>
-			<p class="smalltext">', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '
-			</p>';
 
 	add_js('
 	if (can_ajax)
@@ -457,4 +430,21 @@ function template_messageindex_sortlink($sort, $caption)
 	else
 		echo '<a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
 }
+
+function template_messageindex_legend()
+{
+	global $settings, $txt, $context, $modSettings;
+
+	echo '
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/assist.gif">', $txt['legend'], '
+		</we:title>
+		<p>
+			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
+			<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ', $txt['sticky_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
+			<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
+			<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
+		</p>';
+}
+
 ?>
