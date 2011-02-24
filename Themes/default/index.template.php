@@ -115,14 +115,76 @@ function template_body_above()
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
 		<div id="top_section">
-			<h1 class="forumtitle">
-				<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
-			</h1>
-			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none">
-			', $context['site_slogan'], '
+			<div class="frame">
+				<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" title="', $txt['upshrink_description'], '">';
+
+	if (!empty($context['allow_search']))
+	{
+		echo '
+				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+					<input type="search" name="search" value="" class="search">
+					<input type="submit" name="submit" value="', $txt['search'], '">
+					<input type="hidden" name="advanced" value="0">';
+
+		// Search within current topic?
+		if (!empty($context['current_topic']))
+			echo '
+					<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+		// Or within current board?
+		elseif (!empty($context['current_board']))
+			echo '
+					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
+
+		echo '
+				</form>';
+	}
+
+	// Show a random news item? (or you could pick one from news_lines...)
+	if (!empty($settings['enable_news']))
+		echo '
+				<h2>', $txt['news'], ': </h2>
+				<p>', $context['random_news_line'], '</p>';
+
+	echo '
+			</div>
 		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
-			<div class="user">';
+			<div class="frame">
+				<h1 class="forumtitle">
+					<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
+				</h1>
+				', $context['site_slogan'], '
+			</div>
+		</div>
+	</div></div>
+
+	<div id="navi">';
+
+	// Show the menu here, according to the menu sub template.
+	template_menu();
+
+	// Show the navigation tree.
+	theme_linktree();
+
+	// The main content should go here.
+	echo '
+	</div>
+
+	<div id="content"><div class="frame">';
+}
+
+function template_sidebar_above()
+{
+	global $needs_tables, $txt, $scripturl, $context;
+	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
+
+	echo $needs_tables ? '
+		<table id="edge"><tr><td id="sidebar" valign="top">' : '
+		<div id="edge"><div id="sidebar">', '<div class="column">
+			<we:title2>
+				<span class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></span>
+			</we:title2>
+			<div id="userbox">';
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
 	if ($context['user']['is_logged'])
@@ -130,11 +192,11 @@ function template_body_above()
 		if (!empty($context['user']['avatar']))
 			echo '
 				<p class="avatar">', $context['user']['avatar']['image'], '</p>';
+
 		echo '
 				<ul class="reset">
-					<li class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></li>
-					<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
-					<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
+					<li>&bull; <a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
+					<li>&bull; <a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 
 		// Is the forum in maintenance mode?
 		if ($context['in_maintenance'] && $context['user']['is_admin'])
@@ -182,68 +244,6 @@ function template_body_above()
 	}
 
 	echo '
-			</div>
-			<div class="news normaltext">';
-
-	if (!empty($context['allow_search']))
-	{
-		echo '
-				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="" class="search">
-					<input type="submit" name="submit" value="', $txt['search'], '">
-					<input type="hidden" name="advanced" value="0">';
-
-		// Search within current topic?
-		if (!empty($context['current_topic']))
-			echo '
-					<input type="hidden" name="topic" value="', $context['current_topic'], '">';
-		// Or within current board?
-		elseif (!empty($context['current_board']))
-			echo '
-					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
-
-		echo '</form>';
-	}
-
-	// Show a random news item? (or you could pick one from news_lines...)
-	if (!empty($settings['enable_news']))
-		echo '
-				<h2>', $txt['news'], ': </h2>
-				<p>', $context['random_news_line'], '</p>';
-
-	echo '
-			</div>
-		</div>
-	</div></div>
-
-	<div id="navi">';
-
-	// Show the menu here, according to the menu sub template.
-	template_menu();
-
-	// Show the navigation tree.
-	theme_linktree();
-
-	// The main content should go here.
-	echo '
-	</div>
-
-	<div id="content"><div class="frame">';
-}
-
-function template_sidebar_above()
-{
-	global $browser, $needs_tables;
-	$needs_tables = $browser['is_ie6'] || $browser['is_ie7'];
-
-	echo $needs_tables ? '
-		<table id="edge"><tr><td id="sidebar" valign="top">' : '
-		<div id="edge"><div id="sidebar">', '<div class="column">
-			<we:title>
-				Sidebar
-			</we:title>
-			<div class="roundframe">
-				What? It\'s just a filler. It will be removed once some default contents is shown here.
 			</div>
 			<hr>';
 }

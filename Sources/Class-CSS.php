@@ -83,7 +83,7 @@ class wecss_var extends wecss
 {
 	function process(&$css)
 	{
-		global $css_vars, $context, $alpha_matte;
+		global $css_vars, $context, $alphamix;
 
 		// Reuse CSS variables from Wedge.
 		$css_vars = isset($css_vars) ? $css_vars : array();
@@ -110,10 +110,10 @@ class wecss_var extends wecss
 			{
 				$css = str_replace($dec, '', $css);
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
-					$css_vars[$matches[1][$i]] = trim(rtrim($matches[3][$i], ';'), '"');
+					$css_vars[$matches[1][$i]] = trim(rtrim($matches[3][$i], '; '), '"');
 				// We need to keep this one for later...
-				if ($matches[1][$i] === '$alpha_matte')
-					$alpha_matte = trim($matches[3][$i], '"');
+				if ($matches[1][$i] === '$alphamix')
+					$alphamix = trim($matches[3][$i], '"');
 			}
 
 			// Sort the array by key length, to avoid conflicts.
@@ -140,29 +140,29 @@ class wecss_var extends wecss
 class wecss_func extends wecss
 {
 	// Converts from a RGBA color to a string
-	private function color2string($r, $g, $b, $a)
+	private function color2string($r, $g, $b, $a, $force_hex = false)
 	{
-		global $browser, $alpha_matte;
+		global $browser, $alphamix;
 
 		$a = max(0, min(1, $a));
 
-		if ($browser['is_ie8down'] && $a !== 1)
+		if ($browser['is_ie8down'] && $a !== 1 && !$force_hex)
 		{
 			// Old IE doesn't support RGBA, and we want to turn it into RGB.
 			// We're going to assume the matte color is white, otherwise, well, too bad.
-			if (isset($alpha_matte) && !is_array($alpha_matte))
+			if (isset($alphamix) && !is_array($alphamix))
 			{
-				$rgb = $this->string2color($alpha_matte);
+				$rgb = $this->string2color($alphamix);
 				if (empty($rgb[1]) && !empty($rgb[2]))
 					$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-				$alpha_matte = $rgb[1];
+				$alphamix = $rgb[1];
 			}
-			elseif (!isset($alpha_matte))
-				$alpha_matte = array(255, 255, 255);
+			elseif (!isset($alphamix))
+				$alphamix = array(255, 255, 255);
 			$ma = 1 - $a;
-			$r = $a * $r + $ma * $alpha_matte[0];
-			$g = $a * $g + $ma * $alpha_matte[1];
-			$b = $a * $b + $ma * $alpha_matte[2];
+			$r = $a * $r + $ma * $alphamix[0];
+			$g = $a * $g + $ma * $alphamix[1];
+			$b = $a * $b + $ma * $alphamix[2];
 			$a = 1;
 		}
 
@@ -171,7 +171,8 @@ class wecss_func extends wecss
 		$b = max(0, min(255, round($b)));
 
 		return $a === 1 ?
-			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
+			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : ($force_hex ?
+			'#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b) : "rgba($r, $g, $b, $a)");
 	}
 
 	// Converts from hue to RGB
@@ -270,7 +271,7 @@ class wecss_func extends wecss
 		}
 
 		// Extract color data
-		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
+		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))(/hex)?~', $data, $rgb);
 
 		$color = $hsl = 0;
 		if (empty($rgb[0]))
@@ -293,7 +294,7 @@ class wecss_func extends wecss
 		else
 			$color = array(255, 255, 255, 1);
 
-		return array($rgb[0], $color, $hsl);
+		return array($rgb[0], $color, $hsl, !empty($rgb[7]));
 	}
 
 	// Now, go with the actual color parsing.
@@ -306,7 +307,7 @@ class wecss_func extends wecss
 		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
 		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
 		if ($browser['is_ie8down'])
-			$css = preg_replace('~((?:rgba|hsla?)\([^()]*\))~i', 'channels($1,0,0,0,0)', $css);
+			$css = preg_replace('~((?:rgba|hsla?)\([^()]*\)(?:/hex)?)~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
@@ -316,7 +317,7 @@ class wecss_func extends wecss
 				if (isset($nodupes[$dec]))
 					continue;
 				$nodupes[$dec] = true;
-				$code = $matches[1][$i];
+				$code = strtolower($matches[1][$i]);
 				$m = strtolower(trim($matches[2][$i]));
 				if (empty($m))
 					continue;
@@ -324,8 +325,12 @@ class wecss_func extends wecss
 				$rgb = $this->string2color($m);
 				if ($rgb === false)
 				{
+					// Unfortunately, the alpha() function can clash with the equivalent IE filter...
+					if ($code === 'alpha' && strpos($m, 'opacity') !== false)
+						$css = str_replace($dec, 'alpha_ms_wedge' . substr($dec, 5), $css);
 					// Syntax error? We just replace with red. Otherwise we'll end up in an infinite loop.
-					$css = str_replace($dec, 'red', $css);
+					else
+						$css = str_replace($dec, 'red', $css);
 					continue;
 				}
 
@@ -380,9 +385,10 @@ class wecss_func extends wecss
 					continue;
 
 				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
+				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a'], $rgb[3]), $css);
 			}
 		}
+		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
 

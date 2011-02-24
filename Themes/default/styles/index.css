@@ -56,13 +56,35 @@ body
 #sidebar
 	display: table-cell
 	vertical-align: top
-	width: 242px
+	width: $sidebar-width
+	border: 1px solid #ccc
+	background: darken($main_bg, 2%)
+	border-radius: 8px
 	.column
 		margin: 6px 0
-		border: 1px solid #ccc
-		background: darken($main_bg, 2%)
 		padding: 5px 15px 10px
-		border-radius: 8px
+
+#userbox
+	width: 100%
+	float: left
+	overflow: hidden
+	margin: 1em 0 0
+	a
+		color: #600
+		border-bottom: 1px dotted #600
+		text-decoration: none
+	p
+		float: left
+		margin: 0 1em 1em 0
+		padding: 0
+		img
+			$ie-max-width: 70px
+	ul
+		margin: 0
+		padding-left: 10px
+		li
+			font-size: .9em
+			margin-bottom: 2px
 
 #edgehide extends #edge
 	position: relative
@@ -86,11 +108,20 @@ body
 	overflow: hidden
 	margin: 0
 	padding: 6px 30px 10px
+	.frame
+		width: 100%
+		overflow: auto
+		p, h2
+			text-align, float: left
+			display: inline-block
+			margin: .5em 1em 0 0
+		form
+			text-align, float: right
 
 // The main title
 h1.forumtitle
-	font: italic bold 2.8em/1.25em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-	margin: 10px 0 0 10px
+	font: italic bold 3.2em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+	margin: 38px 0 0 30px
 	padding: 0
 	float: left
 	a
@@ -106,50 +137,23 @@ h1.forumtitle
 // The upshrink image needs some tweaking
 #upshrink
 	float: right
-	margin: 1em
+	visibility: hidden
+	padding: .3em 1em 0
 
 // The upper_section, float the two each way
 #upper_section
 	background: url($images/theme/bg.jpg)
-	border-top, border-bottom: 3px solid lighten($reddish, 3%)
 	margin, padding: 0
-	width: 100%
 	height: 100px
 	overflow: hidden
-	.news
-		position: absolute
-		width: 50%
-		top: 100px
-		right: 30px
-		float: right
-		text-align: right
-		p
-			display: inline
-		form
-			padding-bottom: 10px
-	.user
+	width: 100%
+	.frame
 		width: 100%
 		height: 100px
-		float: left
-		overflow: auto
 		background-color: $head_bg
-		padding: 10px 30px
-		a
-			color: #600
-			border-bottom: 1px dotted #600
-			text-decoration: none
-		p
-			float: left
-			margin: .5em 1em 1em 0
-			padding: 0
-			img
-				height: 70px
-				width: auto
-		ul
-			margin: 0
-			padding-left: 10px
-			li
-				margin-bottom: 2px
+
+#top_section, #upper_section
+	border-bottom: 3px solid lighten($reddish, 3%)
 
 .menu_arrows
 	background-image: url($images/menu.gif)
@@ -305,7 +309,6 @@ select.qaction, input.qaction
 // The font size of textareas should be just a little bit larger.
 textarea
 	font: 100%/130% $main_font
-	max-width: 95%
 
 // Buttons should be styled a bit differently, in order to make them look more button'ish.
 input, textarea, select
@@ -1384,6 +1387,8 @@ th.last_th
 $main_font = "Verdana, Arial, Helvetica, sans-serif"
 $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
+$ie-max-width = "max-width"
+$ie-max-width {ie6} = "width"
 $main_bg = rgb(241,243,234)
 $main_bg = rgb(246,248,239)
 $head_bg = rgb(232,226,231)
@@ -1391,16 +1396,18 @@ $head_bg = rgba(233,235,186,.66)
 $menu_bg = #f7f0da
 $board_col = #d97b33
 $footer_bg = #e8e3cb
+$sidebar-width = "242px"
+$sidebar-width {webkit} = "244px" // Webkit screws up on padding/border in table mode
 
 // These are unused for now, but I like 'em...
 $other_bg = #e7e9b8
 $reddish = "#cc6600"
 
-/* $alpha_matte is a RGB value that should stand for your main area's background.
+/* $alphamix is a RGB value that should stand for your main area's background.
    You only need it if you're using alpha values in your CSS. Don't use a variable
    name in it, it's already complicated enough to calculate... */
 
-$alpha_matte = rgb(241,243,234)
+$alphamix = rgb(241,243,234)
 
 /* And our mixins... Well, I have no idea where to use them, so here are just a
    few examples, commented out, for you to see how powerful they can be... */
