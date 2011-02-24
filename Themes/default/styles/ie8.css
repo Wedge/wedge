@@ -1,7 +1,6 @@
 
 /* Editor
 ------------------------------------------------------- */
-
 // This is the WYSIWYG editor
 .rich_editor
 	background-color: #fff
@@ -17,6 +16,9 @@
 .richedit_resize
 	padding: 0 !important
 
+
+/* Misc hacks
+------------- */
 // Old IEs reset background-position to 0 if you provide them with multiples values :-/
 input.submit
 	background-position: 4px 2px

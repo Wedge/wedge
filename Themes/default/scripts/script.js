@@ -385,7 +385,7 @@ function smc_Toggle(oOptions)
 	{
 		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
 		{
-			$('#' + this.opt.aSwapImages[i].sId).show().data('that', this).click(function () {
+			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(function () {
 				$(this).data('that').toggle();
 				this.blur();
 			}).css('cursor', 'pointer').mousedown(false);

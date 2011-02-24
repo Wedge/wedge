@@ -1212,6 +1212,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'link' => '<a class="msn new_win" href="http://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '"><img src="' . $settings['images_url'] . '/msntalk.gif" alt="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '"></a>',
 			'link_text' => '<a class="msn new_win" href="http://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '">' . $profile['msn'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'has_messenger' => false,
 		'real_posts' => $profile['posts'],
 		'posts' => $profile['posts'] > 500000 ? $txt['geek'] : comma_format($profile['posts']),
 		'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
@@ -1240,16 +1241,15 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'warning' => $profile['warning'],
 		'warning_status' => empty($modSettings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
+		'avatar' => array(
+			'name' => '',
+			'image' => '',
+			'href' => '',
+			'url' => '',
+		),
 	);
 
-	// Avatars are tricky, so let's do them next. Start with an empty template.
-	$memberContext[$user]['avatar'] = array(
-		'name' => '',
-		'image' => '',
-		'href' => '',
-		'url' => '',
-	);
-
+	// Avatars are tricky, so let's do them next.
 	// So, they're not banned, or if they are, we're not hiding their avatar.
 	if (!$memberContext[$user]['is_banned'] || empty($modSettings['avatar_banned_hide']))
 	{
@@ -1296,7 +1296,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 	}
 
 	// First do a quick run through to make sure there is something to be shown.
-	$memberContext[$user]['has_messenger'] = false;
 	foreach (array('icq', 'msn', 'aim', 'yim') as $messenger)
 	{
 		if (!isset($context['disabled_fields'][$messenger]) && !empty($memberContext[$user][$messenger]['link']))
@@ -1394,7 +1393,7 @@ function detectBrowser()
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'webkit', 'chrome', 'safari', 'iphone', 'android', 'gecko', 'firefox', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
+	foreach (array('opera', 'chrome', 'safari', 'iphone', 'android', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{
@@ -1856,6 +1855,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Set the character set from the template.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
+
+	// Add Webkit fixes -- there are so many popular browsers based on it.
+	if ($context['browser']['is_webkit'])
+		$context['css_generic_files'][] = 'webkit';
 
 	// Add any potential browser-based fixes.
 	if (!empty($context['browser']['agent']))

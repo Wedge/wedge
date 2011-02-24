@@ -1385,7 +1385,7 @@ class wedgeEditor
 
 	public function LoadBBC()
 	{
-		global $modSettings, $txt, $settings, $board_info;
+		global $modSettings, $txt, $settings;
 
 		if ($this->bbc !== null)
 			return;

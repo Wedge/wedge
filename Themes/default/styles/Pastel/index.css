@@ -71,13 +71,13 @@ body
 #sidebar
 	display: table-cell
 	vertical-align: top
-	width: 242px
+	width: $sidebar-width
+	border: 1px solid #ccc
+	background: #edefe6
+	border-radius: 8px
 	.column
 		margin: 6px 0 0 3px
-		border: 1px solid #ccc
-		background: #edefe6
 		padding: 12px
-		border-radius: 8px
 
 #edgehide extends #edge
 	position: relative
@@ -1359,3 +1359,5 @@ th.last_th
 $main_font = "Verdana, Arial, Helvetica, sans-serif"
 $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
+$sidebar-width = "242px"
+$sidebar-width {webkit} = "244px" // Chrome screws up on padding/border in table mode
