@@ -108,6 +108,7 @@ class wesql
 	public static function fix_prefix(&$db_prefix, $db_name)
 	{
 		$db_prefix = is_numeric(substr($db_prefix, 0, 1)) ? $db_name . '.' . $db_prefix : '`' . $db_name . '`.' . $db_prefix;
+		self::register_replacement('db_prefix', $db_prefix);
 	}
 
 	public static function quote($db_string, $db_values, $connection = null)
