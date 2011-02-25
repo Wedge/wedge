@@ -1693,7 +1693,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	wesql::free_result($request);
 
 	// Load the message icons - the usual suspects.
-	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless');
+	$stable_icons = stable_icons();
 	$icon_sources = array();
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';

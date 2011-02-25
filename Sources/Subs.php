@@ -2770,4 +2770,11 @@ function get_gravatar_url($email_address)
 	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($modSettings['gravatarMaxRating']) ? '&amp;rating=' . $modSettings['gravatarMaxRating']: '') . $size_string;
 }
 
+/**
+ * Return the list of message icons that we can rely on having.
+ */
+function stable_icons()
+{
+	return array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless', 'clip', 'android');
+}
 ?>

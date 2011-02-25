@@ -57,10 +57,16 @@ function MessageIndex()
 	if (WIRELESS)
 		showSubTemplate(WIRELESS_PROTOCOL . '_messageindex');
 	else
+	{
 		loadTemplate('MessageIndex');
 
-	// Did someone save a conventional draft of a new topic?
-	$context['draft_saved'] = isset($_GET['draftsaved']);
+		// Did someone save a conventional draft of a new topic? If so, add it as a subtemplate but make sure we don't screw other things up.
+		$templates = array();
+		if (isset($_GET['draftsaved']))
+			$templates[] = 'messageindex_draft';
+		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
+		showSubTemplate($templates);
+	}
 
 	$context['name'] = $board_info['name'];
 	$context['description'] = $board_info['description'];
@@ -68,7 +74,10 @@ function MessageIndex()
 	$board_info['total_topics'] = allowedTo('approve_posts') ? $board_info['num_topics'] + $board_info['unapproved_topics'] : $board_info['num_topics'] + $board_info['unapproved_user_topics'];
 
 	// View all the topics, or just a few?
-	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
+	if ($board_info['type'] == 'blog')
+		$context['topics_per_page'] = 8;
+	else
+		$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 	$maxindex = isset($_REQUEST['all']) && !empty($modSettings['enableAllMessages']) ? $board_info['total_topics'] : $context['topics_per_page'];
 
@@ -288,7 +297,7 @@ function MessageIndex()
 		$fake_ascending = false;
 
 	// Setup the default topic icons...
-	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless', 'clip');
+	$stable_icons = stable_icons();
 	$context['icon_sources'] = array();
 	foreach ($stable_icons as $icon)
 		$context['icon_sources'][$icon] = 'images_url';

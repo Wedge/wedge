@@ -749,6 +749,13 @@ function Post2()
 	// Creating a new topic?
 	$newTopic = empty($_REQUEST['msg']) && empty($topic);
 
+	// Magical device dependent icons.
+	if ($_POST['icon'] == 'xx')
+	{
+		if (!empty($context['browser']['is_android']))
+			$_POST['icon'] = 'android';
+	}
+
 	$_POST['icon'] = !empty($attachIDs) && $_POST['icon'] == 'xx' ? 'clip' : $_POST['icon'];
 
 	// Collect all parameters for the creation or modification of a post.
