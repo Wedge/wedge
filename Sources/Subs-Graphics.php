@@ -144,9 +144,9 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 			$path = $modSettings['attachmentUploadDir'];
 
 		// Remove the .tmp extension from the attachment.
-		if (rename($destName . '.tmp', empty($avatar_hash) ? $destName : $path . '/' . $attachID . '_' . $avatar_hash))
+		if (rename($destName . '.tmp', empty($avatar_hash) ? $destName : $path . '/' . $attachID . '_' . $avatar_hash . '.ext'))
 		{
-			$destName = empty($avatar_hash) ? $destName : $path . '/' . $attachID . '_' . $avatar_hash;
+			$destName = empty($avatar_hash) ? $destName : $path . '/' . $attachID . '_' . $avatar_hash . '.ext';
 			list ($width, $height) = getimagesize($destName);
 			$mime_type = 'image/' . $ext;
 
