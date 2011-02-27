@@ -276,6 +276,38 @@ function template_sidebar_below()
 		</div>', '</div>';
 }
 
+function template_sidebar_rss()
+{
+	global $topic, $board, $txt, $context, $scripturl, $modSettings, $settings, $board_info;
+	// This natty little function makes pretty RSS stuff in the sidebar. Mostly autonomous, it's lovely for that.
+	// This function is only added to the list if the feeds are available, so we don't even need to check anything.
+
+	echo '
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/feed.png">', $txt['rss'], '
+		</we:title>
+		<p>';
+
+	// Topic RSS links
+	if (!empty($topic))
+		echo '
+			', sprintf($txt['rss_topic'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '<br>';
+
+	// Board level RSS links
+	if (!empty($board))
+	{
+		$rss = $scripturl . '?board=' . $board . ';action=feed;type=rss';
+		echo '
+			', sprintf($board_info['type'] == 'blog' ? $txt['rss_blog'] : $txt['rss_board'], $rss, $rss . ';sa=news'), '<br>';
+	}
+
+	// Forum wide and end
+	$rss = $scripturl . '?action=feed;type=rss';
+	echo '
+			', sprintf($txt['rss_forum'], $rss, $rss . ';sa=news'), '
+		</p>';
+}
+
 function template_main_above()
 {
 	global $needs_tables;
@@ -312,9 +344,7 @@ function template_body_below()
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
 			<li><a id="site_credits" href="', $scripturl, '?action=credits"><span>', $txt['site_credits'], '</span></a></li>
-			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>',
-			!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) ? '
-			<li>|&nbsp;&nbsp;<a id="button_rss" href="' . $scripturl . '?action=feed;type=rss" class="new_win"><span>' . $txt['rss'] . '</span></a></li>' : '', '
+			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>
 			<li class="last">|&nbsp;&nbsp;<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
 		</ul>';
 

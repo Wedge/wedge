@@ -239,6 +239,9 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 }
 // After all this time... after everything we saw, after everything we lost... I have only one thing to say to you... bye!
 $function();
+// Just quickly sneak the RSS stuff in...
+if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
+	showSubTemplate('sidebar_rss', 'sidebar', false);
 obExit(null, null, true);
 
 // Since we're not leaving obExit the special route, we need to make sure we update the error count.
