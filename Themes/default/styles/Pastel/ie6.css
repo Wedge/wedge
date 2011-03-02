@@ -1,9 +1,4 @@
 
-.codeheader, code.bbc_code
-	width: 96%
-	margin: 0 auto
-
-
 /* The dropdown menus
 ------------------------------------------------------- */
 .menu ul, #menu_container
@@ -15,52 +10,10 @@
 
 .menu
 	width: 90%
-	a:hover
-		text-decoration: none
-
-	/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry that
-		has a submenu itself. It still fails, though, at making menu item anchors extend to the width of their
-		container. If you have a fix that doesn't involve setting a fixed width, please share. Curse you, IE6! */
-	li
-		border-bottom: 1px solid #fff8f1
-
-// Dunno if it's worth it: show a rather ugly hover background on top level menus until JS takes over.
-.css h4 a:hover
-	background: #fbe2c8
-	color: #000
-
-// This is a dummy iframe that hides form elements when they're overlapped by a menu entry.
-.iefs
-	display: none
-	z-index: 9
-	position: absolute
-	left: 0
-	top: 0
-	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0)
-
-// Sub-area non-dropdown menus in the admin area
-#context_menus
-	h4
-		padding: 0
-	a
-		padding: 3px 5px
-		:hover
-			background: #ebe7e2
-	li.chosen a:hover
-		background: none
 
 
 /* Miscellaneous
 ------------------------------------------------------- */
-.pagesection
-	overflow: auto
-
-#top_section
-	height: 1%
-
-// Generic lists header. Side paddings must NOT be defined here.
-.table_grid thead th
-	padding-top, padding-bottom: 0 !important
 
 
 // overflow: hidden doesn't help in IE6.
@@ -71,114 +24,19 @@
 #upper_section
 	display: inline-block
 
-
-/* Overrides for the message index template
-------------------------------------------------------- */
-#messageindex table
-	margin-top: 5px
-	th
-		border-bottom: 1px solid #fff
-
-#topic_icons .description
-	padding: 2em 1em 1em 1em
-	overflow: auto
-
-
 /* Overrides for the display template
 ------------------------------------------------------- */
 #forumposts
-	.postarea
-		margin-left: 0
-		margin-right: 0
-		float: right
 	.cat_bar h3
 		clear: both
 
-.keyinfo
-	padding-bottom: 6px
-
-.inner
-	clear: both
-
-.post
-	word-wrap: break-word
-
-.buttonlist a
-	text-decoration: none
-	width: 1%
-	white-space: nowrap
-	:hover
-		text-decoration: none
-
-
-/* Styles for the statistics center.
-------------------------------------------------- */
-#statistics
-	div.wrc
-		height: 210px
-		overflow: hidden
-	div.top_row
-		height: 150px
-
-
-/* Overrides for the profile template
-------------------------------------------------------- */
-#basicinfo h4
-	word-wrap: break-word
-
-.ignoreboards
-	margin: 0 1%
-	padding: 0
-	width: 45%
-
-
-/* Overrides for the personal messages template
-------------------------------------------------------- */
-#personal_messages .postarea
-	margin-left, margin-right: 0
-	float: right
-
-
-/* Overrides for the admin section of the register template
------------------------------------------------------------ */
-#registration_agreement
-	width: 99.5%
-	margin: 0 auto
-
-#edit_poll ul.poll_main li
-	padding-left: 0
-	margin: 0 -2em
-
-#postmodify div.roundframe
-	margin-right: 0
-
-
-/* Overrides for the recent posts template
-------------------------------------------------------- */
-.list_posts
-	word-wrap: break-word
-
-
-/* Editor
-------------------------------------------------------- */
-// This is the WYSIWYG editor
-.rich_editor
-	background-color: #fff
-	color: #000
-	font-family: verdana
-	font-size: x-small
-	border: none
-	p
-		margin: 0
-	a img
-		border: 0
-
-.richedit_resize
-	padding: 0 !important
 
 
 /* Misc hacks
 ------------- */
+
+#content div.frame
+	width: auto
 
 #header, #navi, #content, #footer
 	width: expression(this.clientWidth > 1200 ? '1200px' : '95%')
@@ -186,72 +44,12 @@
 .cat_bar h3 a
 	color: black !important
 
-.wrc
-	zoom: 1
-
-#button_home
-	padding-left: 10px !important
-
-#admin_main_section
-	width: 100%
-
-#postMoreOptions
-	border: 0
-
-// Since IE6 doesn't understand border-spacing, we'll just hide borders.
-table.table_grid, table.cs0, table.cs1
-	border-collapse: collapse
-
-.bbc_button, .bbc_button div
-	display: inline
-	width: 21px
-	height: 18px
-
-.bbc_button
-	padding: 0 3px 0 1px
-
-.bbc_divider
-	display: inline
-	padding-right: 3px
-
-.features .wrc
-	width: expression(this.clientWidth < 300 ? '300px' : 'auto')
-	height: 150px
-
 h4.hove
 	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 2px
 
 li.hove
 	background: #e2ebe7
 
-li.separator
-	background: none
-	a
-		padding: 0 8px
-	hr
-		position: absolute
-		margin: 6px 0 0 55px
-		width: 50px
-		display: block
 
-#admincenter hr
-	display: block
-	margin: 0
-
-.ie_button
-	overflow: visible
-
-input.submit, input.delete, input.save, input.new
-	padding-right: 6px
-	overflow: visible
-	width: auto
-
-// Old IEs reset background-position to 0 if you provide them with multiples values :-/
-input.submit
-	background-position: 4px 2px
-input.delete
-	background-position: 4px -30px
-input.save
-	background-position: 4px -62px
-input.new
-	background-position: 4px -94px
+#upper_section .frame
+	filter: none

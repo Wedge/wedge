@@ -1496,11 +1496,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Time to determine our CSS list...
 	// First, load our requested styling folder.
-	$context['styling'] = empty($styling) ? 'styles' : $styling;
+	$context['styling'] = empty($styling) ? 'styles' : (strpos($styling, 'styles/') === 0 ? '' : 'styles/') . $styling;
 	$folders = explode('/', $context['styling']);
 	$context['css_folders'] = array();
-	// !!! Shouldn't this simply be set to ''...?
-	$current_folder = $folders[0] == 'styles' ? '' : '/styles';
+	$current_folder = '';
 	foreach ($folders as $folder)
 	{
 		$current_folder .= '/' . $folder;

@@ -10,8 +10,7 @@
 		padding-top: 5px
 
 ol.search_results
-	margin-top: 0
-	padding-top: 0
+	margin-top, padding-top: 0
 	li
 		padding-top: 1em
 		border-bottom: 1px solid #ccc
@@ -115,8 +114,7 @@ ol.search_results
 		font-size: 80%
 
 .windowbg ol
-	margin-top: 0
-	margin-bottom: 0
+	margin-top, margin-bottom: 0
 
 .table_caption, tr.table_caption td
 	color: #000
@@ -343,8 +341,7 @@ span.search_weight
 	width: 97%
 
 ul.pending_payments
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	li
 		list-style-type: none
 
@@ -371,8 +368,7 @@ ul.pending_payments
 	margin: 0.2em
 
 .permission_groups
-	padding: 0
-	margin: 0
+	margin, padding: 0
 	li
 		list-style-type: none
 		padding: 0.2em
@@ -387,8 +383,7 @@ ul.pending_payments
 /* Styles for the themes section.
 ------------------------------------------------- */
 ul.theme_options
-	padding: 0
-	margin: 0
+	margin, padding: 0
 	li
 		list-style: none
 		padding: 0.4em
@@ -444,8 +439,7 @@ dl.themes_list
 
 // Moderation Notes
 ul.moderation_notes
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	list-style: none
 	overflow: auto
 	height: 8.5em

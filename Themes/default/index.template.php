@@ -114,29 +114,28 @@ function template_body_above()
 	echo '
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
-		<div id="top_section">
-			<div class="frame">
-				<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" title="', $txt['upshrink_description'], '">';
+		<div id="top_section"><div class="frame">
+			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" title="', $txt['upshrink_description'], '">';
 
 	if (!empty($context['allow_search']))
 	{
 		echo '
-				<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-					<input type="search" name="search" value="" class="search">
-					<input type="submit" name="submit" value="', $txt['search'], '">
-					<input type="hidden" name="advanced" value="0">';
+			<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+				<input type="search" name="search" value="" class="search">
+				<input type="submit" name="submit" value="', $txt['search'], '">
+				<input type="hidden" name="advanced" value="0">';
 
 		// Search within current topic?
 		if (!empty($context['current_topic']))
 			echo '
-					<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
 		// Or within current board?
 		elseif (!empty($context['current_board']))
 			echo '
-					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
+				<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
 
 		echo '
-				</form>';
+			</form>';
 	}
 
 	$languages = glob($settings['theme_dir'] . '/languages/Flag.*.png');
@@ -148,31 +147,28 @@ function template_body_above()
 			$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
 
 		echo '
-				<p>';
+			<p>';
 		foreach (array_map('basename', $languages) as $language)
 			echo '
-					<a href="' . $lng . 'language=' . substr($language, 5, -4) . '" title="Français"><img src="' . $settings['theme_url'] . '/languages/' . $language . '"></a>';
+				<a href="' . $lng . 'language=' . substr($language, 5, -4) . '" title="' . westr::ucwords(westr::htmlspecialchars(substr($language, 5, -4))) . '"><img src="' . $settings['theme_url'] . '/languages/' . $language . '"></a>';
 		echo '
-				</p>';
+			</p>';
 	}
 
 	// Show a random news item? (or you could pick one from news_lines...)
 	if (!empty($settings['enable_news']))
 		echo '
-				<h2>', $txt['news'], ': </h2>
-				<p>', $context['random_news_line'], '</p>';
+			<h2>', $txt['news'], ': </h2>
+			<p>', $context['random_news_line'], '</p>';
 
 	echo '
-			</div>
-		</div>
-		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
-			<div class="frame">
-				<h1 class="forumtitle">
-					<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
-				</h1>
-				', $context['site_slogan'], '
-			</div>
-		</div>
+		</div></div>
+		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '><div class="frame">
+			<h1 class="forumtitle">
+				<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
+			</h1>
+			', $context['site_slogan'], '
+		</div></div>
 	</div></div>
 
 	<div id="navi">';
@@ -196,7 +192,7 @@ function template_sidebar_above()
 	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 
 	echo $needs_tables ? '
-		<table id="edge"><tr><td id="sidebar" valign="top">' : '
+		<table id="edge"><tr><td id="sidebar" class="top">' : '
 		<div id="edge"><div id="sidebar">', '<div class="column">
 			<we:title2>
 				<span class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></span>
@@ -206,19 +202,11 @@ function template_sidebar_above()
 	// If the user is logged in, display stuff like their name, new messages, etc.
 	if ($context['user']['is_logged'])
 	{
-		if (!empty($context['user']['avatar']))
-			echo '
-				<p class="avatar">', $context['user']['avatar']['image'], '</p>';
-
-		echo '
-				<ul class="reset">
-					<li>&bull; <a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
-					<li>&bull; <a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
-
-		// Is the forum in maintenance mode?
-		if ($context['in_maintenance'] && $context['user']['is_admin'])
-			echo '
-					<li class="notice">', $txt['maintain_mode_on'], '</li>';
+		echo empty($context['user']['avatar']) ? '' : '
+				' . $context['user']['avatar']['image'], '
+				<ul>
+					<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
+					<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 
 		// Are there any members waiting for approval?
 		if (!empty($context['unapproved_members']))
@@ -230,8 +218,13 @@ function template_sidebar_above()
 					<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
 
 		echo '
-					<li>', $context['current_time'], '</li>
-				</ul>';
+				</ul>
+				<p>', $context['current_time'], '</p>';
+
+		// Is the forum in maintenance mode?
+		if ($context['in_maintenance'] && $context['user']['is_admin'])
+			echo '
+				<p class="notice">', $txt['maintain_mode_on'], '</p>';
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
@@ -261,51 +254,48 @@ function template_sidebar_above()
 	}
 
 	echo '
-			</div>
-			<hr>';
+			</div>';
 }
 
-function template_sidebar_below()
-{
-	global $needs_tables;
-
-	echo '
-			<hr>
-			And some filler for the sidebar footer.', $needs_tables ? '
-		</td>' : '
-		</div>', '</div>';
-}
-
+// This natty little function makes pretty RSS stuff in the sidebar. Mostly autonomous, it's lovely for that.
+// This function is only added to the list if the feeds are available, so we don't even need to check anything.
 function template_sidebar_rss()
 {
 	global $topic, $board, $txt, $context, $scripturl, $modSettings, $settings, $board_info;
-	// This natty little function makes pretty RSS stuff in the sidebar. Mostly autonomous, it's lovely for that.
-	// This function is only added to the list if the feeds are available, so we don't even need to check anything.
 
 	echo '
-		<we:title2>
-			<img src="', $settings['images_url'], '/icons/feed.png">', $txt['rss'], '
-		</we:title>
-		<p>';
+			<we:title2>
+				<img src="', $settings['images_url'], '/icons/feed.png">', $txt['rss'], '
+			</we:title2>
+			<p>';
 
 	// Topic RSS links
 	if (!empty($topic))
 		echo '
-			', sprintf($txt['rss_topic'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '<br>';
+				', sprintf($txt['rss_topic'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '<br>';
 
 	// Board level RSS links
 	if (!empty($board))
 	{
 		$rss = $scripturl . '?board=' . $board . ';action=feed;type=rss';
 		echo '
-			', sprintf($board_info['type'] == 'blog' ? $txt['rss_blog'] : $txt['rss_board'], $rss, $rss . ';sa=news'), '<br>';
+				', sprintf($board_info['type'] == 'blog' ? $txt['rss_blog'] : $txt['rss_board'], $rss, $rss . ';sa=news'), '<br>';
 	}
 
 	// Forum wide and end
 	$rss = $scripturl . '?action=feed;type=rss';
 	echo '
-			', sprintf($txt['rss_forum'], $rss, $rss . ';sa=news'), '
-		</p>';
+				', sprintf($txt['rss_forum'], $rss, $rss . ';sa=news'), '
+			</p>';
+}
+
+function template_sidebar_below()
+{
+	global $needs_tables;
+
+	echo $needs_tables ? '
+		</td>' : '
+		</div>', '</div>';
 }
 
 function template_main_above()
@@ -313,7 +303,7 @@ function template_main_above()
 	global $needs_tables;
 
 	echo $needs_tables ? '
-		<td id="main_content" valign="top">' : '
+		<td id="main_content" class="top">' : '
 		<div id="main_content">';
 }
 
@@ -560,11 +550,9 @@ function template_button_strip($button_strip, $direction = 'top', $strip_options
 	// Create the buttons...
 	$buttons = array();
 	foreach ($button_strip as $key => $value)
-	{
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
 				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
-	}
 
 	// No buttons? No button strip either.
 	if (empty($buttons))

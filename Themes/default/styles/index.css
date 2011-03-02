@@ -61,30 +61,33 @@ body
 	background: darken($main_bg, 2%)
 	border-radius: 8px
 	.column
-		margin: 6px 0
+		margin: 0
 		padding: 5px 15px 10px
 
 #userbox
 	width: 100%
-	float: left
 	overflow: hidden
 	margin: 1em 0 0
 	a
 		color: #600
 		border-bottom: 1px dotted #600
 		text-decoration: none
-	p
+	img.avatar
 		float: left
-		margin: 0 1em 1em 0
+		margin: 0 1em 0 0
 		padding: 0
-		img
-			$ie-max-width: 70px
+		$ie-max-width: 70px
+	p
+		margin: 0 0 2px
+		font-size: .9em
 	ul
-		margin: 0
-		padding-left: 10px
+		padding: 0
+		margin: 0 0 0 85px
+		list-style-type: disc
 		li
 			font-size: .9em
-			margin-bottom: 2px
+			margin: 0 0 2px 0
+			padding: 0
 
 #edgehide extends #edge
 	position: relative
@@ -1102,6 +1105,8 @@ dfn
 	background: none
 	padding: 5px 12px 3px 8px
 	border, margin: 0
+	#sidebar &
+		margin-top: 6px
 	a
 		color: lighten(channels(grey, 30%), 10%)
 	img
@@ -1396,8 +1401,8 @@ $head_bg = rgba(233,235,186,.66)
 $menu_bg = #f7f0da
 $board_col = #d97b33
 $footer_bg = #e8e3cb
-$sidebar-width = "242px"
-$sidebar-width {webkit} = "244px" // Webkit screws up on padding/border in table mode
+$sidebar-width = "240px"
+$sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode
 
 // These are unused for now, but I like 'em...
 $other_bg = #e7e9b8

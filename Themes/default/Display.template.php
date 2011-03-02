@@ -21,8 +21,7 @@ function template_main()
 
 	// Show the anchor for the top and for the first message. If the first message is new, say so.
 	echo '
-			<a id="top"></a>
-			<a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '';
+			<a id="top msg', $context['first_message'], $context['first_new_message'] ? ' new' : '', '"></a>';
 
 	// Is this topic also a poll?
 	if ($context['is_poll'])
@@ -159,9 +158,8 @@ function template_main()
 
 	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
-			<we:cat>
-				', $context['previous_next'], '
-				<div id="top_subject">', $txt['topic'], ': ', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>
+			<we:cat>', $context['previous_next'], '
+				<div id="top_subject">', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>
 			</we:cat>
 			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
@@ -611,13 +609,6 @@ function template_main()
 	echo '
 			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'bottom', array('id' => 'moderationbuttons_strip')), '</div>';
 
-	// Show the jumpto box, or actually...let Javascript do it.
-	echo '
-			<we:cat>
-				', $context['previous_next'], '
-				<div id="display_jump_to"></div>
-			</we:cat>';
-
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{
 		echo '
@@ -679,6 +670,12 @@ function template_main()
 	else
 		echo '
 			<br class="clear">';
+
+	// Show the jumpto box, or actually...let Javascript do it.
+	echo '
+			<we:cat>', $context['previous_next'], '
+				<div id="display_jump_to"></div>
+			</we:cat>';
 
 	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{
@@ -849,10 +846,10 @@ function template_display_whoviewing()
 	global $txt, $context, $settings;
 
 	echo '
-		<we:title2>
-			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-		</we:title>
-		<p>';
+			<we:title2>
+				<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+			</we:title2>
+			<p>';
 
 	// Show just numbers...?
 	if ($settings['display_who_viewing'] == 1)
@@ -863,7 +860,7 @@ function template_display_whoviewing()
 
 	// Now show how many guests are here too.
 	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_topic'], '
-		</p>';
+			</p>';
 }
 
 ?>

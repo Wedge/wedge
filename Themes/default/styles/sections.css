@@ -31,7 +31,7 @@ p.moderators
 	font-size: .8em
 	font-family: verdana, sans-serif
 
-// Hide the table header/footer parts - but it's here for those needing to style it
+// Hide the table header/footer parts - but it's here for those needing to style it.
 #boardindex_table .table_list
 	thead, tfoot
 		display: none
@@ -70,7 +70,7 @@ p.moderators
 	overflow: auto
 	margin: 1em 0
 	display: none
-	color: #575757; // shouldn't be shorthand style due to a JS bug in IE!
+	color: #575757 // Shouldn't be shorthand style due to a JS bug in IE!
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
@@ -915,9 +915,7 @@ dl
 
 #tracking extends #profile_box
 	dl
-		border-bottom: 0
-		margin: 0
-		padding: 0
+		margin, padding, border-bottom: 0
 
 #detailedinfo extends #profile_box
 	margin-top: 10px
@@ -943,6 +941,7 @@ dl
 	float: left
 	padding: 0 3px
 
+// If the screen is too small, show the avatar on top
 @media all and (max-width: 1000px)
 	#basicinfo, #detailedinfo
 		width: 100%

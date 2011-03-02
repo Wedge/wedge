@@ -241,6 +241,7 @@ function ThemeAdmin()
 			'theme_styling_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'styles',
 			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
+
 		if (!empty($_POST['theme_reset']))
 		{
 			$reset = explode('_', $_POST['theme_reset']);

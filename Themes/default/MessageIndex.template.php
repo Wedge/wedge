@@ -19,7 +19,7 @@ function template_main_board()
 		echo '
 	<div class="pagesection">
 		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] .
-		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', template_button_strip($context['button_list'], 'right'), '
+		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -224,7 +224,7 @@ function template_main_board()
 	</form>';
 
 		echo '
-	<div class="pagesection">', template_button_strip($context['button_list'], 'right'), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
@@ -307,7 +307,7 @@ function template_main_blog()
 	</we:cat>
 	<div class="pagesection">
 		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] .
-		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', template_button_strip($context['button_list'], 'right'), '
+		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -507,7 +507,7 @@ function template_main_blog()
 	</form>';
 
 		echo '
-	<div class="pagesection">', template_button_strip($context['button_list'], 'right'), '
+	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
