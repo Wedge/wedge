@@ -7,20 +7,15 @@
 		margin-top: 8px
 		clear: both
 
-
 /* Overrides for the calendar template
 ------------------------------------------------- */
 #main_grid table.weeklist .title_bar h4
 	margin: 2px 0 -4px 0
 
-
-
-
 /* Misc hacks
 ------------------------------------------------------- */
 .cat_bar, .title_bar
 	overflow: hidden
-
 
 #upper_section .frame
 	filter: none

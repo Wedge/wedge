@@ -163,6 +163,9 @@ img.new_posts
 	overflow: hidden
 	margin-bottom: 6px
 
+#moderationbuttons_strip
+	margin: 4px 0 0
+
 // Events
 .linked_events
 	padding: 1em 0

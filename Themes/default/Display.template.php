@@ -581,10 +581,15 @@ function template_main()
 
 	// Show the page index... "Pages: [1]".
 	echo '
-			<div class="pagesection">
-				', template_button_strip($normal_buttons, 'right'), '
+			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 			</div>';
+
+	// Show the jumpto box, or actually...let Javascript do it.
+	echo '
+			<we:cat>', $context['previous_next'], '
+				<div id="display_jump_to"></div>
+			</we:cat>';
 
 	// Show the lower breadcrumbs.
 	$context['bottom_linktree'] = true;
@@ -670,12 +675,6 @@ function template_main()
 	else
 		echo '
 			<br class="clear">';
-
-	// Show the jumpto box, or actually...let Javascript do it.
-	echo '
-			<we:cat>', $context['previous_next'], '
-				<div id="display_jump_to"></div>
-			</we:cat>';
 
 	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{

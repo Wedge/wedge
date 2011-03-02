@@ -13,18 +13,8 @@
 
 // Onto the posts
 #forumposts
-	// Author and topic information
-
 	.cat_bar
 		margin-bottom: 3px
-
-// The jump to box
-#display_jump_to
-	clear: both
-	padding: 5px
-	margin-top: 5px
-	text-align: right
-
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
@@ -40,7 +30,6 @@
 tr.windowbg td, tr.approvebg td, tr.highlight2 td
 	padding: .3em .7em
 
-
 /* Styles for the statistics center.
 ------------------------------------------------- */
 #statistics
@@ -48,7 +37,6 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 		margin: 4px 0
 	.cat_bar h3
 		text-align: center
-
 
 /* Styles for the calendar section.
 ------------------------------------------------- */
@@ -66,7 +54,6 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 				margin: 0
 				height: 23px
 				line-height: 27px
-
 
 /* More hacks.
 ------------------------------------------------- */
