@@ -53,8 +53,9 @@ p.moderators
 
 .prevnext_prev
 	float: left
+	line-height: 1.4em
 
-.prevnext_next
+.prevnext_next extends .prevnext_prev
 	float: right
 
 #top_subject

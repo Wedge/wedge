@@ -76,7 +76,7 @@ function Display()
 	// !!! Should we just be taking the original HTTP var and redirect to it?
 	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($modSettings['pretty_enable_filters']))
 	{
-		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['prev_next']) ? ';prev_next=' . $_REQUEST['prev_next'] : '') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
+		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
 		redirectexit($url, false);
 	}
@@ -108,67 +108,6 @@ function Display()
 
 	if (!empty($_REQUEST['start']) && (!is_numeric($_REQUEST['start']) || $_REQUEST['start'] % $context['messages_per_page'] != 0))
 		$context['robot_no_index'] = true;
-
-	// Find the previous or next topic.  Make a fuss if there are no more.
-	if (isset($_REQUEST['prev_next']) && ($_REQUEST['prev_next'] == 'prev' || $_REQUEST['prev_next'] == 'next'))
-	{
-		// No use in calculating the next topic if there's only one.
-		if ($board_info['num_topics'] > 1)
-		{
-			// Just prepare some variables that are used in the query.
-			$gt_lt = $_REQUEST['prev_next'] == 'prev' ? '>' : '<';
-			$order = $_REQUEST['prev_next'] == 'prev' ? '' : ' DESC';
-
-			$request = wesql::query('
-				SELECT t2.id_topic
-				FROM {db_prefix}topics AS t
-					INNER JOIN {db_prefix}topics AS t2 ON ((t2.id_last_msg ' . $gt_lt . ' t.id_last_msg AND t2.is_sticky ' . $gt_lt . '= t.is_sticky) OR t2.is_sticky ' . $gt_lt . ' t.is_sticky)
-				WHERE t.id_topic = {int:current_topic}
-					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-					AND (t2.approved = {int:is_approved} OR (t2.id_member_started != {int:id_member_started} AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky' . $order . ', t2.id_last_msg' . $order . '
-				LIMIT 1',
-				array(
-					'current_board' => $board,
-					'current_member' => $user_info['id'],
-					'current_topic' => $topic,
-					'is_approved' => 1,
-					'id_member_started' => 0,
-				)
-			);
-
-			// No more left.
-			if (wesql::num_rows($request) == 0)
-			{
-				wesql::free_result($request);
-
-				// Roll over - if we're going prev, get the last - otherwise the first.
-				$request = wesql::query('
-					SELECT id_topic
-					FROM {db_prefix}topics
-					WHERE id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-						AND (approved = {int:is_approved} OR (id_member_started != {int:id_member_started} AND id_member_started = {int:current_member}))') . '
-					ORDER BY is_sticky' . $order . ', id_last_msg' . $order . '
-					LIMIT 1',
-					array(
-						'current_board' => $board,
-						'current_member' => $user_info['id'],
-						'is_approved' => 1,
-						'id_member_started' => 0,
-					)
-				);
-			}
-
-			// Now you can be sure $topic is the id_topic to view.
-			list ($topic) = wesql::fetch_row($request);
-			wesql::free_result($request);
-
-			$context['current_topic'] = $topic;
-		}
-
-		// Go to the newest message on this topic.
-		$_REQUEST['start'] = 'new';
-	}
 
 	// Add 1 to the number of views of this topic.
 	if (!$user_info['possibly_robot'] && empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic)
@@ -219,7 +158,7 @@ function Display()
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
-	$including_first = $topicinfo['approved'] && $board_info['type'] != 'blog';
+	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board';
 	if ($modSettings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
@@ -341,10 +280,97 @@ function Display()
 		}
 	}
 
+	// No use in calculating the next topic if there's only one.
+	$modSettings['disableQueryCheck'] = true;
+	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1 && $board_info['type'] == 'board')
+	{
+		// !!! @todo: {query_see_topic}
+		$request = wesql::query('
+			(
+				SELECT t2.id_topic, m.subject, 1
+				FROM {db_prefix}topics AS t
+					INNER JOIN {db_prefix}topics AS t2 ON ((t2.id_last_msg > t.id_last_msg AND t2.is_sticky >= t.is_sticky) OR t2.is_sticky > t.is_sticky)
+					INNER JOIN {db_prefix}messages AS m ON (t2.id_first_msg = m.id_msg)
+				WHERE t.id_topic = {int:current_topic}
+					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
+				ORDER BY t2.is_sticky, t2.id_last_msg
+				LIMIT 1
+			)
+			UNION ALL
+			(
+				SELECT t2.id_topic, m.subject, 2
+				FROM {db_prefix}topics AS t
+					INNER JOIN {db_prefix}topics AS t2 ON ((t2.id_last_msg < t.id_last_msg AND t2.is_sticky <= t.is_sticky) OR t2.is_sticky < t.is_sticky)
+					INNER JOIN {db_prefix}messages AS m ON (t2.id_first_msg = m.id_msg)
+				WHERE t.id_topic = {int:current_topic}
+					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
+				ORDER BY t2.is_sticky DESC, t2.id_last_msg DESC
+				LIMIT 1
+			)',
+			array(
+				'current_board' => $board,
+				'current_member' => $user_info['id'],
+				'current_topic' => $topic,
+			)
+		);
+		list ($prev_topic, $prev_title, $prev_pos) = wesql::fetch_row($request);
+		list ($next_topic, $next_title, $next_pos) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		if (empty($next_topic) && !empty($prev_topic) && $prev_pos == 2)
+		{
+			$next_topic = $prev_topic;
+			$next_title = $prev_title;
+			$prev_topic = $prev_title = '';
+		}
+	}
+	// Not a board, but still enough topics to launch a query? Here we don't care about message index position. Query is a tad faster.
+	elseif (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
+	{
+		// !!! @todo: {query_see_topic}
+		$request = wesql::query('
+			SELECT t.id_topic, m.subject
+			FROM {db_prefix}topics AS t
+				INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+			WHERE
+				t.id_topic = (
+					SELECT MIN(t.id_topic)
+					FROM {db_prefix}topics AS t
+					WHERE t.id_topic > {int:topic}
+						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
+				)
+			OR
+				t.id_topic = (
+					SELECT MAX(t.id_topic)
+					FROM {db_prefix}topics AS t
+					WHERE t.id_topic < {int:topic}
+						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
+				)
+			ORDER BY t.id_topic',
+			array(
+				'topic' => $topic,
+				'current_member' => $user_info['id'],
+			)
+		);
+		list ($prev_topic, $prev_title) = wesql::fetch_row($request);
+		list ($next_topic, $next_title) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		if (empty($next_topic) && !empty($prev_topic) && $prev_topic > $topic)
+		{
+			$next_topic = $prev_topic;
+			$next_title = $prev_title;
+			$prev_topic = $prev_title = '';
+		}
+	}
+	$modSettings['disableQueryCheck'] = false;
+
 	// Create a previous next string if the selected theme has it as a selected option.
-	$context['previous_next'] = $modSettings['enablePreviousNext'] ? '
-				<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=prev#new" class="prevnext_prev">' . $txt['previous_next_back'] . '</a>
-				<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=next#new" class="prevnext_next">' . $txt['previous_next_forward'] . '</a>' : '';
+	$context['previous_next'] = (empty($prev_topic) ? '' : '
+				<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new" class="prevnext_prev" title="' . $txt['previous_next_back'] . '">&laquo; ' . $prev_title . '</a>') . (empty($next_topic) ? '' : '
+				<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new" class="prevnext_next" title="' . $txt['previous_next_forward'] . '">' . $next_title . ' &raquo;</a>');
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
 	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
@@ -719,7 +745,7 @@ function Display()
 
 	// Calculate the fastest way to get the messages!
 	$ascending = empty($options['view_newest_first']);
-	$start = $_REQUEST['start'] + ($board_info['type'] == 'blog' ? 1 : 0);
+	$start = $_REQUEST['start'] + ($board_info['type'] != 'board' ? 1 : 0);
 	$limit = $context['messages_per_page'];
 	$firstIndex = 0;
 	if ($_REQUEST['start'] >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
@@ -783,7 +809,7 @@ function Display()
 	);
 
 	$all_posters = array();
-	if ($board_info['type'] == 'blog')
+	if ($board_info['type'] != 'board')
 	{
 		// Always get the first poster and message.
 		$messages = array($topicinfo['id_first_msg']);
@@ -986,7 +1012,7 @@ function Display()
 			loadMemberData($posters);
 
 		// Figure out the ordering.
-		if ($board_info['type'] == 'blog')
+		if ($board_info['type'] != 'board')
 			$order = empty($options['view_newest_first']) ? 'ORDER BY id_msg' : 'ORDER BY id_msg != {int:first_msg}, id_msg DESC';
 		else
 			$order = 'ORDER BY id_msg' . (empty($options['view_newest_first']) ? '' : ' DESC');

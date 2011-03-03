@@ -104,7 +104,7 @@ h1.forumtitle
 
 // The navigation list (i.e. linktree)
 .linktree
-	padding: .5em 20px
+	padding: 0 20px .5em
 	margin: 1em 0 0
 	ul
 		display: block
@@ -117,6 +117,11 @@ h1.forumtitle
 			background-position: right -49px
 			height, line-height: 21px
 			padding: 0 1.7em 0 5px
+	&.bt
+		padding: 0 20px .5em
+		margin: 0
+		ul
+			padding-top, border-top: 0
 
 // The footer with copyright links etc.
 #footer
@@ -132,7 +137,7 @@ h1.forumtitle
 ------------------------------------------------------- */
 
 // Normal, standard links.
-a, .linktree a, .menu li a
+a, .linktree a
 	color: #568
 	:hover
 		color: #78a
