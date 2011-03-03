@@ -769,7 +769,7 @@ function template_topic_poll()
 
 function template_quick_reply()
 {
-	global $settings, $options, $txt, $context, $scripturl;
+	global $settings, $options, $txt, $context, $scripturl, $modSettings;
 
 	echo '
 			<a id="quickreply"></a>
