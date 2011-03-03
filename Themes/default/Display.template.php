@@ -5,6 +5,9 @@ function template_main()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
+	// OK, we're going to need this!
+	add_js_file('scripts/topic.js');
+
 	// Let them know, if their report was a success!
 	if ($context['report_sent'])
 		echo '
@@ -13,11 +16,7 @@ function template_main()
 			</div>';
 
 	// Or let them know if their draft was saved.
-	elseif ($context['draft_saved'])
-		echo '
-			<div class="windowbg" id="profile_success">
-				', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
-			</div>';
+	template_display_draft();
 
 	// Show the anchor for the top and for the first message. If the first message is new, say so.
 	echo '
@@ -25,101 +24,7 @@ function template_main()
 
 	// Is this topic also a poll?
 	if ($context['is_poll'])
-	{
-		echo '
-			<div id="poll">
-				<we:cat>
-					<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif">', $txt['poll'], '
-				</we:cat>
-				<div class="windowbg wrc">
-					<div id="poll_options">
-						<h4 id="poll_question">
-							', $context['poll']['question'], '
-						</h4>';
-
-		// Are they not allowed to vote but allowed to view the options?
-		if ($context['poll']['show_results'] || !$context['allow_vote'])
-		{
-			echo '
-						<dl class="options">';
-
-			// Show each option with its corresponding percentage bar.
-			foreach ($context['poll']['options'] as $option)
-			{
-				echo '
-							<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
-							<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
-
-				if ($context['allow_poll_view'])
-					echo '
-								', $option['bar_ndt'], '
-								<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
-
-				echo '
-							</dd>';
-			}
-
-			echo '
-						</dl>';
-
-			if ($context['allow_poll_view'])
-				echo '
-						<p><strong>', $txt['poll_total_voters'], ':</strong> ', $context['poll']['total_votes'], '</p>';
-		}
-		// They are allowed to vote! Go to it!
-		else
-		{
-			echo '
-						<form action="', $scripturl, '?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
-
-			// Show a warning if they are allowed more than one option.
-			if ($context['poll']['allowed_warning'])
-				echo '
-							<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
-
-			echo '
-							<ul class="reset options">';
-
-			// Show each option with its button - a radio likely.
-			foreach ($context['poll']['options'] as $option)
-				echo '
-								<li class="middletext">', $option['vote_button'], ' <label for="', $option['id'], '">', $option['option'], '</label></li>';
-
-			echo '
-							</ul>
-							<div class="submitbutton">
-								<input type="submit" value="', $txt['poll_vote'], '">
-								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-							</div>
-						</form>';
-		}
-
-		// Is the clock ticking?
-		if (!empty($context['poll']['expire_time']))
-			echo '
-						<p><strong>', ($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']), ':</strong> ', $context['poll']['expire_time'], '</p>';
-
-		echo '
-					</div>
-				</div>
-			</div>
-			<div id="poll_moderation">';
-
-		// Build the poll moderation button array.
-		$poll_buttons = array(
-			'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'image' => 'poll_options.gif', 'lang' => true, 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']),
-			'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'image' => 'poll_results.gif', 'lang' => true, 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
-			'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'image' => 'poll_change_vote.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-			'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'image' => 'poll_lock.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-			'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'image' => 'poll_edit.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
-			'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'image' => 'admin_remove_poll.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['poll_remove_warn']) . ');"', 'url' => $scripturl . '?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-		);
-
-		template_button_strip($poll_buttons);
-
-		echo '
-			</div>';
-	}
+		template_topic_poll();
 
 	// Does this topic have some events linked to it?
 	if (!empty($context['linked_calendar_events']))
@@ -380,7 +285,7 @@ function template_main()
 			echo '
 								<ul class="reset smalltext quickbuttons">';
 
-		// !!! @todo: Don't allow this for the first comment of a blog post?
+		// Can we merge this post to the previous one? (Normally requires same author)
 		if ($message['can_mergeposts'])
 			echo '
 									<li class="mergepost_button"><a href="', $scripturl, '?action=mergeposts;pid=', $message['id'], ';msgid=', $message['last_post_id'], ';topic=', $context['current_topic'], '">', $txt['merge_double'], '</a></li>';
@@ -615,63 +520,7 @@ function template_main()
 			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'bottom', array('id' => 'moderationbuttons_strip')), '</div>';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
-	{
-		echo '
-			<a id="quickreply"></a>
-			<div class="tborder" id="quickreplybox">
-				<we:cat>
-					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">
-						<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand">
-					</a>
-					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
-				</we:cat>
-				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
-					<div class="roundframe">
-						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
-						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
-						<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
-						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
-						<br>' : '', '
-						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
-							<input type="hidden" name="topic" value="', $context['current_topic'], '">
-							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
-							<input type="hidden" name="icon" value="xx">
-							<input type="hidden" name="from_qr" value="1">
-							<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
-							<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
-							<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
-							<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-							<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
-
-			// Guests just need more.
-			if ($context['user']['is_guest'])
-				echo '
-							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
-							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
-
-			// Is visual verification enabled?
-			if ($context['require_verification'])
-				echo '
-							<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br>';
-
-			echo '
-							<div class="quickReplyContent">
-								<div id="bbcBox_message" style="display: none"></div>
-								<div id="smileyBox_message" style="display: none"></div>',
-								$context['postbox']->outputEditor(), '
-							</div>
-							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
-							</div>
-							<div class="righttext padding">',
-								$context['postbox']->outputButtons(), '
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>';
-	}
+		template_quick_reply();
 	else
 		echo '
 			<br class="clear">';
@@ -682,27 +531,6 @@ function template_main()
 <form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
 		add_js_file('scripts/spellcheck.js');
 	}
-
-	add_js_file('scripts/topic.js');
-
-	if ($context['can_reply'] && !empty($options['display_quick_reply']))
-		add_js('
-	var oQuickReply = new QuickReply({
-		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		iTopicId: ' . $context['current_topic'] . ',
-		iStart: ' . $context['start'] . ',
-		sScriptUrl: smf_scripturl,
-		sImagesUrl: "' . $settings['images_url'] . '",
-		sContainerId: "quickReplyOptions",
-		sImageId: "quickReplyExpand",
-		sImageCollapsed: "collapse.gif",
-		sImageExpanded: "expand.gif",
-		sJumpAnchor: "quickreply",
-		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
-		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
-		sSwitchMode: "switch_mode",
-		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
-	});');
 
 	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
 		add_js('
@@ -840,6 +668,184 @@ function template_main()
 	}
 }
 
+function template_topic_poll()
+{
+	global $settings, $options, $context, $txt, $scripturl, $modSettings;
+
+	echo '
+			<div id="poll">
+				<we:cat>
+					<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif">', $txt['poll'], '
+				</we:cat>
+				<div class="windowbg wrc">
+					<div id="poll_options">
+						<h4 id="poll_question">
+							', $context['poll']['question'], '
+						</h4>';
+
+	// Are they not allowed to vote but allowed to view the options?
+	if ($context['poll']['show_results'] || !$context['allow_vote'])
+	{
+		echo '
+						<dl class="options">';
+
+		// Show each option with its corresponding percentage bar.
+		foreach ($context['poll']['options'] as $option)
+		{
+			echo '
+							<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
+							<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
+
+			if ($context['allow_poll_view'])
+				echo '
+								', $option['bar_ndt'], '
+								<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
+
+			echo '
+							</dd>';
+		}
+
+		echo '
+						</dl>';
+
+		if ($context['allow_poll_view'])
+			echo '
+						<p><strong>', $txt['poll_total_voters'], ':</strong> ', $context['poll']['total_votes'], '</p>';
+	}
+	// They are allowed to vote! Go to it!
+	else
+	{
+		echo '
+						<form action="', $scripturl, '?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
+
+		// Show a warning if they are allowed more than one option.
+		if ($context['poll']['allowed_warning'])
+			echo '
+							<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
+
+		echo '
+							<ul class="reset options">';
+
+		// Show each option with its button - a radio likely.
+		foreach ($context['poll']['options'] as $option)
+			echo '
+								<li class="middletext">', $option['vote_button'], ' <label for="', $option['id'], '">', $option['option'], '</label></li>';
+
+		echo '
+							</ul>
+							<div class="submitbutton">
+								<input type="submit" value="', $txt['poll_vote'], '">
+								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+							</div>
+						</form>';
+	}
+
+	// Is the clock ticking?
+	if (!empty($context['poll']['expire_time']))
+		echo '
+						<p><strong>', ($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']), ':</strong> ', $context['poll']['expire_time'], '</p>';
+
+	echo '
+					</div>
+				</div>
+			</div>
+			<div id="poll_moderation">';
+
+	// Build the poll moderation button array.
+	$poll_buttons = array(
+		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'image' => 'poll_options.gif', 'lang' => true, 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']),
+		'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'image' => 'poll_results.gif', 'lang' => true, 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
+		'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'image' => 'poll_change_vote.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'image' => 'poll_lock.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'image' => 'poll_edit.gif', 'lang' => true, 'url' => $scripturl . '?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
+		'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'image' => 'admin_remove_poll.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['poll_remove_warn']) . ');"', 'url' => $scripturl . '?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+	);
+
+	template_button_strip($poll_buttons);
+
+	echo '
+			</div>';
+}
+
+function template_quick_reply()
+{
+	global $settings, $options, $txt, $context, $scripturl;
+
+	echo '
+			<a id="quickreply"></a>
+			<div class="tborder" id="quickreplybox">
+				<we:cat>
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">
+						<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand">
+					</a>
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
+				</we:cat>
+				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
+					<div class="roundframe">
+						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
+						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
+						<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
+						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
+						<br>' : '', '
+						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
+							<input type="hidden" name="topic" value="', $context['current_topic'], '">
+							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
+							<input type="hidden" name="icon" value="xx">
+							<input type="hidden" name="from_qr" value="1">
+							<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
+							<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
+							<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
+							<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
+							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+							<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
+
+	// Guests just need more.
+	if ($context['user']['is_guest'])
+			echo '
+							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
+							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
+
+	// Is visual verification enabled?
+	if ($context['require_verification'])
+		echo '
+							<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br>';
+
+	echo '
+							<div class="quickReplyContent">
+								<div id="bbcBox_message" style="display: none"></div>
+								<div id="smileyBox_message" style="display: none"></div>',
+								$context['postbox']->outputEditor(), '
+							</div>
+							<div class="floatleft padding">
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
+							</div>
+							<div class="righttext padding">',
+								$context['postbox']->outputButtons(), '
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>';
+
+	add_js('
+	var oQuickReply = new QuickReply({
+		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
+		iTopicId: ' . $context['current_topic'] . ',
+		iStart: ' . $context['start'] . ',
+		sScriptUrl: smf_scripturl,
+		sImagesUrl: "' . $settings['images_url'] . '",
+		sContainerId: "quickReplyOptions",
+		sImageId: "quickReplyExpand",
+		sImageCollapsed: "collapse.gif",
+		sImageExpanded: "expand.gif",
+		sJumpAnchor: "quickreply",
+		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
+		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
+		sSwitchMode: "switch_mode",
+		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
+	});');
+}
+
 function template_display_whoviewing()
 {
 	global $txt, $context, $settings;
@@ -860,6 +866,17 @@ function template_display_whoviewing()
 	// Now show how many guests are here too.
 	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_topic'], '
 			</p>';
+}
+
+function template_display_draft()
+{
+	global $context, $txt, $scripturl;
+
+	if ($context['draft_saved'])
+		echo '
+	<div class="windowbg" id="profile_success">
+		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
+	</div>';
 }
 
 ?>

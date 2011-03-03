@@ -1140,7 +1140,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $settings, $txt, $modSettings, $scripturl, $options, $user_info;
+	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
 	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
@@ -1276,6 +1276,10 @@ function prepareDisplayContext($reset = false)
 	);
 
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
+
+	// Is this a board? If not, we're dealing with this as replies to a post, and we won't allow merging the first reply into the post.
+	if ($board_info['type'] != 'board')
+		$output['can_mergeposts'] &= $counter != 1;
 
 	// Is this user the message author?
 	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
