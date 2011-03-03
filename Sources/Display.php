@@ -189,7 +189,7 @@ function Display()
 	$request = wesql::query('
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
-			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts,
+			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, ms.poster_time,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
@@ -218,6 +218,8 @@ function Display()
 		$context['real_num_replies'] += $topicinfo['unapproved_posts'] - ($topicinfo['approved'] ? 0 : 1);
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
+	// We also need to discount the first post if this is a blog board.
+	$including_first = $topicinfo['approved'] && $board_info['type'] != 'blog';
 	if ($modSettings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
@@ -234,10 +236,10 @@ function Display()
 		list ($myUnapprovedPosts) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($topicinfo['approved'] ? 1 : 0);
+		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($including_first ? 1 : 0);
 	}
 	else
-		$context['total_visible_posts'] = $context['num_replies'] + $topicinfo['unapproved_posts'] + ($topicinfo['approved'] ? 1 : 0);
+		$context['total_visible_posts'] = $context['num_replies'] + $topicinfo['unapproved_posts'] + ($including_first ? 1 : 0);
 
 	// The start isn't a number; it's information about what to do, where to go.
 	if (!is_numeric($_REQUEST['start']))
@@ -717,14 +719,14 @@ function Display()
 
 	// Calculate the fastest way to get the messages!
 	$ascending = empty($options['view_newest_first']);
-	$start = $_REQUEST['start'];
+	$start = $_REQUEST['start'] + ($board_info['type'] == 'blog' ? 1 : 0);
 	$limit = $context['messages_per_page'];
 	$firstIndex = 0;
-	if ($start >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
+	if ($_REQUEST['start'] >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
 	{
 		$ascending = !$ascending;
-		$limit = $context['total_visible_posts'] <= $start + $limit ? $context['total_visible_posts'] - $start : $limit;
-		$start = $context['total_visible_posts'] <= $start + $limit ? 0 : $context['total_visible_posts'] - $start - $limit;
+		$limit = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? $context['total_visible_posts'] - $_REQUEST['start'] : $limit;
+		$start = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? 0 : $context['total_visible_posts'] - $_REQUEST['start'] - $limit;
 		$firstIndex = $limit - 1;
 	}
 
@@ -780,9 +782,21 @@ function Display()
 		)
 	);
 
-	$messages = array();
 	$all_posters = array();
-	$times = array();
+	if ($board_info['type'] == 'blog')
+	{
+		// Always get the first poster and message.
+		$messages = array($topicinfo['id_first_msg']);
+		if (!empty($topicinfo['id_member_started']))
+			$all_posters = array($topicinfo['id_member_started']);
+		$times = array($topicinfo['poster_time']);
+	}
+	else
+	{
+		$messages = array();
+		$times = array();
+	}
+
 	while ($row = wesql::fetch_assoc($request))
 	{
 		if (!empty($row['id_member']))
@@ -970,6 +984,13 @@ function Display()
 		// What?  It's not like it *couldn't* be only guests in this topic...
 		if (!empty($posters))
 			loadMemberData($posters);
+
+		// Figure out the ordering.
+		if ($board_info['type'] == 'blog')
+			$order = empty($options['view_newest_first']) ? 'ORDER BY id_msg' : 'ORDER BY id_msg != {int:first_msg}, id_msg DESC';
+		else
+			$order = 'ORDER BY id_msg' . (empty($options['view_newest_first']) ? '' : ' DESC');
+
 		$messages_request = wesql::query('
 			SELECT
 				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member, modified_time, modified_name, body,
@@ -978,10 +999,11 @@ function Display()
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 			WHERE id_msg IN ({array_int:message_list})
-			ORDER BY id_msg' . (empty($options['view_newest_first']) ? '' : ' DESC'),
+			' . $order,
 			array(
 				'message_list' => $messages,
 				'new_from' => $topicinfo['new_from'],
+				'first_msg' => $topicinfo['id_first_msg'],
 			)
 		);
 
