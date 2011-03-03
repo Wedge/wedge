@@ -352,7 +352,7 @@ function loadUserSettings()
 	);
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
-	$user_info['host'] = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
+	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
 	$user_info['server'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $user_info['host'];
 
 	// Also contains the query string.
@@ -1821,7 +1821,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$remote = array(
 			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js',
 			'jquery' =>		'http://code.jquery.com/jquery-1.4.4.min.js',
-			'microsoft' =>	'http://ajax.microsoft.com/ajax/jquery/jquery-1.4.4.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.4.min.js',
 		);
 		$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
 		$context['javascript_files'] = array('scripts/script.js');

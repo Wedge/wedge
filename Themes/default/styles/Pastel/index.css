@@ -157,7 +157,6 @@ input.search
 	border-width: 1px 0
 	padding: 0 10px
 
-
 .menu ul
 	background: #fff8f1 url($images/theme/grad250.png) 0 -150px repeat-x
 
@@ -188,14 +187,12 @@ code.bbc_code, code.php_code
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-$subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS"
 .titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td
 	color: #222
 	font: $subcat_font
 .catbg, tr.catbg td, tr.catbg th, tr.catbg th a
 	color: #666
 	font: $subcat_font
-
 
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg final
@@ -259,6 +256,7 @@ img[alt="!"]
 .table_grid
 	tr.catbg, tr.titlebg
 		font-size: .95em
+
 /* Let's have a bit of fun, shall we? */
 form.wrc
 	box-shadow: 0 1px 5px rgba(0,0,0, .125)
@@ -278,4 +276,4 @@ tr.titlebg, tr.titlebg2
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-// (None for now...)
+$subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS"

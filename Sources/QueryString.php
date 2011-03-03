@@ -205,6 +205,7 @@ function cleanRequest()
 
 			// The happy place where boards are identified.
 			$_GET['board'] = $board = $full_board['id_board'];
+			$_SERVER['REAL_HTTP_HOST'] = $_SERVER['HTTP_HOST'];
 			$_SERVER['HTTP_HOST'] = $full_board['url'];
 			$_SERVER['REQUEST_URI'] = $ru = str_replace($full_board['url'], '', $full_request);
 

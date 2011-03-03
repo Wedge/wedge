@@ -530,10 +530,12 @@ function theme_base_css()
 
 	if (!empty($context['extra_styling_css']))
 	{
+		global $user_info;
+
 		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
 		if (strpos($context['extra_styling_css'], '$behavior') !== false)
-			$context['extra_styling_css'] = str_replace('$behavior', strpos($boardurl, '://' . $_SERVER['HTTP_HOST']) !== false ? $boardurl
-				: preg_replace('~(?<=://)([^/]+)~', $_SERVER['HTTP_HOST'], $boardurl), $context['extra_styling_css']);
+			$context['extra_styling_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
+				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['extra_styling_css']);
 		echo "\n\t<style>", $context['extra_styling_css'], "\t</style>";
 	}
 }

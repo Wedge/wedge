@@ -11,14 +11,11 @@
 .menu
 	width: 90%
 
-
 /* Miscellaneous
 ------------------------------------------------------- */
-
-
 // overflow: hidden doesn't help in IE6.
 .title_bar
-	h3 a, h3, h4, h4 a
+	h3, h3 a, h4, h4 a
 		display: inline-block
 
 #upper_section
@@ -26,15 +23,11 @@
 
 /* Overrides for the display template
 ------------------------------------------------------- */
-#forumposts
-	.cat_bar h3
-		clear: both
-
-
+#forumposts .cat_bar h3
+	clear: both
 
 /* Misc hacks
 ------------- */
-
 #content div.frame
 	width: auto
 
@@ -50,6 +43,10 @@ h4.hove
 li.hove
 	background: #e2ebe7
 
-
 #upper_section .frame
 	filter: none
+
+#wedge
+	zoom: 1
+	background: none
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#a0a0a0', endColorstr='#faefe6')
