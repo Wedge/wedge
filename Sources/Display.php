@@ -281,7 +281,6 @@ function Display()
 	}
 
 	// No use in calculating the next topic if there's only one.
-	$modSettings['disableQueryCheck'] = true;
 	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1 && $board_info['type'] == 'board')
 	{
 		// !!! @todo: {query_see_topic}
@@ -316,17 +315,16 @@ function Display()
 			)
 		);
 		list ($prev_topic, $prev_title, $prev_pos) = wesql::fetch_row($request);
-		list ($next_topic, $next_title, $next_pos) = wesql::fetch_row($request);
+		list ($next_topic, $next_title) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		if (empty($next_topic) && !empty($prev_topic) && $prev_pos == 2)
 		{
-			$next_topic = $prev_topic;
-			$next_title = $prev_title;
+			list ($next_topic, $next_title) = array($prev_topic, $prev_title);
 			$prev_topic = $prev_title = '';
 		}
 	}
-	// Not a board, but still enough topics to launch a query? Here we don't care about message index position. Query is a tad faster.
+	// Not a board, but still enough topics to run a query? Here we don't care about message index position. Query is a tad faster.
 	elseif (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
 	{
 		// !!! @todo: {query_see_topic}
@@ -338,20 +336,23 @@ function Display()
 				t.id_topic = (
 					SELECT MIN(t.id_topic)
 					FROM {db_prefix}topics AS t
-					WHERE t.id_topic > {int:topic}
+					WHERE t.id_topic > {int:current_topic}
+						AND t.id_board = {int:current_board}
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
 				)
 			OR
 				t.id_topic = (
 					SELECT MAX(t.id_topic)
 					FROM {db_prefix}topics AS t
-					WHERE t.id_topic < {int:topic}
+					WHERE t.id_topic < {int:current_topic}
+						AND t.id_board = {int:current_board}
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
 				)
 			ORDER BY t.id_topic',
 			array(
-				'topic' => $topic,
+				'current_board' => $board,
 				'current_member' => $user_info['id'],
+				'current_topic' => $topic,
 			)
 		);
 		list ($prev_topic, $prev_title) = wesql::fetch_row($request);
@@ -365,7 +366,6 @@ function Display()
 			$prev_topic = $prev_title = '';
 		}
 	}
-	$modSettings['disableQueryCheck'] = false;
 
 	// Create a previous next string if the selected theme has it as a selected option.
 	$context['previous_next'] = (empty($prev_topic) ? '' : '
