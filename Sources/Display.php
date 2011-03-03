@@ -1281,7 +1281,7 @@ function prepareDisplayContext($reset = false)
 		'subject' => $message['subject'],
 		'time' => timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
-		'counter' => $counter,
+		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'time' => timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
