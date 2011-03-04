@@ -1,7 +1,4 @@
 
-body
-	padding-top: 20px
-
 #upper_section
 	.user
 		height: 4em
@@ -20,7 +17,7 @@ body
 #main-steps
 	float: right
 	width: 50%
-	margin-top: -60px
+	margin-top: 30px
 	h2
 		font-size: 1.1em
 		border-bottom: 1px solid #d05800
@@ -55,4 +52,4 @@ a:link, a:hover, a:visited
 
 .overall_progress
 	position: relative
-	margin: -25px 3px 0 3px
+	margin: -24px 3px 0 8px

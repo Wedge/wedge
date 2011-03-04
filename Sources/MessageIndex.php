@@ -262,7 +262,7 @@ function MessageIndex()
 	{
 		$context['sort_by'] = $board_info['sort_method'];
 		$_REQUEST['sort'] = $sort_methods[$board_info['sort_method']];
-		$ascending = $board_info['sort_override'] == 'force_asc';
+		$ascending = $board_info['sort_override'] === 'force_asc';
 		$context['can_reorder'] = false;
 	}
 	// So the user *could*, but they didn't this time around. Or they were naughty.

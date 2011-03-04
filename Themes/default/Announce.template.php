@@ -23,12 +23,12 @@ function template_announce()
 	foreach ($context['groups'] as $group)
 		echo '
 					<li>
-						<label for="who_', $group['id'], '"><input type="checkbox" name="who[', $group['id'], ']" id="who_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em>
+						<label><input type="checkbox" name="who[', $group['id'], ']" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em>
 					</li>';
 
 	echo '
 					<li>
-						<label for="checkall"><input type="checkbox" id="checkall" onclick="invertAll(this, this.form);" checked> <em>', $txt['check_all'], '</em></label>
+						<label><input type="checkbox" onclick="invertAll(this, this.form);" checked> <em>', $txt['check_all'], '</em></label>
 					</li>
 				</ul>
 				<div id="confirm_buttons">

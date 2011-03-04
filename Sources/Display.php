@@ -281,8 +281,22 @@ function Display()
 	}
 
 	// No use in calculating the next topic if there's only one.
-	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1 && $board_info['type'] == 'board')
+	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
 	{
+		$sort_methods = array(
+			'subject' => 'm.subject',
+			'starter' => 'IFNULL(memf.real_name, mf.poster_name)',
+			'last_poster' => 'IFNULL(meml.real_name, ml.poster_name)',
+			'replies' => 't2.num_replies',
+			'views' => 't2.num_views',
+			'first_post' => 't2.id_topic',
+			'last_post' => 't2.id_last_msg'
+		);
+
+		$sort_by = $board_info['sort_method'];
+		$sort = $sort_methods[$sort_by];
+		$ascending = $board_info['sort_override'] === 'force_asc'|| $board_info['sort_override'] === 'natural_asc';
+
 		// !!! @todo: {query_see_topic}
 		$request = wesql::query('
 			(
@@ -293,7 +307,7 @@ function Display()
 				WHERE t.id_topic = {int:current_topic}
 					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky, t2.id_last_msg
+				ORDER BY t2.is_sticky' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
 				LIMIT 1
 			)
 			UNION ALL
@@ -305,7 +319,7 @@ function Display()
 				WHERE t.id_topic = {int:current_topic}
 					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky DESC, t2.id_last_msg DESC
+				ORDER BY t2.is_sticky' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
 				LIMIT 1
 			)',
 			array(
@@ -323,8 +337,10 @@ function Display()
 			list ($next_topic, $next_title) = array($prev_topic, $prev_title);
 			$prev_topic = $prev_title = '';
 		}
+		$context['prev_topic'] = $prev_topic;
+		$context['next_topic'] = $next_topic;
 	}
-	// Not a board, but still enough topics to run a query? Here we don't care about message index position. Query is a tad faster.
+/*
 	elseif (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
 	{
 		// !!! @todo: {query_see_topic}
@@ -366,11 +382,13 @@ function Display()
 			$prev_topic = $prev_title = '';
 		}
 	}
+*/
 
-	// Create a previous next string if the selected theme has it as a selected option.
-	$context['previous_next'] = (empty($prev_topic) ? '' : '
-				<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new" class="prevnext_prev" title="' . $txt['previous_next_back'] . '">&laquo; ' . $prev_title . '</a>') . (empty($next_topic) ? '' : '
-				<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new" class="prevnext_next" title="' . $txt['previous_next_forward'] . '">' . $next_title . ' &raquo;</a>');
+	// Create a previous/next string if the selected theme has it as a selected option.
+	$context['prevnext_prev'] = '
+				<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '<p>&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new" title="' . $txt['previous_next_back'] . '">' . $prev_title . '</a></p>') . '</div>';
+	$context['prevnext_next'] = '
+				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<p><a href="' . $scripturl . '?topic=' . $next_topic . '.0#new" title="' . $txt['previous_next_forward'] . '">' . $next_title . '</a>&nbsp;&raquo;</p>') . '</div>';
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
 	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
@@ -1279,7 +1297,7 @@ function prepareDisplayContext($reset = false)
 		'icon' => $message['icon'],
 		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
-		'time' => timeformat($message['poster_time']),
+		'time' => on_timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
 		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(

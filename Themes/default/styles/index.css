@@ -1083,13 +1083,18 @@ dfn
 .cat, .title
 	overflow: hidden
 	border-radius: 5px
-	padding: 5px 12px 5px 8px
+	padding: 5px 10px 5px
 	margin-bottom: 4px
 	background: rgba(0,0,0, .03)
 	border: 1px solid rgba(0,0,0, .15)
 	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	text-shadow: white 0 1px 2px
 	color: grey
+
+.cat
+	display: table
+	box-sizing: border-box
+	width: 100%
 
 .cat, .title, .table_list tbody.header td
 	a

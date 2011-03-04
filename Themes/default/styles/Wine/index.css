@@ -55,9 +55,10 @@ body
 	a
 		color: #fff
 
-#sidebar .column
+#sidebar
 	background: #edefe6
-	padding: 12px
+	.column
+		padding: 12px
 
 /* The menu is inside another div that had padding applied to it, so we use
    a negative margin to make it cancel the padding and use the full width.
@@ -233,3 +234,8 @@ tr.catbg
 
 .table_list tbody.header td.catbg
 	background-color: #b8deca
+
+/* Hacks! */
+
+.prevnext_prev, .prevnext_next
+	font-size: 128%

@@ -71,6 +71,22 @@
 
 /* Overrides for the display template
 ------------------------------------------------------- */
+.cat
+	width: auto
+	clear: both
+
+.prevnext_prev
+	padding: 0 8px 0
+	float: left
+	width: 20%
+
+.prevnext_next
+	float: right
+
+#top_subject, #display_jump_to
+	float: left
+	width: 55%
+
 #forumposts
 	.postarea
 		margin-left: 0

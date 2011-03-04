@@ -151,12 +151,9 @@ function template_attachment_repair()
 
 		// Loop through each error reporting the status
 		foreach ($context['repair_errors'] as $error => $number)
-		{
 			if (!empty($number))
 				echo '
-				<input type="checkbox" name="to_fix[]" id="', $error, '" value="', $error, '">
-				<label for="', $error, '">', sprintf($txt['attach_repair_' . $error], $number), '</label><br>';
-		}
+				<label><input type="checkbox" name="to_fix[]" value="', $error, '"> ', sprintf($txt['attach_repair_' . $error], $number), '</label><br>';
 
 		echo '<br>
 				<input type="submit" value="', $txt['repair_attachments_continue'], '" class="submit">

@@ -744,11 +744,11 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a><span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<label><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a><span', ($config_var['disabled'] ? ' style="color: #777777"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['label'], $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span></label>
 					</dt>';
 				else
 					echo '
-						<a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777;"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['type'] == 'var_message' ? $config_var['label'] : '<label for="' . $config_var['name'] . '">' . $config_var['label'] . '</label>', $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span>
+						<label><a id="setting_', $config_var['name'], '"></a> <span', ($config_var['disabled'] ? ' style="color: #777777"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['label'], $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span></label>
 					</dt>';
 
 				echo '
@@ -794,12 +794,12 @@ function template_show_settings()
 						foreach ($bbcColumn as $bbcTag)
 							echo '
 								<li class="list_bbc floatleft">
-									<input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked' : '', '> <label for="tag_', $config_var['name'], '_', $bbcTag['tag'], '">', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this);">?</a>)' : '', '
+									<label><input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked' : '', '> ', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=helpadmin;help=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this);">?</a>)' : '', '
 								</li>';
 					}
 					echo '
 							</ul>
-							<input type="checkbox" id="select_all" onclick="invertAll(this, this.form, \'', $config_var['name'], '_enabledTags\');"', $context['bbc_sections'][$config_var['name']]['all_selected'] ? ' checked' : '', '> <label for="select_all"><em>', $txt['bbcTagsToUse_select_all'], '</em></label>
+							<label><input type="checkbox" onclick="invertAll(this, this.form, \'', $config_var['name'], '_enabledTags\');"', $context['bbc_sections'][$config_var['name']]['all_selected'] ? ' checked' : '', '> <em>', $txt['bbcTagsToUse_select_all'], '</em></label>
 						</fieldset>';
 				}
 				// A simple message?
@@ -1243,8 +1243,8 @@ function template_core_features()
 						<h4>', ($feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title']), '</h4>
 						<p>', $feature['desc'], '</p>
 						<div id="plain_feature_', $id, '">
-							<label for="plain_feature_', $id, '_radio_on"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_on" value="1"', $feature['enabled'] ? ' checked' : '', '>', $txt['core_settings_enabled'], '</label>
-							<label for="plain_feature_', $id, '_radio_off"><input type="radio" name="feature_plain_', $id, '" id="plain_feature_', $id, '_radio_off" value="0"', !$feature['enabled'] ? ' checked' : '', '>', $txt['core_settings_disabled'], '</label>
+							<label><input type="radio" name="feature_plain_', $id, '" value="1"', $feature['enabled'] ? ' checked' : '', '> ', $txt['core_settings_enabled'], '</label>
+							<label><input type="radio" name="feature_plain_', $id, '" value="0"', !$feature['enabled'] ? ' checked' : '', '> ', $txt['core_settings_disabled'], '</label>
 						</div>
 					</div>
 				</div>';
@@ -1922,11 +1922,11 @@ function template_pretty_urls()
 	<div class="windowbg2 wrc">
 		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
 			<fieldset>
-				<input type="checkbox" name="pretty_enable" id="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), '>
-				<label for="pretty_enable">', $txt['pretty_enable'], '</label>
+				<label><input type="checkbox" name="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), '>
+				', $txt['pretty_enable'], '</label>
 				<br>
-				<input type="checkbox" name="pretty_cache" id="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
-				<label for="pretty_cache">', $txt['pretty_cache'], '</label>
+				<label><input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
+				', $txt['pretty_cache'], '</label>
 			</fieldset>';
 
 	// Display the filters
@@ -1939,8 +1939,8 @@ function template_pretty_urls()
 		foreach ($context['pretty']['filters'] as $filter)
 			echo '
 				<div>
-					<input type="checkbox" name="pretty_filter_', $filter['id'], '" id="pretty_filter_', $filter['id'], '"', ($filter['enabled'] ? ' checked' : ''), '>
-					<label for="pretty_filter_', $filter['id'], '">', $txt['pretty_filter_' . $filter['id']], '</label>
+					<label><input type="checkbox" name="pretty_filter_', $filter['id'], '"', $filter['enabled'] ? ' checked' : '', '>
+					', $txt['pretty_filter_' . $filter['id']], '</label>
 				</div>';
 
 		echo '

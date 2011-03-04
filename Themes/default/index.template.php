@@ -55,7 +55,7 @@ function template_html_above()
 	// Declare HTML5, and show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<!-- Powered by Wedge, (c) Wedgeward 2010 - http://wedgeforum.com -->
+<!-- Powered by Wedge, (c) Wedgeward 2010-2011 - http://wedgeforum.com -->
 <head>
 	<meta charset="utf-8">';
 
@@ -91,10 +91,12 @@ function template_html_above()
 	<link rel="alternate" type="application/rss+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['rss'], '" href="', $scripturl, '?action=feed;type=rss">';
 
 	// If we're viewing a topic, these should be the previous and next topics, respectively.
-	if (!empty($context['current_topic']))
+	if (!empty($context['prev_topic']))
 		echo '
-	<link rel="prev" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=prev">
-	<link rel="next" href="', $scripturl, '?topic=', $context['current_topic'], '.0;prev_next=next">';
+	<link rel="prev" href="', $scripturl, '?topic=', $context['prev_topic'], '.0">';
+	if (!empty($context['next_topic']))
+		echo '
+	<link rel="next" href="', $scripturl, '?topic=', $context['next_topic'], '.0">';
 
 	// If we're in a board, or a topic for that matter, the index will be the board's index.
 	if (!empty($context['current_board']))

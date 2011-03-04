@@ -22,6 +22,10 @@
 
 /* Overrides for the display template
 ------------------------------------------------------- */
+.prevnext_prev
+	padding: 0 8px
+	width: 96%
+
 .post
 	padding-top: 1em
 	float: none

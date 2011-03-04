@@ -51,16 +51,6 @@ p.moderators
 	line-height: 19px
 	padding: 0 0 0 6px
 
-.prevnext_prev
-	float: left
-	line-height: 1.4em
-
-.prevnext_next extends .prevnext_prev
-	float: right
-
-#top_subject
-	text-align: center
-
 .mark_read
 	padding: 0 .5em
 
@@ -143,6 +133,33 @@ img.new_posts
 
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
+.prevnext_prev
+	text-align: left
+	width: 150px
+	height: 100%
+	display: table-cell
+	vertical-align: middle
+	p
+		margin: 0
+		font: .7em Verdana, "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+
+.prevnext_next extends .prevnext_prev
+	text-align: right
+
+#top_subject
+	text-align: center
+	display: table-cell
+	vertical-align: middle
+
+// The jump to box
+#display_jump_to
+	text-align: center
+	display: table-cell
+	vertical-align: middle
+	select, input
+		font-size: 8pt
+		padding: 2px 2px 0
+
 #postbuttons
 	div.buttons
 		padding: .5em
@@ -418,13 +435,6 @@ ul.quickbuttons
 		margin: .25em 0 0
 	.roundframe
 		base: #postmodify .roundframe
-
-// The jump to box
-#display_jump_to
-	text-align: center
-	select, input
-		font-size: 8pt
-		padding: 2px 2px 0
 
 /* Styles for edit/new post section
 ---------------------------------------------------- */
@@ -947,6 +957,8 @@ dl
 
 // If the screen is too small, show the avatar on top
 @media all and (max-width: 1000px)
+	.prevnext_prev
+		display: none
 	#basicinfo, #detailedinfo
 		width: 100%
 	#basicinfo

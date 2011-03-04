@@ -740,7 +740,7 @@ function on_timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $txt;
 	$ret = timeformat($log_time, $show_today, $offset_type);
-	return is_numeric($ret[0]) ? $txt['on'] . ' ' . $ret : $ret;
+	return is_numeric($ret[0]) ? sprintf($txt['on_date'], $ret) : $ret;
 }
 
 /**
@@ -2731,6 +2731,21 @@ function blankGif()
 {
 	header('Content-Type: image/gif');
 	die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
+}
+
+/**
+ * Shortcut for use in <img src="', src_blankGif(), '">
+ */
+function img_blankGif()
+{
+	global $browser;
+	if (!$browser['is_ie8down'] || $browser['is_ie8'])
+		return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+	// !!! Alternatively, the shorter non-standard 42-byte version, but it compresses slightly worse.
+	//	return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAEALAAAAAABAAEAAAIBTAA7';
+
+	global $settings;
+	return $settings['images_url'] . '/blank.gif';
 }
 
 /**

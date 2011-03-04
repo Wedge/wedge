@@ -220,6 +220,12 @@ code.bbc_code, code.php_code
 	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x
 	border: 1px solid #e0e0e0
 	border: 1px solid rgba(160,160,160, .5)
+	box-sizing: border-box
+	h3
+		display: table
+		box-sizing: border-box
+		width: 100%
+
 .title_bar
 	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x
 	border: 1px solid #ddd

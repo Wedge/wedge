@@ -67,10 +67,3 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 
 dfn
 	line-height: 140%
-
-.prevnext_prev
-	font-size: .9em
-	color: #666 !important
-	border-bottom: 1px dotted #666
-	:hover
-		color: #933 !important

@@ -16,13 +16,6 @@
 		By Nao, inspired by Bloc's Curve. Obviously.
 	]]></comment>
 
-	<css for="ie7,ie8"><![CDATA[
-		#header, #footer, .title_bar, .cat_bar, .wrc, .roundframe, .buttonlist a {
-			behavior: url($behavior/Themes/default/scripts/PIE.htc);
-			position: relative;
-		}
-	]]></css>
-
 	<code for="ie6"><![CDATA[
 	DD_belatedPNG.fix('div,#wedgelogo,#boardindex_table img');
 	$('input[type=submit], input[type=button]').addClass('ie_button');

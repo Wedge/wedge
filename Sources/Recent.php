@@ -297,7 +297,7 @@ function Recent()
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
 			'start' => $row['num_replies'],
 			'subject' => $row['subject'],
-			'time' => timeformat($row['poster_time']),
+			'time' => on_timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'first_poster' => array(
 				'id' => $row['id_first_member'],

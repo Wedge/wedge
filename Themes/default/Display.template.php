@@ -63,8 +63,8 @@ function template_main()
 
 	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
-			<we:cat>', $context['previous_next'], '
-				<div id="top_subject">', $context['subject'], ' &nbsp;(', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>
+			<we:cat>', $context['prevnext_prev'], '
+				<div id="top_subject">', $context['subject'], ' (', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>', $context['prevnext_next'], '
 			</we:cat>
 			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
@@ -276,7 +276,7 @@ function template_main()
 									<h5 id="subject_', $message['id'], '">
 										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
 									</h5>
-									<div class="smalltext">&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', $txt['on'], ':</strong> ', $message['time'], ' &#187;</div>
+									<div class="smalltext">&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', '</strong> ', $message['time'], ' &#187;</div>
 									<div id="msg_', $message['id'], '_quick_mod"></div>
 								</div>';
 
@@ -342,7 +342,7 @@ function template_main()
 			echo '
 							<div id="msg_', $message['id'], '_ignored_prompt">
 								', $txt['ignoring_user'], '
-								<a href="#" id="msg_', $message['id'], '_ignored_link" style="display: none;">', $txt['show_ignore_user_post'], '</a>
+								<a href="#" id="msg_', $message['id'], '_ignored_link" style="display: none">', $txt['show_ignore_user_post'], '</a>
 							</div>';
 
 		// Show the post itself, finally!
@@ -492,8 +492,8 @@ function template_main()
 
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
-			<we:cat>', $context['previous_next'], '
-				<div id="display_jump_to"></div>
+			<we:cat>', $context['prevnext_prev'], '
+				<div id="display_jump_to"></div>', $context['prevnext_next'], '
 			</we:cat>';
 
 	// Show the lower breadcrumbs.
