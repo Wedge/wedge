@@ -9,8 +9,7 @@
 
 /* Common admin center classes.
 ------------------------------------------------------- */
-.title_bar
+.title
 	margin-bottom: 3px
-	h3 form
+	form
 		font-size: 80%
-

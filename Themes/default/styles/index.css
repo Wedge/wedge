@@ -1077,6 +1077,20 @@ dfn
 	font: italic 85% Verdana
 	color: #888
 
+dl#rss
+	clear: right
+	overflow: auto
+	margin: 10px 0 0
+	padding: 0
+	dt, dd
+		margin, padding: 0
+	dt
+		float: left
+		width: 86px
+		text-align: right
+	dd
+		margin: 0 0 2px 90px
+
 /* Styles for section headers.
 ------------------------------------------------------- */
 

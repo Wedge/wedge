@@ -1,21 +1,25 @@
 
-.cat_bar h3 input[type=checkbox]
+.cat input[type=checkbox]
 	margin: 0 4px
 
 #content
-	#forumposts div.cat_bar
+	#forumposts .cat
 		margin-top: 8px
 		clear: both
 
 /* Overrides for the calendar template
 ------------------------------------------------- */
-#main_grid table.weeklist .title_bar h4
+#main_grid table.weeklist .title2
 	margin: 2px 0 -4px 0
 
 /* Misc hacks
 ------------------------------------------------------- */
-.cat_bar, .title_bar
+.cat, .title
 	overflow: hidden
 
 #upper_section .frame
 	filter: none
+
+.cat
+	overflow: hidden
+	width: 98%

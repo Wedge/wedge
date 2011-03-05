@@ -146,7 +146,7 @@ input.search
 	#header &
 		background: rgb(235,225,215) url($images/filter.gif) 5px 2px no-repeat
 
-.cat_bar h3 input[type=checkbox]
+.cat input[type=checkbox]
 	margin: 5px -3px 0 7px
 
 
@@ -210,56 +210,48 @@ code.bbc_code, code.php_code
 
 /* Styles for section headers.
 ------------------------------------------------------- */
-.cat_bar, .title_bar
+.cat, .title
 	padding: 5px 8px
 	margin-top: 8px
 	overflow: auto
 	border-radius: 5px
-
-.cat_bar
-	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x
-	border: 1px solid #e0e0e0
-	border: 1px solid rgba(160,160,160, .5)
-	box-sizing: border-box
-	h3
-		display: table
-		box-sizing: border-box
-		width: 100%
-
-.title_bar
-	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x
-	border: 1px solid #ddd
-	border: 1px solid rgba(0,0,0, .15)
-
-.cat_bar, .title_bar
-	h3, h4
-		padding-right: 9px
-		font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	a
+		font-size: .96em
 	img
 		float: left
 		vertical-align: middle
 		margin-right: .5em
 		margin-top: 2px
 
-.cat_bar h3, .cat_bar h4
+.cat
+	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x
+	border: 1px solid rgba(160,160,160, .5)
+	box-sizing: border-box
+	display: table
+	width: 100%
 	letter-spacing: 1px
-.cat_bar h3, .cat_bar h4, .table_list tbody.header td
+	img
+		&[alt="+"], &[alt="-"]
+			margin-top: 3px
+
+.title
+	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x
+	border: 1px solid rgba(0,0,0, .15)
+
+.cat, .table_list tbody.header td
 	&, a
 		color: #000
 	a:hover
 		color: #963
 		text-decoration: none
 
-.title_bar h3, .title_bar h4
+.title, .title2
 	&, a
 		color: #222
 	a:hover
 		color: #53616f
 		text-decoration: none
-
-.cat_bar img
-	&[alt="+"], &[alt="-"]
-		margin-top: 3px
 
 img[alt="!"]
 	margin-top: 4px

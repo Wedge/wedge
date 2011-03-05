@@ -269,26 +269,29 @@ function template_sidebar_rss()
 			<we:title2>
 				<img src="', $settings['images_url'], '/icons/feed.png">', $txt['rss'], '
 			</we:title2>
-			<p>';
+			<dl id="rss">';
 
 	// Topic RSS links
 	if (!empty($topic))
 		echo '
-				', sprintf($txt['rss_topic'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '<br>';
+				<dt>', $txt['rss_current_topic'], '</dt>
+				<dd>', sprintf($txt['rss_posts'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '</dd>';
 
 	// Board level RSS links
 	if (!empty($board))
 	{
 		$rss = $scripturl . '?board=' . $board . ';action=feed;type=rss';
 		echo '
-				', sprintf($board_info['type'] == 'blog' ? $txt['rss_blog'] : $txt['rss_board'], $rss, $rss . ';sa=news'), '<br>';
+				<dt>', $board_info['type'] == 'blog' ? $txt['rss_current_blog'] : $txt['rss_current_board'], '</dt>
+				<dd>', sprintf($txt['rss_posts'], $rss), ' / ', sprintf($txt['rss_topics'], $rss . ';sa=news'), '</dd>';
 	}
 
 	// Forum wide and end
 	$rss = $scripturl . '?action=feed;type=rss';
 	echo '
-				', sprintf($txt['rss_forum'], $rss, $rss . ';sa=news'), '
-			</p>';
+				<dt>', $txt['rss_everywhere'], '</dt>
+				<dd>', sprintf($txt['rss_posts'], $rss), ' / ', sprintf($txt['rss_topics'], $rss . ';sa=news'), '</dd>
+			</dl>';
 }
 
 function template_sidebar_below()

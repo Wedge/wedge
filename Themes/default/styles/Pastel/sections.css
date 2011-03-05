@@ -7,14 +7,12 @@
 ------------------------------------------------- */
 
 // The board title!
-#board_list
-	td.info a.subject
-		color: #d97b33
+#board_list td.info a.subject
+	color: #d97b33
 
 // Onto the posts
-#forumposts
-	.cat_bar
-		margin-bottom: 3px
+#forumposts .cat
+	margin-bottom: 3px
 
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
@@ -24,7 +22,7 @@
 	li
 		padding: 0 0 0 1em
 
-.side_section .title_bar
+.side_section .title
 	margin-bottom: 5px
 
 tr.windowbg td, tr.approvebg td, tr.highlight2 td
@@ -33,27 +31,25 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 /* Styles for the statistics center.
 ------------------------------------------------- */
 #statistics
-	.title_bar
+	.title
 		margin: 4px 0
-	.cat_bar h3
+	.cat
 		text-align: center
 
 /* Styles for the calendar section.
 ------------------------------------------------- */
-#calendar .cat_bar
+#calendar .cat
 	margin-bottom: 4px
 
-#main_grid
-	table
-		.cat_bar h3
-			text-align: center
-			border-top: 2px solid #fff
-			border-bottom: none
-		&.weeklist
-			.title_bar h4
-				margin: 0
-				height: 23px
-				line-height: 27px
+#main_grid table
+	.cat
+		text-align: center
+		border-top: 2px solid #fff
+		border-bottom: none
+	&.weeklist .title2
+		margin: 0
+		height: 23px
+		line-height: 27px
 
 /* More hacks.
 ------------------------------------------------- */
@@ -62,7 +58,7 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 		margin: 0
 		padding: .5em
 
-	.cat_bar h3, .title_bar h4
+	.cat, .title2
 		font-size: 1.1em
 
 dfn

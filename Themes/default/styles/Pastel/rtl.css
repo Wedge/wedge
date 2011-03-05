@@ -62,26 +62,24 @@ dl.settings
 
 /* Styles for rounded headers.
 ------------------------------------------------------- */
-.title_bar
-	h3, h4
-		padding-right: 9px
-		padding-left: 0
-	h4 img
-		float: right
+.title, .title2
+	padding-right: 9px
+	padding-left: 0
 
 #wedgelogo
 	margin-top: .7em
 	margin-right: 1em
 
-
-.title_bar h3 img
+.title img
 	margin-left: 0.5em
 
+.title2 img
+	float: right
 
 
 /* Various Wedge fixes
 ------------------------------------------------- */
-.cat_bar img, .title_bar img
+.cat img, .title img
 	float: right
 	margin-left: 0.5em
 	margin-right: 0

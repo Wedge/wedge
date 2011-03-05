@@ -277,7 +277,8 @@ function ModifyGeneralSettings($return_config = false)
 		// Delete the JS cache in case we're changing one of these settings. Only does the current theme.
 		// Cached JS files are also cleaned up on the fly so this is just a small time saver.
 		foreach (array('enableCompressedData', 'obfuscate_filenames', 'minify') as $cache)
-			if (isset($_REQUEST[$cache]) && $_REQUEST[$cache] != $modSettings[$cache] && is_callable('glob'))
+		{
+			if (isset($_REQUEST[$cache]) && (!isset($modSettings[$cache]) || $_REQUEST[$cache] != $modSettings[$cache]) && is_callable('glob'))
 			{
 				array_map('unlink', glob($cachedir . '/*.j*'));
 				// Note: enableCompressedData should always be tested first in the array,
@@ -286,6 +287,7 @@ function ModifyGeneralSettings($return_config = false)
 					array_map('unlink', glob($cachedir . '/*.c*'));
 				break;
 			}
+		}
 
 		saveSettings($config_vars);
 		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
