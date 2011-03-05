@@ -233,8 +233,9 @@ function wedge_cache_css()
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
 	$context['extra_styling_css'] = '';
+	$css_files = array_merge($context['css_generic_files'], (array) 'custom');
 
-	foreach ($context['css_folders'] as $folder)
+	foreach ($context['css_folders'] as &$folder)
 	{
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
@@ -248,7 +249,7 @@ function wedge_cache_css()
 				$css = array();
 		}
 
-		foreach ($context['css_generic_files'] as $file)
+		foreach ($css_files as &$file)
 		{
 			$add = $fold . $file . '.css';
 			if (file_exists($add))
