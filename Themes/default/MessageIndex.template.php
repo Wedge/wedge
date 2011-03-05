@@ -735,4 +735,26 @@ function template_messageindex_legend()
 		</p>';
 }
 
+// Show statistical style information...
+// !!! Should we show this only in MessageIndex, or in index and show
+// !!! it based on !empty($context['current_board']) or something?
+function template_messageindex_statistics()
+{
+	global $context, $settings, $options, $txt, $scripturl, $modSettings, $board_info;
+
+	if (!$settings['show_stats_index'])
+		return;
+
+	$type = $board_info['type'] == 'board' ? 'board' : 'blog';
+
+	echo '
+				<we:title2>
+					<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
+					', $txt[$type . '_stats'], '
+				</we:title2>
+				<p>
+					', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $board_info['total_topics'], ' ', $txt['topics'], '<br>
+				</p>';
+}
+
 ?>

@@ -64,7 +64,7 @@ function template_main()
 	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
 			<we:cat>', $context['prevnext_prev'], '
-				<div id="top_subject">', $context['subject'], ' (', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], ')</div>', $context['prevnext_next'], '
+				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
 			</we:cat>
 			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
@@ -876,6 +876,25 @@ function template_display_draft()
 	<div class="windowbg" id="profile_success">
 		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
 	</div>';
+}
+
+// Show statistical style information...
+function template_display_statistics()
+{
+	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+
+	if (!$settings['show_stats_index'])
+		return;
+
+	echo '
+				<we:title2>
+					<img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
+					', $txt['topic_stats'], '
+				</we:title2>
+				<p>
+					', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], '
+					<br>', $context['num_replies'], ' ', $txt['replies'], '
+				</p>';
 }
 
 ?>

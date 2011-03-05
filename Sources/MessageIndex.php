@@ -66,6 +66,7 @@ function MessageIndex()
 			$templates[] = 'messageindex_draft';
 		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
 		showSubTemplate($templates);
+		showSubTemplate('messageindex_statistics', 'sidebar');
 	}
 
 	$context['name'] = $board_info['name'];

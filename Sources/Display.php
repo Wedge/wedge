@@ -415,6 +415,8 @@ function Display()
 	censorText($topicinfo['subject']);
 	$context['page_title'] = $topicinfo['subject'];
 
+	showSubTemplate('display_statistics', 'sidebar');
+
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
 

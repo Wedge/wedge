@@ -211,7 +211,7 @@ code.bbc_code, code.php_code
 /* Styles for section headers.
 ------------------------------------------------------- */
 .cat, .title
-	padding: 5px 8px
+	padding: 4px 8px
 	margin-top: 8px
 	overflow: auto
 	border-radius: 5px
