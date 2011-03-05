@@ -183,6 +183,73 @@ class westr_base extends westr_entity
 	{
 		return preg_replace('~(\r\n|\r|\n)~', '<br>$1', $string);
 	}
+
+	public static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
+	{
+		global $entities, $replace_counter, $context;
+
+		if (empty($string))
+			return $ellipsis ? '&hellip;' : '';
+		if (!$check_multibyte)
+			return rtrim(preg_replace('/&#?\w*$/', '', substr($string, 0, $max_length))) . ($ellipsis && strlen($string) > $max_length ? '&hellip;' : '');
+		if ($preparse)
+			$string = parse_bbc($string);
+		$work = preg_replace('/(?:&[^&;]+;|<[^>]+>)/', chr(20), $string);
+		$strlen = is_callable('mb_strlen') ? 'mb_strlen' : 'strlen';
+		$substr = is_callable('mb_substr') ? 'mb_substr' : 'substr';
+		if ($strlen($work) <= $max_length && (empty($hard_limit) || strlen($string) <= $hard_limit))
+			return $string;
+		preg_match_all("/(?:\x14|&[^&;]+;|<[^>]+>)/", $string, $entities);
+		$work = rtrim($substr($work, 0, $max_length)) . ($ellipsis && $strlen($work) > $max_length ? '&hellip;' : '');
+		if ($cut_long_words)
+		{
+			$cw = is_integer($cut_long_words) ? round($cut_long_words/2) + 1 : round($max_length/3) + 1;
+			$work = preg_replace('/(\w{'.$cw.'})(\w+)/u', '$1&shy;$2', $work);
+		}
+		$replace_counter = 0;
+		$work = preg_replace_callback("/\x14/", 'westr::restore_entities', $work);
+		// Make sure to close any opened tags after preparsing the string...
+		if (strpos($work, '<') !== false)
+			self::close_tags($work, $hard_limit);
+		return $hard_limit && strlen($work) > $hard_limit ? rtrim(preg_replace('/&#?\w*$/', '', substr($work, 0, $hard_limit))) : $work;
+	}
+
+	function restore_entities($match)
+	{
+		global $entities, $replace_counter;
+		return $entities[0][$replace_counter++];
+	}
+
+	function close_tags(&$str, $hard_limit)
+	{
+		// Could be made faster with substr_count() but wouldn't always validate.
+		if (!preg_match_all('~<([^/\s>]+)(?:>|[^>]*?[^/]>)~', $str, $m) || empty($m[1]))
+			return;
+
+		$mo = $m[1];
+		preg_match_all('~</([^>]+)~', $str, $m);
+		$mc = $m[1];
+		$ct = array();
+		if (count($mo) > count($mc))
+		{
+			foreach ($mc as $tag)
+				$ct[$tag] = isset($ct[$tag]) ? $ct[$tag] + 1 : 1;
+			foreach (array_reverse($mo) as $tag)
+			{
+				if (empty($ct[$tag]) || !($ct[$tag]--))
+				{
+					// If we're not limited in size, close the tag, otherwise just give up and strip all tags.
+					if (!$hard_limit || strlen($str . $tag) + 3 <= $hard_limit)
+						$str .= '</' . $tag . '>';
+					else
+					{
+						$str = strip_tags($str);
+						return;
+					}
+				}
+			}
+		}
+	}
 }
 
 if (is_callable('mb_strtolower'))

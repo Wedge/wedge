@@ -385,10 +385,12 @@ function Display()
 */
 
 	// Create a previous/next string if the selected theme has it as a selected option.
+	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, 60);
+	$short_next = empty($next_title) ? '' : westr::cut($next_title, 60);
 	$context['prevnext_prev'] = '
-				<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '<p>&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new" title="' . $txt['previous_next_back'] . '">' . $prev_title . '</a></p>') . '</div>';
+				<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '<p>&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a></p>') . '</div>';
 	$context['prevnext_next'] = '
-				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<p><a href="' . $scripturl . '?topic=' . $next_topic . '.0#new" title="' . $txt['previous_next_forward'] . '">' . $next_title . '</a>&nbsp;&raquo;</p>') . '</div>';
+				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<p><a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;</p>') . '</div>';
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
 	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');

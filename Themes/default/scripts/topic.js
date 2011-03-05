@@ -325,7 +325,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 
 		// If this is the first message, also update the topic subject.
 		if (oSubject.attr('is_first') == '1')
-			$('#top_subject').html(this.opt.sTemplateTopSubject.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
+			$('#top_subject').html(sSubjectText.replace(/\{&dollarfix;\$\}/g, '$'));
 
 		// Show this message as 'modified on x by y'.
 		if (this.opt.bShowModify)
