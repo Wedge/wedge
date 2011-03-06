@@ -280,7 +280,7 @@ function template_sidebar_rss()
 	// Board level RSS links
 	if (!empty($board))
 	{
-		$rss = $scripturl . '?board=' . $board . ';action=feed;type=rss';
+		$rss = $scripturl . '?board=' . $board_info['id'] . ';action=feed;type=rss';
 		echo '
 				<dt>', $board_info['type'] == 'blog' ? $txt['rss_current_blog'] : $txt['rss_current_board'], '</dt>
 				<dd>', sprintf($txt['rss_posts'], $rss), ' / ', sprintf($txt['rss_topics'], $rss . ';sa=news'), '</dd>';
