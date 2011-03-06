@@ -284,50 +284,95 @@ function Display()
 	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
 	{
 		$sort_methods = array(
-			'subject' => 'm.subject',
-			'starter' => 'IFNULL(memf.real_name, mf.poster_name)',
-			'last_poster' => 'IFNULL(meml.real_name, ml.poster_name)',
-			'replies' => 't2.num_replies',
-			'views' => 't2.num_views',
-			'first_post' => 't2.id_topic',
-			'last_post' => 't2.id_last_msg'
+			'subject' => array(
+				'sort' => 'mf.subject',
+				'cmp' => '{raw:operator} {string:current_subject}',
+			),
+			'starter' => array(
+				'sort' => 'poster',
+				'join' => '
+						INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
+						LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)',
+				'select' => ', IFNULL(memf.real_name, mf.poster_name) AS poster',
+				'cmp' => '{raw:operator} {string:current_poster}',
+			),
+			'last_poster' => array(
+				'sort' => 'poster',
+				'join' => '
+						INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
+						LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)',
+				'select' => ', IFNULL(meml.real_name, ml.poster_name) AS poster',
+				'cmp' => '{raw:operator} {string:current_poster}',
+			),
+			'replies' => array(
+				'sort' => 't.num_replies',
+				'cmp' => '{raw:operator} {int:current_replies}',
+			),
+			'views' => array(
+				'sort' => 't.num_views',
+				'cmp' => '{raw:operator} {int:current_views}',
+			),
+			'first_post' => array(
+				'sort' => 't.id_topic',
+				'cmp' => '{raw:operator} {int:current_topic}',
+			),
+			'last_post' => array(
+				'sort' => 't.id_last_msg',
+				'cmp' => '{raw:operator} {int:current_last_msg}',
+			),
 		);
 
 		$sort_by = $board_info['sort_method'];
-		$sort = $sort_methods[$sort_by];
-		$ascending = $board_info['sort_override'] === 'force_asc'|| $board_info['sort_override'] === 'natural_asc';
+		$sort = $sort_methods[$sort_by]['sort'];
+		$ascending = $board_info['sort_override'] === 'force_asc' || $board_info['sort_override'] === 'natural_asc';
 
 		// !!! @todo: {query_see_topic}
 		$request = wesql::query('
 			(
-				SELECT t2.id_topic, m.subject, 1
+				SELECT t.id_topic, m.subject, 1
 				FROM {db_prefix}topics AS t
-					INNER JOIN {db_prefix}topics AS t2 ON ((t2.id_last_msg > t.id_last_msg AND t2.is_sticky >= t.is_sticky) OR t2.is_sticky > t.is_sticky)
-					INNER JOIN {db_prefix}messages AS m ON (t2.id_first_msg = m.id_msg)
-				WHERE t.id_topic = {int:current_topic}
-					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
-				LIMIT 1
+					INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+				WHERE t.id_topic = (
+					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
+					FROM {db_prefix}topics AS t
+						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
+					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
+						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
+					ORDER BY t.is_sticky' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
+					LIMIT 1
+				)
 			)
 			UNION ALL
 			(
-				SELECT t2.id_topic, m.subject, 2
+				SELECT t.id_topic, m.subject, 2
 				FROM {db_prefix}topics AS t
-					INNER JOIN {db_prefix}topics AS t2 ON ((t2.id_last_msg < t.id_last_msg AND t2.is_sticky <= t.is_sticky) OR t2.is_sticky < t.is_sticky)
-					INNER JOIN {db_prefix}messages AS m ON (t2.id_first_msg = m.id_msg)
-				WHERE t.id_topic = {int:current_topic}
-					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-					AND (t2.approved = 1 OR (t2.id_member_started != 0 AND t2.id_member_started = {int:current_member}))') . '
-				ORDER BY t2.is_sticky' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
-				LIMIT 1
+					INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+				WHERE t.id_topic = (
+					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
+					FROM {db_prefix}topics AS t
+						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
+					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
+						AND ' . $sort . ' ' . str_replace('{raw:operator}', '{raw:notoperator}', $sort_methods[$sort_by]['cmp']) . '
+					ORDER BY t.is_sticky' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
+					LIMIT 1
+				)
 			)',
 			array(
 				'current_board' => $board,
 				'current_member' => $user_info['id'],
 				'current_topic' => $topic,
+				'operator' => '>',
+				'notoperator' => '<',
+				'current_subject' => $topicinfo['subject'],
+				'current_poster' => '', // !!! I thought the poster's name for first/last poster were supplied through the topicinfo query, but they're not, so need to fix this!
+				'current_replies' => $topicinfo['num_replies'],
+				'current_views' => $topicinfo['num_views'],
+				'current_last_msg' => $topicinfo['id_last_msg'],
 			)
 		);
+
 		list ($prev_topic, $prev_title, $prev_pos) = wesql::fetch_row($request);
 		list ($next_topic, $next_title) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -340,49 +385,6 @@ function Display()
 		$context['prev_topic'] = $prev_topic;
 		$context['next_topic'] = $next_topic;
 	}
-/*
-	elseif (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
-	{
-		// !!! @todo: {query_see_topic}
-		$request = wesql::query('
-			SELECT t.id_topic, m.subject
-			FROM {db_prefix}topics AS t
-				INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
-			WHERE
-				t.id_topic = (
-					SELECT MIN(t.id_topic)
-					FROM {db_prefix}topics AS t
-					WHERE t.id_topic > {int:current_topic}
-						AND t.id_board = {int:current_board}
-						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
-				)
-			OR
-				t.id_topic = (
-					SELECT MAX(t.id_topic)
-					FROM {db_prefix}topics AS t
-					WHERE t.id_topic < {int:current_topic}
-						AND t.id_board = {int:current_board}
-						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))
-				)
-			ORDER BY t.id_topic',
-			array(
-				'current_board' => $board,
-				'current_member' => $user_info['id'],
-				'current_topic' => $topic,
-			)
-		);
-		list ($prev_topic, $prev_title) = wesql::fetch_row($request);
-		list ($next_topic, $next_title) = wesql::fetch_row($request);
-		wesql::free_result($request);
-
-		if (empty($next_topic) && !empty($prev_topic) && $prev_topic > $topic)
-		{
-			$next_topic = $prev_topic;
-			$next_title = $prev_title;
-			$prev_topic = $prev_title = '';
-		}
-	}
-*/
 
 	// Create a previous/next string if the selected theme has it as a selected option.
 	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, 60);
