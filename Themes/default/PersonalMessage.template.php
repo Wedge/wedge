@@ -638,10 +638,10 @@ function template_search()
 	add_js('
 	function expandCollapseLabels()
 	{
-		var current = $("#searchLabelsExpand").is(":visible");
+		var current = $("#searchLabelsExpand").is(":visible"), icon = $("#expandLabelsIcon");
 
 		$("#searchLabelsExpand").toggle(!current);
-		$("#expandLabelsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
+		icon.css("backgroundPositionY", current ? 0 : icon.css("width"));
 	}');
 
 	echo '
@@ -724,7 +724,7 @@ function template_search()
 		<fieldset class="labels">
 			<div class="roundframe">
 				<we:title2>
-					<a href="#" onclick="expandCollapseLabels(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandLabelsIcon"></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
+					<a href="#" onclick="expandCollapseLabels(); return false;"><img class="foldable" src="', img_blankGif(), '" id="expandLabelsIcon"></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
 				</we:title2>
 				<ul id="searchLabelsExpand" class="reset" ', $context['check_all'] ? 'style="display: none;"' : '', '>';
 

@@ -8,7 +8,7 @@ function template_info_center_begin()
 	// Here's where the "Info Center" starts...
 	echo '
 			<we:title>
-				<img id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '">
+				<img id="upshrink_ic" src="', img_blankGif(), '" title="', $txt['upshrink_description'], '"', empty($options['collapse_header_ic']) ? ' class="fold"' : '', '>
 				', $txt['info_center_title'], '
 			</we:title>
 			<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none"', '>';

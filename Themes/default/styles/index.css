@@ -141,7 +141,7 @@ h1.forumtitle
 #upshrink
 	float: right
 	visibility: hidden
-	padding: .3em 1em 0
+	margin: .3em 1em 0
 
 // The upper_section, float the two each way
 #upper_section

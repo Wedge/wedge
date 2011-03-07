@@ -509,7 +509,7 @@ function template_set_settings()
 // This template allows for the selection of different themes ;)
 function template_pick()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
 	<div id="pick_theme">
@@ -521,7 +521,8 @@ function template_pick()
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
 	{
-		$thumbnail_href = file_exists($theme['theme_dir'] . '/styles/thumbnail.jpg') ? $theme['theme_url'] . '/styles/thumbnail.jpg' : '';
+		$thumbnail = '/' . (empty($theme['id']) ? $modSettings['theme_styling_guests'] : 'styles') . '/thumbnail.jpg';
+		$thumbnail_href = file_exists($theme['theme_dir'] . $thumbnail) ? $theme['theme_url'] . $thumbnail : '';
 
 		echo '
 			<div style="margin: 8px 0"></div>

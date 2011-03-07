@@ -623,7 +623,6 @@ function template_main()
 		{
 			add_js('
 	aIgnoreToggles[' . $msgid . '] = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			\'msg_' . $msgid . '_extra_info\',
@@ -775,7 +774,7 @@ function template_quick_reply()
 			<div class="tborder" id="quickreplybox">
 				<we:cat>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">
-						<img src="', $settings['images_url'], '/', $options['display_quick_reply'] == 2 ? 'collapse' : 'expand', '.gif" alt="+" id="quickReplyExpand">
+						<img class="foldable', $options['display_quick_reply'] == 2 ? ' fold' : '', '" src="', img_blankGif(), '" alt="+" id="quickReplyExpand">
 					</a>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 				</we:cat>
@@ -835,8 +834,6 @@ function template_quick_reply()
 		sImagesUrl: "' . $settings['images_url'] . '",
 		sContainerId: "quickReplyOptions",
 		sImageId: "quickReplyExpand",
-		sImageCollapsed: "collapse.gif",
-		sImageExpanded: "expand.gif",
 		sJumpAnchor: "quickreply",
 		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
 		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",

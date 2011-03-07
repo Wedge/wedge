@@ -111,7 +111,7 @@ function template_main()
 			<br>
 			<fieldset class="flow_hidden">
 				<we:title2>
-					<a href="#" onclick="expandCollapseBoards(); return false;"><img src="', $settings['images_url'], '/expand.gif" id="expandBoardsIcon"></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
+					<a href="#" onclick="expandCollapseBoards(); return false;"><img class="foldable" src="', img_blankGif(), '" id="expandBoardsIcon"></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 				</we:title2>
 				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
 					<ul class="ignoreboards floatleft">';
@@ -188,10 +188,10 @@ function template_main()
 
 	function expandCollapseBoards()
 	{
-		var current = $("#searchBoardsExpand").is(":visible");
+		var current = $("#searchBoardsExpand").is(":visible"), icon = $("#expandBoardsIcon");
 
 		$("#searchBoardsExpand").slideToggle(!current);
-		$("#expandBoardsIcon").attr("src", smf_images_url + (current ? "/expand.gif" : "/collapse.gif"));
+		icon.css("backgroundPositionY", current ? 0 : icon.css("width"));
 	}');
 }
 

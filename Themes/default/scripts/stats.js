@@ -31,25 +31,21 @@ function smf_StatsCenter(oOptions)
 			oCurYear = that.oYears[sYearId];
 
 			// Use the collapse image to determine the current state.
-			oCurYear.bIsCollapsed = oCurYear.oCollapseImage.src.indexOf(oOptions.sYearImageCollapsed) >= 0;
+			oCurYear.bIsCollapsed = oCurYear.oCollapseImage.style.backgroundPositionY == 0;
 
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new smc_Toggle({
-				bToggleEnabled: true,
 				bCurrentlyCollapsed: oCurYear.bIsCollapsed,
 				instanceRef: that,
 				sYearId: sYearId,
 				funcOnBeforeCollapse: function () {
 					this.opt.instanceRef.onBeforeCollapseYear(this);
 				},
-				aSwappableContainers: [
-				],
+				aSwappableContainers: [],
 				aSwapImages: [
 					{
 						sId: oOptions.sYearImageIdPrefix + sYearId,
-						srcExpanded: smf_images_url + '/' + oOptions.sYearImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + oOptions.sYearImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
@@ -78,13 +74,12 @@ function smf_StatsCenter(oOptions)
 			oCurMonth = oCurYear.oMonths[sMonthId];
 
 			// Determine whether the month is currently collapsed or expanded..
-			oCurMonth.bIsCollapsed = oCurMonth.oCollapseImage.src.indexOf(oOptions.sMonthImageCollapsed) >= 0;
+			oCurMonth.bIsCollapsed = oCurMonth.oCollapseImage.style.backgroundPositionY == 0;
 
 			var sLinkText = $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html();
 
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new smc_Toggle({
-				bToggleEnabled: true,
 				bCurrentlyCollapsed: oCurMonth.bIsCollapsed,
 				instanceRef: that,
 				sMonthId: sMonthId,
@@ -94,14 +89,11 @@ function smf_StatsCenter(oOptions)
 				funcOnBeforeExpand: function () {
 					this.opt.instanceRef.onBeforeExpandMonth(this);
 				},
-				aSwappableContainers: [
-				],
+				aSwappableContainers: [],
 				aSwapImages: [
 					{
 						sId: oOptions.sMonthImageIdPrefix + sMonthId,
-						srcExpanded: smf_images_url + '/' + oOptions.sMonthImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + oOptions.sMonthImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
@@ -192,19 +184,12 @@ smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 
 			for (var iCellIndex = 0, iNumCells = that.opt.aDataCells.length; iCellIndex < iNumCells; iCellIndex++)
 			{
-				var
-					oCurCell = oCurRow.insertCell(-1),
-					sCurData = this.getAttribute(that.opt.aDataCells[iCellIndex]);
+				var oCurCell = oCurRow.insertCell(-1);
 
 				if (that.opt.aDataCells[iCellIndex] == 'date')
-				{
-					oCurCell.style.paddingLeft = '6ex';
-					oCurCell.style.textAlign = 'left';
-				}
-				else
-					oCurCell.style.textAlign = 'center';
+					oCurCell.className = 'stats_day';
 
-				oCurCell.appendChild(document.createTextNode(sCurData));
+				oCurCell.appendChild(document.createTextNode(this.getAttribute(that.opt.aDataCells[iCellIndex])));
 			}
 
 			// Add these day rows to the toggle objects in case of collapse.

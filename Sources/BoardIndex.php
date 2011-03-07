@@ -154,7 +154,6 @@ function BoardIndex()
 
 	add_js('
 	var oInfoCenterToggle = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
 		aSwappableContainers: [
 			\'upshrinkHeaderIC\'
@@ -162,17 +161,15 @@ function BoardIndex()
 		aSwapImages: [
 			{
 				sId: \'upshrink_ic\',
-				srcExpanded: smf_images_url + \'/collapse.gif\',
-				altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ',
-				srcCollapsed: smf_images_url + \'/expand.gif\',
-				altCollapsed: ' . JavaScriptEscape($txt['upshrink_description']) . '
+				altExpanded: ' . ($upshrink_desc = JavaScriptEscape($txt['upshrink_description'])) . ',
+				altCollapsed: ' . $upshrink_desc . '
 			}
 		],
 		oThemeOptions: {
 			bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ',
 			sOptionName: \'collapse_header_ic\',
-			sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
-			sSessionId: ' . JavaScriptEscape($context['session_id']) . '
+			sSessionVar: \'' . $context['session_var'] . '\',
+			sSessionId: \'' . $context['session_id'] . '\'
 		},
 		oCookieOptions: {
 			bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',

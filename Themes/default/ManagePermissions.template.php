@@ -87,7 +87,7 @@ function template_permission_index()
 	{
 		echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/', empty($context['show_advanced_options']) ? 'selected' : 'sort_down', '.gif" id="permissions_panel_toggle"> ', $txt['permissions_advanced_options'], '
+				<img class="sortselect', empty($context['show_advanced_options']) ? ' select' : '', '" src="', img_blankGif(), '" id="permissions_panel_toggle"> ', $txt['permissions_advanced_options'], '
 			</we:cat>
 			<div id="permissions_panel_advanced" class="windowbg wrc">
 				<fieldset>
@@ -180,25 +180,20 @@ function template_permission_index()
 		// Javascript for the advanced stuff.
 		add_js('
 	var oPermissionsPanelToggle = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
-		aSwappableContainers: [
-			\'permissions_panel_advanced\'
-		],
+		aSwappableContainers: [\'permissions_panel_advanced\'],
 		aSwapImages: [
 			{
 				sId: \'permissions_panel_toggle\',
-				srcExpanded: smf_images_url + \'/sort_down.gif\',
 				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-				srcCollapsed: smf_images_url + \'/selected.gif\',
 				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
 			}
 		],
 		oThemeOptions: {
 			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
 			sOptionName: \'admin_preferences\',
-			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-			sSessionId: ', JavaScriptEscape($context['session_id']), ',
+			sSessionVar: \'', $context['session_var'], '\',
+			sSessionId: \'', $context['session_id'], '\',
 			sThemeId: \'1\',
 			sAdditionalVars: \';admin_key=app\'
 		}
@@ -572,7 +567,7 @@ function template_modify_group_simple($type)
 					<tr class="windowbg">
 						<td colspan="2" class="w100 left">
 							<a href="#" onclick="return toggleBreakdown(\'', $id_group, '\');">
-								<img src="', $settings['images_url'], '/sort_down.gif" id="group_toggle_img_', $id_group, '">&nbsp;<strong>', $permissionGroup['name'], '</strong>
+								<img class="sortselect" src="', img_blankGif(), '" id="group_toggle_img_', $id_group, '">&nbsp;<strong>', $permissionGroup['name'], '</strong>
 							</a>
 						</td>';
 				if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
@@ -666,7 +661,7 @@ function template_modify_group_simple($type)
 				$("#perm_div_" + id_group + "_" + groupPermissions[id_group][i]).toggle(displayType == "");
 
 		$("#group_hr_div_" + id_group).toggle(displayType == "");
-		$("#group_toggle_img_" + id_group).attr("src", "', $settings['images_url'], '/" + (displayType == "" ? "sort_down" : "selected") + ".gif");
+		$("#group_toggle_img_" + id_group).css("backgroundPositionY", displayType == "" ? 0 : $("#group_toggle_img_" + id_group).css("width"));
 
 		return false;
 	}');

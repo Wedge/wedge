@@ -24,7 +24,8 @@ function template_boardindex()
 			<tbody class="header" id="category_', $category['id'], '">
 				<tr>
 					<td colspan="4">
-						<we:cat>';
+						<we:cat>
+							<a href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
@@ -183,7 +184,7 @@ function template_boardindex_newsfader()
 		echo '
 	<div id="newsfader">
 		<we:cat>
-			<img id="newsupshrink" src="', $settings['images_url'], '/collapse.gif" title="', $txt['upshrink_description'], '" class="bottom" style="display: none">
+			<img id="newsupshrink" src="', img_blankGif(), '" title="', $txt['upshrink_description'], '">
 			', $txt['news'], '
 		</we:cat>
 		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';
@@ -208,25 +209,20 @@ function template_boardindex_newsfader()
 	});
 
 	var smfNewsFadeToggle = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
-		aSwappableContainers: [
-			\'smfFadeScroller\'
-		],
+		aSwappableContainers: [\'smfFadeScroller\'],
 		aSwapImages: [
 			{
 				sId: \'newsupshrink\',
-				srcExpanded: smf_images_url + \'/collapse.gif\',
-				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-				srcCollapsed: smf_images_url + \'/expand.gif\',
-				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
+				altExpanded: ', $upshrink_desc = JavaScriptEscape($txt['upshrink_description']), ',
+				altCollapsed: ', $upshrink_desc, '
 			}
 		],
 		oThemeOptions: {
 			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
 			sOptionName: \'collapse_news_fader\',
-			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-			sSessionId: ', JavaScriptEscape($context['session_id']), '
+			sSessionVar: \'', $context['session_var'], '\',
+			sSessionId: \'', $context['session_id'], '\'
 		},
 		oCookieOptions: {
 			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',

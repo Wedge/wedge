@@ -117,7 +117,7 @@ function template_body_above()
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
 		<div id="top_section"><div class="frame">
-			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" title="', $txt['upshrink_description'], '">';
+			<img id="upshrink" src="', img_blankGif(), '" title="', $txt['upshrink_description'], '">';
 
 	if (!empty($context['allow_search']))
 	{
@@ -408,25 +408,20 @@ function template_html_below()
 	<!-- insert inline events here -->
 
 	var oMainHeaderToggle = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
-		aSwappableContainers: [
-			\'upper_section\'
-		],
+		aSwappableContainers: [\'upper_section\'],
 		aSwapImages: [
 			{
 				sId: \'upshrink\',
-				srcExpanded: smf_images_url + \'/upshrink.png\',
-				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-				srcCollapsed: smf_images_url + \'/upshrink2.png\',
-				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
+				altExpanded: ', $upshrink_desc = JavaScriptEscape($txt['upshrink_description']), ',
+				altCollapsed: ', $upshrink_desc, '
 			}
 		],
 		oThemeOptions: {
 			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
 			sOptionName: \'collapse_header\',
-			sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-			sSessionId: ', JavaScriptEscape($context['session_id']), '
+			sSessionVar: \'', $context['session_var'], '\',
+			sSessionId: \'', $context['session_id'], '\'
 		},
 		oCookieOptions: {
 			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',

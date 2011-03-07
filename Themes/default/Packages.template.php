@@ -119,7 +119,7 @@ function template_view_package()
 
 			echo '
 				<tr class="windowbg', $alternate ? '' : '2', '">
-					<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none">' : '', '</td>
+					<td>', isset($packageaction['operations']) ? '<img class="sortselect" id="operation_img_' . $action_num . '" src="' . img_blankGif() . '" alt="*">' : '', '</td>
 					<td>', $i++, '.</td>
 					<td>', $packageaction['type'], '</td>
 					<td>', $packageaction['action'], '</td>
@@ -302,17 +302,12 @@ function template_view_package()
 		foreach ($js_operations as $key => $operation)
 			add_js('
 	aOperationElements[', $key, '] = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
-		aSwappableContainers: [
-			\'operation_', $key, '\'
-		],
+		aSwappableContainers: [\'operation_', $key, '\'],
 		aSwapImages: [
 			{
 				sId: \'operation_img_', $key, '\',
-				srcExpanded: smf_images_url + \'/sort_down.gif\',
 				altExpanded: \'*\',
-				srcCollapsed: smf_images_url + \'/selected.gif\',
 				altCollapsed: \'*\'
 			}
 		]
@@ -805,7 +800,7 @@ function template_package_list()
 		{
 			echo '
 				<li>
-					<strong><img id="ps_img_', $i, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none"> ', $packageSection['title'], '</strong>';
+					<strong><img class="shrinkable" id="ps_img_', $i, '" src="', img_blankGif(), '" alt="*"> ', $packageSection['title'], '</strong>';
 
 			if (!empty($packageSection['text']))
 				echo '
@@ -846,7 +841,7 @@ function template_package_list()
 				{
 					// 1. Some mod [ Download ].
 					echo '
-							<strong><img id="ps_img_', $i, '_pkg_', $id, '" src="', $settings['images_url'], '/upshrink.png" alt="*" style="display: none"> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
+							<strong><img class="shrinkable" id="ps_img_', $i, '_pkg_', $id, '" src="', img_blankGif(), '" alt="*"> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
@@ -909,17 +904,12 @@ function template_package_list()
 		{
 			add_js('
 	var oPackageServerToggle_', $section, ' = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
-		aSwappableContainers: [
-			\'package_section_', $section, '\'
-		],
+		aSwappableContainers: [\'package_section_', $section, '\'],
 		aSwapImages: [
 			{
 				sId: \'ps_img_', $section, '\',
-				srcExpanded: smf_images_url + \'/upshrink.png\',
 				altExpanded: \'*\',
-				srcCollapsed: smf_images_url + \'/upshrink2.png\',
 				altCollapsed: \'*\'
 			}
 		]
@@ -929,17 +919,12 @@ function template_package_list()
 				if (!$package['is_text'] && !$package['is_line'] && !$package['is_remote'])
 					add_js('
 	var oPackageToggle_', $section, '_pkg_', $id, ' = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
-		aSwappableContainers: [
-			\'package_section_', $section, '_pkg_', $id, '\'
-		],
+		aSwappableContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
 		aSwapImages: [
 			{
 				sId: \'ps_img_', $section, '_pkg_', $id, '\',
-				srcExpanded: smf_images_url + \'/upshrink.png\',
 				altExpanded: \'*\',
-				srcCollapsed: smf_images_url + \'/upshrink2.png\',
 				altCollapsed: \'*\'
 			}
 		]

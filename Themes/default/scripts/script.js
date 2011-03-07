@@ -311,18 +311,6 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 	$(spanNode).unbind('click').css('fontWeight', 'normal').html(replacement);
 }
 
-function smc_preCacheImage(sSrc)
-{
-	if (!('smc_aCachedImages' in window))
-		window.smc_aCachedImages = [];
-
-	if (!in_array(sSrc, window.smc_aCachedImages))
-	{
-		var oImage = new Image();
-		oImage.src = sSrc;
-	}
-}
-
 
 // *** smc_Cookie class.
 function smc_Cookie(oOptions)
@@ -359,10 +347,6 @@ function smc_Toggle(oOptions)
 	this._collapsed = false;
 	this._cookie = null;
 
-	// The master switch can disable this toggle fully.
-	if ('bToggleEnabled' in this.opt && !this.opt.bToggleEnabled)
-		return;
-
 	// If cookies are enabled and they were set, override the initial state.
 	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
 	{
@@ -382,18 +366,11 @@ function smc_Toggle(oOptions)
 	// Initialize the images to be clickable.
 	var i, n;
 	if ('aSwapImages' in this.opt)
-	{
 		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
-		{
 			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(function () {
 				$(this).data('that').toggle();
 				this.blur();
 			}).css('cursor', 'pointer').mousedown(false);
-
-			// Preload the collapsed image.
-			smc_preCacheImage(this.opt.aSwapImages[i].srcCollapsed);
-		}
-	}
 
 	// Initialize links.
 	if ('aSwapLinks' in this.opt)
@@ -426,11 +403,8 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		op = this.opt.aSwapImages;
 		for (i = 0, n = op.length; i < n; i++)
 		{
-			var oImg = $('#' + op[i].sId), sTarget = bCollapse ? op[i].srcCollapsed : op[i].srcExpanded, sAlt = bCollapse ? op[i].altCollapsed : op[i].altExpanded;
-			// Only (re)load the image if it's changed.
-			if (oImg.attr('src') != sTarget)
-				oImg.attr('src', sTarget);
-			oImg.attr({ alt: sAlt, title: sAlt });
+			var oImg = $('#' + op[i].sId), sAlt = bCollapse ? op[i].altCollapsed : op[i].altExpanded;
+			oImg.css('backgroundPositionY', bCollapse ? 0 : oImg.css('width')).attr({ alt: sAlt, title: sAlt });
 		}
 	}
 

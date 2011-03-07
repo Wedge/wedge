@@ -166,7 +166,7 @@ function template_main()
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
 				<div id="postAdditionalOptionsHeader">
-					<img src="', $settings['images_url'], '/collapse.gif" alt="-" id="postMoreExpand" style="display: none"> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
+					<img class="foldable" src="', img_blankGif(), '" alt="-" id="postMoreExpand"> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
 				</div>';
 
 	// Display the check boxes for all the standard options - if they are available to the user!
@@ -392,7 +392,7 @@ function template_main()
 
 		new_replies = [];
 		var ignored_replies = [], ignoring;
-		var newPostsHTML = \'\', id;
+		var newPostsHTML = "", id;
 
 		$("smf new_posts post", XMLDoc).each(function () {
 			id = $(this).attr("id");
@@ -425,7 +425,6 @@ function template_main()
 			for (var i = 0; i < numIgnoredReplies; i++)
 			{
 				aIgnoreToggles[ignored_replies[i]] = new smc_Toggle({
-					bToggleEnabled: true,
 					bCurrentlyCollapsed: true,
 					aSwappableContainers: [
 						"msg_" + ignored_replies[i] + "_body",
@@ -459,7 +458,6 @@ function template_main()
 
 		add_js('
 	var oSwapAdditionalOptions = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: ', $fold ? 'true' : 'false', ',
 		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
 		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
@@ -471,9 +469,7 @@ function template_main()
 		aSwapImages: [
 			{
 				sId: "postMoreExpand",
-				srcExpanded: smf_images_url + "/collapse.gif",
 				altExpanded: "-",
-				srcCollapsed: smf_images_url + "/expand.gif",
 				altCollapsed: "+"
 			}
 		],
@@ -779,7 +775,6 @@ function template_show_previous_posts()
 	foreach ($ignored_posts as $post_id)
 		add_js('
 	aIgnoreToggles[' . $post_id . '] = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			"msg_' . $post_id . '_body",

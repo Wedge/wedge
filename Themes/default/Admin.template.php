@@ -1419,7 +1419,7 @@ function template_download_language()
 		echo '
 				<tr class="titlebg">
 					<td colspan="4">
-						<img src="', $settings['images_url'], '/sort_down.gif" id="toggle_image_', $theme, '">&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
+						<img class="sortselect" src="', img_blankGif(), '" id="toggle_image_', $theme, '">&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
 					</td>
 				</tr>';
 
@@ -1516,7 +1516,6 @@ function template_download_language()
 
 		add_js('
 	var oTogglePanel_', $theme, ' = new smc_Toggle({
-		bToggleEnabled: true,
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [');
 
@@ -1530,9 +1529,7 @@ function template_download_language()
 		aSwapImages: [
 			{
 				sId: \'toggle_image_', $theme, '\',
-				srcExpanded: smf_images_url + \'/sort_down.gif\',
 				altExpanded: \'*\',
-				srcCollapsed: smf_images_url + \'/selected.gif\',
 				altCollapsed: \'*\'
 			}
 		]

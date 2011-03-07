@@ -296,7 +296,7 @@ function template_main()
 			echo '
 					<tr class="windowbg2" id="year_', $id, '">
 						<th class="stats_year">
-							<img id="year_img_', $id, '" src="', $settings['images_url'], '/collapse.gif">
+							<img class="foldable" id="year_img_', $id, '" src="', img_blankGif(), '">
 							<a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
 						</th>
 						<th>', $year['new_topics'], '</th>
@@ -316,7 +316,7 @@ function template_main()
 				echo '
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
 						<th class="stats_month">
-							<img src="', $settings['images_url'], '/', $month['expanded'] ? 'collapse.gif' : 'expand.gif', '" id="img_', $month['id'], '">
+							<img class="foldable', $month['expanded'] ? ' fold' : '', '" id="img_', $month['id'], '" src="', img_blankGif(), '">
 							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th>', $month['new_topics'], '</th>
@@ -367,14 +367,10 @@ function template_main()
 		sTableId: \'stats\',
 
 		reYearPattern: /year_(\d+)/,
-		sYearImageCollapsed: \'expand.gif\',
-		sYearImageExpanded: \'collapse.gif\',
 		sYearImageIdPrefix: \'year_img_\',
 		sYearLinkIdPrefix: \'year_link_\',
 
 		reMonthPattern: /tr_month_(\d+)/,
-		sMonthImageCollapsed: \'expand.gif\',
-		sMonthImageExpanded: \'collapse.gif\',
 		sMonthImageIdPrefix: \'img_\',
 		sMonthLinkIdPrefix: \'m\',
 
