@@ -161,8 +161,7 @@ function BoardIndex()
 		aSwapImages: [
 			{
 				sId: \'upshrink_ic\',
-				altExpanded: ' . ($upshrink_desc = JavaScriptEscape($txt['upshrink_description'])) . ',
-				altCollapsed: ' . $upshrink_desc . '
+				altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . '
 			}
 		],
 		oThemeOptions: {

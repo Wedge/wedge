@@ -476,8 +476,7 @@ function template_main()
 		aSwapLinks: [
 			{
 				sId: "postMoreExpandLink",
-				msgExpanded: ' . JavaScriptEscape($txt['post_additionalopt']) . ',
-				msgCollapsed: ' . JavaScriptEscape($txt['post_additionalopt']) . '
+				msgExpanded: ' . JavaScriptEscape($txt['post_additionalopt']) . '
 			}
 		]
 	});');

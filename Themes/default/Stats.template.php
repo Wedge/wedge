@@ -276,7 +276,7 @@ function template_main()
 			<table class="table_grid w100 cs0 cp4" id="stats">
 				<thead>
 					<tr class="titlebg">
-						<th class="first_th left w25">', $txt['yearly_summary'], '</th>
+						<th class="first_th w25">', $txt['yearly_summary'], '</th>
 						<th>', $txt['stats_new_topics'], '</th>
 						<th>', $txt['stats_new_posts'], '</th>
 						<th>', $txt['stats_new_members'], '</th>

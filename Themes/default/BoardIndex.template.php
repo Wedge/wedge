@@ -214,8 +214,7 @@ function template_boardindex_newsfader()
 		aSwapImages: [
 			{
 				sId: \'newsupshrink\',
-				altExpanded: ', $upshrink_desc = JavaScriptEscape($txt['upshrink_description']), ',
-				altCollapsed: ', $upshrink_desc, '
+				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '
 			}
 		],
 		oThemeOptions: {

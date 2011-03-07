@@ -638,10 +638,10 @@ function template_search()
 	add_js('
 	function expandCollapseLabels()
 	{
-		var current = $("#searchLabelsExpand").is(":visible"), icon = $("#expandLabelsIcon");
+		var current = $("#searchLabelsExpand").is(":visible");
 
 		$("#searchLabelsExpand").toggle(!current);
-		icon.css("backgroundPositionY", current ? 0 : icon.css("width"));
+		$("#expandLabelsIcon").toggleClass("fold", !current);
 	}');
 
 	echo '

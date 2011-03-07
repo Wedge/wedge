@@ -27,10 +27,13 @@ body
 
 #top_section
 	background: none
+	border: 0
 
 #upper_section
-	base: #top_section
-	border: 0
+	border: 3px solid darken(#fd9604, 10%)
+	border-width: 3px 0 0 0
+	.frame
+		background-color: hue(darken($head_bg, 15%), -5%)
 
 #content
 	color: #444
@@ -46,14 +49,12 @@ body
 		color: #fc9
 	a
 		color: #fff /* f93 */
+
 	// Text color for the forum title in the header
 	h1.forumtitle a
-		color: #fc9
+		color: lighten(hue(#fc9, 20), 10%)
+		font: bold .9em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 		text-shadow: 1px 1px 1px #000
-
-#upper_section .user extends #top_section
-	a
-		color: #fff
 
 #sidebar
 	background: #edefe6
@@ -91,8 +92,7 @@ body
 	background: transparent url($images/wedgelogo.png) no-repeat
 	width: 140px
 	height: 52px
-	margin-top: .7em
-	margin-left: 1em
+	margin: 3em 2em 0
 
 #main_menu
 	border: 0
@@ -196,11 +196,14 @@ code.bbc_code
 	a:hover
 		color: #fc8
 
+.grad40
+	background: url($images/theme/grad40.png) repeat-x
+
 .cat, .title
-	background: #b3afa9 url($images/theme/grad40.png) repeat-x
-	font: bold 10pt Verdana
+	base: .grad40
+	background-color: #b3afa9
+	font: bold 10pt/18px Verdana
 	letter-spacing: 0
-	line-height: 18px
 
 .cat
 	background-color: #c3b9c3
@@ -223,11 +226,14 @@ code.bbc_code
 	background: #6294CE
 
 tr.titlebg th, tr.titlebg td, tr.titlebg2 td
-	background: #333f39 url($images/theme/grad40.png) 0 0 repeat-x
+	base: .grad40
+	background-color: #936f69
+	color: #fff
 
 tr.catbg
 	td, th
-		background: #623f39 url($images/theme/grad40.png) 0 0 repeat-x
+		base: .grad40
+		background-color: #623f39
 		color: #fff
 		a
 			color: #fff

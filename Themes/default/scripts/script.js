@@ -403,15 +403,15 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		op = this.opt.aSwapImages;
 		for (i = 0, n = op.length; i < n; i++)
 		{
-			var oImg = $('#' + op[i].sId), sAlt = bCollapse ? op[i].altCollapsed : op[i].altExpanded;
-			oImg.css('backgroundPositionY', bCollapse ? 0 : oImg.css('width')).attr({ alt: sAlt, title: sAlt });
+			var sAlt = bCollapse && op[i].altCollapsed ? op[i].altCollapsed : op[i].altExpanded, icon = $('#' + op[i].sId);
+			icon.toggleClass('fold', !bCollapse).attr({ alt: sAlt, title: sAlt });
 		}
 	}
 
 	// Loop through all the links that need to be toggled.
 	if ('aSwapLinks' in this.opt)
 		for (i = 0, op = this.opt.aSwapLinks, n = op.length; i < n; i++)
-			$('#' + op[i].sId).html(bCollapse ? op[i].msgCollapsed : op[i].msgExpanded);
+			$('#' + op[i].sId).html(bCollapse && op[i].msgCollapsed ? op[i].msgCollapsed : op[i].msgExpanded);
 
 	// Now go through all the sections to be collapsed.
 	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)

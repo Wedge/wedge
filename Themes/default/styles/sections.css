@@ -1391,28 +1391,29 @@ span.hidelink
 	width, height: 14px
 	background: url($images/foldable.gif)
 	&.fold
-		background-position-y: -14px
+		background-position: 0 -14px
 
 .shrinkable
 	width, height: 20px
 	background: url($images/shrinkable.png)
-	&.shrink
-		background-position-y: -20px
+	&.fold
+		background-position: 0 -20px
 
 // Only seen in the admin area, so don't bother preloading its graphics...
 .sortselect
 	width, height: 12px
 	background: url-no-base64($images/sortselect.gif)
-	&.select
-		background-position-y: -12px
+	&.fold
+		background-position: 0 -12px
 
+// The upshrink image needs some tweaking
 #upshrink extends .shrinkable
-	background-position: 0 -20px
+	float: right
+	margin: 0 1em 0
 
 #upshrink_ic extends .foldable
 	float: right
 	margin: 2px -5px 0 0
-	background-position: 0 -14px
 
 #newsupshrink extends .foldable
 	margin-top: 4px

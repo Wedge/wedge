@@ -31,7 +31,7 @@ function smf_StatsCenter(oOptions)
 			oCurYear = that.oYears[sYearId];
 
 			// Use the collapse image to determine the current state.
-			oCurYear.bIsCollapsed = oCurYear.oCollapseImage.style.backgroundPositionY == 0;
+			oCurYear.bIsCollapsed = !$(oCurYear.oCollapseImage).hasClass('fold');
 
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new smc_Toggle({
@@ -52,8 +52,7 @@ function smf_StatsCenter(oOptions)
 				aSwapLinks: [
 					{
 						sId: oOptions.sYearLinkIdPrefix + sYearId,
-						msgExpanded: sYearId,
-						msgCollapsed: sYearId
+						msgExpanded: sYearId
 					}
 				]
 			});
@@ -74,7 +73,7 @@ function smf_StatsCenter(oOptions)
 			oCurMonth = oCurYear.oMonths[sMonthId];
 
 			// Determine whether the month is currently collapsed or expanded..
-			oCurMonth.bIsCollapsed = oCurMonth.oCollapseImage.style.backgroundPositionY == 0;
+			oCurMonth.bIsCollapsed = !$(oCurMonth.oCollapseImage).hasClass('fold');
 
 			var sLinkText = $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html();
 
@@ -100,8 +99,7 @@ function smf_StatsCenter(oOptions)
 				aSwapLinks: [
 					{
 						sId: oOptions.sMonthLinkIdPrefix + sMonthId,
-						msgExpanded: sLinkText,
-						msgCollapsed: sLinkText
+						msgExpanded: sLinkText
 					}
 				]
 			});

@@ -137,12 +137,6 @@ h1.forumtitle
 	float: right
 	line-height: 3em
 
-// The upshrink image needs some tweaking
-#upshrink
-	float: right
-	visibility: hidden
-	margin: .3em 1em 0
-
 // The upper_section, float the two each way
 #upper_section
 	background: url($images/theme/bg.jpg)
@@ -1161,7 +1155,7 @@ img[alt="!"]
 		font-size: 10pt
 		border-bottom: 1px solid #fff
 		th
-			height, line-height: 28px
+			height: 28px
 	th.last_th input
 		margin: 0 2px
 	th.lefttext
@@ -1413,7 +1407,6 @@ $ie-max-width = "max-width"
 $ie-max-width {ie6} = "width"
 $main_bg = rgb(241,243,234)
 $main_bg = rgb(246,248,239)
-$head_bg = rgb(232,226,231)
 $head_bg = rgba(233,235,186,.66)
 $menu_bg = #f7f0da
 $board_col = #d97b33

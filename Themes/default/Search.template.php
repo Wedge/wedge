@@ -188,10 +188,10 @@ function template_main()
 
 	function expandCollapseBoards()
 	{
-		var current = $("#searchBoardsExpand").is(":visible"), icon = $("#expandBoardsIcon");
+		var current = $("#searchBoardsExpand").is(":visible");
 
 		$("#searchBoardsExpand").slideToggle(!current);
-		icon.css("backgroundPositionY", current ? 0 : icon.css("width"));
+		$("#expandBoardsIcon").toggleClass("fold", !current);
 	}');
 }
 

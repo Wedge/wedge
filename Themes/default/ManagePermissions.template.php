@@ -87,7 +87,7 @@ function template_permission_index()
 	{
 		echo '
 			<we:cat>
-				<img class="sortselect', empty($context['show_advanced_options']) ? ' select' : '', '" src="', img_blankGif(), '" id="permissions_panel_toggle"> ', $txt['permissions_advanced_options'], '
+				<img class="sortselect', empty($context['show_advanced_options']) ? ' fold' : '', '" src="', img_blankGif(), '" id="permissions_panel_toggle"> ', $txt['permissions_advanced_options'], '
 			</we:cat>
 			<div id="permissions_panel_advanced" class="windowbg wrc">
 				<fieldset>
@@ -185,8 +185,7 @@ function template_permission_index()
 		aSwapImages: [
 			{
 				sId: \'permissions_panel_toggle\',
-				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-				altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
+				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '
 			}
 		],
 		oThemeOptions: {
@@ -661,7 +660,7 @@ function template_modify_group_simple($type)
 				$("#perm_div_" + id_group + "_" + groupPermissions[id_group][i]).toggle(displayType == "");
 
 		$("#group_hr_div_" + id_group).toggle(displayType == "");
-		$("#group_toggle_img_" + id_group).css("backgroundPositionY", displayType == "" ? 0 : $("#group_toggle_img_" + id_group).css("width"));
+		$("#group_toggle_img_" + id_group).toggleClass("fold", displayType != "");
 
 		return false;
 	}');

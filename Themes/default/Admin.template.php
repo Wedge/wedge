@@ -1529,8 +1529,7 @@ function template_download_language()
 		aSwapImages: [
 			{
 				sId: \'toggle_image_', $theme, '\',
-				altExpanded: \'*\',
-				altCollapsed: \'*\'
+				altExpanded: \'*\'
 			}
 		]
 	});');

@@ -117,7 +117,7 @@ function template_body_above()
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
 		<div id="top_section"><div class="frame">
-			<img id="upshrink" src="', img_blankGif(), '" title="', $txt['upshrink_description'], '">';
+			<img id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' src="', img_blankGif(), '" title="', $txt['upshrink_description'], '">';
 
 	if (!empty($context['allow_search']))
 	{
@@ -410,13 +410,7 @@ function template_html_below()
 	var oMainHeaderToggle = new smc_Toggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'upper_section\'],
-		aSwapImages: [
-			{
-				sId: \'upshrink\',
-				altExpanded: ', $upshrink_desc = JavaScriptEscape($txt['upshrink_description']), ',
-				altCollapsed: ', $upshrink_desc, '
-			}
-		],
+		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],
 		oThemeOptions: {
 			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
 			sOptionName: \'collapse_header\',

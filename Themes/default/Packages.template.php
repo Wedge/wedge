@@ -307,8 +307,7 @@ function template_view_package()
 		aSwapImages: [
 			{
 				sId: \'operation_img_', $key, '\',
-				altExpanded: \'*\',
-				altCollapsed: \'*\'
+				altExpanded: \'*\'
 			}
 		]
 	});');
@@ -909,8 +908,7 @@ function template_package_list()
 		aSwapImages: [
 			{
 				sId: \'ps_img_', $section, '\',
-				altExpanded: \'*\',
-				altCollapsed: \'*\'
+				altExpanded: \'*\'
 			}
 		]
 	});');
@@ -924,8 +922,7 @@ function template_package_list()
 		aSwapImages: [
 			{
 				sId: \'ps_img_', $section, '_pkg_', $id, '\',
-				altExpanded: \'*\',
-				altCollapsed: \'*\'
+				altExpanded: \'*\'
 			}
 		]
 	});');
