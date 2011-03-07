@@ -1131,12 +1131,8 @@ function PickTheme()
 		elseif (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php'))
 			include($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php');
 		else
-		{
-			$txt['theme_thumbnail_href'] = $theme_data['images_url'] . '/thumbnail.gif';
 			$txt['theme_description'] = '';
-		}
 
-		$context['available_themes'][$id_theme]['thumbnail_href'] = $txt['theme_thumbnail_href'];
 		$context['available_themes'][$id_theme]['description'] = $txt['theme_description'];
 	}
 

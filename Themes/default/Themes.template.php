@@ -521,15 +521,17 @@ function template_pick()
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
 	{
+		$thumbnail_href = file_exists($theme['theme_dir'] . '/styles/thumbnail.jpg') ? $theme['theme_url'] . '/styles/thumbnail.jpg' : '';
+
 		echo '
 			<div style="margin: 8px 0"></div>
 			<we:title>
 				<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $theme['name'], '</a>
 			</we:title>
-			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">
+			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">', $thumbnail_href ? '
 				<div class="floatright">
-					<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '" id="theme_thumb_preview_', $theme['id'], '" title="', $txt['theme_preview'], '"><img src="', $theme['thumbnail_href'], '" id="theme_thumb_', $theme['id'], '" class="padding"></a>
-				</div>
+					<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $theme['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" id="theme_thumb_preview_' . $theme['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $theme['id'] . '" class="padding"></a>
+				</div>' : '', '
 				<p>
 					', $theme['description'], '
 				</p>
@@ -572,8 +574,12 @@ function template_list_stylings(&$theme, $theme_id)
 	foreach ($theme['stylings'] as $sty)
 	{
 		$target = $theme_id . '_' . base64_encode($sty['dir']);
+		$thumbnail_href = isset($theme['theme_dir']) && file_exists($theme['theme_dir'] . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme['theme_url'] . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
 		echo '
-				<div class="roundframe" style="margin: 8px">
+				<div class="roundframe clear_right" style="margin: 8px">', $thumbnail_href ? '
+					<div class="floatright">
+						<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $target . ';' . $context['session_var'] . '=' . $context['session_id'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"></a>
+					</div>' : '', '
 					<p><strong>', $sty['name'], '</strong></p>
 					<p>', $sty['comment'], '</p>
 					<ul class="reset">

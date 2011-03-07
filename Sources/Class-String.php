@@ -122,12 +122,12 @@ class westr_base extends westr_entity
 
 	public static function strlen($string)
 	{
-		return strlen(preg_replace('~' . self::westr_STRPOS_ENT . '|.~u', '_', self::entity_clean($string)));
+		return strlen(preg_replace('~' . self::westr_ENTLIST . '|.~u', '_', self::entity_clean($string)));
 	}
 
 	public static function strpos($haystack, $needle, $offset = 0)
 	{
-		$haystack_arr = preg_split('~(&' . self::westr_STRPOS_ENT . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$haystack_arr = preg_split('~(&#' . self::westr_STRPOS_ENT . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		$haystack_size = count($haystack_arr);
 		if (strlen($needle) === 1)
 		{
@@ -184,6 +184,8 @@ class westr_base extends westr_entity
 		return preg_replace('~(\r\n|\r|\n)~', '<br>$1', $string);
 	}
 
+	// Cuts a HTML string to requested length, counting entities as 1 character, and not cutting them.
+	// max_length is the max desired length in characters, hard_limit in bytes (for database storage reasons), the rest is self explained.
 	public static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
 	{
 		global $entities, $replace_counter, $context;
@@ -214,12 +216,14 @@ class westr_base extends westr_entity
 		return $hard_limit && strlen($work) > $hard_limit ? rtrim(preg_replace('/&#?\w*$/', '', substr($work, 0, $hard_limit))) : $work;
 	}
 
+	// Recursively reattributes entities to strings
 	function restore_entities($match)
 	{
 		global $entities, $replace_counter;
 		return $entities[0][$replace_counter++];
 	}
 
+	// Closes all open tags, in recursive order, in order for pages not to be broken and to validate.
 	function close_tags(&$str, $hard_limit)
 	{
 		// Could be made faster with substr_count() but wouldn't always validate.

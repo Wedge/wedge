@@ -463,8 +463,6 @@ input[type=file]
 		display: block
 		float: none
 		white-space: nowrap
-		li
-			font-size: .95em
 
 .css h4:hover, h4.hove
 	base: .menu_arrows
@@ -475,13 +473,13 @@ input[type=file]
 .menu .chosen h4 extends .menu_arrows
 	background-color: #3fa6c3
 	background-position: 98% -28px
-	font-weight: bold
+	font: bold .95em/1.3em Verdana
 	color: #fff
 	a
 		color: #fff
 
 li.active > a
-	font-weight: bold
+	font: bold .95em/1.3em Verdana
 
 li.subsection > a extends .menu_arrows
 	background-position: 98% -46px
