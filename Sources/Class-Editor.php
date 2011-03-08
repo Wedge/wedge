@@ -2495,7 +2495,7 @@ class wedgeEditor
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
 		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . '
 	});
-	smf_editorArray[smf_editorArray.length] = oEditorHandle_' . $this->id . ';');
+	smf_editorArray.push(oEditorHandle_' . $this->id . ');');
 	}
 
 	public function outputButtons()

@@ -578,7 +578,7 @@ function template_main()
 			sErrorBorderStyle: ' . JavaScriptEscape('1px solid red') . '
 		});
 
-		aJumpTo[aJumpTo.length] = new JumpTo({
+		aJumpTo.push(new JumpTo({
 			sContainerId: "display_jump_to",
 			sJumpToTemplate: "<label for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
 			iCurBoardId: ' . $context['current_board'] . ',
@@ -589,9 +589,9 @@ function template_main()
 			sCatSeparator: "-----------------------------",
 			sCatPrefix: "",
 			sGoButtonLabel: "' . $txt['go'] . '"
-		});
+		}));
 
-		aIconLists[aIconLists.length] = new IconList({
+		aIconLists.push(new IconList({
 			sBackReference: "aIconLists[" + aIconLists.length + "]",
 			sIconIdPrefix: "msg_icon_",
 			sScriptUrl: smf_scripturl,
@@ -611,7 +611,7 @@ function template_main()
 			sItemBorderHover: "1px dotted gray",
 			sItemBackground: "transparent",
 			sItemBackgroundHover: "#e0e0f0"
-		});
+		}));
 	}');
 
 	if (!empty($ignoredMsgs))

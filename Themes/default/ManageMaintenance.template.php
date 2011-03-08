@@ -133,7 +133,7 @@ function template_maintain_members()
 	{
 		membersSwap = !membersSwap;
 
-		$("#membersIcon").attr("src", smf_images_url + (membersSwap ? "/collapse.gif" : "/expand.gif"));
+		$("#membersIcon").toggleClass("fold", membersSwap);
 		$("#membersText").html(membersSwap ? ', JavaScriptEscape($txt['maintain_members_choose']), ' : ', JavaScriptEscape($txt['maintain_members_all']), ');
 		$("#membersPanel").slideToggle(membersSwap);
 		$("#membersForm input[type=checkbox]").attr("checked", !membersSwap);
@@ -219,7 +219,7 @@ function template_maintain_members()
 				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
 
 	echo '
-				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
+				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img class="foldable" src="', img_blankGif(), '" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
 				<div style="display: none; padding: 3px" id="membersPanel">';
 
 	foreach ($context['membergroups'] as $group)
@@ -276,9 +276,9 @@ function template_maintain_topics()
 	{
 		rotSwap = !rotSwap;
 
-		$("#rotIcon").attr("src", smf_images_url + (rotSwap ? "/collapse.gif" : "/expand.gif"));
+		$("#rotIcon").toggleClass("fold", rotSwap);
 		$("#rotText").html(rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
-		$("#rotPanel").toggle(rotSwap);
+		$("#rotPanel").slideToggle(rotSwap);
 		$("#rotPanel input").each(function () {
 			if (this.type.toLowerCase() == "checkbox")
 				this.checked = !rotSwap;
@@ -308,7 +308,7 @@ function template_maintain_topics()
 						<label for="delete_old_not_sticky"><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br>
 					</p>
 					<p>
-						<a href="#rotLink" onclick="swapRot();"><img src="', $settings['images_url'], '/expand.gif" alt="+" id="rotIcon"></a> <a href="#rotLink" onclick="swapRot();" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
+						<a href="#rotLink" onclick="swapRot(); return false;"><img class="foldable" src="', img_blankGif(), '" alt="+" id="rotIcon"></a> <a href="#rotLink" onclick="swapRot(); return false;" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
 					</p>
 					<div style="display: none;" id="rotPanel" class="flow_hidden">
 						<div class="floatleft" style="width: 49%">';

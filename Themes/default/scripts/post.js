@@ -633,14 +633,14 @@ wedge_autoDraft.prototype.draftSend = function()
 		// This is not nice, though.
 		var recipients = [];
 		$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function() {
-			recipients[recipients.length] = $(this).val();
+			recipients.push($(this).val());
 		});
 		if (recipients.length > 0)
 			draftInfo['recipient_to[]'] = recipients;
 
 		recipients = [];
 		$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function() {
-			recipients[recipients.length] = $(this).val();
+			recipients.push($(this).val());
 		});
 		if (recipients.length > 0)
 			draftInfo['recipient_bcc[]'] = recipients;

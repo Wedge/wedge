@@ -448,7 +448,7 @@ function template_results()
 
 	add_js('
 	if (can_ajax)
-		aJumpTo[aJumpTo.length] = new JumpTo({
+		aJumpTo.push(new JumpTo({
 			sContainerId: "search_jump_to",
 			sJumpToTemplate: ', $context['jump_to']['label'], ',
 			iCurBoardId: 0,
@@ -459,7 +459,7 @@ function template_results()
 			sCatSeparator: "-----------------------------",
 			sCatPrefix: "",
 			sGoButtonLabel: ', JavaScriptEscape($txt['quick_mod_go']), '
-		});');
+		}));');
 }
 
 ?>

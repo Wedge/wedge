@@ -14,7 +14,7 @@ function wedge_NewsFader(oOptions)
 	// Load the items from the DOM.
 	var aFaderItems = [];
 	$(this.sControlId + ' li').each(function (i) {
-		aFaderItems[aFaderItems.length] = $(this).html();
+		aFaderItems.push($(this).html());
 	});
 
 	if (aFaderItems.length < 1)

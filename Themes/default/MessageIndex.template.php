@@ -239,7 +239,7 @@ function template_main_board()
 
 	add_js('
 	if (can_ajax)
-		aJumpTo[aJumpTo.length] = new JumpTo({
+		aJumpTo.push(new JumpTo({
 			sContainerId: "message_index_jump_to",
 			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
 			iCurBoardId: ' . $context['current_board'] . ',
@@ -250,7 +250,7 @@ function template_main_board()
 			sCatSeparator: "-----------------------------",
 			sCatPrefix: "",
 			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
-		});');
+		}));');
 
 	echo '
 		</div>
@@ -522,7 +522,7 @@ function template_main_blog()
 
 	add_js('
 	if (can_ajax)
-		aJumpTo[aJumpTo.length] = new JumpTo({
+		aJumpTo.push(new JumpTo({
 			sContainerId: "message_index_jump_to",
 			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
 			iCurBoardId: ' . $context['current_board'] . ',
@@ -533,7 +533,7 @@ function template_main_blog()
 			sCatSeparator: "-----------------------------",
 			sCatPrefix: "",
 			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
-		});');
+		}));');
 
 	echo '
 		</div>

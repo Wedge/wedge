@@ -326,16 +326,16 @@ function template_main()
 			{
 				// Handle the WYSIWYG editor.
 				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
-					x[x.length] = "message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
+					x.push("message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
 				else
-					x[x.length] = textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
+					x.push(textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
 			}
 		for (var i = 0, n = numericFields.length; i < n; i++)
 			if (numericFields[i] in postmod && "value" in postmod[numericFields[i]])
-				x[x.length] = numericFields[i] + "=" + parseInt(postmod.elements[numericFields[i]].value);
+				x.push(numericFields[i] + "=" + parseInt(postmod.elements[numericFields[i]].value));
 		for (var i = 0, n = checkboxFields.length; i < n; i++)
 			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
-				x[x.length] = checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value;
+				x.push(checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value);
 
 		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
 
@@ -358,7 +358,7 @@ function template_main()
 		// Show a list of errors (if any).
 		var errors = $("smf errors", XMLDoc), errorList = [];
 		$("error", errors).each(function () {
-			errorList[errorList.length] = $(this).text();
+			errorList.push($(this).text());
 		});
 		$("#errors").toggle(errorList.length > 0);
 		$("#error_serious").toggle(errors.attr("serious") == 1);
@@ -396,11 +396,11 @@ function template_main()
 
 		$("smf new_posts post", XMLDoc).each(function () {
 			id = $(this).attr("id");
-			new_replies[new_replies.length] = id;
+			new_replies.push(id);
 
 			ignoring = false;
 			if ($("is_ignored", this).text() != 0)
-				ignored_replies[ignored_replies.length] = ignoring = id;
+				ignored_replies.push(ignoring = id);
 
 			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + id + \'"></div>\';');
 
@@ -614,7 +614,7 @@ function template_make_event()
 			dayElement.options[0] = null;
 
 		for (i = 1; i <= days; i++)
-			dayElement.options[dayElement.length] = new Option(i, i);
+			dayElement.options.push(new Option(i, i));
 
 		if (selected < days)
 			dayElement.selectedIndex = selected;

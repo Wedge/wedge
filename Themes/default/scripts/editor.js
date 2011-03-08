@@ -436,11 +436,11 @@ smc_Editor.prototype.updateEditorControls = function()
 		}
 
 		sTree += (i != 0 ? '&nbsp;<strong>&gt;</strong>' : '') + '&nbsp;' + sCrumbName;
-		aAllCrumbs[aAllCrumbs.length] = sCrumbName;
+		aAllCrumbs.push(sCrumbName);
 	}
 
 	// Since we're in WYSIWYG state, show the toggle button as active.
-	aAllCrumbs[aAllCrumbs.length] = 'toggle';
+	aAllCrumbs.push('toggle');
 
 	this.opt.oBBCBox.setActive(aAllCrumbs);
 
@@ -1105,7 +1105,7 @@ smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
 		if (aSplitModifiers[i] in oNewShortcut)
 			oNewShortcut[aSplitModifiers[i]] = true;
 
-	this.aKeyboardShortcuts[this.aKeyboardShortcuts.length] = oNewShortcut;
+	this.aKeyboardShortcuts.push(oNewShortcut);
 };
 
 // Check whether the key has triggered a shortcut?

@@ -262,7 +262,7 @@ function template_modify_user_subscription()
 		days = monthLength[monthElement.value - 1];
 
 		for (i = 1; i <= days; i++)
-			dayElement.options[dayElement.length] = new Option(i, i);
+			dayElement.options.push(new Option(i, i));
 
 		if (selected < days)
 			dayElement.selectedIndex = selected;

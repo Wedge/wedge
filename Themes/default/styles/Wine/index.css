@@ -30,7 +30,7 @@ body
 	border: 0
 
 #upper_section
-	border: 3px solid darken(#fd9604, 10%)
+	border: 3px solid darken(#fd9604, 20%)
 	border-width: 3px 0 0 0
 	.frame
 		background-color: hue(darken($head_bg, 15%), -5%)
@@ -54,7 +54,7 @@ body
 	h1.forumtitle a
 		color: lighten(hue(#fc9, 20), 10%)
 		font: bold .9em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-		text-shadow: 1px 1px 1px #000
+		text-shadow: 0 0 8px #333
 
 #sidebar
 	background: #edefe6

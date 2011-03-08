@@ -102,24 +102,24 @@ function template_folder()
 
 		if (toAdd.length != 0)
 		{
-			theSelect.options[theSelect.options.length] = new Option(', $pm_msg_label_apply, ', "");
+			theSelect.options.push(new Option(', $pm_msg_label_apply, ', ""));
 			theSelect.options[theSelect.options.length - 1].innerHTML = ', $pm_msg_label_apply, ';
 			theSelect.options[theSelect.options.length - 1].disabled = true;
 
 			for (i in toAdd)
 				if (i != "length")
-					theSelect.options[theSelect.options.length] = new Option(toAdd[i], "add_" + i);
+					theSelect.options.push(new Option(toAdd[i], "add_" + i));
 		}
 
 		if (toRemove.length != 0)
 		{
-			theSelect.options[theSelect.options.length] = new Option(', $pm_msg_label_remove, ', "");
+			theSelect.options.push(new Option(', $pm_msg_label_remove, ', ""));
 			theSelect.options[theSelect.options.length - 1].innerHTML = ', $pm_msg_label_remove, ';
 			theSelect.options[theSelect.options.length - 1].disabled = true;
 
 			for (i in toRemove)
 				if (i != "length")
-					theSelect.options[theSelect.options.length] = new Option(toRemove[i], "rem_" + i);
+					theSelect.options.push(new Option(toRemove[i], "rem_" + i));
 		}
 	}');
 

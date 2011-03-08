@@ -76,9 +76,9 @@ function modify_topic_save(cur_session_id, cur_session_var)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x[x.length] = 'subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
-	x[x.length] = 'topic=' + qm.elements.topic.value;
-	x[x.length] = 'msg=' + qm.elements.msg.value;
+	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
+	x.push('topic=' + qm.elements.topic.value);
+	x.push('msg=' + qm.elements.msg.value);
 
 	if (typeof window.ajax_indicator == "function")
 		ajax_indicator(true);
@@ -278,10 +278,10 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x[x.length] = 'subject=' + escape(qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
-	x[x.length] = 'message=' + escape(qm.message.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B");
-	x[x.length] = 'topic=' + qm.elements.topic.value;
-	x[x.length] = 'msg=' + qm.elements.msg.value;
+	x.push('subject=' + escape(qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B"));
+	x.push('message=' + escape(qm.message.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B"));
+	x.push('topic=' + qm.elements.topic.value);
+	x.push('msg=' + qm.elements.msg.value);
 
 	// Send in the XMLHttp request and let's hope for the best.
 	ajax_indicator(true);

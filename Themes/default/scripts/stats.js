@@ -104,13 +104,13 @@ function smf_StatsCenter(oOptions)
 				]
 			});
 
-			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = this.id;
+			oCurYear.oToggle.opt.aSwappableContainers.push(this.id);
 		}
 
 		else if ((aResults = oOptions.reDayPattern.exec(this.id)) != null)
 		{
-			oCurMonth.oToggle.opt.aSwappableContainers[oCurMonth.oToggle.opt.aSwappableContainers.length] = this.id;
-			oCurYear.oToggle.opt.aSwappableContainers[oCurYear.oToggle.opt.aSwappableContainers.length] = this.id;
+			oCurMonth.oToggle.opt.aSwappableContainers.push(this.id);
+			oCurYear.oToggle.opt.aSwappableContainers.push(this.id);
 		}
 	});
 
@@ -140,7 +140,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 
 		for (var i = 0, c = oYearToggle.opt.aSwappableContainers, n = c.length; i < n; i++)
 			if (!in_array(c[i], oToggle.opt.aSwappableContainers))
-				aNewContainers[aNewContainers.length] = c[i];
+				aNewContainers.push(c[i]);
 
 		oYearToggle.opt.aSwappableContainers = aNewContainers;
 	}
@@ -191,8 +191,8 @@ smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 			}
 
 			// Add these day rows to the toggle objects in case of collapse.
-			that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers[that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers.length] = oCurRow.id;
-			that.oYears[sYearId].oToggle.opt.aSwappableContainers[that.oYears[sYearId].oToggle.opt.aSwappableContainers.length] = oCurRow.id;
+			that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers.push(oCurRow.id);
+			that.oYears[sYearId].oToggle.opt.aSwappableContainers.push(oCurRow.id);
 		});
 	});
 

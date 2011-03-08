@@ -469,13 +469,13 @@ function grabJumpToContent()
 	ajax_indicator(true);
 
 	$('smf item', getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml').responseXML).each(function () {
-		aBoardsAndCategories[aBoardsAndCategories.length] = {
+		aBoardsAndCategories.push({
 			id: parseInt(this.getAttribute('id'), 10),
 			isCategory: this.getAttribute('type') == 'category',
 			name: $(this).text().removeEntities(),
 			is_current: false,
 			childLevel: parseInt(this.getAttribute('childlevel'), 10)
-		};
+		});
 	});
 
 	ajax_indicator(false);
@@ -620,7 +620,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	if (typeof sMask == 'string')
 		for (i = 0; i < n; i++)
 			if (e[i].id.substr(0, sMask.length) == sMask)
-				aElementNames[aElementNames.length] = e[i].name;
+				aElementNames.push(e[i].name);
 
 	for (i = 0, n = aElementNames.length; i < n; i++)
 		if (aElementNames[i] in f[sFormName])
