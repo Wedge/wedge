@@ -668,11 +668,12 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 
 	if ($modSettings['totalMessages'] > 100000)
 	{
-		// !!! Why don't we use {query(_wanna)_see_board}?
+		// !!! Added {query_wanna_see_board} here, for security reasons. May be bad for performance.
 		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
-			WHERE num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($modSettings['postmod_active'] ? '
+			WHERE {query_wanna_see_board}
+				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($modSettings['postmod_active'] ? '
 				AND approved = {int:is_approved}' : '') . '
 			ORDER BY num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 			LIMIT {int:limit}',

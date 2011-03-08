@@ -63,6 +63,9 @@ p.moderators
 	display: none
 	color: #575757 // Shouldn't be shorthand style due to a JS bug in IE!
 
+.catfold
+	margin-top: 3px
+
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
 #upshrinkHeaderIC

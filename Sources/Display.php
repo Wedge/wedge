@@ -286,7 +286,7 @@ function Display()
 		$sort_methods = array(
 			'subject' => array(
 				'sort' => 'mf.subject',
-				'cmp' => '{raw:operator} {string:current_subject}',
+				'cmp' => '> {string:current_subject}',
 			),
 			'starter' => array(
 				'sort' => 'poster',
@@ -294,7 +294,7 @@ function Display()
 						INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
 						LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)',
 				'select' => ', IFNULL(memf.real_name, mf.poster_name) AS poster',
-				'cmp' => '{raw:operator} {string:current_poster}',
+				'cmp' => '> {string:current_poster}',
 			),
 			'last_poster' => array(
 				'sort' => 'poster',
@@ -302,23 +302,23 @@ function Display()
 						INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 						LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)',
 				'select' => ', IFNULL(meml.real_name, ml.poster_name) AS poster',
-				'cmp' => '{raw:operator} {string:current_poster}',
+				'cmp' => '> {string:current_poster}',
 			),
 			'replies' => array(
 				'sort' => 't.num_replies',
-				'cmp' => '{raw:operator} {int:current_replies}',
+				'cmp' => '> {int:current_replies}',
 			),
 			'views' => array(
 				'sort' => 't.num_views',
-				'cmp' => '{raw:operator} {int:current_views}',
+				'cmp' => '> {int:current_views}',
 			),
 			'first_post' => array(
 				'sort' => 't.id_topic',
-				'cmp' => '{raw:operator} {int:current_topic}',
+				'cmp' => '> {int:current_topic}',
 			),
 			'last_post' => array(
 				'sort' => 't.id_last_msg',
-				'cmp' => '{raw:operator} {int:current_last_msg}',
+				'cmp' => '> {int:current_last_msg}',
 			),
 		);
 
@@ -354,7 +354,7 @@ function Display()
 						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
 					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
-						AND ' . $sort . ' ' . str_replace('{raw:operator}', '{raw:notoperator}', $sort_methods[$sort_by]['cmp']) . '
+						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
 					ORDER BY t.is_sticky' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
 					LIMIT 1
 				)
@@ -363,8 +363,6 @@ function Display()
 				'current_board' => $board,
 				'current_member' => $user_info['id'],
 				'current_topic' => $topic,
-				'operator' => '>',
-				'notoperator' => '<',
 				'current_subject' => $topicinfo['subject'],
 				'current_poster' => '', // !!! I thought the poster's name for first/last poster were supplied through the topicinfo query, but they're not, so need to fix this!
 				'current_replies' => $topicinfo['num_replies'],

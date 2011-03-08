@@ -145,7 +145,7 @@ function reloadSettings()
  * - Assuming the member is correct, check and update the last-visit information if appropriate.
  * - Ensure the user groups are sanitised; or if not a logged in user, perform 'is this a spider' checks.
  * - Populate $user_info with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
- * - Establish board access rights based as an SQL clause (based on user groups) in $user_info['query_see_boards'], and a subset of this to include ignore boards preferences into $user_info['query_wanna_see_boards'].
+ * - Establish board access rights based as an SQL clause (based on user groups) in $user_info['query_see_board'], and a subset of this to include ignore boards preferences into $user_info['query_wanna_see_board'].
  */
 function loadUserSettings()
 {
@@ -380,7 +380,7 @@ function loadUserSettings()
 	// Just build this here, it makes it easier to change/use - administrators can see all boards.
 	if ($user_info['is_admin'])
 	{
-		$user_info['query_see_only_board'] = '1=1';
+		$user_info['query_list_board'] = '1=1';
 		$user_info['query_see_board'] = '1=1';
 	}
 	// Otherwise just the groups in $user_info['groups'].
@@ -414,13 +414,13 @@ function loadUserSettings()
 			}
 			$access['view_allow'] = array_diff($access['view_allow'], $access['view_deny']);
 			$access['enter_allow'] = array_diff($access['enter_allow'], $access['enter_deny']);
-			$user_info['query_see_only_board'] = empty($access['view_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['view_allow']) . ')';
+			$user_info['query_list_board'] = empty($access['view_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['view_allow']) . ')';
 			$user_info['query_see_board'] = empty($access['enter_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['enter_allow']) . ')';
 
 			$cache = array(
-				'query_see_only_board' => $user_info['query_see_only_board'],
+				'query_list_board' => $user_info['query_list_board'],
 				'query_see_board' => $user_info['query_see_board'],
-				'qsob_boards' => $access['view_allow'],
+				'qlb_boards' => $access['view_allow'],
 				'qsb_boards' => $access['enter_allow'],
 			);
 			cache_put_data('board_access_' . $cache_groups, $cache, 300);
@@ -430,13 +430,13 @@ function loadUserSettings()
 	}
 
 	// Build the list of boards they WANT to see.
-	// This will take the place of query_see_boards in certain spots, so it better include the boards they can see also
+	// This will take the place of query_see_board in certain spots, so it better include the boards they can see also
 
 	// If they aren't ignoring any boards then they want to see all the boards they can see
 	if (empty($user_info['ignoreboards']))
 	{
 		$user_info['query_wanna_see_board'] = $user_info['query_see_board'];
-		$user_info['query_wanna_see_only_board'] = $user_info['query_see_only_board'];
+		$user_info['query_wanna_list_board'] = $user_info['query_list_board'];
 	}
 	// Ok I guess they don't want to see all the boards
 	else
@@ -444,20 +444,20 @@ function loadUserSettings()
 		if ($user_info['is_admin'])
 		{
 			// Admin can implicitly see and enter every board. If they want to ignore boards, make sure we clear both of the 'wanna see' options.
-			$user_info['query_wanna_see_only_board'] = 'b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . ')';
-			$user_info['query_wanna_see_board'] = $user_info['query_wanna_see_only_board'];
+			$user_info['query_wanna_list_board'] = 'b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . ')';
+			$user_info['query_wanna_see_board'] = $user_info['query_wanna_list_board'];
 		}
 		else
 		{
 			$user_info['query_wanna_see_board'] = 'b.id_board IN (' . implode(',', array_diff($user_info['qsb_boards'], $user_info['ignoreboards'])) . ')';
-			$user_info['query_wanna_see_only_board'] = 'b.id_board IN (' . implode(',', array_diff($user_info['qsob_boards'], $user_info['ignoreboards'])) . ')';
+			$user_info['query_wanna_list_board'] = 'b.id_board IN (' . implode(',', array_diff($user_info['qlb_boards'], $user_info['ignoreboards'])) . ')';
 		}
 	}
 
 	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
-	wesql::register_replacement('query_see_only_board', $user_info['query_see_only_board']);
+	wesql::register_replacement('query_list_board', $user_info['query_list_board']);
 	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
-	wesql::register_replacement('query_wanna_see_only_board', $user_info['query_wanna_see_only_board']);
+	wesql::register_replacement('query_wanna_list_board', $user_info['query_wanna_list_board']);
 }
 
 /**
