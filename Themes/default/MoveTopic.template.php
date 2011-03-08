@@ -40,15 +40,15 @@ function template_main()
 	// Disable the reason textarea when the postRedirect checkbox is unchecked...
 	echo '
 					</dl>
-					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="$(\'#subjectArea\').toggle(this.checked);"> ', $txt['moveTopic2'], '.</label><br>
-					<fieldset id="subjectArea" style="display: none;">
+					<label><input type="checkbox" name="reset_subject" id="reset_subject" onclick="$(\'#subjectArea\').toggle(this.checked);"> ', $txt['moveTopic2'], '.</label><br>
+					<fieldset id="subjectArea" style="display: none">
 						<dl class="settings">
 							<dt><strong>', $txt['moveTopic3'], ':</strong></dt>
 							<dd><input type="text" name="custom_subject" size="30" value="', $context['subject'], '"></dd>
 						</dl>
-						<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject"> ', $txt['moveTopic4'], '.</label>
+						<label><input type="checkbox" name="enforce_subject"> ', $txt['moveTopic4'], '.</label>
 					</fieldset>
-					<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').toggle(this.checked);"> ', $txt['moveTopic1'], '.</label>
+					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').toggle(this.checked);"> ', $txt['moveTopic1'], '.</label>
 					<fieldset id="reasonArea" style="margin-top: 1ex;', $context['is_approved'] ? '' : 'display: none;', '">
 						<dl class="settings">
 							<dt>

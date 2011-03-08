@@ -83,7 +83,7 @@ function template_modify_subscription()
 	// Put a checkbox in for each group
 	foreach ($context['groups'] as $id => $name)
 		echo '
-						<label for="addgroup_', $id, '"><input type="checkbox" id="addgroup_', $id, '" name="addgroup[', $id, ']"', in_array($id, $context['sub']['add_groups']) ? ' checked' : '', !empty($context['disable_groups']) ? ' disabled' : '', '>&nbsp;<span class="smalltext">', $name, '</span></label><br>';
+						<label><input type="checkbox" name="addgroup[', $id, ']"', in_array($id, $context['sub']['add_groups']) ? ' checked' : '', !empty($context['disable_groups']) ? ' disabled' : '', '>&nbsp;<span class="smalltext">', $name, '</span></label><br>';
 
 	echo '
 					</dd>
@@ -115,17 +115,17 @@ function template_modify_subscription()
 	// Put a checkbox in for each group
 	foreach ($groups as $id => $name)
 		echo '
-						<label for="allowed_groups_', $id, '"><input type="checkbox" id="allowed_groups_', $id, '" name="allowed_groups[', $id, ']"', in_array($id, $context['sub']['allowed_groups']) ? ' checked' : '', !empty($context['disable_groups']) ? ' disabled' : '', ' class="allowed_groups">&nbsp;<span class="smalltext">', $name, '</span></label><br>';
+						<label><input type="checkbox" name="allowed_groups[', $id, ']"', in_array($id, $context['sub']['allowed_groups']) ? ' checked' : '', !empty($context['disable_groups']) ? ' disabled' : '', ' class="allowed_groups">&nbsp;<span class="smalltext">', $name, '</span></label><br>';
 
 	echo '
 						<div class="righttext">
-							<label for="allowed_groups_check_all"><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').attr(\'checked\', $(\'#allowed_groups_check_all\').attr(\'checked\'));"> ', $txt['check_all'], '</label>
+							<label><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').attr(\'checked\', $(\'#allowed_groups_check_all\').attr(\'checked\'));"> ', $txt['check_all'], '</label>
 						</div>
 					</dd>
 				</dl>
 				<hr>
-				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed"', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? ' checked' : '', ' onclick="toggleDuration(\'fixed\');">
-				<label for="duration_type_fixed"><strong>', $txt['paid_mod_fixed_price'], '</strong></label>
+				<label><input type="radio" name="duration_type" id="duration_type_fixed" value="fixed"', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? ' checked' : '', ' onclick="toggleDuration(\'fixed\');">
+				<strong>', $txt['paid_mod_fixed_price'], '</strong></label>
 				<br>
 				<div id="fixed_area" ', empty($context['sub']['duration']) || $context['sub']['duration'] == 'fixed' ? '' : 'style="display: none;"', '>
 					<fieldset>
@@ -151,8 +151,8 @@ function template_modify_subscription()
 						</dl>
 					</fieldset>
 				</div>
-				<input type="radio" name="duration_type" id="duration_type_flexible" value="flexible"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'flexible' ? ' checked' : '', ' onclick="toggleDuration(\'flexible\');">
-				<label for="duration_type_flexible"><strong>', $txt['paid_mod_flexible_price'], '</strong></label>
+				<label><input type="radio" name="duration_type" id="duration_type_flexible" value="flexible"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'flexible' ? ' checked' : '', ' onclick="toggleDuration(\'flexible\');">
+				<strong>', $txt['paid_mod_flexible_price'], '</strong></label>
 				<br>
 				<div id="flexible_area" ', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'flexible' ? '' : 'style="display: none;"', '>
 					<fieldset>';

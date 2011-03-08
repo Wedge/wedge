@@ -183,7 +183,7 @@ function template_search()
 	foreach ($context['search_fields'] as $id => $title)
 	{
 		echo '
-							<label for="fields-', $id, '"><input type="checkbox" name="fields[]" id="fields-', $id, '" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br>';
+							<label><input type="checkbox" name="fields[]" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br>';
 		// Halfway through?
 		if (round(count($context['search_fields']) / 2) == ++$count)
 			echo '

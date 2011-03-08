@@ -100,11 +100,11 @@ function template_email_members()
 
 	foreach ($context['groups'] as $group)
 				echo '
-						<label for="groups_', $group['id'], '"><input type="checkbox" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
+						<label><input type="checkbox" name="groups[', $group['id'], ']" id="groups_', $group['id'], '" value="', $group['id'], '" checked> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
 
 	echo '
 						<br>
-						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, \'groups\');"> <em>', $txt['check_all'], '</em></label>
+						<label><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, \'groups\');"> <em>', $txt['check_all'], '</em></label>
 					</dd>
 				</dl><br class="clear">
 			</div>
@@ -145,11 +145,11 @@ function template_email_members()
 
 	foreach ($context['groups'] as $group)
 				echo '
-						<label for="exclude_groups_', $group['id'], '"><input type="checkbox" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
+						<label><input type="checkbox" name="exclude_groups[', $group['id'], ']" id="exclude_groups_', $group['id'], '" value="', $group['id'], '"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em><br>';
 
 	echo '
 						<br>
-						<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, \'exclude_groups\');"> <em>', $txt['check_all'], '</em></label><br>
+						<label><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, \'exclude_groups\');"> <em>', $txt['check_all'], '</em></label><br>
 					</dd>
 					<dt>
 						<strong>', $txt['admin_news_select_excluded_members'], ':</strong>
@@ -231,9 +231,9 @@ function template_email_members_compose()
 					<textarea cols="70" rows="9" name="message" class="editor">', $context['default_message'], '</textarea>
 				</p>
 				<ul class="reset">
-					<li><label for="send_pm"><input type="checkbox" name="send_pm" id="send_pm" onclick="if (this.checked && ', $context['total_emails'], ' != 0 && !confirm(', JavaScriptEscape($txt['admin_news_cannot_pm_emails_js']), ')) return false; this.form.parse_html.disabled = this.checked; this.form.send_html.disabled = this.checked;"> ', $txt['email_as_pms'], '</label></li>
-					<li><label for="send_html"><input type="checkbox" name="send_html" id="send_html" onclick="this.form.parse_html.disabled = !this.checked;"> ', $txt['email_as_html'], '</label></li>
-					<li><label for="parse_html"><input type="checkbox" name="parse_html" id="parse_html" checked disabled> ', $txt['email_parsed_html'], '</label></li>
+					<li><label><input type="checkbox" name="send_pm" id="send_pm" onclick="if (this.checked && ', $context['total_emails'], ' != 0 && !confirm(', JavaScriptEscape($txt['admin_news_cannot_pm_emails_js']), ')) return false; this.form.parse_html.disabled = this.checked; this.form.send_html.disabled = this.checked;"> ', $txt['email_as_pms'], '</label></li>
+					<li><label><input type="checkbox" name="send_html" id="send_html" onclick="this.form.parse_html.disabled = !this.checked;"> ', $txt['email_as_html'], '</label></li>
+					<li><label><input type="checkbox" name="parse_html" id="parse_html" checked disabled> ', $txt['email_parsed_html'], '</label></li>
 				</ul>
 				<p>
 					<input type="submit" value="', $txt['sendtopic_send'], '" class="submit">

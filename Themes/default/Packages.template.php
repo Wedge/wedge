@@ -70,7 +70,7 @@ function template_view_package()
 	{
 		echo '
 			<div class="windowbg2 wrc">
-				<label for="do_db_changes"><input type="checkbox" name="do_db_changes" id="do_db_changes">', $txt['package_db_uninstall'], '</label> [<a href="#" onclick="return swap_database_changes();">', $txt['package_db_uninstall_details'], '</a>]
+				<label><input type="checkbox" name="do_db_changes">', $txt['package_db_uninstall'], '</label> [<a href="#" onclick="return swap_database_changes();">', $txt['package_db_uninstall_details'], '</a>]
 				<div id="db_changes_div">
 					', $txt['package_db_uninstall_actions'], ':
 					<ul>';
@@ -638,7 +638,7 @@ function template_servers()
 					</dt>
 					<dd>
 						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
-						<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '">
+						<label>', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '"></label>
 					</dd>
 					<dt>
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
@@ -990,7 +990,7 @@ function template_install_options()
 						<input type="text" name="pack_user" id="pack_user" value="', $context['package_ftp_username'], '" size="30">
 					</dd>
 				</dl>
-				<label for="package_make_backups"><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label>
+				<label><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label>
 				<br><br>
 				<div class="righttext">
 					<input type="submit" name="submit" value="', $txt['save'], '" class="submit">
@@ -1045,7 +1045,7 @@ function template_control_chmod()
 						</dt>
 						<dd>
 							<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $context['package_ftp']['server'], '">
-							<label for="ftp_port">', $txt['package_ftp_port'], ':&nbsp;</label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '">
+							<label>', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" id="ftp_port" value="', $context['package_ftp']['port'], '"></label>
 						</dd>
 						<dt>
 							<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
@@ -1543,15 +1543,15 @@ function template_file_permissions()
 			<fieldset>
 				<dl>
 					<dt>
-						<input type="radio" name="method" value="individual" checked id="method_individual">
-						<label for="method_individual"><strong>', $txt['package_file_perms_apply'], '</strong></label>
+						<label><input type="radio" name="method" value="individual" checked id="method_individual">
+						<strong>', $txt['package_file_perms_apply'], '</strong></label>
 					</dt>
 					<dd>
 						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5">&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this);" class="help">(?)</a></em>
 					</dd>
 					<dt>
-						<input type="radio" name="method" value="predefined" id="method_predefined">
-						<label for="method_predefined"><strong>', $txt['package_file_perms_predefined'], ':</strong></label>
+						<label><input type="radio" name="method" value="predefined" id="method_predefined">
+						<strong>', $txt['package_file_perms_predefined'], ':</strong></label>
 						<select name="predefined" onchange="$(\'#method_predefined\').attr(\'checked\', true);">
 							<option value="restricted" selected>', $txt['package_file_perms_pre_restricted'], '</option>
 							<option value="standard">', $txt['package_file_perms_pre_standard'], '</option>

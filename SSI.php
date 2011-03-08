@@ -1170,12 +1170,11 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		$bar = floor(($option[1] * 100) / $divisor);
 		$barWide = $bar == 0 ? 1 : floor(($bar * 5) / 3);
 		$return['options'][$i] = array(
-			'id' => 'options-' . ($topPollInstead ? 'top-' : 'recent-') . $i,
 			'percent' => $bar,
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '">'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
 
@@ -1193,7 +1192,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 		foreach ($return['options'] as $option)
 			echo '
-			<label for="', $option['id'], '">', $option['vote_button'], ' ', $option['option'], '</label><br />';
+			<label>', $option['vote_button'], ' ', $option['option'], '</label><br />';
 
 		echo '
 			<input type="submit" value="', $txt['poll_vote'], '" class="submit" />
@@ -1322,12 +1321,11 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 		$bar = floor(($option[1] * 100) / $divisor);
 		$barWide = $bar == 0 ? 1 : floor(($bar * 5) / 3);
 		$return['options'][$i] = array(
-			'id' => 'options-' . $i,
 			'percent' => $bar,
 			'votes' => $option[1],
 			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
 	}
 
@@ -1345,7 +1343,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 
 		foreach ($return['options'] as $option)
 			echo '
-				<label for="', $option['id'], '">', $option['vote_button'], ' ', $option['option'], '</label><br />';
+				<label>', $option['vote_button'], ' ', $option['option'], '</label><br />';
 
 		echo '
 				<input type="submit" value="', $txt['poll_vote'], '" class="submit" />

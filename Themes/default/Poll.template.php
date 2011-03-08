@@ -19,7 +19,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		$("#pollMoreOptions").append(\'<li><label for="options-\' + pollOptionNum + \'" ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \'</label>: <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255"></li>\');
+		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255"></label></li>\');
 		return false;
 	}');
 
@@ -57,8 +57,8 @@ function template_main()
 	{
 		echo '
 							<li>
-								<label for="options-', $choice['id'], '" ', (isset($context['poll_error']['poll_few']) ? ' class="error"' : ''), '>', $txt['option'], ' ', $choice['number'], '</label>:
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="80" maxlength="255">';
+								<label', (isset($context['poll_error']['poll_few']) ? ' class="error"' : ''), '>', $txt['option'], ' ', $choice['number'], ':
+								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="80" maxlength="255"></label>';
 
 		// Does this option have a vote count yet, or is it new?
 		if ($choice['votes'] != -1)
@@ -114,9 +114,9 @@ function template_main()
 								', $txt['poll_results_visibility'], ':
 							</dt>
 							<dd>
-								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll']['hide_results'] == 0 ? ' checked' : '', '> <label for="poll_results_anyone">', $txt['poll_results_anyone'], '</label><br>
-								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll']['hide_results'] == 1 ? ' checked' : '', '> <label for="poll_results_voted">', $txt['poll_results_voted'], '</label><br>
-								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll']['hide_results'] == 2 ? ' checked' : '', empty($context['poll']['expiration']) ? ' disabled' : '', '> <label for="poll_results_expire">', $txt['poll_results_after'], '</label>
+								<label><input type="radio" name="poll_hide" id="poll_results_anyone" value="0"', $context['poll']['hide_results'] == 0 ? ' checked' : '', '> ', $txt['poll_results_anyone'], '</label><br>
+								<label><input type="radio" name="poll_hide" id="poll_results_voted" value="1"', $context['poll']['hide_results'] == 1 ? ' checked' : '', '> ', $txt['poll_results_voted'], '</label><br>
+								<label><input type="radio" name="poll_hide" id="poll_results_expire" value="2"', $context['poll']['hide_results'] == 2 ? ' checked' : '', empty($context['poll']['expiration']) ? ' disabled' : '', '> ', $txt['poll_results_after'], '</label>
 							</dd>
 						</dl>
 					</fieldset>';

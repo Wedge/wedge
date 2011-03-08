@@ -129,16 +129,16 @@ function template_search_members()
 					<div class="msearch_details floatleft">
 						<fieldset>
 							<legend>', $txt['gender'], '</legend>
-							<label for="gender-0"><input type="checkbox" name="gender[]" value="0" id="gender-0" checked> ', $txt['undefined_gender'], '</label>&nbsp;&nbsp;
-							<label for="gender-1"><input type="checkbox" name="gender[]" value="1" id="gender-1" checked> ', $txt['male'], '</label>&nbsp;&nbsp;
-							<label for="gender-2"><input type="checkbox" name="gender[]" value="2" id="gender-2" checked> ', $txt['female'], '</label>
+							<label><input type="checkbox" name="gender[]" value="0" id="gender-0" checked> ', $txt['undefined_gender'], '</label>&nbsp;&nbsp;
+							<label><input type="checkbox" name="gender[]" value="1" id="gender-1" checked> ', $txt['male'], '</label>&nbsp;&nbsp;
+							<label><input type="checkbox" name="gender[]" value="2" id="gender-2" checked> ', $txt['female'], '</label>
 						</fieldset>
 					</div>
 					<div class="msearch_details floatright">
 						<fieldset>
 							<legend>', $txt['activation_status'], '</legend>
-							<label for="activated-0"><input type="checkbox" name="activated[]" value="1" id="activated-0" checked> ', $txt['activated'], '</label>&nbsp;&nbsp;
-							<label for="activated-1"><input type="checkbox" name="activated[]" value="0" id="activated-1" checked> ', $txt['not_activated'], '</label>
+							<label><input type="checkbox" name="activated[]" value="1" id="activated-0" checked> ', $txt['activated'], '</label>&nbsp;&nbsp;
+							<label><input type="checkbox" name="activated[]" value="0" id="activated-1" checked> ', $txt['not_activated'], '</label>
 						</fieldset>
 					</div>
 				</div>

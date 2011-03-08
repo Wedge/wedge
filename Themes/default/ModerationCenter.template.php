@@ -634,7 +634,7 @@ function template_moderation_settings()
 
 	foreach ($context['homepage_blocks'] as $k => $v)
 		echo '
-						<label for="mod_homepage_', $k, '"><input type="checkbox" id="mod_homepage_', $k, '" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked' : '', '> ', $v, '</label><br>';
+						<label><input type="checkbox" name="mod_homepage[', $k, ']"', in_array($k, $context['mod_settings']['user_blocks']) ? ' checked' : '', '> ', $v, '</label><br>';
 
 	echo '
 					</dd>';
@@ -751,8 +751,8 @@ function template_warn_template()
 
 	if ($context['template_data']['can_edit_personal'])
 		echo '
-				<input type="checkbox" name="make_personal" id="make_personal"', $context['template_data']['personal'] ? ' checked' : '', '>
-				<label for="make_personal">
+				<label>
+					<input type="checkbox" name="make_personal" id="make_personal"', $context['template_data']['personal'] ? ' checked' : '', '>
 					<strong>', $txt['mc_warning_template_personal'], '</strong>
 				</label>
 				<dfn>', $txt['mc_warning_template_personal_desc'], '</dfn>

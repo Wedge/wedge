@@ -14,18 +14,18 @@ function template_ask()
 			</we:cat>
 			<div class="windowbg wrc">
 				<p class="split_topics">
-					<strong><label for="subname">', $txt['subject_new_topic'], '</label>:</strong>
-					<input type="text" name="subname" id="subname" value="', $context['message']['subject'], '" size="25">
+					<label><strong>', $txt['subject_new_topic'], ':</strong>
+					<input type="text" name="subname" id="subname" value="', $context['message']['subject'], '" size="25"></label>
 				</p>
 				<ul class="reset split_topics">
 					<li>
-						<input type="radio" id="onlythis" name="step2" value="onlythis" checked> <label for="onlythis">', $txt['split_this_post'], '</label>
+						<label><input type="radio" id="onlythis" name="step2" value="onlythis" checked> ', $txt['split_this_post'], '</label>
 					</li>
 					<li>
-						<input type="radio" id="afterthis" name="step2" value="afterthis"> <label for="afterthis">', $txt['split_after_and_this_post'], '</label>
+						<label><input type="radio" id="afterthis" name="step2" value="afterthis"> ', $txt['split_after_and_this_post'], '</label>
 					</li>
 					<li>
-						<input type="radio" id="selective" name="step2" value="selective"> <label for="selective">', $txt['select_split_posts'], '</label>
+						<label><input type="radio" id="selective" name="step2" value="selective"> ', $txt['select_split_posts'], '</label>
 					</li>
 				</ul>
 				<div class="righttext">
@@ -384,7 +384,7 @@ function template_merge_extra_options()
 					</select>
 					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject" style="display: none">
 					<br>
-					<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> ', $txt['merge_enforce_subject'], '</label>
+					<label><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> ', $txt['merge_enforce_subject'], '</label>
 				</fieldset>';
 
 	if (!empty($context['boards']) && count($context['boards']) > 1)

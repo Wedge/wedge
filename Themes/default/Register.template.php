@@ -162,11 +162,11 @@ function template_registration_form()
 							<a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a>
 						</dt>
 						<dd>
-							<label for="auth_pass" id="option_auth_pass">
+							<label id="option_auth_pass">
 								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '"', empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
 								', $txt['authenticate_password'], '
 							</label>
-							<label for="auth_openid" id="option_auth_openid">
+							<label id="option_auth_openid">
 								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '"', !empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
 								', $txt['authenticate_openid'], '
 							</label>
@@ -638,7 +638,7 @@ function template_edit_agreement()
 					<textarea cols="70" rows="20" name="agreement" id="agreement">', $context['agreement'], '</textarea>
 				</p>
 				<p>
-					<label for="requireAgreement"><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '" value="1"> ', $txt['admin_agreement'], '.</label>
+					<label><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '" value="1"> ', $txt['admin_agreement'], '.</label>
 				</p>
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '" tabindex="', $context['tabindex']++, '" class="save">
@@ -666,10 +666,10 @@ function template_edit_reserved_words()
 					<textarea cols="30" rows="6" id="reserved">', implode("\n", $context['reserved_words']), '</textarea>
 				</p>
 				<ul class="reset">
-					<li><label for="matchword"><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_word'] ? ' checked' : '', '> ', $txt['admin_match_whole'], '</label></li>
-					<li><label for="matchcase"><input type="checkbox" name="matchcase" id="matchcase" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_case'] ? ' checked' : '', '> ', $txt['admin_match_case'], '</label></li>
-					<li><label for="matchuser"><input type="checkbox" name="matchuser" id="matchuser" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_user'] ? ' checked' : '', '> ', $txt['admin_check_user'], '</label></li>
-					<li><label for="matchname"><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_name'] ? ' checked' : '', '> ', $txt['admin_check_display'], '</label></li>
+					<li><label><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_word'] ? ' checked' : '', '> ', $txt['admin_match_whole'], '</label></li>
+					<li><label><input type="checkbox" name="matchcase" id="matchcase" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_case'] ? ' checked' : '', '> ', $txt['admin_match_case'], '</label></li>
+					<li><label><input type="checkbox" name="matchuser" id="matchuser" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_user'] ? ' checked' : '', '> ', $txt['admin_check_user'], '</label></li>
+					<li><label><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_name'] ? ' checked' : '', '> ', $txt['admin_check_display'], '</label></li>
 				</ul>
 				<div class="righttext">
 					<input type="submit" value="', $txt['save'], '" name="save_reserved_names" tabindex="', $context['tabindex']++, '" style="margin: 1ex" class="save">
