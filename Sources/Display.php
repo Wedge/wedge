@@ -288,21 +288,26 @@ function Display()
 				'sort' => 'mf.subject',
 				'cmp' => '> {string:current_subject}',
 			),
+			// These two are going to hurt but there's not really any better way to do it *sad face* - fortunately they're not very common.
 			'starter' => array(
 				'sort' => 'poster',
 				'join' => '
 						INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
-						LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)',
-				'select' => ', IFNULL(memf.real_name, mf.poster_name) AS poster',
-				'cmp' => '> {string:current_poster}',
+						LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)
+						INNER JOIN {db_prefix}messages AS md ON (md.id_msg = {int:current_first_msg})
+						LEFT JOIN {db_prefix}members AS memd ON (memd.id_member = md.id_member)',
+				'select' => ', IFNULL(memf.real_name, mf.poster_name) AS poster, IFNULL(memd.real_name, md.poster_name) AS this_poster',
+				'cmp' => '> this_poster',
 			),
 			'last_poster' => array(
 				'sort' => 'poster',
 				'join' => '
 						INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
-						LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)',
-				'select' => ', IFNULL(meml.real_name, ml.poster_name) AS poster',
-				'cmp' => '> {string:current_poster}',
+						LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
+						INNER JOIN {db_prefix}messages AS md ON (md.id_msg = {int:current_last_msg})
+						LEFT JOIN {db_prefix}members AS memd ON (memd.id_member = md.id_member)',
+				'select' => ', IFNULL(meml.real_name, ml.poster_name) AS poster, IFNULL(memd.real_name, md.poster_name) AS this_poster',
+				'cmp' => '> this_poster',
 			),
 			'replies' => array(
 				'sort' => 't.num_replies',
@@ -364,9 +369,9 @@ function Display()
 				'current_member' => $user_info['id'],
 				'current_topic' => $topic,
 				'current_subject' => $topicinfo['subject'],
-				'current_poster' => '', // !!! I thought the poster's name for first/last poster were supplied through the topicinfo query, but they're not, so need to fix this!
 				'current_replies' => $topicinfo['num_replies'],
 				'current_views' => $topicinfo['num_views'],
+				'current_first_msg' => $topicinfo['id_first_msg'],
 				'current_last_msg' => $topicinfo['id_last_msg'],
 			)
 		);
