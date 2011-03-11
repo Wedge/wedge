@@ -286,6 +286,8 @@ function Display()
 		$sort_methods = array(
 			'subject' => array(
 				'sort' => 'mf.subject',
+				'join' => '
+						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)',
 				'cmp' => '> {string:current_subject}',
 			),
 			// These two are going to hurt but there's not really any better way to do it *sad face* - fortunately they're not very common.
@@ -339,8 +341,7 @@ function Display()
 					INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
-					FROM {db_prefix}topics AS t
-						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
+					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
 					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
@@ -355,8 +356,7 @@ function Display()
 					INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
-					FROM {db_prefix}topics AS t
-						INNER JOIN {db_prefix}messages AS mf ON (t.id_first_msg = mf.id_msg)' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
+					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
 					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
