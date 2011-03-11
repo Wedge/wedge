@@ -36,7 +36,7 @@ global $modSettings;
 class westr_foundation
 {
 	protected static $instance; // container for self
-	protected static $ent_list, $ent_check; // internals for checking entities
+	protected static $can_mb; // internals for checking multibyte function support
 
 	const westr_SPACECHARS = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
 
@@ -55,6 +55,9 @@ class westr_foundation
 		{
 			self::$instance = new self();
 
+			self::$can_mb = is_callable('mb_internal_encoding');
+			if (self::$can_mb)
+				mb_internal_encoding('UTF-8');
 			if (!is_callable('mb_strtolower'))
 				loadSource('Subs-Charset');
 		}
@@ -122,11 +125,6 @@ class westr_base extends westr_entity
 		return preg_replace('~^(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+$~u', '', self::entity_clean($string));
 	}
 
-	public static function strlen($string)
-	{
-		return strlen(preg_replace('~' . self::westr_ENT_ANY . '~u', '_', self::entity_clean($string)));
-	}
-
 	public static function strpos($haystack, $needle, $offset = 0)
 	{
 		$haystack_arr = preg_split('~' . self::westr_ENT_ANY . '~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -140,6 +138,7 @@ class westr_base extends westr_entity
 		{
 			$needle_arr = preg_split('~' . self::westr_ENT_ANY . '~u', self::entity_clean($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			$needle_size = count($needle_arr);
+			$needle_arr[0] = isset($needle_arr[0]) ? $needle_arr[0] : '';
 
 			$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
 			while (is_int($result))
@@ -214,11 +213,8 @@ class westr_base extends westr_entity
 		if (!$test_mb)
 		{
 			$test_mb = true;
-			$supports_mb = is_callable('mb_internal_encoding');
-			if ($supports_mb)
-				mb_internal_encoding('UTF-8');
-			$strlen = $supports_mb ? 'mb_strlen' : create_function('$str', 'return strlen(preg_replace(\'~.~us\', \'_\', $str));');
-			$substr = $supports_mb ? 'mb_substr' : 'self::substr';
+			$strlen = self::$can_mb ? 'mb_strlen' : create_function('$str', 'return strlen(preg_replace(\'~.~us\', \'_\', $str));');
+			$substr = self::$can_mb ? 'mb_substr' : 'self::substr';
 		}
 
 		if ($strlen($work) <= $max_length && (empty($hard_limit) || strlen($string) <= $hard_limit))
@@ -286,7 +282,7 @@ class westr_base extends westr_entity
 
 if (is_callable('mb_strtolower'))
 {
-	// with multibyte extension
+	// With multibyte extension
 	class westr extends westr_base
 	{
 		public static function strtolower($string)
@@ -298,11 +294,16 @@ if (is_callable('mb_strtolower'))
 		{
 			return mb_strtoupper($string, 'UTF-8');
 		}
+
+		public static function strlen($string)
+		{
+			return mb_strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);~', '_', $string));
+		}
 	}
 }
 else
 {
-	// without mb - Subs-Charset should have been loaded at this point though
+	// Without mb - Subs-Charset should have been loaded at this point though
 	class westr extends westr_base
 	{
 		public static function strtolower($string)
@@ -313,6 +314,11 @@ else
 		public static function strtoupper($string)
 		{
 			return utf8_strtoupper($string);
+		}
+
+		public static function strlen($string)
+		{
+			return strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);|.~us', '_', $string));
 		}
 	}
 }
