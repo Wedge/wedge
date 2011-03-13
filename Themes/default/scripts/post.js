@@ -105,6 +105,69 @@ function surroundText(text1, text2, oTextHandle)
 	}
 }
 
+// Split a quote if we press Enter inside it.
+function splitQuote(oEvent)
+{
+	// Did we just press Enter?
+	if (oEvent.which != 13)
+		return true;
+
+	// Where are we, already?
+	if ('selectionStart' in this)
+		var selectionStart = this.selectionStart;
+	else
+	{
+		var range = document.selection.createRange(), stored_range = range.duplicate();
+		dul.moveToElementText(this);
+		dul.setEndPoint('EndToEnd', range);
+		var selectionStart = dul.text.length - range.text.length;
+	}
+
+	// Build a list of opened tags...
+	var
+		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(),
+		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], extag, log_tags = true,
+		protect_tags = [
+			'code',
+			'php',
+			'html',
+		],
+		closed_tags = [
+			'br',
+			'hr',
+			'more',
+		];
+	while (true)
+	{
+		pos = lcs.indexOf('[', pos) + 1;
+		if (!pos)
+			break;
+		tag = selection.substring(pos, lcs.indexOf(']', pos + 1));
+		bbcode = tag.substr(tag.charAt(0) === '/' ? 1 : 0);
+
+		if (tag.charAt(0) === '/')
+		{
+			if (!log_tags && bbcode != taglist[taglist.length - 1].substr(0, bbcode.length))
+				continue;
+			do
+			{
+				extag = taglist.pop();
+				log_tags |= in_array(extag, protect_tags);
+			}
+			while (extag && bbcode != extag.substr(0, bbcode.length).toLowerCase());
+		}
+		else if (log_tags && !in_array(bbcode, closed_tags))
+			taglist.push(bbcode);
+		if (log_tags && in_array(bbcode, protect_tags))
+			log_tags = false;
+	}
+	for (var closers = [], j = 0, l = taglist.length; j < l; j++)
+		closers.push('[/' + (taglist[j].indexOf(' ') > 0 ? taglist[j].substr(0, taglist[j].indexOf(' ')) : taglist[j]) + ']');
+	surroundText(closers.reverse().join('') + '\n', '\n\n[' + taglist.join('][') + ']', this);
+
+	return true;
+};
+
 /*
 	A smiley is worth
 	a thousands words.

@@ -212,7 +212,7 @@ function smc_Editor(oOptions)
 
 		// Attach functions to the key and mouse events.
 		$(this.oFrameDocument).bind('keyup mouseup', this.aEventWrappers.editorKeyUp).keydown(this.aEventWrappers.shortcutCheck);
-		$(this.oTextHandle).keydown(this.aEventWrappers.shortcutCheck);
+		$(this.oTextHandle).keydown(this.aEventWrappers.shortcutCheck).keydown(splitQuote);
 		if (this.opt.oDrafts)
 			$(this.oTextHandle).keyup(function () {
 				oCaller.opt.oDrafts.needsUpdate(true); // This is established earlier in this function.
@@ -1119,11 +1119,8 @@ smc_Editor.prototype.checkShortcut = function(oEvent)
 
 	// Let's take a look at each of our shortcuts shall we?
 	for (var i = 0, n = this.aKeyboardShortcuts.length; i < n; i++)
-	{
-		// Found something?
 		if (oEvent.altKey == this.aKeyboardShortcuts[i].alt && oEvent.ctrlKey == this.aKeyboardShortcuts[i].ctrl && oEvent.keyCode == this.aKeyboardShortcuts[i].key)
-			sReturnCode = this.aKeyboardShortcuts[i].code;
-	}
+			sReturnCode = this.aKeyboardShortcuts[i].code; // Found something?
 
 	return sReturnCode;
 };

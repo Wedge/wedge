@@ -595,7 +595,7 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 
 	// Add the button.
 	$('<li></li>').html('<a href="#"' + oOptions.sCustom + ' class="last" id="' + oOptions.sId + '">' + oOptions.sText + '</a>')
-		.hide().appendTo($('ul', oButtonStrip)).fadeIn(300);
+		.hide().appendTo($('#' + sButtonStripId + ' ul')).fadeIn(300);
 }
 
 // *** The UserMenu

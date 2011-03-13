@@ -481,7 +481,7 @@ class wecss_nesting extends wecss
 		{
 			if (strpos($node['selector'], 'extends') !== false)
 			{
-				preg_match_all('~([+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?:(?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+))[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];

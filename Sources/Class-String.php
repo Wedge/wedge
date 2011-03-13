@@ -54,8 +54,8 @@ class westr_foundation
 		if (self::$instance == null)
 		{
 			self::$instance = new self();
-
 			self::$can_mb = is_callable('mb_internal_encoding');
+
 			if (self::$can_mb)
 				mb_internal_encoding('UTF-8');
 			if (!is_callable('mb_strtolower'))
@@ -118,7 +118,50 @@ else
 	}
 }
 
-class westr_base extends westr_entity
+if (is_callable('mb_strtolower'))
+{
+	// With multibyte extension
+	class westr_mb extends westr_entity
+	{
+		public static function strtolower($string)
+		{
+			return mb_strtolower($string, 'UTF-8');
+		}
+
+		public static function strtoupper($string)
+		{
+			return mb_strtoupper($string, 'UTF-8');
+		}
+
+		public static function strlen($string)
+		{
+			return mb_strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);~', '_', $string));
+		}
+	}
+}
+else
+{
+	// Without mb - Subs-Charset should have been loaded at this point though
+	class westr_mb extends westr_entity
+	{
+		public static function strtolower($string)
+		{
+			return utf8_strtolower($string);
+		}
+
+		public static function strtoupper($string)
+		{
+			return utf8_strtoupper($string);
+		}
+
+		public static function strlen($string)
+		{
+			return strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);|.~us', '_', $string));
+		}
+	}
+}
+
+class westr extends westr_mb
 {
 	public static function htmltrim($string)
 	{
@@ -127,7 +170,7 @@ class westr_base extends westr_entity
 
 	public static function strpos($haystack, $needle, $offset = 0)
 	{
-		$haystack_arr = preg_split('~' . self::westr_ENT_ANY . '~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$haystack_arr = preg_split('~(' . self::westr_ENT_ANY . ')~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		$haystack_size = count($haystack_arr);
 		if (strlen($needle) === 1)
 		{
@@ -136,7 +179,7 @@ class westr_base extends westr_entity
 		}
 		else
 		{
-			$needle_arr = preg_split('~' . self::westr_ENT_ANY . '~u', self::entity_clean($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$needle_arr = preg_split('~(' . self::westr_ENT_ANY . ')~u', self::entity_clean($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			$needle_size = count($needle_arr);
 			$needle_arr[0] = isset($needle_arr[0]) ? $needle_arr[0] : '';
 
@@ -154,7 +197,7 @@ class westr_base extends westr_entity
 
 	public static function substr($string, $start, $length = null)
 	{
-		$ent_arr = preg_split('~' . self::westr_ENT_ANY . '~u', self::entity_clean($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		$ent_arr = preg_split('~(' . self::westr_ENT_ANY . ')~u', self::entity_clean($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 	}
 
@@ -222,7 +265,7 @@ class westr_base extends westr_entity
 
 		preg_match_all("~(?:\x14|&[^&;]+;|<[^>]+>)~", $string, $entities);
 		$len = $strlen($work);
-		$work = rtrim($substr($work, 0, $max_length));
+		$work = rtrim(self::$can_mb ? mb_substr($work, 0, $max_length) : self::substr($work, 0, $max_length));
 
 		if ($cut_long_words)
 		{
@@ -276,49 +319,6 @@ class westr_base extends westr_entity
 					}
 				}
 			}
-		}
-	}
-}
-
-if (is_callable('mb_strtolower'))
-{
-	// With multibyte extension
-	class westr extends westr_base
-	{
-		public static function strtolower($string)
-		{
-			return mb_strtolower($string, 'UTF-8');
-		}
-
-		public static function strtoupper($string)
-		{
-			return mb_strtoupper($string, 'UTF-8');
-		}
-
-		public static function strlen($string)
-		{
-			return mb_strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);~', '_', $string));
-		}
-	}
-}
-else
-{
-	// Without mb - Subs-Charset should have been loaded at this point though
-	class westr extends westr_base
-	{
-		public static function strtolower($string)
-		{
-			return utf8_strtolower($string);
-		}
-
-		public static function strtoupper($string)
-		{
-			return utf8_strtoupper($string);
-		}
-
-		public static function strlen($string)
-		{
-			return strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);|.~us', '_', $string));
 		}
 	}
 }
