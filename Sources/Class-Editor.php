@@ -2478,6 +2478,18 @@ class wedgeEditor
 		sRemove: ', JavaScriptEscape($txt['remove_draft']), '
 	});');
 
+		// Get a list of all the tags that are not disabled.
+		$all_tags = parse_bbc(false);
+		$unparsed_tags = array();
+		$closed_tags = array();
+		foreach ($all_tags as $tag)
+		{
+			if (isset($tag['type']) && $tag['type'] == 'closed')
+				$closed_tags[] = $tag['tag'];
+			elseif (isset($tag['type']) && $tag['type'] == 'unparsed_content')
+				$unparsed_tags[] = $tag['tag'];
+		}
+
 		// Now it's all drawn out we'll actually setup the box.
 		add_js('
 	var oEditorHandle_' . $this->id . ' = new smc_Editor({
@@ -2493,7 +2505,9 @@ class wedgeEditor
 		bRichEditOff: ' . (empty($modSettings['disable_wysiwyg']) ? 'false' : 'true') . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
-		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . '
+		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . (empty($unparsed_tags) ? '' : ',
+		aProtectTags: ["' . implode('", "', $unparsed_tags) . '"]') . (empty($closed_tags) ? '' : ',
+		aClosedTags: ["' . implode('", "', $closed_tags) . '"]') . '
 	});
 	smf_editorArray.push(oEditorHandle_' . $this->id . ');');
 	}

@@ -117,26 +117,18 @@ function splitQuote(oEvent)
 		var selectionStart = this.selectionStart;
 	else
 	{
-		var range = document.selection.createRange(), stored_range = range.duplicate();
+		var range = document.selection.createRange(), dul = range.duplicate();
 		dul.moveToElementText(this);
 		dul.setEndPoint('EndToEnd', range);
 		var selectionStart = dul.text.length - range.text.length;
 	}
 
-	// Build a list of opened tags...
 	var
 		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(),
 		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], extag, log_tags = true,
-		protect_tags = [
-			'code',
-			'php',
-			'html',
-		],
-		closed_tags = [
-			'br',
-			'hr',
-			'more',
-		];
+		protect_tags = this.instanceRef.opt.aProtectTags, closed_tags = this.instanceRef.opt.aClosedTags;
+
+	// Build a list of opened tags...
 	while (true)
 	{
 		pos = lcs.indexOf('[', pos) + 1;
@@ -147,6 +139,8 @@ function splitQuote(oEvent)
 
 		if (tag.charAt(0) === '/')
 		{
+			if (!taglist.length)
+				break;
 			if (!log_tags && bbcode != taglist[taglist.length - 1].substr(0, bbcode.length))
 				continue;
 			do
