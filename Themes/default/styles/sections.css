@@ -153,6 +153,8 @@ img.new_posts
 	text-align: center
 	display: table-cell
 	vertical-align: middle
+	font-size: 1.2em
+	padding: 4px 8px
 
 // The jump to box
 #display_jump_to
