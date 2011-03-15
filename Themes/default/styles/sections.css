@@ -1394,14 +1394,16 @@ span.hidelink
 /* More hacks.
 ------------------------------------------------- */
 .foldable
+	display: $ie-inline-block
 	width, height: 14px
-	background: url($images/foldable.gif)
+	background: url($images/upshrinks.png) -20px 0 no-repeat
 	&.fold
-		background-position: 0 -14px
+		background-position: -20px -25px
 
 .shrinkable
+	display: $ie-inline-block
 	width, height: 20px
-	background: url($images/shrinkable.png)
+	background: url($images/shrinkable.png) 0 0 no-repeat
 	&.fold
 		background-position: 0 -20px
 
