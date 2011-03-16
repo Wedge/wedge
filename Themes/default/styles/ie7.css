@@ -84,8 +84,14 @@
 
 /* Misc hacks
 ------------------------------------------------------- */
+.posthead
+	width: auto
+
 .cat, .title
 	overflow: hidden
+
+.table_list a.collapse
+	width: 14px
 
 .bbc_divider, .bbc_button, .bbc_button div
 	display: inline

@@ -1087,7 +1087,7 @@ dl#rss
 /* Styles for section headers.
 ------------------------------------------------------- */
 
-.cat, .title
+.cat, .title, .posthead
 	overflow: hidden
 	border-radius: 5px
 	padding: 5px 10px 5px
@@ -1097,8 +1097,13 @@ dl#rss
 	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	text-shadow: white 0 1px 2px
 	color: grey
+	img
+		float: left
+		vertical-align: middle
+		margin-right: .5em
+		margin-top: 1px
 
-.cat
+.posthead
 	display: table
 	box-sizing: border-box
 	width: 100%
@@ -1121,18 +1126,10 @@ dl#rss
 		margin-top: 6px
 	a
 		color: lighten(channels(grey, 30%), 10%)
-	img
-		float: left
-		vertical-align: middle
-		margin-right: .5em
-		margin-top: 1px
 
 .cat
 	a
 		font-size: .92em
-	img extends .title img
-		&[alt="+"], &[alt="-"]
-			margin-top: 4px
 
 .title2 extends .title
 	font-size: 1.1em
@@ -1360,7 +1357,7 @@ table
 		float: right
 	a.collapse
 		float: right
-		margin: 0 -12px 0 .8em
+		margin: 3px 0 -3px .8em
 	p
 		padding, margin: 0
 

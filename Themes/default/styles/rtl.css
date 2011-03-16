@@ -69,10 +69,8 @@ dl.settings
 		float: right
 
 .table_list
-	a.unreadlink, a.collapse
+	a.unreadlink
 		float: left
-	a.collapse
-		margin: 0 0.5em 0 -5px
 
 th.first_th
 	border-radius: 0 8px 0 0
@@ -182,6 +180,9 @@ h1.forumtitle
 #upshrink_ic
 	float: left
 	margin: 4px 0 0 4px
+
+.catfold
+	margin: 3px 0.6em -3px 0
 
 
 /* Styles for the message (topic) index.

@@ -8,6 +8,7 @@
 
 // The board title!
 #board_list
+	width: auto
 	td.info a.subject
 		font-weight: bold
 		font-size: 110%
@@ -30,11 +31,6 @@
 p.moderators
 	font-size: .8em
 	font-family: verdana, sans-serif
-
-// Hide the table header/footer parts - but it's here for those needing to style it.
-#boardindex_table .table_list
-	thead, tfoot
-		display: none
 
 // The posting icons
 #posting_icons
@@ -62,9 +58,6 @@ p.moderators
 	margin: 1em 0
 	display: none
 	color: #575757 // Shouldn't be shorthand style due to a JS bug in IE!
-
-.catfold
-	margin-top: 3px
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
@@ -256,8 +249,6 @@ img.new_posts
 	// Author and topic information
 	#author
 		margin: 0 7.7em 0 10px
-	.cat
-		margin-bottom: 3px
 	.modified
 		float: left
 	.reportlinks
@@ -1393,26 +1384,33 @@ span.hidelink
 
 /* More hacks.
 ------------------------------------------------- */
-.foldable
+.upshrinks
+	background: url($images/upshrinks.png) no-repeat
+
+.foldable extends .upshrinks
 	display: $ie-inline-block
 	width, height: 14px
-	background: url($images/upshrinks.png) -20px 0 no-repeat
-	&.fold
+	background-position: -20px 0
+	.fold&
 		background-position: -20px -25px
 
-.shrinkable
+.shrinkable extends .upshrinks
 	display: $ie-inline-block
 	width, height: 20px
-	background: url($images/shrinkable.png) 0 0 no-repeat
-	&.fold
+	background-position: 0 0
+	.fold&
 		background-position: 0 -20px
 
 // Only seen in the admin area, so don't bother preloading its graphics...
 .sortselect
 	width, height: 12px
 	background: url-no-base64($images/sortselect.gif)
-	&.fold
+	.fold&
 		background-position: 0 -12px
+
+.catfold extends .foldable
+	float: right
+	text-decoration: none
 
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable

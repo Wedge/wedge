@@ -6,8 +6,7 @@ function template_boardindex()
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language;
 
 	echo '
-	<div id="boardindex_table">
-		<table id="board_list" class="table_list">';
+	<table class="table_list" id="board_list">';
 
 	/* Each category in categories is made up of:
 	id, href, link, name, is_collapsed (is it collapsed?), can_collapse (is it okay if it is?),
@@ -21,28 +20,28 @@ function template_boardindex()
 			continue;
 
 		echo '
-			<tbody class="header" id="category_', $category['id'], '">
-				<tr>
-					<td colspan="4">
-						<we:cat>
-							<a href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>';
+		<tbody class="header" id="category_', $category['id'], '">
+			<tr>
+				<td colspan="4">
+					<we:cat>
+						<a class="catrss" href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
 			echo '
-							<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
+						<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
 
 		if (!$context['user']['is_guest'] && !empty($category['show_unread']))
 			echo '
-							<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
+						<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		echo '
-							', $category['link'], '
-						</we:cat>
-					</td>
-				</tr>
-			</tbody>
-			<tbody id="category_', $category['id'], '_boards">';
+						', $category['link'], '
+					</we:cat>
+				</td>
+			</tr>
+		</tbody>
+		<tbody id="category_', $category['id'], '_boards">';
 
 		// Assuming the category hasn't been collapsed...
 		if (!$category['is_collapsed'])
@@ -56,52 +55,52 @@ function template_boardindex()
 				$alt = !$alt;
 
 				echo '
-				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
-					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
+			<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
+				<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
+					<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
 
 				// If the board or children is new, show an indicator.
 				if ($board['new'] || $board['children_new'])
 					echo '
-							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
+						<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-							<img src="', $settings['images_url'], '/redirect.png">';
+						<img src="', $settings['images_url'], '/redirect.png">';
 				// No new posts at all! The agony!!
 				else
 					echo '
-							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
+						<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
 
 				echo '
-						</a>
-					</td>
-					<td class="info">
-						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
+					</a>
+				</td>
+				<td class="info">
+					', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
 				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
 					echo '
-						<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_var'], '=', $context['session_id'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_var'], '=', $context['session_id'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
 				if (!empty($board['description']))
 					echo '
-						<p>', $board['description'], '</p>';
+					<p>', $board['description'], '</p>';
 
 				// Show the "Moderators: ". Each has name, href, link, and id. (but we're gonna use link_moderators.)
 				if (!empty($board['moderators']))
 					echo '
-						<p class="moderators">', count($board['moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
+					<p class="moderators">', count($board['moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 				// Show some basic information about the number of posts, etc.
 				echo '
-					</td>
-					<td class="stats">
-						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br>
-						', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
-						</p>
-					</td>
-					<td class="lastpost">';
+				</td>
+				<td class="stats">
+					<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br>
+					', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
+					</p>
+				</td>
+				<td class="lastpost">';
 
 				/* The board's and children's 'last_post's have:
 				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
@@ -109,14 +108,15 @@ function template_boardindex()
 				and member. (which has id, name, link, href, username in it.) */
 				if (!empty($board['last_post']['id']))
 					echo '
-						<p><strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br>
+					<p>
+						<strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br>
 						', $txt['in'], ' ', $board['last_post']['link'], '<br>
 						', $txt['on'], ' ', $board['last_post']['time'], '
-						</p>';
+					</p>';
 
 				echo '
-					</td>
-				</tr>';
+				</td>
+			</tr>';
 
 				// Show the "Child Boards: ". (there's a link_children but we're going to bold the new ones...)
 				if (!empty($board['children']))
@@ -139,25 +139,24 @@ function template_boardindex()
 						$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 					}
 					echo '
-					<tr id="board_', $board['id'], '_children">
-						<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
-							<strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '
-						</td>
-					</tr>';
+				<tr id="board_', $board['id'], '_children">
+					<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
+						<strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '
+					</td>
+				</tr>';
 				}
 			}
 		}
 		echo '
-			</tbody>
-			<tbody class="divider">
-				<tr>
-					<td colspan="4"></td>
-				</tr>
-			</tbody>';
+		</tbody>
+		<tbody class="divider">
+			<tr>
+				<td colspan="4"></td>
+			</tr>
+		</tbody>';
 	}
 	echo '
-		</table>
-	</div>';
+	</table>';
 
 }
 
@@ -184,7 +183,7 @@ function template_boardindex_newsfader()
 		echo '
 	<div id="newsfader">
 		<we:cat>
-			<img id="newsupshrink" src="', img_blankGif(), '" title="', $txt['upshrink_description'], '">
+			<div id="newsupshrink" title="', $txt['upshrink_description'], '"></div>
 			', $txt['news'], '
 		</we:cat>
 		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';

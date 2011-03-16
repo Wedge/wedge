@@ -103,7 +103,7 @@ function getBoardIndex($boardIndexOptions)
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && $row_board['is_collapsed'] > 0,
 					'can_collapse' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1,
 					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_var'] . '=' . $context['session_id'] . '#c' . $row_board['id_cat'] : '',
-					'collapse_image' => isset($row_board['can_collapse']) ? '<img src="' . img_blankGif() . '" class="catfold foldable' . ($row_board['is_collapsed'] > 0 ? '" alt="+"' : ' fold" alt="-"') . '>' : '',
+					'collapse_image' => isset($row_board['can_collapse']) ? '<div class="catfold' . ($row_board['is_collapsed'] > 0 ? '' : ' fold') . '"></div>' : '',
 					'href' => $scripturl . '#c' . $row_board['id_cat'],
 					'boards' => array(),
 					'new' => false,

@@ -63,9 +63,9 @@ function template_main()
 
 	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
-			<we:cat>', $context['prevnext_prev'], '
+			<div class="posthead">', $context['prevnext_prev'], '
 				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
-			</we:cat>
+			</div>
 			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
 			</div>', $context['browser']['is_ie6'] ? '
@@ -492,9 +492,9 @@ function template_main()
 
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
-			<we:cat>', $context['prevnext_prev'], '
+			<div class="posthead">', $context['prevnext_prev'], '
 				<div id="display_jump_to"></div>', $context['prevnext_next'], '
-			</we:cat>';
+			</div>';
 
 	// Show the lower breadcrumbs.
 	$context['bottom_linktree'] = true;

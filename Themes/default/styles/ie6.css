@@ -189,6 +189,9 @@
 .wrc
 	zoom: 1
 
+.table_list a.collapse
+	width: 14px
+
 #button_home
 	padding-left: 10px !important
 

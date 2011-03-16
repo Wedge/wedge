@@ -298,9 +298,8 @@ function template_sidebar_below()
 {
 	global $needs_tables;
 
-	echo $needs_tables ? '
-		</td>' : '
-		</div>', '</div>';
+	echo '
+		</div>', $needs_tables ? '</td>' : '</div>';
 }
 
 function template_main_above()
