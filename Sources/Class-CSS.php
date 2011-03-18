@@ -17,10 +17,12 @@ class wecss_mixin extends wecss
 {
 	function process(&$css)
 	{
+		global $context;
+
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~\nmixin\s+([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\3[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~\nmixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\4[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as &$mixin)
@@ -28,16 +30,19 @@ class wecss_mixin extends wecss
 				// Remove the mixin declaration
 				$css = str_replace($mixin[0], '', $css);
 
+				if (!empty($mixin[1]) && !array_intersect(explode(',', strtolower($mixin[1])), $context['css_generic_files']))
+					continue;
+
 				// Create our mixin entry...
-				$mix[$mixin[1]] = rtrim(str_replace("\n" . $mixin[3], "\n", $mixin[4] . $mixin[5]));
+				$mix[$mixin[2]] = rtrim(str_replace("\n" . $mixin[4], "\n", $mixin[5] . $mixin[6]));
 
 				// Do we have variables to set?
-				if (!empty($mixin[2]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[2], $variables, PREG_SET_ORDER))
+				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[3], $variables, PREG_SET_ORDER))
 				{
 					foreach ($variables as $i => &$var)
 					{
-						$mix[$mixin[1]] = str_replace($var[1], '$%' . $i . '%', $mix[$mixin[1]]);
-						$def[$mixin[1]][$i] = trim($var[2], '" ');
+						$mix[$mixin[2]] = str_replace($var[1], '$%' . $i . '%', $mix[$mixin[2]]);
+						$def[$mixin[2]][$i] = trim($var[2], '" ');
 					}
 				}
 			}
@@ -394,8 +399,7 @@ class wecss_func extends wecss
 
 class wecss_nesting extends wecss
 {
-	var $rules;
-	var $props;
+	var $rules, $props;
 
 	// Sort the bases array by the first argument's length.
 	private static function lensort($a, $b)
@@ -410,6 +414,8 @@ class wecss_nesting extends wecss
 
 	function process(&$css)
 	{
+		global $browser;
+
 		/******************************************************************************
 		 Process nested selectors
 		 ******************************************************************************/
@@ -479,7 +485,9 @@ class wecss_nesting extends wecss
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as &$node)
 		{
-			if (strpos($node['selector'], 'extends') !== false)
+			// A quick hack to avoid extending selectors with a direct child selector if we're in IE6 - it would cancel ALL extends in the batch.
+			// !!! Need to figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
+			if (strpos($node['selector'], 'extends') !== false && (!$browser['is_ie6'] || strpos($node['selector'], '>') === false))
 			{
 				preg_match_all('~((?:(?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+))[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)

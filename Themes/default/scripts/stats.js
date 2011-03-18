@@ -122,10 +122,10 @@ function smf_StatsCenter(oOptions)
 smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell SMF that all underlying months have disappeared.
-	var omon = this.oYears[oToggle.opt.sYearId].oMonths;
-	for (var sMonth in omon)
-		if (omon[sMonth].oToggle.opt.aSwappableContainers.length > 0)
-			omon[sMonth].oToggle.changeState(true);
+	var oMon = this.oYears[oToggle.opt.sYearId].oMonths, m = oMon.length, i;
+	for (i = 0; i < m; i++)
+		if (oMon[i].oToggle.opt.aSwappableContainers.length > 0)
+			oMon[i].oToggle.changeState(true);
 };
 
 smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)

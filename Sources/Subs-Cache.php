@@ -241,11 +241,11 @@ function wedge_cache_css()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
-		if ($folder !== 'styles' && file_exists($fold . 'settings.xml'))
+		if (file_exists($fold . 'settings.xml'))
 		{
 			$set = file_get_contents($fold . '/settings.xml');
 			// If this is a replace-type styling, erase all of the parent files.
-			if (strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
+			if ($folder !== 'styles' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
 				$css = array();
 		}
 
@@ -265,8 +265,7 @@ function wedge_cache_css()
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
 	$id .= $folder === 'styles' ? 'Wedge' : str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
 
-	// The last folder in the list is the deepest styling.
-	// It's the one that gets CSS/JavaScript attention.
+	// The deepest styling gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
