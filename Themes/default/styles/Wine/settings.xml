@@ -44,7 +44,7 @@
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,#header,#footer,#board_list img,#wedgelogo');
+	DD_belatedPNG.fix('img.ping,.windowbg,.windowbg2,#header,#footer,#wedgelogo');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 

@@ -13,7 +13,7 @@
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame,#board_list img');
+	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
