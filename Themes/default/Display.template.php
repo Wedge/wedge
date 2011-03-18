@@ -773,9 +773,7 @@ function template_quick_reply()
 			<a id="quickreply"></a>
 			<div class="tborder" id="quickreplybox">
 				<we:cat>
-					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">
-						<img class="foldable', $options['display_quick_reply'] == 2 ? ' fold' : '', '" src="', img_blankGif(), '" alt="+" id="quickReplyExpand">
-					</a>
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 				</we:cat>
 				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>

@@ -111,7 +111,7 @@ function template_main()
 			<br>
 			<fieldset class="flow_hidden">
 				<we:title2>
-					<a href="#" onclick="expandCollapseBoards(); return false;"><img class="foldable" src="', img_blankGif(), '" id="expandBoardsIcon"></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
+					<a href="#" onclick="expandCollapseBoards(); return false;"><div class="foldable" id="expandBoardsIcon" style="margin: 2px 2px -2px 0"></div></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 				</we:title2>
 				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
 					<ul class="ignoreboards floatleft">';

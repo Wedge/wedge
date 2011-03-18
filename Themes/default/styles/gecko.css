@@ -4,3 +4,8 @@
 	left: -220px
 	:hover
 		left: 0
+
+// Firefox 2.x doesn't support inline-block
+.upshrinks
+	display: -moz-inline-box
+	display: inline-block

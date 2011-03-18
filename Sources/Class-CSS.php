@@ -315,7 +315,7 @@ class wecss_func extends wecss
 			$css = preg_replace('~((?:rgba|hsla?)\([^()]*\)(?:/hex)?)~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -374,6 +374,9 @@ class wecss_func extends wecss
 				elseif ($code === 'hue')
 					$hsl['h'] += $parg[0] ? $parg[0] * 360 : $arg[0];
 
+				elseif ($code === 'complement')
+					$hsl['h'] += 180;
+
 				elseif ($code === 'channels')
 				{
 					if ($color === 0)
@@ -387,7 +390,14 @@ class wecss_func extends wecss
 				}
 
 				else
-					continue;
+				{
+					// Do modders want to add their own color processor? Send them all the data they might need.
+					$hook = call_hook('css_color', array(&$nc, &$hsl, &$color, &$arg, &$parg, &$dec));
+
+					// Set $nc or $hsl, and then return true to tell Wedge you were there.
+					if (empty($hook))
+						continue;
+				}
 
 				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
 				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a'], $rgb[3]), $css);

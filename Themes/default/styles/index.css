@@ -152,10 +152,6 @@ h1.forumtitle
 #top_section, #upper_section
 	border-bottom: 3px solid lighten($reddish, 3%)
 
-.menu_arrows
-	background-image: url($images/menu.gif)
-	background-repeat: no-repeat
-
 // The navigation list (i.e. linktree)
 .linktree
 	clear: both
@@ -183,6 +179,10 @@ h1.forumtitle
 			border-top: 1px dotted #999
 			border-bottom: 0
 
+.menu_arrows
+	background-image: url($images/menu.gif)
+	background-repeat: no-repeat
+
 // The footer with copyright links etc.
 #footer
 	margin: 0 auto
@@ -191,14 +191,14 @@ h1.forumtitle
 	div.frame
 		background: transparent url($images/minilogo.png) 99% 17px no-repeat
 		padding: 10px 20px
-	ul li, p
+	p
 		font-size: .9em
-	ul
-		li
-			display: inline
-			padding: 0 2px
-			&.copyright
-				display: block
+	ul li
+		font-size: .9em
+		display: inline
+		padding: 0 2px
+		&.copyright
+			display: block
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -805,7 +805,7 @@ td.footnum a:target, a.fnotel:target
 
 .readmore
 	font-style: italic
-	color: grey
+	color: gray
 
 // Merged double posts
 .mergedate
@@ -1096,7 +1096,7 @@ dl#rss
 	border: 1px solid rgba(0,0,0, .15)
 	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	text-shadow: white 0 1px 2px
-	color: grey
+	color: gray
 	img
 		float: left
 		vertical-align: middle
@@ -1111,13 +1111,14 @@ dl#rss
 .cat, .title, .table_list tbody.header td
 	a
 		letter-spacing: -1px
-		color: lighten(grey, 10%)
+		color: lighten(gray, 10%)
 		text-decoration: underline
+		font-size: .92em
 		:hover
 			color: $board_col
 
 .title
-	color: channels(grey, 30%)
+	color: channels(gray, 30%)
 	font-size: 1.2em
 	background: none
 	padding: 5px 12px 3px 8px
@@ -1125,15 +1126,11 @@ dl#rss
 	#sidebar &
 		margin-top: 6px
 	a
-		color: lighten(channels(grey, 30%), 10%)
-
-.cat
-	a
-		font-size: .92em
+		color: lighten(channels(gray, 30%), 10%)
 
 .title2 extends .title
 	font-size: 1.1em
-	color: channels(grey,0,0,30%)
+	color: channels(gray,0,0,30%)
 	border-bottom: 1px dotted rgba(0,0,0, .5)
 
 img[alt="!"]
@@ -1357,7 +1354,7 @@ table
 		float: right
 	a.collapse
 		float: right
-		margin: 3px 0 -3px .8em
+		margin: 3px 0 -3px .5em
 	p
 		padding, margin: 0
 
@@ -1403,8 +1400,6 @@ $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
 $ie-max-width = "max-width"
 $ie-max-width {ie6} = "width"
-$ie-inline-block = "inline-block"
-$ie-inline-block {ie6} = "inline"
 $main_bg = rgb(241,243,234)
 $main_bg = rgb(246,248,239)
 $head_bg = rgba(233,235,186,.66)
@@ -1424,10 +1419,15 @@ $reddish = "#cc6600"
 
 $alphamix = rgb(241,243,234)
 
-/* And our mixins... Well, I have no idea where to use them, so here are just a
-   few examples, commented out, for you to see how powerful they can be... */
+/* And our mixins... */
+
+// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
+mixin {ie6,ie7} inline-icon
+	margin-right: 6px
+	zoom: 1
 
 /*
+// This example is here to showcase the mixin power.
 mixin example($border: 1px solid black, $width: 777px, $co = #888)
 	width: $width
 	font-size: 1em
@@ -1436,12 +1436,8 @@ mixin example($border: 1px solid black, $width: 777px, $co = #888)
 		border: $border
 		color: $board_col
 
-mixin no_params
-	color: #fff
-
 .class
 	.thing
-		mixin: no_params
 		mixin: example
 		mixin: example(1px dotted white)
 		mixin: example(,, #fff)

@@ -325,12 +325,10 @@ function template_body_below()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
-	</div>';
+	</div></div>';
 
 	if (!empty($context['bottom_linktree']))
 		theme_linktree(false, true);
-
-	echo '</div>';
 
 	// Show the "Powered by" and "Valid" logos, as well as the copyright.
 	echo '

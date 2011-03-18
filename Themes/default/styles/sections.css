@@ -41,7 +41,7 @@ p.moderators
 		font-size: .8em
 	img
 		vertical-align: -5px
-		margin: 0 2px 0 4ex
+		padding: 0 2px 0 10px
 
 #postbuttons_upper ul li a span
 	line-height: 19px
@@ -49,6 +49,8 @@ p.moderators
 
 .mark_read
 	padding: 0 .5em
+	.buttonlist ul
+		padding-top: 0
 
 // The newsfader
 #smfFadeScroller
@@ -1382,27 +1384,28 @@ span.hidelink
 	.buttons
 		padding: 5px 1em 0 0
 
-/* More hacks.
+/* Foldable icons.
 ------------------------------------------------- */
 .upshrinks
 	background: url($images/upshrinks.png) no-repeat
+	vertical-align: middle
+	display: inline-block
+	mixin: inline-icon
 
 .foldable extends .upshrinks
-	display: $ie-inline-block
 	width, height: 14px
 	background-position: -20px 0
 	.fold&
 		background-position: -20px -25px
 
 .shrinkable extends .upshrinks
-	display: $ie-inline-block
 	width, height: 20px
 	background-position: 0 0
 	.fold&
 		background-position: 0 -20px
 
 // Only seen in the admin area, so don't bother preloading its graphics...
-.sortselect
+.sortselect extends .upshrinks
 	width, height: 12px
 	background: url-no-base64($images/sortselect.gif)
 	.fold&
@@ -1411,6 +1414,7 @@ span.hidelink
 .catfold extends .foldable
 	float: right
 	text-decoration: none
+	margin: 0
 
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable
@@ -1419,11 +1423,45 @@ span.hidelink
 
 #upshrink_ic extends .foldable
 	float: right
-	margin: 2px -5px 0 0
+	margin: 2px -8px 0 0
 
-#newsupshrink extends .foldable
-	margin-top: 4px
+#quickReplyExpand extends .foldable
+	margin: 4px 5px -4px -1px
 
+#postMoreExpand, #newsupshrink
+	base: .foldable
+
+/* Board status icons.
+------------------------------------------------- */
+
+.boardstate_on extends .upshrinks
+	background: url($images/boardstatus.png) 0 0 no-repeat
+	width: 38px
+	height: 42px
+
+.boardstate_new extends .boardstate_on
+	background-position: -53px 0
+
+.boardstate_off extends .boardstate_on
+	background-position: -110px 0
+
+.boardstate_redirect extends .boardstate_on
+	background-position: -163px 0
+
+.mini_boardstate_off extends .boardstate_on
+	background-position: -208px -3px
+	width: 19px
+	height: 21px
+	margin: -2px 4px 2px 12px
+
+.mini_boardstate_on extends .mini_boardstate_off
+	background-position: -239px -3px
+
+.mini_boardstate_redirect extends .mini_boardstate_off
+	background-position: -273px -3px
+
+/* More hacks.
+------------------------------------------------- */
 // table_grid styles for Profile > Show Permissions.
 #permissions table.table_grid td
 	padding: .4em .8em

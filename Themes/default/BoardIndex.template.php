@@ -62,15 +62,15 @@ function template_boardindex()
 				// If the board or children is new, show an indicator.
 				if ($board['new'] || $board['children_new'])
 					echo '
-						<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
+						<div class="boardstate_', $board['new'] ? 'new' : 'on', '" title="', $txt['new_posts'], '"></div>';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-						<img src="', $settings['images_url'], '/redirect.png">';
+						<div class="boardstate_redirect"></div>';
 				// No new posts at all! The agony!!
 				else
 					echo '
-						<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
+						<div class="boardstate_off" title="', $txt['old_posts'], '"></div>';
 
 				echo '
 					</a>
@@ -246,9 +246,9 @@ function template_boardindex_below()
 
 		echo '
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_some.png"> ', $txt['new_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png"> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png"> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><div class="mini_boardstate_on"></div> ', $txt['new_posts'], '</li>
+			<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 
@@ -261,8 +261,8 @@ function template_boardindex_below()
 		echo '
 	<div id="posting_icons" class="flow_hidden">
 		<ul class="reset">
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_none.png"> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><img src="', $settings['images_url'], '/new_redirect.png"> ', $txt['redirect_board'], '</li>
+			<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
+			<li class="floatleft"><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
 	}

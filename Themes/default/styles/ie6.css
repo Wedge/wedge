@@ -47,6 +47,7 @@
 // The page section
 .pagesection
 	overflow: auto
+	clear: both
 
 #top_section
 	height: 1%
@@ -71,21 +72,27 @@
 
 /* Overrides for the display template
 ------------------------------------------------------- */
-.cat
+.posthead
 	width: auto
+	overflow: hidden
 	clear: both
+	height: 1%
 
 .prevnext_prev
 	padding: 0 8px 0
 	float: left
 	width: 20%
 
-.prevnext_next
+.prevnext_next extends .prevnext_prev
 	float: right
 
 #top_subject, #display_jump_to
+	line-height: 1.2em
 	float: left
 	width: 55%
+
+#quickreplybox
+	clear: both
 
 #forumposts
 	.postarea
@@ -183,6 +190,13 @@
 #content div.frame
 	width: expression(this.clientWidth > 1200 ? '1200px' : '100%')
 
+#footer
+	clear: both
+
+// Adding layout to a few divs that are distorted by IE6.
+#menu_container, .linktree ul
+	zoom: 1
+
 .cat a
 	color: black !important
 
@@ -218,7 +232,7 @@ table.table_grid, table.cs0, table.cs1
 	padding-right: 3px
 
 .features .wrc
-	width: expression(this.clientWidth < 300 ? '300px' : 'auto')
+	width: 300px
 	height: 150px
 
 li.hove
@@ -261,3 +275,11 @@ input.new
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$head_bg/hex, endColorstr=$head_bg/hex)
 	h1
 		display: inline // IE6 double margin bug fix
+
+// IE6 needs inline-block to be reset to inline separately... How annoying.
+.upshrinks
+	display: inline
+
+// And it doesn't show the 'off' icons in boardstatus.png. I'm nice, so I'm giving it another file to play with.
+.boardstate_on extends .upshrinks
+	background-image: url($images/boardstatus-ie6.png)

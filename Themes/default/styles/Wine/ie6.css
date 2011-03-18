@@ -12,3 +12,6 @@
 
 .title
 	border-bottom-style: solid
+
+#upper_section h1
+	filter: glow(color=#666666, strength=3)

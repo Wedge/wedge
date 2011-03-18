@@ -23,8 +23,16 @@
 /* Overrides for the display template
 ------------------------------------------------------- */
 .prevnext_prev
-	padding: 0 8px
-	width: 96%
+	padding: 0 8px 0
+	float: left
+	width: 20%
+
+.prevnext_next extends .prevnext_prev
+	float: right
+
+#top_subject, #display_jump_to
+	float: left
+	width: 55%
 
 .post
 	padding-top: 1em
@@ -133,3 +141,7 @@ input.new
 #upper_section .frame
 	background: none
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=$head_bg/hex, endColorstr=$head_bg/hex)
+
+// IE7 needs inline-block to be reset to inline separately... How annoying.
+.upshrinks
+	display: inline

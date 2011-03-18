@@ -296,7 +296,7 @@ function template_main()
 			echo '
 					<tr class="windowbg2" id="year_', $id, '">
 						<th class="stats_year">
-							<img class="foldable" id="year_img_', $id, '" src="', img_blankGif(), '">
+							<div class="foldable fold" id="year_img_', $id, '"></div>
 							<a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
 						</th>
 						<th>', $year['new_topics'], '</th>
@@ -316,7 +316,7 @@ function template_main()
 				echo '
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
 						<th class="stats_month">
-							<img class="foldable', $month['expanded'] ? ' fold' : '', '" id="img_', $month['id'], '" src="', img_blankGif(), '">
+							<div class="foldable', $month['expanded'] ? ' fold' : '', '" id="img_', $month['id'], '"></div>
 							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
 						</th>
 						<th>', $month['new_topics'], '</th>

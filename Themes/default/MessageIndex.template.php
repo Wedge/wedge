@@ -594,15 +594,15 @@ function template_messageindex_childboards()
 			// If the board or children is new, show an indicator.
 			if ($board['new'] || $board['children_new'])
 				echo '
-							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '">';
+							<div class="boardstate_', $board['new'] ? 'new' : 'on', '" title="', $txt['new_posts'], '"></div>';
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
 				echo '
-							<img src="', $settings['images_url'], '/redirect.png">';
+							<div class="boardstate_redirect"></div>';
 			// No new posts at all! The agony!!
 			else
 				echo '
-							<img src="', $settings['images_url'], '/off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '">';
+							<div class="boardstate_off" title="', $txt['old_posts'], '"></div>';
 
 			echo '
 						</a>
