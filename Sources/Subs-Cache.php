@@ -575,7 +575,7 @@ function clean_cache($type = '', $extensions = 'php')
 	$ext = array_flip(explode(',', $extensions));
 	$len = strlen($type);
 	foreach ($dh as $file)
-		if ($file === '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type) && isset($exts[substr($file, -3)]))
+		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type) && isset($exts[substr($file, -3)]))
 			@unlink($cachedir . '/' . $file);
 
 	// Invalidate cache, to be sure!

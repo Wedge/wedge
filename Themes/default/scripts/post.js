@@ -155,9 +155,14 @@ function splitQuote(oEvent)
 		if (log_tags && in_array(bbcode, protect_tags))
 			log_tags = false;
 	}
-	for (var closers = [], j = 0, l = taglist.length; j < l; j++)
-		closers.push('[/' + (taglist[j].indexOf(' ') > 0 ? taglist[j].substr(0, taglist[j].indexOf(' ')) : taglist[j]) + ']');
-	surroundText(closers.reverse().join('') + '\n', '\n\n[' + taglist.join('][') + ']', this);
+
+	var len = taglist.length, closers = [], j;
+	if (len)
+	{
+		for (j = 0; j < len; j++)
+			closers.push('[/' + (taglist[j].indexOf(' ') > 0 ? taglist[j].substr(0, taglist[j].indexOf(' ')) : taglist[j]) + ']');
+		surroundText(closers.reverse().join('') + '\n', '\n\n[' + taglist.join('][') + ']', this);
+	}
 
 	return true;
 };
