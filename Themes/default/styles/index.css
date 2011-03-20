@@ -147,7 +147,7 @@ h1.forumtitle
 	.frame
 		width: 100%
 		height: 100px
-		background-color: $head_bg
+		gradient-background: $head_bg, darken($head_bg, 20%)
 
 #top_section, #upper_section
 	border-bottom: 3px solid lighten($reddish, 3%)

@@ -329,9 +329,14 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		new wecss_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 		new wecss_math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
 	);
+
+	// rgba to rgb conversion for IE 6/7
+	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
+		$plugins[] = new wecss_rgba();
+
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
-	if ($can_gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
+	elseif ($can_gzip)
 		$plugins[] = new wecss_base64();
 
 	// Default CSS variables (paths are set relative to the cache folder)

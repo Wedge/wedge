@@ -1382,7 +1382,7 @@ function detectBrowser()
 
 	// Detect Firefox versions
 	$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
-	$browser['is_firefox'] = strpos($ua, 'Gecko/') === 1;					// Firefox says "Gecko/20xx", not "like Gecko"
+	$browser['is_firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
 
 	// Internet Explorer is often "emulated".
 	$browser['is_ie'] = $is_ie = !$browser['is_opera'] && !$browser['is_gecko'] && strpos($ua, 'MSIE') !== false;

@@ -144,42 +144,48 @@ class wecss_var extends wecss
  */
 class wecss_func extends wecss
 {
-	// Converts from a RGBA color to a string
-	private function color2string($r, $g, $b, $a, $force_hex = false)
+	// Converts from a string (possibly rgba) value to a rgb string
+	function rgba2rgb($input, $return_alpha = false)
 	{
-		global $browser, $alphamix;
+		global $alphamix;
 
-		$a = max(0, min(1, $a));
+		list (, $rgba, $hsl) = wecss_func::string2color(is_array($input) ? $input[0] : $input);
+		list ($r, $g, $b, $a) = $rgba ? $rgba : wecss_func::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
 
-		if ($browser['is_ie8down'] && $a !== 1 && !$force_hex)
+		if ($return_alpha)
+			return '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
+		if ($a == 1)
+			return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+
+		// We're going to assume the matte color is white, otherwise, well, too bad.
+		if (isset($alphamix) && !is_array($alphamix))
 		{
-			// Old IE doesn't support RGBA, and we want to turn it into RGB.
-			// We're going to assume the matte color is white, otherwise, well, too bad.
-			if (isset($alphamix) && !is_array($alphamix))
-			{
-				$rgb = $this->string2color($alphamix);
-				if (empty($rgb[1]) && !empty($rgb[2]))
-					$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-				$alphamix = $rgb[1];
-			}
-			elseif (!isset($alphamix))
-				$alphamix = array(255, 255, 255);
-			$ma = 1 - $a;
-			$r = $a * $r + $ma * $alphamix[0];
-			$g = $a * $g + $ma * $alphamix[1];
-			$b = $a * $b + $ma * $alphamix[2];
-			$a = 1;
+			$rgb = wecss_func::string2color($alphamix);
+			if (empty($rgb[1]) && !empty($rgb[2]))
+				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
+			$alphamix = $rgb[1];
 		}
+		elseif (!isset($alphamix))
+			$alphamix = array(255, 255, 255);
 
+		$ma = 1 - $a;
+		$r = $a * $r + $ma * $alphamix[0];
+		$g = $a * $g + $ma * $alphamix[1];
+		$b = $a * $b + $ma * $alphamix[2];
+
+		return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+	}
+
+	// Converts from a RGBA color to a string
+	private function color2string($r, $g, $b, $a)
+	{
+		$a = max(0, min(1, $a));
 		$r = max(0, min(255, round($r)));
 		$g = max(0, min(255, round($g)));
 		$b = max(0, min(255, round($b)));
 
-		return $a === 1 ?
-			'#' . sprintf('%02x%02x%02x', $r, $g, $b) : ($force_hex ?
-			'#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b) : "rgba($r, $g, $b, $a)");
+		return $a === 1 ? '#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
-
 	// Converts from hue to RGB
 	private function hue2rgb($m1, $m2, $h)
 	{
@@ -255,6 +261,49 @@ class wecss_func extends wecss
 		);
 	}
 
+	// Transform "gradient-background: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
+	// You can add a second parameter for an actual gradient effect. (Only vertical for now.)
+	private function gradient_background($input)
+	{
+		global $browser;
+		static $test_gradient_support = true, $no_gradients;
+
+		$is_ie = $browser['is_ie8down'] || $browser['is_ie9'];
+		if ($test_gradient_support)
+		{
+			$test_gradient_support = false;
+			$no_gradients = $browser['is_ie8down'] || $browser['is_ie9'];
+			if ($browser['is_firefox'] && preg_match('~Firefox/([\d\.]+)~', $browser['ua'], $version))
+				$no_gradients |= (float) $version[1] < 3.6;
+			if ($browser['is_opera'] && preg_match('~Version/([\d\.]+)~', $browser['ua'], $version))
+				$no_gradients |= (float) $version[1] < 11.1;
+		}
+		$bg1 = $input[2];
+		$bg2 = empty($input[3]) ? $bg1 : $input[3];
+
+		// If you're not specifying a gradient shade, IE 8/9 won't need the filter.
+		if ($is_ie && (($bg1 != $bg2) || $browser['is_ie6'] || $browser['is_ie7']))
+		{
+			$bg1 = $this->rgba2rgb($bg1, true);
+			$bg2 = empty($input[3]) || $input[2] == $input[3] ? $bg1 : $this->rgba2rgb($bg2, true);
+			return $input[1] . 'background: none' . $input[1] . 'filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ', endColorStr=' . $bg2 . ')';
+		}
+
+		// Better than nothing...
+		if ($no_gradients)
+			return $input[1] . 'background-color: ' . $bg1;
+
+		$grad = 'linear-gradient(top, %1$s, %2$s)';
+		if ($browser['is_opera'])
+			$grad = '-o-' . $grad;
+		elseif ($browser['is_gecko'])
+			$grad = '-moz-' . $grad;
+		elseif ($browser['is_webkit'])
+			$grad = '-webkit-' . $grad;
+
+		return $input[1] . 'background-image: ' . sprintf($grad, $bg1, $bg2);
+	}
+
 	// Converts from a string to a RGBA or HSLA color
 	function string2color($data)
 	{
@@ -276,7 +325,7 @@ class wecss_func extends wecss
 		}
 
 		// Extract color data
-		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))(/hex)?~', $data, $rgb);
+		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
 
 		$color = $hsl = 0;
 		if (empty($rgb[0]))
@@ -299,7 +348,7 @@ class wecss_func extends wecss
 		else
 			$color = array(255, 255, 255, 1);
 
-		return array($rgb[0], $color, $hsl, !empty($rgb[7]));
+		return array($rgb[0], $color, $hsl);
 	}
 
 	// Now, go with the actual color parsing.
@@ -308,11 +357,6 @@ class wecss_func extends wecss
 		global $browser;
 
 		$nodupes = array();
-
-		// A quick but relatively elegant hack to allow replacing rgba, hsl and hsla
-		// calls to pure rgb crap in IE 6/7/8, by wrapping them around a dummy function.
-		if ($browser['is_ie8down'])
-			$css = preg_replace('~((?:rgba|hsla?)\([^()]*\)(?:/hex)?)~i', 'channels($1,0,0,0,0)', $css);
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
@@ -400,9 +444,11 @@ class wecss_func extends wecss
 				}
 
 				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a'], $rgb[3]), $css);
+				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
+
+		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*((?:rgba|hsla?)\([^()]*\))(?:\s*,\s*((?:rgba|hsla?)\([^()]*\)))?~i', 'self::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -734,6 +780,16 @@ class wecss_math extends wecss
 
 			$css = str_replace($matches[0][$i], eval('return (' . $math . ');') . ($em ? 'em' : ($px ? 'px' : ($pt ? 'pt' : ''))), $css);
 		}
+	}
+}
+
+// IE 6/7 don't support rgba/hsla, so we're replacing them
+// with regular rgb colors mixed with an alpha variable.
+class wecss_rgba extends wecss
+{
+	function process(&$css)
+	{
+		$css = preg_replace_callback('~(?:rgba|hsla?)\([^()]*\)~i', 'wecss_func::rgba2rgb', $css);
 	}
 }
 
