@@ -10,6 +10,143 @@
 
 class wecss
 {
+	/**
+	 * The HSL to RGB and RGB to HSL functions are based on ABC algorithms from the CWI,
+	 * based on 'Fundamentals of Interactive Computer Graphics' (J.D. Foley, 1982.)
+	 */
+
+	// Converts from a RGBA color to a string
+	protected function color2string($r, $g, $b, $a)
+	{
+		$a = max(0, min(1, $a));
+		$r = max(0, min(255, round($r)));
+		$g = max(0, min(255, round($g)));
+		$b = max(0, min(255, round($b)));
+
+		return $a === 1 ? '#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
+	}
+	// Converts from hue to RGB
+	protected function hue2rgb($m1, $m2, $h)
+	{
+		$h < 0 ? $h++ : ($h > 1 ? $h-- : '');
+
+		if ($h * 6 < 1)
+			return $m2 + ($m1 - $m2) * $h * 6;
+		if ($h * 2 < 1)
+			return $m1;
+		if ($h * 3 < 2)
+			return $m2 + ($m1 - $m2) * (2 / 3 - $h) * 6;
+		return $m2;
+	}
+
+	/**
+	 * Converts from HSL to RGB
+	 * Algorithm from the CSS3 spec: http://www.w3.org/TR/css3-color/
+	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
+	 */
+	protected function hsl2rgb($h, $s, $l, $a)
+	{
+		while ($h < 0)
+			$h += 360;
+		$h = fmod($h, 360) / 360;
+		$s = max(0, min(1, $s / 100));
+		$l = max(0, min(1, $l / 100));
+
+		$m1 = $l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s;
+		$m2 = $l * 2 - $m1;
+
+		return array(
+			'r' => wecss::hue2rgb($m1, $m2, $h + 1 / 3) * 255,
+			'g' => wecss::hue2rgb($m1, $m2, $h) * 255,
+			'b' => wecss::hue2rgb($m1, $m2, $h - 1 / 3) * 255,
+			'a' => $a
+		);
+	}
+
+	/**
+	 * Converts from RGB to HSL
+	 * $r/$g/$b are RGB values (0-255)
+	 */
+	protected function rgb2hsl($r, $g, $b, $a)
+	{
+		$r /= 255;
+		$g /= 255;
+		$b /= 255;
+		$max = max($r, $g, $b);
+		$min = min($r, $g, $b);
+		$c = $max - $min;
+		$l = ($max + $min) / 2;
+
+		if ($max === $min)
+			return array('h' => 0, 's' => 0, 'l' => $l * 100, 'a' => $a);
+
+		if ($max === $r)
+		{
+			$h = ($g - $b) / $c;
+			while ($h < 0)
+				$h += 6;
+			$h = fmod($h, 6);
+		}
+		elseif ($max === $g)
+			$h = (($b - $r) / $c) + 2;
+		else
+			$h = (($r - $g) / $c) + 4;
+
+		return array(
+			'h' => $h * 60,
+			's' => $c / ($l <= 0.5 ? $l + $l : 2 - $l - $l) * 100,
+			'l' => $l * 100,
+			'a' => $a
+		);
+	}
+
+	// Converts from a string to a RGBA or HSLA color
+	protected function string2color($data)
+	{
+		static $colors = array(
+			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
+			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
+			'grey'		=> '808080', 'lime'		=> '00ff00', 'maroon'	=> '800000',
+			'navy'		=> '000080', 'olive'	=> '808000', 'purple'	=> '800080',
+			'red'		=> 'ff0000', 'silver'	=> 'c0c0c0', 'teal'		=> '008080',
+			'white'		=> 'ffffff', 'yellow'	=> 'ffff00'
+		);
+
+		if (!function_exists('to_max'))
+		{
+			function to_max($d, $max = 255)
+			{
+				return substr($d, -1) === '%' ? (int) substr($d, 0, -1) / 100 * $max : $d;
+			}
+		}
+
+		// Extract color data
+		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
+
+		$color = $hsl = 0;
+		if (empty($rgb[0]))
+		{
+			$data = explode(',', $data);
+			$rgb[0] = $data[0];
+			$data = trim($data[0]);
+			if (!isset($colors[$data]))
+				return false;
+			$color = array(hexdec(substr($colors[$data], 0, 2)), hexdec(substr($colors[$data], 2, 2)), hexdec(substr($colors[$data], -2)), 1);
+		}
+		elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
+			$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+		elseif ($rgb[2] !== '')
+			$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
+		elseif ($rgb[6] !== '' && isset($rgb[6][3]))
+			$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
+		elseif ($rgb[6] !== '')
+			$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
+		else
+			$color = array(255, 255, 255, 1);
+
+		return array($rgb[0], $color, $hsl);
+	}
+
 	function process(&$css) {}
 }
 
@@ -135,135 +272,13 @@ class wecss_var extends wecss
 }
 
 /**
- * Various functions for the CSS parser. Currently only color-related.
- *
- * The HSL to RGB and RGB to HSL functions are based on ABC algorithms from the CWI,
- * based on 'Fundamentals of Interactive Computer Graphics' (J.D. Foley, 1982.)
- *
- * The rest isn't as good, but it's mine. Ben oui.
+ * Apply color functions to the CSS file.
  */
 class wecss_func extends wecss
 {
-	// Converts from a string (possibly rgba) value to a rgb string
-	function rgba2rgb($input, $return_alpha = false)
-	{
-		global $alphamix;
-
-		list (, $rgba, $hsl) = wecss_func::string2color(is_array($input) ? $input[0] : $input);
-		list ($r, $g, $b, $a) = $rgba ? $rgba : wecss_func::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-
-		if ($return_alpha)
-			return '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
-		if ($a == 1)
-			return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
-
-		// We're going to assume the matte color is white, otherwise, well, too bad.
-		if (isset($alphamix) && !is_array($alphamix))
-		{
-			$rgb = wecss_func::string2color($alphamix);
-			if (empty($rgb[1]) && !empty($rgb[2]))
-				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
-			$alphamix = $rgb[1];
-		}
-		elseif (!isset($alphamix))
-			$alphamix = array(255, 255, 255);
-
-		$ma = 1 - $a;
-		$r = $a * $r + $ma * $alphamix[0];
-		$g = $a * $g + $ma * $alphamix[1];
-		$b = $a * $b + $ma * $alphamix[2];
-
-		return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
-	}
-
-	// Converts from a RGBA color to a string
-	private function color2string($r, $g, $b, $a)
-	{
-		$a = max(0, min(1, $a));
-		$r = max(0, min(255, round($r)));
-		$g = max(0, min(255, round($g)));
-		$b = max(0, min(255, round($b)));
-
-		return $a === 1 ? '#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
-	}
-	// Converts from hue to RGB
-	private function hue2rgb($m1, $m2, $h)
-	{
-		$h < 0 ? $h++ : ($h > 1 ? $h-- : '');
-
-		if ($h * 6 < 1)
-			return $m2 + ($m1 - $m2) * $h * 6;
-		if ($h * 2 < 1)
-			return $m1;
-		if ($h * 3 < 2)
-			return $m2 + ($m1 - $m2) * (2 / 3 - $h) * 6;
-		return $m2;
-	}
-
-	/**
-	 * Converts from HSL to RGB
-	 * Algorithm from the CSS3 spec: http://www.w3.org/TR/css3-color/
-	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
-	 */
-	private function hsl2rgb($h, $s, $l, $a)
-	{
-		while ($h < 0)
-			$h += 360;
-		$h = fmod($h, 360) / 360;
-		$s = max(0, min(1, $s / 100));
-		$l = max(0, min(1, $l / 100));
-
-		$m1 = $l <= 0.5 ? $l * ($s + 1) : $l + $s - $l * $s;
-		$m2 = $l * 2 - $m1;
-
-		return array(
-			'r' => $this->hue2rgb($m1, $m2, $h + 1 / 3) * 255,
-			'g' => $this->hue2rgb($m1, $m2, $h) * 255,
-			'b' => $this->hue2rgb($m1, $m2, $h - 1 / 3) * 255,
-			'a' => $a
-		);
-	}
-
-	/**
-	 * Converts from RGB to HSL
-	 * $r/$g/$b are RGB values (0-255)
-	 */
-	private function rgb2hsl($r, $g, $b, $a)
-	{
-		$r /= 255;
-		$g /= 255;
-		$b /= 255;
-		$max = max($r, $g, $b);
-		$min = min($r, $g, $b);
-		$c = $max - $min;
-		$l = ($max + $min) / 2;
-
-		if ($max === $min)
-			return array('h' => 0, 's' => 0, 'l' => $l * 100, 'a' => $a);
-
-		if ($max === $r)
-		{
-			$h = ($g - $b) / $c;
-			while ($h < 0)
-				$h += 6;
-			$h = fmod($h, 6);
-		}
-		elseif ($max === $g)
-			$h = (($b - $r) / $c) + 2;
-		else
-			$h = (($r - $g) / $c) + 4;
-
-		return array(
-			'h' => $h * 60,
-			's' => $c / ($l <= 0.5 ? $l + $l : 2 - $l - $l) * 100,
-			'l' => $l * 100,
-			'a' => $a
-		);
-	}
-
 	// Transform "gradient-background: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
-	// You can add a second parameter for an actual gradient effect. (Only vertical for now.)
-	private function gradient_background($input)
+	// You can add a second parameter for an actual gradient effect, and a third: top (vertical gradient) or left (horizontal.)
+	protected function gradient_background($input)
 	{
 		global $browser;
 		static $test_gradient_support = true, $no_gradients;
@@ -280,20 +295,19 @@ class wecss_func extends wecss
 		}
 		$bg1 = $input[2];
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];
+		$dir = empty($input[4]) ? 'top' : $input[4];
 
-		// If you're not specifying a gradient shade, IE 8/9 won't need the filter.
-		if ($is_ie && (($bg1 != $bg2) || $browser['is_ie6'] || $browser['is_ie7']))
-		{
-			$bg1 = $this->rgba2rgb($bg1, true);
-			$bg2 = empty($input[3]) || $input[2] == $input[3] ? $bg1 : $this->rgba2rgb($bg2, true);
-			return $input[1] . 'background: none' . $input[1] . 'filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ', endColorStr=' . $bg2 . ')';
-		}
+		// If you're not specifying a gradient shade, IE 9 won't need the filter.
+		if ($browser['is_ie8down'] && $bg1 != $bg2)
+			return $input[1] . 'background: transparent' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] .
+				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')' :
+				'-ms-filter:"progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')"');
 
 		// Better than nothing...
 		if ($no_gradients)
 			return $input[1] . 'background-color: ' . $bg1;
 
-		$grad = 'linear-gradient(top, %1$s, %2$s)';
+		$grad = 'linear-gradient(' . $dir . ', %1$s, %2$s)';
 		if ($browser['is_opera'])
 			$grad = '-o-' . $grad;
 		elseif ($browser['is_gecko'])
@@ -304,53 +318,6 @@ class wecss_func extends wecss
 		return $input[1] . 'background-image: ' . sprintf($grad, $bg1, $bg2);
 	}
 
-	// Converts from a string to a RGBA or HSLA color
-	function string2color($data)
-	{
-		static $colors = array(
-			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
-			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
-			'grey'		=> '808080', 'lime'		=> '00ff00', 'maroon'	=> '800000',
-			'navy'		=> '000080', 'olive'	=> '808000', 'purple'	=> '800080',
-			'red'		=> 'ff0000', 'silver'	=> 'c0c0c0', 'teal'		=> '008080',
-			'white'		=> 'ffffff', 'yellow'	=> 'ffff00'
-		);
-
-		if (!function_exists('to_max'))
-		{
-			function to_max($d, $max = 255)
-			{
-				return substr($d, -1) === '%' ? (int) substr($d, 0, -1) / 100 * $max : $d;
-			}
-		}
-
-		// Extract color data
-		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
-
-		$color = $hsl = 0;
-		if (empty($rgb[0]))
-		{
-			$data = explode(',', $data);
-			$rgb[0] = $data[0];
-			$data = trim($data[0]);
-			if (!isset($colors[$data]))
-				return false;
-			$color = array(hexdec(substr($colors[$data], 0, 2)), hexdec(substr($colors[$data], 2, 2)), hexdec(substr($colors[$data], -2)), 1);
-		}
-		elseif ($rgb[2] !== '' && $rgb[1] === 'rgb')
-			$color = array(to_max($rgb[2]), to_max($rgb[3]), to_max($rgb[4]), !isset($rgb[5]) || $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
-		elseif ($rgb[2] !== '')
-			$hsl = array('h' => to_max($rgb[2], 360), 's' => to_max($rgb[3], 100), 'l' => to_max($rgb[4], 100), 'a' => $rgb[5] === '' ? 1 : to_max((float) $rgb[5], 1));
-		elseif ($rgb[6] !== '' && isset($rgb[6][3]))
-			$color = array(hexdec(substr($rgb[6], 0, 2)), hexdec(substr($rgb[6], 2, 2)), hexdec(substr($rgb[6], -2)), 1);
-		elseif ($rgb[6] !== '')
-			$color = array(hexdec($rgb[6][0] . $rgb[6][0]), hexdec($rgb[6][1] . $rgb[6][1]), hexdec($rgb[6][2] . $rgb[6][2]), 1);
-		else
-			$color = array(255, 255, 255, 1);
-
-		return array($rgb[0], $color, $hsl);
-	}
-
 	// Now, go with the actual color parsing.
 	function process(&$css)
 	{
@@ -359,7 +326,7 @@ class wecss_func extends wecss
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|alpha|channels)\(((?:[^()]|(?:rgb|hsl)a?\([^()]*\))+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -371,7 +338,7 @@ class wecss_func extends wecss
 				if (empty($m))
 					continue;
 
-				$rgb = $this->string2color($m);
+				$rgb = wecss::string2color($m);
 				if ($rgb === false)
 				{
 					// Unfortunately, the alpha() function can clash with the equivalent IE filter...
@@ -397,7 +364,7 @@ class wecss_func extends wecss
 						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
 				foreach ($arg as $i => &$a)
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
-				$hsl = $hsl ? $hsl : $this->rgb2hsl($color[0], $color[1], $color[2], $color[3]);
+				$hsl = $hsl ? $hsl : wecss::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
 				// Run our functions
 				if ($code === 'alpha')
@@ -424,7 +391,7 @@ class wecss_func extends wecss
 				elseif ($code === 'channels')
 				{
 					if ($color === 0)
-						$color = $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+						$color = wecss::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
 					$nc = array(
 						'r' => $color[0] + ($parg[0] ? $color[0] * $parg[0] : $arg[0]),
 						'g' => $color[1] + ($parg[1] ? $color[1] * $parg[1] : $arg[1]),
@@ -443,12 +410,13 @@ class wecss_func extends wecss
 						continue;
 				}
 
-				$nc = $nc ? $nc : $this->hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-				$css = str_replace($dec, $this->color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
+				$nc = $nc ? $nc : wecss::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+				$css = str_replace($dec, wecss::color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
 
-		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*((?:rgba|hsla?)\([^()]*\))(?:\s*,\s*((?:rgba|hsla?)\([^()]*\)))?~i', 'self::gradient_background', $css);
+		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
+		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'self::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -671,7 +639,7 @@ class wecss_nesting extends wecss
 			$css .= '}';
 	}
 
-	function getAncestorSelectors(&$node)
+	private function getAncestorSelectors(&$node)
 	{
 		if (empty($node['parent']))
 			return (array) $node['selector'];
@@ -679,7 +647,7 @@ class wecss_nesting extends wecss
 		return array_merge((array) $node['selector'], $this->getAncestorSelectors($this->rules[$node['parent']]));
 	}
 
-	function parseAncestorSelectors($ancestors = array())
+	private function parseAncestorSelectors($ancestors = array())
 	{
 		$growth = array();
 		foreach ($ancestors as $selector)
@@ -707,7 +675,7 @@ class wecss_nesting extends wecss
 		return implode(',', $growth);
 	}
 
-	function pierce(&$data)
+	private function pierce(&$data)
 	{
 		preg_match_all('~<(/?)([a-z]+)\s*(?:name="([^"]*)"\s*)?(?:(?:value|selector)="([^"]*)")?[^>]*>~s', $data, $tags, PREG_SET_ORDER);
 
@@ -783,13 +751,53 @@ class wecss_math extends wecss
 	}
 }
 
-// IE 6/7 don't support rgba/hsla, so we're replacing them
-// with regular rgb colors mixed with an alpha variable.
+// IE 6/7/8 don't support rgba/hsla, so we're replacing them with regular rgb colors mixed with an alpha variable.
+// The only exception is the gradient function, because it accepts a #aarrggbb value.
 class wecss_rgba extends wecss
 {
+	var $cache;
+
+	// Converts from a string (possibly rgba) value to a rgb string
+	private function rgba2rgb($input)
+	{
+		global $alphamix;
+
+		if (isset($this->cache[$input[0]]))
+			return $this->cache[$input[0]];
+
+		$str = wecss::string2color($input[2]);
+		if (empty($str))
+			return $this->cache[$input[0]] = 'red';
+		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wecss::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
+
+		if ($a == 1)
+			return $this->cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+		if (!empty($input[1]))
+			return $this->cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
+
+		// We're going to assume the matte color is white, otherwise, well, too bad.
+		if (isset($alphamix) && !is_array($alphamix))
+		{
+			$rgb = wecss::string2color($alphamix);
+			if (empty($rgb[1]) && !empty($rgb[2]))
+				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
+			$alphamix = $rgb[1];
+		}
+		elseif (!isset($alphamix))
+			$alphamix = array(255, 255, 255);
+
+		$ma = 1 - $a;
+		$r = $a * $r + $ma * $alphamix[0];
+		$g = $a * $g + $ma * $alphamix[1];
+		$b = $a * $b + $ma * $alphamix[2];
+
+		return $this->cache[$input[0]] = '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+	}
+
 	function process(&$css)
 	{
-		$css = preg_replace_callback('~(?:rgba|hsla?)\([^()]*\)~i', 'wecss_func::rgba2rgb', $css);
+		$this->cache = array();
+		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', 'self::rgba2rgb', $css);
 	}
 }
 

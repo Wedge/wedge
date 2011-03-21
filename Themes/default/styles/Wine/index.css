@@ -79,7 +79,6 @@ body
 		padding: 0 0 8px 0
 
 #navi
-	background: #fffdfa
 	color: #999
 
 #siteslogan, #wedgelogo
@@ -110,9 +109,6 @@ body
 		a
 			color: white
 
-#content
-	background: #fffdfa
-
 #main_menu, #context_menus
 	li.chosen h4
 		background-color: #fd9604 !important
@@ -126,10 +122,12 @@ blockquote.bbc_alternate_quote
 code.bbc_code
 	background: #eef
 
-.linktree
+#linktree
 	margin-top: 0
 	ul
 		background: none
+		padding: 0 5px
+		margin: 0 15px
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
@@ -240,9 +238,5 @@ tr.catbg
 .table_list tbody.header td.catbg
 	background-color: #b8deca
 
-/* Hacks! */
-
-.prevnext_prev, .prevnext_next
-	font-size: 128%
-
 $head_bg = rgba(221,200,137,0.66)
+$main_bg = #fffdfa

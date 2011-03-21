@@ -166,7 +166,7 @@ function template_main()
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
 				<div id="postAdditionalOptionsHeader">
-					<div id="postMoreExpand"></div> <strong style="font-size: 30px"><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
+					<div id="postMoreExpand"></div> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
 				</div>';
 
 	// Display the check boxes for all the standard options - if they are available to the user!

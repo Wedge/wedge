@@ -1,12 +1,15 @@
 
-/* The dropdown menus
+/* Menus and gradients
 ------------------------------------------------------- */
-.menu ul, #menu_container
+#menu_container, #wedge, .menu ul
 	background-image: none
 
-#menu_container
+#menu_container, #wedge
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0')
-	height: 1%
+	zoom: 1
+
+#wedge
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#a0a0a0', endColorstr='#faefe6')
 
 .menu
 	width: 90%
@@ -32,11 +35,6 @@ li.hove
 
 #upper_section .frame
 	filter: none
-
-#wedge
-	zoom: 1
-	background: none
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#a0a0a0', endColorstr='#faefe6')
 
 .cat
 	overflow: hidden

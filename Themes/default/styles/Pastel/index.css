@@ -38,7 +38,7 @@ body
 	background: url($images/theme/grad700.png) repeat-x
 	padding: 15px 0
 
-#header, #navi, #content, #footer
+#header, #navi, #content, #footer, #linktree
 	margin: auto
 	width: 95%
 	max-width: 1200px
@@ -54,7 +54,7 @@ body
 	padding: 5px 0 0
 	overflow: hidden
 
-#navi, #content
+#navi, #content, #linktree
 	border: 1px solid #999
 	border-width: 0 1px
 	background: #faf8f6
@@ -103,25 +103,21 @@ h1.forumtitle
 		width, height: auto
 
 // The navigation list (i.e. linktree)
-.linktree
-	padding: 0 20px .5em
-	margin: 1em 0 0
+#linktree
 	ul
+		padding: .5em 20px
 		display: block
 		margin: 0
 		font: 90% Verdana
-		padding: .5em 0
 		border: 0
 		background: none
 		li
 			background-position: right -49px
 			height, line-height: 21px
 			padding: 0 1.7em 0 5px
-	&.bt
-		padding: 0 20px .5em
-		margin: 0
-		ul
-			padding-top, border-top: 0
+
+#linktree_bt ul
+	border: 0
 
 // The footer with copyright links etc.
 #footer
@@ -137,7 +133,7 @@ h1.forumtitle
 ------------------------------------------------------- */
 
 // Normal, standard links.
-a, .linktree a
+a, #linktree a
 	color: #568
 	:hover
 		color: #78a

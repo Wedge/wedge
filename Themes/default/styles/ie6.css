@@ -194,7 +194,7 @@
 	clear: both
 
 // Adding layout to a few divs that are distorted by IE6.
-#menu_container, .linktree ul
+#menu_container, #linktree, #linktree ul
 	zoom: 1
 
 .cat a

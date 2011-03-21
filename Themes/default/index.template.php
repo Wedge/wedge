@@ -178,12 +178,14 @@ function template_body_above()
 	// Show the menu here, according to the menu sub template.
 	template_menu();
 
+	echo '
+	</div>';
+
 	// Show the navigation tree.
 	theme_linktree();
 
 	// The main content should go here.
 	echo '
-	</div>
 
 	<div id="content"><div class="frame">';
 }
@@ -354,7 +356,9 @@ function template_body_below()
 	{
 		var d = document, e1 = d.getElementById("edge"), e2 = d.getElementById("edgehide"),
 			s = d.getElementById("sidebar"), m = d.getElementById("main_content"), w = m ? m.clientWidth : 0;
-		if (w && w < 728 && !wedge_side && e1)
+		if (!w || w === wedge_width)
+			return;
+		if (w < 728 && !wedge_side && e1)
 		{
 			wedge_side = 1;
 			e1.id = "edgehide";
@@ -364,8 +368,9 @@ function template_body_below()
 			wedge_side = 0;
 			e2.id = "edge";
 		}
+		wedge_width = w;
 	}
-	wedge_side = 0;
+	wedge_side = wedge_width = 0;
 	window.onresize = noi_resize;
 	noi_resize();
 // ]]></script>';
@@ -437,7 +442,7 @@ function theme_linktree($force_show = false, $on_bottom = false)
 	global $context, $settings, $options, $shown_linktree;
 
 	echo '
-		<div class="linktree', $on_bottom ? ' bt' : '', '">';
+		<div id="linktree', $on_bottom ? '_bt' : '', '">';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && count($context['linktree']) !== 1 && (empty($context['dont_default_linktree']) || $force_show))

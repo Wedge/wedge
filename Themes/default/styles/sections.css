@@ -467,6 +467,11 @@ ul.post_options
 
 #postAdditionalOptionsHeader
 	margin-top: 1em
+	strong
+		vertical-align: middle
+
+#quickreplybox .cat final
+	vertical-align: middle
 
 #postMoreOptions
 	border-bottom: 1px solid #cacdd3
@@ -1425,10 +1430,7 @@ span.hidelink
 	float: right
 	margin: 2px -8px 0 0
 
-#quickReplyExpand extends .foldable
-	margin: 4px 5px -4px -1px
-
-#postMoreExpand, #newsupshrink
+#quickReplyExpand, #postMoreExpand, #newsupshrink
 	base: .foldable
 
 /* Board status icons.
