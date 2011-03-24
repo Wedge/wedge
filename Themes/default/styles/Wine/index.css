@@ -74,7 +74,8 @@ body
 	a
 		color: #fff
 	div.frame
-		background: none
+		// This is a temporary, non-textual, logo. Just a... symbol really.
+		background: transparent url($images/wedgesight.png) 99% 70% no-repeat
 	ul
 		padding: 0 0 8px 0
 
@@ -181,8 +182,8 @@ code.bbc_code
 .information
 	background: #f0f6f0
 
-.cat, .title, .table_list tbody.header td,
-.cat a, .title a, .table_list tbody.header td a,
+.cat, .title final, .table_list tbody.header td,
+.cat a, .title a final, .table_list tbody.header td a,
 .catbg, .catbg2, tr.catbg th, tr.catbg td, tr.catbg2 th, tr.catbg2 td,
 .titlebg, .titlebg2, tr.titlebg td, tr.titlebg2 td
 	color: #fff
@@ -196,7 +197,7 @@ code.bbc_code
 .grad40
 	background: url($images/theme/grad40.png) repeat-x
 
-.cat, .title
+.cat, .title final
 	base: .grad40
 	background-color: #b3afa9
 	font: bold 10pt/18px Verdana

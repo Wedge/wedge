@@ -210,13 +210,13 @@ class wecss_mixin extends wecss
 					}
 					$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
 				}
+
+				// Sort the array by key length, to avoid conflicts.
+				$keys = array_map('strlen', array_keys($repa));
+				array_multisort($keys, SORT_DESC, $repa);
+
+				$css = str_replace(array_keys($repa), array_values($repa), $css);
 			}
-
-			// Sort the array by key length, to avoid conflicts.
-			$keys = array_map('strlen', array_keys($repa));
-			array_multisort($keys, SORT_DESC, $repa);
-
-			$css = str_replace(array_keys($repa), array_values($repa), $css);
 		}
 	}
 }
@@ -313,7 +313,7 @@ class wecss_func extends wecss
 		elseif ($browser['is_gecko'])
 			$grad = '-moz-' . $grad;
 		elseif ($browser['is_webkit'])
-			$grad = '-webkit-' . $grad;
+			$grad = '-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))';
 
 		return $input[1] . 'background-image: ' . sprintf($grad, $bg1, $bg2);
 	}
@@ -416,7 +416,7 @@ class wecss_func extends wecss
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'self::gradient_background', $css);
+		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', array($this, 'gradient_background'), $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -797,7 +797,7 @@ class wecss_rgba extends wecss
 	function process(&$css)
 	{
 		$this->cache = array();
-		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', 'self::rgba2rgb', $css);
+		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', array($this, 'rgba2rgb'), $css);
 	}
 }
 
