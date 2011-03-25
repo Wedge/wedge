@@ -588,6 +588,9 @@ li.separator
 /* Common classes to ease styling.
 ------------------------------------------------------- */
 
+header
+	display: block
+
 .inline-block
 	display: inline-block
 	mixin: ie-inline-block
@@ -1295,11 +1298,8 @@ table
 
 // The dropdown menu toggle image
 #menu_toggle
-	margin-right: 10px
-	padding-top: 3px
-	span
-		position: relative
-		right: 5000px
+	float: right
+	margin: 3px 10px 0 0
 
 /* Styles for the standard button lists.
 ------------------------------------------------------- */

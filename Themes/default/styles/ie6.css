@@ -188,15 +188,19 @@
 /* Misc hacks
 ------------- */
 #content div.frame
-	width: expression(this.clientWidth > 1200 ? '1200px' : '100%')
+	width: auto // expression(this.clientWidth > 1200 ? '1200px' : 'auto') tends to crash IE6.
 
 #footer
 	clear: both
 
+#menu_toggle
+	margin-bottom: -18px
+
+.table_list a.collapse
+	margin: 3px -.5em -3px .5em
+
 // Adding layout to a few divs that are distorted by IE6.
-#menu_container, #linktree, #linktree ul,
-.cat, .title, .posthead,
-.wrc
+#menu_container, #linktree, #linktree ul, .cat, .title, .posthead, .wrc
 	zoom: 1
 
 .table_list a.collapse

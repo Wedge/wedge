@@ -23,8 +23,7 @@ function template_boardindex()
 		<tbody class="header" id="category_', $category['id'], '">
 			<tr>
 				<td colspan="4">
-					<we:cat>
-						<a class="catrss" href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>';
+					<we:cat>';
 
 		// If this category even can collapse, show a link to collapse it.
 		if ($category['can_collapse'])
@@ -36,6 +35,7 @@ function template_boardindex()
 						<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		echo '
+						<a class="catrss" href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>
 						', $category['link'], '
 					</we:cat>
 				</td>

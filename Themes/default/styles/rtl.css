@@ -83,18 +83,13 @@ th.last_th
 ------------------------------------------------------- */
 #main_menu
 	padding: 0 0 0 0.5em
-	float: right
-	text-align: right
+	float, text-align: right
 
 // The dropdown menu toggle image
 #menu_toggle
 	float: left
-	margin-right: 0
-	margin-left: 10px
+	margin: 0 0 0 10px
 	padding-top: 3px
-	span
-		position: relative
-		left: 0
 
 .menu
 	float, clear: right
@@ -222,8 +217,7 @@ h1.forumtitle
 		padding: 1em 2em 1em 2.5em
 		margin: 0 0 1em 1em
 		dt
-			float: right
-			clear: right
+			float, clear: right
 		dd
 			margin: 0 2em 0 0
 			float: right
@@ -268,13 +262,13 @@ span.percent
 	float: right
 
 .modifybutton
-	clear, float, text-align: left
+	float, clear, text-align: left
 	margin: 8px 0 10px 20px
 
 // The quick buttons
 ul.quickbuttons
 	margin: 0.9em 0 0 11px
-	clear, float, text-align: left
+	float, clear, text-align: left
 	li
 		float: left
 		margin: 0 11px 0 0
