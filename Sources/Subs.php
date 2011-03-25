@@ -744,6 +744,40 @@ function on_timeformat($log_time, $show_today = true, $offset_type = false)
 }
 
 /**
+ * Returns 'On March 21' or 'Today', depending on the date. Used when templating.
+ *
+ * @param int $time Human-readable date
+ * @param bool $upper Set to true if this starts a sentence or a block
+ *
+ * @return string Human-readable date in a "on" context.
+ */
+function on_date($time, $upper = false)
+{
+	global $txt;
+	return is_numeric($time[0]) ? ($upper ? ucfirst(sprintf($txt['on_date'], $ret)) : sprintf($txt['on_date'], $ret)) : $ret;
+}
+
+/**
+ * Returns the current timestamp (seconds since midnight 1/1/1970) with forum offset and optionally user's preference for time offset.
+ *
+ * @param bool $use_user_offset Specifies that the time returned should include the user's time offset set in their Look and Layout Preferences.
+ * @param mixed $timestamp Specifies a timestamp to be used for calculation; this will return the timestamp modified by the forum/user options. If unspecified or null, return the current time modified by these options.
+ *
+ * @return int Timestamp since Unix epoch in seconds
+ */
+function forum_time($use_user_offset = true, $timestamp = null)
+{
+	global $user_info, $modSettings;
+
+	if ($timestamp === null)
+		$timestamp = time();
+	elseif ($timestamp == 0)
+		return 0;
+
+	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
+}
+
+/**
  * Reconverts a number of the translations performed by {@link preparsecode()} with respect to HTML entity characters (e.g. angle brackets, quotes, apostrophes)
  *
  * This function effectively performs mostly as htmlspecialchars_decode(ENT_QUOTES) for the important characters, however it also adds the apostrophe and non-breaking spaces.
@@ -779,26 +813,6 @@ function shorten_subject($subject, $len)
 
 	// Shorten it by the length it was too long, and strip off junk from the end.
 	return westr::substr($subject, 0, $len) . '...';
-}
-
-/**
- * Returns the current timestamp (seconds since midnight 1/1/1970) with forum offset and optionally user's preference for time offset.
- *
- * @param bool $use_user_offset Specifies that the time returned should include the user's time offset set in their Look and Layout Preferences.
- * @param mixed $timestamp Specifies a timestamp to be used for calculation; this will return the timestamp modified by the forum/user options. If unspecified or null, return the current time modified by these options.
- *
- * @return int Timestamp since Unix epoch in seconds
- */
-function forum_time($use_user_offset = true, $timestamp = null)
-{
-	global $user_info, $modSettings;
-
-	if ($timestamp === null)
-		$timestamp = time();
-	elseif ($timestamp == 0)
-		return 0;
-
-	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
 }
 
 /**

@@ -20,7 +20,7 @@ derivative of this Package.
 v. The Software is defined as an installed copy of this Package, a Modified
 Package, or a derivative of this Package.
 
-vi. The Wedgeward Website is defined as http://www.wedgeforum.com/.
+vi. The Wedgeward Website is defined as http://www.wedge.org/.
 
 vii. Wedgeward is defined as the copyright holders of the Wedge package
 (Peter Spicer and René-Gilles Deberdt), and the product of their association.
@@ -64,7 +64,7 @@ without express written consent.
 
 4. Wedgeward reserves the right to change the terms of this Agreement
 at any time, although those changes are not retroactive to past releases.
-Changes to this document will be announced via email using the WedgeForum
+Changes to this document will be announced via email using the Wedge.org
 email notification list. Failure to receive notification of a change
 does not make those changes invalid. A current copy of this Agreement can be
 found on the Wedgeward Website.
@@ -81,5 +81,5 @@ EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR ANY DIRECT, INDIRECT,
 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY
 OUT OF THE USE OR MISUSE OF THIS PACKAGE.
 
-	Last Update: December 18, 2010
-	(c) 2010 by Wedgeward (Peter Spicer & René-Gilles Deberdt)
+	Last Update: March 24, 2011
+	(c) 2010-2011 by Wedgeward (Peter Spicer & René-Gilles Deberdt)

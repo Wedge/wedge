@@ -1,7 +1,7 @@
 /*!
  * This file is under the SMF license.
  * All code changes compared against SMF 2.0 are protected
- * by the Wedge license, http://wedgeforum.com/license/
+ * by the Wedge license, http://wedge.org/license/
  */
 
 var
