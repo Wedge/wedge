@@ -44,11 +44,11 @@
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,.windowbg,.windowbg2,#header,#footer,#wedgelogo');
+	DD_belatedPNG.fix('img.ping,.windowbg,.windowbg2,#header,#footer,#wedgelogo,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
-	<block name="title"><div class="title">|</div></block>
-	<block name="title2"><div class="title2">|</div></block>
-	<block name="cat"><div class="cat">|</div></block>
+	<block name="title"><header class="title">|</header></block>
+	<block name="title2"><header class="title2">|</header></block>
+	<block name="cat"><header class="cat">|</header></block>
 </styling>

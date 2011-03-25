@@ -44,7 +44,7 @@
 		<br>This styling's purpose is to show what nested stylings can do.
 	]]></comment>
 
-	<block name="title"><div class="title">|</div></block>
-	<block name="title2"><div class="title2">|</div></block>
-	<block name="cat"><div class="cat">|</div></block>
+	<block name="title"><header class="title">|</header></block>
+	<block name="title2"><header class="title2">|</header></block>
+	<block name="cat"><header class="cat">|</header></block>
 </styling>

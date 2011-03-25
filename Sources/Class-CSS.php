@@ -278,7 +278,7 @@ class wecss_func extends wecss
 {
 	// Transform "gradient-background: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
 	// You can add a second parameter for an actual gradient effect, and a third: top (vertical gradient) or left (horizontal.)
-	protected function gradient_background($input)
+	protected static function gradient_background($input)
 	{
 		global $browser;
 		static $test_gradient_support = true, $no_gradients;
@@ -416,7 +416,7 @@ class wecss_func extends wecss
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', array($this, 'gradient_background'), $css);
+		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_func::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -467,17 +467,23 @@ class wecss_nesting extends wecss
 					$xml .= $l[1] . "\n";
 					continue;
 				}
-				if ($level == $l[0] && substr($ex_string, -1) !== ',')
+
+				// Do we have an extends line followed by a line on the same level or above it?
+				// If yes, this means we just extended a selector and should close it immediately.
+				if ($level >= $l[0] && strpos($ex_string, ' extends ') !== false)
+					$xml .= " {\n}\n";
+
+				// Same level, and no continuation of a selector? We're probably in a list of properties.
+				elseif ($level == $l[0] && substr($ex_string, -1) !== ',')
 					$xml .= ";\n";
+				// Higher level than before? This is a child, obviously.
 				elseif ($level < $l[0])
 					$xml .= " {\n";
-				else
+
+				while ($level > $l[0])
 				{
-					while ($level > $l[0])
-					{
-						$xml .= "}\n";
-						$level -= $indent;
-					}
+					$xml .= "}\n";
+					$level -= $indent;
 				}
 
 				$level = $l[0];
@@ -755,25 +761,24 @@ class wecss_math extends wecss
 // The only exception is the gradient function, because it accepts a #aarrggbb value.
 class wecss_rgba extends wecss
 {
-	var $cache;
-
 	// Converts from a string (possibly rgba) value to a rgb string
-	private function rgba2rgb($input)
+	private static function rgba2rgb($input)
 	{
 		global $alphamix;
+		static $cache = array();
 
-		if (isset($this->cache[$input[0]]))
-			return $this->cache[$input[0]];
+		if (isset($cache[$input[0]]))
+			return $cache[$input[0]];
 
 		$str = wecss::string2color($input[2]);
 		if (empty($str))
-			return $this->cache[$input[0]] = 'red';
+			return $cache[$input[0]] = 'red';
 		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wecss::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
 
 		if ($a == 1)
-			return $this->cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x', $r, $g, $b);
 		if (!empty($input[1]))
-			return $this->cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
+			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
 
 		// We're going to assume the matte color is white, otherwise, well, too bad.
 		if (isset($alphamix) && !is_array($alphamix))
@@ -791,13 +796,12 @@ class wecss_rgba extends wecss
 		$g = $a * $g + $ma * $alphamix[1];
 		$b = $a * $b + $ma * $alphamix[2];
 
-		return $this->cache[$input[0]] = '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+		return $cache[$input[0]] = '#' . sprintf('%02x%02x%02x', $r, $g, $b);
 	}
 
 	function process(&$css)
 	{
-		$this->cache = array();
-		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', array($this, 'rgba2rgb'), $css);
+		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
 	}
 }
 
