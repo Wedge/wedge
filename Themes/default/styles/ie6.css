@@ -89,7 +89,7 @@
 #top_subject, #display_jump_to
 	line-height: 1.2em
 	float: left
-	width: 55%
+	width: 59%
 
 #quickreplybox
 	clear: both
@@ -194,12 +194,8 @@
 	clear: both
 
 // Adding layout to a few divs that are distorted by IE6.
-#menu_container, #linktree, #linktree ul
-	zoom: 1
-
-.cat a
-	color: black !important
-
+#menu_container, #linktree, #linktree ul,
+.cat, .title, .posthead,
 .wrc
 	zoom: 1
 
@@ -274,9 +270,9 @@ input.new
 	display: inline // IE6 double margin bug fix
 
 // IE6 needs inline-block to be reset to inline separately... How annoying.
-.upshrinks
+.inline-block
 	display: inline
 
 // And it doesn't show the 'off' icons in boardstatus.png. I'm nice, so I'm giving it another file to play with.
-.boardstate_on extends .upshrinks
+.boardstate_on
 	background-image: url($images/boardstatus-ie6.png)

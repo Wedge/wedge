@@ -108,7 +108,7 @@ else
 
 		public static function entity_clean($string)
 		{
-			return preg_replace_callback('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'westr::entity_fix', $string);
+			return preg_replace_callback('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'self::entity_fix', $string);
 		}
 
 		public static function htmlspecialchars($string, $quote_style = ENT_COMPAT)
@@ -240,7 +240,7 @@ class westr extends westr_mb
 	public static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
 	{
 		global $entities, $replace_counter, $context;
-		static $test_mb = false, $strlen, $substr;
+		static $test_mb = false, $strlen;
 
 		if (empty($string))
 			return $ellipsis ? '&hellip;' : '';
@@ -254,11 +254,9 @@ class westr extends westr_mb
 		$work = preg_replace('~(?:&[^&;]+;|<[^>]+>)~', chr(20), $string);
 
 		if (!$test_mb)
-		{
-			$test_mb = true;
 			$strlen = self::$can_mb ? 'mb_strlen' : create_function('$str', 'return strlen(preg_replace(\'~.~us\', \'_\', $str));');
-			$substr = self::$can_mb ? 'mb_substr' : 'self::substr';
-		}
+
+		$test_mb = true;
 
 		if ($strlen($work) <= $max_length && (empty($hard_limit) || strlen($string) <= $hard_limit))
 			return $string;
@@ -284,14 +282,14 @@ class westr extends westr_mb
 	}
 
 	// Recursively reattributes entities to strings
-	function restore_entities($match)
+	private static function restore_entities($match)
 	{
 		global $entities, $replace_counter;
 		return $entities[0][$replace_counter++];
 	}
 
 	// Closes all open tags, in recursive order, in order for pages not to be broken and to validate.
-	function close_tags(&$str, $hard_limit)
+	public static function close_tags(&$str, $hard_limit)
 	{
 		// Could be made faster with substr_count(), but it wouldn't always validate.
 		if (!preg_match_all('~<([^/\s>]+)(?:>|[^>]*?[^/]>)~', $str, $m) || empty($m[1]))

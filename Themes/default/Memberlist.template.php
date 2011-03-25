@@ -14,15 +14,13 @@ function template_main()
 
 	echo '
 	<div class="main_section" id="memberlist">
-		<we:cat>
-			', !isset($context['old_search']) ? '
+		<we:cat>', !isset($context['old_search']) ? '
 			<span class="floatright">' . $context['letter_links'] . '</span>' : '', '
 			', $txt['members_list'];
 
 	echo '
 		</we:cat>
-		<div class="pagesection">
-			', template_button_strip($memberlist_buttons, 'right'), '
+		<div class="pagesection">', template_button_strip($memberlist_buttons, 'right'), '
 			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
 		</div>
 

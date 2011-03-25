@@ -8,7 +8,7 @@
 
 // The board title!
 #board_list
-	width: auto
+	box-sizing: border-box
 	td.info a.subject
 		font-weight: bold
 		font-size: 110%
@@ -131,31 +131,19 @@ img.new_posts
 
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
-.prevnext_prev
+.prevnext_prev extends .cell
+	font: .7em Verdana, "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	text-align: left
 	width: 150px
-	height: 100%
-	display: table-cell
-	vertical-align: middle
-	p
-		margin: 0
-		font: .7em Verdana, "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 
 .prevnext_next extends .prevnext_prev
 	text-align: right
 
-#top_subject
-	text-align: center
-	display: table-cell
-	vertical-align: middle
-	font-size: 1.2em
+#top_subject extends .cell
 	padding: 4px 8px
 
 // The jump to box
-#display_jump_to
-	text-align: center
-	display: table-cell
-	vertical-align: middle
+#display_jump_to extends .cell
 	select, input
 		font-size: 8pt
 		padding: 2px 2px 0
@@ -431,8 +419,7 @@ ul.quickbuttons
 	form textarea
 		height: 100px
 		margin: .25em 0 0
-	.roundframe
-		base: #postmodify .roundframe
+	.roundframe extends #postmodify .roundframe
 
 /* Styles for edit/new post section
 ---------------------------------------------------- */
@@ -470,8 +457,9 @@ ul.post_options
 	strong
 		vertical-align: middle
 
-#quickreplybox .cat final
-	vertical-align: middle
+#post_confirm_buttons
+	white-space: nowrap
+	float: right
 
 #postMoreOptions
 	border-bottom: 1px solid #cacdd3
@@ -517,8 +505,7 @@ ul.post_options
 #smileyBox_message
 	margin: .5em
 
-#preview_body
-	base: .windowbg
+#preview_body extends .windowbg
 
 /* Styles for edit event section
 ---------------------------------------------------- */
@@ -1391,11 +1378,9 @@ span.hidelink
 
 /* Foldable icons.
 ------------------------------------------------- */
-.upshrinks
+.upshrinks extends .inline-block
 	background: url($images/upshrinks.png) no-repeat
-	vertical-align: middle
-	display: inline-block
-	mixin: inline-icon
+	text-decoration: none
 
 .foldable extends .upshrinks
 	width, height: 14px
@@ -1417,9 +1402,6 @@ span.hidelink
 		background-position: 0 -12px
 
 .catfold extends .foldable
-	float: right
-	text-decoration: none
-	margin: 0
 
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable
@@ -1428,7 +1410,7 @@ span.hidelink
 
 #upshrink_ic extends .foldable
 	float: right
-	margin: 2px -8px 0 0
+	margin: 2px -2px 0 0
 
 #quickReplyExpand, #postMoreExpand, #newsupshrink
 	base: .foldable
@@ -1436,21 +1418,23 @@ span.hidelink
 /* Board status icons.
 ------------------------------------------------- */
 
-.boardstate_on extends .upshrinks
+.boardstatus extends .inline-block
 	background: url($images/boardstatus.png) 0 0 no-repeat
 	width: 38px
 	height: 42px
 
-.boardstate_new extends .boardstate_on
+.boardstate_on extends .boardstatus
+
+.boardstate_new extends .boardstatus
 	background-position: -53px 0
 
-.boardstate_off extends .boardstate_on
+.boardstate_off extends .boardstatus
 	background-position: -110px 0
 
-.boardstate_redirect extends .boardstate_on
+.boardstate_redirect extends .boardstatus
 	background-position: -163px 0
 
-.mini_boardstate_off extends .boardstate_on
+.mini_boardstate_off extends .boardstatus
 	background-position: -208px -3px
 	width: 19px
 	height: 21px

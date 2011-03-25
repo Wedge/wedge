@@ -276,7 +276,7 @@ function template_main()
 				<p class="smalltext" id="shortcuts">
 					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
 				</p>
-				<p id="post_confirm_buttons" class="righttext">
+				<p id="post_confirm_buttons">
 					', $context['postbox']->outputButtons();
 
 	// Option to delete an event if user is editing one.

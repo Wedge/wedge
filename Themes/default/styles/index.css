@@ -588,6 +588,16 @@ li.separator
 /* Common classes to ease styling.
 ------------------------------------------------------- */
 
+.inline-block
+	display: inline-block
+	mixin: ie-inline-block
+	vertical-align: middle
+
+.cell
+	text-align: center
+	display: table-cell
+	vertical-align: middle
+
 .floatright
 	float: right
 
@@ -1099,10 +1109,7 @@ dl#rss
 	text-shadow: white 0 1px 2px
 	color: gray
 	img
-		float: left
-		vertical-align: middle
-		margin-right: .5em
-		margin-top: 1px
+		vertical-align: -3px
 
 .posthead
 	display: table
@@ -1122,7 +1129,7 @@ dl#rss
 	color: channels(gray, 30%)
 	font-size: 1.2em
 	background: none
-	padding: 5px 12px 3px 8px
+	padding: 4px 8px
 	border, margin: 0
 	#sidebar &
 		margin-top: 6px
@@ -1130,9 +1137,9 @@ dl#rss
 		color: lighten(channels(gray, 30%), 10%)
 
 .title2 extends .title
-	font-size: 1.1em
 	color: channels(gray,0,0,30%)
 	border-bottom: 1px dotted rgba(0,0,0, .5)
+	border-radius: 0
 
 img[alt="!"]
 	margin-top: 8px
@@ -1355,7 +1362,7 @@ table
 		float: right
 	a.collapse
 		float: right
-		margin: 3px 0 -3px .5em
+		margin: -1px 0 0 .5em
 	p
 		padding, margin: 0
 
@@ -1423,7 +1430,7 @@ $alphamix = rgb(241,243,234)
 /* And our mixins... */
 
 // IE6 needs layout to show inline-block divs... And a default right margin from my experience.
-mixin {ie6,ie7} inline-icon
+mixin {ie6,ie7} ie-inline-block
 	margin-right: 6px
 	zoom: 1
 

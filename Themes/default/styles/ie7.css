@@ -92,6 +92,9 @@
 
 /* Misc hacks
 ------------------------------------------------------- */
+#linktree
+	zoom: 1
+
 .posthead
 	width: auto
 
@@ -139,5 +142,5 @@ input.new
 	background-position: 4px -94px
 
 // IE7 needs inline-block to be reset to inline separately... How annoying.
-.upshrinks
+.inline-block
 	display: inline
