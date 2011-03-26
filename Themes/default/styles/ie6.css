@@ -278,5 +278,5 @@ input.new
 	display: inline
 
 // And it doesn't show the 'off' icons in boardstatus.png. I'm nice, so I'm giving it another file to play with.
-.boardstate_on
+.boardstatus
 	background-image: url($images/boardstatus-ie6.png)

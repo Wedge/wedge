@@ -287,11 +287,9 @@ class wecss_func extends wecss
 		if ($test_gradient_support)
 		{
 			$test_gradient_support = false;
-			$no_gradients = $browser['is_ie8down'] || $browser['is_ie9'];
-			if ($browser['is_firefox'] && preg_match('~Firefox/([\d\.]+)~', $browser['ua'], $version))
-				$no_gradients |= (float) $version[1] < 3.6;
-			if ($browser['is_opera'] && preg_match('~Version/([\d\.]+)~', $browser['ua'], $version))
-				$no_gradients |= (float) $version[1] < 11.1;
+			$no_gradients = $browser['is_ie'] && $browser['version'] <= 9;
+			$no_gradients |= $browser['is_firefox'] && $browser['version'] < 3.6;
+			$no_gradients |= $browser['is_opera'] && $browser['version'] < 11.1;
 		}
 		$bg1 = $input[2];
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];

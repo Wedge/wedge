@@ -1386,10 +1386,19 @@ function detectBrowser()
 
 	// Internet Explorer is often "emulated".
 	$browser['is_ie'] = $is_ie = !$browser['is_opera'] && !$browser['is_gecko'] && strpos($ua, 'MSIE') !== false;
-	$is_ie ? preg_match('~MSIE (\d+)~', $ua, $ie_ver) : '';
+
+	// Retrieve the version number, as a floating point.
+	preg_match('~' . ($browser['is_opera'] || $browser['is_safari'] ?
+		'version[/ ]' : ($browser['is_firefox'] ?
+		'firefox/' : ($browser['is_ie'] ?
+		'msie ' : ($browser['is_chrome'] ?
+		'chrom(?:e|ium)/' : 'applewebkit/')))) . '([\d.]+)~i', $ua, $ver)
+	|| preg_match('~' . ($browser['is_opera'] ? 'opera[/ ]' : ($browser['is_safari'] ? 'safari/' : 'version[/ ]')) . '([\d.]+)~i', $ua, $ver);
+	$browser['version'] = $ver = isset($ver) ? (float) $ver[1] : 0;
+
+	$browser['is_ie8down'] = $is_ie && $ver <= 8;
 	for ($i = 6; $i <= 9; $i++)
-		$browser['is_ie' . $i] = $is_ie && $ie_ver[1] == $i;
-	$browser['is_ie8down'] = $is_ie && !$browser['is_ie9'];
+		$browser['is_ie' . $i] = $is_ie && $ver == $i;
 
 	// Store our browser name...
 	$browser['agent'] = '';
