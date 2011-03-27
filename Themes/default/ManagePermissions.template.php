@@ -87,7 +87,7 @@ function template_permission_index()
 	{
 		echo '
 			<we:cat>
-				<img class="sortselect', empty($context['show_advanced_options']) ? ' fold' : '', '" src="', img_blankGif(), '" id="permissions_panel_toggle"> ', $txt['permissions_advanced_options'], '
+				<div class="sortselect', empty($context['show_advanced_options']) ? ' fold' : '', '" id="permissions_panel_toggle"></div> ', $txt['permissions_advanced_options'], '
 			</we:cat>
 			<div id="permissions_panel_advanced" class="windowbg wrc">
 				<fieldset>
@@ -469,7 +469,7 @@ function template_modify_group()
 			</we:cat>
 			<div class="windowbg wrc">
 				', $txt['permissions_change_view'], ': ', ($context['view_type'] == 'simple' ? '<img src="' . $settings['images_url'] . '/selected.gif">' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=simple">', $txt['permissions_view_simple'], '</a> |
-				', ($context['view_type'] == 'classic' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="*">' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=classic">', $txt['permissions_view_classic'], '</a>
+				', ($context['view_type'] == 'classic' ? '<img src="' . $settings['images_url'] . '/selected.gif">' : ''), '<a href="', $scripturl, '?action=admin;area=permissions;sa=modify;group=', $context['group']['id'], ($context['permission_type'] == 'board' ? ';pid=' . $context['profile']['id'] : ''), ';view=classic">', $txt['permissions_view_classic'], '</a>
 			</div>
 			<div class="flow_hidden">';
 
@@ -566,7 +566,7 @@ function template_modify_group_simple($type)
 					<tr class="windowbg">
 						<td colspan="2" class="w100 left">
 							<a href="#" onclick="return toggleBreakdown(\'', $id_group, '\');">
-								<img class="sortselect" src="', img_blankGif(), '" id="group_toggle_img_', $id_group, '">&nbsp;<strong>', $permissionGroup['name'], '</strong>
+								<div class="sortselect" id="group_toggle_img_', $id_group, '"></div>&nbsp;<strong>', $permissionGroup['name'], '</strong>
 							</a>
 						</td>';
 				if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)

@@ -404,7 +404,7 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		for (i = 0, n = op.length; i < n; i++)
 		{
 			var sAlt = bCollapse && op[i].altCollapsed ? op[i].altCollapsed : op[i].altExpanded, icon = $('#' + op[i].sId);
-			icon.toggleClass('fold', !bCollapse).attr({ alt: sAlt, title: sAlt });
+			icon.toggleClass('fold', !bCollapse).attr('title', sAlt);
 		}
 	}
 

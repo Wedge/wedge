@@ -1393,7 +1393,7 @@ function detectBrowser()
 		'firefox/' : ($browser['is_ie'] ?
 		'msie ' : ($browser['is_chrome'] ?
 		'chrom(?:e|ium)/' : 'applewebkit/')))) . '([\d.]+)~i', $ua, $ver)
-	|| preg_match('~' . ($browser['is_opera'] ? 'opera[/ ]' : ($browser['is_safari'] ? 'safari/' : 'version[/ ]')) . '([\d.]+)~i', $ua, $ver);
+	|| preg_match('~' . ($browser['is_opera'] ? 'opera[/ ]' : 'version[/ ]') . '([\d.]+)~i', $ua, $ver);
 	$browser['version'] = $ver = isset($ver) ? (float) $ver[1] : 0;
 
 	$browser['is_ie8down'] = $is_ie && $ver <= 8;

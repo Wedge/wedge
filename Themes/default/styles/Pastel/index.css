@@ -222,9 +222,6 @@ code.bbc_code, code.php_code
 	display: table
 	width: 100%
 	letter-spacing: 1px
-	img
-		&[alt="+"], &[alt="-"]
-			margin-top: 3px
 
 .title
 	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x

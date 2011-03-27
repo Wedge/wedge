@@ -626,23 +626,26 @@ function AddLanguage()
 			$context['smf_error'] = 'no_response';
 		else
 		{
-			$language_list = $language_list->path('languages[0]');
-			$lang_files = $language_list->set('language');
 			$context['smf_languages'] = array();
-			foreach ($lang_files as $file)
+			$language_list = $language_list->path('languages[0]');
+			if ($language_list->exists('language'))
 			{
-				// Were we searching?
-				if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['smf_search_term'])) === false)
-					continue;
+				$lang_files = $language_list->set('language');
+				foreach ($lang_files as $file)
+				{
+					// Were we searching?
+					if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['smf_search_term'])) === false)
+						continue;
 
-				$context['smf_languages'][] = array(
-					'id' => $file->fetch('id'),
-					'name' => westr::ucwords($file->fetch('name')),
-					'version' => $file->fetch('version'),
-					'utf8' => $file->fetch('utf8'),
-					'description' => $file->fetch('description'),
-					'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_var'] . '=' . $context['session_id'],
-				);
+					$context['smf_languages'][] = array(
+						'id' => $file->fetch('id'),
+						'name' => westr::ucwords($file->fetch('name')),
+						'version' => $file->fetch('version'),
+						'utf8' => $file->fetch('utf8'),
+						'description' => $file->fetch('description'),
+						'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_var'] . '=' . $context['session_id'],
+					);
+				}
 			}
 			if (empty($context['smf_languages']))
 				$context['smf_error'] = 'no_files';

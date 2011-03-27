@@ -119,7 +119,7 @@ function template_view_package()
 
 			echo '
 				<tr class="windowbg', $alternate ? '' : '2', '">
-					<td>', isset($packageaction['operations']) ? '<img class="sortselect" id="operation_img_' . $action_num . '" src="' . img_blankGif() . '" alt="*">' : '', '</td>
+					<td>', isset($packageaction['operations']) ? '<div class="sortselect" id="operation_img_' . $action_num . '"></div>' : '', '</td>
 					<td>', $i++, '.</td>
 					<td>', $packageaction['type'], '</td>
 					<td>', $packageaction['action'], '</td>
@@ -211,7 +211,7 @@ function template_view_package()
 				{
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
-						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" alt="*" style="display: none">' : '', '</td>
+						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" style="display: none">' : '', '</td>
 						<td style="width: 30px" class="center">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '"', (!empty($action['not_mod']) ? '' : ' disabled'), !empty($context['themes_locked']) ? ' checked' : '', '>
 						</td>
@@ -304,12 +304,7 @@ function template_view_package()
 	aOperationElements[', $key, '] = new smc_Toggle({
 		bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
 		aSwappableContainers: [\'operation_', $key, '\'],
-		aSwapImages: [
-			{
-				sId: \'operation_img_', $key, '\',
-				altExpanded: \'*\'
-			}
-		]
+		aSwapImages: [{ sId: \'operation_img_', $key, '\' }]
 	});');
 
 	// And a bit more for database changes.
@@ -799,7 +794,7 @@ function template_package_list()
 		{
 			echo '
 				<li>
-					<strong><img class="shrinkable" id="ps_img_', $i, '" src="', img_blankGif(), '" alt="*"> ', $packageSection['title'], '</strong>';
+					<strong><div class="shrinkable" id="ps_img_', $i, '"></div> ', $packageSection['title'], '</strong>';
 
 			if (!empty($packageSection['text']))
 				echo '
@@ -838,9 +833,9 @@ function template_package_list()
 				// Otherwise, it's a package.
 				else
 				{
-					// 1. Some mod [ Download ].
+					// 1. Some mod [Download]
 					echo '
-							<strong><img class="shrinkable" id="ps_img_', $i, '_pkg_', $id, '" src="', img_blankGif(), '" alt="*"> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
+							<strong><div class="shrinkable" id="ps_img_', $i, '_pkg_', $id, '"></div> ', $package['can_install'] ? '<strong>' . $package['name'] . '</strong> <a href="' . $package['download']['href'] . '">[ ' . $txt['download'] . ' ]</a>' : $package['name'];
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
@@ -905,12 +900,7 @@ function template_package_list()
 	var oPackageServerToggle_', $section, ' = new smc_Toggle({
 		bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
 		aSwappableContainers: [\'package_section_', $section, '\'],
-		aSwapImages: [
-			{
-				sId: \'ps_img_', $section, '\',
-				altExpanded: \'*\'
-			}
-		]
+		aSwapImages: [{ sId: \'ps_img_', $section, '\' }]
 	});');
 
 			foreach ($ps['items'] as $id => $package)
@@ -919,12 +909,7 @@ function template_package_list()
 	var oPackageToggle_', $section, '_pkg_', $id, ' = new smc_Toggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
-		aSwapImages: [
-			{
-				sId: \'ps_img_', $section, '_pkg_', $id, '\',
-				altExpanded: \'*\'
-			}
-		]
+		aSwapImages: [{ sId: \'ps_img_', $section, '_pkg_', $id, '\' }]
 	});');
 		}
 	}

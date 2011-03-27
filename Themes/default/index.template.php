@@ -206,9 +206,10 @@ function template_sidebar_above()
 	// If the user is logged in, display stuff like their name, new messages, etc.
 	if ($context['user']['is_logged'])
 	{
-		echo empty($context['user']['avatar']) ? '' : '
-				' . $context['user']['avatar']['image'], '
-				<ul>
+		echo empty($context['user']['avatar']) ? '
+				<ul id="noava">' : '
+				' . $context['user']['avatar']['image'] . '
+				<ul>', '
 					<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
 					<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 

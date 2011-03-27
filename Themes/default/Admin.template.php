@@ -1419,7 +1419,7 @@ function template_download_language()
 		echo '
 				<tr class="titlebg">
 					<td colspan="4">
-						<img class="sortselect" src="', img_blankGif(), '" id="toggle_image_', $theme, '">&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
+						<div class="sortselect" id="toggle_image_', $theme, '"></div>&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
 					</td>
 				</tr>';
 
@@ -1526,12 +1526,7 @@ function template_download_language()
 		add_js('
 			null
 		],
-		aSwapImages: [
-			{
-				sId: \'toggle_image_', $theme, '\',
-				altExpanded: \'*\'
-			}
-		]
+		aSwapImages: [{ sId: \'toggle_image_', $theme, '\' }]
 	});');
 	}
 }

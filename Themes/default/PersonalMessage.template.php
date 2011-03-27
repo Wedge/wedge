@@ -724,7 +724,7 @@ function template_search()
 		<fieldset class="labels">
 			<div class="roundframe">
 				<we:title2>
-					<a href="#" onclick="expandCollapseLabels(); return false;"><img class="foldable" src="', img_blankGif(), '" id="expandLabelsIcon"></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
+					<a href="#" onclick="expandCollapseLabels(); return false;"><div class="foldable" id="expandLabelsIcon"></div></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
 				</we:title2>
 				<ul id="searchLabelsExpand" class="reset" ', $context['check_all'] ? 'style="display: none;"' : '', '>';
 

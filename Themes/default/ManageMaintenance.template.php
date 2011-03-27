@@ -218,7 +218,7 @@ function template_maintain_members()
 				</select> ', $txt['maintain_members_since2'], ' <input type="text" name="maxdays" value="30" size="3">', $txt['maintain_members_since3'], '</p>';
 
 	echo '
-				<p><a href="#membersLink" onclick="swapMembers(); return false;"><img class="foldable" src="', img_blankGif(), '" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
+				<p><a href="#membersLink" onclick="swapMembers(); return false;"><div class="foldable" title="+" id="membersIcon"></div></a> <a href="#membersLink" onclick="swapMembers(); return false;" id="membersText" style="font-weight: bold;">', $txt['maintain_members_all'], '</a></p>
 				<div style="display: none; padding: 3px" id="membersPanel">';
 
 	foreach ($context['membergroups'] as $group)
@@ -307,7 +307,7 @@ function template_maintain_topics()
 						<label><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br>
 					</p>
 					<p>
-						<a href="#rotLink" onclick="swapRot(); return false;"><img class="foldable" src="', img_blankGif(), '" alt="+" id="rotIcon"></a> <a href="#rotLink" onclick="swapRot(); return false;" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
+						<a href="#rotLink" onclick="swapRot(); return false;"><div class="foldable" title="+" id="rotIcon"></div></a> <a href="#rotLink" onclick="swapRot(); return false;" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
 					</p>
 					<div style="display: none;" id="rotPanel" class="flow_hidden">
 						<div class="floatleft" style="width: 49%">';
