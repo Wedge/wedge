@@ -234,7 +234,8 @@ function template_results()
 		echo '
 			</form>
 		</div>
-	</div><br>';
+	</div>
+	<br>';
 	}
 
 	if ($context['compact'])
@@ -265,7 +266,7 @@ function template_results()
 				$color_class .= 'lockedbg';
 
 			echo '
-			<div class="search_results_posts">
+		<div class="search_results_posts">
 			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
 				<div class="flow_auto">';
 
@@ -323,10 +324,10 @@ function template_results()
 				</div>
 			</div>
 		</div>';
-
 		}
+
 		if (!empty($context['topics']))
-		echo '
+			echo '
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
@@ -334,45 +335,47 @@ function template_results()
 		if ($show_checkboxes)
 		{
 			echo '
-			<div class="middletext titlebg2" style="padding: 4px;">
-				<div class="floatright">
-					<select name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
-						<option value="">--------</option>', $context['can_remove'] ? '
-						<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-						<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
-						<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
-						<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
-						<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', '
-						<option value="markread">', $txt['quick_mod_markread'], '</option>
-					</select>';
+		<div class="middletext roundframe">
+			<div class="floatright">
+				<select name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
+					<option value="">--------</option>', $context['can_remove'] ? '
+					<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
+					<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
+					<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
+					<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
+					<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', '
+					<option value="markread">', $txt['quick_mod_markread'], '</option>
+				</select>';
 
 			if ($context['can_move'])
 			{
 					echo '
-					<select id="moveItTo" name="move_to" disabled>';
+				<select id="moveItTo" name="move_to" disabled>';
 
 					foreach ($context['move_to_boards'] as $category)
 					{
 						echo '
-						<optgroup label="', $category['name'], '">';
+					<optgroup label="', $category['name'], '">';
+
 						foreach ($category['boards'] as $board)
 								echo '
-						<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+					<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+
 						echo '
-						</optgroup>';
+					</optgroup>';
 					}
 					echo '
-					</select>';
+				</select>';
 			}
 
 			echo '
-					<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
-					<input type="submit" style="font-size: 0.8em;" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');">
-				</div>
-				<br class="clear">
+				<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
+				<input type="submit" style="font-size: 0.8em;" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');">
 			</div>
-			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-		</form>';
+			<br class="clear">
+		</div>
+		<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
+	</form>';
 		}
 	}
 	else

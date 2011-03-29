@@ -1493,8 +1493,8 @@ function ViewOperations()
 	);
 
 	// No layers
-	$context['template_layers'] = array();
 	showSubTemplate('view_operations');
+	hideChrome();
 }
 
 // Allow the admin to reset permissions on files.
@@ -1804,7 +1804,7 @@ function PackagePermissions()
 	{
 		loadTemplate('Xml');
 		showSubTemplate('generic_xml');
-		$context['template_layers'] = array();
+		hideChrome();
 	}
 }
 
@@ -2204,7 +2204,7 @@ function PackageFTPTest()
 	// Deal with the template stuff.
 	loadTemplate('Xml');
 	showSubTemplate('generic_xml');
-	$context['template_layers'] = array();
+	hideChrome();
 
 	// Define the return data, this is simple.
 	$context['xml_data'] = array(

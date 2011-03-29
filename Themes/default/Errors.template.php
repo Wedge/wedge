@@ -40,10 +40,11 @@ function template_error_log()
 	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="if (lastClicked == \'remove_all\') if (!confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ')) return false; return true;">
 		<div class="clear_right">
 			<we:title>
-				<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['errlog'], '
+				<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+				', $txt['errlog'], '
 			</we:title>
 		</div>
-		<table class="table_grid cs1" id="error_log">
+		<table class="table_grid w100 cs1" id="error_log">
 			<tr>
 				<td colspan="3" class="windowbg">
 					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':';
@@ -163,7 +164,7 @@ function template_show_file()
 {
 	global $context;
 
-	echo $context['is_ajax'] ? '' : '<!DOCTYPE html>
+	echo !empty($context['hide_chrome']) ? '' : '<!DOCTYPE html>
 <html' . ($context['right_to_left'] ? ' dir="rtl"' : '') . '>
 <head>
 	<meta charset="utf-8">
@@ -185,7 +186,7 @@ function template_show_file()
 	}
 
 	echo '
-	</table>', $context['is_ajax'] ? '' : '
+	</table>', !empty($context['hide_chrome']) ? '' : '
 </body>
 </html>';
 }

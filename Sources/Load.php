@@ -1791,13 +1791,13 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
-		$context['template_layers'] = array();
+		hideChrome();
 	}
 	// These actions don't require the index template at all
 	elseif (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
 		loadLanguage('index+Modifications');
-		$context['template_layers'] = array();
+		hideChrome();
 	}
 	else
 	{
@@ -1859,6 +1859,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$settings['theme_dir'] = $settings['default_theme_dir'];
 	}
 	// Make a special URL for the language.
+	// !!! $txt['image_lang'] isn't defined anywhere...
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// Set the character set from the template.

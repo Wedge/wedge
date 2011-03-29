@@ -1132,8 +1132,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		if (empty($context['sub_template']))
 			$context['sub_template'] = array('main');
 
-		// If we're calling from jQuery, don't show the sidebar
-		if (empty($context['is_ajax']))
+		// If we're calling from a page that wants to hide the UI, don't show the sidebar
+		if (empty($context['hide_chrome']))
 		{
 			loadSubTemplate('sidebar_above', 'ignore');
 			foreach ((array) $context['sidebar_template'] as $key => $template)
@@ -1142,8 +1142,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		}
 
 		loadSubTemplate('main_above', 'ignore');
-		// If we're calling from jQuery, don't show the menus/tabs
-		if (empty($context['is_ajax']))
+		// If we're calling from a page that wants to hide the UI, don't show the menus/tabs
+		if (empty($context['hide_chrome']))
 			foreach ((array) $context['top_template'] as $template)
 				loadSubTemplate($template);
 		foreach ((array) $context['sub_template'] as $template)
@@ -1156,7 +1156,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			$footer_done = true;
 			template_footer();
 
-			if (!isset($_REQUEST['xml']) && empty($context['is_ajax']))
+			if (!isset($_REQUEST['xml']) && empty($context['hide_chrome']))
 				db_debug_junk();
 		}
 	}
@@ -1184,6 +1184,19 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			);
 		exit;
 	}
+}
+
+/**
+ * A quick alias to tell Wedge not to show the top and sidebar sub-templates.
+ *
+ * @param array $layers An array with the layers we actually want to show. Usually empty.
+ */
+function hideChrome($layers = null)
+{
+	global $context;
+
+	$context['template_layers'] = $layers === null ? array() : $layers;
+	$context['hide_chrome'] = true;
 }
 
 /**
@@ -1691,9 +1704,12 @@ function template_header()
 	{
 		loadSubTemplate($layer . '_above', true);
 
+		if ($layer !== 'main' && $layer !== 'body')
+			continue;
+
 		// May seem contrived, but this is done in case the body and main layer aren't there...
 		// Was there a security error for the admin?
-		if (($layer == 'main' || $layer == 'body') && $context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
+		if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
 		{
 			$showed_behav_error = true;
 			loadLanguage('Security');
@@ -1705,7 +1721,7 @@ function template_header()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 		}
-		elseif (($layer == 'body' || $layer == 'main') && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+		elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
 			$checked_securityFiles = true;
 			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -1743,7 +1759,7 @@ function template_header()
 			}
 		}
 		// If the user is banned from posting inform them of it.
-		elseif (($layer == 'main' || $layer == 'body') && isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+		elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
 		{
 			$showed_banned = true;
 			echo '

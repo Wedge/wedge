@@ -44,8 +44,7 @@ if (!defined('SMF'))
  */
 function PrintPage()
 {
-	global $topic, $txt, $scripturl, $context, $user_info;
-	global $board_info, $modSettings;
+	global $topic, $txt, $scripturl, $context, $user_info, $board_info, $modSettings;
 
 	// Redirect to the boardindex if no valid topic id is provided.
 	if (empty($topic))
@@ -74,7 +73,8 @@ function PrintPage()
 
 	// Let's "output" all that info.
 	loadTemplate('Printpage');
-	$context['template_layers'] = array('print');
+	hideChrome(array('print'));
+
 	$context['board_name'] = $board_info['name'];
 	$context['category_name'] = $board_info['cat']['name'];
 	$context['poster_name'] = $row['poster_name'];

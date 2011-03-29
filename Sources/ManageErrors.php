@@ -407,7 +407,6 @@ function ViewFile()
 	loadTemplate('Errors');
 	$context['template_layers'] = array();
 	showSubTemplate('show_file');
-
 }
 
 ?>

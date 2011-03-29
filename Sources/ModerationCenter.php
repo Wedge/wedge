@@ -1018,11 +1018,11 @@ function ShowNotice()
 
 	$context['page_title'] = $txt['show_notice'];
 	showSubTemplate('show_notice');
-	$context['template_layers'] = array();
+	hideChrome();
 
 	loadTemplate('ModerationCenter');
 
-	//!!! Assumes nothing needs permission more than accessing moderation center!
+	// !!! Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
 	$request = wesql::query('
 		SELECT body, subject

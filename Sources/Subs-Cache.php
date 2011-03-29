@@ -297,6 +297,8 @@ function wedge_cache_css()
 	unset($context['css_generic_files'][0], $context['css_generic_files'][1]);
 	if (!empty($context['css_generic_files']))
 		$id .= '-' . implode('-', $context['css_generic_files']);
+	if ($context['user']['language'] !== 'english')
+		$id .= '-' . $context['user']['language'];
 
 	$context['cached_css'] = $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
 	$final_file = $cachedir . '/' . $id . '-' . $latest_date . $ext;
@@ -342,6 +344,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
 	$css_vars = array(
+		'$language' => $context['user']['language'],
 		'$images' => '..' . str_replace($boardurl, '', $settings['images_url']),
 		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
 		'$here' => '',
@@ -483,7 +486,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 		// Adding a semicolon after a function/prototype declaration is mandatory in Packer.
 		// The original SMF code didn't bother with that, and developers are advised NOT to
 		// follow that 'advice'. If you can't fix your scripts, uncomment the following
-		// block and semicolons will be added automatically, at a small performance cost.
+		// block. Semicolons will be added automatically, at a small performance cost.
 
 		/*
 		$max = strlen($final);
