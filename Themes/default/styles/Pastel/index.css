@@ -241,9 +241,6 @@ code.bbc_code, code.php_code
 		color: #53616f
 		text-decoration: none
 
-img[alt="!"]
-	margin-top: 4px
-
 .table_grid
 	tr.catbg, tr.titlebg
 		font-size: .95em

@@ -21,16 +21,15 @@ hr
 	border: 0
 	background-color, color: #000
 
-.catbg
+.catback
 	background-color: #d6d6d6
 	font-weight: bold
+	color: white
 
-.titlebg, tr.titlebg td, .titlebg a:link, .titlebg a:visited
-	font-style: normal
-	background-color: #f0f4f7
-
-.bordercolor
-	background-color: #333
+.titleback
+	&, & td, & a:link, & a:visited
+		font-style: normal
+		background-color: #f0f4f7
 
 .windowbg
 	color: #000
@@ -43,12 +42,10 @@ hr
 	font-size: x-small
 	text-align: center
 
-table.cs1
+.printable
+	background-color: #333
+	width: 100%
 	border-collapse: separate
 	border-spacing: 1px
-
-table.cp4 th, table.cp4 td
-	padding: 4px
-
-table.w100
-	width: 100%
+	th, td
+		padding: 4px

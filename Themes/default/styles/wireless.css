@@ -1,19 +1,19 @@
 
-.catbg, tr.catbg td
+.cat, tr.cat td
 	background-color: #6d92aa
 	color: #fff
 
-.titlebg
+.title
 	&, a, a:link, a:visited
 		background-color: #b6dbff
 		color: #000
 		text-decoration: none
 
-.windowbg final, tr.windowbg td final
+.win, tr.win td
 	background-color: #fff
 	color: #000
 
-.windowbg2, tr.windowbg2 td
+.win2, tr.win2 td
 	background-color: #c0c0c0
 
 .new, a:link.new, a:visited.new

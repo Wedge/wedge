@@ -165,21 +165,16 @@ function template_body_above()
 
 	echo '
 		</div></div>
-		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '><div class="frame">
-			<h1 class="forumtitle">
+		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none"', '><div class="frame">
+			<h1>
 				<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
 			</h1>
 			', $context['site_slogan'], '
 		</div></div>
-	</div></div>
-
-	<div id="navi">';
+	</div></div>';
 
 	// Show the menu here, according to the menu sub template.
 	template_menu();
-
-	echo '
-	</div>';
 
 	// Show the navigation tree.
 	theme_linktree();
@@ -473,34 +468,34 @@ function template_menu()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-		<div id="menu_container"><ul id="main_menu" class="css menu">';
+	<div id="navi"><ul id="main_menu" class="css menu">';
 
 	foreach ($context['menu_buttons'] as $act => $button)
 	{
 		$mh4 = empty($button['padding']) ? '' : ' style="margin-left: ' . ($button['padding'] + 6) . 'px"';
 		$class = ($button['active_button'] ? ' chosen' : '') . (empty($button['sub_buttons']) ? ' nodrop' : '');
 		$ic = !$mh4 ? '' : '
-				<div class="m_' . $act . '">&nbsp;</div>';
+			<div class="m_' . $act . '">&nbsp;</div>';
 
 		echo '
-			<li id="button_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
-				<h4', $mh4, '><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
+		<li id="button_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
+			<h4', $mh4, '><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
 
 		if (!empty($button['sub_buttons']))
 		{
 			echo '
-				<ul>';
+			<ul>';
 
 			foreach ($button['sub_buttons'] as $childbutton)
 			{
 				echo '
-					<li><a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
+				<li><a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
 
 				// 3rd level menus
 				if (!empty($childbutton['sub_buttons']))
 				{
 					echo '
-						<ul>';
+					<ul>';
 
 					foreach ($childbutton['sub_buttons'] as $grandchildbutton)
 						echo '<li><a href="', $grandchildbutton['href'], '"', isset($grandchildbutton['target']) ? ' target="' . $grandchildbutton['target'] . '"' : '', '>', $grandchildbutton['title'], '</a></li>';
@@ -510,13 +505,13 @@ function template_menu()
 				echo '</li>';
 			}
 			echo '
-				</ul>';
+			</ul>';
 		}
 		echo '
-			</li>';
+		</li>';
 	}
 	echo '
-		</ul></div>';
+	</ul></div>';
 }
 
 // Generate a strip of buttons.

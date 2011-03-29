@@ -20,7 +20,7 @@ function template_generic_menu_sidebar()
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			echo '
-				<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" alt="!"></a>';
+				<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" id="sidebar_toggle"></a>';
 
 		echo '
 				', $section['title'];
@@ -79,7 +79,7 @@ function template_generic_menu_dropdown()
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
-<a href="', $menu_context['toggle_url'], '"><img id="menu_toggle" src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" alt="!"></a>';
+<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" id="menu_toggle"></a>';
 
 	echo '
 <ul id="amen', $mid > 1 ? '_' . ($mid - 1) : '', '" class="css menu">';

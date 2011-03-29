@@ -20,7 +20,7 @@ function template_boardindex()
 			continue;
 
 		echo '
-		<tbody class="header" id="category_', $category['id'], '">
+		<tbody id="category_', $category['id'], '">
 			<tr>
 				<td colspan="4">
 					<we:cat>';
@@ -183,7 +183,7 @@ function template_boardindex_newsfader()
 		echo '
 	<div id="newsfader">
 		<we:cat>
-			<div id="newsupshrink" title="', $txt['upshrink_description'], '"></div>
+			<div id="newsupshrink" title="', $txt['upshrink_description'], '"', empty($options['collapse_news_fader']) ? ' class="fold"' : '', '></div>
 			', $txt['news'], '
 		</we:cat>
 		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';

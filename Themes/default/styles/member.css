@@ -48,10 +48,6 @@
 #manrules div.righttext
 	padding: .3em .1em
 
-dl.addrules dt.floatleft
-	width: 20em
-	color: #333
-	padding: 0 1.25em .5em
-
 #addrule fieldset
 	clear: both
+	margin-top: 10px

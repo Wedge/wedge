@@ -165,12 +165,12 @@ function template_print()
 	foreach ($context['tables'] as $table)
 	{
 		echo '
-	<div style="overflow: visible;', $table['max_width'] != 'auto' ? ' width: ' . $table['max_width'] . 'px;' : '', '">
-		<table class="bordercolor w100 cs1 cp4">';
+	<div style="overflow: visible', $table['max_width'] != 'auto' ? '; width: ' . $table['max_width'] . 'px' : '', '">
+		<table class="printable">';
 
 		if (!empty($table['title']))
 			echo '
-			<tr class="catbg">
+			<tr class="catback">
 				<td colspan="', $table['column_count'], '">
 					', $table['title'], '
 				</td>
@@ -183,7 +183,7 @@ function template_print()
 		{
 			if ($row_number == 0 && !empty($table['shading']['top']))
 				echo '
-			<tr class="titlebg top">';
+			<tr class="titleback top">';
 			else
 				echo '
 			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">';
@@ -196,7 +196,7 @@ function template_print()
 				if (!empty($data['separator']) && $column_number == 0)
 				{
 					echo '
-				<td colspan="', $table['column_count'], '" class="catbg">
+				<td colspan="', $table['column_count'], '" class="catback">
 					<strong>', $data['v'], ':</strong>
 				</td>';
 					break;
@@ -205,7 +205,7 @@ function template_print()
 				// Shaded?
 				if ($column_number == 0 && !empty($table['shading']['left']))
 					echo '
-				<td class="', $table['align']['shaded'], ' titlebg"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
+				<td class="', $table['align']['shaded'], ' titleback"', $table['width']['shaded'] != 'auto' ? ' style="width: ' . $table['width']['shaded'] . 'px"' : '', '>
 					', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
 				</td>';
 				else
