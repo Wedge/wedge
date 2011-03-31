@@ -692,8 +692,6 @@ tr.windowbg2
 /* Styles for the package manager.
 ------------------------------------------------- */
 #package_list
-	.tborder
-		margin: .25em 26px .25em 0
 	ol, ol li
 		margin-left: 0
 		margin-right: 50px

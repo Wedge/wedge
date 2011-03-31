@@ -153,7 +153,7 @@ input.search
 	font: 100% Verdana
 	clear: left
 
-#menu_container
+#main_menu
 	background: url($images/theme/grad250.png) 0 -180px repeat-x
 	border-width: 1px 0
 	padding: 0 10px
@@ -188,10 +188,10 @@ code.bbc_code, code.php_code
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-.titlebg, .titlebg2, tr.titlebg th, tr.titlebg td, tr.titlebg2 th, tr.titlebg2 td
+tr.titlebg th, tr.titlebg td
 	color: #222
 	font: $subcat_font
-.catbg, tr.catbg td, tr.catbg th, tr.catbg th a
+tr.catbg td, tr.catbg th
 	color: #666
 	font: $subcat_font
 
@@ -241,6 +241,9 @@ code.bbc_code, code.php_code
 		color: #53616f
 		text-decoration: none
 
+img[alt="!"]
+	margin-top: 4px
+
 .table_grid
 	tr.catbg, tr.titlebg
 		font-size: .95em
@@ -253,13 +256,11 @@ form.wrc
 /* A few more header styles...
 ------------------------------------------------------- */
 
-tr.catbg
-	th
-		background: #e5eee5 url($images/theme/grad40.png) 0 -18px repeat-x
+tr.catbg th
+	background: #e5eee5 url($images/theme/grad40.png) 0 -18px repeat-x
 
-tr.titlebg, tr.titlebg2
-	th
-		background: #e3e9ef url($images/theme/grad40.png) 0 -18px repeat-x
+tr.titlebg th
+	background: #e3e9ef url($images/theme/grad40.png) 0 -18px repeat-x
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

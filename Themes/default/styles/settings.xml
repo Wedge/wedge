@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!--
-	See Wine/settings.xml for descriptions.
+	See Warm/settings.xml for descriptions.
 -->
 <styling>
 
 	<name>
-		Warm
+		Wine
 	</name>
 
 	<comment><![CDATA[
@@ -13,7 +13,7 @@
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
+	DD_belatedPNG.fix('img.ping,#wedgelogo,#footer,#footer div.frame,.windowbg,.windowbg2');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 

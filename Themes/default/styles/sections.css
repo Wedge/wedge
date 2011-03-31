@@ -1406,7 +1406,7 @@ span.hidelink
 // The upshrink image needs some tweaking
 #upshrink extends .shrinkable
 	float: right
-	margin: 0 1em 0
+	margin-left: 1em
 
 #upshrink_ic extends .foldable
 	float: right

@@ -5,20 +5,19 @@
 	Make sure to save the file as UTF-8 if you're using special characters in it.
 -->
 <styling>
-	<!--
-		Styling name.
 
-		This will only be shown to anyone who can change a styling.
+	<!--
+		Name. This will only be shown to anyone who can change a styling.
 	-->
-	<name>
-		Wine
-	</name>
-	<!--
-		Styling type.
 
-		Possible values:
-			add (default, add this styling to the root style)
-			replace (discard the root style and consider this as the basic style)
+	<name>
+		Warm
+	</name>
+
+	<!--
+		Type. Possible values:
+			- add (default, add this styling to the root style)
+			- replace (discard the root style and consider this as the basic style)
 
 		Warnings:
 			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
@@ -26,29 +25,31 @@
 			- If you're offering nested stylings (/styles/styling1/styling2/), styling2 can only be of the "add" type,
 			  otherwise it should obviously be set in a top-level folder. (/styles/styling2/)
 	-->
+
 	<type>
 		add
 	</type>
-	<!--
-		Styling comment.
 
-		This HTML text will only be shown to users when selecting a styling,
-		either for the default forum theme (admins), board theme (board
-		owners) and default theme override (regular users, if allowed.)
+	<!--
+		Comment. This HTML text will only be shown to users when selecting
+		a styling, either for the default forum theme (admins), board theme
+		(board owners) and default theme override (regular users, if allowed.)
 
 		Use the opportunity to communicate credits or details to users.
 		Technical information is best posted wherever you upload the file.
 	-->
+
 	<comment><![CDATA[
-		Made by Nao, inspired by Eren's theme for yourasoft.org
+		By Nao.
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,.windowbg,.windowbg2,#header,#footer,#wedgelogo,#footer div.frame');
+	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
 	<block name="title"><header class="title">|</header></block>
 	<block name="title2"><header class="title2">|</header></block>
 	<block name="cat"><header class="cat">|</header></block>
+
 </styling>

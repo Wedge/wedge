@@ -31,6 +31,8 @@ ol.search_results
 		padding: 1em 0 0.5em 0.5em
 		margin: 0
 		font-size: 1.1em
+		a
+			text-decoration: underline
 	p
 		padding: 0 1em 1em
 		margin: 0
@@ -241,7 +243,7 @@ pre.file_content
 		overflow: auto
 	li
 		list-style-type: none
-		border: 1px solid #cacdd3
+		border-bottom: 1px dotted #8a8d92
 		padding: 0.2em
 		margin: 1px
 		clear: right

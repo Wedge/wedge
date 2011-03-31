@@ -268,21 +268,23 @@ function wedge_cache_css()
 	// The deepest styling gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
-		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
 					$context['extra_styling_css'] .= rtrim($match[2], "\t");
 
-		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?\>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
 					add_js(rtrim($match[2], "\t"));
 
-		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)">(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
-				$block = explode('|', $match[2]);
+				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
+					continue;
+				$block = explode('|', $match[3]);
 				$context['blocks_to_search'][$match[1]] = '<we:' . $match[1] . '>';
 				$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
 				$context['blocks_to_replace'][$match[1]] = $block[0];

@@ -1,10 +1,10 @@
 
 /* Menus and gradients
 ------------------------------------------------------- */
-#menu_container, #wedge, .menu ul
+#navi, #wedge, .menu ul
 	background-image: none
 
-#menu_container, #wedge
+#navi, #wedge
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#eceae8', endColorstr='#f4f2f0')
 	zoom: 1
 

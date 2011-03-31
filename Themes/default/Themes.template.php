@@ -549,9 +549,9 @@ function template_pick()
 		{
 			echo '
 				<div style="margin-top: 8px; clear: right">
-					<we:title2>
+					<we:title>
 						', $txt['theme_stylings'], '
-					</we:title2>
+					</we:title>
 				</div>';
 
 			template_list_stylings($theme, $theme['id']);
@@ -580,7 +580,9 @@ function template_list_stylings(&$theme, $theme_id)
 					<div class="floatright">
 						<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $target . ';' . $context['session_var'] . '=' . $context['session_id'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"></a>
 					</div>' : '', '
-					<p><strong>', $sty['name'], '</strong></p>
+					<we:title2>
+						', $sty['name'], '
+					</we:title2>
 					<p>', $sty['comment'], '</p>
 					<ul class="reset">
 						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $target, ';', $context['session_var'], '=', $context['session_id'], '" id="theme_use_', $target, '_', '">[', $txt['theme_styling_set'], ']</a></li>

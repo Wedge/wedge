@@ -8,9 +8,6 @@
 .attachments
 	clear: right
 
-.table_grid thead th
-	height, line-height: 26px
-
 .table_list tbody.header td div.cat
 	margin-bottom: -2px
 

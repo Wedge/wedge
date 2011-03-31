@@ -1,0 +1,169 @@
+
+/*!
+ * Warm styling for Wedge
+ * (c) 2011, Wedgeward (http://wedge.org)
+ */
+
+body
+	background: #efead2
+	color: #333
+
+#content div.frame
+	padding: 0 40px 20px
+
+#sidebar
+	background: darken($main_bg, 2%)
+	.column
+		padding: 5px 15px 10px
+
+#top_section
+	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
+
+#header
+	h2, p
+		color: #000
+	h1
+		margin: 38px 0 0 30px
+		a
+			color: #999
+			font: italic bold 3.2em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			text-shadow: white 0 1px 2px
+
+#wedgelogo
+	background: none
+
+#upper_section
+	border-top: 0
+
+#top_section, #upper_section
+	border-bottom: 3px solid lighten($reddish, 3%)
+
+#linktree ul
+	padding: 0 20px
+	margin: 0
+	background: hue($menu_bg, -5%)
+
+#footer
+	border-top: 2px solid darken($footer_bg, 20%)
+	background: $footer_bg
+	color: #333
+	div.frame extends .minilogo
+		background-position: 99% 17px
+	ul
+		padding: 0
+		li a
+			color: #679
+
+
+/* Styles for the dropdown menus.
+------------------------------------------------------- */
+#navi
+	border-bottom: 1px dotted #000
+	background: $menu_bg
+
+#main_menu
+	padding: 5px 0 2px
+	h4 a
+		color: #000
+	h4:hover, h4.hove
+		background-color: rgba(0,0,0, .075)
+		background-position: 98% 2px
+		li.chosen &
+			background-position: 98% -28px
+		a
+			color: #000
+	li.chosen h4
+		padding-bottom: 3px
+		margin-bottom: 2px
+		border-radius: 6px
+		background-color: #fd9604
+		a
+			color: #fff
+
+blockquote.bbc_standard_quote
+	background-color: #e8eee8
+
+blockquote.bbc_alternate_quote
+	background-color: #e3eae3
+
+code.bbc_code, code.php_code
+	background: #eef5ec
+
+
+/* Generic, mostly color-related, classes.
+------------------------------------------------------- */
+tr.catbg
+	td, th
+		background: #e5eeee
+		color: #666
+	a
+		color: #666
+
+tr.titlebg
+	td, th
+		background: #e3e9ef
+		color: #222
+	a
+		color: #333
+
+// Adjust the table versions of headers
+tr.titlebg th, tr.catbg th
+	padding: 0 6px
+
+.windowbg
+	background: rgba(75%, 50%, 50%, .1) // #e9e8de
+
+.windowbg2
+	background: rgba(50%, 50%, 75%, .1) // #e4edeb
+
+.windowbg3
+	background: rgba(50%, 75%, 50%, .1) // #cacdd3
+
+
+/* Styles for section headers.
+------------------------------------------------------- */
+.catbase
+	background: rgba(0,0,0, .03)
+	text-shadow: white 0 1px 2px
+	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	img
+		vertical-align: -2px
+
+.cat a
+	letter-spacing: -1px
+	color: lighten(gray, 10%)
+	:hover
+		color: $board_col
+
+.title
+	font-size: 1.2em
+	background: none
+	a
+		color: lighten(channels(gray, 30%), 10%)
+
+.cat final
+	border: 1px solid rgba(0,0,0, 0.15)
+	color: gray
+
+.title final
+	color: channels(gray, 30%)
+
+.table_grid
+	tr.catbg, tr.titlebg
+		th
+			height: 28px
+
+.plainbox
+	background: #f5f5f0
+
+.roundframe
+	background: rgba(0,0,0, .02)
+
+
+/* These are our CSS variable and mixin definitions.
+------------------------------------------------------- */
+
+$alphamix = rgb(241,243,234)
+$main_bg  = rgb(241,243,234)
+$main_bg  = rgb(246,248,239)
+$head_bg  = rgba(233,235,186,.66)

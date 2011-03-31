@@ -200,8 +200,14 @@
 	margin: 3px -.5em -3px .5em
 
 // Adding layout to a few divs that are distorted by IE6.
-#menu_container, #linktree, #linktree ul, .cat, .title, .posthead, .wrc
+#navi, #linktree, #linktree ul, .cat, .title, .posthead, .wrc
 	zoom: 1
+
+#navi, #top_section
+	background: #928585
+
+#main_menu
+	margin-bottom: -1px
 
 .table_list a.collapse
 	width: 14px
@@ -280,3 +286,15 @@ input.new
 // And it doesn't show the 'off' icons in boardstatus.png. I'm nice, so I'm giving it another file to play with.
 .boardstatus
 	background-image: url($images/boardstatus-ie6.png)
+
+#upper_section h1
+	filter: glow(color=#666666, strength=3)
+
+/*
+	If you find IE6 to be too slow to render PNG when there are many topic posts,
+	feel free to remove ".windowbg,.windowbg2" from the <code> section in settings.xml,
+	and set .windowbg to have no background (it will propagate to .windowbg2 as well.)
+
+.windowbg
+	background-image: none
+*/

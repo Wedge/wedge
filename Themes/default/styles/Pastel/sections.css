@@ -1,8 +1,4 @@
 
-/*
-	This is where all styling related to a specific page or area is put.
-/*
-
 /* Styles for the board index.
 ------------------------------------------------- */
 
@@ -11,7 +7,7 @@
 	color: #d97b33
 
 // Onto the posts
-#forumposts .cat
+#forumposts .cat final
 	margin-bottom: 3px
 
 /* Styles for sidebar menus.
@@ -31,22 +27,22 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 /* Styles for the statistics center.
 ------------------------------------------------- */
 #statistics
-	.title
+	.title final
 		margin: 4px 0
-	.cat
+	.cat final
 		text-align: center
 
 /* Styles for the calendar section.
 ------------------------------------------------- */
-#calendar .cat
+#calendar .cat final
 	margin-bottom: 4px
 
 #main_grid table
-	.cat
+	.cat final
 		text-align: center
 		border-top: 2px solid #fff
 		border-bottom: none
-	&.weeklist .title2
+	&.weeklist .title2 final
 		margin: 0
 		height: 23px
 		line-height: 27px
@@ -57,8 +53,7 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 	p.pminfo
 		margin: 0
 		padding: .5em
-
-	.cat, .title2
+	.cat final, .title2 final
 		font-size: 1.1em
 
 dfn
