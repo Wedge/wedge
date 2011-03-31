@@ -10,7 +10,7 @@ function template_login()
 
 	echo '
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 			</we:cat>
@@ -77,7 +77,7 @@ function template_kick_guest()
 
 	echo '
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				', $txt['warning'], '
 			</we:cat>';
@@ -140,7 +140,7 @@ function template_maintenance()
 
 	echo '
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
-	<div class="tborder login" id="maintenance_mode">
+	<div class="login" id="maintenance_mode">
 		<we:cat>
 			', $context['title'], '
 		</we:cat>
@@ -179,7 +179,7 @@ function template_admin_login()
 
 	echo '
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
-	<div class="tborder login" id="admin_login">
+	<div class="login" id="admin_login">
 		<we:cat>
 			<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
 		</we:cat>

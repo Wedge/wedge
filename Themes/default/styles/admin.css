@@ -138,8 +138,6 @@ fieldset dl
 ------------------------------------------------- */
 #package_list
 	list-style-type: none
-	.tborder
-		margin: .25em 0 .25em 26px
 	li
 		border: 1px solid #cacdd3
 		padding: 0.2em

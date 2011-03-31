@@ -2817,4 +2817,5 @@ function draftXmlReturn($draft, $is_pm)
 	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
 	obExit(false);
 }
+
 ?>

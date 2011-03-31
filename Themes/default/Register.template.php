@@ -414,7 +414,7 @@ function template_coppa_form()
 
 	// Show the form (As best we can)
 	echo '
-		<table class="tborder w100 cp4 cs0 centertext">
+		<table class="w100 cp4 cs0 centertext">
 			<tr>
 				<td class="left">', $context['forum_contacts'], '</td>
 			</tr>

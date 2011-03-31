@@ -160,7 +160,7 @@ $action_list = array(
 cleanRequest();
 
 // Seed the random generator.
-if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
+if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 42)
 	smf_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!

@@ -1505,4 +1505,5 @@ function userBehaviorResponse()
 
 	return array($error, $error_blocks);
 }
+
 ?>

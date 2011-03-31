@@ -40,7 +40,8 @@ function template_summary()
 	echo '
 <div id="profileview" class="flow_auto">
 	<we:cat>
-		<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['summary'], '
+		<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+		', $txt['summary'], '
 	</we:cat>
 	<div id="basicinfo">
 		<div class="windowbg wrc">
@@ -358,7 +359,7 @@ function template_showDrafts()
 	// No drafts? Just end the table with an informative message.
 	if (empty($context['posts']))
 		echo '
-		<div class="tborder windowbg2 padding centertext">
+		<div class="windowbg2 padding centertext">
 			', $txt['show_drafts_none'], '
 		</div>';
 
@@ -518,7 +519,7 @@ function template_showPosts()
 	if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
 		echo '
 				<tr>
-					<td class="tborder windowbg2 padding center" colspan="4">
+					<td class="windowbg2 padding center" colspan="4">
 						', isset($context['attachments']) ? $txt['show_attachments_none'] : ($context['is_topics'] ? $txt['show_topics_none'] : $txt['show_posts_none']), '
 					</td>
 				</tr>';
@@ -588,7 +589,7 @@ function template_editBuddies()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="UTF-8">
-		<div class="tborder add_buddy">
+		<div class="add_buddy">
 			<we:title>
 				', $txt['buddy_add'], '
 			</we:title>
@@ -668,7 +669,7 @@ function template_editIgnoreList()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="UTF-8">
-		<div class="tborder add_buddy">
+		<div class="add_buddy">
 			<we:title>
 				', $txt['ignore_add'], '
 			</we:title>
@@ -832,7 +833,8 @@ function template_showPermissions()
 
 	echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['showPermissions'], '
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+			', $txt['showPermissions'], '
 		</we:cat>';
 
 	if ($context['member']['has_all_permissions'])
@@ -865,47 +867,46 @@ function template_showPermissions()
 
 		// General Permissions section.
 		echo '
-			<div class="tborder">
-				<we:cat>
-					', $txt['showPermissions_general'], '
-				</we:cat>';
+			<we:cat>
+				', $txt['showPermissions_general'], '
+			</we:cat>';
 
 		if (!empty($context['member']['permissions']['general']))
 		{
 			echo '
-				<table class="table_grid w100 cs0">
-					<thead>
-						<tr class="titlebg left">
-							<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
-							<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
-						</tr>
-					</thead>
-					<tbody>';
+			<table class="table_grid w100 cs0">
+				<thead>
+					<tr class="titlebg left">
+						<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
+						<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
 
 			foreach ($context['member']['permissions']['general'] as $permission)
 			{
 				echo '
-						<tr>
-							<td class="windowbg" title="', $permission['id'], '">
-								', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
-							</td>
-							<td class="windowbg2 smalltext">';
+					<tr>
+						<td class="windowbg" title="', $permission['id'], '">
+							', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
+						</td>
+						<td class="windowbg2 smalltext">';
 
 				if ($permission['is_denied'])
 					echo '
-								<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
+							<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
 				else
 					echo '
-								', $txt['showPermissions_given'], ':&nbsp;', implode(', ', $permission['groups']['allowed']);
+							', $txt['showPermissions_given'], ':&nbsp;', implode(', ', $permission['groups']['allowed']);
 
 					echo '
-							</td>
-						</tr>';
+						</td>
+					</tr>';
 			}
 			echo '
-					</tbody>
-				</table>
-			</div><br>';
+				</tbody>
+			</table>
+			<br>';
 		}
 		else
 			echo '
@@ -913,70 +914,67 @@ function template_showPermissions()
 
 		// Board permission section.
 		echo '
-			<div class="tborder">
-				<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="UTF-8">
-					<we:cat>
-						<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
-						<select name="board" onchange="if ($(this).val()) this.form.submit();">
-							<option value="0"', $context['board'] == 0 ? ' selected' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
+			<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="UTF-8">
+				<we:cat>
+					<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
+					<select name="board" onchange="if ($(this).val()) this.form.submit();">
+						<option value="0"', $context['board'] == 0 ? ' selected' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
 
 		if (!empty($context['boards']))
 			echo '
-							<option value="" disabled>---------------------------</option>';
+						<option value="" disabled>---------------------------</option>';
 
 		// Fill the box with any local permission boards.
 		foreach ($context['boards'] as $board)
 			echo '
-							<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['name'], ' (', $board['profile_name'], ')</option>';
+						<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['name'], ' (', $board['profile_name'], ')</option>';
 
 		echo '
-						</select>
-					</we:cat>
-				</form>';
+					</select>
+				</we:cat>
+			</form>';
 
 		if (!empty($context['member']['permissions']['board']))
 		{
 			echo '
-				<table class="table_grid w100 cs0">
-					<thead>
-						<tr class="titlebg left">
-							<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
-							<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
-						</tr>
-					</thead>
-					<tbody>';
+			<table class="table_grid w100 cs0">
+				<thead>
+					<tr class="titlebg left">
+						<th class="first_th w50" scope="col">', $txt['showPermissions_permission'], '</th>
+						<th class="last_th w50" scope="col">', $txt['showPermissions_status'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
+
 			foreach ($context['member']['permissions']['board'] as $permission)
 			{
 				echo '
-						<tr>
-							<td class="windowbg" title="', $permission['id'], '">
-								', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
-							</td>
-							<td class="windowbg2 smalltext">';
+					<tr>
+						<td class="windowbg" title="', $permission['id'], '">
+							', $permission['is_denied'] ? '<del>' . $permission['name'] . '</del>' : $permission['name'], '
+						</td>
+						<td class="windowbg2 smalltext">';
 
 				if ($permission['is_denied'])
-				{
 					echo '
-								<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
-				}
+							<span class="alert">', $txt['showPermissions_denied'], ':&nbsp;', implode(', ', $permission['groups']['denied']), '</span>';
 				else
-				{
 					echo '
-								', $txt['showPermissions_given'], ': &nbsp;', implode(', ', $permission['groups']['allowed']);
-				}
+							', $txt['showPermissions_given'], ': &nbsp;', implode(', ', $permission['groups']['allowed']);
+
 				echo '
-							</td>
-						</tr>';
+						</td>
+					</tr>';
 			}
 			echo '
-					</tbody>
-				</table>';
+				</tbody>
+			</table>';
 		}
 		else
 			echo '
-				<p class="windowbg2 description">', $txt['showPermissions_none_board'], '</p>';
+			<p class="windowbg2 description">', $txt['showPermissions_none_board'], '</p>';
+
 	echo '
-			</div>
 		</div>';
 	}
 }
@@ -1014,7 +1012,8 @@ function template_statPanel()
 	echo '
 		<div id="activitytime" class="flow_hidden">
 			<we:cat>
-				<img src="', $settings['images_url'], '/stats_history.gif">', $txt['statPanel_activityTime'], '
+				<img src="', $settings['images_url'], '/stats_history.gif">
+				', $txt['statPanel_activityTime'], '
 			</we:cat>
 			<div class="windowbg2 wrc">';
 
@@ -1058,7 +1057,8 @@ function template_statPanel()
 		<div class="flow_hidden">
 			<div id="popularposts">
 				<we:cat>
-					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['statPanel_topBoards'], '
+					<img src="', $settings['images_url'], '/stats_replies.gif">
+					', $txt['statPanel_topBoards'], '
 				</we:cat>
 				<div class="windowbg2 wrc">';
 
@@ -1093,7 +1093,8 @@ function template_statPanel()
 	echo '
 			<div id="popularactivity">
 				<we:cat>
-					<img src="', $settings['images_url'], '/stats_replies.gif">', $txt['statPanel_topBoardsActivity'], '
+					<img src="', $settings['images_url'], '/stats_replies.gif">
+					', $txt['statPanel_topBoardsActivity'], '
 				</we:cat>
 				<div class="windowbg2 wrc">';
 
@@ -1571,7 +1572,8 @@ function template_notification()
 	// The main containing header.
 	echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+				', $txt['profile'], '
 			</we:cat>
 			<p class="windowbg description">', $txt['notification_info'], '</p>
 			<div class="windowbg2 wrc">
@@ -1639,7 +1641,8 @@ function template_groupMembership()
 	echo '
 		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+				', $txt['profile'], '
 			</we:cat>
 			<p class="description">', $txt['groupMembership_info'], '</p>';
 
@@ -1811,7 +1814,8 @@ function template_ignoreboards()
 	echo '
 	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<we:cat>
-			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['profile'], '
+			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+			', $txt['profile'], '
 		</we:cat>
 		<p class="description">', $txt['ignoreboards_info'], '</p>
 		<div class="windowbg2 wrc">
@@ -2796,7 +2800,8 @@ function template_authentication_method()
 	echo '
 		<form action="', $scripturl, '?action=profile;area=authentication;save" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data">
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['authentication'], '
+				<img src="', $settings['images_url'], '/icons/profile_sm.gif">
+				', $txt['authentication'], '
 			</we:cat>
 			<p class="windowbg description">', $txt['change_authentication'], '</p>
 			<div class="windowbg2 wrc">

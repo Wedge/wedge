@@ -186,7 +186,7 @@ function template_boardindex_newsfader()
 			<div id="newsupshrink" title="', $txt['upshrink_description'], '"', empty($options['collapse_news_fader']) ? ' class="fold"' : '', '></div>
 			', $txt['news'], '
 		</we:cat>
-		<ul class="reset" id="smfFadeScroller"', empty($options['collapse_news_fader']) ? '' : ' style="display: none"', '>';
+		<ul class="reset" id="smfFadeScroller">';
 
 			foreach ($context['news_lines'] as $news)
 				echo '

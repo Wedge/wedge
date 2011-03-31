@@ -612,9 +612,7 @@ function ModifyProfile($post_errors = array())
 
 			// If the member changed his/her birthdate, update calendar statistics.
 			if (isset($profile_vars['birthdate']) || isset($profile_vars['real_name']))
-				updateSettings(array(
-					'calendar_updated' => time(),
-				));
+				updateSettings(array('calendar_updated' => time()));
 
 			// Anything worth logging?
 			if (!empty($context['log_changes']) && !empty($modSettings['modlog_enabled']))
@@ -629,6 +627,7 @@ function ModifyProfile($post_errors = array())
 						'ip' => get_ip_identifier($user_info['ip']),
 						'extra' => serialize(array_merge($v, array('applicator' => $user_info['id']))),
 					);
+
 				wesql::insert('',
 					'{db_prefix}log_actions',
 					array(

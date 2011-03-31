@@ -24,7 +24,7 @@ function template_main()
 			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
 		</div>
 
-		<div id="mlist" class="tborder topic_table">
+		<div id="mlist" class="topic_table">
 			<table class="table_grid w100 cs0">
 			<thead>
 				<tr class="catbg">';

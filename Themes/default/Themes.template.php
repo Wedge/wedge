@@ -701,7 +701,7 @@ function template_edit_browse()
 
 	echo '
 	<div id="admincenter">
-		<table class="table_grid tborder w100 cs0">
+		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
 				<th class="left first_th w50" scope="col">', $txt['themeadmin_edit_filename'], '</th>

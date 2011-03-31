@@ -771,7 +771,7 @@ function template_quick_reply()
 
 	echo '
 			<a id="quickreply"></a>
-			<div class="tborder" id="quickreplybox">
+			<div id="quickreplybox">
 				<we:cat>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>

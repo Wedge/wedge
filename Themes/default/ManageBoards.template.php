@@ -9,9 +9,9 @@ function template_main()
 	// Table header.
 	echo '
 	<div id="manage_boards">
-		<we:title>
+		<we:cat>
 			', $txt['boardsEdit'], '
-		</we:title>';
+		</we:cat>';
 
 	if (!empty($context['move_board']))
 		echo '
@@ -33,9 +33,9 @@ function template_main()
 	{
 		// Link to modify the category.
 		echo '
-		<we:cat>
+		<we:title>
 			<a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $category['name'], '</a> <a href="' . $scripturl . '?action=admin;area=manageboards;sa=cat;cat=' . $category['id'] . '">', $txt['catModify'], '</a>
-		</we:cat>';
+		</we:title>';
 
 		// Boards table header.
 		echo '

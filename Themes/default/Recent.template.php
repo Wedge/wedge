@@ -115,7 +115,7 @@ function template_unread()
 			</div>';
 
 		echo '
-			<div class="tborder topic_table" id="unread">
+			<div class="topic_table" id="unread">
 				<table class="table_grid cs0">
 					<thead>
 						<tr class="catbg">
@@ -289,7 +289,7 @@ function template_replies()
 			</div>';
 
 		echo '
-			<div class="tborder topic_table" id="unreadreplies">
+			<div class="topic_table" id="unreadreplies">
 				<table class="table_grid cs0">
 					<thead>
 						<tr class="catbg">

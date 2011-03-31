@@ -8,7 +8,7 @@ function template_main()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '
 			</we:cat>
@@ -32,7 +32,7 @@ function template_reminder_pick()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '
 			</we:cat>
@@ -60,7 +60,7 @@ function template_sent()
 
 	echo '
 		<br>
-		<div class="tborder login" id="reminder_sent">
+		<div class="login" id="reminder_sent">
 			<we:cat>
 				' . $context['page_title'] . '
 			</we:cat>
@@ -75,7 +75,7 @@ function template_set_password()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=reminder;sa=setpassword2" name="reminder_form" id="reminder_form" method="post" accept-charset="UTF-8">
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -124,7 +124,7 @@ function template_ask()
 	echo '
 	<br>
 	<form action="', $scripturl, '?action=reminder;sa=secret2" method="post" accept-charset="UTF-8" name="creator" id="creator">
-		<div class="tborder login">
+		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '
 			</we:cat>

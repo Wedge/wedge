@@ -841,4 +841,5 @@ function cache_getNews()
 		'expires' => time() + 7200,
 	);
 }
+
 ?>

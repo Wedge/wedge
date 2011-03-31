@@ -28,7 +28,7 @@ function template_main_board()
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
 		echo '
-	<div class="tborder topic_table" id="messageindex">
+	<div class="topic_table" id="messageindex">
 		<table class="table_grid cs0">
 			<thead>
 				<tr class="catbg">';
@@ -172,7 +172,7 @@ function template_main_board()
 		{
 			echo '
 				<tr class="titlebg">
-					<td colspan="5" class="right">
+					<td colspan="5" class="round-bottom right">
 						<select class="qaction" name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
 							<option value="">--------</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
@@ -233,7 +233,7 @@ function template_main_board()
 	$context['bottom_linktree'] = true;
 
 	echo '
-	<div class="tborder" id="topic_icons">
+	<div id="topic_icons">
 		<div class="description">
 			<p class="floatright" id="message_index_jump_to">&nbsp;</p>';
 
@@ -316,7 +316,7 @@ function template_main_blog()
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
 		echo '
-	<div class="tborder topic_table" id="messageindex">
+	<div class="topic_table" id="messageindex">
 		<table class="table_grid cs0">
 			<thead>
 				<tr class="catbg">';
@@ -516,7 +516,7 @@ function template_main_blog()
 	$context['bottom_linktree'] = true;
 
 	echo '
-	<div class="tborder" id="topic_icons">
+	<div id="topic_icons">
 		<div class="description">
 			<p class="floatright" id="message_index_jump_to">&nbsp;</p>';
 
@@ -576,7 +576,7 @@ function template_messageindex_childboards()
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
 		echo '
-	<div class="tborder childboards" id="board_', $context['current_board'], '_childboards">
+	<div class="childboards" id="board_', $context['current_board'], '_childboards">
 		<we:cat>
 			', $txt['parent_boards'], '
 		</we:cat>
@@ -725,7 +725,8 @@ function template_messageindex_legend()
 
 	echo '
 		<we:title2>
-			<img src="', $settings['images_url'], '/icons/assist.gif">', $txt['legend'], '
+			<img src="', $settings['images_url'], '/icons/assist.gif">
+			', $txt['legend'], '
 		</we:title>
 		<p>
 			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>

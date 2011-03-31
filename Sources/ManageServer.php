@@ -2133,7 +2133,6 @@ function saveDBSettings(&$config_vars)
 {
 	global $context;
 
-	$inlinePermissions = array();
 	foreach ($config_vars as $var)
 	{
 		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'permissions' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))

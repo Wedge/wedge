@@ -430,10 +430,8 @@ function updateMemberData($members, $data)
  *
  * @param array $changeArray A key/value pair where the array key specifies the entry in the settings table and $modSettings array to be updated, and the value specifies the new value. Additionally, when $update is true, the value can be specified as true or false to increment or decrement (respectively) the current value.
  * @param bool $update If the value is known to already exist, this can be specified as true to have the data in the table be managed through an UPDATE query, rather than a REPLACE query. Note that UPDATE queries are run individually, while a REPLACE applies all changes simultaneously to the table.
- * @param bool $debug Not used.
- * @todo Remove the debug parameter.
  */
-function updateSettings($changeArray, $update = false, $debug = false)
+function updateSettings($changeArray, $update = false)
 {
 	global $modSettings;
 
@@ -466,9 +464,10 @@ function updateSettings($changeArray, $update = false, $debug = false)
 	$replaceArray = array();
 	foreach ($changeArray as $variable => $value)
 	{
-		// Don't bother if it's already like that ;).
+		// Don't bother if it's already like that ;)
 		if (isset($modSettings[$variable]) && $modSettings[$variable] == $value)
 			continue;
+
 		// If the variable isn't set, but would only be set to nothingness, then don't bother setting it.
 		elseif (!isset($modSettings[$variable]) && empty($value))
 			continue;
@@ -2647,14 +2646,6 @@ function smf_seed_generator()
 {
 	global $modSettings;
 
-	// Never existed?
-	if (empty($modSettings['rand_seed']))
-	{
-		$modSettings['rand_seed'] = microtime() * 1000000;
-		updateSettings(array('rand_seed' => $modSettings['rand_seed']));
-	}
-
-	// Change the seed.
 	updateSettings(array('rand_seed' => mt_rand()));
 }
 
@@ -2807,4 +2798,5 @@ function stable_icons()
 {
 	return array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless', 'clip', 'android');
 }
+
 ?>

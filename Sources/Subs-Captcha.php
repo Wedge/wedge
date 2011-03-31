@@ -97,4 +97,5 @@ function loadCaptchaTypes()
 
 	return $captcha_types;
 }
+
 ?>

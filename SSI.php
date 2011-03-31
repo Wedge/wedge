@@ -91,7 +91,7 @@ $context = array(
 cleanRequest();
 
 // Seed the random generator?
-if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
+if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 42)
 	smf_seed_generator();
 
 // Check on any hacking attempts.

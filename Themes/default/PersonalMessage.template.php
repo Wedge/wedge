@@ -1698,7 +1698,7 @@ function template_pm_drafts()
 	// No drafts? Just end the table with an informative message.
 	if (empty($context['posts']))
 		echo '
-		<div class="tborder windowbg2 padding centertext">
+		<div class="windowbg2 padding centertext">
 			', $txt['show_drafts_none'], '
 		</div>';
 
