@@ -290,11 +290,5 @@ input.new
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
 
-/*
-	If you find IE6 to be too slow to render PNG when there are many topic posts,
-	feel free to remove ".windowbg,.windowbg2" from the <code> section in settings.xml,
-	and set .windowbg to have no background (it will propagate to .windowbg2 as well.)
-
 .windowbg
 	background-image: none
-*/

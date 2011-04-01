@@ -1827,12 +1827,12 @@ function notification($memID)
 				),
 				'data' => array(
 					'function' => create_function('$board', '
-						global $settings, $txt;
+						global $txt;
 
 						$link = $board[\'link\'];
 
 						if ($board[\'new\'])
-							$link .= \' <a href="\' . $board[\'href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'"></a>\';
+							$link .= \' <a href="\' . $board[\'href\'] . \'"><div class="new_icon" title="\' . $txt[\'new\'] . \'"></div></a>\';
 
 						return $link;
 					'),
@@ -1909,12 +1909,12 @@ function notification($memID)
 				),
 				'data' => array(
 					'function' => create_function('$topic', '
-						global $settings, $txt;
+						global $txt;
 
 						$link = $topic[\'link\'];
 
 						if ($topic[\'new\'])
-							$link .= \' <a href="\' . $topic[\'new_href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'"></a>\';
+							$link .= \' <a href="\' . $topic[\'new_href\'] . \'"><div class="new_icon" title="\' . $txt[\'new\'] . \'"></div></a>\';
 
 						$link .= \'<div class="smalltext"><em>\' . $txt[\'in\'] . \' \' . $topic[\'board_link\'] . \'</em></div>\';
 

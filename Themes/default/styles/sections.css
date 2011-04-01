@@ -1417,7 +1417,6 @@ span.hidelink
 
 /* Board status icons.
 ------------------------------------------------- */
-
 .boardstatus extends .inline-block
 	background: url($images/boardstatus.png) 0 0 no-repeat
 	width: 38px
@@ -1445,6 +1444,14 @@ span.hidelink
 
 .mini_boardstate_redirect extends .mini_boardstate_off
 	background-position: -273px -3px
+
+/* More icons.
+------------------------------------------------- */
+.new_icon extends .inline-block
+	background: url($language/new.gif) no-repeat
+	width: width($language_dir/new.gif)px
+	height: height($language_dir/new.gif)px
+	text-decoration: none
 
 /* More hacks.
 ------------------------------------------------- */

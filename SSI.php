@@ -405,7 +405,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>' : '', '
+					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><div class="new_icon" title="' . $txt['new'] . '"></div></a>' : '', '
 				</td>
 				<td class="right nowrap">
 					', $post['time'], '
@@ -555,7 +555,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>', '
+					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ';topicseen#new" rel="nofollow"><div class="new_icon" title="' . $txt['new'] . '"></div></a>', '
 				</td>
 				<td class="top right nowrap">
 					', $post['time'], '
@@ -653,7 +653,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 	foreach ($boards as $board)
 		echo '
 			<tr>
-				<td>', $board['link'], $board['new'] ? ' <a href="' . $board['href'] . '"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>' : '', '</td>
+				<td>', $board['link'], $board['new'] ? ' <a href="' . $board['href'] . '"><div class="new_icon" title="' . $txt['new'] . '"></div></a>' : '', '</td>
 				<td class="right">', comma_format($board['num_topics']), '</td>
 				<td class="right">', comma_format($board['num_posts']), '</td>
 			</tr>';

@@ -13,12 +13,13 @@
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('img.ping,#wedgelogo,#footer,#footer div.frame,.windowbg,.windowbg2');
+	DD_belatedPNG.fix('img.ping,#wedgelogo,#footer,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
 	<block name="title"><header class="title">|</header></block>
 	<block name="title2"><header class="title2">|</header></block>
 	<block name="cat"><header class="cat">|</header></block>
+	<block name="block"><section>|</section></block>
 
 </styling>

@@ -229,6 +229,15 @@ class westr extends westr_mb
 	}
 
 	/**
+	 * Equivalent of htmlspecialchars, but faster. PHP 5.2.3 adds a double_encode flag
+	 * which we could set to false to avoid the extra str_replace, but we can't for now.
+	 */
+	public static function safe($string, $quote_style = ENT_COMPAT)
+	{
+		return str_replace('&amp;amp;', '&amp;', htmlspecialchars($string, $quote_style, 'UTF-8'));
+	}
+
+	/**
 	 * Cuts a HTML string to requested length, taking entities and tags into account.
 	 * You can say this is the ultimate string cutter. (Thank you very much.)
 	 *

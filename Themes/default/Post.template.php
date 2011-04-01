@@ -402,7 +402,7 @@ function template_main()
 			if ($("is_ignored", this).text() != 0)
 				ignored_replies.push(ignoring = id);
 
-			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <img src="\' + smf_images_url + \'/' . $context['user']['language'] . '/new.gif" alt="' . $txt['preview_new'] . '" id="image_new_\' + id + \'"></div>\';');
+			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <div class="new_icon" title="' . $txt['preview_new'] . '" id="image_new_\' + id + \'"></div></div>\';');
 
 	if ($context['can_quote'])
 		add_js('

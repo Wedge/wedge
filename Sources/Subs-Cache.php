@@ -329,7 +329,8 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$plugins = array(
 		new wecss_mixin(),		// CSS mixins (mixin hello($world: 0))
 		new wecss_var(),		// CSS variables ($hello_world)
-		new wecss_func(),		// CSS functions (color transforms)
+		new wecss_color(),		// CSS color transforms
+		new wecss_func(),		// Various CSS functions
 		new wecss_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 		new wecss_math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
 	);
@@ -345,21 +346,24 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
+	$images_url = '..' . str_replace($boardurl, '', $settings['images_url']);
+	$language_folder = file_exists($settings['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
 	$css_vars = array(
-		'$language' => $context['user']['language'],
-		'$images' => '..' . str_replace($boardurl, '', $settings['images_url']),
+		'$language_dir' => $settings['theme_dir'] . '/images/' . $language_folder,
+		'$language' => $images_url . '/' . $language_folder,
+		'$images_dir' => $settings['theme_dir'] . '/images',
+		'$images' => $images_url,
+		'$theme_dir' => $settings['theme_dir'],
 		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
 		'$here' => '',
 		'$root' => '../',
 	);
 
-	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	foreach ($css as $file)
-	{
-		$css_vars['$here'] = '..' . str_replace($boarddir, '', dirname($file));
 		$final .= file_get_contents($file);
-	}
+	$css_vars['$here'] = '..' . str_replace($boarddir, '', dirname($file));
 
+	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
 	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */...

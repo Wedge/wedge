@@ -274,7 +274,7 @@ class wecss_var extends wecss
 /**
  * Apply color functions to the CSS file.
  */
-class wecss_func extends wecss
+class wecss_color extends wecss
 {
 	// Transform "gradient-background: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
 	// You can add a second parameter for an actual gradient effect, and a third: top (vertical gradient) or left (horizontal.)
@@ -414,8 +414,29 @@ class wecss_func extends wecss
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_func::gradient_background', $css);
+		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
+	}
+}
+
+// Miscellaneous helper functions...
+class wecss_func extends wecss
+{
+	function process(&$css)
+	{
+		if (!preg_match_all('~(width|height)\(([^)]+)\)~i', $css, $matches))
+			return;
+
+		$done = array();
+		foreach ($matches[2] as $i => $file)
+		{
+			if (isset($done[$file]))
+				continue;
+			$done[$file] = true;
+
+			list ($width, $height) = getimagesize($file);
+			$css = str_replace(array('width(' . $file . ')', 'height(' . $file . ')'), array($width, $height), $css);
+		}
 	}
 }
 
