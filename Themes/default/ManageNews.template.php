@@ -218,7 +218,8 @@ function template_email_members_compose()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['admin_newsletters'], '
+				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="information">
 				', $txt['email_variables'], '
@@ -262,7 +263,8 @@ function template_email_members_send()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a> ', $txt['admin_newsletters'], '
+				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<p>

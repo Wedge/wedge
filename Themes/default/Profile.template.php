@@ -2722,8 +2722,8 @@ function template_profile_timeformat_modify()
 					<dt>
 						<strong>', $txt['time_format'], ':</strong>
 						<dfn>
-							<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="floatleft"></a>
-							&nbsp;', $txt['date_format'], '
+							<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+							', $txt['date_format'], '
 						</dfn>
 					</dt>
 					<dd>

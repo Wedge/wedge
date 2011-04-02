@@ -27,7 +27,8 @@ function template_maintain_database()
 		</div>
 
 		<we:title>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_backup'], '
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['maintain_backup'], '
 		</we:title>
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
@@ -207,7 +208,8 @@ function template_maintain_members()
 			</form>
 		</div>
 		<we:title>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['maintain_members'], '
+			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['maintain_members'], '
 		</we:title>
 		<div class="windowbg wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">

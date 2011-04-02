@@ -616,7 +616,7 @@ function template_modify_group_simple($type)
 				echo '
 					<tr id="perm_div_', $id_group, '_', $permission['id'], '" class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td class="top" style="width: 10px; padding-right: 1ex">
-							', $permission['help_index'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '"></a>' : '', '
+							', $permission['help_index'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 						</td>
 						<td class="top w100 left" style="padding-bottom: 2px">', $permission['name'], '</td>';
 
@@ -862,7 +862,7 @@ function template_modify_group_classic($type)
 					echo '
 						<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
 							<td style="width: 10px">
-								', $permission['show_help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '"></a>' : '', '
+								', $permission['show_help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 							</td>';
 
 					if ($permission['has_own_any'])

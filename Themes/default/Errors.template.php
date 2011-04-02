@@ -40,7 +40,7 @@ function template_error_log()
 	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="if (lastClicked == \'remove_all\') if (!confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ')) return false; return true;">
 		<div class="clear_right">
 			<we:title>
-				<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+				<a href="', $scripturl, '?action=helpadmin;help=error_log" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['errlog'], '
 			</we:title>
 		</div>

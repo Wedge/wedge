@@ -36,7 +36,7 @@ function template_admin()
 		<div class="roundframe">
 			<div id="welcome">
 				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
-				', sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']), '
+				', sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help']), '
 			</div>
 		</div>';
 
@@ -49,7 +49,8 @@ function template_admin()
 	echo '
 			<div id="live_news" class="floatleft">
 				<we:title>
-					<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['live'], '
+					<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+					', $txt['live'], '
 				</we:title>
 				<div class="windowbg wrc">
 					<div id="smfAnnouncements">', $txt['lfyi'], '</div>
@@ -201,7 +202,7 @@ function template_credits()
 	// Display latest support questions from simplemachines.org.
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+			<a href="', $scripturl, '?action=helpadmin;help=latest_support" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['support_latest'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
@@ -688,7 +689,7 @@ function template_show_settings()
 			<div class="settings_cat"></div>
 			<we:cat>
 				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
-					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help"><img src="' . $settings['images_url'] . '/helptopics.gif" alt="' . $txt['help'] . '"></a>' : ''), '
+					<a href="' . $scripturl . '?action=helpadmin;help=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : ''), '
 					', $config_var['label'], '
 				</div>
 			</we:cat>';
@@ -745,7 +746,7 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<label><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+						<label><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=helpadmin;help=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						<span', ($config_var['disabled'] ? ' style="color: #777777"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['label'], $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span></label>
 					</dt>';
 				else
@@ -982,7 +983,7 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt>
-							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>
+							<a id="field_show_enclosed" href="', $scripturl, '?action=helpadmin;help=field_show_enclosed" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong>
 							<dfn>', $txt['custom_edit_enclose_desc'], '</dfn>
 						</dt>
@@ -1027,7 +1028,7 @@ function template_edit_profile_field()
 							<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked' : '', '>
 						</dd>
 						<dt id="options_dt">
-							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+							<a href="', $scripturl, '?action=helpadmin;help=customoptions" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_options'], ':</strong>
 							<dfn>', $txt['custom_edit_options_desc'], '</dfn>
 						</dt>
@@ -1055,7 +1056,7 @@ function template_edit_profile_field()
 					<legend>', $txt['custom_edit_advanced'], '</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>
+							<a id="custom_mask" href="', $scripturl, '?action=helpadmin;help=custom_mask" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong>
 							<dfn>', $txt['custom_edit_mask_desc'], '</dfn>
 						</dt>

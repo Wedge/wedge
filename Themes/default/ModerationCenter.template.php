@@ -46,7 +46,8 @@ function template_latest_news()
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['mc_latest_news'], '
+			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['mc_latest_news'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>

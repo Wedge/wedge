@@ -11,7 +11,7 @@ function template_main()
 		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
 			<input type="hidden" value="0" name="options[theme_allow]">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>
+				<a href="', $scripturl, '?action=helpadmin;help=themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['themeadmin_title'], '
 			</we:cat>
 			<div class="information">
@@ -97,7 +97,8 @@ function template_main()
 	echo '
 		<br>
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['theme_latest'], '
+			<a href="', $scripturl, '?action=helpadmin;help=latest_themes" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['theme_latest'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<div id="themeLatest">
@@ -114,7 +115,8 @@ function template_main()
 	echo '
 		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return confirm(', JavaScriptEscape($txt['theme_install_new_confirm']), ');">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a> ', $txt['theme_install'], '
+				<a href="', $scripturl, '?action=helpadmin;help=theme_install" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				', $txt['theme_install'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings">';
@@ -363,7 +365,8 @@ function template_set_settings()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
 			<we:title>
-				<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '"></a>', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
+				<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
 			</we:title>';
 
 	// !!! Why can't I edit the default theme popup.

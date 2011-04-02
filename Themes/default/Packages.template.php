@@ -446,7 +446,8 @@ function template_browse()
 	echo '
 	<div id="admincenter">
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" alt="', $txt['help'], '" class="top"></a>', $txt['packages_latest'], '
+			<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['packages_latest'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
 			<div id="packagesLatest">', $txt['packages_latest_fetch'], '</div>

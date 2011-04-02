@@ -238,7 +238,7 @@ table.table_grid, table.cs0, table.cs1
 	padding-right: 3px
 
 .features .wrc
-	width: 300px
+	width: 90%
 	height: 150px
 
 li.hove
@@ -292,3 +292,6 @@ input.new
 
 .windowbg
 	background-image: none
+
+hr
+	clear: both
