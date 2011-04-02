@@ -160,7 +160,7 @@ function template_body_above()
 	// Show a random news item? (or you could pick one from news_lines...)
 	if (!empty($settings['enable_news']))
 		echo '
-			<h2>', $txt['news'], ': </h2>
+			<h2>', $txt['news'], '</h2>
 			<p>', $context['random_news_line'], '</p>';
 
 	echo '
@@ -265,7 +265,7 @@ function template_sidebar_rss()
 
 	echo '
 			<we:title>
-				<img src="', $settings['images_url'], '/icons/feed.png">
+				<div class="feed_icon"></div>
 				', $txt['rss'], '
 			</we:title>
 			<dl id="rss">';

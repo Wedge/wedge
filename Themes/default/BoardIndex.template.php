@@ -35,7 +35,7 @@ function template_boardindex()
 						<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
 		echo '
-						<a class="catrss" href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><img src="', $settings['images_url'], '/icons/feed.png" style="margin-left: -4px"></a>
+						<a class="catrss" href="', $scripturl, '?action=feed;type=rss;c=', $category['id'], '"><div class="feed_icon"></div></a>
 						', $category['link'], '
 					</we:cat>
 				</td>

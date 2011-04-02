@@ -246,16 +246,16 @@ class wecss_var extends wecss
 		// (index.css)	.class
 		//					border-$border-pos: 1px solid $border-col;
 
-		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*(.*);?$~m', $css, $matches))
+		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*("?)(.*)\\3;?$~m', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
 				$css = str_replace($dec, '', $css);
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
-					$css_vars[$matches[1][$i]] = trim(rtrim($matches[3][$i], '; '), '"');
+					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
 				// We need to keep this one for later...
 				if ($matches[1][$i] === '$alphamix')
-					$alphamix = trim($matches[3][$i], '"');
+					$alphamix = trim($matches[4][$i], '"');
 			}
 
 			// Sort the array by key length, to avoid conflicts.

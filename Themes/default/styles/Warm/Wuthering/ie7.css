@@ -7,6 +7,12 @@
 		margin-top: 8px
 		clear: both
 
+#upper_section .frame
+	filter: none
+
+#upper_section h1
+	filter: none
+
 /* Overrides for the calendar template
 ------------------------------------------------- */
 #main_grid table.weeklist .title2
@@ -14,12 +20,12 @@
 
 /* Misc hacks
 ------------------------------------------------------- */
-.cat, .title
+.cat final
 	overflow: hidden
 
-#upper_section .frame
-	filter: none
+.title final
+	overflow: hidden
 
 .cat
 	overflow: hidden
-	width: 98%
+	width: auto

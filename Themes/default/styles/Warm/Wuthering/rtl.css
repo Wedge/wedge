@@ -70,16 +70,16 @@ dl.settings
 	margin-top: .7em
 	margin-right: 1em
 
+
+/* Various Wedge fixes
+------------------------------------------------- */
+.cat img
+	float: right
+	margin-left: 0.5em
+	margin-right: 0
+
 .title img
 	margin-left: 0.5em
 
 .title2 img
 	float: right
-
-
-/* Various Wedge fixes
-------------------------------------------------- */
-.cat img, .title img
-	float: right
-	margin-left: 0.5em
-	margin-right: 0

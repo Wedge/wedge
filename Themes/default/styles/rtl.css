@@ -115,7 +115,7 @@ th.last_th
 	padding-right: 2em
 
 // The main title
-h1.forumtitle
+#header h1
 	float: right
 
 // Float these items to the left

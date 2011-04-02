@@ -3,3 +3,6 @@
 ------------------------------------------------------- */
 #upper_section .frame
 	filter: none
+
+#upper_section h1
+	filter: none

@@ -123,6 +123,10 @@ ul#noava
 			text-align, float: left
 			display: inline-block
 			margin: .5em 1em 0 0
+		h2 extends .arrows
+			background-position: right -52px
+			margin-right: .4em
+			padding-right: 18px
 		form
 			text-align, float: right
 
@@ -140,7 +144,7 @@ ul#noava
 			font: bold 2.9em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 			text-shadow: 0 0 8px #333
 
-.menu_arrows
+.arrows
 	background-image: url($images/menu.gif)
 	background-repeat: no-repeat
 
@@ -186,11 +190,11 @@ ul#noava
 		list-style: none
 		border: 1px dotted #999
 		border-width: 0 0 1px 0
-		li extends .menu_arrows
-			background-position: right -42px
+		li extends .arrows
 			float: left
 			height, line-height: 20px
-			padding: .5em 1.5em .5em 3px
+			padding: .5em 1.4em .5em 3px
+			background-position: right -42px
 			&.last
 				background: none
 
@@ -437,7 +441,7 @@ input[type=file]
 	padding: 6px 8px
 	margin: 0
 
-.menu h4 extends .menu_arrows
+.menu h4 extends .arrows
 	background-position: 98% 2px
 	padding: 3px 19px 3px 6px
 	font-weight: normal
@@ -482,12 +486,12 @@ input[type=file]
 		white-space: nowrap
 
 .css h4:hover, h4.hove
-	base: .menu_arrows
+	base: .arrows
 	background-color: rgba(0,0,0, .075)
 	background-position: 98% 2px
 	color: #000
 
-.menu .chosen h4 extends .menu_arrows
+.menu .chosen h4 extends .arrows
 	background-color: #3fa6c3
 	background-position: 98% -28px
 	font: bold .95em/1.3em Verdana
@@ -498,7 +502,7 @@ input[type=file]
 li.active > a
 	font: bold .95em/1.3em Verdana
 
-li.subsection > a extends .menu_arrows
+li.subsection > a extends .arrows
 	background-position: 98% -46px
 	padding: 6px 24px 6px 8px
 

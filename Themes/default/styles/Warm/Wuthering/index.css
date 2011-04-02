@@ -34,8 +34,7 @@
 body
 	background: #faefe6
 
-#wedge
-	background: url($images/theme/grad700.png) repeat-x
+#wedge extends .grad700
 	padding: 15px 0
 
 #header, #navi, #content, #footer, #linktree
@@ -44,8 +43,16 @@ body
 	max-width: 1200px
 	background: none
 
-#header
-	background: #faf8f6 url($images/theme/grad250.png) 0 -50px repeat-x
+#navi extends .grad250
+	background-position: 0 -180px
+	background-color: #faf8f6
+	border: 1px solid #999
+	border-width: 0 1px
+	padding: 0
+
+#header extends .grad250
+	background-color: #faf8f6
+	background-position: 0 -50px
 	border: 1px solid #999
 	border-bottom: 0
 	border-radius: 12px 12px 0 0
@@ -54,7 +61,7 @@ body
 	padding: 5px 0 0
 	overflow: hidden
 
-#navi, #content, #linktree
+#content, #linktree
 	border: 1px solid #999
 	border-width: 0 1px
 	background: #faf8f6
@@ -77,27 +84,13 @@ body
 	padding: 0 20px 10px
 
 // The main title
-h1.forumtitle
-	margin: 0
-	a
-		text-shadow: none
-		color: #78a
-
-// ...So does the Wedge logo
-#wedgelogo extends #siteslogan
-	background: transparent url($images/wedgelogo.png) no-repeat
-	width: 140px
-	height: 52px
-	margin-top: .7em
-	margin-left: 1em
+#header h1 a
+	color: #78a
 
 // The upper_section, float the two each way
 #upper_section
 	background: none
-	border: 0
-	overflow: hidden
-	padding: 5px 20px
-	width, height: auto
+	border, padding: 0
 	.frame
 		background-color: transparent
 		width, height: auto
@@ -120,9 +113,10 @@ h1.forumtitle
 	border: 0
 
 // The footer with copyright links etc.
-#footer
+#footer extends .grad250
 	text-align: center
-	background: #f4f2f3 url($images/theme/grad250.png) 0 -180px repeat-x
+	background-position: 0 -180px
+	background-color: #f4f2f3
 	border: 1px solid #999
 	border-top: 1px solid #ccc
 	border-radius: 0 0 12px 12px
@@ -154,12 +148,13 @@ input.search
 	clear: left
 
 #main_menu
-	background: url($images/theme/grad250.png) 0 -180px repeat-x
 	border-width: 1px 0
-	padding: 0 10px
+	margin: 0 30px
+	width: 100%
 
-.menu ul
-	background: #fff8f1 url($images/theme/grad250.png) 0 -150px repeat-x
+.menu ul extends .grad250
+	background-color: #fff8f1
+	background-position: 0 -150px
 
 .css > li li:hover, li.hove
 	color: #000
@@ -188,13 +183,6 @@ code.bbc_code, code.php_code
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-tr.titlebg th, tr.titlebg td
-	color: #222
-	font: $subcat_font
-tr.catbg td, tr.catbg th
-	color: #666
-	font: $subcat_font
-
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg final
 	background-color: #f5f5f0
@@ -206,17 +194,24 @@ tr.catbg td, tr.catbg th
 
 /* Styles for section headers.
 ------------------------------------------------------- */
+.new_grad40
+	background-image: url($images/theme/grad40.png)
+	background-repeat: repeat-x
+
 .cat, .title
+	base: .new_grad40
 	padding: 4px 8px
 	margin-top: 8px
 	overflow: auto
 	border-radius: 5px
+	text-shadow: none
 	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
 	a
 		font-size: .96em
 
-.cat
-	background: #e5eee5 url($images/theme/grad40.png) 0 -20px repeat-x
+.cat final
+	background-color: #e5eee5
+	background-position: 0 -20px
 	border: 1px solid rgba(160,160,160, .5)
 	box-sizing: border-box
 	display: table
@@ -224,43 +219,50 @@ tr.catbg td, tr.catbg th
 	letter-spacing: 1px
 
 .title
-	background: #e3e9ef url($images/theme/grad40.png) 0 -20px repeat-x
+	background-color: #e3e9ef
+	background-position: 0 -20px
 	border: 1px solid rgba(0,0,0, .15)
 
-.cat, .table_list tbody.header td
+.title2
+	background: none
+
+.cat final
 	&, a
 		color: #000
 	a:hover
 		color: #963
 		text-decoration: none
 
-.title, .title2
+.title
 	&, a
 		color: #222
 	a:hover
 		color: #53616f
 		text-decoration: none
 
-img[alt="!"]
-	margin-top: 4px
-
-.table_grid
-	tr.catbg, tr.titlebg
-		font-size: .95em
-
-/* Let's have a bit of fun, shall we? */
-form.wrc
-	box-shadow: 0 1px 5px rgba(0,0,0, .125)
-
+.grad250
+	background-image: url($images/theme/grad250.png)
+	background-repeat: repeat-x
 
 /* A few more header styles...
 ------------------------------------------------------- */
 
-tr.catbg th
-	background: #e5eee5 url($images/theme/grad40.png) 0 -18px repeat-x
+tr.catbg
+	th, td
+		base: .new_grad40
+		background-color: #e3e9ef
+		background-position: 0 -18px
+		font: $subcat_font
+		color: #666
 
-tr.titlebg th
-	background: #e3e9ef url($images/theme/grad40.png) 0 -18px repeat-x
+tr.titlebg
+	th, td
+		base: .new_grad40
+		background-color: #e5eee5
+		background-position: 0 -18px
+		font: $subcat_font
+		color: #222
+
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!--
-	See Wine/settings.xml for descriptions.
+	See Warm/settings.xml for descriptions.
 -->
 <styling>
 
 	<name>
-		Pastel
+		Wuthering
 	</name>
 
 	<type>
@@ -13,11 +13,11 @@
 	</type>
 
 	<comment><![CDATA[
-		By Nao, inspired by Bloc's Curve. Obviously.
+		By Nao, inspired by Bloc's Curve.
 	]]></comment>
 
 	<code for="ie6"><![CDATA[
-	DD_belatedPNG.fix('div,#wedgelogo');
+	DD_belatedPNG.fix('img.ping,header,#header,#navi,#footer,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 

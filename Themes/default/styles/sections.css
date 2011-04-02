@@ -1453,6 +1453,20 @@ span.hidelink
 	height: height($language_dir/new.gif)px
 	text-decoration: none
 
+.feed_icon extends .inline-block
+	background: url($images/icons/feed.png) no-repeat
+	width: width($images_dir/icons/feed.png)px
+	height: height($images_dir/icons/feed.png)px
+	text-decoration: none
+	vertical-align: -3px
+	.catrss &
+		margin-left: -4px
+
+.arrow_left extends .inline-block
+	base: .arrows
+	background-position: 0 -28px
+	width, height: 9px
+
 /* More hacks.
 ------------------------------------------------- */
 // table_grid styles for Profile > Show Permissions.
