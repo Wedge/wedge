@@ -1,38 +1,13 @@
 
 /*!
- * Pastel styling for Wedge
+ * Wuthering styling for Wedge
  * (c) 2011, Wedgeward (http://wedge.org)
- */
-
-/**
- * This is the base CSS file for the default theme.
- *
- * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
- * index.css, sections.css, admin.css, editor.css, rtl.css, guest.css, member.css
- *
- * As well as browser-specific stylesheets. If you need to add a browser hack, just create one of these files into your folder:
- * opera.css, webkit.css, chrome.css, safari.css, iphone.css, android.css, gecko.css, firefox.css, ie6.css, ie7.css, ie8.css, ie9.css
- *
- * These files should be theme-agnostic, and thus are not skinnable per se:
- * install.css, report.css, wireless.css
- * @todo: Consider wireless.css as an alternative index.css and allow overriding it in subfolders?
- *
- * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
- * CSS cached files are put inside the /cache/ folder, so any relative URLs will fail unless they use it
- * as their root, or use the available path variables.
- *
- * $images - current theme's image folder URL
- * $theme - current theme's root folder URL
- * $here - current styling's root folder URL
- * $root - forum's root URL
- *
- * e.g. If you have a file called sprite.png in your custom "styles/Hello/World"
- * styling folder, link to url($here/sprite.png) rather than url(sprite.png).
  */
 
 // Set a fontsize that will look the same in all browsers.
 body
 	background: #faefe6
+	color: #333
 
 #wedge extends .grad700
 	padding: 15px 0
@@ -83,9 +58,17 @@ body
 	border: 0
 	padding: 0 20px 10px
 
-// The main title
-#header h1 a
-	color: #78a
+#header
+	h2, p
+		color: #000
+	h1
+		margin: 38px 0 0 30px
+		a
+			color: #78a
+			font: italic bold 3.2em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			text-shadow: white 0 1px 2px
+	input.search
+		background-color: rgb(235,225,215)
 
 // The upper_section, float the two each way
 #upper_section
@@ -120,8 +103,13 @@ body
 	border: 1px solid #999
 	border-top: 1px solid #ccc
 	border-radius: 0 0 12px 12px
+	color: #333
 	div.frame
 		padding: 15px 20px
+	ul
+		padding: 0
+		li a
+			color: #679
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -131,10 +119,6 @@ a, #linktree a
 	color: #568
 	:hover
 		color: #78a
-
-input.search
-	#header &
-		background: rgb(235,225,215) url($images/filter.gif) 5px 2px no-repeat
 
 .cat input[type=checkbox]
 	margin: 5px -3px 0 7px
@@ -151,6 +135,23 @@ input.search
 	border-width: 1px 0
 	margin: 0 30px
 	width: 100%
+	padding: 5px 0 2px
+	h4 a
+		color: #000
+	h4:hover, h4.hove
+		background-color: rgba(0,0,0, .075)
+		background-position: 98% 2px
+		li.chosen &
+			background-position: 98% -28px
+		a
+			color: #000
+	li.chosen h4
+		padding-bottom: 3px
+		margin-bottom: 2px
+		border-radius: 6px
+		background-color: #fd9604
+		a
+			color: #fff
 
 .menu ul extends .grad250
 	background-color: #fff8f1
@@ -166,15 +167,12 @@ input.search
 /* Some BBC related styles.
 ------------------------------------------------------- */
 
-// A quote, usually from another post.
 blockquote.bbc_standard_quote
 	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat
 
-// Alternate blockquote stylings
 blockquote.bbc_alternate_quote
 	background-color: #daddef
 
-// A code block - maybe PHP ;)
 code.bbc_code, code.php_code
 	background: #eef
 	white-space: pre
@@ -182,8 +180,10 @@ code.bbc_code, code.php_code
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
+.grad250
+	background-image: url($images/theme/grad250.png)
+	background-repeat: repeat-x
 
-// Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg final
 	background-color: #f5f5f0
 .windowbg2
@@ -194,28 +194,17 @@ code.bbc_code, code.php_code
 
 /* Styles for section headers.
 ------------------------------------------------------- */
-.new_grad40
-	background-image: url($images/theme/grad40.png)
-	background-repeat: repeat-x
-
 .cat, .title
-	base: .new_grad40
 	padding: 4px 8px
 	margin-top: 8px
 	overflow: auto
-	border-radius: 5px
 	text-shadow: none
 	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
-	a
-		font-size: .96em
 
 .cat final
 	background-color: #e5eee5
 	background-position: 0 -20px
 	border: 1px solid rgba(160,160,160, .5)
-	box-sizing: border-box
-	display: table
-	width: 100%
 	letter-spacing: 1px
 
 .title
@@ -225,31 +214,30 @@ code.bbc_code, code.php_code
 
 .title2
 	background: none
+	border-radius: 6px
 
 .cat final
-	&, a
-		color: #000
-	a:hover
-		color: #963
-		text-decoration: none
+	color: #000
+	a
+		letter-spacing: 0
+		color: #555
+		:hover
+			color: #963
+			text-decoration: none
 
 .title
-	&, a
-		color: #222
-	a:hover
-		color: #53616f
-		text-decoration: none
-
-.grad250
-	background-image: url($images/theme/grad250.png)
-	background-repeat: repeat-x
+	color: #222
+	a
+		color: #777
+		:hover
+			color: #53616f
+			text-decoration: none
 
 /* A few more header styles...
 ------------------------------------------------------- */
 
 tr.catbg
 	th, td
-		base: .new_grad40
 		background-color: #e3e9ef
 		background-position: 0 -18px
 		font: $subcat_font
@@ -257,7 +245,6 @@ tr.catbg
 
 tr.titlebg
 	th, td
-		base: .new_grad40
 		background-color: #e5eee5
 		background-position: 0 -18px
 		font: $subcat_font
