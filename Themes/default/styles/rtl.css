@@ -562,9 +562,6 @@ tr.titlebg td
 #permissions div.permission_name
 	margin: 0 0 0 1%
 
-#ip_list li.header, #ip_list li.ip
-	float: right
-
 #creator
 	dt, dd
 		float: right

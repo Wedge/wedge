@@ -107,6 +107,8 @@ ul#noava
 		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
 		:hover
 			left: -40px
+	#main_content
+		width: 100%
 
 #main_content
 	display: table-cell
@@ -1048,26 +1050,13 @@ dl.settings
 		margin: 0 0 10px
 		padding: 0
 		clear: both
-		// help icons
-		a img
-			position: relative
-			top: 2px
-	dt.settings_title
-		width: 100%
-		float: none
-		margin: 0 0 10px 0
-		padding: 5px 0 0 0
-		font-weight: bold
-		clear: both
 	dt.windowbg final
 		width: 98%
-		float: left
 		margin: 0 0 3px 0
 		padding: 0 0 5px 0
-		clear: both
 	dd
 		width: 48%
-		float: right
+		float: left
 		margin: 0 0 3px 1.5%
 		padding: 0
 	img

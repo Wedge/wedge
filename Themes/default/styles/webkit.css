@@ -8,9 +8,6 @@
 .attachments
 	clear: right
 
-.table_list tbody.header td div.cat
-	margin-bottom: -2px
-
 // Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers.
 input[type=search]
 	-webkit-appearance: textfield

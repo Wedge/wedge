@@ -147,3 +147,7 @@ input.new
 
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
+
+// Without this, the clear: both on dt will fail.
+dl.settings dd
+	float: none

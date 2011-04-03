@@ -9,10 +9,12 @@ body
 	color: #333
 
 #content div.frame
-	padding: 0 40px 20px
+	padding: 0 40px 4px
 
 #sidebar
-	background: darken($main_bg, 2%)
+	border-width: 0 1px 0 0
+	border-radius: 0
+	background: none
 	.column
 		padding: 5px 15px 10px
 
@@ -38,10 +40,15 @@ body
 #top_section, #upper_section
 	border-bottom: 3px solid lighten($reddish, 3%)
 
-#linktree ul
-	padding: 0 20px
-	margin: 0
-	background: hue($menu_bg, -5%)
+#linktree
+	padding: 0
+	ul
+		padding: 0 20px
+		margin: 0
+		background: hue($menu_bg, -5%)
+
+#main_content
+	padding-top: 16px
 
 #footer
 	border-top: 2px solid darken($footer_bg, 20%)

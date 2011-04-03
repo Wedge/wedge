@@ -295,3 +295,7 @@ input.new
 
 hr
 	clear: both
+
+// Without this, the clear: both on dt will fail.
+dl.settings dd
+	float: none

@@ -246,7 +246,7 @@ class wecss_var extends wecss
 		// (index.css)	.class
 		//					border-$border-pos: 1px solid $border-col;
 
-		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*("?)(.*)\\3;?$~m', $css, $matches))
+		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*("?)(.*)\\3;?\s*$~m', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
