@@ -1104,6 +1104,8 @@ dl
 		float: left
 		width: 55%
 		margin: 0 0 10px 2px
+	hr
+		margin-top: 0
 
 .ignoreboards
 	margin: 0 2%

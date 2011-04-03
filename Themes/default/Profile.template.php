@@ -1447,7 +1447,7 @@ function template_profile_theme_settings()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-					<dd></dd>
+					<dd style="margin: 0"></dd>
 				</dl>
 				<ul id="theme_settings">
 					<li>
@@ -1562,7 +1562,7 @@ function template_profile_theme_settings()
 					</li>
 				</ul>
 				<dl>
-					<dd></dd>';
+					<dd style="margin: 0"></dd>';
 }
 
 function template_notification()
@@ -2371,41 +2371,41 @@ function template_profile_group_manage()
 	global $context, $txt, $scripturl;
 
 	echo '
-							<dt>
-								<strong>', $txt['primary_membergroup'], ': </strong>
-								<dfn>(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
-							</dt>
-							<dd>
-								<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
+					<dt>
+						<strong>', $txt['primary_membergroup'], ': </strong>
+						<dfn>(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
+					</dt>
+					<dd>
+						<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
 
 	// Fill the select box with all primary member groups that can be assigned to a member.
 	foreach ($context['member_groups'] as $member_group)
 		if (!empty($member_group['can_be_primary']))
 			echo '
-									<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected' : '', '>
-										', $member_group['name'], '
-									</option>';
+							<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected' : '', '>
+								', $member_group['name'], '
+							</option>';
 
 	echo '
-								</select>
-							</dd>
-							<dt>
-								<strong>', $txt['additional_membergroups'], ':</strong>
-							</dt>
-							<dd>
-								<span id="additional_groupsList">
-									<input type="hidden" name="additional_groups[]" value="0">';
+						</select>
+					</dd>
+					<dt>
+						<strong>', $txt['additional_membergroups'], ':</strong>
+					</dt>
+					<dd>
+						<span id="additional_groupsList">
+							<input type="hidden" name="additional_groups[]" value="0">';
 
 	// For each membergroup show a checkbox so members can be assigned to more than one group.
 	foreach ($context['member_groups'] as $member_group)
 		if ($member_group['can_be_additional'])
 			echo '
-									<label><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', '> ', $member_group['name'], '</label><br>';
+							<label><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', '> ', $member_group['name'], '</label><br>';
 
 	echo '
-								</span>
-								<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
-							</dd>';
+						</span>
+						<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
+					</dd>';
 
 	add_js('
 	$("#additional_groupsList").hide();
@@ -2419,15 +2419,15 @@ function template_profile_birthdate()
 
 	// Just show the pretty box!
 	echo '
-							<dt>
-								<strong>', $txt['dob'], ':</strong>
-								<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
-							</dt>
-							<dd>
-								<input type="text" name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '"> -
-								<input type="text" name="bday1" size="2" maxlength="2" value="', $context['member']['birth_date']['month'], '"> -
-								<input type="text" name="bday2" size="2" maxlength="2" value="', $context['member']['birth_date']['day'], '">
-							</dd>';
+					<dt>
+						<strong>', $txt['dob'], ':</strong>
+						<dfn>', $txt['dob_year'], ' - ', $txt['dob_month'], ' - ', $txt['dob_day'], '</dfn>
+					</dt>
+					<dd>
+						<input type="text" name="bday3" size="4" maxlength="4" value="', $context['member']['birth_date']['year'], '"> -
+						<input type="text" name="bday1" size="2" maxlength="2" value="', $context['member']['birth_date']['month'], '"> -
+						<input type="text" name="bday2" size="2" maxlength="2" value="', $context['member']['birth_date']['day'], '">
+					</dd>';
 }
 
 // Show the signature editing box?
@@ -2436,31 +2436,31 @@ function template_profile_signature_modify()
 	global $txt, $context, $settings;
 
 	echo '
-							<dt>
-								<strong>', $txt['signature'], ':</strong>
-								<dfn>', $txt['sig_info'], '</dfn>
-								<br>';
+					<dt>
+						<strong>', $txt['signature'], ':</strong>
+						<dfn>', $txt['sig_info'], '</dfn>
+						<br>';
 
 	if ($context['show_spellchecking'])
 		echo '
-								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="spell">';
+						<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="spell">';
 
 		echo '
-							</dt>
-							<dd>
-								<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br>';
+					</dt>
+					<dd>
+						<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br>';
 
 	// If there is a limit at all!
 	if (!empty($context['signature_limits']['max_length']))
 		echo '
-								<div class="smalltext">', sprintf($txt['max_sig_characters'], $context['signature_limits']['max_length']), ' <span id="signatureLeft">', $context['signature_limits']['max_length'], '</span></div>';
+						<div class="smalltext">', sprintf($txt['max_sig_characters'], $context['signature_limits']['max_length']), ' <span id="signatureLeft">', $context['signature_limits']['max_length'], '</span></div>';
 
 	if ($context['signature_warning'])
 		echo '
-								<div class="smalltext">', $context['signature_warning'], '</div>';
+						<div class="smalltext">', $context['signature_warning'], '</div>';
 
 	echo '
-							</dd>';
+					</dd>';
 
 	// Load the spell checker?
 	if ($context['show_spellchecking'])
@@ -2503,36 +2503,36 @@ function template_profile_avatar_select()
 
 	// Start with the upper menu
 	echo '
-							<dt>
-								<strong id="personal_picture">', $txt['personal_picture'], '</strong>
-								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
-								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
-								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
-								', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
-							</dt>
-							<dd>';
+					<dt>
+						<strong id="personal_picture">', $txt['personal_picture'], '</strong>
+						', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
+					</dt>
+					<dd>';
 
 	// If users are allowed to choose avatars stored on the server show selection boxes to choice them from.
 	if (!empty($context['member']['avatar']['allow_server_stored']))
 	{
 		echo '
-								<div id="avatar_server_stored">
-									<div>
-										<select name="cat" id="cat" size="10" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
+						<div id="avatar_server_stored">
+							<div>
+								<select name="cat" id="cat" size="10" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
 		// This lists all the file categories.
 		foreach ($context['avatars'] as $avatar)
 			echo '
-											<option value="', $avatar['filename'] . ($avatar['is_dir'] ? '/' : ''), '"', ($avatar['checked'] ? ' selected' : ''), '>', $avatar['name'], '</option>';
+									<option value="', $avatar['filename'] . ($avatar['is_dir'] ? '/' : ''), '"', ($avatar['checked'] ? ' selected' : ''), '>', $avatar['name'], '</option>';
 
 		// !!! Hmm... Should we put all of this code to the end?
 		echo '
-										</select>
-									</div>
-									<div>
-										<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
-									</div>
-									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
-								</div>';
+								</select>
+							</div>
+							<div>
+								<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
+							</div>
+							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
+						</div>';
 
 		add_js('
 	var
@@ -2633,28 +2633,28 @@ function template_profile_avatar_select()
 	// If the user can link to an off server avatar, show them a box to input the address. But don't put in the Gravatar email if it is currently that...
 	if (!empty($context['member']['avatar']['allow_external']))
 		echo '
-								<div id="avatar_external">
-									<div class="smalltext">', $txt['avatar_by_url'], '</div>
-									<br>
-									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);">
-								</div>';
+						<div id="avatar_external">
+							<div class="smalltext">', $txt['avatar_by_url'], '</div>
+							<br>
+							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);">
+						</div>';
 
 	// If the user is able to upload avatars to the server show them an upload box.
 	if (!empty($context['member']['avatar']['allow_upload']))
 		echo '
-								<div id="avatar_upload">
-									<input type="file" name="attachment" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');">
-									', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : ''), '
-								</div>';
+						<div id="avatar_upload">
+							<input type="file" name="attachment" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');">
+							', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : ''), '
+						</div>';
 
 	// Using a Gravatar? Well, maybe there is an option for you, maybe there isn't...
 	if (!empty($context['member']['avatar']['allow_gravatar']))
 	{
 		if (empty($modSettings['gravatarAllowExtraEmail']))
 			echo '
-								<div id="avatar_gravatar">
-									<div class="smalltext">', $txt['gravatar_noAlternateEmail'], '</div>
-								</div>';
+						<div id="avatar_gravatar">
+							<div class="smalltext">', $txt['gravatar_noAlternateEmail'], '</div>
+						</div>';
 		else
 		{
 			// Depending on other stuff, the stored value here might have some odd things in it from other areas.
@@ -2664,16 +2664,16 @@ function template_profile_avatar_select()
 				$textbox_value = $context['member']['avatar']['external'];
 
 			echo '
-								<div id="avatar_gravatar">
-									<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
-									<br>
-									<input type="email" name="gravatarEmail" size="45" value="', $textbox_value, '">
-								</div>';
+						<div id="avatar_gravatar">
+							<div class="smalltext">', $txt['gravatar_alternateEmail'], '</div>
+							<br>
+							<input type="email" name="gravatarEmail" size="45" value="', $textbox_value, '">
+						</div>';
 		}
 	}
 
 	echo '
-							</dd>';
+					</dd>';
 
 	add_js(!empty($context['member']['avatar']['allow_server_stored']) ? '
 	$("#avatar_server_stored").' . ($context['member']['avatar']['choice'] == 'server_stored' ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_external']) ? '
@@ -2720,11 +2720,9 @@ function template_profile_timeformat_modify()
 
 	echo '
 					<dt>
+						<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						<strong>', $txt['time_format'], ':</strong>
-						<dfn>
-							<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-							', $txt['date_format'], '
-						</dfn>
+						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
 					<dd>
 						<select name="easyformat" onchange="document.forms.creator.time_format.value = $(this).val();" style="margin-bottom: 4px;">';
@@ -2807,7 +2805,7 @@ function template_authentication_method()
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '> <strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);" class="help">(?)</a></em><br>
+						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '> <strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);">(?)</a></em><br>
 						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked' : '', '> <strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>
