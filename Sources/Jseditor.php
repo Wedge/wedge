@@ -38,7 +38,7 @@ function Jseditor()
 
 	loadSource('Class-Editor');
 
-	showSubTemplate('sendbody');
+	loadSubTemplate('sendbody');
 
 	$context['view'] = (int) $_REQUEST['view'];
 

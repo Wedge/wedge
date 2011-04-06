@@ -169,6 +169,9 @@ function loadUserSettings()
 		}
 	}
 
+	if (isset($_REQUEST['upcook']))
+		$_COOKIE[$cookiename] = base64_decode(urldecode($_REQUEST['upcook']));
+
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
 		list ($id_member, $password) = @unserialize($_COOKIE[$cookiename]);
@@ -343,6 +346,7 @@ function loadUserSettings()
 		'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 		'messages' => empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 		'unread_messages' => empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
+		'aeva_unseen' => empty($user_settings['aeva_unseen']) ? 0 : $user_settings['aeva_unseen'],
 		'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
 		'buddies' => !empty($modSettings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
 		'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
@@ -956,7 +960,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login,
-			mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
+			mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online, mem.aeva_items, mem.aeva_comments,
 			mem.buddy_list, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,
 			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank_string} THEN pg.stars ELSE mg.stars END AS stars' . (!empty($modSettings['titlesEnable']) ? ',
@@ -973,8 +977,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(lo.log_time, 0) AS is_online, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
-			mem.openid_uri, mem.birthdate, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login,
-			mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
+			mem.openid_uri, mem.birthdate, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login, mem.aeva_items,
+			mem.aeva_comments, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
 			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from, mem.time_offset' . (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '') . ',
 			mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
 			mem.total_time_logged_in, mem.id_post_group, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body,
@@ -1241,6 +1245,10 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'warning' => $profile['warning'],
 		'warning_status' => empty($modSettings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
+		'aeva' => array(
+			'total_items' => $profile['aeva_items'],
+			'total_comments' => $profile['aeva_comments'],
+		),
 		'avatar' => array(
 			'name' => '',
 			'image' => '',
@@ -1394,7 +1402,7 @@ function detectBrowser()
 		'msie ' : ($browser['is_chrome'] ?
 		'chrom(?:e|ium)/' : 'applewebkit/')))) . '([\d.]+)~i', $ua, $ver)
 	|| preg_match('~' . ($browser['is_opera'] ? 'opera[/ ]' : 'version[/ ]') . '([\d.]+)~i', $ua, $ver);
-	$browser['version'] = $ver = isset($ver) ? (float) $ver[1] : 0;
+	$browser['version'] = $ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
 	$browser['is_ie8down'] = $is_ie && $ver <= 8;
 	for ($i = 6; $i <= 9; $i++)
@@ -1837,7 +1845,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize the theme
-	loadSubTemplate('init', 'ignore');
+	execSubTemplate('init', 'ignore');
 
 	// Guests may still need a name
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
@@ -2045,7 +2053,7 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
  * @param string $sub_template_name The name of the function (without template_ prefix) to be called.
  * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
  */
-function loadSubTemplate($sub_template_name, $fatal = false)
+function execSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
 
@@ -2068,13 +2076,13 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 }
 
 /**
- * Add a function to the list of sub-templates.
+ * Build a list of sub-templates.
  *
- * @param string $sub_templates The name of the function (without template_ prefix) to be called.
+ * @param string $sub_templates The name of the function(s) (without template_ prefix) to be called.
  * @param string $target Which flow to load this function in. Can either be 'main' (main contents), 'top' (above the main area), or 'sidebar' (sidebar area).
  * @param boolean $overwrite Overwrite existing sub-templates. Useful if you provide a default sub-template and then override it.
  */
-function showSubTemplate($sub_templates, $target = 'main', $overwrite = true)
+function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 {
 	global $context;
 

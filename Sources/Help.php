@@ -62,7 +62,7 @@ function ShowAdminHelp()
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];
 
 	// Just show the popup sub template.
-	showSubTemplate('popup');
+	loadSubTemplate('popup');
 
 	// What help string should be used?
 	if (isset($helptxt[$_GET['help']]))

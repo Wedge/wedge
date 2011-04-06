@@ -176,7 +176,7 @@ function ViewErrorLog()
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 800, 600, false);">' . $row['file'] . '</a>' : $row['file'],
+				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 800, 600, false, true);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}
@@ -301,7 +301,7 @@ function ViewErrorLog()
 	// And this is pretty basic ;).
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
-	showSubTemplate('error_log');
+	loadSubTemplate('error_log');
 	// Don't rewrite any URLs, we need them to remain exact!
 	$modSettings['pretty_enable_filters'] = false;
 }
@@ -372,10 +372,11 @@ function updateErrorCount()
 function ViewFile()
 {
 	global $context, $txt, $boarddir, $sourcedir;
-	// Check for the administrative permission to do this.
+
+	// Only admins can view files
 	isAllowedTo('admin_forum');
 
-	// decode the file and get the line
+	// Decode the file and get the line
 	$file = base64_decode($_REQUEST['file']);
 	$line = isset($_REQUEST['line']) ? (int) $_REQUEST['line'] : 0;
 
@@ -383,7 +384,7 @@ function ViewFile()
 	if (!is_readable($file) || (strpos($file, '../') !== false && ( strpos($file, $boarddir) === false || strpos($file, $sourcedir) === false)))
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
-	// get the min and max lines
+	// Get the min and max lines
 	$min = $line - 20 <= 0 ? 1 : $line - 20;
 	$max = $line + 21; // One additional line to make everything work out correctly
 
@@ -404,9 +405,9 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
+	hideChrome();
 	loadTemplate('Errors');
-	$context['template_layers'] = array();
-	showSubTemplate('show_file');
+	loadSubTemplate('show_file');
 }
 
 ?>

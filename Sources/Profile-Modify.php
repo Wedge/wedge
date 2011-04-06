@@ -536,7 +536,7 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => create_function('&$value', '
 				global $cur_profile, $profile_vars;
 
-				// Simple validate and apply the two "sub settings"
+				// Validate and apply the two "sub settings"
 				$value = max(min($value, 2), 0);
 
 				$cur_profile[\'pm_email_notify\'] = $profile_vars[\'pm_email_notify\'] = max(min((int) $_POST[\'pm_email_notify\'], 2), 0);
@@ -1011,7 +1011,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	if (isset($_POST['sa']) && $_POST['sa'] == 'ignoreboards' && empty($_POST['ignore_brd']))
 			$_POST['ignore_brd'] = array();
 
-	unset($_POST['ignore_boards']); // Whatever it is set to is a dirty fithy thing.  Kinda like our minds.
+	unset($_POST['ignore_boards']); // Whatever it is set to is a dirty fithy thing. Kinda like our minds.
 	if (isset($_POST['ignore_brd']))
 	{
 		if (!is_array($_POST['ignore_brd']))
@@ -1054,7 +1054,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	}
 }
 
-// Make any theme changes that are sent with the profile..
+// Make any theme changes that are sent with the profile...
 function makeThemeChanges($memID, $id_theme)
 {
 	global $modSettings, $context;
@@ -1079,7 +1079,7 @@ function makeThemeChanges($memID, $id_theme)
 	);
 
 	// Can't change reserved vars.
-	if ((isset($_POST['options']) && array_intersect($_POST['options'], $reservedVars) != array()) || (isset($_POST['default_options']) && array_intersect($_POST['default_options'], $reservedVars) != array()))
+	if ((isset($_POST['options']) && array_intersect($_POST['options'], $reservedVars) != array()) || (isset($_POST['default_options']) && count(array_intersect($_POST['default_options'], $reservedVars)) > 0))
 		fatal_lang_error('no_access', false);
 
 	// Don't allow any overriding of custom fields with default or non-default options.
@@ -1343,7 +1343,7 @@ function editBuddyIgnoreLists($memID)
 	);
 
 	// Pass on to the actual function.
-	showSubTemplate($subActions[$context['list_area']][0]);
+	loadSubTemplate($subActions[$context['list_area']][0]);
 	$subActions[$context['list_area']][0]($memID);
 }
 
@@ -1569,7 +1569,7 @@ function account($memID)
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any')))
 		loadCustomFields($memID, 'account');
 
-	showSubTemplate('edit_options');
+	loadSubTemplate('edit_options');
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
@@ -1591,7 +1591,7 @@ function forumProfile($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'forumprofile');
 
-	showSubTemplate('edit_options');
+	loadSubTemplate('edit_options');
 	$context['page_desc'] = $txt['forumProfile_info'];
 
 	setupProfileContext(
@@ -1605,7 +1605,7 @@ function forumProfile($memID)
 	);
 }
 
-// Allow the edit of *someone elses* personal message settings.
+// Allow the edit of *someone else's* personal message settings.
 function pmprefs($memID)
 {
 	global $context, $txt, $scripturl;
@@ -1613,7 +1613,7 @@ function pmprefs($memID)
 	loadThemeOptions($memID);
 	loadCustomFields($memID, 'pmprefs');
 
-	showSubTemplate('edit_options');
+	loadSubTemplate('edit_options');
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	setupProfileContext(
@@ -1708,7 +1708,7 @@ function theme($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'theme');
 
-	showSubTemplate('edit_options');
+	loadSubTemplate('edit_options');
 	$context['page_desc'] = $txt['theme_info'];
 
 	setupProfileContext(
@@ -1794,7 +1794,7 @@ function authentication($memID, $saving = false)
 	// Some stuff.
 	$context['member']['openid_uri'] = $cur_profile['openid_uri'];
 	$context['auth_method'] = empty($cur_profile['openid_uri']) ? 'password' : 'openid';
-	showSubTemplate('authentication_method');
+	loadSubTemplate('authentication_method');
 }
 
 // Display the notifications and settings for changes.
@@ -2128,9 +2128,8 @@ function loadThemeOptions($memID)
 	if ($context['user']['is_owner'])
 	{
 		$context['member']['options'] = $options;
-		foreach ($context['member']['options'] as $k => $v)
-			if (isset($_POST['options'][$k]))
-				$context['member']['options'][$k] = $_POST['options'][$k];
+		foreach ($_POST['options'] as $k => $v)
+			$context['member']['options'][$k] = $v;
 	}
 	else
 	{
@@ -3010,7 +3009,7 @@ function profileSendActivation()
 	// Send them to the done-with-registration-login screen.
 	loadTemplate('Register');
 
-	showSubTemplate('after');
+	loadSubTemplate('after');
 	$context['page_title'] = $txt['profile'];
 	$context['title'] = $txt['activate_changed_email_title'];
 	$context['description'] = $txt['activate_changed_email_desc'];

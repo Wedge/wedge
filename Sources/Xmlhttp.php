@@ -85,7 +85,7 @@ function GetJumpTo()
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
 	}
 
-	showSubTemplate('jump_to');
+	loadSubTemplate('jump_to');
 }
 
 /**
@@ -102,7 +102,7 @@ function ListMessageIcons()
 	loadSource('Subs-Editor');
 	$context['icons'] = getMessageIcons($board);
 
-	showSubTemplate('message_icons');
+	loadSubTemplate('message_icons');
 }
 
 ?>

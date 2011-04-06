@@ -1,0 +1,460 @@
+.view_options {
+	float: left;
+}
+.vam {
+	vertical-align: middle;
+}
+.mgra {
+	text-align: right;
+}
+.aeva_header {
+	height: 31px;
+	padding: 0 8px;
+	margin-bottom: 4px;
+	overflow: hidden;
+}
+div.subheader {
+	margin-top: 20px;
+	border: 1px solid black;
+}
+div.subheader h4 {
+	padding: 6px;
+}
+div.subheader p {
+	margin: 0;
+	padding: 6px;
+}
+.aeva_ok, .aeva_cancel {
+	font-size: 8pt;
+	line-height: 8pt;
+	border: 1px solid black;
+	padding: 3px 3px 3px 21px;
+	margin: 0;
+	background: #DEF url(../images/aeva/accept.png) 1px 2px no-repeat;
+}
+.aeva_cancel {
+	background: #DEF url(../images/aeva/cancel.png) 1px 2px no-repeat;
+}
+
+.pics td {
+	padding: 0;
+	text-align: center;
+}
+.aep {
+	margin: 6px auto;
+}
+.aea, .aep, .aevisio {
+	box-shadow: 2px 2px 6px 0 rgba(128, 128, 128, .75);
+	border-radius: 5px;
+}
+.aep a, .aea a {
+	text-decoration: none !important;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+table.aextbox .pics td {
+	margin: 0;
+}
+table.aextbox {
+	padding: 4px 0;
+	text-align: center;
+}
+table.aextbox img.aext {
+	padding: 4px;
+	border: 1px solid black;
+	margin: 0;
+}
+iframe.aext {
+	margin: 8px auto -8px auto;
+}
+.comments {
+	padding: 10px;
+}
+.comments:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0pt;
+	visibility: hidden;
+}
+.aeva_statsbar, .aeva_statsbar2 {
+	border: 1px solid black;
+	background: #FC9 url(../images/aeva/progress.png) 0 -1px no-repeat;
+	height: 10px;
+}
+.aeva_statsbar2 {
+	background-image: url(../images/aeva/progress2.png);
+}
+#viewitem .info_list {
+	padding: 0;
+	margin: 0;
+}
+#viewitem .info_list li {
+	display: inline;
+	float: left;
+	width: 100%;
+	padding: 0 6px 3px 6px;
+}
+#viewitem h3 {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+#viewitem h4 {
+	padding: 3px 6px 1px 6px;
+}
+.sort_options {
+	margin-top: 8px;
+	text-align: right;
+	padding: 6px;
+}
+.page_index {
+	padding: 6px;
+}
+.notice {
+	padding: 10px;
+	text-align: center;
+}
+#albums .data {
+	padding: 0;
+	overflow: auto;
+}
+#albums .buttonlist ul {
+	padding-left: 0;
+}
+#albums .buttonlist ul img {
+	vertical-align: middle;
+}
+#home .aeva_header {
+	padding: 6px;
+}
+.item_heading, .item_headings {
+	padding: 6px;
+	vertical-align: middle;
+	text-align: center;
+	margin-top: 8px;
+	border: 1px solid #888;
+}
+.item_headings { margin-bottom: 8px; }
+.cat_heading { margin-top: 8px; }
+.cat_heading a, .cat_headings a, .item_heading a, .item_headings a {
+	text-decoration: underline !important;
+}
+#aeva_toplinks { margin: 8px 0 0 0; }
+#aeva_toplinks .cat { text-align: center; }
+#home .recent_comments {
+	float: left;
+	width: 50%;
+}
+#home .recent_albums {
+	float: right;
+	width: 49%;
+}
+.recent_comments .item_heading { border-right: 0; }
+.recent_albums .item_heading { border-left: 0; }
+#viewitem .info {
+	padding: 3px;
+}
+#viewitem td.info {
+	vertical-align: middle;
+}
+#viewitem td.aeva_header {
+	padding: 6px;
+}
+#viewitem .comment_sort_options {
+	float: right;
+}
+#viewitem .page_index {
+	padding: 5px;
+}
+#itembox {
+	text-align: center;
+	overflow: visible;
+	padding: 16px 0;
+}
+div.mgabs img {
+	padding: 0 2px;
+	vertical-align: text-bottom;
+}
+div.mgabs a {
+	text-decoration: none;
+}
+.selected a {
+	color: inherit !important;
+}
+#viewitem .images {
+	height: 20px;
+}
+#viewitem .images a {
+	margin-right: 4px;
+	font-weight: bold;
+	text-decoration: none;
+	line-height: 18px;
+}
+#viewitem .images img {
+	vertical-align: middle;
+}
+.text_margins a {
+	margin: 0 2px;
+}
+.mg_subtext, .mg_desc, .mg_hidden {
+	color: #777;
+	font-size: 0.85em;
+	line-height: 1.1em;
+	padding-top: 4px;
+}
+.mg_hidden {
+	color: red;
+}
+.unapproved_notice, .unapproved_yet {
+	background: #FEEE00;
+	text-align: center;
+	padding: 10px;
+}
+.unapproved_yet {
+	margin: 6px;
+	border: 2px dashed #cc3344;
+	background: #FFDCE0;
+	font-weight: bold;
+}
+.unapp {
+	background: #FFD0D0;
+}
+.mg_prev {
+	float: left;
+	text-align: left;
+	padding: 4px 4px 10px 4px
+}
+.mg_next {
+	float: right;
+	text-align: right;
+	padding: 4px 4px 10px 4px
+}
+.mg_prevnext { margin: 4px 0; }
+.mg_prevnext td { text-align: center; }
+.mg_prevnext_pad td { padding: 8px !important; }
+.mg_prevnext_pad div { margin: auto; }
+
+.mg_large {
+	font-size: 110%;
+	font-weight: bold;
+	letter-spacing: -0.5px;
+	padding-bottom: 4px;
+}
+.mg_pb4 {
+	padding-bottom: 4px;
+}
+.mg_title {
+	border: 1px solid white;
+	text-align: center;
+}
+.currentbutton {
+	font-weight: bold;
+}
+.mgc_main, .mgc_last_edit, .mgc_icons {
+	font-size: 8pt;
+	padding: 1px;
+}
+.mgc_post {
+	clear: both;
+	font-size: 9pt;
+	padding: 8px;
+	margin: 0;
+}
+.mgc_main {
+	border-bottom: 1px dotted #999;
+	margin: 5px 5px 1px 5px;
+	float: left;
+}
+.mgc_last_edit {
+	border-top: 1px dotted #999;
+	margin: 1px 5px 5px 5px;
+	font-style: italic;
+}
+.mgc_icons {
+	text-align: right;
+	margin: 5px 5px 1px 5px;
+	float: right;
+}
+#mg_coms {
+	margin-top: 8px;
+}
+#mg_coms .mgc_icons a {
+	text-decoration: none;
+	line-height: 18px;
+}
+#mg_coms .mgc_icons img {
+	vertical-align: middle;
+}
+.comment_preview {
+	color: #666;
+	border: 1px dashed #666;
+	margin: 8px 16px 0 16px;
+	padding: 8px;
+	font-size: 1em;
+	line-height: 1.4em;
+}
+#itembox .maeva, .aextbox .maeva {
+	text-align: center;
+	margin: auto;
+}
+table.foxy_side {
+	border: 1px solid #888;
+	margin: 0 0 8px 12px;
+}
+table.foxy_side tr td {
+	padding: 4px;
+	text-align: left !important;
+}
+.foxy_playlist_name {
+	color: inherit;
+	white-space: nowrap;
+	font: 16pt/20pt bold Tahoma, arial, helvetica;
+	margin: 0;
+	padding: 0;
+}
+.aeva_playlist_list {
+	padding: 8px 8px 0 8px;
+	float: left;
+	width: 47%;
+}
+.aevera {
+	vertical-align: middle;
+}
+.title_rss, .sort_options {
+	font: 8pt Verdana, Tahoma, arial, helvetica !important;
+}
+.title_rss img {
+	vertical-align: text-top !important;
+}
+.title_rss a {
+	text-decoration: none;
+}
+.clearfix {
+	clear: both;
+}
+.unbrowsable {
+	color: red;
+}
+.aeva_ich, .aeva_ich2 {
+	display: inline;
+	float: left;
+	width: 48%;
+	padding: 3px;
+}
+.aeva_ich2 {
+	width: 24%;
+}
+ul.aevadesc {
+	margin: 0 0 1em 1em;
+	padding: 1em;
+}
+ul.aevadesc li {
+	line-height: 1.2em;
+	list-style-type: disc !important;
+	padding: 0.2em;
+}
+.aeva_quickmod {
+	display: inline;
+}
+.aeva_quickmod_bar {
+	font: 0.85em Verdana, Tahoma, arial, helvetica;
+	float: right;
+	line-height: 27px;
+	margin-top: -5px;
+}
+.aeva_quickmod_bar input[type=checkbox] {
+	vertical-align: middle;
+}
+.aeva_inside_caption {
+	padding: 4px;
+	text-align: left;
+	color: #888;
+}
+#aeva_welcome {
+	padding: 6px 4px 4px;
+}
+.readme { padding: 8px 16px; }
+.readme pre { font-size: 9pt; }
+.readme span.bbc_size { line-height: 1em !important; }
+.readme table { width: 100%; }
+.earlier_versions {
+	font-weight: bold;
+	margin: 8px;
+	padding: 8px;
+	border: 2px dotted #c63;
+	border-width: 2px 0;
+}
+#file_warning {
+	padding: 8px 4px 0 4px;
+	color: red;
+}
+#aeva_tabs {
+	font-weight: bold;
+}
+ul#aeva_tabs {
+	padding: 0;
+	margin: 0;
+	line-height: 32px;
+	float: right;
+}
+ul#aeva_tabs li {
+	display: inline;
+	padding: 0;
+	margin-left: 5px;
+	font-size: 12px;
+}
+ul#aeva_tabs img {
+	margin-right: 0;
+}
+.bullet_a, .bullet_c, .bullet_f, .bullet_m, .bullet_r {
+	padding-bottom: 3px;
+}
+.bullet_a { list-style-image: url(../images/aeva/bullet_new.png); }
+.bullet_c { list-style-image: url(../images/aeva/bullet_com.png); }
+.bullet_f { list-style-image: url(../images/aeva/bullet_fix.png); }
+.bullet_m { list-style-image: url(../images/aeva/bullet_mod.png); }
+.bullet_r { list-style-image: url(../images/aeva/bullet_rem.png); }
+table.aelista tr td {
+	border: 0;
+	padding: 8px;
+}
+#admin_content {
+	overflow: hidden;
+}
+.aeva_rounded {
+	border-radius: 5px;
+}
+.tlf {
+	table-layout: fixed;
+}
+.popup_copyright {
+	font-size: 0.9em;
+	padding: 0 6px 12px 6px;
+	text-align: center;
+}
+
+.ae_details {
+	position: relative;
+	width: 1px;
+	padding: 4px 0 0 0;
+	left: 50%;
+	*left: 0;
+}
+.aevisio {
+	position: absolute;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	visibility: hidden;
+	padding: 4px;
+	margin: 0;
+	opacity: 0;
+	transition: opacity .5s;
+	border-radius: 8px;
+}
+table.pics td:hover .aevisio {
+	visibility: visible;
+	opacity: 1;
+	transition: opacity .5s;
+}

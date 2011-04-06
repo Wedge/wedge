@@ -39,6 +39,7 @@ function ViewSMFile()
 {
 	global $context, $modSettings;
 
+	hideChrome();
 	@ini_set('memory_limit', '32M');
 
 	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))
@@ -68,7 +69,6 @@ if (!(\'smfForum_sessionvar\' in window))
 	window.smfForum_sessionvar = \'sesc\';
 ' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
 
-	$context['template_layers'] = array();
 	// Let's make sure we aren't going to output anything nasty.
 	@ob_end_clean();
 	if (!empty($modSettings['enableCompressedOutput']))

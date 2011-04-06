@@ -177,7 +177,7 @@ function ModifySettings()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['admin_server_settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
@@ -578,7 +578,7 @@ function ManageLanguages()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['edit_languages'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
@@ -652,7 +652,7 @@ function AddLanguage()
 		}
 	}
 
-	showSubTemplate('add_language');
+	loadSubTemplate('add_language');
 }
 
 // Download a language file from the Simple Machines website.
@@ -669,7 +669,7 @@ function DownloadLanguage()
 
 	// Some lovely context.
 	$context['download_id'] = $_GET['did'];
-	showSubTemplate('download_language');
+	loadSubTemplate('download_language');
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'add';
 
 	// Can we actually do the installation - and do they want to?
@@ -1127,7 +1127,7 @@ function ModifyLanguages()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	showSubTemplate('show_list');
+	loadSubTemplate('show_list');
 	$context['default_list'] = 'language_list';
 }
 
@@ -1262,7 +1262,7 @@ function ModifyLanguage()
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	showSubTemplate('modify_language_entries');
+	loadSubTemplate('modify_language_entries');
 
 	$context['lang_id'] = $_GET['lid'];
 	list ($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '+') === false ? array(1, '') : explode('+', $_REQUEST['tfid']);

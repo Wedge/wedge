@@ -179,7 +179,7 @@ function EditNews()
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
 		);
 
-	showSubTemplate('edit_news');
+	loadSubTemplate('edit_news');
 	$context['page_title'] = $txt['admin_edit_news'];
 }
 
@@ -189,7 +189,7 @@ function SelectMailingMembers()
 
 	$context['page_title'] = $txt['admin_newsletters'];
 
-	showSubTemplate('email_members');
+	loadSubTemplate('email_members');
 
 	$context['groups'] = array();
 	$postGroups = array();
@@ -446,7 +446,7 @@ function ComposeMailing()
 
 	// Setup the template!
 	$context['page_title'] = $txt['admin_newsletters'];
-	showSubTemplate('email_members_compose');
+	loadSubTemplate('email_members_compose');
 
 	$context['default_subject'] = htmlspecialchars($context['forum_name'] . ': ' . $txt['subject']);
 	$context['default_message'] = htmlspecialchars($txt['message'] . "\n\n" . $txt['regards_team'] . "\n\n" . '{$board_url}');
@@ -776,7 +776,7 @@ function SendMailing($clean_only = false)
 	$context['percentage_done'] = round(($percentEmails + $percentMembers) * 100, 2);
 
 	$context['page_title'] = $txt['admin_newsletters'];
-	showSubTemplate('email_members_send');
+	loadSubTemplate('email_members_send');
 }
 
 function ModifyNewsSettings($return_config = false)
@@ -798,7 +798,7 @@ function ModifyNewsSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['admin_edit_news'] . ' - ' . $txt['settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.
 	loadSource(array('ManagePermissions', 'ManageServer'));

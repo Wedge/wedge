@@ -1,0 +1,27 @@
+/* Styles for rounded headers.
+------------------------------------------------------- */
+.cat, .title {
+	line-height: 32px;
+}
+.title a:hover {
+	color: #ffa500;
+	text-decoration: none;
+}
+.cat img.icon, .title img.icon {
+	vertical-align: middle;
+	margin: -2px 5px 0 0;
+}
+.cat a.toggle img {
+	vertical-align: middle;
+	margin: -2px 5px 0 5px;
+}
+div.title {
+	background: url($images/theme/main_block.png) no-repeat 0 -200px;
+	padding-left: 9px;
+	overflow: hidden;
+}
+div.cat {
+	background: url($images/theme/main_block.png) no-repeat 0 -160px;
+	padding-left: 9px;
+	overflow: hidden;
+}

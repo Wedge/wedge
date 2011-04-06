@@ -83,7 +83,7 @@ function Display()
 
 	// Load the proper template and/or sub template.
 	if (WIRELESS)
-		showSubTemplate(WIRELESS_PROTOCOL . '_display');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_display');
 	else
 		loadTemplate('Display');
 
@@ -420,7 +420,7 @@ function Display()
 	censorText($topicinfo['subject']);
 	$context['page_title'] = $topicinfo['subject'];
 
-	showSubTemplate('display_statistics', 'sidebar');
+	loadSubTemplate('display_statistics', 'sidebar');
 
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
@@ -436,7 +436,7 @@ function Display()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
-		showSubTemplate('display_whoviewing', 'sidebar');
+		loadSubTemplate('display_whoviewing', 'sidebar');
 	}
 
 	// If all is set, but not allowed... just unset it.

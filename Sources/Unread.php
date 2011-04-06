@@ -243,11 +243,11 @@ function Unread()
 	);
 
 	if (WIRELESS)
-		showSubTemplate(WIRELESS_PROTOCOL . '_recent');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_recent');
 	else
 	{
 		loadTemplate('Recent');
-		showSubTemplate('unread');
+		loadSubTemplate('unread');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)

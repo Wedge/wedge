@@ -62,9 +62,9 @@ function createMenu($menuData, $menuOptions = array())
 	}
 
 	// Work out where we should get our images from.
-	$context['menu_image_path'] = file_exists($settings['theme_dir'] . '/images/admin/change_menu.png') ? $settings['images_url'] . '/admin' : $settings['default_images_url'] . '/admin';
+	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : (file_exists($settings['theme_dir'] . '/images/admin/change_menu.png') ? $settings['images_url'] . '/admin' : $settings['default_images_url'] . '/admin');
 
-	/* Note menuData is array of form:
+	/* Note menuData is an array of form:
 
 		Possible fields:
 			For Section:
@@ -157,7 +157,7 @@ function createMenu($menuData, $menuOptions = array())
 							$here['url'] = $area['custom_url'];
 
 						// Does this area have its own icon?
-						if (isset($area['icon']))
+						if (!empty($area['icon']))
 							$here['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '">&nbsp;&nbsp;';
 						else
 							$here['icon'] = '';
@@ -292,8 +292,8 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
-		showSubTemplate($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', false);
-		showSubTemplate('generic_tabs', 'top', false);
+		loadSubTemplate($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', false);
+		loadSubTemplate('generic_tabs', 'top', false);
 	}
 
 	// Check we had something - for sanity sake.

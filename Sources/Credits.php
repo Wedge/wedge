@@ -74,6 +74,12 @@ function Credits($in_admin = false)
 			'title' => $txt['credits_smf_team'],
 			'groups' => array(
 				array(
+					'title' => $txt['credits_groups_founder'],
+					'members' => array(
+						'Unknown W. &quot;[Unknown]&quot; Brackets',
+					),
+				),
+				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
 					),
@@ -165,12 +171,6 @@ function Credits($in_admin = false)
 					$txt['credits_translators_message'],
 				),
 			),
-			array(
-				'title' => $txt['credits_groups_founder'],
-				'members' => array(
-					'Unknown W. &quot;[Unknown]&quot; Brackets',
-				),
-			),
 		),
 	);
 
@@ -197,7 +197,7 @@ function Credits($in_admin = false)
 	if (!$in_admin)
 	{
 		loadTemplate('Who');
-		showSubTemplate('credits');
+		loadSubTemplate('credits');
 		$context['robot_no_index'] = true;
 		$context['page_title'] = $txt['credits'];
 	}

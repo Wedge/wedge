@@ -301,6 +301,87 @@ function Admin()
 				),
 			),
 		),
+		'aeva' => array(
+			'title' => $txt['media_title'],
+			'permission' => array('aeva_manage'),
+			'areas' => array(
+				'aeva_about' => array(
+					'label' => $txt['media_admin_labels_about'],
+					'icon' => 'administration.gif',
+					'subsections' => array(
+						'about' => 'media_admin_labels_index',
+						'readme' => 'media_admin_readme',
+						'changelog' => 'media_admin_changelog',
+					),
+				),
+				'aeva_settings' => array(
+					'label' => $txt['media_admin_labels_settings'],
+					'icon' => 'corefeatures.gif',
+					'subsections' => array(
+						'config' => 'media_admin_settings_config',
+						'exif' => 'media_admin_settings_exif',
+						'layout' => 'media_admin_settings_layout',
+					),
+				),
+				'aeva_embed' => array(
+					'label' => $txt['media_admin_labels_embed'],
+					'icon' => 'aeva.png',
+					'subsections' => array(
+						'config' => 'media_admin_settings_config',
+						'sites' => 'media_admin_settings_sites',
+					),
+				),
+				'aeva_albums' => array(
+					'label' => $txt['media_admin_labels_albums'],
+					'icon' => 'mgallery.png',
+					'subsections' => array(
+						'index' => 'media_admin_labels_index',
+						'normal' => 'media_admin_filter_normal_albums',
+						'featured' => 'media_admin_filter_featured_albums',
+						'add' => 'media_admin_add_album',
+					),
+				),
+				'aeva_maintenance' => array(
+					'label' => $txt['media_admin_labels_maintenance'],
+					'icon' => 'maintain.gif',
+					'subsections' => array(
+						'index' => 'media_admin_maintenance_all_tasks',
+						'recount' => 'media_admin_maintenance_recount',
+						'checkfiles' => 'media_admin_maintenance_checkfiles',
+						'finderrors' => 'media_admin_maintenance_finderrors',
+						'prune' => 'media_admin_maintenance_prune',
+					),
+				),
+				'aeva_bans' => array(
+					'label' => $txt['media_admin_labels_bans'],
+					'icon' => 'ban.gif',
+					'subsections' => array(
+						'index' => 'media_admin_labels_index',
+						'add' => 'media_admin_bans_add',
+					),
+				),
+				'aeva_fields' => array(
+					'label' => $txt['media_cf'],
+					'icon' => 'packages.gif',
+					'subsections' => array(
+						'index' => 'media_admin_labels_index',
+						'edit' => 'media_cf_add',
+					),
+				),
+				'aeva_perms' => array(
+					'label' => $txt['media_admin_labels_perms'],
+					'icon' => 'permissions.gif',
+				),
+				'aeva_quotas' => array(
+					'label' => $txt['media_admin_labels_quotas'],
+					'icon' => 'attachment.gif',
+				),
+				'aeva_ftp' => array(
+					'label' => $txt['media_admin_labels_ftp'],
+					'icon' => 'boards.gif',
+				),
+			),
+		),
 		'members' => array(
 			'title' => $txt['admin_manage_members'],
 			'permission' => array('moderate_forum', 'manage_membergroups', 'manage_bans', 'manage_permissions', 'admin_forum'),
@@ -467,6 +548,18 @@ function Admin()
 		),
 	);
 
+	// Temp compatibility code for Aeva Media integration...
+	foreach ($admin_areas['aeva']['areas'] as &$tab)
+	{
+		$tab['file'] = 'media/ManageMedia';
+		$tab['function'] = 'aeva_admin_init';
+		$tab['permission'] = array('aeva_manage');
+		if (!empty($tab['subsections']))
+			foreach ($tab['subsections'] as &$title)
+				$title = array($txt[$title]);
+	}
+	// End of compatibility code.
+
 	// Any files to include for administration?
 	if (!empty($modSettings['integrate_admin_include']))
 	{
@@ -479,7 +572,10 @@ function Admin()
 		}
 	}
 
-	// Let them modify admin areas easily.
+	// Let modders modify admin areas easily.
+	// You can insert a top-level menu into the admin menu by doing something like this in your hook:
+	// $admin_areas = array_merge(array_splice($admin_areas, 0, 2), $my_top_level_menu_array, $admin_areas);
+
 	call_hook('admin_areas', array(&$admin_areas));
 
 	// Make sure the administrator has a valid session...
@@ -569,7 +665,7 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	showSubTemplate($context['admin_area'] == 'credits' ? 'credits' : 'admin');
+	loadSubTemplate($context['admin_area'] == 'credits' ? 'credits' : 'admin');
 	$context['page_title'] = $context['admin_area'] == 'credits' ? $txt['support_credits_title'] : $txt['admin_center'];
 
 	// The format of this array is: permission, action, title, description, icon.
@@ -635,7 +731,7 @@ function AdminSearch()
 	$context['search_type'] = !isset($_REQUEST['search_type']) || !isset($subactions[$_REQUEST['search_type']]) ? 'internal' : $_REQUEST['search_type'];
 	$context['search_term'] = isset($_REQUEST['search_term']) ? westr::htmlspecialchars($_REQUEST['search_term'], ENT_QUOTES) : '';
 
-	showSubTemplate('admin_search_results');
+	loadSubTemplate('admin_search_results');
 	$context['page_title'] = $txt['admin_search_results'];
 
 	// Keep track of what the admin wants.

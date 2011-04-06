@@ -110,7 +110,7 @@ function PackageServers()
 	global $txt, $scripturl, $context, $boarddir, $modSettings;
 
 	// Ensure we use the correct template, and page title.
-	showSubTemplate('servers');
+	loadSubTemplate('servers');
 	$context['page_title'] .= ' - ' . $txt['download_packages'];
 
 	// Load the list of servers.
@@ -247,7 +247,7 @@ function PackageGBrowse()
 		$token = checkConfirm('get_absolute_url');
 		if ($token !== true)
 		{
-			showSubTemplate('package_confirm');
+			loadSubTemplate('package_confirm');
 
 			$context['page_title'] = $txt['package_servers'];
 			$context['confirm_message'] = sprintf($txt['package_confirm_view_package_content'], htmlspecialchars($_GET['absolute']));
@@ -289,7 +289,7 @@ function PackageGBrowse()
 		$name = $listing->fetch('list-title');
 
 	// Pick the correct template.
-	showSubTemplate('package_list');
+	loadSubTemplate('package_list');
 
 	$context['page_title'] = $txt['package_servers'] . ($name != '' ? ' - ' . $name : '');
 	$context['package_server'] = $server;
@@ -533,7 +533,7 @@ function PackageDownload()
 	global $txt, $scripturl, $boarddir, $context;
 
 	// Use the downloaded sub template.
-	showSubTemplate('downloaded');
+	loadSubTemplate('downloaded');
 
 	// Security is good...
 	checkSession('get');
@@ -640,7 +640,7 @@ function PackageUpload()
 	global $txt, $scripturl, $boarddir, $context;
 
 	// Setup the correct template, even though I'll admit we ain't downloading ;)
-	showSubTemplate('downloaded');
+	loadSubTemplate('downloaded');
 
 	// !!! TODO: Use FTP if the Packages directory is not writable.
 

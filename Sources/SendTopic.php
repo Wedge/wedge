@@ -281,7 +281,7 @@ function CustomEmail()
 			redirectexit();
 	}
 
-	showSubTemplate('custom_email');
+	loadSubTemplate('custom_email');
 	$context['page_title'] = $txt['send_email'];
 }
 

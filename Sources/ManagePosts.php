@@ -194,7 +194,7 @@ function SetCensor()
 		$context['censored_words'][htmlspecialchars(trim($censor_vulgar[$i]))] = isset($censor_proper[$i]) ? htmlspecialchars($censor_proper[$i]) : '';
 	}
 
-	showSubTemplate('edit_censored');
+	loadSubTemplate('edit_censored');
 	$context['page_title'] = $txt['admin_censored_words'];
 }
 
@@ -232,7 +232,7 @@ function ModifyPostSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['manageposts_settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -306,7 +306,7 @@ function ModifyBBCSettings($return_config = false)
 
 	// Setup the template.
 	loadSource('ManageServer');
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 	$context['page_title'] = $txt['manageposts_bbc_settings_title'];
 
 	// Make sure we check the right tags!
@@ -371,7 +371,7 @@ function ModifyTopicSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['manageposts_topic_settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -413,7 +413,7 @@ function ModifyDraftSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['manageposts_draft_settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -461,7 +461,7 @@ function ModifyMergeSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['merge_post_header'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Saving?
 	if (isset($_GET['save']))

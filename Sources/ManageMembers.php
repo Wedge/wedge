@@ -649,7 +649,7 @@ function ViewMemberlist()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	showSubTemplate('show_list');
+	loadSubTemplate('show_list');
 	$context['default_list'] = 'member_list';
 }
 
@@ -695,7 +695,7 @@ function SearchMembers()
 	wesql::free_result($request);
 
 	$context['page_title'] = $txt['admin_members'];
-	showSubTemplate('search_members');
+	loadSubTemplate('search_members');
 }
 
 // List all members who are awaiting approval / activation
@@ -705,7 +705,7 @@ function MembersAwaitingActivation()
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
-	showSubTemplate('admin_browse');
+	loadSubTemplate('admin_browse');
 	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;

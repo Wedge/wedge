@@ -119,7 +119,7 @@ String.prototype.easyReplace = function (oReplacements)
 };
 
 // Open a new popup window.
-function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
+function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 {
 	var
 		desktopURL = from && from.href ? from.href : from, vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
@@ -143,7 +143,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
-	$('<div class="windowbg wrc"></div>').hide()
+	$('<div class="windowbg wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>').hide()
 		.load(desktopURL, function () {
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : auto,
@@ -634,9 +634,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	// This way, you can drag the element, but still access UI elements within it.
 	$.fn.dragslide = function () {
 		return this.each(function () {
-			$(this).css("cursor", "move").find(".nodrag").each(function () {
-				$(this).css("cursor", "default");
-			});
+			$(this).css("cursor", "move").find(".nodrag").css("cursor", "default");
 
 			// Start the dragging process
 			$(this).mousedown(function (e) {

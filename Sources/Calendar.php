@@ -72,8 +72,8 @@ function CalendarMain()
 
 	// This is gonna be needed...
 	loadTemplate('Calendar');
-	showSubTemplate('sidebar', 'sidebar');
-	showSubTemplate('main');
+	loadSubTemplate('sidebar', 'sidebar');
+	loadSubTemplate('main');
 
 	// You can't do anything if the calendar is off.
 	if (empty($modSettings['cal_enabled']))
@@ -309,7 +309,7 @@ function CalendarPost()
 
 	// Template, sub template, etc.
 	loadTemplate('Calendar');
-	showSubTemplate('event_post');
+	loadSubTemplate('event_post');
 
 	$context['page_title'] = isset($_REQUEST['eventid']) ? $txt['calendar_edit'] : $txt['calendar_post_event'];
 	$context['linktree'][] = array(

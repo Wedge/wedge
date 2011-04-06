@@ -213,7 +213,7 @@ function ManageAttachmentSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
 	prepareDBSettingContext($config_vars);
 
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 }
 
 function ManageAvatarSettings($return_config = false)
@@ -295,14 +295,14 @@ function ManageAvatarSettings($return_config = false)
 
 	// Add a layer for the javascript.
 	$context['template_layers'][] = 'avatar_settings';
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 }
 
 function BrowseFiles()
 {
 	global $context, $txt, $scripturl, $options, $modSettings;
 
-	showSubTemplate('browse');
+	loadSubTemplate('browse');
 
 	// Attachments or avatars?
 	$context['browse_type'] = isset($_REQUEST['avatars']) ? 'avatars' : (isset($_REQUEST['thumbs']) ? 'thumbs' : 'attachments');
@@ -577,7 +577,7 @@ function MaintainFiles()
 {
 	global $context, $modSettings, $txt;
 
-	showSubTemplate('maintenance');
+	loadSubTemplate('maintenance');
 
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 		$attach_dirs = unserialize($modSettings['attachmentUploadDir']);
@@ -1395,7 +1395,7 @@ function RepairAttachments()
 	// Got here we must be doing well - just the template! :D
 	$context['page_title'] = $txt['repair_attachments'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
-	showSubTemplate('attachment_repair');
+	loadSubTemplate('attachment_repair');
 
 	// What stage are we at?
 	$context['completed'] = $fix_errors ? true : false;
@@ -1420,7 +1420,7 @@ function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	showSubTemplate('not_done');
+	loadSubTemplate('not_done');
 
 	// Specific stuff to not break this template!
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
@@ -1735,7 +1735,7 @@ function ManageAttachmentPaths()
 	// Fix up our template.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'attachments';
 	$context['page_title'] = $txt['attach_path_manage'];
-	showSubTemplate('attachment_paths');
+	loadSubTemplate('attachment_paths');
 }
 
 // Prepare the actual attachment directories to be displayed in the list.

@@ -82,7 +82,7 @@ function ManageSmileys()
 
 	$context['page_title'] = $txt['smileys_manage'];
 	$context['sub_action'] = $_REQUEST['sa'];
-	showSubTemplate($context['sub_action']);
+	loadSubTemplate($context['sub_action']);
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -162,7 +162,7 @@ function EditSmileySettings($return_config = false)
 
 	// Setup the basics of the settings template.
 	loadSource('ManageServer');
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Finish up the form...
 	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';
@@ -295,7 +295,7 @@ function EditSmileySets()
 
 		// Force the process to continue.
 		$context['sub_action'] = 'modifyset';
-		showSubTemplate('modifyset');
+		loadSubTemplate('modifyset');
 	}
 	// If we're modifying or adding a smileyset, some context info needs to be set.
 	if ($context['sub_action'] == 'modifyset')
@@ -1094,7 +1094,7 @@ function EditSmileys()
 
 		// The list is the only thing to show, so make it the main template.
 		$context['default_list'] = 'smiley_list';
-		showSubTemplate('show_list');
+		loadSubTemplate('show_list');
 	}
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')
@@ -1682,7 +1682,7 @@ function EditMessageIcons()
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
 	{
 		// Force the sub_template just in case.
-		showSubTemplate('editicon');
+		loadSubTemplate('editicon');
 
 		$context['new_icon'] = !isset($_GET['icon']);
 

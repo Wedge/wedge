@@ -292,6 +292,51 @@ function ModifyProfile($post_errors = array())
 				),
 			),
 		),
+		'aeva' => array(
+			'title' => $txt['media_gallery'],
+			'areas' => array(
+				'aeva' => array(
+					'file' => 'media/Aeva-Gallery2.php',
+					'function' => 'aeva_profileSummary',
+					'label' => $txt['media_profile_sum'],
+					'permission' => array(
+						'own' => array('aeva_viewprofile'),
+						'any' => array('aeva_viewprofile'),
+					),
+					'load_member' => true,
+				),
+				'aevaitems' => array(
+					'file' => 'media/Aeva-Gallery2.php',
+					'function' => 'aeva_profileItems',
+					'label' => $txt['media_view_items'],
+					'permission' => array(
+						'own' => array('aeva_viewprofile'),
+						'any' => array('aeva_viewprofile'),
+					),
+					'load_member' => true,
+				),
+				'aevacoms' => array(
+					'file' => 'media/Aeva-Gallery2.php',
+					'function' => 'aeva_profileComments',
+					'label' => $txt['media_view_coms'],
+					'permission' => array(
+						'own' => array('aeva_viewprofile'),
+						'any' => array('aeva_viewprofile'),
+					),
+					'load_member' => true,
+				),
+				'aevavotes' => array(
+					'file' => 'media/Aeva-Gallery2.php',
+					'function' => 'aeva_profileVotes',
+					'label' => $txt['media_view_votes'],
+					'permission' => array(
+						'own' => array('aeva_viewprofile'),
+						'any' => array('aeva_viewprofile'),
+					),
+					'load_member' => true,
+				),
+			),
+		),
 		'profile_action' => array(
 			'title' => $txt['profileAction'],
 			'areas' => array(
@@ -493,7 +538,7 @@ function ModifyProfile($post_errors = array())
 		);
 
 	// Set the template for this area and add the profile layer.
-	showSubTemplate($profile_include_data['function']);
+	loadSubTemplate($profile_include_data['function']);
 	$context['template_layers'][] = 'profile';
 
 	// All the subactions that require a user password in order to validate.
@@ -502,7 +547,7 @@ function ModifyProfile($post_errors = array())
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && in_array('summary', $context['sub_template']))
-		showSubTemplate(WIRELESS_PROTOCOL . '_profile');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_profile');
 
 	// These will get populated soon!
 	$post_errors = array();

@@ -136,9 +136,9 @@ function template_credits()
 
 		if (isset($section['title']))
 		echo '
-		<we:cat>
+		<we:title>
 			', $section['title'], '
-		</we:cat>';
+		</we:title>';
 
 		echo '
 		<div class="windowbg2 wrc">

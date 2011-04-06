@@ -1456,6 +1456,12 @@ class wedgeEditor
 		);
 		$this->bbc[] = array(
 			array(
+				'image' => array(13, 1),
+				'code' => 'add_media',
+				'before' => '',
+				'description' => $txt['media'],
+			),
+			array(
 				'image' => array(7, 0),
 				'code' => 'flash',
 				'before' => '[flash=200,200]',
@@ -1584,21 +1590,22 @@ class wedgeEditor
 
 		// Show the toggle?
 		if (empty($modSettings['disable_wysiwyg']))
-		{
-			$this->bbc[count($this->bbc) - 1][] = array();
-			$this->bbc[count($this->bbc) - 1][] = array(
-				'image' => array(6, 0),
-				'code' => 'unformat',
-				'before' => '',
-				'description' => $txt['unformat_text'],
+			array_push(
+				$this->bbc[count($this->bbc) - 1],
+				array(),
+				array(
+					'image' => array(6, 0),
+					'code' => 'unformat',
+					'before' => '',
+					'description' => $txt['unformat_text'],
+				),
+				array(
+					'image' => array(5, 0),
+					'code' => 'toggle',
+					'before' => '',
+					'description' => $txt['toggle_view'],
+				)
 			);
-			$this->bbc[count($this->bbc) - 1][] = array(
-				'image' => array(5, 0),
-				'code' => 'toggle',
-				'before' => '',
-				'description' => $txt['toggle_view'],
-			);
-		}
 
 		// Fix up the last item in each row
 		foreach ($this->bbc as $row => $tagRow)

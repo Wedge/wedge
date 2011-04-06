@@ -57,7 +57,7 @@ function ManageMail()
 	loadSource('ManageServer');
 
 	$context['page_title'] = $txt['mailqueue_title'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	$subActions = array(
 		'browse' => 'BrowseMailQueue',
@@ -224,7 +224,7 @@ function BrowseMailQueue()
 	createList($listOptions);
 
 	loadTemplate('ManageMail');
-	showSubTemplate('browse');
+	loadSubTemplate('browse');
 }
 
 function list_getMailQueue($start, $items_per_page, $sort)
@@ -408,7 +408,7 @@ function pauseMailQueueClear()
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	showSubTemplate('not_done');
+	loadSubTemplate('not_done');
 
 	// Keep browse selected.
 	$context['selected'] = 'browse';

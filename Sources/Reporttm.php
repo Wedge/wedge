@@ -96,7 +96,7 @@ function Reporttm()
 	$context['message_id'] = $_REQUEST['msg'];
 
 	$context['page_title'] = $txt['report_to_mod'];
-	showSubTemplate('report');
+	loadSubTemplate('report');
 }
 
 /**

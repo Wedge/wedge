@@ -55,7 +55,7 @@ function MessageIndex()
 	}
 
 	if (WIRELESS)
-		showSubTemplate(WIRELESS_PROTOCOL . '_messageindex');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_messageindex');
 	else
 	{
 		loadTemplate('MessageIndex');
@@ -65,8 +65,8 @@ function MessageIndex()
 		if (isset($_GET['draftsaved']))
 			$templates[] = 'messageindex_draft';
 		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
-		showSubTemplate($templates);
-		showSubTemplate('messageindex_statistics', 'sidebar');
+		loadSubTemplate($templates);
+		loadSubTemplate('messageindex_statistics', 'sidebar');
 	}
 
 	$context['name'] = $board_info['name'];
@@ -244,7 +244,7 @@ function MessageIndex()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
-		showSubTemplate('messageindex_whoviewing', 'sidebar');
+		loadSubTemplate('messageindex_whoviewing', 'sidebar');
 	}
 
 	// Default sort methods.
@@ -634,7 +634,7 @@ function MessageIndex()
 	// If there are children, but no topics and no ability to post topics...
 	$context['no_topic_listing'] = !empty($context['boards']) && empty($context['topics']) && !$context['can_post_new'];
 	if (!$context['no_topic_listing'])
-		showSubTemplate('messageindex_legend', 'sidebar');
+		loadSubTemplate('messageindex_legend', 'sidebar');
 
 	// Create the button set...
 	$context['button_list'] = array(

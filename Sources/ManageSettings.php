@@ -91,7 +91,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 	// Will need the utility functions from here.
 	loadSource('ManageServer');
 
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// By default do the basic settings.
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($defaultAction) ? $defaultAction : array_pop(array_keys($subActions)));
@@ -449,7 +449,7 @@ function ModifyCoreFeatures($return_config = false)
 	if ($context['is_new_install'])
 		updateSettings(array('admin_features' => ''));
 
-	showSubTemplate('core_features');
+	loadSubTemplate('core_features');
 	$context['page_title'] = $txt['core_settings_title'];
 }
 
@@ -878,7 +878,7 @@ function ModifySignatureSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['signature_settings'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	add_js('
@@ -1200,7 +1200,7 @@ function pauseSignatureApplySettings()
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	showSubTemplate('not_done');
+	loadSubTemplate('not_done');
 
 	// Specific stuff to not break this template!
 	$context[$context['admin_menu_name']]['current_subsection'] = 'sig';
@@ -1220,7 +1220,7 @@ function ShowCustomProfiles()
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
-	showSubTemplate('show_custom_profile');
+	loadSubTemplate('show_custom_profile');
 
 	// What about standard fields they can tweak?
 	$standard_fields = array('icq', 'msn', 'aim', 'yim', 'location', 'gender', 'website', 'posts', 'warning_status');
@@ -1508,7 +1508,7 @@ function EditCustomProfiles()
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
-	showSubTemplate('edit_profile_field');
+	loadSubTemplate('edit_profile_field');
 
 	// Load the profile language for section names.
 	loadLanguage('Profile');
@@ -1952,7 +1952,7 @@ function ModifyPruningSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=pruning';
 	$context['settings_title'] = $txt['pruning_title'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
@@ -2029,7 +2029,7 @@ function ModifyPrettyURLs()
 {
 	global $context, $modSettings, $settings, $txt;
 
-	showSubTemplate('pretty_urls');
+	loadSubTemplate('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];
 
 	// Core settings

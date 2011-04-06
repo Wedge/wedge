@@ -401,7 +401,7 @@ function PermissionIndex()
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
 
 	// Load the proper template.
-	showSubTemplate('permission_index');
+	loadSubTemplate('permission_index');
 }
 
 function PermissionByBoard()
@@ -472,7 +472,7 @@ function PermissionByBoard()
 		}
 	}
 
-	showSubTemplate('by_board');
+	loadSubTemplate('by_board');
 }
 
 function SetQuickGroups()
@@ -880,7 +880,7 @@ function ModifyMembergroup()
 			}
 		}
 	}
-	showSubTemplate('modify_group');
+	loadSubTemplate('modify_group');
 	$context['page_title'] = $txt['permissions_modify_group'];
 }
 
@@ -1029,7 +1029,7 @@ function GeneralPermissionSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['permission_settings_title'];
-	showSubTemplate('show_settings');
+	loadSubTemplate('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.
 	loadSource('ManageServer');
@@ -1442,6 +1442,7 @@ function loadAllPermissions($loadType = 'classic')
 				'use_avatar',
 				'moderate_general',
 				'administrate',
+				'aeva',
 			),
 			'classic' => array(
 				'general',
@@ -1450,6 +1451,7 @@ function loadAllPermissions($loadType = 'classic')
 				'maintenance',
 				'member_admin',
 				'profile',
+				'aeva',
 			),
 		),
 		'board' => array(
@@ -1508,6 +1510,7 @@ function loadAllPermissions($loadType = 'classic')
 			'send_mail' => array(false, 'member_admin', 'administrate'),
 			'view_ip_address' => array(true, 'member_admin', 'administrate', 'administrate'),
 			'issue_warning' => array(false, 'member_admin', 'moderate_general'),
+
 			'profile_view' => array(true, 'profile', 'view_basic_info', 'view_basic_info'),
 			'profile_identity' => array(true, 'profile', 'edit_profile', 'moderate_general'),
 			'profile_extra' => array(true, 'profile', 'edit_profile', 'moderate_general'),
@@ -1518,6 +1521,17 @@ function loadAllPermissions($loadType = 'classic')
 			'profile_server_avatar' => array(false, 'profile', 'use_avatar'),
 			'profile_upload_avatar' => array(false, 'profile', 'use_avatar'),
 			'profile_remote_avatar' => array(false, 'profile', 'use_avatar'),
+
+			'aeva_access' => array(false, 'aeva', 'aeva'),
+			'aeva_moderate' => array(false, 'aeva', 'aeva'),
+			'aeva_manage' => array(false, 'aeva', 'aeva'),
+			'aeva_access_unseen' => array(false, 'aeva', 'aeva'),
+			'aeva_search' => array(false, 'aeva', 'aeva'),
+			'aeva_add_playlists' => array(false, 'aeva', 'aeva'),
+			'aeva_add_user_album' => array(false, 'aeva', 'aeva'),
+			'aeva_auto_approve_albums' => array(false, 'aeva', 'aeva'),
+			'aeva_moderate_own_albums' => array(false, 'aeva', 'aeva'),
+			'aeva_viewprofile' => array(false, 'aeva', 'aeva'),
 		),
 		'board' => array(
 			'moderate_board' => array(false, 'general_board', 'moderate'),
@@ -1541,6 +1555,7 @@ function loadAllPermissions($loadType = 'classic')
 			'delete' => array(true, 'post', 'modify', 'moderate'),
 			'modify' => array(true, 'post', 'modify', 'moderate'),
 			'report_any' => array(false, 'post', 'participate'),
+
 			'poll_view' => array(false, 'poll', 'participate'),
 			'poll_vote' => array(false, 'poll', 'participate'),
 			'poll_post' => array(false, 'poll', 'post_polls'),
@@ -1548,6 +1563,7 @@ function loadAllPermissions($loadType = 'classic')
 			'poll_edit' => array(true, 'poll', 'modify', 'moderate'),
 			'poll_lock' => array(true, 'poll', 'moderate', 'moderate'),
 			'poll_remove' => array(true, 'poll', 'modify', 'moderate'),
+
 			'mark_any_notify' => array(false, 'notification', 'notification'),
 			'mark_notify' => array(false, 'notification', 'notification'),
 			'view_attachments' => array(false, 'attachment', 'participate'),
@@ -1922,7 +1938,7 @@ function EditPermissionProfiles()
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
-	showSubTemplate('edit_profiles');
+	loadSubTemplate('edit_profiles');
 
 	// If we're creating a new one do it first.
 	if (isset($_POST['create']))
@@ -2253,7 +2269,7 @@ function ModifyPostModeration()
 	checkSession('get');
 
 	$context['page_title'] = $txt['permissions_post_moderation'];
-	showSubTemplate('postmod_permissions');
+	loadSubTemplate('postmod_permissions');
 	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
 
 	// Load all the permission profiles.

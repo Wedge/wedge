@@ -120,7 +120,7 @@ function Spellcheck()
 	);';
 
 	// And instruct the template system to just show the spellcheck sub template.
-	showSubTemplate('spellcheck');
+	loadSubTemplate('spellcheck');
 	hideChrome();
 }
 

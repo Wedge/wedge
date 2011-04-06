@@ -203,7 +203,7 @@ function is_not_guest($message = '')
 	if (WIRELESS)
 	{
 		$context['login_error'] = $message ? $message : $txt['only_members_can_access'];
-		showSubTemplate(WIRELESS_PROTOCOL . '_login');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_login');
 	}
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	elseif (empty($context['template_layers']))
@@ -214,7 +214,7 @@ function is_not_guest($message = '')
 	else
 	{
 		loadTemplate('Login');
-		showSubTemplate('kick_guest');
+		loadSubTemplate('kick_guest');
 		$context['robot_no_index'] = true;
 	}
 
@@ -1093,7 +1093,7 @@ function checkUserBehavior()
 			loadLanguage('Security');
 
 			// Figure out what we're going to tell the user
-			showSubTemplate('fatal_error');
+			loadSubTemplate('fatal_error');
 			$context['no_back_link'] = true;
 			$context['robot_no_index'] = true;
 			$context['page_title'] = $txt['http_error'] . ' ' . $error;

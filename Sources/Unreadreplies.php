@@ -247,11 +247,11 @@ function Unreadreplies()
 	);
 
 	if (WIRELESS)
-		showSubTemplate(WIRELESS_PROTOCOL . '_recent');
+		loadSubTemplate(WIRELESS_PROTOCOL . '_recent');
 	else
 	{
 		loadTemplate('Recent');
-		showSubTemplate('replies');
+		loadSubTemplate('replies');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)

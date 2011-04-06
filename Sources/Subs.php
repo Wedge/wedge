@@ -1134,20 +1134,20 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		// If we're calling from a page that wants to hide the UI, don't show the sidebar
 		if (empty($context['hide_chrome']))
 		{
-			loadSubTemplate('sidebar_above', 'ignore');
+			execSubTemplate('sidebar_above', 'ignore');
 			foreach ((array) $context['sidebar_template'] as $key => $template)
-				loadSubTemplate($template);
-			loadSubTemplate('sidebar_below', 'ignore');
+				execSubTemplate($template);
+			execSubTemplate('sidebar_below', 'ignore');
 		}
 
-		loadSubTemplate('main_above', 'ignore');
+		execSubTemplate('main_above', 'ignore');
 		// If we're calling from a page that wants to hide the UI, don't show the menus/tabs
 		if (empty($context['hide_chrome']))
 			foreach ((array) $context['top_template'] as $template)
-				loadSubTemplate($template);
+				execSubTemplate($template);
 		foreach ((array) $context['sub_template'] as $template)
-			loadSubTemplate($template);
-		loadSubTemplate('main_below', 'ignore');
+			execSubTemplate($template);
+		execSubTemplate('main_below', 'ignore');
 
 		// Just so we don't get caught in an endless loop of errors from the footer...
 		if (!$footer_done)
@@ -1701,7 +1701,7 @@ function template_header()
 	$showed_behav_error = false;
 	foreach ($context['template_layers'] as $layer)
 	{
-		loadSubTemplate($layer . '_above', true);
+		execSubTemplate($layer . '_above', true);
 
 		if ($layer !== 'main' && $layer !== 'body')
 			continue;
@@ -1826,7 +1826,7 @@ function template_footer()
 	}
 
 	foreach (array_reverse($context['template_layers']) as $layer)
-		loadSubTemplate($layer . '_below', true);
+		execSubTemplate($layer . '_below', true);
 }
 
 /**
@@ -2339,6 +2339,13 @@ function setupMenuContext()
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
 
+	// Recalculate the number of unseen media items
+	if (!empty($user_info['aeva_unseen']) && $user_info['aeva_unseen'] == -1)
+	{
+		loadSource('media/Aeva-Subs');
+		loadMediaSettings();
+	}
+
 	$cacheTime = $modSettings['lastActive'] * 60;
 
 	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? ' (<strong>' . $modSettings['app_error_count'] . '</strong>)' : '') : '';
@@ -2514,6 +2521,24 @@ function setupMenuContext()
 						'title' => $txt['calendar_post_event'],
 						'href' => $scripturl . '?action=calendar;sa=post',
 						'show' => allowedTo('calendar_post'),
+						'is_last' => true,
+					),
+				),
+			),
+			'media' => array(
+				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
+				'href' => $scripturl . '?action=media',
+				'show' => !empty($modSettings['enable_gallery']) && allowedTo('aeva_access'),
+				'sub_buttons' => !allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? array() : array(
+					'aeva_home' => array(
+						'title' => $txt['media_home'],
+						'href' => $scripturl . '?action=media',
+						'show' => true,
+					),
+					'aeva_unseen' => array(
+						'title' => $txt['media_unseen'],
+						'href' => $scripturl . '?action=media;sa=unseen',
+						'show' => true,
 						'is_last' => true,
 					),
 				),

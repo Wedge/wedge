@@ -1,0 +1,97 @@
+#mu_items {
+	display: none;
+}
+#mu_items ul {
+	padding: 0;
+	margin: 0;
+}
+#mu_items ul li {
+	display: inline;
+	overflow: auto;
+	float: left;
+	margin-right: 8px;
+	border: 1px solid;
+	padding: 4px;
+	margin-top: 8px;
+}
+#mu_items_error {
+	display: none
+}
+#upload_form .progress {
+	background: white url(../images/aeva/progress.png) no-repeat -250px 0;
+	margin-right: 0.5em;
+}
+#upload_form .progress2 {
+	background: white url(../images/aeva/progress2.png) no-repeat -250px 0;
+	margin-right: 0.5em;
+}
+#upload_form .progress-text {
+	font-size: 0.9em;
+	font-weight: bold;
+}
+#upload_form {
+	padding: 10px 15px;
+}
+#current_list {
+	list-style: none;
+}
+#current_list li {
+	width: 400px;
+	display: inline;
+	border: 1px solid;
+	float: left;
+	padding: 6px;
+	margin: 8px;
+}
+#current_list li.file {
+	background: #D9DDE9;
+}
+#current_list li.file-uploading {
+	background: url(../images/aeva/uploading.png) no-repeat 4px 10px;
+	background-color: #F9F7ED;
+}
+#current_list li.file-success {
+	background: url(../images/aeva/tick.png) no-repeat 12px 17px;
+}
+#current_list li.file-failed {
+	background: url(../images/aeva/failed.png) no-repeat 12px 17px;
+}
+#current_list li.file .file-name {
+	font-size: 1.1em;
+	margin-left: 34px;
+	display: block;
+	clear: left;
+	line-height: 40px;
+	height: 40px;
+	font-weight: bold;
+	overflow: hidden;
+}
+#current_list li.file .file-size {
+	font-size: 0.9em;
+	line-height: 18px;
+	float: right;
+	margin-top: 2px;
+	margin-right: 6px;
+}
+#current_list li.file .file-info {
+	display: block;
+	margin-left: 34px;
+	font-size: 0.9em;
+	line-height: 20px;
+}
+#current_list li.file .file-remove {
+	clear: right;
+	float: right;
+	line-height: 18px;
+	margin-right: 6px;
+}
+#current_list li.file .file-error {
+	color: #FF0000;
+}
+#current_list li.file .file-warning {
+	color: #993366;
+}
+#current_list li.succ_item {
+	text-align: center;
+	border: 0px;
+}

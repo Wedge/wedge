@@ -96,7 +96,7 @@ function ScheduledTasks()
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
-	showSubTemplate('view_scheduled_tasks');
+	loadSubTemplate('view_scheduled_tasks');
 	$context['page_title'] = $txt['maintain_tasks'];
 
 	// Saving changes?
@@ -282,7 +282,7 @@ function ScheduledTasks()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	showSubTemplate('view_scheduled_tasks');
+	loadSubTemplate('view_scheduled_tasks');
 
 	$context['tasks_were_run'] = isset($_GET['done']);
 }
@@ -327,7 +327,7 @@ function EditTask()
 
 	// Just set up some lovely context stuff.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'tasks';
-	showSubTemplate('edit_scheduled_tasks');
+	loadSubTemplate('edit_scheduled_tasks');
 	$context['page_title'] = $txt['scheduled_task_edit'];
 	$context['server_time'] = timeformat(time(), false, 'server');
 
@@ -517,7 +517,7 @@ function TaskLog()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	showSubTemplate('show_list');
+	loadSubTemplate('show_list');
 	$context['default_list'] = 'task_log';
 
 	// Make it all look tify.

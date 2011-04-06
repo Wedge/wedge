@@ -111,7 +111,7 @@ function Search2()
 		loadTemplate('Search');
 	//If we're doing XML we need to use the results template regardless really.
 	else
-		showSubTemplate('results');
+		loadSubTemplate('results');
 
 	// Are you allowed?
 	isAllowedTo('search_posts');
@@ -1519,7 +1519,7 @@ function Search2()
 	foreach ($stable_icons as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
-	showSubTemplate('results');
+	loadSubTemplate('results');
 	$context['page_title'] = $txt['search_results'];
 	$context['get_topics'] = 'prepareSearchContext';
 	$context['can_send_pm'] = allowedTo('pm_send');

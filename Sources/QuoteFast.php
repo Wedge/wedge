@@ -72,7 +72,7 @@ function QuoteFast()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	showSubTemplate('quotefast');
+	loadSubTemplate('quotefast');
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == $user_info['id']) || allowedTo('approve_posts', $row['id_board']);
 
@@ -91,7 +91,7 @@ function QuoteFast()
 		{
 			censorText($row['subject']);
 
-			showSubTemplate('modifyfast');
+			loadSubTemplate('modifyfast');
 			$context['message'] = array(
 				'id' => $_REQUEST['quote'],
 				'body' => $row['body'],
@@ -123,7 +123,7 @@ function QuoteFast()
 	// In case our message has been removed in the meantime.
 	elseif (isset($_REQUEST['modify']))
 	{
-		showSubTemplate('modifyfast');
+		loadSubTemplate('modifyfast');
 		$context['message'] = array(
 			'id' => 0,
 			'body' => '',

@@ -111,6 +111,7 @@ $action_list = array(
 	'login2' => array('Login2.php', 'Login2'),
 	'logout' => array('Logout.php', 'Logout'),
 	'markasread' => array('Subs-Boards.php', 'MarkRead'),
+	'media' => array('media/Aeva-Gallery.php', 'aeva_initGallery'),
 	'mergeposts' => array('SplitTopics.php', 'MergePosts'),
 	'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
 	'mlist' => array('Memberlist.php', 'Memberlist'),
@@ -243,7 +244,7 @@ $function();
 
 // Just quickly sneak the RSS stuff in...
 if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_rss'))
-	showSubTemplate('sidebar_rss', 'sidebar', false);
+	loadSubTemplate('sidebar_rss', 'sidebar', false);
 
 obExit(null, null, true);
 

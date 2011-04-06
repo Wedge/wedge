@@ -54,6 +54,7 @@ function smc_Editor(oOptions)
 
 	// Codes to call a private function
 	this.oSmfExec = {
+		add_media: 'addMedia',
 		unformat: 'removeFormatting',
 		toggle: 'toggleView'
 	};
@@ -882,6 +883,14 @@ smc_Editor.prototype.removeFormatting = function()
 		replaceText(cText, this.oTextHandle);
 	}
 };
+
+// Upload/add a media file (picture, video...)
+smc_Editor.prototype.addMedia = function()
+{
+	reqWin(smf_prepareScriptUrl(smf_scripturl) + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true);
+
+	return true;
+}
 
 // Toggle wysiwyg/normal mode.
 smc_Editor.prototype.toggleView = function(bView)
