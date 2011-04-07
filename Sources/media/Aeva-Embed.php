@@ -287,8 +287,8 @@ function aeva_build_object($input)
 	static $swfobjects = 0;
 
 	// Load the language files, English if no translated version is available
-	if (!isset($txt['aeva']) && loadLanguage('Aeva') == false)
-		loadLanguage('Aeva', 'english');
+	if (!isset($txt['aeva']) && loadLanguage('Media') == false)
+		loadLanguage('Media', 'english');
 
 	if (empty($input[1]) && empty($modSettings['aeva_incontext']))
 		return preg_replace(array('~http://~i', '@#[\w/\.~-]*@'), array('noae://', ''), $input[0], 1);
@@ -736,7 +736,7 @@ function aeva_protect_recursive_autolink($input)
 	}
 
 	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
+	return preg_replace_callback('~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
 		'aeva_protect_recursive_autolink', $input);
 }
 
@@ -757,7 +757,7 @@ function aeva_protect_recursive($input)
 		$input = str_ireplace('http://', 'noae://', $input[1]);
 
 	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
+	return preg_replace_callback('~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
 		'aeva_protect_recursive', $input);
 }
 
@@ -1069,8 +1069,8 @@ function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 		if (!empty($context['user']['is_admin']) && empty($context['aeva_disable']) && !empty($modSettings['autoembed']) && !empty($modSettings['aeva_debug']) && strpos($cache_id, 'sig') === false)
 		{
 			// We need our language strings
-			if (!isset($txt['media_debug_took']) && loadLanguage('Aeva') == false)
-				loadLanguage('Aeva', 'english');
+			if (!isset($txt['media_debug_took']) && loadLanguage('Media') == false)
+				loadLanguage('Media', 'english');
 			// Append the timer to each post
 			$message .= '<br /><div class="smalltext">' . $txt['media_debug_took'] . ' ' . round($aeva_timer + array_sum(explode(' ', microtime())), 4) . $txt['media_debug_seconds'] . '</div>';
 		}

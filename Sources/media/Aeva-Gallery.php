@@ -277,13 +277,7 @@ function aeva_initGallery($gal_url = null)
 		$sa = isset($_GET['sa']) ? $_GET['sa'] : '';
 	}
 
-/*	$menu = array(
-		'area' => $area,
-		'sa' => $sa,
-		'base_url' => $scripturl . '?action=media',
-		'extra_parameters' => '',
-	);
-*/
+	// !!! $area, $sa, base_url
 	$media_areas = array(
 		'home' => array(
 			'title' => $txt['media_home'],
@@ -419,7 +413,7 @@ function aeva_initGallery($gal_url = null)
 			}
 		}
 	}
-//print_r($menu);
+
 	$context['menu_image_path'] = $settings['images_aeva'];
 
 	// Set a few options for the menu.
@@ -467,10 +461,10 @@ function aeva_initGallery($gal_url = null)
 			unset($areas[$area]);
 			continue;
 		}
-//print_r($details);
+
 		// Load the action... Is it this one?
 		$urlvar = isset($details['url_index']) ? (isset($_REQUEST[$details['url_index']]) ? $_REQUEST[$details['url_index']] : '') : (isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '');
-//echo $urlvar,'/',$area,'<br>';
+
 		if (!empty($urlvar) && $urlvar == $area)
 		{
 			// Make sure we don't load anything else
@@ -527,9 +521,6 @@ function aeva_initGallery($gal_url = null)
 	if (empty($data['functions']))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
-//		print_r($areas[$area]);
-//		print_r($data);
-
 	// Call the files and function
 	loadSource($data['files']);
 	foreach ($data['functions'] as $func)
@@ -551,7 +542,7 @@ function aeva_home()
 	{
 		$is_dir = aeva_foolProof();
 		if ($is_dir !== 1)
-			$context['aeva_welcome'] .= '<br /><br /><div style="color: red">' . $txt[$is_dir ? 'aeva_admin_album_dir_failed' : 'aeva_not_a_dir'] . '</div>';;
+			$context['aeva_welcome'] .= '<br /><br /><div style="color: red">' . $txt[$is_dir ? 'media_dir_failed' : 'media_not_a_dir'] . '</div>';;
 	}
 
 	// Load the albums
@@ -1785,7 +1776,7 @@ function aeva_mgPost()
 		elseif (!empty($_FILES['file']['name']) && aeva_allowedTo(array('moderate', 'add_audios', 'add_videos', 'add_images', 'add_docs'), true))
 			$embedding = false;
 		elseif (!$editing)
-			fatal_lang_error(empty($_FILES['file']['name']) ? 'aeva_file_not_specified' : 'aeva_add_not_allowed');
+			fatal_lang_error(empty($_FILES['file']['name']) ? 'media_file_not_specified' : 'media_add_not_allowed');
 
 		$force_thumbnail = !empty($_FILES['thumbnail']['name']);
 

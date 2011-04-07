@@ -861,7 +861,7 @@ tr.highlight2 td
 /* Styles for the profile section.
 ------------------------------------------------- */
 dl
-	overflow: auto
+	overflow: hidden
 	margin: 0
 	padding: 0
 

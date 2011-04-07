@@ -344,8 +344,8 @@ function aeva_show_sitelist_updates()
 {
 	global $sites, $txt, $modSettings;
 
-	if (!isset($txt['aeva']) && loadLanguage('Aeva') == false)
-		loadLanguage('Aeva', 'english');
+	if (!isset($txt['media']) && loadLanguage('Media') == false)
+		loadLanguage('Media', 'english');
 
 	$alu = empty($modSettings['media_list_updates']) ? '' : $modSettings['media_list_updates'];
 	$old_sites = $new_sites = array();

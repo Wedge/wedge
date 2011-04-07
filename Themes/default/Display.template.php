@@ -517,7 +517,7 @@ function template_main()
 	call_hook('mod_buttons', array(&$mod_buttons));
 
 	echo '
-			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'bottom', array('id' => 'moderationbuttons_strip')), '</div>';
+			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'left', array('id' => 'moderationbuttons_strip')), '</div>';
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 		template_quick_reply();

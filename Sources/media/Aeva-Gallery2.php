@@ -1677,7 +1677,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 					array('id' => $id_album)
 				);
 
-				fatal_lang_error($is_dir ? 'aeva_admin_album_dir_failed' : 'aeva_not_a_dir');
+				fatal_lang_error($is_dir ? 'media_dir_failed' : 'media_not_a_dir');
 			}
 
 			// Re-order the albums

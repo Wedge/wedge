@@ -635,8 +635,8 @@ function aeva_foxy_get_board_list($current_board)
 		}
 		wesql::free_result($request);
 
-		if (empty($txt['aeva']))
-			loadLanguage('Aeva');
+		if (empty($txt['media']))
+			loadLanguage('Media');
 
 		$topic_boards[0] = array($txt['media_no_topic_board'], $current_board === 0);
 		foreach ($topic_cats as $c => $category)
@@ -686,8 +686,8 @@ function aeva_foxy_create_topic($id_album, $album_name, $board, $lock = false, $
 
 	loadSource('Subs-Post');
 
-	if (empty($txt['aeva']))
-		loadLanguage('Aeva');
+	if (empty($txt['media']))
+		loadLanguage('Media');
 
 	// Show an album playlist, with all details except its name (because it's already in the subject.)
 	$msgOptions = array(
@@ -742,8 +742,8 @@ function aeva_foxy_notify_items($album, $items)
 
 	loadSource('Subs-Post');
 
-	if (empty($txt['aeva']))
-		loadLanguage('Aeva');
+	if (empty($txt['media']))
+		loadLanguage('Media');
 
 	$msgOptions = array(
 		'subject' => $txt['media_topic'] . ': ' . westr::htmlspecialchars(aeva_utf2entities($name, false)),
@@ -1083,8 +1083,8 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	if ($det == 'all' || $det == 'no_name')
 		$details = $det == 'all' ? array('name', 'description', 'playlists', 'votes') : array('description', 'playlists', 'votes');
 
-	if (empty($txt['aeva']))
-		loadLanguage('Aeva');
+	if (empty($txt['media']))
+		loadLanguage('Media');
 
 	if (!isset($txt['by']))
 	{

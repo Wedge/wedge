@@ -1040,7 +1040,7 @@ a.moderation_link
 
 dl.settings
 	clear: right
-	overflow: auto
+	overflow: hidden
 	margin: 0 0 10px
 	padding: 0
 	dt

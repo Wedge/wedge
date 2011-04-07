@@ -252,7 +252,7 @@ function media_is_not_banned()
 			continue;
 		}
 
-		aeva_loadLanguage('aeva_banned_full');
+		aeva_loadLanguage('media_banned_full');
 
 		// Bye Bye
 		if ($row['val2'] == 1)
@@ -560,7 +560,7 @@ function aeva_getSuitableDir($album_id)
 	// Better crash now than later!
 	$is_dir = aeva_foolProof();
 	if ($is_dir !== 1)
-		fatal_lang_error($is_dir ? 'aeva_admin_album_dir_failed' : 'aeva_not_a_dir');
+		fatal_lang_error($is_dir ? 'media_dir_failed' : 'media_not_a_dir');
 
 	$request = wesql::query('
 		SELECT directory
@@ -1618,22 +1618,39 @@ function aeva_logModAction(&$options, $return_boolean = false)
 
 function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC = false, $value = '')
 {
-	global $context, $modSettings;
+	global $context, $modSettings, $txt;
 
-	loadSource('Subs-Editor');
-
-	$context['post_box_name'] = $post_box_name;
 	$modSettings['enableSpellChecking'] = false;
+	$context['post_box_name'] = $post_box_name;
 
-	$editorOptions = array(
-		'id' => $post_box_name,
-		'form' => $post_box_form,
-		'value' => $value,
-		'width' => '95%',
-		'preview_type' => 1,
-		'disable_smiley_box' => $forceDisableBBC,
+	loadSource('Class-Editor');
+	$context['postbox'] = new wedgeEditor(
+		array(
+			'id' => $post_box_name,
+			'form' => $post_box_form,
+			'value' => $value,
+			'width' => '95%',
+			'disable_smiley_box' => $forceDisableBBC,
+			'buttons' => array(
+				array(
+					'name' => 'post_button',
+					'button_text' => $txt['post'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 's',
+				),
+				array(
+					'name' => 'preview',
+					'button_text' => $txt['preview'],
+					'onclick' => 'return submitThisOnce(this);',
+					'accesskey' => 'p',
+				),
+			),
+			'drafts' => (!allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts'])) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
+			// Now, since we're custom styling these, we need our own divs. For shame!
+			'custom_bbc_div' => 'bbcBox_message',
+			'custom_smiley_div' => 'smileyBox_message',
+		)
 	);
-	create_control_richedit($editorOptions);
 }
 
 // Determines who's online action type
@@ -1645,7 +1662,7 @@ function aeva_getOnlineType($actions)
 	if (!is_array($actions) || !isset($actions['action']) || $actions['action'] != 'media')
 		return false;
 
-	aeva_loadLanguage('aeva_wo_home');
+	aeva_loadLanguage('media_wo_home');
 
 	// Admin area?
 	if (isset($actions['area']))
@@ -1744,7 +1761,7 @@ function aeva_getFetchData($type, $data)
 	if (!isset($amSettings))
 		loadMediaSettings();
 
-	aeva_loadLanguage('aeva_wo_home');
+	aeva_loadLanguage('media_wo_home');
 
 	if (!is_array($data))
 		return false;
@@ -2418,7 +2435,7 @@ function aeva_timeformat($log_time)
 {
 	global $user_info, $txt, $modSettings;
 
-	aeva_loadLanguage('aeva_short_date_format');
+	aeva_loadLanguage('media_short_date_format');
 	$str = $txt['media_short_date_format'];
 
 	$time = $log_time + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
@@ -2530,12 +2547,12 @@ function aeva_showThumbnail($data)
 	}
 	if ($counter++ >= (isset($amSettings['max_thumbs_per_page']) ? $amSettings['max_thumbs_per_page'] : 100))
 	{
-		aeva_loadLanguage('aeva_max_thumbs_reached');
+		aeva_loadLanguage('media_max_thumbs_reached');
 		return $txt['media_max_thumbs_reached'];
 	}
 	if (!allowedTo('media_access'))
 	{
-		aeva_loadLanguage('aeva_accessDenied');
+		aeva_loadLanguage('media_accessDenied');
 		return '(' . $txt['media_accessDenied'] . ')<br />';
 	}
 
@@ -3553,7 +3570,7 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_lightbo
 	if (isset($context['mg_headers_sent']))
 		return;
 
-	aeva_loadLanguage('aeva_move');
+	aeva_loadLanguage('media_move');
 
 	$use_lightbox &= !empty($amSettings['use_lightbox']);
 	$lightbox = (empty($_GET['action']) || $_GET['action'] != 'media' ? '

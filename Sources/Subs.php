@@ -612,6 +612,49 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 }
 
 /**
+ * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
+ *
+ * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
+ *
+ * @param string $string A string of potential output.
+ * @return string The sanitized string.
+ */
+function cleanXml($string)
+{
+	global $context;
+
+	// http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
+	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{D800}-\x{DFFF}\x{FFFE}\x{FFFF}]~u', '', $string);
+}
+
+/**
+ * Sanitize strings that might be passed through to Javascript.
+ *
+ * Multiple instances of scripts will need to be adjusted through the codebase if passed to Javascript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
+ *
+ * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
+ *
+ * @param string $string A string whose contents to be quoted.
+ * @return string A transformed string with contents suitably single quoted for use in Javascript.
+ */
+function JavaScriptEscape($string)
+{
+	global $scripturl;
+
+	return '\'' . strtr($string, array(
+		"\r" => '',
+		"\n" => '\\n',
+		"\t" => '\\t',
+		'\\' => '\\\\',
+		'\'' => '\\\'',
+		'</' => '<\' + \'/',
+		'script' => 'scri\'+\'pt',
+		'<a href' => '<a hr\'+\'ef',
+		$scripturl => $scripturl . '\'+\'',
+	)) . '\'';
+}
+
+/**
  * Format a number in a localized fashion.
  *
  * Each of the language packs should declare $txt['number_format'] in the index language file, which is simply a string that consists of the number 1234.00 localized to that region. This function detects the thousands and decimal separators, and uses those in its place. It also detects the number of digits in the decimal position, and rounds to that many digits. Note that the style is cached locally (statically) for the life of the page.
@@ -1186,6 +1229,308 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 }
 
 /**
+ * Rewrites URLs in the page to include the session ID if the user is using a normal browser and is not accepting cookies.
+ *
+ * - If $scripturl is empty, or no session id (e.g. SSI), exit.
+ * - If ?debug has been specified previously, re-inject it back into the page's canonical reference.
+ * - We also do our Pretty URLs voodoo here...
+ *
+ * @param string $buffer The contents of the output buffer thus far. Managed by PHP during the relevant ob_*() calls.
+ * @return string The modified buffer.
+ */
+function ob_sessrewrite($buffer)
+{
+	global $scripturl, $modSettings, $user_info, $context, $db_prefix, $session_var;
+	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache;
+
+	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
+	if ($scripturl == '' || !defined('SID'))
+		return $buffer;
+
+	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
+	if (empty($_COOKIE) && SID != '' && empty($context['browser']['possibly_robot']))
+		$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
+	// Debugging templates, are we?
+	elseif (isset($_GET['debug']))
+		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
+
+	call_hook('dynamic_rewrite', array(&$buffer));
+
+	if (!allowedTo('profile_view_any'))
+		$buffer = preg_replace(
+			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'$1', $buffer
+		);
+
+	// Rewrite the buffer with pretty URLs!
+	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
+	{
+		// !!!	$insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
+		$insideurl = preg_quote($scripturl, '~');
+		$use_cache = !empty($modSettings['pretty_enable_cache']);
+		$session_var = $context['session_var'];
+
+		// Remove the script tags
+		$context['pretty']['scriptID'] = 0;
+		$context['pretty']['scripts'] = array();
+		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
+
+		// Find all URLs in the buffer
+		$context['pretty']['search_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=[^"\'#]+)~';
+		$urls_query = array();
+		$uncached_urls = array();
+
+		// Making sure we don't execute patterns twice.
+		$context['pretty']['search_patterns'] = array_flip(array_flip($context['pretty']['search_patterns']));
+		foreach ($context['pretty']['search_patterns'] as $pattern)
+		{
+			preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
+			foreach ($matches[2] as $match)
+			{
+				// Rip out everything that shouldn't be cached
+				// !!! base64_encode sometimes finishes strings with '=' gaps IIRC. Should check whether they're not going to be ripped by this.
+				// !!! Also, '~=?;+~' (in various places) should probably be rewritten as '~=;+|;{2,}~'
+				if ($use_cache)
+					$match = preg_replace(array('~^["\']|PHPSESSID=[^&;]+|' . $session_var . '=[^;]+~', '~"~', '~=?;+~', '~\?;|\?&amp;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+				else
+					// !!! This can easily be optimized into a simple str_replace by adding placeholders for ^ and $.
+					$match = preg_replace(array('~^["\']~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+				$url_id = $match;
+				$urls_query[] = $url_id;
+				$uncached_urls[$match] = array(
+					'url' => $match,
+				);
+			}
+		}
+
+		// Proceed only if there are actually URLs in the page
+		if (count($urls_query) != 0)
+		{
+			// Eliminate duplicate URLs.
+			$urls_query = array_keys(array_flip($urls_query));
+
+			// Retrieve cached URLs
+			$cached_urls = array();
+
+			if ($use_cache)
+			{
+				$query = wesql::query('
+					SELECT url_id, replacement
+					FROM {db_prefix}pretty_urls_cache
+					WHERE url_id IN ({array_string:urls})
+						AND log_time > ' . (int) (time() - 86400),
+					array(
+						'urls' => $urls_query
+					)
+				);
+				while ($row = wesql::fetch_assoc($query))
+				{
+					$cached_urls[$row['url_id']] = $row['replacement'];
+					unset($uncached_urls[$row['url_id']]);
+				}
+				wesql::free_result($query);
+			}
+
+			// If there are any uncached URLs, process them
+			if (count($uncached_urls) != 0)
+			{
+				// Run each filter callback function on each URL
+				if (!function_exists('pretty_urls_topic_filter'))
+					loadSource('PrettyUrls-Filters');
+				$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
+				foreach ($filter_callbacks as $callback)
+					$uncached_urls = call_user_func($callback, $uncached_urls);
+
+				// Fill the cached URLs array
+				$cache_data = array();
+				foreach ($uncached_urls as $url_id => $url)
+				{
+					if (!isset($url['replacement']))
+						$url['replacement'] = $url['url'];
+					$url['replacement'] = str_replace(chr(18), "'", $url['replacement']);
+					$url['replacement'] = preg_replace(array('~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('%22', ';', '?', ''), $url['replacement']);
+					$cached_urls[$url_id] = $url['replacement'];
+					if ($use_cache && strlen($url_id) < 256)
+						$cache_data[] = '(\'' . $url_id . '\', \'' . addslashes($url['replacement']) . '\')';
+				}
+
+				// Cache these URLs in the database (use mysql_query to avoid some issues.)
+				if (count($cache_data) > 0)
+					mysql_query("REPLACE INTO {$db_prefix}pretty_urls_cache (url_id, replacement) VALUES " . implode(', ', $cache_data));
+			}
+
+			// Put the URLs back into the buffer
+			$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)[\"\']'.$insideurl.'([^\"\'#]*?[?;&](board|topic|action)=([^\"]+\"|[^\']+\'))~';
+			foreach ($context['pretty']['replace_patterns'] as $pattern)
+				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
+		}
+
+		// Restore the script tags
+		if ($context['pretty']['scriptID'] > 0)
+			$buffer = preg_replace_callback('~' . chr(20) . '([0-9]+)' . chr(20) . '~', 'pretty_scripts_restore', $buffer);
+	}
+
+	// Moving all inline events (<code onclick="event();">) to the footer, to make
+	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
+	$context['delayed_events'] = array();
+	$cut = explode("<!-- Javascript area -->\n", $buffer);
+
+	// If the placeholder isn't there, it means we're probably not in a default index template,
+	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
+	if (!empty($cut[1]))
+		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
+
+	if (!empty($context['delayed_events']))
+	{
+		$thing = 'var eves = {';
+		foreach ($context['delayed_events'] as $eve)
+			$thing .= '
+		' . $eve[0] . ': ["' . $eve[1] . '", function() { ' . $eve[2] . ' }],';
+		$thing = substr($thing, 0, -1) . '
+	};
+	$("*[data-eve]").each(function() {
+		var elis = $(this).data("eve");
+		for (var eve in elis)
+			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
+	});';
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+	}
+	else
+		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
+
+	// Don't waste time replacing blocks if there's none in the first place.
+	if (strpos($buffer, '<we:') !== false)
+	{
+		while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]|<(?!/?we:))*)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as &$heres)
+			{
+				$block = isset($context['blocks'][$heres[1]]) ? $context['blocks'][$heres[1]] : array('body' => '');
+				$body = str_replace('{body}', $heres[3], $block['body']);
+				if (!empty($heres[2])) // Has it got variables? (The names are case-sensitive, this time.)
+				{
+					preg_match_all('~([a-z][^="]*)="([^"]*)"~', $heres[2], $params);
+					if (!empty($params))
+					{
+						array_shift($params);
+						foreach ($params[0] as $id => $param)
+						{
+							// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
+							while ($block['has_if'] && preg_match_all('~<if:([^>]+)>(.*?)</if:\\1>~is', $body, $ifs, PREG_SET_ORDER))
+								foreach ($ifs as $ifi)
+									$body = str_replace($ifi[0], in_array($ifi[1], $params[0]) ? $ifi[2] : '', $body);
+
+							$body = str_replace('{' . $param . '}', $params[1][$id], $body);
+						}
+					}
+				}
+				$buffer = str_replace($heres[0], $body, $buffer);
+			}
+		}
+	}
+
+	if (!empty($context['debugging_info']))
+		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
+
+	// Update the load times
+	$pattern = '~' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '~';
+	if ($user_info['is_admin'] && preg_match($pattern, $buffer, $matches))
+	{
+		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+		$timeDiff = round($newTime - (float) $matches[1], 3);
+		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
+
+		// !!! Hardcoded stuff. Bad! Should we remove this entirely..?
+		$newLoadTime = $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<abbr title="Dynamic Replacements">DR</abbr>: ' . $timeDiff . $txt['seconds_with'] . $queriesDiff . $txt['queries'] . ')';
+		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
+ 	}
+
+	// Return the changed buffer.
+	return $buffer;
+}
+
+// Move inline events to the end
+function wedge_event_delayer($match)
+{
+	global $context;
+	static $eve = 1, $dupes = array();
+
+	$eve_list = array();
+	preg_match_all('~\son(\w+)="([^"]+)"~', $match[0], $insides, PREG_SET_ORDER);
+	foreach ($insides as $inside)
+	{
+		$match[0] = str_replace($inside[0], '', $match[0]);
+		$dupe = serialize($inside);
+		if (!isset($dupes[$dupe]))
+		{
+			// Build the inline event array. Because inline events are more of a hassle to work with, we replace &quot; with
+			// double quotes, because that's how " is shown in an inline event to avoid conflicting with the surrounding quotes.
+			// !!! @todo: maybe &amp; should be turned into &, too.
+			$context['delayed_events'][$eve] = array($eve, $inside[1], str_replace(array('&quot;', '\\\\n'), array('"', '\\n'), $inside[2]));
+			$dupes[$dupe] = $eve;
+			$eve_list[] = $eve++;
+		}
+		else
+			$eve_list[] = $dupes[$dupe];
+	}
+	return rtrim($match[0], ' />') . ' data-eve="[' . implode(',', $eve_list) . ']">';
+}
+
+// Remove and save script tags
+function pretty_scripts_remove($match)
+{
+	global $context;
+
+	$context['pretty']['scriptID']++;
+	$context['pretty']['scripts'][$context['pretty']['scriptID']] = $match[0];
+	return chr(20) . $context['pretty']['scriptID'] . chr(20);
+}
+
+// A callback function to replace the buffer's URLs with their cached URLs
+function pretty_buffer_callback($matches)
+{
+	global $cached_urls, $scripturl, $use_cache, $session_var;
+
+	// Is this URL part of a feed?
+	$isFeed = strpos($matches[1], '>') === false ? '"' : '';
+
+	// Remove those annoying quotes
+	$matches[2] = preg_replace('~^[\"\']|[\"\']$~', '', $matches[2]);
+
+	// Store the parts of the URL that won't be cached so they can be inserted later
+	if ($use_cache)
+	{
+		preg_match('~PHPSESSID=[^;#&]+~', $matches[2], $PHPSESSID);
+		preg_match('~' . $session_var . '=[^;#]+~', $matches[2], $sesc);
+		preg_match('~#.*~', $matches[2], $fragment);
+		$url_id = preg_replace(array('~PHPSESSID=[^;#]+|' . $session_var . '=[^;#]+|#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+	}
+	else
+	{
+		preg_match('~#.*~', $matches[2], $fragment);
+		// Rip out everything that won't have been cached
+		$url_id = preg_replace(array('~#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+	}
+
+	// Stitch everything back together, clean it up and return
+	$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
+	$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . (isset($PHPSESSID[0]) ? $PHPSESSID[0] : '') . ';' . (isset($sesc[0]) ? $sesc[0] : '') . (isset($fragment[0]) ? $fragment[0] : '');
+	$replacement = preg_replace(array('~=?;+~', '~\?;~', '~[?;=]+#|&amp;#~', '~[?;=#]+$|&amp;$~'), array(';', '?', '#', ''), $replacement);
+
+	if (empty($replacement) || $replacement[0] == '?')
+		$replacement = $scripturl . $replacement;
+	return $matches[1] . $isFeed . $replacement . $isFeed;
+}
+
+// Put the script tags back
+function pretty_scripts_restore($match)
+{
+	global $context;
+
+	return $context['pretty']['scripts'][(int) $match[1]];
+}
+
+/**
  * A quick alias to tell Wedge not to show the top and sidebar sub-templates.
  *
  * @param array $layers An array with the layers we actually want to show. Usually empty.
@@ -1196,6 +1541,324 @@ function hideChrome($layers = null)
 
 	$context['template_layers'] = $layers === null ? array() : $layers;
 	$context['hide_chrome'] = true;
+}
+
+/**
+ * Ensures content above the main page content is loaded, including HTTP page headers.
+ *
+ * Several things happen here.
+ * - {@link setupThemeContext()} is called to get some key values.
+ * - Issue HTTP headers that cause browser-side caching to be turned off (old expires and last modified). This is turned off for attachments errors, though.
+ * - Issue MIME type header
+ * - Step through the template layers from outermost, and ensure those happen.
+ * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
+ * - If the user is post-banned, provide a nice warning for them.
+ * - If the settings dictate it so, update the theme settings to use the default images and path.
+ */
+function template_header()
+{
+	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
+
+	if (!isset($_REQUEST['xml']))
+		setupThemeContext();
+
+	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
+	if (empty($context['no_last_modified']))
+	{
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+
+		if (!isset($_REQUEST['xml']) && !WIRELESS)
+			header('Content-Type: text/html; charset=UTF-8');
+	}
+
+	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
+
+	$checked_securityFiles = false;
+	$showed_banned = false;
+	$showed_behav_error = false;
+	foreach ($context['template_layers'] as $layer)
+	{
+		execSubTemplate($layer . '_above', true);
+
+		if ($layer !== 'main' && $layer !== 'body')
+			continue;
+
+		// May seem contrived, but this is done in case the body and main layer aren't there...
+		// Was there a security error for the admin?
+		if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
+		{
+			$showed_behav_error = true;
+			loadLanguage('Security');
+
+			echo '
+			<div class="errorbox">
+				<p class="alert">!!</p>
+				<h3>', $txt['behavior_admin'], '</h3>
+				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
+			</div>';
+		}
+		elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+		{
+			$checked_securityFiles = true;
+			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+			foreach ($securityFiles as $i => $securityFile)
+			{
+				if (!file_exists($boarddir . '/' . $securityFile))
+					unset($securityFiles[$i]);
+			}
+
+			if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
+			{
+				echo '
+		<div class="errorbox">
+			<p class="alert">!!</p>
+			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
+			<p>';
+
+				foreach ($securityFiles as $securityFile)
+				{
+					echo '
+				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
+
+					if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
+						echo '
+				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
+				}
+
+				if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
+					echo '
+				<strong>', $txt['cache_writable'], '</strong><br>';
+
+				echo '
+			</p>
+		</div>';
+			}
+		}
+		// If the user is banned from posting inform them of it.
+		elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+		{
+			$showed_banned = true;
+			echo '
+				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
+					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
+
+			if (!empty($_SESSION['ban']['cannot_post']['reason']))
+				echo '
+					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
+
+			if (!empty($_SESSION['ban']['expire_time']))
+				echo '
+					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
+			else
+				echo '
+					<div>', $txt['your_ban_expires_never'], '</div>';
+
+			echo '
+				</div>';
+		}
+	}
+
+	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
+	{
+		$settings['theme_url'] = $settings['default_theme_url'];
+		$settings['images_url'] = $settings['default_images_url'];
+		$settings['theme_dir'] = $settings['default_theme_dir'];
+	}
+}
+
+/**
+ * Shows the copyright notice.
+ */
+function theme_copyright()
+{
+	global $forum_copyright, $forum_version;
+
+	// For SSI and other things, skip the version number.
+	echo sprintf($forum_copyright, empty($forum_version) ? 'Wedge' : $forum_version);
+}
+
+/**
+ * Ensure the content below the main content is loaded, i.e. the footer and including the copyright (and displaying a large warning if copyright has been hidden)
+ *
+ * Several things occur here.
+ * - Load time and query count are moved into $context.
+ * - Theme dirs and paths are re-established from the master values (as opposed to being modified through any other page)
+ * - Template layers after the main content are executed in reverse order of the layers (deepest layer first)
+ * - If not in SSI or wireless, and there were template layers, check the theme did display the copyright, and if not, displaying a big message and log this in the error log.
+ */
+function template_footer()
+{
+	global $context, $settings, $modSettings, $time_start, $db_count;
+
+	// Show the load time? (only makes sense for the footer.)
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$context['load_time'] = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+	$context['load_queries'] = $db_count;
+
+	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
+	{
+		$settings['theme_url'] = $settings['actual_theme_url'];
+		$settings['images_url'] = $settings['actual_images_url'];
+		$settings['theme_dir'] = $settings['actual_theme_dir'];
+	}
+
+	foreach (array_reverse($context['template_layers']) as $layer)
+		execSubTemplate($layer . '_below', true);
+}
+
+/**
+ * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in wireless or the query viewer page.
+ *
+ * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
+ * - Check if the current user is on the list of people who can see the debug (and query debug) information, and clear information if not appropriate.
+ * - Clean up a list of things that might not have been initialized this page, especially if heavily caching.
+ * - Get the list of included files, and strip out the long paths to the board dir, replacing with a . for "current directory"; also collate the size of included files.
+ * - Examine the DB query cache, and see if any warnings have been issued from queries.
+ * - Grab the page content, and remove the trailing ending of body and html tags, so the footer information can replace them (and still leave legal HTML)
+ * - Output the list of included templates, subtemplates, language files, properly included (through loadTemplate) stylesheets, and master list of files.
+ * - If caching is enabled, also include the list of cache items included, how much data was loaded and how long was spent on caching retrieval.
+ * - Additionally, if we already have a list of queries in session (i.e. the query list is expanded), display that too, stripping out ones that we can't send for EXPLAIN.
+ * - Finally, clear cached language files.
+ */
+function db_debug_junk()
+{
+	global $context, $scripturl, $boarddir, $modSettings, $txt;
+	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
+
+	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
+	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'helpadmin')) && !WIRELESS);
+	// Check groups
+	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
+		$show_debug &= $context['user']['is_admin'];
+	elseif ($modSettings['db_show_debug_who'] == 'mod')
+		$show_debug &= allowedTo('moderate_forum');
+	elseif ($modSettings['db_show_debug_who'] == 'regular')
+		$show_debug &= $context['user']['is_logged'];
+	else
+		$show_debug &= ($modSettings['db_show_debug_who'] == 'any');
+
+	// Now, who can see the query log? Need to have the ability to see any of this anyway.
+	$show_debug_query = $show_debug;
+	if (empty($modSettings['db_show_debug_who_log']) || $modSettings['db_show_debug_who_log'] == 'admin')
+		$show_debug_query &= $context['user']['is_admin'];
+	elseif ($modSettings['db_show_debug_who_log'] == 'mod')
+		$show_debug_query &= allowedTo('moderate_forum');
+	elseif ($modSettings['db_show_debug_who_log'] == 'regular')
+		$show_debug_query &= $context['user']['is_logged'];
+	else
+		$show_debug_query &= ($modSettings['db_show_debug_who_log'] == 'any');
+
+	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
+	if (!$show_debug_query)
+	{
+		unset($_SESSION['debug'], $db_cache);
+		$_SESSION['view_queries'] = 0;
+	}
+	if (!$show_debug)
+		return;
+
+	if (empty($_SESSION['view_queries']))
+		$_SESSION['view_queries'] = 0;
+	if (empty($context['debug']['language_files']))
+		$context['debug']['language_files'] = array();
+	if (empty($context['debug']['sheets']))
+		$context['debug']['sheets'] = array();
+
+	$files = get_included_files();
+	$total_size = 0;
+	for ($i = 0, $n = count($files); $i < $n; $i++)
+	{
+		if (file_exists($files[$i]))
+			$total_size += filesize($files[$i]);
+		$files[$i] = strtr($files[$i], array($boarddir => '.'));
+	}
+
+	$warnings = 0;
+	if (!empty($db_cache))
+	{
+		foreach ($db_cache as $q => $qq)
+			if (!empty($qq['w']))
+				$warnings += count($qq['w']);
+
+		$_SESSION['debug'] = &$db_cache;
+	}
+
+	$temp = '
+<div class="smalltext" style="text-align: left; margin: 1ex">
+	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br>
+	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br>
+	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
+	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
+	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_include_info" style="display: none"><em>' . implode(', ', $files) . '</em></span>)<br>';
+
+	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
+	{
+		$entries = array();
+		$total_t = 0;
+		$total_s = 0;
+		foreach ($cache_hits as $cache_hit)
+		{
+			$entries[] = $cache_hit['d'] . ' ' . $cache_hit['k'] . ': ' . sprintf($txt['debug_cache_seconds_bytes'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
+			$total_t += $cache_hit['t'];
+			$total_s += $cache_hit['s'];
+		}
+
+		$temp .= '
+	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="javascript:void(0)" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_cache_info" style="display: none"><em>' . implode(', ', $entries) . '</em></span>)<br>';
+	}
+
+	if ($show_debug_query)
+		$temp .= '
+	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br>
+	<br>';
+	else
+		$temp .= '
+	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br>
+	<br>';
+
+	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
+		foreach ($db_cache as $q => $qq)
+		{
+			$is_select = substr(trim($qq['q']), 0, 6) == 'SELECT' || preg_match('~^INSERT(?: IGNORE)? INTO \w+(?:\s+\([^)]+\))?\s+SELECT .+$~s', trim($qq['q'])) != 0;
+			// Temporary tables created in earlier queries are not explainable.
+			if ($is_select)
+			{
+				foreach (array('log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages') as $tmp)
+					if (strpos(trim($qq['q']), $tmp) !== false)
+					{
+						$is_select = false;
+						break;
+					}
+			}
+			// But actual creation of the temporary tables are.
+			elseif (preg_match('~^CREATE TEMPORARY TABLE .+?SELECT .+$~s', trim($qq['q'])) != 0)
+				$is_select = true;
+
+			// Make the filenames look a bit better.
+			if (isset($qq['f']))
+				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
+
+			$temp .= '
+	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	&nbsp;&nbsp;&nbsp;';
+			if (!empty($qq['f']) && !empty($qq['l']))
+				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
+
+			if (isset($qq['s'], $qq['t'], $txt['debug_query_which_took_at']))
+				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br>';
+			elseif (isset($qq['t']))
+				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br>';
+			$temp .= '
+	<br>';
+		}
+
+	if ($show_debug_query)
+		$temp .= '
+	<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+
+	$context['debugging_info'] = $temp . '
+</div>';
 }
 
 /**
@@ -1663,324 +2326,6 @@ function setupThemeContext($forceload = false)
 	// Set some specific vars.
 	$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']));
 	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? westr::htmlspecialchars($modSettings['meta_keywords']) : '';
-}
-
-/**
- * Ensures content above the main page content is loaded, including HTTP page headers.
- *
- * Several things happen here.
- * - {@link setupThemeContext()} is called to get some key values.
- * - Issue HTTP headers that cause browser-side caching to be turned off (old expires and last modified). This is turned off for attachments errors, though.
- * - Issue MIME type header
- * - Step through the template layers from outermost, and ensure those happen.
- * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
- * - If the user is post-banned, provide a nice warning for them.
- * - If the settings dictate it so, update the theme settings to use the default images and path.
- */
-function template_header()
-{
-	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
-
-	if (!isset($_REQUEST['xml']))
-		setupThemeContext();
-
-	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
-	if (empty($context['no_last_modified']))
-	{
-		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-
-		if (!isset($_REQUEST['xml']) && !WIRELESS)
-			header('Content-Type: text/html; charset=UTF-8');
-	}
-
-	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
-
-	$checked_securityFiles = false;
-	$showed_banned = false;
-	$showed_behav_error = false;
-	foreach ($context['template_layers'] as $layer)
-	{
-		execSubTemplate($layer . '_above', true);
-
-		if ($layer !== 'main' && $layer !== 'body')
-			continue;
-
-		// May seem contrived, but this is done in case the body and main layer aren't there...
-		// Was there a security error for the admin?
-		if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
-		{
-			$showed_behav_error = true;
-			loadLanguage('Security');
-
-			echo '
-			<div class="errorbox">
-				<p class="alert">!!</p>
-				<h3>', $txt['behavior_admin'], '</h3>
-				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
-			</div>';
-		}
-		elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
-		{
-			$checked_securityFiles = true;
-			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
-			foreach ($securityFiles as $i => $securityFile)
-			{
-				if (!file_exists($boarddir . '/' . $securityFile))
-					unset($securityFiles[$i]);
-			}
-
-			if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
-			{
-				echo '
-		<div class="errorbox">
-			<p class="alert">!!</p>
-			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
-			<p>';
-
-				foreach ($securityFiles as $securityFile)
-				{
-					echo '
-				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
-
-					if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
-						echo '
-				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
-				}
-
-				if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
-					echo '
-				<strong>', $txt['cache_writable'], '</strong><br>';
-
-				echo '
-			</p>
-		</div>';
-			}
-		}
-		// If the user is banned from posting inform them of it.
-		elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
-		{
-			$showed_banned = true;
-			echo '
-				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
-					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
-
-			if (!empty($_SESSION['ban']['cannot_post']['reason']))
-				echo '
-					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
-
-			if (!empty($_SESSION['ban']['expire_time']))
-				echo '
-					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
-			else
-				echo '
-					<div>', $txt['your_ban_expires_never'], '</div>';
-
-			echo '
-				</div>';
-		}
-	}
-
-	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
-	{
-		$settings['theme_url'] = $settings['default_theme_url'];
-		$settings['images_url'] = $settings['default_images_url'];
-		$settings['theme_dir'] = $settings['default_theme_dir'];
-	}
-}
-
-/**
- * Shows the copyright notice.
- */
-function theme_copyright()
-{
-	global $forum_copyright, $forum_version;
-
-	// For SSI and other things, skip the version number.
-	echo sprintf($forum_copyright, empty($forum_version) ? 'Wedge' : $forum_version);
-}
-
-/**
- * Ensure the content below the main content is loaded, i.e. the footer and including the copyright (and displaying a large warning if copyright has been hidden)
- *
- * Several things occur here.
- * - Load time and query count are moved into $context.
- * - Theme dirs and paths are re-established from the master values (as opposed to being modified through any other page)
- * - Template layers after the main content are executed in reverse order of the layers (deepest layer first)
- * - If not in SSI or wireless, and there were template layers, check the theme did display the copyright, and if not, displaying a big message and log this in the error log.
- */
-function template_footer()
-{
-	global $context, $settings, $modSettings, $time_start, $db_count;
-
-	// Show the load time? (only makes sense for the footer.)
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
-	$context['load_queries'] = $db_count;
-
-	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
-	{
-		$settings['theme_url'] = $settings['actual_theme_url'];
-		$settings['images_url'] = $settings['actual_images_url'];
-		$settings['theme_dir'] = $settings['actual_theme_dir'];
-	}
-
-	foreach (array_reverse($context['template_layers']) as $layer)
-		execSubTemplate($layer . '_below', true);
-}
-
-/**
- * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in wireless or the query viewer page.
- *
- * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
- * - Check if the current user is on the list of people who can see the debug (and query debug) information, and clear information if not appropriate.
- * - Clean up a list of things that might not have been initialized this page, especially if heavily caching.
- * - Get the list of included files, and strip out the long paths to the board dir, replacing with a . for "current directory"; also collate the size of included files.
- * - Examine the DB query cache, and see if any warnings have been issued from queries.
- * - Grab the page content, and remove the trailing ending of body and html tags, so the footer information can replace them (and still leave legal HTML)
- * - Output the list of included templates, subtemplates, language files, properly included (through loadTemplate) stylesheets, and master list of files.
- * - If caching is enabled, also include the list of cache items included, how much data was loaded and how long was spent on caching retrieval.
- * - Additionally, if we already have a list of queries in session (i.e. the query list is expanded), display that too, stripping out ones that we can't send for EXPLAIN.
- * - Finally, clear cached language files.
- */
-function db_debug_junk()
-{
-	global $context, $scripturl, $boarddir, $modSettings, $txt;
-	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
-
-	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
-	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'helpadmin')) && !WIRELESS);
-	// Check groups
-	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
-		$show_debug &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who'] == 'mod')
-		$show_debug &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who'] == 'regular')
-		$show_debug &= $context['user']['is_logged'];
-	else
-		$show_debug &= ($modSettings['db_show_debug_who'] == 'any');
-
-	// Now, who can see the query log? Need to have the ability to see any of this anyway.
-	$show_debug_query = $show_debug;
-	if (empty($modSettings['db_show_debug_who_log']) || $modSettings['db_show_debug_who_log'] == 'admin')
-		$show_debug_query &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who_log'] == 'mod')
-		$show_debug_query &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who_log'] == 'regular')
-		$show_debug_query &= $context['user']['is_logged'];
-	else
-		$show_debug_query &= ($modSettings['db_show_debug_who_log'] == 'any');
-
-	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
-	if (!$show_debug_query)
-	{
-		unset($_SESSION['debug'], $db_cache);
-		$_SESSION['view_queries'] = 0;
-	}
-	if (!$show_debug)
-		return;
-
-	if (empty($_SESSION['view_queries']))
-		$_SESSION['view_queries'] = 0;
-	if (empty($context['debug']['language_files']))
-		$context['debug']['language_files'] = array();
-	if (empty($context['debug']['sheets']))
-		$context['debug']['sheets'] = array();
-
-	$files = get_included_files();
-	$total_size = 0;
-	for ($i = 0, $n = count($files); $i < $n; $i++)
-	{
-		if (file_exists($files[$i]))
-			$total_size += filesize($files[$i]);
-		$files[$i] = strtr($files[$i], array($boarddir => '.'));
-	}
-
-	$warnings = 0;
-	if (!empty($db_cache))
-	{
-		foreach ($db_cache as $q => $qq)
-			if (!empty($qq['w']))
-				$warnings += count($qq['w']);
-
-		$_SESSION['debug'] = &$db_cache;
-	}
-
-	$temp = '
-<div class="smalltext" style="text-align: left; margin: 1ex">
-	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br>
-	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br>
-	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
-	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
-	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_include_info" style="display: none"><em>' . implode(', ', $files) . '</em></span>)<br>';
-
-	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
-	{
-		$entries = array();
-		$total_t = 0;
-		$total_s = 0;
-		foreach ($cache_hits as $cache_hit)
-		{
-			$entries[] = $cache_hit['d'] . ' ' . $cache_hit['k'] . ': ' . sprintf($txt['debug_cache_seconds_bytes'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
-			$total_t += $cache_hit['t'];
-			$total_s += $cache_hit['s'];
-		}
-
-		$temp .= '
-	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="javascript:void(0)" onclick="$(\'#debug_cache_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_cache_info" style="display: none"><em>' . implode(', ', $entries) . '</em></span>)<br>';
-	}
-
-	if ($show_debug_query)
-		$temp .= '
-	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br>
-	<br>';
-	else
-		$temp .= '
-	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br>
-	<br>';
-
-	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
-		foreach ($db_cache as $q => $qq)
-		{
-			$is_select = substr(trim($qq['q']), 0, 6) == 'SELECT' || preg_match('~^INSERT(?: IGNORE)? INTO \w+(?:\s+\([^)]+\))?\s+SELECT .+$~s', trim($qq['q'])) != 0;
-			// Temporary tables created in earlier queries are not explainable.
-			if ($is_select)
-			{
-				foreach (array('log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages') as $tmp)
-					if (strpos(trim($qq['q']), $tmp) !== false)
-					{
-						$is_select = false;
-						break;
-					}
-			}
-			// But actual creation of the temporary tables are.
-			elseif (preg_match('~^CREATE TEMPORARY TABLE .+?SELECT .+$~s', trim($qq['q'])) != 0)
-				$is_select = true;
-
-			// Make the filenames look a bit better.
-			if (isset($qq['f']))
-				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
-
-			$temp .= '
-	<strong>' . ($is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none">' : '') . westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars(ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
-	&nbsp;&nbsp;&nbsp;';
-			if (!empty($qq['f']) && !empty($qq['l']))
-				$temp .= sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
-
-			if (isset($qq['s'], $qq['t'], $txt['debug_query_which_took_at']))
-				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br>';
-			elseif (isset($qq['t']))
-				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br>';
-			$temp .= '
-	<br>';
-		}
-
-	if ($show_debug_query)
-		$temp .= '
-	<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
-
-	$context['debugging_info'] = $temp . '
-</div>';
 }
 
 /**

@@ -100,9 +100,9 @@ function template_aeva_subtabs()
 			$buttons[] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
-				'custom' => $tab['active'] ? ' class="currentbutton"' : '',
+				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
 			);
-		aeva_button_strip($buttons, 'top');
+		template_button_strip($buttons);
 	}
 
 	// sub-tabs maybe?
@@ -113,24 +113,10 @@ function template_aeva_subtabs()
 			$buttons[] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
-				'custom' => $tab['active'] ? ' class="currentbutton"' : '',
+				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
 			);
-		aeva_button_strip($buttons);
+		template_button_strip($buttons);
 	}
-}
-
-function aeva_button_strip(&$buttons, $direction = 'bottom', $a_la_smf2 = false)
-{
-	global $context, $settings;
-
-	if ($a_la_smf2 && substr($settings['theme_url'], -8) == '/default')
-		echo '
-		<div class="buttonlist align_right" style="overflow: auto">', template_button_strip($buttons, $direction), '
-		</div>';
-	else
-		echo '
-		<div style="margin-left: 10px; overflow: auto">', template_button_strip($buttons, $direction), '
-		</div>';
 }
 
 function template_aeva_home()
@@ -1039,11 +1025,15 @@ function template_aeva_unseen()
 
 	if (!empty($context['aeva_items']))
 	{
+		echo '
+	<div>';
 		$mark_seen = array();
 		if (strpos($context['aeva_page_index'], '<a') !== false)
 			$mark_seen['pageseen'] = array('text' => 'aeva_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_var'] . '=' . $context['session_id']);
 		$mark_seen['markseen'] = array('text' => 'aeva_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_var'] . '=' . $context['session_id']);
-		aeva_button_strip($mark_seen, 'top', true);
+		template_button_strip($mark_seen, 'left');
+		echo '
+	</div>';
 	}
 
 	echo '
@@ -1102,8 +1092,13 @@ function template_aeva_search_searching()
 				</td>
 			</tr>
 			<tr>
-				<td class="w50 right">', $txt['media_search_by_mem'], '<div class="mg_subtext">', $txt['media_search_by_mem_sub'], '</div></td>
-				<td class="w50 left"><input name="sch_mem" id="sch_mem" type="text" size="25" /> <a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_var'] . '=', $context['session_id'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera" /></a></td>
+				<td class="w50 right">
+					', $txt['media_search_by_mem'], '<div class="mg_subtext">', $txt['media_search_by_mem_sub'], '</div>
+				</td>
+				<td class="w50 left">
+					<input name="sch_mem" id="sch_mem" type="text" size="25" />
+					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_var'] . '=', $context['session_id'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera" /></a>
+				</td>
 			</tr>
 			<tr>
 				<td colspan="2" class="right"><input type="submit" name="submit_aeva" value="', $txt['media_submit'], '" /></td>
@@ -1486,7 +1481,7 @@ function template_aeva_text_editor()
 {
 	global $context;
 
-	echo $context['post_box_value']->outputEditor();
+	echo $context['postbox']->outputEditor();
 }
 
 function template_aeva_multiUpload_xml()
