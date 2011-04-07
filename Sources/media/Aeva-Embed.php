@@ -40,7 +40,7 @@ function aeva_main(&$message)
 	$aeva_update_list = false;
 
 	// Attempt to load all Enabled Sites, if not already loaded
-	if (empty($sites))
+	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	// Are we checking a link in the media gallery? We'd best avoid Javascript then.
@@ -143,7 +143,7 @@ function aeva_protection($array = array(), $input, $reverse = false)
 
 			// Always retained, never replaced, we need a preg for this one as well.
 			$input = preg_replace(
-				array('~(\[quote[]\s=])~i' . ($context['utf8'] ? 'u' : ''), '~\[/quote]~i' . ($context['utf8'] ? 'u' : '')),
+				array('~(\[quote[]\s=])~i', '~\[/quote]~i'),
 				array('[noae]$1', '[/quote][/noae]'),
 				$input
 			);
@@ -274,7 +274,7 @@ function aeva_match($input)
 
 	// Call the object builder for each successful match (force then remove a leading <br /> to match videos at the beginning, too.)
 	return preg_replace_callback(
-		'`(<br />|<aeva-begin>|</blockquote>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i' . ($context['utf8'] ? 'u' : ''),
+		'`(<br />|<aeva-begin>|</blockquote>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
 		'aeva_build_object',
 		'<aeva-begin>' . $input
 	);
@@ -413,7 +413,7 @@ function aeva_build_object($input)
 		elseif ($ion[0] == 'h' && is_numeric($ion[1]))
 			$size_type[1] = strpos($ion, '+') === false ? (int) substr($ion, 1) : (int) substr($ion, 1, strpos($ion, '+')-1) + (int) substr($ion, strpos($ion, '+')+1);
 		elseif (empty($title) && substr($ion, 0, 2) == 't=')
-			$title = $context['utf8'] ? base64_decode(substr($ion, 2)) : aeva_utf8_decode(base64_decode(substr($ion, 2)));
+			$title = base64_decode(substr($ion, 2));
 		elseif ($ion == 'center')
 			$center_this = true;
 	}
@@ -736,7 +736,7 @@ function aeva_protect_recursive_autolink($input)
 	}
 
 	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~' . ($context['utf8'] ? 'u' : ''),
+	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
 		'aeva_protect_recursive_autolink', $input);
 }
 
@@ -757,19 +757,8 @@ function aeva_protect_recursive($input)
 		$input = str_ireplace('http://', 'noae://', $input[1]);
 
 	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~' . ($context['utf8'] ? 'u' : ''),
+	return preg_replace_callback('~\[noae]((?>[^\[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
 		'aeva_protect_recursive', $input);
-}
-
-function aeva_utf8_decode($s)
-{
-	if (!preg_match("~[\200-\237]~", $s) && !preg_match("~[\241-\377]~", $s))
-		return $s;
-
-	$s = preg_replace("~([\340-\357])([\200-\277])([\200-\277])~e", "'&#'.((ord('\\1')-224<<12)+(ord('\\2')-128<<6)+ord('\\3')-128).';'", $s);
-	$s = preg_replace("~([\300-\337])([\200-\277])~e", "'&#'.((ord('\\1')-192<<6)+ord('\\2')-128).';'", $s);
-
-	return $s;
 }
 
 // The 'Lookup' function to grab a page and match a regex
@@ -890,13 +879,13 @@ function aeva_lookups_obtain_callback($input)
 			$actual = str_replace('$2', $url, $actual);
 		}
 		if (!empty($title))
-			$title = html_entity_decode(str_replace('&amp;', '&', $context['utf8'] ? $title : aeva_utf8_decode($title)), ENT_QUOTES);
+			$title = html_entity_decode(str_replace('&amp;', '&', $title), ENT_QUOTES);
 		return !empty($title) ? '[' . $input[1] . '=' . $actual . ']' . $title . '[/' . $input[1] . ']' : str_replace($input[2], $actual, $input[0]);
 	}
 	else
 	{
 		// Complete the regex pattern
-		$regex = '`\[(i?url)[]=](' . (!empty($arr['lookup-url']) ? $arr['lookup-url'] : $arr['pattern']) . ')(?:[^]#[]*?][^[]*\[/\1\]|[^#[]*?\[/\1\])`i' . ($context['utf8'] ? 'u' : '');
+		$regex = '`\[(i?url)[]=](' . (!empty($arr['lookup-url']) ? $arr['lookup-url'] : $arr['pattern']) . ')(?:[^]#[]*?][^[]*\[/\1\]|[^#[]*?\[/\1\])`i';
 		return preg_replace_callback($regex, 'aeva_lookups_obtain_callback', $input);
 	}
 }
@@ -958,7 +947,7 @@ function aeva_onposting($input)
 	);
 
 	// Attempt to Load - Enabled Sites
-	if (empty($sites))
+	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
 	// If we can't use generated version (either just after install, OR permissions meant generated
@@ -1013,7 +1002,7 @@ function aeva_fix_html($input)
 			// Re-use the embed pattern
 			$regex = str_replace('$1', '(' . $site['pattern'] . ')(?:[^"\>]*?)', $site['fix-html-pattern']);
 			// Complete the pattern with delimiter and utf8 support. If starting with a <, make sure to escape it
-			$regex = '`' . ($regex[0] == '<' ? '\\' : '') . $regex . '`is' . ($context['utf8'] ? 'u' : '');
+			$regex = '`' . ($regex[0] == '<' ? '\\' : '') . $regex . '`isu';
 
 			// Match, and replace with a valid link
 			$input = preg_replace($regex, empty($site['fix-html-url']) ? "$1\r\n" : $site['fix-html-url'], $input);
@@ -1259,18 +1248,17 @@ function aeva_check_embed_link($link)
 			return true;
 	unset($x);
 
-	if (empty($sites))
-	{
+	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
-		if (empty($sites))
-			loadSource(
-				file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
-			);
-	}
+
+	if (empty($sites))
+		loadSource(
+			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
+		);
 
 	$link = preg_replace(array('~\[url=([^]]*)][^[]*\[/url]~', '~\[url]([^[]*)\[/url]~'), '$1', $link);
 	foreach ($sites as $arr)
-		if (preg_match('`^' . (isset($arr['pattern']) ? $arr['pattern'] : $arr['embed-pattern']) . '`i' . ($context['utf8'] ? 'u' : ''), $link))
+		if (preg_match('`^' . (isset($arr['pattern']) ? $arr['pattern'] : $arr['embed-pattern']) . '`iu', $link))
 			return true;
 
 	if (function_exists('aeva_foxy_remote_image'))
@@ -1313,7 +1301,7 @@ function aeva_generate_embed_thumb($link, $id_album, $id_file = 0, $folder = '')
 	);
 
 	foreach ($thumbs as $ids => $arr)
-		if (preg_match('`^' . $arr['pattern'] . '.*?$`i' . ($context['utf8'] ? 'u' : ''), $link))
+		if (preg_match('`^' . $arr['pattern'] . '.*?$`iu', $link))
 			$id = $ids;
 
 	$embed_folder = $folder;

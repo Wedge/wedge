@@ -625,7 +625,7 @@ function aeva_utf2entities($source, $is_file = true, $limit = 255, $is_utf = fal
 
 	$do = empty($amSettings['entities_convert']) ? 0 : $amSettings['entities_convert'];
 	$is_utf |= $do == 2 ? false : aeva_is_utf8($source);
-	$str = ($do == 1 && $context['utf8'] && $is_utf) || ($do == 2) || !$is_utf ? $source : (is_callable('mb_encode_numericentity') ?
+	$str = ($do == 1 && $is_utf) || ($do == 2) || !$is_utf ? $source : (is_callable('mb_encode_numericentity') ?
 				mb_encode_numericentity($source, array(0x80, 0x2ffff, 0, 0xffff), 'UTF-8') : aeva_utf2entities_internal($source));
 	$strlen = is_callable('mb_strlen') ? 'mb_strlen' : 'strlen';
 	if ($limit == 0 || ($strlen($str) <= $limit && (!$hard_limit || strlen($str) <= $hard_limit)))
@@ -633,7 +633,7 @@ function aeva_utf2entities($source, $is_file = true, $limit = 255, $is_utf = fal
 		if ($cut_long_words)
 		{
 			$cw = is_integer($cut_long_words) ? round($cut_long_words/2) + 1 : round($limit/3) + 1;
-			$str = preg_replace('/(\w{'.$cw.'})(\w+)/' . ($context['utf8'] ? 'u' : ''), '$1&shy;$2', $str);
+			$str = preg_replace('/(\w{'.$cw.'})(\w+)/u', '$1&shy;$2', $str);
 		}
 		return $str;
 	}
