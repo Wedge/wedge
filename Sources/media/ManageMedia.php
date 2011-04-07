@@ -576,35 +576,35 @@ function aeva_admin_settings()
 
 function aeva_admin_albums()
 {
-	require_once('Aeva-Gallery2.php');
+	loadSource('media/Aeva-Gallery2');
 	aeva_albumCP(true);
 }
 
 // Handles adding a album
 function aeva_admin_albums_add()
 {
-	require_once('Aeva-Gallery2.php');
+	loadSource('media/Aeva-Gallery2');
 	aeva_addAlbum(true);
 }
 
 // Handles the album editing page
 function aeva_admin_albums_edit()
 {
-	require_once('Aeva-Gallery2.php');
+	loadSource('media/Aeva-Gallery2');
 	aeva_addAlbum(true, false);
 }
 
 // Moves a album
 function aeva_admin_albums_move()
 {
-	require_once('Aeva-Gallery2.php');
+	loadSource('media/Aeva-Gallery2');
 	aeva_moveAlbum();
 }
 
 // Deletes a album and the items/comments in it
 function aeva_admin_albums_delete()
 {
-	require_once('Aeva-Gallery2.php');
+	loadSource('media/Aeva-Gallery2');
 	aeva_deleteAlbum();
 }
 

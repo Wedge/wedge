@@ -296,7 +296,7 @@ function ModifyProfile($post_errors = array())
 			'title' => $txt['media_gallery'],
 			'areas' => array(
 				'aeva' => array(
-					'file' => 'media/Aeva-Gallery2.php',
+					'file' => 'media/Aeva-Gallery2',
 					'function' => 'aeva_profileSummary',
 					'label' => $txt['media_profile_sum'],
 					'permission' => array(
@@ -306,7 +306,7 @@ function ModifyProfile($post_errors = array())
 					'load_member' => true,
 				),
 				'aevaitems' => array(
-					'file' => 'media/Aeva-Gallery2.php',
+					'file' => 'media/Aeva-Gallery2',
 					'function' => 'aeva_profileItems',
 					'label' => $txt['media_view_items'],
 					'permission' => array(
@@ -316,7 +316,7 @@ function ModifyProfile($post_errors = array())
 					'load_member' => true,
 				),
 				'aevacoms' => array(
-					'file' => 'media/Aeva-Gallery2.php',
+					'file' => 'media/Aeva-Gallery2',
 					'function' => 'aeva_profileComments',
 					'label' => $txt['media_view_coms'],
 					'permission' => array(
@@ -326,7 +326,7 @@ function ModifyProfile($post_errors = array())
 					'load_member' => true,
 				),
 				'aevavotes' => array(
-					'file' => 'media/Aeva-Gallery2.php',
+					'file' => 'media/Aeva-Gallery2',
 					'function' => 'aeva_profileVotes',
 					'label' => $txt['media_view_votes'],
 					'permission' => array(

@@ -1,11 +1,11 @@
 <?php
 /*
-	Exifer 1.6
+	Exifixer 1.6
 	Extracts EXIF information from digital photos.
 
 	Originally created by:
 	Copyright © 2005 Jake Olefsky
-	http:// www.offsky.com/software/exif/index.php
+	http://www.offsky.com/software/exif/index.php
 	jake@olefsky.com
 
 	This program is free software; you can redistribute it and/or modify it under the terms of 
