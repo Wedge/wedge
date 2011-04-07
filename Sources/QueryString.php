@@ -885,14 +885,35 @@ function ob_sessrewrite($buffer)
 	else
 		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
 
+	// Don't waste time replacing blocks if there's none in the first place.
 	if (strpos($buffer, '<we:') !== false)
 	{
-		// A quick proof of concept...
-		$buffer = str_replace(
-			$context['blocks_to_search'],
-			$context['blocks_to_replace'],
-			$buffer
-		);
+		while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?:[^<]|<(?!/we:))*)</we:\\1>~is', $buffer, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as &$heres)
+			{
+				$block = isset($context['blocks'][$heres[1]]) ? $context['blocks'][$heres[1]] : array('body' => '');
+				$body = str_replace('{body}', $heres[3], $block['body']);
+				if (!empty($heres[2])) // Has it got variables? (The names are case-sensitive, this time.)
+				{
+					preg_match_all('~([a-z][^="]*)="([^"]*)"~', $heres[2], $params);
+					array_shift($params);
+					if (!empty($params))
+					{
+						foreach ($params[0] as $id => $param)
+						{
+							// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
+							while ($block['has_if'] && preg_match_all('~<if:([^>]+)>(.*?)</if:\\1>~is', $body, $ifs, PREG_SET_ORDER))
+								foreach ($ifs as $ifi)
+									$body = str_replace($ifi[0], in_array($ifi[1], $params[0]) ? $ifi[2] : '', $body);
+
+							$body = str_replace('{' . $param . '}', $params[1][$id], $body);
+						}
+					}
+				}
+				$buffer = str_replace($heres[0], $body, $buffer);
+			}
+		}
 	}
 
 	if (!empty($context['debugging_info']))

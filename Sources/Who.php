@@ -437,6 +437,28 @@ function determineActions($urls, $preferred_prefix = false)
 				else
 					$data[$k] = $txt['who_hidden'];
 			}
+			elseif ($actions['action'] == 'media')
+			{
+				loadSource('media/Aeva-Subs');
+
+				if (!isset($mediaFetch))
+					$mediaFetch = array();
+
+				$ret = array();
+				$ret = aeva_getOnlineType($actions);
+				if ($ret[0] == 'hidden')
+					$data[$k] = $txt['who_hidden'];
+				elseif ($ret[0] == 'direct')
+					$data[$k] = $ret[1];
+				else
+				{
+					// We'll need to fetch up data...
+					$mediaFetch[$ret[3]][$k] = array(
+						'id' => $ret[2],
+						'type' => $ret[1]
+					);
+				}
+			}
 			// Unlisted or unknown action.
 			else
 				$data[$k] = $txt['who_unknown'];
@@ -470,6 +492,13 @@ function determineActions($urls, $preferred_prefix = false)
 			if (!empty($error_message))
 				$data[$k] = '<img src="' . $settings['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 		}
+	}
+
+	if (!empty($mediaFetch))
+	{
+		foreach ($mediaFetch as $type => $array)
+			if ($dat = aeva_getFetchData($type, $array))
+				$data += $dat;
 	}
 
 	// Load topic names.

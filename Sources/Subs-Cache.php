@@ -225,7 +225,7 @@ function wedge_add_css($style_sheets)
  */
 function wedge_cache_css()
 {
-	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl;
+	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl, $scripturl;
 
 	// Mix CSS files together!
 	$css = array();
@@ -284,11 +284,10 @@ function wedge_cache_css()
 			{
 				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
 					continue;
-				$block = explode('|', $match[3]);
-				$context['blocks_to_search'][$match[1]] = '<we:' . $match[1] . '>';
-				$context['blocks_to_search'][$match[1] . '_end'] = '</we:' . $match[1] . '>';
-				$context['blocks_to_replace'][$match[1]] = $block[0];
-				$context['blocks_to_replace'][$match[1] . '_end'] = $block[1];
+				$context['blocks'][$match[1]] = array(
+					'has_if' => strpos($match[3], '<if:') !== false,
+					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($match[3]))
+				);
 			}
 		}
 	}

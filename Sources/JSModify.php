@@ -144,7 +144,7 @@ function JSModify()
 
 			wedgeEditor::preparsecode($_POST['message']);
 
-			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '')
+			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);

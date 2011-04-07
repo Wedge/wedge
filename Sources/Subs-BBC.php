@@ -163,6 +163,24 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$bbc_codes = array();
 	}
 
+	if (empty($parse_tags) && empty($context['uninstalling']))
+	{
+		if (stripos($message, '[media') !== false)
+		{
+			if (!function_exists('aeva_protect_bbc'))
+				loadSource('media/Aeva-Subs');
+			aeva_protect_bbc($message);
+		}
+
+		// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
+		if (!empty($modSettings['autoembed']) && strlen($message) > 15)
+		{
+			if (!function_exists('aeva_preprotect'))
+				loadSource('media/Aeva-Embed');
+			aeva_preprotect($message, $cache_id);
+		}
+	}
+
 	// Sift out the bbc for a performance improvement.
 	if (empty($bbc_codes) || $message === false || !empty($parse_tags))
 	{
@@ -997,6 +1015,17 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br>', '<br> ' => '<br>&nbsp;', '&#13;' => "\n"));
+
+	if (empty($parse_tags) && empty($context['uninstalling']))
+	{
+		// Do the actual embedding
+		if (!function_exists('aeva_parse_bbc2'))
+			loadSource('media/Aeva-Embed');
+		aeva_parse_bbc2($message, $smileys, $cache_id);
+
+		if (function_exists('aeva_parse_bbc') && stripos($message, '[media') !== false)
+			aeva_parse_bbc($message, $cache_id);
+	}
 
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
 	if (stripos($message, '[nb]') !== false && (empty($parse_tags) || in_array('nb', $parse_tags)) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor'))

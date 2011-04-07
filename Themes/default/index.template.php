@@ -166,10 +166,7 @@ function template_body_above()
 	echo '
 		</div></div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none"', '><div class="frame">
-			<h1>
-				<a href="', $scripturl, '">', $context['header_logo_url_html_safe'], '</a>
-			</h1>
-			', $context['site_slogan'], '
+			<we:header logo="', $context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
 		</div></div>
 	</div></div>';
 

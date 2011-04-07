@@ -1527,23 +1527,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['css_generic_files'] = array('index', 'sections');
 
 	// Now we initialize the search/replace pairs for template blocks.
-	// They can be overridden in a styling's settings.xml file.
-	$context['blocks_to_search'] = array(
-		'title'			=> '<we:title>',
-		'title_end'		=> '</we:title>',
-		'title2'		=> '<we:title2>',
-		'title2_end'	=> '</we:title2>',
-		'cat'			=> '<we:cat>',
-		'cat_end'		=> '</we:cat>',
-	);
-	$context['blocks_to_replace'] = array(
-		'title'			=> '<div class="title">',
-		'title_end'		=> '</div>',
-		'title2'		=> '<div class="title2">',
-		'title2_end'	=> '</div>',
-		'cat'			=> '<div class="cat">',
-		'cat_end'		=> '</div>',
-	);
+	// They can be set up in a styling's settings.xml file.
+	$context['blocks'] = array();
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 

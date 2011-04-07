@@ -104,6 +104,14 @@ function Post2()
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
 	wedgeEditor::preparseWYSIWYG('message');
 
+	// On posting new topic/reply/full modify: replace embed HTML, do lookups, and/or check whether YouTube links are embeddable
+	if (!empty($_POST['message']))
+	{
+		if (!function_exists('aeva_onposting'))
+			loadSource('media/Aeva-Embed');
+		$_POST['message'] = aeva_onposting($_POST['message']);
+	}
+
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
 	{
@@ -407,6 +415,14 @@ function Post2()
 		$post_errors[] = 'long_message';
 	else
 	{
+		// On quick edit, only call if message is set.
+		if (!empty($_POST['message']))
+		{
+			if (!function_exists('aeva_onposting'))
+				loadSource('media/Aeva-Embed');
+			$_POST['message'] = aeva_onposting($_POST['message']);
+		}
+
 		// Prepare the message a bit for some additional testing.
 		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
@@ -416,7 +432,7 @@ function Post2()
 		wedgeEditor::preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
+		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 	if (isset($_POST['calendar']) && !isset($_REQUEST['deleteevent']) && westr::htmltrim($_POST['evtitle']) === '')

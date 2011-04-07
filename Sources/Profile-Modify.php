@@ -2128,8 +2128,9 @@ function loadThemeOptions($memID)
 	if ($context['user']['is_owner'])
 	{
 		$context['member']['options'] = $options;
-		foreach ($_POST['options'] as $k => $v)
-			$context['member']['options'][$k] = $v;
+		if (isset($_POST['options']))
+			foreach ($_POST['options'] as $k => $v)
+				$context['member']['options'][$k] = $v;
 	}
 	else
 	{
