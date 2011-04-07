@@ -1526,10 +1526,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Then, we need a list of generic CSS files.
 	$context['css_generic_files'] = array('index', 'sections');
 
-	// Now we initialize the search/replace pairs for template blocks.
-	// They can be set up in a styling's settings.xml file.
-	$context['blocks'] = array();
-
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $modSettings['settings_updated'])
@@ -1831,6 +1827,35 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Initialize the theme
 	execSubTemplate('init', 'ignore');
+
+	// Now we initialize the search/replace pairs for template blocks.
+	// They can be set up in a styling's settings.xml file.
+	$context['blocks'] = array();
+
+	if (!empty($settings['blocks']))
+	{
+		foreach ($settings['blocks'] as $name => $contents)
+		{
+			if (is_array($contents))
+			{
+				$is_done = false;
+				$final_contents = '';
+				foreach ($contents as $browser => $sub_contents)
+				{
+					if ($context['browser']['agent'] == $browser || ($browser == 'else' && !$is_done))
+					{
+						$final_contents = $sub_contents;
+						$is_done = true;
+					}
+				}
+				$contents = !empty($final_contents) ? $final_contents : '';
+			}
+			$context['blocks'][$name] = array(
+				'has_if' => strpos($contents, '<if:') !== false,
+				'body' => $contents,
+			);
+		}
+	}
 
 	// Guests may still need a name
 	if ($context['user']['is_guest'] && empty($context['user']['name']))

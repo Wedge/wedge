@@ -45,6 +45,46 @@ function template_init()
 
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
 	$settings['require_theme_strings'] = false;
+
+	/* You can define blocks for your theme, with default contents. Then, stylings can override them through
+		the settings.xml file (see the styles/Warm/settings.xml file for a sample implementation.) */
+
+	$settings['blocks'] = array(
+
+		// We start with the header bars. Nothing special about them...
+		'title'		=> '<header class="title">{body}</header>',
+		'title2'	=> '<header class="title2">{body}</header>',
+		'cat'		=> '<header class="cat">{body}</header>',
+
+		// Now with a regular content block. You may add a title to it. If you don't specify a title,
+		// everything between the <if:title> tags will be hidden.
+		'block'		=> '<section><if:title><header class="title">{title}</header></if:title>{body}</section>',
+
+		// Our sidebar. Note that we can serve different content to different browsers by using an array
+		// with browser names and a "else" fallback. This can also be done in settings.xml
+		// with the <block name="..." for="ie6,ie7"> keyword.
+		'sidebar'	=> array(
+			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top">{body}</td>',
+			'ie7'	=> '<table id="edge"><tr><td id="sidebar" class="top">{body}</td>',
+			'else'	=> '<div id="edge"><aside id="sidebar">{body}</aside>',
+		),
+
+		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
+		// the table that was opened in the sidebar block.
+		'content'	=> array(
+			'ie6'	=> '<td id="main_content" class="top">{body}</td></tr></table>',
+			'ie7'	=> '<td id="main_content" class="top">{body}</td></tr></table>',
+			'else'	=> '<div id="main_content">{body}</div></div>',
+		),
+
+		// The main header of the website. Feel free to redefine it in your stylings and themes.
+		'header'	=> '
+			<if:logo><h1>
+				<a href="{scripturl}">{logo}</a>
+			</h1></if:logo>
+			{body}',
+
+	);
 }
 
 // The main sub template above the content.
@@ -184,12 +224,9 @@ function template_body_above()
 
 function template_sidebar_above()
 {
-	global $needs_tables, $txt, $scripturl, $context;
-	$needs_tables = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
+	global $txt, $scripturl, $context;
 
-	echo $needs_tables ? '
-		<table id="edge"><tr><td id="sidebar" class="top">' : '
-		<div id="edge"><div id="sidebar">', '<div class="column">
+	echo '<we:sidebar><div class="column">
 			<we:title>
 				<span class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></span>
 			</we:title>
@@ -292,28 +329,20 @@ function template_sidebar_rss()
 
 function template_sidebar_below()
 {
-	global $needs_tables;
-
 	echo '
-		</div>', $needs_tables ? '</td>' : '</div>';
+		</div></we:sidebar>';
 }
 
 function template_main_above()
 {
-	global $needs_tables;
-
-	echo $needs_tables ? '
-		<td id="main_content" class="top">' : '
-		<div id="main_content">';
+	echo '
+		<we:content>';
 }
 
 function template_main_below()
 {
-	global $needs_tables;
-
-	echo $needs_tables ? '
-		</td></tr></table>' : '
-		</div></div>';
+	echo '
+		</we:content>';
 }
 
 function template_body_below()

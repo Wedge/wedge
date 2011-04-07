@@ -1401,29 +1401,29 @@ function ob_sessrewrite($buffer)
 	// Don't waste time replacing blocks if there's none in the first place.
 	if (strpos($buffer, '<we:') !== false)
 	{
-		while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]|<(?!/?we:))*)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+		while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as &$heres)
 			{
-				$block = isset($context['blocks'][$heres[1]]) ? $context['blocks'][$heres[1]] : array('body' => '');
+				// We don't like unknown blocks in this town.
+				$block = isset($context['blocks'][$heres[1]]) ? $context['blocks'][$heres[1]] : array('has_if' => false, 'body' => '');
 				$body = str_replace('{body}', $heres[3], $block['body']);
-				if (!empty($heres[2])) // Has it got variables? (The names are case-sensitive, this time.)
-				{
-					preg_match_all('~([a-z][^="]*)="([^"]*)"~', $heres[2], $params);
-					if (!empty($params))
-					{
-						array_shift($params);
-						foreach ($params[0] as $id => $param)
-						{
-							// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
-							while ($block['has_if'] && preg_match_all('~<if:([^>]+)>(.*?)</if:\\1>~is', $body, $ifs, PREG_SET_ORDER))
-								foreach ($ifs as $ifi)
-									$body = str_replace($ifi[0], in_array($ifi[1], $params[0]) ? $ifi[2] : '', $body);
 
-							$body = str_replace('{' . $param . '}', $params[1][$id], $body);
-						}
-					}
-				}
+				if (!empty($heres[2])) // Has it got variables? (The names are case-sensitive, this time.)
+					preg_match_all('~([a-z][^="]*)="([^"]*)"~', $heres[2], $params);
+				else
+					$params = 0;
+
+				// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
+				while ($block['has_if'] && preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
+					foreach ($ifs as $ifi)
+						$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
+
+				// Does the template specify variables? Then replace them.
+				if (!empty($params))
+					foreach ($params[1] as $id => $param)
+						$body = str_replace('{' . $param . '}', $params[2][$id], $body);
+
 				$buffer = str_replace($heres[0], $body, $buffer);
 			}
 		}
