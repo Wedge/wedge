@@ -346,6 +346,17 @@ function aeva_foxy_playlists()
 	}
 	wesql::free_result($request);
 
+	// This query could be cached later on...
+	$result = wesql::query('
+		SELECT id_album
+		FROM {db_prefix}media_albums AS a
+		WHERE approved = 1
+		AND featured = 0
+		LIMIT 1',array()
+	);
+	$context['show_albums_link'] = wesql::num_rows($result) > 0;
+	wesql::free_result($result);
+
 	$pi = '
 	<div class="pagelinks page_index">
 		' . $txt['media_pages'] . ': ' . $context['aeva_page_index'] . '
@@ -353,11 +364,11 @@ function aeva_foxy_playlists()
 
 	$o = '
 	<div id="aeva_toplinks">
-		<h3 class="catbg"><span class="left"><span></span></span>
-			<img src="'.$settings['images_aeva'].'/house.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'">'.$txt['media_home'].'</a></b> -
-			<img src="'.$settings['images_aeva'].'/album.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'sa=vua">'.$txt['media_albums'].'</a></b>'.(empty($amSettings['disable_playlists']) ? ' -
-			<img src="'.$settings['images_aeva'].'/playlist.png" style="vertical-align: -3px" /> <b>'.$txt['media_playlists'].'</b>' : '').'
-		</h3>
+		<we:cat>
+			<img src="' . $settings['images_aeva'] . '/house.png" style="vertical-align: -3px" /> <b><a href="' . $galurl . '">' . $txt['media_home'] . '</a></b>' . ($context['show_albums_link'] ? ' -
+			<img src="' . $settings['images_aeva'] . '/album.png" style="vertical-align: -3px" /> <b><a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a></b>' : '') . (empty($amSettings['disable_playlists']) ? ' -
+			<img src="' . $settings['images_aeva'] . '/playlist.png" style="vertical-align: -3px" /> <b>' . $txt['media_playlists'] . '</b>' : '') . '
+		</we:cat>
 	</div>';
 
 	if (allowedTo('media_add_playlists'))
@@ -367,9 +378,9 @@ function aeva_foxy_playlists()
 	<div class="notice warn_watch">' . $txt['media_playlist_done'] . '</div>';
 
 		$o .= '
-	<h3 class="titlebg"><span class="left"><span></span></span>
+	<we:title2>
 		' . $txt['media_my_playlists'] . '
-	</h3>
+	</we:title2>
 	<table class="aeva_my_playlists w100 cp4 cs0">';
 		$res = 0;
 		foreach ($my_playlists as $p)

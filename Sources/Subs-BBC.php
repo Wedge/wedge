@@ -168,7 +168,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (stripos($message, '[media') !== false)
 		{
 			if (!function_exists('aeva_protect_bbc'))
-				loadSource('media/Aeva-Subs');
+				loadSource('media/Subs-Media');
 			aeva_protect_bbc($message);
 		}
 
@@ -1109,8 +1109,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
  */
 function parsesmileys(&$message)
 {
-	global $modSettings, $txt, $user_info, $context;
-	static $smileyPregSearch = array(), $smileyPregReplacements = array();
+	global $modSettings, $txt, $user_info, $context, $smileyPregReplace;
+	static $smileyPregSearch = array();
 
 	// No smiley set at all?!
 	if ($user_info['smiley_set'] == 'none')
@@ -1155,23 +1155,33 @@ function parsesmileys(&$message)
 		}
 
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
-		$smileyPregReplacements = array();
-		$searchParts = array();
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
-			$smileyCode = '<img src="' . htmlspecialchars($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/' . $smileysto[$i]) . '" alt="' . strtr(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr(htmlspecialchars($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley">';
+			$safe = htmlspecialchars($smileysfrom[$i], ENT_QUOTES); // !!! Use westr version?
+			$smileyCode = '<img src="' . htmlspecialchars($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/' . $smileysto[$i]) . '" alt="' . strtr($safe, array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr(htmlspecialchars($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley">';
 
-			$smileyPregReplacements[$smileysfrom[$i]] = $smileyCode;
-			$smileyPregReplacements[htmlspecialchars($smileysfrom[$i], ENT_QUOTES)] = $smileyCode;
+			$smileyPregReplace[$smileysfrom[$i]] = $smileyCode;
 			$searchParts[] = preg_quote($smileysfrom[$i], '~');
-			$searchParts[] = preg_quote(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), '~');
-		}
 
-		$smileyPregSearch = '~(?<=[>:?.\s\x{A0}[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~eu';
+			if ($safe != $smileysfrom[$i])
+			{
+				$smileyPregReplace[$safe] = $smileyCode;
+				$searchParts[] = preg_quote($safe, '~');
+			}
+		}
+		$smileyPregSearch = '~(?<=[>:?.\s\x{A0}[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~u';
 	}
 
 	// Replace away!
-	$message = preg_replace($smileyPregSearch, 'isset($smileyPregReplacements[\'$1\']) ? $smileyPregReplacements[\'$1\'] : \'\'', $message);
+	$message = preg_replace_callback($smileyPregSearch, 'replace_smileys', $message);
+}
+
+// Quick preg_replace_callback...
+function replace_smileys($match)
+{
+	global $smileyPregReplace;
+
+	return isset($smileyPregReplace[$match[1]]) ? $smileyPregReplace[$match[1]] : '';
 }
 
 /**

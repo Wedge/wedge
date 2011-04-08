@@ -439,7 +439,7 @@ function determineActions($urls, $preferred_prefix = false)
 			}
 			elseif ($actions['action'] == 'media')
 			{
-				loadSource('media/Aeva-Subs');
+				loadSource('media/Subs-Media');
 
 				if (!isset($mediaFetch))
 					$mediaFetch = array();

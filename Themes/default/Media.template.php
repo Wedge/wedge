@@ -102,7 +102,7 @@ function template_aeva_subtabs()
 				'url' => $tab['url'],
 				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
 			);
-		template_button_strip($buttons);
+		template_button_strip($buttons, '');
 	}
 
 	// sub-tabs maybe?
@@ -115,7 +115,7 @@ function template_aeva_subtabs()
 				'url' => $tab['url'],
 				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
 			);
-		template_button_strip($buttons);
+		template_button_strip($buttons, '');
 	}
 }
 
@@ -660,8 +660,7 @@ function template_aeva_viewItem()
 				</span>
 			</we:cat>
 			<div id="quickReplyOptions" style="display: none">
-				<span class="upperframe"><span></span></span>
-				<div class="roundframe">
+				<div class="roundframe wrc">
 					<form action="'.$galurl.'sa=comment;in='.$item['id_media'].'" method="post">
 						<div>
 							<h3>'.$txt['media_commenting_this_item'].'</h3>
@@ -671,7 +670,6 @@ function template_aeva_viewItem()
 						<p class="mgra"><input type="submit" value="'.$txt['media_submit'].'" name="submit_aeva" class="aeva_ok" /> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_close'] . '" class="aeva_cancel"></p>
 					</form>
 				</div>
-				<span class="lowerframe"><span></span></span>
 			</div>
 		</div>';
 
@@ -1025,15 +1023,11 @@ function template_aeva_unseen()
 
 	if (!empty($context['aeva_items']))
 	{
-		echo '
-	<div>';
 		$mark_seen = array();
 		if (strpos($context['aeva_page_index'], '<a') !== false)
 			$mark_seen['pageseen'] = array('text' => 'aeva_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_var'] . '=' . $context['session_id']);
 		$mark_seen['markseen'] = array('text' => 'aeva_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_var'] . '=' . $context['session_id']);
-		template_button_strip($mark_seen, 'left');
-		echo '
-	</div>';
+		template_button_strip($mark_seen, '');
 	}
 
 	echo '

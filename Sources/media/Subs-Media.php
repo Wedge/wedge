@@ -3,7 +3,7 @@
 * Aeva Media													*
 * © Noisen.com & SMF-Media.com									*
 *****************************************************************
-* Aeva-Subs.php - API functions, mainly							*
+* Subs-Media.php - API functions, mainly						*
 *****************************************************************
 * Users of this software are bound by the terms of the			*
 * Aeva Media license. You can view it in the license_am.txt		*

@@ -1398,33 +1398,51 @@ function ob_sessrewrite($buffer)
 	else
 		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
 
+	// Nerd alert -- most of the following can be done in a simple regex.
+	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+
 	// Don't waste time replacing blocks if there's none in the first place.
-	if (strpos($buffer, '<we:') !== false)
+	if (!empty($context['blocks']) && strpos($buffer, '<we:') !== false)
 	{
-		while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+		// Case-insensitive version - twice slower, but it's so fast to begin with...
+		$lc = strtolower($buffer);
+		while (strpos($lc, '<we:') !== false)
 		{
-			foreach ($matches as &$heres)
+			$p = 0;
+			while (($p = strpos($lc, '<we:', $p)) !== false)
 			{
+				$space = strpos($lc, ' ', $p);
+				$gt = strpos($lc, '>', $p);
+				$code = substr($buffer, $p + 4, min($space, $gt) - $p - 4);
+				$end_code = strpos($lc, '</we:' . strtolower($code), $p + 4);
+				$next_code = strpos($lc, '<we:', $p + 4);
+
+				// Did we find a block with no nested blocks?
+				if ($next_code !== false && $end_code > $next_code)
+				{
+					$p += 4;
+					continue;
+				}
+
 				// We don't like unknown blocks in this town.
-				$block = isset($context['blocks'][$heres[1]]) ? $context['blocks'][$heres[1]] : array('has_if' => false, 'body' => '');
-				$body = str_replace('{body}', $heres[3], $block['body']);
+				$block = isset($context['blocks'][$code]) ? $context['blocks'][$code] : array('has_if' => false, 'body' => '');
+				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $block['body']);
+				if ($space < $gt)
+				{
+					preg_match_all('~([a-z][^="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
 
-				if (!empty($heres[2])) // Has it got variables? (The names are case-sensitive, this time.)
-					preg_match_all('~([a-z][^="]*)="([^"]*)"~', $heres[2], $params);
-				else
-					$params = 0;
+					// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
+					while ($block['has_if'] && preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
+						foreach ($ifs as $ifi)
+							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
 
-				// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
-				while ($block['has_if'] && preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
-					foreach ($ifs as $ifi)
-						$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
-
-				// Does the template specify variables? Then replace them.
-				if (!empty($params))
-					foreach ($params[1] as $id => $param)
-						$body = str_replace('{' . $param . '}', $params[2][$id], $body);
-
-				$buffer = str_replace($heres[0], $body, $buffer);
+					// Does the template specify variables? Then replace them.
+					if (!empty($params))
+						foreach ($params[1] as $id => $param)
+							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
+				}
+				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
+				$lc = str_replace(substr($lc, $p, $end_code + strlen($code) + 6 - $p), $body, $lc);
 			}
 		}
 	}
@@ -2687,7 +2705,7 @@ function setupMenuContext()
 	// Recalculate the number of unseen media items
 	if (!empty($user_info['aeva_unseen']) && $user_info['aeva_unseen'] == -1)
 	{
-		loadSource('media/Aeva-Subs');
+		loadSource('media/Subs-Media');
 		loadMediaSettings();
 	}
 

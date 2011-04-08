@@ -14,7 +14,7 @@
 ****************************************************************/
 
 /*
-	Contains vital functions for Aeva Media, previously half of Aeva-Subs.php.... Basically functions that don't play with the DB.
+	Contains vital media functions, previously half of Subs-Media.php....
 
 	array aeva_allowed_types(bool flat = false, bool see_all = false)
 		- Returns the allowed item extensions for the user

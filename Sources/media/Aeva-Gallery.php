@@ -277,34 +277,34 @@ function aeva_initGallery($gal_url = null)
 		$sa = isset($_GET['sa']) ? $_GET['sa'] : '';
 	}
 
-	// !!! $area, $sa, base_url
+	// !!! base_url
 	$media_areas = array(
 		'home' => array(
 			'title' => $txt['media_home'],
 			'icon' => 'house.png',
-			'href' => $galurl2,
-			'sub_areas' => array(
+			'url' => $galurl2,
+			'areas' => array(
 				'vua' => array(
-					'title' => 'media_albums',
+					'label' => $txt['media_albums'],
 					'icon' => 'album.png',
 				),
 				'unseen' => array(
-					'title' => $txt['media_unseen'] . (empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
+					'label' => $txt['media_unseen'] . (empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
 					'icon' => 'eye.png',
 					'enabled' => allowedTo('media_access_unseen'),
 				),
 				'playlists' => array(
-					'title' => 'media_playlists',
+					'label' => $txt['media_playlists'],
 					'icon' => 'playlist.png',
 					'enabled' => empty($amSettings['disable_playlists']),
 				),
 				'stats' => array(
-					'title' => 'media_stats',
+					'label' => $txt['media_stats'],
 					'enabled' => true,
 					'icon' => 'chart_bar.png',
 				),
 				'search' => array(
-					'title' => 'media_search',
+					'label' => $txt['media_search'],
 					'icon' => 'magnifier.png',
 					'enabled' => allowedTo('media_search'),
 				),
@@ -313,16 +313,16 @@ function aeva_initGallery($gal_url = null)
 		'mya' => array(
 			'title' => $txt['media_my_user_albums'],
 			'icon' => 'user.png',
-			'enabled' => allowedTo('media_add_user_album'),
-			'sub_areas' => array(
+			'permission' => array('media_add_user_album'),
+			'areas' => array(
 				'add' => array(
 					'enabled' => allowedTo('media_add_user_album'),
-					'title' => 'media_admin_add_album',
+					'label' => $txt['media_admin_add_album'],
 					'icon' => 'images.png',
 				),
 				'post' => array(
 					'enabled' => !$user_info['is_guest'],
-					'title' => 'media_add_item',
+					'label' => $txt['media_add_item'],
 					'href' => $galurl . 'sa=post',
 					'icon' => 'camera_add.png',
 				),
@@ -331,101 +331,79 @@ function aeva_initGallery($gal_url = null)
 		'admin' => array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
-			'href' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_var'] . '=' . $context['session_id'],
-			'enabled' => allowedTo('media_manage'),
-			'sub_areas' => array(
+			'url' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_var'] . '=' . $context['session_id'],
+			'permission' => array('media_manage'),
+			'areas' => array(
 				'settings' => array(
-					'title' => 'media_admin_labels_settings',
+					'label' => $txt['media_admin_labels_settings'],
 					'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_var'] . '=' . $context['session_id'],
 				),
 				'embed' => array(
-					'title' => 'media_admin_labels_embed',
+					'label' => $txt['media_admin_labels_embed'],
 					'href' => $scripturl . '?action=admin;area=aeva_embed;' . $context['session_var'] . '=' . $context['session_id'],
 				),
 				'albums' => array(
-					'title' => 'media_admin_labels_albums',
+					'label' => $txt['media_admin_labels_albums'],
 					'href' => $scripturl . '?action=admin;area=aeva_albums;' . $context['session_var'] . '=' . $context['session_id'],
 				),
 				'maintenance' => array(
-					'title' => 'media_admin_labels_maintenance',
+					'label' => $txt['media_admin_labels_maintenance'],
 					'href' => $scripturl . '?action=admin;area=aeva_maintenance;' . $context['session_var'] . '=' . $context['session_id'],
 				),
 			),
 		),
 		'moderate' => array(
 			'title' => $txt['media_modcp'],
-			'enabled' => allowedTo('media_moderate'),
+			'permission' => array('media_moderate'),
 			'icon' => 'report.png',
-			'sub_areas' => array(
+			'areas' => array(
 				'about' => array(
-					'title' => 'media_admin_labels_about',
+					'label' => $txt['media_admin_labels_about'],
 				),
 				'readme' => array(
-					'title' => 'media_admin_readme',
+					'label' => $txt['media_admin_readme'],
 				),
 				'changelog' => array(
-					'title' => 'media_admin_changelog',
+					'label' => $txt['media_admin_changelog'],
 				),
 				'submissions' => array(
-					'title' => 'media_admin_labels_submissions',
+					'label' => $txt['media_admin_labels_submissions'],
 				),
 				'reports' => array(
-					'title' => 'media_admin_labels_reports',
+					'label' => $txt['media_admin_labels_reports'],
 				),
 				'modlog' => array(
-					'title' => 'media_admin_labels_modlog',
+					'label' => $txt['media_admin_labels_modlog'],
 				),
 			),
 		),
 	);
 
+	foreach ($media_areas as $id => &$area)
+	{
+		$area['title'] = '<a href="' . (isset($area['href']) ? $area['href'] : $scripturl . '?action=media;area=' . $id) . '">' . $area['title'] . '</a>';
+
+		if (!empty($area['areas']))
+			foreach ($area['areas'] as $sub_id => &$sub_area)
+				$sub_area['custom_url'] = isset($sub_area['href']) ? $sub_area['href'] : (isset($area['href']) ? $area['href'] . ';sa=' . $sub_id : $galurl . 'area=' . $id . ';sa=' . $sub_id);
+	}
+
 	// Let modders modify the media menu easily.
 	call_hook('media_areas', array(&$media_areas));
-
-	foreach ($media_areas as $id => $area)
-	{
-		if ((!isset($area['enabled']) || !empty($area['enabled'])) && isset($area['title']))
-		{
-			$menu[$id] = array(
-				'id' => $id,
-				'title' => '<a href="' . (isset($area['href']) ? $area['href'] : $scripturl . '?action=media;area=' . $id) . '">' . $area['title'] . '</a>',
-				'url' => isset($area['href']) ? $area['href'] : '',
-				'icon' => isset($area['icon']) ? $area['icon'] : '',
-				'areas' => array(),
-			);
-
-			if (empty($area['sub_areas']))
-				continue;
-
-			foreach ($area['sub_areas'] as $sub_id => $sub_area)
-			{
-				if ((!isset($sub_area['enabled']) || !empty($sub_area['enabled'])) && isset($sub_area['title']))
-				{
-					$menu[$id]['areas'][$sub_id] = array(
-						'id' => $sub_id,
-						'label' => isset($txt[$sub_area['title']]) ? $txt[$sub_area['title']] : $sub_area['title'],
-						'icon' => isset($sub_area['icon']) ? $sub_area['icon'] : '',
-						'custom_url' => isset($sub_area['href']) ? $sub_area['href'] : (isset($area['href']) ? $area['href'] . ';sa=' . $sub_id : $galurl . 'area=' . $id . ';sa=' . $sub_id),
-						'selected' => $sub_id == $sa,
-						'subsections' => array(),
-					);
-				}
-			}
-		}
-	}
 
 	$context['menu_image_path'] = $settings['images_aeva'];
 
 	// Set a few options for the menu.
 	$menuOptions = array(
 		'disable_url_session_check' => true,
-		'current_area' => $area,
+		'current_subsection' => $sa,
+		'current_area' => $sa,
 		'action' => 'media',
 	);
 
 	// Actually create the menu!
 	loadSource('Subs-Menu');
-	createMenu($menu, $menuOptions);
+	createMenu($media_areas, $menuOptions);
 
 	if (!isset($_REQUEST['xml']))
 	{

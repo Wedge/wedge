@@ -1141,12 +1141,13 @@ dl#rss
 		color: #faf8f8
 
 .title2 extends .title
-	color: channels(gray,0,0,30%)
 	font-size: 1.2em
 	background: none
 	border-bottom: 1px dotted rgba(0,0,0, .5)
 	border-radius: 0
 	text-shadow: white 0 1px 2px
+	&, a
+		color: channels(gray,0,0,30%)
 
 .cat final, .title final
 	font: bold 10pt/18px Verdana
@@ -1352,6 +1353,7 @@ table
 
 .buttonlist
 	margin-right: -8px
+	overflow: hidden
 	ul
 		padding: 5px
 		margin: 0 .2em 0 0
