@@ -727,7 +727,7 @@ function template_messageindex_legend()
 		<we:title2>
 			<img src="', $settings['images_url'], '/icons/assist.gif">
 			', $txt['legend'], '
-		</we:title>
+		</we:title2>
 		<p>
 			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
 			<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ', $txt['sticky_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
