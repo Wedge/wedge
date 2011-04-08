@@ -1400,22 +1400,22 @@ function ob_sessrewrite($buffer)
 
 	// Nerd alert -- most of the following can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+	// It's case-insensitive, but always slower -- noticeably so with hundreds of blocks.
 
 	// Don't waste time replacing blocks if there's none in the first place.
 	if (!empty($context['blocks']) && strpos($buffer, '<we:') !== false)
 	{
 		// Case-insensitive version - twice slower, but it's so fast to begin with...
-		$lc = strtolower($buffer);
-		while (strpos($lc, '<we:') !== false)
+		while (strpos($buffer, '<we:') !== false)
 		{
 			$p = 0;
-			while (($p = strpos($lc, '<we:', $p)) !== false)
+			while (($p = strpos($buffer, '<we:', $p)) !== false)
 			{
-				$space = strpos($lc, ' ', $p);
-				$gt = strpos($lc, '>', $p);
+				$space = strpos($buffer, ' ', $p);
+				$gt = strpos($buffer, '>', $p);
 				$code = substr($buffer, $p + 4, min($space, $gt) - $p - 4);
-				$end_code = strpos($lc, '</we:' . strtolower($code), $p + 4);
-				$next_code = strpos($lc, '<we:', $p + 4);
+				$end_code = strpos($buffer, '</we:' . strtolower($code), $p + 4);
+				$next_code = strpos($buffer, '<we:', $p + 4);
 
 				// Did we find a block with no nested blocks?
 				if ($next_code !== false && $end_code > $next_code)
@@ -1429,7 +1429,7 @@ function ob_sessrewrite($buffer)
 				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $block['body']);
 				if ($space < $gt)
 				{
-					preg_match_all('~([a-z][^="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
+					preg_match_all('~([a-z][^\s="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
 
 					// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
 					while ($block['has_if'] && preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
@@ -1442,7 +1442,6 @@ function ob_sessrewrite($buffer)
 							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
 				}
 				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
-				$lc = str_replace(substr($lc, $p, $end_code + strlen($code) + 6 - $p), $body, $lc);
 			}
 		}
 	}

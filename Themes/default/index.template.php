@@ -47,7 +47,8 @@ function template_init()
 	$settings['require_theme_strings'] = false;
 
 	/* You can define blocks for your theme, with default contents. Then, stylings can override them through
-		the settings.xml file (see the styles/Warm/settings.xml file for a sample implementation.) */
+		the settings.xml file (see the styles/Warm/settings.xml file for a sample implementation.)
+		Block names are case-sensitive, for performance reasons. */
 
 	$settings['blocks'] = array(
 

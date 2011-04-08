@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-	See Warm/settings.xml for descriptions.
+	See Warm/settings.xml for descriptions and more options.
 -->
 <styling>
 
@@ -16,16 +16,5 @@
 	DD_belatedPNG.fix('img.ping,#wedgelogo,#footer,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
-
-	<block name="header">
-			<if:logo><h1>
-				<a href="{scripturl}">{logo}</a>
-			</h1></if:logo>
-			{body}
-	</block>
-	<block name="title"><header class="title">{body}</header></block>
-	<block name="title2"><header class="title2">{body}</header></block>
-	<block name="cat"><header class="cat">{body}</header></block>
-	<block name="block"><section><if:title><header class="title">{title}</header></if:title>{body}</section></block>
 
 </styling>

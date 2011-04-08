@@ -18,11 +18,11 @@
 	display: none
 }
 #upload_form .progress {
-	background: white url(../images/aeva/progress.png) no-repeat -250px 0;
+	background: white url($images/aeva/progress.png) no-repeat -250px 0;
 	margin-right: 0.5em;
 }
 #upload_form .progress2 {
-	background: white url(../images/aeva/progress2.png) no-repeat -250px 0;
+	background: white url($images/aeva/progress2.png) no-repeat -250px 0;
 	margin-right: 0.5em;
 }
 #upload_form .progress-text {
@@ -47,14 +47,14 @@
 	background: #D9DDE9;
 }
 #current_list li.file-uploading {
-	background: url(../images/aeva/uploading.png) no-repeat 4px 10px;
+	background: url($images/aeva/uploading.png) no-repeat 4px 10px;
 	background-color: #F9F7ED;
 }
 #current_list li.file-success {
-	background: url(../images/aeva/tick.png) no-repeat 12px 17px;
+	background: url($images/aeva/tick.png) no-repeat 12px 17px;
 }
 #current_list li.file-failed {
-	background: url(../images/aeva/failed.png) no-repeat 12px 17px;
+	background: url($images/aeva/failed.png) no-repeat 12px 17px;
 }
 #current_list li.file .file-name {
 	font-size: 1.1em;

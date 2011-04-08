@@ -1837,22 +1837,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 		foreach ($settings['blocks'] as $name => $contents)
 		{
 			if (is_array($contents))
-			{
-				$is_done = false;
-				$final_contents = '';
-				foreach ($contents as $browser => $sub_contents)
-				{
-					if ($context['browser']['agent'] == $browser || ($browser == 'else' && !$is_done))
-					{
-						$final_contents = $sub_contents;
-						$is_done = true;
-					}
-				}
-				$contents = !empty($final_contents) ? $final_contents : '';
-			}
+				$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
+						(isset($contents['else']) ? $contents['else'] : '{body}');
+
 			$context['blocks'][$name] = array(
 				'has_if' => strpos($contents, '<if:') !== false,
-				'body' => $contents,
+				'body' => str_replace(array('{scripturl}'), array($scripturl), trim($contents)),
 			);
 		}
 	}

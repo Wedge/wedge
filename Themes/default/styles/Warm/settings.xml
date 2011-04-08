@@ -48,8 +48,20 @@
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
-	<block name="title"><header class="title">|</header></block>
-	<block name="title2"><header class="title2">|</header></block>
-	<block name="cat"><header class="cat">|</header></block>
+	<!--
+		Blocks. These examples are actually fairly useless since they just
+		repeat the default blocks defined in index.template.php, but it makes
+		it easier to get the point. Use these settings to override any blocks
+		set up in the theme with your own versions. Makes it easier to change
+		the header banner with limited effort.
+	-->
+
+	<block name="header">
+			<if:logo><h1>
+				<a href="{scripturl}">{logo}</a>
+			</h1></if:logo>
+			{body}
+	</block>
+	<block name="title"><header class="title">{body}</header></block>
 
 </styling>
