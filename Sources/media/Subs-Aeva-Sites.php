@@ -142,7 +142,7 @@ $sites = array(
 		'website' => 'http://www.youtube.com',
 		'type' => 'pop',
 		'added' => '<4.0',
-		'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"#[]*?(?:&|&amp;|/|\?|;|\%3F|\%2F)(?:video_id=|v(?:/|=|\%3D|\%2F))([\w-]{11})',
+		'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:&|&amp;|/|\?|;|\%3F|\%2F)(?:video_id=|v(?:/|=|\%3D|\%2F))|\.be/)([\w-]{11})',
 		'movie' => 'http://www.youtube.com/v/$2&rel=0&fs=1',
 		'size' => array(
 			'normal' => array(480, 385),

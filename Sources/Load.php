@@ -1763,7 +1763,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$txt = array();
 	$simpleActions = array(
 		'findmember',
-		'helpadmin',
+		'help',
 		'printpage',
 		'spellcheck',
 	);

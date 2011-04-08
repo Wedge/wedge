@@ -1858,7 +1858,7 @@ function aeva_listFiles($items, $can_moderate = false)
 				<td>
 					<strong><a href="', $galurl, 'sa=item;in=', $item['id'], '">', trim($item['title']) == '' ? '...' : $item['title'], '</a></strong>', empty($context['aeva_album']) || $item['poster_id'] != $context['aeva_album']['owner']['id'] ? '
 					' . strtolower($txt['media_posted_by']) . ' ' . aeva_profile($item['poster_id'], $item['poster_name']) : '', empty($context['aeva_album']) ? '
-					' . $txt['media_in_album'] . ' <a href="' . $galurl . 'sa=album;id=' . $item['id_album'] . '">' . $item['album_name'] . '</a>' : '', '
+					' . $txt['media_in_album'] . ' <a href="' . $galurl . 'sa=album;in=' . $item['id_album'] . '">' . $item['album_name'] . '</a>' : '', '
 				</td>
 				<td>', $item['posted_on'], '</td>
 				<td>', !empty($item['views']) ? $item['views'] : '', '</td>
