@@ -27,7 +27,7 @@ function template_maintain_database()
 		</div>
 
 		<we:title>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_backup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="', $scripturl, '?action=help;in=maintenance_backup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['maintain_backup'], '
 		</we:title>
 		<div class="windowbg2 wrc">
@@ -208,7 +208,7 @@ function template_maintain_members()
 			</form>
 		</div>
 		<we:title>
-			<a href="', $scripturl, '?action=helpadmin;help=maintenance_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="', $scripturl, '?action=help;in=maintenance_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['maintain_members'], '
 		</we:title>
 		<div class="windowbg wrc">

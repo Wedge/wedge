@@ -446,7 +446,7 @@ function template_aeva_viewItem()
 				<td class="info smalltext">', $txt['media_embed_bbc'], '</td>
 				<td class="info">
 					<input id="bbc_embed" type="text" size="56" value="[smg id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="return selectText(this);" readonly="readonly" />
-					<a href="', $scripturl, '?action=helpadmin;help=mediatag" onclick="return reqWin(this);" class="help"></a>
+					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this);" class="help"></a>
 				</td>
 			</tr>';
 

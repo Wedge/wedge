@@ -223,7 +223,7 @@ function template_generic_tabs()
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '
-		<a href="', $scripturl, '?action=helpadmin;help=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>';
+		<a href="', $scripturl, '?action=help;in=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>';
 
 	echo '
 		', $tab_context['title'], '

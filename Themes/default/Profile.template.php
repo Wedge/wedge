@@ -712,7 +712,7 @@ function template_trackActivity()
 				<dl class="noborder">
 					<dt>
 						', $txt['most_recent_ip'], ':', (empty($context['last_ip2']) ? '' : '
-						<dfn>(<a href="' . $scripturl . '?action=helpadmin;help=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</dfn>'), '
+						<dfn>(<a href="' . $scripturl . '?action=help;in=whytwoip" onclick="return reqWin(this);">' . $txt['why_two_ip_address'] . '</a>)</dfn>'), '
 					</dt>
 					<dd>
 						<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=tracking;sa=ip;searchip=', $context['last_ip'], '">', $context['last_ip'], '</a>';
@@ -2373,7 +2373,7 @@ function template_profile_group_manage()
 	echo '
 					<dt>
 						<strong>', $txt['primary_membergroup'], ': </strong>
-						<dfn>(<a href="', $scripturl, '?action=helpadmin;help=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
+						<dfn>(<a href="', $scripturl, '?action=help;in=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
 					</dt>
 					<dd>
 						<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
@@ -2720,7 +2720,7 @@ function template_profile_timeformat_modify()
 
 	echo '
 					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<a href="', $scripturl, '?action=help;in=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						<strong>', $txt['time_format'], ':</strong>
 						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
@@ -2805,7 +2805,7 @@ function template_authentication_method()
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>
-						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '> <strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);">(?)</a></em><br>
+						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="openid" id="auth_openid"', $context['auth_method'] == 'openid' ? ' checked' : '', '> <strong>', $txt['authenticate_openid'], '</strong></label>&nbsp;<em><a href="', $scripturl, '?action=help;in=register_openid" onclick="return reqWin(this);">(?)</a></em><br>
 						<label><input type="radio" onclick="updateAuthMethod();" name="authenticate" value="passwd" id="auth_pass"', $context['auth_method'] == 'password' ? ' checked' : '', '> <strong>', $txt['authenticate_password'], '</strong></label>
 					</dt>
 					<dd>

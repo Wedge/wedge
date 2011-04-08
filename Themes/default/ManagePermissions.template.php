@@ -53,7 +53,7 @@ function template_permission_index()
 		echo '
 					<tr class="windowbg', $alternate ? '2' : '', ' center">
 						<td class="left">
-							', $group['name'], $group['id'] == -1 ? ' (<a href="' . $scripturl . '?action=helpadmin;help=membergroup_guests" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 0 ? ' (<a href="' . $scripturl . '?action=helpadmin;help=membergroup_regular_members" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 1 ? ' (<a href="' . $scripturl . '?action=helpadmin;help=membergroup_administrator" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 3 ? ' (<a href="' . $scripturl . '?action=helpadmin;help=membergroup_moderator" onclick="return reqWin(this);">?</a>)' : '')));
+							', $group['name'], $group['id'] == -1 ? ' (<a href="' . $scripturl . '?action=help;in=membergroup_guests" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 0 ? ' (<a href="' . $scripturl . '?action=help;in=membergroup_regular_members" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 1 ? ' (<a href="' . $scripturl . '?action=help;in=membergroup_administrator" onclick="return reqWin(this);">?</a>)' : ($group['id'] == 3 ? ' (<a href="' . $scripturl . '?action=help;in=membergroup_moderator" onclick="return reqWin(this);">?</a>)' : '')));
 
 		if (!empty($group['children']))
 			echo '
@@ -94,7 +94,7 @@ function template_permission_index()
 					<legend>', $txt['permissions_with_selection'], '</legend>
 					<dl class="settings admin_permissions">
 						<dt>
-							', $txt['permissions_apply_pre_defined'], ' <a href="', $scripturl, '?action=helpadmin;help=permissions_quickgroups" onclick="return reqWin(this);">(?)</a>:
+							', $txt['permissions_apply_pre_defined'], ' <a href="', $scripturl, '?action=help;in=permissions_quickgroups" onclick="return reqWin(this);">(?)</a>:
 						</dt>
 						<dd>
 							<select name="predefined">
@@ -616,7 +616,7 @@ function template_modify_group_simple($type)
 				echo '
 					<tr id="perm_div_', $id_group, '_', $permission['id'], '" class="', $alternate ? 'windowbg' : 'windowbg2', '">
 						<td class="top" style="width: 10px; padding-right: 1ex">
-							', $permission['help_index'] ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
+							', $permission['help_index'] ? '<a href="' . $scripturl . '?action=help;in=' . $permission['help_index'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 						</td>
 						<td class="top w100 left" style="padding-bottom: 2px">', $permission['name'], '</td>';
 
@@ -862,7 +862,7 @@ function template_modify_group_classic($type)
 					echo '
 						<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
 							<td style="width: 10px">
-								', $permission['show_help'] ? '<a href="' . $scripturl . '?action=helpadmin;help=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
+								', $permission['show_help'] ? '<a href="' . $scripturl . '?action=help;in=permissionhelp_' . $permission['id'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 							</td>';
 
 					if ($permission['has_own_any'])

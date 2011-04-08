@@ -218,7 +218,7 @@ function template_email_members_compose()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="information">
@@ -263,7 +263,7 @@ function template_email_members_send()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<we:cat>
-				<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="windowbg wrc">

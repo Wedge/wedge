@@ -941,7 +941,7 @@ function template_send()
 
 	// A link to add BCC
 	echo '
-					<span class="smalltext" id="bcc_link_container" style="display: none">&nbsp;<a href="#" id="bcc_link">', $txt['make_bcc'], '</a> <a href="', $scripturl, '?action=helpadmin;help=pm_bcc" onclick="return reqWin(this);">(?)</a></span>
+					<span class="smalltext" id="bcc_link_container" style="display: none">&nbsp;<a href="#" id="bcc_link">', $txt['make_bcc'], '</a> <a href="', $scripturl, '?action=help;in=pm_bcc" onclick="return reqWin(this);">(?)</a></span>
 				</dd>';
 
 	// This BCC row will be hidden by default if JavaScript is enabled.

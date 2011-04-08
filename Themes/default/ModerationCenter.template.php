@@ -46,7 +46,7 @@ function template_latest_news()
 
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['mc_latest_news'], '
 		</we:cat>
 		<div class="windowbg wrc">

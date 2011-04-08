@@ -40,7 +40,7 @@ function template_login()
 		echo '<p><strong>&mdash;', $txt['or'], '&mdash;</strong></p>
 				<dl>
 					<dt>', $txt['openid'], ':</dt>
-					<dd><input type="text" name="openid_identifier" class="openid_login" size="17">&nbsp;<em><a href="', $scripturl, '?action=helpadmin;help=register_openid" onclick="return reqWin(this);">(?)</a></em></dd>
+					<dd><input type="text" name="openid_identifier" class="openid_login" size="17">&nbsp;<em><a href="', $scripturl, '?action=help;in=register_openid" onclick="return reqWin(this);">(?)</a></em></dd>
 				</dl><hr>';
 
 	echo '
@@ -192,7 +192,7 @@ function template_admin_login()
 	echo '
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
-			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a><br>
+			<a href="', $scripturl, '?action=help;in=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a><br>
 			<input type="submit" style="margin-top: 1em" value="', $txt['login'], '" class="submit">';
 
 	// Make sure to output all the old post data.

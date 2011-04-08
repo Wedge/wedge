@@ -446,7 +446,7 @@ function template_browse()
 	echo '
 	<div id="admincenter">
 		<we:cat>
-			<a href="', $scripturl, '?action=helpadmin;help=latest_packages" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="', $scripturl, '?action=help;in=latest_packages" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['packages_latest'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
@@ -1533,7 +1533,7 @@ function template_file_permissions()
 						<strong>', $txt['package_file_perms_apply'], '</strong></label>
 					</dt>
 					<dd>
-						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5">&nbsp;<a href="', $scripturl, '?action=helpadmin;help=chmod_flags" onclick="return reqWin(this);">(?)</a></em>
+						<em class="smalltext">', $txt['package_file_perms_custom'], ': <input type="text" name="custom_value" value="0755" maxlength="4" size="5">&nbsp;<a href="', $scripturl, '?action=help;in=chmod_flags" onclick="return reqWin(this);">(?)</a></em>
 					</dd>
 					<dt>
 						<label><input type="radio" name="method" value="predefined" id="method_predefined">
