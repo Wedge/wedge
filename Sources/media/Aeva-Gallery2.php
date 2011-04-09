@@ -984,8 +984,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	}
 
 	loadSource('Class-Editor');
-	$title = wedgeEditor::un_preparsecode($title);
-	$description = wedgeEditor::un_preparsecode($description);
+	$title = wedit::un_preparsecode($title);
+	$description = wedit::un_preparsecode($description);
 
 	$members_allowed = !empty($allowed_members) ? aeva_getFromMemberlist($allowed_members, $owner) : array();
 	$members_denied = !empty($denied_members) ? aeva_getFromMemberlist($denied_members, $owner) : array();
@@ -1405,8 +1405,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		if (empty($name))
 			fatal_lang_error('media_admin_name_left_empty', false);
 		$desc = westr::htmlspecialchars(aeva_utf2entities($_POST['desc'], false, 0));
-		preparsecode($name);
-		preparsecode($desc);
+		wedit::preparsecode($name);
+		wedit::preparsecode($desc);
 		$passwd = !empty($_POST['passwd']) ? $_POST['passwd'] : '';
 
 		$id_profile = (int) $_REQUEST['profile'];
@@ -1448,7 +1448,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		if ($is_add)
 		{
 			// Now get their target and position (which also gets their order, child level and parent)
-			if (!empty($_albums) && !isset($_albums[$_POST['target']]))
+			if (!empty($_albums) && !isset($_POST['target'], $_albums[$_POST['target']]))
 				fatal_lang_error('media_admin_invalid_target');
 			if (!empty($_albums))
 				$target = $_albums[$_POST['target']];
@@ -1600,13 +1600,13 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 				$ins_var,
 				$ins_val
 			);
-			$icon = wesql::insert_id('{db_prefix}media_files', 'id_file');
+			$icon = wesql::insert_id();
 
 			if ($thumbnailed)
 			{
 				if ($bigiconed)
 					@unlink($_FILES['icon']['tmp_name']);
-				@rename($dir.'/'.$encfile, $dir.'/'.aeva_getEncryptedFilename($filename, $icon, true));
+				@rename($dir . '/' . $encfile, $dir . '/' . aeva_getEncryptedFilename($filename, $icon, true));
 
 				if (!empty($preview_width))
 				{
@@ -1621,7 +1621,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 						$ins_var,
 						$ins_val
 					);
-					$big_icon = wesql::insert_id('{db_prefix}media_files', 'id_file');
+					$big_icon = wesql::insert_id();
 
 					if ($bigiconed)
 						@rename($dir.'/big_'.$filename, $dir.'/'.aeva_getEncryptedFilename('big_'.$filename, $big_icon));
@@ -1637,13 +1637,17 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 		if ($is_add)
 		{
-			$ins_var = array('name', 'description', 'passwd', 'featured', 'parent', 'child_level', 'a_order', 'icon', 'bigicon', 'approved', 'directory',
-							 'options', 'album_of', 'id_perm_profile', 'id_quota_profile', 'hidden', 'access', 'access_write',
-							 'allowed_members', 'allowed_write', 'denied_members', 'denied_write');
-			$ins_val = array($name, $desc, $passwd, $featured ? 1 : 0, $parent, $child_level, $order, $icon, $big_icon, !$featured && $will_be_unapproved ?
-							 0 : 1, '', serialize($peralbum), $owner, $id_profile, $id_quota_profile, $hidden, $mgroups, $mwgroups,
-							 empty($list_allowed) ? '' : $list_allowed, empty($list_allowed_write) ? '' : $list_allowed_write,
-							 empty($list_denied) ? '' : $list_denied, empty($list_denied_write) ? '' : $list_denied_write);
+			$ins_var = array(
+				'name', 'description', 'passwd', 'featured', 'parent', 'child_level', 'a_order', 'icon', 'bigicon', 'approved', 'directory',
+				'options', 'album_of', 'id_perm_profile', 'id_quota_profile', 'hidden', 'access', 'access_write',
+				'allowed_members', 'allowed_write', 'denied_members', 'denied_write'
+			);
+			$ins_val = array(
+				$name, $desc, $passwd, $featured ? 1 : 0, $parent, $child_level, $order, $icon, $big_icon, !$featured && $will_be_unapproved ?
+				0 : 1, '', serialize($peralbum), $owner, $id_profile, $id_quota_profile, $hidden, $mgroups, $mwgroups,
+				empty($list_allowed) ? '' : $list_allowed, empty($list_allowed_write) ? '' : $list_allowed_write,
+				empty($list_denied) ? '' : $list_denied, empty($list_denied_write) ? '' : $list_denied_write
+			);
 
 			// Insert the album
 			wesql::insert('',
@@ -1651,7 +1655,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 				$ins_var,
 				$ins_val
 			);
-			$id_album = wesql::insert_id('{db_prefix}media_albums', 'id_album');
+			$id_album = wesql::insert_id();
 
 			// Insert master ID (i.e. topmost album in the tree)
 			if (!empty($parent))

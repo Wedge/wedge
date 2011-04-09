@@ -1878,7 +1878,7 @@ function ModifyWarningTemplate()
 		$_POST['template_title'] = westr::htmlspecialchars($_POST['template_title']);
 
 		// Clean up BBC.
-		wedgeEditor::preparsecode($_POST['template_body']);
+		wedit::preparsecode($_POST['template_body']);
 		// But put line breaks back!
 		$_POST['template_body'] = strtr($_POST['template_body'], array('<br>' => "\n"));
 

@@ -157,7 +157,7 @@ function EditNews()
 			else
 			{
 				$_POST['news'][$i] = westr::htmlspecialchars($_POST['news'][$i], ENT_QUOTES);
-				wedgeEditor::preparsecode($_POST['news'][$i]);
+				wedit::preparsecode($_POST['news'][$i]);
 			}
 		}
 
@@ -175,7 +175,7 @@ function EditNews()
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
-			'unparsed' => wedgeEditor::un_preparsecode($line),
+			'unparsed' => wedit::un_preparsecode($line),
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
 		);
 

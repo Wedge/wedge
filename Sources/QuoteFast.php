@@ -79,7 +79,7 @@ function QuoteFast()
 	if (!empty($can_view_post))
 	{
 		// Remove special formatting we don't want anymore.
-		$row['body'] = wedgeEditor::un_preparsecode($row['body']);
+		$row['body'] = wedit::un_preparsecode($row['body']);
 
 		// Censor the message!
 		censorText($row['body']);
@@ -109,7 +109,7 @@ function QuoteFast()
 		if (!empty($_REQUEST['mode']))
 		{
 			$row['body'] = strtr($row['body'], array('&lt;' => '#smlt#', '&gt;' => '#smgt#', '&amp;' => '#smamp#'));
-			$row['body'] = wedgeEditor::bbc_to_html($row['body']);
+			$row['body'] = wedit::bbc_to_html($row['body']);
 			$lb = '<br>';
 		}
 		else

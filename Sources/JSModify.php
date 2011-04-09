@@ -142,7 +142,7 @@ function JSModify()
 		{
 			$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
-			wedgeEditor::preparsecode($_POST['message']);
+			wedit::preparsecode($_POST['message']);
 
 			if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '')
 			{

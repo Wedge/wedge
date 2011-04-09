@@ -417,7 +417,7 @@ function aeva_initGallery($gal_url = null)
 
 		// Some CSS and JS we'll be using
 		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media', true);
-		add_js_file('media.js');
+		add_js_file('scripts/media.js');
 	}
 
 	$context['aeva_header'] = array(
@@ -1269,9 +1269,9 @@ function aeva_mgComment()
 			$_POST['comment'] = un_htmlspecialchars(html_to_bbc($_POST['comment']));
 		}
 
-		loadSource('Subs-Post');
+		loadSource('Class-Editor');
 		$comment = westr::htmlspecialchars(aeva_utf2entities($_POST['comment'], false, 0));
-		preparsecode($comment);
+		wedit::preparsecode($comment);
 		if (empty($comment))
 			fatal_lang_error('media_comment_left_empty');
 		// Approval stuff
@@ -1283,7 +1283,7 @@ function aeva_mgComment()
 			array('id_member', 'id_media', 'id_album', 'message', 'posted_on', 'approved'),
 			array($user_info['id'], $item_data['id_media'], $item_data['album_id'], $comment, time(), $approved)
 		);
-		$id_comment = wesql::insert_id('{db_prefix}media_comments', 'id_comment');
+		$id_comment = wesql::insert_id();
 
 		if ($approved == 1)
 		{
@@ -1383,9 +1383,9 @@ function aeva_mgReport()
 	// Reporting?
 	if (isset($_POST['submit_aeva']))
 	{
-		loadSource('Subs-Post');
+		loadSource('Class-Editor');
 		$reason = westr::htmlspecialchars($_POST['reason']);
-		preparsecode($reason);
+		wedit::preparsecode($reason);
 		if (empty($reason))
 			fatal_lang_error('media_report_left_empty');
 
@@ -1565,9 +1565,9 @@ function aeva_mgPost()
 	// Load the limits
 	aeva_loadQuotas(empty($albums) ? array() : array('image' => $q['image'], 'audio' => $q['audio'], 'video' => $q['video'], 'doc' => $q['doc']));
 
-	loadSource('Subs-Post');
-	$data['title'] = un_preparsecode($data['title']);
-	$data['description'] = un_preparsecode($data['description']);
+	loadSource('Class-Editor');
+	$data['title'] = wedit::un_preparsecode($data['title']);
+	$data['description'] = wedit::un_preparsecode($data['description']);
 
 	// Construct the form
 	$context['aeva_form'] = array(
@@ -1741,8 +1741,8 @@ function aeva_mgPost()
 		$name = westr::htmlspecialchars($_POST['title']);
 		$name = aeva_utf2entities($name, false, 255 + strlen($name) - strlen($_POST['title']), false, false, true, true, 255);
 		$desc = aeva_utf2entities(westr::htmlspecialchars($_POST['desc']), false, 0, false, false);
-		preparsecode($name);
-		preparsecode($desc);
+		wedit::preparsecode($name);
+		wedit::preparsecode($desc);
 
 		$embed_url = !empty($_POST['embed_url']) ? westr::htmlspecialchars($_POST['embed_url']) : '';
 		$kw = westr::htmlspecialchars($_POST['keywords']);
@@ -1763,7 +1763,7 @@ function aeva_mgPost()
 		foreach ($fields as $field)
 		{
 			$value = isset($_POST['custom_field'][$field['id']]) && (is_array($_POST['custom_field'][$field['id']]) || trim($_POST['custom_field'][$field['id']]) != '') ? $_POST['custom_field'][$field['id']] : '';
-			preparsecode($value);
+			wedit::preparsecode($value);
 
 			// Do the value checks
 			if ($field['type'] == 'checkbox')

@@ -2915,7 +2915,7 @@ function profileValidateSignature(&$value)
 		}
 	}
 
-	wedgeEditor::preparsecode($value);
+	wedit::preparsecode($value);
 	return true;
 }
 

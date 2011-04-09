@@ -1854,7 +1854,7 @@ function MessagePost()
 		{
 			// OK, we have a draft in storage for this message.	Let's get down and dirty with it.
 			$form_subject = $row['subject'];
-			$form_message = wedgeEditor::un_preparsecode($row['body']);
+			$form_message = wedit::un_preparsecode($row['body']);
 			$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
 
 			// Get a list of all the users we're sending to, so we can load their data.
@@ -1906,7 +1906,7 @@ function MessagePost()
 	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
 
 	// Now create the editor.
-	$context['postbox'] = new wedgeEditor(
+	$context['postbox'] = new wedit(
 		array(
 			'id' => 'message',
 			'value' => $context['message'],
@@ -2066,7 +2066,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// Create it...
-	$context['postbox'] = new wedgeEditor(
+	$context['postbox'] = new wedit(
 		array(
 			'id' => 'message',
 			'value' => $context['message'],
@@ -2160,7 +2160,7 @@ function MessagePost2()
 	}
 
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
-	wedgeEditor::preparseWYSIWYG('message');
+	wedit::preparseWYSIWYG('message');
 
 	// Initialize the errors we're about to make.
 	$post_errors = array();
@@ -2219,7 +2219,7 @@ function MessagePost2()
 	{
 		// Preparse the message.
 		$message = $_REQUEST['message'];
-		wedgeEditor::preparsecode($message);
+		wedit::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
 		if (westr::htmltrim(strip_tags(parse_bbc(westr::htmlspecialchars($message, ENT_QUOTES), false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
@@ -2251,7 +2251,7 @@ function MessagePost2()
 		// Set everything up to be displayed.
 		$context['preview_subject'] = westr::htmlspecialchars($_REQUEST['subject']);
 		$context['preview_message'] = westr::htmlspecialchars($_REQUEST['message'], ENT_QUOTES);
-		wedgeEditor::preparsecode($context['preview_message'], true);
+		wedit::preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
 		$context['preview_message'] = parse_bbc($context['preview_message']);

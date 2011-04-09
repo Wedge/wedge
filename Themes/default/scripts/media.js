@@ -31,14 +31,6 @@ function aevaDelConfirm(txt)
 	return sel && sel.options[sel.selectedIndex].value == 'delete' ? confirm(txt) : true;
 }
 
-function aevaSwap(url, ie, io)
-{
-	toggle = !toggle ? 1 : 0;
-	$(!ie ? '#quickReplyExpand' : '#' + ie).toggleClass('fold', toggle);
-	$(!io ? '#quickReplyOptions' : '#' + io).toggle(toggle);
-	return false;
-}
-
 // This function is only used by IE6 because it can't cope with td:hover. Stupid IE6...
 function mouseo(id, over)
 {

@@ -75,7 +75,7 @@ function aeva_foxy_playlist()
 		redirectexit($scripturl . '?action=media;sa=playlists');
 	}
 
-	loadSource('Subs-Post');
+	loadSource('Class-Editor');
 
 	if ($id)
 	{
@@ -88,8 +88,8 @@ function aeva_foxy_playlist()
 		list ($pname, $pdesc) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$pname = un_preparsecode($pname);
-		$pdesc = un_preparsecode($pdesc);
+		$pname = wedit::un_preparsecode($pname);
+		$pdesc = wedit::un_preparsecode($pdesc);
 
 		// My playlist's contents
 		$request = wesql::query('
@@ -234,8 +234,8 @@ function aeva_foxy_playlist()
 	{
 		$name = westr::htmlspecialchars($_POST['title']);
 		$desc = westr::htmlspecialchars(aeva_utf2entities($_POST['desc'], false, 0));
-		preparsecode($name);
-		preparsecode($desc);
+		wedit::preparsecode($name);
+		wedit::preparsecode($desc);
 
 		if ($id)
 		{

@@ -501,14 +501,16 @@ class wesql
 
 		// Create the mold for a single row insert.
 		$insertData = '(';
+
+		// Didn't we bother to specify column types?
+		if (isset($columns[0]))
+		{
+			$columns = array_flip($columns);
+			foreach ($columns as $k => &$v)
+				$v = is_int($k) ? 'int' : 'string';
+		}
 		foreach ($columns as $columnName => $type)
 		{
-			// Didn't we bother to specify column types? (Media area... Lazy ass!)
-			if (is_int($columnName))
-			{
-				$columnName = $type;
-				$type = is_int($type) ? 'int' : 'string';
-			}
 			// Are we restricting the length?
 			if (strpos($type, 'string-') !== false)
 				$insertData .= sprintf('SUBSTRING({string:%1$s}, 1, ' . substr($type, 7) . '), ', $columnName);
@@ -522,6 +524,7 @@ class wesql
 
 		// Here's where the variables are injected to the query.
 		$insertRows = array();
+
 		foreach ($data as $dataRow)
 			$insertRows[] = self::quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
 

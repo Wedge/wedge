@@ -297,7 +297,7 @@ function MoveTopic2()
 			loadLanguage('index', $language);
 
 		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
-		wedgeEditor::preparsecode($_POST['reason']);
+		wedit::preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.
 		$_POST['reason'] = strtr($_POST['reason'], array(

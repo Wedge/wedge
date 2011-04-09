@@ -427,7 +427,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// This is the one that will go in their inbox.
 	$htmlmessage = westr::htmlspecialchars($message, ENT_QUOTES);
 	$htmlsubject = westr::htmlspecialchars($subject);
-	wedgeEditor::preparsecode($htmlmessage);
+	wedit::preparsecode($htmlmessage);
 
 	// Integrated PMs
 	call_hook('personal_message', array(&$recipients, &$from['username'], &$subject, &$message));
@@ -2692,8 +2692,8 @@ function saveDraft($is_pm, $id_context = 0)
 
 	// We would not have handled the WYSIWYG if we came from PM since that's done later in the PM workflow than we arrived here.
 	if ($is_pm)
-		wedgeEditor::preparseWYSIWYG('message');
-	wedgeEditor::preparsecode($message);
+		wedit::preparseWYSIWYG('message');
+	wedit::preparsecode($message);
 
 	if (westr::htmltrim(westr::htmlspecialchars($subject)) === '' && westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
 		fatal_lang_error('empty_draft', false);

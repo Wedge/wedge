@@ -46,14 +46,14 @@ function Jseditor()
 	if ($context['view'])
 	{
 		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
-		$context['message'] = wedgeEditor::bbc_to_html($_REQUEST['message']);
+		$context['message'] = wedit::bbc_to_html($_REQUEST['message']);
 	}
 	else
 	{
 		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
 		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
 
-		$context['message'] = wedgeEditor::html_to_bbc($_REQUEST['message']);
+		$context['message'] = wedit::html_to_bbc($_REQUEST['message']);
 	}
 
 	$context['message'] = westr::htmlspecialchars($context['message']);

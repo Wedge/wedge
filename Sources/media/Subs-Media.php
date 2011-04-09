@@ -26,7 +26,7 @@ define('AEVA_MEDIA_VERSION', '2.10');
 		- If found banned, takes action as requested
 
 	void aeva_reorderAlbums()
-		- Re-orders the albums and fixes the a_order field in aeva_albums table to work correctly
+		- Re-orders the albums and fixes the a_order field in media_albums table to work correctly
 
 	array aeva_getAlbumParents(int current, int master, bool simple)
 		- Gets the specified album's parents, using its master ID
@@ -973,7 +973,7 @@ function aeva_loadAlbum($album_id = 0)
 			a.icon, f.directory AS icon_dir, f.filename AS icon_file, f.filesize, f.width, f.height,
 			bf.directory AS bigicon_dir, bf.filename AS bigicon_file, bf.width AS bwidth, bf.height AS bheight, bf.id_file AS bigicon, bf.transparency,
 			a.id_perm_profile, a.id_quota_profile, a.access, a.access_write, a.allowed_members, a.allowed_write, a.denied_members, a.denied_write, a.passwd, a.hidden, a.master
-		FROM {db_prefix}' . ($item_filter ? 'aeva_media AS m' : ($com_filter ? 'aeva_comments AS c' : 'aeva_albums AS a')) . ($item_filter ? '
+		FROM {db_prefix}' . ($item_filter ? 'media_items AS m' : ($com_filter ? 'media_comments AS c' : 'media_albums AS a')) . ($item_filter ? '
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)' : ($com_filter ? '
 			INNER JOIN {db_prefix}media_albums AS a ON (c.id_album = a.id_album)' : '')) . '
 			LEFT JOIN {db_prefix}media_files AS f ON (f.id_file = a.icon)
@@ -1604,7 +1604,7 @@ function aeva_logModAction(&$options, $return_boolean = false)
 		array('type', 'val1', 'val2', 'val3', 'val4', 'val5', 'val6', 'val7', 'val8', 'val9'),
 		array('mod_log', $type, $subtype, $action_on_id, $action_on_name, $action_by_id, $action_by_name, $action_time, $val8, $val9)
 	);
-	$id_log = wesql::insert_id('{db_prefix}media_variables', 'id');
+	$id_log = wesql::insert_id();
 
 	// Return it.
 	if ($return_boolean)
@@ -1624,7 +1624,7 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 	$context['post_box_name'] = $post_box_name;
 
 	loadSource('Class-Editor');
-	$context['postbox'] = new wedgeEditor(
+	$context['postbox'] = new wedit(
 		array(
 			'id' => $post_box_name,
 			'form' => $post_box_form,
@@ -1845,7 +1845,7 @@ function aeva_insertFileID($id, $filesize, $filename, $width, $height, $director
 			array($filesize, $filename, $width, $height, $directory, $id_album, $exif)
 		);
 
-		return wesql::insert_id('{db_prefix}media_files', 'id_file');
+		return wesql::insert_id();
 	}
 
 	$request = wesql::query('
@@ -2240,7 +2240,7 @@ function aeva_createItem($options)
 		array('title', 'description', 'id_file', 'id_thumb', 'id_preview', 'keywords', 'embed_url', 'type', 'album_id', 'approved', 'time_added', 'member_name', 'log_last_access_time', 'id_member', 'last_edited_name'),
 		array($options['title'], $options['description'], $options['id_file'], $options['id_thumb'], $options['id_preview'], $options['keywords'], $options['embed_url'], $options['type'], $options['album'], $options['approved'], $options['time'], $options['mem_name'], time(), $options['id_member'], '')
 	);
-	$id_media = wesql::insert_id('{db_prefix}media_items', 'id_media');
+	$id_media = wesql::insert_id();
 
 	// If approved, update album and uploader stats
 	if ($options['approved'])
@@ -3574,8 +3574,8 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_lightbo
 
 	$use_lightbox &= !empty($amSettings['use_lightbox']);
 	$lightbox = (empty($_GET['action']) || $_GET['action'] != 'media' ? '
-	<link rel="stylesheet" href="' . aeva_theme_url('media.css') . '" />' : '') . (!$use_lightbox ? '' : '
-	<link rel="stylesheet" href="' . aeva_theme_url('hs.css') . '" media="screen" />');
+	<link rel="stylesheet" href="' . add_css_file('media') . '">' : '') . (!$use_lightbox ? '' : '
+	<link rel="stylesheet" href="' . add_css_file('hs') . '" media="screen">');
 
 	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
 		$lightbox .= '

@@ -582,8 +582,8 @@ function Post()
 		{
 			// Set up the preview message and subject and censor them...
 			$context['preview_message'] = $form_message;
-			wedgeEditor::preparsecode($form_message, true);
-			wedgeEditor::preparsecode($context['preview_message']);
+			wedit::preparsecode($form_message, true);
+			wedit::preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
 			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
@@ -770,7 +770,7 @@ function Post()
 
 		// Get the stuff ready for the form.
 		$form_subject = $row['subject'];
-		$form_message = wedgeEditor::un_preparsecode($row['body']);
+		$form_message = wedit::un_preparsecode($row['body']);
 		censorText($form_message);
 		censorText($form_subject);
 
@@ -1133,7 +1133,7 @@ function Post()
 		{
 			// OK, we have a draft in storage for this post. Let's get down and dirty with it.
 			$context['subject'] = $row['subject'];
-			$context['message'] = wedgeEditor::un_preparsecode($row['body']);
+			$context['message'] = wedit::un_preparsecode($row['body']);
 			$row['extra'] = empty($row['extra']) ? array() : unserialize($row['extra']);
 			$context['use_smileys'] = !empty($row['extra']['smileys_enabled']);
 			$context['icon'] = empty($row['extra']['post_icon']) ? 'xx' : $row['extra']['post_icon'];
@@ -1145,7 +1145,7 @@ function Post()
 	}
 
 	// Now create the editor.
-	$context['postbox'] = new wedgeEditor(
+	$context['postbox'] = new wedit(
 		array(
 			'id' => 'message',
 			'value' => $context['message'],

@@ -1159,7 +1159,7 @@ function Display()
 		$context['email'] = isset($_SESSION['guest_email']) ? $_SESSION['guest_email'] : '';
 
 		loadSource('Class-Editor');
-		$context['postbox'] = new wedgeEditor(
+		$context['postbox'] = new wedit(
 			array(
 				'id' => 'message',
 				'value' => '',

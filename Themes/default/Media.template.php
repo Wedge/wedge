@@ -283,7 +283,7 @@ function show_prevnext($id, $url)
 
 function template_aeva_viewItem()
 {
-	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info;
+	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	$item = $context['item_data'];
 
@@ -368,9 +368,9 @@ function template_aeva_viewItem()
 	echo '
 
 		<table cellspacing="0" cellpadding="4" border="0" width="100%">
-		<tr class="titlebg">
-			<td width="25%" style="padding: 7px 0 5px 8px; border-radius: 8px 0 0 0"><h3>', $txt['media_poster_info'], '</h3></td>
-			<td style="padding: 7px 0 5px 8px; border-radius: 0 8px 0 0"><h3>', $txt['media_item_info'], '</h3></td>
+		<tr class="catbg">
+			<th width="25%" style="padding: 7px 0 5px 8px; border-radius: 8px 0 0 0">', $txt['media_poster_info'], '</th>
+			<th style="padding: 7px 0 5px 8px; border-radius: 0 8px 0 0">', $txt['media_item_info'], '</th>
 		</tr><tr>
 		<td class="windowbg top">', empty($item['member']['id']) ? '
 			<h4>' . $txt['guest'] . '</h4>' : '
@@ -445,7 +445,7 @@ function template_aeva_viewItem()
 			<tr>
 				<td class="info smalltext">', $txt['media_embed_bbc'], '</td>
 				<td class="info">
-					<input id="bbc_embed" type="text" size="56" value="[smg id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="return selectText(this);" readonly="readonly" />
+					<input id="bbc_embed" type="text" size="56" value="[smg id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="return selectText(this);" readonly>
 					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this);" class="help"></a>
 				</td>
 			</tr>';
@@ -458,8 +458,8 @@ function template_aeva_viewItem()
 			<tr>
 				<td class="info smalltext">', $txt['media_embed_html'], '</td><td class="info">
 					<input id="html_embed" type="text" size="60" value="', $item['type'] == 'image' ?
-						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" />') :
-						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="return selectText(this);" readonly="readonly" />
+						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
+						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="return selectText(this);" readonly>
 				</td>
 			</tr>';
 			if ($item['type'] != 'embed')
@@ -467,7 +467,7 @@ function template_aeva_viewItem()
 			<tr>
 				<td class="info smalltext">' . $txt['media_direct_link'] . '</td>
 				<td class="info">
-					<input id="direct_link" type="text" size="60" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="return selectText(this);" readonly="readonly" />
+					<input id="direct_link" type="text" size="60" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="return selectText(this);" readonly>
 				</td>
 			</tr>';
 		}
@@ -480,7 +480,9 @@ function template_aeva_viewItem()
 	{
 		echo '
 		<tr><td class="windowbg bottom">
-			<div class="titlebg" style="margin: 0 -4px 2px -4px; padding: 7px 0 5px 8px"><h3>', $txt['media_extra_info'], '</h3></div>';
+			<we:title2>
+				', $txt['media_extra_info'], '
+			</we:title2>';
 
 		if (empty($item['extra_info']))
 			echo '
@@ -488,7 +490,7 @@ function template_aeva_viewItem()
 		else
 		{
 			echo $amSettings['use_lightbox'] ? '
-			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam" /> <a href="#" onclick="return hs.htmlExpand(this);">'
+			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" onclick="return hs.htmlExpand(this);">'
 			. $txt['media_exif_entries'] . '</a> (' . count($item['extra_info']) . ')
 			<div class="highslide-maincontent">
 				<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
@@ -508,41 +510,49 @@ function template_aeva_viewItem()
 
 	echo '
 		<tr class="titlebg"><td colspan="2" class="center info images" style="line-height: 16px; vertical-align: text-bottom; border-radius: 0 0 8px 8px">', $item['can_report'] ? '
-			<a href="'.$galurl.'sa=report;type=item;in='.$item['id_media'].'"' . ($amSettings['use_lightbox'] ? ' onclick="return hs.htmlExpand(this);"' : '') . '><img src="'.$settings['images_aeva'].'/report.png" />&nbsp;' . $txt['media_report_this_item'] . '</a>' : '';
+			<a href="' . $galurl . 'sa=report;type=item;in=' . $item['id_media'] . '"' . ($amSettings['use_lightbox'] ? ' onclick="return hs.htmlExpand(this);"' : '') . '>
+				<img src="' . $settings['images_aeva'] . '/report.png">&nbsp;' . $txt['media_report_this_item'] . '
+			</a>' : '';
 
 	if ($item['can_report'] && $amSettings['use_lightbox'])
 		echo '
 			<div class="highslide-maincontent">
-				<form action="'.$galurl.'sa=report;type=item;in='.$item['id_media'].'" method="post">
-					<h3>'.$txt['media_reporting_this_item'].'</h3>
-					<hr />'.$txt['media_reason'].'<br />
+				<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
+					<h3>', $txt['media_reporting_this_item'], '</h3>
+					<hr>', $txt['media_reason'], '<br>
 					<textarea cols="" rows="8" style="width: 98%" name="reason"></textarea>
-					<p class="mgra"><input type="submit" value="'.$txt['media_submit'].'" class="aeva_ok" name="submit_aeva" /> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_close'] . '" class="aeva_cancel"></p>
+					<p class="mgra">
+						<input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva">
+						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="aeva_cancel">
+					</p>
 				</form>
 			</div>';
 
 	if ($item['can_edit'])
 		echo '
-			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/camera_edit.png" />&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' onclick="return hs.htmlExpand(this);"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"', '><img src="', $settings['images_aeva'], '/delete.png" />&nbsp;', $txt['media_delete_this_item'], '</a>';
+			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' onclick="return hs.htmlExpand(this);"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"', '><img src="', $settings['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_lightbox'])
 		echo '
 			<div class="highslide-maincontent">
-				<form action="'.$galurl.'sa=delete;in='.$item['id_media'].'" method="post">
-					<h3>'.$txt['media_delete_this_item'].'</h3>
-					<hr />'.$txt['quickmod_confirm'].'
-					<p class="mgra"><input type="submit" value="' . $txt['media_yes'] . '" class="aeva_ok" /> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_no'] . '" class="aeva_cancel"></p>
+				<form action="'.$galurl.'sa=delete;in=', $item['id_media'], '" method="post">
+					<h3>', $txt['media_delete_this_item'], '</h3>
+					<hr>', $txt['quickmod_confirm'], '
+					<p class="mgra">
+						<input type="submit" value="', $txt['media_yes'], '" class="aeva_ok">
+						<input type="button" onclick="return hs.close(this);" value="', $txt['media_no'], '" class="aeva_cancel">
+					</p>
 				</form>
 			</div>';
 
 	echo
 		allowedTo('media_download_item') && $item['type'] != 'embed' ? '
-			<a href="'.$galurl.'sa=media;in='.$item['id_media'].';dl"><img src="'.$settings['images_aeva'].'/download.png" />&nbsp;' . $txt['media_download_this_item'] . '</a>' : '';
+			<a href="'.$galurl.'sa=media;in='.$item['id_media'].';dl"><img src="'.$settings['images_aeva'].'/download.png">&nbsp;' . $txt['media_download_this_item'] . '</a>' : '';
 
 	if ($item['can_edit'] && !empty($context['aeva_move_albums']))
 		echo '
-			<a href="'.$galurl.'sa=move;in='.$item['id_media'].'" '.($amSettings['use_lightbox'] ? 'onclick="return hs.htmlExpand(this);"' : '').'><img src="'.$settings['images_aeva'].'/arrow_out.png" />&nbsp;' . $txt['media_move_item'] . '</a>';
+			<a href="'.$galurl.'sa=move;in='.$item['id_media'].'" '.($amSettings['use_lightbox'] ? 'onclick="return hs.htmlExpand(this);"' : '').'><img src="'.$settings['images_aeva'].'/arrow_out.png">&nbsp;' . $txt['media_move_item'] . '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_lightbox'])
 	{
@@ -550,23 +560,27 @@ function template_aeva_viewItem()
 			<div class="highslide-maincontent">
 				<h3>', $txt['media_moving_this_item'], '</h3>
 				<h2>', $txt['media_album'], ': ', $item['album_name'], '</h2>
-				<hr />
+				<hr>
 				<form action="', $galurl, 'sa=move;in=', $item['id_media'], '" method="post">
-					', $txt['media_album_to_move'], ': <select name="album">';
+					', $txt['media_album_to_move'], ':
+					<select name="album">';
 
 			foreach ($context['aeva_move_albums'] as $album => $name)
 			{
 				if ($name[2] === '')
-					echo '</optgroup>';
+					echo '
+						</optgroup>';
 				elseif ($name[2] == 'begin')
-					echo '<optgroup label="', $name[0], '">';
+					echo '
+						<optgroup label="', $name[0], '">';
 				else
-					echo '<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
+					echo '
+							<option value="', $album, '"', $name[1] ? ' disabled' : '', '>', $name[0], '</option>';
 			}
 
 			echo '
 					</select>
-					<p class="mgra"><input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva" /> <input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="aeva_cancel"></p>
+					<p class="mgra"><input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva"> <input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="aeva_cancel"></p>
 				</form>
 			</div>';
 	}
@@ -574,7 +588,7 @@ function template_aeva_viewItem()
 	$un = $item['approved'] ? 'un' : '';
 	if ($item['can_approve'])
 		echo '
-			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/', $un, 'tick.png" />&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
+			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
 
 	echo '
 		</td></tr>
@@ -585,12 +599,15 @@ function template_aeva_viewItem()
 
 	// Comments!
 	echo '
+		<we:cat>', empty($amSettings['disable_rss']) ? '
+			<a href="' . $galurl . 'sa=rss;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
+				<div class="feed_icon"></div>
+				' . $txt['media_comments'] . '
+			</a>' : '
+			' . $txt['media_comments'], '
+		</we:cat>
 		<table class="cs1 cp4 w100" id="mg_coms">
 		<tr class="titlebg middle"><td colspan="4" style="padding: 0 6px">
-			<span class="comment_header">', empty($amSettings['disable_rss']) ? '
-				<a href="'.$galurl.'sa=rss;item='.$item['id_media'].';type=comments" style="text-decoration: none"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" />&nbsp;' . $txt['media_comments'] . '</a>' : '
-				' . $txt['media_comments'], '
-			</span>
 			<span class="smalltext comment_sort_options">
 				', empty($item['comments']) ? $txt['media_no_comments'] : $txt['media_sort_order_com'] . ' -
 				<a href="' . $galurl . 'sa=item;in=' . $item['id_media'] . (isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '') . '">' . $txt['media_sort_order_asc'] . '</a>
@@ -627,10 +644,10 @@ function template_aeva_viewItem()
 		if ($c['can_edit'] || $c['can_report'])
 			echo '
 				<div class="mgc_icons">', $c['can_edit'] ? '
-					<a href="'.$galurl.'sa=edit;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/comment_edit.png" /> '.$txt['media_edit_this_item'].'</a>' : '', $c['can_delete'] ? '
-					<a href="'.$galurl.'sa=delete;type=comment;in='.$c['id_comment'].'" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="'.$settings['images_aeva'].'/delete.png" /> '.$txt['media_delete_this_item'].'</a> ' : '', $c['can_report'] ? '
-					<a href="'.$galurl.'sa=report;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/report.png" /> '.$txt['media_report_this_item'].'</a>' : '', !$c['approved'] && $c['can_delete'] ? '
-					<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;in='.$c['id_comment'].';type=coms;' . $context['session_var'] . '='.$context['session_id'].'"><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'" /> '.$txt['media_admin_approve'].'</a>' : '', '
+					<a href="'.$galurl.'sa=edit;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/comment_edit.png"> '.$txt['media_edit_this_item'].'</a>' : '', $c['can_delete'] ? '
+					<a href="'.$galurl.'sa=delete;type=comment;in='.$c['id_comment'].'" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="'.$settings['images_aeva'].'/delete.png"> '.$txt['media_delete_this_item'].'</a> ' : '', $c['can_report'] ? '
+					<a href="'.$galurl.'sa=report;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/report.png"> '.$txt['media_report_this_item'].'</a>' : '', !$c['approved'] && $c['can_delete'] ? '
+					<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;in='.$c['id_comment'].';type=coms;' . $context['session_var'] . '='.$context['session_id'].'"><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> '.$txt['media_admin_approve'].'</a>' : '', '
 				</div>';
 
 		echo '
@@ -653,21 +670,18 @@ function template_aeva_viewItem()
 		echo '
 		<div id="quickreplybox" style="padding-top: 4px">
 			<we:cat>
-				<span class="ie6_header floatleft"><a href="#" onclick="return aevaSwap(\'', $settings['images_url'], '\');">
-					<img src="', $settings['images_url'], '/expand.gif" alt="+" id="quickReplyExpand" class="icon" />
-				</a>
-				<a href="#" onclick="return aevaSwap(\'', $settings['images_url'], '\');">', $txt['media_comment_this_item'], '</a>
-				</span>
+				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
+				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['media_comment_this_item'], '</a>
 			</we:cat>
 			<div id="quickReplyOptions" style="display: none">
 				<div class="roundframe wrc">
 					<form action="'.$galurl.'sa=comment;in='.$item['id_media'].'" method="post">
 						<div>
 							<h3>'.$txt['media_commenting_this_item'].'</h3>
-							<img src="'.$settings['images_aeva'].'/comment.png" class="middle" /> <a href="' . $galurl . 'sa=comment;in=' . $item['id_media'] . '">' . $txt['media_switch_fulledit'] . '</a>
+							<img src="'.$settings['images_aeva'].'/comment.png" class="middle"> <a href="' . $galurl . 'sa=comment;in=' . $item['id_media'] . '">' . $txt['media_switch_fulledit'] . '</a>
 						</div>
 						<textarea name="comment" cols="" rows="8" style="width: 95%"></textarea>
-						<p class="mgra"><input type="submit" value="'.$txt['media_submit'].'" name="submit_aeva" class="aeva_ok" /> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_close'] . '" class="aeva_cancel"></p>
+						<p class="mgra"><input type="submit" value="'.$txt['media_submit'].'" name="submit_aeva" class="aeva_ok"> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_close'] . '" class="aeva_cancel"></p>
 					</form>
 				</div>
 			</div>
@@ -675,6 +689,23 @@ function template_aeva_viewItem()
 
 	echo '
 	</div>';
+
+	add_js_file('scripts/topic.js');
+/*
+	add_js('
+	var oQuickReply = new QuickReply({
+		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
+		sScriptUrl: smf_scripturl,
+		sImagesUrl: "' . $settings['images_url'] . '",
+		sContainerId: "quickReplyOptions",
+		sImageId: "quickReplyExpand",
+		sJumpAnchor: "quickreply",
+		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
+		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
+		sSwitchMode: "switch_mode",
+		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
+	});');
+*/
 }
 
 function template_aeva_done()
@@ -717,7 +748,7 @@ function template_aeva_form()
 			if (isset($e['skip']))
 			{
 				$show_at_end .= '
-					<input type="hidden" name="' . $e['fieldname'] . '" value="' . $e['value'] . '" />';
+					<input type="hidden" name="' . $e['fieldname'] . '" value="' . $e['value'] . '">';
 				continue;
 			}
 
@@ -755,7 +786,7 @@ function template_aeva_form()
 				switch($e['type'])
 				{
 					case 'text';
-						echo '<input type="text"', isset($e['value']) ? ' value="'.$e['value'].'"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' />';
+						echo '<input type="text"', isset($e['value']) ? ' value="'.$e['value'].'"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'textbox';
 						if (isset($context['post_box_name']) && $context['post_box_name'] == $e['fieldname'])
@@ -767,13 +798,13 @@ function template_aeva_form()
 							echo '<textarea name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>', isset($e['value']) ? $e['value'] : '', '</textarea>';
 					break;
 					case 'file';
-						echo '<input type="file" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="51"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' />', isset($e['add_text']) ? ' ' . $e['add_text'] : '';
+						echo '<input type="file" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="51"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>', isset($e['add_text']) ? ' ' . $e['add_text'] : '';
 					break;
 					case 'hidden';
-						echo '<input type="hidden" name="', $e['fieldname'], '" value="', $e['value'], '"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' />';
+						echo '<input type="hidden" name="', $e['fieldname'], '" value="', $e['value'], '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'small_text';
-						echo '<input type="text"', isset($e['value']) ? ' value="'.$e['value'].'"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="10"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' />';
+						echo '<input type="text"', isset($e['value']) ? ' value="'.$e['value'].'"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="10"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'select';
 						echo '<select name="', $e['fieldname'], isset($e['multi']) && $e['multi'] === true ? '[]' : '', '" tabindex="', $context['tabindex']++, '"',
@@ -790,25 +821,25 @@ function template_aeva_form()
 					break;
 					case 'radio';
 						foreach ($e['options'] as $value => $name)
-							echo '<div><input id="radio', $chk, '" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', $value, '"', is_array($name) && isset($name[1]) && $name[1] === true ? ' checked' : '', ' type="radio"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' /><label for="radio', $chk++, '"> ', is_array($name) ? $name[0] : $name, '</label></div>';
+							echo '<div><input id="radio', $chk, '" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', $value, '"', is_array($name) && isset($name[1]) && $name[1] === true ? ' checked' : '', ' type="radio"', isset($e['custom']) ? ' ' . $e['custom'] : '', '><label for="radio', $chk++, '"> ', is_array($name) ? $name[0] : $name, '</label></div>';
 					break;
 					case 'yesno';
 						echo '<div><select name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"><option value="1"', !empty($e['value']) ? ' selected' : '', ' style="color: green">', $txt['media_yes'], '</option><option value="0"', empty($e['value']) ? ' selected' : '', ' style="color: red">', $txt['media_no'], '</option></select></div>';
 					break;
 					case 'passwd';
-						echo '<input name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', isset($e['value']) ? $e['value'] : '', '" type="password"', isset($e['custom']) ? ' ' . $e['custom'] : '', ' />';
+						echo '<input name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', isset($e['value']) ? $e['value'] : '', '" type="password"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'checkbox';
 					case 'checkbox_line';
 						foreach ($e['options'] as $opt => $label)
 						{
 							if (!is_array($label) && $label == 'sep')
-								echo '<hr />';
+								echo '<hr>';
 							else
 								echo '<div', $e['type'] == 'checkbox_line' ? ' class="aeva_ich' . (!empty($e['skip_left']) ? '2' : '') . '"' : '', '><input type="checkbox" id="chk', $chk, '" name="', is_array($label) ?
 									(!isset($label['force_name']) ? $e['fieldname'] . (isset($e['multi']) && $e['multi'] === true ? '[]' : '') : $label['force_name']) : $label,
 									'" tabindex="', $context['tabindex']++, '" value="', $opt, '"', is_array($label) && isset($label[1]) && $label[1] === true ? ' checked' : '', is_array($label) && !empty($label['disabled']) ? ' disabled' : '',
-									is_array($label) && isset($label['custom']) ? ' ' . $label['custom'] : '', ' /><label for="chk', $chk++, '">&nbsp;&nbsp;', is_array($label) ? $label[0] : $label, '</label></div>';
+									is_array($label) && isset($label['custom']) ? ' ' . $label['custom'] : '', '><label for="chk', $chk++, '">&nbsp;&nbsp;', is_array($label) ? $label[0] : $label, '</label></div>';
 						}
 					break;
 					case 'checkbox_dual'; // This one is for album creation only... ;)
@@ -826,7 +857,7 @@ function template_aeva_form()
 										'" tabindex="', $context['tabindex']++, '" value="', $opt, '"',
 										isset($label[$i+1]) && $label[$i+1] === true ? ' checked' : '',
 										$opt == -1 && $i == 1 ? ' disabled' : '',
-										isset($label['custom']) ? ' ' . str_replace('$1', $e['fieldname'][$i], $label['custom']) : '', ' /></td>';
+										isset($label['custom']) ? ' ' . str_replace('$1', $e['fieldname'][$i], $label['custom']) : '', '></td>';
 								echo '<td><label for="chk', $chk-2, '">', $label[0], '</label></td>';
 							}
 							echo '</tr>';
@@ -852,7 +883,7 @@ function template_aeva_form()
 			<tr>
 				<td class="windowbg right', empty($alt) ? '2' : '', '" colspan="2">', $show_at_end, !empty($context['aeva_form']['silent']) ? '
 					<input type="submit" value="' . $txt['media_silent_update'] .  '" name="silent_update" tabindex="' . $context['tabindex']++ . '">' : '', '
-					<input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" tabindex="', $context['tabindex']++, '" class="submit" />
+					<input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" tabindex="', $context['tabindex']++, '" class="submit">
 				</td>
 			</tr>
 		</table>
@@ -871,20 +902,20 @@ function template_aeva_viewAlbum()
 	// Show some album data
 	echo '
 	<div id="albums">
-		<table cellpadding="6" cellspacing="0" border="0" width="100%" class="windowbg2">
+		<table class="w100 cp4 cs0 windowbg2">
 		<tr><td class="windowbg top" style="width: 2%" rowspan="2">';
 	$trans = $album_data['bigicon_transparent'] ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
 	// If the big icon is too... big, then we can't round its corners. Ah well.
 	if ($album_data['bigicon_resized'])
-		echo '<img src="', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon" width="', $album_data['bigicon'][0], '" height="', $album_data['bigicon'][1], '" />';
+		echo '<img src="', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon" width="', $album_data['bigicon'][0], '" height="', $album_data['bigicon'][1], '">';
 	else
 		echo '<div class="aea" style="width: ', $album_data['bigicon'][0], 'px; height: ', $album_data['bigicon'][1], 'px; background: url(', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon) 0 0', $trans, '">&nbsp;</div>';
 	echo '</td>
 		<td style="padding: 12px 12px 6px 12px">
 			<div class="mg_large mg_pb4">', !empty($album_data['passwd']) ? aeva_lockedAlbum($album_data['passwd'], $album_data['id'], $album_data['owner']) : '',
 			$album_data['name'], empty($amSettings['disable_rss']) ? '&nbsp;&nbsp;&nbsp;<span class="title_rss">
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . '"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
+			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . '"><div class="feed_icon"></div> ' . $txt['media_items'] . '</a>
+			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
 			<div>', $album_data['type2'], !empty($album_data['owner']['id']) ? '
 			- ' . $txt['media_owner'] . ': ' . aeva_profile($album_data['owner']['id'], $album_data['owner']['name']) : '', '
 			- ', $album_data['num_items'] == 0 ? $txt['media_no_items'] : $album_data['num_items'] . ' ' . $txt['media_lower_item' . ($album_data['num_items'] == 1 ? '' : 's')], !empty($album_data['last_item']) ? ' - ' . $txt['media_latest_item'] . ': <a href="'.$galurl.'sa=item;in='.$album_data['last_item'].'">'.$album_data['last_item_title'].'</a> (' . $album_data['last_item_date'] . ')' : '', '</div>', !empty($album_data['description']) ? '

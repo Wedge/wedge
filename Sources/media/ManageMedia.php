@@ -1700,7 +1700,7 @@ function aeva_admin_fields_edit()
 {
 	global $context, $scripturl, $txt;
 
-	loadSource('Subs-Post');
+	loadSource('Class-Editor');
 
 	// Editing?
 	if (!empty($_REQUEST['in']))
@@ -1709,8 +1709,8 @@ function aeva_admin_fields_edit()
 		if (empty($field[$_REQUEST['in']]))
 			fatal_lang_error('media_cf_invalid');
 		$field = $field[$_REQUEST['in']];
-		$field['name'] = un_preparsecode($field['name']);
-		$field['raw_desc'] = un_preparsecode($field['raw_desc']);
+		$field['name'] = wedit::un_preparsecode($field['name']);
+		$field['raw_desc'] = wedit::un_preparsecode($field['raw_desc']);
 	}
 	else
 	{
@@ -1809,8 +1809,8 @@ function aeva_admin_fields_edit()
 	{
 		$field_name = westr::htmlspecialchars($_POST['name']);
 		$field_desc = westr::htmlspecialchars($_POST['desc']);
-		preparsecode($field_name);
-		preparsecode($field_desc);
+		wedit::preparsecode($field_name);
+		wedit::preparsecode($field_desc);
 
 		$field_type = in_array($_POST['type'], array('text', 'textbox', 'checkbox', 'radio', 'select')) ? $_POST['type'] : 'text';
 

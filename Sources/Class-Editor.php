@@ -25,7 +25,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class wedgeEditor
+class wedit
 {
 	protected static $editorLoaded = false;
 	public $bbc = null;
@@ -49,7 +49,7 @@ class wedgeEditor
 		$this->editorOptions = array(
 			'id' => $editorOptions['id'],
 			'value' => $editorOptions['value'],
-			'rich_value' => wedgeEditor::bbc_to_html($editorOptions['value']),
+			'rich_value' => wedit::bbc_to_html($editorOptions['value']),
 			'rich_active' => empty($modSettings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
 			'disable_smiley_box' => !empty($editorOptions['disable_smiley_box']),
 			'columns' => isset($editorOptions['columns']) ? $editorOptions['columns'] : 60,
@@ -527,7 +527,7 @@ class wedgeEditor
 				break;
 
 			// Now work out what the attributes are.
-			$attribs = wedgeEditor::fetchTagAttributes($matches[1]);
+			$attribs = wedit::fetchTagAttributes($matches[1]);
 			$tags = array();
 			foreach ($attribs as $s => $v)
 			{
@@ -779,7 +779,7 @@ class wedgeEditor
 			$had_params = array();
 			$src = '';
 
-			$attrs = wedgeEditor::fetchTagAttributes($matches[1]);
+			$attrs = wedit::fetchTagAttributes($matches[1]);
 			foreach ($attrs as $attrib => $value)
 			{
 				if (in_array($attrib, array('width', 'height')))
@@ -875,7 +875,7 @@ class wedgeEditor
 			$tag_type = 'url';
 			$href = '';
 
-			$attrs = wedgeEditor::fetchTagAttributes($matches[1]);
+			$attrs = wedit::fetchTagAttributes($matches[1]);
 			foreach ($attrs as $attrib => $value)
 			{
 				if ($attrib == 'href')
@@ -934,7 +934,7 @@ class wedgeEditor
 		// Fix up entities.
 		$text = preg_replace('~&#38;~i', '&#38;#38;', $text);
 
-		$text = wedgeEditor::legalise_bbc($text);
+		$text = wedit::legalise_bbc($text);
 
 		return $text;
 	}
@@ -1086,7 +1086,7 @@ class wedgeEditor
 			$lastlen = strlen($text = preg_replace($backToBackPattern, '', $text));
 
 		// Need to sort the tags my name length.
-		uksort($valid_tags, array('wedgeEditor', 'sort_array_length'));
+		uksort($valid_tags, array('wedit', 'sort_array_length'));
 
 		// These inline tags can compete with each other regarding style.
 		$competing_tags = array(
@@ -1838,7 +1838,7 @@ class wedgeEditor
 			// It goes 0 = outside, 1 = begin tag, 2 = inside, 3 = close tag, repeat.
 			if ($i % 4 == 0)
 			{
-				wedgeEditor::fixTags($parts[$i]);
+				wedit::fixTags($parts[$i]);
 
 				// Replace /me.+?\n with [me=name]dsf[/me]\n.
 				if (strpos($user_info['name'], '[') !== false || strpos($user_info['name'], ']') !== false || strpos($user_info['name'], '\'') !== false || strpos($user_info['name'], '"') !== false)
@@ -2081,7 +2081,7 @@ class wedgeEditor
 
 		// Fix each type of tag.
 		foreach ($fixArray as $param)
-			wedgeEditor::fixTag($message, $param['tag'], $param['protocols'], $param['embeddedUrl'], $param['hasEqualSign'], !empty($param['hasExtra']));
+			wedit::fixTag($message, $param['tag'], $param['protocols'], $param['embeddedUrl'], $param['hasEqualSign'], !empty($param['hasExtra']));
 
 		// Now fix possible security problems with images loading links automatically...
 		$message = preg_replace('~(\[img.*?\])(.+?)\[/img\]~eis', '\'$1\' . preg_replace(\'~action(=|%3d)(?!dlattach)~i\', \'action-\', \'$2\') . \'[/img]\'', $message);
