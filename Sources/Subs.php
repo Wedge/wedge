@@ -1417,6 +1417,9 @@ function ob_sessrewrite($buffer)
 				$end_code = strpos($buffer, '</we:' . strtolower($code), $p + 4);
 				$next_code = strpos($buffer, '<we:', $p + 4);
 
+				if ($end_code === false)
+					$end_code = strlen($buffer);
+
 				// Did we find a block with no nested blocks?
 				if ($next_code !== false && $end_code > $next_code)
 				{
@@ -2891,6 +2894,7 @@ function setupMenuContext()
 				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($modSettings['enable_gallery']) && allowedTo('aeva_access'),
+				'padding' => 18,
 				'sub_buttons' => !allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? array() : array(
 					'aeva_home' => array(
 						'title' => $txt['media_home'],

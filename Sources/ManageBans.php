@@ -956,7 +956,7 @@ function BanEdit()
 				$context['ban']['name'] = $context['ban_suggestions']['member']['name'];
 
 				// Would be nice if we could also ban the hostname. Make sure we pass the normal IP address to the lookup function, rather than our magic format.
-				if ($context['ban_suggestions']['main_ip']) != INVALID_IP && empty($modSettings['disableHostnameLookup']))
+				if ($context['ban_suggestions']['main_ip'] != INVALID_IP && empty($modSettings['disableHostnameLookup']))
 					$context['ban_suggestions']['hostname'] = host_from_ip(format_ip($context['ban_suggestions']['main_ip']));
 
 				// Find some additional IP's used by this member.
@@ -985,7 +985,7 @@ function BanEdit()
 						array(
 							'ips' => $ip_ids,
 						)
-					}
+					);
 					while ($row = wesql::fetch_assoc($request))
 						$context['ban_suggestions']['message_ips'][] = format_ip($row['member_ip']);
 					wesql::free_result($request);
@@ -1016,7 +1016,7 @@ function BanEdit()
 						array(
 							'ips' => $ip_ids,
 						)
-					}
+					);
 					while ($row = wesql::fetch_assoc($request))
 						$context['ban_suggestions']['error_ips'][] = format_ip($row['member_ip']);
 					wesql::free_result($request);

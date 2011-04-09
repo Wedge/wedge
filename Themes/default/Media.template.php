@@ -132,9 +132,9 @@ function template_aeva_home()
 	<div id="aeva_welcome">' . $context['aeva_welcome'] . '</div>' : '', '
 	<div id="aeva_toplinks">
 		<we:cat>
-			<img src="'.$settings['images_aeva'].'/house.png" style="vertical-align: -3px" /> <b>'.$txt['media_home'].'</b>', $context['show_albums_link'] ? ' -
-			<img src="'.$settings['images_aeva'].'/album.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'sa=vua">'.$txt['media_albums'].'</a></b>' : '', empty($amSettings['disable_playlists']) ? ' -
-			<img src="'.$settings['images_aeva'].'/playlist.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'sa=playlists">'.$txt['media_playlists'].'</a></b>' : '', '
+			<img src="'.$settings['images_aeva'].'/house.png"> <b>'.$txt['media_home'].'</b>', $context['show_albums_link'] ? ' -
+			<img src="'.$settings['images_aeva'].'/album.png"> <b><a href="'.$galurl.'sa=vua">'.$txt['media_albums'].'</a></b>' : '', empty($amSettings['disable_playlists']) ? ' -
+			<img src="'.$settings['images_aeva'].'/playlist.png"> <b><a href="'.$galurl.'sa=playlists">'.$txt['media_playlists'].'</a></b>' : '', '
 		</we:cat>
 	</div>';
 

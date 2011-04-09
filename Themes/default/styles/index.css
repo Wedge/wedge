@@ -569,47 +569,51 @@ li.separator
 	margin: 2px 0 0 2px
 	background-repeat: no-repeat
 	background-image: url($images/icons/sprite.png)
-	background-position: -64px 0
+	background-position: -74px 0
 
 .m_board extends .m_home
-	background-position: -64px 0
+	background-position: -74px 0
 
 .m_search extends .m_home
-	background-position: -112px 1px
+	background-position: -131px 0
 	height: 17px
 
 .m_admin extends .m_home
-	background-position: -32px 0
+	background-position: -36px 0
 
 .m_moderate extends .m_home
-	background-position: -48px 0
+	background-position: -55px 0
 
 .m_profile extends .m_home
 	background-position: 0 0
 
 .m_pm extends .m_home
-	background-position: -80px 0
+	background-position: -93px 0
 
 .m_pm_unread extends .m_home
-	background-position: -96px 0
+	background-position: -112px 0
 
 .m_calendar extends .m_home
-	background-position: -176px 0
+	background-position: -205px 0
 	width: 14px
 
+.m_media extends .m_home
+	background-position: -222px 0
+	width: 18px
+
 .m_mlist extends .m_home
-	background-position: -17px 0
+	background-position: -19px 0
 	width: 14px
 
 .m_login extends .m_home
-	background-position: -144px 0
+	background-position: -168px 0
 	width: 15px
 
 .m_register extends .m_home
-	background-position: -160px 0
+	background-position: -186px 0
 
 .m_logout extends .m_home
-	background-position: -128px 0
+	background-position: -150px 0
 	width: 15px
 
 /* Common classes to ease styling.
