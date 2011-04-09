@@ -42,7 +42,14 @@ function template_admin()
 
 	// Is there an update available?
 	echo '
-		<div id="update_section"></div>
+		<div id="update_section">
+			<we:cat>
+				<div id="update_title"></div>
+			</we:cat>
+			<div class="windowbg wrc">
+				<div id="update_message" class="smalltext"></div>
+			</div>
+		</div>
 		<div id="admin_main_section">';
 
 	// Display the "live news" from simplemachines.org.
@@ -143,20 +150,8 @@ function template_admin()
 		') . ',
 
 		bLoadUpdateNotification: true,
-		sUpdateNotificationContainerId: \'update_section\',
 		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationTemplate: ' . JavaScriptEscape('
-			<we:cat>
-				<div id="update_title">
-					%title%
-				</div>
-			</we:cat>
-			<div class="windowbg wrc">
-				<div id="update_message" class="smalltext">
-					%message%
-				</div>
-			</div>') . ',
 		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']) . '
 	});');
 }

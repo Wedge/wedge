@@ -71,18 +71,16 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 		sTitle = 'smfUpdateTitle' in window ? window.smfUpdateTitle : this.opt.sUpdateNotificationDefaultTitle,
 		sMessage = 'smfUpdateNotice' in window ? window.smfUpdateNotice : this.opt.sUpdateNotificationDefaultMessage;
 
-	$('#' + this.opt.sUpdateNotificationContainerId).html(this.opt.sUpdateNotificationTemplate.replace('%title%', sTitle).replace('%message%', sMessage));
+	$('#update_title').html(sTitle);
+	$('#update_message').html(sMessage);
+	$('#update_section').show();
 
 	// Parse in the package download URL if it exists in the string.
 	$('#update-link').attr('href', this.opt.sUpdateNotificationLink.replace('%package%', window.smfUpdatePackage));
 
-	// If we decide to override life into "red" mode, do it.
+	// Is it a critical update? Then make it more visible.
 	if ('smfUpdateCritical' in window)
-	{
-		$('#update_table').css('backgroundColor', '#aa2222');
-		$('#update_title').css({ backgroundColor: '#dd2222', color: 'white' });
-		$('#update_message').css({ backgroundColor: '#eebbbb', color: 'black' });
-	}
+		$('#update_title').css({ color: '#ffcc99', fontSize: '1.2em' });
 };
 
 
