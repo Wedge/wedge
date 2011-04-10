@@ -73,47 +73,37 @@ function aeva_admin_maintenance()
 	// $context['aeva_maintenance_done'] can have false (not shown), 'error' (red), ' pending'(yellow), true (green)
 	// Title is fetched as $txt['media_admin_maintenance_'.sa];
 
-	$sas = array(
-		// Tasks
-		'recount' => array('aeva_admin_maintenance_recount', false),
-		'checkfiles' => array('aeva_admin_maintenance_checkfiles', false),
-		'checkorphans' => array('aeva_admin_maintenance_checkorphans', false),
-		'finderrors' => array('aeva_admin_maintenance_finderrors', false),
-		'clear' => array('aeva_admin_maintenance_clear', 0),
-		'regen' => array('aeva_admin_maintenance_regenerate', false, array('thumb', 'embed', 'preview', 'all')),
-		// Utilities
-		'prune' => array('aeva_admin_maintenance_prune', true),
+	$sas = $album ? array(
+		'checkorphans'
+	) : array(
+		'recount',
+		'checkfiles',
+		'checkorphans',
+		'finderrors',
 	);
-	if ($album)
-		unset($sas['recount'], $sas['checkfiles'], $sas['clear'], $sas['finderrors']);
 
 	// Construct the template array
 	$context['aeva_dos'] = array();
 	$end_url = ($album ? ';album=' . $album : '') . ';' . $context['session_var'] . '=' . $context['session_id'];
-	foreach ($sas as $sa => $data)
-		if ($data[1] === false)
-		{
-			// Any sub-tasks?
-			if (isset($data[2]))
-				foreach ($data[2] as $st)
-					$context['aeva_dos'][$sa][] = array(
-						'title' => $txt['media_admin_maintenance_' . $sa . '_' . $st],
-						'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . ';st=' . $st . $end_url,
-						'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_' . $st . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_' . $st . '_subtext'] : '',
-					);
-			else
-				$context['aeva_dos']['tasks'][] = array(
-					'title' => $txt['media_admin_maintenance_' . $sa],
-					'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
-					'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
-				);
-		}
-		elseif ($data[1])
-			$context['aeva_dos']['utils'][] = array(
-				'title' => $txt['media_admin_maintenance_' . $sa],
-				'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
-				'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
-			);
+	foreach ($sas as $sa)
+		$context['aeva_dos']['tasks'][] = array(
+			'title' => $txt['media_admin_maintenance_' . $sa],
+			'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
+			'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
+		);
+
+	foreach (array('thumb', 'embed', 'preview', 'all') as $st)
+		$context['aeva_dos']['regen'][] = array(
+			'title' => $txt['media_admin_maintenance_regen_' . $st],
+			'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=regen;st=' . $st . $end_url,
+			'subtext' => isset($txt['media_admin_maintenance_regen_' . $st . '_subtext']) ? $txt['media_admin_maintenance_regen_' . $st . '_subtext'] : '',
+		);
+
+	$context['aeva_dos']['utils'][] = array(
+		'title' => $txt['media_admin_maintenance_prune'],
+		'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=prune' . $end_url,
+		'subtext' => $txt['media_admin_maintenance_prune_subtext'],
+	);
 
 	if (isset($_REQUEST['sa'], $sas[$_REQUEST['sa']]))
 	{
@@ -440,7 +430,7 @@ function aeva_admin_maintenance_recount()
 	{
 		wesql::query('
 			UPDATE {db_prefix}members
-			SET aeva_items = {int:total}
+			SET media_items = {int:total}
 			WHERE id_member = {int:id}',
 			array('id' => $row['id_member'], 'total' => $row['total_media'])
 		);
@@ -449,7 +439,7 @@ function aeva_admin_maintenance_recount()
 	wesql::free_result($request);
 	wesql::query('
 		UPDATE {db_prefix}members
-		SET aeva_items = 0' . (!empty($done_mems) ? '
+		SET media_items = 0' . (!empty($done_mems) ? '
 		WHERE id_member NOT IN ({array_int:mems})' : ''),
 		array('mems' => $done_mems)
 	);
@@ -465,7 +455,7 @@ function aeva_admin_maintenance_recount()
 	{
 		wesql::query('
 			UPDATE {db_prefix}members
-			SET aeva_comments = {int:total}
+			SET media_comments = {int:total}
 			WHERE id_member = {int:id}',
 			array('id' => $row['id_member'], 'total' => $row['total_comments'])
 		);
@@ -474,7 +464,7 @@ function aeva_admin_maintenance_recount()
 	wesql::free_result($request);
 	wesql::query('
 		UPDATE {db_prefix}members
-		SET aeva_comments = 0' . (!empty($done_mems) ? '
+		SET media_comments = 0' . (!empty($done_mems) ? '
 		WHERE id_member NOT IN ({array_int:mems})' : ''),
 		array('mems' => $done_mems)
 	);

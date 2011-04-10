@@ -265,11 +265,8 @@ function createMenu($menuData, $menuOptions = array())
 	foreach ($menu_context['sections'] as &$section)
 	{
 		$areas =& $section['areas'];
-		while (reset($areas) == '')
-			array_shift($areas);
-		while (end($areas) == '')
-			array_pop($areas);
-		reset($areas);
+		while (reset($areas) == '' && array_shift($areas) !== null);
+		while (end($areas) == '' && array_pop($areas) !== null);
 		foreach ($areas as $id => &$area)
 		{
 			if (!empty($ex) && is_numeric($id))

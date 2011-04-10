@@ -114,7 +114,7 @@ define('AEVA_MEDIA_VERSION', '2.10');
 	array aeva_getFetchData(string type, array data)
 		- Returns data which needs fetching to be displayed
 
-	array aeva_insertFileID(array options, int filesize, int filename, int width, int height, string directory, int id_album, string exif)
+	array aeva_insertFileID(array options, int filesize, int filename, int width, int height, string directory, int id_album, string meta)
 		- Inserts (or updates) file data into the files tables
 
 	void aeva_loadQuotas()
@@ -787,9 +787,9 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	$galurl2 = rtrim($galurl, ';?&');
 
 	// Recalculate number of unseen items
-	if (!empty($user_info['aeva_unseen']) && $user_info['aeva_unseen'] == -1)
+	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
 	{
-		$aeva_unseen = 0;
+		$media_unseen = 0;
 		if ($can_unseen = allowedTo('media_access_unseen'))
 		{
 			$request = wesql::query('
@@ -804,13 +804,13 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 				LIMIT 1',
 				array('user' => $user_info['id'])
 			);
-			list ($aeva_unseen) = wesql::fetch_row($request);
+			list ($media_unseen) = wesql::fetch_row($request);
 			wesql::free_result($request);
 		}
-		updateMemberData($user_info['id'], array('aeva_unseen' => $aeva_unseen));
-		$user_info['aeva_unseen'] = $aeva_unseen;
+		updateMemberData($user_info['id'], array('media_unseen' => $media_unseen));
+		$user_info['media_unseen'] = $media_unseen;
 		// If unseen counter if set to 0, make sure to clean up the database!
-		if ($can_unseen && empty($aeva_unseen))
+		if ($can_unseen && empty($media_unseen))
 			aeva_markAllSeen();
 	}
 
@@ -1436,7 +1436,7 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 	foreach ($mem_counter as $id_mem => $to_decrement)
 		wesql::query("
 			UPDATE {db_prefix}members
-			SET aeva_items = aeva_items - {int:to_decrement}
+			SET media_items = media_items - {int:to_decrement}
 			WHERE id_member = {int:mem}",array('mem' => $id_mem, 'to_decrement' => $to_decrement));
 
 	media_resetUnseen();
@@ -1565,7 +1565,7 @@ function aeva_deleteComments($id, $log = true)
 	// Update member's data
 	foreach ($mem_counter as $id_mem => $to_decrement)
 		wesql::query('
-			UPDATE {db_prefix}members SET aeva_comments = aeva_comments - {int:to_decrement} WHERE id_member = {int:mem}',
+			UPDATE {db_prefix}members SET media_comments = media_comments - {int:to_decrement} WHERE id_member = {int:mem}',
 			array('mem' => $id_mem, 'to_decrement' => $to_decrement)
 		);
 
@@ -1834,15 +1834,15 @@ function aeva_getFetchData($type, $data)
 	return $ret;
 }
 
-function aeva_insertFileID($id, $filesize, $filename, $width, $height, $directory, $id_album, $exif = '')
+function aeva_insertFileID($id, $filesize, $filename, $width, $height, $directory, $id_album, $meta = '')
 {
 	if (empty($id))
 	{
 		// Insert it
 		wesql::insert('',
 			'{db_prefix}media_files',
-			array('filesize', 'filename', 'width', 'height', 'directory', 'id_album', 'exif'),
-			array($filesize, $filename, $width, $height, $directory, $id_album, $exif)
+			array('filesize', 'filename', 'width', 'height', 'directory', 'id_album', 'meta'),
+			array($filesize, $filename, $width, $height, $directory, $id_album, $meta)
 		);
 
 		return wesql::insert_id();
@@ -1850,7 +1850,7 @@ function aeva_insertFileID($id, $filesize, $filename, $width, $height, $director
 
 	$request = wesql::query('
 		UPDATE {db_prefix}media_files
-		SET filesize = {int:filesize}, width = {int:width}, height = {int:height}, exif = {string:exif}, filename = {string:filename}'
+		SET filesize = {int:filesize}, width = {int:width}, height = {int:height}, meta = {string:meta}, filename = {string:filename}'
 		. (!empty($directory) ? ', directory = {string:directory}' : '') . (!empty($id_album) ? ', id_album = {int:id_album}' : '') . '
 		WHERE id_file = {int:id_file}',
 		array(
@@ -1861,7 +1861,7 @@ function aeva_insertFileID($id, $filesize, $filename, $width, $height, $director
 			'height' => $height,
 			'id_album' => $id_album,
 			'directory' => $directory,
-			'exif' => $exif,
+			'meta' => $meta,
 		)
 	);
 
@@ -1956,12 +1956,12 @@ function aeva_createFile(&$options)
 	if (empty($height))
 		$height = isset($options['height']) ? $options['height'] : 0;
 
-	$exifInfo = $file->getInfo();
-	if ($amSettings['use_exif_date'] && !empty($exifInfo['datetime']))
-		if (preg_match('/(\d{4}).(\d{2}).(\d{2}) (\d{2}).(\d{2}).(\d{2})/', $exifInfo['datetime'], $dt) > 0 && $dt[1] != 1970)
+	$metaInfo = $file->getInfo();
+	if ($amSettings['use_metadata_date'] && !empty($metaInfo['datetime']))
+		if (preg_match('/(\d{4}).(\d{2}).(\d{2}) (\d{2}).(\d{2}).(\d{2})/', $metaInfo['datetime'], $dt) > 0 && $dt[1] != 1970)
 			$ret['time'] = mktime($dt[4], $dt[5], $dt[6], $dt[2], $dt[3], $dt[1]);
 
-	$exif = serialize($exifInfo);
+	$meta = serialize($metaInfo);
 	$fsize = $file->getFileSize();
 	$mtype = $file->media_type();
 
@@ -2019,7 +2019,7 @@ function aeva_createFile(&$options)
 	// Done with security checks, now on with creating the file
 	$ret['file'] = $id_file = aeva_insertFileID(
 		isset($options['force_id_file']) ? $options['force_id_file'] : 0, $fsize, $options['filename'],
-		$width, $height, $options['cur_dest'], $options['album'], $exif
+		$width, $height, $options['cur_dest'], $options['album'], $meta
 	);
 
 	// Move the file
@@ -2254,7 +2254,7 @@ function aeva_createItem($options)
 
 		wesql::query('
 			UPDATE {db_prefix}members
-			SET aeva_items = aeva_items + 1
+			SET media_items = media_items + 1
 			WHERE id_member = {int:mem}',
 			array('mem' => $options['id_member'])
 		);
@@ -2872,7 +2872,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	{
 		// If you don't want to allow item previewing via Highslide on album pages, replace the following line with: $is_image = false;
 		$is_image = $i['type'] == 'image' || ($i['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $i['embed_url']));
-		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($modSettings['autoembed']);
+		$is_embed = !$is_image && $i['type'] == 'embed' && isset($context['admin_features']['e']);
 		if ($is_embed)
 		{
 			if (!function_exists('aeva_main'))
@@ -3278,10 +3278,10 @@ function aeva_getTopItems($limit = 10, $by = 'views', $order = 'DESC')
 function aeva_getTopMembers($limit = 10, $by = 'items', $order = 'DESC')
 {
 	$request = wesql::query('
-		SELECT mem.real_name AS member_name, mem.id_member AS id_member, mem.aeva_items, mem.aeva_comments
+		SELECT mem.real_name AS member_name, mem.id_member AS id_member, mem.media_items, mem.media_comments
 		FROM {db_prefix}members AS mem
-		WHERE ' . ($by == 'items' ? 'mem.aeva_items' : 'mem.aeva_comments'). ' > 0
-		ORDER BY ' . ($by == 'items' ? 'mem.aeva_items' : 'mem.aeva_comments'). ' {raw:order}
+		WHERE ' . ($by == 'items' ? 'mem.media_items' : 'mem.media_comments'). ' > 0
+		ORDER BY ' . ($by == 'items' ? 'mem.media_items' : 'mem.media_comments'). ' {raw:order}
 		LIMIT {int:limit}',
 		array('1' => 1, 'order' => $order, 'limit' => $limit)
 	);
@@ -3292,12 +3292,12 @@ function aeva_getTopMembers($limit = 10, $by = 'items', $order = 'DESC')
 	{
 		$members[$row['id_member']] = array(
 			'id' => $row['id_member'],
-			'total_items' => $row['aeva_items'],
-			'total_comments' => $row['aeva_comments'],
+			'total_items' => $row['media_items'],
+			'total_comments' => $row['media_comments'],
 			'name' => $row['member_name'],
 		);
-		if ($max < $row[$by == 'items' ? 'aeva_items' : 'aeva_comments'])
-			$max = $row[$by == 'items' ? 'aeva_items' : 'aeva_comments'];
+		if ($max < $row[$by == 'items' ? 'media_items' : 'media_comments'])
+			$max = $row[$by == 'items' ? 'media_items' : 'media_comments'];
 	}
 	foreach ($members as $k => $v)
 		$members[$k]['percent'] = round(($v[$by == 'items' ? 'total_items' : 'total_comments'] * 100) / $max);
@@ -3532,7 +3532,7 @@ function aeva_mkdir($dir, $chmod)
 // Reset everyone's Unseen counter to zero.
 function media_resetUnseen($id = null)
 {
-	updateMemberData($id, array('aeva_unseen' => '-1'));
+	updateMemberData($id, array('media_unseen' => '-1'));
 	if ($id === null && function_exists('clean_cache'))
 		clean_cache('member_data');
 }
@@ -3553,9 +3553,9 @@ function aeva_markAllSeen()
 		array('member' => $user_info['id'])
 	);
 
-	if (!empty($user_info['aeva_unseen']))
-		updateMemberData($user_info['id'], array('aeva_unseen' => 0));
-	$user_info['aeva_unseen'] = 0;
+	if (!empty($user_info['media_unseen']))
+		updateMemberData($user_info['id'], array('media_unseen' => 0));
+	$user_info['media_unseen'] = 0;
 
 	// Optimize the table from time to time... Only 33% of the time should be okay,
 	// change this to mt_rand(1, 100) for a 1% rate if your forum is busy.
@@ -3677,7 +3677,7 @@ function aeva_getItemData($item)
 			m.id_thumb, m.id_preview, m.id_file, IFNULL(mem2.real_name, m.last_edited_name) AS last_edited_name,
 			m.approved, m.type, m.rating, m.voters, m.weighted, m.views, m.downloads, m.time_added, m.num_comments,
 			a.id_album AS album_id, a.master, a.name AS album_name, a.featured, a.options,
-			f.filename, f.filesize, f.width, f.height, f.directory, m.embed_url, f.exif,
+			f.filename, f.filesize, f.width, f.height, f.directory, m.embed_url, f.meta,
 			IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time AS is_new,
 			IFNULL(p.width,f.width) AS preview_width, IFNULL(p.height,f.height) AS preview_height, (p.width && p.height) AS has_preview,
 			t.width AS thumb_width, t.height AS thumb_height

@@ -149,9 +149,9 @@ function aeva_modCP_submissions()
 
 	// Get the subtabs
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'aeva_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'items'),
-		'comments' => array('title' => 'aeva_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'coms'),
-		'albums' => array('title' => 'aeva_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_var'] . '=' . $context['session_id'], 'active' => $filter == 'albums'),
+		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'items'),
+		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'coms'),
+		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_var'] . '=' . $context['session_id'], 'active' => $filter == 'albums'),
 	);
 
 	// HTML headers
@@ -261,7 +261,7 @@ function aeva_modCP_submissions_approve()
 			// Update the uploader's stats
 			wesql::query('
 				UPDATE {db_prefix}members
-				SET aeva_items = aeva_items + 1
+				SET media_items = media_items + 1
 				WHERE id_member = {int:member}',
 				array('member' => $id_member)
 			);
@@ -326,7 +326,7 @@ function aeva_modCP_submissions_approve()
 			// Update the uploader's stats
 			wesql::query('
 				UPDATE {db_prefix}members
-				SET aeva_comments = aeva_comments + 1
+				SET media_comments = media_comments + 1
 				WHERE id_member = {int:member}',
 				array('member' => $id_member)
 			);

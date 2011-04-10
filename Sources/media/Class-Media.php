@@ -462,7 +462,7 @@ class media_handler
 				if (is_null($this->getid3_data))
 					$this->getid3_data = $this->getid3->analyze($this->src);
 
-				// FLV dimensions seem to be more reliable in meta data.
+				// FLV dimensions seem to be more reliable in metadata.
 				if (!empty($this->getid3_data['meta']['onMetaData']['width']))
 				{
 					$width = @$this->getid3_data['meta']['onMetaData']['width'];
@@ -532,7 +532,7 @@ class media_handler
 		return $this->getMimeFromExt($this->src);
 	}
 
-	// Gets some extra info of the file
+	// Gets metadata from the file
 	function getInfo()
 	{
 		$return = array();

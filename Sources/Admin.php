@@ -301,13 +301,14 @@ function Admin()
 				),
 			),
 		),
-		'aeva' => array(
+		'media' => array(
 			'title' => $txt['media_title'],
 			'permission' => array('aeva_manage'),
 			'areas' => array(
 				'aeva_about' => array(
 					'label' => $txt['media_admin_labels_about'],
 					'icon' => 'administration.gif',
+					'enabled' => isset($context['admin_features']['e']) || isset($context['admin_features']['m']),
 					'subsections' => array(
 						'about' => 'media_admin_labels_index',
 						'readme' => 'media_admin_readme',
@@ -319,13 +320,14 @@ function Admin()
 					'icon' => 'corefeatures.gif',
 					'subsections' => array(
 						'config' => 'media_admin_settings_config',
-						'exif' => 'media_admin_settings_exif',
+						'meta' => 'media_admin_settings_meta',
 						'layout' => 'media_admin_settings_layout',
 					),
 				),
 				'aeva_embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
 					'icon' => 'aeva.png',
+					'enabled' => in_array('e', $context['admin_features']),
 					'subsections' => array(
 						'config' => 'media_admin_settings_config',
 						'sites' => 'media_admin_settings_sites',
@@ -549,11 +551,12 @@ function Admin()
 	);
 
 	// Temp compatibility code for Aeva Media integration...
-	foreach ($admin_areas['aeva']['areas'] as &$tab)
+	foreach ($admin_areas['media']['areas'] as &$tab)
 	{
 		$tab['file'] = 'media/ManageMedia';
 		$tab['function'] = 'aeva_admin_init';
 		$tab['permission'] = array('aeva_manage');
+		$tab['enabled'] = isset($tab['enabled']) ? $tab['enabled'] : isset($context['admin_features']['m']);
 		if (!empty($tab['subsections']))
 			foreach ($tab['subsections'] as &$title)
 				$title = array($txt[$title]);

@@ -173,7 +173,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		}
 
 		// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
-		if (!empty($modSettings['autoembed']) && strlen($message) > 15)
+		if (isset($context['admin_features']['e']) && strlen($message) > 15)
 		{
 			if (!function_exists('aeva_preprotect'))
 				loadSource('media/Aeva-Embed');

@@ -378,8 +378,8 @@ function template_aeva_viewItem()
 			<ul class="smalltext info_list">' . (!empty($item['member']['group']) ? '
 				<li>' . $item['member']['group'] . '</li>' : '') . (!empty($item['member']['avatar']['image']) ? '
 				<li>' . $item['member']['avatar']['image'] . '</li>' : '') . '
-				<li>' . $txt['media_total_items'] . ': ' . $item['member']['aeva']['total_items'] . '</li>
-				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['aeva']['total_comments'] . '</li>', '
+				<li>' . $txt['media_total_items'] . ': ' . $item['member']['media']['total_items'] . '</li>
+				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
 			</ul>
 		</td>
 		<td class="windowbg2 top"', $amSettings['show_extra_info'] == 1 ? ' rowspan="2"' : '', '>
@@ -486,20 +486,20 @@ function template_aeva_viewItem()
 
 		if (empty($item['extra_info']))
 			echo '
-			<div class="info">', $txt['media_exif_not_available'], '</div>';
+			<div class="info">', $txt['media_meta_not_available'], '</div>';
 		else
 		{
 			echo $amSettings['use_lightbox'] ? '
 			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" onclick="return hs.htmlExpand(this);">'
-			. $txt['media_exif_entries'] . '</a> (' . count($item['extra_info']) . ')
+			. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
 			<div class="highslide-maincontent">
 				<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
-				<div class="smalltext exif">';
+				<div class="smalltext meta">';
 
 			foreach ($item['extra_info'] as $info => $data)
 				if (!empty($data))
 					echo '
-					<div class="info"><b>', $txt['media_exif_'.$info], '</b>: ', $data, '</div>';
+					<div class="info"><b>', $txt['media_meta_' . $info], '</b>: ', $data, '</div>';
 			echo '
 				</div>
 			</div>', $amSettings['use_lightbox'] ? '</div>' : '';
@@ -630,8 +630,8 @@ function template_aeva_viewItem()
 				<ul class="smalltext info_list">' . (!empty($c['member']['group']) ? '
 					<li>' . $c['member']['group'] . '</li>' : '') . (!empty($c['member']['avatar']['image']) ? '
 					<li>' . $c['member']['avatar']['image'] . '</li>' : '') . '
-					<li>' . $txt['media_total_items'] . ': ' . $c['member']['aeva']['total_items'] . '</li>
-					<li>' . $txt['media_total_comments'] . ': ' . $c['member']['aeva']['total_comments'] . '</li>
+					<li>' . $txt['media_total_items'] . ': ' . $c['member']['media']['total_items'] . '</li>
+					<li>' . $txt['media_total_comments'] . ': ' . $c['member']['media']['total_comments'] . '</li>
 				</ul>', '
 			</td>
 			<td class="top', $c['approved'] ? '' : ' unapp', '">

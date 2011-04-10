@@ -2705,7 +2705,7 @@ function setupMenuContext()
 	$context['allow_pm'] = allowedTo('pm_read');
 
 	// Recalculate the number of unseen media items
-	if (!empty($user_info['aeva_unseen']) && $user_info['aeva_unseen'] == -1)
+	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
 	{
 		loadSource('media/Subs-Media');
 		loadMediaSettings();
@@ -2891,20 +2891,20 @@ function setupMenuContext()
 				),
 			),
 			'media' => array(
-				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
+				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('aeva_access_unseen') || empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
 				'href' => $scripturl . '?action=media',
-				'show' => !empty($modSettings['enable_gallery']) && allowedTo('aeva_access'),
+				'show' => in_array('m', $context['admin_features']) && allowedTo('aeva_access'),
 				'padding' => 18,
-				'sub_buttons' => !allowedTo('aeva_access_unseen') || empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? array() : array(
-					'aeva_home' => array(
+				'sub_buttons' => array(
+					'home' => array(
 						'title' => $txt['media_home'],
 						'href' => $scripturl . '?action=media',
 						'show' => true,
 					),
-					'aeva_unseen' => array(
+					'unseen' => array(
 						'title' => $txt['media_unseen'],
 						'href' => $scripturl . '?action=media;sa=unseen',
-						'show' => true,
+						'show' => allowedTo('aeva_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
 						'is_last' => true,
 					),
 				),

@@ -338,11 +338,9 @@ function aeva_admin_settings()
 	loadSubTemplate('aeva_form');
 	$context['template_layers'][] = 'aeva_admin_enclose_table';
 
-	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('exif', 'layout')) ? $_REQUEST['sa'] : 'config';
+	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 
 	$settings = array(
-		'enable_gallery' => array('yesno', 'config'),
-
 		'title_main' => array('title', 'config'),
 		'welcome' => array('textbox', 'config'),
 		'data_dir_path' => array('text', 'config'),
@@ -350,7 +348,7 @@ function aeva_admin_settings()
 		'max_dir_files' => array('small_text', 'config'),
 		'max_dir_size' => array('small_text', 'config', null, null, $txt['media_kb']),
 		'enable_re-rating' => array('yesno', 'config'),
-		'use_exif_date' => array('yesno', 'config'),
+		'use_metadata_date' => array('yesno', 'config'),
 		'enable_cache' => array('yesno', 'config'),
 		'image_handler' => array('radio', 'config'),
 		'entities_convert' => array('select', 'config'),
@@ -379,7 +377,7 @@ function aeva_admin_settings()
 		'max_preview_height' => array('small_text', 'config', null, null, $txt['media_pixels']),
 		'max_bigicon_width' => array('small_text', 'config', null, null, $txt['media_pixels']),
 		'max_bigicon_height' => array('small_text', 'config', null, null, $txt['media_pixels']),
-		'show_extra_info' => array('yesno', 'exif'),
+		'show_extra_info' => array('yesno', 'meta'),
 
 		'title_limits' => array('title', 'layout'),
 		'num_items_per_page' => array('small_text', 'layout'),
@@ -418,9 +416,9 @@ function aeva_admin_settings()
 	}
 
 	$info = array('datetime', 'copyright', 'xposuretime', 'flash', 'duration', 'make', 'model', 'xres', 'yres', 'resunit', 'focal_length', 'orientation', 'iso', 'meteringMode', 'digitalZoom', 'exifVersion', 'contrast', 'sharpness', 'focusType', 'fnumber','frame_count', 'bit_rate', 'audio_codec', 'video_codec');
-	$settings['show_info'] = array('checkbox', 'exif', array());
+	$settings['show_info'] = array('checkbox', 'meta', array());
 	foreach ($info as $in)
-		$settings['show_info'][2]['show_info_'.$in] = array($txt['media_exif_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
+		$settings['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
 
 	$sho = isset($_POST['entities_convert']) ? $_POST['entities_convert'] : (empty($amSettings['entities_convert']) ? 0 : $amSettings['entities_convert']);
 	$settings['entities_convert'][2][0] = array($txt['media_entities_always'], $sho == 0);
@@ -466,9 +464,6 @@ function aeva_admin_settings()
 
 	$txt['media_admin_settings_my_docs_subtext'] = sprintf($txt['media_admin_settings_my_docs_subtext'], implode(', ', explode(',', $default_docs)));
 
-	if ($context['current_area'] === 'config' && ((isset($_POST['submit_aeva']) && empty($_POST['enable_gallery'])) || empty($modSettings['enable_gallery'])))
-		$settings = array('enable_gallery' => array('yesno', 'config'));
-
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
 	{
@@ -512,11 +507,7 @@ function aeva_admin_settings()
 				}
 			}
 			else
-			{
 				aeva_updateSettings($setting, $new_value, true);
-				if ($setting === 'enable_gallery')
-					updateSettings(array($setting => $new_value));
-			}
 		}
 		if ($amSettings['enable_cache'])
 			cache_put_data('aeva_settings', $amSettings, 60);

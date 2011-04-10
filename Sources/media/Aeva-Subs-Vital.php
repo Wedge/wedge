@@ -620,7 +620,7 @@ function aeva_utf2entities($source, $is_file = true, $limit = 255, $is_utf = fal
 {
 	global $context, $amSettings, $modSettings;
 
-	if (isset($modSettings['autoembed']) && function_exists('aeva_onposting'))
+	if (isset($context['admin_features']['e']) && function_exists('aeva_onposting'))
 		$source = aeva_onposting($source);
 
 	$do = empty($amSettings['entities_convert']) ? 0 : $amSettings['entities_convert'];

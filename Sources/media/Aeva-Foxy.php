@@ -1132,7 +1132,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 		$request = wesql::query('
 			SELECT
-				m.id_media, m.title, m.type, f.exif, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
+				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, f.filename, i.width AS icon_width, p.height AS preview_height,
 				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
 			FROM {db_prefix}media_items AS m
@@ -1154,7 +1154,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	{
 		$request = wesql::query('
 			SELECT
-				m.id_media, m.title, m.type, f.exif, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
+				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, a.description AS album_description, f.filename, i.width AS icon_width, p.height AS preview_height,
 				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
 			FROM {db_prefix}media_items AS m
@@ -1184,7 +1184,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		}
 		$request = wesql::query('
 			SELECT
-				m.id_media, m.title, m.type, f.exif, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
+				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, a.description AS album_description, f.filename, i.width AS icon_width, p.height AS preview_height,
 				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
 			FROM {db_prefix}media_items AS m
@@ -1225,7 +1225,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		$ext = strtolower(substr(strrchr($row['filename'], '.'), 1));
 		$artist = $row['album_name'];
 		$thumb = isset($row['td']) && !empty($amSettings['clear_thumbnames']) ? $clearurl . '/' . str_replace('%2F', '/', urlencode($row['td'])) . '/' . aeva_getEncryptedFilename($row['tf'], $row['id_thumb'], true) : $galurl . 'sa=media;in=' . $row['id_media'] . ';thumba';
-		$exif = unserialize($row['exif']);
+		$meta = unserialize($row['meta']);
 		$total_rating += (int) $row['rating'];
 		$nvotes += (int) $row['voters'];
 		$thei = min(400, max($thei, ($row['type'] == 'image' && $row['height'] > $amSettings['max_preview_height']) || empty($row['height']) ? $row['preview_height'] : $row['height']));
@@ -1234,7 +1234,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			'id' => $row['id_media'],
 			'file' => $filename,
 			'thumb' => $thumb,
-			'duration' => round(!empty($exif['duration']) ? $exif['duration'] : 5),
+			'duration' => round(!empty($meta['duration']) ? $meta['duration'] : 5),
 			'description' => empty($row['description']) ? '' : parse_bbc($row['description']),
 			'lister_description' => empty($row['pl_description']) ? '' : parse_bbc($row['pl_description']),
 			'album' => $row['album_name'],

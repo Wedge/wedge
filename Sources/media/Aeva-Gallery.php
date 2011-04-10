@@ -89,7 +89,7 @@ function aeva_initGallery($gal_url = null)
 	// If you are not allowed to enter......What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')
 	{
-		if (empty($modSettings['enable_gallery']))
+		if (!in_array('m', $context['admin_features']))
 			redirectexit($scripturl);
 		elseif (!allowedTo('media_access'))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
@@ -289,7 +289,7 @@ function aeva_initGallery($gal_url = null)
 					'icon' => 'album.png',
 				),
 				'unseen' => array(
-					'label' => $txt['media_unseen'] . (empty($user_info['aeva_unseen']) || $user_info['aeva_unseen'] == -1 ? '' : ' [<b>' . $user_info['aeva_unseen'] . '</b>]'),
+					'label' => $txt['media_unseen'] . (empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
 					'icon' => 'eye.png',
 					'enabled' => allowedTo('media_access_unseen'),
 				),
@@ -1098,7 +1098,7 @@ function aeva_viewItem()
 
 			if ($amSettings['show_extra_info'] == 1)
 			{
-				if (empty($item_data['exif']))
+				if (empty($item_data['meta']))
 				{
 					$xtra_info = $file->getInfo();
 
@@ -1106,16 +1106,16 @@ function aeva_viewItem()
 					if (!empty($xtra_info))
 						wesql::query('
 							UPDATE {db_prefix}media_files
-							SET exif = {string:exif}
+							SET meta = {string:meta}
 							WHERE id_file = {int:file}',
 							array(
-								'exif' => serialize($xtra_info),
+								'meta' => serialize($xtra_info),
 								'file' => $item_data['id_file'],
 							)
 						);
 				}
 				else
-					$xtra_info = unserialize($item_data['exif']);
+					$xtra_info = unserialize($item_data['meta']);
 
 				foreach ($xtra_info as $key => $value)
 				{
@@ -1289,7 +1289,7 @@ function aeva_mgComment()
 		{
 			wesql::query('
 				UPDATE {db_prefix}members
-				SET aeva_comments = aeva_comments + 1
+				SET media_comments = media_comments + 1
 				WHERE id_member = {int:mem}',array('mem' => $user_info['id']));
 
 			wesql::query('

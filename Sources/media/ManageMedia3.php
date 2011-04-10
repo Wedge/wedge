@@ -72,7 +72,6 @@ function aeva_admin_embed()
 	$test = $txt['media_lookups_desc'] . '<br /><span style="font-weight: bold; color: ' . (empty($modSettings['media_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
 
 	$settings = array(
-		'autoembed'			=> array('yesno', 'config'),
 		'media_admin_labels_embed' => array('title', 'config'),
 		'hr1'					=> array('hr', 'config'),
 		'media_lookups'			=> array('yesno', 'config', 'subtext' => $test, 'disabled' => !empty($modSettings['media_lookup_result']) ? 0 : 1),
@@ -247,15 +246,6 @@ function aeva_admin_embed()
 	foreach ($stypes as $stype)
 		if ($is_sites && !empty($sitelist[$stype]))
 			aeva_settings($settings, $sitelist[$stype], $stype, $checkall);
-
-	// Only show the MASTER setting, if it's disabled
-	if (empty($modSettings['autoembed']))
-	{
-		$settings = array(
-			'media_title' => array('title', $context['current_area']),
-			'autoembed' => array('yesno', $context['current_area']),
-		);
-	}
 
 	// Render the form
 	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_var'].'='.$context['session_id'];

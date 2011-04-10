@@ -2274,10 +2274,10 @@ function aeva_profileSummary($memID)
 
 	$context['aeva_member'] = array(
 		'id' => $memID,
-		'items' => $context['member']['aeva']['total_items'],
-		'coms' => $context['member']['aeva']['total_comments'],
-		'avg_coms' => $days_started > 0 ? round(($context['member']['aeva']['total_comments'] / $days_started), 2) : 0,
-		'avg_items' => $days_started > 0 ? round(($context['member']['aeva']['total_items'] / $days_started), 2) : 0,
+		'items' => $context['member']['media']['total_items'],
+		'coms' => $context['member']['media']['total_comments'],
+		'avg_coms' => $days_started > 0 ? round(($context['member']['media']['total_comments'] / $days_started), 2) : 0,
+		'avg_items' => $days_started > 0 ? round(($context['member']['media']['total_items'] / $days_started), 2) : 0,
 		'recent_items' => array(),
 		'user_albums' => array(),
 		'top_albums' => array(),
@@ -2348,7 +2348,7 @@ function aeva_profileItems($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['aeva']['total_items'], 20);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
 
 	// Load the items
 	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = '.$memID);
@@ -2372,7 +2372,7 @@ function aeva_profileComments($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['aeva']['total_comments'], 20);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
 
 	// Load the items
 	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = '.$memID);
