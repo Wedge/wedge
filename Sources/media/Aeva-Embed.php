@@ -27,7 +27,7 @@ function aeva_main(&$message)
 	static $aeva_update_list = true;
 
 	// Auto-embedding is disabled. We shouldn't have got this far, but if we have... get out of here.
-	if (!isset($context['admin_features']['e']))
+	if (empty($modSettings['embed_enabled']))
 		return $message;
 
 	// If lookups are available, retrieve the latest version for both Aeva and its site list
@@ -1047,7 +1047,7 @@ function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 
 	if (strlen($message) > 10 & empty($context['uninstalling']))
 	{
-		if (isset($context['admin_features']['e']) && empty($context['aeva_disable']) && stripos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
+		if (!empty($modSettings['embed_enabled']) && empty($context['aeva_disable']) && stripos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
 			$message = aeva_main($message);
 		else
 		{
@@ -1066,7 +1066,7 @@ function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 			unset($context['aeva']['skip']);
 
 		// Admin Only. Debug to view the time taken for each post/step.
-		if (!empty($context['user']['is_admin']) && empty($context['aeva_disable']) && isset($context['admin_features']['e']) && !empty($modSettings['aeva_debug']) && strpos($cache_id, 'sig') === false)
+		if (!empty($context['user']['is_admin']) && empty($context['aeva_disable']) && !empty($modSettings['embed_enabled']) && !empty($modSettings['aeva_debug']) && strpos($cache_id, 'sig') === false)
 		{
 			// We need our language strings
 			if (!isset($txt['media_debug_took']) && loadLanguage('Media') == false)
@@ -1230,7 +1230,7 @@ function aeva_check_embed_link($link)
 {
 	global $context, $sites, $boardurl, $modSettings, $sourcedir;
 
-	if (!isset($context['admin_features']['e']))
+	if (empty($modSettings['embed_enabled']))
 		return false;
 
 	$link2 = aeva_onposting($link);

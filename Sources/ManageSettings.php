@@ -226,16 +226,12 @@ function ModifyCoreFeatures($return_config = false)
 		// m = media gallery
 		'm' => array(
 			'url' => 'action=admin;area=media',
-			'settings' => array(
-				'gallery_enabled' => 1,
-			),
+			'setting' => 'media_enabled',
 		),
 		// e = auto-embedding
 		'e' => array(
-			'url' => 'action=admin;area=embed',
-			'settings' => array(
-				'embed_enabled' => 1,
-			),
+			'url' => 'action=admin;area=aeva_embed',
+			'setting' => 'embed_enabled',
 		),
 		// cp = custom profile fields.
 		'cp' => array(
@@ -262,39 +258,29 @@ function ModifyCoreFeatures($return_config = false)
 		// cd = calendar.
 		'cd' => array(
 			'url' => 'action=admin;area=managecalendar',
-			'settings' => array(
-				'cal_enabled' => 1,
-			),
+			'setting' => 'cal_enabled',
 		),
 		// ml = moderation log.
 		'ml' => array(
 			'url' => 'action=admin;area=logs;sa=modlog',
-			'settings' => array(
-				'modlog_enabled' => 1,
-			),
+			'setting' => 'modlog_enabled',
 		),
 		// pm = post moderation.
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
+			// Can't use warning post moderation if disabled!
 			'setting_callback' => create_function('$value', '
-				// Cant use warning post moderation if disabled!
-				if (!$value)
-				{
-					loadSource(\'PostModeration\');
-					approveAllData();
-
-					return array(\'warning_moderate\' => 0);
-				}
-				else
+				if ($value)
 					return array();
+				loadSource(\'PostModeration\');
+				approveAllData();
+				return array(\'warning_moderate\' => 0);
 			'),
 		),
 		// ps = Paid Subscriptions.
 		'ps' => array(
 			'url' => 'action=admin;area=paidsubscribe',
-			'settings' => array(
-				'paid_enabled' => 1,
-			),
+			'setting' => 'paid_enabled',
 			'setting_callback' => create_function('$value', '
 				// Set the correct disabled value for scheduled task.
 				wesql::query(\'
@@ -322,9 +308,7 @@ function ModifyCoreFeatures($return_config = false)
 		// Search engines
 		'sp' => array(
 			'url' => 'action=admin;area=sengines',
-			'settings' => array(
-				'spider_mode' => 1,
-			),
+			'setting' => 'spider_mode',
 			'setting_callback' => create_function('$value', '
 				// Turn off the spider group if disabling.
 				if (!$value)
@@ -399,12 +383,9 @@ function ModifyCoreFeatures($return_config = false)
 				$setting_changes['admin_features'][] = $id;
 
 			// Setting values to change?
-			if (isset($feature['settings']))
-			{
-				foreach ($feature['settings'] as $key => $value)
-					if (empty($_POST[$post_var_prefix . $id]) || (!empty($_POST[$post_var_prefix . $id]) && ($value < 2 || empty($modSettings[$key]))))
-						$setting_changes[$key] = !empty($_POST[$post_var_prefix . $id]) ? $value : !$value;
-			}
+			if (isset($feature['setting']))
+				$setting_changes[$feature['setting']] = !empty($_POST[$post_var_prefix . $id]) ? 1 : 0;
+
 			// Is there a call back for settings?
 			if (isset($feature['setting_callback']))
 			{

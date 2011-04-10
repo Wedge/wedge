@@ -308,7 +308,7 @@ function Admin()
 				'aeva_about' => array(
 					'label' => $txt['media_admin_labels_about'],
 					'icon' => 'administration.gif',
-					'enabled' => isset($context['admin_features']['e']) || isset($context['admin_features']['m']),
+					'enabled' => !empty($modSettings['media_enabled']) || !empty($modSettings['embed_enabled']),
 					'subsections' => array(
 						'about' => 'media_admin_labels_index',
 						'readme' => 'media_admin_readme',
@@ -327,7 +327,7 @@ function Admin()
 				'aeva_embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
 					'icon' => 'aeva.png',
-					'enabled' => in_array('e', $context['admin_features']),
+					'enabled' => !empty($modSettings['embed_enabled']),
 					'subsections' => array(
 						'config' => 'media_admin_settings_config',
 						'sites' => 'media_admin_settings_sites',
@@ -453,7 +453,7 @@ function Admin()
 				),
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
-					'enabled' => in_array('ps', $context['admin_features']),
+					'enabled' => !empty($modSettings['paid_enabled']),
 					'file' => 'ManagePaid',
 					'icon' => 'paid.gif',
 					'function' => 'ManagePaidSubscriptions',
@@ -556,7 +556,7 @@ function Admin()
 		$tab['file'] = 'media/ManageMedia';
 		$tab['function'] = 'aeva_admin_init';
 		$tab['permission'] = array('aeva_manage');
-		$tab['enabled'] = isset($tab['enabled']) ? $tab['enabled'] : isset($context['admin_features']['m']);
+		$tab['enabled'] = isset($tab['enabled']) ? $tab['enabled'] : !empty($modSettings['media_enabled']);
 		if (!empty($tab['subsections']))
 			foreach ($tab['subsections'] as &$title)
 				$title = array($txt[$title]);

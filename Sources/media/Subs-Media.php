@@ -2872,7 +2872,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	{
 		// If you don't want to allow item previewing via Highslide on album pages, replace the following line with: $is_image = false;
 		$is_image = $i['type'] == 'image' || ($i['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $i['embed_url']));
-		$is_embed = !$is_image && $i['type'] == 'embed' && isset($context['admin_features']['e']);
+		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($modSettings['embed_enabled']);
 		if ($is_embed)
 		{
 			if (!function_exists('aeva_main'))

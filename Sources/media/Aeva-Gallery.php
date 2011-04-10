@@ -89,7 +89,7 @@ function aeva_initGallery($gal_url = null)
 	// If you are not allowed to enter......What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')
 	{
-		if (!in_array('m', $context['admin_features']))
+		if (empty($modSettings['media_enabled']))
 			redirectexit($scripturl);
 		elseif (!allowedTo('media_access'))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
