@@ -259,7 +259,7 @@ function MessageMain()
 
 	// This is convenient.  Do you know how annoying it is to do this every time?!
 	$context['current_label_redirect'] = 'action=pm;f=' . $context['folder'] . (isset($_GET['start']) ? ';start=' . $_GET['start'] : '') . (isset($_REQUEST['l']) ? ';l=' . $_REQUEST['l'] : '');
-	$context['can_issue_warning'] = in_array('w', $context['admin_features']) && allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1;
+	$context['can_issue_warning'] = !empty($modSettings['warning_enabled']) && allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1;
 
 	// Build the linktree for all the actions...
 	$context['linktree'][] = array(

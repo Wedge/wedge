@@ -1589,13 +1589,13 @@ function loadAllPermissions($loadType = 'classic')
 	$hiddenPermissions = array();
 	$relabelPermissions = array(); // Permissions to apply a different label to.
 	$relabelGroups = array(); // As above but for groups.
-	if (!in_array('cd', $context['admin_features']))
+	if (empty($modSettings['cal_enabled']))
 	{
 		$hiddenPermissions[] = 'calendar_view';
 		$hiddenPermissions[] = 'calendar_post';
 		$hiddenPermissions[] = 'calendar_edit';
 	}
-	if (!in_array('w', $context['admin_features']))
+	if (empty($modSettings['warning_enabled']))
 		$hiddenPermissions[] = 'issue_warning';
 
 	// Post moderation?

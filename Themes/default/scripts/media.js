@@ -1,12 +1,14 @@
-// Wedge Media
-// © wedgeforum.com
-// am.js
-//
-// Users of this software are bound by the terms of the
-// Wedge license. You can view it online at http://wedgeforum.com/license/
-//
-// Support and updates for this software can be found at
-// http://wedgeforum.com
+/*!
+ * Wedge Media
+ * © wedge.org
+ * am.js
+ *
+ * Users of this software are bound by the terms of the
+ * Wedge license. You can view it online at http://wedgeforum.com/license/
+ *
+ * Support and updates for this software can be found at
+ * http://wedge.org
+ */
 
 function selectText(box)
 {

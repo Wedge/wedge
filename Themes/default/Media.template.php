@@ -778,7 +778,7 @@ function template_aeva_form()
 
 			echo '
 			<tr>', !empty($e['skip_left']) || --$colspan > 0 ? '' : '
-				<td width="' . (isset($context['post_box_name']) ? ($context['post_box_name'] == 'desc' ? '35' : '10') : '50') . '%" class="windowbg' . $alt .
+				<td width="' . (isset($context['postbox']) ? ($context['postbox']->id == 'desc' ? '35' : '10') : '50') . '%" class="windowbg' . $alt .
 				($valign ? ' top' : '') . '"' . (!empty($e['colspan']) && ($colspan = $e['colspan']) ? ' rowspan="2"' : '') . '>' . $e['label'] . (!empty($e['subtext']) ? '<div class="mg_subtext">' . $e['subtext'] . '</div>' : '') . '</td>', '
 				<td class="windowbg' . $alt . '"' . (!empty($e['skip_left']) ? ' colspan="2"' : '') . '>';
 
@@ -789,7 +789,7 @@ function template_aeva_form()
 						echo '<input type="text"', isset($e['value']) ? ' value="'.$e['value'].'"' : '', ' name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="', !empty($e['size']) ? $e['size'] : 50, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 					break;
 					case 'textbox';
-						if (isset($context['post_box_name']) && $context['post_box_name'] == $e['fieldname'])
+						if (isset($context['postbox']) && $context['postbox']->id == $e['fieldname'])
 						{
 							echo '<div id="bbcBox_message"></div><div id="smileyBox_message"></div>';
 							template_aeva_text_editor();

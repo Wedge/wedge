@@ -171,7 +171,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'viewwarning' => array(
 					'label' => $txt['profile_view_warnings'],
-					'enabled' => in_array('w', $context['admin_features']) && $modSettings['warning_settings'][0] == 1 && $cur_profile['warning'] && $context['user']['is_owner'] && !empty($modSettings['warning_show']),
+					'enabled' => !empty($modSettings['warning_enabled']) && $modSettings['warning_settings'][0] == 1 && $cur_profile['warning'] && $context['user']['is_owner'] && !empty($modSettings['warning_show']),
 					'file' => 'Profile-View',
 					'function' => 'viewWarning',
 					'permission' => array(
@@ -371,7 +371,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'issuewarning' => array(
 					'label' => $txt['profile_issue_warning'],
-					'enabled' => in_array('w', $context['admin_features']) && $modSettings['warning_settings'][0] == 1 && (!$context['user']['is_owner'] || $context['user']['is_admin']),
+					'enabled' => !empty($modSettings['warning_enabled']) && $modSettings['warning_settings'][0] == 1 && (!$context['user']['is_owner'] || $context['user']['is_admin']),
 					'file' => 'Profile-Actions',
 					'function' => 'issueWarning',
 					'permission' => array(

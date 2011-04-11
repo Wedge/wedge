@@ -223,19 +223,20 @@ function ModifyCoreFeatures($return_config = false)
 		save_callback	- Function called on save, takes state as parameter.
 	*/
 	$core_features = array(
-		// m = media gallery
+		// Media area
 		'm' => array(
 			'url' => 'action=admin;area=media',
 			'setting' => 'media_enabled',
 		),
-		// e = auto-embedding
+		// Auto-embedding
 		'e' => array(
 			'url' => 'action=admin;area=aeva_embed',
 			'setting' => 'embed_enabled',
 		),
-		// cp = custom profile fields.
+		// Custom profile fields
 		'cp' => array(
 			'url' => 'action=admin;area=featuresettings;sa=profile',
+			'setting' => 'cf_enabled',
 			'save_callback' => create_function('$value', '
 				if (!$value)
 				{
@@ -255,19 +256,20 @@ function ModifyCoreFeatures($return_config = false)
 					return array();
 			'),
 		),
-		// cd = calendar.
+		// Calendar
 		'cd' => array(
 			'url' => 'action=admin;area=managecalendar',
 			'setting' => 'cal_enabled',
 		),
-		// ml = moderation log.
+		// Moderation Log
 		'ml' => array(
 			'url' => 'action=admin;area=logs;sa=modlog',
 			'setting' => 'modlog_enabled',
 		),
-		// pm = post moderation.
+		// Post Moderation
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
+			'setting' => 'postmod_enabled',
 			// Can't use warning post moderation if disabled!
 			'setting_callback' => create_function('$value', '
 				if ($value)
@@ -277,7 +279,7 @@ function ModifyCoreFeatures($return_config = false)
 				return array(\'warning_moderate\' => 0);
 			'),
 		),
-		// ps = Paid Subscriptions.
+		// Paid Subscriptions.
 		'ps' => array(
 			'url' => 'action=admin;area=paidsubscribe',
 			'setting' => 'paid_enabled',
@@ -301,9 +303,10 @@ function ModifyCoreFeatures($return_config = false)
 				}
 			'),
 		),
-		// rg = report generator.
+		// report generator.
 		'rg' => array(
 			'url' => 'action=admin;area=reports',
+			'setting' => 'reports_enabled',
 		),
 		// Search engines
 		'sp' => array(
@@ -319,9 +322,10 @@ function ModifyCoreFeatures($return_config = false)
 				recacheSpiderNames();
 			'),
 		),
-		// w = warning.
+		// Warning.
 		'w' => array(
 			'url' => 'action=admin;area=securitysettings;sa=moderation',
+			'setting' => 'warning_enabled',
 			'setting_callback' => create_function('$value', '
 				global $modSettings;
 				list ($modSettings[\'warning_enable\'], $modSettings[\'user_limit\'], $modSettings[\'warning_decrement\']) = explode(\',\', $modSettings[\'warning_settings\']);
@@ -370,7 +374,7 @@ function ModifyCoreFeatures($return_config = false)
 	{
 		checkSession();
 
-		$setting_changes = array('admin_features' => array());
+		$setting_changes = array();
 
 		// Are we using the javascript stuff or radios to submit?
 		$post_var_prefix = empty($_POST['js_worked']) ? 'feature_plain_' : 'feature_';
@@ -378,10 +382,6 @@ function ModifyCoreFeatures($return_config = false)
 		// Cycle each feature and change things as required!
 		foreach ($core_features as $id => $feature)
 		{
-			// Enabled?
-			if (!empty($_POST[$post_var_prefix . $id]))
-				$setting_changes['admin_features'][] = $id;
-
 			// Setting values to change?
 			if (isset($feature['setting']))
 				$setting_changes[$feature['setting']] = !empty($_POST[$post_var_prefix . $id]) ? 1 : 0;
@@ -398,9 +398,6 @@ function ModifyCoreFeatures($return_config = false)
 			if (isset($feature['on_save']))
 				$feature['on_save']();
 		}
-
-		// Make sure this one setting is a string!
-		$setting_changes['admin_features'] = implode(',', $setting_changes['admin_features']);
 
 		// Make any setting changes!
 		updateSettings($setting_changes);
@@ -419,16 +416,16 @@ function ModifyCoreFeatures($return_config = false)
 		$context['features'][$id] = array(
 			'title' => isset($feature['title']) ? $feature['title'] : $txt['core_settings_item_' . $id],
 			'desc' => isset($feature['desc']) ? $feature['desc'] : $txt['core_settings_item_' . $id . '_desc'],
-			'enabled' => in_array($id, $context['admin_features']),
+			'enabled' => isset($feature['setting']) && !empty($modSettings[$feature['setting']]),
 			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_var'] . '=' . $context['session_id'] : '',
 		);
 
 	// Are they a new user?
-	$context['is_new_install'] = !isset($modSettings['admin_features']);
+	$context['is_new_install'] = !isset($modSettings['media_enabled']);
 	$context['force_disable_tabs'] = $context['is_new_install'];
 	// Don't show them this twice!
 	if ($context['is_new_install'])
-		updateSettings(array('admin_features' => ''));
+		updateSettings(array('media_enabled' => 1));
 
 	loadSubTemplate('core_features');
 	$context['page_title'] = $txt['core_settings_title'];

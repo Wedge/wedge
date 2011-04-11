@@ -1621,7 +1621,6 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 	global $context, $modSettings, $txt;
 
 	$modSettings['enableSpellChecking'] = false;
-	$context['post_box_name'] = $post_box_name;
 
 	loadSource('Class-Editor');
 	$context['postbox'] = new wedit(
@@ -1645,8 +1644,7 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 					'accesskey' => 'p',
 				),
 			),
-			'drafts' => (!allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts'])) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
-			// Now, since we're custom styling these, we need our own divs. For shame!
+			'drafts' => 'none',
 			'custom_bbc_div' => 'bbcBox_message',
 			'custom_smiley_div' => 'smileyBox_message',
 		)

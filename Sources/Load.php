@@ -112,7 +112,7 @@ function reloadSettings()
 	}
 
 	// Is post moderation alive and well?
-	$modSettings['postmod_active'] = isset($modSettings['admin_features']) ? in_array('pm', explode(',', $modSettings['admin_features'])) : true;
+	$modSettings['postmod_active'] = !empty($modSettings['postmod_enabled']);
 
 	// Gotta love hooks. What? I said hooks, not hookers.
 	if (defined('WEDGE_HOOK_SETTINGS'))
@@ -1889,12 +1889,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['css_generic_files'][] = $user_info['is_guest'] ? 'guest' : 'member';
 
 	$context['tabindex'] = 1;
-
-	// This allows us to change the way things look for the admin.
-	$context['admin_features'] = explode(',', isset($modSettings['admin_features']) ? $modSettings['admin_features'] : 'm,e,cd,cp,k,w,rg,ml,pm');
-
-	// Make isset() work the same as in_array().
-	$context['admin_features'] = array_combine($context['admin_features'], $context['admin_features']);
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)
 	if ((!empty($modSettings['mail_next_send']) && $modSettings['mail_next_send'] < time() && empty($modSettings['mail_queue_use_cron'])) || empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())
