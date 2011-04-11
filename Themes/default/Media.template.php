@@ -47,11 +47,11 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_unapproved_items']))
-			printf($txt['media_unapproved_items_notice'] . '<br />', $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;'.$context['session_var'].'='.$context['session_id'], $amSettings['num_unapproved_items']);
+			printf($txt['media_unapproved_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_items']);
 		if (!empty($amSettings['num_unapproved_comments']))
-			printf($txt['media_unapproved_coms_notice'] . '<br />', $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;'.$context['session_var'].'='.$context['session_id'], $amSettings['num_unapproved_comments']);
+			printf($txt['media_unapproved_coms_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_comments']);
 		if (!empty($amSettings['num_unapproved_albums']))
-			printf($txt['media_unapproved_albums_notice'], $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;'.$context['session_var'].'='.$context['session_id'], $amSettings['num_unapproved_albums']);
+			printf($txt['media_unapproved_albums_notice'], $scripturl . '?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_albums']);
 		echo '</div>';
 	}
 
@@ -61,9 +61,9 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_reported_items']))
-			printf($txt['media_reported_items_notice'] . '<br />', $scripturl.'?action=media;area=moderate;sa=reports;items;'.$context['session_var'].'='.$context['session_id'], $amSettings['num_reported_items']);
+			printf($txt['media_reported_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;items;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_reported_items']);
 		if (!empty($amSettings['num_reported_comments']))
-			printf($txt['media_reported_comments_notice'] . '<br />', $scripturl.'?action=media;area=moderate;sa=reports;comments;'.$context['session_var'].'='.$context['session_id'], $amSettings['num_reported_comments']);
+			printf($txt['media_reported_comments_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;comments;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_reported_comments']);
 		echo '</div>';
 	}
 
@@ -151,7 +151,7 @@ function template_aeva_home()
 		echo '
 	<we:title>
 		', $txt['media_recent_items'], $can_rss ?
-		' <a href="'.$galurl.'sa=rss"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', '
+		' <a href="'.$galurl.'sa=rss"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
 	</we:title>';
 
 		// Page index and sorting things
@@ -198,7 +198,7 @@ function template_aeva_home()
 	<div', !empty($context['recent_albums']) ? ' class="recent_comments"' : '', '>
 		<we:title>
 			', $txt['media_recent_comments'], $can_rss ?
-			' <a href="'.$galurl.'sa=rss;type=comments"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', '
+			' <a href="'.$galurl.'sa=rss;type=comments"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
 		</we:title>
 		<div class="windowbg wrc smalltext">
 			<div style="line-height: 1.4em">';
@@ -236,12 +236,12 @@ function template_aeva_home()
 
 	// Fix
 	if (!empty($context['recent_comments']) && !empty($context['recent_albums']))
-		echo '<br style="clear: both" />';
+		echo '<br class="clear">';
 
 	// Show some general stats'n'stuff below
 	echo '
 	<we:title>
-		<img src="', $settings['images_aeva'], '/chart_bar.png" class="vam" />&nbsp;<a href="', $galurl, 'sa=stats">', $txt['media_stats'], '</a>
+		<img src="', $settings['images_aeva'], '/chart_bar.png" class="vam">&nbsp;<a href="', $galurl, 'sa=stats">', $txt['media_stats'], '</a>
 	</we:title>
 	<div class="windowbg wrc smalltext" style="line-height: 1.4em">
 		<table cellpadding="0" cellspacing="0" width="100%"><tr><td>
@@ -336,7 +336,7 @@ function template_aeva_viewItem()
 		<div class="mg_next">', (int) $item['next'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next'].'">'.$txt['media_next'].'</a> &raquo;' : $txt['media_next'].' &raquo;', '</div>';
 	else // Browsing disabled
 		echo '
-		<br />';
+		<br>';
 
 	echo '
 		<div class="tborder">
@@ -349,7 +349,7 @@ function template_aeva_viewItem()
 			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '
 		</div>', !empty($item['description']) ? '
 		<div class="mg_item_desc" style="margin: auto; text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>
-		<br />' : '', '
+		<br>' : '', '
 
 		<div class="clear"></div>';
 
@@ -821,7 +821,7 @@ function template_aeva_form()
 					break;
 					case 'radio';
 						foreach ($e['options'] as $value => $name)
-							echo '<div><input id="radio', $chk, '" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', $value, '"', is_array($name) && isset($name[1]) && $name[1] === true ? ' checked' : '', ' type="radio"', isset($e['custom']) ? ' ' . $e['custom'] : '', '><label for="radio', $chk++, '"> ', is_array($name) ? $name[0] : $name, '</label></div>';
+							echo '<div><label><input id="radio', $chk++, '" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', $value, '"', is_array($name) && isset($name[1]) && $name[1] === true ? ' checked' : '', ' type="radio"', isset($e['custom']) ? ' ' . $e['custom'] : '', '> ', is_array($name) ? $name[0] : $name, '</label></div>';
 					break;
 					case 'yesno';
 						echo '<div><select name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"><option value="1"', !empty($e['value']) ? ' selected' : '', ' style="color: green">', $txt['media_yes'], '</option><option value="0"', empty($e['value']) ? ' selected' : '', ' style="color: red">', $txt['media_no'], '</option></select></div>';
@@ -836,10 +836,10 @@ function template_aeva_form()
 							if (!is_array($label) && $label == 'sep')
 								echo '<hr>';
 							else
-								echo '<div', $e['type'] == 'checkbox_line' ? ' class="aeva_ich' . (!empty($e['skip_left']) ? '2' : '') . '"' : '', '><input type="checkbox" id="chk', $chk, '" name="', is_array($label) ?
+								echo '<div', $e['type'] == 'checkbox_line' ? ' class="aeva_ich' . (!empty($e['skip_left']) ? '2' : '') . '"' : '', '><label><input type="checkbox" id="chk', $chk++, '" name="', is_array($label) ?
 									(!isset($label['force_name']) ? $e['fieldname'] . (isset($e['multi']) && $e['multi'] === true ? '[]' : '') : $label['force_name']) : $label,
 									'" tabindex="', $context['tabindex']++, '" value="', $opt, '"', is_array($label) && isset($label[1]) && $label[1] === true ? ' checked' : '', is_array($label) && !empty($label['disabled']) ? ' disabled' : '',
-									is_array($label) && isset($label['custom']) ? ' ' . $label['custom'] : '', '><label for="chk', $chk++, '">&nbsp;&nbsp;', is_array($label) ? $label[0] : $label, '</label></div>';
+									is_array($label) && isset($label['custom']) ? ' ' . $label['custom'] : '', '>&nbsp;&nbsp;', is_array($label) ? $label[0] : $label, '</label></div>';
 						}
 					break;
 					case 'checkbox_dual'; // This one is for album creation only... ;)
@@ -935,31 +935,31 @@ function template_aeva_viewAlbum()
 
 		if ($context['aeva_can_add_item'])
 			echo '
-					<li><a href="', $galurl, 'sa=post;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_add.png" /> ', $txt['media_add_item'], '</span></a></li>';
+					<li><a href="', $galurl, 'sa=post;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_add.png"> ', $txt['media_add_item'], '</span></a></li>';
 
 		if ($context['aeva_can_multi_upload'])
 			echo '
-					<li><a href="', $galurl, 'sa=mass;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_mass.png" /> ', $txt['media_multi_upload'], '</span></a></li>';
+					<li><a href="', $galurl, 'sa=mass;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_mass.png"> ', $txt['media_multi_upload'], '</span></a></li>';
 
 		if ($can_moderate_here)
 		{
 			echo '
-					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '" /> ', $txt['media_admin_edit'], '</span></a></li>';
+					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> ', $txt['media_admin_edit'], '</span></a></li>';
 			if ($user_info['is_admin'])
 				echo '
-					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '" /> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
+					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
 			if (allowedTo('media_moderate') && $album_data['approved'] == 0)
 				echo '
-					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '" /> ', $txt['media_admin_approve'], '</span></a></li>';
+					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
 		}
 
 		if (allowedTo('media_multi_download'))
 			echo '
-					<li><a href="', $galurl, 'sa=massdown;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/download.png" title="', $txt['media_multi_download'], '" /> ', $txt['media_multi_download'], '</span></a></li>';
+					<li><a href="', $galurl, 'sa=massdown;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/download.png" title="', $txt['media_multi_download'], '"> ', $txt['media_multi_download'], '</span></a></li>';
 
 		if (allowedTo('media_access_unseen'))
 			echo '
-					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '" /> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
+					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
 
 		echo '
 				</ul>
@@ -976,8 +976,8 @@ function template_aeva_viewAlbum()
 	{
 		echo '
 		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], empty($amSettings['disable_rss']) ? '&nbsp;&nbsp;&nbsp;<span class="title_rss">
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
+			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_items'] . '</a>
+			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
 		aeva_listChildren($context['aeva_sub_albums']);
 	}
 
@@ -1015,7 +1015,7 @@ function template_aeva_viewAlbum()
 		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', 0, $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
 		<div class="pagelinks page_index" style="margin-top: 8px">', $can_edit_items ? '
 			<div class="aeva_quickmod_bar">
-				<input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');" /> <label for="check_all">' . $txt['check_all'] . '</label>&nbsp;
+				<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
 				<select name="aeva_modtype" id="modtype" tabindex="' . $context['tabindex']++ . '"' . ($can_add_playlist ? ' onchange="$(\'#aeva_my_playlists\').toggle(this.value == \'playlist\');"' : '') . '>' . ($can_approve_here ? '
 					<option value="move">' . $txt['media_move_item'] . '</option>
 					<option value="approve">' . $txt['media_admin_approve'] . '</option>
@@ -1034,8 +1034,8 @@ function template_aeva_viewAlbum()
 				</select>';
 		}
 		echo $can_edit_items ? '
-				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '" />
-				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return aevaDelConfirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');" />
+				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
+				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return aevaDelConfirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
 			</div>' : '', '
 			', $txt['media_pages'], ': ', $context['aeva_page_index'], '
 		</div>', $can_edit_items ? '
@@ -1062,7 +1062,7 @@ function template_aeva_unseen()
 	}
 
 	echo '
-	<div id="unseen_items" style="clear: both">', !empty($context['aeva_items']) ? aeva_listItems($context['aeva_items']) : '<br /><div class="notice">' . $txt['media_no_listing'] . '</div>', '
+	<div id="unseen_items" style="clear: both">', !empty($context['aeva_items']) ? aeva_listItems($context['aeva_items']) : '<br><div class="notice">' . $txt['media_no_listing'] . '</div>', '
 	</div>
 	<div class="pagelinks align_left page_index">
 		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
@@ -1074,19 +1074,19 @@ function template_aeva_search_searching()
 	global $txt, $galurl, $scripturl, $context, $settings;
 
 	echo '
-	<br />
+	<br>
 	<form action="', $galurl, 'sa=search" method="post">
 		<div class="windowbg2 wrc center">
-			', $txt['media_search_for'], ': <input type="text" name="search" size="50" />
+			', $txt['media_search_for'], ': <input type="text" name="search" size="50">
 		</div>
 		<div class="windowbg wrc">
 			<table border="0" width="100%" cellspacing="1" cellpadding="8">
 			<tr>
 				<td class="', !empty($context['custom_fields']) ? 'w50 top right ' : 'center" colspan="2"', '>
-					<label for="seala1">', $txt['media_search_in_title'], '</label> <input type="checkbox" name="sch_title" checked id="seala1" /><br />
-					<label for="seala2">', $txt['media_search_in_description'], '</label> <input type="checkbox" name="sch_desc" id="seala2" /><br />
-					<label for="seala3">', $txt['media_search_in_kw'], '</label> <input type="checkbox" name="sch_kw" id="seala3" /><br />
-					<label for="seala4">', $txt['media_search_in_album_name'], '</label> <input type="checkbox" name="sch_an" id="seala4" />';
+					<label>', $txt['media_search_in_title'], ' <input type="checkbox" name="sch_title" checked id="seala1"></label><br>
+					<label>', $txt['media_search_in_description'], ' <input type="checkbox" name="sch_desc" id="seala2"></label><br>
+					<label>', $txt['media_search_in_kw'], ' <input type="checkbox" name="sch_kw" id="seala3"></label><br>
+					<label>', $txt['media_search_in_album_name'], ' <input type="checkbox" name="sch_an" id="seala4"></label>';
 
 	if (!empty($context['custom_fields']))
 	{
@@ -1097,7 +1097,7 @@ function template_aeva_search_searching()
 		$kl = 1;
 		foreach ($context['custom_fields'] as $field)
 			echo '
-					<input type="checkbox" name="fields[]" value="', $field['id'], '" id="cusla', $kl, '" /> <label for="cusla', $kl++, '">', sprintf($txt['media_search_in_cf'], '<i>' . $field['name'] . '</i>'), '</label><br />';
+					<label><input type="checkbox" name="fields[]" value="', $field['id'], '" id="cusla', $kl++, '"> ', sprintf($txt['media_search_in_cf'], '<i>' . $field['name'] . '</i>'), '</label><br>';
 	}
 
 	echo '
@@ -1121,12 +1121,12 @@ function template_aeva_search_searching()
 					', $txt['media_search_by_mem'], '<div class="mg_subtext">', $txt['media_search_by_mem_sub'], '</div>
 				</td>
 				<td class="w50 left">
-					<input name="sch_mem" id="sch_mem" type="text" size="25" />
-					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_var'] . '=', $context['session_id'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera" /></a>
+					<input name="sch_mem" id="sch_mem" type="text" size="25">
+					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_var'] . '=', $context['session_id'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" class="right"><input type="submit" name="submit_aeva" value="', $txt['media_submit'], '" /></td>
+				<td colspan="2" class="right"><input type="submit" name="submit_aeva" value="', $txt['media_submit'], '"></td>
 			</tr>
 			</table>
 		</div>
@@ -1158,9 +1158,9 @@ function template_aeva_viewUserAlbums()
 	echo '
 	<div id="aeva_toplinks">
 		<we:cat>
-			<img src="'.$settings['images_aeva'].'/house.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'">'.$txt['media_home'].'</a></b> -
-			<img src="'.$settings['images_aeva'].'/album.png" style="vertical-align: -3px" /> <b>'.$txt['media_albums'].'</b>', empty($amSettings['disable_playlists']) ? ' -
-			<img src="'.$settings['images_aeva'].'/playlist.png" style="vertical-align: -3px" /> <b><a href="'.$galurl.'sa=playlists">'.$txt['media_playlists'].'</a></b>' : '', '
+			<img src="', $settings['images_aeva'], '/house.png"> <b><a href="', $galurl, '">', $txt['media_home'], '</a></b> -
+			<img src="', $settings['images_aeva'], '/album.png"> <b>', $txt['media_albums'], '</b>', empty($amSettings['disable_playlists']) ? ' -
+			<img src="' . $settings['images_aeva'] . '/playlist.png"> <b><a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a></b>' : '', '
 		</we:cat>
 	</div>';
 
@@ -1176,7 +1176,7 @@ function template_aeva_viewUserAlbums()
 	<div class="cat_heading">
 		<we:title>
 			', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_rss ?
-			' <a href="' . $galurl . 'sa=rss;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', '
+			' <a href="' . $galurl . 'sa=rss;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
 		</we:title>
 	</div>';
 
@@ -1214,7 +1214,7 @@ function template_aeva_album_cp()
 	{
 		echo '
 			<tr class="windowbg', $album['featured'] ? '' : '2', '">
-				<td><a href="javascript:admin_toggle('.$album['id'].', true);"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $album['id'], '" /></a></td>
+				<td><a href="javascript:admin_toggle('.$album['id'].', true);"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $album['id'], '"></a></td>
 				<td>', !empty($album['owner']['id']) ? $album['owner']['name'] : '', '</td>
 				<td', !$album['approved'] ? ' class="unapp"' : '', ' style="padding-left: ', 5 + 30 * $album['child_level'], 'px',
 				$context['aeva_moving'] !== false && ($context['aeva_moving'] == $album['id'] || $context['aeva_moving'] == $album['parent']) ? '; font-weight: bold' : '', '">';
@@ -1227,7 +1227,7 @@ function template_aeva_album_cp()
 
 		if (!empty($album['featured']))
 			echo '
-				<img src="', $settings['images_aeva'], '/star.gif" title="', $txt['media_featured_album'], '" />';
+				<img src="', $settings['images_aeva'], '/star.gif" title="', $txt['media_featured_album'], '">';
 
 		echo '
 				<a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a>', $show_move ? '
@@ -1237,17 +1237,17 @@ function template_aeva_album_cp()
 
 		if ($can_manage || $album['owner']['id'] == $user_info['id'])
 			echo '
-					<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '" />&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">'.$txt['media_admin_edit'].'</a>
-					<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '" />&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return confirm(', JavaScriptEscape($txt['media_admin_album_confirm']), ');">'.$txt['media_admin_delete'].'</a>
-					<img src="', $settings['images_aeva'], '/arrow_inout.png" title="', $txt['media_admin_move'], '" />&nbsp;<a href="' . $alburl . 'move='.$album['id'] . '">' . $txt['media_admin_move'] . '</a>', $album['approved'] == 0 && $can_moderate ? '
-					<img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'" />&nbsp;<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;type=albums;in='.$album['id'].'">'.$txt['media_admin_approve'].'</a>' : '';
+					<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '">&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">'.$txt['media_admin_edit'].'</a>
+					<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return confirm(', JavaScriptEscape($txt['media_admin_album_confirm']), ');">'.$txt['media_admin_delete'].'</a>
+					<img src="', $settings['images_aeva'], '/arrow_inout.png" title="', $txt['media_admin_move'], '">&nbsp;<a href="' . $alburl . 'move='.$album['id'] . '">' . $txt['media_admin_move'] . '</a>', $album['approved'] == 0 && $can_moderate ? '
+					<img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'">&nbsp;<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;type=albums;in='.$album['id'].'">'.$txt['media_admin_approve'].'</a>' : '';
 
 		echo '
 				</td>
 			</tr>
 			<tr class="windowbg" style="display: none" id="tr_expand_', $album['id'], '">
 				<td colspan="4">
-					<img src="" id="img_', $album['id'], '" style="float: left; margin-right: 8px" />
+					<img src="" id="img_', $album['id'], '" style="float: left; margin-right: 8px">
 					<div>', $txt['media_items'], ': ', $album['num_items'], '</div>', !empty($album['description']) ? '
 					<div>' . $txt['media_add_desc'] . ': ' . $album['description'] . '</div>' : '', !empty($album['owner']['id']) ? '
 					<div>' . $txt['media_owner'] . ': ' . aeva_profile($album['owner']['id'], $album['owner']['name']) . '</div>' : '';
@@ -1270,25 +1270,25 @@ function template_aeva_stats()
 	echo '
 		<table class="table_grid w100 cp4 cs1" style="margin-top: 10px">
 			<tr class="titlebg center">
-				<th colspan="2" style="border-radius: 8px 8px 0 0"><img src="', $settings['images_aeva'], '/chart_pie.png" class="vam" /> ', $txt['media_gen_stats'], '</td>
+				<th colspan="2" style="border-radius: 8px 8px 0 0"><img src="', $settings['images_aeva'], '/chart_pie.png" class="vam"> ', $txt['media_gen_stats'], '</td>
 			</tr>
 			<tr>
 				<td width="50%" class="windowbg2">
 					<table cellpadding="4" cellspacing="0" width="100%">
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/images.png" class="vam" /> ', $txt['media_total_items'], '</td>
+							<td><img src="', $settings['images_aeva'], '/images.png" class="vam"> ', $txt['media_total_items'], '</td>
 							<td class="right">', $stats['total_items'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/comments.png" class="vam" /> ', $txt['media_total_comments'], '</td>
+							<td><img src="', $settings['images_aeva'], '/comments.png" class="vam"> ', $txt['media_total_comments'], '</td>
 							<td class="right">', $stats['total_comments'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/folder_image.png" class="vam" /> ', $txt['media_total_albums'], '</td>
+							<td><img src="', $settings['images_aeva'], '/folder_image.png" class="vam"> ', $txt['media_total_albums'], '</td>
 							<td class="right">', $stats['total_albums'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/group.png" class="vam" /> ', $txt['media_total_featured_albums'], '</td>
+							<td><img src="', $settings['images_aeva'], '/group.png" class="vam"> ', $txt['media_total_featured_albums'], '</td>
 							<td class="right">', $stats['total_featured_albums'], '</td>
 						</tr>
 					</table>
@@ -1296,27 +1296,27 @@ function template_aeva_stats()
 				<td class="windowbg2">
 					<table cellpadding="4" cellspacing="0" width="100%">
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/images.png" class="vam" /> ', $txt['media_avg_items'], '</td>
+							<td><img src="', $settings['images_aeva'], '/images.png" class="vam"> ', $txt['media_avg_items'], '</td>
 							<td class="right">', $stats['avg_items'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/comments.png" class="vam" /> ', $txt['media_avg_comments'], '</td>
+							<td><img src="', $settings['images_aeva'], '/comments.png" class="vam"> ', $txt['media_avg_comments'], '</td>
 							<td class="right">', $stats['avg_comments'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/user.png" class="vam" /> ', $txt['media_total_item_contributors'], '</td>
+							<td><img src="', $settings['images_aeva'], '/user.png" class="vam"> ', $txt['media_total_item_contributors'], '</td>
 							<td class="right">', $stats['total_item_posters'], '</td>
 						</tr>
 						<tr>
-							<td><img src="', $settings['images_aeva'], '/user_comment.png" class="vam" /> ', $txt['media_total_commentators'], '</td>
+							<td><img src="', $settings['images_aeva'], '/user_comment.png" class="vam"> ', $txt['media_total_commentators'], '</td>
 							<td class="right">', $stats['total_commentators'], '</td>
 						</tr>
 					</table>
 				</td>
 			</tr>
 			<tr class="titlebg center">
-				<td class="w50"><img src="', $settings['images_aeva'], '/user.png" class="vam" /> ', $txt['media_top_uploaders'], '</td>
-				<td><img src="', $settings['images_aeva'], '/user_comment.png" class="vam" /> ', $txt['media_top_commentators'], '</td>
+				<td class="w50"><img src="', $settings['images_aeva'], '/user.png" class="vam"> ', $txt['media_top_uploaders'], '</td>
+				<td><img src="', $settings['images_aeva'], '/user_comment.png" class="vam"> ', $txt['media_top_commentators'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
@@ -1360,8 +1360,8 @@ function template_aeva_stats()
 				</td>
 			</tr>
 			<tr class="titlebg center">
-				<td class="w50"><img src="', $settings['images_aeva'], '/folder_image.png" class="vam" /> ', $txt['media_top_albums_items'], '</td>
-				<td><img src="', $settings['images_aeva'], '/folder_table.png" class="vam" /> ', $txt['media_top_albums_comments'], '</td>
+				<td class="w50"><img src="', $settings['images_aeva'], '/folder_image.png" class="vam"> ', $txt['media_top_albums_items'], '</td>
+				<td><img src="', $settings['images_aeva'], '/folder_table.png" class="vam"> ', $txt['media_top_albums_comments'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
@@ -1406,8 +1406,8 @@ function template_aeva_stats()
 				</td>
 			</tr>
 			<tr class="titlebg center">
-				<td class="w50"><img src="', $settings['images_aeva'], '/images.png" class="vam" /> ', $txt['media_top_items_views'], '</td>
-				<td><img src="', $settings['images_aeva'], '/comments.png" class="vam" /> ', $txt['media_top_items_comments'], '</td>
+				<td class="w50"><img src="', $settings['images_aeva'], '/images.png" class="vam"> ', $txt['media_top_items_views'], '</td>
+				<td><img src="', $settings['images_aeva'], '/comments.png" class="vam"> ', $txt['media_top_items_comments'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
@@ -1452,8 +1452,8 @@ function template_aeva_stats()
 				</td>
 			</tr>
 			<tr class="titlebg center">
-				<td class="w50"><img src="', $settings['images_aeva'], '/chart_pie.png" class="vam" /> ', $txt['media_top_items_rating'], '</td>
-				<td><img src="', $settings['images_aeva'], '/star.gif" class="vam" /> ', $txt['media_top_items_voters'], '</td>
+				<td class="w50"><img src="', $settings['images_aeva'], '/chart_pie.png" class="vam"> ', $txt['media_top_items_rating'], '</td>
+				<td><img src="', $settings['images_aeva'], '/star.gif" class="vam"> ', $txt['media_top_items_voters'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
@@ -1587,12 +1587,12 @@ function template_aeva_multiUpload()
 							<strong>3</strong>. <a id="upload" href="#">', $txt['media_upload'], '</a>
 						</p>
 						<div>
-							<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br />
-							<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress" /> <strong id="overall_prog_perc">0%</strong>
+							<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br>
+							<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress"> <strong id="overall_prog_perc">0%</strong>
 						</div>
 						<div>
-							<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br />
-							<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress" /> <strong id="current_prog_perc">0%</strong>
+							<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br>
+							<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress"> <strong id="current_prog_perc">0%</strong>
 						</div>
 						<div class="current-text" id="current_text"></div>
 					</div>
@@ -1602,8 +1602,8 @@ function template_aeva_multiUpload()
 								<li id="remove_me" style="visibility: hidden"></li>
 							</ul>
 						</div>
-						<br style="clear: both;" />
-						<div style="text-align: center;" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '" /></div>
+						<br class="clear">
+						<div style="text-align: center;" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
 					</div>
 				</form>
 			</td>
@@ -1629,7 +1629,7 @@ function template_aeva_profile_summary()
 	echo '
 		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
 			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0" />&nbsp;&nbsp;', $txt['media_profile_sum_pt'], '</td>
+				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_sum_pt'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_sum_desc'], '</td>
@@ -1639,10 +1639,10 @@ function template_aeva_profile_summary()
 			</tr>
 			<tr>
 				<td class="windowbg2">
-					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br />
-					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br />
-					', $txt['media_avg_items'], ': ', $member['avg_items'], '<br />
-					', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br />
+					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
+					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
+					', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
+					', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
 				</td>
 			</tr>';
 
@@ -1652,7 +1652,7 @@ function template_aeva_profile_summary()
 
 		echo '
 			<tr class="titlebg">
-				<td>', $txt['media_albums'], $can_rss ? ' <a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera" /></a>' : '', '</td>
+				<td>', $txt['media_albums'], $can_rss ? ' <a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '</td>
 			</tr>
 			<tr>
 				<td>';
@@ -1719,7 +1719,7 @@ function template_aeva_profile_viewitems()
 	echo '
 		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
 			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0" />&nbsp;&nbsp;', $txt['media_profile_viewitems_pt'], '</td>
+				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewitems_pt'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewitems_desc'], '</td>
@@ -1744,7 +1744,7 @@ function template_aeva_profile_viewcoms()
 	echo '
 		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
 			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0" />&nbsp;&nbsp;', $txt['media_profile_viewcoms_pt'], '</td>
+				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewcoms_pt'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewcoms_desc'], '</td>
@@ -1780,7 +1780,7 @@ function template_aeva_profile_viewvotes()
 	echo '
 		<table class="bordercolor w100 cp4 cs1">
 			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0" />&nbsp;&nbsp;', $txt['media_profile_viewvotes_pt'], '</td>
+				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewvotes_pt'], '</td>
 			</tr>
 			<tr>
 				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewvotes_desc'], '</td>
@@ -1799,19 +1799,19 @@ function template_aeva_profile_viewvotes()
 
 		foreach ($context['aeva_ratingLogs'] as $log)
 		{
-			echo ' <img src="' . $settings['images_aeva'] . '/star' . $log['star'] . '.gif" class="aeva_vera" alt="' . $log['star'] . '" />';
+			echo ' <img src="' . $settings['images_aeva'] . '/star' . $log['star'] . '.gif" class="aeva_vera" alt="' . $log['star'] . '">';
 			echo '&nbsp;&nbsp;<b><a href="' . $scripturl . '?action=media;sa=item;in=' . $log['id_media'] . '">' . $log['title'] . '</a></b>';
 			echo ' (<a href="' . $scripturl . '?action=media;sa=album;in=' . $log['album_id'] . '">' . $log['name'] . '</a>)';
 			if (!empty($log['messages']))
 				echo ' (' . $log['messages'] . ' <a href="' . $scripturl . '?topic=' . $log['id_topic'] . '.0">' . $txt['media_post' . ($log['messages'] > 1 ? 's' : '') . '_noun'] . '</a>)';
-			echo '<br />';
+			echo '<br>';
 		}
-		echo '<br />
+		echo '<br>
 			<we:cat>
 				' . $txt['media_voter_list'] . '
 			</we:cat>';
 		foreach ($context['aeva_otherVoters'] as $row)
-			echo '<br /><a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';
+			echo '<br><a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';
 	}
 
 	echo '
@@ -1844,7 +1844,7 @@ function template_aeva_whoRatedWhat()
 			echo '
 				<tr>
 					<td class="windowbg2"><a href="', $log['member_link'], '">', $log['member_name'], '</a></td>
-					<td class="windowbg2">', str_repeat('<img src="' . $settings['images_url'] . '/star.gif" border="0" alt="*" />', $log['rating']), '</td>
+					<td class="windowbg2">', str_repeat('<img src="' . $settings['images_url'] . '/star.gif" border="0" alt="*">', $log['rating']), '</td>
 					<td class="windowbg2">', $log['time'], '</td>
 				</tr>';
 		}
@@ -1877,7 +1877,7 @@ function aeva_listFiles($items, $can_moderate = false)
 	foreach ($items as $item)
 	{
 		$check = $can_moderate && ($can_moderate_here || $item['poster_id'] == $user_info['id']) ? '
-				<td class="bottom"><input type="checkbox" name="mod_item[' . $item['id'] . ']" /></td>' : '';
+				<td class="bottom"><input type="checkbox" name="mod_item[' . $item['id'] . ']"></td>' : '';
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', $item['approved'] ? '' : ' unapp', '">
 				<td>
@@ -1916,7 +1916,7 @@ function template_aeva_rating_object($item)
 
 	$object = ($item['can_rate'] ? '
 				<form action="'.$galurl.'sa=item;in='.$item['id_media'].'" method="post" id="ratingForm">' : '') . '
-					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$settings['images_url'].'/star.gif" />', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (allowedTo('media_whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (allowedTo('media_whoratedwhat') ? '</a>' : '') . ')' : '') .
+					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$settings['images_url'].'/star.gif">', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (allowedTo('media_whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (allowedTo('media_whoratedwhat') ? '</a>' : '') . ')' : '') .
 					(!empty($item['weighted']) ? ' (' . $txt['media_weighted_mean'] . ': ' . sprintf('%01.2f', $item['weighted']) . ')' : '');
 
 	if ($item['can_rate'])
