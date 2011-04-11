@@ -272,9 +272,9 @@ function aeva_match($input)
 		}
 	}
 
-	// Call the object builder for each successful match (force then remove a leading <br /> to match videos at the beginning, too.)
+	// Call the object builder for each successful match (force then remove a leading <br> to match videos at the beginning, too.)
 	return preg_replace_callback(
-		'`(<br />|<aeva-begin>|</blockquote>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
+		'`(<br>|<aeva-begin>|</blockquote>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
 		'aeva_build_object',
 		'<aeva-begin>' . $input
 	);
@@ -429,7 +429,7 @@ function aeva_build_object($input)
 			{
 				$embed_params .= ' ' . $a . '="' . $b . '"';
 				if ($context['browser']['is_ie'])
-					$object_params .= '<param name="' . $a . '" value="' . $b . '" />';
+					$object_params .= '<param name="' . $a . '" value="' . $b . '">';
 			}
 		}
 	}
@@ -439,7 +439,7 @@ function aeva_build_object($input)
 	{
 		$embed_params .= ' flashvars="<flashvars>"';
 		if ($context['browser']['is_ie'])
-			$object_params .= '<param name="flashvars" value="<flashvars>" />';
+			$object_params .= '<param name="flashvars" value="<flashvars>">';
 	}
 
 	if (!empty($plugin) && (isset($_REQUEST['xml']) || SMF == 'SSI'))
@@ -557,11 +557,11 @@ function aeva_build_object($input)
 			$object .= '<object classid="' . $plugin['classid'] . '" ' .
 				(!empty($plugin['codebase']) ? 'codebase="' . $plugin['codebase'] . '" ' : '') .
 				'type="' . $plugin['type'] . '" width="' . $swp . '" height="' . $shp . '">' .
-				'<param name="' . (empty($plugin['src']) ? 'movie' : $plugin['src']) . '" value="' . $embed . '" />' . $object_params;
+				'<param name="' . (empty($plugin['src']) ? 'movie' : $plugin['src']) . '" value="' . $embed . '">' . $object_params;
 
 		// Build the <embed>
 		$object .= '<embed type="' . $plugin['type'] . '" src="' . $embed
-				. '" width="' . $swp . '" height="' . $shp . '"' . $embed_params . ' />';
+				. '" width="' . $swp . '" height="' . $shp . '"' . $embed_params . '>';
 
 		// <noembed> tag containing raw link in case Flash is disabled. However, don't include it if we're going to show the raw link anyway.
 		if (!$show_raw_link)
@@ -593,7 +593,7 @@ function aeva_build_object($input)
 		$object .= '</td>';
 
 	if ($show_something_below && empty($plugin))
-		$object .= '<br /><a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
+		$object .= '<br><a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
 	elseif ($show_something_below)
 	{
 		$object .= '</tr>
@@ -1072,7 +1072,7 @@ function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 			if (!isset($txt['media_debug_took']) && loadLanguage('Media') == false)
 				loadLanguage('Media', 'english');
 			// Append the timer to each post
-			$message .= '<br /><div class="smalltext">' . $txt['media_debug_took'] . ' ' . round($aeva_timer + array_sum(explode(' ', microtime())), 4) . $txt['media_debug_seconds'] . '</div>';
+			$message .= '<br><div class="smalltext">' . $txt['media_debug_took'] . ' ' . round($aeva_timer + array_sum(explode(' ', microtime())), 4) . $txt['media_debug_seconds'] . '</div>';
 		}
 	}
 
@@ -1223,7 +1223,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 	if (substr($msg, 0, 7) !== '<a href')
 		return $msg;
 	$where = $id_media && $id_preview ? $scripturl . '?action=media;sa=media;in=' . (int) $id_media . ';preview' : '$2';
-	return preg_replace('~(<a href="([^"]+)".*?)>.*?(</a>)~', '$1 class="hs" onclick="return hs.expand(this);"><img src="' . $where . '" />$3', $msg);
+	return preg_replace('~(<a href="([^"]+)".*?)>.*?(</a>)~', '$1 class="hs" onclick="return hs.expand(this);"><img src="' . $where . '">$3', $msg);
 }
 
 function aeva_check_embed_link($link)

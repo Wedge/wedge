@@ -69,7 +69,7 @@ function aeva_admin_embed()
 	else
 		$test = $txt['media_lookup_' . (empty($modSettings['media_lookup_result']) ? 'fail' : 'success')];
 
-	$test = $txt['media_lookups_desc'] . '<br /><span style="font-weight: bold; color: ' . (empty($modSettings['media_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
+	$test = $txt['media_lookups_desc'] . '<br><span style="font-weight: bold; color: ' . (empty($modSettings['media_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
 
 	$settings = array(
 		'media_admin_labels_embed' => array('title', 'config'),
@@ -358,24 +358,24 @@ function aeva_show_sitelist_updates()
 	$msg = '';
 	if (count($sites_added) > 0)
 	{
-		$msg .= '<br />' . $txt['media_sitelist_added'] . ' ';
+		$msg .= '<br>' . $txt['media_sitelist_added'] . ' ';
 		foreach ($sites_added as $s)
 			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br />';
+		$msg = substr($msg, 0, -2) . '<br>';
 	}
 	if (count($sites_removed) > 0)
 	{
-		$msg .= '<br />' . $txt['media_sitelist_removed'] . ' ';
+		$msg .= '<br>' . $txt['media_sitelist_removed'] . ' ';
 		foreach ($sites_removed as $s)
 			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br />';
+		$msg = substr($msg, 0, -2) . '<br>';
 	}
 	if (count($sites_modified) > 0)
 	{
-		$msg .= '<br />' . $txt['media_sitelist_modified'] . ' ';
+		$msg .= '<br>' . $txt['media_sitelist_modified'] . ' ';
 		foreach ($sites_modified as $s)
 			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br />';
+		$msg = substr($msg, 0, -2) . '<br>';
 	}
 	unset($sites_added, $sites_removed, $sites_modified);
 
@@ -383,7 +383,7 @@ function aeva_show_sitelist_updates()
 	if (empty($msg))
 		return;
 
-	updateSettings(array('media_list_updates' => empty($alu) ? '<span style="color: red">' . $txt['media_sitelist_updated'] . '</span><br />' . $msg : $alu . $msg));
+	updateSettings(array('media_list_updates' => empty($alu) ? '<span style="color: red">' . $txt['media_sitelist_updated'] . '</span><br>' . $msg : $alu . $msg));
 }
 
 // Removes disabled sites, and removes information we won't need.

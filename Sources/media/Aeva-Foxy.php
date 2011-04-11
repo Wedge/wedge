@@ -193,17 +193,17 @@ function aeva_foxy_playlist()
 		{
 			$next = $curpos < count($pos)-1 ? $pos[++$curpos] : 0;
 			$context['aeva_extra_data'] .= '<tr class="windowbg' . ($curpos % 2 == 0 ? '' : '2') . '"><td class="right">' . $m['play_order'] . '.</td>
-			<td><strong><a href="' . $galurl . 'sa=item;in=' . $m['id'] . '">' . $m['title'] . '</a></strong> <a href="#" onclick="return foxyComment(' . $m['id'] . ');"><img src="' . $settings['default_images_url'] . '/aeva/user_comment.png" /></a>' . (!empty($m['description']) ? '
+			<td><strong><a href="' . $galurl . 'sa=item;in=' . $m['id'] . '">' . $m['title'] . '</a></strong> <a href="#" onclick="return foxyComment(' . $m['id'] . ');"><img src="' . $settings['default_images_url'] . '/aeva/user_comment.png"></a>' . (!empty($m['description']) ? '
 			<div style="display: block" id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description']) . '</div>' : '') . '
 			<div style="display: none" id="foxyComment' . $m['id'] . '">
 				<form action="' . $galurl . 'sa=playlists;in=' . $id . ';edit;des=' . $m['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" method="post">
 					<textarea name="txt' . $m['id'] . '" cols="60" rows="3">' . $m['description'] . '</textarea>
-					<input type="submit" value="' . $txt['media_submit'] . '" />
+					<input type="submit" value="' . $txt['media_submit'] . '">
 				</form>
 			</div></td><td class="center">' .
-			(empty($prev) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $prev . ';' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['default_images_url'] . '/sort_up.gif" /></a>') . '</td><td class="center">' .
-			(empty($next) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $next . ';' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['default_images_url'] . '/sort_down.gif" /></a>') . '</td><td class="center">' .
-			'<a href="' . $galurl . 'sa=item;in=' . $m['id'] . ';premove=' . $id . ';redirpl;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom" /> ' . $txt['media_delete_this_item'] . '</a>' .
+			(empty($prev) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $prev . ';' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['default_images_url'] . '/sort_up.gif"></a>') . '</td><td class="center">' .
+			(empty($next) ? '' : '<a href="' . $galurl . 'sa=playlists;in=' . $id . ';from=' . $m['play_order'] . ';to=' . $next . ';' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['default_images_url'] . '/sort_down.gif"></a>') . '</td><td class="center">' .
+			'<a href="' . $galurl . 'sa=item;in=' . $m['id'] . ';premove=' . $id . ';redirpl;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>' .
 			'</td></tr>';
 			$prev = $curpos > 0 ? $pos[$curpos-1] : 0;
 		}
@@ -365,9 +365,9 @@ function aeva_foxy_playlists()
 	$o = '
 	<div id="aeva_toplinks">
 		<we:cat>
-			<img src="' . $settings['images_aeva'] . '/house.png" style="vertical-align: -3px" /> <b><a href="' . $galurl . '">' . $txt['media_home'] . '</a></b>' . ($context['show_albums_link'] ? ' -
-			<img src="' . $settings['images_aeva'] . '/album.png" style="vertical-align: -3px" /> <b><a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a></b>' : '') . (empty($amSettings['disable_playlists']) ? ' -
-			<img src="' . $settings['images_aeva'] . '/playlist.png" style="vertical-align: -3px" /> <b>' . $txt['media_playlists'] . '</b>' : '') . '
+			<img src="' . $settings['images_aeva'] . '/house.png"> <b><a href="' . $galurl . '">' . $txt['media_home'] . '</a></b>' . ($context['show_albums_link'] ? ' -
+			<img src="' . $settings['images_aeva'] . '/album.png"> <b><a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a></b>' : '') . (empty($amSettings['disable_playlists']) ? ' -
+			<img src="' . $settings['images_aeva'] . '/playlist.png"> <b>' . $txt['media_playlists'] . '</b>' : '') . '
 		</we:cat>
 	</div>';
 
@@ -391,9 +391,9 @@ function aeva_foxy_playlists()
 			$o .= '
 		<td>
 			<strong><a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . '">' . $p['name'] . '</a></strong>
-			<br /><span class="smalltext">' . sprintf($txt['media_items_from_album' . ($p['num_albums'] == 1 ? '' : 's')], $p['num_items'], $p['num_albums']) . '<br />
-			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';edit;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/camera_edit.png" style="vertical-align: bottom" /> ' . $txt['media_edit_this_item'] . '</a>
-			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';delete;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom" /> ' . $txt['media_delete_this_item'] . '</a></span>
+			<br><span class="smalltext">' . sprintf($txt['media_items_from_album' . ($p['num_albums'] == 1 ? '' : 's')], $p['num_items'], $p['num_albums']) . '<br>
+			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';edit;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/camera_edit.png" style="vertical-align: bottom"> ' . $txt['media_edit_this_item'] . '</a>
+			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';delete;' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a></span>
 		</td>';
 			if ($res == 3)
 				$o .= '
@@ -403,7 +403,7 @@ function aeva_foxy_playlists()
 		$o .= ($res != 0 ? '
 	</tr>' : '') . '
 	</table>
-	<div style="padding: 8px"><img src="' . $settings['images_aeva'] . '/camera_add.png" /> <b><a href="' . $galurl . 'sa=playlists;new">' . $txt['media_new_playlist'] . '</a></b></div>';
+	<div style="padding: 8px"><img src="' . $settings['images_aeva'] . '/camera_add.png"> <b><a href="' . $galurl . 'sa=playlists;new">' . $txt['media_new_playlist'] . '</a></b></div>';
 	}
 	$o .= '
 	<h3 class="titlebg"><span class="left"><span></span></span>
@@ -571,7 +571,7 @@ function aeva_foxy_show_playlists($id, $pl)
 
 		echo '
 				</select>
-				<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist" />
+				<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
 			</span>
 			</form>';
 	}
@@ -592,8 +592,8 @@ function aeva_foxy_show_playlists($id, $pl)
 			<td>
 				<strong><a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . '">' . $p['name'] . '</a></strong>', empty($p['owner_id']) ? '' : '
 				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
-				<br /><span class="smalltext">' . $txt['media_items'] . ': ' . $p['num_items'] . ($p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br />
-				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom" /> ' . $txt['media_delete_this_item'] . '</a>')
+				<br><span class="smalltext">' . $txt['media_items'] . ': ' . $p['num_items'] . ($p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br>
+				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>')
 				. '</span>
 			</td>';
 		if ($res == 3)
@@ -703,7 +703,7 @@ function aeva_foxy_create_topic($id_album, $album_name, $board, $lock = false, $
 	// Show an album playlist, with all details except its name (because it's already in the subject.)
 	$msgOptions = array(
 		'subject' => $txt['media_topic'] . ': ' . $album_name,
-		'body' => '[smg id=' . $id_album . ' type=media_album details=no_name]',
+		'body' => '[media id=' . $id_album . ' type=media_album details=no_name]',
 		'icon' => 'xx',
 		'smileys_enabled' => 1,
 	);
@@ -758,7 +758,7 @@ function aeva_foxy_notify_items($album, $items)
 
 	$msgOptions = array(
 		'subject' => $txt['media_topic'] . ': ' . westr::htmlspecialchars(aeva_utf2entities($name, false)),
-		'body' => '[smg id=' . implode(',', $items) . ' type=box]',
+		'body' => '[media id=' . implode(',', $items) . ' type=box]',
 		'icon' => 'xx',
 		'smileys_enabled' => 1,
 	);
@@ -1013,7 +1013,7 @@ function aeva_foxy_get_xml_items()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$thumb_url = isset($row['directory']) && !empty($amSettings['clear_thumbnames']) ? $clearurl . '/' . str_replace('%2F', '/', urlencode($row['directory'])) . '/' . aeva_getEncryptedFilename($row['filename'], $row['id_thumb'], true) : $galurl . 'sa=media;in=' . $row['id_media'] . ';thumb';
-		$item = '<p><a href="' . $galurl . 'sa=item;in=' . $row['id_media'] . '"><img src="' . $thumb_url . '" style="padding: 3px; margin: 3px" /></a></p>'
+		$item = '<p><a href="' . $galurl . 'sa=item;in=' . $row['id_media'] . '"><img src="' . $thumb_url . '" style="padding: 3px; margin: 3px"></a></p>'
 			. "\n" . '<p>' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aeva">' . $row['member_name'] . '</a>'
 			. ($row['hidden'] ? '' : ' ' . $txt['media_in_album'] . ' <a href="' . $galurl . 'sa=album;in=' . $row['album_id'] . '">' . $row['name'] . '</a>') . '</p>';
 		$data[] = array(

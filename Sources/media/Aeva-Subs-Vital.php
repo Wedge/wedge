@@ -299,14 +299,14 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	if ($show_audio_preview)
 		$output .= '
 		<div align="center" style="margin: auto; text-align: center; width: ' . max($cur_width, $pwid) . 'px">
-		<img src="' . $preview_image . '"' . ($cur_width > 0 && $cur_height > 0 ? ' width="' . $cur_width . '" height="' . $cur_height . '"' : '') . ' align="middle" style="padding-bottom: 8px" />';
+		<img src="' . $preview_image . '"' . ($cur_width > 0 && $cur_height > 0 ? ' width="' . $cur_width . '" height="' . $cur_height . '"' : '') . ' align="middle" style="padding-bottom: 8px">';
 
 	$ext = aeva_getExt($obj->src);
 	if ($type == 'image')
 	{
 		$output .= '
 		' . (!empty($context['aeva_has_preview']) ? '<a href="' . $galurl . 'sa=media;in=' . $id_file . '" title="' . westr::htmlspecialchars($desc) . '"' . ($amSettings['use_lightbox'] ? ' class="hs" onclick="return hs.expand(this, slideOptions);"' : '') . '>' : '')
-		. '<img src="' . $preview_image . '" width="' . $cur_width . '" height="' . $cur_height . '" />'
+		. '<img src="' . $preview_image . '" width="' . $cur_width . '" height="' . $cur_height . '">'
 		. (!empty($context['aeva_has_preview']) ? '</a>' : '');
 	}
 	elseif ($type == 'doc')
@@ -315,7 +315,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		$height = empty($cur_height) ? 52 : $cur_height;
 		$output .= '
 		<a href="' . $galurl . 'sa=media;in=' . $id_file . ';dl" title="' . westr::htmlspecialchars($desc) . '">'
-		. '<img src="' . $preview_image . '" width="' . $width . '" height="' . $height . '" /></a>';
+		. '<img src="' . $preview_image . '" width="' . $width . '" height="' . $height . '"></a>';
 	}
 	elseif ($type == 'video' || ($type == 'audio' && in_array($ext, array('mp3', 'm4a', 'm4p', 'a-latm'))))
 	{
@@ -345,7 +345,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm
 		. (!empty($pcol) ? '&amp;backcolor=' . $pcol : '') . (!empty($bcol) ? '&amp;screencolor=' . $bcol : '')
 		. ($show_audio_preview ? '' : 'amp;image=' . $preview_image) . '&amp;type=' . ($type != 'audio' ? $type : 'sound&amp;plugins=spectrumvisualizer-1&amp;showdigits=true&amp;repeat=always&amp;duration='
-		. floor($duration['duration'])) . '" width="' . $width . '" height="' . ($height+20) . '" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" />';
+		. floor($duration['duration'])) . '" width="' . $width . '" height="' . ($height+20) . '" allowscriptaccess="always" allowfullscreen="true" wmode="transparent">';
 				}
 				else
 				{
@@ -380,15 +380,15 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 				if ($context['browser']['is_ie'])
 					$output .= '
 		<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab" width="' . $width . '" height="' . ($height + 15) . '">
-			<param name="src" value="' . $galurl . 'sa=media;in=' . $id_file . ';v" />
-			<param name="wmode" value="transparent" />
-			<param name="controller" value="true" />
-			<param name="autoplay" value="false" />
-			<param name="loop" value="false" />';
+			<param name="src" value="' . $galurl . 'sa=media;in=' . $id_file . ';v">
+			<param name="wmode" value="transparent">
+			<param name="controller" value="true">
+			<param name="autoplay" value="false">
+			<param name="loop" value="false">';
 
 				$output .='
 			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $width . '" height="' . ($height + 15) . '" type="' . $mime . '"
-				pluginspage="http://www.apple.com/quicktime/download/" controller="true" autoplay="false" loop="false" wmode="transparent" />';
+				pluginspage="http://www.apple.com/quicktime/download/" controller="true" autoplay="false" loop="false" wmode="transparent">';
 
 				if ($context['browser']['is_ie'])
 					$output .='
@@ -412,17 +412,17 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		if ($context['browser']['is_ie'])
 			$output .= '
 		<object classid="' . $class_id . '" width="' . $width . '" height="' . $height . '">
-			<param name="wmode" value="transparent" />
-			<param name="ShowDisplay" value="0" />
-			<param name="ShowControls" value="1" />
-			<param name="AutoStart" value="0" />
-			<param name="AutoRewind" value="-1" />
-			<param name="Volume" value="0" />
-			<param name="FileName" value="' . $galurl . 'sa=media;in=' . $id_file . ';v" />';
+			<param name="wmode" value="transparent">
+			<param name="ShowDisplay" value="0">
+			<param name="ShowControls" value="1">
+			<param name="AutoStart" value="0">
+			<param name="AutoRewind" value="-1">
+			<param name="Volume" value="0">
+			<param name="FileName" value="' . $galurl . 'sa=media;in=' . $id_file . ';v">';
 
 		$output .= '
 			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v' . (isset($upcook) ? $upcook : '')
-			. '" width="' . $width . '" height="' . ($height+42) . '" type="' . $mime . '" controller="true" autoplay="false" autostart="0" loop="false" wmode="transparent" />';
+			. '" width="' . $width . '" height="' . ($height+42) . '" type="' . $mime . '" controller="true" autoplay="false" autostart="0" loop="false" wmode="transparent">';
 
 		if ($context['browser']['is_ie'])
 			$output .= '
@@ -436,14 +436,14 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			$output .= '
 		<audio src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50" controls="controls">
 			<object style="border: 1px solid #999" type="application/ogg" data="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50">
-				<param name="wmode" value="transparent" />
+				<param name="wmode" value="transparent">
 			</object>
 		</audio>';
 		else
 			$output .= '
 		<audio src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $pwid . '" height="50" controls="controls">
 			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v' . (isset($_COOKIE[$cookiename]) ? ';upcook=' . urlencode(base64_encode($_COOKIE[$cookiename])) : '')
-			. '" width="' . $pwid . '" height="50" autoplay="false" autostart="0" loop="true" wmode="transparent" />
+			. '" width="' . $pwid . '" height="50" autoplay="false" autostart="0" loop="true" wmode="transparent">
 		</audio>';
 
 		$output .= '

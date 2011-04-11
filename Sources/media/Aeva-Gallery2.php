@@ -838,7 +838,7 @@ function aeva_albumCP($is_admin = false)
 
 		if ($moving !== false && $moving != $list)
 		{
-			$move_url = '<a href="' . $alburl . ';sa=move;target='.$context['aeva_albums'][$list]['id'].';src='.$moving.';pos=%s"><img src="'.$settings['images_aeva'].'/arrow_%s.png" title="%s" style="vertical-align: bottom" /></a>';
+			$move_url = '<a href="' . $alburl . ';sa=move;target='.$context['aeva_albums'][$list]['id'].';src='.$moving.';pos=%s"><img src="'.$settings['images_aeva'].'/arrow_%s.png" title="%s" style="vertical-align: bottom"></a>';
 			$context['aeva_my_albums'][$list]['move_links'] = array(
 				'before' => sprintf($move_url, 'before', 'up', $txt['media_admin_before']),
 				'after' => sprintf($move_url, 'after', 'down', $txt['media_admin_after']),
@@ -1146,7 +1146,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'change_owner',
 			'value' => $is_add ? $user_info['username'] : $owner_name,
 			'custom' => 'maxlength="30" id="change_owner"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif" /></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'featured' => array(
 			'label' => $txt['media_featured_album'],
@@ -1168,7 +1168,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'type' => 'file',
 			'fieldname' => 'icon',
 			'subtext' => $is_edit ? $txt['media_admin_icon_edit_subtext'] : '',
-			'add_text' => $is_edit ? '<p><img src="'.$galurl.'sa=media;in='.$id_album.';icon" style="padding-left: 4px" /></p>' : '',
+			'add_text' => $is_edit ? '<p><img src="'.$galurl.'sa=media;in='.$id_album.';icon" style="padding-left: 4px"></p>' : '',
 		),
 		'profile' => array(
 			'label' => $txt['media_perm_profile'],
@@ -1245,7 +1245,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_members',
 			'value' => empty($members_allowed) ? '' : implode(', ', $members_allowed),
 			'custom' => 'maxlength="52" id="allowed_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif" /></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'allowed_write' => array(
 			'label' => $txt['media_allowed_write'],
@@ -1254,7 +1254,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_write',
 			'value' => empty($members_allowed_write) ? '' : implode(', ', $members_allowed_write),
 			'custom' => 'maxlength="52" id="allowed_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif" /></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_members' => array(
 			'label' => $txt['media_denied_members'],
@@ -1263,7 +1263,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_members',
 			'value' => empty($members_denied) ? '' : implode(', ', $members_denied),
 			'custom' => 'maxlength="52" id="denied_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif" /></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_write' => array(
 			'label' => $txt['media_denied_write'],
@@ -1272,7 +1272,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_write',
 			'value' => empty($members_denied_write) ? '' : implode(', ', $members_denied_write),
 			'custom' => 'maxlength="52" id="denied_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif" /></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'hidden' => array(
 			'label' => $txt['media_album_hidden'],
@@ -2555,7 +2555,7 @@ function aeva_massDownload()
 	$context['aeva_form_url'] = $galurl . 'sa=massdown;do=create';
 	$context['aeva_form'] = array(
 		'title' => array(
-			'label' => '<input type="hidden" name="album" value="' . $context['aeva_album']['id'] . '" />' . $txt['media_multi_download'] . ' - <a href="' . $galurl . 'sa=album;in=' . $context['aeva_album']['id'] . '">' . $context['aeva_album']['name'] . '</a>',
+			'label' => '<input type="hidden" name="album" value="' . $context['aeva_album']['id'] . '">' . $txt['media_multi_download'] . ' - <a href="' . $galurl . 'sa=album;in=' . $context['aeva_album']['id'] . '">' . $context['aeva_album']['name'] . '</a>',
 			'type' => 'title',
 		),
 		'title2' => array(
@@ -2693,7 +2693,7 @@ function aeva_massDownloadCreate()
 		loadSubTemplate('aeva_done');
 		$context['aeva_done_txt'] = sprintf($txt['media_multi_dl_wait'], $_SESSION['aeva_mdl']['num_done'], $compte);
 		$context['header'] .= '
-	<meta http-equiv="refresh" content="2"; url=' . $galurl . 'sa=massdown;do=create" />';
+	<meta http-equiv="refresh" content="2"; url=' . $galurl . 'sa=massdown;do=create">';
 	}
 	else
 	{

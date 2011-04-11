@@ -148,10 +148,10 @@ define('AEVA_MEDIA_VERSION', '2.10');
 		- Takes the db request of "request" and creates an associative array
 
 	string aeva_parse_bbc(string message)
-		- Parses the [smg] BBC tag inside messages
+		- Parses the [media] BBC tag inside messages
 
 	string aeva_parse_bbc_each(array data)
-		- Does the actual parsing for each [smg] tag
+		- Does the actual parsing for each [media] tag
 
 	array aeva_loadCustomFields(int id_media = null, array albums = array, string custom = '')
 		- Loads custom fields
@@ -773,8 +773,8 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	if (!empty($amSettings['ftp_file']) && file_exists($amSettings['ftp_file']))
 	{
 		require_once($amSettings['ftp_file']);
-		if ($context['smg_ftp']['media'] != '/' && substr($context['smg_ftp']['media'], -1) == '/')
-			$context['smg_ftp']['media'] = substr($context['smg_ftp']['media'], 0, -1);
+		if ($context['media_ftp']['media'] != '/' && substr($context['media_ftp']['media'], -1) == '/')
+			$context['media_ftp']['media'] = substr($context['media_ftp']['media'], 0, -1);
 	}
 	$settings['images_aeva'] = file_exists($settings['theme_dir'] . '/images/aeva') ? $settings['images_url'] . '/aeva' : $settings['default_images_url'] . '/aeva';
 
@@ -827,12 +827,12 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	$context['aeva_update_show_on_top'] = $sotop <= 0;
 
 	$context['aeva_update_message'] = ($sotop ? '<span style="color: red; font-weight: bold">' . sprintf($txt['media_new_version'], 'http://custom.simplemachines.org/mods/index.php?mod=977', $modSettings['aeva_latest_version'])
-		. '</span><br />' : '') . sprintf($txt['media_current_version'], AEVA_MEDIA_VERSION) . ' (<a href="' . $scu . '">' . $txt['media_check_now'] . '</a>)'
-		. (isset($modSettings['aeva_version_test']) ? '<br />' . $txt['media_last_check'] . ': ' . timeformat($modSettings['aeva_version_test']) : '');
+		. '</span><br>' : '') . sprintf($txt['media_current_version'], AEVA_MEDIA_VERSION) . ' (<a href="' . $scu . '">' . $txt['media_check_now'] . '</a>)'
+		. (isset($modSettings['aeva_version_test']) ? '<br>' . $txt['media_last_check'] . ': ' . timeformat($modSettings['aeva_version_test']) : '');
 
 	if (empty($context['aeva_auto_updating']) && !empty($modSettings['aeva_list_updates']))
 	{
-		$context['aeva_update_message'] .= '<hr />' . $modSettings['aeva_list_updates'];
+		$context['aeva_update_message'] .= '<hr>' . $modSettings['aeva_list_updates'];
 		updateSettings(array('aeva_list_updates' => ''));
 	}
 }
@@ -1200,8 +1200,9 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 				'width' => $row['width'],
 				'height' => $row['height'],
 				'url' => $row['icon'] > 0 ? $icon_url : '',
-				'src' => $row['icon'] > 0 ? ($row['width'] > 0 ? '<div class="aea" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')' . $trans . '"><a href="'.$scripturl.'?action=media;sa=album;in='.$row['id_album'].'">&nbsp;</a></div>' :
-																 '<a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '"><img src="'.$icon_url.'" border="0" /></a>') : '',
+				'src' => $row['icon'] > 0 ? ($row['width'] > 0 ?
+					'<div class="aea" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')' . $trans . '"><a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '">&nbsp;</a></div>' :
+					'<a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '"><img src="' . $icon_url . '"></a>') : '',
 			);
 		}
 	}
@@ -2488,7 +2489,7 @@ function aeva_protect_bbc(&$message)
 	foreach ($protect_tags as $tag)
 		if (stripos($message, '[' . $tag . ']') !== false)
 			$message = preg_replace('~\[' . $tag . ']((?>[^[]|\[(?!/?' . $tag . '])|(?R))+?)\[/' . $tag . ']~ie',
-				"'[" . $tag . "]' . str_ireplace('[smg', '&#91;smg', '$1') . '[/" . $tag . "]'", $message);
+				"'[" . $tag . "]' . str_ireplace('[media', '&#91;media', '$1') . '[/" . $tag . "]'", $message);
 }
 
 function aeva_parse_bbc(&$message, $id_msg = -1)
@@ -2496,12 +2497,12 @@ function aeva_parse_bbc(&$message, $id_msg = -1)
 	global $modSettings, $context;
 	if ($id_msg >= 0)
 		$context['aeva_id_msg'] = $id_msg;
-	if (isset($context['smg_disable']) || empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	if (isset($context['media_disable']) || empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 	{
-		unset($context['smg_disable']);
+		unset($context['media_disable']);
 		return;
 	}
-	preg_match_all('~\[smg\s+([^]]*?(?:&quot;.+?&quot;.*?(?!&quot;))?)](?:<br />)?[\r\n]?~i', $message, $aeva_stuff);
+	preg_match_all('~\[media\s+([^]]*?(?:&quot;.+?&quot;.*?(?!&quot;))?)](?:<br>)?[\r\n]?~i', $message, $aeva_stuff);
 	if (!empty($aeva_stuff))
 		foreach ($aeva_stuff[1] as $id => $aeva_replace)
 			$message = str_replace($aeva_stuff[0][$id], aeva_parse_bbc_each($aeva_replace), $message);
@@ -2527,7 +2528,7 @@ function aeva_parse_bbc_each($data)
 			$done[$id] = $this_one[1];
 
 	$result = aeva_showThumbnail($done);
-	return !empty($result) ? $result : '[smg ' . $data . ']';
+	return !empty($result) ? $result : '[media ' . $data . ']';
 }
 
 function aeva_showThumbnail($data)
@@ -2551,7 +2552,7 @@ function aeva_showThumbnail($data)
 	if (!allowedTo('media_access'))
 	{
 		aeva_loadLanguage('media_accessDenied');
-		return '(' . $txt['media_accessDenied'] . ')<br />';
+		return '(' . $txt['media_accessDenied'] . ')<br>';
 	}
 
 	extract($data);
@@ -2636,7 +2637,7 @@ function aeva_showThumbnail($data)
 		$box = aeva_listItems(aeva_getMediaItems(-1, !empty($amSettings['max_items_per_page']) ? $amSettings['max_items_per_page'] : 15, 'm.id_media DESC', true, array(), 'm.album_id IN (' . $id . ')'), false, $align == 'none' ? '' : $align, -1);
 	else
 	{
-		$box = '<img src="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v' : ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext" border="0" />';
+		$box = '<img src="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v' : ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">';
 		$inside_caption = $no_lightbox ? '' : '<div class="highslide-caption"><div style="float: right"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
 	}
 	if (empty($box))
@@ -2699,7 +2700,7 @@ function aeva_lockedAlbum(&$pass, &$id, &$owner)
 
 	$name = array('', 'locked', 'unlocked');
 	$locked = empty($pass) ? 0 : ((empty($_SESSION['aeva_access']) || !in_array($id, $_SESSION['aeva_access'])) && ($owner != $user_info['id'] || $user_info['is_guest']) ? 1 : 2);
-	return ' <img src="' . $settings['images_aeva'] . '/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera" /> ';
+	return ' <img src="' . $settings['images_aeva'] . '/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera"> ';
 }
 
 function aeva_showSubAlbums(&$alb)
@@ -2801,10 +2802,10 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		<td width="5%" valign="top" align="right"', $padding, '>', $album['icon']['src'], '</td>
 		<td', $i <= $cols ? ' width="' . $w45 . '%"' : '', ' valign="top"', $is_alone ? ' colspan="' . ($cols*2-1) . '"' : '', $padding, '>
 			<div class="mg_large">', $can_moderate_here ? '
-				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_admin_edit'] . '" /></a>' : '',
+				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_admin_edit'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
 				!empty($album['featured']) ? '
-				<img src="' . $settings['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '" />' : '', '
+				<img src="' . $settings['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
 				<a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a>
 			</div>
 			<div>', $totals, $album['hidden'] ? ' (<span class="unbrowsable">' . $txt['media_unbrowsable'] . '</span>)' : '', '</div>', empty($album['description']) || $album['description'] === '&hellip;' ? '' : '
@@ -2852,7 +2853,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
 			<img width="10" height="10" src="' . $settings['images_aeva'] . '/';
-	$new_icon = '<img src="' . $settings['images_url'] . '/' . $context['user']['language'] . '/new.gif" border="0" />';
+	$new_icon = '<img src="' . $settings['images_url'] . '/' . $context['user']['language'] . '/new.gif" border="0">';
 	// If we're in an external embed, we might not have all the space we would like...
 	$per_line = $per_line > 0 ? $per_line : (!empty($amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) ?
 				max(1, $amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) : ($per_line === -1 ? 3 : 5));
@@ -2892,7 +2893,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 				<div style="float: right">' . ($i['has_preview'] ? '
 					<a class="aelink hs" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '" onclick="return hss(' . $in_page . ', this);">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
 					<a class="aelink" href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
-					<img src="' . $settings['images_aeva'] . '/comment.gif" /> ' . $i['comments'] : '') . '
+					<img src="' . $settings['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
 				</div>
 				' . $i['title'] . (empty($i['desc']) ? '' : '
 				<div class="smalltext mg_desc">
@@ -2908,7 +2909,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$ex_album_id = $i['id_album'];
 
 		$check = $can_moderate && ($i['poster_id'] == $user_info['id'] || $can_moderate_here) ? '
-			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']" /></div>' : '';
+			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']"></div>' : '';
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
 		<td' . ($i['approved'] ? '' : '  class="unapp"') . ' id="aepic_' . $i['id'] . '" align="center"' . ($context['browser']['is_ie6'] ? ' onmouseover="mouseo(' . $i['id'] . ', 0)" onmouseout="mouseo(' . $i['id'] . ', 1)"' : '') . '>
@@ -2926,17 +2927,17 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			<div class="ae_details">
 				<div style="width: ' . ($amSettings['max_thumb_width'] + 10) . 'px; left: -' . round($amSettings['max_thumb_width'] / 2 + 9) . 'px" class="aevisio" id="visio_' . $i['id'] . '">';
 		if ($ico) // Icons only?
-			$re .= $icourl . 'graph.gif" title="' . $txt['media_views'] . '" />&nbsp;' . $i['views'] .
-			(!empty($i['comments']) ? $icourl . 'comment.gif" title="' . $txt['media_comments'] . '" />&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') : '') .
+			$re .= $icourl . 'graph.gif" title="' . $txt['media_views'] . '">&nbsp;' . $i['views'] .
+			(!empty($i['comments']) ? $icourl . 'comment.gif" title="' . $txt['media_comments'] . '">&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') : '') .
 			(!empty($i['new_comments']) ? '(' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') .
-			(!empty($i['voters']) ? $icourl . 'star.gif" title="' . $txt['media_rating'] . '" />&nbsp;' . $i['rating'] : '') . '<br />';
+			(!empty($i['voters']) ? $icourl . 'star.gif" title="' . $txt['media_rating'] . '">&nbsp;' . $i['rating'] : '') . '<br>';
 		else
-			$re .= $icourl . 'graph.gif" />&nbsp;' . $txt['media_views'] . ':&nbsp;' . $i['views'] . '<br />' .
-			(!empty($i['comments']) ? $icourl . 'comment.gif" />&nbsp;' . $txt['media_comments'] . ':&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') . '<br />' : '') .
-			(!empty($i['voters']) ? $icourl . 'star.gif" />&nbsp;' . $txt['media_rating'] . ':&nbsp;' . $i['rating'] . '<br />' : '');
+			$re .= $icourl . 'graph.gif">&nbsp;' . $txt['media_views'] . ':&nbsp;' . $i['views'] . '<br>' .
+			(!empty($i['comments']) ? $icourl . 'comment.gif">&nbsp;' . $txt['media_comments'] . ':&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') . '<br>' : '') .
+			(!empty($i['voters']) ? $icourl . 'star.gif">&nbsp;' . $txt['media_rating'] . ':&nbsp;' . $i['rating'] . '<br>' : '');
 
-		$re .= ($user_is_known || $main_user == $i['poster_id'] ? '' : ($ico ? $icourl . 'person.gif" title="' . $txt['media_posted_by'] . '" />&nbsp;' : '
-			' . $txt['media_posted_by'] . ' ') . aeva_profile($i['poster_id'], $i['poster_name']) . '<br />') . $icourl . 'clock.gif" title="" /> ' . $i['time'] . (!$in_album ? '<br />
+		$re .= ($user_is_known || $main_user == $i['poster_id'] ? '' : ($ico ? $icourl . 'person.gif" title="' . $txt['media_posted_by'] . '">&nbsp;' : '
+			' . $txt['media_posted_by'] . ' ') . aeva_profile($i['poster_id'], $i['poster_name']) . '<br>') . $icourl . 'clock.gif" title=""> ' . $i['time'] . (!$in_album ? '<br>
 			' . $txt['media_in_album'] . ' ' . ($i['hidden_album'] ? $album_name : '<a href="' . $galurl . 'sa=album;in=' . $i['id_album'] . '">' . $album_name . '</a>') : '');
 
 		$re .= '
@@ -2982,7 +2983,7 @@ function aeva_fillMediaArray($request, $all_albums = true)
 			'h_thumb' => isset($row['type']) && ($row['type'] === 'audio' || $row['type'] === 'doc') ? $row['thumb_height'] : $row['height'],
 			'hidden_album' => !empty($row['hidden']),
 
-			// These are for [smg type=av]
+			// These are for [media type=av]
 			'type' => isset($row['type']) ? $row['type'] : '',
 			'id_file' => isset($row['id_file']) ? $row['id_file'] : 0,
 			'embed_url' => isset($row['embed_url']) ? $row['embed_url'] : '',
@@ -3512,15 +3513,15 @@ function aeva_mkdir($dir, $chmod)
 {
 	global $amSettings, $context;
 
-	if (isset($context['smg_ftp']) && ini_get('safe_mode'))
+	if (isset($context['media_ftp']) && ini_get('safe_mode'))
 	{
 		loadSource('Subs-Package');
 		if (function_exists('loadClassFile'))
 			loadClassFile('Class-Package.php');
-		$smg_ftp = new ftp_connection($context['smg_ftp']['server'], $context['smg_ftp']['port'], $context['smg_ftp']['username'], $context['smg_ftp']['password']);
-		$success = $smg_ftp->create_dir($context['smg_ftp']['media'] . $dir);
-		$smg_ftp->chmod($context['smg_ftp']['media'] . $dir, $chmod);
-		$smg_ftp->close();
+		$media_ftp = new ftp_connection($context['media_ftp']['server'], $context['media_ftp']['port'], $context['media_ftp']['username'], $context['media_ftp']['password']);
+		$success = $media_ftp->create_dir($context['media_ftp']['media'] . $dir);
+		$media_ftp->chmod($context['media_ftp']['media'] . $dir, $chmod);
+		$media_ftp->close();
 		return (bool) $success;
 	}
 

@@ -1048,17 +1048,12 @@ function aeva_admin_maintenance_checkorphans()
 	{
 		$_SESSION['aeva_orphans'] = array();
 
-		// This code is only there to clean up data from earlier SMG2 betas. There is no need to execute it on regular copies of Aeva Media.
-		wesql::query('
-			DELETE FROM {db_prefix}media_settings
-			WHERE name IN ({string:notouch}, {string:unk}, {string:orphans})',
-			array('notouch' => 'notouch', 'unk' => 'unknown_files', 'orphans' => 'orphans')
-		);
 		unset($amSettings['notouch'], $amSettings['orphans']);
 		wesql::query('OPTIMIZE TABLE {db_prefix}media_settings', array());
 		$request = wesql::query('SELECT COUNT(DISTINCT id_file) FROM {db_prefix}media_files WHERE ' . ($album ? 'id_album = {int:album}' : 'id_file > 4'), array('album' => $album));
 		list ($total_files) = wesql::fetch_row($request);
 		wesql::free_result($request);
+
 		aeva_updateSettings('total_files', $total_files, true);
 		$context['aeva_maintenance_message'] = 'Phase 1/3 - ' . sprintf($txt['media_admin_maintenance_operation_pending'], 0, $amSettings['total_files']);
 		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=1;start=0;' . $context['session_var'] . '=' . $context['session_id']);
@@ -1275,7 +1270,7 @@ function aeva_admin_bans_add()
 			'fieldname' => 'banning',
 			'type' => 'text',
 			'value' => $context['aeva_curr_members'],
-			'label' => $txt['media_admin_banning'] . ' <a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);" ><img src="' . $settings['images_url'] . '/icons/assist.gif" alt="findmember" border="0" /></a>',
+			'label' => $txt['media_admin_banning'] . ' <a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 			'custom' => 'id="banning"',
 		),
 		'type' => array(

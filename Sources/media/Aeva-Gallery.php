@@ -520,7 +520,7 @@ function aeva_home()
 	{
 		$is_dir = aeva_foolProof();
 		if ($is_dir !== 1)
-			$context['aeva_welcome'] .= '<br /><br /><div style="color: red">' . $txt[$is_dir ? 'media_dir_failed' : 'media_not_a_dir'] . '</div>';;
+			$context['aeva_welcome'] .= '<br><br><div style="color: red">' . $txt[$is_dir ? 'media_dir_failed' : 'media_not_a_dir'] . '</div>';;
 	}
 
 	// Load the albums
@@ -1637,7 +1637,7 @@ function aeva_mgPost()
 			'fieldname' => 'thumbnail',
 			'type' => 'file',
 			'subtext' => $txt['media_force_thumbnail_subtxt'] . ($editing ? $txt['media_force_thumbnail_edit'] : ''),
-			'add_text' => $editing ? '<p><img src="'.$galurl.'sa=media;in='.$data['id_media'].';thumb" style="padding-left: 4px" /></p>' : '',
+			'add_text' => $editing ? '<p><img src="'.$galurl.'sa=media;in='.$data['id_media'].';thumb" style="padding-left: 4px"></p>' : '',
 			'colspan' => allowedTo('media_moderate') || $data['album_owner'] == $context['user']['id'] ? 2 : 0,
 		),
 		'as_icon' => array(
@@ -1710,7 +1710,7 @@ function aeva_mgPost()
 			'multi' => $field['type'] == 'checkbox',
 			'type' => $field['type'],
 			'options' => $options,
-			'subtext' => implode('<br />', $subtexts),
+			'subtext' => implode('<br>', $subtexts),
 			'value' => $field['raw_value'],
 		);
 	}

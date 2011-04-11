@@ -168,7 +168,7 @@ function aeva_admin_about()
 
 	if ($sa == 'readme' || $sa == 'changelog')
 	{
-		$context['smg_disable'] = true;
+		$context['media_disable'] = true;
 		$readme = trim(@file_get_contents($boarddir . '/Themes/default/aeva/' . $sa . '.txt'));
 		if (empty($readme))
 			return;
@@ -186,7 +186,7 @@ function aeva_admin_about()
 					'/^([*+@!-]) ([^\r\n]*)(?:[\r\n]+ ( [^\r\n]+))*/m',
 					'/<ul class="bbc_list">[\r\n]*<\/ul>/',
 				), array(
-					'</ul><div style="font-size: 11pt; color: #396; font-weight: bold; padding-top: 12px"><div style="float: right;">$2</div>$1</div><hr /><ul class="bbc_list">',
+					'</ul><div style="font-size: 11pt; color: #396; font-weight: bold; padding-top: 12px"><div style="float: right;">$2</div>$1</div><hr><ul class="bbc_list">',
 					'</ul><div style="padding: 8px 16px">$1</div><ul class="bbc_list">',
 					'<li class="bullet_$1">$2$3$4$5</li>',
 					'',
@@ -301,9 +301,9 @@ function aeva_admin_about()
 	foreach ($context['aeva_data'] as $k => $dat)
 	{
 		if (strpos($dat, $txt['media_yes']) !== false)
-			$context['aeva_data'][$k] = str_replace($txt['media_yes'], '<img src="' . $settings['images_aeva'] . '/tick.png" title="' . $txt['media_yes'] . '" class="middle" />', $dat);
+			$context['aeva_data'][$k] = str_replace($txt['media_yes'], '<img src="' . $settings['images_aeva'] . '/tick.png" title="' . $txt['media_yes'] . '" class="middle">', $dat);
 		if ($dat == $txt['media_no'])
-			$context['aeva_data'][$k] = '<img src="' . $settings['images_aeva'] . '/untick2.png" title="' . $txt['media_no'] . '" class="middle" />';
+			$context['aeva_data'][$k] = '<img src="' . $settings['images_aeva'] . '/untick2.png" title="' . $txt['media_no'] . '" class="middle">';
 	}
 
 	// Get gallery managers and moderators
@@ -1977,7 +1977,7 @@ function aeva_refreshPage($next)
 	if ($context['browser']['is_ie'])
 		$next = str_replace(';', '&', $next);
 	$context['header'] .= '
-	<meta http-equiv="refresh" content="1; url=' . $next . '" />';
+	<meta http-equiv="refresh" content="1; url=' . $next . '">';
 }
 
 function aeva_timeSpent()
