@@ -60,7 +60,7 @@
 	background: black;
 }
 a.highslide-full-expand {
-   background: url(hs/fullexpand.gif) no-repeat;
+   background: url($here/hs/fullexpand.gif) no-repeat;
    display: block;
    margin: 0 10px 10px 0;
    width: 34px;
@@ -77,7 +77,7 @@ a.highslide-full-expand {
 	border: 1px solid white;
 	background-color: white;
 	padding-left: 22px;
-	background-image: url(hs/loader.white.gif);
+	background-image: url($here/hs/loader.white.gif);
 	background-repeat: no-repeat;
 	background-position: 3px 1px;
 }
@@ -109,7 +109,7 @@ a.highslide-full-expand {
 	width: 30px;
 	height: 30px;
 	cursor: pointer;
-	background: url(hs/close.png);
+	background: url($here/hs/close.png);
 	/* NOTE! For IE6, you also need to update the highslide-ie6.css file. */
 }
 
@@ -167,7 +167,7 @@ html>/**/body .highslide-gallery ul img {
 .highslide-controls {
 	width: 195px;
 	height: 40px;
-	background: url(hs/controlbar-white.gif) 0 -90px no-repeat;
+	background: url($here/hs/controlbar-white.gif) 0 -90px no-repeat;
 	margin: 20px 15px 10px 0;
 }
 .highslide-controls ul {
@@ -177,7 +177,7 @@ html>/**/body .highslide-gallery ul img {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	background: url(hs/controlbar-white.gif) right -90px no-repeat;
+	background: url($here/hs/controlbar-white.gif) right -90px no-repeat;
 
 }
 .highslide-controls li {
@@ -187,7 +187,7 @@ html>/**/body .highslide-gallery ul img {
 	list-style: none;
 }
 .highslide-controls a {
-	background-image: url(hs/controlbar-white.gif);
+	background-image: url($here/hs/controlbar-white.gif);
 	display: block;
 	float: left;
 	height: 30px;
@@ -314,7 +314,7 @@ html>/**/body .highslide-gallery ul img {
 	margin-top: 5px;
 	height: 11px;
 	width: 11px;
-	background: url(hs/resize.gif) no-repeat;
+	background: url($here/hs/resize.gif) no-repeat;
 }
 .highslide-footer .highslide-resize span {
 	display: none;
@@ -333,7 +333,7 @@ html>/**/body .highslide-gallery ul img {
 	font-size: 10pt;
 }
 .hs {
-	cursor: url(hs/zoomin.cur), pointer;
+	cursor: url($here/hs/zoomin.cur), pointer;
 	outline: none;
 	text-decoration: none;
 }
@@ -362,12 +362,12 @@ html>/**/body .highslide-gallery ul img {
 	background-color: white;
 
 	padding-left: 22px;
-	background-image: url(hs/loader.white.gif);
+	background-image: url($here/hs/loader.white.gif);
 	background-repeat: no-repeat;
 	background-position: 3px 1px;
 }
 a.highslide-full-expand {
-	background: url(hs/fullexpand.gif) no-repeat;
+	background: url($here/hs/fullexpand.gif) no-repeat;
 	display: block;
 	margin: 0 10px 10px 0;
 	width: 34px;
@@ -416,7 +416,7 @@ a.highslide-full-expand {
 	float: right;
 	height: 11px;
 	width: 11px;
-	background: url(hs/resize.gif);
+	background: url($here/hs/resize.gif);
 }
 .highslide-wrapper .highslide-body {
 }

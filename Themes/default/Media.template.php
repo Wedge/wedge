@@ -944,7 +944,7 @@ function template_aeva_viewAlbum()
 		if ($can_moderate_here)
 		{
 			echo '
-					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> ', $txt['media_admin_edit'], '</span></a></li>';
+					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
 			if ($user_info['is_admin'])
 				echo '
 					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
@@ -1237,8 +1237,8 @@ function template_aeva_album_cp()
 
 		if ($can_manage || $album['owner']['id'] == $user_info['id'])
 			echo '
-					<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '">&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">'.$txt['media_admin_edit'].'</a>
-					<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return confirm(', JavaScriptEscape($txt['media_admin_album_confirm']), ');">'.$txt['media_admin_delete'].'</a>
+					<img src="', $settings['images_aeva'], '/folder_edit.png">&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">', $txt['media_edit_this_item'], '</a>
+					<img src="', $settings['images_aeva'], '/folder_delete.png">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return confirm(', JavaScriptEscape($txt['media_admin_album_confirm']), ');">', $txt['media_admin_delete'], '</a>
 					<img src="', $settings['images_aeva'], '/arrow_inout.png" title="', $txt['media_admin_move'], '">&nbsp;<a href="' . $alburl . 'move='.$album['id'] . '">' . $txt['media_admin_move'] . '</a>', $album['approved'] == 0 && $can_moderate ? '
 					<img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'">&nbsp;<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;type=albums;in='.$album['id'].'">'.$txt['media_admin_approve'].'</a>' : '';
 
@@ -1652,7 +1652,7 @@ function template_aeva_profile_summary()
 
 		echo '
 			<tr class="titlebg">
-				<td>', $txt['media_albums'], $can_rss ? ' <a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '</td>
+				<td>', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';albums" class="feed_icon"></a> ' : '', $txt['media_albums'], '</td>
 			</tr>
 			<tr>
 				<td>';

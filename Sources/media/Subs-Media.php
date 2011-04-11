@@ -2769,18 +2769,16 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	if (empty($albums))
 		return;
 
-	if (!isset($context['aeva_windowbg']))
-		$context['aeva_windowbg'] = '2';
-	if (!$skip_table)
-		echo '
-	<table width="100%" cellspacing="0" class="aelista" style="border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; line-height: 1.4em">';
-
 	$can_moderate = allowedTo('media_moderate');
 	$cols = isset($amSettings['album_columns']) ? max(1, (int) $amSettings['album_columns']) : 1;
 	$w45 = round(100 / $cols) - 5;
 	$is_alone = $cols > 1 && count($albums) < 2;
 	$count = ceil(count($albums) / $cols);
 	$i = $j = -1;
+
+	if (!$skip_table)
+		echo '
+	<table class="w100 cs0 aelista">';
 
 	foreach ($albums as $album)
 	{
@@ -2791,18 +2789,14 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		$can_moderate_here = $can_moderate || (!$user_info['is_guest'] && $user_info['id'] == $album['owner']['id']);
 
 		$i++;
-		if ($i % $cols === 0)
-		{
-			$context['aeva_windowbg'] = !empty($context['aeva_windowbg']) ? '' : '2';
-			echo '<tr class="windowbg' . $context['aeva_windowbg'] . '">';
-			$j++;
-		}
-		$padding = $j === 0 ? ($count == 1 ? ' style="padding: 0 8px"' : ' style="padding-top: 0"') : ($j == $count - 1 ? ' style="padding-bottom: 0"' : '');
+		if ($i % $cols === 0 && ++$j)
+			echo '<tr>';
+
 		echo '
-		<td width="5%" valign="top" align="right"', $padding, '>', $album['icon']['src'], '</td>
-		<td', $i <= $cols ? ' width="' . $w45 . '%"' : '', ' valign="top"', $is_alone ? ' colspan="' . ($cols*2-1) . '"' : '', $padding, '>
+		<td width="5%" class="windowbg top right">', $album['icon']['src'], '</td>
+		<td', $i <= $cols ? ' width="' . $w45 . '%"' : '', ' class="windowbg2 top"', $is_alone ? ' colspan="' . ($cols*2-1) . '"' : '', '>
 			<div class="mg_large">', $can_moderate_here ? '
-				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_admin_edit'] . '"></a>' : '',
+				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
 				!empty($album['featured']) ? '
 				<img src="' . $settings['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
@@ -2810,6 +2804,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 			</div>
 			<div>', $totals, $album['hidden'] ? ' (<span class="unbrowsable">' . $txt['media_unbrowsable'] . '</span>)' : '', '</div>', empty($album['description']) || $album['description'] === '&hellip;' ? '' : '
 			<div class="mg_desc">' . $album['description'] . '</div>';
+
 		if (!empty($album['sub_albums']))
 		{
 			echo '
@@ -2818,7 +2813,8 @@ function aeva_listChildren(&$albums, $skip_table = false)
 				echo $txt['media_sub_albums'], ': ', count($album['sub_albums']);
 			else
 				echo aeva_showSubAlbums($album);
-			echo '</div>';
+			echo '
+			</div>';
 		}
 		echo '
 		</td>', $i % $cols == $cols - 1 ? '</tr>' : '';
@@ -2827,7 +2823,8 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	if ($i++ % $cols != $cols - 1)
 	{
 		while (($i++ % $cols != 0) && !$is_alone)
-			echo '<td></td><td></td>';
+			echo '
+		<td class="windowbg"></td><td class="windowbg2"></td>';
 		echo '</tr>';
 	}
 
