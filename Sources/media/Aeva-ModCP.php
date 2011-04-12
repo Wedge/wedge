@@ -156,7 +156,7 @@ function aeva_modCP_submissions()
 
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('media_admin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('scripts/media_admin.js', false, true) . '"></script>';
 }
 
 // Approves an unapproved item
@@ -511,7 +511,7 @@ function aeva_modCP_reports()
 	loadSubTemplate('aeva_admin_reports');
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('media_admin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('scripts/media_admin.js', false, true) . '"></script>';
 }
 
 // Deletes a report
@@ -761,7 +761,7 @@ function aeva_modCP_modLog()
 
 	// HTML headers
 	$context['header'] .= '
-	<script src="' . add_js_file('media_admin.js', false, true) . '"></script>';
+	<script src="' . add_js_file('scripts/media_admin.js', false, true) . '"></script>';
 }
 
 ?>

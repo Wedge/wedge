@@ -141,8 +141,8 @@ function aeva_admin_init()
 
 	// Some CSS and JS we'll be using
 	add_css_file('media', true);
-	add_js_file('media.js');
-	add_js_file('media_admin.js');
+	add_js_file('scripts/media.js');
+	add_js_file('scripts/media_admin.js');
 	add_js('
 	var galurl = "' . $galurl . '";');
 

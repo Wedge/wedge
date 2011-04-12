@@ -1430,12 +1430,13 @@ function ob_sessrewrite($buffer)
 				// We don't like unknown blocks in this town.
 				$block = isset($context['blocks'][$code]) ? $context['blocks'][$code] : array('has_if' => false, 'body' => '');
 				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $block['body']);
-				if ($space < $gt)
+
+				if ($block['has_if'])
 				{
 					preg_match_all('~([a-z][^\s="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
 
 					// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
-					while ($block['has_if'] && preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
+					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
 						foreach ($ifs as $ifi)
 							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
 

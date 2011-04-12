@@ -50,8 +50,7 @@ div.subheader p {
 .aep a, .aea a {
 	text-decoration: none !important;
 	display: block;
-	width: 100%;
-	height: 100%;
+	width, height: 100%;
 }
 
 table.aextbox .pics td {
@@ -88,8 +87,7 @@ iframe.aext {
 	background-image: url($images/aeva/progress2.png);
 }
 #viewitem .info_list {
-	padding: 0;
-	margin: 0;
+	padding, margin: 0;
 }
 #viewitem .info_list li {
 	display: inline;
@@ -98,8 +96,7 @@ iframe.aext {
 	padding: 0 6px 3px 6px;
 }
 #viewitem h3 {
-	margin-top: 0;
-	margin-bottom: 0;
+	margin-top, margin-bottom: 0;
 }
 #viewitem h4 {
 	padding: 3px 6px 1px 6px;
@@ -300,7 +297,6 @@ div.mgabs a {
 	margin: auto;
 }
 table.foxy_side {
-	border: 1px solid #888;
 	margin: 0 0 8px 12px;
 }
 table.foxy_side tr td {

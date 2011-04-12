@@ -1289,12 +1289,10 @@ table
 	border: 1px solid rgba(0,0,0, .1)
 
 .wrc_top extends .wrc
-	padding: 14px 0 0 0
 	border-radius: 12px 12px 0 0
 	border-bottom, margin-bottom: 0
 
 .wrc_bottom extends .wrc
-	padding: 0 0 14px 0
 	border-radius: 0 0 12px 12px
 	border-top, margin-top: 0
 

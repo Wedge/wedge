@@ -1134,7 +1134,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			SELECT
 				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, f.filename, i.width AS icon_width, p.height AS preview_height,
-				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
+				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td, i.transparency
 			FROM {db_prefix}media_items AS m
 			INNER JOIN {db_prefix}media_playlist_data AS pl ON (pl.id_media = m.id_media AND pl.id_playlist = {int:playlist})
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)
@@ -1156,7 +1156,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			SELECT
 				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, a.description AS album_description, f.filename, i.width AS icon_width, p.height AS preview_height,
-				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
+				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td, i.transparency
 			FROM {db_prefix}media_items AS m
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)
 			INNER JOIN {db_prefix}media_files AS f ON (f.id_file = m.id_file)
@@ -1186,7 +1186,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			SELECT
 				m.id_media, m.title, m.type, f.meta, m.description, m.album_id, a.name AS album_name, a.hidden, a.id_album,
 				rating, voters, m.id_member, f.height, a.description AS album_description, f.filename, i.width AS icon_width, p.height AS preview_height,
-				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td
+				t.filename AS tf, t.id_file AS id_thumb, t.directory AS td, i.transparency
 			FROM {db_prefix}media_items AS m
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)
 			INNER JOIN {db_prefix}media_files AS f ON (f.id_file = m.id_file)
@@ -1243,6 +1243,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			'owner' => $row['id_member'],
 			'type' => $row['type'] == 'audio' ? 'sound' : $row['type'],
 			'icon_width' => $row['icon_width'],
+			'icon_transparent' => $row['transparency'] == 'transparent',
 			'rating' => (int) $row['rating'],
 			'voters' => (int) $row['voters'],
 			'ext' => $ext,
@@ -1325,7 +1326,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	if (!in_array('none', $details))
 	{
 		$first_p = reset($playlist);
-		$box .= '<table class="foxy_side cp0 cs0 right" style="width: ' . max(100, $first_p['icon_width'] + 10) . 'px">';
+		$box .= '<table class="foxy_side cp0 cs0 floatright" style="width: ' . max(100, $first_p['icon_width'] + 10) . 'px">';
 
 		if (!empty($all_fields))
 		{
@@ -1350,7 +1351,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		}
 
 		$box .= '<tr>' . ($album_id > 0 ? '<td class="top">
-	<img src="' . $scripturl . '?action=media;sa=media;in=' . $album_id . ';bigicon"></td>' : '');
+	<img class="aep" src="' . $scripturl . '?action=media;sa=media;in=' . $album_id . ';bigicon"' . ($first_p['icon_transparent'] ? ' style="' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none"' : '') . '></td>' : '');
 
 		if ($nvotes != 0 && in_array('votes', $details))
 		{

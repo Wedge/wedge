@@ -789,7 +789,7 @@ function aeva_albumCP($is_admin = false)
 	{
 		// This file is needed for the toggle
 		$context['header'] .= '
-	<script src="' . add_js_file('media_admin.js', false, true) . '"></script>
+	<script src="' . add_js_file('scripts/media_admin.js', false, true) . '"></script>
 	<script><!-- // --><![CDATA[
 		var galurl = "' . $galurl . '";
 	// ]]></script>';
@@ -2012,33 +2012,25 @@ function aeva_massUpload()
 
 		// HTML Headers
 		$context['aeva_submit_url'] = $galurl . 'sa=mass;album=' . $id_album . ';xml;upcook=' . urlencode(base64_encode($_COOKIE[$cookiename]));
-		$context['header'] .= '
-	<script src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.6.0/build/element/element-beta-min.js&amp;2.6.0/build/uploader/uploader-experimental.js"></script>
-	<script src="' . add_js_file('uploader.js', false, true) . '"></script>
-	<script><!-- // --><![CDATA[
-		var galurl = "' . $galurl . '";
-		YAHOO.util.Event.onDOMReady(function()
-		{
-			var areas = [];
-			areas["cprog"] = "current_progress";
-			areas["cprogtxt"] = "current_title";
-			areas["cprogtxt2"] = "current_text";
-			areas["cprogtxt3"] = "current_prog_perc";
-			areas["oprog"] = "overall_progress";
-			areas["oprogtxt"] = "overall_title";
-			areas["oprogtxt2"] = "overall_prog_perc";
-			areas["browse"] = "browse";
-			areas["upload"] = "upload";
-			areas["list"] = "current_list";
-			areas["submit"] = "mu_items";
-			areas["swfurl"] = "' . aeva_theme_url('uploader.swf') . '";
-			areas["browseBtn"] = "browseBtn";
-			areas["postURL"] = "' . $context['aeva_submit_url'] . '";
-			areas["filters"] = new Array(' . implode(', ', $allowed_exts) . ');
-			areas["php_limit"] = ' . $max_php_size . ';
-			areas["text"] = { "bytes": "' . $txt['media_bytes'] . '", "kb": "' . $txt['media_kb'] . '", "mb": "' . $txt['media_mb'] . '", "cancel": "'
-			. $txt['media_mass_cancel'] . '", "tl_php": "' . sprintf($txt['media_file_too_large_php'], round($max_php_size/1048576, 1)) . '", "tl_quota": "' . $txt['media_file_too_large_quota'] . '", "tl_img": "' . $txt['media_file_too_large_img'] . '" };
-			areas["quotas"] = { ';
+		add_js_file('http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.6.0/build/element/element-beta-min.js&amp;2.6.0/build/uploader/uploader-experimental-min.js', true);
+		add_js_file('scripts/up.js');
+		add_js('
+	var galurl = "', $galurl, '";
+	Yup.init({
+		swfurl: "', aeva_theme_url('uploader.swf'), '",
+		postURL: ', JavaScriptEscape($context['aeva_submit_url']), ',
+		filters: [ ', implode(', ', $allowed_exts), ' ],
+		php_limit: ', $max_php_size, ',
+		text: {
+			bytes: ', JavaScriptEscape($txt['media_bytes']), ',
+			kb: ', JavaScriptEscape($txt['media_kb']), ',
+			mb: ', JavaScriptEscape($txt['media_mb']), ',
+			cancel: ', JavaScriptEscape($txt['media_mass_cancel']), ',
+			tl_php: ', JavaScriptEscape(sprintf($txt['media_file_too_large_php'], round($max_php_size/1048576, 1))), ',
+			tl_quota: ', JavaScriptEscape($txt['media_file_too_large_quota']), ',
+			tl_img: ', JavaScriptEscape($txt['media_file_too_large_img']), '
+		},
+		quotas: {');
 
 		$filetypes = array('im' => 'image', 'au' => 'audio', 'vi' => 'video', 'do' => 'doc');
 		if (!empty($context['allowed_types']))
@@ -2046,14 +2038,13 @@ function aeva_massUpload()
 			foreach ($context['allowed_types'] as $filetype => $exts)
 				if (isset($filetypes[$filetype]))
 					foreach ($exts as $ext)
-						$context['header'] .= '"' . substr(strrchr($ext, '.'), 1) . '": ' . (int) $context['aeva_max_file_size'][$filetypes[$filetype]] . ', ';
-			$context['header'] = substr($context['header'], 0, -2);
+						$context['footer_js'] .= ' "' . substr(strrchr($ext, '.'), 1) . '": ' . (int) $context['aeva_max_file_size'][$filetypes[$filetype]] . ',';
+			$context['footer_js'] = substr($context['footer_js'], 0, -1) . ' ';
 		}
 
-		$context['header'] .= ' };
-			Yup.init(areas);
-		});
-	// ]]></script>';
+		add_js('}
+	});');
+
 		return;
 	}
 

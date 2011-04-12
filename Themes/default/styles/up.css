@@ -2,17 +2,15 @@
 	display: none;
 }
 #mu_items ul {
-	padding: 0;
-	margin: 0;
+	padding, margin: 0;
 }
 #mu_items ul li {
 	display: inline;
 	overflow: auto;
 	float: left;
-	margin-right: 8px;
+	margin-right, margin-top: 8px;
 	border: 1px solid;
 	padding: 4px;
-	margin-top: 8px;
 }
 #mu_items_error {
 	display: none
@@ -61,8 +59,7 @@
 	margin-left: 34px;
 	display: block;
 	clear: left;
-	line-height: 40px;
-	height: 40px;
+	height, line-height: 40px;
 	font-weight: bold;
 	overflow: hidden;
 }
@@ -80,8 +77,7 @@
 	line-height: 20px;
 }
 #current_list li.file .file-remove {
-	clear: right;
-	float: right;
+	clear, float: right;
 	line-height: 18px;
 	margin-right: 6px;
 }

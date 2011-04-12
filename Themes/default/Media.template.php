@@ -1540,82 +1540,76 @@ function template_aeva_multiUpload()
 	global $context, $txt, $galurl, $amSettings, $settings, $boardurl;
 
 	echo '
-	<table cellpadding="6" cellspacing="0" border="0" width="100%">
-		<tr class="titlebg">
-			<td>', $txt['media_multi_upload'], '</td>
-		</tr>
-		<tr class="windowbg">
-			<td>
-				<ul class="normallist">
-					<li>', $txt['media_max_file_size'], ': ', $txt['media_image'], ' - ', $context['aeva_max_file_size']['image'], ' ', $txt['media_kb'], ', ', $txt['media_video'], ' - ', $context['aeva_max_file_size']['video'], ' ', $txt['media_kb'], ', ', $txt['media_audio'], ' - ', $context['aeva_max_file_size']['audio'], ' ', $txt['media_kb'], ', ', $txt['media_doc'], ' - ', $context['aeva_max_file_size']['doc'], ' ', $txt['media_kb'], '
-					<li>', $txt['media_needs_js_flash'], '</li>
-				</ul>
-			</td>
-		</tr>
-		<tr class="windowbg2">
-			<td>
-				', $txt['media_add_allowedTypes'], ':
-				<ul class="normallist">';
+	<we:title>
+		', $txt['media_multi_upload'], '
+	</we:title>
+	<div class="windowbg wrc_top">
+		<ul class="normallist">
+			<li>', $txt['media_max_file_size'], ': ', $txt['media_image'], ' - ', $context['aeva_max_file_size']['image'], ' ', $txt['media_kb'], ', ', $txt['media_video'], ' - ', $context['aeva_max_file_size']['video'], ' ', $txt['media_kb'], ', ', $txt['media_audio'], ' - ', $context['aeva_max_file_size']['audio'], ' ', $txt['media_kb'], ', ', $txt['media_doc'], ' - ', $context['aeva_max_file_size']['doc'], ' ', $txt['media_kb'], '
+			<li>', $txt['media_needs_js_flash'], '</li>
+		</ul>
+	</div>
+	<div class="windowbg2 wrc_bottom">
+		<we:title2>
+			', $txt['media_add_allowedTypes'], '
+		</we:title2>
+		<ul class="normallist">';
 
 	foreach ($context['allowed_types'] as $k => $v)
 		echo '
-					<li><b>', $txt['media_filetype_'.$k], '</b>: ', str_replace('*.', '', implode(', ', $v)), '</li>';
+			<li><b>', $txt['media_filetype_'.$k], '</b>: ', str_replace('*.', '', implode(', ', $v)), '</li>';
 
 	echo '
-				</ul>
-			</td>
-		</tr>
-		<tr class="windowbg2 center">
-			<td>
-				<form action="', $boardurl, '">
-					<strong>1</strong>. ', $txt['media_sort_order'], ' &ndash;
-					<select id="sort_order" name="sort_order">
-						<option value="1" selected>', $txt['media_sort_order_filename'], '</option>
-						<option value="2">', $txt['media_sort_order_filedate'], '</option>
-						<option value="3">', $txt['media_sort_order_filesize'], '</option>
-					</select>
-				</form>
-			</td>
-		</tr>
-		<tr class="windowbg2">
-			<td>
-				<form action="', $context['aeva_submit_url'], '" id="upload_form" method="post">
-					<div id="mu_container" style="text-align: center">
-						<p>
-							<strong>2</strong>. <span id="browse" style="position: absolute; z-index: 2"></span>
-							<span id="browseBtnSpan" style="z-index: 1"><a id="browseBtn" href="#">', $txt['media_selectFiles'], '</a></span> |
-							<strong>3</strong>. <a id="upload" href="#">', $txt['media_upload'], '</a>
-						</p>
-						<div>
-							<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br>
-							<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress"> <strong id="overall_prog_perc">0%</strong>
-						</div>
-						<div>
-							<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br>
-							<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress"> <strong id="current_prog_perc">0%</strong>
-						</div>
-						<div class="current-text" id="current_text"></div>
-					</div>
-					<div>
-						<div>
-							<ul id="current_list">
-								<li id="remove_me" style="visibility: hidden"></li>
-							</ul>
-						</div>
-						<br class="clear">
-						<div style="text-align: center;" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
-					</div>
-				</form>
-			</td>
-		</tr>
-		<tr id="mu_items_tr" style="display: none" class="titlebg">
-			<td>', $txt['media_errors'], '</td>
-		</tr>
-		<tr id="mu_items_tr2" style="display: none" class="windowbg2">
-			<td id="mu_items_error" style="color: red;">
-			</td>
-		</tr>
-	</table>';
+		</ul>
+	</div>
+	<div class="roundframe">
+		<form action="', $boardurl, '" style="text-align: center">
+			<strong>1</strong>. ', $txt['media_sort_order'], ' &ndash;
+			<select id="sort_order" name="sort_order">
+				<option value="1" selected>', $txt['media_sort_order_filename'], '</option>
+				<option value="2">', $txt['media_sort_order_filedate'], '</option>
+				<option value="3">', $txt['media_sort_order_filesize'], '</option>
+			</select>
+		</form>
+
+		<form action="', $context['aeva_submit_url'], '" id="upload_form" method="post">
+			<div id="mu_container" style="text-align: center">
+				<p>
+					<strong>2</strong>. <span id="browse" style="position: absolute; z-index: 2"></span>
+					<span id="browseBtnSpan" style="z-index: 1"><a id="browseBtn" href="#">', $txt['media_selectFiles'], '</a></span> |
+					<strong>3</strong>. <a id="upload" href="#">', $txt['media_upload'], '</a>
+				</p>
+				<div>
+					<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br>
+					<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress"> <strong id="overall_prog_perc">0%</strong>
+				</div>
+				<div>
+					<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br>
+					<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress"> <strong id="current_prog_perc">0%</strong>
+				</div>
+				<div class="current-text" id="current_text"></div>
+			</div>
+			<div>
+				<div>
+					<ul id="current_list">
+						<li id="remove_me" style="visibility: hidden"></li>
+					</ul>
+				</div>
+				<br class="clear">
+				<div style="text-align: center;" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
+			</div>
+		</form>
+
+		<table class="w100 cs0">
+			<tr id="mu_items_tr" style="display: none" class="titlebg">
+				<td>', $txt['media_errors'], '</td>
+			</tr>
+			<tr id="mu_items_tr2" style="display: none" class="windowbg2">
+				<td id="mu_items_error" style="color: red;">
+				</td>
+			</tr>
+		</table>
+	</div>';
 }
 
 // Profile summary template
