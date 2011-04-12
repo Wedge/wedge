@@ -458,89 +458,87 @@ function aeva_initLightbox($autosize, $peralbum = array())
 
 	$not_single = empty($peralbum) ? 'true' : 'false';
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
-	$r = '
-	<script src="' . aeva_theme_url('highslide-2.js') . '"></script>
-	<script><!-- // --><![CDATA[
-		function hss(aId, aSelf)
-		{
-			var aUrl = aSelf.href;
-			var ah = $(\'#hsm\' + aId)[0];
-			hs.close(ah);
-			hs.expanders[hs.getWrapperKey(ah)] = null;
-			ah.href = aUrl;
-			hs.expand(ah);
-			return false;
-		}' . "\n";
 
-	$r .= empty($peralbum) ? '
-		hs.Expander.prototype.onInit = function()
+	add_js_file('aeva/highslide.js');
+	add_js('
+	function hss(aId, aSelf)
+	{
+		var aUrl = aSelf.href;
+		var ah = $(\'#hsm\' + aId)[0];
+		hs.close(ah);
+		hs.expanders[hs.getWrapperKey(ah)] = null;
+		ah.href = aUrl;
+		hs.expand(ah);
+		return false;
+	}' . "\n");
+
+	add_js(empty($peralbum) ? '
+	hs.Expander.prototype.onInit = function()
+	{
+		for (var i = 0, j = this.a.attributes, k = j.length; i < k; i++)
 		{
-			for (var i = 0, j = this.a.attributes, k = j.length; i < k; i++)
+			if (j[i].value.indexOf(\'htmlExpand\') != -1)
 			{
-				if (j[i].value.indexOf(\'htmlExpand\') != -1)
-				{
-					getXMLDocument(\'index.php?action=media;sa=addview;in=\' + this.a.id.substr(3), function() {});
-					return;
-				}
+				getXMLDocument(\'index.php?action=media;sa=addview;in=\' + this.a.id.substr(3), function() {});
+				return;
 			}
 		}
+	}
 
-		var slideOptions = { slideshowGroup: \'aeva\', align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ' };
-		var mediaOptions = { slideshowGroup: \'aeva\', align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ', width: 1 };' : '
-		var slideOptions = { align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ' };';
+	var slideOptions = { slideshowGroup: \'aeva\', align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ' };
+	var mediaOptions = { slideshowGroup: \'aeva\', align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ', width: 1 };' : '
+	var slideOptions = { align: \'center\', transitions: [\'expand\', \'crossfade\'], fadeInOut: ' . $fadein . ' };');
 
-	$r .= '
+	add_js('
 
-		if (hs.addSlideshow) hs.addSlideshow({
-			slideshowGroup: \'aeva\',
-			interval: 5000,
-			repeat: false,
-			useControls: true,
-			fixedControls: \'fit\',
-			overlayOptions: {
-				opacity: .66,
-				position: \'bottom center\',
-				hideOnMouseOut: true
-			}
-		});
+	if (hs.addSlideshow) hs.addSlideshow({
+		slideshowGroup: \'aeva\',
+		interval: 5000,
+		repeat: false,
+		useControls: true,
+		fixedControls: \'fit\',
+		overlayOptions: {
+			opacity: .66,
+			position: \'bottom center\',
+			hideOnMouseOut: true
+		}
+	});
 
-		hs.lang = {
-			moveText: \'' . $txt['media_lbox_move'] . '\',
-			closeText: \'' . $txt['media_close'] . '\',
-			closeTitle: \'' . $txt['media_lbox_close_title'] . '\',
-			loadingText: \'' . $txt['media_lbox_loading'] . '\',
-			loadingTitle: \'' . $txt['media_lbox_clicktocancel'] . '\',
-			restoreTitle: \'' . $txt['media_lbox_clicktoclose'] . '\',
-			focusTitle: \'' . $txt['media_lbox_focus'] . '\',
-			fullExpandTitle: \'' . $txt['media_lbox_expandtoactual'] . '\',
-			previousTitle: \'' . $txt['media_lbox_previous'] . '\',
-			nextTitle: \'' . $txt['media_lbox_next'] . '\',
-			playTitle: \'' . $txt['media_lbox_play'] . '\',
-			pauseTitle: \'' . $txt['media_lbox_pause'] . '\'
-		};' . ($autosize ? '' : '
-		hs.allowSizeReduction = false;') . (empty($peralbum) || $peralbum['outline'] == 'rounded-white' ? '
-		hs.outlineType = \'rounded-white\';' : '') . '
-		hs.numberOfImagesToPreload = 0;
-		hs.graphicsDir = \'' . aeva_theme_url('hs/') . '\';';
+	hs.lang = {
+		moveText: \'', $txt['media_lbox_move'], '\',
+		closeText: \'', $txt['media_close'], '\',
+		closeTitle: \'', $txt['media_lbox_close_title'], '\',
+		loadingText: \'', $txt['media_lbox_loading'], '\',
+		loadingTitle: \'', $txt['media_lbox_clicktocancel'], '\',
+		restoreTitle: \'', $txt['media_lbox_clicktoclose'], '\',
+		focusTitle: \'', $txt['media_lbox_focus'], '\',
+		fullExpandTitle: \'', $txt['media_lbox_expandtoactual'], '\',
+		previousTitle: \'', $txt['media_lbox_previous'], '\',
+		nextTitle: \'', $txt['media_lbox_next'], '\',
+		playTitle: \'', $txt['media_lbox_play'], '\',
+		pauseTitle: \'', $txt['media_lbox_pause'], '\'
+	};', $autosize ? '' : '
+	hs.allowSizeReduction = false;', empty($peralbum) || $peralbum['outline'] == 'rounded-white' ? '
+	hs.outlineType = \'rounded-white\';' : '', '
+	hs.numberOfImagesToPreload = 0;
+	hs.graphicsDir = \'', aeva_theme_url('hs/'), '\';');
 
 	if (empty($peralbum))
-		return $r . '
+		return '';
 
-	// ]]></script>';
+	add_js(($peralbum['outline'] == 'drop-shadow' ? '' : '
+	hs.outlineType = \'' . $peralbum['outline'] . '\';') . ($peralbum['autosize'] == 'yes' ? '' : '
+	hs.allowSizeReduction = false;') . (!isset($peralbum['expand']) || $peralbum['expand'] == 250 ? '' : '
+	hs.expandDuration = ' . $peralbum['expand'] . ';
+	hs.restoreDuration = ' . $peralbum['expand'] . ';'));
 
-	return $r . ($peralbum['outline'] == 'drop-shadow' ? '' : '
-		hs.outlineType = \'' . $peralbum['outline'] . '\';') . ($peralbum['autosize'] == 'yes' ? '' : '
-		hs.allowSizeReduction = false;') . (!isset($peralbum['expand']) || $peralbum['expand'] == 250 ? '' : '
-		hs.expandDuration = ' . $peralbum['expand'] . ';
-		hs.restoreDuration = ' . $peralbum['expand'] . ';') . '
-
-	// ]]></script>' . ($peralbum['outline'] == 'rounded-white' || !empty($peralbum['fadeinout']) ? '
+	return $peralbum['outline'] == 'rounded-white' || !empty($peralbum['fadeinout']) ? '
 	<style>' . ($peralbum['outline'] == 'rounded-white' ? '
 		.hs img { border: 2px solid gray }
 		.hs:hover img, .highslide-image { border: 2px solid white }
 		.highslide-wrapper .highslide-html-content { padding: 0 5px 5px 5px }' : '') . (!empty($peralbum['fadeinout']) ? '
 		.highslide-active-anchor img { visibility: visible }' : '') . '
-	</style>' : '');
+	</style>' : '';
 }
 
 // Gets an encrypted filename

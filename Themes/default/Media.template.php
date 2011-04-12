@@ -605,23 +605,29 @@ function template_aeva_viewItem()
 				' . $txt['media_comments'] . '
 			</a>' : '
 			' . $txt['media_comments'], '
-		</we:cat>
+		</we:cat>';
+
+	if (empty($item['comments']))
+		echo '<div class="windowbg wrc">', $txt['media_no_comments'], '</div>';
+	else
+	{
+		echo '
 		<table class="cs1 cp4 w100" id="mg_coms">
 		<tr class="titlebg middle"><td colspan="4" style="padding: 0 6px">
 			<span class="smalltext comment_sort_options">
-				', empty($item['comments']) ? $txt['media_no_comments'] : $txt['media_sort_order_com'] . ' -
-				<a href="' . $galurl . 'sa=item;in=' . $item['id_media'] . (isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '') . '">' . $txt['media_sort_order_asc'] . '</a>
-				<a href="' . $galurl . 'sa=item;in=' . $item['id_media'] . ';com_desc' . (isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '') . '">' . $txt['media_sort_order_desc'] . '</a>', '
+				', $txt['media_sort_order_com'], ' -
+				<a href="', $galurl, 'sa=item;in=', $item['id_media'], isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '', '">', $txt['media_sort_order_asc'], '</a>
+				<a href="', $galurl, 'sa=item;in=', $item['id_media'], ';com_desc', isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '', '">', $txt['media_sort_order_desc'], '</a>
 			</span>
 		</td></tr>
-		</table>', empty($item['comments']) ? '' : '
-		<div class="pagelinks">' . $txt['media_pages'] . ': ' . $item['com_page_index'] . '</div>';
+		</table>
+		<div class="pagelinks">', $txt['media_pages'], ': ', $item['com_page_index'], '</div>';
 
-	$alternative = false;
-	foreach ($item['comments'] as $c)
-	{
-		$alternative = !$alternative;
-		echo '
+		$alternative = false;
+		foreach ($item['comments'] as $c)
+		{
+			$alternative = !$alternative;
+			echo '
 		<div class="windowbg', $alternative ? '' : '2', ' wrc">
 			<table class="w100 cp0 cs0 tlf" style="padding: 0 10px"><tr>
 			<td width="20%"', $c['is_edited'] ? ' rowspan="2"' : '', ' class="top">', empty($c['member']['id']) ? '
@@ -638,11 +644,11 @@ function template_aeva_viewItem()
 				<a name="com', $c['id_comment'], '"></a>
 				<div class="mgc_main">
 					', $txt['media_comment'], ' <a href="#com', $c['id_comment'], '" rel="nofollow">#', $c['counter'], '</a> - ',
-				is_numeric($c['posted_on'][0]) ? $txt['media_posted_on_date'] : $txt['media_posted_on'], ' ', $c['posted_on'], '
+					is_numeric($c['posted_on'][0]) ? $txt['media_posted_on_date'] : $txt['media_posted_on'], ' ', $c['posted_on'], '
 				</div>';
 
-		if ($c['can_edit'] || $c['can_report'])
-			echo '
+			if ($c['can_edit'] || $c['can_report'])
+				echo '
 				<div class="mgc_icons">', $c['can_edit'] ? '
 					<a href="'.$galurl.'sa=edit;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/comment_edit.png"> '.$txt['media_edit_this_item'].'</a>' : '', $c['can_delete'] ? '
 					<a href="'.$galurl.'sa=delete;type=comment;in='.$c['id_comment'].'" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="'.$settings['images_aeva'].'/delete.png"> '.$txt['media_delete_this_item'].'</a> ' : '', $c['can_report'] ? '
@@ -650,7 +656,7 @@ function template_aeva_viewItem()
 					<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;in='.$c['id_comment'].';type=coms;' . $context['session_var'] . '='.$context['session_id'].'"><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> '.$txt['media_admin_approve'].'</a>' : '', '
 				</div>';
 
-		echo '
+			echo '
 				<div class="mgc_post">
 					', $c['message'], '
 				</div>
@@ -660,11 +666,10 @@ function template_aeva_viewItem()
 				($c['last_edited']['id'] > -2 ? ' ' . strtolower($txt['media_by']) . ' ' . $c['last_edited']['link'] : '') . '</div>
 			</td></tr>' : '', '
 			</table>
-		</div>';
+		</div>
+		<div class="pagelinks">', $txt['media_pages'], ': ', $item['com_page_index'], '</div>';
+		}
 	}
-	if (!empty($item['comments']))
-		echo '
-		<div class="pagelinks">' . $txt['media_pages'] . ': ' . $item['com_page_index'] . '</div>';
 
 	if (allowedTo('media_comment'))
 		echo '
@@ -1326,7 +1331,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%">', aeva_profile($uploader['id'], $uploader['name']), '</td>
-							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $uploader['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $uploader['percent'], 'px"></div></td>
 							<td class="right">', $uploader['total_items'], '</td>
 						</tr>';
 
@@ -1345,7 +1350,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%">', aeva_profile($uploader['id'], $uploader['name']), '</td>
-							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $uploader['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $uploader['percent'], 'px"></div></td>
 							<td class="right">', $uploader['total_comments'], '</td>
 						</tr>';
 
@@ -1371,7 +1376,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
 							<td class="right">', $album['num_items'], '</td>
 						</tr>';
 
@@ -1391,7 +1396,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $album['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $album['percent'], 'px"></div></td>
 							<td class="right">', $album['num_comments'], '</td>
 						</tr>';
 
@@ -1417,7 +1422,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=item;in=', $item['id'], '">', $item['title'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $item['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $item['percent'], 'px"></div></td>
 							<td class="right">', $item['views'], '</td>
 						</tr>';
 
@@ -1437,7 +1442,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=item;in=', $item['id'], '">', $item['title'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $item['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $item['percent'], 'px"></div></td>
 							<td class="right">', $item['num_com'], '</td>
 						</tr>';
 
@@ -1463,7 +1468,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=item;in=', $item['id'], '">', $item['title'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $item['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar" style="width: ', $item['percent'], 'px"></div></td>
 							<td class="right">', $item['rating'], '</td>
 						</tr>';
 
@@ -1482,7 +1487,7 @@ function template_aeva_stats()
 		echo '
 						<tr>
 							<td class="left" style="width: 60%"><a href="', $galurl, 'sa=item;in=', $item['id'], '">', $item['title'], '</a></td>
-							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $item['percent'], 'px;"></div></td>
+							<td style="width: 20%"><div class="aeva_statsbar2" style="width: ', $item['percent'], 'px"></div></td>
 							<td class="right">', $item['voters'], '</td>
 						</tr>';
 
@@ -1596,7 +1601,7 @@ function template_aeva_multiUpload()
 					</ul>
 				</div>
 				<br class="clear">
-				<div style="text-align: center;" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
+				<div style="text-align: center" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
 			</div>
 		</form>
 
@@ -1605,7 +1610,7 @@ function template_aeva_multiUpload()
 				<td>', $txt['media_errors'], '</td>
 			</tr>
 			<tr id="mu_items_tr2" style="display: none" class="windowbg2">
-				<td id="mu_items_error" style="color: red;">
+				<td id="mu_items_error" style="color: red">
 				</td>
 			</tr>
 		</table>
@@ -1626,7 +1631,7 @@ function template_aeva_profile_summary()
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_sum_pt'], '</td>
 			</tr>
 			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_sum_desc'], '</td>
+				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_sum_desc'], '</td>
 			</tr>
 			<tr class="titlebg">
 				<td>', $txt['media_profile_stats'], '</td>
@@ -1685,14 +1690,14 @@ function template_aeva_profile_summary()
 				<td>', $txt['media_top_albums'], '</td>
 			</tr>
 			<tr>
-				<td style="padding: 0px;">
+				<td style="padding: 0px">
 					<table cellpadding="6" cellspacing="0" width="100%" border="0">';
 
 		foreach ($member['top_albums'] as $album)
 			echo '
 						<tr>
 							<td class="windowbg2" width="50%"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
-							<td class="windowbg2" width="40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px;"></div></td>
+							<td class="windowbg2" width="40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
 							<td class="windowbg2" width="10%">', $album['total_items'], '</td>
 						</tr>';
 
@@ -1716,7 +1721,7 @@ function template_aeva_profile_viewitems()
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewitems_pt'], '</td>
 			</tr>
 			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewitems_desc'], '</td>
+				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewitems_desc'], '</td>
 			</tr>
 		</table>
 
@@ -1741,7 +1746,7 @@ function template_aeva_profile_viewcoms()
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewcoms_pt'], '</td>
 			</tr>
 			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewcoms_desc'], '</td>
+				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewcoms_desc'], '</td>
 			</tr>
 		</table>
 
@@ -1777,7 +1782,7 @@ function template_aeva_profile_viewvotes()
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewvotes_pt'], '</td>
 			</tr>
 			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex;">', $txt['media_profile_viewvotes_desc'], '</td>
+				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewvotes_desc'], '</td>
 			</tr>
 		</table>
 

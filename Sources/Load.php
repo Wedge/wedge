@@ -2442,11 +2442,10 @@ function template_include($filename, $once = false)
 			if (!empty($error))
 				echo '
 		<hr>
-
 		<div style="margin: 0 20px"><tt>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</tt></div>';
 
 			// Yes, this is VERY complicated... Still, it's good.
-			if (preg_match('~ <strong>\d+</strong><br\s*/?\>$~i', $error, $match) != 0)
+			if (preg_match('~ <strong>(\d+)</strong><br\s*/?\>$~i', $error, $match) != 0)
 			{
 				$data = file($filename);
 				$data2 = highlight_php_code(implode('', $data));

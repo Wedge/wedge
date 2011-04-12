@@ -14,37 +14,38 @@ var Yup = {
 	init: function(areas)
 	{
 		YUI = YAHOO.util;
-		Yup.currentProgress = YUI.Dom.get("current_progress");
-		Yup.currentProgressText = YUI.Dom.get("current_title");
-		Yup.currentProgressText2 = YUI.Dom.get("current_text");
-		Yup.currentProgressText3 = YUI.Dom.get("current_prog_perc");
-		Yup.overallProgress = YUI.Dom.get("overall_progress");
-		Yup.overallProgressText = YUI.Dom.get("overall_title");
-		Yup.overallProgressText2 = YUI.Dom.get("overall_prog_perc");
-		Yup.browse = YUI.Dom.get("browse");
-		Yup.upload = YUI.Dom.get("upload");
-		Yup.list = YUI.Dom.get("current_list");
-		Yup.submit = YUI.Dom.get("mu_items");
-		Yup.php_limit = areas['php_limit'];
-		Yup.quotas = areas['quotas'];
-		Yup.txt = areas['text'];
+		Yup.currentProgress = $("#current_progress");
+		Yup.currentProgressText = $("#current_title");
+		Yup.currentProgressText2 = $("#current_text");
+		Yup.currentProgressText3 = $("#current_prog_perc");
+		Yup.overallProgress = $("#overall_progress");
+		Yup.overallProgressText = $("#overall_title");
+		Yup.overallProgressText2 = $("#overall_prog_perc");
+		Yup.browse = $("#browse");
+		Yup.upload = $("#upload");
+		Yup.list = $("#current_list");
+		Yup.browseBtn = $("#browseBtn");
+		Yup.php_limit = areas.php_limit;
+		Yup.quotas = areas.quotas;
+		Yup.txt = areas.text;
 		Yup.tabindex = 0;
 		Yup.overAllTotal = 0;
 		Yup.overAllProg = 0;
 		Yup.tempAllProg = 0;
 		Yup.currProg = 0;
-		Yup.curOverallText = Yup.overallProgressText.innerHTML;
-		Yup.browseBtn = YUI.Dom.getRegion("browseBtn");
-		Yup.upload.href = 'javascript:Yup.startNext();';
-		Yup.postURL = areas['postURL'];
-		Yup.files = new Array();
+		Yup.curOverallText = Yup.overallProgressText.html();
+		Yup.upload.attr('href', 'javascript:Yup.startNext();');
+		Yup.postURL = areas.postURL;
+		Yup.files = [];
 		Yup.lastDone = 0;
-		Yup.done = new Array();
-		Yup.fileFilters = areas['filters'];
-		YUI.Dom.setStyle(Yup.browse, 'width', (Yup.browseBtn.right - Yup.browseBtn.left) + 'px');
-		YUI.Dom.setStyle(Yup.browse, 'height', (Yup.browseBtn.bottom - Yup.browseBtn.top) + 'px');
+		Yup.done = [];
+		Yup.fileFilters = areas.filters;
+		Yup.browse.css({
+			width: Yup.browseBtn.css('width'),
+			height: Yup.browseBtn.css('height')
+		});
 
-		YAHOO.widget.Uploader.SWFURL = areas['swfurl'];
+		YAHOO.widget.Uploader.SWFURL = areas.swfurl;
 		Yup.uploader = new YAHOO.widget.Uploader('browse');
 
 		Yup.uploader.addListener('contentReady', Yup.onContentReady);
@@ -61,24 +62,19 @@ var Yup = {
 		Yup.uploader.addListener('uploadCompleteData', Yup.onCompleteData);
 
 		if (is_safari || is_chrome)
-			document.getElementById('mu_container').style.textAlign = '';
+			$('#mu_container').css('textAlign', '');
 	},
 
 	setProg: function(which, prog)
 	{
-		var toSet = which == 'overall' ? Yup.overallProgress : Yup.currentProgress;
-		YUI.Dom.setStyle(toSet, 'backgroundPosition', (100 - prog) + '%');
-
-		if (which == 'current')
-			Yup.currentProgressText3.innerHTML = prog + '%';
-		else
-			Yup.overallProgressText2.innerHTML = prog + '%';
+		(which == 'overall' ? Yup.overallProgress : Yup.currentProgress).css('backgroundPosition', (100 - prog) + '%');
+		(which == 'current' ? Yup.currentProgressText3 : Yup.overallProgressText2).html(prog + '%');
 	},
 
 	setOverallTotal: function(toIncrement)
 	{
 		Yup.overAllTotal += toIncrement;
-		Yup.overallProgressText.innerHTML = Yup.curOverallText + ' (' + Yup.bytesToSize(Yup.overAllTotal) + ')';
+		(Yup.overallProgressText).html(Yup.curOverallText + ' (' + Yup.bytesToSize(Yup.overAllTotal) + ')');
 	},
 
 	setOverallProg: function(toProg)
@@ -90,113 +86,73 @@ var Yup = {
 	bytesToSize: function (size)
 	{
 		if (size < 1024)
-			return size + ' ' + Yup.txt['bytes'];
+			return size + ' ' + Yup.txt.bytes;
 		else if (size > 1024 && size < (1024 * 1024))
-			return Math.round(size / 1024) + ' ' + Yup.txt['kb'];
+			return Math.round(size / 1024) + ' ' + Yup.txt.kb;
 		else
-			return Math.round(size / (1024 * 1024)) + ' ' + Yup.txt['mb'];
+			return Math.round(size / (1024 * 1024)) + ' ' + Yup.txt.mb;
 	},
 
 	onFilesSelect: function(event)
 	{
-		try
-		{
-			var remove_me = document.getElementById('remove_me');
-			if (remove_me != null)
-				remove_me.parentNode.removeChild(remove_me);
-		}
-		catch (e) {}
+		$('#remove_me').remove();
+		var sorter = $('#sort_order').val(), myFiles = [];
 
-		var sorter = 1;
-		var sort_select = document.getElementById('sort_order');
-		if (sort_select != null)
-			sorter = sort_select.value;
-
-		var myFiles = new Array();
-		for (i in event.fileList)
-		{
-			if (document.getElementById(i))
-				continue;
-
-			myFiles[myFiles.length] = new Array(i, event.fileList[i].name.toLowerCase(), event.fileList[i].mDate.getTime(), event.fileList[i].size);
-		}
+		for (var i in event.fileList)
+			if (!document.getElementById(i))
+				myFiles.push([i, event.fileList[i].name.toLowerCase(), event.fileList[i].mDate.getTime(), event.fileList[i].size]);
 
 		myFiles.sort(function (a, b) {
 			return a[sorter] < b[sorter] ? -1 : (a[sorter] > b[sorter] ? 1 : 0);
 		});
+
 		for (i in myFiles)
 		{
 			var file = event.fileList[myFiles[i][0]];
-
-			var fsize = document.createElement('span');
-			YUI.Dom.addClass(fsize, 'file-size');
-			fsize.innerHTML = Yup.bytesToSize(file.size);
-
 			var exten = file.name.substr(file.name.lastIndexOf('.') + 1, file.name.length), err = '';
+
 			if (file.size >  Yup.php_limit)
 				err = 'tl_php';
-			else if (file.size > Yup.quotas[exten] * 1024 && Yup.fileFilters[0]['extensions'].indexOf(exten) > 0)
+			else if (file.size > Yup.quotas[exten] * 1024 && Yup.fileFilters[0].extensions.indexOf(exten) > 0)
 				err = 'tl_img';
 			else if (file.size > Yup.quotas[exten] * 1024)
 				err = 'tl_quota';
 
-			var rem = document.createElement('a');
-			YUI.Dom.addClass(rem, 'file-remove');
-			rem.href = 'javascript:Yup.removeFile(\'' + file.id + '\');';
-			rem.innerHTML = Yup.txt['cancel'];
-			rem.id = 'rem_' + file.id;
-			var name = document.createElement('span');
-			YUI.Dom.addClass(name, 'file-name');
-			name.innerHTML = file.name;
-
-			var mainEl = document.createElement('li');
-			YUI.Dom.addClass(mainEl, 'file');
-			mainEl.id = file.id;
-
-			mainEl.appendChild(fsize);
-			mainEl.appendChild(rem);
-			mainEl.appendChild(name);
+			var mainEl = $('<li id="' + file.id + '" class="file"></li>')
+				.append($('<span class="file-size"></span>').html(Yup.bytesToSize(file.size)))
+				.append($('<a href="javascript:Yup.removeFile(\'' + file.id + '\');" id="rem_' + file.id + '" class="file-remove"></a>').html(Yup.txt.cancel))
+				.append($('<span class="file-name"></span>').html(file.name));
 
 			if (err != '')
-			{
-				var div = document.createElement('div');
-				YUI.Dom.addClass(div, err == 'tl_img' ? 'file-warning' : 'file-error');
-				div.innerHTML = Yup.txt[err];
-				mainEl.appendChild(div);
-			}
+				mainEl.append($('<div></div>').addClass(err == 'tl_img' ? 'file-warning' : 'file-error').html(Yup.txt[err]));
+
 			if (err == '' || err == 'tl_img')
 			{
 				Yup.setOverallTotal(file.size);
-				Yup.files[Yup.files.length] = file;
+				Yup.files.push(file);
 			}
 
-			Yup.list.appendChild(mainEl);
+			Yup.list.append(mainEl);
 		}
 	},
 
 	onUploadStart: function(event)
 	{
 		var file = Yup.files[Yup.lastDone];
-		var element = YUI.Dom.get(file.id);
-		Yup.currentProgressText2.innerHTML = file.name;
-		YUI.Dom.addClass(element, 'file-uploading');
+		$(file.id).addClass('file-uploading');
+		Yup.currentProgressText2.html(file.name);
 		Yup.currProg = 0;
 	},
 
 	onUploadError: function(event)
 	{
-		var err = 'The Flash upload module sent the following error.<br /><br />Error type: ' + event.type
-				+ '<br />Error ID: ' + event.id + '<br /><br />Error message: ' + event.status + '<br /><br />';
+		var err = 'The Flash upload module sent the following error.<br /><br />Error type: ' + event.type + '<br />Error ID: ' + event.id + '<br /><br />Error message: ' + event.status + '<br /><br />';
 		try
 		{
-			var file = Yup.files[Yup.lastDone];
-			var element = YUI.Dom.get(file.id);
-			var div = document.createElement('div');
-			YUI.Dom.addClass(div, 'file-error');
-			div.innerHTML = err;
-			element.appendChild(div);
-			YUI.Dom.removeClass(element, 'file-success');
-			YUI.Dom.addClass(element, 'file-failed');
+			$(Yup.files[Yup.lastDone].id)
+				.append($('<div class="file-error"></div>').html(err))
+				.removeClass('file-success')
+				.addClass('file-failed');
 		}
 		catch (e)
 		{
@@ -222,7 +178,7 @@ var Yup = {
 			sub.id = sub.name;
 			sub.value = 'dummy';
 
-			Yup.list.appendChild(sub);
+			Yup.list.append(sub);
 		}
 
 		var ret = event.data.split('|');
