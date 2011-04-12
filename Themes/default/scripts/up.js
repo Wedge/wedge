@@ -146,7 +146,7 @@ var Yup = {
 
 	onUploadError: function(event)
 	{
-		var err = 'The Flash upload module sent the following error.<br /><br />Error type: ' + event.type + '<br />Error ID: ' + event.id + '<br /><br />Error message: ' + event.status + '<br /><br />';
+		var err = 'The Flash upload module sent the following error.<br><br>Error type: ' + event.type + '<br>Error ID: ' + event.id + '<br><br>Error message: ' + event.status + '<br><br>';
 		try
 		{
 			$(Yup.files[Yup.lastDone].id)
@@ -156,7 +156,7 @@ var Yup = {
 		}
 		catch (e)
 		{
-			alert(err.replace(/<br \/>/g, "\n"));
+			alert(err.replace(/<br>/g, "\n"));
 		}
 	},
 

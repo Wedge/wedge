@@ -991,6 +991,9 @@ function aeva_viewItem()
 
 	wesql::free_result($result);
 
+	// Create the WYSIWYG editor
+	aeva_createTextEditor('comment', 'aeva_form');
+
 	// Done with comments, now prepare the item's data itself
 
 	// Get some variables ready (just as in aeva_viewAlbum)

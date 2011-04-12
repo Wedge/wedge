@@ -580,7 +580,7 @@ function template_aeva_viewItem()
 
 			echo '
 					</select>
-					<p class="mgra"><input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva"> <input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="aeva_cancel"></p>
+					<p class="mgra"><input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva"> <input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel"></p>
 				</form>
 			</div>';
 	}
@@ -608,7 +608,10 @@ function template_aeva_viewItem()
 		</we:cat>';
 
 	if (empty($item['comments']))
-		echo '<div class="windowbg wrc">', $txt['media_no_comments'], '</div>';
+		echo '
+		<div class="windowbg wrc">
+			', $txt['media_no_comments'], '
+		</div>';
 	else
 	{
 		echo '
@@ -629,7 +632,7 @@ function template_aeva_viewItem()
 			$alternative = !$alternative;
 			echo '
 		<div class="windowbg', $alternative ? '' : '2', ' wrc">
-			<table class="w100 cp0 cs0 tlf" style="padding: 0 10px"><tr>
+			<table class="w100 cp0 cs0 tlf"><tr>
 			<td width="20%"', $c['is_edited'] ? ' rowspan="2"' : '', ' class="top">', empty($c['member']['id']) ? '
 				<h4>' . $txt['guest'] . '</h4>' : '
 				<h4>' . $c['member_link'] . '</h4>
@@ -685,8 +688,18 @@ function template_aeva_viewItem()
 							<h3>'.$txt['media_commenting_this_item'].'</h3>
 							<img src="'.$settings['images_aeva'].'/comment.png" class="middle"> <a href="' . $galurl . 'sa=comment;in=' . $item['id_media'] . '">' . $txt['media_switch_fulledit'] . '</a>
 						</div>
-						<textarea name="comment" cols="" rows="8" style="width: 95%"></textarea>
-						<p class="mgra"><input type="submit" value="'.$txt['media_submit'].'" name="submit_aeva" class="aeva_ok"> <input type="button" onclick="return hs.close(this);" value="' . $txt['media_close'] . '" class="aeva_cancel"></p>
+						<div class="quickReplyContent">
+							<div id="bbcBox_message" style="display: none"></div>
+							<div id="smileyBox_message" style="display: none"></div>',
+							$context['postbox']->outputEditor(), '
+						</div>
+						<div class="floatleft padding">
+							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
+						</div>
+						<div class="righttext padding">',
+							$context['postbox']->outputButtons(), '
+						</div>
+						<input type="hidden" name="submit_aeva">
 					</form>
 				</div>
 			</div>
@@ -696,7 +709,7 @@ function template_aeva_viewItem()
 	</div>';
 
 	add_js_file('scripts/topic.js');
-/*
+
 	add_js('
 	var oQuickReply = new QuickReply({
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
@@ -710,7 +723,6 @@ function template_aeva_viewItem()
 		sSwitchMode: "switch_mode",
 		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
 	});');
-*/
 }
 
 function template_aeva_done()
