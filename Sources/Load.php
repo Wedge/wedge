@@ -2455,7 +2455,7 @@ function template_include($filename, $once = false)
 				if (!$context['browser']['is_gecko'])
 					$data2 = str_replace("\t", '<span style="white-space: pre">' . "\t" . '</span>', $data2);
 				else
-					$data2 = str_replace('<pre style="display: inline;">' . "\t" . '</pre>', "\t", $data2);
+					$data2 = str_replace('<pre style="display: inline">' . "\t" . '</pre>', "\t", $data2);
 
 				// Now we get to work around a bug in PHP where it doesn't escape <br>s!
 				$j = -1;

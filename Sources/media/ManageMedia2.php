@@ -69,16 +69,17 @@ function aeva_admin_maintenance()
 	// array(
 	//   'sa' => array('function', (bool) is_utility),
 	// );
-	// Use $context['aeva_maintenance_message'] for showing a message
+	// Use $context['aeva_maintenance_message'] to show a message
 	// $context['aeva_maintenance_done'] can have false (not shown), 'error' (red), ' pending'(yellow), true (green)
 	// Title is fetched as $txt['media_admin_maintenance_'.sa];
 
 	$sas = $album ? array(
-		'checkorphans'
+		'checkorphans',
 	) : array(
 		'recount',
 		'checkfiles',
 		'checkorphans',
+		'clear',
 		'finderrors',
 	);
 
@@ -86,11 +87,12 @@ function aeva_admin_maintenance()
 	$context['aeva_dos'] = array();
 	$end_url = ($album ? ';album=' . $album : '') . ';' . $context['session_var'] . '=' . $context['session_id'];
 	foreach ($sas as $sa)
-		$context['aeva_dos']['tasks'][] = array(
-			'title' => $txt['media_admin_maintenance_' . $sa],
-			'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
-			'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
-		);
+		if ($sa !== 'clear')
+			$context['aeva_dos']['tasks'][] = array(
+				'title' => $txt['media_admin_maintenance_' . $sa],
+				'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
+				'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
+			);
 
 	foreach (array('thumb', 'embed', 'preview', 'all') as $st)
 		$context['aeva_dos']['regen'][] = array(
@@ -105,10 +107,11 @@ function aeva_admin_maintenance()
 		'subtext' => $txt['media_admin_maintenance_prune_subtext'],
 	);
 
-	if (isset($_REQUEST['sa'], $sas[$_REQUEST['sa']]))
+	$task = 'aeva_admin_maintenance_' . (isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '');
+	if (function_exists($task))
 	{
-		$sas[$_REQUEST['sa']][0]();
-		if ($sas[$_REQUEST['sa']][1])
+		$task();
+		if ($_REQUEST['sa'] == 'regen')
 			return;
 	}
 

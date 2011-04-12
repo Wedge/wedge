@@ -373,7 +373,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 	// Only the basic CSS3 we actually use. May add more in the future.
-	$final = preg_replace_callback('~(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, and the 'final' keyword in its compact form.
 	$final = str_replace(

@@ -1,13 +1,16 @@
-// Wedge Media
-// © wedge.org
-// Yup.js
-// Handler for uploading files using Yahoo UI Yup
-//
-// Users of this software are bound by the terms of the
-// Wedge license. You can view it online at http://wedge.org/license/
-//
-// Support and updates for this software can be found at
-// http://wedge.org
+/*!
+ * up.js
+ *
+ * Mass uploader for Wedge
+ * © Dragooon and Nao for wedge.org
+ * Handler for uploading files using Yahoo UI Yup
+ *
+ * Users of this software are bound by the terms of the
+ * Wedge license. You can view it online at http://wedge.org/license/
+ *
+ * Support and updates for this software can be found at
+ * http://wedge.org
+ */
 
 var Yup = {
 
@@ -139,7 +142,7 @@ var Yup = {
 	onUploadStart: function(event)
 	{
 		var file = Yup.files[Yup.lastDone];
-		$(file.id).addClass('file-uploading');
+		$('#' + file.id).addClass('file-uploading');
 		Yup.currentProgressText2.html(file.name);
 		Yup.currProg = 0;
 	},
@@ -149,7 +152,7 @@ var Yup = {
 		var err = 'The Flash upload module sent the following error.<br><br>Error type: ' + event.type + '<br>Error ID: ' + event.id + '<br><br>Error message: ' + event.status + '<br><br>';
 		try
 		{
-			$(Yup.files[Yup.lastDone].id)
+			$('#' + Yup.files[Yup.lastDone].id)
 				.append($('<div class="file-error"></div>').html(err))
 				.removeClass('file-success')
 				.addClass('file-failed');
@@ -168,7 +171,7 @@ var Yup = {
 		Yup.overAllProg += Yup.tempAllProg;
 		Yup.tempAllProg = 0;
 		var file = Yup.files[Yup.lastDone];
-		var element = YUI.Dom.get(file.id);
+		var element = $('#' + file.id);
 
 		if (!YUI.Dom.get('submit_title_update'))
 		{
@@ -185,9 +188,12 @@ var Yup = {
 		var items = ret[0].split(';');
 		var errors = ret[1].split(';');
 
-		YUI.Dom.removeClass(element, 'file-uploading');
-		YUI.Dom.addClass(element, 'file-success');
-		YUI.Dom.setStyle(YUI.Dom.get('rem_' + file.id), 'display', 'none');
+		element
+			.removeClass('file-uploading')
+			.addClass('file-success');
+
+		$('#rem_' + file.id).css('display', 'none');
+
 		if (typeof items == 'object')
 		{
 			for (i = 0; i < items.length; i++)
@@ -200,37 +206,15 @@ var Yup = {
 				if (mid == null)
 					continue;
 
-				var li = document.createElement('li');
-				YUI.Dom.addClass(li, 'succ_item');
+				$('<li class="succ_item"></li>')
+					.append($('<p></p>').append(
+						$('<input type="text" size="30" name="item_title_' + mid + '" tabindex="' + (Yup.tabindex * 2) + '"></input>').val(this_ret[1])
+					))
+					.append($('<p><textarea cols="30" rows="3" name="item_desc_' + mid + '" tabindex="' + (Yup.tabindex * 2 + 1) + '"></textarea></p>'))
+					.append($('<img src="' + galurl + 'sa=media;in=' + mid + ';thumb"></img>'))
+					.appendTo(element);
 
-				var title_p = document.createElement('p');
-				var title_p2 = document.createElement('p');
-
-				var title = document.createElement('input');
-				title.type = 'text';
-				title.size = '30';
-				title.value = this_ret[1];
-				title.name = 'item_title_' + mid;
-				title.tabindex = Yup.tabindex*2;
-
-				var desc = document.createElement('textarea');
-				desc.cols = '30';
-				desc.rows = '3';
-				desc.name = 'item_desc_' + mid;
-				desc.tabindex = Yup.tabindex*2+1;
-
-				var img = document.createElement('img');
-				img.src = galurl + 'sa=media;in=' + mid + ';thumb';
-
-				title_p.appendChild(title);
-				title_p2.appendChild(desc);
-				li.appendChild(title_p);
-				li.appendChild(title_p2);
-				li.appendChild(img);
-
-				element.appendChild(li);
-
-				YUI.Dom.setStyle(YUI.Dom.get('mu_items'), 'display', 'block');
+				$('#mu_items').css('display', 'block');
 			}
 		}
 
@@ -241,14 +225,10 @@ var Yup = {
 				if (!errors[i] || errors[i].length == 0)
 					continue;
 
-				var div = document.createElement('div');
-				YUI.Dom.addClass(div, 'file-error');
-				div.innerHTML = errors[i];
-
-				element.appendChild(div);
-
-				YUI.Dom.removeClass(element, 'file-success');
-				YUI.Dom.addClass(element, 'file-failed');
+				element
+					.append($('<div class="file-error"></div>').html(errors[i]))
+					.removeClass('file-success')
+					.addClass('file-failed');
 			}
 		}
 
@@ -279,7 +259,7 @@ var Yup = {
 	removeFile: function(file_id)
 	{
 		Yup.uploader.removeFile(file_id);
-		YUI.Dom.setStyle(YUI.Dom.get(file_id), 'display', 'none');
+		$('#' + file_id).css('display', 'none');
 
 		var file_key = 0, i;
 		for (i in Yup.files)
