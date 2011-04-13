@@ -2645,7 +2645,7 @@ function aeva_showThumbnail($data)
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data = ($show_main_div ? '<table class="aextbox"' . (!empty($align) ? ' align="' . $align . '"' : '') . (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
-		. ($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'preview' ? '' : ';preview') . ($amSettings['use_lightbox'] ? '" class="hs" onclick="return hs.expand(this, slideOptions);">' : '">') : '')
+		. ($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'preview' ? '' : ';preview') . ($amSettings['use_lightbox'] ? '" class="hs">' : '">') : '')
 		. $box . ($show_bigger ? '</a>' : '') . (empty($inside_caption) ? '' : $inside_caption) . ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '') . ($type === 'av' && !empty($inside_caption) ? '' : $caption_box) . ($show_main_div ? '</td></tr></table>' : '');
 	return $data;
 }
@@ -2911,10 +2911,8 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$re .= '
 		<td' . ($i['approved'] ? '' : '  class="unapp"') . ' id="aepic_' . $i['id'] . '" align="center"' . ($context['browser']['is_ie6'] ? ' onmouseover="mouseo(' . $i['id'] . ', 0)" onmouseout="mouseo(' . $i['id'] . ', 1)"' : '') . '>
 			<div class="aep" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0' . ($i['transparent'] ? '; ' . $css_prefix . 'box-shadow: none' : '') . '"><a href="'
-			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ?
-				' id="hsm' . $in_page . '" class="hs" onclick="' . ($is_image ? 'return hs.expand(this, slideOptions)' :
-				'mediaOptions[\'width\'] = ' . $siz[1] . '; return hs.htmlExpand(this, mediaOptions)') . ';"' : '')
-			. '>&nbsp;</a>' . $inside_caption . '</div>
+			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="hs"'
+			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '>&nbsp;</a>' . $inside_caption . '</div>
 
 			<div style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '
 				<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '"' . ($title != $i['title'] ? ' title="'

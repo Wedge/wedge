@@ -266,8 +266,11 @@ var Yup = {
 			if (Yup.files[i].id == file_id)
 				file_key = i;
 
-		Yup.setOverallTotal(Yup.files[file_key].size * -1);
-		delete Yup.files[file_key];
+		if (typeof Yup.files[file_key] != 'undefined')
+		{
+			Yup.setOverallTotal(Yup.files[file_key].size * -1);
+			delete Yup.files[file_key];
+		}
 
 		var files = Yup.files, inc = 0;
 		Yup.files = [];
