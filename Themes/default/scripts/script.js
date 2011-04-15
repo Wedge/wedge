@@ -633,12 +633,13 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	// You may set an area as non-draggable by adding the nodrag class to it.
 	// This way, you can drag the element, but still access UI elements within it.
 	$.fn.dragslide = function () {
+		var origin = this.selector;
 		return this.each(function () {
 			$(this).css("cursor", "move").find(".nodrag").css("cursor", "default");
 
 			// Start the dragging process
 			$(this).mousedown(function (e) {
-				if ($(e.target).parentsUntil("#helf").andSelf().hasClass("nodrag"))
+				if ($(e.target).parentsUntil(origin).andSelf().hasClass("nodrag"))
 					return true;
 				is_fixed = this.style.position == "fixed";
 

@@ -1,7 +1,7 @@
 /*!
  * Wedge Media
+ * media.js
  * © wedge.org
- * am.js
  *
  * Users of this software are bound by the terms of the
  * Wedge license. You can view it online at http://wedgeforum.com/license/

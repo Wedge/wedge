@@ -202,7 +202,7 @@ function add_css_file($original_files = array(), $add_link = false)
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = str_replace('-webkit-', '-', $id);
+		$id = preg_replace('~(?:^webkit-|-webkit(?=-)|-webkit$)~', '', $id, 1);
 
 	if (isset($context['user']) && $context['user']['language'] !== 'english')
 		$id .= '-' . $context['user']['language'];

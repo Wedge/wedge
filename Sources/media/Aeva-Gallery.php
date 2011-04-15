@@ -1254,10 +1254,10 @@ function aeva_mgComment()
 		),
 	);
 	$context['aeva_form_headers'] = array(
-		array($txt['media_commenting'].' : <a href="'.$galurl.'sa=item;in='.$item_data['id_media'].'">'.$item_data['title'].'</a>'),
+		array($txt['media_commenting'] . ': <a href="' . $galurl . 'sa=item;in=' . $item_data['id_media'] . '">' . $item_data['title'] . '</a>'),
 		array($txt['media_com_will_be_approved'], !allowedTo('media_auto_approve_com') && !allowedTo('media_moderate')),
 	);
-	$context['aeva_form_url'] = $galurl.'sa=comment;in='.$item_data['id_media'];
+	$context['aeva_form_url'] = $galurl . 'sa=comment;in=' . $item_data['id_media'];
 
 	// Editor
 	aeva_createTextEditor('comment', 'aeva_form');
