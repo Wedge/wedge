@@ -299,6 +299,3 @@ hr
 // Without this, the clear: both on dt will fail.
 dl.settings dd
 	float: none
-
-div.ae_details
-	left: 0

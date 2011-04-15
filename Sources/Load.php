@@ -1524,7 +1524,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Then, we need a list of generic CSS files.
-	$context['css_generic_files'] = array('index', 'sections');
+	$context['css_main_files'] = array('index', 'sections');
+	$context['css_generic_files'] = array();
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 

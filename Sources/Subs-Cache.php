@@ -141,27 +141,31 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 /**
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
- * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current styling.
+ * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current styling.
  * @param boolean $add_link Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($files = array(), $add_link = false)
+function add_css_file($original_files = array(), $add_link = false)
 {
 	global $context, $modSettings, $settings, $cachedir, $boardurl;
 
-	if (!is_array($files))
-		$files = (array) $files;
+	if (!is_array($original_files))
+		$original_files = (array) $original_files;
 
 	// Delete all duplicates.
-	$files = array_keys(array_flip($files));
+	$files = $original_files = array_keys(array_flip($original_files));
 
-	$id = '';
+	// Make sure custom.css, if available, is added last.
+	foreach ($files as $file)
+		foreach ($context['css_generic_files'] as $gen)
+			$files[] = $file . '.' . $gen;
+
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
 	$styling = empty($context['styling']) ? 'styles' : $context['styling'];
 
-	foreach ($files as &$file)
+	foreach ($files as $i => &$file)
 	{
 		if (strpos($file, '.css') === false)
 		{
@@ -177,18 +181,33 @@ function add_css_file($files = array(), $add_link = false)
 		}
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
 		if (!$target)
+		{
+			unset($files[$i]);
 			continue;
+		}
 
 		$is_default_theme &= $target === 'default_theme_';
-		// Turn styles/name.css into 'name', and othertheme/file.css into 'othertheme_css' for the final filename.
-		$id .= str_replace(array('styles/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -4)) . '-';
 		$file = $settings[$target . 'dir'] . '/' . $file;
 		$latest_date = max($latest_date, filemtime($file));
 	}
 
-	$id = $is_default_theme ? $id : substr(strrchr($settings['theme_dir'], '/'), 1) . '-' . $id;
-	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+	$folder = end($context['css_folders']);
+	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id = $folder === 'styles' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
+	$id .= implode('-', $original_files) . '-';
 
+	// We need to cache different versions for different browsers, even if we don't have overrides available.
+	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+	$id .= implode('-', $context['css_generic_files']);
+
+	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
+	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
+		$id = str_replace('-webkit-', '-', $id);
+
+	if (isset($context['user']) && $context['user']['language'] !== 'english')
+		$id .= '-' . $context['user']['language'];
+
+	$id = (!empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 
@@ -209,13 +228,13 @@ function add_css_file($files = array(), $add_link = false)
 /**
  * Add a generic CSS file to the list of files loaded on this page, in the form of "admin" (no folder, no extension.)
  *
- * @param array $style_sheets List of CSS files to add to $context['css_generic_files']
+ * @param array $style_sheets List of CSS files to add to $context['css_main_files']
  */
 function wedge_add_css($style_sheets)
 {
 	global $context;
 
-	$context['css_generic_files'] = array_merge($context['css_generic_files'], (array) $style_sheets);
+	$context['css_main_files'] = array_merge($context['css_main_files'], (array) $style_sheets);
 }
 
 /**
@@ -233,7 +252,14 @@ function wedge_cache_css()
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
 	$context['extra_styling_css'] = '';
-	$css_files = array_merge($context['css_generic_files'], (array) 'custom');
+
+	// Make sure custom.css, if available, is added last.
+	$css_files = array_merge($context['css_main_files'], (array) 'custom');
+
+	// Add all possible variations of a file name.
+	foreach ($css_files as $file)
+		foreach ($context['css_generic_files'] as $gen)
+			$css_files[] = $file . '.' . $gen;
 
 	foreach ($context['css_folders'] as &$folder)
 	{
@@ -263,7 +289,7 @@ function wedge_cache_css()
 	}
 
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id .= $folder === 'styles' ? 'Wedge' : str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
+	$id = $folder === 'styles' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder) . '-';
 
 	// The deepest styling gets CSS/JavaScript attention.
 	if (!empty($set))
@@ -294,11 +320,14 @@ function wedge_cache_css()
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-	// No need to have all URLs say 'index-sections'...
-	unset($context['css_generic_files'][0], $context['css_generic_files'][1]);
-	if (!empty($context['css_generic_files']))
-		$id .= '-' . implode('-', $context['css_generic_files']);
-	if ($context['user']['language'] !== 'english')
+
+	$id .= implode('-', $context['css_generic_files']);
+
+	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
+	if ($context['browser']['is_safari'] || $context['browser']['is_chrome'])
+		$id = str_replace('-webkit-', '-', $id);
+
+	if (isset($context['user']) && $context['user']['language'] !== 'english')
 		$id .= '-' . $context['user']['language'];
 
 	$context['cached_css'] = $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
@@ -346,7 +375,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
 	$images_url = '..' . str_replace($boardurl, '', $settings['images_url']);
-	$language_folder = file_exists($settings['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
+	$language_folder = isset($context['user']) && file_exists($settings['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
 	$css_vars = array(
 		'$language_dir' => $settings['theme_dir'] . '/images/' . $language_folder,
 		'$language' => $images_url . '/' . $language_folder,

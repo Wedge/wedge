@@ -1431,16 +1431,17 @@ function ob_sessrewrite($buffer)
 				$block = isset($context['blocks'][$code]) ? $context['blocks'][$code] : array('has_if' => false, 'body' => '');
 				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $block['body']);
 
+				// Has it got an <if:param> block?
 				if ($block['has_if'])
 				{
 					preg_match_all('~([a-z][^\s="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
 
-					// Has it got an <if:param> block? If yes, remove it if the param is not there, otherwise clean up the <if>.
+					// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
 					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
 						foreach ($ifs as $ifi)
 							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
 
-					// Does the template specify variables? Then replace them.
+					// ...And replace with the contents.
 					if (!empty($params))
 						foreach ($params[1] as $id => $param)
 							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
