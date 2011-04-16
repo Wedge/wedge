@@ -656,26 +656,25 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 	};
 
 	// Updates the position during the dragging process
-	$(document).mousemove(function (e) {
-		if (currentDrag)
-		{
-			// If it's in a fixed position, it's a bottom-right aligned popup.
-			$(currentDrag).css(is_fixed ? {
-				right: currentPos.X - e.pageX + origMouse.X,
-				bottom: currentPos.Y - e.pageY + origMouse.Y
-			} : {
-				left: currentPos.X + e.pageX - origMouse.X,
-				top: currentPos.Y + e.pageY - origMouse.Y
-			});
-			return false;
-		}
-	}).mouseup(function () {
-		if (currentDrag)
-		{
-			currentDrag = 0;
-			return false;
-		}
-	});
+	$(document)
+		.mousemove(function (e) {
+			if (currentDrag)
+			{
+				// If it's in a fixed position, it's a bottom-right aligned popup.
+				$(currentDrag).css(is_fixed ? {
+					right: currentPos.X - e.pageX + origMouse.X,
+					bottom: currentPos.Y - e.pageY + origMouse.Y
+				} : {
+					left: currentPos.X + e.pageX - origMouse.X,
+					top: currentPos.Y + e.pageY - origMouse.Y
+				});
+				return false;
+			}
+		})
+		.mouseup(function () {
+			if (currentDrag)
+				return !!(currentDrag = 0);
+		});
 })(jQuery);
 
 /*

@@ -459,9 +459,11 @@ ul.moderation_notes
 ------------------------------------------------- */
 #error_log
 	width: 100%
-	tr.windowbg td
+	td
 		padding: 8px
 		line-height: 160%
+		img
+			vertical-align: middle
 	td.half_width
 		width: 50%
 	td.checkbox_column

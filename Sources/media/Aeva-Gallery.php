@@ -1477,7 +1477,7 @@ function aeva_mgPost()
 	function aeva_testImage()
 	{
 		if (document.aeva_form.file.files) // Firefox 3 or Webkit?
-			$("#file_warning").html(document.aeva_form.file.files.item(0).fileSize > ' . $max_php_size . ' ?
+			$("#file_warning").html(document.aeva_form.file.files[0].size > ' . $max_php_size . ' ?
 				"' . sprintf($txt['media_file_too_large_php'], round($max_php_size/1048576, 1)) . '" : "");
 	}');
 

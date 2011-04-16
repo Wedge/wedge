@@ -1471,8 +1471,7 @@ span.hidelink
 
 .help extends .inline-block
 	background: url($images/helptopics.gif) no-repeat
-	width: 16px
-	height: 16px
+	width, height: 16px
 	vertical-align: -2px
 
 

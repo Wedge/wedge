@@ -344,7 +344,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
-		foreach (glob($cachedir . '/' . $id . '-*.*') as $del)
+		foreach (glob($cachedir . '/' . $id . '*' . $ext) as $del)
 			if (!strpos($del, $latest_date))
 				@unlink($del);
 
@@ -458,7 +458,7 @@ function wedge_fix_browser_css($matches)
  * @param bool $gzip Should we gzip the resulting file?
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
+function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext)
 {
 	global $settings, $modSettings, $comments, $cachedir;
 
@@ -467,7 +467,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
-		foreach (glob($cachedir . '/' . $id. '*.*') as $del)
+		foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
 			if (!strpos($del, $latest_date))
 				@unlink($del);
 
@@ -492,6 +492,8 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false)
 			if ($minify == 'none')
 				$cont = preg_replace("~/\* Optimize:\n(.*?)\n\*/~s", '', $cont);
 		}
+		// An UglifyJS-inspired trick. We're taking it on the safe side though.
+		$cont = preg_replace(array('~(?<=[ \t])false(?=[,; ])~', '~(?<=[ \t])true(?=[,; ])~'), array('!1', '!0'), $cont);
 		$final .= $cont;
 	}
 

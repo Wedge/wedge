@@ -890,7 +890,7 @@ smc_Editor.prototype.addMedia = function()
 	reqWin(smf_prepareScriptUrl(smf_scripturl) + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true);
 
 	return true;
-}
+};
 
 // Toggle wysiwyg/normal mode.
 smc_Editor.prototype.toggleView = function(bView)

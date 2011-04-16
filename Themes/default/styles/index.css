@@ -884,7 +884,7 @@ tr.titlebg
 		base: .grad40
 		background-color: hue(lighten(#936f69, 50%), 90)
 	a
-		color: #cdc
+		color: #eed
 
 tr.catbg, tr.titlebg
 	color: #fff

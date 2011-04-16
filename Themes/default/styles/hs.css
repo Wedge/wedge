@@ -1,7 +1,4 @@
-/**
-* @file: highslide.css 
-* @version: 4.1.7
-*/
+
 .highslide-container div {
 	font-family: Verdana, Helvetica;
 	font-size: 10pt;
@@ -19,11 +16,6 @@
 .highslide:hover img {
 	border-color: gray;
 }
-.highslide-gallery .highslide-active-anchor img {
-	border-color: black;
-	visibility: visible;
-	cursor: default;
-}
 .highslide-image {
 	border-width: 2px;
 	border-style: solid;
@@ -33,12 +25,7 @@
 .highslide-wrapper, .highslide-outline {
 	background: white;
 }
-.glossy-dark {
-	background: #111;
-}
 
-.highslide-image-blur {
-}
 .highslide-number {
 	font-weight: bold;
 	color: gray;
@@ -48,16 +35,12 @@
 	display: none;
 	font-size: 1em;
 	padding: 5px;
-	/*background: white;*/
+	// background: white;
 }
 .highslide-heading {
 	display: none;
 	font-weight: bold;
 	margin: 0.4em;
-}
-.highslide-dimming {
-	position: absolute;
-	background: black;
 }
 a.highslide-full-expand {
    background: url($here/hs/fullexpand.gif) no-repeat;
@@ -100,167 +83,6 @@ a.highslide-full-expand {
 }
 .hidden-container {
 	display: none;
-}
-/* Example of a semitransparent, offset closebutton */
-.closebutton {
-	position: relative;
-	top: -15px;
-	left: 15px;
-	width: 30px;
-	height: 30px;
-	cursor: pointer;
-	background: url($here/hs/close.png);
-	/* NOTE! For IE6, you also need to update the highslide-ie6.css file. */
-}
-
-/*****************************************************************************/
-/* Thumbnail boxes for the galleries.                                        */
-/* Remove these if you are not using a gallery.                              */
-/*****************************************************************************/
-.highslide-gallery ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-.highslide-gallery ul li {
-	display: block;
-	position: relative;
-	float: left;
-	width: 106px;
-	height: 106px;
-	border: 1px solid silver;
-	background: #ededed;
-	margin: 2px;
-	line-height: 0;
-	overflow: hidden;
-}
-.highslide-gallery ul a {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-}
-.highslide-gallery ul img {
- 	position: relative;
-	top: -50%;
-	left: -50%;
-}
-html>/**/body .highslide-gallery ul li {
-	display: table;
-	text-align: center;
-}
-html>/**/body .highslide-gallery ul li {
-	text-align: center;
-}
-html>/**/body .highslide-gallery ul a {
-	position: static;
-	display: table-cell;
-	vertical-align: middle;
-}
-html>/**/body .highslide-gallery ul img {
-	position: static;
-}
-
-/*****************************************************************************/
-/* Controls for the galleries.											     */
-/* Remove these if you are not using a gallery							     */
-/*****************************************************************************/
-.highslide-controls {
-	width: 195px;
-	height: 40px;
-	background: url($here/hs/controlbar-white.gif) 0 -90px no-repeat;
-	margin: 20px 15px 10px 0;
-}
-.highslide-controls ul {
-	position: relative;
-	left: 15px;
-	height: 40px;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	background: url($here/hs/controlbar-white.gif) right -90px no-repeat;
-
-}
-.highslide-controls li {
-	float: left;
-	padding: 5px 0;
-	margin:0;
-	list-style: none;
-}
-.highslide-controls a {
-	background-image: url($here/hs/controlbar-white.gif);
-	display: block;
-	float: left;
-	height: 30px;
-	width: 30px;
-	outline: none;
-}
-.highslide-controls a.disabled {
-	cursor: default;
-}
-.highslide-controls a.disabled span {
-	cursor: default;
-}
-.highslide-controls a span {
-	/* hide the text for these graphic buttons */
-	display: none;
-	cursor: pointer;
-}
-
-
-/* The CSS sprites for the controlbar - see http://www.google.com/search?q=css+sprites */
-.highslide-controls .highslide-previous a {
-	background-position: 0 0;
-}
-.highslide-controls .highslide-previous a:hover {
-	background-position: 0 -30px;
-}
-.highslide-controls .highslide-previous a.disabled {
-	background-position: 0 -60px !important;
-}
-.highslide-controls .highslide-play a {
-	background-position: -30px 0;
-}
-.highslide-controls .highslide-play a:hover {
-	background-position: -30px -30px;
-}
-.highslide-controls .highslide-play a.disabled {
-	background-position: -30px -60px !important;
-}
-.highslide-controls .highslide-pause a {
-	background-position: -60px 0;
-}
-.highslide-controls .highslide-pause a:hover {
-	background-position: -60px -30px;
-}
-.highslide-controls .highslide-next a {
-	background-position: -90px 0;
-}
-.highslide-controls .highslide-next a:hover {
-	background-position: -90px -30px;
-}
-.highslide-controls .highslide-next a.disabled {
-	background-position: -90px -60px !important;
-}
-.highslide-controls .highslide-move a {
-	background-position: -120px 0;
-}
-.highslide-controls .highslide-move a:hover {
-	background-position: -120px -30px;
-}
-.highslide-controls .highslide-full-expand a {
-	background-position: -150px 0;
-}
-.highslide-controls .highslide-full-expand a:hover {
-	background-position: -150px -30px;
-}
-.highslide-controls .highslide-full-expand a.disabled {
-	background-position: -150px -60px !important;
-}
-.highslide-controls .highslide-close a {
-	background-position: -180px 0;
-}
-.highslide-controls .highslide-close a:hover {
-	background-position: -180px -30px;
 }
 
 /*****************************************************************************/
@@ -326,7 +148,7 @@ html>/**/body .highslide-gallery ul img {
 }
 
 
-/* Highslide specifics for Aeva Media */
+/* Specifics for Wedge */
 
 .highslide-wrapper div {
 	font-family: Verdana, Helvetica;
@@ -336,6 +158,7 @@ html>/**/body .highslide-gallery ul img {
 	cursor: url($here/hs/zoomin.cur), pointer;
 	outline: none;
 	text-decoration: none;
+	display: inline-block;
 }
 .highslide-maincontent { display: none; }
 .rounded-white { background: white; }
@@ -425,4 +248,184 @@ a.highslide-full-expand {
 }
 .highslide-resize {
 	cursor: nw-resize;
+}
+
+/****************************
+
+#colorbox, #cboxOverlay, #cboxWrapper {
+	position: absolute;
+	top, left: 0;
+	z-index: 9999;
+	overflow: hidden;
+}
+#cboxOverlay {
+	position: fixed;
+	width, height: 100%;
+}
+#cboxMiddleLeft, #cboxBottomLeft {
+	clear: left;
+}
+#cboxContent {
+	position: relative;
+}
+#cboxLoadedContent {
+	overflow: auto;
+}
+#cboxTitle {
+	margin: 0;
+}
+#cboxLoadingOverlay, #cboxLoadingGraphic {
+	position: absolute;
+	top, left: 0;
+	width: 100%;
+}
+#cboxPrevious, #cboxNext, #cboxClose, #cboxSlideshow {
+	cursor: pointer;
+}
+.cboxPhoto {
+	float: left;
+	margin: auto;
+	border: 0;
+	display: block;
+}
+.cboxIframe {
+	width, height: 100%;
+	display: block;
+	border: 0;
+}
+
+#cboxOverlay {
+	background: #fff;
+}
+#colorbox {
+}
+#cboxTopLeft {
+	width, height: 25px;
+	background: url(images/border1.png) no-repeat 0 0;
+}
+#cboxTopCenter {
+	height: 25px;
+	background: url(images/border1.png) repeat-x 0 -50px;
+}
+#cboxTopRight {
+	width, height: 25px;
+	background: url(images/border1.png) no-repeat -25px 0;
+}
+#cboxBottomLeft {
+	width, height: 25px;
+	background: url(images/border1.png) no-repeat 0 -25px;
+}
+#cboxBottomCenter {
+	height: 25px;
+	background: url(images/border1.png) repeat-x 0 -75px;
+}
+#cboxBottomRight {
+	width, height: 25px;
+	background: url(images/border1.png) no-repeat -25px -25px;
+}
+#cboxMiddleLeft {
+	width: 25px;
+	background: url(images/border2.png) repeat-y 0 0;
+}
+#cboxMiddleRight {
+	width: 25px;
+	background: url(images/border2.png) repeat-y -25px 0;
+}
+#cboxContent {
+	background: #fff;
+	overflow: hidden;
+}
+#cboxError {
+	padding: 50px;
+	border: 1px solid #ccc;
+}
+#cboxLoadedContent {
+	margin-bottom: 20px;
+}
+#cboxTitle {
+	position: absolute;
+	bottom, left: 0;
+	text-align: center;
+	width: 100%;
+	color: #999;
+}
+#cboxCurrent {
+	position: absolute;
+	bottom: 0;
+	left: 100px;
+	color: #999;
+}
+#cboxSlideshow {
+	position: absolute;
+	bottom: 0;
+	right: 42px;
+	color: #444;
+}
+#cboxPrevious {
+	position: absolute;
+	bottom, left: 0;
+	color: #444;
+}
+#cboxNext {
+	position: absolute;
+	bottom: 0;
+	left: 63px;
+	color: #444;
+}
+#cboxLoadingOverlay {
+	background: #fff url(images/loading.gif) no-repeat 5px 5px;
+}
+#cboxClose {
+	position: absolute;
+	bottom, right: 0;
+	display: block;
+	color: #444;
+}
+
+#cboxTopLeft,
+#cboxTopCenter,
+#cboxTopRight,
+#cboxBottomLeft,
+#cboxBottomCenter,
+#cboxBottomRight,
+#cboxMiddleLeft,
+#cboxMiddleRight {
+	width, height: 8px;
+	background: none;
+}
+#cboxWrapper {
+	background: white;
+	border-radius: 8px;
+	border: 1px solid alpha(black, -80%)
+	box-shadow: 0 4px 8px 8px rgba(0,0,0, .25);
+}
+#colorbox {
+}
+#cboxOverlay {
+	background: none; // rgba(0,0,0,.2);
+	opacity: 1 !important;
+}
+
+***********************************/
+
+#zoom {
+	display: none;
+	position: absolute;
+	background: #fff;
+	border: 1px solid #aaa;
+	box-shadow: 0 0 12px #999;
+	border-radius: 8px;
+}
+#zoom_content {
+	margin: 15px;
+	img.scale {
+		width: 100%;
+		height: auto;
+	}
+}
+#zoom_close extends .inline-block {
+	position: absolute;
+	top, left: -12px;
+	width, height: 30px;
+	background: url($images/aeva/close.png) no-repeat;
 }

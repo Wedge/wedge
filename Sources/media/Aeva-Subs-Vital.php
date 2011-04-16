@@ -454,7 +454,29 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 
 function aeva_initLightbox($autosize, $peralbum = array())
 {
-	global $txt;
+	global $txt, $settings;
+
+	if (true)
+	{
+		add_js_file('scripts/zoomedia.js');
+
+		add_js('
+
+	$("a.hs").zoomedia();
+');
+		return '';
+	}
+
+	if (true)
+	{
+		add_js_file('scripts/jquery.colorbox.js');
+
+		add_js('
+
+	$("a.hs").colorbox({ photo: true, transition: "fade", onLoad: function () { $("#colorbox").dragslide(); }, onClosed: function () { currentDrag = 0; } });
+');
+		return '';
+	}
 
 	$not_single = empty($peralbum) ? 'true' : 'false';
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
