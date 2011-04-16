@@ -1035,9 +1035,11 @@ function checkUserBehavior()
 		}
 
 	if (!empty($context['http_headers']['User-Agent']))
+	{
 		foreach ($whitelist['user-agent'] as $item)
 			if ($context['http_headers']['User-Agent'] === $item)
 				return true;
+	}
 	else
 		$context['http_headers']['User-Agent'] = ''; // Just in case we didn't actually get one.
 
