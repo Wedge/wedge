@@ -64,7 +64,7 @@ var Yup = {
 		Yup.uploader.addListener('uploadProgress', Yup.onUploadProgress);
 		Yup.uploader.addListener('uploadCompleteData', Yup.onCompleteData);
 
-		if (is_safari || is_chrome)
+		if (is_webkit)
 			$('#mu_container').css('textAlign', '');
 	},
 
@@ -207,14 +207,12 @@ var Yup = {
 					continue;
 
 				$('<li class="succ_item"></li>')
-					.append($('<p></p>').append(
-						$('<input type="text" size="30" name="item_title_' + mid + '" tabindex="' + (Yup.tabindex * 2) + '"></input>').val(this_ret[1])
-					))
-					.append($('<p><textarea cols="30" rows="3" name="item_desc_' + mid + '" tabindex="' + (Yup.tabindex * 2 + 1) + '"></textarea></p>'))
-					.append($('<img src="' + galurl + 'sa=media;in=' + mid + ';thumb"></img>'))
+					.append($('<img src="' + galurl + 'sa=media;in=' + mid + ';thumb" class="right">'))
+					.append($('<input type="text" name="item_title_' + mid + '" tabindex="' + (Yup.tabindex * 2) + '"></input>').val(this_ret[1]))
+					.append($('<textarea rows="5" name="item_desc_' + mid + '" tabindex="' + (Yup.tabindex * 2 + 1) + '"></textarea>'))
 					.appendTo(element);
 
-				$('#mu_items').css('display', 'block');
+				$('#mu_items input').css('display', 'block');
 			}
 		}
 

@@ -1,93 +1,99 @@
-#mu_items {
+#mu_container {
+	text-align: center;
+}
+#mu_items input {
 	display: none;
-}
-#mu_items ul {
-	padding, margin: 0;
-}
-#mu_items ul li {
-	display: inline;
-	overflow: auto;
-	float: left;
-	margin-right, margin-top: 8px;
-	border: 1px solid;
-	padding: 4px;
-}
-#mu_items_error {
-	display: none
-}
-#upload_form .progress {
-	background: white url($images/aeva/progress.png) no-repeat -250px 0;
-	margin-right: 0.5em;
-}
-#upload_form .progress2 {
-	background: white url($images/aeva/progress2.png) no-repeat -250px 0;
-	margin-right: 0.5em;
-}
-#upload_form .progress-text {
-	font-size: 0.9em;
-	font-weight: bold;
 }
 #upload_form {
 	padding: 10px 15px;
+	.progress {
+		background: white url($images/aeva/progress.png) no-repeat -250px 0;
+		margin-right: 0.5em;
+	}
+	.progress2 {
+		background: white url($images/aeva/progress2.png) no-repeat -250px 0;
+		margin-right: 0.5em;
+	}
+	.progress-text {
+		font-size: 0.9em;
+		font-weight: bold;
+	}
 }
 #current_list {
 	list-style: none;
-}
-#current_list li {
-	width: 400px;
-	display: inline;
-	border: 1px solid;
-	float: left;
-	padding: 6px;
-	margin: 8px;
-}
-#current_list li.file {
-	background: #D9DDE9;
-}
-#current_list li.file-uploading {
-	background: url($images/aeva/uploading.png) no-repeat 4px 10px;
-	background-color: #F9F7ED;
-}
-#current_list li.file-success {
-	background: url($images/aeva/tick.png) no-repeat 12px 17px;
-}
-#current_list li.file-failed {
-	background: url($images/aeva/failed.png) no-repeat 12px 17px;
-}
-#current_list li.file .file-name {
-	font-size: 1.1em;
-	margin-left: 34px;
-	display: block;
-	clear: left;
-	height, line-height: 40px;
-	font-weight: bold;
-	overflow: hidden;
-}
-#current_list li.file .file-size {
-	font-size: 0.9em;
-	line-height: 18px;
-	float: right;
-	margin-top: 2px;
-	margin-right: 6px;
-}
-#current_list li.file .file-info {
-	display: block;
-	margin-left: 34px;
-	font-size: 0.9em;
-	line-height: 20px;
-}
-#current_list li.file .file-remove {
-	clear, float: right;
-	line-height: 18px;
-	margin-right: 6px;
-}
-#current_list li.file .file-error {
-	color: #FF0000;
-}
-#current_list li.file .file-warning {
-	color: #993366;
-}
-#current_list li.succ_item {
-	text-align: center;
-	border: 0px;
+	text-align: left;
+	padding: 0;
+	ul {
+		padding, margin: 5px;
+	}
+	li {
+		display: inline-block;
+		overflow: auto;
+		margin: 0;
+		padding: 6px;
+		border: 1px solid rgba(0,0,0, .2);
+		border-radius: 8px;
+	}
+	li.file {
+		margin: 8px;
+		background: #D9DDE9;
+		width: 400px;
+	}
+	li.file-uploading {
+		background: url($images/aeva/uploading.png) no-repeat 4px 10px;
+		background-color: #F9F7ED;
+	}
+	li.file-success {
+		background: url($images/aeva/tick.png) no-repeat 12px 12px;
+	}
+	li.file-failed {
+		background: url($images/aeva/failed.png) no-repeat 12px 12px;
+	}
+	li.file {
+		.file-name {
+			font-size: 1.1em;
+			display: block;
+			clear: left;
+			margin-left, height, line-height: 30px;
+			font-weight: bold;
+			overflow: hidden;
+		}
+		.file-size {
+			font-size: 0.9em;
+			line-height: 18px;
+			float: right;
+			margin-top: 2px;
+			margin-right: 6px;
+		}
+		.file-info {
+			display: block;
+			margin-left: 30px;
+			font-size: 0.9em;
+			line-height: 20px;
+		}
+		.file-remove {
+			clear, float: right;
+			line-height: 18px;
+			margin-right: 6px;
+		}
+		.file-error {
+			color: #FF0000;
+		}
+		.file-warning {
+			color: #993366;
+		}
+		input, textarea {
+			width: 250px;
+			margin-bottom: 6px;
+		}
+		textarea {
+			height: 60px;
+		}
+		img {
+			max-width: 120px;
+		}
+	}
+	li.succ_item {
+		border: 0;
+	}
 }

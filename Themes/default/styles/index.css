@@ -528,6 +528,7 @@ li.subsection > a extends .arrows
 #context_menus
 	padding-left: 1em
 	min-height: 2.5em
+	overflow: hidden
 	h4
 		background-image: none
 		padding-right: 6px

@@ -244,7 +244,7 @@ function template_aeva_home()
 		<img src="', $settings['images_aeva'], '/chart_bar.png" class="vam">&nbsp;<a href="', $galurl, 'sa=stats">', $txt['media_stats'], '</a>
 	</we:title>
 	<div class="windowbg wrc smalltext" style="line-height: 1.4em">
-		<table cellpadding="0" cellspacing="0" width="100%"><tr><td>
+		<table class="w100 cs0 cp0"><tr><td>
 			<div>', $txt['media_total_items'], ': ', $amSettings['total_items'], '</div>
 			<div>', $txt['media_total_albums'], ': ', $amSettings['total_albums'], '</div>
 			<div>', $txt['media_total_comments'], ': ', $amSettings['total_comments'], '</div>', allowedTo('media_manage') ? '
@@ -296,7 +296,7 @@ function template_aeva_viewItem()
 
 	if (empty($amSettings['prev_next'])) // 3 items
 		echo '
-		<table cellspacing="0" cellpadding="2" border="0" class="mg_prevnext windowbg" width="100%">
+		<table class="mg_prevnext windowbg w100 cs0 cp4">
 			<tr class="mg_prevnext_pad">
 				<td rowspan="2">', (int) $item['prev'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev'].'">&laquo;</a>' : '&laquo;', '</td>
 				<td width="33%">', (int) $item['prev'] > 0 ? show_prevnext($item['prev'], $item['prev_thumb']) : $txt['media_prev'], '</td>
@@ -312,7 +312,7 @@ function template_aeva_viewItem()
 		</table>';
 	elseif ($amSettings['prev_next'] == 1) // 5 items
 		echo '
-		<table cellspacing="0" cellpadding="3" border="0" class="mg_prevnext windowbg" width="100%">
+		<table class="mg_prevnext windowbg w100 cs0 cp4">
 			<tr class="mg_prevnext_pad">
 				<td rowspan="2">', (int) $item['prev_page'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev_page'].'">&laquo;</a>' : '&laquo;', '</td>
 				<td width="20%">', (int) $item['prev2'] > 0 ? show_prevnext($item['prev2'], $item['prev2_thumb']) : '', '</td>
@@ -367,9 +367,9 @@ function template_aeva_viewItem()
 
 	echo '
 
-		<table cellspacing="0" cellpadding="4" border="0" width="100%">
+		<table class="w100 cs0 cp4">
 		<tr class="catbg">
-			<th width="25%" style="padding: 7px 0 5px 8px; border-radius: 8px 0 0 0">', $txt['media_poster_info'], '</th>
+			<th class="w25" style="padding: 7px 0 5px 8px; border-radius: 8px 0 0 0">', $txt['media_poster_info'], '</th>
 			<th style="padding: 7px 0 5px 8px; border-radius: 0 8px 0 0">', $txt['media_item_info'], '</th>
 		</tr><tr>
 		<td class="windowbg top">', empty($item['member']['id']) ? '
@@ -383,7 +383,7 @@ function template_aeva_viewItem()
 			</ul>
 		</td>
 		<td class="windowbg2 top"', $amSettings['show_extra_info'] == 1 ? ' rowspan="2"' : '', '>
-			<table class="w100 cp4 cs0">
+			<table class="w100 cs0 cp4">
 			<tr><td class="info smalltext">', $txt['media_posted_on'], '</td><td class="info">', timeformat($item['time_added']), '</td></tr>';
 
 	if ($item['type'] != 'embed')
@@ -861,7 +861,7 @@ function template_aeva_form()
 						}
 					break;
 					case 'checkbox_dual'; // This one is for album creation only... ;)
-						echo '<table cellpadding="4" cellspacing="0" border="0" width="100%"><thead><tr><th>', $txt['media_access_read'], '</th><th>', $txt['media_access_write'], '</th><th></th></tr></thead>';
+						echo '<table class="w100 cs0 cp4"><thead><tr><th>', $txt['media_access_read'], '</th><th>', $txt['media_access_write'], '</th><th></th></tr></thead>';
 						foreach ($e['options'] as $opt => $label)
 						{
 							echo '<tr>';
@@ -870,7 +870,7 @@ function template_aeva_form()
 							else
 							{
 								for ($i = 0; $i < 2; $i++)
-									echo '<td width="15" class="center"><input type="checkbox" id="chk', $chk++, '" name="',
+									echo '<td style="width: 15px" class="center"><input type="checkbox" id="chk', $chk++, '" name="',
 										$opt === 'check_all' ? 'check_all_' . ($i+1) : $e['fieldname'][$i] . '[]',
 										'" tabindex="', $context['tabindex']++, '" value="', $opt, '"',
 										isset($label[$i+1]) && $label[$i+1] === true ? ' checked' : '',
@@ -920,7 +920,7 @@ function template_aeva_viewAlbum()
 	// Show some album data
 	echo '
 	<div id="albums">
-		<table class="w100 cp4 cs0 windowbg2">
+		<table class="w100 cs0 cp4 windowbg2">
 		<tr><td class="windowbg top" style="width: 2%" rowspan="2">';
 	$trans = $album_data['bigicon_transparent'] ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
 	// If the big icon is too... big, then we can't round its corners. Ah well.
@@ -1098,7 +1098,7 @@ function template_aeva_search_searching()
 			', $txt['media_search_for'], ': <input type="text" name="search" size="50">
 		</div>
 		<div class="windowbg wrc">
-			<table border="0" width="100%" cellspacing="1" cellpadding="8">
+			<table class="w100 cs1 cp8">
 			<tr>
 				<td class="', !empty($context['custom_fields']) ? 'w50 top right ' : 'center" colspan="2"', '>
 					<label>', $txt['media_search_in_title'], ' <input type="checkbox" name="sch_title" checked id="seala1"></label><br>
@@ -1209,7 +1209,7 @@ function template_aeva_album_cp()
 	global $txt, $scripturl, $galurl, $context, $settings, $alburl, $user_info;
 
 	echo '
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="bordercolor w100 cs1 cp8">
 			<tr class="titlebg">
 				<td width="2%">&nbsp;</td>
 				<td width="15%">', $txt['media_owner'], '</td>
@@ -1286,13 +1286,13 @@ function template_aeva_stats()
 
 	// Show the general stats
 	echo '
-		<table class="table_grid w100 cp4 cs1" style="margin-top: 10px">
+		<table class="table_grid w100 cs1 cp4" style="margin-top: 10px">
 			<tr class="titlebg center">
 				<th colspan="2" style="border-radius: 8px 8px 0 0"><img src="', $settings['images_aeva'], '/chart_pie.png" class="vam"> ', $txt['media_gen_stats'], '</td>
 			</tr>
 			<tr>
-				<td width="50%" class="windowbg2">
-					<table cellpadding="4" cellspacing="0" width="100%">
+				<td class="w50 windowbg2">
+					<table class="w100 cs0 cp4">
 						<tr>
 							<td><img src="', $settings['images_aeva'], '/images.png" class="vam"> ', $txt['media_total_items'], '</td>
 							<td class="right">', $stats['total_items'], '</td>
@@ -1312,7 +1312,7 @@ function template_aeva_stats()
 					</table>
 				</td>
 				<td class="windowbg2">
-					<table cellpadding="4" cellspacing="0" width="100%">
+					<table class="w100 cs0 cp4">
 						<tr>
 							<td><img src="', $settings['images_aeva'], '/images.png" class="vam"> ', $txt['media_avg_items'], '</td>
 							<td class="right">', $stats['avg_items'], '</td>
@@ -1338,7 +1338,7 @@ function template_aeva_stats()
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_uploaders'] as $uploader)
 		echo '
@@ -1357,7 +1357,7 @@ function template_aeva_stats()
 					</table>
 				</td>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_commentators'] as $uploader)
 		echo '
@@ -1383,7 +1383,7 @@ function template_aeva_stats()
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_albums_items'] as $album)
 		echo '
@@ -1403,7 +1403,7 @@ function template_aeva_stats()
 					</table>
 				</td>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_albums_comments'] as $album)
 		echo '
@@ -1429,7 +1429,7 @@ function template_aeva_stats()
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_items_views'] as $item)
 		echo '
@@ -1449,7 +1449,7 @@ function template_aeva_stats()
 					</table>
 				</td>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_items_com'] as $item)
 		echo '
@@ -1475,7 +1475,7 @@ function template_aeva_stats()
 			</tr>
 			<tr>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_items_rating'] as $item)
 		echo '
@@ -1494,7 +1494,7 @@ function template_aeva_stats()
 					</table>
 				</td>
 				<td class="windowbg2 top">
-					<table cellpadding="4" cellspacing="0" width="100%">';
+					<table class="w100 cs0 cp4">';
 
 	foreach ($stats['top_items_voters'] as $item)
 		echo '
@@ -1580,8 +1580,8 @@ function template_aeva_multiUpload()
 	echo '
 		</ul>
 	</div>
-	<div class="roundframe">
-		<form action="', $boardurl, '" style="text-align: center">
+	<div class="roundframe" id="mu_container">
+		<form action="', $boardurl, '">
 			<strong>1</strong>. ', $txt['media_sort_order'], ' &ndash;
 			<select id="sort_order" name="sort_order">
 				<option value="1" selected>', $txt['media_sort_order_filename'], '</option>
@@ -1591,42 +1591,27 @@ function template_aeva_multiUpload()
 		</form>
 
 		<form action="', $context['aeva_submit_url'], '" id="upload_form" method="post">
-			<div id="mu_container" style="text-align: center">
-				<p>
-					<strong>2</strong>. <span id="browse" style="position: absolute; z-index: 2"></span>
-					<span id="browseBtnSpan" style="z-index: 1"><a id="browseBtn" href="#">', $txt['media_selectFiles'], '</a></span> |
-					<strong>3</strong>. <a id="upload" href="#">', $txt['media_upload'], '</a>
-				</p>
-				<div>
-					<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br>
-					<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress"> <strong id="overall_prog_perc">0%</strong>
-				</div>
-				<div>
-					<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br>
-					<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress"> <strong id="current_prog_perc">0%</strong>
-				</div>
-				<div class="current-text" id="current_text"></div>
+			<p>
+				<strong>2</strong>. <span id="browse" style="position: absolute; z-index: 2"></span>
+				<span id="browseBtnSpan" style="z-index: 1"><a id="browseBtn" href="#">', $txt['media_selectFiles'], '</a></span> |
+				<strong>3</strong>. <a id="upload" href="#">', $txt['media_upload'], '</a>
+			</p>
+			<div>
+				<strong id="overall_title" class="overall-title">', $txt['media_overall_prog'], '</strong><br>
+				<img src="', $settings['images_aeva'], '/bar.gif" class="progress overall-progress" id="overall_progress"> <strong id="overall_prog_perc">0%</strong>
 			</div>
 			<div>
-				<div>
-					<ul id="current_list">
-						<li id="remove_me" style="visibility: hidden"></li>
-					</ul>
-				</div>
-				<br class="clear">
-				<div style="text-align: center" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
+				<strong class="current-title" id="current_title">', $txt['media_curr_prog'], '</strong><br>
+				<img src="', $settings['images_aeva'], '/bar.gif" class="progress2 current-progress" id="current_progress"> <strong id="current_prog_perc">0%</strong>
 			</div>
-		</form>
+			<div class="current-text" id="current_text"></div>
 
-		<table class="w100 cs0">
-			<tr id="mu_items_tr" style="display: none" class="titlebg">
-				<td>', $txt['media_errors'], '</td>
-			</tr>
-			<tr id="mu_items_tr2" style="display: none" class="windowbg2">
-				<td id="mu_items_error" style="color: red">
-				</td>
-			</tr>
-		</table>
+			<ul id="current_list">
+				<li id="remove_me" style="display: none"></li>
+			</ul>
+			<br class="clear">
+			<div style="text-align: center" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>
+		</form>
 	</div>';
 }
 
@@ -1639,7 +1624,7 @@ function template_aeva_profile_summary()
 	$can_rss = empty($amSettings['disable_rss']);
 
 	echo '
-		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="bordercolor w100 cs1 cp4">
 			<tr class="titlebg">
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_sum_pt'], '</td>
 			</tr>
@@ -1682,7 +1667,7 @@ function template_aeva_profile_summary()
 	if (!empty($member['recent_items']))
 	{
 		echo '
-		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor margintop">
+		<table class="bordercolor margintop w100 cs1 cp4">
 			<tr class="titlebg">
 				<td>', $txt['media_recent_items'], '</td>
 			</tr>
@@ -1698,20 +1683,20 @@ function template_aeva_profile_summary()
 	if (!empty($member['top_albums']))
 	{
 		echo '
-		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor margintop">
+		<table class="bordercolor margintop w100 cs1 cp4">
 			<tr class="titlebg">
 				<td>', $txt['media_top_albums'], '</td>
 			</tr>
 			<tr>
 				<td style="padding: 0px">
-					<table cellpadding="6" cellspacing="0" width="100%" border="0">';
+					<table class="w100 cs0 cp8">';
 
 		foreach ($member['top_albums'] as $album)
 			echo '
 						<tr>
-							<td class="windowbg2" width="50%"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
-							<td class="windowbg2" width="40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
-							<td class="windowbg2" width="10%">', $album['total_items'], '</td>
+							<td class="windowbg2 w50"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
+							<td class="windowbg2" style="width: 40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
+							<td class="windowbg2" style="width: 10%">', $album['total_items'], '</td>
 						</tr>';
 
 		echo '
@@ -1729,7 +1714,7 @@ function template_aeva_profile_viewitems()
 	global $context, $txt, $galurl, $settings;
 
 	echo '
-		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="bordercolor w100 cs1 cp4">
 			<tr class="titlebg">
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewitems_pt'], '</td>
 			</tr>
@@ -1754,7 +1739,7 @@ function template_aeva_profile_viewcoms()
 	global $context, $txt, $settings;
 
 	echo '
-		<table cellpadding="4" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="bordercolor w100 cs1 cp4">
 			<tr class="titlebg">
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewcoms_pt'], '</td>
 			</tr>
@@ -1790,7 +1775,7 @@ function template_aeva_profile_viewvotes()
 	global $context, $txt, $settings, $scripturl;
 
 	echo '
-		<table class="bordercolor w100 cp4 cs1">
+		<table class="bordercolor w100 cs1 cp4">
 			<tr class="titlebg">
 				<td><img src="', $settings['images_url'], '/admin/mgallery.png" border="0">&nbsp;&nbsp;', $txt['media_profile_viewvotes_pt'], '</td>
 			</tr>
@@ -1838,7 +1823,7 @@ function template_aeva_whoRatedWhat()
 	global $context, $txt, $settings, $galurl;
 
 	echo '
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="bordercolor w100 cs1 cp8">
 			<tr>
 				<td colspan="3" class="windowbg2 center">', $txt['media_who_rated_what'], ' (<a href="', $galurl, 'sa=item;in=', $context['item']['id_media'], '">', $context['item']['title'], '</a>)</td>
 			</tr>
@@ -1875,7 +1860,7 @@ function aeva_listFiles($items, $can_moderate = false)
 			$can_moderate_one |= $item['poster_id'] == $user_info['id'];
 
 	echo '
-		<table class="bordercolor w100 cp4 cs1">
+		<table class="bordercolor w100 cs1 cp4">
 			<tr class="catbg">
 				<td style="height: 25px">', $txt['media_name'], '</td>
 				<td>', $txt['media_posted_on'], '</td>

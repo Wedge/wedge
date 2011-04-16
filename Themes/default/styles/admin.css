@@ -460,8 +460,8 @@ ul.moderation_notes
 #error_log
 	width: 100%
 	td
-		padding: 8px
-		line-height: 160%
+		padding: 4px 8px
+		line-height: 150%
 		img
 			vertical-align: middle
 	td.half_width

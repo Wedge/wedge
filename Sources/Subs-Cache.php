@@ -321,6 +321,8 @@ function wedge_cache_css()
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 
+	unset($context['css_main_files'][0], $context['css_main_files'][1]);
+	$id .= implode('-', $context['css_main_files']) . (empty($context['css_main_files']) ? '' : '-');
 	$id .= implode('-', $context['css_generic_files']);
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.

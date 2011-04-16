@@ -75,12 +75,9 @@
 				$zoom_close.hide();
 
 				if (options.closeOnClick)
-				  $zoom.click(hide);
+					$zoom.click(hide);
 
-				if (!options.noScale)
-					$zoom_content.html($(img).addClass('scale'));
-				else
-					$zoom_content.html('');
+				$zoom_content.html(options.noScale ? '' : $(img).addClass('scale'));
 
 				$zoom.animate(
 					{
