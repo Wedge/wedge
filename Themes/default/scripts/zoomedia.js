@@ -11,6 +11,7 @@
 
 			var
 				$zoom = $('#zoom'),
+				$zoom_desc = $('#zoom_desc'),
 				$zoom_close = $('#zoom_close'),
 				$zoom_content = $('#zoom_content');
 
@@ -82,6 +83,7 @@
 					$zoom.click(hide);
 
 				$zoom_content.html(options.noScale ? '' : $(img).addClass('scale'));
+				$zoom_desc.hide();
 
 				$zoom.animate(
 					{
@@ -98,9 +100,10 @@
 							$zoom_content.html(img);
 
 						$zoom_close.show();
-						$('#zoom_desc')
+						$zoom_desc
 							.css('width', $zoom_content.css('width'))
-							.html($anchor.next('.highslide-caption').show() || '');
+							.html($anchor.next('.highslide-caption').html() || '')
+							.show();
 						zooming = false;
 					}
 				).dragslide();

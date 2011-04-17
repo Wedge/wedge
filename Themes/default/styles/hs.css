@@ -166,9 +166,6 @@ a.highslide-full-expand {
 .highslide-caption {
 	display: none;
 	padding: 0;
-	.mg_desc {
-		color: #ccc;
-	}
 }
 .highslide-loading {
 	display: block;
@@ -439,5 +436,8 @@ a.highslide-full-expand {
 	#zoom:hover & {
 		transition: opacity .5s ease;
 		opacity: 1;
+	}
+	.mg_desc {
+		color: #ccc;
 	}
 }
