@@ -165,13 +165,10 @@ a.highslide-full-expand {
 .highslide-image-blur { }
 .highslide-caption {
 	display: none;
-	border: 2px solid white;
-	border-top: none;
-	font-family: Verdana, Helvetica;
-	font-size: 10pt;
-	color: black;
-	padding: 5px;
-	background-color: white;
+	padding: 0;
+	.mg_desc {
+		color: #ccc;
+	}
 }
 .highslide-loading {
 	display: block;
@@ -428,4 +425,19 @@ a.highslide-full-expand {
 	top, left: -12px;
 	width, height: 30px;
 	background: url($images/aeva/close.png) no-repeat;
+}
+#zoom_desc extends #zoom_content {
+	position: absolute;
+	box-sizing: border-box;
+	transition: opacity .5s ease;
+	opacity: 0;
+	width: 100%;
+	bottom: 0;
+	color: #fff;
+	padding: 12px;
+	gradient-background: rgba(0,0,0,.5), darken(rgba(0,0,0,.5), 10%), top
+	#zoom:hover & {
+		transition: opacity .5s ease;
+		opacity: 1;
+	}
 }

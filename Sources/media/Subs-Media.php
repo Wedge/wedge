@@ -2850,7 +2850,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
 			<img width="10" height="10" src="' . $settings['images_aeva'] . '/';
-	$new_icon = '<img src="' . $settings['images_url'] . '/' . $context['user']['language'] . '/new.gif" border="0">';
+	$new_icon = '<div class="new_icon"></div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$per_line = $per_line > 0 ? $per_line : (!empty($amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) ?
 				max(1, $amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) : ($per_line === -1 ? 3 : 5));
@@ -2885,7 +2885,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$in_page++;
 		$inside_caption = !$amSettings['use_lightbox'] ? '' : ($is_image || $is_embed ? ($is_image ? '
 			<div class="highslide-caption">' : ($is_embed ? '
-			<div class="highslide-maincontent" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2]+42) . 'px; overflow: visible !important">
+			<div class="highslide-maincontent" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
 				' . trim($match) : '')) . '
 				<div style="float: right">' . ($i['has_preview'] ? '
 					<a class="aelink hs" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '" onclick="return hss(' . $in_page . ', this);">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '

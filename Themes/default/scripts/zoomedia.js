@@ -7,7 +7,7 @@
 
 		if (!$zoom)
 		{
-			$('body').append('<div id="zoom"><div id="zoom_content"></div><a href="#" title="Close" id="zoom_close"></a></div>');
+			$('body').append('<div id="zoom"><div id="zoom_content"></div><div id="zoom_desc"></div><a href="#" title="Close" id="zoom_close"></a></div>');
 
 			var
 				$zoom = $('#zoom'),
@@ -98,6 +98,9 @@
 							$zoom_content.html(img);
 
 						$zoom_close.show();
+						$('#zoom_desc')
+							.css('width', $zoom_content.css('width'))
+							.html($anchor.next('.highslide-caption').show() || '');
 						zooming = false;
 					}
 				).dragslide();
