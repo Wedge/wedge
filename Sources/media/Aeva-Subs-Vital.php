@@ -116,11 +116,11 @@ function aeva_allowedTo($perms, $single_true = false)
 		return true;
 
 	if (!is_array($perms))
-		return !in_array($perms, $context['aeva_album_permissions']) ? allowedTo('aeva_' . $perms) : isset($context['aeva_album']) && in_array($perms, $context['aeva_album']['permissions']);
+		return !in_array($perms, $context['aeva_album_permissions']) ? allowedTo('media_' . $perms) : isset($context['aeva_album']) && in_array($perms, $context['aeva_album']['permissions']);
 
 	$tests = array();
 	foreach ($perms as $perm)
-		$tests[] = !in_array($perm, $context['aeva_album_permissions']) ? allowedTo('aeva_' . $perm) : isset($context['aeva_album']) && in_array($perm, $context['aeva_album']['permissions']);
+		$tests[] = !in_array($perm, $context['aeva_album_permissions']) ? allowedTo('media_' . $perm) : isset($context['aeva_album']) && in_array($perm, $context['aeva_album']['permissions']);
 
 	return $single_true ? in_array(true, $tests) : !in_array(false, $tests);
 }
