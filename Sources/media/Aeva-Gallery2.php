@@ -1117,6 +1117,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	else
 		$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_var'] . '=' . $context['session_id'];
 
+	loadLanguage('ManageMedia');
 	$context['aeva_form'] = array(
 		'note' => array(
 			'label' => $txt['media_album_will_be_approved'],

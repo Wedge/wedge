@@ -179,7 +179,7 @@ function aeva_initGallery($gal_url = null)
 			'sub_areas' => array(
 				'add' => array(
 					'enabled' => allowedTo('media_add_user_album'),
-					'title' => 'media_admin_add_album',
+					'title' => 'media_add_album',
 				),
 			),
 		),
@@ -221,7 +221,7 @@ function aeva_initGallery($gal_url = null)
 	);
 
 	// Admin or moderator? Load the language file for our menu strings.
-	if (aeva_allowedTo('moderate'))
+	if (allowedTo('media_moderate'))
 	{
 		loadLanguage('Admin');
 		loadLanguage('ManageMedia');
@@ -317,7 +317,7 @@ function aeva_initGallery($gal_url = null)
 			'areas' => array(
 				'add' => array(
 					'enabled' => allowedTo('media_add_user_album'),
-					'label' => $txt['media_admin_add_album'],
+					'label' => $txt['media_add_album'],
 					'icon' => 'images.png',
 				),
 				'post' => array(
@@ -328,7 +328,12 @@ function aeva_initGallery($gal_url = null)
 				),
 			),
 		),
-		'admin' => array(
+	);
+
+	// Admin or moderator?
+	if (allowedTo('media_moderate'))
+	{
+		$media_areas['admin'] = array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
 			'url' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_var'] . '=' . $context['session_id'],
@@ -351,8 +356,8 @@ function aeva_initGallery($gal_url = null)
 					'href' => $scripturl . '?action=admin;area=aeva_maintenance;' . $context['session_var'] . '=' . $context['session_id'],
 				),
 			),
-		),
-		'moderate' => array(
+		);
+		$media_areas['moderate'] = array(
 			'title' => $txt['media_modcp'],
 			'permission' => array('media_moderate'),
 			'icon' => 'report.png',
@@ -376,8 +381,8 @@ function aeva_initGallery($gal_url = null)
 					'label' => $txt['media_admin_labels_modlog'],
 				),
 			),
-		),
-	);
+		);
+	}
 
 	foreach ($media_areas as $id => &$area)
 	{

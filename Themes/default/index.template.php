@@ -374,7 +374,7 @@ function template_body_below()
 	echo '
 	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
 </div>
-', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? '' : '
+', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : '
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{

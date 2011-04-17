@@ -462,7 +462,7 @@ function aeva_initLightbox($autosize, $peralbum = array())
 
 		add_js('
 
-	$("a.hs").zoomedia();
+	$("a.hs").zoomedia({ desc: "This is a test. Do not touch your computer screen.\nEverything is under our control." });
 ');
 		return '';
 	}

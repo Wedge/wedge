@@ -1410,7 +1410,7 @@ function detectBrowser()
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'chrome', 'safari', 'iphone', 'android', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
+	foreach (array('opera', 'chrome', 'iphone', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{

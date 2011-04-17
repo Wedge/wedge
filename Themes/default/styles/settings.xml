@@ -17,4 +17,8 @@
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
 
+	<code for="iphone"><![CDATA[
+	$('#main_content').insertBefore('#edge');
+	]]></code>
+
 </styling>
