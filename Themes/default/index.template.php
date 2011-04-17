@@ -12,7 +12,7 @@
 	- sidebar (a list of sub-templates that should be shown in the sidebar)
 	- main (a list of sub-templates that should be shown in the main contents area)
 	- theme_linktree (displays the link tree, using the data in the $context['linktree'] variable)
-	- template_menu (displays the menu, using the data in $context['menu_buttons'])
+	- template_menu (displays the menu, using the data in $context['menu_items'])
 	- template_button_strip (displays contextual buttons)
 */
 
@@ -497,35 +497,35 @@ function template_menu()
 	echo '
 	<div id="navi"><ul id="main_menu" class="css menu">';
 
-	foreach ($context['menu_buttons'] as $act => $button)
+	foreach ($context['menu_items'] as $act => $item)
 	{
-		$mh4 = empty($button['padding']) ? '' : ' style="margin-left: ' . ($button['padding'] + 6) . 'px"';
-		$class = ($button['active_button'] ? ' chosen' : '') . (empty($button['sub_buttons']) ? ' nodrop' : '');
+		$mh4 = empty($item['padding']) ? '' : ' style="margin-left: ' . ($item['padding'] + 6) . 'px"';
+		$class = ($item['active_item'] ? ' chosen' : '') . (empty($item['sub_items']) ? ' nodrop' : '');
 		$ic = !$mh4 ? '' : '
 			<div class="m_' . $act . '">&nbsp;</div>';
 
 		echo '
-		<li id="button_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
-			<h4', $mh4, '><a href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>', $button['title'], '</a></h4>';
+		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
+			<h4', $mh4, '><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>', $item['title'], '</a></h4>';
 
-		if (!empty($button['sub_buttons']))
+		if (!empty($item['sub_items']))
 		{
 			echo '
 			<ul>';
 
-			foreach ($button['sub_buttons'] as $childbutton)
+			foreach ($item['sub_items'] as $sub_item)
 			{
 				echo '
-				<li><a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>', $childbutton['title'], '</a>';
+				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>', $sub_item['title'], '</a>';
 
 				// 3rd level menus
-				if (!empty($childbutton['sub_buttons']))
+				if (!empty($sub_item['sub_items']))
 				{
 					echo '
 					<ul>';
 
-					foreach ($childbutton['sub_buttons'] as $grandchildbutton)
-						echo '<li><a href="', $grandchildbutton['href'], '"', isset($grandchildbutton['target']) ? ' target="' . $grandchildbutton['target'] . '"' : '', '>', $grandchildbutton['title'], '</a></li>';
+					foreach ($sub_item['sub_items'] as $subsub_item)
+						echo '<li><a href="', $subsub_item['href'], '"', isset($subsub_item['target']) ? ' target="' . $subsub_item['target'] . '"' : '', '>', $subsub_item['title'], '</a></li>';
 
 					echo '</ul>';
 				}

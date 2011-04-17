@@ -235,7 +235,7 @@ function ssi_menubar($output_method = 'echo')
 		template_menu();
 	// What else could this do?
 	else
-		return $context['menu_buttons'];
+		return $context['menu_items'];
 }
 
 // Show a logout link.

@@ -2688,10 +2688,10 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  * This function handles the processing of the main application menu presented to the user.
  *
  * Notes:
- * - It defines every master item in the menu, as well as any sub-buttons it may have.
- * - It also matches the current action against the list of items to ensure the appropriate top level button is highlighted.
+ * - It defines every master item in the menu, as well as any sub-items it may have.
+ * - It also matches the current action against the list of items to ensure the appropriate top level item is highlighted.
  * - The principle menu data is also cached, based on the user groups and language.
- * - The entire menu, as it will be displayed (i.e. disabled items/where show is set to false; these are removed) is pushed into $context['menu_buttons'].
+ * - The entire menu, as it will be displayed (i.e. disabled items/where show is set to false; these are removed) is pushed into $context['menu_items'].
  */
 function setupMenuContext()
 {
@@ -2717,17 +2717,17 @@ function setupMenuContext()
 
 	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? ' (<strong>' . $modSettings['app_error_count'] . '</strong>)' : '') : '';
 
-	// All the buttons we can possible want and then some, try pulling the final list of buttons from cache first.
-	if (($menu_buttons = cache_get_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
+	// All the items we can possible want and then some, try pulling the final list of items from cache first.
+	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
 	{
 		$is_b = !empty($board_info['id']);
-		$buttons = array(
+		$items = array(
 			'home' => array(
 				'title' => $txt['home'],
 				'href' => $scripturl,
 				'show' => true,
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'root' => array(
 						'title' => $context['forum_name'],
 						'href' => $scripturl,
@@ -2747,7 +2747,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=search',
 				'show' => $context['allow_search'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'search' => array(
 						'title' => $txt['search_simple'],
 						'href' => $scripturl . '?action=search',
@@ -2766,7 +2766,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'featuresettings' => array(
 						'title' => $txt['modSettings_title'],
 						'href' => $scripturl . '?action=admin;area=featuresettings',
@@ -2795,7 +2795,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=moderate',
 				'show' => $context['allow_moderation_center'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
@@ -2824,7 +2824,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=profile',
 				'show' => $context['allow_edit_profile'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'summary' => array(
 						'title' => $txt['summary'],
 						'href' => $scripturl . '?action=profile',
@@ -2853,7 +2853,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
 						'href' => $scripturl . '?action=pm',
@@ -2878,7 +2878,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=calendar',
 				'show' => $context['allow_calendar'],
 				'padding' => 14,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'view' => array(
 						'title' => $txt['calendar_menu'],
 						'href' => $scripturl . '?action=calendar',
@@ -2897,7 +2897,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($modSettings['media_enabled']) && allowedTo('media_access'),
 				'padding' => 18,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'home' => array(
 						'title' => $txt['media_home'],
 						'href' => $scripturl . '?action=media',
@@ -2916,7 +2916,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=mlist',
 				'show' => $context['allow_memberlist'],
 				'padding' => 14,
-				'sub_buttons' => array(
+				'sub_items' => array(
 					'mlist_view' => array(
 						'title' => $txt['mlist_menu_view'],
 						'href' => $scripturl . '?action=mlist',
@@ -2935,7 +2935,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
 				'padding' => 15,
-				'sub_buttons' => array(
+				'sub_items' => array(
 				),
 			),
 			'register' => array(
@@ -2943,7 +2943,7 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=register',
 				'show' => $user_info['is_guest'],
 				'padding' => 16,
-				'sub_buttons' => array(
+				'sub_items' => array(
 				),
 				'is_last' => !$context['right_to_left'],
 			),
@@ -2952,63 +2952,63 @@ function setupMenuContext()
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
 				'padding' => 15,
-				'sub_buttons' => array(
+				'sub_items' => array(
 				),
 				'is_last' => !$context['right_to_left'],
 			),
 		);
 
-		// Now we put the buttons in the context so the theme can use them.
-		$menu_buttons = array();
-		foreach ($buttons as $act => $button)
-			if (!empty($button['show']))
+		// Now we put the items in the context so the theme can use them.
+		$menu_items = array();
+		foreach ($items as $act => $item)
+			if (!empty($item['show']))
 			{
-				$button['active_button'] = false;
+				$item['active_item'] = false;
 
-				// Make sure the last button truely is the last button.
-				if (!empty($button['is_last']))
+				// Make sure the last item truly is the last item.
+				if (!empty($item['is_last']))
 				{
-					if (isset($last_button))
-						unset($menu_buttons[$last_button]['is_last']);
-					$last_button = $act;
+					if (isset($last_item))
+						unset($menu_items[$last_item]['is_last']);
+					$last_item = $act;
 				}
 
-				// Go through the sub buttons if there are any.
-				if (!empty($button['sub_buttons']))
-					foreach ($button['sub_buttons'] as $key => $subbutton)
+				// Go through the sub items if there are any.
+				if (!empty($item['sub_items']))
+					foreach ($item['sub_items'] as $key => $subitem)
 					{
-						if (empty($subbutton['show']))
-							unset($button['sub_buttons'][$key]);
+						if (empty($subitem['show']))
+							unset($item['sub_items'][$key]);
 
-						// 2nd level sub buttons next
-						if (!empty($subbutton['sub_buttons']))
-							foreach($subbutton['sub_buttons'] as $key2 => $sub_button2)
-								if (empty($sub_button2['show']))
-									unset($button['sub_buttons'][$key]['sub_buttons'][$key2]);
+						// 2nd level sub items next
+						if (!empty($subitem['sub_items']))
+							foreach($subitem['sub_items'] as $key2 => $sub_item2)
+								if (empty($sub_item2['show']))
+									unset($item['sub_items'][$key]['sub_items'][$key2]);
 					}
 
-				$menu_buttons[$act] = $button;
+				$menu_items[$act] = $item;
 			}
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
-			cache_put_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_buttons, $cacheTime);
+			cache_put_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_items, $cacheTime);
 	}
 
-	// Allow editing menu buttons easily.
+	// Allow editing menu items easily.
 	// Use PHP's array_splice to add entries at a specific position.
-	call_hook('menu_buttons', array(&$menu_buttons));
+	call_hook('menu_items', array(&$menu_items));
 
-	$context['menu_buttons'] = $menu_buttons;
+	$context['menu_items'] = $menu_items;
 
 	// Logging out requires the session id in the url.
-	if (isset($context['menu_buttons']['logout']))
-		$context['menu_buttons']['logout']['href'] = sprintf($context['menu_buttons']['logout']['href'], $context['session_var'], $context['session_id']);
+	if (isset($context['menu_items']['logout']))
+		$context['menu_items']['logout']['href'] = sprintf($context['menu_items']['logout']['href'], $context['session_var'], $context['session_id']);
 
 	// Figure out which action we are doing so we can set the active tab.
 	// Default to home.
 	$current_action = 'home';
 
-	if (isset($context['menu_buttons'][$context['current_action']]))
+	if (isset($context['menu_items'][$context['current_action']]))
 		$current_action = $context['current_action'];
 	elseif ($context['current_action'] == 'search2')
 		$current_action = 'search';
@@ -3021,12 +3021,12 @@ function setupMenuContext()
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'moderate';
 
-	$context['menu_buttons'][$current_action]['active_button'] = true;
+	$context['menu_items'][$current_action]['active_item'] = true;
 
-	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($context['menu_buttons']['pm']))
+	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($context['menu_items']['pm']))
 	{
-		$context['menu_buttons']['pm']['alttitle'] = $context['menu_buttons']['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
-		$context['menu_buttons']['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
+		$context['menu_items']['pm']['alttitle'] = $context['menu_items']['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
+		$context['menu_items']['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
 	}
 }
 
