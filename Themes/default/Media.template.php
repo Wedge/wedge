@@ -1936,7 +1936,7 @@ function template_aeva_xml_rated()
 {
 	global $context, $txt;
 
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?', '>
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>
 <ratingObject><![CDATA[', template_aeva_rating_object($context['item_data']), ']]></ratingObject>';
 }
 

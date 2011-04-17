@@ -1273,8 +1273,8 @@ function aeva_admin_perms_albums()
 	if (empty($string_parts))
 		$string_parts[] = '<span style="font-style: italic">None</span>';
 
-	header('Content-Type: text/xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?', '>
+	header('Content-Type: text/xml; charset=UTF-8');
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>
 <albums>
 	<id_profile>', $row['id'], '</id_profile>
 	<album_string><![CDATA[', $txt['media_albums'], ' : ', implode(', ', $string_parts), ']]></album_string>
@@ -1642,8 +1642,8 @@ function aeva_admin_quotas_albums()
 	if (empty($string_parts))
 		$string_parts[] = '<span style="font-style: italic;">None</span>';
 
-	header('Content-Type: text/xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?', '>
+	header('Content-Type: text/xml; charset=UTF-8');
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>
 <albums>
 	<id_profile>', $row['id'], '</id_profile>
 	<album_string><![CDATA[', $txt['media_albums'], ' : ', implode(', ', $string_parts), ']]></album_string>

@@ -963,10 +963,10 @@ function aeva_foxy_rss()
 		$context['pretty']['replace_patterns'][] = '~(<link>|<guid>)'.$insideurl.'([^<]*?[?;&](action)=([^<]+))~';
 	}
 
-	header('Content-Type: application/rss+xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+	header('Content-Type: application/rss+xml; charset=UTF-8');
 
 	// First, output the xml header.
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?' . '>
+	echo '<?xml version="1.0" encoding="UTF-8"?' . '>
 <rss version="2.0" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
 	<channel>
 		<title><![CDATA[', $feed_title, ']]></title>

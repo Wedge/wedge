@@ -2331,7 +2331,7 @@ function aeva_addView()
 	if (media_markSeen($id))
 		media_resetUnseen($user_info['id']);
 
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?', '>';
+	echo '<?xml version="1.0" encoding="UTF-8"?', '>';
 	obExit(false);
 }
 
