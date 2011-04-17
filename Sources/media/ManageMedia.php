@@ -309,8 +309,8 @@ function aeva_admin_about()
 	// Get gallery managers and moderators
 	loadSource('Subs-Members');
 
-	$managers = membersAllowedTo('aeva_manage');
-	$moderators = membersAllowedTo('aeva_moderate');
+	$managers = membersAllowedTo('media_manage');
+	$moderators = membersAllowedTo('media_moderate');
 	// Let's make sure they are unique
 	foreach ($managers as $m)
 		foreach ($moderators as $k => $v)

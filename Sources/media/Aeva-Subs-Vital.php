@@ -112,7 +112,7 @@ function aeva_allowedTo($perms, $single_true = false)
 	if (empty($perms))
 		return false;
 
-	if (allowedTo('aeva_manage'))
+	if (allowedTo('media_manage'))
 		return true;
 
 	if (!is_array($perms))

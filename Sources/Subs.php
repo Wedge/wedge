@@ -2893,9 +2893,9 @@ function setupMenuContext()
 				),
 			),
 			'media' => array(
-				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('aeva_access_unseen') || empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
+				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('media_access_unseen') || empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
 				'href' => $scripturl . '?action=media',
-				'show' => !empty($modSettings['media_enabled']) && allowedTo('aeva_access'),
+				'show' => !empty($modSettings['media_enabled']) && allowedTo('media_access'),
 				'padding' => 18,
 				'sub_buttons' => array(
 					'home' => array(
@@ -2906,7 +2906,7 @@ function setupMenuContext()
 					'unseen' => array(
 						'title' => $txt['media_unseen'],
 						'href' => $scripturl . '?action=media;sa=unseen',
-						'show' => allowedTo('aeva_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
+						'show' => allowedTo('media_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
 						'is_last' => true,
 					),
 				),

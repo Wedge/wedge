@@ -1665,7 +1665,7 @@ function aeva_getOnlineType($actions)
 
 	// Admin area?
 	if (isset($actions['area']))
-		return array(allowedTo('aeva_manage') ? 'direct' : 'hidden', $txt['media_wo_admin']);
+		return array(allowedTo('media_manage') ? 'direct' : 'hidden', $txt['media_wo_admin']);
 
 	// Load if not set
 	if (empty($amSettings))
@@ -1712,7 +1712,7 @@ function aeva_getOnlineType($actions)
 			}
 		break;
 		case 'unseen';
-			$ret[0] = allowedTo('aeva_access_unseen') ? 'direct' : 'hidden';
+			$ret[0] = allowedTo('media_access_unseen') ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_unseen'];
 		break;
 		case 'comment';
@@ -1728,7 +1728,7 @@ function aeva_getOnlineType($actions)
 			$ret[0] = allowedTo('aeva_report_items') ? 'fetch' : 'hidden';
 		break;
 		case 'search';
-			$ret[0] = allowedTo('aeva_search') ? 'direct' : 'hidden';
+			$ret[0] = allowedTo('media_search') ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_search'];
 		break;
 		case 'stats';

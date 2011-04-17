@@ -303,7 +303,7 @@ function Admin()
 		),
 		'media' => array(
 			'title' => $txt['media_title'],
-			'permission' => array('aeva_manage'),
+			'permission' => array('media_manage'),
 			'areas' => array(
 				'aeva_about' => array(
 					'label' => $txt['media_admin_labels_about'],
@@ -555,7 +555,7 @@ function Admin()
 	{
 		$tab['file'] = 'media/ManageMedia';
 		$tab['function'] = 'aeva_admin_init';
-		$tab['permission'] = array('aeva_manage');
+		$tab['permission'] = array('media_manage');
 		$tab['enabled'] = isset($tab['enabled']) ? $tab['enabled'] : !empty($modSettings['media_enabled']);
 		if (!empty($tab['subsections']))
 			foreach ($tab['subsections'] as &$title)

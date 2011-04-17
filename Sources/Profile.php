@@ -300,8 +300,8 @@ function ModifyProfile($post_errors = array())
 					'function' => 'aeva_profileSummary',
 					'label' => $txt['media_profile_sum'],
 					'permission' => array(
-						'own' => array('aeva_viewprofile'),
-						'any' => array('aeva_viewprofile'),
+						'own' => array('media_viewprofile'),
+						'any' => array('media_viewprofile'),
 					),
 					'load_member' => true,
 				),
@@ -310,8 +310,8 @@ function ModifyProfile($post_errors = array())
 					'function' => 'aeva_profileItems',
 					'label' => $txt['media_view_items'],
 					'permission' => array(
-						'own' => array('aeva_viewprofile'),
-						'any' => array('aeva_viewprofile'),
+						'own' => array('media_viewprofile'),
+						'any' => array('media_viewprofile'),
 					),
 					'load_member' => true,
 				),
@@ -320,8 +320,8 @@ function ModifyProfile($post_errors = array())
 					'function' => 'aeva_profileComments',
 					'label' => $txt['media_view_coms'],
 					'permission' => array(
-						'own' => array('aeva_viewprofile'),
-						'any' => array('aeva_viewprofile'),
+						'own' => array('media_viewprofile'),
+						'any' => array('media_viewprofile'),
 					),
 					'load_member' => true,
 				),
@@ -330,8 +330,8 @@ function ModifyProfile($post_errors = array())
 					'function' => 'aeva_profileVotes',
 					'label' => $txt['media_view_votes'],
 					'permission' => array(
-						'own' => array('aeva_viewprofile'),
-						'any' => array('aeva_viewprofile'),
+						'own' => array('media_viewprofile'),
+						'any' => array('media_viewprofile'),
 					),
 					'load_member' => true,
 				),
