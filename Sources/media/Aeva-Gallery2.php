@@ -2012,8 +2012,8 @@ function aeva_massUpload()
 
 		// HTML Headers
 		$context['aeva_submit_url'] = $galurl . 'sa=mass;album=' . $id_album . ';xml;upcook=' . urlencode(base64_encode($_COOKIE[$cookiename]));
-		add_js_file('http://yui.yahooapis.com/combo?2.8.2r1/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.8.2r1/build/element/element-min.js', true);
-		add_js_file(array('scripts/uploader.js', 'scripts/up.js'));
+		add_js_file('http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/element/element-min.js&2.9.0/build/uploader/uploader-min.js', true);
+		add_js_file('scripts/up.js');
 		add_js('
 	var galurl = "', $galurl, '";
 	Yup.init({
