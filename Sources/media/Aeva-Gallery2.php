@@ -789,7 +789,7 @@ function aeva_albumCP($is_admin = false)
 	{
 		// This file is needed for the toggle
 		$context['header'] .= '
-	<script src="' . add_js_file('scripts/media_admin.js', false, true) . '"></script>
+	<script src="' . add_js_file('scripts/media-admin.js', false, true) . '"></script>
 	<script><!-- // --><![CDATA[
 		var galurl = "' . $galurl . '";
 	// ]]></script>';

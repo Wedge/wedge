@@ -60,8 +60,12 @@
 				var
 					img = this,
 					win = $(window),
+					win_width = win.width(),
+					win_height = win.height(),
 					width = (options.width || img.width) + 32,
-					height = (options.height || img.height) + 32;
+					height = (options.height || img.height) + 32,
+					on_width = win_height < height ? width * (win_height / height) : width,
+					on_height = Math.min(win_height, height);
 
 				$zoom
 					.hide()
@@ -81,10 +85,10 @@
 
 				$zoom.animate(
 					{
-						top: Math.max((win.height() - height) / 2 + win.scrollTop(), 0) + px,
-						left: ((win.width() - width) / 2 + win.scrollLeft()) + px,
-						width: width,
-						height: height,
+						top: Math.max((win_height - on_height) / 2 + win.scrollTop(), 0) + px,
+						left: ((win_width - on_width) / 2 + win.scrollLeft()) + px,
+						width: on_width,
+						height: on_height,
 						opacity: 'show'
 					},
 					500,
