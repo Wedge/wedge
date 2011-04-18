@@ -432,7 +432,7 @@ function Display()
 	$context['draft_saved'] = isset($_GET['draftsaved']);
 
 	// Let's get nosey, who is viewing this topic?
-	if (!empty($settings['display_who_viewing']))
+	if (!empty($settings['display_who_viewing']) && !WIRELESS)
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
