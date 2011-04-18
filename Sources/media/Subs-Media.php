@@ -2638,14 +2638,14 @@ function aeva_showThumbnail($data)
 	else
 	{
 		$box = '<img src="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v' : ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">';
-		$inside_caption = $no_lightbox ? '' : '<div class="highslide-caption"><div style="float: right"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
+		$inside_caption = $no_lightbox ? '' : '<div class="zoom-overlay"><div style="float: right"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
 	}
 	if (empty($box))
 		$box = $txt['media_tag_no_items'];
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data = ($show_main_div ? '<table class="aextbox"' . (!empty($align) ? ' align="' . $align . '"' : '') . (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
-		. ($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'preview' ? '' : ';preview') . ($amSettings['use_lightbox'] ? '" class="hs">' : '">') : '')
+		. ($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'preview' ? '' : ';preview') . ($amSettings['use_lightbox'] ? '" class="zoom">' : '">') : '')
 		. $box . ($show_bigger ? '</a>' : '') . (empty($inside_caption) ? '' : $inside_caption) . ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '') . ($type === 'av' && !empty($inside_caption) ? '' : $caption_box) . ($show_main_div ? '</td></tr></table>' : '');
 	return $data;
 }
@@ -2866,7 +2866,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 
 	foreach ($items as $i)
 	{
-		// If you don't want to allow item previewing via Highslide on album pages, replace the following line with: $is_image = false;
+		// If you don't want to allow item previewing via Zoomedia on album pages, replace the following line with: $is_image = false;
 		$is_image = $i['type'] == 'image' || ($i['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $i['embed_url']));
 		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($modSettings['embed_enabled']);
 		if ($is_embed)
@@ -2884,11 +2884,11 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 
 		$in_page++;
 		$inside_caption = !$amSettings['use_lightbox'] ? '' : ($is_image || $is_embed ? ($is_image ? '
-			<div class="highslide-caption">' : ($is_embed ? '
-			<div class="highslide-maincontent" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
+			<div class="zoom-overlay">' : ($is_embed ? '
+			<div class="zoom-html" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
 				' . trim($match) : '')) . '
 				<div style="float: right">' . ($i['has_preview'] ? '
-					<a class="aelink hs" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '" onclick="return hss(' . $in_page . ', this);">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
+					<a class="aelink" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '" onclick="return hss(' . $in_page . ', this);">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
 					<a class="aelink" href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
 					<img src="' . $settings['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
 				</div>
@@ -2911,7 +2911,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$re .= '
 		<td' . ($i['approved'] ? '' : '  class="unapp"') . ' id="aepic_' . $i['id'] . '" align="center"' . ($context['browser']['is_ie6'] ? ' onmouseover="mouseo(' . $i['id'] . ', 0)" onmouseout="mouseo(' . $i['id'] . ', 1)"' : '') . '>
 			<div class="aep" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0' . ($i['transparent'] ? '; ' . $css_prefix . 'box-shadow: none' : '') . '"><a href="'
-			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="hs"'
+			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="zoom"'
 			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '>&nbsp;</a>' . $inside_caption . '</div>
 
 			<div style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '
@@ -3569,7 +3569,7 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_lightbo
 	$use_lightbox &= !empty($amSettings['use_lightbox']);
 	$lightbox = (empty($_GET['action']) || $_GET['action'] != 'media' ? '
 	<link rel="stylesheet" href="' . add_css_file('media') . '">' : '') . (!$use_lightbox ? '' : '
-	<link rel="stylesheet" href="' . add_css_file('hs') . '" media="screen">');
+	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">');
 
 	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
 		$lightbox .= '

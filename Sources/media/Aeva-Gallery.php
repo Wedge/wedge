@@ -946,7 +946,7 @@ function aeva_viewItem()
 	{
 		$context['mg_headers_sent'] = true;
 		$context['header'] .= '
-	<link rel="stylesheet" href="' . add_css_file('hs') . '" media="screen">' . aeva_initLightbox($peralbum['autosize'], $peralbum);
+	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">' . aeva_initLightbox($peralbum['autosize'], $peralbum);
 	}
 
 	if (wesql::num_rows($result) > 0)

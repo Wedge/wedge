@@ -305,7 +305,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	if ($type == 'image')
 	{
 		$output .= '
-		' . (!empty($context['aeva_has_preview']) ? '<a href="' . $galurl . 'sa=media;in=' . $id_file . '" title="' . westr::htmlspecialchars($desc) . '"' . ($amSettings['use_lightbox'] ? ' class="hs"' : '') . '>' : '')
+		' . (!empty($context['aeva_has_preview']) ? '<a href="' . $galurl . 'sa=media;in=' . $id_file . '" title="' . westr::htmlspecialchars($desc) . '"' . ($amSettings['use_lightbox'] ? ' class="zoom"' : '') . '>' : '')
 		. '<img src="' . $preview_image . '" width="' . $cur_width . '" height="' . $cur_height . '">'
 		. (!empty($context['aeva_has_preview']) ? '</a>' : '');
 	}
@@ -459,21 +459,36 @@ function aeva_initLightbox($autosize, $peralbum = array())
 	if (true)
 	{
 		add_js_file('scripts/zoomedia.js');
+	add_js('
 
-		add_js('
+	function hss(aId, aSelf)
+	{
+		// Work in progress...
+		return false;
 
-	$("a.hs").zoomedia();
-');
-		return '';
+		var aUrl = aSelf.href;
+		var ah = $(\'#hsm\' + aId)[0];
+		hs.close(ah);
+		hs.expanders[hs.getWrapperKey(ah)] = null;
+		ah.href = aUrl;
+		hs.expand(ah);
+		return false;
 	}
 
-	if (true)
-	{
-		add_js_file('scripts/jquery.colorbox.js');
-
-		add_js('
-
-	$("a.hs").colorbox({ photo: true, transition: "fade", onLoad: function () { $("#colorbox").dragslide(); }, onClosed: function () { currentDrag = 0; } });
+	$("a.zoom").zoomedia({ lang: {
+		move: \'', $txt['media_lbox_move'], '\',
+		close: \'', $txt['media_close'], '\',
+		closeTitle: \'', $txt['media_lbox_close_title'], '\',
+		loading: \'', $txt['media_lbox_loading'], '\',
+		loadingTitle: \'', $txt['media_lbox_clicktocancel'], '\',
+		restoreTitle: \'', $txt['media_lbox_clicktoclose'], '\',
+		focusTitle: \'', $txt['media_lbox_focus'], '\',
+		fullExpandTitle: \'', $txt['media_lbox_expandtoactual'], '\',
+		previousTitle: \'', $txt['media_lbox_previous'], '\',
+		nextTitle: \'', $txt['media_lbox_next'], '\',
+		playTitle: \'', $txt['media_lbox_play'], '\',
+		pauseTitle: \'', $txt['media_lbox_pause'], '\'
+	}});
 ');
 		return '';
 	}
@@ -482,18 +497,6 @@ function aeva_initLightbox($autosize, $peralbum = array())
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
 
 	add_js_file('aeva/highslide-full.js');
-	add_js('
-
-	function hss(aId, aSelf)
-	{
-		var aUrl = aSelf.href;
-		var ah = $(\'#hsm\' + aId)[0];
-		hs.close(ah);
-		hs.expanders[hs.getWrapperKey(ah)] = null;
-		ah.href = aUrl;
-		hs.expand(ah);
-		return false;
-	}' . "\n");
 
 	add_js(empty($peralbum) ? '
 	hs.Expander.prototype.onInit = function()
@@ -527,29 +530,15 @@ function aeva_initLightbox($autosize, $peralbum = array())
 		}
 	});
 
-	$("a.hs").each(function () {
+	$("a.zoom").each(function () {
 		this.onclick = function () {
 			if (this.rel == "media")
 				mediaOptions.width = $(this).data("width");
 			return this.rel == "html" ? hs.htmlExpand(this) : (this.rel == "embed" ? hs.expand(this) :
 				  (this.rel == "media" ? hs.htmlExpand(this, mediaOptions) : hs.expand(this, slideOptions)));
 		};
-	});
+	});', $autosize ? '' : '
 
-	hs.lang = {
-		moveText: \'', $txt['media_lbox_move'], '\',
-		closeText: \'', $txt['media_close'], '\',
-		closeTitle: \'', $txt['media_lbox_close_title'], '\',
-		loadingText: \'', $txt['media_lbox_loading'], '\',
-		loadingTitle: \'', $txt['media_lbox_clicktocancel'], '\',
-		restoreTitle: \'', $txt['media_lbox_clicktoclose'], '\',
-		focusTitle: \'', $txt['media_lbox_focus'], '\',
-		fullExpandTitle: \'', $txt['media_lbox_expandtoactual'], '\',
-		previousTitle: \'', $txt['media_lbox_previous'], '\',
-		nextTitle: \'', $txt['media_lbox_next'], '\',
-		playTitle: \'', $txt['media_lbox_play'], '\',
-		pauseTitle: \'', $txt['media_lbox_pause'], '\'
-	};', $autosize ? '' : '
 	hs.allowSizeReduction = false;', empty($peralbum) || $peralbum['outline'] == 'rounded-white' ? '
 	hs.outlineType = \'rounded-white\';' : '', '
 	hs.numberOfImagesToPreload = 0;
@@ -566,10 +555,9 @@ function aeva_initLightbox($autosize, $peralbum = array())
 
 	return $peralbum['outline'] == 'rounded-white' || !empty($peralbum['fadeinout']) ? '
 	<style>' . ($peralbum['outline'] == 'rounded-white' ? '
-		.hs img { border: 2px solid gray }
-		.hs:hover img, .highslide-image { border: 2px solid white }
-		.highslide-wrapper .highslide-html-content { padding: 0 5px 5px 5px }' : '') . (!empty($peralbum['fadeinout']) ? '
-		.highslide-active-anchor img { visibility: visible }' : '') . '
+		.zoom img { border: 2px solid gray }
+		.zoom-html { padding: 0 5px 5px 5px }' : '') . (!empty($peralbum['fadeinout']) ? '
+		.zoom-active-anchor img { visibility: visible }' : '') . '
 	</style>' : '';
 }
 

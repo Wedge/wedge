@@ -221,11 +221,6 @@ function aeva_admin_about()
 	);
 
 	$context['aeva_thanks'] = array(
-		'Highslide' => array(
-			'name' => 'Highslide',
-			'site' => 'http://highslide.com',
-			'position' => 'Animation library, free for non-commercial use',
-		),
 		'GetID3' => array(
 			'name' => 'GetID3 script',
 			'site' => 'http://getid3.org',
@@ -239,7 +234,7 @@ function aeva_admin_about()
 		'YUIU' => array(
 			'name' => 'Yahoo! UI Uploader',
 			'site' => 'http://developer.yahoo.com/yui/',
-			'position' => 'Flash/Ajax-based mass uploader. Graphics from <a href="http://digitarald.de/project/fancyupload/">FancyUpload</a>.',
+			'position' => 'Flash/Ajax-based mass uploader. Progress bars from <a href="http://digitarald.de/project/fancyupload/">FancyUpload</a>.',
 		),
 		'JW Player' => array(
 			'name' => 'JW Player',

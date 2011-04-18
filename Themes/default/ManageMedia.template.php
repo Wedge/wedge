@@ -90,7 +90,7 @@ function template_aeva_admin_submissions()
 					<td><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> <a href="javascript:doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';' . $context['session_var'] . '=', $context['session_id'], ';xml\');">'.$txt['media_admin_approve'].'</a>
 						<img src="'.$settings['images_aeva'].'/folder_edit.png" title="'.$txt['media_admin_edit'].'"> <a href="', $item['edit_link'], '">'.$txt['media_admin_edit'].'</a>
 						<img src="'.$settings['images_aeva'].'/folder_delete.png" title="'.$txt['media_admin_delete'].'"> <a href="javascript:doSubAction(\'', $item['del_link'], ';xml\');" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');">'.$txt['media_admin_delete'].'</a>
-						', $filter == 'items' ? '<a href="'. $galurl .'sa=media;in='.$item['id'].';preview"' . ($amSettings['use_lightbox'] ? ' class="hs"' : '') . '><img src="'.$settings['images_aeva'].'/magnifier.png"> '.$txt['media_admin_view_image'].'</a>' : '', '
+						', $filter == 'items' ? '<a href="'. $galurl .'sa=media;in='.$item['id'].';preview"' . ($amSettings['use_lightbox'] ? ' class="zoom"' : '') . '><img src="'.$settings['images_aeva'].'/magnifier.png"> '.$txt['media_admin_view_image'].'</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>

@@ -1223,7 +1223,7 @@ function aeva_embed_video($message, $id_media = 0, $id_preview = 0)
 	if (substr($msg, 0, 7) !== '<a href')
 		return $msg;
 	$where = $id_media && $id_preview ? $scripturl . '?action=media;sa=media;in=' . (int) $id_media . ';preview' : '$2';
-	return preg_replace('~(<a href="([^"]+)".*?)>.*?(</a>)~', '$1 class="hs" rel="embed"><img src="' . $where . '">$3', $msg);
+	return preg_replace('~(<a href="([^"]+)".*?)>.*?(</a>)~', '$1 class="zoom" rel="embed"><img src="' . $where . '">$3', $msg);
 }
 
 function aeva_check_embed_link($link)

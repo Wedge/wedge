@@ -1,0 +1,10 @@
+
+#edge, #sidebar
+	display: block
+
+#main_content
+	display: block
+	padding: 4px 4px 8px
+
+#content div.frame
+	padding: 0 10px 20px

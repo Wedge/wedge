@@ -490,9 +490,9 @@ function template_aeva_viewItem()
 		else
 		{
 			echo $amSettings['use_lightbox'] ? '
-			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="hs" rel="html">'
+			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
 			. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
-			<div class="highslide-maincontent">
+			<div class="zoom-html">
 				<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
 				<div class="smalltext meta">';
 
@@ -510,13 +510,13 @@ function template_aeva_viewItem()
 
 	echo '
 		<tr class="titlebg"><td colspan="2" class="center info images" style="line-height: 16px; vertical-align: text-bottom; border-radius: 0 0 8px 8px">', $item['can_report'] ? '
-			<a href="' . $galurl . 'sa=report;type=item;in=' . $item['id_media'] . '"' . ($amSettings['use_lightbox'] ? ' class="hs" rel="html"' : '') . '>
+			<a href="' . $galurl . 'sa=report;type=item;in=' . $item['id_media'] . '"' . ($amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : '') . '>
 				<img src="' . $settings['images_aeva'] . '/report.png">&nbsp;' . $txt['media_report_this_item'] . '
 			</a>' : '';
 
 	if ($item['can_report'] && $amSettings['use_lightbox'])
 		echo '
-			<div class="highslide-maincontent">
+			<div class="zoom-html">
 				<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
 					<h3>', $txt['media_reporting_this_item'], '</h3>
 					<hr>', $txt['media_reason'], '<br>
@@ -531,12 +531,12 @@ function template_aeva_viewItem()
 	if ($item['can_edit'])
 		echo '
 			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' class="hs" rel="html"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"',
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"',
 			'><img src="', $settings['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_lightbox'])
 		echo '
-			<div class="highslide-maincontent">
+			<div class="zoom-html">
 				<form action="', $galurl, 'sa=delete;in=', $item['id_media'], '" method="post">
 					<h3>', $txt['media_delete_this_item'], '</h3>
 					<hr>', $txt['quickmod_confirm'], '
@@ -553,12 +553,12 @@ function template_aeva_viewItem()
 
 	if ($item['can_edit'] && !empty($context['aeva_move_albums']))
 		echo '
-			<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' class="hs" rel="html"' : '', '><img src="', $settings['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
+			<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : '', '><img src="', $settings['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_lightbox'])
 	{
 		echo '
-			<div class="highslide-maincontent">
+			<div class="zoom-html">
 				<h3>', $txt['media_moving_this_item'], '</h3>
 				<h2>', $txt['media_album'], ': ', $item['album_name'], '</h2>
 				<hr>
