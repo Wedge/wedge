@@ -59,6 +59,9 @@
 	-->
 
 	<code for="ie6" include="scripts/pngfix.js"><![CDATA[
+	$('div.ping').each(function () {
+		$(this).html($('<img class="ping">').attr('src', $(this).css('backgroundImage').slice(5, -2))).css('backgroundImage', '');
+	});
 	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>
