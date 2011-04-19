@@ -16,9 +16,13 @@
 		By Nao, inspired by Bloc's Curve.
 	]]></comment>
 
-	<code for="ie6"><![CDATA[
+	<code for="ie6" include="scripts/pngfix.js"><![CDATA[
 	DD_belatedPNG.fix('img.ping,header,#header,#navi,#footer,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
+	]]></code>
+
+	<code for="iphone"><![CDATA[
+	$('#main_content').insertBefore('#edge');
 	]]></code>
 
 	<block name="title"><header class="title">|</header></block>

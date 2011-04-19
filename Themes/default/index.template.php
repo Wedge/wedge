@@ -27,8 +27,6 @@ function template_init()
 		$context['javascript_files'][] = 'scripts/theme.js';
 		if ($context['user']['is_guest'] && !empty($context['show_login_bar']))
 			$context['javascript_files'][] = 'scripts/sha1.js';
-		if ($context['browser']['is_ie6'])
-			$context['javascript_files'][] = 'scripts/pngfix.js';
 	}
 
 	/* Use images from default theme when using templates from the default theme?

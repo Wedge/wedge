@@ -12,7 +12,7 @@
 		By Nao.
 	]]></comment>
 
-	<code for="ie6"><![CDATA[
+	<code for="ie6"	include="scripts/pngfix.js"><![CDATA[
 	DD_belatedPNG.fix('img.ping,#wedgelogo,#footer,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	]]></code>

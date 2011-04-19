@@ -299,10 +299,26 @@ function wedge_cache_css()
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
 					$context['extra_styling_css'] .= rtrim($match[2], "\t");
 
-		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+		{
 			foreach ($matches as $match)
-				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
-					add_js(rtrim($match[2], "\t"));
+			{
+				if (!empty($match[1]) && !in_array($context['browser']['agent'], explode(',', $match[1])))
+					continue;
+
+				if (!empty($match[2]))
+				{
+					$includes = array_map('trim', explode(',', $match[2]));
+					// If we have an include param in the code tag, it should either use 'scripts/something.js' (in which case it'll
+					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the styling folder.
+					if (strpos($match[2], '$here') !== false)
+						foreach ($includes as &$scr)
+							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);
+					add_js_file($includes);
+				}
+				add_js(rtrim($match[3], "\t"));
+			}
+		}
 
 		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
 		{

@@ -71,7 +71,7 @@
 	border: 1px solid rgba(255,255,255, .25);
 	border-radius: 8px;
 	margin: 4px;
-	background: rgba(255,255,255, .5) url($images/loading-flow.gif) 8px 6px no-repeat;
+	background: rgba(255,255,255, .5) url($images/loader.gif) 8px 6px no-repeat;
 	height: 20px;
 }
 .zoom-html {

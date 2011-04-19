@@ -1051,7 +1051,7 @@ function aeva_loadAlbum($album_id = 0)
 	$bh = $album_info['bheight'];
 	$mw = !empty($amSettings['max_bigicon_width']) ? $amSettings['max_bigicon_width'] : 200;
 	$mh = !empty($amSettings['max_bigicon_height']) ? $amSettings['max_bigicon_height'] : 200;
-	$trans = $album_info['transparency'] === 'transparent' ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
+	$trans = $album_info['transparency'] === 'transparent' ? ' ping' : '';
 
 	// Let's put the album info in a proper array...
 	$context['aeva_album'] = array(
@@ -1068,7 +1068,7 @@ function aeva_loadAlbum($album_id = 0)
 			'width' => $album_info['width'],
 			'height' => $album_info['height'],
 			'url' => $album_info['icon'] > 0 ? $icon_url : '',
-			'src' => $album_info['icon'] > 0 ? '<div class="aea" style="width: ' . $album_info['width'] . 'px; height: ' . $album_info['height'] . 'px; background: url(' . $icon_url . ')' . $trans . '"><a href="'.$scripturl.'?action=media;sa=album;in='.$album_info['id_album'].'">&nbsp;</a></div>' : '',
+			'src' => $album_info['icon'] > 0 ? '<div class="aea' . $trans . '" style="width: ' . $album_info['width'] . 'px; height: ' . $album_info['height'] . 'px; background: url(' . $icon_url . ')"><a href="'.$scripturl.'?action=media;sa=album;in='.$album_info['id_album'].'">&nbsp;</a></div>' : '',
 		),
 		'bigicon' => $bw <= $mw && $bh <= $mh ? array($bw, $bh) : (round($mw * $bh / $bw) <= $mh ? array($mw, round($mw * $bh / $bw)) : array(round($mh * $bw / $bh), $mh)),
 		'bigicon_resized' => $bw > $mw || $bh > $mh,
@@ -1193,7 +1193,7 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 		);
 		if ($need_icon)
 		{
-			$trans = $row['transparency'] === 'transparent' ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
+			$trans = $row['transparency'] === 'transparent' ? ' ping' : '';
 			$albums[$row['id_album']]['icon'] = array(
 				'id' => $row['icon'],
 				'size' => round($row['filesize'] / 1024, 3),
@@ -1201,7 +1201,7 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 				'height' => $row['height'],
 				'url' => $row['icon'] > 0 ? $icon_url : '',
 				'src' => $row['icon'] > 0 ? ($row['width'] > 0 ?
-					'<div class="aea" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')' . $trans . '"><a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '">&nbsp;</a></div>' :
+					'<div class="aea' . $trans . '" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')"><a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '">&nbsp;</a></div>' :
 					'<a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '"><img src="' . $icon_url . '"></a>') : '',
 			);
 		}
@@ -2844,7 +2844,6 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 
 	aeva_addHeaders();
 	$urlmore = isset($context['aeva_urlmore']) ? $context['aeva_urlmore'] : '';
-	$css_prefix = $context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '');
 	$user_is_known = !empty($context['current_action']) && $context['current_action'] == 'profile';
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
@@ -2910,7 +2909,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
 		<td' . ($i['approved'] ? '' : '  class="unapp"') . ' id="aepic_' . $i['id'] . '" align="center"' . ($context['browser']['is_ie6'] ? ' onmouseover="mouseo(' . $i['id'] . ', 0)" onmouseout="mouseo(' . $i['id'] . ', 1)"' : '') . '>
-			<div class="aep" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0' . ($i['transparent'] ? '; ' . $css_prefix . 'box-shadow: none' : '') . '"><a href="'
+			<div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"><a href="'
 			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="zoom"'
 			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '>&nbsp;</a>' . $inside_caption . '</div>
 

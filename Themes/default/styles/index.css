@@ -303,6 +303,8 @@ em
 .underline
 	text-decoration: underline
 
+.ping
+	box-shadow: none !important
 
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */

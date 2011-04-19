@@ -1351,7 +1351,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		}
 
 		$box .= '<tr>' . ($album_id > 0 ? '<td class="top">
-	<img class="aep" src="' . $scripturl . '?action=media;sa=media;in=' . $album_id . ';bigicon"' . ($first_p['icon_transparent'] ? ' style="' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none"' : '') . '></td>' : '');
+	<img class="aep' . ($first_p['icon_transparent'] ? ' ping' : '') . '" src="' . $scripturl . '?action=media;sa=media;in=' . $album_id . ';bigicon"></td>' : '');
 
 		if ($nvotes != 0 && in_array('votes', $details))
 		{

@@ -275,9 +275,9 @@ function show_prevnext($id, $url)
 {
 	global $galurl, $context;
 
-	$trans = $url[3] == 'transparent' ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
+	$trans = $url[3] == 'transparent' ? ' ping' : '';
 
-	echo '<div class="aea" style="width: ', $url[1], 'px; height: ', $url[2], 'px; background: url(', $url[0], ') 0 0', $trans, '">',
+	echo '<div class="aea', $trans, '" style="width: ', $url[1], 'px; height: ', $url[2], 'px; background: url(', $url[0], ') 0 0">',
 			$id ? '<a href="' . $galurl . 'sa=item;in=' . $id . '">&nbsp;</a></div>' : '&nbsp;</div>';
 }
 
@@ -922,12 +922,12 @@ function template_aeva_viewAlbum()
 	<div id="albums">
 		<table class="w100 cs0 cp4 windowbg2">
 		<tr><td class="windowbg top" style="width: 2%" rowspan="2">';
-	$trans = $album_data['bigicon_transparent'] ? '; ' . ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_firefox'] ? '-moz-' : '')) . 'box-shadow: none' : '';
+	$trans = $album_data['bigicon_transparent'] ? ' ping' : '';
 	// If the big icon is too... big, then we can't round its corners. Ah well.
 	if ($album_data['bigicon_resized'])
 		echo '<img src="', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon" width="', $album_data['bigicon'][0], '" height="', $album_data['bigicon'][1], '">';
 	else
-		echo '<div class="aea" style="width: ', $album_data['bigicon'][0], 'px; height: ', $album_data['bigicon'][1], 'px; background: url(', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon) 0 0', $trans, '">&nbsp;</div>';
+		echo '<div class="aea', $trans, '" style="width: ', $album_data['bigicon'][0], 'px; height: ', $album_data['bigicon'][1], 'px; background: url(', $galurl, 'sa=media;in=', $album_data['id'], ';bigicon) 0 0">&nbsp;</div>';
 	echo '</td>
 		<td style="padding: 12px 12px 6px 12px">
 			<div class="mg_large mg_pb4">', !empty($album_data['passwd']) ? aeva_lockedAlbum($album_data['passwd'], $album_data['id'], $album_data['owner']) : '',

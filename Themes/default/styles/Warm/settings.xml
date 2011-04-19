@@ -43,9 +43,28 @@
 		By Nao.
 	]]></comment>
 
-	<code for="ie6"><![CDATA[
+	<!--
+		Code. This section allows you to define extra JavaScript that should be
+		added at the end of the page. You can specify a target browser using the
+		"for" keyword. You can also require some JavaScript files to be loaded,
+		use the "include" keyword to specify a comma-separated list of files.
+		They should either use a relative path based on the current theme, or
+		the $here variable which acts as an alias to the styling's folder.
+		If you use both keywords, use them in this order: for, and include.
+
+		In the examples below, we're applying PNG compatibility fixes to IE6
+		(loading the DD_belatedPNG script in the process); we're also allowing
+		submit buttons to be styled, and finally we're changing the layout on
+		iOS devices to show the sidebar below the main content.
+	-->
+
+	<code for="ie6" include="scripts/pngfix.js"><![CDATA[
 	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
+	]]></code>
+
+	<code for="iphone"><![CDATA[
+	$('#main_content').insertBefore('#edge');
 	]]></code>
 
 	<!--
