@@ -397,8 +397,8 @@ input.search
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
-	border: none
 	background: none
+	border: 0
 
 .cat input[type=checkbox]
 	margin: 5px -3px 0 7px

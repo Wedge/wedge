@@ -2637,16 +2637,27 @@ function aeva_showThumbnail($data)
 		$box = aeva_listItems(aeva_getMediaItems(-1, !empty($amSettings['max_items_per_page']) ? $amSettings['max_items_per_page'] : 15, 'm.id_media DESC', true, array(), 'm.album_id IN (' . $id . ')'), false, $align == 'none' ? '' : $align, -1);
 	else
 	{
-		$box = '<img src="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v' : ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">';
-		$inside_caption = $no_lightbox ? '' : '<div class="zoom-overlay"><div style="float: right"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
+		foreach ($ids as $i)
+			$box .=
+				($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $i . ($type == 'preview' ? '' : ';preview')
+				. ($amSettings['use_lightbox'] ? '" class="zoom">' : '">') : '')
+				. '<img src="' . $scripturl . '?action=media;sa=media;in=' . $i
+				. ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v'
+				: ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">'
+				. ($show_bigger ? '</a>' : '')
+				. ($no_lightbox ? '' : '<div class="zoom-overlay"><div class="floatright"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
 	}
 	if (empty($box))
 		$box = $txt['media_tag_no_items'];
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
-	$data = ($show_main_div ? '<table class="aextbox"' . (!empty($align) ? ' align="' . $align . '"' : '') . (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
-		. ($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $id . ($type == 'preview' ? '' : ';preview') . ($amSettings['use_lightbox'] ? '" class="zoom">' : '">') : '')
-		. $box . ($show_bigger ? '</a>' : '') . (empty($inside_caption) ? '' : $inside_caption) . ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '') . ($type === 'av' && !empty($inside_caption) ? '' : $caption_box) . ($show_main_div ? '</td></tr></table>' : '');
+	$data =
+		($show_main_div ? '<table class="aextbox"' . (!empty($align) ? ' align="' . $align . '"' : '')
+		. (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
+		. $box . (empty($inside_caption) ? '' : $inside_caption)
+		. ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '')
+		. ($type === 'av' && !empty($inside_caption) ? '' : $caption_box)
+		. ($show_main_div ? '</td></tr></table>' : '');
 	return $data;
 }
 
