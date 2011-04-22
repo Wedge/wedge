@@ -1,12 +1,9 @@
 
-.ae_details
-	left: 0
-
 #media-details
 	width: 100%
 	display: block
 	dt
 		line-height: 1.2em
 
-#sidebar section.block
-	width: 180px
+#sidebar section.block header
+	margin: 0 0 1em

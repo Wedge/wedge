@@ -1,7 +1,7 @@
 <?php
 /**
  * CSS file parser, written by Nao for Wedge. (c) 2011 Wedgeward
- * Released under the Wedge license.
+ * Released under the Wedge license. http://wedge.org/license/
  *
  * Uses some code and ideas from Shaun Inman's CSS Cacheer library
  * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
@@ -295,9 +295,9 @@ class wecss_color extends wecss
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];
 		$dir = empty($input[4]) ? 'top' : $input[4];
 
-		// If you're not specifying a gradient shade, IE 9 won't need the filter.
-		if ($browser['is_ie8down'] && $bg1 != $bg2)
-			return $input[1] . 'background: transparent' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] .
+		// If you're not specifying a gradient shade, IE 9 won't need the filter, but other IEs will.
+		if ($browser['is_ie8down'])
+			return $input[1] . 'background: none' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] .
 				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')' :
 				'-ms-filter:"progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')"');
 

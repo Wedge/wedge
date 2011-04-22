@@ -1232,12 +1232,13 @@ function aeva_viewItem()
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
 		'aeva_item_main',
-//		'aeva_item_details',
+		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
 	));
-	loadSubTemplate('aeva_item_details', 'sidebar');
+	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
+		loadSubTemplate('aeva_item_details', 'sidebar');
 }
 
 function aeva_mgComment()

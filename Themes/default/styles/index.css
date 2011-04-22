@@ -696,7 +696,7 @@ li.separator
 /* Common classes to ease styling.
 ------------------------------------------------------- */
 
-header
+header, footer, aside
 	display: block
 
 .floatright
@@ -927,7 +927,7 @@ td.footnum a:target, a.fnotel:target
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-section.windowbg extends .wrc
+section.block extends .wrc
 	overflow: hidden
 	header extends .wehead
 		font-weight: 700
@@ -1084,7 +1084,9 @@ a.moderation_link
 ------------------------------------------------------- */
 
 #ajax_in_progress
-	background: url($images/theme/loadingbar.png) repeat-x
+	background: #fff
+	border-bottom: 3px solid #f96f00
+	box-shadow: 0 0 8px #000
 	color: #f96f00
 	text-align: center
 	font-size: 16pt

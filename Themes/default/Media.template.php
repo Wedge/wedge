@@ -702,7 +702,7 @@ function template_aeva_item_playlists()
 
 function template_aeva_item_comments()
 {
-	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info;
+	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info, $options;
 
 	echo '
 		<we:cat>', empty($amSettings['disable_rss']) ? '

@@ -2054,6 +2054,9 @@ function execSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
 
+	if (empty($sub_template_name))
+		return;
+
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;
 
@@ -2095,7 +2098,7 @@ function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 		$context['top_template'] = $overwrite ? $sub_templates :
 			array_merge(isset($context['top_template']) ? $context['top_template'] : array(), $sub_templates);
 
-	// A sidebar block, maybe?
+	// A sidebar block, maybe? We never overwrite these. They're actual blocks...
 	else
 		$context['sidebar_template'] = array_merge(isset($context['sidebar_template']) ? $context['sidebar_template'] : array(), $sub_templates);
 }

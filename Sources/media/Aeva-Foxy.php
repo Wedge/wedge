@@ -758,15 +758,13 @@ function aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$widt
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// AEVA MEDIA RSS FEEDS
+// MEDIA RSS FEEDS
 ///////////////////////////////////////////////////////////////////////////////
 
-// Because I'm such a lazy bastard, I'll just take SMF2's excellent code and adapt it to Aeva Media.
 function aeva_foxy_rss()
 {
 	global $context, $scripturl, $txt, $modSettings, $user_info, $amSettings;
-	global $query_this, $forum_version, $cdata_override;
-	global $db_show_debug;
+	global $query_this, $forum_version, $cdata_override, $db_show_debug;
 
 	$amSettings['max_rss_items'] = !isset($amSettings['max_rss_items']) ? 10 : $amSettings['max_rss_items'];
 	if (empty($amSettings['max_rss_items']))
@@ -896,14 +894,12 @@ function aeva_foxy_rss()
 
 	$feed_title = westr::htmlspecialchars(strip_tags($context['forum_name'])) . ' - ' . $txt['media_gallery'] . (isset($feed_title) ? $feed_title : '');
 
-	ob_clean();
-
 	// Support for PrettyURLs rewriting
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][]  = '~(<link>|<guid>)'.$insideurl.'([^<]*?[?;&](action)=[^#<]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<link>|<guid>)'.$insideurl.'([^<]*?[?;&](action)=([^<]+))~';
+		$context['pretty']['search_patterns'][]  = '~(<link>|<guid>)' . $insideurl . '([^<]*?[?;&](action)=[^#<]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<link>|<guid>)' . $insideurl . '([^<]*?[?;&](action)=([^<]+))~';
 	}
 
 	header('Content-Type: application/rss+xml; charset=UTF-8');
@@ -953,6 +949,7 @@ function aeva_foxy_get_xml_items()
 
 	$data = array();
 	$clearurl = $amSettings['data_dir_url'];
+
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$thumb_url = isset($row['directory']) && !empty($amSettings['clear_thumbnames']) ? $clearurl . '/' . str_replace('%2F', '/', urlencode($row['directory'])) . '/' . aeva_getEncryptedFilename($row['filename'], $row['id_thumb'], true) : $galurl . 'sa=media;in=' . $row['id_media'] . ';thumb';
