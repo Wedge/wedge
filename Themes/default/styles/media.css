@@ -194,13 +194,6 @@ iframe.aext
 		.block
 			gradient-background: rgba(255,255,255, .3)
 
-div.mgabs
-	img
-		padding: 0 2px
-		vertical-align: text-bottom
-	a
-		text-decoration: none
-
 .selected a
 	color: inherit !important
 

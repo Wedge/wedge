@@ -696,7 +696,7 @@ li.separator
 /* Common classes to ease styling.
 ------------------------------------------------------- */
 
-header, footer, aside
+header, footer, aside, section
 	display: block
 
 .floatright

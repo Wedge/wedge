@@ -297,9 +297,8 @@ class wecss_color extends wecss
 
 		// If you're not specifying a gradient shade, IE 9 won't need the filter, but other IEs will.
 		if ($browser['is_ie8down'])
-			return $input[1] . 'background: none' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] .
-				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')' :
-				'-ms-filter:"progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')"');
+			return $input[1] . 'background: none' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] : '') .
+				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')';
 
 		// Better than nothing...
 		if ($no_gradients)
