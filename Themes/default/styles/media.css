@@ -92,6 +92,7 @@ iframe.aext
 		font-weight: 700
 		font-size, line-height: .9em
 		width: auto
+		margin: 5px 0
 	dd
 		float: right
 		clear: both
@@ -152,9 +153,9 @@ iframe.aext
 			border-left: 0
 
 #viewitem
-	.info
-		padding: 3px
-	td.info
+	.actions
+		padding: 3px 8px
+		text-align: center
 		vertical-align: middle
 	.comment_sort_options
 		float: right
@@ -164,6 +165,8 @@ iframe.aext
 #itembox
 	display: table
 	width: 100%
+	section
+		margin: 12px 0
 	.item
 		display: table-cell
 		vertical-align: middle
@@ -188,14 +191,13 @@ div.mgabs
 	color: inherit !important
 
 #viewitem .images
-	height: 20px
 	a
 		margin-right: 4px
 		font-weight: bold
 		text-decoration: none
 		line-height: 18px
 	img
-		vertical-align: middle
+		vertical-align: -2px
 
 .text_margins a
 	margin: 0 2px

@@ -1227,7 +1227,14 @@ function aeva_viewItem()
 
 	// End it!
 	$context['item_data'] = $item_data;
-	loadSubTemplate('aeva_viewItem');
+	loadSubTemplate(array(
+		'aeva_item_init',
+		'aeva_item_prevnext',
+		'aeva_item_main',
+		'aeva_item_details',
+		'aeva_item_actions',
+		'aeva_item_comments',
+	));
 }
 
 function aeva_mgComment()

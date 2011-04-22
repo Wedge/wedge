@@ -281,11 +281,27 @@ function show_prevnext($id, $url)
 			$id ? '<a href="' . $galurl . 'sa=item;in=' . $id . '">&nbsp;</a></div>' : '&nbsp;</div>';
 }
 
-function template_aeva_viewItem()
+function template_aeva_item_init()
 {
-	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
-	$item =& $context['item_data'];
+	add_js_file('scripts/topic.js');
+
+	add_js('
+	var oQuickReply = new QuickReply({
+		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
+		sScriptUrl: smf_scripturl,
+		sImagesUrl: "' . $settings['images_url'] . '",
+		sContainerId: "quickReplyOptions",
+		sImageId: "quickReplyExpand",
+		sJumpAnchor: "quickreply",
+		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
+		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
+		sSwitchMode: "switch_mode",
+		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
+	});');
+
+	$item = $context['item_data'];
 
 	if (isset($_REQUEST['noh']))
 		echo sprintf($txt['media_foxy_add_tag'], 'javascript:insertTag();');
@@ -293,6 +309,11 @@ function template_aeva_viewItem()
 	// Show the item and info boxes
 	echo '
 	<div id="viewitem">';
+}
+
+function template_aeva_item_prevnext()
+{
+	global $item, $galurl, $amSettings, $txt;
 
 	if (empty($amSettings['prev_next'])) // 3 items
 		echo '
@@ -334,8 +355,11 @@ function template_aeva_viewItem()
 		echo '
 		<div class="mg_prev">', (int) $item['prev'] > 0 ? '&laquo; <a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">' . $txt['media_prev'] . '</a>' : '&laquo; ' . $txt['media_prev'], '</div>
 		<div class="mg_next">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">' . $txt['media_next'] . '</a> &raquo;' : $txt['media_next'] . ' &raquo;', '</div>';
+}
 
-	$desc_len = strlen($item['description']);
+function template_aeva_item_main()
+{
+	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	echo '
 		<we:cat>
@@ -346,8 +370,11 @@ function template_aeva_viewItem()
 			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '<br>';
 
 	if (!empty($item['description']))
+	{
+		$desc_len = westr::strlen($item['description']);
 		echo '
 			<div class="mg_item_desc" style="margin: auto; text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>';
+	}
 
 	if ($context['aeva_size_mismatch'])
 		echo '
@@ -362,7 +389,14 @@ function template_aeva_viewItem()
 			<div class="unapproved_yet">', $txt['media_approve_this'], '</div>';
 
 	echo '
-		</div>
+		</div>';
+}
+
+function template_aeva_item_details()
+{
+	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+
+	echo '
 		<div class="details">
 			<we:block class="windowbg2" header="', westr::safe($txt['media_item_info']), '">
 			<dl class="settings">
@@ -493,12 +527,21 @@ function template_aeva_viewItem()
 				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
 			</ul>
 		</we:block>
-		</div></div>
+		</div></div>';
+}
 
-		<we:block class="windowbg titlebg clear center info images" style="line-height: 16px; vertical-align: text-bottom">', $item['can_report'] ? '
-			<a href="' . $galurl . 'sa=report;type=item;in=' . $item['id_media'] . '"' . ($amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : '') . '>
-				<img src="' . $settings['images_aeva'] . '/report.png">&nbsp;' . $txt['media_report_this_item'] . '
-			</a>' : '';
+function template_aeva_item_actions()
+{
+	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info;
+
+	echo '
+		<we:block class="windowbg actions images" style="line-height: 16px; vertical-align: text-bottom">';
+
+	if ($item['can_report'])
+		echo '
+			<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : '', '>
+				<img src="', $settings['images_aeva'], '/report.png">&nbsp;', $txt['media_report_this_item'], '
+			</a>';
 
 	if ($item['can_report'] && $amSettings['use_lightbox'])
 		echo '
@@ -577,13 +620,74 @@ function template_aeva_viewItem()
 		echo '
 			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
 
+	if (isset($item['playlists'], $item['playlists']['current']) && !empty($item['playlists']['mine']))
+	{
+		echo '
+			<a href="#" class="zoom" rel="html"><img src="', $settings['images_aeva'], '/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
+
+			<div class="zoom-html">
+				<form action="', $galurl, 'sa=item;in=', $item['id_media'], '" method="post" style="line-height: 2.2em">
+				<span style="float: left">', $txt['media_playlists'], '</span>
+				<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
+					<select name="add_to_playlist">';
+
+		foreach ($item['playlists']['mine'] as $p)
+			echo '<option value="', $p['id'], '">', $p['name'], '</option>';
+
+		echo '
+					</select>
+					<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
+				</span>
+				</form>
+			</div>';
+	}
+
 	echo '
 		</we:block>';
+}
 
-	if (isset($item['playlists'], $item['playlists']['current']))
-		aeva_foxy_show_playlists($item['id_media'], $item['playlists']);
+function template_aeva_item_playlists()
+{
+	global $item, $txt, $galurl, $user_info, $context;
 
-	// Comments!
+	if (!isset($item['playlists']) || empty($item['playlists']['current']))
+		return;
+
+	$id =& $item['id_media'];
+	$pl =& $item['playlists'];
+
+	echo '
+			', $txt['media_playlists'];
+
+	echo '
+			</td></tr>', empty($pl['current']) ? '' : '
+			<tr>';
+
+	$res = 0;
+	foreach ($pl['current'] as $p)
+	{
+		echo $res == 0 ? '
+		<tr>' : '', '
+			<td>
+				<strong><a href="', $galurl, 'sa=playlists;in=', $p['id'], '">', $p['name'], '</a></strong>', empty($p['owner_id']) ? '' : '
+				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
+				<br><span class="smalltext">', $txt['media_items'], ': ', $p['num_items'], $p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br>
+				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>',
+				'</span>
+			</td>', $res == 3 ? '
+		</tr>' : '';
+
+		$res = ($res + 1) % 4;
+	}
+	echo $res != 0 ? '
+		</tr>' : '', '
+		</table>';
+}
+
+function template_aeva_item_comments()
+{
+	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info;
+
 	echo '
 		<we:cat>', empty($amSettings['disable_rss']) ? '
 			<a href="' . $galurl . 'sa=rss;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
@@ -693,22 +797,6 @@ function template_aeva_viewItem()
 
 	echo '
 	</div>';
-
-	add_js_file('scripts/topic.js');
-
-	add_js('
-	var oQuickReply = new QuickReply({
-		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		sScriptUrl: smf_scripturl,
-		sImagesUrl: "' . $settings['images_url'] . '",
-		sContainerId: "quickReplyOptions",
-		sImageId: "quickReplyExpand",
-		sJumpAnchor: "quickreply",
-		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
-		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
-		sSwitchMode: "switch_mode",
-		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
-	});');
 }
 
 function template_aeva_done()

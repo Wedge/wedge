@@ -549,63 +549,6 @@ function aeva_foxy_item_page_playlists($item)
 	return array('mine' => $my_playlists, 'current' => $playlists);
 }
 
-function aeva_foxy_show_playlists($id, $pl)
-{
-	global $txt, $galurl, $user_info, $context, $settings, $scripturl;
-
-	echo '
-
-		<table class="w100 cs1 cp4 bordercolor" style="padding-top: 8px">
-		<tr><td class="titlebg middle" colspan="4" style="padding: 0 6px">';
-
-	if (!empty($pl['mine']))
-	{
-		echo '
-			<form action="' . $galurl . 'sa=item;in=', $id, '" method="post" style="line-height: 2.2em">
-			<span style="float: left">', $txt['media_playlists'], '</span>
-			<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
-				<select name="add_to_playlist">';
-
-		foreach ($pl['mine'] as $p)
-			echo '<option value="', $p['id'], '">', $p['name'], '</option>';
-
-		echo '
-				</select>
-				<input type="submit" value="', $txt['media_submit'], '" name="submit_playlist">
-			</span>
-			</form>';
-	}
-	else
-		echo '
-			', $txt['media_playlists'];
-
-	echo '
-		</td></tr>', empty($pl['current']) ? '' : '
-		<tr>';
-	$res = 0;
-	foreach ($pl['current'] as $p)
-	{
-		if ($res == 0)
-			echo '
-		<tr>';
-		echo '
-			<td>
-				<strong><a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . '">' . $p['name'] . '</a></strong>', empty($p['owner_id']) ? '' : '
-				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
-				<br><span class="smalltext">' . $txt['media_items'] . ': ' . $p['num_items'] . ($p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br>
-				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>')
-				. '</span>
-			</td>';
-		if ($res == 3)
-			echo '
-		</tr>';
-		$res = ($res + 1) % 4;
-	}
-	echo $res != 0 ? '
-		</tr>' : '', '
-		</table>';
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // LINKED TOPICS / NOTIFICATIONS
 ///////////////////////////////////////////////////////////////////////////////
