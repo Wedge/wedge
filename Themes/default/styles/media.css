@@ -77,6 +77,14 @@ iframe.aext
 	background-image: url($images/aeva/progress2.png)
 
 #viewitem
+	h3
+		margin-top, margin-bottom: 0
+	h4
+		padding: 0 6px 2px
+
+#media-details
+	h4
+		padding: 0 6px 2px
 	.info_list
 		padding, margin: 0
 		li
@@ -84,10 +92,6 @@ iframe.aext
 			float: left
 			width: 100%
 			padding: 0 6px 3px 6px
-	h3
-		margin-top, margin-bottom: 0
-	h4
-		padding: 3px 6px 1px 6px
 	dt
 		font-weight: 700
 		font-size, line-height: .9em
@@ -167,18 +171,26 @@ iframe.aext
 	width: 100%
 	section
 		margin: 12px 0
-	.item
-		display: table-cell
-		vertical-align: middle
-		text-align: center
-		overflow: visible
-		box-sizing: border-box
-		padding: 16px 0
-	.details
-		display: table-cell
-		vertical-align: middle
-		overflow: visible
-		width: 220px
+
+#media-item
+	display: table-cell
+	vertical-align: middle
+	text-align: center
+	overflow: visible
+	box-sizing: border-box
+	padding: 16px 0
+
+#media-details
+	display: table-cell
+	vertical-align: middle
+	overflow: visible
+	width: 220px
+	.block
+		gradient-background: rgba(0,0,0, .05)
+	#sidebar &
+		width: auto
+		.block
+			gradient-background: rgba(255,255,255, .3)
 
 div.mgabs
 	img

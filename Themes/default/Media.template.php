@@ -357,15 +357,23 @@ function template_aeva_item_prevnext()
 		<div class="mg_next">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">' . $txt['media_next'] . '</a> &raquo;' : $txt['media_next'] . ' &raquo;', '</div>';
 }
 
-function template_aeva_item_main()
+function template_aeva_item_wrap_begin()
 {
-	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+	global $item;
 
 	echo '
 		<we:cat>
 			', $item['title'], '
 		</we:cat>
-		<div id="itembox"><div class="item">',
+		<div id="itembox">';
+}
+
+function template_aeva_item_main()
+{
+	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+
+	echo '
+		<div id="media-item">',
 			$item['embed_object'], $item['is_resized'] ? '
 			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '<br>';
 
@@ -394,11 +402,13 @@ function template_aeva_item_main()
 
 function template_aeva_item_details()
 {
-	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+
+	$item =& $context['item_data'];
 
 	echo '
-		<div class="details">
-			<we:block class="windowbg2" header="', westr::safe($txt['media_item_info']), '">
+		<div id="media-details">
+			<we:block header="', westr::safe($txt['media_item_info']), '">
 			<dl class="settings">
 				<dt>', $txt['media_posted_on'], '</dt>
 				<dd>', timeformat($item['time_added']), '</dd>', !empty($item['last_edited']) ? '
@@ -496,7 +506,7 @@ function template_aeva_item_details()
 	if ($amSettings['show_extra_info'] == 1 && !empty($item['extra_info']))
 	{
 		echo '
-		<we:block class="windowbg" header="', westr::safe($txt['media_extra_info']), '">';
+		<we:block header="', westr::safe($txt['media_extra_info']), '">';
 
 		echo $amSettings['use_lightbox'] ? '
 			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
@@ -527,7 +537,13 @@ function template_aeva_item_details()
 				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
 			</ul>
 		</we:block>
-		</div></div>';
+		</div>';
+}
+
+function template_aeva_item_wrap_end()
+{
+	echo '
+		</div>';
 }
 
 function template_aeva_item_actions()
