@@ -207,7 +207,7 @@ var Yup = {
 					continue;
 
 				$('<li class="succ_item"></li>')
-					.append($('<img src="' + galurl + 'sa=media;in=' + mid + ';thumb" class="right">'))
+					.append($('<img src="' + smf_prepareScriptUrl(smf_scripturl) + 'action=media;sa=media;in=' + mid + ';thumb" class="right">'))
 					.append($('<input type="text" name="item_title_' + mid + '" tabindex="' + (Yup.tabindex * 2) + '"></input>').val(this_ret[1]))
 					.append($('<textarea rows="5" name="item_desc_' + mid + '" tabindex="' + (Yup.tabindex * 2 + 1) + '"></textarea>'))
 					.appendTo(element);

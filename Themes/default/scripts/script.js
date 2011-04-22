@@ -7,7 +7,6 @@
 var
 	_formSubmitted = false,
 	_lastKeepAliveCheck = new Date().getTime(),
-	_ajax_indicator_ele = null,
 	smf_editorArray = [],
 
 	// Basic browser detection
@@ -34,10 +33,7 @@ function getXMLDocument(sUrl, funcCallback)
 // Send a post form to the server using XMLHttpRequest.
 function sendXMLDocument(sUrl, sContent, funcCallback)
 {
-	$.ajax(typeof funcCallback != 'undefined' ?
-		{ url: sUrl, data: sContent, type: 'POST', context: this, success: funcCallback } :
-		{ url: sUrl, data: sContent, type: 'POST', context: this }
-	);
+	$.ajax($.extend({}, { url: sUrl, data: sContent, type: 'POST', context: this }, typeof funcCallback != 'undefined' ? { success: funcCallback } : {}));
 	return true;
 }
 
@@ -437,24 +433,30 @@ smc_Toggle.prototype.toggle = function ()
 
 function ajax_indicator(turn_on)
 {
-	if (!_ajax_indicator_ele)
-	{
-		_ajax_indicator_ele = $('#ajax_in_progress');
-		if (!(_ajax_indicator_ele.length) && ajax_notification_text !== null && turn_on)
-			create_ajax_indicator_ele();
-	}
-	if (is_ie6)
-		_ajax_indicator_ele.css({ position: 'absolute', top: $(document).scrollTop() });
-	_ajax_indicator_ele.toggle(turn_on);
+	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
+	if (turn_on)
+		$('<div id="ajax_in_progress"></div>').html('<a href="#" onclick="ajax_indicator(false);"' +
+			(ajax_notification_cancel_text ? ' title="' + ajax_notification_cancel_text + '"' : '') + '></a>' + ajax_notification_text
+		).css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
+	else
+		$('#ajax_in_progress').remove();
 }
 
-function create_ajax_indicator_ele()
+function selectText(box)
 {
-	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
-	_ajax_indicator_ele = $('<div></div>').attr('id', 'ajax_in_progress').html(
-		'<a href="#" onclick="ajax_indicator(false);"><img src="' + smf_images_url + '/icons/quick_remove.gif"'	+ (ajax_notification_cancel_text ?
-		' alt="' + ajax_notification_cancel_text + '" title="' + ajax_notification_cancel_text + '"' : '') + '>' + ajax_notification_text
-	).appendTo('body');
+	box.focus();
+	box.select();
+}
+
+function ajaxRating()
+{
+	$('#ratingElement').html('<img src="' + (typeof smf_default_theme_url == "undefined" ? smf_theme_url : smf_default_theme_url) + '/images/loader.gif">');
+	sendXMLDocument($('#ratingForm').attr('action') + ';xml', 'rating=' + $('#rating').val(), ajaxRating2);
+}
+
+function ajaxRating2(XMLDoc)
+{
+	$('#ratingElement').html($('ratingObject', XMLDoc).text());
 }
 
 
@@ -815,7 +817,6 @@ var
 	can_ajax = $.support.ajax;
 
 /* Optimize:
-_ajax_indicator_ele = _a
 menu_baseId = _b
 _cookie = _c
 menu_delay = _d

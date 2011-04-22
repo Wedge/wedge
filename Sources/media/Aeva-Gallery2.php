@@ -298,7 +298,7 @@ function aeva_moveItems()
 		aeva_logModAction($opts);
 
 		// Redirect back to previous album
-		redirectexit($galurl.'sa=album;in='.$items[0]['id_album']);
+		redirectexit($galurl . 'sa=album;in=' . $items[0]['id_album']);
 	}
 
 	// Linktree
@@ -325,7 +325,7 @@ function aeva_unseen()
 	{
 		checkSession('get');
 		aeva_markAllSeen();
-		redirectexit($galurl.'sa=unseen');
+		redirectexit($galurl . 'sa=unseen');
 	}
 
 	if (!empty($_REQUEST['pageseen']))
@@ -422,7 +422,7 @@ function aeva_unseen()
 	$context['page_title'] = $txt['media_viewing_unseen'];
 	loadSubTemplate('aeva_unseen');
 	$context['aeva_current'] = 'unseen';
-	add_linktree($galurl.'sa=unseen',$txt['media_viewing_unseen']);
+	add_linktree($galurl . 'sa=unseen', $txt['media_viewing_unseen']);
 }
 
 // Handles searching of items
@@ -436,7 +436,7 @@ function aeva_mgSearch()
 	foreach ($context['aeva_album_list'] as $album)
 		$albums[$album] = str_repeat('-', $context['aeva_albums'][$album]['child_level']).' '.$context['aeva_albums'][$album]['name'];
 	// Search linktree
-	add_linktree($galurl.'sa=search', $txt['media_search']);
+	add_linktree($galurl . 'sa=search', $txt['media_search']);
 
 	// Page title
 	$context['page_title'] = $txt['media_search'];
@@ -776,7 +776,7 @@ function aeva_mgStats()
 	$context['page_title'] = $txt['media_gallery'].' - '.$txt['media_stats'];
 	$context['aeva_current'] = 'stats';
 	loadSubTemplate('aeva_stats');
-	add_linktree($galurl.'sa=stats', $txt['media_stats']);
+	add_linktree($galurl . 'sa=stats', $txt['media_stats']);
 }
 
 // Manages your albums' control panel
@@ -787,12 +787,8 @@ function aeva_albumCP($is_admin = false)
 	$alburl = $is_admin ? $scripturl . '?action=admin;area=aeva_albums;' . $context['session_var'] . '=' . $context['session_id'] . ';' : $galurl . 'area=mya;';
 	if (!$is_admin)
 	{
-		// This file is needed for the toggle
-		$context['header'] .= '
-	<script src="' . add_js_file('scripts/media-admin.js', false, true) . '"></script>
-	<script><!-- // --><![CDATA[
-		var galurl = "' . $galurl . '";
-	// ]]></script>';
+		// This is needed for the toggle
+		add_js_file('scripts/media-admin.js');
 
 		$context['page_title'] = $txt['media_my_user_albums'];
 		$context['aeva_header']['data']['title'] = $txt['media_my_user_albums'];
@@ -1169,7 +1165,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'type' => 'file',
 			'fieldname' => 'icon',
 			'subtext' => $is_edit ? $txt['media_admin_icon_edit_subtext'] : '',
-			'add_text' => $is_edit ? '<p><img src="'.$galurl.'sa=media;in='.$id_album.';icon" style="padding-left: 4px"></p>' : '',
+			'add_text' => $is_edit ? '<p><img src="' . $galurl . 'sa=media;in=' . $id_album . ';icon" style="padding-left: 4px"></p>' : '',
 		),
 		'profile' => array(
 			'label' => $txt['media_perm_profile'],
@@ -2016,7 +2012,6 @@ function aeva_massUpload()
 		add_js_file('http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.9.0/build/element/element-min.js&amp;2.9.0/build/uploader/uploader-min.js', true);
 		add_js_file('scripts/up.js');
 		add_js('
-	var galurl = "', $galurl, '";
 	Yup.init({
 		swfurl: "', aeva_theme_url('uploader.swf'), '",
 		postURL: ', JavaScriptEscape($context['aeva_submit_url']), ',
@@ -2248,15 +2243,12 @@ function aeva_massUploadFinish()
 // Profile area for our gallery
 function aeva_profileSummary($memID)
 {
-	global $amSettings, $context, $txt, $settings, $galurl, $scripturl;
+	global $amSettings, $context, $txt, $settings, $scripturl;
 
 	loadSource('media/Subs-Media');
 
-	// Some CSS and JS we'll be using
+	// Some CSS we'll be using
 	add_css_file('media', true);
-	add_js('
-	var galurl = "'.$galurl.'";');
-	add_js_file('media.js');
 
 	// Load the gallery template's profile summary section
 	loadMediaSettings(null, true, true);
@@ -2325,15 +2317,12 @@ function aeva_profileSummary($memID)
 // Viewing all items
 function aeva_profileItems($memID)
 {
-	global $amSettings, $context, $txt, $settings, $galurl, $scripturl;
+	global $amSettings, $context, $txt, $settings, $scripturl;
 
 	loadSource('media/Subs-Media');
 
-	// Some CSS and JS we'll be using
+	// Some CSS we'll be using
 	add_css_file('media', true);
-	add_js('
-	var galurl = "'.$galurl.'";');
-	add_js_file('media.js');
 
 	// Load the gallery template's profile items section
 	loadMediaSettings(null, true, true);
@@ -2353,7 +2342,7 @@ function aeva_profileItems($memID)
 // Viewing all comments
 function aeva_profileComments($memID)
 {
-	global $amSettings, $context, $txt, $settings, $galurl, $scripturl;
+	global $amSettings, $context, $txt, $settings, $scripturl;
 
 	loadSource('media/Subs-Media');
 
@@ -2377,7 +2366,7 @@ function aeva_profileComments($memID)
 // Viewing all comments
 function aeva_profileVotes($memID)
 {
-	global $amSettings, $context, $txt, $settings, $galurl, $scripturl;
+	global $amSettings, $context, $txt, $settings, $scripturl;
 
 	loadSource('media/Subs-Media');
 

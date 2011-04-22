@@ -4,81 +4,84 @@
  * (c) Wedgeward, 2011
  */
 
-.zoom {
-	display: inline-block;
-}
+.zoom
+	display: inline-block
 
-#zoom {
-	display: none;
-	position: absolute;
-	background: #000;
-	border: 1px solid #333;
-	box-shadow: 0 0 12px #666;
-	border-radius: 8px;
-}
-#zoom-content {
-	margin: 15px;
-	img.scale {
-		width: 100%;
-		height: auto;
-	}
-}
-#zoom-close extends .inline-block {
-	position: absolute;
-	top, left: -12px;
-	width, height: 30px;
-	background: url($images/aeva/close.png) no-repeat;
-}
-#zoom-desc extends #zoom-content {
-	position: absolute;
-	box-sizing: border-box;
-	transition: opacity .5s ease;
-	opacity, bottom: 0;
-	width: 100%;
-	color: #fff;
-	padding: 12px;
-	gradient-background: rgba(0,0,0,.5), darken(rgba(0,0,0,.5), 20%), top
-	#zoom:hover & {
-		transition: opacity .5s ease;
-		opacity: 1;
-	}
-	.mg_desc {
-		color: #ccc;
-	}
-}
+#zoom
+	display: none
+	position: absolute
+	background: #fff
+	border: 1px solid #ccc
+	box-shadow: 0 0 12px #666
+	border-radius: 8px
+	&.black
+		background: #000
+		border: 1px solid #333
 
-.zoom-overlay {
-	display: none;
-	font-size: 1em;
-	padding: 5px;
-	// background: white;
-}
-.zoom-expand {
-   background: url($images/aeva/arrow_out.png) no-repeat;
-   display: block;
-   margin: 0 10px 10px 0;
-   width: 34px;
-   height: 34px;
-}
-.zoom-loading {
-	position: absolute;
-	display: block;
-	color: black;
-	font-size: 8pt;
-	font-weight: bold;
-	text-transform: uppercase;
-	padding: 5px 5px 0 28px;
-	border: 1px solid rgba(255,255,255, .25);
-	border-radius: 8px;
-	margin: 4px;
-	background: rgba(255,255,255, .5) url($images/loader.gif) 8px 6px no-repeat;
-	height: 20px;
-}
-.zoom-html {
-	display: none;
-}
+#zoom-content
+	margin: 15px
+	img.scale
+		width: 100%
+		height: auto
 
-.zoom-overlay {
-	display: none;
-	padding: 0;
-}
+#zoom-close
+	display: inline-block
+	position: absolute
+	top, left: -12px
+	width, height: 30px
+	background: url($images/aeva/close.png) no-repeat
+
+#zoom-desc extends #zoom-content
+	position: absolute
+	box-sizing: border-box
+	transition: opacity .5s ease
+	opacity, bottom: 0
+	width: 100%
+	padding: 12px
+	color: #000
+	gradient-background: rgba(255,255,255,.7)
+	.mg_desc
+		color: #555
+	#zoom.black &
+		color: #fff
+		gradient-background: rgba(0,0,0,.4)
+		.mg_desc
+			color: #ccc
+	#zoom:hover &
+		transition: opacity .5s ease
+		opacity: 1
+
+.zoom-overlay
+	display: none
+	font-size: 1em
+	padding: 5px
+	// background: white
+
+.zoom-expand
+	background: url($images/aeva/arrow_out.png) no-repeat
+	display: block
+	margin: 0 10px 10px 0
+	width: 34px
+	height: 34px
+
+.zoom-loading
+	position: absolute
+	display: block
+	color: black
+	font-size: 8pt
+	font-weight: bold
+	text-transform: uppercase
+	padding: 5px 5px 0 28px
+	border: 1px solid rgba(255,255,255, .25)
+	border-radius: 8px
+	margin: 4px
+	background-color: rgba(255,255,255, .5)
+	background-position: 8px 6px
+	height: 20px
+
+.zoom-html
+	display: none
+
+.zoom-overlay
+	display: none
+	padding: 0

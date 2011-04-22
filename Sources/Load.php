@@ -207,7 +207,7 @@ function loadUserSettings()
 				cache_put_data('user_settings-' . $id_member, $user_settings, 60);
 		}
 
-		// Did we find 'im?  If not, junk it.
+		// Did we find 'im? If not, junk it.
 		if (!empty($user_settings))
 		{
 			// As much as the password should be right, we can assume the integration set things up.
@@ -364,7 +364,7 @@ function loadUserSettings()
 	$user_info['url'] = empty($_SERVER['REAL_HTTP_HOST']) ? $user_info['server'] . $_SERVER['REQUEST_URI'] : substr($user_info['server'], 0, strpos($user_info['server'], '/')) . '//' . $_SERVER['HTTP_HOST'] . '/';
 
 	$user_info['groups'] = array_unique($user_info['groups']);
-	// Make sure that the last item in the ignore boards array is valid.  If the list was too long it could have an ending comma that could cause problems.
+	// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.
 	if (!empty($user_info['ignoreboards']) && empty($user_info['ignoreboards'][$tmp = count($user_info['ignoreboards']) - 1]))
 		unset($user_info['ignoreboards'][$tmp]);
 
@@ -900,7 +900,7 @@ function loadPermissions()
 	if (isset($cache_groups) && !empty($board) && $modSettings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array($user_info['permissions'], null), 240);
 
-	// Banned?  Watch, don't touch..
+	// Banned? Watch, don't touch..
 	banPermissions();
 
 	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests
@@ -1047,7 +1047,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			cache_put_data('member_data-' . $set . '-' . $new_loaded_ids[$i], $user_profile[$new_loaded_ids[$i]], 240);
 	}
 
-	// Are we loading any moderators?  If so, fix their group data...
+	// Are we loading any moderators? If so, fix their group data...
 	if (!empty($loaded_ids) && !empty($board_info['moderators']) && $set === 'normal' && count($temp_mods = array_intersect($loaded_ids, array_keys($board_info['moderators']))) !== 0)
 	{
 		if (($row = cache_get_data('moderator_group_info', 480)) == null)
@@ -1629,7 +1629,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			}
 		}
 
-		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
+		// Hmm... check #2 - is it just different by a www? Send them to the correct place!!
 		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && SMF != 'SSI')
 		{
 			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;)
@@ -1648,7 +1648,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (strtr($detected_url, array('https://' => 'http://')) == $boardurl)
 			$do_fix = true;
 
-		// Okay, #4 - perhaps it's an IP address?  We're gonna want to use that one, then. (assuming it's the IP or something...)
+		// Okay, #4 - perhaps it's an IP address? We're gonna want to use that one, then. (assuming it's the IP or something...)
 		if (!empty($do_fix) || preg_match('~^http[s]?://(?:[\d.:]+|\[[\d:]+\](?::\d+)?)(?:$|/)~', $detected_url) == 1)
 		{
 			// Caching is good ;)
@@ -1764,7 +1764,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$txt = array();
 	$simpleActions = array(
 		'findmember',
-		'help',
 		'printpage',
 		'spellcheck',
 	);
@@ -1783,7 +1782,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadTemplate('Xml');
 		hideChrome();
 	}
-	// These actions don't require the index template at all
+	// These actions don't require the index template at all. Meaning: don't use blocks in their templates...
 	elseif (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
 		loadLanguage('index+Modifications');
@@ -2015,7 +2014,7 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 		if (function_exists('template_' . $template_name . '_init'))
 			call_user_func('template_' . $template_name . '_init');
 	}
-	// Hmmm... doesn't exist?!  I don't suppose the directory is wrong, is it?
+	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
 	elseif (!file_exists($settings['default_theme_dir']) && file_exists($boarddir . '/Themes/default'))
 	{
 		$settings['default_theme_dir'] = $boarddir . '/Themes/default';
@@ -2067,7 +2066,7 @@ function execSubTemplate($sub_template_name, $fatal = false)
 	elseif ($fatal !== 'ignore')
 		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the %s sub template!', (string) $sub_template_name), 'template'));
 
-	// Are we showing debugging for templates?  Just make sure not to do it before the doctype...
+	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
 	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $sub_template_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
 		echo '
 <div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $sub_template_name, ' ends ----</div>';
@@ -2185,7 +2184,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 		}
 
-		// That couldn't be found!  Log the error, but *try* to continue normally.
+		// That couldn't be found! Log the error, but *try* to continue normally.
 		if (!$found && $fatal)
 		{
 			log_error(sprintf($txt['theme_language_error'], $template_name . '.' . $lang, 'template'));
@@ -2724,7 +2723,7 @@ function sessionGC($max_lifetime)
 {
 	global $modSettings;
 
-	// Just set to the default or lower?  Ignore it for a higher value. (hopefully)
+	// Just set to the default or lower? Ignore it for a higher value. (hopefully)
 	if (!empty($modSettings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $modSettings['databaseSession_lifetime'] > $max_lifetime))
 		$max_lifetime = max($modSettings['databaseSession_lifetime'], 60);
 

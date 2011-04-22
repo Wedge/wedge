@@ -57,6 +57,7 @@ function Help()
 		loadLanguage('ManagePermissions');
 
 	loadTemplate('Help');
+	hideChrome();
 
 	// Set the page title to something relevant.
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];

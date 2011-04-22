@@ -1398,14 +1398,14 @@ function ob_sessrewrite($buffer)
 	else
 		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
 
-	// Nerd alert -- most of the following can be done in a simple regex.
+	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
 	// It's case-insensitive, but always slower -- noticeably so with hundreds of blocks.
 
 	// Don't waste time replacing blocks if there's none in the first place.
 	if (!empty($context['blocks']) && strpos($buffer, '<we:') !== false)
 	{
-		// Case-insensitive version - twice slower, but it's so fast to begin with...
+		// Case-sensitive version - you themers please don't use <We> or <WE> tags, or I'll tell your momma.
 		while (strpos($buffer, '<we:') !== false)
 		{
 			$p = 0;
@@ -1553,7 +1553,7 @@ function pretty_scripts_restore($match)
 }
 
 /**
- * A quick alias to tell Wedge not to show the top and sidebar sub-templates.
+ * A quick alias to tell Wedge to hide sub-templates that don't belong to the main flow.
  *
  * @param array $layers An array with the layers we actually want to show. Usually empty.
  */
@@ -1561,8 +1561,15 @@ function hideChrome($layers = null)
 {
 	global $context;
 
+	// Removing layers such as sidebar and top area.
 	$context['template_layers'] = $layers === null ? array() : $layers;
+
+	// Nothing to see here, sir.
 	$context['hide_chrome'] = true;
+
+	// This is a bit of a hack, but it's likely 'content' is linked
+	// with 'sidebar', so we need to strip it down to the minimum.
+	$context['blocks']['content'] = array('has_if' => false, 'body' => '{body}');
 }
 
 /**

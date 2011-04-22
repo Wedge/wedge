@@ -55,9 +55,12 @@ function template_init()
 		'title2'	=> '<header class="title2">{body}</header>',
 		'cat'		=> '<header class="cat">{body}</header>',
 
-		// Now with a regular content block. You may add a title to it. If you don't specify a title,
-		// everything between the <if:title> tags will be hidden.
-		'block'		=> '<section><if:title><header class="title">{title}</header></if:title>{body}</section>',
+		// Now with a regular content block. You may add a class, title and/or footer to it. If you don't specify a title,
+		// everything between the <if:title> tags will be hidden. Same for the footer and class.
+		'block'		=> '<section<if:class> class="{class}"</if:class><if:style> style="{style}"</if:style>>'
+						. '<if:header><header>{header}</header></if:header>'
+						. '{body}'
+						. '<if:footer><footer>{footer}</footer></if:footer></section>',
 
 		// Our sidebar. Note that we can serve different content to different browsers by using an array
 		// with browser names and a "else" fallback. This can also be done in settings.xml
@@ -415,8 +418,6 @@ function template_html_below()
 
 	initMenu("main_menu");
 
-	<!-- insert inline events here -->
-
 	var oMainHeaderToggle = new smc_Toggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'upper_section\'],
@@ -439,8 +440,10 @@ function template_html_below()
 	// Output any postponed Javascript added by templates
 	// and mods, and close all outstanding tags. We're done!
 	// $context['footer_js'] assumes the <script> tag is already output.
-	echo $context['footer_js'], empty($footer_coding) ? '' : '
-// ]]></script>', '
+	echo $context['footer_js'], empty($footer_coding) ? '
+<script><!-- // --><![CDATA[' : '', '
+	<!-- insert inline events here -->
+// ]]></script>
 </body></html>';
 }
 

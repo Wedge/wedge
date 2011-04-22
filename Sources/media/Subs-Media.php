@@ -2785,7 +2785,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	$w45 = round(100 / $cols) - 5;
 	$is_alone = $cols > 1 && count($albums) < 2;
 	$count = ceil(count($albums) / $cols);
-	$i = $j = -1;
+	$i = 0;
 
 	if (!$skip_table)
 		echo '
@@ -2799,13 +2799,12 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		$totals .= $it2 == 0 ? '' : sprintf($it1 == 0 ? $txt['media_items_only_in_children'] : $txt['media_items_also_in_children'], $it2);
 		$can_moderate_here = $can_moderate || (!$user_info['is_guest'] && $user_info['id'] == $album['owner']['id']);
 
-		$i++;
-		if ($i % $cols === 0 && ++$j)
+		if ($i++ % $cols === 0)
 			echo '<tr>';
 
 		echo '
-		<td width="5%" class="windowbg top right">', $album['icon']['src'], '</td>
-		<td', $i <= $cols ? ' width="' . $w45 . '%"' : '', ' class="windowbg2 top"', $is_alone ? ' colspan="' . ($cols*2-1) . '"' : '', '>
+		<td style="width: 5%" class="windowbg top right">', $album['icon']['src'], '</td>
+		<td', $i <= $cols ? ' style="width: ' . $w45 . '%"' : '', ' class="windowbg2 top">
 			<div class="mg_large">', $can_moderate_here ? '
 				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
@@ -2859,7 +2858,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
-			<img width="10" height="10" src="' . $settings['images_aeva'] . '/';
+			<img style="width: 10px; height: 10px" src="' . $settings['images_aeva'] . '/';
 	$new_icon = '<div class="new_icon"></div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$per_line = $per_line > 0 ? $per_line : (!empty($amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) ?
@@ -2869,7 +2868,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 	$can_moderate &= isset($_REQUEST['action']) && $_REQUEST['action'] == 'media';
 	$can_moderate_here = allowedTo('media_moderate');
 	$re = '
-		<table class="pics smalltext" width="' . (count($items) == 1 ? max(120, $first['w_thumb'] + 12) . '"' : '100%" cellspacing="8"') . (!empty($align) ? ' align="' . $align . '"' : '') . '>';
+		<table class="pics smalltext cs8" style="width: ' . (count($items) == 1 ? max(120, $first['w_thumb'] + 12) . 'px"' : '100%"') . (!empty($align) ? ' align="' . $align . '"' : '') . '>';
 
 	$cnt = 0;
 	$ex_album_id = 0;
@@ -2919,10 +2918,10 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']"></div>' : '';
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
-		<td' . ($i['approved'] ? '' : '  class="unapp"') . ' id="aepic_' . $i['id'] . '" align="center"' . ($context['browser']['is_ie6'] ? ' onmouseover="mouseo(' . $i['id'] . ', 0)" onmouseout="mouseo(' . $i['id'] . ', 1)"' : '') . '>
-			<div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"><a href="'
-			. $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="zoom"'
-			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '>&nbsp;</a>' . $inside_caption . '</div>
+		<td class="center' . ($i['approved'] ? '' : ' unapp') . '">
+			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="zoom"'
+			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
+			. $inside_caption . '
 
 			<div style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '
 				<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '"' . ($title != $i['title'] ? ' title="'
@@ -2931,19 +2930,20 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 
 			<div class="ae_details">
 				<div style="width: ' . ($amSettings['max_thumb_width'] + 10) . 'px; left: -' . round($amSettings['max_thumb_width'] / 2 + 9) . 'px" class="aevisio" id="visio_' . $i['id'] . '">';
+
+		$re .= ($user_is_known || $main_user == $i['poster_id'] ? '' : ($ico ? $icourl . 'person.gif" title="' . $txt['media_posted_by'] . '">&nbsp;' : '
+			' . $txt['media_posted_by'] . ' ') . aeva_profile($i['poster_id'], $i['poster_name']) . '<br>') . $icourl . 'clock.gif" title=""> ' . $i['time'] . (!$in_album ? '<br>
+			' . $txt['media_in_album'] . ' ' . ($i['hidden_album'] ? $album_name : '<a href="' . $galurl . 'sa=album;in=' . $i['id_album'] . '">' . $album_name . '</a>') : '') . '<br>';
+
 		if ($ico) // Icons only?
 			$re .= $icourl . 'graph.gif" title="' . $txt['media_views'] . '">&nbsp;' . $i['views'] .
 			(!empty($i['comments']) ? $icourl . 'comment.gif" title="' . $txt['media_comments'] . '">&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') : '') .
 			(!empty($i['new_comments']) ? '(' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') .
-			(!empty($i['voters']) ? $icourl . 'star.gif" title="' . $txt['media_rating'] . '">&nbsp;' . $i['rating'] : '') . '<br>';
+			(!empty($i['voters']) ? $icourl . 'star.gif" title="' . $txt['media_rating'] . '">&nbsp;' . $i['rating'] : '');
 		else
-			$re .= $icourl . 'graph.gif">&nbsp;' . $txt['media_views'] . ':&nbsp;' . $i['views'] . '<br>' .
-			(!empty($i['comments']) ? $icourl . 'comment.gif">&nbsp;' . $txt['media_comments'] . ':&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') . '<br>' : '') .
-			(!empty($i['voters']) ? $icourl . 'star.gif">&nbsp;' . $txt['media_rating'] . ':&nbsp;' . $i['rating'] . '<br>' : '');
-
-		$re .= ($user_is_known || $main_user == $i['poster_id'] ? '' : ($ico ? $icourl . 'person.gif" title="' . $txt['media_posted_by'] . '">&nbsp;' : '
-			' . $txt['media_posted_by'] . ' ') . aeva_profile($i['poster_id'], $i['poster_name']) . '<br>') . $icourl . 'clock.gif" title=""> ' . $i['time'] . (!$in_album ? '<br>
-			' . $txt['media_in_album'] . ' ' . ($i['hidden_album'] ? $album_name : '<a href="' . $galurl . 'sa=album;in=' . $i['id_album'] . '">' . $album_name . '</a>') : '');
+			$re .= $icourl . 'graph.gif">&nbsp;' . $txt['media_views'] . ':&nbsp;' . $i['views'] .
+			(!empty($i['comments']) ? '<br>' . $icourl . 'comment.gif">&nbsp;' . $txt['media_comments'] . ':&nbsp;' . $i['comments'] . (!empty($i['new_comments']) ? ' (' . $new_icon . '&nbsp;' . $i['new_comments'] . ')' : '') : '') .
+			(!empty($i['voters']) ? '<br>' . $icourl . 'star.gif">&nbsp;' . $txt['media_rating'] . ':&nbsp;' . $i['rating'] . '' : '');
 
 		$re .= '
 				</div>

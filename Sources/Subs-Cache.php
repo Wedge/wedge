@@ -73,12 +73,16 @@ function add_js_inline()
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
 	global $context, $modSettings, $footer_coding, $settings, $cachedir, $boardurl;
+	static $done_files = array();
 
 	if (!is_array($files))
 		$files = (array) $files;
 
-	// Delete all duplicates.
-	$files = array_keys(array_flip($files));
+	// Delete all duplicates and already cached files.
+	$files = array_diff(array_keys(array_flip($files)), $done_files);
+	$done_files = array_merge($done_files, $files);
+	if (empty($files))
+		return;
 
 	if ($is_direct_url)
 	{

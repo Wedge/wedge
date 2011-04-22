@@ -58,12 +58,11 @@
 		iOS devices to show the sidebar below the main content.
 	-->
 
-	<code for="ie6" include="scripts/pngfix.js"><![CDATA[
-	$('div.ping').each(function () {
-		$(this).html($('<img class="ping">').attr('src', $(this).css('backgroundImage').slice(5, -2))).css('backgroundImage', '');
-	});
-	DD_belatedPNG.fix('img.ping,#top_section,#footer div.frame');
+	<code for="ie6" include="scripts/pngfix.js,scripts/ie6hover.js"><![CDATA[
+	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
+	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame');
+	$.ie6hover();
 	]]></code>
 
 	<code for="iphone"><![CDATA[

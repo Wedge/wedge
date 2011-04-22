@@ -42,6 +42,10 @@ body
 	font: 78%/130% $main_font
 	margin, padding: 0
 
+
+/* Main layout declarations (body, sidebar...)
+------------------------------------------------------- */
+
 #header, #content, #linktree
 	margin: 0 auto
 	background: $main_bg
@@ -150,16 +154,6 @@ ul#noava
 			font: bold 2.9em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 			text-shadow: 0 0 8px #333
 
-.arrows
-	background-image: url($images/menu.gif)
-	background-repeat: no-repeat
-
-.wedgesymbol
-	background: transparent url($images/wedgesight.png) 99% 70% no-repeat
-
-.minilogo
-	background: transparent url($images/minilogo.png) no-repeat
-
 // Float these items to the right
 #siteslogan, #wedgelogo
 	float: right
@@ -257,10 +251,6 @@ a.new_win
 table
 	empty-cells: show
 
-// Help popups' body
-#help_popup
-	padding: 1em
-
 // Wraps the entire forum when a forum width is set.
 #wrapper
 	margin: 0 auto
@@ -299,12 +289,89 @@ strong
 em
 	font-style: italic
 
-// Alternative for u tag
-.underline
-	text-decoration: underline
-
 .ping
 	box-shadow: none !important
+
+/* Common styles used for inheritance. You can declare
+	them anywhere you like, but having them near the
+	start of the file should avoid cascading issues.
+------------------------------------------------------- */
+
+.arrows
+	background-image: url($images/menu.gif)
+	background-repeat: no-repeat
+
+.wedgesymbol
+	background: transparent url($images/wedgesight.png) 99% 70% no-repeat
+
+.minilogo
+	background: transparent url($images/minilogo.png) no-repeat
+
+// "With rounded corners" class, for modern browsers...
+.wrc
+	margin-top: 2px
+	margin-bottom: 4px
+	padding: .9em 1.2em
+	border-radius: 12px
+	border: 1px solid rgba(0,0,0, .1)
+
+.wrc_top extends .wrc
+	border-radius: 12px 12px 0 0
+	border-bottom, margin-bottom: 0
+
+.wrc_bottom extends .wrc
+	border-radius: 0 0 12px 12px
+	border-top, margin-top: 0
+
+.grad40
+	background-image: url($images/theme/grad40.png)
+	background-repeat: repeat-x
+
+.grad700
+	background-image: url($images/theme/grad700.png)
+	background-repeat: repeat-x
+
+// Can't use an extends on .zoom-loading, because it's in a different file.
+.loading, .zoom-loading
+	background-image: url($images/loader.gif)
+	background-repeat: no-repeat;
+
+.wehead extends .grad40
+	background-color: hue(lighten(#936f69, 50%), -90)
+	color: #fff
+	a
+		color: #e0eeff
+
+.wefoot extends .grad40
+	background-color: hue(lighten(#936f69, 50%), 90)
+	color: #fff
+	a
+		color: #eed
+
+// Alternating backgrounds for posts, and several other sections of the forum.
+.windowbg extends .grad700
+	color: #000
+	background-color: #f3f3f3
+	background-position: 0 -550px
+
+.windowbg2 extends .windowbg
+	background-color: #f6f3f0
+
+.windowbg3 extends .windowbg
+	background-color: #cad3cd
+
+.windowbg a
+	color: #47a
+
+.inline-block
+	display: inline-block
+	mixin: ie-inline-block
+	vertical-align: middle
+
+.cell
+	text-align: center
+	display: table-cell
+	vertical-align: middle
 
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
@@ -397,8 +464,7 @@ input.search
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
-	background: none
-	border: 0
+	mixin: checkbox-styling
 
 .cat input[type=checkbox]
 	margin: 5px -3px 0 7px
@@ -633,16 +699,6 @@ li.separator
 header
 	display: block
 
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-	vertical-align: middle
-
-.cell
-	text-align: center
-	display: table-cell
-	vertical-align: middle
-
 .floatright
 	float: right
 
@@ -799,10 +855,6 @@ code.bbc_code, code.php_code
 .bbc_tt
 	font-family: "dejavu sans mono", monaco, "lucida console", "courier new", monospace
 
-// Generally, those [?] icons.  This makes your cursor a help icon.
-.help
-	cursor: help
-
 // emote, try typing "/me uses this a lot" in a post.
 .meaction
 	color: red
@@ -875,46 +927,41 @@ td.footnum a:target, a.fnotel:target
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
+section.windowbg extends .wrc
+	overflow: hidden
+	header extends .wehead
+		font-weight: 700
+		padding: 3px 12px
+		border-radius: 8px 8px 0 0
+		margin: -0.9em -1.2em 1em
+	footer extends .wefoot
+		padding: 3px 12px
+		border-radius: 0 0 8px 8px
+		margin: .5em -1.2em -0.9em
+	dl.settings
+		margin: 0
+
 tr.catbg
 	td, th
-		base: .grad40
-		background-color: hue(lighten(#936f69, 50%), -90)
-	a
-		color: #e0eeff
+		base: .wehead
 
 tr.titlebg
 	td, th
-		base: .grad40
-		background-color: hue(lighten(#936f69, 50%), 90)
-	a
-		color: #eed
+		base: footer.titlebg
 
 tr.catbg, tr.titlebg
-	color: #fff
 	select
 		height: 17px
 		font-size: 11px
 		margin-top: 3px
 
-// Alternating backgrounds for posts, and several other sections of the forum.
-.windowbg extends .grad700
-	color: #000
-	background-color: #f3f3f3
-	background-position: 0 -550px
-
-.windowbg2 extends .windowbg
-	background-color: #f6f3f0
-
-.windowbg3 extends .windowbg
-	background-color: #cad3cd
+.postbg
+	border-left, border-right: 1px solid #7f7f7f
 
 .post
 	font: 105% Tahoma
 	em
 		font: italic 90% Verdana
-
-.windowbg a
-	color: #47a
 
 // The page navigation area
 .pagesection
@@ -1029,6 +1076,10 @@ a.moderation_link
 		color: red
 		font-weight: bold
 
+// Those [?] icons. This makes your cursor a help icon.
+.help
+	cursor: help
+
 /* AJAX notification bar
 ------------------------------------------------------- */
 
@@ -1043,12 +1094,11 @@ a.moderation_link
 	line-height: 25px
 	position: fixed
 	top, left: 0
-	a
-		color: orange
-		text-decoration: underline
-		font-size: smaller
+	a extends .loading
 		float: right
-		margin-right: 20px
+		margin: 8px 25px 0 0
+		display: inline-block
+		width, height: 12px
 
 /* Lists with settings use these a lot.
 ------------------------------------------------------- */
@@ -1058,21 +1108,19 @@ dl.settings
 	overflow: hidden
 	margin: 0 0 10px
 	padding: 0
-	dt
+	dt, dd
 		width: 48%
 		float: left
-		margin: 0 0 10px
 		padding: 0
+	dt
+		margin: 0 0 10px
 		clear: both
 	dt.windowbg final
 		width: 98%
 		margin: 0 0 3px 0
 		padding: 0 0 5px 0
 	dd
-		width: 48%
-		float: left
 		margin: 0 0 3px 1.5%
-		padding: 0
 	img
 		margin: 0 10px 0 0
 
@@ -1100,16 +1148,7 @@ dl#rss
 /* Styles for section headers.
 ------------------------------------------------------- */
 
-.grad40
-	background-image: url($images/theme/grad40.png)
-	background-repeat: repeat-x
-
-.grad700
-	background-image: url($images/theme/grad700.png)
-	background-repeat: repeat-x
-
 // .cat, .title, .title2 and .posthead are closely related... Inheritance fiesta!
-
 .catbase extends .grad40
 	overflow: hidden
 	border-radius: 5px
@@ -1259,6 +1298,8 @@ table
 		border-spacing: 1px
 	&.cs3 extends &.cs0
 		border-spacing: 3px
+	&.cs8 extends &.cs0
+		border-spacing: 8px
 	&.cp0
 		th, td
 			padding: 0
@@ -1288,28 +1329,6 @@ table
 		th.center, td.center
 			text-align: center
 
-/* Common styles used to add corners to divisions.
-------------------------------------------------------- */
-
-// "With rounded corners" class, for modern browsers...
-.wrc
-	margin-top: 2px
-	margin-bottom: 4px
-	padding: .9em 1.2em
-	border-radius: 12px
-	border: 1px solid rgba(0,0,0, .1)
-
-.wrc_top extends .wrc
-	border-radius: 12px 12px 0 0
-	border-bottom, margin-bottom: 0
-
-.wrc_bottom extends .wrc
-	border-radius: 0 0 12px 12px
-	border-top, margin-top: 0
-
-.postbg
-	border-left, border-right: 1px solid #7f7f7f
-
 /* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
 
@@ -1328,6 +1347,10 @@ table
 .round-bottom
 	border-radius: 0 0 8px 8px
 
+// Help popups' body
+#help_page
+	padding: 1em
+
 #helf
 	max-height: 90%
 	a
@@ -1336,6 +1359,10 @@ table
 		box-shadow: 2px 2px 8px 0 rgba(0,0,0, .25)
 	.windowbg final
 		background-color: #f0f0f0
+
+#help_page h2, #helf h2
+	base: .title2
+	margin-bottom: 12px !important
 
 /* The main content area.
 ------------------------------------------------------- */
@@ -1486,6 +1513,10 @@ $alphamix = #fffdfa
 mixin {ie6,ie7} ie-inline-block
 	margin-right: 6px
 	zoom: 1
+
+mixin checkbox-styling
+	background: none
+	border: 0
 
 /*
 // This example is here to showcase the mixin power.

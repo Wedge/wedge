@@ -87,7 +87,7 @@ if (!defined('SMF'))
 // Gallery admin initializer
 function aeva_admin_init()
 {
-	global $context, $txt, $scripturl, $settings, $amSettings, $modSettings, $galurl;
+	global $context, $txt, $scripturl, $settings, $amSettings, $modSettings;
 
 	// Let's call our friends
 	// Admin2 = maintenance & ban, Admin3 = embedder
@@ -141,10 +141,7 @@ function aeva_admin_init()
 
 	// Some CSS and JS we'll be using
 	add_css_file('media', true);
-	add_js_file('scripts/media.js');
 	add_js_file('scripts/media-admin.js');
-	add_js('
-	var galurl = "' . $galurl . '";');
 
 	// If lookups are available, retrieve the latest version numbers for both Aeva Media and its site list
 	if (!isset($_POST['submit_aeva']) && !empty($modSettings['aeva_lookups']) && (empty($modSettings['aeva_version_test'])
@@ -742,7 +739,7 @@ function aeva_admin_FTPImport()
 // Handles the permission area...
 function aeva_admin_perms()
 {
-	global $context, $galurl, $txt, $user_info, $scripturl, $amSettings;
+	global $context, $txt, $user_info, $scripturl, $amSettings;
 
 	$context['base_url'] = $scripturl . '?action=admin;area=aeva_perms;' . $context['session_var'] . '=' . $context['session_id'];
 

@@ -556,14 +556,14 @@ function aeva_foxy_show_playlists($id, $pl)
 	echo '
 
 		<table class="w100 cs1 cp4 bordercolor" style="padding-top: 8px">
-		<tr><td class="titlebg aeva_header middle" colspan="4" style="padding: 0 6px">';
+		<tr><td class="titlebg middle" colspan="4" style="padding: 0 6px">';
 
 	if (!empty($pl['mine']))
 	{
 		echo '
 			<form action="' . $galurl . 'sa=item;in=', $id, '" method="post" style="line-height: 2.2em">
 			<span style="float: left">', $txt['media_playlists'], '</span>
-			<span style="float: right">', $txt['media_add_to_playlist'], '
+			<span style="float: right">', $txt['media_add_to_playlist'], '&nbsp;
 				<select name="add_to_playlist">';
 
 		foreach ($pl['mine'] as $p)

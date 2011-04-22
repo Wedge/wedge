@@ -25,8 +25,8 @@ function template_popup()
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>
-<body id="help_popup">
-	<div class="windowbg description">
+<body id="help_page">
+	<div class="windowbg wrc description">
 		', $context['help_text'], '
 		<br><br>
 		<a href="#" onclick="history.back(); return false;">', $txt['back'], '</a>

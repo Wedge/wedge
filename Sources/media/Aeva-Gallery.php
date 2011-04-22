@@ -422,7 +422,6 @@ function aeva_initGallery($gal_url = null)
 
 		// Some CSS and JS we'll be using
 		add_css_file(isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'mass' ? array('media', 'up') : 'media', true);
-		add_js_file('scripts/media.js');
 	}
 
 	$context['aeva_header'] = array(

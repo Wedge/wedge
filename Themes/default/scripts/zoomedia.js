@@ -122,6 +122,10 @@
 				$('<div class="zoom-loading">' + (lang.loading || '') + '</div>').css({
 					left: original_size.x + px,
 					top: original_size.y + px
+				}).click(function () {
+					$('<img>').unbind('load');
+					$(this).remove();
+					zooming = false;
 				}).appendTo('body');
 			}, 50);
 

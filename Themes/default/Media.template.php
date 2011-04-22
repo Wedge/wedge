@@ -285,7 +285,7 @@ function template_aeva_viewItem()
 {
 	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
-	$item = $context['item_data'];
+	$item =& $context['item_data'];
 
 	if (isset($_REQUEST['noh']))
 		echo sprintf($txt['media_foxy_add_tag'], 'javascript:insertTag();');
@@ -298,104 +298,92 @@ function template_aeva_viewItem()
 		echo '
 		<table class="mg_prevnext windowbg w100 cs0 cp4">
 			<tr class="mg_prevnext_pad">
-				<td rowspan="2">', (int) $item['prev'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev'].'">&laquo;</a>' : '&laquo;', '</td>
+				<td rowspan="2">', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">&laquo;</a>' : '&laquo;', '</td>
 				<td width="33%">', (int) $item['prev'] > 0 ? show_prevnext($item['prev'], $item['prev_thumb']) : $txt['media_prev'], '</td>
 				<td width="34%" class="windowbg2">', show_prevnext(0, $item['current_thumb']), '</td>
 				<td width="33%">', (int) $item['next'] > 0 ? show_prevnext($item['next'], $item['next_thumb']) : $txt['media_next'], '</td>
-				<td rowspan="2">', (int) $item['next'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next'].'">&raquo;</a>' : '&raquo;', '</td>
+				<td rowspan="2">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">&raquo;</a>' : '&raquo;', '</td>
 			</tr>
 			<tr class="smalltext">
-				<td>', (int) $item['prev'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev'].'">'.$item['prev_title'].'</a>' : '', '</td>
-				<td class="windowbg2">'.$item['current_title'].'</td>
-				<td>', (int) $item['next'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next'].'">'.$item['next_title'].'</a>' : '', '</td>
+				<td>', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">' . $item['prev_title'] . '</a>' : '', '</td>
+				<td class="windowbg2">', $item['current_title'], '</td>
+				<td>', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">' . $item['next_title'] . '</a>' : '', '</td>
 			</tr>
 		</table>';
 	elseif ($amSettings['prev_next'] == 1) // 5 items
 		echo '
 		<table class="mg_prevnext windowbg w100 cs0 cp4">
 			<tr class="mg_prevnext_pad">
-				<td rowspan="2">', (int) $item['prev_page'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev_page'].'">&laquo;</a>' : '&laquo;', '</td>
+				<td rowspan="2">', (int) $item['prev_page'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev_page'] . '">&laquo;</a>' : '&laquo;', '</td>
 				<td width="20%">', (int) $item['prev2'] > 0 ? show_prevnext($item['prev2'], $item['prev2_thumb']) : '', '</td>
 				<td width="20%">', (int) $item['prev'] > 0 ? show_prevnext($item['prev'], $item['prev_thumb']) : '', '</td>
 				<td width="20%" class="windowbg2">', show_prevnext(0, $item['current_thumb']), '</td>
 				<td width="20%">', (int) $item['next'] > 0 ? show_prevnext($item['next'], $item['next_thumb']) : '', '</td>
 				<td width="20%">', (int) $item['next2'] > 0 ? show_prevnext($item['next2'], $item['next2_thumb']) : '', '</td>
-				<td rowspan="2">', (int) $item['next_page'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next_page'].'">&raquo;</a>' : '&raquo;', '</td>
+				<td rowspan="2">', (int) $item['next_page'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next_page'] . '">&raquo;</a>' : '&raquo;', '</td>
 			</tr>
 			<tr class="smalltext">
-				<td>', (int) $item['prev2'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev2'].'">'.$item['prev2_title'].'</a>' : '', '</td>
-				<td>', (int) $item['prev'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['prev'].'">'.$item['prev_title'].'</a>' : '', '</td>
-				<td class="windowbg2">'.$item['current_title'].'</td>
-				<td>', (int) $item['next'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next'].'">'.$item['next_title'].'</a>' : '', '</td>
-				<td>', (int) $item['next2'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next2'].'">'.$item['next2_title'].'</a>' : '', '</td>
+				<td>', (int) $item['prev2'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev2'] . '">' . $item['prev2_title'] . '</a>' : '', '</td>
+				<td>', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">' . $item['prev_title'] . '</a>' : '', '</td>
+				<td class="windowbg2">', $item['current_title'], '</td>
+				<td>', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">' . $item['next_title'] . '</a>' : '', '</td>
+				<td>', (int) $item['next2'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next2'] . '">' . $item['next2_title'] . '</a>' : '', '</td>
 			</tr>
 		</table>';
 	elseif ($amSettings['prev_next'] == 2) // Text links
 		echo '
-		<div class="mg_prev">', (int) $item['prev'] > 0 ? '&laquo; <a href="'.$galurl.'sa=item;in='.$item['prev'].'">'.$txt['media_prev'].'</a>' : '&laquo; '.$txt['media_prev'], '</div>
-		<div class="mg_next">', (int) $item['next'] > 0 ? '<a href="'.$galurl.'sa=item;in='.$item['next'].'">'.$txt['media_next'].'</a> &raquo;' : $txt['media_next'].' &raquo;', '</div>';
-	else // Browsing disabled
-		echo '
-		<br>';
-
-	echo '
-		<div class="tborder">
-			<div class="titlebg info mg_title"><strong>', $item['title'], '</strong></div>
-		</div>';
+		<div class="mg_prev">', (int) $item['prev'] > 0 ? '&laquo; <a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">' . $txt['media_prev'] . '</a>' : '&laquo; ' . $txt['media_prev'], '</div>
+		<div class="mg_next">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">' . $txt['media_next'] . '</a> &raquo;' : $txt['media_next'] . ' &raquo;', '</div>';
 
 	$desc_len = strlen($item['description']);
-	echo '
-		<div id="itembox">', $item['embed_object'], $item['is_resized'] ? '
-			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '
-		</div>', !empty($item['description']) ? '
-		<div class="mg_item_desc" style="margin: auto; text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>
-		<br>' : '', '
 
-		<div class="clear"></div>';
+	echo '
+		<we:cat>
+			', $item['title'], '
+		</we:cat>
+		<div id="itembox"><div class="item">',
+			$item['embed_object'], $item['is_resized'] ? '
+			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '<br>';
+
+	if (!empty($item['description']))
+		echo '
+			<div class="mg_item_desc" style="margin: auto; text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>';
 
 	if ($context['aeva_size_mismatch'])
 		echo '
-		<div class="unapproved_yet">', $txt['media_size_mismatch'], '</div>';
+			<div class="unapproved_yet">', $txt['media_size_mismatch'], '</div>';
 
 	if (!$item['approved'] && ($item['member']['id'] == $user_info['id']) && !allowedTo('media_moderate') && !allowedTo('media_auto_approve_item'))
 		echo '
-		<div class="unapproved_yet">', $txt['media_will_be_approved'], '</div>';
+			<div class="unapproved_yet">', $txt['media_will_be_approved'], '</div>';
 
 	if (!$item['approved'] && (allowedTo('media_moderate') || allowedTo('media_auto_approve_item')))
 		echo '
-		<div class="unapproved_yet">', $txt['media_approve_this'], '</div>';
+			<div class="unapproved_yet">', $txt['media_approve_this'], '</div>';
 
 	echo '
-
-		<table class="w100 cs0 cp4">
-		<tr class="catbg">
-			<th class="w25" style="padding: 7px 0 5px 8px; border-radius: 8px 0 0 0">', $txt['media_poster_info'], '</th>
-			<th style="padding: 7px 0 5px 8px; border-radius: 0 8px 0 0">', $txt['media_item_info'], '</th>
-		</tr><tr>
-		<td class="windowbg top">', empty($item['member']['id']) ? '
-			<h4>' . $txt['guest'] . '</h4>' : '
-			<h4>' . $item['member']['link'] . '</h4>
-			<ul class="smalltext info_list">' . (!empty($item['member']['group']) ? '
-				<li>' . $item['member']['group'] . '</li>' : '') . (!empty($item['member']['avatar']['image']) ? '
-				<li>' . $item['member']['avatar']['image'] . '</li>' : '') . '
-				<li>' . $txt['media_total_items'] . ': ' . $item['member']['media']['total_items'] . '</li>
-				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
-			</ul>
-		</td>
-		<td class="windowbg2 top"', $amSettings['show_extra_info'] == 1 ? ' rowspan="2"' : '', '>
-			<table class="w100 cs0 cp4">
-			<tr><td class="info smalltext">', $txt['media_posted_on'], '</td><td class="info">', timeformat($item['time_added']), '</td></tr>';
+		</div>
+		<div class="details">
+			<we:block class="windowbg2" header="', westr::safe($txt['media_item_info']), '">
+			<dl class="settings">
+				<dt>', $txt['media_posted_on'], '</dt>
+				<dd>', timeformat($item['time_added']), '</dd>', !empty($item['last_edited']) ? '
+				<dt>' . $txt['media_last_edited'] . '</dt>
+				<dd>' . $item['last_edited'] . ($item['last_edited_by'] !== -2 ? ' ' . $txt['media_by'] . ' ' . $item['last_edited_by'] : '') . '</dd>' : '';
 
 	if ($item['type'] != 'embed')
 		echo !empty($item['width']) && !empty($item['height']) ? '
-			<tr><td class="info smalltext">' . $txt['media_width'] . '&nbsp;&times;&nbsp;' . $txt['media_height'] . '</td><td class="info">' . $item['width'] . '&nbsp;&times;&nbsp;' . $item['height'] . '</td></tr>' : '', '
-			<tr><td class="info smalltext">', $txt['media_filesize'], '</td><td class="info">', $item['filesize'], '</td></tr>
-			<tr><td class="info smalltext">', $txt['media_filename'], '</td><td class="info">', $item['filename'], '</td></tr>';
+				<dt>' . $txt['media_width'] . '&nbsp;&times;&nbsp;' . $txt['media_height'] . '</dt>
+				<dd>' . $item['width'] . '&nbsp;&times;&nbsp;' . $item['height'] . '</dd>' : '', '
+				<dt>', $txt['media_filesize'], '</dt>
+				<dd>', $item['filesize'], '</dd>
+				<dt>', $txt['media_filename'], '</dt>
+				<dd>', $item['filename'], '</dd>';
 
 	if ((!empty($item['keyword_list']) && implode('', $item['keyword_list']) != '') || !empty($item['keywords']))
 	{
 		echo '
-			<tr><td class="info smalltext">', $txt['media_keywords'], '</td><td class="info">';
+				<dt>', $txt['media_keywords'], '</dt><dd>';
 		$tag_list = '';
 		if (!empty($item['keyword_list']))
 		{
@@ -405,25 +393,26 @@ function template_aeva_viewItem()
 		}
 		else
 			echo $item['keywords'];
-		echo substr($tag_list, 0, strlen($tag_list) - 2) . '</td></tr>';
+		echo substr($tag_list, 0, strlen($tag_list) - 2) . '</dd>';
 	}
 
 	echo '
-			<tr><td class="info smalltext">', $txt['media_views'], '</td><td class="info">', $item['views'], '</td></tr>', !empty($item['downloads']) ? '
-			<tr><td class="info smalltext">' . $txt['media_downloads'] . '</td><td class="info">' . $item['downloads'] . '</td></tr>' : '', '
-			<tr><td class="info smalltext">', $txt['media_rating'], '</td><td class="info" id="ratingElement">', template_aeva_rating_object($item), '</td></tr>',
-			!empty($item['num_comments']) ? '
-			<tr><td class="info smalltext">' . $txt['media_comments'] . '</td><td class="info">' . $item['num_comments'] . '</td></tr>' : '', !empty($item['last_edited']) ? '
-			<tr><td class="info smalltext">' . $txt['media_last_edited'] . '</td><td class="info">' . $item['last_edited'] . ($item['last_edited_by'] !== -2 ? ' ' . $txt['media_by'] . ' ' . $item['last_edited_by'] : '') . '</td></tr>' : '';
+				<dt>', $txt['media_views'], '</dt>
+				<dd>', $item['views'], '</dd>', !empty($item['downloads']) ? '
+				<dt>' . $txt['media_downloads'] . '</dt>
+				<dd>' . $item['downloads'] . '</dd>' : '', '
+				<dt>', $txt['media_rating'], '</dt>
+				<dd id="ratingElement">', template_aeva_rating_object($item), '</dd>', !empty($item['num_comments']) ? '
+				<dt>' . $txt['media_comments'] . '</dt>
+				<dd>' . $item['num_comments'] . '</dd>' : '';
 
 	foreach ($item['custom_fields'] as $field)
 	{
 		if (!empty($field['value']))
 		{
 			echo '
-			<tr>
-				<td class="info smalltext">', $field['name'], '</td>
-				<td class="info">';
+				<dt>', $field['name'], '</dt>
+				<dd>';
 			if ($field['searchable'])
 			{
 				$build_list = '';
@@ -434,82 +423,79 @@ function template_aeva_viewItem()
 			}
 			else
 				echo substr($field['value'], 0, 7) == 'http://' ? '<a href="' . $field['value'] . '">' . westr::htmlspecialchars($field['value']) . '</a>' : $field['value'];
-			echo '</td>
-			</tr>';
+			echo '</dd>';
 		}
 	}
 
 	if ($amSettings['show_linking_code'])
 	{
 		echo '
-			<tr>
-				<td class="info smalltext">', $txt['media_embed_bbc'], '</td>
-				<td class="info">
-					<input id="bbc_embed" type="text" size="56" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="return selectText(this);" readonly>
+				<dt>', $txt['media_embed_bbc'], '</dt>
+				<dd>
+					<input id="bbc_embed" type="text" size="20" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="selectText(this);" readonly>
 					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 600, 400, false, true);" class="help"></a>
-				</td>
-			</tr>';
+				</dd>';
 
 		// Don't show html/direct links if the helper file was deleted
 		if ($amSettings['show_linking_code'] == 1)
 		{
 			if (strpos($item['embed_object'], 'swfobject.embedSWF') === false)
 				echo '
-			<tr>
-				<td class="info smalltext">', $txt['media_embed_html'], '</td><td class="info">
-					<input id="html_embed" type="text" size="60" value="', $item['type'] == 'image' ?
+				<dt>', $txt['media_embed_html'], '</dt>
+				<dd>
+					<input id="html_embed" type="text" size="24" value="', $item['type'] == 'image' ?
 						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
-						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="return selectText(this);" readonly>
-				</td>
-			</tr>';
+						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="selectText(this);" readonly>
+				</dd>';
 			if ($item['type'] != 'embed')
 				echo '
-			<tr>
-				<td class="info smalltext">' . $txt['media_direct_link'] . '</td>
-				<td class="info">
-					<input id="direct_link" type="text" size="60" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="return selectText(this);" readonly>
-				</td>
-			</tr>';
+				<dt>', $txt['media_direct_link'], '</td>
+				<dd>
+					<input id="direct_link" type="text" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="selectText(this);" readonly>
+				</dd>';
 		}
 	}
 	echo '
-			</table>
-		</td></tr>';
+			</dl>
+		</we:block>';
 
-	if ($amSettings['show_extra_info'] == 1)
+	if ($amSettings['show_extra_info'] == 1 && !empty($item['extra_info']))
 	{
 		echo '
-		<tr><td class="windowbg bottom">
-			<we:title2>
-				', $txt['media_extra_info'], '
-			</we:title2>';
+		<we:block class="windowbg" header="', westr::safe($txt['media_extra_info']), '">';
 
-		if (empty($item['extra_info']))
-			echo '
-			<div class="info">', $txt['media_meta_not_available'], '</div>';
-		else
-		{
-			echo $amSettings['use_lightbox'] ? '
+		echo $amSettings['use_lightbox'] ? '
 			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
 			. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
 			<div class="zoom-html">
 				<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
 				<div class="smalltext meta">';
 
-			foreach ($item['extra_info'] as $info => $data)
-				if (!empty($data))
-					echo '
+		foreach ($item['extra_info'] as $info => $data)
+			if (!empty($data))
+				echo '
 					<div class="info"><b>', $txt['media_meta_' . $info], '</b>: ', $data, '</div>';
-			echo '
-				</div>
-			</div>', $amSettings['use_lightbox'] ? '</div>' : '';
-		}
+
 		echo '
-		</td></tr>';
+				</div>
+			</div>', $amSettings['use_lightbox'] ? '</div>' : '', '
+		</we:block>';
 	}
 
 	echo '
-		<tr class="titlebg"><td colspan="2" class="center info images" style="line-height: 16px; vertical-align: text-bottom; border-radius: 0 0 8px 8px">', $item['can_report'] ? '
+		<we:block class="windowbg" header="', westr::safe($txt['media_poster_info']), '">', empty($item['member']['id']) ? '
+			<h4>' . $txt['guest'] . '</h4>' : '
+			<h4>' . $item['member']['link'] . '</h4>
+			<ul class="smalltext info_list">' . (!empty($item['member']['group']) ? '
+				<li>' . $item['member']['group'] . '</li>' : '') . (!empty($item['member']['avatar']['image']) ? '
+				<li>' . $item['member']['avatar']['image'] . '</li>' : '') . '
+				<li>' . $txt['media_total_items'] . ': ' . $item['member']['media']['total_items'] . '</li>
+				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
+			</ul>
+		</we:block>
+		</div></div>
+
+		<we:block class="windowbg titlebg clear center info images" style="line-height: 16px; vertical-align: text-bottom">', $item['can_report'] ? '
 			<a href="' . $galurl . 'sa=report;type=item;in=' . $item['id_media'] . '"' . ($amSettings['use_lightbox'] ? ' class="zoom" rel="html"' : '') . '>
 				<img src="' . $settings['images_aeva'] . '/report.png">&nbsp;' . $txt['media_report_this_item'] . '
 			</a>' : '';
@@ -592,8 +578,7 @@ function template_aeva_viewItem()
 			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
 
 	echo '
-		</td></tr>
-		</table>';
+		</we:block>';
 
 	if (isset($item['playlists'], $item['playlists']['current']))
 		aeva_foxy_show_playlists($item['id_media'], $item['playlists']);
@@ -1053,7 +1038,7 @@ function template_aeva_viewAlbum()
 		}
 		echo $can_edit_items ? '
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return aevaDelConfirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
+				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ') : true;">
 			</div>' : '', '
 			', $txt['media_pages'], ': ', $context['aeva_page_index'], '
 		</div>', $can_edit_items ? '

@@ -261,6 +261,10 @@ li.separator
 .ie_button
 	overflow: visible
 
+// IE6 ignores .ie_check if declared alongside input[type=*]... .ie_button doesn't. Screw IE6.
+.ie_check
+	mixin: checkbox-styling
+
 input.submit, input.delete, input.save, input.new
 	padding-right: 6px
 	overflow: visible
