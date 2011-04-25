@@ -63,7 +63,7 @@ class wedbPackages
 	}
 
 	// Create a table.
-	public static function create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'update', $error = 'fatal')
+	public static function create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
 	{
 		global $db_package_log, $db_prefix;
 

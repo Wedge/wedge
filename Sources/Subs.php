@@ -2988,9 +2988,9 @@ function setupMenuContext()
 						if (empty($subitem['show']))
 							unset($item['sub_items'][$key]);
 
-						// 2nd level sub items next
+						// 2nd level sub items next...
 						if (!empty($subitem['sub_items']))
-							foreach($subitem['sub_items'] as $key2 => $sub_item2)
+							foreach ($subitem['sub_items'] as $key2 => $sub_item2)
 								if (empty($sub_item2['show']))
 									unset($item['sub_items'][$key]['sub_items'][$key2]);
 					}

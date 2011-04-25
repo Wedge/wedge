@@ -39,7 +39,7 @@ if (!defined('SMF'))
 		- requires the edit_news permission.
 		- writes an entry into the moderation log.
 		- uses the edit_news administration area.
-		- can be accessed with ?action=editnews.
+		- can be accessed with ?action=admin;area=news;sa=editnews.
 
 	void SelectMailingMembers()
 		- allows a user to select the membergroups to send their mailing to.
@@ -102,7 +102,7 @@ function ManageNews()
 		'help' => 'edit_news',
 		'description' => $txt['admin_news_desc'],
 		'tabs' => array(
-			'edit_news' => array(
+			'editnews' => array(
 			),
 			'mailingmembers' => array(
 				'description' => $txt['news_mailing_desc'],

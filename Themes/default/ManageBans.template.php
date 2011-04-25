@@ -88,13 +88,13 @@ function template_ban_edit()
 
 		echo '
 						<dt>
-							<label><input type="checkbox" name="ban_suggestion[]" id="email_check" value="email"> ', $txt['ban_on_email'], '</label>
+							<label><input type="checkbox" name="ban_suggestion[]" id="email_check" value="email" checked="checked"> ', $txt['ban_on_email'], '</label>
 						</dt>
 						<dd>
 							<input type="email" name="email" value="', $context['ban_suggestions']['email'], '" size="50" onfocus="$(\'#email_check\').attr(\'checked\', true);">
 						</dd>
 						<dt>
-							<label><input type="checkbox" name="ban_suggestion[]" id="user_check" value="user"> ', $txt['ban_on_username'], '</label>:
+							<label><input type="checkbox" name="ban_suggestion[]" id="user_check" value="user" checked="checked"> ', $txt['ban_on_username'], '</label>:
 						</dt>
 						<dd>';
 

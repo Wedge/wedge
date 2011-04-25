@@ -44,6 +44,10 @@ function ViewQuery()
 	global $scripturl, $user_info, $settings, $context, $db_connection, $modSettings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
+	// We should have debug mode enabled, as well as something to display!
+	if (!$show_debug || !isset($_SESSION['debug']))
+		fatal_lang_error('no_access', false);
+
 	// Check groups
 	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
 		$show_debug &= $context['user']['is_admin'];

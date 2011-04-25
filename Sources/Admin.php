@@ -93,7 +93,7 @@ function Admin()
 					'icon' => 'news.gif',
 					'permission' => array('edit_news', 'send_mail', 'admin_forum'),
 					'subsections' => array(
-						'edit_news' => array($txt['admin_edit_news'], 'edit_news'),
+						'editnews' => array($txt['admin_edit_news'], 'edit_news'),
 						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),

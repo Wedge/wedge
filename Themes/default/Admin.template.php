@@ -1313,7 +1313,7 @@ function template_add_language()
 						<th scope="col">', $txt['add_language_smf_desc'], '</th>
 						<th scope="col">', $txt['add_language_smf_version'], '</th>
 						<th scope="col">', $txt['add_language_smf_utf8'], '</th>
-						<th class="first_th" scope="col">', $txt['add_language_smf_install'], '</th>
+						<th class="last_th" scope="col">', $txt['add_language_smf_install'], '</th>
 					</tr>
 				</thead>
 				<tbody>';

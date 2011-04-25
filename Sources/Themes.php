@@ -56,7 +56,7 @@ if (!defined('SMF'))
 		- loads the Admin language file.
 		- calls ThemeAdmin() if no theme is specified. (the theme center.)
 		- requires an administrator.
-		- accessed with ?action=admin;area=theme;sa=settings&id=xx.
+		- accessed with ?action=admin;area=theme;sa=settings&th=xx.
 
 	void RemoveTheme()
 		- removes an installed theme.
@@ -376,11 +376,11 @@ function SetThemeOptions()
 {
 	global $txt, $context, $settings, $modSettings;
 
-	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
+	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : 0;
 
 	isAllowedTo('admin_forum');
 
-	if (empty($_GET['th']) && empty($_GET['id']))
+	if (empty($_GET['th']))
 	{
 		$request = wesql::query('
 			SELECT id_theme, variable, value
