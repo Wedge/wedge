@@ -1308,7 +1308,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			$box .= '</tr><tr><td><div class="vote"><div class="vote_header"><b>' . $txt['media_rating'] . ': <span style="color: red">' . $nrating . '/5</span></b> (' . $nvotes . ' ' . $txt['media_vote' . ($nvotes > 1 ? 's' : '') . '_noun'] . ')';
 			$box .= '<br><img src="' . $settings['images_aeva'] . '/star' . $star . '.gif" class="aevera" alt="' . $altstar . '">';
 
-			$box .= ' <a href="javascript:void(0)" onclick="n = this.parentNode.parentNode.lastChild; if(n.style.display == \'none\') { n.style.display = \'block\'; } else { n.style.display = \'none\'; } return false;"><img src="' . $settings['images_aeva'] . '/magnifier.png" width="16" height="16" alt="' . $txt['media_who_rated_what'] . '" title="' . $txt['media_who_rated_what'] . '" class="aevera"></a></div>
+			$box .= ' <a href="#" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;"><img src="' . $settings['images_aeva'] . '/magnifier.png" width="16" height="16" alt="' . $txt['media_who_rated_what'] . '" title="' . $txt['media_who_rated_what'] . '" class="aevera"></a></div>
 			<div class="vote_details" style="padding: 12px 0 0 12px; display: none">';
 
 			// All votes

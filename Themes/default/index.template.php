@@ -500,14 +500,12 @@ function template_menu()
 
 	foreach ($context['menu_items'] as $act => $item)
 	{
-		$mh4 = empty($item['padding']) ? '' : ' style="margin-left: ' . ($item['padding'] + 6) . 'px"';
 		$class = ($item['active_item'] ? ' chosen' : '') . (empty($item['sub_items']) ? ' nodrop' : '');
-		$ic = !$mh4 ? '' : '
-			<div class="m_' . $act . '">&nbsp;</div>';
 
 		echo '
-		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>', $ic, '
-			<h4', $mh4, '><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>', $item['title'], '</a></h4>';
+		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>
+			<span class="m_' . $act . '"></span>
+			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>', $item['title'], '</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{

@@ -520,6 +520,7 @@ input[type=file]
 	margin: 0
 
 .menu h4 extends .arrows
+	float: left
 	background-position: 98% 2px
 	padding: 3px 19px 3px 6px
 	font-weight: normal
@@ -528,26 +529,24 @@ input[type=file]
 	a
 		border, padding: 0
 
-.menu ul
+.menu li ul
 	background: rgba(255, 248, 240, .92) // !!! background: #fff8f1
 	position: absolute
 	display: block
 	border: 1px solid #666
-	padding: 0
 	z-index: 42
 	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
 	border-radius: 0 10px 10px 0
-
-.menu li ul
+	clear: left
 	visibility: hidden
-	opacity: 0
+	opacity, padding: 0
 	transition: opacity .3s ease
+	margin-top: 24px
 
 .css > li > ul
 	transition: opacity .15s ease
 
 .menu li li ul
-	position: absolute
 	margin-left: 160px
 	margin-top: -24px
 
@@ -564,12 +563,11 @@ input[type=file]
 		white-space: nowrap
 
 .css h4:hover, h4.hove
-	base: .arrows
 	background-color: rgba(0,0,0, .075)
 	background-position: 98% 2px
 	color: #000
 
-.menu .chosen h4 extends .arrows
+.menu .chosen h4
 	background-color: #3fa6c3
 	background-position: 98% -28px
 	font: bold .95em/1.3em Verdana
@@ -635,15 +633,16 @@ li.separator
 #main_content .menu
 	margin-bottom: 8px
 
-/*	These are the top-level menu icons. It may look complicated, but it isn't.
-	Just fetch documentation on image spriting. You can also simply use
-	single images to show icons. */
+/* Top-level menu icons.
+------------------------------------------------------- */
+// It may look complicated, but it isn't. Just fetch documentation on
+// image spriting. You can also simply use single images to show icons.
+
 .m_home
 	float: left
 	width, height: 16px
 	padding: 0
-	display: inline
-	margin: 2px 0 0 2px
+	margin: 2px 4px 0 2px
 	background-repeat: no-repeat
 	background-image: url($images/icons/sprite.png)
 	background-position: -74px 0
@@ -696,7 +695,7 @@ li.separator
 /* Common classes to ease styling.
 ------------------------------------------------------- */
 
-header, footer, aside, section
+header, footer, aside, section, article, nav
 	display: block
 
 .floatright

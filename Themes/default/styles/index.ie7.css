@@ -128,6 +128,9 @@ li.separator
 #context_menus h4:hover
 	background-color: #ebe7e2
 
+.menu li ul
+	margin-top: 0
+
 input[type=submit]
 	overflow: visible
 

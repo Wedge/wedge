@@ -2734,7 +2734,6 @@ function setupMenuContext()
 				'title' => $txt['home'],
 				'href' => $scripturl,
 				'show' => true,
-				'padding' => 16,
 				'sub_items' => array(
 					'root' => array(
 						'title' => $context['forum_name'],
@@ -2754,7 +2753,6 @@ function setupMenuContext()
 				'title' => $txt['search'],
 				'href' => $scripturl . '?action=search',
 				'show' => $context['allow_search'],
-				'padding' => 16,
 				'sub_items' => array(
 					'search' => array(
 						'title' => $txt['search_simple'],
@@ -2773,7 +2771,6 @@ function setupMenuContext()
 				'title' => $txt['admin'] . $error_count,
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
-				'padding' => 16,
 				'sub_items' => array(
 					'featuresettings' => array(
 						'title' => $txt['modSettings_title'],
@@ -2802,7 +2799,6 @@ function setupMenuContext()
 				'title' => $txt['moderate'],
 				'href' => $scripturl . '?action=moderate',
 				'show' => $context['allow_moderation_center'],
-				'padding' => 16,
 				'sub_items' => array(
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
@@ -2831,7 +2827,6 @@ function setupMenuContext()
 				'title' => $txt['profile'],
 				'href' => $scripturl . '?action=profile',
 				'show' => $context['allow_edit_profile'],
-				'padding' => 16,
 				'sub_items' => array(
 					'summary' => array(
 						'title' => $txt['summary'],
@@ -2860,7 +2855,6 @@ function setupMenuContext()
 				'title' => !$user_info['is_guest'] && $context['user']['unread_messages'] > 0 ? '<span style="color: red">' . $txt['pm_short'] . '</span>' : $txt['pm_short'],
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
-				'padding' => 16,
 				'sub_items' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
@@ -2885,7 +2879,6 @@ function setupMenuContext()
 				'title' => $txt['calendar'],
 				'href' => $scripturl . '?action=calendar',
 				'show' => $context['allow_calendar'],
-				'padding' => 14,
 				'sub_items' => array(
 					'view' => array(
 						'title' => $txt['calendar_menu'],
@@ -2904,7 +2897,6 @@ function setupMenuContext()
 				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('media_access_unseen') || empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($modSettings['media_enabled']) && allowedTo('media_access'),
-				'padding' => 18,
 				'sub_items' => array(
 					'home' => array(
 						'title' => $txt['media_home'],
@@ -2923,7 +2915,6 @@ function setupMenuContext()
 				'title' => $txt['members_title'],
 				'href' => $scripturl . '?action=mlist',
 				'show' => $context['allow_memberlist'],
-				'padding' => 14,
 				'sub_items' => array(
 					'mlist_view' => array(
 						'title' => $txt['mlist_menu_view'],
@@ -2942,7 +2933,6 @@ function setupMenuContext()
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
-				'padding' => 15,
 				'sub_items' => array(
 				),
 			),
@@ -2950,7 +2940,6 @@ function setupMenuContext()
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
 				'show' => $user_info['is_guest'],
-				'padding' => 16,
 				'sub_items' => array(
 				),
 				'is_last' => !$context['right_to_left'],
@@ -2959,7 +2948,6 @@ function setupMenuContext()
 				'title' => $txt['logout'],
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
-				'padding' => 15,
 				'sub_items' => array(
 				),
 				'is_last' => !$context['right_to_left'],

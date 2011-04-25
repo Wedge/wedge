@@ -118,8 +118,12 @@
 				$.ie6hover.selectors.jQuery = selectors;
 
 				// Add hover event handlers to selectors
+				// Skips over form elements to make IE6 faster, without breaking the UI.
+				// Also skips over .css, as it's only used to make menus work on browser with JS disabled...
 				$(function () {
 					$.each(selectors, function (i, selector) {
+						if (selector.match(/(INPUT|SELECT|TEXTAREA|.css)/g))
+							return;
 						var klass = selectorClasses[selector] || selectorClasses._default;
 						$(selector)[func]('mouseenter', function () {
 							$(this).addClass(klass);

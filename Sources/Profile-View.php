@@ -419,7 +419,7 @@ function viewDrafts($memID)
 		{
 			if ($post['topic']['locked'])
 			{
-				if(in_array($post['board']['id'], $boards))
+				if (in_array($post['board']['id'], $boards))
 					$context['posts'][$id]['topic']['locked'] = false;
 				else
 					$context['posts'][$id]['topic']['no_edit'] = true;

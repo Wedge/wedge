@@ -9,7 +9,7 @@
 	/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry that
 		has a submenu itself. It still fails, though, at making menu item anchors extend to the width of their
 		container. If you have a fix that doesn't involve setting a fixed width, please share. Curse you, IE6! */
-	li
+	li li
 		border-bottom: 1px solid #fff8f1
 
 // Dunno if it's worth it: show a rather ugly hover background on top level menus until JS takes over.
@@ -240,6 +240,9 @@ table.table_grid, table.cs0, table.cs1
 .features .wrc
 	width: 90%
 	height: 150px
+
+.menu li ul
+	margin-top: 0
 
 li.hove
 	background-color: #e2ebe7
