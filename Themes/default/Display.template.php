@@ -661,8 +661,7 @@ function template_main()
 		}
 
 		$context['footer_js'] .= '
-	});
-	$(".umme").hover(function () { return oUserMenu.switchMenu(this); });';
+	});';
 	}
 }
 

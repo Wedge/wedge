@@ -602,12 +602,16 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 function UserMenu(oList)
 {
 	this.list = oList;
+	var that = this;
+	$(".umme").mouseenter(function () { return that.switchMenu(this); });
 }
 
 UserMenu.prototype.switchMenu = function (oLink)
 {
-	var details = oLink && oLink.id ? oLink.id.substr(2).split('_') : [0, 0];
-	var iMsg = details[0], iUserId = details[1];
+	var
+		details = oLink && oLink.id ? oLink.id.substr(2).split('_') : [0, 0],
+		iMsg = details[0], iUserId = details[1],
+		pos = $(oLink).offset();
 
 	if (current_user_menu != null)
 	{
@@ -628,10 +632,10 @@ UserMenu.prototype.switchMenu = function (oLink)
 
 		sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
 	}
-	var pos = $(oLink).offset();
-	$('<div></div>', { id: 'userMenu' + iMsg, 'class': 'usermenu' }).html(sHTML).appendTo('body')
-		.css({ display: 'block', left: pos.left + 'px', top: (pos.top + oLink.offsetHeight) + 'px' })
-		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; });
+	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html(sHTML).hide().appendTo('body')
+		.css({ left: (pos.left - 6) + 'px', top: (pos.top - 4) + 'px' })
+		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; })
+		.show(500);
 	return false;
 };
 
