@@ -603,7 +603,7 @@ function UserMenu(oList)
 {
 	this.list = oList;
 	var that = this;
-	$(".umme").mouseenter(function () { return that.switchMenu(this); });
+	$(".umme").mouseenter(function () { that.switchMenu(this); });
 }
 
 UserMenu.prototype.switchMenu = function (oLink)
@@ -616,15 +616,15 @@ UserMenu.prototype.switchMenu = function (oLink)
 	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
 		return;
 
-	var i, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length;
+	var i, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length, sFirstChar = sLink.charAt(0);
 	for (i in aLinkList)
 	{
 		var sLink = aLinkList[i].replace(/%id%/, iUserId);
 		if (sLink == '')
 			sLink = oLink.href;
-		else if (sLink.charAt(0) == '?')
+		else if (sFirstChar == '?')
 			sLink = smf_scripturl + sLink;
-		else if (sLink.charAt(0) == ';')
+		else if (sFirstChar == ';')
 			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
 
 		sHTML += '<div><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></div>';

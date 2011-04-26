@@ -67,11 +67,14 @@ function Buddy()
 		$buddy_action = 'add';
 	}
 
-	// Update the settings.
-	updateMemberData($user_info['id'], array('buddy_list' => implode(',', $user_info['buddies'])));
+	if (isset($buddy_action))
+	{
+		// Update the settings.
+		updateMemberData($user_info['id'], array('buddy_list' => implode(',', $user_info['buddies'])));
 
-	// Call a hook, just in case we want to do something with this. Let's pass both the user we're adding/removing, and what we did with them.
-	call_hook('buddy', array((int) $_REQUEST['u'], $buddy_action));
+		// Call a hook, just in case we want to do something with this. Let's pass both the user we're adding/removing, and what we did with them.
+		call_hook('buddy', array((int) $_REQUEST['u'], $buddy_action));
+	}
 
 	// Redirect back to the profile
 	redirectexit('action=profile;u=' . $_REQUEST['u']);

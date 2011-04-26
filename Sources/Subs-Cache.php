@@ -433,8 +433,9 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		$final
 	);
 	// Restore comments as requested.
-	foreach ($comments[0] as $comment)
-		$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
+	if (!empty($comments))
+		foreach ($comments[0] as $comment)
+			$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
 	$final = ltrim($final, "\n");
 
 	// If we find any empty rules, we should be able to remove them.
