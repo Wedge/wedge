@@ -1344,7 +1344,7 @@ function prepareDisplayContext($reset = false)
 	$context['last_msg_id'] = $message['id_msg'];
 	$context['last_post_length'] = $context['current_post_length'];
 
-	// 0. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
+	// 1. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
 	if ($can_pm === null)
 	{
 		$can_pm = allowedTo('pm_send');
@@ -1356,35 +1356,35 @@ function prepareDisplayContext($reset = false)
 	// Now, to business. Is it not a guest, and we haven't done this before?
 	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
 	{
-		// 1. Figure out that user's menu to the stack. It may be different if it's our menu.
+		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
 		$menu = array();
 		if ($output['is_message_author'])
 		{
 			// Can't PM, email, add to buddy list
 			if ($profile_own)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profile']) . ']';
+				$menu[] = 'pr: \'\'';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
+				$menu[] = 'we: ' . JavaScriptEscape($output['member']['website']['url']);
 			if ($profile_own)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id'] . ';area=showposts') . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+				$menu[] = 'po: \';area=showposts\'';
 		}
 		else
 		{
 			if ($profile_any)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['usermenu_profile']) . ']';
+				$menu[] = 'pr: \'\'';
 			if ($can_pm)
-				$menu[] = '[' . JavaScriptEscape('?action=pm;sa=send;u=' . $output['member']['id']) . ',' . JavaScriptEscape($txt['pm_menu_send']) . ']';
+				$menu[] = 'pm: \'?action=pm;sa=send;u=%id%\'';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = '[' . JavaScriptEscape($output['member']['website']['url']) . ',' . JavaScriptEscape($txt['usermenu_website']) . ']';
+				$menu[] = 'we: ' . JavaScriptEscape($output['member']['website']['url']);
 			if ($profile_any)
-				$menu[] = '[' . JavaScriptEscape('?action=profile;u=' . $output['member']['id'] . ';area=showposts') . ',' . JavaScriptEscape($txt['usermenu_showposts']) . ']';
+				$menu[] = 'po: \';area=showposts\'';
 			if ($buddy)
-				$menu[] = '[' . JavaScriptEscape('?action=buddy;u=' . $output['member']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']) . ',' . JavaScriptEscape($txt['usermenu_' . ($memberContext[$message['id_member']]['is_buddy'] ? 'removebuddy' : 'addbuddy')]) . ']';
+				$menu[] = ($memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab') . ': \'?action=buddy;u=%id%;' . $context['session_var'] . '=' . $context['session_id'] . '\'';
 			if ($context['can_report_moderator'])
-				$menu[] = '[' . JavaScriptEscape('?action=reporttm;topic=' . $context['current_topic'] . '.0;msg=%msg%') . ',' . JavaScriptEscape($txt['report_to_mod']) . ']';
+				$menu[] = 're: \'?action=reporttm;topic=' . $context['current_topic'] . '.0;msg=%msg%\'';
 		}
 
-		// 2. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
+		// 3. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
 		// This first operation is probably the nastiest abuse going, mostly because it's dealing with a by-ref :S
 		if (!empty($menu))
 			$context['user_menu'][$output['member']['id']] = $menu;

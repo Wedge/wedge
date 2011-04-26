@@ -646,21 +646,22 @@ function template_main()
 	if (!empty($context['user_menu']))
 	{
 		add_js('
+	var oUserMenuStrings = {
+		pr: ', JavaScriptEscape($txt['usermenu_profile']), ',
+		pm: ', JavaScriptEscape($txt['pm_menu_send']), ',
+		we: ', JavaScriptEscape($txt['usermenu_website']), ',
+		po: ', JavaScriptEscape($txt['usermenu_showposts']), ',
+		ab: ', JavaScriptEscape($txt['usermenu_addbuddy']), ',
+		rb: ', JavaScriptEscape($txt['usermenu_removebuddy']), ',
+		re: ', JavaScriptEscape($txt['report_to_mod']), '
+	};
 	var oUserMenu = new UserMenu({');
 
-		$menu_started = false;
 		foreach ($context['user_menu'] as $user => $linklist)
-		{
-			if (!$menu_started)
-				$menu_started = true;
-			else
-				$context['footer_js'] .= ',';
-
 			$context['footer_js'] .= '
-		user' . $user . ': [' . implode(',', $linklist) . ']';
-		}
+		user' . $user . ': { ' . implode(', ', $linklist) . ' }, ';
 
-		$context['footer_js'] .= '
+		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
 	});';
 	}
 }

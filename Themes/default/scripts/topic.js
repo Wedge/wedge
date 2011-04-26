@@ -609,34 +609,30 @@ function UserMenu(oList)
 UserMenu.prototype.switchMenu = function (oLink)
 {
 	var
-		details = oLink && oLink.id ? oLink.id.substr(2).split('_') : [0, 0],
+		details = oLink.id.substr(2).split('_'),
 		iMsg = details[0], iUserId = details[1],
 		pos = $(oLink).offset();
 
-	if (current_user_menu != null)
-	{
-		$('#userMenu' + current_user_menu).remove();
-		if (current_user_menu == iMsg)
-		{
-			current_user_menu = null;
-			return false;
-		}
-	}
-	current_user_menu = iMsg;
-	if (!(this.list['user' + iUserId]))
-		return false;
-	for (var i = 0, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length; i < j; i++)
-	{
-		if (aLinkList[i][0].charAt[0] == '?')
-			aLinkList[i][0] = smf_scripturl + aLinkList[i][0];
+	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
+		return;
 
-		sHTML += '<div class="usermenuitem windowbg"><a href="' + aLinkList[i][0].replace(/%msg%/, iMsg) + '">' + aLinkList[i][1] + '</a></div>';
+	var i, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length;
+	for (i in aLinkList)
+	{
+		var sLink = aLinkList[i].replace(/%id%/, iUserId);
+		if (sLink == '')
+			sLink = oLink.href;
+		else if (sLink.charAt(0) == '?')
+			sLink = smf_scripturl + sLink;
+		else if (sLink.charAt(0) == ';')
+			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
+
+		sHTML += '<div><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></div>';
 	}
-	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html(sHTML).hide().appendTo('body')
+	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
 		.css({ left: (pos.left - 6) + 'px', top: (pos.top - 4) + 'px' })
-		.mouseleave(function () { oUserMenu.switchMenu(); current_user_menu = null; })
+		.mouseleave(function (e) { if (e.toElement.className != 'umme') $(this).remove(); })
 		.show(500);
-	return false;
 };
 
 
