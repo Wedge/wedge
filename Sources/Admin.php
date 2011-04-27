@@ -59,7 +59,8 @@ function Admin()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadTemplate('Admin', 'admin');
+	loadTemplate('Admin');
+	add_css_file('admin', true);
 
 	// No indexing evil stuff.
 	$context['robot_no_index'] = true;

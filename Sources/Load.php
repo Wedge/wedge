@@ -1978,17 +1978,12 @@ function loadSource($source_name)
  * The function can be used to load just stylesheets as well as loading templates; neither is required for the other to operate. Both templates and stylesheets loaded here will be logged if full debugging is on.
  *
  * @param mixed $template_name Name of a template file to load from the current theme's directory (with .template.php suffix), falling back to locating it in the default theme directory. Alternatively if loading stylesheets only, supply boolean false instead.
- * @param array $style_sheets Name of zero or more stylesheets to load (with .css suffix) from first the theme's css folder, then the default theme's css folder. Any stylesheets added here are tracked to avoid duplicate includes.
- * @param bool $fatal Whether to exit execution with a fatal error if the template file could not be loaded.
+ * @param bool $fatal Whether to exit execution with a fatal error if the template file could not be loaded. (Note: this is never used in the Wedge code base.)
  * @return bool Returns true on success, false on failure (assuming $fatal is false; otherwise the fatal error will suspend execution)
  */
-function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
+function loadTemplate($template_name, $fatal = true)
 {
 	global $context, $settings, $txt, $scripturl, $boarddir, $db_show_debug;
-
-	// Do any style sheets first, cause we're easy with those.
-	if (!empty($style_sheets))
-		wedge_add_css($style_sheets);
 
 	// No template to load?
 	if ($template_name === false)

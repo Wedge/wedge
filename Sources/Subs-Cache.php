@@ -230,18 +230,6 @@ function add_css_file($original_files = array(), $add_link = false)
 }
 
 /**
- * Add a generic CSS file to the list of files loaded on this page, in the form of "admin" (no folder, no extension.)
- *
- * @param array $style_sheets List of CSS files to add to $context['css_main_files']
- */
-function wedge_add_css($style_sheets)
-{
-	global $context;
-
-	$context['css_main_files'] = array_merge($context['css_main_files'], (array) $style_sheets);
-}
-
-/**
  * Create a compact CSS file that concatenates and compresses a list of existing CSS files, also fixing relative paths.
  *
  * @return int Returns the current timestamp, for use in caching

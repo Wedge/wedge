@@ -71,7 +71,7 @@ class wedit
 			self::$editorLoaded = true;
 
 			loadLanguage('Post');
-			wedge_add_css('editor');
+			add_css_file('editor', true);
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			add_js('

@@ -74,7 +74,8 @@ function Packages()
 	// Load all the basic stuff.
 	loadSource('Subs-Package');
 	loadLanguage('Packages');
-	loadTemplate('Packages', 'admin');
+	loadTemplate('Packages');
+	add_css_file('admin', true);
 
 	$context['page_title'] = $txt['package'];
 

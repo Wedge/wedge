@@ -51,7 +51,7 @@ function ModerationMain($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	loadTemplate(false, 'admin');
+	add_css_file('admin', true);
 
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
 	$context['robot_no_index'] = true;
