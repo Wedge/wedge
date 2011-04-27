@@ -476,18 +476,18 @@ function aeva_initZoom($autosize, $peralbum = array())
 	}
 
 	$("a.zoom").zoomedia({ lang: {
-		move: \'', $txt['media_lbox_move'], '\',
+		move: \'', $txt['media_zoom_move'], '\',
 		close: \'', $txt['media_close'], '\',
-		closeTitle: \'', $txt['media_lbox_close_title'], '\',
-		loading: \'', $txt['media_lbox_loading'], '\',
-		loadingTitle: \'', $txt['media_lbox_clicktocancel'], '\',
-		restoreTitle: \'', $txt['media_lbox_clicktoclose'], '\',
-		focusTitle: \'', $txt['media_lbox_focus'], '\',
-		fullExpandTitle: \'', $txt['media_lbox_expandtoactual'], '\',
-		previousTitle: \'', $txt['media_lbox_previous'], '\',
-		nextTitle: \'', $txt['media_lbox_next'], '\',
-		playTitle: \'', $txt['media_lbox_play'], '\',
-		pauseTitle: \'', $txt['media_lbox_pause'], '\'
+		closeTitle: \'', $txt['media_zoom_close_title'], '\',
+		loading: \'', $txt['media_zoom_loading'], '\',
+		loadingTitle: \'', $txt['media_zoom_clicktocancel'], '\',
+		restoreTitle: \'', $txt['media_zoom_clicktoclose'], '\',
+		focusTitle: \'', $txt['media_zoom_focus'], '\',
+		fullExpandTitle: \'', $txt['media_zoom_expandtoactual'], '\',
+		previousTitle: \'', $txt['media_zoom_previous'], '\',
+		nextTitle: \'', $txt['media_zoom_next'], '\',
+		playTitle: \'', $txt['media_zoom_play'], '\',
+		pauseTitle: \'', $txt['media_zoom_pause'], '\'
 	}});
 ');
 		return '';
