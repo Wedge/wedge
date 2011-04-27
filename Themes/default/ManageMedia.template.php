@@ -244,7 +244,7 @@ function template_aeva_admin_maintenance_prune()
 				</tr>
 				<tr>
 					<td class="windowbg2">
-						<select name="albums[]" multiple="multiple" size="9">';
+						<select name="albums[]" multiple size="9">';
 
 		foreach ($context['aeva_album_list'] as $list)
 			echo '

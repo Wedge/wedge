@@ -750,7 +750,7 @@ function template_aeva_item_comments()
 				</ul>', '
 			</td>
 			<td class="top', $c['approved'] ? '' : ' unapp', '">
-				<a name="com', $c['id_comment'], '"></a>
+				<a id="com', $c['id_comment'], '"></a>
 				<div class="mgc_main">
 					', $txt['media_comment'], ' <a href="#com', $c['id_comment'], '" rel="nofollow">#', $c['counter'], '</a> - ',
 					is_numeric($c['posted_on'][0]) ? $txt['media_posted_on_date'] : $txt['media_posted_on'], ' ', $c['posted_on'], '
@@ -759,10 +759,18 @@ function template_aeva_item_comments()
 			if ($c['can_edit'] || $c['can_report'])
 				echo '
 				<div class="mgc_icons">', $c['can_edit'] ? '
-					<a href="'.$galurl.'sa=edit;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/comment_edit.png"> '.$txt['media_edit_this_item'].'</a>' : '', $c['can_delete'] ? '
-					<a href="'.$galurl.'sa=delete;type=comment;in='.$c['id_comment'].'" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="'.$settings['images_aeva'].'/delete.png"> '.$txt['media_delete_this_item'].'</a> ' : '', $c['can_report'] ? '
-					<a href="'.$galurl.'sa=report;type=comment;in='.$c['id_comment'].'"><img src="'.$settings['images_aeva'].'/report.png"> '.$txt['media_report_this_item'].'</a>' : '', !$c['approved'] && $c['can_delete'] ? '
-					<a href="'.$scripturl.'?action=media;area=moderate;sa=submissions;do=approve;in='.$c['id_comment'].';type=coms;' . $context['session_var'] . '='.$context['session_id'].'"><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> '.$txt['media_admin_approve'].'</a>' : '', '
+					<a href="' . $galurl . 'sa=edit;type=comment;in=' . $c['id_comment'] . '">
+						<img src="' . $settings['images_aeva'] . '/comment_edit.png"> ' . $txt['media_edit_this_item'] . '
+					</a>' : '', $c['can_delete'] ? '
+					<a href="' . $galurl . 'sa=delete;type=comment;in=' . $c['id_comment'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
+						<img src="' . $settings['images_aeva'].'/delete.png"> ' . $txt['media_delete_this_item'] . '
+					</a> ' : '', $c['can_report'] ? '
+					<a href="' . $galurl . 'sa=report;type=comment;in=' . $c['id_comment'] . '">
+						<img src="' . $settings['images_aeva'] . '/report.png"> ' . $txt['media_report_this_item'] . '
+					</a>' : '', !$c['approved'] && $c['can_delete'] ? '
+					<a href="' . $scripturl . '?action=media;area=moderate;sa=submissions;do=approve;in=' . $c['id_comment'] . ';type=coms;' . $context['session_var'] . '=' . $context['session_id'] . '">
+						<img src="' . $settings['images_aeva'] . '/tick.png" title="' . $txt['media_admin_approve'] . '"> ' . $txt['media_admin_approve'] . '
+					</a>' : '', '
 				</div>';
 
 			echo '
@@ -915,7 +923,7 @@ function template_aeva_form()
 					break;
 					case 'select';
 						echo '<select name="', $e['fieldname'], isset($e['multi']) && $e['multi'] === true ? '[]' : '', '" tabindex="', $context['tabindex']++, '"',
-							isset($e['multi']) && $e['multi'] === true ? ' multiple="multiple"' . (!empty($e['size']) ? ' size="' . $e['size'] . '"' : '') : '',
+							isset($e['multi']) && $e['multi'] === true ? ' multiple' . (!empty($e['size']) ? ' size="' . $e['size'] . '"' : '') : '',
 							isset($e['custom']) ? ' ' . $e['custom'] : '', '>';
 						foreach ($e['options'] as $value => $name)
 						{

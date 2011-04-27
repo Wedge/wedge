@@ -295,7 +295,7 @@ class wecss_color extends wecss
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];
 		$dir = empty($input[4]) ? 'top' : $input[4];
 
-		// If you're not specifying a gradient shade, IE 9 won't need the filter, but other IEs will.
+		// IE 6, 7 and 8 will need a filter to apply the transparency effect, except for IE9. Also, IE8 can do without hasLayout.
 		if ($browser['is_ie8down'])
 			return $input[1] . 'background: none' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] : '') .
 				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')';
