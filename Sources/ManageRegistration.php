@@ -275,7 +275,7 @@ function SetReserve()
  * - Accessed by ?action=admin;area=regcenter;sa=settings.
  * - Requires admin_forum permission.
  * - Uses the standard settings template.
- * - Adds some Javascript to the page to hide the COPPA options if COPPA is not in effect.
+ * - Adds some JavaScript to the page to hide the COPPA options if COPPA is not in effect.
  */
 function ModifyRegistrationSettings($return_config = false)
 {

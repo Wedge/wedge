@@ -490,7 +490,7 @@ function template_main()
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 			</div>';
 
-	// Show the jumpto box, or actually...let Javascript do it.
+	// Show the jumpto box, or... Actually let JavaScript do it.
 	echo '
 			<div class="posthead">', $context['prevnext_prev'], '
 				<div id="display_jump_to"></div>', $context['prevnext_next'], '

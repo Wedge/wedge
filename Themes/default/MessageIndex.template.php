@@ -256,7 +256,7 @@ function template_main_board()
 		</div>
 	</div>';
 
-	// Javascript for inline editing.
+	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');
 
 	add_js('
@@ -539,7 +539,7 @@ function template_main_blog()
 		</div>
 	</div>';
 
-	// Javascript for inline editing.
+	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');
 
 	add_js('

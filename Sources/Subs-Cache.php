@@ -33,7 +33,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * This function adds a string to the footer Javascript that relies on jQuery and script.js being loaded.
+ * This function adds a string to the footer JavaScript that relies on jQuery and script.js being loaded.
  * Several strings can be passed as parameters, allowing for easier conversion from an "echo" to an "add_js()" call.
  */
 function add_js()
@@ -51,7 +51,7 @@ function add_js()
 }
 
 /**
- * This function adds a string to the footer Javascript. Because this will be shown before jQuery or script.js are loaded,
+ * This function adds a string to the footer JavaScript. Because this will be shown before jQuery or script.js are loaded,
  * you must not use any of the functions provided by default in Wedge. This is only good for quick snippets that manipulate document IDs.
  */
 function add_js_inline()
@@ -63,7 +63,7 @@ function add_js_inline()
 }
 
 /**
- * This function adds one or more minified, gzipped files to the footer Javascript. It takes care of everything. Good boy.
+ * This function adds one or more minified, gzipped files to the footer JavaScript. It takes care of everything. Good boy.
  *
  * @param mixed $files A filename or an array of filenames, with a relative path set to the theme root folder.
  * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
@@ -606,7 +606,7 @@ function theme_base_css()
 }
 
 /**
- * Shows the base Javascript calls, i.e. including jQuery and script.js
+ * Shows the base JavaScript calls, i.e. including jQuery and script.js
  *
  * @param boolean $indenting Number of tabs on each new line. For the average anal-retentive web developer.
  */

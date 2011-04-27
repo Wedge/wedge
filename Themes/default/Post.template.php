@@ -493,7 +493,7 @@ function template_make_poll()
 {
 	global $context, $txt;
 
-	// This is a poll - use some javascript to ensure the user doesn't create a poll with illegal option combinations.
+	// This is a poll - use some JavaScript to ensure the user doesn't create a poll with illegal option combinations.
 	add_js('
 	function pollOptions()
 	{
@@ -838,7 +838,7 @@ function template_spellcheck()
 		}
 	</style>';
 
-	// As you may expect - we need a lot of Javascript for this... Load it from the separate files.
+	// As you may expect - we need a lot of JavaScript for this... Load it from the separate files.
 	echo theme_base_js(1), '
 	<script src="', add_js_file('scripts/spellcheck.js', false, true), '"></script>
 	<script><!-- // --><![CDATA[

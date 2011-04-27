@@ -205,7 +205,7 @@ define('AEVA_MEDIA_VERSION', '2.10');
 	void aeva_mkdir(string dir, octal chmod)
 		- Creates a folder via mkdir or, if PHP safe mode is enabled, try to create it via FTP
 
-	void aeva_addHeaders(bool add_to_headers, bool use_lightbox = true)
+	void aeva_addHeaders(bool add_to_headers, bool use_zoomedia = true)
 		- Adds the Aeva declarations to the headers
 		- If add_to_headers is true, it replaces the buffer instead of using $context['header']
 
@@ -2573,9 +2573,9 @@ function aeva_showThumbnail($data)
 		return '';
 
 	$is_playlist = in_array($type, array('media_album', 'audio_album', 'video_album', 'photo_album', 'playlist'));
-	$no_lightbox = empty($amSettings['use_lightbox']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']);
+	$no_zoom = empty($amSettings['use_zoom']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']);
 
-	aeva_addHeaders(false, true, !$no_lightbox);
+	aeva_addHeaders(false, true, !$no_zoom);
 	$box = '';
 
 	if ($is_playlist)
@@ -2640,12 +2640,12 @@ function aeva_showThumbnail($data)
 		foreach ($ids as $i)
 			$box .=
 				($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $i . ($type == 'preview' ? '' : ';preview')
-				. ($amSettings['use_lightbox'] ? '" class="zoom">' : '">') : '')
+				. ($amSettings['use_zoom'] ? '" class="zoom">' : '">') : '')
 				. '<img src="' . $scripturl . '?action=media;sa=media;in=' . $i
 				. ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v'
 				: ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">'
 				. ($show_bigger ? '</a>' : '')
-				. ($no_lightbox ? '' : '<div class="zoom-overlay"><div class="floatright"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
+				. ($no_zoom ? '' : '<div class="zoom-overlay"><div class="floatright"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
 	}
 	if (empty($box))
 		$box = $txt['media_tag_no_items'];
@@ -2892,7 +2892,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		}
 
 		$in_page++;
-		$inside_caption = !$amSettings['use_lightbox'] ? '' : ($is_image || $is_embed ? ($is_image ? '
+		$inside_caption = !$amSettings['use_zoom'] ? '' : ($is_image || $is_embed ? ($is_image ? '
 			<div class="zoom-overlay">' : ($is_embed ? '
 			<div class="zoom-html" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
 				' . trim($match) : '')) . '
@@ -2919,7 +2919,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
 		<td class="center' . ($i['approved'] ? '' : ' unapp') . '">
-			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_lightbox'] ? ' id="hsm' . $in_page . '" class="zoom"'
+			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_zoom'] ? ' id="hsm' . $in_page . '" class="zoom"'
 			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
 			. $inside_caption . '
 
@@ -3567,7 +3567,7 @@ function aeva_markAllSeen()
 		wesql::query('OPTIMIZE TABLE {db_prefix}media_log_media', array());
 }
 
-function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_lightbox = true)
+function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_zoomedia = true)
 {
 	global $context, $txt, $modSettings, $amSettings, $scripturl;
 
@@ -3576,29 +3576,29 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_lightbo
 
 	aeva_loadLanguage('media_move');
 
-	$use_lightbox &= !empty($amSettings['use_lightbox']);
-	$lightbox = (empty($_GET['action']) || $_GET['action'] != 'media' ? '
-	<link rel="stylesheet" href="' . add_css_file('media') . '">' : '') . (!$use_lightbox ? '' : '
+	$use_zoomedia &= !empty($amSettings['use_zoom']);
+	$zoom = (empty($_GET['action']) || $_GET['action'] != 'media' ? '
+	<link rel="stylesheet" href="' . add_css_file('media') . '">' : '') . (!$use_zoomedia ? '' : '
 	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">');
 
 	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
-		$lightbox .= '
+		$zoom .= '
 	<style>
 		.pics td { -' . $pfx . '-border-radius: 5px; }
 		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }
 	</style>';
 
-	if ($use_lightbox)
-		$lightbox .= aeva_initLightbox($autosize);
+	if ($use_zoomedia)
+		$zoom .= aeva_initZoom($autosize);
 
 	if ($add_to_headers || (ob_get_length() === 0))
-		$context['header'] .= $lightbox;
+		$context['header'] .= $zoom;
 	else
 	{
 		$temp = ob_get_contents();
 		ob_clean();
 
-		echo substr_replace($temp, $lightbox . "\n" . '</head>', stripos($temp, '</head>'), 7);
+		echo substr_replace($temp, $zoom . "\n" . '</head>', stripos($temp, '</head>'), 7);
 		unset($temp);
 	}
 

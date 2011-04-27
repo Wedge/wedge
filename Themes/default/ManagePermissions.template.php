@@ -177,7 +177,7 @@ function template_permission_index()
 				</div>
 			</div>';
 
-		// Javascript for the advanced stuff.
+		// JavaScript for the advanced stuff.
 		add_js('
 	var oPermissionsPanelToggle = new smc_Toggle({
 		bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
@@ -516,7 +516,7 @@ function template_modify_group()
 
 }
 
-// A Javascript-enabled clean permissions view.
+// A JavaScript-enabled clean permissions view.
 function template_modify_group_simple($type)
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;

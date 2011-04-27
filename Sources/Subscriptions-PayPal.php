@@ -144,7 +144,7 @@ class paypal_display
 			$return_data['hidden']['t3'] = $period;
 		}
 
-		// If it's repeatable add some Javascript to respect this idea.
+		// If it's repeatable add some JavaScript to respect this idea.
 		if (!empty($sub_data['repeatable']))
 			$return_data['javascript'] = '
 				document.write(\'<label><input type="checkbox" name="do_paypal_recur" id="do_paypal_recur" checked onclick="switchPaypalRecur();">' . $txt['paid_make_recurring'] . '</label><br>\');

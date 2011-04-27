@@ -992,7 +992,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$will_be_unapproved = $is_admin ? false : ($is_edit ? (!empty($amSettings['album_edit_unapprove']) || $still_unapproved) && !$can_auto_approve : !$can_auto_approve);
 
 	$peralbum = $is_add ? array() : unserialize($peralbum_options);
-	$peralbum['lightbox'] = isset($peralbum['lightbox']) && $peralbum['lightbox'] == 'no' ? 'no' : 'yes';
+	$peralbum['zoom'] = isset($peralbum['zoom']) && $peralbum['zoom'] == 'no' ? 'no' : 'yes';
 	$peralbum['outline'] = isset($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'rounded-white')) ? $peralbum['outline'] : 'drop-shadow';
 	$peralbum['autosize'] = isset($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
 	$peralbum['expand'] = isset($peralbum['expand']) && is_numeric($peralbum['expand']) ? (int) $peralbum['expand'] : 250;
@@ -1285,45 +1285,45 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'type' => 'text',
 			'value' => preg_match('/^[a-f0-9]{40}$/', $passwd) ? '' : $passwd,
 		),
-		'lightbox_section' => array(
-			'label' => $txt['media_lightbox_section'],
+		'zoom_section' => array(
+			'label' => $txt['media_zoom_section'],
 			'type' => 'title',
 		),
-		'lightbox_enable' => array(
-			'label' => $txt['media_lightbox_enable'],
-			'subtext' => $txt['media_lightbox_enable_info'],
-			'fieldname' => 'lightbox',
+		'zoom_enable' => array(
+			'label' => $txt['media_zoom_enable'],
+			'subtext' => $txt['media_zoom_enable_info'],
+			'fieldname' => 'zoom',
 			'type' => 'yesno',
-			'value' => $peralbum['lightbox'] == 'yes',
+			'value' => $peralbum['zoom'] == 'yes',
 		),
-		'lightbox_outline' => array(
-			'label' => $txt['media_lightbox_outline'],
-			'subtext' => $txt['media_lightbox_outline_info'],
-			'fieldname' => 'lightbox_outline',
+		'zoom_outline' => array(
+			'label' => $txt['media_zoom_outline'],
+			'subtext' => $txt['media_zoom_outline_info'],
+			'fieldname' => 'zoom_outline',
 			'type' => 'select',
 			'options' => array(
 				'drop-shadow' => array('drop-shadow', $peralbum['outline'] == 'drop-shadow'),
 				'rounded-white' => array('rounded-white', $peralbum['outline'] == 'rounded-white'),
 			),
 		),
-		'lightbox_expand' => array(
-			'label' => $txt['media_lightbox_expand'],
-			'subtext' => $txt['media_lightbox_expand_info'],
-			'fieldname' => 'lightbox_expand',
+		'zoom_expand' => array(
+			'label' => $txt['media_zoom_expand'],
+			'subtext' => $txt['media_zoom_expand_info'],
+			'fieldname' => 'zoom_expand',
 			'value' => $peralbum['expand'],
 			'type' => 'text',
 		),
-		'lightbox_autosize' => array(
-			'label' => $txt['media_lightbox_autosize'],
-			'subtext' => $txt['media_lightbox_autosize_info'],
-			'fieldname' => 'lightbox_autosize',
+		'zoom_autosize' => array(
+			'label' => $txt['media_zoom_autosize'],
+			'subtext' => $txt['media_zoom_autosize_info'],
+			'fieldname' => 'zoom_autosize',
 			'type' => 'yesno',
 			'value' => $peralbum['autosize'] == 'yes',
 		),
-		'lightbox_fadeinout' => array(
-			'label' => $txt['media_lightbox_fadeinout'],
-			'subtext' => $txt['media_lightbox_fadeinout_info'],
-			'fieldname' => 'lightbox_fadeinout',
+		'zoom_fadeinout' => array(
+			'label' => $txt['media_zoom_fadeinout'],
+			'subtext' => $txt['media_zoom_fadeinout_info'],
+			'fieldname' => 'zoom_fadeinout',
 			'type' => 'yesno',
 			'value' => !empty($peralbum['fadeinout']),
 		),
@@ -1354,25 +1354,25 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 	unset($context['aeva_form'][$id_topic ? 'topic_board' : 'linked_topic']);
 
-	if (empty($amSettings['use_lightbox']))
+	if (empty($amSettings['use_zoom']))
 		unset(
-			$context['aeva_form']['lightbox_section'],
-			$context['aeva_form']['lightbox_enable'],
-			$context['aeva_form']['lightbox_outline'],
-			$context['aeva_form']['lightbox_expand'],
-			$context['aeva_form']['lightbox_autosize'],
-			$context['aeva_form']['lightbox_fadeinout']
+			$context['aeva_form']['zoom_section'],
+			$context['aeva_form']['zoom_enable'],
+			$context['aeva_form']['zoom_outline'],
+			$context['aeva_form']['zoom_expand'],
+			$context['aeva_form']['zoom_autosize'],
+			$context['aeva_form']['zoom_fadeinout']
 		);
 
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
 	{
-		$peralbum['lightbox'] = isset($_POST['lightbox']) && $_POST['lightbox'] == 0 ? 'no' : 'yes';
-		$peralbum['outline'] = isset($_POST['lightbox_outline']) && in_array($_POST['lightbox_outline'], array('drop-shadow', 'rounded-white')) ? $_POST['lightbox_outline'] : 'drop-shadow';
-		$peralbum['autosize'] = isset($_POST['lightbox_autosize']) && $_POST['lightbox_autosize'] == 0 ? 'no' : 'yes';
-		$peralbum['expand'] = isset($_POST['lightbox_expand']) && is_numeric($_POST['lightbox_expand']) && $_POST['lightbox_expand'] >= 0 ? (int) $_POST['lightbox_expand'] : 250;
+		$peralbum['zoom'] = isset($_POST['zoom']) && $_POST['zoom'] == 0 ? 'no' : 'yes';
+		$peralbum['outline'] = isset($_POST['zoom_outline']) && in_array($_POST['zoom_outline'], array('drop-shadow', 'rounded-white')) ? $_POST['zoom_outline'] : 'drop-shadow';
+		$peralbum['autosize'] = isset($_POST['zoom_autosize']) && $_POST['zoom_autosize'] == 0 ? 'no' : 'yes';
+		$peralbum['expand'] = isset($_POST['zoom_expand']) && is_numeric($_POST['zoom_expand']) && $_POST['zoom_expand'] >= 0 ? (int) $_POST['zoom_expand'] : 250;
 		$peralbum['expand'] = max(1, min(5000, $peralbum['expand']));
-		$peralbum['fadeinout'] = empty($_POST['lightbox_fadeinout']) ? 0 : 1;
+		$peralbum['fadeinout'] = empty($_POST['zoom_fadeinout']) ? 0 : 1;
 		$peralbum['view'] = !empty($_POST['default_view']) && in_array($_POST['default_view'], array('normal', 'filestack')) ? $_POST['default_view'] : 'normal';
 
 		$hidden = empty($_POST['hidden']) ? 0 : 1;

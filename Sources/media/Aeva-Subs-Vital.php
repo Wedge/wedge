@@ -305,7 +305,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	if ($type == 'image')
 	{
 		$output .= '
-		' . (!empty($context['aeva_has_preview']) ? '<a href="' . $galurl . 'sa=media;in=' . $id_file . '" title="' . westr::htmlspecialchars($desc) . '"' . ($amSettings['use_lightbox'] ? ' class="zoom"' : '') . '>' : '')
+		' . (!empty($context['aeva_has_preview']) ? '<a href="' . $galurl . 'sa=media;in=' . $id_file . '" title="' . westr::htmlspecialchars($desc) . '"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '>' : '')
 		. '<img src="' . $preview_image . '" width="' . $cur_width . '" height="' . $cur_height . '">'
 		. (!empty($context['aeva_has_preview']) ? '</a>' : '');
 	}
@@ -452,7 +452,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 	return $output;
 }
 
-function aeva_initLightbox($autosize, $peralbum = array())
+function aeva_initZoom($autosize, $peralbum = array())
 {
 	global $txt, $settings;
 
@@ -493,10 +493,10 @@ function aeva_initLightbox($autosize, $peralbum = array())
 		return '';
 	}
 
+	// !! WIP !! To be removed.
+
 	$not_single = empty($peralbum) ? 'true' : 'false';
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
-
-	add_js_file('aeva/highslide-full.js');
 
 	add_js(empty($peralbum) ? '
 	hs.Expander.prototype.onInit = function()

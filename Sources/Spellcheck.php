@@ -70,13 +70,13 @@ function Spellcheck()
 	window.close();
 </script></head>');
 
-	// Construct a bit of Javascript code.
+	// Construct a bit of JavaScript code.
 	$context['spell_js'] = '
 	var txt = { done: ' . JavaScriptEscape($txt['spellcheck_done']) . ' };
 	var mispstr = window.opener.document.forms[spell_formname][spell_fieldname].value;
 	var misps = Array(';
 
-	// Get all the words (Javascript already separated them).
+	// Get all the words (JavaScript already separated them.)
 	$alphas = explode("\n", strtr($_POST['spellstring'], array("\r" => '')));
 
 	$found_words = false;
@@ -92,7 +92,7 @@ function Spellcheck()
 		// Find the word, and move up the "last occurance" to here.
 		$found_words = true;
 
-		// Add on the javascript for this misspelling.
+		// Add on the JavaScript for this misspelling.
 		$context['spell_js'] .= '
 		new misp("' . strtr($check_word[0], array('\\' => '\\\\', '"' => '\\"', '<' => '', '&gt;' => '')) . '", ' . (int) $check_word[1] . ', ' . (int) $check_word[2] . ', [';
 

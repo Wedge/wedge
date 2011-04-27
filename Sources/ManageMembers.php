@@ -784,7 +784,7 @@ function MembersAwaitingActivation()
 		$allowed_actions .= '
 			<option value="' . $key . '">' . $desc . '</option>';
 
-	// Setup the Javascript function for selecting an action for the list.
+	// Set up the JavaScript function for selecting an action for the list.
 	$javascript = '
 	function onSelectChange()
 	{

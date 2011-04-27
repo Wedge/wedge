@@ -394,7 +394,7 @@ function aeva_admin_settings()
 		'player_color' => array('small_text', 'layout'),
 		'player_bcolor' => array('small_text', 'layout'),
 		'audio_player_width' => array('small_text', 'layout', null, null, $txt['media_pixels']),
-		'use_lightbox' => array('yesno', 'layout'),
+		'use_zoom' => array('yesno', 'layout'),
 		'disable_rss' => array('yesno', 'layout'),
 		'disable_playlists' => array('yesno', 'layout'),
 		'disable_comments' => array('yesno', 'layout'),

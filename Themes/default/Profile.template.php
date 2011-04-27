@@ -1339,7 +1339,7 @@ function template_edit_options()
 		echo '
 		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="', $scripturl, '?action=spellcheck"><input type="hidden" name="spellstring" value=""></form>';
 
-	// Some javascript!
+	// Some JavaScript!
 	add_js_inline('
 	function checkProfileSubmit()
 	{');
@@ -1769,7 +1769,7 @@ function template_groupMembership()
 			</table>';
 		}
 
-		// Javascript for the selector stuff.
+		// JavaScript for the selector stuff.
 		add_js_inline('
 	var prevClass = "", prevDiv = "";
 	function highlightSelected(box)
@@ -2116,7 +2116,7 @@ function template_issueWarning()
 						<input type="text" name="warning_level_nojs" size="6" maxlength="4" value="', $context['member']['warning'], '">&nbsp;', $txt['profile_warning_max'], '
 						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
 
-	// For non-javascript give a better list.
+	// For non-JavaScript give a better list.
 	foreach ($context['level_effects'] as $limit => $effect)
 		echo '
 							', sprintf($txt['profile_warning_effect_text'], $limit, $effect), '<br>';
@@ -2233,7 +2233,7 @@ function template_issueWarning()
 	</table>
 	<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
 
-	// Do our best to get pretty javascript enabled.
+	// Do our best to get pretty JavaScript enabled.
 	add_js('
 	$("#warndiv1").show();
 	$("#warndiv2").hide();');
@@ -2466,7 +2466,7 @@ function template_profile_signature_modify()
 	if ($context['show_spellchecking'])
 		add_js_file('scripts/spellcheck.js');
 
-	// Some javascript used to count how many characters have been used so far in the signature.
+	// Some JavaScript used to count how many characters have been used so far in the signature.
 	add_js('
 	function tick()
 	{

@@ -628,14 +628,14 @@ function cleanXml($string)
 }
 
 /**
- * Sanitize strings that might be passed through to Javascript.
+ * Sanitize strings that might be passed through to JavaScript.
  *
- * Multiple instances of scripts will need to be adjusted through the codebase if passed to Javascript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
+ * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
  *
  * Other protections include dealing with newlines, carriage returns (through suppression), single quotes, links, inline script tags, and $scripturl. (Probably to prevent search bots from indexing JS-only URLs.)
  *
  * @param string $string A string whose contents to be quoted.
- * @return string A transformed string with contents suitably single quoted for use in Javascript.
+ * @return string A transformed string with contents suitably single quoted for use in JavaScript.
  */
 function JavaScriptEscape($string)
 {
@@ -1374,7 +1374,7 @@ function ob_sessrewrite($buffer)
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
 	$context['delayed_events'] = array();
-	$cut = explode("<!-- Javascript area -->\n", $buffer);
+	$cut = explode("<!-- JavaScript area -->\n", $buffer);
 
 	// If the placeholder isn't there, it means we're probably not in a default index template,
 	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
@@ -2215,7 +2215,7 @@ function url_image_size($url)
  * - Prepare the news items (load, split from the one entry in the admin option, randomize the other).
  * - Get various user details (or defaults for guests) such as number of PMs, avatar.
  * - Call {@link setupMenuContext()} to load the main menu.
- * - Load the Javascript if we need that to resize the user information area's instance of the avatar.
+ * - Load the JavaScript if we need that to resize the user information area's instance of the avatar.
  * - Load a few details about the latest member and current forum-wide stats.
  * - Set the page title and meta keywords.
  */

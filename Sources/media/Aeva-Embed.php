@@ -43,7 +43,7 @@ function aeva_main(&$message)
 	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
 		loadSource('media/Aeva-Sites');
 
-	// Are we checking a link in the media gallery? We'd best avoid Javascript then.
+	// Are we checking a link in the media gallery? We'd best avoid JavaScript then.
 	if (isset($_REQUEST, $_REQUEST['action'], $_REQUEST['sa']) && $_REQUEST['action'] == 'media' && $_REQUEST['sa'] == 'post')
 		$context['aeva_mg_hack'] = true;
 

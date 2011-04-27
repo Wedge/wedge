@@ -1717,7 +1717,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!isset($context['footer_js_inline']))
 		$context['footer_js_inline'] = '';
 
-	// Specifies that the Javascript footer section is currently
+	// Specifies that the JavaScript footer section is currently
 	// open for sending JS code without <script> tags.
 	$footer_coding = true;
 

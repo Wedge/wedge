@@ -21,7 +21,7 @@ function template_init()
 {
 	global $context, $settings, $options, $txt;
 
-	// Add the theme-specific Javascript files to our priority cache list.
+	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['javascript_files']))
 	{
 		$context['javascript_files'][] = 'scripts/theme.js';
@@ -392,11 +392,11 @@ function template_html_below()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
-	// Javascript section -- files to include, main vars and functions to start.
+	// JavaScript section -- files to include, main vars and functions to start.
 	// Don't modify the HTML comments, as they're placeholders for Wedge.
 
 	echo $context['footer'], '
-<!-- Javascript area -->';
+<!-- JavaScript area -->';
 
 	// Code added here through add_js_inline() will execute before jQuery
 	// and script.js are loaded. You may add time-critical events here.
@@ -437,7 +437,7 @@ function template_html_below()
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");' : '';
 
-	// Output any postponed Javascript added by templates
+	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!
 	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], empty($footer_coding) ? '

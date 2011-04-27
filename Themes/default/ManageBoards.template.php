@@ -589,7 +589,7 @@ function template_modify_board()
 			]
 		});');
 
-	// Javascript for deciding what to show.
+	// JavaScript for deciding what to show.
 	add_js_inline('
 	function refreshOptions()
 	{

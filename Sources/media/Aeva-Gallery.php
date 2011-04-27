@@ -763,7 +763,7 @@ function aeva_viewItem()
 	unset($item_data['options']);
 	$peralbum['outline'] = !empty($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'rounded-white')) ? $peralbum['outline'] : 'drop-shadow';
 	$peralbum['autosize'] = !empty($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
-	$amSettings['use_lightbox'] &= empty($peralbum['lightbox']) || $peralbum['lightbox'] == 'yes';
+	$amSettings['use_zoom'] &= empty($peralbum['zoom']) || $peralbum['zoom'] == 'yes';
 	$context['aeva_has_preview'] = (bool) $item_data['has_preview'];
 	$amSettings['show_linking_code'] = empty($amSettings['show_linking_code']) || ($item_data['type'] == 'unknown') ? 0 : (1 + (file_exists($boarddir . '/MGalleryItem.php') ? 0 : 1));
 
@@ -940,12 +940,12 @@ function aeva_viewItem()
 	$members = array();
 	$counter = $start;
 
-	// Include lightbox here to avoid further issues
-	if ($amSettings['use_lightbox'])
+	// Include Zoomedia here to avoid further issues
+	if ($amSettings['use_zoom'])
 	{
 		$context['mg_headers_sent'] = true;
 		$context['header'] .= '
-	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">' . aeva_initLightbox($peralbum['autosize'], $peralbum);
+	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">' . aeva_initZoom($peralbum['autosize'], $peralbum);
 	}
 
 	if (wesql::num_rows($result) > 0)
@@ -1199,7 +1199,7 @@ function aeva_viewItem()
 	$item_data['can_approve'] = allowedTo('media_moderate') || (allowedTo('media_auto_approve_item') && $item_data['id_member'] == $user_info['id']);
 
 	// Moveable/Commentable albums?
-	if ($amSettings['use_lightbox'])
+	if ($amSettings['use_zoom'])
 	{
 		$allowed_albums = albumsAllowedTo('add_' . $item_data['type'] . 's');
 		// This one only selects the user's own albums... Would this save processing time for admins with large galleries?

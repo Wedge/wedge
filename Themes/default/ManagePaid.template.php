@@ -6,7 +6,7 @@ function template_modify_subscription()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	// Javascript for the duration stuff.
+	// JavaScript for the duration stuff.
 	add_js('
 	function toggleDuration(toChange)
 	{
