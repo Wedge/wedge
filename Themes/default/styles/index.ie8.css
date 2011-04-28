@@ -31,3 +31,7 @@ input.new
 
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
+
+// On very short posts, IE8 shows a scrollbar if you have a smiley on the last line. Pff.
+.post, .personalmessage
+	overflow: hidden

@@ -810,7 +810,7 @@ code.bbc_code, code.php_code
 	border-bottom: 2px solid #999
 	padding: 3px 1em
 	overflow: auto
-	white-space: nowrap
+	white-space: pre
 	// Show a scrollbar after about 24 lines.
 	max-height: 24em
 
