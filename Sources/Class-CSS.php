@@ -462,67 +462,66 @@ class wecss_nesting extends wecss
 		 Process nested selectors
 		 ******************************************************************************/
 
-		// Transform the CSS into XML
-		$xml = str_replace('"', '#wedge-quote#', trim($css));
+		// Transform the CSS into a tree
+		$tree = str_replace('"', '#wedge-quote#', trim($css));
 
 		// Does this file use the regular CSS syntax?
-		$css_syntax = strpos($xml, "{\n") !== false && strpos($xml, "\n}") !== false;
+		$css_syntax = strpos($tree, "{\n") !== false && strpos($tree, "\n}") !== false;
 		if (!$css_syntax)
 		{
 			// Nope? Then let's have fun with our simplified syntax.
-			$xml = preg_replace("~\n\s*\n~", "\n", $xml); // Delete blank lines
-			$xml = preg_replace_callback('~^([\t ]*)~m', 'wecss_nesting::indentation', $xml);
-			$tree = explode("\n", $xml);
+			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
+			$tree = preg_replace_callback('~^([\t ]*)~m', 'wecss_nesting::indentation', $tree);
+			$branches = explode("\n", $tree);
 			$level = 0;
-			$xml = '';
-			foreach ($tree as &$line)
+			$tree = '';
+			foreach ($branches as &$line)
 			{
 				$l = explode(':', $line, 2);
 				if (!isset($indent) && !empty($l[0]))
 					$indent = $l[0];
 				if (!isset($indent))
 				{
-					$xml .= $l[1] . "\n";
+					$tree .= $l[1] . "\n";
 					continue;
 				}
 
 				// Do we have an extends line followed by a line on the same level or above it?
 				// If yes, this means we just extended a selector and should close it immediately.
 				if ($level >= $l[0] && strpos($ex_string, ' extends ') !== false)
-					$xml .= " {\n}\n";
+					$tree .= " {\n}\n";
 
 				// Same level, and no continuation of a selector? We're probably in a list of properties.
 				elseif ($level == $l[0] && substr($ex_string, -1) !== ',')
-					$xml .= ";\n";
+					$tree .= ";\n";
 				// Higher level than before? This is a child, obviously.
 				elseif ($level < $l[0])
-					$xml .= " {\n";
+					$tree .= " {\n";
 
 				while ($level > $l[0])
 				{
-					$xml .= "}\n";
+					$tree .= "}\n";
 					$level -= $indent;
 				}
 
 				$level = $l[0];
-				$xml .= $l[1];
+				$tree .= $l[1];
 				$ex_string = $l[1];
 			}
 			while ($level > 0)
 			{
-				$xml .= '}';
+				$tree .= '}';
 				$level -= $indent;
 			}
 		}
 
-		$xml = preg_replace('~([a-z-, ]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2" />', $xml); // Transform properties
-		$xml = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $xml); // Transform selectors
-		$xml = preg_replace(array('~ {2,}~'), array(' '), $xml); // Remove extra spaces
-		$xml = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $xml); // Close rules and indent everything one tab
-		$xml = '<?xml version="1.0"?'.">\n<css>\n\t$xml\n</css>\n"; // Tie it all up with a bow
+		$tree = preg_replace('~([a-z-, ]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $tree); // Transform selectors
+		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
+		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
 		 // Parse the XML into a crawlable DOM
-		$this->pierce($xml);
+		$this->pierce($tree);
 
 		/******************************************************************************
 		 Rebuild parsed CSS

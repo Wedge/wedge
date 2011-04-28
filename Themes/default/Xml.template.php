@@ -48,7 +48,7 @@ function template_modifydone()
 	}
 	else
 		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br />', $context['message']['errors']), ']]></error>';
+		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
 	echo '
 	</message>
 </smf>';
@@ -71,7 +71,7 @@ function template_modifytopicdone()
 	}
 	else
 		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br />', $context['message']['errors'])), ']]></error>';
+		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br>', $context['message']['errors'])), ']]></error>';
 	echo '
 	</message>
 </smf>';

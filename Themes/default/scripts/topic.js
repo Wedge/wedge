@@ -1,9 +1,6 @@
 
-var
-	cur_topic_id, cur_msg_id, cur_subject_div,
-	buff_subject, in_edit_mode = 0,
-	current_user_menu = null,
-	hide_prefixes = [];
+var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0;
+hide_prefixes = [];
 
 function is_editing()
 {
@@ -330,6 +327,9 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 		// Show this message as 'modified on x by y'.
 		if (this.opt.bShowModify)
 			$('#modified_' + this.sCurMessageId.substr(4)).html($('modified', message).text());
+
+		// Finally, we can safely declare we're up and running...
+		this.sCurMessageId = '';
 	}
 	else if (error.length)
 	{
@@ -634,12 +634,3 @@ UserMenu.prototype.switchMenu = function (oLink)
 		.mouseleave(function (e) { if (e.toElement.className != 'umme') $(this).remove(); })
 		.show(500);
 };
-
-
-/* Optimize:
-cur_topic_id = ct
-cur_msg_id = cm
-buff_subject = bs
-cur_subject_div = cs
-in_edit_mode = em
-*/
