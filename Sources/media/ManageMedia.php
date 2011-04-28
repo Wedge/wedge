@@ -144,7 +144,7 @@ function aeva_admin_init()
 	add_js_file('scripts/media-admin.js');
 
 	// If lookups are available, retrieve the latest version numbers for both Aeva Media and its site list
-	if (!isset($_POST['submit_aeva']) && !empty($modSettings['aeva_lookups']) && (empty($modSettings['aeva_version_test'])
+	if (!isset($_POST['submit_aeva']) && !empty($modSettings['embed_lookups']) && (empty($modSettings['aeva_version_test'])
 		|| ((time() - 24*3600) >= $modSettings['aeva_version_test']) || isset($_GET['checkaeva'])))
 	{
 		loadSource('media/Aeva-Embed');
@@ -165,7 +165,7 @@ function aeva_admin_about()
 
 	if ($sa == 'readme' || $sa == 'changelog')
 	{
-		$context['media_disable'] = true;
+		$context['disable_media_tag'] = true;
 		$readme = trim(@file_get_contents($boarddir . '/Themes/default/aeva/' . $sa . '.txt'));
 		if (empty($readme))
 			return;

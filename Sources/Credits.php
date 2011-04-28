@@ -183,7 +183,7 @@ function Credits($in_admin = false)
 	/*
 		To Add-on Authors:
 		You may add a copyright statement to this array for your add-ons.
-		Do NOT edit the file, it would be messy. Simply call an add_hook('place_credit', 'my_function')
+		Do NOT edit the file, it could get messy. Simply call an add_hook('place_credit', 'my_function', 'my_source_file')
 		where my_function will simply add your copyright to $context['copyrights']['mods'].
 		You may also add credits at the end of the $context['credits'] array, following the same structure.
 

@@ -1204,7 +1204,7 @@ function highlight_php_code($code)
 	error_reporting($oldlevel);
 
 	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
-	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline">' . "\t" . '</pre>', $buffer);
+	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<span class="bbc_pre">' . "\t" . '</span>', $buffer);
 
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
@@ -1214,25 +1214,25 @@ function highlight_php_code($code)
  *
  * This feature was shamelessly inspired by a mod by JayBachatero, which should have been made a core feature long ago. Thanks, man!
  *
- * @param string $ur URL that should be shortened, in case it's longer than $modSettings['urlLength']
+ * @param string $url URL that should be shortened, in case it's longer than $modSettings['max_urlLength']
  * @return string The resulting string
  */
-function trim_url($ur)
+function trim_url($url)
 {
 	global $modSettings;
 
-	$modSettings['urlLength'] = isset($modSettings['urlLength']) ? $modSettings['urlLength'] : 50;
-	if (empty($modSettings['urlLength']))
-		return $ur;
+	$modSettings['max_urlLength'] = isset($modSettings['max_urlLength']) ? $modSettings['max_urlLength'] : 50;
+	if (empty($modSettings['max_urlLength']))
+		return $url;
 
-	$url = html_entity_decode($ur, ENT_QUOTES);
+	$u = html_entity_decode($url, ENT_QUOTES);
 
 	// Check the length of the url
-	if (westr::strlen($url) <= $modSettings['urlLength'])
-		return $ur;
+	if (westr::strlen($u) <= $modSettings['max_urlLength'])
+		return $url;
 
-	$break = $modSettings['urlLength'] / 2;
-	return htmlentities(preg_replace('/&[^&;]*$/', '', substr($url, 0, $break)) . '&hellip;' . preg_replace('/^\d+;/', '', substr($url, -$break)));
+	$break = $modSettings['max_urlLength'] / 2;
+	return str_replace('&amp;hellip;', '&hellip;', htmlentities(preg_replace('/&[^&;]*$/', '', westr::substr($u, 0, floor($break))) . '&hellip;' . preg_replace('/^\d+;/', '', westr::substr($u, -ceil($break)))));
 }
 
 /**

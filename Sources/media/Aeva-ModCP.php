@@ -691,10 +691,10 @@ function aeva_modCP_modLog()
 		// Get their action href and type
 		$href = '';
 		$type = '';
-		switch($row['val1'])
+		switch ($row['val1'])
 		{
 			case 'approval':
-				switch($row['val8'])
+				switch ($row['val8'])
 				{
 					case 'item':
 						if ($row['val2'] == 'approved')

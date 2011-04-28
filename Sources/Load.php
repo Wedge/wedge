@@ -41,7 +41,7 @@ if (!defined('SMF'))
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
  * - Check if WEDGE_HOOK_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
- * - Load any files specified in the file preloader ($modSettings['hooks']['pre_include']), and run any functions specified in the pre_load hook.
+ * - Run any functions specified in the pre_load hook.
  */
 function reloadSettings()
 {
@@ -113,21 +113,6 @@ function reloadSettings()
 
 	// Is post moderation alive and well?
 	$modSettings['postmod_active'] = !empty($modSettings['postmod_enabled']);
-
-	// Gotta love hooks. What? I said hooks, not hookers.
-	if (defined('WEDGE_HOOK_SETTINGS'))
-		foreach (unserialize(WEDGE_HOOK_SETTINGS) as $hook => $function)
-			add_hook($hook, $function, false);
-
-	// Any files to pre-include?
-	if (!empty($modSettings['hooks']['pre_include']))
-	{
-		foreach ($modSettings['hooks']['pre_include'] as $include)
-			if (file_exists($inc = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir))))
-				require_once($inc);
-			else
-				remove_hook('pre_include', $include);
-	}
 
 	// Call pre-load integration functions.
 	call_hook('pre_load');
@@ -2450,10 +2435,7 @@ function template_include($filename, $once = false)
 				$data2 = preg_split('~\<br\s*/?\>~', $data2);
 
 				// Fix the PHP code stuff...
-				if (!$context['browser']['is_gecko'])
-					$data2 = str_replace("\t", '<span style="white-space: pre">' . "\t" . '</span>', $data2);
-				else
-					$data2 = str_replace('<pre style="display: inline">' . "\t" . '</pre>', "\t", $data2);
+				$data2 = str_replace('<span class="bbc_pre">' . "\t" . '</span>', "\t", $data2);
 
 				// Now we get to work around a bug in PHP where it doesn't escape <br>s!
 				$j = -1;
@@ -2476,7 +2458,7 @@ function template_include($filename, $once = false)
 				array_unshift($data2, '');
 
 				echo '
-		<div style="margin: 2ex 20px; width: 96%; overflow: auto"><pre style="margin: 0">';
+		<div style="margin: 2ex 20px"><div style="width: 100%; overflow: auto"><pre style="margin: 0">';
 
 				// Figure out what the color coding was before...
 				$line = max($match[1] - 9, 1);
@@ -2510,12 +2492,12 @@ function template_include($filename, $once = false)
 						echo '</', substr($last_line, 1, 4), '>';
 
 					if ($line == $match[1])
-						echo '</pre></div><pre style="margin: 0;">';
+						echo '</pre></div><pre style="margin: 0">';
 					else
 						echo "\n";
 				}
 
-				echo '</pre></div>';
+				echo '</pre></div></div>';
 			}
 
 			echo '

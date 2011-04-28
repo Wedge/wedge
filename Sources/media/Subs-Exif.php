@@ -49,7 +49,7 @@ function intel2Moto($intel) {
 }
 
 function lookup_tag($tag) {
-	switch($tag) {
+	switch ($tag) {
 		case '000b': $tag = 'ACDComment'; break;
 		case '00fe': $tag = 'ImageType'; break;
 		case '0106': $tag = 'PhotometricInterpret'; break;
@@ -194,7 +194,7 @@ function lookup_tag($tag) {
 }
 
 function lookup_type(&$type,&$size) {
-	switch($type) {
+	switch ($type) {
 		case '0001': $type = 'UBYTE'; $size=1; break;
 		case '0002': $type = 'ASCII'; $size=1; break;
 		case '0003': $type = 'USHORT'; $size=2; break;
@@ -812,7 +812,7 @@ function get35mmEquivFocalLength(&$result)
 
 function lookup_Canon_tag($tag)
 {
-	switch($tag) {
+	switch ($tag) {
 		case "0001": $tag = "Settings 1"; break;
 		case "0004": $tag = "Settings 4"; break;
 		case "0006": $tag = "ImageType"; break;
@@ -855,25 +855,25 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['Bytes']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			if ($result['Bytes'] != strlen($data) / 2) return $result;
 			$result['Macro']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Macro']) {
+			switch ($result['Macro']) {
 				case 1: $result['Macro'] = "Macro"; break;
 				case 2: $result['Macro'] = "Normal"; break;
 				default: $result['Macro'] = "Unknown";
 			}
 			$result['SelfTimer']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['SelfTimer']) {
+			switch ($result['SelfTimer']) {
 				case 0: $result['SelfTimer'] = "Off"; break;
 				default: $result['SelfTimer'] .= "/10s";
 			}
 			$result['Quality']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Quality']) {
+			switch ($result['Quality']) {
 				case 2: $result['Quality'] = "Normal"; break;
 				case 3: $result['Quality'] = "Fine"; break;
 				case 5: $result['Quality'] = "Superfine"; break;
 				default: $result['Quality'] = "Unknown";
 			}
 			$result['Flash']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Flash']) {
+			switch ($result['Flash']) {
 				case 0: $result['Flash'] = "Off"; break;
 				case 1: $result['Flash'] = "Auto"; break;
 				case 2: $result['Flash'] = "On"; break;
@@ -885,14 +885,14 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['Flash'] = "Unknown";
 			}
 			$result['DriveMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['DriveMode']) {
+			switch ($result['DriveMode']) {
 				case 0: $result['DriveMode'] = "Single/Timer"; break;
 				case 1: $result['DriveMode'] = "Continuous"; break;
 				default: $result['DriveMode'] = "Unknown";
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['FocusMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['FocusMode']) {
+			switch ($result['FocusMode']) {
 				case 0: $result['FocusMode'] = "One-Shot"; break;
 				case 1: $result['FocusMode'] = "AI Servo"; break;
 				case 2: $result['FocusMode'] = "AI Focus"; break;
@@ -905,14 +905,14 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['ImageSize']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['ImageSize']) {
+			switch ($result['ImageSize']) {
 				case 0: $result['ImageSize'] = "Large"; break;
 				case 1: $result['ImageSize'] = "Medium"; break;
 				case 2: $result['ImageSize'] = "Small"; break;
 				default: $result['ImageSize'] = "Unknown";
 			}
 			$result['EasyShooting']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['EasyShooting']) {
+			switch ($result['EasyShooting']) {
 				case 0: $result['EasyShooting'] = "Full Auto"; break;
 				case 1: $result['EasyShooting'] = "Manual"; break;
 				case 2: $result['EasyShooting'] = "Landscape"; break;
@@ -928,7 +928,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['EasyShooting'] = "Unknown";
 			}
 			$result['DigitalZoom']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['DigitalZoom']) {
+			switch ($result['DigitalZoom']) {
 				case 0:
 				case 65535: $result['DigitalZoom'] = "None"; break;
 				case 1: $result['DigitalZoom'] = "2x"; break;
@@ -936,28 +936,28 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['DigitalZoom'] = "Unknown";
 			}
 			$result['Contrast']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Contrast']) {
+			switch ($result['Contrast']) {
 				case 0: $result['Contrast'] = "Normal"; break;
 				case 1: $result['Contrast'] = "High"; break;
 				case 65535: $result['Contrast'] = "Low"; break;
 				default: $result['Contrast'] = "Unknown";
 			}
 			$result['Saturation']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Saturation']) {
+			switch ($result['Saturation']) {
 				case 0: $result['Saturation'] = "Normal"; break;
 				case 1: $result['Saturation'] = "High"; break;
 				case 65535: $result['Saturation'] = "Low"; break;
 				default: $result['Saturation'] = "Unknown";
 			}
 			$result['Sharpness']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['Sharpness']) {
+			switch ($result['Sharpness']) {
 				case 0: $result['Sharpness'] = "Normal"; break;
 				case 1: $result['Sharpness'] = "High"; break;
 				case 65535: $result['Sharpness'] = "Low"; break;
 				default: $result['Sharpness'] = "Unknown";
 			}
 			$result['ISO']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['ISO']) {
+			switch ($result['ISO']) {
 				case 32767:
 				case 0: $result['ISO'] = isset($exif['SubIFD']['ISOSpeedRatings'])
 					? $exif['SubIFD']['ISOSpeedRatings'] : 'Unknown'; break;
@@ -969,14 +969,14 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['ISO'] = "Unknown";
 			}
 			$result['MeteringMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['MeteringMode']) {
+			switch ($result['MeteringMode']) {
 				case 3: $result['MeteringMode'] = "Evaluative"; break;
 				case 4: $result['MeteringMode'] = "Partial"; break;
 				case 5: $result['MeteringMode'] = "Center-weighted"; break;
 				default: $result['MeteringMode'] = "Unknown";
 			}
 			$result['FocusType']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['FocusType']) {
+			switch ($result['FocusType']) {
 				case 0: $result['FocusType'] = "Manual"; break;
 				case 1: $result['FocusType'] = "Auto"; break;
 				case 3: $result['FocusType'] = "Close-up (Macro)"; break;
@@ -984,7 +984,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['FocusType'] = "Unknown";
 			}
 			$result['AFPointSelected']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['AFPointSelected']) {
+			switch ($result['AFPointSelected']) {
 				case 12288: $result['AFPointSelected'] = "Manual Focus"; break;
 				case 12289: $result['AFPointSelected'] = "Auto Selected"; break;
 				case 12290: $result['AFPointSelected'] = "Right"; break;
@@ -993,7 +993,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 				default: $result['AFPointSelected'] = "Unknown";
 			}
 			$result['ExposureMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['ExposureMode']) {
+			switch ($result['ExposureMode']) {
 				case 0: $result['ExposureMode'] = "EasyShoot"; break;
 				case 1: $result['ExposureMode'] = "Program"; break;
 				case 2: $result['ExposureMode'] = "Tv"; break;
@@ -1013,7 +1013,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['FlashActivity']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['FlashActivity']) {
+			switch ($result['FlashActivity']) {
 				case 0: $result['FlashActivity'] = "Flash Did Not Fire"; break;
 				case 1: $result['FlashActivity'] = "Flash Fired"; break;
 				default: $result['FlashActivity'] = "Unknown";
@@ -1030,7 +1030,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$anotherFocusMode=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			if(strpos(strtoupper($exif['IFD0']['Model']), "G1") !== false) {
-				switch($anotherFocusMode) {
+				switch ($anotherFocusMode) {
 					case 0: $result['FocusMode'] = "Single"; break;
 					case 1: $result['FocusMode'] = "Continuous"; break;
 					default: $result['FocusMode'] = "Unknown";
@@ -1047,7 +1047,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
 			$result['WhiteBalance']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;
-			switch($result['WhiteBalance']) {
+			switch ($result['WhiteBalance']) {
 				case 0: $result['WhiteBalance'] = "Auto"; break;
 				case 1: $result['WhiteBalance'] = "Sunny"; break;
 				case 2: $result['WhiteBalance'] = "Cloudy"; break;
@@ -1076,7 +1076,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 			$result['AFPointUsed'] = implode(",", $afPointUsed);
 			$result['FlashBias']=intel2Moto(substr($data,$place,4));$place+=4;
 
-			switch($result['FlashBias'])
+			switch ($result['FlashBias'])
 			{
 				case 'ffc0': $result['FlashBias'] = "-2 EV"; break;
 				case 'ffcc': $result['FlashBias'] = "-1.67 EV"; break;
@@ -1200,7 +1200,7 @@ function parseCanon($block, &$result, $seek, $globalOffset)
 
 function lookup_Fujifilm_tag($tag)
 {
-	switch($tag)
+	switch ($tag)
 	{
 		case "0000": $tag = "Version";break;
 		case "1000": $tag = "Quality";break;
@@ -1408,7 +1408,7 @@ function parseFujifilm($block,&$result) {
 
 function lookup_GPS_tag($tag) {
 
-	switch($tag) {
+	switch ($tag) {
 		case "0000": $tag = "Version";break;
 		case "0001": $tag = "Latitude Reference";break;
 		case "0002": $tag = "Latitude";break;
@@ -1606,7 +1606,7 @@ function parseGPS($block,&$result,$offset,$seek, $globalOffset) {
 function lookup_Nikon_tag($tag,$model) {
 
 	if($model==0) {
-		switch($tag) {
+		switch ($tag) {
 			case "0003": $tag = "Quality";break;
 			case "0004": $tag = "ColorMode";break;
 			case "0005": $tag = "ImageAdjustment";break;
@@ -1620,7 +1620,7 @@ function lookup_Nikon_tag($tag,$model) {
 			default: $tag = "unknown:".$tag;break;
 		}
 	} else if($model==1) {
-		switch($tag) {
+		switch ($tag) {
 			case "0002": $tag = "ISOSetting";break;
 			case "0003": $tag = "ColorMode";break;
 			case "0004": $tag = "Quality";break;
@@ -1876,7 +1876,7 @@ function parseNikon($block,&$result) {
 }
 
 function lookup_Olympus_tag($tag) {
-	switch($tag) {
+	switch ($tag) {
 		case "0200": $tag = "SpecialMode";break;
 		case "0201": $tag = "JpegQual";break;
 		case "0202": $tag = "Macro";break;
@@ -2016,7 +2016,7 @@ function parseOlympus($block, &$result, $seek, $globalOffset) {
 
 function lookup_Panasonic_tag($tag) {
 
-	switch($tag) {
+	switch ($tag) {
 		case "0001": $tag = "Quality";break;
 		case "0002": $tag = "FirmwareVersion";break;
 		case "0003": $tag = "WhiteBalance";break;
@@ -2262,7 +2262,7 @@ function parsePanasonic($block,&$result) {
 
 function lookup_Sanyo_tag($tag) {
 
-	switch($tag) {
+	switch ($tag) {
 		case "0200": $tag = "SpecialMode";break;
 		case "0201": $tag = "Quality";break;
 		case "0202": $tag = "Macro";break;

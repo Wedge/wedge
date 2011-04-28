@@ -2497,9 +2497,9 @@ function aeva_parse_bbc(&$message, $id_msg = -1)
 	global $modSettings, $context;
 	if ($id_msg >= 0)
 		$context['aeva_id_msg'] = $id_msg;
-	if (isset($context['media_disable']) || empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	if (isset($context['disable_media_tag']) || empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 	{
-		unset($context['media_disable']);
+		unset($context['disable_media_tag']);
 		return;
 	}
 	preg_match_all('~\[media\s+([^]]*?(?:&quot;.+?&quot;.*?(?!&quot;))?)](?:<br>)?[\r\n]?~i', $message, $aeva_stuff);

@@ -854,6 +854,11 @@ code.bbc_code, code.php_code
 .bbc_tt
 	font-family: "dejavu sans mono", monaco, "lucida console", "courier new", monospace
 
+.bbc_pre
+	display: inline
+	white-space: pre
+	margin, padding: 0
+
 // emote, try typing "/me uses this a lot" in a post.
 .meaction
 	color: red

@@ -3061,12 +3061,16 @@ function call_hook($hook, $parameters = array())
 	// Loop through each function.
 	foreach ($modSettings['hooks'][$hook] as $function)
 	{
-		$fun = trim($function);
-		$call = strpos($fun, '::') !== false ? explode('::', $fun) : $fun;
+		$fun = explode('|', trim($function));
+		$call = strpos($fun[0], '::') !== false ? explode('::', $fun[0]) : $fun[0];
+
+		// Load any required file.
+		if (!empty($fun[1]))
+			loadSource($fun[1]);
 
 		// If it isn't valid, remove it from our list.
 		if (is_callable($call))
-			$results[$fun] = call_user_func_array($call, $parameters);
+			$results[$fun[0]] = call_user_func_array($call, $parameters);
 		else
 			remove_hook($call, $function);
 	}
@@ -3076,16 +3080,23 @@ function call_hook($hook, $parameters = array())
 
 /**
  * Add a function to one of the integration hook stacks.
+ * Gotta love hooks. What? I said hooks, not hookers.
  *
- * This function adds a function to be called (or file to be loaded, for the pre_include hook). This function also prevents the same function being added to the same hook twice.
+ * This function adds a function to be called. It also prevents duplicates on the same hook.
  *
  * @param string $hook The name of the hook that has zero or more functions attached, that the function will be added to.
  * @param string $function The name of the function whose name should be added to the named hook.
+ * @param string $file The file where Wedge can find that function, in loadSource() format. To include /Sources/MyFile.php, simply use 'MyFile'. Use '../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
  * @param bool $register Whether the named function will be added to the hook registry permanently (default), or simply for the current page load only.
  */
-function add_hook($hook, $function, $register = true)
+function add_hook($hook, $function, $file = '', $register = true)
 {
-	global $modSettings;
+	global $modSettings, $sourcedir;
+
+	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file))))
+		$file = '';
+
+	$function .= '|' . $file;
 
 	// Do nothing if it's already there, except if we're
 	// asking for registration and it isn't registered yet.

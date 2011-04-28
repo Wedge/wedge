@@ -80,7 +80,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 		// Now, I guess, we can draw the frames.
 		foreach ($framestore as $frameno => $frame)
 		{
-			list($image, $colours) = $this->create_image($this->width, $this->height);
+			list ($image, $colours) = $this->create_image($this->width, $this->height);
 			imagefilledrectangle($image, 0, 0, $this->width, $this->height, $frameno == 0 ? $colours['black'] : $colours['purple']);
 			imagecolortransparent($image, $colours['purple']);
 
@@ -138,7 +138,7 @@ class captcha_ledicons_anim extends captcha_ledicons
 		if (isset($this->leds[$id]))
 			return false;
 
-		list($this->leds[$id], $colours) = $this->create_image(4, 4);
+		list ($this->leds[$id], $colours) = $this->create_image(4, 4);
 
 		imagefilledrectangle($this->leds[$id], 0, 0, 3, 3, $colours[$id . '_lo']);
 		imagesetpixel($this->leds[$id], 0, 0, $colours['purple']); // transparent corners

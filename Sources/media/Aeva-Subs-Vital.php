@@ -593,7 +593,7 @@ function aeva_getPHPSize($size)
 		$value = $m[1];
 		if (isset($m[2]))
 		{
-			switch(strtolower($m[2]))
+			switch (strtolower($m[2]))
 			{
 				case 'g': $value *= 1024;
 				case 'm': $value *= 1024;
