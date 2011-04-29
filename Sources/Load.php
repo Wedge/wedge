@@ -1353,6 +1353,7 @@ function loadMemberContext($user, $display_custom_fields = false)
  * - Webkit (used in Safari, Chrome, Android...)
  * - iPhone/iPod Touch (Safari Mobile)
  * - Android
+ * - Tablets (only iPad for now)
  * - Gecko engine (used in Firefox and compatible)
  * - Internet Explorer (plus tests for 6, 7, 8, 9)
  */
@@ -1372,6 +1373,9 @@ function detectBrowser()
 	$browser['is_safari'] = $is_webkit && !$browser['is_chrome'] && strpos($ua, 'Safari') !== false;
 	$browser['is_iphone'] = $is_webkit && (strpos($ua, 'iPhone') !== false || strpos($ua, 'iPod') !== false);
 	$browser['is_android'] = $is_webkit && strpos($ua, 'Android') !== false;
+
+	// We're only detecting the iPad for now. Well it's a start...
+	$browser['is_tablet'] = $is_webkit && strpos($ua, 'iPad') !== false;
 
 	// Detect Firefox versions
 	$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
@@ -1395,7 +1399,7 @@ function detectBrowser()
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'chrome', 'iphone', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
+	foreach (array('opera', 'chrome', 'iphone', 'tablet', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{
@@ -1413,6 +1417,8 @@ function detectBrowser()
 
 	// A small reference to the usual place...
 	$context['browser'] =& $browser;
+
+	call_hook('detect_browser');
 }
 
 /**

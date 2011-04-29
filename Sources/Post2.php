@@ -769,12 +769,9 @@ function Post2()
 
 	// Magical device dependent icons.
 	if ($_POST['icon'] == 'xx')
-	{
-		if (!empty($context['browser']['is_android']))
-			$_POST['icon'] = 'android';
-		elseif (!empty($context['browser']['is_iphone']))
-			$_POST['icon'] = 'iphone';
-	}
+		foreach (array('android', 'iphone', 'tablet') as $device)
+			if (!empty($context['browser']['is_' . $device]))
+				$_POST['icon'] = $device;
 
 	// Collect all parameters for the creation or modification of a post.
 	$msgOptions = array(
