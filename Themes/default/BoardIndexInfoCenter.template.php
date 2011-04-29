@@ -19,7 +19,7 @@ function template_info_center_recentposts()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
-	if (empty($settings['number_recent_posts']))
+	if (empty($settings['number_recent_posts']) || ($settings['number_recent_posts'] == 1 && empty($context['latest_post'])) || ($settings['number_recent_posts'] > 1 && empty($context['latest_posts'])))
 		return;
 
 	echo '

@@ -189,6 +189,9 @@ function ModifyModSettings()
 		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.
 	);
 
+	// Make it easier for mods to add new areas.
+	call_hook('modify_modifications', array(&$subActions));
+
 	loadGeneralSettingParameters($subActions, 'general');
 
 	// Load up all the tabs...
@@ -202,8 +205,6 @@ function ModifyModSettings()
 		),
 	);
 
-	// Make it easier for mods to add new areas.
-	call_hook('modify_modifications', array(&$subActions, &$context[$context['admin_menu_name']]['tab_data']['tabs']));
 
 	// Call the right function for this sub-acton.
 	$subActions[$_REQUEST['sa']]();

@@ -1159,6 +1159,8 @@ function list_getLanguages()
 	$settings['actual_theme_dir'] = $backup_actual_theme_dir;
 	if (!empty($backup_base_theme_dir))
 		$settings['base_theme_dir'] = $backup_base_theme_dir;
+	else
+		unset($settings['base_theme_dir']);
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)

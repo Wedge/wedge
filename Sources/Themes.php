@@ -779,6 +779,8 @@ function SetThemeSettings()
 
 	// Also load the actual themes language file - in case of special settings.
 	loadLanguage('Settings', '', true, true);
+	// And the custom language strings...
+	loadLanguage('ThemeStrings', '', false, true);
 
 	// Let the theme take care of the settings.
 	loadTemplate('Settings');

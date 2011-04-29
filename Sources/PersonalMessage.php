@@ -2263,8 +2263,8 @@ function MessagePost2()
 		// Set a descriptive title.
 		$context['page_title'] = $txt['preview'] . ' - ' . $context['preview_subject'];
 
-		// Pretend they messed up :P.
-		return messagePostError(array(), $namedRecipientList, $recipientList);
+		// Pretend they messed up but don't ignore if they really did :P.
+		return messagePostError($post_errors, $namedRecipientList, $recipientList);
 	}
 
 	// Adding a recipient cause javascript ain't working?

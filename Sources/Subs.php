@@ -2954,6 +2954,10 @@ function setupMenuContext()
 			),
 		);
 
+		// Allow editing menu items easily.
+		// Use PHP's array_splice to add entries at a specific position.
+		call_hook('menu_items', array(&$items));
+
 		// Now we put the items in the context so the theme can use them.
 		$menu_items = array();
 		foreach ($items as $act => $item)
@@ -2989,10 +2993,6 @@ function setupMenuContext()
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 			cache_put_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_items, $cacheTime);
 	}
-
-	// Allow editing menu items easily.
-	// Use PHP's array_splice to add entries at a specific position.
-	call_hook('menu_items', array(&$menu_items));
 
 	$context['menu_items'] = $menu_items;
 
