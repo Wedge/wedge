@@ -350,7 +350,7 @@ function wedge_cache_css()
 
 function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext)
 {
-	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl;
+	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_callable('glob'))
@@ -411,8 +411,11 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		$plugin->process($final);
 
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
+
 	// Only the basic CSS3 we actually use. May add more in the future.
+	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = preg_replace('~(?<=:)linear-gradient~', $prefix . 'linear-gradient', $final);
 
 	// Remove double quote hacks, remaining whitespace, and the 'final' keyword in its compact form.
 	$final = str_replace(
@@ -438,23 +441,18 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 }
 
 /**
- * Add browser-specific prefixes to a few commonly used CSS attributes.
+ * Add browser-specific prefixes to a few commonly used CSS attributes (in Wedge at least.)
+ * This is pretty basic, and could probably benefit from being less hackish and more systematic.
  *
  * @param string $matches The actual CSS contents
  * @return string Updated CSS contents with fixed code
  */
 function wedge_fix_browser_css($matches)
 {
-	global $context;
+	global $context, $prefix;
 
-	if ($context['browser']['is_opera'] && strpos($matches[0], 'bo') !== 0)
-		return '-o-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_webkit'])
-		return '-webkit-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_gecko'])
-		return '-moz-' . $matches[0] . ';' . $matches[0];
-	if ($context['browser']['is_ie'])
-		return '-ms-' . $matches[0] . ';' . $matches[0];
+	if (!empty($prefix) && (!$context['browser']['is_opera'] || strpos($matches[0], 'bo') !== 0))
+		return $prefix . $matches[0] . ';' . $matches[0];
 
 	return $matches[0];
 }

@@ -57,15 +57,32 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
-						'<b>Arantor</b> (Peter Spicer)',
+						'<b>Wedgeward</b> (Peter Spicer',
+						'Ren&eacute;-Gilles Deberdt)',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
-						'<b>Arantor</b> (Peter Spicer)',
 						'<b>Nao &#23578;</b> (Ren&eacute;-Gilles Deberdt)',
+						'<b>Arantor</b> (Peter Spicer)',
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_consultants'],
+					'members' => array(
+						'live627 (John Rayes)',
+						'Bloc (Bjoern Kristiansen)',
+						'Dragooon (Shitiz Garg)',
+						'A&auml;ron (A&auml;ron van Geffen)',
+						'TE (Thorsten Eurich)',
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_support'],
+					'members' => array(
+						'Dismal Shadow',
+						'MultiformeIngegno (Lorenzo)',
 					),
 				),
 			),
@@ -76,7 +93,7 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_founder'],
 					'members' => array(
-						'Unknown W. &quot;[Unknown]&quot; Brackets',
+						'Unknown W. "[Unknown]" Brackets',
 					),
 				),
 				array(
@@ -90,15 +107,15 @@ function Credits($in_admin = false)
 						'Norv',
 						'A&auml;ron van Geffen',
 						'Antechinus',
-						'Bjoern &quot;Bloc&quot; Kristiansen',
-						'Hendrik Jan &quot;Compuart&quot; Visser',
-						'Juan &quot;JayBachatero&quot; Hernandez',
-						'Karl &quot;RegularExpression&quot; Benson',
-						$user_info['is_admin'] ? 'Matt &quot;Grudge&quot; Wolf' : 'Grudge',
-						'Michael &quot;Thantos&quot; Miller',
-						'Sinan &quot;[SiNaN]&quot; &Ccedil;evik',
-						'Theodore &quot;Orstio&quot; Hildebrandt',
-						'Thorsten &quot;TE&quot; Eurich',
+						'Bjoern "Bloc" Kristiansen',
+						'Hendrik Jan "Compuart" Visser',
+						'Juan "JayBachatero" Hernandez',
+						'Karl "RegularExpression" Benson',
+						$user_info['is_admin'] ? 'Matt "Grudge" Wolf' : 'Grudge',
+						'Michael "Thantos" Miller',
+						'Sinan "[SiNaN]" &Ccedil;evik',
+						'Theodore "Orstio" Hildebrandt',
+						'Thorsten "TE" Eurich',
 						'winrules',
 					),
 				),
@@ -106,7 +123,7 @@ function Credits($in_admin = false)
 					'title' => $txt['credits_groups_consultants'],
 					'members' => array(
 						'Brett Flannigan',
-						'Ren&eacute;-Gilles &quot;Nao &#23578;&quot; Deberdt',
+						'Ren&eacute;-Gilles "Nao &#23578;" Deberdt',
 					),
 				),
 				array(

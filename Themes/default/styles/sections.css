@@ -773,10 +773,15 @@ tr.approvebg td,
 tr.highlight2 td
 	padding: .3em .7em
 
-#credits p
-	padding: 0
-	font-style: italic
-	margin: 0
+#credits
+	p
+		padding: 0
+		font-style: italic
+		margin: 0
+	dl
+		line-height: 1.5em
+	dd
+		padding: 5px 0
 
 /* Styles for generic tables.
 ------------------------------------------------------- */

@@ -70,6 +70,19 @@
 	]]></code>
 
 	<!--
+		CSS. This section allows you to define extra style rules that should be
+		added at the top of the page. Really, the ONLY point is to be able to
+		use the "$behavior" keyword, which is mandatory if you want to use
+		behavior files for IE compatibility code. Otherwise, use CSS files!
+		Example:
+			.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }
+	-->
+
+	<css for="no_browser"><![CDATA[
+	.ie_sucks_anyway {}
+	]]></code>
+
+	<!--
 		Blocks. These examples are actually fairly useless since they just
 		repeat the default blocks defined in index.template.php, but it makes
 		it easier to get the point. Use these settings to override any blocks

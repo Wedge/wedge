@@ -486,9 +486,9 @@ class wecss_nesting extends wecss
 					continue;
 				}
 
-				// Do we have an extends line followed by a line on the same level or above it?
+				// Do we have an extends/unextend line followed by a line on the same level or above it?
 				// If yes, this means we just extended a selector and should close it immediately.
-				if ($level >= $l[0] && strpos($ex_string, ' extends ') !== false)
+				if ($level >= $l[0] && (strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextend') !== false))
 					$tree .= " {\n}\n";
 
 				// Same level, and no continuation of a selector? We're probably in a list of properties.
@@ -528,15 +528,38 @@ class wecss_nesting extends wecss
 		 ******************************************************************************/
 		$css = $standard_nest = '';
 
-		$bases = array();
+		$bases = $removals = $unextends = array();
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
-		foreach ($this->rules as &$node)
+		foreach ($this->rules as $n => &$node)
 		{
+			// Reset properties based on the @remove command.
+			if ($node['selector'] == '@remove')
+			{
+				foreach ($node['props'] as $remove)
+					$removals[$remove['name'] . ':' . $remove['value']] = true;
+				unset($this->rules[$n]);
+				continue;
+			}
+
+			// Reset inheritance based on the unextend keyword.
+			if (strpos($node['selector'], 'unextend') !== false)
+			{
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+unextends?(?=[\s,]|$)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				foreach ($matches as $m)
+					$unextends[$m[1]] = $n;
+				$node['selector'] = preg_replace('~(?<=\s)unextends?(?=[\s,]|$)~i', '', $node['selector']);
+				if (trim($node['selector'] == ''))
+				{
+					unset($this->rules[$n]);
+					continue;
+				}
+			}
+
 			// A quick hack to avoid extending selectors with a direct child selector if we're in IE6 - it would cancel ALL extends in the batch.
 			// !!! Need to figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
 			if (strpos($node['selector'], 'extends') !== false && (!$browser['is_ie6'] || strpos($node['selector'], '>') === false))
 			{
-				preg_match_all('~((?:(?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+))[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
@@ -551,7 +574,8 @@ class wecss_nesting extends wecss
 					$bases[] = array(
 						rtrim($m[2]), // Add to this class in the tree...
 						preg_quote(rtrim($m[2])),
-						$path // ...The current selector
+						$path, // ...The current selector
+						$n,
 					);
 					$node['selector'] = str_replace($m[0], $m[1], $save_selector);
 				}
@@ -572,7 +596,8 @@ class wecss_nesting extends wecss
 					$bases[] = array(
 						$target, // Add to this class in the tree...
 						preg_quote($target),
-						$path // ...The current selector
+						$path, // ...The current selector
+						$node['id'],
 					);
 				}
 				if (isset($this->rules[$node['parent']]))
@@ -580,6 +605,10 @@ class wecss_nesting extends wecss
 				unset($this->props[$node['id']], $node);
 			}
 		}
+
+		foreach ($bases as $i => &$base)
+			if (isset($unextends[$base[2]]) && $base[3] < $unextends[$base[2]])
+				unset($bases[$i]);
 
 		// Sort the bases array by the first argument's length.
 		usort($bases, 'wecss_nesting::lensort');
@@ -612,11 +641,11 @@ class wecss_nesting extends wecss
 						// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
 						if (empty($selectors))
 							$selectors = explode(',', $selector);
-						$beginning = isset($alpha[$base[0][0]]) ? '(?<!\w)' : '';
+						$beginning = isset($alpha[$base[0][0]]) ? '(?<![a-z0-9_-])' : '';
 
 						foreach ($selectors as &$snippet)
 						{
-							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?!\w|.*[\t ]+final(?:\s|$))~i', $snippet))
+							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*[\t ]+final(?:\s|$))~i', $snippet))
 							{
 								// And our magic trick happens here. Then we restart the process to handle inherited extends.
 								$selector .= ', ' . str_replace($base[0], $base[2], $snippet);
@@ -648,8 +677,13 @@ class wecss_nesting extends wecss
 
 			foreach ($node['props'] as &$prop)
 			{
+				// Is it a @removed property?
+				if (isset($removals[$prop['name'] . ':' . $prop['value']]))
+					continue;
+				// Or maybe a regular one?
 				if (!strpos($prop['name'], ','))
 					$css .= $prop['name'] . ': ' . $prop['value'] . ';';
+				// Or multiple properties with the same value?
 				else
 					foreach (explode(',', $prop['name']) as $names)
 						$css .= $names . ': ' . $prop['value'] . ';';
@@ -744,11 +778,13 @@ class wecss_nesting extends wecss
 	}
 }
 
+// Simple math functions. For instance, width: math((2px * 8px)/4) should return width: 4px
+// Don't mix different unit types in the same operation, Wedge won't bother.
 class wecss_math extends wecss
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(?:em|px|pt)|\b(?:round|ceil|floor|abs|fmod)\()+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod)\()+)\)~i', $css, $matches))
 			return;
 
 		$done = array();
@@ -758,18 +794,10 @@ class wecss_math extends wecss
 				continue;
 			$done[$math] = true;
 
-			$em = strpos($math, 'em') ? 1 : 0;
-			$px = strpos($math, 'px') ? 1 : 0;
-			$pt = strpos($math, 'pt') ? 1 : 0;
+			if (isset($matches[2][$i]))
+				$math = preg_replace('~(?<=\d)' . $matches[2][$i] . '~', '', $math);
 
-			// Are we mixing units? Nah. Write the routine yourself. Have fun.
-			if ($em + $px + $pt > 1)
-				continue;
-
-			if ($em | $px | $pt)
-				$math = str_replace(array('em', 'px', 'pt'), '', $math);
-
-			$css = str_replace($matches[0][$i], eval('return (' . $math . ');') . ($em ? 'em' : ($px ? 'px' : ($pt ? 'pt' : ''))), $css);
+			$css = str_replace($matches[0][$i], eval('return (' . $math . ');') . $matches[2][$i], $css);
 		}
 	}
 }

@@ -1220,6 +1220,10 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
+	// Does an add-on want to manipulate all new posts/topics before they're created?
+	// (e.g. check for user agent and change the icon based on that.)
+	call_hook('create_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
+
 	// It's do or die time: forget any user aborts!
 	$previous_ignore_user_abort = ignore_user_abort(true);
 
@@ -1308,9 +1312,6 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 		updateStats('topic', true);
 		updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
-
-		// What if we want to export new topics out to a CMS?
-		call_hook('create_topic', array(&$msgOptions, &$topicOptions, &$posterOptions));
 	}
 	// The topic already exists, it only needs a little updating.
 	else
@@ -1350,7 +1351,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// Creating is modifying...in a way.
-	//!!! Why not set id_msg_modified on the insert?
+	// !!! Why not set id_msg_modified on the insert?
 	wesql::query('
 		UPDATE {db_prefix}messages
 		SET id_msg_modified = {int:id_msg}
@@ -1470,11 +1471,14 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	// Alright, done now... we can abort now, I guess... at least this much is done.
 	ignore_user_abort($previous_ignore_user_abort);
 
+	// What if we want to export new posts/topics out to a CMS?
+	call_hook('create_post_after', array(&$msgOptions, &$topicOptions, &$posterOptions));
+
 	// Success.
 	return true;
 }
 
-// !!!
+// !!! @todo: replace with Media Gallery
 function createAttachment(&$attachmentOptions)
 {
 	global $modSettings, $context;
@@ -1822,6 +1826,9 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
 
+	// Does an add-on want to manipulate posts/topics before they're modified?
+	call_hook('modify_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
+
 	// This is longer than it has to be, but makes it so we only set/change what we have to.
 	$messages_columns = array();
 	if (isset($posterOptions['name']))
@@ -1993,6 +2000,9 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	// Finally, if we are setting the approved state we need to do much more work :(
 	if ($modSettings['postmod_active'] && isset($msgOptions['approved']))
 		approvePosts($msgOptions['id'], $msgOptions['approved']);
+
+	// Have fun with this one.
+	call_hook('modify_post_after', array(&$msgOptions, &$topicOptions, &$posterOptions));
 
 	return true;
 }
