@@ -490,19 +490,15 @@ function grabJumpToContent()
 function JumpTo(opt)
 {
 	this.opt = opt;
-	this.dropdownList = null;
+	var sChildLevelPrefix = new Array(opt.iCurBoardChildLevel + 1).join(opt.sBoardChildLevelIndicator);
 
-	var sChildLevelPrefix = '';
-	for (var i = opt.iCurBoardChildLevel; i > 0; i--)
-		sChildLevelPrefix += opt.sBoardChildLevelIndicator;
 	$('#' + opt.sContainerId).html(opt.sJumpToTemplate
 		.replace(/%select_id%/, opt.sContainerId + '_select')
-		.replace(/%dropdown_list%/, '<select name="' + opt.sContainerId + '_select" id="' + opt.sContainerId + '_select" '
-			+ ('onbeforeactivate' in document ? 'onbeforeactivate' : 'onfocus') + '="grabJumpToContent();"><option value="?board='
-			+ opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities()
-			+ '</option></select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" onclick="window.location.href = \''
-			+ smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';">'));
-	this.dropdownList = $('#' + opt.sContainerId + '_select')[0];
+		.replace(/%dropdown_list%/,
+			  '<select name="' + opt.sContainerId + '_select" id="' + opt.sContainerId + '_select">'
+			+ '<option value="?board=' + opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities() + '</option>'
+			+ '</select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" '
+			+ 'onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';">')).find('select').focus(grabJumpToContent);
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
@@ -512,13 +508,8 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 		// Create an option that'll be above and below the category.
 		oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', 'disabled').val('')[0],
 		// Create a document fragment that'll allowing inserting big parts at once.
-		oListFragment = document.createDocumentFragment(),
-		i, j, n, sChildLevelPrefix;
-
-	if ('onbeforeactivate' in document)
-		this.dropdownList.onbeforeactivate = null;
-	else
-		this.dropdownList.onfocus = null;
+		oListFragment = document.createDocumentFragment(), i, n, sChildLevelPrefix, $val,
+		$dropdownList = $('#' + this.opt.sContainerId + '_select').unbind('focus');
 
 	// Loop through all items to be added.
 	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
@@ -526,7 +517,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 		// If we've reached the currently selected board add all items so far.
 		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
 		{
-			$(this.dropdownList).prepend(oListFragment);
+			$dropdownList.prepend(oListFragment);
 			oListFragment = document.createDocumentFragment();
 			continue;
 		}
@@ -534,12 +525,11 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 		if (aBoardsAndCategories[i].isCategory)
 			oListFragment.appendChild(oDashOption.cloneNode(true));
 		else
-			for (j = aBoardsAndCategories[i].childLevel, sChildLevelPrefix = ''; j > 0; j--)
-				sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
+			sChildLevelPrefix = new Array(aBoardsAndCategories[i].childLevel + 1).join(this.opt.sBoardChildLevelIndicator);
 
 		oListFragment.appendChild(
 			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>')
-				.val(aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
+				.attr('value', aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
 		);
 
 		if (aBoardsAndCategories[i].isCategory)
@@ -548,9 +538,9 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 
 	// Add the remaining items after the currently selected item.
 	// Internet Explorer needs css() to keep the box dropped down.
-	$(this.dropdownList).append(oListFragment).css('width', 'auto').focus().change(function () {
-		if (this.selectedIndex > 0 && $(this).val())
-			window.location.href = smf_scripturl + $(this).val().substr(smf_scripturl.indexOf('?') == -1 || $(this).val().substr(0, 1) != '?' ? 0 : 1);
+	$dropdownList.append(oListFragment).focus().change(function () {
+		if (this.selectedIndex > 0 && ($val = $(this).val()))
+			window.location.href = smf_scripturl + $val.substr(smf_scripturl.indexOf('?') == -1 || $val.substr(0, 1) != '?' ? 0 : 1);
 	});
 };
 
@@ -825,7 +815,6 @@ menu_hide_children = _h
 menu_hide_me = _hm
 menu_ieshim = _ie
 _lastKeepAliveCheck = _k
-dropdownList = _l
 _collapsed = _o
 menu_show_me = _sm
 menu_show_shim = _sh

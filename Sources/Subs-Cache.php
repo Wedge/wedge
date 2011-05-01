@@ -198,7 +198,7 @@ function add_css_file($original_files = array(), $add_link = false)
 	$folder = end($context['css_folders']);
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
 	$id = $folder === 'styles' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
-	$id .= implode('-', $original_files) . '-';
+	$id .= '-' . implode('-', $original_files) . '-';
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.

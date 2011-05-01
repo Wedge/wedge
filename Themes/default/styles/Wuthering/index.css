@@ -70,12 +70,14 @@ body
 	input.search
 		background-color: rgb(235,225,215)
 
+@remove
+	background: url($images/theme/bg.jpg)
+
 // The upper_section, float the two each way
 #upper_section
-	background: none
 	border, padding: 0
 	.frame
-		background-color: transparent
+		background-image: none
 		width, height: auto
 
 // The navigation list (i.e. linktree)
@@ -241,14 +243,16 @@ tr.catbg
 		background-color: #e3e9ef
 		background-position: 0 -18px
 		font: $subcat_font
-		color: #666
+		&, a
+			color: #666
 
 tr.titlebg
 	th, td
 		background-color: #e5eee5
 		background-position: 0 -18px
 		font: $subcat_font
-		color: #222
+		&, a
+			color: #222
 
 
 /* These are our CSS variable and mixin definitions.

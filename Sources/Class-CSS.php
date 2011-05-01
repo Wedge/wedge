@@ -618,6 +618,7 @@ class wecss_nesting extends wecss
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
 		{
+			// !!! Should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
 			if ($node['selector'][0] === '@' && (strpos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector'])))
 			{
 				$standard_nest = $node['selector'];
@@ -784,7 +785,7 @@ class wecss_math extends wecss
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod)\()+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
 			return;
 
 		$done = array();
