@@ -745,7 +745,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 	$str = !is_bool($show_today) ? $show_today : $user_info['time_format'];
 
-	if (setlocale(LC_TIME, $txt['lang_locale']))
+	if ($user_info['setlocale'])
 	{
 		foreach (array('%a', '%A', '%b', '%B') as $token)
 			if (strpos($str, $token) !== false)

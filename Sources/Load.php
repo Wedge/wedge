@@ -2179,6 +2179,10 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			log_error(sprintf($txt['theme_language_error'], $template_name . '.' . $lang, 'template'));
 			break;
 		}
+
+		// The index language file contains the locale. If that's what we're loading, we're changing locales, so reload that.
+		if ($found && $template === 'index')
+			$user_info['setlocale'] = setlocale(LC_ALL, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
 	}
 
 	// Keep track of what we're up to soldier.

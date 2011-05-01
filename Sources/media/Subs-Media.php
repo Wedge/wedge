@@ -2456,7 +2456,7 @@ function aeva_timeformat($log_time)
 			return $txt['media_yesterday'];
 	}
 
-	if (setlocale(LC_TIME, $txt['lang_locale']))
+	if ($user_info['setlocale'])
 		$str = str_replace('%b', westr::ucwords(strftime('%b', $time)), $str);
 	else
 	{
