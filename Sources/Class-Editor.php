@@ -2252,10 +2252,7 @@ class wedit
 
 		if ($context['browser']['is_ie'])
 			add_js('
-	$("#', $this->id, '").bind("select click keyup change", function () {
-		if (\'createTextRange\' in this)
-			this.caretPos = document.selection.createRange().duplicate();
-	});');
+	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
 		echo '
 		<div>

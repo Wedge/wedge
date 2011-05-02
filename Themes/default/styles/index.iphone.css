@@ -1,10 +1,32 @@
 
-#edge, #sidebar
-	display: block
-
+// Main area should have slightly larger text.
 #main_content
 	display: block
 	padding: 4px 4px 8px
+	font-size: 1.4em
+	line-height: 1.5em
+
+// Make the poster info area less prominent.
+.poster
+	width: 7.5em
+	h4
+		font-size: 80%
+		overflow: hidden
+
+.postarea
+	margin-left: 8em
+
+// Sidebar should be at the bottom, in full width.
+#edge, #sidebar
+	display: block
+	clear: both
+	width: 100%
 
 #content div.frame
 	padding: 0 10px 20px
+
+#board_list
+	td.stats
+		display: none
+	td.lastpost
+		width: 40%

@@ -616,10 +616,10 @@ UserMenu.prototype.switchMenu = function (oLink)
 	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
 		return;
 
-	var i, sHTML = '', aLinkList = this.list['user' + iUserId], j = aLinkList.length, sFirstChar = sLink.charAt(0);
+	var i, sHTML = '', aLinkList = this.list['user' + iUserId];
 	for (i in aLinkList)
 	{
-		var sLink = aLinkList[i].replace(/%id%/, iUserId);
+		var sLink = aLinkList[i].replace(/%id%/, iUserId), sFirstChar = sLink.charAt(0);
 		if (sLink == '')
 			sLink = oLink.href;
 		else if (sFirstChar == '?')

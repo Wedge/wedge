@@ -3196,7 +3196,7 @@ function get_gravatar_url($email_address)
  */
 function stable_icons()
 {
-	return array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless', 'clip', 'android');
+	return array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'clip', 'wireless', 'android', 'iphone', 'tablet');
 }
 
 ?>
