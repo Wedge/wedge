@@ -559,24 +559,30 @@ class wecss_nesting extends wecss
 			// !!! Need to figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
 			if (strpos($node['selector'], 'extends') !== false && (!$browser['is_ie6'] || strpos($node['selector'], '>') === false))
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+([^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
 					$node['selector'] = $m[1];
 					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
+					// In case we extend directly from a parent's property, make sure to keep only one parent if we have several.
 					if (strpos($m[2], '&') !== false)
 					{
-						$parent = isset($parent) ? $parent : $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
+						$parent = $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
+						if (strpos($parent, ',') !== false)
+							$parent = substr($parent, 0, strpos($parent, ','));
 						$m[2] = str_replace('&', $parent, $m[2]);
 					}
-
-					$bases[] = array(
-						rtrim($m[2]), // Add to this class in the tree...
-						preg_quote(rtrim($m[2])),
-						$path, // ...The current selector
-						$n,
-					);
+					// And if we have multiple inheritance, add each selector to the base list.
+					$targets = array_map('trim', explode(',', trim($m[2], '"')));
+					foreach ($targets as $target)
+						$bases[] = array(
+							$target, // Add to this class in the tree...
+							preg_quote($target),
+							$path, // ...The current selector
+							$n,
+						);
 					$node['selector'] = str_replace($m[0], $m[1], $save_selector);
 				}
 			}
@@ -592,13 +598,20 @@ class wecss_nesting extends wecss
 				{
 					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->getAncestorSelectors($this->rules[$this->rules[$node['parent']]['parent']]);
 					$path = $this->parseAncestorSelectors(array_merge((array) $here, $parent));
-					$target = str_replace('&', $path, $node['value']);
-					$bases[] = array(
-						$target, // Add to this class in the tree...
-						preg_quote($target),
-						$path, // ...The current selector
-						$node['id'],
-					);
+					if (strpos($node['value'], '&') !== false)
+					{
+						if (strpos($path, ',') !== false)
+							$path = substr($path, 0, strpos($path, ','));
+						$node['value'] = str_replace('&', $path, $node['value']);
+					}
+					$targets = array_map('trim', explode(',', $node['value']));
+					foreach ($targets as $target)
+						$bases[] = array(
+							$target, // Add to this class in the tree...
+							preg_quote($target),
+							$path, // ...The current selector
+							$node['id'],
+						);
 				}
 				if (isset($this->rules[$node['parent']]))
 					unset($this->rules[$node['parent']]['props'][$node['id']]);
