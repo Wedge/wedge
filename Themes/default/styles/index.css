@@ -151,7 +151,7 @@ ul#noava
 		float: left
 		a
 			color: lighten(hue(#fc9, 20), 10%)
-			font: bold 2.9em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			font: bold 2.9em $big_font
 			text-shadow: 0 0 8px #333
 
 // Float these items to the right
@@ -963,9 +963,7 @@ tr.catbg, tr.titlebg
 	border-left, border-right: 1px solid #7f7f7f
 
 .post
-	font: 105% Tahoma
-	em
-		font: italic 90% Verdana
+	font: 1.05em $post_font
 
 // The page navigation area
 .pagesection
@@ -1014,7 +1012,6 @@ tr.catbg, tr.titlebg
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	overflow: auto
 	line-height: 1.4em
 	padding: .1em 0
 
@@ -1171,7 +1168,7 @@ dl#rss
 	padding: 5px 10px 5px
 	margin-bottom: 4px
 	border: 1px solid rgba(0,0,0, .15)
-	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	font: 700 1.4em/20px $big_font
 	img
 		vertical-align: -3px
 
@@ -1376,9 +1373,9 @@ table
 	.windowbg final
 		background-color: #f0f0f0
 
-#help_page h2, #helf h2
-	base: .title2
-	margin-bottom: 12px !important
+#help_page, #helf
+	h2 extends .title2
+		margin-bottom: 12px !important
 
 /* The main content area.
 ------------------------------------------------------- */
@@ -1501,6 +1498,8 @@ th.last_th
    satellite stylesheet, and will take effect in parent files as well. */
 
 $main_font = "Verdana, Arial, Helvetica, sans-serif"
+$post_font = Verdana, Georgia, "Segoe UI", Geneva, verdana, sans-serif
+$big_font = "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 $bevel = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
 $ie-max-width = "max-width"

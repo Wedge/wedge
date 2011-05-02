@@ -607,8 +607,24 @@ class wecss_nesting extends wecss
 		}
 
 		foreach ($bases as $i => &$base)
+		{
 			if (isset($unextends[$base[2]]) && $base[3] < $unextends[$base[2]])
 				unset($bases[$i]);
+			// Do we have multiple selectors to extend?
+			elseif (strpos($base[2], ',') !== false)
+			{
+				$selectors = array_map('trim', explode(',', $base[2]));
+				$base[2] = $selectors[0];
+				unset($selectors[0]);
+				foreach ($selectors as $sel)
+					$bases[] = array(
+						$base[0],
+						$base[1],
+						$sel,
+						$base[3],
+					);
+			}
+		}
 
 		// Sort the bases array by the first argument's length.
 		usort($bases, 'wecss_nesting::lensort');
