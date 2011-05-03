@@ -9,9 +9,9 @@ function template_report_type()
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
-			<we:title>
+			<we:cat>
 				', $txt['generate_reports'], '
-			</we:title>
+			</we:cat>
 			<div class="information">
 				', $txt['generate_reports_desc'], '
 			</div>

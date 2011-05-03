@@ -1712,8 +1712,8 @@ function prepareSearchContext($reset = false)
 		'category' => array(
 			'id' => $message['id_cat'],
 			'name' => $message['cat_name'],
-			'href' => $scripturl . '#c' . $message['id_cat'],
-			'link' => '<a href="' . $scripturl . '#c' . $message['id_cat'] . '">' . $message['cat_name'] . '</a>'
+			'href' => $scripturl . '#category_' . $message['id_cat'],
+			'link' => '<a href="' . $scripturl . '#category_' . $message['id_cat'] . '">' . $message['cat_name'] . '</a>'
 		)
 	));
 
