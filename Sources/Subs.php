@@ -1435,7 +1435,7 @@ function ob_sessrewrite($buffer)
 				// Has it got an <if:param> block?
 				if ($block['has_if'])
 				{
-					preg_match_all('~([a-z][^\s="]*)="([^"]*)"~', substr($buffer, $p, $gt - $p), $params);
+					preg_match_all('~([a-z][^\s="]*)="([^"]+)"~', substr($buffer, $p, $gt - $p), $params);
 
 					// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
 					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))

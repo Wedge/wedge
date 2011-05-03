@@ -22,6 +22,25 @@ function template_main()
 	echo '
 			<a id="top"></a><a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '';
 
+	// Build the normal button array.
+	$normal_buttons = array(
+		'reply' => array('test' => 'can_reply', 'text' => 'reply', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true),
+		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($context['is_marked_notify'] ? $txt['notification_disable_topic'] : $txt['notification_enable_topic']) . ');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'image' => 'markunread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'image' => 'sendtopic.gif', 'lang' => true, 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
+		'print' => array('text' => 'print', 'image' => 'print.gif', 'lang' => true, 'custom' => 'rel="new_win nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
+	);
+
+	// Allow adding new buttons easily.
+	call_hook('display_buttons', array(&$normal_buttons));
+
+	// Show the topic title, previous/next links and page index... "Pages: [1]".
+	echo '
+			<div class="posthead">', $context['prevnext_prev'], '
+				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
+			</div>';
+
+
 	// Is this topic also a poll?
 	if ($context['is_poll'])
 		template_topic_poll();
@@ -49,23 +68,7 @@ function template_main()
 			</div>';
 	}
 
-	// Build the normal button array.
-	$normal_buttons = array(
-		'reply' => array('test' => 'can_reply', 'text' => 'reply', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true),
-		'notify' => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'image' => ($context['is_marked_notify'] ? 'un' : '') . 'notify.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($context['is_marked_notify'] ? $txt['notification_disable_topic'] : $txt['notification_enable_topic']) . ');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-		'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'image' => 'markunread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-		'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'image' => 'sendtopic.gif', 'lang' => true, 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
-		'print' => array('text' => 'print', 'image' => 'print.gif', 'lang' => true, 'custom' => 'rel="new_win nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
-	);
-
-	// Allow adding new buttons easily.
-	call_hook('display_buttons', array(&$normal_buttons));
-
-	// Show the topic title, previous/next links and page index... "Pages: [1]".
 	echo '
-			<div class="posthead">', $context['prevnext_prev'], '
-				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
-			</div>
 			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
 				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . ' &nbsp;&nbsp;<a href="#lastPost"><strong>' . $txt['go_down'] . '</strong></a>' : '', '</div>
 			</div>', $context['browser']['is_ie6'] ? '
@@ -670,85 +673,6 @@ function template_topic_poll()
 {
 	global $settings, $options, $context, $txt, $scripturl, $modSettings;
 
-	echo '
-			<div id="poll">
-				<we:cat>
-					<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif">', $txt['poll'], '
-				</we:cat>
-				<div class="windowbg wrc">
-					<div id="poll_options">
-						<h4 id="poll_question">
-							', $context['poll']['question'], '
-						</h4>';
-
-	// Are they not allowed to vote but allowed to view the options?
-	if ($context['poll']['show_results'] || !$context['allow_vote'])
-	{
-		echo '
-						<dl class="options">';
-
-		// Show each option with its corresponding percentage bar.
-		foreach ($context['poll']['options'] as $option)
-		{
-			echo '
-							<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
-							<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
-
-			if ($context['allow_poll_view'])
-				echo '
-								', $option['bar_ndt'], '
-								<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
-
-			echo '
-							</dd>';
-		}
-
-		echo '
-						</dl>';
-
-		if ($context['allow_poll_view'])
-			echo '
-						<p><strong>', $txt['poll_total_voters'], ':</strong> ', $context['poll']['total_votes'], '</p>';
-	}
-	// They are allowed to vote! Go to it!
-	else
-	{
-		echo '
-						<form action="', $scripturl, '?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
-
-		// Show a warning if they are allowed more than one option.
-		if ($context['poll']['allowed_warning'])
-			echo '
-							<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
-
-		echo '
-							<ul class="reset options">';
-
-		// Show each option with its button - a radio likely.
-		foreach ($context['poll']['options'] as $option)
-			echo '
-								<li class="middletext"><label>', $option['vote_button'], ' ', $option['option'], '</label></li>';
-
-		echo '
-							</ul>
-							<div class="submitbutton">
-								<input type="submit" value="', $txt['poll_vote'], '">
-								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-							</div>
-						</form>';
-	}
-
-	// Is the clock ticking?
-	if (!empty($context['poll']['expire_time']))
-		echo '
-						<p><strong>', ($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']), ':</strong> ', $context['poll']['expire_time'], '</p>';
-
-	echo '
-					</div>
-				</div>
-			</div>
-			<div id="poll_moderation">';
-
 	// Build the poll moderation button array.
 	$poll_buttons = array(
 		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'image' => 'poll_options.gif', 'lang' => true, 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']),
@@ -759,10 +683,75 @@ function template_topic_poll()
 		'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'image' => 'admin_remove_poll.gif', 'lang' => true, 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['poll_remove_warn']) . ');"', 'url' => $scripturl . '?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 	);
 
-	template_button_strip($poll_buttons);
+	$show_voters = ($context['poll']['show_results'] || !$context['allow_vote']) && $context['allow_poll_view'];
+	echo '
+			<div id="poll_moderation">', template_button_strip($poll_buttons), '
+			</div>
+			<we:block id="poll" class="windowbg" header="', $txt['poll'], '" footer="', empty($context['poll']['expire_time']) ? '' :
+				($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''),
+				$show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '', '">
+				<div id="poll_options">
+					<h4 id="poll_question">
+						<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" style="vertical-align: -4px">
+						', $context['poll']['question'], '
+					</h4>';
+
+	// Are they not allowed to vote but allowed to view the options?
+	if ($context['poll']['show_results'] || !$context['allow_vote'])
+	{
+		echo '
+					<dl class="options">';
+
+		// Show each option with its corresponding percentage bar.
+		foreach ($context['poll']['options'] as $option)
+		{
+			echo '
+						<dt class="middletext', $option['voted_this'] ? ' voted' : '', '">', $option['option'], '</dt>
+						<dd class="middletext statsbar', $option['voted_this'] ? ' voted' : '', '">';
+
+			if ($context['allow_poll_view'])
+				echo '
+							', $option['bar_ndt'], '
+							<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
+
+			echo '
+						</dd>';
+		}
+
+		echo '
+					</dl>';
+	}
+	// They are allowed to vote! Go to it!
+	else
+	{
+		echo '
+					<form action="', $scripturl, '?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
+
+		// Show a warning if they are allowed more than one option.
+		if ($context['poll']['allowed_warning'])
+			echo '
+						<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
+
+		echo '
+						<ul class="reset options">';
+
+		// Show each option with its button - a radio likely.
+		foreach ($context['poll']['options'] as $option)
+			echo '
+							<li class="middletext"><label>', $option['vote_button'], ' ', $option['option'], '</label></li>';
+
+		echo '
+						</ul>
+						<div class="submitbutton">
+							<input type="submit" value="', $txt['poll_vote'], '">
+							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						</div>
+					</form>';
+	}
 
 	echo '
-			</div>';
+				</div>
+			</we:block>';
 }
 
 function template_quick_reply()

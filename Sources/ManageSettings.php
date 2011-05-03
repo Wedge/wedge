@@ -605,6 +605,7 @@ function ModifyModerationSettings($return_config = false)
 			array('int', 'warning_watch', 'help' => 'warning_enable'),
 			'moderate' => array('int', 'warning_moderate'),
 			array('int', 'warning_mute'),
+		'',
 			'rem1' => array('int', 'user_limit'),
 			'rem2' => array('int', 'warning_decrement'),
 			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all'])),
@@ -684,7 +685,7 @@ function ModifySpamSettings($return_config = false)
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
 			array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
-			'',
+		'',
 			array('callback', 'question_answer_list'),
 	);
 

@@ -1880,8 +1880,8 @@ function template_load_warning_variables()
 	$context['warningBarWidth'] = 200;
 	// Setup the colors - this is a little messy for theming.
 	$context['colors'] = array(
-		0 => 'green',
-		$modSettings['warning_watch'] => 'darkgreen',
+		0 => 'lime',
+		$modSettings['warning_watch'] => 'green',
 		$modSettings['warning_moderate'] => 'orange',
 		$modSettings['warning_mute'] => 'red',
 	);
@@ -1920,7 +1920,7 @@ function template_viewWarning()
 					<div>
 						<div>
 							<div style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['member']['warning'], '%</div>
+								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['member']['warning'], '%</div>
 								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], ';">&nbsp;</div>
 							</div>
 						</div>
@@ -1960,12 +1960,9 @@ function template_issueWarning()
 
 		// Are we passing the amount to change it by?
 		if (changeAmount)
-		{
-			if ($("#warning_level").val() == "SAME")
-				percent = ', $context['member']['warning'], ' + changeAmount;
-			else
-				percent = parseInt($("#warning_level").val(), 10) + changeAmount;
-		}
+			percent = $("#warning_level").val() == "SAME" ?
+				', $context['member']['warning'], ' + changeAmount :
+				parseInt($("#warning_level").val(), 10) + changeAmount;
 		// If not then it\'s a mouse thing.
 		else
 		{
@@ -2008,11 +2005,8 @@ function template_issueWarning()
 
 		size = barWidth * (percent/100);
 
-		$("#warning_text").html(percent + "%");
-		$("#warning_level").val(percent);
-
 		// Get the right color.
-		var color = "black"');
+		var color = "white";');
 
 	foreach ($context['colors'] as $limit => $color)
 		add_js('
@@ -2021,6 +2015,8 @@ function template_issueWarning()
 
 	add_js('
 		$("#warning_progress").css({ width: size + "px", backgroundColor: color });
+		$("#warning_text").css("color", percent < 50 ? "black" : (percent < 60 ? (color == "green" ? "#ccc" : "black") : "white")).html(percent + "%");
+		$("#warning_level").val(percent);
 
 		// Also set the right effect.
 		effectText = "";');
@@ -2102,12 +2098,12 @@ function template_issueWarning()
 				<dd>
 					<div id="warndiv1" style="display: none">
 						<div>
-							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(-5); return false;">[-]</a></span>
-							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;" onmousedown="setWarningBarPos(event, true);" onmousemove="setWarningBarPos(event, true);" onclick="setWarningBarPos(event);">
+							<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeWarnLevel(-5); return false;">[-]</a></span>
+							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative" onmousedown="setWarningBarPos(event, true);" onmousemove="setWarningBarPos(event, true);" onclick="setWarningBarPos(event);">
 								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['member']['warning'], '%</div>
-								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], ';">&nbsp;</div>
+								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], '">&nbsp;</div>
 							</div>
-							<span class="floatleft" style="padding: 0 0.5em"><a href="#" onclick="changeWarnLevel(5); return false;">[+]</a></span>
+							<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeWarnLevel(5); return false;">[+]</a></span>
 							<div class="clear_left smalltext">', $txt['profile_warning_impact'], ': <span id="cur_level_div">', $context['level_effects'][$context['current_level']], '</span></div>
 						</div>
 						<input type="hidden" name="warning_level" id="warning_level" value="SAME">
@@ -2124,7 +2120,11 @@ function template_issueWarning()
 	echo '
 						</div>
 					</div>
-				</dd>';
+				</dd>
+				<script><!--
+					document.getElementById("warndiv2").style.display = "none";
+					document.getElementById("warndiv1").style.display = "";
+				// --></script>';
 
 	if (!$context['user']['is_owner'])
 	{
@@ -2232,11 +2232,6 @@ function template_issueWarning()
 		</tbody>
 	</table>
 	<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
-
-	// Do our best to get pretty JavaScript enabled.
-	add_js('
-	$("#warndiv1").show();
-	$("#warndiv2").hide();');
 
 	if (!$context['user']['is_owner'])
 		add_js('

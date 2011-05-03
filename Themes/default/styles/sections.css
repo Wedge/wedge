@@ -194,16 +194,15 @@ img.new_posts
 		padding: 1em 2.5em 0 2em
 		margin: 0 0 1em
 	div.submitbutton
-		border-bottom: 1px solid #9999aa
 		clear: both
 		padding: 0 0 1em 2em
-		margin: 0 0 1em
+		margin: 0
 
 	// Poll results
 	dl.options
 		border: solid #9999aa
-		border-width: 1px 0
-		padding: 1em 2.5em 1em 2em
+		border-width: 1px 0 0 0
+		padding: 1em 2.5em 0 2em
 		margin: 0 1em 1em 0
 		line-height: 1.1em !important
 		dt
@@ -230,8 +229,8 @@ img.new_posts
 		padding: 0 .5em .5em
 
 #poll_moderation
-	margin: 0 0 1em
-	padding: 0
+	margin: .5em 0 0
+	padding: 0 .2em .2em 0
 	overflow: hidden
 
 // Onto the posts
@@ -280,8 +279,12 @@ img.new_posts
 		margin: 0 1em 0 1.5em
 
 	h4
-		margin: .2em 0 .4em 1.1em
-		font-size: 120%
+		margin: .2em 0 .2em 1.1em
+		font-size, line-height: 120%
+		overflow: hidden
+		text-overflow: ellipsis
+		:hover
+			overflow: visible
 		a, &
 			color: #c06002
 
@@ -303,6 +306,52 @@ img.new_posts
 		a img
 			vertical-align: bottom
 			padding: 0 .2em
+
+
+// Posts and personal messages displayed throughout the forum.
+.post, .personalmessage
+	line-height: 1.4em
+	padding: .1em 0
+
+// The user menu in the post display.
+.usermenu
+	position: absolute
+	background: rgba(255,255,255,.5)
+	padding: 24px 4px 4px
+	width: auto
+	white-space: nowrap
+	z-index: 50
+	border: 1px solid rgba(0,0,0, .2)
+	border-radius: 5px
+	box-shadow: 0 0 6px rgba(0,0,0, .15)
+	overflow: hidden
+
+.usermenuitem
+	padding: 2px 4px
+	div
+		padding: 1px 0
+
+.umme
+	position: relative
+	z-index: 60
+
+// All the signatures used in the forum. You might want to add max-height here ;)
+.signature, .attachments
+	width: 98%
+	overflow: auto
+	clear: right
+	padding: 1em 0 3px
+	border-top: 1px solid #aaa
+	line-height: 1.4em
+	font-size: .85em
+
+.custom_fields_above_signature
+	width: 98%
+	clear: right
+	padding: 1em 0 3px
+	border-top: 1px solid #aaa
+	line-height: 1.4em
+	font-size: .85em
 
 .messageicon
 	float: left
@@ -577,10 +626,10 @@ ul.poll_main
 
 dl.poll_options
 	dt
-		width: 33%
+		width: 35%
 		padding: 0 0 0 1em
 	dd
-		width: 65%
+		width: 60%
 		input
 			margin-left: 0
 

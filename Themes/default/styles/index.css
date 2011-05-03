@@ -74,7 +74,7 @@ body
 	vertical-align: top
 	width: $sidebar-width
 	border: 1px solid #ccc
-	background: #edefe6
+	background: #f2f3ea
 	border-radius: 8px
 	.column
 		padding: 12px
@@ -1010,50 +1010,6 @@ tr.catbg, tr.titlebg
 
 .lockedbg2 extends .lockedbg
 	background: #d8e1e7
-
-// Posts and personal messages displayed throughout the forum.
-.post, .personalmessage
-	line-height: 1.4em
-	padding: .1em 0
-
-// The user menu in the post display.
-.usermenu
-	position: absolute
-	background: rgba(255,255,255,.5)
-	padding: 24px 4px 4px
-	width: auto
-	white-space: nowrap
-	z-index: 50
-	border: 1px solid rgba(0,0,0, .2)
-	border-radius: 5px
-	box-shadow: 0 0 6px rgba(0,0,0, .15)
-
-.usermenuitem
-	padding: 2px 4px
-	div
-		padding: 1px 0
-
-.umme
-	position: relative
-	z-index: 60
-
-// All the signatures used in the forum. You might want to add max-height here ;)
-.signature, .attachments
-	width: 98%
-	overflow: auto
-	clear: right
-	padding: 1em 0 3px
-	border-top: 1px solid #aaa
-	line-height: 1.4em
-	font-size: .85em
-
-.custom_fields_above_signature
-	width: 98%
-	clear: right
-	padding: 1em 0 3px
-	border-top: 1px solid #aaa
-	line-height: 1.4em
-	font-size: .85em
 
 // Sometimes there will be an error when you post
 .error

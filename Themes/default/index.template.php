@@ -57,7 +57,7 @@ function template_init()
 
 		// Now with a regular content block. You may add a class, title and/or footer to it. If you don't specify a title,
 		// everything between the <if:title> tags will be hidden. Same for the footer and class.
-		'block'		=> '<section class="block<if:class> {class}</if:class>"<if:style> style="{style}"</if:style>>'
+		'block'		=> '<section class="block<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>'
 						. '<if:header><header>{header}</header></if:header>'
 						. '{body}'
 						. '<if:footer><footer>{footer}</footer></if:footer></section>',

@@ -19,7 +19,7 @@ function template_main()
 		}
 		pollOptionNum++;
 
-		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="80" maxlength="255"></label></li>\');
+		$("#pollMoreOptions").append(\'<li><label', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['option'], ' \' + pollOptionNum + \': <input type="text" name="options[\' + (pollOptionNum - 1) + \']" id="options-\' + (pollOptionNum - 1) + \'" value="" size="70" maxlength="255"></label></li>\');
 		return false;
 	}');
 
@@ -58,7 +58,7 @@ function template_main()
 		echo '
 							<li>
 								<label', (isset($context['poll_error']['poll_few']) ? ' class="error"' : ''), '>', $txt['option'], ' ', $choice['number'], ':
-								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="80" maxlength="255"></label>';
+								<input type="text" name="options[', $choice['id'], ']" id="options-', $choice['id'], '" value="', $choice['label'], '" size="70" maxlength="255"></label>';
 
 		// Does this option have a vote count yet, or is it new?
 		if ($choice['votes'] != -1)

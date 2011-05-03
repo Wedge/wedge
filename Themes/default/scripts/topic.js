@@ -38,8 +38,7 @@ function modify_topic(topic_id, first_msg_id)
 	in_edit_mode = 1;
 	cur_topic_id = topic_id;
 
-	if (typeof window.ajax_indicator == "function")
-		ajax_indicator(true);
+	ajax_indicator(true);
 	getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", onDocReceived_modify_topic);
 }
 
@@ -54,8 +53,7 @@ function onDocReceived_modify_topic(XMLDoc)
 	set_hidden_topic_areas('none');
 
 	modify_topic_show_edit($('subject', XMLDoc).text());
-	if (typeof window.ajax_indicator == "function")
-		ajax_indicator(false);
+	ajax_indicator(false);
 }
 
 function modify_topic_cancel()
@@ -77,8 +75,7 @@ function modify_topic_save(cur_session_id, cur_session_var)
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
-	if (typeof window.ajax_indicator == "function")
-		ajax_indicator(true);
+	ajax_indicator(true);
 	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
@@ -96,8 +93,7 @@ function modify_topic_done(XMLDoc)
 		subject = $('smf message subject', XMLDoc),
 		error = $('smf message error', XMLDoc);
 
-	if (typeof window.ajax_indicator == 'function')
-		ajax_indicator(false);
+	ajax_indicator(false);
 
 	if (!subject.length || error.length)
 		return false;
@@ -505,7 +501,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 
 	this.oClickedIcon = oDiv;
 
-	$(document.body).mousedown(this.onWindowMouseDown);
+	$('body').mousedown(this.onWindowMouseDown);
 };
 
 // Setup the list of icons once it is received through XMLHttp.
@@ -571,7 +567,7 @@ IconList.prototype.collapseList = function()
 	this.onBoxHover(this.oClickedIcon, false);
 	$(this.oContainerDiv).hide();
 	this.iCurMessageId = 0;
-	$(document.body).mousedown(this.onWindowMouseDown);
+	$('body').mousedown(this.onWindowMouseDown);
 };
 
 
@@ -603,7 +599,14 @@ function UserMenu(oList)
 {
 	this.list = oList;
 	var that = this;
-	$(".umme").mouseenter(function () { that.switchMenu(this); });
+	$('.umme')
+		.mouseenter(function () {
+			that.switchMenu(this);
+		})
+		.mouseleave(function (e) {
+			if (e.toElement.className != 'usermenu' && !$(e.toElement).parents('.usermenu').length)
+				$('.usermenu').remove();
+		});
 }
 
 UserMenu.prototype.switchMenu = function (oLink)

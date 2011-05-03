@@ -2074,6 +2074,10 @@ function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 
 	$sub_templates = (array) $sub_templates;
 
+	// Don't bother with sidebar/top elements in Wireless mode.
+	if (WIRELESS && $target != 'main')
+		return;
+
 	// Is it a regular sub-template?
 	if ($target === 'main')
 		$context['sub_template'] = $overwrite ? $sub_templates :
