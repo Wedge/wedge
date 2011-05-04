@@ -2072,7 +2072,7 @@ function PackagePermissionsAction()
 			unset($context['to_process'][$path]);
 
 			// See if we're out of time?
-			if (time() - array_sum(explode(' ', $time_start)) > $timeout_limit)
+			if (microtime(true) - $time_start > $timeout_limit)
 				return false;
 		}
 	}
@@ -2163,7 +2163,7 @@ function PackagePermissionsAction()
 				}
 
 				// See if we're out of time?
-				if (!$dont_chmod && time() - array_sum(explode(' ', $time_start)) > $timeout_limit)
+				if (!$dont_chmod && microtime(true) - $time_start > $timeout_limit)
 				{
 					$dont_chmod = true;
 					// Don't do this again.
@@ -2187,7 +2187,7 @@ function PackagePermissionsAction()
 			unset($context['directory_list'][$path]);
 
 			// See if we're out of time?
-			if (time() - array_sum(explode(' ', $time_start)) > $timeout_limit)
+			if (microtime(true) - $time_start > $timeout_limit)
 				return false;
 		}
 	}

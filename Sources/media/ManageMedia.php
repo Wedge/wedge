@@ -594,7 +594,7 @@ function aeva_admin_albums_delete()
 // Handles the FTP import area
 function aeva_admin_FTPImport()
 {
-	global $amSettings, $context, $txt, $scripturl, $user_info;
+	global $amSettings, $context, $txt, $scripturl, $user_info, $time_start;
 
 	// Load the map
 	list ($context['ftp_map'], $context['ftp_folder_list']) = aeva_get_dir_map($amSettings['data_dir_path'] . '/ftp');
@@ -670,7 +670,7 @@ function aeva_admin_FTPImport()
 		// Start the import
 		foreach ($files as $id => $file)
 		{
-			if (aeva_timeSpent() > 10)
+			if (microtime(true) - $time_start > 10)
 				break;
 
 			$context['ftp_done']++;
@@ -1970,13 +1970,6 @@ function aeva_refreshPage($next)
 		$next = str_replace(';', '&', $next);
 	$context['header'] .= '
 	<meta http-equiv="refresh" content="1; url=' . $next . '">';
-}
-
-function aeva_timeSpent()
-{
-	global $time_start;
-
-	return round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
 }
 
 ?>

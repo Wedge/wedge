@@ -2654,7 +2654,7 @@ function aeva_massDownloadCreate()
 	for ($i = $start; $i < $compte; $i++)
 	{
 		// We need to stop?
-		if (round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3) > 10)
+		if (microtime(true) - $time_start > 10)
 			break;
 
 		$item = $album_items[$_SESSION['aeva_mdl']['items'][$i]];

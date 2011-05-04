@@ -1248,6 +1248,12 @@ function ob_sessrewrite($buffer)
 	if ($scripturl == '' || !defined('SID'))
 		return $buffer;
 
+	if (!empty($modSettings['timeLoadPageEnable']))
+	{
+		$old_db_count = $db_count;
+		$old_load_time = microtime(true);
+	}
+
 	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
 	if (empty($_COOKIE) && SID != '' && empty($context['browser']['possibly_robot']))
 		$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
@@ -1386,7 +1392,7 @@ function ob_sessrewrite($buffer)
 		$thing = 'var eves = {';
 		foreach ($context['delayed_events'] as $eve)
 			$thing .= '
-		' . $eve[0] . ': ["' . $eve[1] . '", function() { ' . $eve[2] . ' }],';
+		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
 	};
 	$("*[data-eve]").each(function() {
@@ -1456,17 +1462,16 @@ function ob_sessrewrite($buffer)
 		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
 
 	// Update the load times
-	$pattern = '~' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '~';
-	if ($user_info['is_admin'] && preg_match($pattern, $buffer, $matches))
+	$loadTime = '';
+	if (!empty($modSettings['timeLoadPageEnable']))
 	{
-		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
-		$timeDiff = round($newTime - (float) $matches[1], 3);
-		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
-
-		// !!! Hardcoded stuff. Bad! Should we remove this entirely..?
-		$newLoadTime = $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<abbr title="Dynamic Replacements">DR</abbr>: ' . $timeDiff . $txt['seconds_with'] . $queriesDiff . $txt['queries'] . ')';
-		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
- 	}
+		$new_load_time = microtime(true);
+		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);
+		$queriesDiff = $db_count - $old_db_count;
+		if ($user_info['is_admin'])
+			$loadTime .= ' (' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
+	}
+	$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 
 	// Return the changed buffer.
 	return $buffer;
@@ -1719,12 +1724,7 @@ function theme_copyright()
  */
 function template_footer()
 {
-	global $context, $settings, $modSettings, $time_start, $db_count;
-
-	// Show the load time? (only makes sense for the footer.)
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
-	$context['load_queries'] = $db_count;
+	global $context, $settings;
 
 	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
 	{
@@ -2145,7 +2145,7 @@ function url_image_size($url)
 	// Can we pull this from the cache... please please?
 	if (($temp = cache_get_data('url_image_size-' . md5($url), 240)) !== null)
 		return $temp;
-	$t = microtime();
+	$t = microtime(true);
 
 	// Get the host to pester...
 	preg_match('~^\w+://(.+?)/(.*)$~', $url, $match);
@@ -2198,7 +2198,7 @@ function url_image_size($url)
 		$size = false;
 
 	// If this took a long time, we may never have to do it again, but then again we might...
-	if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $t)) > 0.8)
+	if (microtime(true) - $t > 0.8)
 		cache_put_data('url_image_size-' . md5($url), $size, 240);
 
 	// Didn't work.
@@ -2544,7 +2544,7 @@ function host_from_ip($ip)
 
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
-	$t = microtime();
+	$t = microtime(true);
 
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
@@ -2580,7 +2580,7 @@ function host_from_ip($ip)
 		$host = @gethostbyaddr($ip);
 
 	// It took a long time, so let's cache it!
-	if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $t)) > 0.5)
+	if (microtime(true) - $t > 0.5)
 		cache_put_data('hostlookup-' . $ip, $host, 600);
 
 	return $host;

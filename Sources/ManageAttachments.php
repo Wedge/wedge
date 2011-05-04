@@ -1407,13 +1407,13 @@ function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
 {
 	global $context, $txt, $time_start;
 
-	// Try get more time...
+	// Try to get more time...
 	@set_time_limit(600);
 	if (function_exists('apache_reset_timeout'))
 		@apache_reset_timeout();
 
 	// Have we already used our maximum time?
-	if (time() - array_sum(explode(' ', $time_start)) < 3)
+	if (microtime(true) - $time_start < 3)
 		return;
 
 	$context['continue_get_data'] = '?action=admin;area=manageattachments;sa=repair' . (isset($_GET['fixErrors']) ? ';fixErrors' : '') . ';step=' . $_GET['step'] . ';substep=' . $_GET['substep'] . ';' . $context['session_var'] . '=' . $context['session_id'];

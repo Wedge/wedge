@@ -45,7 +45,7 @@ define('CACHE_SUFFIX', 'a');
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
-$time_start = microtime();
+$time_start = microtime(true);
 
 // Makes sure that headers can be sent!
 ob_start();

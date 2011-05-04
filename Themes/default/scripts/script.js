@@ -782,7 +782,7 @@ function menu_hide_me(e)
 
 	// Are we leaving the menu entirely, and thus triggering the time
 	// threshold, or are we just switching to another menu item?
-	$(e.relatedTarget || e.toElement).parents('.menu').length ?
+	$(e.relatedTarget).parents('.menu').length ?
 		menu_hide_children(this.id) :
 		menu_delay[this.id.substring(2)] = setTimeout('menu_hide_children("' + this.id + '")', 250);
 }

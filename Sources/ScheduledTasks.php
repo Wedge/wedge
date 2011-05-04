@@ -141,7 +141,7 @@ function AutoTask()
 				// Log that we did it ;)
 				if ($completed)
 				{
-					$total_time = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+					$total_time = round(microtime(true) - $time_start, 3);
 					wesql::insert('',
 						'{db_prefix}log_scheduled_tasks',
 						array(

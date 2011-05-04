@@ -604,8 +604,9 @@ function UserMenu(oList)
 			that.switchMenu(this);
 		})
 		.mouseleave(function (e) {
-			if (e.toElement.className != 'usermenu' && !$(e.toElement).parents('.usermenu').length)
-				$('.usermenu').remove();
+			var usermenu = 'usermenu', target = e.relatedTarget;
+			if (target.className != usermenu && !$(target).parents('.' + usermenu).length)
+				$('.' + usermenu).remove();
 		});
 }
 
@@ -634,6 +635,6 @@ UserMenu.prototype.switchMenu = function (oLink)
 	}
 	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
 		.css({ left: (pos.left - 6) + 'px', top: (pos.top - 4) + 'px' })
-		.mouseleave(function (e) { if (e.toElement.className != 'umme') $(this).remove(); })
+		.mouseleave(function (e) { if (e.relatedTarget.className != 'umme') $(this).remove(); })
 		.show(500);
 };
