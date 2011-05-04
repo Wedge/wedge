@@ -1248,7 +1248,7 @@ function ob_sessrewrite($buffer)
 	if ($scripturl == '' || !defined('SID'))
 		return $buffer;
 
-	if (!empty($modSettings['timeLoadPageEnable']))
+	if ($context['show_page_load'])
 	{
 		$old_db_count = $db_count;
 		$old_load_time = microtime(true);
@@ -1462,16 +1462,15 @@ function ob_sessrewrite($buffer)
 		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
 
 	// Update the load times
-	$loadTime = '';
-	if (!empty($modSettings['timeLoadPageEnable']))
+	if ($context['show_page_load'])
 	{
 		$new_load_time = microtime(true);
 		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);
 		$queriesDiff = $db_count - $old_db_count;
 		if ($user_info['is_admin'])
 			$loadTime .= ' (' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
+		$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 	}
-	$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 
 	// Return the changed buffer.
 	return $buffer;
@@ -1724,7 +1723,9 @@ function theme_copyright()
  */
 function template_footer()
 {
-	global $context, $settings;
+	global $context, $settings, $modSettings;
+
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
 
 	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
 	{

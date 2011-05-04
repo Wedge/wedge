@@ -702,7 +702,7 @@ function cache_put_data($key, $value, $ttl = 120)
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(serialize($value)));
-		$st = microtime();
+		$st = microtime(true);
 	}
 
 	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-SMF-' . strtr($key, ':', '-');
@@ -776,7 +776,7 @@ function cache_put_data($key, $value, $ttl = 120)
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)
-		$cache_hits[$cache_count]['t'] = array_sum(explode(' ', microtime())) - array_sum(explode(' ', $st));
+		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 }
 
 /**
@@ -800,7 +800,7 @@ function cache_get_data($key, $ttl = 120)
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
-		$st = microtime();
+		$st = microtime(true);
 	}
 
 	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-SMF-' . strtr($key, ':', '-');
@@ -840,7 +840,7 @@ function cache_get_data($key, $ttl = 120)
 
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
-		$cache_hits[$cache_count]['t'] = array_sum(explode(' ', microtime())) - array_sum(explode(' ', $st));
+		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 		$cache_hits[$cache_count]['s'] = isset($value) ? strlen($value) : 0;
 	}
 

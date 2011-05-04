@@ -242,7 +242,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (($temp = cache_get_data($cache_key, 240)) != null)
 			return $temp;
 
-		$cache_t = microtime();
+		$cache_t = microtime(true);
 	}
 
 	if ($smileys === 'print')
@@ -1079,7 +1079,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	// Cache the output if it took some time...
-	if (isset($cache_key, $cache_t) && array_sum(explode(' ', microtime())) - array_sum(explode(' ', $cache_t)) > 0.05)
+	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
 		cache_put_data($cache_key, $message, 240);
 
 	// If this was a force parse revert if needed.

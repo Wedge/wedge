@@ -153,7 +153,7 @@ function ScheduledTasks()
 			if (!empty($row['sourcefile']))
 				loadSource($row['sourcefile']);
 
-			$start_time = microtime();
+			$start_time = microtime(true);
 			// The functions got to exist for us to use it.
 			if (!function_exists('scheduled_' . $row['task']))
 				continue;
@@ -169,7 +169,7 @@ function ScheduledTasks()
 			// Log that we did it ;)
 			if ($completed)
 			{
-				$total_time = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $start_time)), 3);
+				$total_time = round(microtime(true) - $start_time, 3);
 				wesql::insert('',
 					'{db_prefix}log_scheduled_tasks',
 					array('id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'),
