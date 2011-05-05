@@ -24,8 +24,6 @@ var Yup = {
 		Yup.overallProgress = $("#overall_progress");
 		Yup.overallProgressText = $("#overall_title");
 		Yup.overallProgressText2 = $("#overall_prog_perc");
-		Yup.browse = $("#browse");
-		Yup.upload = $("#upload");
 		Yup.list = $("#current_list");
 		Yup.browseBtn = $("#browseBtn");
 		Yup.php_limit = areas.php_limit;
@@ -37,13 +35,13 @@ var Yup = {
 		Yup.tempAllProg = 0;
 		Yup.currProg = 0;
 		Yup.curOverallText = Yup.overallProgressText.html();
-		Yup.upload.attr('href', 'javascript:Yup.startNext();');
 		Yup.postURL = areas.postURL;
 		Yup.files = [];
 		Yup.lastDone = 0;
 		Yup.done = [];
 		Yup.fileFilters = areas.filters;
-		Yup.browse.css({
+		$("#upload").click(function () { Yup.startNext(); return false; });
+		$("#browse").css({
 			width: Yup.browseBtn.css('width'),
 			height: Yup.browseBtn.css('height')
 		});
@@ -56,13 +54,14 @@ var Yup = {
 
 	onContentReady: function()
 	{
-		Yup.uploader.setAllowMultipleFiles(true);
-		Yup.uploader.setFileFilters(Yup.fileFilters);
-		Yup.uploader.addListener('fileSelect', Yup.onFilesSelect);
-		Yup.uploader.addListener('uploadError', Yup.onUploadError);
-		Yup.uploader.addListener('uploadStart', Yup.onUploadStart);
-		Yup.uploader.addListener('uploadProgress', Yup.onUploadProgress);
-		Yup.uploader.addListener('uploadCompleteData', Yup.onCompleteData);
+		var ul = Yup.uploader;
+		ul.setAllowMultipleFiles(true);
+		ul.setFileFilters(Yup.fileFilters);
+		ul.addListener('fileSelect', Yup.onFilesSelect);
+		ul.addListener('uploadError', Yup.onUploadError);
+		ul.addListener('uploadStart', Yup.onUploadStart);
+		ul.addListener('uploadProgress', Yup.onUploadProgress);
+		ul.addListener('uploadCompleteData', Yup.onCompleteData);
 
 		if (is_webkit)
 			$('#mu_container').css('textAlign', '');
@@ -70,20 +69,19 @@ var Yup = {
 
 	setProg: function(which, prog)
 	{
-		(which == 'overall' ? Yup.overallProgress : Yup.currentProgress).css('backgroundPosition', (100 - prog) + '%');
-		(which == 'current' ? Yup.currentProgressText3 : Yup.overallProgressText2).html(prog + '%');
+		Yup[which == 'overall' ? 'overallProgress' : 'currentProgress'].css('backgroundPosition', (100 - prog) + '%');
+		Yup[which == 'current' ? 'currentProgressText3' : 'overallProgressText2'].html(prog + '%');
 	},
 
 	setOverallTotal: function(toIncrement)
 	{
 		Yup.overAllTotal += toIncrement;
-		(Yup.overallProgressText).html(Yup.curOverallText + ' (' + Yup.bytesToSize(Yup.overAllTotal) + ')');
+		Yup.overallProgressText.html(Yup.curOverallText + ' (' + Yup.bytesToSize(Yup.overAllTotal) + ')');
 	},
 
 	setOverallProg: function(toProg)
 	{
-		var progPercent = Math.round(((toProg + Yup.overAllProg) / Yup.overAllTotal) * 100);
-		Yup.setProg('overall', progPercent);
+		Yup.setProg('overall', Math.round(((toProg + Yup.overAllProg) / Yup.overAllTotal) * 100));
 	},
 
 	bytesToSize: function (size)
@@ -170,39 +168,31 @@ var Yup = {
 
 		Yup.overAllProg += Yup.tempAllProg;
 		Yup.tempAllProg = 0;
-		var file = Yup.files[Yup.lastDone];
-		var element = $('#' + file.id);
+		var file = Yup.files[Yup.lastDone], element = $('#' + file.id);
 
 		if (!YUI.Dom.get('submit_title_update'))
-		{
-			var sub = document.createElement('input');
-			sub.type = 'hidden';
-			sub.name = 'submit_title_update';
-			sub.id = sub.name;
-			sub.value = 'dummy';
+			$('<input type="hidden" id="submit_title_update" name="submit_title_update" value="dummy"></input>').appendTo(Yup.list);
 
-			Yup.list.append(sub);
-		}
-
-		var ret = event.data.split('|');
-		var items = ret[0].split(';');
-		var errors = ret[1].split(';');
+		var
+			ret = event.data.split('|'),
+			items = ret[0].split(';'),
+			errors = ret[1].split(';');
 
 		element
 			.removeClass('file-uploading')
 			.addClass('file-success');
 
-		$('#rem_' + file.id).css('display', 'none');
+		$('#rem_' + file.id).hide();
 
 		if (typeof items == 'object')
 		{
 			for (i = 0; i < items.length; i++)
 			{
-				var this_ret = items[i].split(',');
+				var this_ret = items[i].split(','), mid;
 
 				if (this_ret[0].length == 0 || this_ret[0] == '')
 					continue;
-				var mid = this_ret[0].match(/\d+/);
+				mid = this_ret[0].match(/\d+/);
 				if (mid == null)
 					continue;
 
@@ -212,7 +202,7 @@ var Yup = {
 					.append($('<textarea rows="5" name="item_desc_' + mid + '" tabindex="' + (Yup.tabindex * 2 + 1) + '"></textarea>'))
 					.appendTo(element);
 
-				$('#mu_items input').css('display', 'block');
+				$('#mu_items input').show();
 			}
 		}
 
@@ -257,7 +247,7 @@ var Yup = {
 	removeFile: function(file_id)
 	{
 		Yup.uploader.removeFile(file_id);
-		$('#' + file_id).css('display', 'none');
+		$('#' + file_id).hide();
 
 		var file_key = 0, i;
 		for (i in Yup.files)
