@@ -947,12 +947,9 @@ section.block extends .wrc
 		margin: 0
 
 tr.catbg
-	td, th
-		base: .wehead
-
+	td extends .wehead, th extends .wehead
 tr.titlebg
-	td, th
-		base: footer.titlebg
+	td extends .wefoot, th extends .wefoot
 
 tr.catbg, tr.titlebg
 	select
@@ -1186,7 +1183,7 @@ dl#rss
 	tr.catbg, tr.titlebg
 		font-size: 9pt
 		th
-			padding: 7px 3px 6px 3px
+			padding: 4px 3px
 	th.last_th input
 		margin: 0 2px
 	th.lefttext

@@ -710,11 +710,13 @@ wedge_autoDraft.prototype.draftSend = function()
 
 	$.post(sUrl + ';xml', draftInfo, function (data) {
 		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
-		var obj = $('#lastsave', data);
-		var draft_id = obj.attr('draft');
-		var url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, localVars.sessvar).replace(/SessId/, localVars.sessid);
-		$('#draft_id').val(draft_id);
 
+		var
+			obj = $('#lastsave', data),
+			draft_id = obj.attr('draft'),
+			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, localVars.sessvar).replace(/SessId/, localVars.sessid);
+
+		$('#draft_id').val(draft_id);
 		$('#' + localVars.lastSavedDiv).html(obj.text() + ' &nbsp; <a href="#" id="remove_draft">' + localVars.removeString + '</a>');
 		$('#remove_draft').click(function () {
 			$.get(url, function () {

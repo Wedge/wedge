@@ -506,7 +506,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 {
 	var
 		// Create an option that'll be above and below the category.
-		oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', 'disabled').val('')[0],
+		oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', true).val('')[0],
 		// Create a document fragment that'll allowing inserting big parts at once.
 		oListFragment = document.createDocumentFragment(), i, n, sChildLevelPrefix, $val,
 		$dropdownList = $('#' + this.opt.sContainerId + '_select').unbind('focus');

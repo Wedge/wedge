@@ -223,15 +223,15 @@ function template_addsmiley()
 	add_js('
 	function switchType()
 	{
-		$("#ul_settings").slideToggle(!$("#method-existing").attr("checked"));
-		$("#ex_settings").slideToggle(!$("#method-upload").attr("checked"));
+		$("#ul_settings").slideToggle(!$("#method-existing").is(":checked"));
+		$("#ex_settings").slideToggle(!$("#method-upload").is(":checked"));
 	}
 
 	function swapUploads()
 	{
-		var enabled = !$("#uploadSmiley").attr("disabled");
-		$("#uploadMore").slideToggle(enabled);
+		var enabled = !$("#uploadSmiley").is(":disabled");
 		$("#uploadSmiley").attr("disabled", enabled);
+		$("#uploadMore").slideToggle(enabled);
 	}
 
 	function selectMethod(element)

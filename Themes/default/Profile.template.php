@@ -1956,9 +1956,10 @@ function template_issueWarning()
 	var isMoving;
 	function setWarningBarPos(e, changeAmount)
 	{
-		var barWidth = ', $context['warningBarWidth'], ', percent;
-		var mouse, size;
-		
+		var
+			barWidth = ', $context['warningBarWidth'], ', mouse = e.pageX,
+			percent, size, color = "white", effectText = "";
+
 		// Are we passing the amount to change it by?
 		if (changeAmount)
 			percent = $("#warning_level").val() == "SAME" ?
@@ -1975,16 +1976,14 @@ function template_issueWarning()
 				return false;
 
 			// Get the position of the container.
-			var position = $("#warning_contain").offset().left, mouse = e.pageX;
+			var position = $("#warning_contain").offset().left;
 			percent = Math.round(Math.round(((mouse - position) / barWidth) * 100) / 5) * 5;
 		}
 
 		percent = Math.min(Math.max(percent, ', $context['min_allowed'], '), ', $context['max_allowed'], ');
-		size = barWidth * (percent/100);
+		size = barWidth * (percent/100);');
 
-		// Get the right color.
-		var color = "white";');
-
+	// Get the right color.
 	foreach ($context['colors'] as $limit => $color)
 		add_js('
 		if (percent >= ', $limit, ')
@@ -1993,11 +1992,9 @@ function template_issueWarning()
 	add_js('
 		$("#warning_progress").css({ width: size + "px", backgroundColor: color });
 		$("#warning_text").css("color", percent < 50 ? "black" : (percent < 60 ? (color == "green" ? "#ccc" : "black") : "white")).html(percent + "%");
-		$("#warning_level").val(percent);
+		$("#warning_level").val(percent);');
 
-		// Also set the right effect.
-		effectText = "";');
-
+	// Also set the right effect.
 	foreach ($context['level_effects'] as $limit => $text)
 		add_js('
 		if (percent >= ', $limit, ')
@@ -2010,7 +2007,7 @@ function template_issueWarning()
 	// Disable notification boxes as required.
 	function modifyWarnNotify()
 	{
-		var enable = $("#warn_notify").attr("checked");
+		var enable = $("#warn_notify").is(":checked");
 		$("#warn_sub, #warn_body, #warn_temp").attr("disabled", !enable);
 		$("#new_template_link").toggle(enable);
 	}
@@ -2850,7 +2847,7 @@ function template_authentication_method()
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
-		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
+		currentAuthMethod = $("#auth_openid").is(":checked") ? "openid" : "passwd";
 
 		// No openID?
 		if (!$("#auth_openid").length)

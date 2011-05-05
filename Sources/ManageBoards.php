@@ -809,12 +809,12 @@ function EditBoardSettings($return_config = false)
 	loadTemplate('ManageBoards');
 	loadSubTemplate('show_settings');
 
-	// Add some javascript stuff for the recycle box.
+	// Add some JavaScript stuff for the recycle box.
 	add_js('
-	$("#recycle_board").attr("disabled", !($("#recycle_enable").attr("checked")));');
+	$("#recycle_board").attr("disabled", !$("#recycle_enable").is(":checked"));');
 
 	// Warn the admin against selecting the recycle topic without selecting a board.
-	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').attr(\'checked\') && $(\'#recycle_board\').val() == 0) { return confirm(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . '); } return true;';
+	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').is(\':checked\') && $(\'#recycle_board\').val() == 0) { return confirm(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . '); } return true;';
 
 	// Doing a save?
 	if (isset($_GET['save']))

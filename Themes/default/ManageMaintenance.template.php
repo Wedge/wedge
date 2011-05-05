@@ -33,10 +33,10 @@ function template_maintain_database()
 		<div class="windowbg2 wrc">
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_backup_info'], '</p>
-				<p><label><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br>
-				<label><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').attr(\'checked\') && !$(\'#data\').attr(\'checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br>
+				<p><label><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').is(\':checked\') && !$(\'#data\').is(\':checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br>
+				<label><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').is(\':checked\') && !$(\'#data\').is(\':checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br>
 				<label><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
-				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').attr(\'checked\') || $(\'#data\').attr(\'checked\');" class="save"></p>
+				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').is(\':checked\') || $(\'#data\').is(\':checked\');" class="save"></p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>';
@@ -403,7 +403,7 @@ function template_maintain_topics()
 	add_js('
 	function moveTopicsNow()
 	{
-		if ($("#id_board_from option:selected").attr("disabled") || $("#id_board_to option:selected").attr("disabled"))
+		if ($("#id_board_from option:selected").is(":disabled") || $("#id_board_to option:selected").is(":disabled"))
 			return false;
 		var confirmText = ', JavaScriptEscape($txt['move_topics_confirm']), ';
 		return confirm(confirmText.replace(/%board_from%/, $("#id_board_from").val().replace(/^=+&gt;&nbsp;/, \'\'))

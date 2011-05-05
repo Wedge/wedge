@@ -683,7 +683,7 @@ function template_modify_group_simple($type)
 			if (typeof forceState != "undefined")
 				$("#select_" + groupPermissions[id_group][i]).attr("checked", forceState == "on");
 
-			thisState = $("#select_" + groupPermissions[id_group][i]).attr("checked") ? "on" : "off";');
+			thisState = $("#select_" + groupPermissions[id_group][i]).is(":checked") ? "on" : "off";');
 		else
 			add_js('
 			if (typeof forceState != "undefined")
@@ -693,9 +693,9 @@ function template_modify_group_simple($type)
 				$("#select_deny_" + groupPermissions[id_group][i]).attr("checked", forceState == "deny");
 			}
 
-			if ($("#select_on_" + groupPermissions[id_group][i]).attr("checked"))
+			if ($("#select_on_" + groupPermissions[id_group][i]).is(":checked"))
 				thisState = "on";
-			else if ($("#select_off_" + groupPermissions[id_group][i]).attr("checked"))
+			else if ($("#select_off_" + groupPermissions[id_group][i]).is(":checked"))
 				thisState = "off";
 			else
 				thisState = "deny";');

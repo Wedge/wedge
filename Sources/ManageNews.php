@@ -807,9 +807,9 @@ function ModifyNewsSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=news;save;sa=settings';
 	$context['permissions_excluded'] = array(-1);
 
-	// Add some javascript at the bottom...
+	// Add some JavaScript at the bottom...
 	add_js('
-	$("#xmlnews_maxlen").attr("disabled", !($("#xmlnews_enable").attr("checked")));');
+	$("#xmlnews_maxlen").attr("disabled", !$("#xmlnews_enable").is(":checked"));');
 
 	// Saving the settings?
 	if (isset($_GET['save']))

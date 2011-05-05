@@ -59,7 +59,7 @@ function template_registration_form()
 	function updateAuthMethod()
 	{
 		// What authentication method is being used?
-		currentAuthMethod = $("#auth_openid").attr("checked") ? "openid" : "passwd";
+		currentAuthMethod = $("#auth_openid").is(":checked") ? "openid" : "passwd";
 
 		// No openID?
 		if (!$("#auth_openid").length)
