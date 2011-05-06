@@ -1804,13 +1804,13 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Initialize our JS files to cache right before we run template_init().
 	if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
-		$context['javascript_files'] = array('scripts/jquery-1.4.4.js', 'scripts/script.js');
+		$context['javascript_files'] = array('scripts/jquery-1.6.js', 'scripts/script.js');
 	else
 	{
 		$remote = array(
-			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js',
-			'jquery' =>		'http://code.jquery.com/jquery-1.4.4.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.4.min.js',
+			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js',
+			'jquery' =>		'http://code.jquery.com/jquery-1.6.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.min.js',
 		);
 		$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
 		$context['javascript_files'] = array('scripts/script.js');
