@@ -1,7 +1,7 @@
+
 /*
 	smf_AdminIndex(oOptions)
 	{
-		public init()
 		public setAnnouncements()
 		public showCurrentVersion()
 		public checkUpdateAvailable()
@@ -9,7 +9,6 @@
 
 	smf_ViewVersions(oOptions)
 	{
-		public init()
 		public swapOption(oSendingElement, sName)
 		public compareVersions(sCurrent, sTarget)
 		public determineVersions()

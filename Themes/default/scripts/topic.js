@@ -1,4 +1,12 @@
 
+/*!
+ * topic.js
+ * Helper functions for topic pages
+ *
+ * This file is released under the Wedge license.
+ * More details at http://wedge.org/license/
+ */
+
 var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0;
 hide_prefixes = [];
 
@@ -297,9 +305,9 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	// If we didn't get a valid document, just cancel.
 	if (!XMLDoc || !message.length)
 	{
-		// Mozilla will nicely tell us what's wrong.
-		if (XMLDoc && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror')
-			$('#error_box').html(XMLDoc.firstChild.textContent);
+		// If you could instead tell us what's wrong...?
+		if (XMLDoc)
+			$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
 		else
 			this.modifyCancel();
 		return;

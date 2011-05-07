@@ -878,22 +878,33 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// A closed tag, with no content or value.
 		elseif ($tag['type'] == 'closed')
 		{
-			if ($tag['tag'] == 'more' && empty($context['current_topic']))
+			if ($tag['tag'] == 'more')
 			{
-				$lent = westr::strlen(substr($message, $pos));
-				if ($lent > 0)
+				if (!empty($context['current_topic']))
 				{
-					$message = rtrim(substr($message, 0, $pos));
-					while (substr($message, -4) === '<br>')
-						$message = substr($message, 0, -4);
-					$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span>';
+					$pos2 = strpos($message, ']', $pos);
+					$message = '<div class="headline">' . substr($message, 0, $pos) . '</div>' . substr($message, $pos2 + 1);
+					$pos = $pos2 + 22;
+				}
+				else
+				{
+					$lent = westr::strlen(substr($message, $pos));
+					if ($lent > 0)
+					{
+						// Add the headline class as well. It's up to CSS to style it differently outside topics.
+						$message = '<div class="headline">' . rtrim(substr($message, 0, $pos));
+						while (substr($message, -4) === '<br>')
+							$message = substr($message, 0, -4);
+						$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span></div>';
+						$pos = strlen($message);
+					}
 				}
 			}
 			else
 			{
 				$pos2 = strpos($message, ']', $pos);
 				$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
-				$pos += strlen($tag['content']) - 1 + 2;
+				$pos += strlen($tag['content']) + 1;
 			}
 		}
 		// This one is sorta ugly... :/ Unfortunately, it's needed for flash.

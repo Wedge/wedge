@@ -1248,7 +1248,7 @@ function ob_sessrewrite($buffer)
 	if ($scripturl == '' || !defined('SID'))
 		return $buffer;
 
-	if ($context['show_load_time'])
+	if (!empty($context['show_load_time']))
 	{
 		$old_db_count = $db_count;
 		$old_load_time = microtime(true);
@@ -1462,7 +1462,7 @@ function ob_sessrewrite($buffer)
 		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
 
 	// Update the load times
-	if ($context['show_load_time'])
+	if (!empty($context['show_load_time']))
 	{
 		$new_load_time = microtime(true);
 		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);

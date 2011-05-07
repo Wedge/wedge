@@ -920,6 +920,10 @@ td.footnum a:target, a.fnotel:target
 	font-style: italic
 	color: gray
 
+.post .headline
+	font: italic 120% Georgia, serif
+	padding-bottom: 8px
+
 // Merged double posts
 .mergedate
 	font-size: 10px
@@ -1055,9 +1059,8 @@ a.moderation_link
 	color: #f96f00
 	text-align: center
 	font-size: 16pt
-	padding: 8px
+	padding: 16px
 	width: 100%
-	height: 66px
 	line-height: 25px
 	position: fixed
 	top, left: 0
