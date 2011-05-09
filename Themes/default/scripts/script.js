@@ -768,6 +768,9 @@ function menu_show_me()
 				$(this).addClass('hove');
 		});
 
+	if (is_top)
+		$('ul', this).first().css({ marginTop: is_ie6 || is_ie7 ? -6 : 18 }).animate({ marginTop: is_ie6 || is_ie7 ? 0 : 24 }, 'fast');
+
 	clearTimeout(menu_delay[this.id.substring(2)]);
 
 	$(this).siblings('li').each(function () { menu_hide_children(this.id); });

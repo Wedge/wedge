@@ -531,10 +531,10 @@ input[type=file]
 		border, padding: 0
 
 .menu li ul
-	background: rgba(255, 248, 240, .92) // !!! background: #fff8f1
+	background: rgba(255, 248, 240, .94) // !!! background: #fff8f1
 	position: absolute
 	display: block
-	border: 1px solid #666
+	border: 1px solid #bbb
 	z-index: 42
 	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
 	border-radius: 0 10px 10px 0
@@ -965,7 +965,7 @@ tr.catbg, tr.titlebg
 	border-left, border-right: 1px solid #7f7f7f
 
 .post
-	font: 1.05em $post_font
+	font-face: $post_font
 
 // The page navigation area
 .pagesection

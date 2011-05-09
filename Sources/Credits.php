@@ -81,8 +81,8 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_support'],
 					'members' => array(
-						'Dismal Shadow',
-						'MultiformeIngegno (Lorenzo)',
+						'Dismal Shadow (Edwin Mendez)',
+						'MultiformeIngegno (Lorenzo Raffio)',
 					),
 				),
 			),
