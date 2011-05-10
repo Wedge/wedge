@@ -768,8 +768,9 @@ function menu_show_me()
 				$(this).addClass('hove');
 		});
 
-	if (is_top)
-		$('ul', this).first().css({ marginTop: is_ie6 || is_ie7 ? -6 : 18 }).animate({ marginTop: is_ie6 || is_ie7 ? 0 : 24 }, 'fast');
+	$('ul', this).first()
+		.css(is_top ? { marginTop: is_ie6 || is_ie7 ? -6 : 18 } : { marginLeft: this.parentNode.clientWidth })
+		.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 24 } : { marginLeft: this.parentNode.clientWidth - 5 }, 'fast');
 
 	clearTimeout(menu_delay[this.id.substring(2)]);
 

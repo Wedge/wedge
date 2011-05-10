@@ -456,24 +456,8 @@ function aeva_initZoom($autosize, $peralbum = array())
 {
 	global $txt, $settings;
 
-	if (true)
-	{
-		add_js_file('scripts/zoomedia.js');
+	add_js_file('scripts/zoomedia.js');
 	add_js('
-
-	function hss(aId, aSelf)
-	{
-		// Work in progress...
-		return false;
-
-		var aUrl = aSelf.href;
-		var ah = $(\'#hsm\' + aId)[0];
-		hs.close(ah);
-		hs.expanders[hs.getWrapperKey(ah)] = null;
-		ah.href = aUrl;
-		hs.expand(ah);
-		return false;
-	}
 
 	$("a.zoom").zoomedia({ lang: {
 		move: \'', $txt['media_zoom_move'], '\',
@@ -490,8 +474,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 		pauseTitle: \'', $txt['media_zoom_pause'], '\'
 	}});
 ');
-		return '';
-	}
+	return '';
 
 	// !! WIP !! To be removed.
 

@@ -399,7 +399,7 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 	// Unset our KNOWN unnecessary information - this way it won't interfere with future variables, upgrading, or any custom variables you decide to use.
 
 	// These are NEVER needed
-	$fields = array('title', 'website', 'type', 'disabled', 'added');
+	$fields = array('title', 'website', 'type', 'disabled');
 
 	// Lookups are disabled, so get rid of all unnecessary information
 	if ($type != 'local' && ($is_sites ? empty($modSettings['embed_lookups']) : empty($_POST['embed_lookups'])))

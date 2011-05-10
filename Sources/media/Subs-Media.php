@@ -2897,7 +2897,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			<div class="zoom-html" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
 				' . trim($match) : '')) . '
 				<div style="float: right">' . ($i['has_preview'] ? '
-					<a class="aelink" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '" onclick="return hss(' . $in_page . ', this);">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
+					<a class="aelink fullsize" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
 					<a class="aelink" href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
 					<img src="' . $settings['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
 				</div>

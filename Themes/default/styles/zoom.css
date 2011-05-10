@@ -8,21 +8,23 @@
 	display: inline-block
 
 #zoom
-	display: none
+	// We set visibility to hidden to avoid getting 0 on child $zoom_desc's height()
+	visibility: hidden
 	position: absolute
 	background: #fff
 	border: 1px solid #ccc
-	box-shadow: 0 0 12px #666
+	box-shadow: 0 0 18px #666
 	border-radius: 8px
 	&.black
 		background: #000
 		border: 1px solid #333
 
 #zoom-content
-	margin: 15px
+	padding: 10px
+	text-align: center
 	img.scale
 		width: 100%
-		height: auto
+		margin, height: auto
 
 #zoom-close
 	display: inline-block
@@ -32,37 +34,29 @@
 	background: url($images/aeva/close.png) no-repeat
 
 #zoom-desc extends #zoom-content
-	position: absolute
 	box-sizing: border-box
-	transition: opacity .5s ease
-	opacity, bottom: 0
-	width: 100%
-	padding: 12px
+	margin: 0 12px 12px
+	text-align: left
+	cursor: default
 	color: #000
-	gradient-background: rgba(255,255,255,.7)
+	padding: 0
 	.mg_desc
-		color: #555
+		color: #999
 	#zoom.black &
 		color: #fff
-		gradient-background: rgba(0,0,0,.4)
 		.mg_desc
 			color: #ccc
-	#zoom:hover &
-		transition: opacity .5s ease
-		opacity: 1
 
 .zoom-overlay
 	display: none
-	font-size: 1em
-	padding: 5px
-	// background: white
 
+/*
 .zoom-expand
 	background: url($images/aeva/arrow_out.png) no-repeat
 	display: block
 	margin: 0 10px 10px 0
-	width: 34px
-	height: 34px
+	width, height: 34px
+*/
 
 .zoom-loading
 	position: absolute
@@ -81,7 +75,3 @@
 
 .zoom-html
 	display: none
-
-.zoom-overlay
-	display: none
-	padding: 0
