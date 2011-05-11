@@ -12,7 +12,8 @@ function template_login()
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="login">
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+				<img src="', $settings['images_url'], '/icons/login_sm.gif">
+				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe"><br class="clear">';
 
@@ -92,7 +93,8 @@ function template_kick_guest()
 	// And now the login information.
 	echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+				<img src="', $settings['images_url'], '/icons/login_sm.gif">
+				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe">
 				<dl>
@@ -181,7 +183,8 @@ function template_admin_login()
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
-			<img src="', $settings['images_url'], '/icons/login_sm.gif">', $txt['login'], '
+			<img src="', $settings['images_url'], '/icons/login_sm.gif">
+			', $txt['login'], '
 		</we:cat>
 		<div class="roundframe centertext">';
 

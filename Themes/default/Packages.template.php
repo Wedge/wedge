@@ -774,7 +774,7 @@ function template_package_list()
 	echo '
 	<div id="admincenter">
 		<we:cat>
-			' . $context['page_title'] . '
+			', $context['page_title'], '
 		</we:cat>
 		<div class="windowbg wrc">';
 

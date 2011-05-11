@@ -896,7 +896,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						while (substr($message, -4) === '<br>')
 							$message = substr($message, 0, -4);
 						$message .= ' <span class="readmore">' . sprintf($txt['readmore'], $lent) . '</span></div>';
-						$pos = strlen($message);
+						$pos = false;
 					}
 				}
 			}

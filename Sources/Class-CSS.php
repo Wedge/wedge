@@ -906,7 +906,6 @@ class wecss_base64 extends wecss
 				}
 			}
 		}
-		$css = str_replace('url-no-base64(', 'url(', $css);
 	}
 }
 

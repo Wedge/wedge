@@ -159,8 +159,9 @@ function template_search()
 	echo '
 	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
-			<we:cat>
-				', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', $txt['mlist_search'], '
+			<we:cat>', !empty($settings['use_buttons']) ? '
+				<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', '
+				', $txt['mlist_search'], '
 			</we:cat>
 			<div class="pagesection">
 				', template_button_strip($memberlist_buttons, 'right'), '

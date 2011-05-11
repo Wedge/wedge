@@ -417,10 +417,10 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 	$final = preg_replace('~(?<=:)linear-gradient~', $prefix . 'linear-gradient', $final);
 
-	// Remove double quote hacks, remaining whitespace, and the 'final' keyword in its compact form.
+	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and the 'final' keyword in its compact form.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' final{', ' final,', ' final '),
-		array('"', "\n", ';', '}', '}', ' ', '{', ',', ' '),
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", 'url-no-base64(', ' final{', ' final,', ' final '),
+		array('"', "\n", ';', '}', '}', ' ', 'url(', '{', ',', ' '),
 		$final
 	);
 	// Restore comments as requested.

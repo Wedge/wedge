@@ -7,7 +7,8 @@ function template_main()
 
 	echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/email_sm.gif">', $txt['notify'], '
+			<img src="', $settings['images_url'], '/email_sm.gif">
+			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe centertext">
 			<p>', $context['notification_set'] ? $txt['notify_deactivate'] : $txt['notify_request'], '</p>
@@ -23,7 +24,8 @@ function template_notify_board()
 
 	echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/email_sm.gif">', $txt['notify'], '
+			<img src="', $settings['images_url'], '/email_sm.gif">
+			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe centertext">
 			<p>', $context['notification_set'] ? $txt['notifyboard_turnoff'] : $txt['notifyboard_turnon'], '</p>

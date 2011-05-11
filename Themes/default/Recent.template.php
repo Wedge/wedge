@@ -8,7 +8,8 @@ function template_main()
 	echo '
 	<div id="recent" class="main_section">
 		<we:cat>
-			<img src="', $settings['images_url'], '/post/xx.gif">', $txt['recent_posts'], '
+			<img src="', $settings['images_url'], '/post/xx.gif">
+			', $txt['recent_posts'], '
 		</we:cat>
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>

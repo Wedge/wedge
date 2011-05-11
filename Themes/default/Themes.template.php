@@ -373,7 +373,8 @@ function template_set_settings()
 	if ($context['theme_settings']['theme_id'] != 1)
 		echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_edit'], '
+				<img src="', $settings['images_url'], '/icons/config_sm.gif">
+				', $txt['theme_edit'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<ul class="reset">
@@ -388,7 +389,8 @@ function template_set_settings()
 
 	echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_url_config'], '
+				<img src="', $settings['images_url'], '/icons/config_sm.gif">
+				', $txt['theme_url_config'], '
 			</we:cat>
 			<div class="windowbg2 wrc">
 				<dl class="settings">
@@ -419,7 +421,8 @@ function template_set_settings()
 				</dl>
 			</div>
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/config_sm.gif">', $txt['theme_options'], '
+				<img src="', $settings['images_url'], '/icons/config_sm.gif">
+				', $txt['theme_options'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings flow_auto">';

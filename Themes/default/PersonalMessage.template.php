@@ -900,7 +900,8 @@ function template_send()
 	// Main message editing box.
 	echo '
 	<we:cat>
-		<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '">&nbsp;', $txt['new_message'], '
+		<img src="', $settings['images_url'], '/icons/im_newmsg.gif" alt="', $txt['new_message'], '" title="', $txt['new_message'], '">
+		', $txt['new_message'], '
 	</we:cat>';
 
 	echo '
