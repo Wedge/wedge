@@ -993,7 +993,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 	$peralbum = $is_add ? array() : unserialize($peralbum_options);
 	$peralbum['zoom'] = isset($peralbum['zoom']) && $peralbum['zoom'] == 'no' ? 'no' : 'yes';
-	$peralbum['outline'] = isset($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'rounded-white')) ? $peralbum['outline'] : 'drop-shadow';
+	$peralbum['outline'] = isset($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? $peralbum['outline'] : 'drop-shadow';
 	$peralbum['autosize'] = isset($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
 	$peralbum['expand'] = isset($peralbum['expand']) && is_numeric($peralbum['expand']) ? (int) $peralbum['expand'] : 250;
 	$peralbum['fadeinout'] = empty($peralbum['fadeinout']) ? 0 : 1;
@@ -1303,7 +1303,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'type' => 'select',
 			'options' => array(
 				'drop-shadow' => array('drop-shadow', $peralbum['outline'] == 'drop-shadow'),
-				'rounded-white' => array('rounded-white', $peralbum['outline'] == 'rounded-white'),
+				'white' => array('white', $peralbum['outline'] == 'white'),
+				'black' => array('black', $peralbum['outline'] == 'black'),
 			),
 		),
 		'zoom_expand' => array(
@@ -1368,7 +1369,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	if (isset($_POST['submit_aeva']))
 	{
 		$peralbum['zoom'] = isset($_POST['zoom']) && $_POST['zoom'] == 0 ? 'no' : 'yes';
-		$peralbum['outline'] = isset($_POST['zoom_outline']) && in_array($_POST['zoom_outline'], array('drop-shadow', 'rounded-white')) ? $_POST['zoom_outline'] : 'drop-shadow';
+		$peralbum['outline'] = isset($_POST['zoom_outline']) && in_array($_POST['zoom_outline'], array('drop-shadow', 'white', 'black')) ? $_POST['zoom_outline'] : 'drop-shadow';
 		$peralbum['autosize'] = isset($_POST['zoom_autosize']) && $_POST['zoom_autosize'] == 0 ? 'no' : 'yes';
 		$peralbum['expand'] = isset($_POST['zoom_expand']) && is_numeric($_POST['zoom_expand']) && $_POST['zoom_expand'] >= 0 ? (int) $_POST['zoom_expand'] : 250;
 		$peralbum['expand'] = max(1, min(5000, $peralbum['expand']));

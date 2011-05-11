@@ -132,9 +132,9 @@ function template_aeva_home()
 	<div id="aeva_welcome">' . $context['aeva_welcome'] . '</div>' : '', '
 	<div id="aeva_toplinks">
 		<we:cat>
-			<img src="'.$settings['images_aeva'].'/house.png"> <b>'.$txt['media_home'].'</b>', $context['show_albums_link'] ? ' -
-			<img src="'.$settings['images_aeva'].'/album.png"> <b><a href="'.$galurl.'sa=vua">'.$txt['media_albums'].'</a></b>' : '', empty($amSettings['disable_playlists']) ? ' -
-			<img src="'.$settings['images_aeva'].'/playlist.png"> <b><a href="'.$galurl.'sa=playlists">'.$txt['media_playlists'].'</a></b>' : '', '
+			<img src="', $settings['images_aeva'], '/house.png"> ', $txt['media_home'], $context['show_albums_link'] ? ' -
+			<img src="' . $settings['images_aeva'] . '/album.png"> <a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a>' : '', empty($amSettings['disable_playlists']) ? ' -
+			<img src="' . $settings['images_aeva'] . '/playlist.png"> <a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a>' : '', '
 		</we:cat>
 	</div>';
 
@@ -1127,7 +1127,7 @@ function template_aeva_viewAlbum()
 		<div class="pagelinks page_index">
 			', $txt['media_pages'], ': ', $context['aeva_page_index'], '
 		</div>',
-		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', 0, $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
+		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
 		<div class="pagelinks page_index" style="margin-top: 8px">', $can_edit_items ? '
 			<div class="aeva_quickmod_bar">
 				<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
@@ -1273,9 +1273,9 @@ function template_aeva_viewUserAlbums()
 	echo '
 	<div id="aeva_toplinks">
 		<we:cat>
-			<img src="', $settings['images_aeva'], '/house.png"> <b><a href="', $galurl, '">', $txt['media_home'], '</a></b> -
-			<img src="', $settings['images_aeva'], '/album.png"> <b>', $txt['media_albums'], '</b>', empty($amSettings['disable_playlists']) ? ' -
-			<img src="' . $settings['images_aeva'] . '/playlist.png"> <b><a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a></b>' : '', '
+			<img src="', $settings['images_aeva'], '/house.png"> <a href="', $galurl, '">', $txt['media_home'], '</a> -
+			<img src="', $settings['images_aeva'], '/album.png"> ', $txt['media_albums'], empty($amSettings['disable_playlists']) ? ' -
+			<img src="' . $settings['images_aeva'] . '/playlist.png"> <a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a>' : '', '
 		</we:cat>
 	</div>';
 
@@ -1888,7 +1888,7 @@ function template_aeva_profile_viewvotes()
 	{
 		echo '
 			<we:cat>
-				' . $context['aeva_voter_name'] . '
+				', $context['aeva_voter_name'], '
 			</we:cat>';
 
 		foreach ($context['aeva_ratingLogs'] as $log)
@@ -1902,7 +1902,7 @@ function template_aeva_profile_viewvotes()
 		}
 		echo '<br>
 			<we:cat>
-				' . $txt['media_voter_list'] . '
+				', $txt['media_voter_list'], '
 			</we:cat>';
 		foreach ($context['aeva_otherVoters'] as $row)
 			echo '<br><a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';

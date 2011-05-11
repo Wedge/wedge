@@ -459,22 +459,25 @@ function aeva_initZoom($autosize, $peralbum = array())
 	add_js_file('scripts/zoomedia.js');
 	add_js('
 
-	$("a.zoom").zoomedia({ lang: {
-		move: \'', $txt['media_zoom_move'], '\',
-		close: \'', $txt['media_close'], '\',
-		closeTitle: \'', $txt['media_zoom_close_title'], '\',
-		loading: \'', $txt['media_zoom_loading'], '\',
-		loadingTitle: \'', $txt['media_zoom_clicktocancel'], '\',
-		restoreTitle: \'', $txt['media_zoom_clicktoclose'], '\',
-		focusTitle: \'', $txt['media_zoom_focus'], '\',
-		fullExpandTitle: \'', $txt['media_zoom_expandtoactual'], '\',
-		previousTitle: \'', $txt['media_zoom_previous'], '\',
-		nextTitle: \'', $txt['media_zoom_next'], '\',
-		playTitle: \'', $txt['media_zoom_play'], '\',
-		pauseTitle: \'', $txt['media_zoom_pause'], '\'
-	}});
+	$("a.zoom").zoomedia({
+		lang: {
+			move: "', $txt['media_zoom_move'], '",
+			close: "', $txt['media_close'], '",
+			closeTitle: "', $txt['media_zoom_close_title'], '",
+			loading: "', $txt['media_zoom_loading'], '",
+			loadingTitle: "', $txt['media_zoom_clicktocancel'], '",
+			restoreTitle: "', $txt['media_zoom_clicktoclose'], '",
+			focusTitle: "', $txt['media_zoom_focus'], '",
+			fullExpandTitle: "', $txt['media_zoom_expandtoactual'], '",
+			previousTitle: "', $txt['media_zoom_previous'], '",
+			nextTitle: "', $txt['media_zoom_next'], '",
+			playTitle: "', $txt['media_zoom_play'], '",
+			pauseTitle: "', $txt['media_zoom_pause'], '"
+		},
+		outline: "', empty($peralbum) || $peralbum['outline'] == 'white' ? 'white' : ($peralbum['outline'] == 'black' ? 'black' : 'drop-shadow'), '"
+	});
 ');
-	return '';
+	return;
 
 	// !! WIP !! To be removed.
 
@@ -513,22 +516,18 @@ function aeva_initZoom($autosize, $peralbum = array())
 		}
 	});
 
-	$("a.zoom").each(function () {
-		this.onclick = function () {
-			if (this.rel == "media")
-				mediaOptions.width = $(this).data("width");
-			return this.rel == "html" ? hs.htmlExpand(this) : (this.rel == "embed" ? hs.expand(this) :
-				  (this.rel == "media" ? hs.htmlExpand(this, mediaOptions) : hs.expand(this, slideOptions)));
-		};
+	$("a.zoom").click(function () {
+		if (this.rel == "media")
+			mediaOptions.width = $(this).data("width");
+		return this.rel == "html" ? hs.htmlExpand(this) : (this.rel == "embed" ? hs.expand(this) :
+			  (this.rel == "media" ? hs.htmlExpand(this, mediaOptions) : hs.expand(this, slideOptions)));
 	});', $autosize ? '' : '
 
-	hs.allowSizeReduction = false;', empty($peralbum) || $peralbum['outline'] == 'rounded-white' ? '
-	hs.outlineType = \'rounded-white\';' : '', '
-	hs.numberOfImagesToPreload = 0;
-	hs.graphicsDir = \'', aeva_theme_url('hs/'), '\';');
+	hs.allowSizeReduction = false;
+	hs.numberOfImagesToPreload = 0;');
 
 	if (empty($peralbum))
-		return '';
+		return;
 
 	add_js(($peralbum['outline'] == 'drop-shadow' ? '' : '
 	hs.outlineType = \'' . $peralbum['outline'] . '\';') . ($peralbum['autosize'] == 'yes' ? '' : '
@@ -536,12 +535,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 	hs.expandDuration = ' . $peralbum['expand'] . ';
 	hs.restoreDuration = ' . $peralbum['expand'] . ';'));
 
-	return $peralbum['outline'] == 'rounded-white' || !empty($peralbum['fadeinout']) ? '
-	<style>' . ($peralbum['outline'] == 'rounded-white' ? '
-		.zoom img { border: 2px solid gray }
-		.zoom-html { padding: 0 5px 5px 5px }' : '') . (!empty($peralbum['fadeinout']) ? '
-		.zoom-active-anchor img { visibility: visible }' : '') . '
-	</style>' : '';
+	return;
 }
 
 // Gets an encrypted filename

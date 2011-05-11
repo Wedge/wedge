@@ -28,10 +28,6 @@ div.subheader
 .aeva_cancel extends .aeva_ok
 	background-image: url($images/aeva/cancel.png)
 
-.pics td
-	padding: 0
-	text-align: center
-
 .aep
 	margin: 6px auto
 
@@ -48,7 +44,7 @@ table.aextbox
 	padding: 4px 0
 	text-align: center
 
-	.pics td
+	.pics > div
 		margin: 0
 
 	img.aext
@@ -446,9 +442,7 @@ table.aelista
 
 .ae_details
 	position: relative
-	width: 1px
 	padding: 4px 0 0 0
-	left: 50%
 
 .aevisio
 	position: absolute
@@ -460,8 +454,16 @@ table.aelista
 	opacity: 0
 	transition: opacity .5s
 	border-radius: 8px
+	.indpic:hover &
+		visibility: visible
+		opacity: 1
+		transition: opacity .5s
 
-table.pics td:hover .aevisio
-	visibility: visible
-	opacity: 1
-	transition: opacity .5s
+.pics
+	margin: auto
+
+.indpic
+	display: inline-block
+	vertical-align: middle
+	text-align: center
+	margin: 10px

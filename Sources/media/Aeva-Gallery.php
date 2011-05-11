@@ -761,7 +761,7 @@ function aeva_viewItem()
 	// Get per-album settings
 	$peralbum = unserialize($item_data['options']);
 	unset($item_data['options']);
-	$peralbum['outline'] = !empty($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'rounded-white')) ? $peralbum['outline'] : 'drop-shadow';
+	$peralbum['outline'] = !empty($peralbum['outline']) && in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? $peralbum['outline'] : 'drop-shadow';
 	$peralbum['autosize'] = !empty($peralbum['autosize']) && $peralbum['autosize'] == 'no' ? 'no' : 'yes';
 	$amSettings['use_zoom'] &= empty($peralbum['zoom']) || $peralbum['zoom'] == 'yes';
 	$context['aeva_has_preview'] = (bool) $item_data['has_preview'];

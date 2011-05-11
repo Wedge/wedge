@@ -12,12 +12,22 @@
 
 	$.fn.zoomedia = function (options, onComplete) {
 
+		var
+			zoom = '#zoom',
+			options = options || {},
+			lang = options.lang || {},
+			outline = options.outline || '',
+			outline = 'drop-shadow',
+			padding = outline == 'drop-shadow' ? 0 : 11,
+			double_padding = outline == 'drop-shadow' ? 0 : 20,
+			zooming = active = false,
+			original_size = {};
+
 		if (!$zoom)
 		{
-			$('body').append('<div id="zoom"><div id="zoom-content"></div><div id="zoom-desc"></div><a href="#" title="Close" id="zoom-close"></a></div>');
+			$('body').append('<div id="zoom" class="zoom-' + outline + '"><div id="zoom-content"></div><div id="zoom-desc"></div><a href="#" title="Close" id="zoom-close"></a></div>');
 
 			var
-				zoom = '#zoom',
 				$zoom = $(zoom),
 				$zoom_desc = $(zoom + '-desc'),
 				$zoom_close = $(zoom + '-close'),
@@ -34,13 +44,6 @@
 
 			$zoom_close.click(hide);
 		}
-
-		var
-			options = options || {},
-			lang = options.lang || {},
-			zooming = active = false,
-			original_size = {},
-			px = 'px';
 
 		this.each(function () {
 			$(this).click(show);
@@ -74,9 +77,9 @@
 					win = $(window),
 					win_width = win.width(),
 					win_height = win.height(),
-					width = (options.width || img.width) + 20,
-					height = (options.height || img.height) + 20,
-					on_width = win_height < height ? (width - 20) * (win_height / height) + 20 : width,
+					width = (options.width || img.width) + double_padding,
+					height = (options.height || img.height) + double_padding,
+					on_width = win_height < height ? (width - double_padding) * (win_height / height) + double_padding : width,
 					on_height = Math.min(win_height, height),
 					scrollTop = is_ie8down ? document.documentElement.scrollTop : window.pageYOffset,
 					scrollLeft = is_ie8down ? document.documentElement.scrollLeft : window.pageXOffset,
@@ -87,10 +90,10 @@
 				$('.zoom-loading').hide();
 
 				$zoom.css({
-					top: (original_size.y - 11) + px,
-					left: (original_size.x - 11) + px,
-					width: (original_size.w + 20) + px,
-					height: (original_size.h + 20) + px
+					top: original_size.y - padding,
+					left: original_size.x - padding,
+					width: original_size.w + double_padding,
+					height: original_size.h + double_padding
 				});
 
 				if (options.closeOnClick)
@@ -101,7 +104,7 @@
 				$zoom_desc
 					.html(desc)
 					.css({
-						width: (on_width - 20) + px,
+						width: on_width - double_padding,
 						height: 'auto'
 					});
 
@@ -124,12 +127,13 @@
 									if ($zoom.queue('fx').length > 0 && $zoom_desc.is(':hidden'))
 										// Delay our zoom until after the description has finished its own.
 										$zoom.delay(400);
+									$zoom_close.hide();
 									$zoom.animate({
 										top: '-=' + (new_height - on_height) / 2,
 										left: '-=' + (new_width - on_width) / 2,
 										width: '+=' + (new_width - on_width),
 										height: '+=' + (new_height - on_height)
-									});
+									}, 500, null, function () { $zoom_close.show(); });
 								};
 							if (wt > 0)
 								rezoom(wt, ht, that);
@@ -149,20 +153,20 @@
 				});
 
 				// Is it a narrow element with a long description? If yes, enlarge its parent to at least 500px.
-				if ($zoom_desc.width() > on_width - 20 || $zoom_desc.height() > 200)
+				if ($zoom_desc.width() > on_width - double_padding || $zoom_desc.height() > 200)
 				{
 					$zoom_content.find('img').css({
 						maxWidth: width,
 						maxHeight: height
 					});
-					on_width = Math.max($zoom_desc.width() + 20, 520);
+					on_width = Math.max($zoom_desc.width() + double_padding, 500 + double_padding);
 				}
 
 				$zoom_desc.hide().css('width', 'auto');
 				$zoom.hide().css('visibility', 'visible').animate(
 					{
-						top: Math.max((win_height - on_height) / 2 + scrollTop, 0) + px,
-						left: ((win_width - on_width) / 2 + scrollLeft) + px,
+						top: Math.max((win_height - on_height) / 2 + scrollTop, 0),
+						left: (win_width - on_width) / 2 + scrollLeft,
 						width: on_width,
 						height: on_height,
 						opacity: 'show'
@@ -188,8 +192,8 @@
 			// timeout because it's slower at retrieving data from the cache.
 			var show_loading = setTimeout(function () {
 				$('<div class="zoom-loading">' + (lang.loading || '') + '</div>').css({
-					left: original_size.x + px,
-					top: original_size.y + px
+					left: original_size.x,
+					top: original_size.y
 				}).click(function () {
 					$('<img>').unbind('load');
 					$(this).remove();
@@ -224,10 +228,10 @@
 
 			$zoom.animate(
 				{
-					top: (original_size.y - 11) + px,
-					left: (original_size.x - 11) + px,
-					width: (original_size.w + 20) + px,
-					height: (original_size.h + 20) + px,
+					top: original_size.y - padding,
+					left: original_size.x - padding,
+					width: original_size.w + double_padding,
+					height: original_size.h + double_padding,
 					opacity: 'hide'
 				},
 				500,

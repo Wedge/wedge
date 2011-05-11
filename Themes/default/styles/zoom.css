@@ -7,7 +7,7 @@
 .zoom
 	display: inline-block
 
-#zoom
+.zoom-base
 	// We set visibility to hidden to avoid getting 0 on child $zoom_desc's height()
 	visibility: hidden
 	position: absolute
@@ -15,9 +15,6 @@
 	border: 1px solid #ccc
 	box-shadow: 0 0 18px #666
 	border-radius: 8px
-	&.black
-		background: #000
-		border: 1px solid #333
 
 #zoom-content
 	padding: 10px
@@ -42,10 +39,6 @@
 	padding: 0
 	.mg_desc
 		color: #999
-	#zoom.black &
-		color: #fff
-		.mg_desc
-			color: #ccc
 
 .zoom-overlay
 	display: none
@@ -75,3 +68,24 @@
 
 .zoom-html
 	display: none
+
+.zoom-white extends .zoom-base
+.zoom-black extends .zoom-base
+	background: #000
+	border: 1px solid #333
+	#zoom-desc
+		color: #fff
+		.mg_desc
+			color: #ccc
+
+.zoom-drop-shadow extends .zoom-base
+	background: #777
+	border: 0
+	#zoom-content
+		padding: 0 0 10px
+	#zoom-desc
+		color: #fff
+		a
+			color: #fc9
+		.mg_desc
+			color: #ccc

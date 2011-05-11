@@ -1,0 +1,11 @@
+
+/*
+	Without the following hack, Opera will add an horizontal scrollbar on the body
+	whenever you hover your mouse over a thumbnail.
+*/
+
+.aevisio
+	z-index: 1
+
+.indpic
+	position: relative

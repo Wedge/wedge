@@ -373,7 +373,6 @@ function aeva_admin_settings()
 
 		'title_limits' => array('title', 'layout'),
 		'num_items_per_page' => array('small_text', 'layout'),
-		'num_items_per_line' => array('small_text', 'layout'),
 		'icons_only' => array('yesno', 'layout'),
 		'album_columns' => array('small_text', 'layout'),
 		'recent_item_limit' => array('small_text', 'layout'),
@@ -386,7 +385,6 @@ function aeva_admin_settings()
 		'show_linking_code' => array('yesno', 'layout'),
 		'max_title_length' => array('small_text', 'layout'),
 		'default_tag_type' => array('select', 'layout'),
-		'num_items_per_line_ext' => array('small_text', 'layout'),
 		'max_thumbs_per_page' => array('small_text', 'layout'),
 
 		'title_misc' => array('title', 'layout'),

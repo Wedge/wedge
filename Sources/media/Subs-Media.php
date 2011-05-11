@@ -162,7 +162,7 @@ define('AEVA_MEDIA_VERSION', '2.10');
 	array aeva_getMediaItems(int start, int limit, string sort, bool all_albums, array albums, string custom)
 		- Gets items
 
-	string aeva_listItems(array items, bool in_album = false, string align, int per_line)
+	string aeva_listItems(array items, bool in_album = false, string align)
 		- Creates HTML for viewing items
 
 	array aeva_getMediaComments(int start, int limit, bool random, array albums, string custom)
@@ -2632,9 +2632,9 @@ function aeva_showThumbnail($data)
 			$inside_caption = '<div class="aeva_inside_caption"><div style="float: right"><a class="aelink" href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
 	}
 	elseif ($type == 'box')
-		$box = aeva_listItems(aeva_getMediaItems(-1, count($ids), 'm.id_media', true, array(), 'm.id_media IN (' . $id . ')'), false, $align == 'none' ? '' : $align, -1);
+		$box = aeva_listItems(aeva_getMediaItems(-1, count($ids), 'm.id_media', true, array(), 'm.id_media IN (' . $id . ')'), false, $align == 'none' ? '' : $align);
 	elseif ($type == 'album')
-		$box = aeva_listItems(aeva_getMediaItems(-1, !empty($amSettings['max_items_per_page']) ? $amSettings['max_items_per_page'] : 15, 'm.id_media DESC', true, array(), 'm.album_id IN (' . $id . ')'), false, $align == 'none' ? '' : $align, -1);
+		$box = aeva_listItems(aeva_getMediaItems(-1, !empty($amSettings['max_items_per_page']) ? $amSettings['max_items_per_page'] : 15, 'm.id_media DESC', true, array(), 'm.album_id IN (' . $id . ')'), false, $align == 'none' ? '' : $align);
 	else
 	{
 		foreach ($ids as $i)
@@ -2844,7 +2844,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 }
 
 // Sub-template for showing item lists
-function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $can_moderate = false)
+function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = false)
 {
 	global $scripturl, $txt, $galurl, $settings, $context, $amSettings, $modSettings, $user_info;
 	static $in_page = 0;
@@ -2861,16 +2861,12 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			<img style="width: 10px; height: 10px" src="' . $settings['images_aeva'] . '/';
 	$new_icon = '<div class="new_icon"></div>';
 	// If we're in an external embed, we might not have all the space we would like...
-	$per_line = $per_line > 0 ? $per_line : (!empty($amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) ?
-				max(1, $amSettings['num_items_per_line' . ($per_line === -1 ? '_ext' : '')]) : ($per_line === -1 ? 3 : 5));
 	$ico = !empty($amSettings['icons_only']);
-	$first = reset($items);
 	$can_moderate &= isset($_REQUEST['action']) && $_REQUEST['action'] == 'media';
 	$can_moderate_here = allowedTo('media_moderate');
 	$re = '
-		<table class="pics smalltext cs8" style="width: ' . (count($items) == 1 ? max(120, $first['w_thumb'] + 12) . 'px"' : '100%"') . (!empty($align) ? ' align="' . $align . '"' : '') . '>';
+		<div class="pics smalltext" style="text-align: ' . (!empty($align) ? $align : 'center') . '">';
 
-	$cnt = 0;
 	$ex_album_id = 0;
 
 	foreach ($items as $i)
@@ -2907,8 +2903,6 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 				</div>') . '
 			</div>' : '');
 
-		if ($cnt % $per_line == 0)
-			$re .= '<tr>';
 		$title = empty($i['title']) ? '&hellip;' : (strlen($i['title']) < $mtl ? $i['title'] : westr::cut($i['title'], $mtl));
 		if ($ex_album_id != $i['id_album'])
 			$album_name = empty($i['album_name']) ? '&hellip;' : (strlen($i['album_name']) < $mtl ? $i['album_name'] : westr::cut($i['album_name'], $mtl));
@@ -2918,7 +2912,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']"></div>' : '';
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
-		<td class="center' . ($i['approved'] ? '' : ' unapp') . '">
+		<div class="indpic center' . ($i['approved'] ? '' : ' unapp') . '" style="width: ' . ($amSettings['max_thumb_width'] + 20) . 'px">
 			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_zoom'] ? ' id="hsm' . $in_page . '" class="zoom"'
 			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
 			. $inside_caption . '
@@ -2929,7 +2923,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 			</div>
 
 			<div class="ae_details">
-				<div style="width: ' . ($amSettings['max_thumb_width'] + 10) . 'px; left: -' . round($amSettings['max_thumb_width'] / 2 + 9) . 'px" class="aevisio" id="visio_' . $i['id'] . '">';
+				<div style="width: ' . ($amSettings['max_thumb_width'] + 10) . 'px" class="aevisio" id="visio_' . $i['id'] . '">';
 
 		$re .= ($user_is_known || $main_user == $i['poster_id'] ? '' : ($ico ? $icourl . 'person.gif" title="' . $txt['media_posted_by'] . '">&nbsp;' : '
 			' . $txt['media_posted_by'] . ' ') . aeva_profile($i['poster_id'], $i['poster_name']) . '<br>') . $icourl . 'clock.gif" title=""> ' . $i['time'] . (!$in_album ? '<br>
@@ -2948,15 +2942,10 @@ function aeva_listItems($items, $in_album = false, $align = '', $per_line = 0, $
 		$re .= '
 				</div>
 			</div>
-		</td>';
-		if (++$cnt % $per_line == 0)
-			$re .= '</tr>';
+		</div>';
 	}
 
-	if ($cnt % $per_line != 0)
-		$re .= '</tr>';
-
-	return $re . '</table>';
+	return $re . '</div>';
 }
 
 function aeva_fillMediaArray($request, $all_albums = true)
