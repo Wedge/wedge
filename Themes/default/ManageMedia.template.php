@@ -695,7 +695,7 @@ function template_aeva_admin_perms_view()
 
 	foreach ($context['aeva_album_permissions'] as $perm)
 		echo '
-							<option value="', $perm, '">', $txt['permissionname_aeva_' . $perm], '</option>';
+							<option value="', $perm, '">', $txt['permissionname_media_' . $perm], '</option>';
 
 	echo '
 						</select>

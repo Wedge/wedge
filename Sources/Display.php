@@ -110,7 +110,7 @@ function Display()
 		$context['robot_no_index'] = true;
 
 	// Add 1 to the number of views of this topic.
-	if (!$user_info['possibly_robot'] && empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic)
+	if (!$user_info['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
 		wesql::query('
 			UPDATE {db_prefix}topics

@@ -1163,23 +1163,24 @@ function template_aeva_unseen()
 	global $context, $txt, $galurl, $scripturl;
 
 	echo '
-	<div class="pagelinks align_left page_index">
-		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
-	</div>';
+	<div class="pagelinks align_left page_index">';
 
 	if (!empty($context['aeva_items']))
 	{
 		$mark_seen = array();
 		if (strpos($context['aeva_page_index'], '<a') !== false)
-			$mark_seen['pageseen'] = array('text' => 'aeva_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_var'] . '=' . $context['session_id']);
-		$mark_seen['markseen'] = array('text' => 'aeva_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_var'] . '=' . $context['session_id']);
-		template_button_strip($mark_seen, '');
+			$mark_seen['pageseen'] = array('text' => 'media_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$mark_seen['markseen'] = array('text' => 'media_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_var'] . '=' . $context['session_id']);
+		template_button_strip($mark_seen);
 	}
 
 	echo '
+		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+	</div>
 	<div id="unseen_items" style="clear: both">', !empty($context['aeva_items']) ? aeva_listItems($context['aeva_items']) : '<br><div class="notice">' . $txt['media_no_listing'] . '</div>', '
 	</div>
-	<div class="pagelinks align_left page_index">
+	<div class="pagelinks align_left page_index">', !empty($context['aeva_items']) ? '
+		' . template_button_strip($mark_seen) : '', '
 		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
 	</div>';
 }

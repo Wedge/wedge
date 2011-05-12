@@ -1176,7 +1176,7 @@ function aeva_admin_perms_edit()
 	foreach ($context['aeva_album_permissions'] as $perm)
 	{
 		$context['aeva_form'][$perm] = array(
-			'label' => $txt['permissionname_aeva_' . $perm],
+			'label' => $txt['permissionname_media_' . $perm],
 			'type' => 'checkbox',
 			'options' => array(
 				0 => array(

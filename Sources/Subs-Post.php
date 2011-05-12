@@ -1220,14 +1220,14 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 	}
 
+	$new_topic = empty($topicOptions['id']);
+
 	// Does an add-on want to manipulate all new posts/topics before they're created?
 	// (e.g. check for user agent and change the icon based on that.)
-	call_hook('create_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
+	call_hook('create_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions, &$new_topic));
 
 	// It's do or die time: forget any user aborts!
 	$previous_ignore_user_abort = ignore_user_abort(true);
-
-	$new_topic = empty($topicOptions['id']);
 
 	// Insert the post.
 	wesql::insert('',
@@ -1472,7 +1472,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	ignore_user_abort($previous_ignore_user_abort);
 
 	// What if we want to export new posts/topics out to a CMS?
-	call_hook('create_post_after', array(&$msgOptions, &$topicOptions, &$posterOptions));
+	call_hook('create_post_after', array(&$msgOptions, &$topicOptions, &$posterOptions, &$new_topic));
 
 	// Success.
 	return true;
