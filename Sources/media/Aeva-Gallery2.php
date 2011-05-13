@@ -788,7 +788,7 @@ function aeva_albumCP($is_admin = false)
 	if (!$is_admin)
 	{
 		// This is needed for the toggle
-		add_js_file('scripts/media-admin.js');
+		add_js_file('scripts/mediadmin.js');
 
 		$context['page_title'] = $txt['media_my_user_albums'];
 		$context['aeva_header']['data']['title'] = $txt['media_my_user_albums'];
@@ -811,6 +811,7 @@ function aeva_albumCP($is_admin = false)
 
 	// Sub-Template
 	loadSubTemplate('aeva_album_cp');
+	loadLanguage('ManageMedia');
 
 	// Load the albums
 	if (!$is_admin)

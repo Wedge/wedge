@@ -1330,7 +1330,7 @@ function template_aeva_album_cp()
 	{
 		echo '
 			<tr class="windowbg', $album['featured'] ? '' : '2', '">
-				<td><a href="javascript:admin_toggle('.$album['id'].', true);"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $album['id'], '"></a></td>
+				<td><a href="#" onclick="return admin_toggle(', $album['id'], ');"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $album['id'], '"></a></td>
 				<td>', !empty($album['owner']['id']) ? $album['owner']['name'] : '', '</td>
 				<td', !$album['approved'] ? ' class="unapp"' : '', ' style="padding-left: ', 5 + 30 * $album['child_level'], 'px',
 				$context['aeva_moving'] !== false && ($context['aeva_moving'] == $album['id'] || $context['aeva_moving'] == $album['parent']) ? '; font-weight: bold' : '', '">';
@@ -1349,7 +1349,7 @@ function template_aeva_album_cp()
 				<a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a>', $show_move ? '
 				' . $album['move_links']['child_of'] : '', '
 				</td>
-				<td class="text_margins" style="white-space: nowrap">';
+				<td class="album_moderation">';
 
 		if ($can_manage || $album['owner']['id'] == $user_info['id'])
 			echo '

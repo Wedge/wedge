@@ -107,6 +107,8 @@ function aeva_admin_maintenance()
 		'subtext' => $txt['media_admin_maintenance_prune_subtext'],
 	);
 
+	loadSubTemplate('aeva_admin_maintenance');
+
 	$task = 'aeva_admin_maintenance_' . (isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '');
 	if (function_exists($task))
 	{
@@ -114,8 +116,6 @@ function aeva_admin_maintenance()
 		if ($_REQUEST['sa'] == 'regen')
 			return;
 	}
-
-	loadSubTemplate('aeva_admin_maintenance');
 }
 
 function aeva_sameDomain($dom)
@@ -847,7 +847,7 @@ function aeva_admin_maintenance_prune()
 		return;
 	}
 
-	// Maybe he/she hasn't submitted, show them the cool page
+	// If user hasn't submitted anything, just show them the cool page.
 	loadSubTemplate('aeva_admin_maintenance_prune');
 }
 

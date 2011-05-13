@@ -77,20 +77,21 @@ function template_aeva_admin_submissions()
 					<td width="4%"><input type="checkbox" name="checkAll" id="checkAll" onclick="invertAll(this, this.form, \'items[]\');"></td>
 				</tr>', !empty($context['aeva_item']) ? '
 				<tr class="windowbg2">
-					<td colspan="' . ($filter == 'albums' ? 5 : 6) . '"><a href="javascript:admin_toggle_all();">' . $txt['media_toggle_all'] . '</a></td>
+					<td colspan="' . ($filter == 'albums' ? 5 : 6) . '"><a href="#" onclick="return admin_toggle_all();">' . $txt['media_toggle_all'] . '</a></td>
 				</tr>' : '';
+
 	$alt = false;
 	foreach ($context['aeva_items'] as $item)
 	{
 		echo '
-				<tr class="windowbg', $alt ? '2' : '', '" id="' . $item['id'] . '">
-					<td><a href="javascript:admin_toggle('.$item['id'].', false);"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $item['id'], '"></a></td>
+				<tr class="windowbg', $alt ? '2' : '', '" id="', $item['id'], '">
+					<td><a href="#" onclick="return admin_toggle(', $item['id'], ');"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $item['id'], '"></a></td>
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
-					<td><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> <a href="javascript:doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';' . $context['session_var'] . '=', $context['session_id'], ';xml\');">'.$txt['media_admin_approve'].'</a>
+					<td><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';' . $context['session_var'] . '=', $context['session_id'], ';xml\');">', $txt['media_admin_approve'], '</a>
 						<img src="'.$settings['images_aeva'].'/folder_edit.png" title="'.$txt['media_admin_edit'].'"> <a href="', $item['edit_link'], '">'.$txt['media_admin_edit'].'</a>
-						<img src="'.$settings['images_aeva'].'/folder_delete.png" title="'.$txt['media_admin_delete'].'"> <a href="javascript:doSubAction(\'', $item['del_link'], ';xml\');" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');">'.$txt['media_admin_delete'].'</a>
-						', $filter == 'items' ? '<a href="'. $galurl .'sa=media;in='.$item['id'].';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="'.$settings['images_aeva'].'/magnifier.png"> '.$txt['media_admin_view_image'].'</a>' : '', '
+						<img src="'.$settings['images_aeva'].'/folder_delete.png" title="'.$txt['media_admin_delete'].'"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>
+						', $filter == 'items' ? '<a href="'. $galurl .'sa=media;in='.$item['id'].';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
@@ -178,16 +179,23 @@ function template_aeva_admin_maintenance_prune()
 {
 	global $context, $scripturl, $txt;
 
+	add_js('
+	function prune_toggle(is_item)
+	{
+		$("#item_prune_opts").toggle(is_item);
+		$("#com_prune_opts").toggle(!is_item);
+	}');
+
 	echo '
 		<form action="', $scripturl, '?action=admin;area=aeva_maintenance;sa=prune;', $context['session_var'], '=', $context['session_id'], '" method="post">
-			<table cellpadding="6" cellspacing="0" border="0" class="tborder" width="100%">
+			<table class="w100 cp8 cs0">
 				<tr class="titlebg">
 					<td>', $txt['media_pruning'], '</td>
 				</tr>
 				<tr>
 					<td class="windowbg2">
-						<label><input type="radio" id="pr1" name="pruning" value="item" onclick="admin_prune_toggle(\'item\',\'com\');" checked> ', $txt['media_items'], '</label><br>
-						<label><input type="radio" id="pr2" name="pruning" value="comments" onclick="admin_prune_toggle(\'com\', \'item\');"> ', $txt['media_comments'], '</label>
+						<label><input type="radio" id="pr1" name="pruning" value="item" onclick="prune_toggle(true);" checked> ', $txt['media_items'], '</label><br>
+						<label><input type="radio" id="pr2" name="pruning" value="comments" onclick="prune_toggle(false);"> ', $txt['media_comments'], '</label>
 					</td>
 				</tr>
 				<tr id="item_prune_opts">
@@ -335,14 +343,14 @@ function template_aeva_admin_reports()
 				<td>', $txt['media_admin_moderation'], '</td>
 			</tr>', !empty($context['aeva_reports']) ? '
 			<tr class="windowbg2">
-				<td colspan="5"><a href="javascript:admin_toggle_all();">' . $txt['media_toggle_all'] . '</a></td>
+				<td colspan="5"><a href="#" onclick="return admin_toggle_all();">' . $txt['media_toggle_all'] . '</a></td>
 			</tr>' : '';
 
 	foreach ($context['aeva_reports'] as $report)
 	{
 		echo '
 			<tr class="windowbg2">
-				<td><a href="javascript:admin_toggle('.$report['id_report'].');"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_'.$report['id_report'].'"></a></td>
+				<td><a href="#" onclick="return admin_toggle(', $report['id_report'], ');"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_'.$report['id_report'].'"></a></td>
 				<td><a href="', $galurl, 'sa=item;in='.($context['aeva_report_type'] == 'comment' ? $report['id2'].'#com'.$report['id'] : $report['id']).'">'.$report['title'].'</a></td>
 				<td>', aeva_profile($report['reported_by']['id'], $report['reported_by']['name']), '</td>
 				<td>', $report['reported_on'], '</td>
@@ -600,7 +608,7 @@ function template_aeva_admin_perms()
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td><a href="', $context['base_url'], ';sa=view;in=', $prof['id'], '">', $prof['name'], '</a></td>
-				<td><a href="javascript:getPermAlbums(', $prof['id'], ');">', $prof['albums'], '</a></td>
+				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ');">', $prof['albums'], '</a></td>
 				<td', !empty($prof['undeletable']) ? ' title="' . $txt['media_permissions_undeletable'] . '"' : '', '><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
 			<tr class="windowbg', $alt ? '2' : '', '" id="albums_' . $prof['id'] . '" style="display: none">
@@ -735,7 +743,7 @@ function template_aeva_admin_quotas()
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td><a href="', $scripturl, '?action=admin;area=aeva_quotas;sa=view;in=', $prof['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $prof['name'], '</a></td>
-				<td><a href="javascript:getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], ';xml\');">', $prof['albums'], '</a></td>
+				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], ';xml\');">', $prof['albums'], '</a></td>
 				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
 			<tr class="windowbg', $alt ? '2' : '', '" id="albums_' . $prof['id'] . '" style="display: none">

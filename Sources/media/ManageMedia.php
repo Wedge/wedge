@@ -141,7 +141,7 @@ function aeva_admin_init()
 
 	// Some CSS and JS we'll be using
 	add_css_file('media', true);
-	add_js_file('scripts/media-admin.js');
+	add_js_file('scripts/mediadmin.js');
 
 	// If lookups are available, retrieve the latest version numbers for both Aeva Media and its site list
 	if (!isset($_POST['submit_aeva']) && !empty($modSettings['embed_lookups']) && (empty($modSettings['aeva_version_test'])

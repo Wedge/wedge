@@ -202,8 +202,12 @@ iframe.aext
 	img
 		vertical-align: -2px
 
-.text_margins a
-	margin: 0 2px
+.album_moderation
+	white-space: nowrap
+	img
+		vertical-align: -2px
+	a
+		margin: 0 2px
 
 .mg_subtext, .mg_desc, .mg_hidden
 	color: #777
