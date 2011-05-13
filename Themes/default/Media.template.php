@@ -42,7 +42,7 @@ function template_aeva_header()
 	</we:cat>';
 
 	// Any unapproved stuff?
-	if (allowedTo('media_moderate') && (!empty($amSettings['num_unapproved_items']) || !empty($amSettings['num_unapproved_comments']) || !empty($amSettings['num_unapproved_albums'])))
+	if (aeva_allowedTo('moderate') && (!empty($amSettings['num_unapproved_items']) || !empty($amSettings['num_unapproved_comments']) || !empty($amSettings['num_unapproved_albums'])))
 	{
 		echo '
 	<div class="unapproved_notice">';
@@ -56,7 +56,7 @@ function template_aeva_header()
 	}
 
 	// Any reported stuff?
-	if (allowedTo('media_moderate') && (!empty($amSettings['num_reported_items']) || !empty($amSettings['num_reported_comments'])))
+	if (aeva_allowedTo('moderate') && (!empty($amSettings['num_reported_items']) || !empty($amSettings['num_reported_comments'])))
 	{
 		echo '
 	<div class="unapproved_notice">';
@@ -251,7 +251,7 @@ function template_aeva_home()
 			' . show_stat($txt['media_reported_items'], $amSettings['num_reported_items']) : '', '
 		</td>';
 
-	if (allowedTo('media_moderate'))
+	if (aeva_allowedTo('moderate'))
 	{
 		echo '
 		<td style="text-align: right">
@@ -388,11 +388,11 @@ function template_aeva_item_main()
 		echo '
 			<div class="unapproved_yet">', $txt['media_size_mismatch'], '</div>';
 
-	if (!$item['approved'] && ($item['member']['id'] == $user_info['id']) && !allowedTo('media_moderate') && !allowedTo('media_auto_approve_item'))
+	if (!$item['approved'] && ($item['member']['id'] == $user_info['id']) && !aeva_allowedTo('moderate') && !aeva_allowedTo('auto_approve_item'))
 		echo '
 			<div class="unapproved_yet">', $txt['media_will_be_approved'], '</div>';
 
-	if (!$item['approved'] && (allowedTo('media_moderate') || allowedTo('media_auto_approve_item')))
+	if (!$item['approved'] && $item['can_approve'])
 		echo '
 			<div class="unapproved_yet">', $txt['media_approve_this'], '</div>';
 
@@ -592,7 +592,7 @@ function template_aeva_item_actions()
 				</form>
 			</div>';
 
-	if (allowedTo('media_download_item') && $item['type'] != 'embed')
+	if (aeva_allowedTo('download_item') && $item['type'] != 'embed')
 		echo '
 			<a href="', $galurl, 'sa=media;in=', $item['id_media'], ';dl"><img src="', $settings['images_aeva'], '/download.png">&nbsp;', $txt['media_download_this_item'], '</a>';
 
@@ -788,7 +788,7 @@ function template_aeva_item_comments()
 		}
 	}
 
-	if (allowedTo('media_comment'))
+	if (aeva_allowedTo('comment'))
 		echo '
 		<div id="quickreplybox" style="padding-top: 4px">
 			<we:cat>
@@ -1039,10 +1039,12 @@ function template_aeva_viewAlbum()
 		</td></tr>
 		<tr><td class="bottom">';
 
-	$can_moderate_here = allowedTo('media_moderate') || (!$user_info['is_guest'] && $user_info['id'] == $album_data['owner']['id']);
-	$can_approve_here = $can_moderate_here || allowedTo('media_auto_approve_item');
+	$can_moderate_here = $context['aeva_can_moderate_here'];
+	$can_approve_here = $context['aeva_can_approve_here'];
 	$can_add_playlist = !empty($context['aeva_my_playlists']);
-	if ($can_edit_items = ($can_moderate_here || $context['aeva_can_add_item'] || $context['aeva_can_multi_upload']) || allowedTo('media_multi_download') || allowedTo('media_access_unseen'))
+	$can_edit_items = $context['aeva_can_edit_items'];
+
+	if ($can_edit_items || aeva_allowedTo('multi_download') || aeva_allowedTo('access_unseen'))
 	{
 		echo '
 			<div class="buttonlist data">
@@ -1063,16 +1065,16 @@ function template_aeva_viewAlbum()
 			if ($user_info['is_admin'])
 				echo '
 					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
-			if (allowedTo('media_moderate') && $album_data['approved'] == 0)
+			if (aeva_allowedTo('moderate') && $album_data['approved'] == 0)
 				echo '
 					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
 		}
 
-		if (allowedTo('media_multi_download'))
+		if (aeva_allowedTo('multi_download'))
 			echo '
 					<li><a href="', $galurl, 'sa=massdown;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/download.png" title="', $txt['media_multi_download'], '"> ', $txt['media_multi_download'], '</span></a></li>';
 
-		if (allowedTo('media_access_unseen'))
+		if (aeva_allowedTo('access_unseen'))
 			echo '
 					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
 
@@ -1325,12 +1327,12 @@ function template_aeva_album_cp()
 			</tr>';
 
 	$can_manage = allowedTo('media_manage');
-	$can_moderate = allowedTo('media_moderate');
+	$can_moderate = aeva_allowedTo('moderate');
 	foreach ($context['aeva_my_albums'] as $album)
 	{
 		echo '
 			<tr class="windowbg', $album['featured'] ? '' : '2', '">
-				<td><a href="#" onclick="return admin_toggle(', $album['id'], ');"><img src="', $settings['images_url'], '/expand.gif" id="toggle_img_', $album['id'], '"></a></td>
+				<td><a href="#" onclick="return admin_toggle(', $album['id'], ');"><div class="foldable" id="toggle_img_', $album['id'], '"></div></a></td>
 				<td>', !empty($album['owner']['id']) ? $album['owner']['name'] : '', '</td>
 				<td', !$album['approved'] ? ' class="unapp"' : '', ' style="padding-left: ', 5 + 30 * $album['child_level'], 'px',
 				$context['aeva_moving'] !== false && ($context['aeva_moving'] == $album['id'] || $context['aeva_moving'] == $album['parent']) ? '; font-weight: bold' : '', '">';
@@ -1743,7 +1745,7 @@ function template_aeva_profile_summary()
 
 	if (!empty($member['user_albums']))
 	{
-		$can_moderate = allowedTo('media_moderate');
+		$can_moderate = aeva_allowedTo('moderate');
 
 		echo '
 			<tr class="titlebg">
@@ -1952,7 +1954,7 @@ function aeva_listFiles($items, $can_moderate = false)
 {
 	global $galurl, $scripturl, $context, $txt, $settings, $user_info;
 
-	$can_moderate_one = $can_moderate_here = allowedTo('media_moderate');
+	$can_moderate_one = $can_moderate_here = aeva_allowedTo('moderate');
 	if (!$can_moderate_one)
 		foreach ($items as $item)
 			$can_moderate_one |= $item['poster_id'] == $user_info['id'];
@@ -2011,7 +2013,7 @@ function template_aeva_rating_object($item)
 
 	$object = ($item['can_rate'] ? '
 				<form action="'.$galurl.'sa=item;in='.$item['id_media'].'" method="post" id="ratingForm">' : '') . '
-					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$settings['images_url'].'/star.gif">', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (allowedTo('media_whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (allowedTo('media_whoratedwhat') ? '</a>' : '') . ')' : '') .
+					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$settings['images_url'].'/star.gif">', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (aeva_allowedTo('whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (aeva_allowedTo('whoratedwhat') ? '</a>' : '') . ')' : '') .
 					(!empty($item['weighted']) ? ' (' . $txt['media_weighted_mean'] . ': ' . sprintf('%01.2f', $item['weighted']) . ')' : '');
 
 	if ($item['can_rate'])

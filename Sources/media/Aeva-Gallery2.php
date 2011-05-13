@@ -115,8 +115,8 @@ function aeva_moveItems()
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('media_item_not_found', !empty($amSettings['log_access_errors']));
 	$items = array();
-	$can_moderate = allowedTo('media_moderate');
-	$can_edit_own = allowedTo('media_edit_own_item');
+	$can_moderate = aeva_allowedTo('moderate');
+	$can_edit_own = aeva_allowedTo('edit_own_item');
 	while ($row = wesql::fetch_assoc($request))
 		if ($can_moderate || ($can_edit_own && $row['id_member'] == $user_info['id']))
 			$items[] = $row;
@@ -135,7 +135,7 @@ function aeva_moveItems()
 	}
 	$moving_link = substr($moving_link, 0, -2);
 	$allowed_albums = albumsAllowedTo($types, true);
-	aeva_getAlbums(allowedTo('media_moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
+	aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
 	$albums = array();
 	$sep = $prev_owner = -1;
 	foreach ($context['aeva_album_list'] as $k => $list)
@@ -347,7 +347,7 @@ function aeva_unseen()
 			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = {int:user})
 		WHERE {query_see_album}
 		AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time
-		{raw:album}' . (!allowedTo('media_moderate') ? '
+		{raw:album}' . (!aeva_allowedTo('moderate') ? '
 		AND m.approved = 1' : '') . '
 		LIMIT 1', array('album' => $album, 'user' => $user_info['id'])
 	);
@@ -383,7 +383,7 @@ function aeva_unseen()
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE {query_see_album}
 		AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time
-		{raw:album}' . (!allowedTo('media_moderate') ? '
+		{raw:album}' . (!aeva_allowedTo('moderate') ? '
 		AND m.approved = 1' : '') . '
 		ORDER BY m.log_last_access_time DESC
 		LIMIT {int:start},{int:per_page}',
@@ -578,7 +578,7 @@ function aeva_mgSearch()
 				LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = {int:user})' . (!empty($joins) ? '
 				' . implode('
 				', $joins) : '') . '
-			WHERE {query_see_album_hidden} AND (' . $query . ')' . (!allowedTo('media_moderate') ? '
+			WHERE {query_see_album_hidden} AND (' . $query . ')' . (!aeva_allowedTo('moderate') ? '
 			AND m.approved = 1' : '') . '
 			ORDER BY m.id_media DESC
 			LIMIT {int:start}, {int:per_page}',
@@ -592,7 +592,7 @@ function aeva_mgSearch()
 			FROM {db_prefix}media_items AS m
 				INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)' . (!empty($joins) ? implode('
 				', $joins) : '') . '
-			WHERE {query_see_album_hidden} AND (' . $query . ')' . (!allowedTo('media_moderate') ? '
+			WHERE {query_see_album_hidden} AND (' . $query . ')' . (!aeva_allowedTo('moderate') ? '
 			AND m.approved = 1' : ''),
 			array(
 				'user' => $user_info['id'],
@@ -674,7 +674,7 @@ function aeva_listAlbums()
 		SELECT a.id_album
 		FROM {db_prefix}media_albums AS a
 		WHERE {query_see_album_nocheck}
-			AND a.child_level = 0' . (!allowedTo('media_moderate') ? '
+			AND a.child_level = 0' . (!aeva_allowedTo('moderate') ? '
 			AND ((a.approved = 1 AND a.hidden = 0) OR a.album_of = ' . $user_info['id'] . ')' : ''),
 		array()
 	);
@@ -900,7 +900,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	if ($is_add)
 	{
 		// Access
-		if (!allowedTo('media_add_user_album'))
+		if (!aeva_allowedTo('add_user_album'))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 		if ($is_admin)
@@ -989,7 +989,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$members_allowed_write = !empty($allowed_write) ? aeva_getFromMemberlist($allowed_write, $owner) : array();
 	$members_denied_write = !empty($denied_write) ? aeva_getFromMemberlist($denied_write, $owner) : array();
 
-	$can_auto_approve = allowedTo('media_auto_approve_albums') || allowedTo('media_moderate');
+	$can_auto_approve = aeva_allowedTo('auto_approve_albums') || aeva_allowedTo('moderate');
 	$will_be_unapproved = $is_admin ? false : ($is_edit ? (!empty($amSettings['album_edit_unapprove']) || $still_unapproved) && !$can_auto_approve : !$can_auto_approve);
 
 	$peralbum = $is_add ? array() : unserialize($peralbum_options);
@@ -1001,7 +1001,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$peralbum['sort'] = empty($peralbum['sort']) ? 'm.id_media DESC' : $peralbum['sort'];
 
 	// Load the member groups
-	$simple_groups = !allowedTo('media_moderate');
+	$simple_groups = !aeva_allowedTo('moderate');
 	$groups = array();
 	$groups[-1] = array($txt['media_membergroups_guests'], in_array(-1, $access));
 	$groups[0] = array('<span' . (isset($primary_groups[0]) && !$simple_groups ? ' style="font-weight: bold" title="' . $txt['media_admin_membergroups_primary'] . '"' : '') . '>' . $txt['media_membergroups_members'] . '</span>', in_array(0, $access), in_array(0, $access_write));
@@ -1152,7 +1152,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'featured',
 			'type' => 'yesno',
 			'value' => $featured,
-			'perm' => allowedTo('media_moderate'),
+			'perm' => aeva_allowedTo('moderate'),
 		),
 		'desc' => array(
 			'label' => $txt['media_add_desc'],
@@ -1179,7 +1179,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'quota_profile',
 			'options' => $quota_profs,
 			'type' => 'select',
-			'perm' => allowedTo('media_manage'),
+			'perm' => aeva_allowedTo('manage'),
 		),
 		'position' => array(
 			'label' => $txt['media_admin_position'],
@@ -1336,7 +1336,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		unset($context['aeva_form']['position']);
 		unset($context['aeva_form']['target']);
 	}
-	unset($context['aeva_form'][allowedTo('media_manage') ? 'owner_name' : 'owner_change']);
+	unset($context['aeva_form'][aeva_allowedTo('manage') ? 'owner_name' : 'owner_change']);
 
 	// No need to show profile select boxes if there's only a default profile to choose from...
 	if (empty($profs) || count($profs) == 1)
@@ -1378,7 +1378,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		$peralbum['view'] = !empty($_POST['default_view']) && in_array($_POST['default_view'], array('normal', 'filestack')) ? $_POST['default_view'] : 'normal';
 
 		$hidden = empty($_POST['hidden']) ? 0 : 1;
-		$featured = !allowedTo('media_moderate') ? $featured : (empty($_POST['featured']) ? 0 : 1);
+		$featured = !aeva_allowedTo('moderate') ? $featured : (empty($_POST['featured']) ? 0 : 1);
 
 		if (!empty($_POST['sort_order']))
 			if (preg_match('~^m\.[a-z_]+ (A|DE)SC$~', $_POST['sort_order']))
@@ -1409,7 +1409,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		$passwd = !empty($_POST['passwd']) ? $_POST['passwd'] : '';
 
 		$id_profile = (int) $_REQUEST['profile'];
-		$id_quota_profile = allowedTo('media_moderate') ? (int) $_REQUEST['quota_profile'] : 1;
+		$id_quota_profile = aeva_allowedTo('moderate') ? (int) $_REQUEST['quota_profile'] : 1;
 
 		$mgroups = $mwgroups = array();
 		if (isset($_POST['groups']))
@@ -1428,7 +1428,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		$mwgroups = implode(',', $mwgroups);
 
 		// Load new owner
-		if (!empty($_POST['change_owner']) && allowedTo('media_manage'))
+		if (!empty($_POST['change_owner']) && aeva_allowedTo('manage'))
 		{
 			$new_owner = aeva_getFromMemberlist($_POST['change_owner'], 0);
 			$owner = !empty($new_owner) && is_array($new_owner) ? key($new_owner) : $owner;
@@ -1760,7 +1760,7 @@ function aeva_moveAlbum()
 	$pos = $_REQUEST['pos'];
 	$src = $context['aeva_albums'][$_REQUEST['src']];
 
-	if ($src['owner']['id'] != $user_info['id'] && !allowedTo('media_moderate'))
+	if ($src['owner']['id'] != $user_info['id'] && !aeva_allowedTo('moderate'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	// Get their new order, child level and parent
@@ -1823,7 +1823,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 	list ($id_album, $dir, $icon, $big_icon, $owner, $file, $big_file, $big_dir, $approved, $name, $parent, $master) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (($owner != $user_info['id'] || !allowedTo('media_moderate_own_albums')) && !allowedTo('media_moderate'))
+	if (($owner != $user_info['id'] || !aeva_allowedTo('moderate_own_albums')) && !aeva_allowedTo('moderate'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	// Are we messed up with the directories?
@@ -2144,7 +2144,7 @@ function aeva_massUpload()
 			'album' => (int) $_REQUEST['album'],
 			'id_member' => $user_info['id'],
 			'mem_name' => $user_info['name'],
-			'approved' => allowedTo('media_auto_approve_item') || allowedTo('media_moderate') ? 1 : 0,
+			'approved' => aeva_allowedTo('auto_approve_item') || aeva_allowedTo('moderate') ? 1 : 0,
 		);
 
 		$id_item = aeva_createItem($iOpts);
@@ -2205,7 +2205,7 @@ function aeva_massUploadFinish()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$album = $row['album_id'];
-		if ($row['id_member'] == $user_info['id'] || allowedTo('media_moderate'))
+		if ($row['id_member'] == $user_info['id'] || aeva_allowedTo('moderate'))
 			$act_items[] = $row['id_media'];
 	}
 	wesql::free_result($request);
@@ -2459,7 +2459,7 @@ function aeva_whoRatedWhat()
 	global $amSettings, $context, $scripturl, $galurl, $txt;
 
 	// Allowed to view or not?
-	if (!allowedTo('media_whoratedwhat'))
+	if (!aeva_allowedTo('whoratedwhat'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	// Load the item

@@ -82,13 +82,13 @@ function aeva_allowed_types($flat = false, $see_all = false)
 
 	if (!$see_all)
 	{
-		if (!allowedTo('media_add_images'))
+		if (!aeva_allowedTo('add_images'))
 			unset($allowed_types['im']);
-		if (!allowedTo('media_add_audios'))
+		if (!aeva_allowedTo('add_audios'))
 			unset($allowed_types['au']);
-		if (!allowedTo('media_add_videos'))
+		if (!aeva_allowedTo('add_videos'))
 			unset($allowed_types['vi']);
-		if (!allowedTo('media_add_docs'))
+		if (!aeva_allowedTo('add_docs'))
 			unset($allowed_types['do']);
 		if (!aeva_allowedTo(array('add_images', 'add_audios', 'add_videos', 'add_docs'), true))
 			unset($allowed_types['zi']);

@@ -230,7 +230,7 @@ function aeva_foxy_playlist()
 	);
 
 	// Submitting?
-	if (isset($_POST['submit_aeva']) && allowedTo('media_add_playlists'))
+	if (isset($_POST['submit_aeva']) && aeva_allowedTo('add_playlists'))
 	{
 		$name = westr::htmlspecialchars($_POST['title']);
 		$desc = westr::htmlspecialchars(aeva_utf2entities($_POST['desc'], false, 0));
@@ -371,7 +371,7 @@ function aeva_foxy_playlists()
 		</we:cat>
 	</div>';
 
-	if (allowedTo('media_add_playlists'))
+	if (aeva_allowedTo('add_playlists'))
 	{
 		if (isset($_GET['done']) && (int) $_GET['done'] > 0)
 			$o .= '
@@ -488,7 +488,7 @@ function aeva_foxy_item_page_playlists($item)
 	{
 		$pl = (int) $_POST['add_to_playlist'];
 		$items = (array) $item;
-		if (!allowedTo('media_add_playlists') || $pl <= 0)
+		if (!aeva_allowedTo('add_playlists') || $pl <= 0)
 			fatal_lang_error('media_edit_denied');
 
 		// Make sure this playlist belongs to self...
@@ -1347,7 +1347,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			. ($has_type['video'] ? $has_type['video'] . ' ' . $txt['media_foxy_stats_video' . ($has_type['video'] > 1 ? 's' : '')] . ($has_type['image'] ? ' ' . $txt['media_and'] . ' ' : ', ') : '')
 			. ($has_type['image'] ? $has_type['image'] . ' ' . $txt['media_foxy_stats_image' . ($has_type['image'] > 1 ? 's' : '')] . ', ' : '');
 		$box = substr($box, 0, -2) . ' ' . sprintf($txt['media_from_album' . (count($has_album) > 1 ? 's' : '')], count($has_album))
-			. ($type == 'playl' && ($user_info['is_admin'] || ($playlist_owner_id == $user_info['id'] && allowedTo('media_add_playlists'))) ? ' - <a href="' . $scripturl . '?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
+			. ($type == 'playl' && ($user_info['is_admin'] || ($playlist_owner_id == $user_info['id'] && aeva_allowedTo('add_playlists'))) ? ' - <a href="' . $scripturl . '?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_var'] . '=' . $context['session_id'] . '"><img src="' . $settings['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
 
 		$box .= !empty($playlist_description) && in_array('description', $details) ? parse_bbc($playlist_description) : '';
 
@@ -1580,7 +1580,7 @@ function setItemStyle(idx)
 		$tx .= ' (' . floor($i['duration'] / 60) . ':' . ($i['duration'] % 60 < 10 ? '0' : '') . ($i['duration'] % 60) . ')';
 
 		$tx .= '<div style="float: right; text-align: right">';
-		if (allowedTo('media_moderate') || $user_info['id'] == $i['owner'])
+		if (aeva_allowedTo('moderate') || $user_info['id'] == $i['owner'])
 			$tx .= '<a href="' . $scripturl . '?action=media;sa=post;in=' . $i['id'] . '" onclick="lnFlag=1;">' . $txt['modify'] . '</a><div class="foxy_small">';
 		$tx .= (in_array('votes', $details) || in_array('none', $details) ? '<img src="' . $settings['images_aeva'] . '/star' . $star . '.gif" class="aevera" alt="' . $altstar . '">'
 				. ($i['voters'] > 0 ? '<br>' . $nrating . '/5 (' . $i['voters'] . ' ' . $txt['media_vote' . ($i['voters'] > 1 ? 's' : '') . '_noun'] . ')' : '') : '') . '</div></div>';

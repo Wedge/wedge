@@ -368,7 +368,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 			INNER JOIN {db_prefix}media_files AS f ON (f.id_file = '. ($type == 'bigicon' ? 'IF(a.bigicon = 0, a.icon, a.bigicon)' : 'a.icon') . ')
 		WHERE
 			a.id_album = {int:media_id}' .
-		($security_override || allowedTo('media_moderate') ? '' : '
+		($security_override || aeva_allowedTo('moderate') ? '' : '
 			AND (f.id_file < 5 OR {query_see_album_hidden})
 			AND (a.approved = 1 OR a.album_of = {int:user_id})');
 	else
@@ -387,7 +387,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 				: ($type != 'main' ? 'IF(m.id_' . $type . ' = 0, m.id_file, m.id_' . $type . ')' : 'm.id_file') . ' = f.id_file)') . ($type == 'thumb' || $type == 'thumba' ? '
 			LEFT JOIN {db_prefix}media_files AS forig
 				ON (m.id_file = forig.id_file AND m.id_thumb < 5)' : '') .
-		($security_override || allowedTo('media_moderate') ? '
+		($security_override || aeva_allowedTo('moderate') ? '
 		WHERE m.id_media = {int:media_id}' : '
 			LEFT JOIN {db_prefix}media_albums AS a ON (a.id_album = f.id_album)
 		WHERE m.id_media = {int:media_id}
@@ -615,7 +615,7 @@ function allowedToAccessAlbum($albumid, $row = null)
 	// Return true of allowed, passwd if it is a password problem, and false if user is not allowed
 	global $user_info;
 
-	if (allowedTo('media_moderate'))
+	if (aeva_allowedTo('moderate'))
 		return true;
 
 	if (!is_array($row))
@@ -658,7 +658,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 	// Simple function to check whether a user can enter a specific item or not.
 	global $user_info;
 
-	if (allowedTo('media_moderate'))
+	if (aeva_allowedTo('moderate'))
 		return true;
 
 	// Get it whether the user can enter or not
@@ -671,7 +671,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 		AND {query_see_album_hidden}',
 		array(
 			'id' => $id,
-			'approved' => !allowedTo('media_moderate') ? 'AND (m.approved = 1 OR m.id_member = '.$user_info['id'].')' : ''
+			'approved' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = '.$user_info['id'].')' : ''
 		)
 	);
 
@@ -723,7 +723,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	// Define the query_see_album shortcut for DB Queries
 	// It is here so that it can be accessed from the outside world ;)
 
-	if (allowedTo('media_moderate'))
+	if (aeva_allowedTo('moderate'))
 		$user_info['query_see_album'] = '1=1';
 	elseif ($user_info['is_guest'])
 		$user_info['query_see_album'] = 'FIND_IN_SET(-1, a.access)';
@@ -736,7 +736,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 
 	$user_info['query_see_album_nocheck'] = $user_info['query_see_album'];
 
-	if (!allowedTo('media_moderate'))
+	if (!aeva_allowedTo('moderate'))
 		$user_info['query_see_album'] .= ' AND (CHAR_LENGTH(a.passwd) = 0' . ($user_info['is_guest'] ? '' : ' OR a.album_of = ' . (int) $user_info['id']) . (empty($_SESSION['aeva_access']) ? '' : ' OR a.id_album IN (' . implode(',', $_SESSION['aeva_access']) . ')') . ')';
 
 	wesql::register_replacement('query_see_album', $user_info['query_see_album']);
@@ -790,7 +790,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
 	{
 		$media_unseen = 0;
-		if ($can_unseen = allowedTo('media_access_unseen'))
+		if ($can_unseen = aeva_allowedTo('access_unseen'))
 		{
 			$request = wesql::query('
 				SELECT COUNT(m.id_media)
@@ -799,7 +799,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 					LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = {int:user})
 					LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = {int:user})
 				WHERE {query_see_album}
-				AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time' . (!allowedTo('media_moderate') ? '
+				AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time' . (!aeva_allowedTo('moderate') ? '
 				AND m.approved = 1' : '') . '
 				LIMIT 1',
 				array('user' => $user_info['id'])
@@ -857,7 +857,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 {
 	global $user_info, $context;
 
-	if (empty($permission) || (!$details && allowedTo('media_moderate')))
+	if (empty($permission) || (!$details && aeva_allowedTo('moderate')))
 		return false;
 
 	if (!is_array($permission))
@@ -865,7 +865,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 
 	// Load it..
 	// If we want details but user can moderate (i.e. has all permissions), just ask for the quota list...
-	if ($details && allowedTo('media_moderate'))
+	if ($details && aeva_allowedTo('moderate'))
 		$query = '
 		SELECT a.id_album, a.featured, a.album_of, q.quota AS `limit`, q.type AS media_type
 		FROM {db_prefix}media_quotas AS q
@@ -892,7 +892,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 		WHERE p.permission IN ({array_string:permissions})
 			AND p.id_group IN ({array_int:groups})';
 
-	if ($need_write && !allowedTo('media_moderate'))
+	if ($need_write && !aeva_allowedTo('moderate'))
 		$query .= '
 			AND (a.album_of = ' . $user_info['id'] . ' OR FIND_IN_SET(' . $user_info['id'] . ', a.allowed_write)
 				OR FIND_IN_SET(' . implode(', a.access_write) OR FIND_IN_SET(', $user_info['groups']) . ', a.access_write))
@@ -1085,7 +1085,7 @@ function aeva_loadAlbum($album_id = 0)
 		'overall_total' => 0,
 		'passwd' => $album_info['passwd'],
 		'permissions' => $permissions,
-		'can_upload' => allowedTo('media_moderate') || $album_info['album_of'] == $user_info['id'] || $can_upload,
+		'can_upload' => aeva_allowedTo('moderate') || $album_info['album_of'] == $user_info['id'] || $can_upload,
 		'id_quota_prof' => $album_info['id_quota_profile'],
 		'hidden' => $album_info['hidden'],
 		'options' => unserialize($album_info['options']),
@@ -1114,7 +1114,7 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 		$order = 'a.child_level, a.a_order';
 	$albums = $raw_albums = array();
 	// We'll need to apply the hidden treatment to sub-albums that didn't go through it already.
-	$can_moderate = allowedTo('media_moderate');
+	$can_moderate = aeva_allowedTo('moderate');
 	$temp_hidden = $can_moderate ? '' : ($user_info['is_guest'] ? ' AND (a.hidden = 0)' : ' AND (a.hidden = 0 OR a.album_of = ' . (int) $user_info['id'] . ')');
 
 	// Gets the album tree
@@ -1385,7 +1385,7 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 	if (empty($ids))
 		return $deleted;
 
-	// Delete the files first (we need to have the aeva_media entry available.)
+	// Delete the files first (we need to have the media_items entry available.)
 	$files = aeva_deleteFiles($files_to_delete);
 
 	// Start deleting them
@@ -1672,7 +1672,7 @@ function aeva_getOnlineType($actions)
 		loadMediaSettings();
 
 	// Uh allowed?
-	if (!allowedTo('aeva_access'))
+	if (!allowedTo('media_access'))
 		return array('hidden');
 
 	// Let's get their type
@@ -1719,13 +1719,13 @@ function aeva_getOnlineType($actions)
 			$ret[3] = 'item';
 			$ret[2] = $actions['in'];
 			$ret[1] = 'comment';
-			$ret[0] = allowedTo('aeva_comment') ? 'fetch' : 'hidden';
+			$ret[0] = allowedTo('media_comment') ? 'fetch' : 'hidden';
 		break;
 		case 'report';
 			$ret[3] = 'item';
 			$ret[2] = $actions['in'];
 			$ret[1] = 'report';
-			$ret[0] = allowedTo('aeva_report_items') ? 'fetch' : 'hidden';
+			$ret[0] = allowedTo('media_report_items') ? 'fetch' : 'hidden';
 		break;
 		case 'search';
 			$ret[0] = allowedTo('media_search') ? 'direct' : 'hidden';
@@ -2549,7 +2549,7 @@ function aeva_showThumbnail($data)
 		aeva_loadLanguage('media_max_thumbs_reached');
 		return $txt['media_max_thumbs_reached'];
 	}
-	if (!allowedTo('media_access'))
+	if (!aeva_allowedTo('access'))
 	{
 		aeva_loadLanguage('media_accessDenied');
 		return '(' . $txt['media_accessDenied'] . ')<br>';
@@ -2780,7 +2780,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	if (empty($albums))
 		return;
 
-	$can_moderate = allowedTo('media_moderate');
+	$can_moderate = aeva_allowedTo('moderate');
 	$cols = isset($amSettings['album_columns']) ? max(1, (int) $amSettings['album_columns']) : 1;
 	$w45 = round(100 / $cols) - 5;
 	$is_alone = $cols > 1 && count($albums) < 2;
@@ -2863,7 +2863,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	// If we're in an external embed, we might not have all the space we would like...
 	$ico = !empty($amSettings['icons_only']);
 	$can_moderate &= isset($_REQUEST['action']) && $_REQUEST['action'] == 'media';
-	$can_moderate_here = allowedTo('media_moderate');
+	$can_moderate_here = aeva_allowedTo('moderate');
 	$re = '
 		<div class="pics smalltext" style="text-align: ' . (!empty($align) ? $align : 'center') . '">';
 
@@ -3044,7 +3044,7 @@ function aeva_getMediaItems($start = 0, $limit = 1, $sort = '', $all_albums = tr
 			'album' => $all_albums ? 0 : (int) $context['aeva_album']['id'],
 			'albums_in' => count($albums) > 0 ? ' AND a.id_album IN (' . implode(',', $albums) . ')' : '',
 			'author' => isset($author) ? $author : 0,
-			'approvals' => !allowedTo('media_moderate') ? ' AND (m.approved = 1 OR m.id_member = ' . (int) $user_info['id'] . ')' : '',
+			'approvals' => !aeva_allowedTo('moderate') ? ' AND (m.approved = 1 OR m.id_member = ' . (int) $user_info['id'] . ')' : '',
 			'start' => (int) $start,
 			'limit' => (int) $limit,
 			'sort' => $sort,
@@ -3685,7 +3685,7 @@ function aeva_getItemData($item)
 		WHERE m.id_media = {int:id_media}
 		{raw:approvals}
 		LIMIT 1',
-		array('id_media' => $item, 'approvals' => !allowedTo('media_moderate') ? 'AND (m.approved = 1 OR m.id_member = '.$user_info['id'].')' : '')
+		array('id_media' => $item, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = '.$user_info['id'].')' : '')
 	);
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('media_item_not_found', !empty($amSettings['log_access_errors']));
