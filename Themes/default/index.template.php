@@ -476,7 +476,7 @@ function theme_linktree($force_show = false, $on_bottom = false)
 				echo $tree['extra_before'];
 
 			// Show the link, including a URL if it should have one.
-			echo $settings['linktree_link'] && isset($tree['url']) ? '<a href="' . $tree['url'] . '"><span>' . $tree['name'] . '</span></a>' : '<span>' . $tree['name'] . '</span>';
+			echo $settings['linktree_link'] && isset($tree['url']) ? '<a href="' . $tree['url'] . '">' . $tree['name'] . '</a>' : $tree['name'];
 
 			// Show something after the link...?
 			if (isset($tree['extra_after']))

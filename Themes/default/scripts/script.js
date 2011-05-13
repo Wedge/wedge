@@ -529,7 +529,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 
 		oListFragment.appendChild(
 			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>')
-				.attr('value', aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
+				.val(aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
 		);
 
 		if (aBoardsAndCategories[i].isCategory)

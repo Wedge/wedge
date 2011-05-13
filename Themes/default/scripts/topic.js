@@ -418,7 +418,7 @@ InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 	// Make sure this form isn't submitted in another way than this function.
 	var
 		oForm = $('#' + this.opt.sFormId)[0],
-		oInput = $('<input type="hidden" />', { name: this.opt.sSessionVar, value: this.opt.sSessionId }).appendTo(oForm);
+		oInput = $('<input type="hidden" />', { name: this.opt.sSessionVar }).val(this.opt.sSessionId).appendTo(oForm);
 
 	if (sSubmitType == 'remove')
 	{

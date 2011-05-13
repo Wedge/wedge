@@ -15,16 +15,15 @@ function admin_toggle(id)
 	{
 		$('#img_' + id).load(function () {
 			$('#tr_expand_' + id).show();
-			$('#toggle_img_' + id).attr('src', smf_images_url + '/collapse.gif');
 			$(this).unbind();
 		}).attr('src', smf_prepareScriptUrl(smf_scripturl) + 'action=media;sa=media;in=' + id + ';icon');
 	}
 	else
 	{
 		$('#tr_expand_' + id).hide();
-		$('#toggle_img_' + id).attr('src', smf_images_url + '/expand.gif');
 		$('#img_' + id).attr('src', '');
 	}
+	$('#toggle_img_' + id).toggleClass('fold');
 
 	return false;
 }

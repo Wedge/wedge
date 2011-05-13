@@ -50,7 +50,7 @@ function smc_AutoSuggest(oOptions)
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
 
 	// Create a backup text input for single-entry inputs.
-	this.oRealTextHandle = $('<input />').attr({ type: "hidden", name: oText.name, value: oText.value }).appendTo(oText.form);
+	this.oRealTextHandle = $('<input type="hidden" />', { name: oText.name }).val(oText.value).appendTo(oText.form);
 
 	// Disable autocomplete in any browser by obfuscating the name.
 	var that = this;

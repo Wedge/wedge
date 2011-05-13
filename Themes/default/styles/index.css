@@ -182,9 +182,8 @@ ul#noava
 	padding: 0 0 1.5em
 	a
 		color: #963
-		white-space: pre
 	ul
-		padding: 0 5px
+		padding: 7px
 		margin: 0 15px
 		font: 105% Tahoma, Verdana
 		overflow: hidden
@@ -192,10 +191,10 @@ ul#noava
 		border: 1px dotted #999
 		border-width: 0 0 1px 0
 		li extends .arrows
-			float: left
-			height, line-height: 20px
-			padding: .5em 1.4em .5em 3px
-			background-position: right -42px
+			display: inline
+			line-height: 20px
+			padding: .5em 1.4em .5em 0
+			background-position: right -45px
 			&.last
 				background: none
 

@@ -154,3 +154,10 @@ input.new
 // Without this, the clear: both on dt will fail.
 dl.settings dd
 	float: none
+
+#linktree
+	li
+		white-space: nowrap
+		margin-right: 5px
+		&.last
+			white-space: normal
