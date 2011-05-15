@@ -741,6 +741,10 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 		// Day-of-year is one less and same year, or it's the first of the year and that's the last of the year...
 		if ($modSettings['todayMod'] == '2' && (($then['yday'] == $now['yday'] - 1 && $then['year'] == $now['year']) || ($now['yday'] == 0 && $then['year'] == $now['year'] - 1) && $then['mon'] == 12 && $then['mday'] == 31))
 			return $txt['yesterday'] . timeformat($log_time, $today_fmt, $offset_type);
+
+		// Is this the current year? Then why bother printing out the year?
+		if ($then['year'] == $now['year'])
+			$show_today = str_replace(' %Y', '', $user_info['time_format']);
 	}
 
 	$str = !is_bool($show_today) ? $show_today : $user_info['time_format'];

@@ -483,16 +483,15 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	if (!this.bListLoaded && this.oContainerDiv == null)
 	{
 		// Create a container div.
-		this.oContainerDiv = $('<div></div>', { id: 'iconList' }).css({
-			display: 'none',
+		this.oContainerDiv = $('<div></div>', { id: 'iconList' }).hide().css({
 			cursor: 'pointer',
 			position: 'absolute',
-			width: oDiv.offsetWidth + 'px',
+			width: oDiv.offsetWidth,
 			background: this.opt.sContainerBackground,
 			border: this.opt.sContainerBorder,
-			padding: '1px',
+			padding: 1,
 			textAlign: 'center'
-		}).appendTo('body')[0];
+		}).appendTo('body');
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
@@ -502,9 +501,9 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	// Set the position of the container.
 	var aPos = $(oDiv).offset();
 
-	$(this.oContainerDiv).css({
-		top: (aPos.top + oDiv.offsetHeight) + 'px',
-		left: (aPos.left - 1) + 'px'
+	this.oContainerDiv.css({
+		top: aPos.top + oDiv.offsetHeight,
+		left: aPos.left - 1
 	}).toggle(this.bListLoaded);
 
 	this.oClickedIcon = oDiv;
@@ -521,11 +520,11 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false);" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\');" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '"></div>';
 	});
 
-	$(this.oContainerDiv).html(sItems).show();
+	this.oContainerDiv.html(sItems).show();
 	this.bListLoaded = true;
 
 	if (is_ie)
-		this.oContainerDiv.style.width = this.oContainerDiv.clientWidth + 'px';
+		this.oContainerDiv.css('width', this.oContainerDiv.clientWidth);
 
 	ajax_indicator(false);
 };
@@ -573,7 +572,7 @@ IconList.prototype.onWindowMouseDown = function ()
 IconList.prototype.collapseList = function()
 {
 	this.onBoxHover(this.oClickedIcon, false);
-	$(this.oContainerDiv).hide();
+	this.oContainerDiv.hide();
 	this.iCurMessageId = 0;
 	$('body').mousedown(this.onWindowMouseDown);
 };
@@ -642,7 +641,7 @@ UserMenu.prototype.switchMenu = function (oLink)
 		sHTML += '<div><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></div>';
 	}
 	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
-		.css({ left: (pos.left - 6) + 'px', top: (pos.top - 4) + 'px' })
+		.css({ left: pos.left - 6, top: pos.top - 4 })
 		.mouseleave(function (e) { if (e.relatedTarget.className != 'umme') $(this).remove(); })
 		.show(500);
 };

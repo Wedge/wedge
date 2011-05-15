@@ -56,7 +56,10 @@ function cleanRequest()
 
 	define('INVALID_IP', '00000000000000000000000000000000');
 
-/*	// Makes it easier to refer to things this way.
+/*
+	// Makes it easier to refer to things this way.
+	// !!! Change this once the feature is deemed to be stable.
+
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
@@ -163,7 +166,9 @@ function cleanRequest()
 		}
 	}
 
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (isset($_GET['board']) && is_numeric($_GET['board']))
+		$board = (int) $_GET['board'];
+	elseif (!empty($modSettings['pretty_enable_filters']))
 	{
 		// !!! Authorize URLs like noisen.com:80
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
@@ -180,6 +185,7 @@ function cleanRequest()
 				'len' => ($len = strpos($full_request, '/')) !== false ? $len : strlen($full_request),
 			)
 		);
+
 		if (wesql::num_rows($query) == 0)
 		{
 			$full_board = array();
@@ -218,7 +224,7 @@ function cleanRequest()
 			// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
 			elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))
 			{
-				$_GET['mois'] = str_replace('/', '', $m[1]);
+				$_GET['month'] = str_replace('/', '', $m[1]);
 				$_GET['start'] = empty($m[2]) ? 0 : $m[2];
 				$_GET['pretty'] = 1;
 			}

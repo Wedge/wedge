@@ -119,7 +119,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 {
 	var
 		desktopURL = from && from.href ? from.href : from, vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src'), px = 'px', auto = 'auto';
+		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto';
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
@@ -143,8 +143,8 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		.load(desktopURL, function () {
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : auto,
-				width: (alternateWidth - 25) + px,
-				height: alternateHeight ? (alternateHeight - 20) + px : auto,
+				width: alternateWidth - 25,
+				height: alternateHeight ? alternateHeight - 20 : auto,
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
 			}).fadeIn(300);
@@ -152,8 +152,8 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', desktopURL).css({
 				position: is_ie6 ? 'absolute' : 'fixed',
-				width: alternateWidth + px,
-				height: alternateHeight ? alternateHeight + px : auto,
+				width: alternateWidth,
+				height: alternateHeight ? alternateHeight : auto,
 				bottom: 10,
 				right: 10
 			}).appendTo('body')
@@ -731,16 +731,16 @@ function initMenu(menu)
 function menu_show_shim(showsh, ieid, j)
 {
 	var iem = ieid.substring(2);
-	if (!(menu_ieshim[iem]))
+	if (!menu_ieshim[iem])
 		return;
 
-	var i = menu_ieshim[iem].style;
+	var i = menu_ieshim[iem].style, px = 'px';
 	if (showsh)
 	{
-		i.top = j.offsetTop + j.offsetParent.offsetTop + 'px';
-		i.left = j.offsetLeft + j.offsetParent.offsetLeft + 'px';
-		i.width = (j.offsetWidth + 1) + 'px';
-		i.height = (j.offsetHeight + 1) + 'px';
+		i.top = j.offsetTop + j.offsetParent.offsetTop + px;
+		i.left = j.offsetLeft + j.offsetParent.offsetLeft + px;
+		i.width = (j.offsetWidth + 1) + px;
+		i.height = (j.offsetHeight + 1) + px;
 	}
 	i.display = showsh ? 'block' : 'none';
 }

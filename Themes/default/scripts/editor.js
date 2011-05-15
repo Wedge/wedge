@@ -21,7 +21,7 @@ function smc_Editor(oOptions)
 
 	// How big?
 	this.sEditWidth = 'sEditWidth' in this.opt ? this.opt.sEditWidth : '70%';
-	this.sEditHeight = 'sEditHeight' in this.opt ? this.opt.sEditHeight : '150px';
+	this.sEditHeight = 'sEditHeight' in this.opt ? this.opt.sEditHeight : 150;
 
 	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
@@ -173,7 +173,7 @@ function smc_Editor(oOptions)
 
 		// Only bother formatting the debug window if debug is enabled.
 		if (this.showDebug)
-			$(this.oBreadHandle).addClass('windowbg2').css({ width: this.sEditWidth, height: '20px', border: '1px black solid', display: '' });
+			$(this.oBreadHandle).addClass('windowbg2').css({ width: this.sEditWidth, height: 20, border: '1px black solid', display: '' });
 
 		// Populate the editor with nothing by default.
 		if (!is_opera95up)
@@ -204,7 +204,7 @@ function smc_Editor(oOptions)
 		$('link[rel=stylesheet]').each(function() { thisFrameHead.append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
-		$(this.oFrameDocument.body).addClass('rich_editor').css({ padding: '1px', margin: 0 });
+		$(this.oFrameDocument.body).addClass('rich_editor').css({ padding: 1, margin: 0 });
 
 		// Listen for input.
 		this.oFrameDocument.instanceRef = this;

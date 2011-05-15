@@ -79,15 +79,6 @@ iframe.aext
 		padding: 0 6px 2px
 
 #media-details
-	h4
-		padding: 0 6px 2px
-	.info_list
-		padding, margin: 0
-		li
-			display: inline
-			float: left
-			width: 100%
-			padding: 0 6px 3px 6px
 	dt
 		font-weight: 700
 		font-size, line-height: .9em
@@ -98,6 +89,14 @@ iframe.aext
 		clear: both
 		width: auto
 		margin-left: 8px
+
+.info_list
+	padding, margin: 0
+	li
+		display: inline
+		float: left
+		width: 100%
+		padding: 0 6px 3px 6px
 
 .sort_options
 	margin-top: 8px

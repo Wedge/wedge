@@ -501,42 +501,42 @@ function template_aeva_item_details()
 	}
 	echo '
 			</dl>
-		</we:block>';
+			</we:block>';
 
 	if ($amSettings['show_extra_info'] == 1 && !empty($item['extra_info']))
 	{
 		echo '
-		<we:block header="', westr::safe($txt['media_extra_info']), '">';
+			<we:block header="', westr::safe($txt['media_extra_info']), '">';
 
 		echo $amSettings['use_zoom'] ? '
-			<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
-			. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
-			<div class="zoom-html">
-				<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
-				<div class="smalltext meta">';
+				<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
+				. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
+				<div class="zoom-html">
+					<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
+					<div class="smalltext meta">';
 
 		foreach ($item['extra_info'] as $info => $data)
 			if (!empty($data))
 				echo '
-					<div class="info"><b>', $txt['media_meta_' . $info], '</b>: ', $data, '</div>';
+						<div class="info"><b>', $txt['media_meta_' . $info], '</b>: ', $data, '</div>';
 
 		echo '
-				</div>
-			</div>', $amSettings['use_zoom'] ? '</div>' : '', '
-		</we:block>';
+					</div>
+				</div>', $amSettings['use_zoom'] ? '</div>' : '', '
+			</we:block>';
 	}
 
 	echo '
-		<we:block class="windowbg" header="', westr::safe($txt['media_poster_info']), '">', empty($item['member']['id']) ? '
-			<h4>' . $txt['guest'] . '</h4>' : '
-			<h4>' . $item['member']['link'] . '</h4>
-			<ul class="smalltext info_list">' . (!empty($item['member']['group']) ? '
-				<li>' . $item['member']['group'] . '</li>' : '') . (!empty($item['member']['avatar']['image']) ? '
-				<li>' . $item['member']['avatar']['image'] . '</li>' : '') . '
-				<li>' . $txt['media_total_items'] . ': ' . $item['member']['media']['total_items'] . '</li>
-				<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
-			</ul>
-		</we:block>
+			<we:block class="windowbg" header="', westr::safe($txt['media_poster_info']), '">', empty($item['member']['id']) ? '
+				<h4>' . $txt['guest'] . '</h4>' : '
+				<h4>' . $item['member']['link'] . '</h4>
+				<ul class="smalltext info_list">' . (!empty($item['member']['group']) ? '
+					<li>' . $item['member']['group'] . '</li>' : '') . (!empty($item['member']['avatar']['image']) ? '
+					<li>' . $item['member']['avatar']['image'] . '</li>' : '') . '
+					<li>' . $txt['media_total_items'] . ': ' . $item['member']['media']['total_items'] . '</li>
+					<li>' . $txt['media_total_comments'] . ': ' . $item['member']['media']['total_comments'] . '</li>', '
+				</ul>
+			</we:block>
 		</div>';
 }
 

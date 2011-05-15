@@ -168,8 +168,8 @@ smc_AutoSuggest.prototype.positionDiv = function()
 	var aParentPos = $(this.oTextHandle).offset();
 
 	$(this.oSuggestDivHandle).css({
-		left: aParentPos.left + 'px',
-		top: (aParentPos.top + this.oTextHandle.offsetHeight + 1) + 'px',
+		left: aParentPos.left,
+		top: aParentPos.top + this.oTextHandle.offsetHeight + 1,
 		width: this.oTextHandle.style.width
 	});
 };
