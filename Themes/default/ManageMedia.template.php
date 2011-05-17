@@ -88,10 +88,10 @@ function template_aeva_admin_submissions()
 					<td><a href="#" onclick="return admin_toggle(', $item['id'], ');"><div class="foldable" id="toggle_img_', $item['id'], '"></div></a></td>
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
-					<td><img src="'.$settings['images_aeva'].'/tick.png" title="'.$txt['media_admin_approve'].'"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';' . $context['session_var'] . '=', $context['session_id'], ';xml\');">', $txt['media_admin_approve'], '</a>
-						<img src="'.$settings['images_aeva'].'/folder_edit.png" title="'.$txt['media_admin_edit'].'"> <a href="', $item['edit_link'], '">'.$txt['media_admin_edit'].'</a>
-						<img src="'.$settings['images_aeva'].'/folder_delete.png" title="'.$txt['media_admin_delete'].'"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>
-						', $filter == 'items' ? '<a href="'. $galurl .'sa=media;in='.$item['id'].';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
+					<td><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';' . $context['session_var'] . '=', $context['session_id'], ';xml\');">', $txt['media_admin_approve'], '</a>
+						<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
+						<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>
+						', $filter == 'items' ? '<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
@@ -99,7 +99,7 @@ function template_aeva_admin_submissions()
 				<tr id="tr_expand_' . $item['id'] . '" class="windowbg', $alt ? '2' : '', '" style="display: none">
 					<td colspan="', $filter == 'albums' ? 4 : 5, '">
 						', !empty($item['description']) ? '<div>' . $txt['media_add_desc'] .' : '. $item['description'] . '</div>' : '',
-						!empty($item['keywords']) ? '<div>'.$txt['media_keywords'].' : ' . $item['keywords'] . '</div>' : '', '
+						!empty($item['keywords']) ? '<div>' . $txt['media_keywords'] . ' : ' . $item['keywords'] . '</div>' : '', '
 					</td>
 				</tr>';
 		$alt = !$alt;

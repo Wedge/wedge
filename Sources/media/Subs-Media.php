@@ -3578,7 +3578,7 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_zoomedi
 	</style>';
 
 	if ($use_zoomedia)
-		$zoom .= aeva_initZoom($autosize);
+		$zoom .= aeva_initZoom($autosize, isset($context['album_data'], $context['album_data']['options']) ? $context['album_data']['options'] : array());
 
 	if ($add_to_headers || (ob_get_length() === 0))
 		$context['header'] .= $zoom;
