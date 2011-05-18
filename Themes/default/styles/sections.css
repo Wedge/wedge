@@ -444,6 +444,8 @@ ul.quickbuttons
 .signature
 	#forumposts &, .post &
 		margin: 1em 0 0 0
+	#forumposts &
+		color: #888
 
 .attachments
 	padding: 1em 0 2em
@@ -819,7 +821,7 @@ tr.titlebg td
 
 tr.windowbg td,
 tr.approvebg td,
-tr.highlight2 td
+tr.highlight td
 	padding: .3em .7em
 
 #credits
@@ -988,7 +990,6 @@ dl
 	border-top: 1px #ccc solid
 
 .signature h5
-	font-size: .85em
 	margin-bottom: 10px
 
 #personal_picture

@@ -1111,7 +1111,7 @@ function ModifyLanguages()
 		prevDiv = document.getElementById(box);
 		prevClass = prevDiv.className;
 
-		prevDiv.className = "highlight2";
+		prevDiv.className = "highlight";
 	}
 	highlightSelected("list_language_list_' . ($language == '' ? 'english' : $language). '");',
 	);

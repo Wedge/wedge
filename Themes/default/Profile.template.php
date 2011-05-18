@@ -1780,7 +1780,7 @@ function template_groupMembership()
 		prevDiv = document.getElementById(box);
 		prevClass = prevDiv.className;
 
-		prevDiv.className = "highlight2";
+		prevDiv.className = "highlight";
 	}');
 
 		if (isset($context['groups']['member'][$context['primary_group']]))

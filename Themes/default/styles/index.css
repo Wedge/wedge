@@ -864,14 +864,14 @@ code.bbc_code, code.php_code
 	color: red
 
 // Highlighted text - such as search results.
-.highlight
-	background-color: #ffd0a0
+mark
+	background-color: #ffd0a0 !important
 	font-weight: bold
 	color: #000 !important
 	padding: 0 2px 1px
 
 // A more discreet highlight color, for selected membergroups etc.
-.highlight2
+.highlight
 	background-color: #d1e1ef
 	color: #000 !important
 
@@ -1127,6 +1127,7 @@ dl#rss
 	font: 700 1.4em/20px $big_font
 	img
 		vertical-align: -3px
+		padding-right: 2px
 
 .posthead extends .catbase
 	width: 100%
@@ -1336,8 +1337,21 @@ table
 /* The main content area.
 ------------------------------------------------------- */
 
-.wrc p
-	margin: 0 0 .5em
+.wrc
+	p
+		margin: 0 0 .5em
+	h4.hd
+		color: #369
+		font-size: 120%
+		font-weight: 700
+		padding: 0 0 8px
+		margin: 10px 0
+		border-bottom: 1px solid #ccc
+		text-transform: uppercase
+	h5.hd extends h4.hd
+		color: #963
+	h6.hd extends h4.hd
+		color: #639
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */

@@ -110,7 +110,8 @@ function template_html_above()
 	<title>', $context['page_title_html_safe'], '</title>
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">
 	<meta name="description" content="', $context['page_title_html_safe'], '">', !empty($context['meta_keywords']) ? '
-	<meta name="keywords" content="' . $context['meta_keywords'] . '">' : '';
+	<meta name="keywords" content="' . $context['meta_keywords'] . '">' : '', '
+	<meta name="generator" content="Wedge">';
 
 	// Please don't index these, Mr Robotto.
 	if (!empty($context['robot_no_index']))
@@ -198,7 +199,7 @@ function template_body_above()
 			<p>';
 		foreach (array_map('basename', $languages) as $language)
 			echo '
-				<a href="' . $lng . 'language=' . substr($language, 5, -4) . '" title="' . westr::ucwords(westr::htmlspecialchars(substr($language, 5, -4))) . '"><img src="' . $settings['theme_url'] . '/languages/' . $language . '"></a>';
+				<a href="' . $lng . 'language=' . substr($language, 5, -4) . '"><img src="' . $settings['theme_url'] . '/languages/' . $language . '" title="' . westr::ucwords(westr::htmlspecialchars(substr($language, 5, -4))) . '"></a>';
 		echo '
 			</p>';
 	}

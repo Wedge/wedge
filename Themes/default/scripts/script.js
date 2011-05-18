@@ -734,15 +734,17 @@ function menu_show_shim(showsh, ieid, j)
 	if (!menu_ieshim[iem])
 		return;
 
-	var i = menu_ieshim[iem].style, px = 'px';
-	if (showsh)
-	{
-		i.top = j.offsetTop + j.offsetParent.offsetTop + px;
-		i.left = j.offsetLeft + j.offsetParent.offsetLeft + px;
-		i.width = (j.offsetWidth + 1) + px;
-		i.height = (j.offsetHeight + 1) + px;
-	}
-	i.display = showsh ? 'block' : 'none';
+	$(menu_ieshim[iem]).css(showsh ?
+		{
+			top: j.offsetTop + j.offsetParent.offsetTop,
+			left: j.offsetLeft + j.offsetParent.offsetLeft,
+			width: j.offsetWidth + 1,
+			height: j.offsetHeight + 1,
+			display: 'block'
+		} : {
+			display: 'none'
+		}
+	);
 }
 
 // Entering a menu entry?

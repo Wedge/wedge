@@ -1354,7 +1354,7 @@ function MessageSearch2()
 	// Create an array of replacements for highlighting.
 	$context['mark'] = array();
 	foreach ($searchArray as $word)
-		$context['mark'][$word] = '<strong class="highlight">' . $word . '</strong>';
+		$context['mark'][$word] = '<mark>' . $word . '</mark>';
 
 	// This contains *everything*
 	$searchWords = array_merge($searchArray, $excludedWords);

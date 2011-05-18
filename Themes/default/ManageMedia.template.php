@@ -56,7 +56,7 @@ function template_aeva_admin_submissions()
 	// Show some extra info
 	echo '
 		<form action="', $galurl, 'area=moderate;sa=submissions;type=', $filter, '" method="post">
-			<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">
+			<table class="w100 cp8 cs1">
 				<tr class="windowbg2">
 					<td>', $txt['media_admin_total_submissions'], ': ', $context['aeva_total'], '</td>
 				</tr>
@@ -67,14 +67,14 @@ function template_aeva_admin_submissions()
 
 	// Show the actual submissions
 	echo '
-			<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor" id="approvals">
+			<table class="w100 cp8 cs1" id="approvals">
 				<tr class="titlebg">
-					<td width="2%">&nbsp;</td>
+					<td style="width: 2%">&nbsp;</td>
 					<td>', $txt['media_name'], '</td>
 					<td>', $txt['media_posted_by'], '</td>
 					<td>', $txt['media_admin_moderation'], '</td>', $filter != 'albums' ? '
 					<td>' . $txt['media_posted_on'] . '</td>' : '', '
-					<td width="4%"><input type="checkbox" name="checkAll" id="checkAll" onclick="invertAll(this, this.form, \'items[]\');"></td>
+					<td style="width: 4%"><input type="checkbox" name="checkAll" id="checkAll" onclick="invertAll(this, this.form, \'items[]\');"></td>
 				</tr>', !empty($context['aeva_item']) ? '
 				<tr class="windowbg2">
 					<td colspan="' . ($filter == 'albums' ? 5 : 6) . '"><a href="#" onclick="return admin_toggle_all();">' . $txt['media_toggle_all'] . '</a></td>
@@ -139,7 +139,7 @@ function template_aeva_admin_maintenance()
 	}
 
 	echo '
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">';
+		<table class="w100 cp8 cs1">';
 
 	foreach ($context['aeva_dos'] as $type => $contents)
 	{
@@ -200,7 +200,7 @@ function template_aeva_admin_maintenance_prune()
 				</tr>
 				<tr id="item_prune_opts">
 					<td style="padding: 0; margin: 0; border: 0">
-						<table cellpadding="6" cellspacing="0" border="0" class="tborder" width="100%">
+						<table class="w100 cp8 cs0">
 							<tr class="catbg">
 								<td height="25">', $txt['media_items'], '</td>
 							</tr>
@@ -227,7 +227,7 @@ function template_aeva_admin_maintenance_prune()
 				</tr>
 				<tr id="com_prune_opts" style="display: none">
 					<td style="padding: 0; margin: 0; border: 0">
-						<table cellpadding="6" cellspacing="0" border="0" class="tborder" width="100%">
+						<table class="w100 cp8 cs0">
 							<tr class="catbg">
 								<td height="25">', $txt['media_comments'], '</td>
 							</tr>
@@ -281,7 +281,7 @@ function template_aeva_admin_modlog()
 
 	echo '
 	<form action="', $galurl, 'area=moderate;sa=modlog;', $context['session_var'], '=', $context['session_id'], '" method="post">
-		<table cellpadding="6" cellspacing="0" border="0" class="bordercolor" width="100%">', !empty($context['aeva_logs']) ? '
+		<table class="w100 cp8 cs0">', !empty($context['aeva_logs']) ? '
 			<tr>
 				<td class="windowbg2 right">
 					<input type="submit" name="delete" value="'.$txt['media_admin_rm_selected'].'" style="margin-right: 10px" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><input type="submit" name="delete_all" value="'.$txt['media_admin_rm_all'].'" style="margin-right: 10px" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
@@ -293,7 +293,7 @@ function template_aeva_admin_modlog()
 				</td>
 			</tr>
 		</table>
-		<table cellpadding="6" cellspacing="0" border="0" class="bordercolor" width="100%">
+		<table class="w100 cp8 cs0">
 			<tr class="titlebg">
 				<td style="width: 5%">&nbsp;</td>
 				<td>', $txt['media_action'], '</td>
@@ -305,7 +305,7 @@ function template_aeva_admin_modlog()
 	{
 		echo '
 			<tr class="windowbg2">
-				<td class="middle" width="5%"><input type="checkbox" name="to_delete[]" value="'.$log['id'].'"></td>
+				<td class="middle" style="width: 5%"><input type="checkbox" name="to_delete[]" value="'.$log['id'].'"></td>
 				<td class="smalltext">', $log['text'], '</td>
 				<td class="smalltext">', $log['time'], '</td>
 				<td class="smalltext"><a href="'.$log['action_by_href'].'">'.$log['action_by_name'].'</a></td>
@@ -317,7 +317,7 @@ function template_aeva_admin_modlog()
 		</table>
 	</form>
 	<form action="', $galurl, 'area=moderate;sa=modlog;', $context['session_var'], '=', $context['session_id'], '" method="post">
-		<table cellpadding="10" cellspacing="0" border="0" class="bordercolor" width="100%">
+		<table class="w100 cp8 cs0">
 			<tr class="titlebg">
 				<td>
 					', $txt['media_admin_modlog_qsearch'], ' : <input type="text" name="qsearch_mem" size="15"> <input type="submit" name="qsearch_go" value="', $txt['media_submit'], '">
@@ -334,9 +334,9 @@ function template_aeva_admin_reports()
 
 	echo '
 
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
-				<td width="2%">&nbsp;</td>
+				<td style="width: 2%">&nbsp;</td>
 				<td>', $txt['media_admin_reported_item'], '</td>
 				<td>', $txt['media_admin_reported_by'], '</td>
 				<td>', $txt['media_admin_reported_on'], '</td>
@@ -377,7 +377,7 @@ function template_aeva_admin_bans()
 
 	echo '
 
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor">
+		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_banned'], '</td>
 				<td>', $txt['media_admin_banned_on'], '</td>
@@ -422,7 +422,7 @@ function template_aeva_admin_about()
 	}
 
 	echo '
-		<table cellpadding="6" cellspacing="1" border="0" width="100%" class="bordercolor" style="margin-top: 1ex">
+		<table class="w100 cp8 cs1" style="margin-top: 1ex">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_credits'], ' <span class="smalltext" style="font-weight: normal">~ ', $txt['media_admin_credits_thanks'], '</span></td>
 			</tr>';
@@ -663,11 +663,11 @@ function template_aeva_admin_perms_view()
 					<td colspan="5">', $txt['media_perm_profile'], ' : "', $context['aeva_profile']['name'], '"</td>
 				</tr>
 				<tr class="titlebg">
-					<td width="40%">', $txt['media_admin_membergroups'], '</td>
-					<td width="20%">', $txt['media_admin_members'], '</td>
-					<td width="25%">', $txt['media_admin_labels_perms'], '</td>
-					<td width="10%">', $txt['media_edit_this_item'], '</td>
-					<td width="5%"><input type="checkbox" name="checkAll" id="checkAll" onclick="invertAll(this, this.form, \'groups[]\');"></td>
+					<td style="width: 40%">', $txt['media_admin_membergroups'], '</td>
+					<td style="width: 20%">', $txt['media_admin_members'], '</td>
+					<td style="width: 25%">', $txt['media_admin_labels_perms'], '</td>
+					<td style="width: 10%">', $txt['media_edit_this_item'], '</td>
+					<td style="width: 5%"><input type="checkbox" name="checkAll" id="checkAll" onclick="invertAll(this, this.form, \'groups[]\');"></td>
 				</tr>';
 
 	$alt = false;
@@ -708,7 +708,7 @@ function template_aeva_admin_perms_view()
 	echo '
 						</select>
 					</td>
-					<td width="16%" class="bottom">
+					<td style="width: 16%" class="bottom">
 						<input type="submit" name="submit" value="', $txt['media_submit'], '">
 					</td>
 				</tr>
@@ -731,9 +731,9 @@ function template_aeva_admin_quotas()
 	<form method="post" action="', $scripturl, '?action=admin;area=aeva_quotas;', $context['session_var'], '=', $context['session_id'], '">
 		<table class="tborder w75 center cp4 cs1" style="margin-top: 2ex;">
 			<tr class="catbg">
-				<td width="50%">', $txt['media_admin_prof_name'], '</td>
-				<td width="25%">', $txt['media_albums'], '</td>
-				<td width="25%">', $txt['media_delete_this_item'], '</td>
+				<td class="w50">', $txt['media_admin_prof_name'], '</td>
+				<td class="w25">', $txt['media_albums'], '</td>
+				<td class="w25">', $txt['media_delete_this_item'], '</td>
 			</tr>';
 
 	$alt = false;
@@ -802,9 +802,9 @@ function template_aeva_admin_quota_view()
 				<td colspan="4">', $txt['media_quota_profile'], ' : "', $context['aeva_profile']['name'], '"</td>
 			</tr>
 			<tr class="titlebg">
-				<td width="65%">', $txt['media_admin_membergroups'], '</td>
-				<td width="20%">', $txt['media_admin_members'], '</td>
-				<td width="15%">', $txt['media_edit_this_item'], '</td>
+				<td style="width: 65%">', $txt['media_admin_membergroups'], '</td>
+				<td style="width: 20%">', $txt['media_admin_members'], '</td>
+				<td style="width: 15%">', $txt['media_edit_this_item'], '</td>
 			</tr>';
 	$alt = false;
 	foreach ($context['membergroups'] as $id => $group)
@@ -832,9 +832,9 @@ function template_aeva_admin_fields()
 				<td colspan="3">', $txt['media_cf'], '</td>
 			</tr>
 			<tr class="catbg">
-				<td width="50%">', $txt['media_cf_name'], '</td>
-				<td width="25%">', $txt['media_cf_type'], '</td>
-				<td width="25%">', $txt['media_admin_moderation'], '</td>
+				<td class="w50">', $txt['media_cf_name'], '</td>
+				<td class="w25">', $txt['media_cf_type'], '</td>
+				<td class="w25">', $txt['media_admin_moderation'], '</td>
 			</tr>
 			<tr class="windowbg2">
 				<td colspan="3"><a href="', $scripturl, '?action=admin;area=aeva_fields;sa=edit;', $context['session_var'], '=', $context['session_id'], '">', $txt['media_cf_add'], '</a></td>
@@ -875,7 +875,7 @@ function template_aeva_admin_ftpimport()
 	</div>
 
 	<form action="', $scripturl, '?action=admin;area=aeva_ftp;', $context['session_var'], '=', $context['session_id'], '" method="post">
-		<table cellpadding="4" cellspacing="1" border="0" class="bordercolor" width="100%">
+		<table class="w100 cp4 cs1">
 			<tr>
 				<td class="windowbg smalltext" style="padding: 10px">', $txt['media_admin_ftp_help'], '</td>
 			</tr>

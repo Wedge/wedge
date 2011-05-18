@@ -498,7 +498,7 @@ function Search2()
 	// Create an array of replacements for highlighting.
 	$context['mark'] = array();
 	foreach ($searchArray as $word)
-		$context['mark'][$word] = '<strong class="highlight">' . $word . '</strong>';
+		$context['mark'][$word] = '<mark>' . $word . '</mark>';
 
 	// Initialize two arrays storing the words that have to be searched for.
 	$orParts = array();
@@ -842,9 +842,8 @@ function Search2()
 					if (!empty($userQuery))
 					{
 						if ($subject_query['from'] != '{db_prefix}messages AS m')
-						{
 							$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_topic = t.id_topic)';
-						}
+
 						$subject_query['where'][] = $userQuery;
 					}
 					if (!empty($search_params['topic']))
@@ -858,9 +857,8 @@ function Search2()
 					if (!empty($excludedPhrases))
 					{
 						if ($subject_query['from'] != '{db_prefix}messages AS m')
-						{
 							$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)';
-						}
+
 						$count = 0;
 						foreach ($excludedPhrases as $phrase)
 						{
@@ -868,6 +866,10 @@ function Search2()
 							$subject_query_params['excluded_phrases_' . $count++] = empty($modSettings['search_match_words']) || $no_regexp ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
 						}
 					}
+
+					// Avoid double inner joins, such as when using several negative search terms.
+					if (!empty($subject_query['inner_join']))
+						$subject_query['inner_join'] = array_flip(array_flip($subject_query['inner_join']));
 
 					$ignoreRequest = wesql::query('
 						INSERT IGNORE INTO {db_prefix}log_search_results
@@ -1039,9 +1041,8 @@ function Search2()
 							if (in_array($subjectWord, $excludedSubjectWords))
 							{
 								if ($subject_query['from'] != '{db_prefix}messages AS m')
-								{
 									$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)';
-								}
+
 								$subject_query['left_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.word ' . (empty($modSettings['search_match_words']) ? 'LIKE {string:subject_not_' . $count . '}' : '= {string:subject_not_' . $count . '}') . ' AND subj' . $numTables . '.id_topic = t.id_topic)';
 								$subject_query['params']['subject_not_' . $count] = empty($modSettings['search_match_words']) ? '%' . $subjectWord . '%' : $subjectWord;
 
@@ -1061,9 +1062,8 @@ function Search2()
 						if (!empty($userQuery))
 						{
 							if ($subject_query['from'] != '{db_prefix}messages AS m')
-							{
 								$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)';
-							}
+
 							$subject_query['where'][] = '{raw:user_query}';
 							$subject_query['params']['user_query'] = $userQuery;
 						}
@@ -1090,9 +1090,8 @@ function Search2()
 						if (!empty($excludedPhrases))
 						{
 							if ($subject_query['from'] != '{db_prefix}messages AS m')
-							{
 								$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)';
-							}
+
 							$count = 0;
 							foreach ($excludedPhrases as $phrase)
 							{
@@ -1105,6 +1104,10 @@ function Search2()
 						// Nothing to search for?
 						if (empty($subject_query['where']))
 							continue;
+
+						// Avoid double inner joins, such as when using several negative search terms.
+						if (!empty($subject_query['inner_join']))
+							$subject_query['inner_join'] = array_flip(array_flip($subject_query['inner_join']));
 
 						$ignoreRequest = wesql::query('
 							INSERT IGNORE INTO {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics
@@ -1755,8 +1758,8 @@ function prepareSearchContext($reset = false)
 		// Fix the international characters in the keyword too.
 		$query = strtr(westr::htmlspecialchars($query), array('\\\'' => '\''));
 
-		$body_highlighted = preg_replace('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/ieu', "'\$2' == '\$1' ? stripslashes('\$1') : '<strong class=\"highlight\">\$1</strong>'", $body_highlighted);
-		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<strong class="highlight">$1</strong>', $subject_highlighted);
+		$body_highlighted = preg_replace('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/ieu', "'\$2' == '\$1' ? stripslashes('\$1') : '<mark>\$1</mark>'", $body_highlighted);
+		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<mark>$1</mark>', $subject_highlighted);
 	}
 
 	$output['matches'][] = array(

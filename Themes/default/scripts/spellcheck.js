@@ -171,7 +171,7 @@ function highlightWord()
 		// Rebuild the string with a span wrapped around the misspelled word
 		// so we can highlight it in the div the user is viewing the string in.
 		sv = $("#spellview").html(
-			(htmlspecialchars(strstart) + '<span class="highlight" id="h1">' + misps[wordindex].word + '</span>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br>')
+			(htmlspecialchars(strstart) + '<mark id="h1">' + misps[wordindex].word + '</mark>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br>')
 		)[0],
 
 		// We could use scrollIntoView, but it's just not that great anyway.
