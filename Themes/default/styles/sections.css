@@ -283,7 +283,7 @@ img.new_posts
 		font-size, line-height: 120%
 		overflow: hidden
 		text-overflow: ellipsis
-		:hover
+		:hover, &.show
 			overflow: visible
 		a, &
 			color: #c06002

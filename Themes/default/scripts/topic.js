@@ -622,7 +622,14 @@ UserMenu.prototype.switchMenu = function (oLink)
 	var
 		details = oLink.id.substr(2).split('_'),
 		iMsg = details[0], iUserId = details[1],
-		pos = $(oLink).offset();
+		pos = $(oLink).offset(), h4 = $(oLink).parent(),
+		leave = function (e) {
+			if (!e || e.relatedTarget.className != 'umme')
+			{
+				h4.removeClass();
+				$(this).remove();
+			}
+		};
 
 	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
 		return;
@@ -640,8 +647,13 @@ UserMenu.prototype.switchMenu = function (oLink)
 
 		sHTML += '<div><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></div>';
 	}
+	h4.addClass('show');
 	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
-		.css({ left: pos.left - 6, top: pos.top - 4 })
-		.mouseleave(function (e) { if (e.relatedTarget.className != 'umme') $(this).remove(); })
-		.show(500);
+		.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 })
+		.mouseleave(leave).show(500, function () {
+			$('body').one('mousemove', function (e) {
+				if (e.target.className != 'umme' && !$(e.target).parents('#userMenu' + iMsg).length)
+					leave();
+			});
+		});
 };
