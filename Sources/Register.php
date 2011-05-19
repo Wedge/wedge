@@ -534,7 +534,7 @@ function RegisterCheckUsername()
 		$context['checked_username'] = westr::htmltrim(westr::substr($context['checked_username'], 0, 25));
 
 	// Only these characters are permitted.
-	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $context['checked_username'])) != 0 || $context['checked_username'] == '_' || $context['checked_username'] == '|' || strpos($context['checked_username'], '[code') !== false || strpos($context['checked_username'], '[/code') !== false)
+	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $context['checked_username'])) != 0 || $context['checked_username'] == '_' || $context['checked_username'] == '|' || stripos($context['checked_username'], '[code') !== false || stripos($context['checked_username'], '[/code') !== false)
 		$context['valid_username'] = false;
 
 	if (stristr($context['checked_username'], $txt['guest_title']) !== false)

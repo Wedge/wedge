@@ -634,7 +634,7 @@ UserMenu.prototype.switchMenu = function (oLink)
 	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
 		return;
 
-	var i, sHTML = '', aLinkList = this.list['user' + iUserId];
+	var i, sHTML = '', aLinkList = this.list['user' + iUserId], mtarget;
 	for (i in aLinkList)
 	{
 		var sLink = aLinkList[i].replace(/%id%/, iUserId), sFirstChar = sLink.charAt(0);
@@ -651,9 +651,10 @@ UserMenu.prototype.switchMenu = function (oLink)
 	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
 		.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 })
 		.mouseleave(leave).show(500, function () {
-			$('body').one('mousemove', function (e) {
-				if (e.target.className != 'umme' && !$(e.target).parents('#userMenu' + iMsg).length)
-					leave();
-			});
+			$('body').unbind('mousemove.umme');
+			// Once the animation is completed, is the mouse still inside the menu area?
+			if (mtarget && mtarget.className != 'umme' && !$(mtarget).parents('#userMenu' + iMsg).length)
+				leave();
 		});
+	$('body').bind('mousemove.umme', function (e) { mtarget = e.target; });
 };
