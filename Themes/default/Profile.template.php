@@ -2477,6 +2477,7 @@ function template_profile_avatar_select()
 	echo '
 					<dt>
 						<strong id="personal_picture">', $txt['personal_picture'], '</strong>
+						<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked' : '') . '><label for="avatar_choice_none"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['no_avatar'] . '</label><br>
 						', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
 						', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
 						', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
@@ -2649,8 +2650,8 @@ function template_profile_avatar_select()
 
 	add_js(!empty($context['member']['avatar']['allow_server_stored']) ? '
 	$("#avatar_server_stored").' . ($context['member']['avatar']['choice'] == 'server_stored' ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-	$("#avatar_external").' . (($context['member']['avatar']['choice'] == 'external' || (empty($context['member']['avatar']['allow_server_stored']))) ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-	$("#avatar_upload").' . (($context['member']['avatar']['choice'] == 'upload' || (empty($context['member']['avatar']['allow_server_stored']) && empty($context['member']['avatar']['allow_external']))) ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
+	$("#avatar_external").' . (($context['member']['avatar']['choice'] == 'external') ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+	$("#avatar_upload").' . (($context['member']['avatar']['choice'] == 'upload') ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 	$("#avatar_gravatar").' . (($context['member']['avatar']['choice'] == 'gravatar' || (empty($context['member']['avatar']['allow_server_stored']))) ? 'show' : 'hide') . '();' : '', '
 
 	function swap_avatar(type)
@@ -2674,6 +2675,11 @@ function template_profile_avatar_select()
 				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
 				$("#avatar_upload").show();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
 				$("#avatar_gravatar").hide();' : '', '
+			break;
+			case "avatar_choice_none":
+				', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
+				', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
+				', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
 			break;
 			case "avatar_choice_gravatar":', !empty($context['member']['avatar']['allow_server_stored']) ? '
 				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '

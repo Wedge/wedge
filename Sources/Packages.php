@@ -1094,6 +1094,9 @@ function PackageInstall()
 	if (file_exists($boarddir . '/Packages/temp'))
 		deltree($boarddir . '/Packages/temp');
 
+	// Log what we just did.
+	logAction($context['uninstalling'] ? 'uninstall_package' : (!empty($is_upgrade) ? 'upgrade_package' : 'install_package'), array('package' => $smcFunc['htmlspecialchars']($packageInfo['name']), 'version' => $smcFunc['htmlspecialchars']($packageInfo['version'])), 'admin');
+
 	// Just in case, let's clear the whole cache to avoid anything going up the swanny.
 	clean_cache();
 
@@ -1492,10 +1495,14 @@ function ViewOperations()
 
 	// Ok let's get the content of the file.
 	$context['operations'] = array(
-		'search' => westr::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['search_original'], ENT_QUOTES),
-		'replace' => westr::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['replace_original'], ENT_QUOTES),
+		'search' => strtr(htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['search_original']), array('[' => '&#91;', ']' => '&#93;')),
+		'replace' => strtr(htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['replace_original']), array('[' => '&#91;', ']' => '&#93;')),
 		'position' => $mod_actions[$_REQUEST['operation_key']]['position'],
 	);
+	// Let's do some formatting...
+	$operation_text = $context['operations']['position'] == 'replace' ? 'operation_replace' : ($context['operations']['position'] == 'before' ? 'operation_after' : 'operation_before');
+	$context['operations']['search'] = parse_bbc('[code=' . $txt['operation_find'] . ']' . ($context['operations']['position'] == 'end' ? '?&gt;' : $context['operations']['search']) . '[/code]');
+	$context['operations']['replace'] = parse_bbc('[code=' . $txt[$operation_text] . ']' . $context['operations']['replace'] . '[/code]');
 
 	// No layers
 	loadSubTemplate('view_operations');

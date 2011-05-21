@@ -1518,14 +1518,16 @@ function MaintainPurgeInactiveMembers()
 			$groups[] = (int) $id;
 		$time_limit = (time() - ($_POST['maxdays'] * 24 * 3600));
 		$where_vars = array(
-			'last_login' => $time_limit,
+			'time_limit' => $time_limit,
 		);
-		$where = 'mem.last_login < {int:last_login}';
+		
 		if ($_POST['del_type'] == 'activated')
 		{
-			$where .= ' AND mem.is_activated = {int:is_activated}';
+			$where = 'mem.date_registered < {int:time_limit} AND mem.is_activated = {int:is_activated}';
 			$where_vars['is_activated'] = 0;
 		}
+		else
+			$where = 'mem.last_login < {int:time_limit}';
 
 		// Need to get *all* groups then work out which (if any) we avoid.
 		$request = wesql::query('

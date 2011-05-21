@@ -105,7 +105,7 @@ function ModerationMain($dont_call = false)
 					'enabled' => $context['can_moderate_approvals'],
 					'file' => 'PostModeration',
 					'function' => 'PostModerationMain',
-					'custom_url' => $scripturl . '?action=moderate;area=postmod;sa=posts',
+					'custom_url' => $scripturl . '?action=moderate;area=postmod',
 					'subsections' => array(
 						'posts' => array($txt['mc_unapproved_replies']),
 						'topics' => array($txt['mc_unapproved_topics']),

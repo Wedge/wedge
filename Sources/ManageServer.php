@@ -1382,14 +1382,25 @@ function ModifyLanguage()
 			if (is_dir($curPath))
 				deltree($curPath);
 
-		// Fifth, update getLanguages() cache.
+        // Fifth, members can no longer use this language.
+		wesql::query('
+			UPDATE {db_prefix}members
+			SET lngfile = {string:empty_string}
+			WHERE lngfile = {string:current_language}',
+			array(
+				'empty_string' => '',
+				'current_language' => $context['lang_id'],
+			)
+		);
+
+		// Sixth, update getLanguages() cache.
 		if (!empty($modSettings['cache_enable']))
 		{
 			cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 			cache_put_data('known_languages_all', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 		}
 
-		// Sixth, if we deleted the default language, set us back to english?
+		// Seventh, if we deleted the default language, set us back to english?
 		if ($context['lang_id'] == $language)
 		{
 			loadSource('Subs-Admin');
@@ -1397,7 +1408,7 @@ function ModifyLanguage()
 			updateSettingsFile(array('language' => '\'' . $language . '\''));
 		}
 
-		// Seventh, get out of here.
+		// Eighth, get out of here.
 		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_var'] . '=' . $context['session_id']);
 	}
 

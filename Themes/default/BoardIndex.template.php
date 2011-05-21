@@ -40,8 +40,7 @@ function template_boardindex()
 					</we:cat>
 				</td>
 			</tr>
-		</tbody>
-		<tbody id="category_', $category['id'], '_boards">';
+		</tbody>';
 
 		// Assuming the category hasn't been collapsed...
 		if (!$category['is_collapsed'])
@@ -50,6 +49,10 @@ function template_boardindex()
 			new (is it new?), id, name, description, moderators (see below), link_moderators (just a list.),
 			children (see below.), link_children (easier to use.), children_new (are they new?),
 			topics (# of), posts (# of), link, href, and last_post. (see below.) */
+
+			echo '
+		<tbody id="category_', $category['id'], '_boards">';
+
 			foreach ($category['boards'] as $board)
 			{
 				$alt = !$alt;
@@ -146,9 +149,11 @@ function template_boardindex()
 				</tr>';
 				}
 			}
+
+			echo '
+		</tbody>';
 		}
 		echo '
-		</tbody>
 		<tbody class="divider">
 			<tr>
 				<td colspan="4"></td>

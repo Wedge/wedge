@@ -363,7 +363,10 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	if (!this.bButtonsShown)
 	{
 		// Make sure it can go somewhere.
-		$('#' + this.opt.sButtonStripDisplay).show();
+		if ($('#' + this.opt.sButtonStripDisplay + ' div').length() == 0)
+			$('<div id="' + this.opt.sButtonStripDisplay + '" class="' + (this.opt.sButtonStripClass ? this.opt.sButtonStripClass : 'buttonlist floatbottom') + '"><ul></ul></div>').appendTo('#' + this.opt.sButtonStrip);
+		else
+			$('#' + this.opt.sButtonStripDisplay).show();
 
 		// Add the 'remove selected items' button.
 		if (this.opt.bCanRemove)

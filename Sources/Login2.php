@@ -116,7 +116,7 @@ function Login2()
 	}
 
 	// Set up the default/fallback stuff.
-	$context['default_username'] = isset($_REQUEST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($_REQUEST['user'])) : '';
+	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($_POST['user'])) : '';
 	$context['default_password'] = '';
 	$context['never_expire'] = $modSettings['cookieTime'] == 525600 || $modSettings['cookieTime'] == 3153600;
 	$context['login_errors'] = array($txt['error_occured']);
@@ -128,36 +128,36 @@ function Login2()
 		'name' => $txt['login'],
 	);
 
-	if (!empty($_REQUEST['openid_identifier']) && !empty($modSettings['enableOpenID']))
+	if (!empty($_POST['openid_identifier']) && !empty($modSettings['enableOpenID']))
 	{
 		loadSource('Subs-OpenID');
-		if (($open_id = smf_openID_validate($_REQUEST['openid_identifier'])) !== 'no_data')
+		if (($open_id = smf_openID_validate($_POST['openid_identifier'])) !== 'no_data')
 			return $open_id;
 	}
 
 	// You forgot to type your username, dummy!
-	if (!isset($_REQUEST['user']) || $_REQUEST['user'] == '')
+	if (!isset($_POST['user']) || $_POST['user'] == '')
 	{
 		$context['login_errors'] = array($txt['need_username']);
 		return;
 	}
 
 	// Hmm... maybe 'admin' will login with no password. Uhh... NO!
-	if ((!isset($_POST['passwrd']) || $_POST['passwrd'] == '') && (!isset($_REQUEST['hash_passwrd']) || strlen($_REQUEST['hash_passwrd']) != 40))
+	if ((!isset($_POST['passwrd']) || $_POST['passwrd'] == '') && (!isset($_POST['hash_passwrd']) || strlen($_POST['hash_passwrd']) != 40))
 	{
 		$context['login_errors'] = array($txt['no_password']);
 		return;
 	}
 
 	// No funky symbols either.
-	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~(&#(\\d{1,7}|x[0-9a-fA-F]{1,6});)~', '', $_REQUEST['user'])) != 0)
+	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~(&#(\\d{1,7}|x[0-9a-fA-F]{1,6});)~', '', $_POST['user'])) != 0)
 	{
 		$context['login_errors'] = array($txt['error_invalid_characters_username']);
 		return;
 	}
 
 	// Are we using any sort of integration to validate the login?
-	if (in_array('retry', call_hook('validate_login', array($_REQUEST['user'], isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40 ? $_REQUEST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
+	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
 	{
 		$context['login_errors'] = array($txt['login_hash_error']);
 		$context['disable_login_hashing'] = true;
@@ -176,7 +176,7 @@ function Login2()
 		)
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
-	if (wesql::num_rows($request) == 0 && strpos($_REQUEST['user'], '@') !== false)
+	if (wesql::num_rows($request) == 0 && strpos($_POST['user'], '@') !== false)
 	{
 		wesql::free_result($request);
 
@@ -187,7 +187,7 @@ function Login2()
 			WHERE email_address = {string:user_name}
 			LIMIT 1',
 			array(
-				'user_name' => $_REQUEST['user'],
+				'user_name' => $_POST['user'],
 			)
 		);
 
@@ -205,7 +205,7 @@ function Login2()
 	wesql::free_result($request);
 
 	// Figure out the password using SMF's encryption - if what they typed is right.
-	if (isset($_REQUEST['hash_passwrd']) && strlen($_REQUEST['hash_passwrd']) == 40)
+	if (isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40)
 	{
 		// Needs upgrading?
 		if (strlen($user_settings['passwd']) != 40)
@@ -216,7 +216,7 @@ function Login2()
 			return;
 		}
 		// Challenge passed.
-		elseif ($_REQUEST['hash_passwrd'] == sha1($user_settings['passwd'] . $sc))
+		elseif ($_POST['hash_passwrd'] == sha1($user_settings['passwd'] . $sc))
 			$sha_passwd = $user_settings['passwd'];
 		else
 		{
@@ -274,7 +274,7 @@ function Login2()
 			$other_passwords[] = phpBB3_password_check($_POST['passwrd'], $user_settings['passwd']);
 
 			// APBoard 2 Login Method.
-			$other_passwords[] = md5(crypt($_REQUEST['passwrd'], 'CRYPT_MD5'));
+			$other_passwords[] = md5(crypt($_POST['passwrd'], 'CRYPT_MD5'));
 		}
 		// The hash should be 40 if it's SHA-1, so we're safe with more here too.
 		elseif (strlen($user_settings['passwd']) == 32)
@@ -295,7 +295,7 @@ function Login2()
 			$other_passwords[] = sha1(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
 
 			// BurningBoard3 style of hashing.
-			$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_REQUEST['passwrd'])));
+			$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_POST['passwrd'])));
 
 			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
 			if (!empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')

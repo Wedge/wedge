@@ -301,8 +301,8 @@ function template_maintain_topics()
 						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3">', $txt['maintain_old_since_days2'], '
 					</p>
 					<p>
-						<label><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing" checked> ', $txt['maintain_old_nothing_else'], '</label><br>
-						<label><input type="radio" name="delete_type" id="delete_type_moved" value="moved"> ', $txt['maintain_old_are_moved'], '</label><br>
+						<label><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing"> ', $txt['maintain_old_nothing_else'], '</label><br>
+						<label><input type="radio" name="delete_type" id="delete_type_moved" value="moved" checked> ', $txt['maintain_old_are_moved'], '</label><br>
 						<label><input type="radio" name="delete_type" id="delete_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br>
 					</p>
 					<p>

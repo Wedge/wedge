@@ -687,13 +687,13 @@ function template_servers()
 							<strong>' . $txt['server_name'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="servername" size="40" value="SMF">
+							<input type="text" name="servername" size="44" value="SMF">
 						</dd>
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="serverurl" size="50" value="http://">
+							<input type="text" name="serverurl" size="44" value="http://">
 						</dd>
 					</dl>
 					<div class="righttext">
@@ -710,13 +710,13 @@ function template_servers()
 							<strong>' . $txt['serverurl'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="package" size="50" value="http://">
+							<input type="text" name="package" size="44" value="http://">
 						</dd>
 						<dt>
 							<strong>', $txt['package_download_filename'], ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="filename" size="50">
+							<input type="text" name="filename" size="44">
 							<dfn>', $txt['package_download_filename_info'], '</dfn>
 						</dd>
 					</dl>
@@ -1156,9 +1156,6 @@ function template_view_operations()
 {
 	global $context, $txt, $settings;
 
-	// Determine the position text.
-	$operation_text = $context['operations']['position'] == 'replace' ? 'operation_replace' : ($context['operations']['position'] == 'before' ? 'operation_after' : 'operation_before');
-
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 <head>
@@ -1170,17 +1167,11 @@ function template_view_operations()
 </head>
 <body>
 	<div class="padding windowbg">
-		<we:title>
-			', $txt['operation_find'], '<a href="#" onclick="return smfSelectText(\'find_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-		</we:title>
 		<div class="padding">
-			<code id="find_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['position'] == 'end' ? '?&gt;' : $context['operations']['search'], '</code>
+			', $context['operations']['search'], '
 		</div>
-		<we:title>
-			', $txt[$operation_text], '<a href="#" onclick="return smfSelectText(\'replace_code\', true);" class="smalltext" style="font-weight: normal;">' . $txt['code_select'] . '</a>
-		</we:title>
 		<div class="padding">
-			<code id="replace_code" style="overflow: auto; max-height: 200px; white-space: pre;">', $context['operations']['replace'], '</code>
+			', $context['operations']['replace'], '
 		</div>
 	</div>
 </body>

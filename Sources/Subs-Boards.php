@@ -523,9 +523,11 @@ function modifyBoard($board_id, &$boardOptions)
 			$child_level = $boards[$boardOptions['target_board']]['level'] + 1;
 			$id_parent = $boardOptions['target_board'];
 
-			// !!! Change error message.
+			// People can be creative, in many ways...
 			if (isChildOf($id_parent, $board_id))
-				fatal_error('Unable to make a parent its own child');
+				fatal_error('mboards_parent_own_child_error', false);
+			elseif ($id_parent == $board_id)
+				fatal_lang_error('mboards_board_own_child_error', false);
 
 			$after = $boards[$boardOptions['target_board']]['order'];
 

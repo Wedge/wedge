@@ -930,7 +930,7 @@ function saveProfileFields()
 			// Prepare additional groups for comparison.
 			$additional_groups = array(
 				'previous' => !empty($old_profile['additional_groups']) ? explode(',', $old_profile['additional_groups']) : array(),
-				'new' => !empty($_POST['additional_groups']) ? $_POST['additional_groups'] : array(),
+				'new' => !empty($_POST['additional_groups']) ? array_diff($_POST['additional_groups'], array(0)) : array(),
 			);
 
 			sort($additional_groups['previous']);
@@ -2128,7 +2128,7 @@ function loadThemeOptions($memID)
 	if ($context['user']['is_owner'])
 	{
 		$context['member']['options'] = $options;
-		if (isset($_POST['options']))
+		if (isset($_POST['options']) && is_array($_POST['options']))
 			foreach ($_POST['options'] as $k => $v)
 				$context['member']['options'][$k] = $v;
 	}
@@ -2371,16 +2371,15 @@ function profileLoadAvatarData()
 		'allow_gravatar' => !empty($modSettings['gravatarEnabled']),
 	);
 
-	// Actually - nothing?
-	if (!$context['member']['avatar']['allow_external'] && !$context['member']['avatar']['allow_server_stored'] && !$context['member']['avatar']['allow_upload'] && !$context['member']['avatar']['allow_gravatar'])
-		return false;
-
 	if ($cur_profile['avatar'] == '' && $cur_profile['id_attach'] > 0 && $context['member']['avatar']['allow_upload'])
+	{
 		$context['member']['avatar'] += array(
 			'choice' => 'upload',
 			'server_pic' => 'blank.gif',
 			'external' => 'http://'
 		);
+		$context['member']['avatar']['href'] = $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar';
+	}
 	elseif (stristr($cur_profile['avatar'], 'http://') && $context['member']['avatar']['allow_external'])
 		$context['member']['avatar'] += array(
 			'choice' => 'external',
@@ -2393,7 +2392,7 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.gif',
 			'external' => $cur_profile['avatar'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) ? $cur_profile['email_address'] : substr($cur_profile['avatar'], 11),
 		);
-	elseif (file_exists($modSettings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
+	elseif ($cur_profile['avatar'] != '' && file_exists($modSettings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
 		$context['member']['avatar'] += array(
 			'choice' => 'server_stored',
 			'server_pic' => $cur_profile['avatar'] == '' ? 'blank.gif' : $cur_profile['avatar'],
@@ -2401,7 +2400,7 @@ function profileLoadAvatarData()
 		);
 	else
 		$context['member']['avatar'] += array(
-			'choice' => 'server_stored',
+			'choice' => 'none',
 			'server_pic' => 'blank.gif',
 			'external' => 'http://'
 		);
@@ -2525,11 +2524,6 @@ function profileSaveAvatarData(&$value)
 	if (empty($memID) && !empty($context['password_auth_failed']))
 		return false;
 
-	// Reset the attach ID.
-	$cur_profile['id_attach'] = 0;
-	$cur_profile['attachment_type'] = 0;
-	$cur_profile['filename'] = '';
-
 	loadSource('ManageAttachments');
 
 	// We need to know where we're going to be putting it..
@@ -2574,13 +2568,29 @@ function profileSaveAvatarData(&$value)
 		}
 	}
 
-	if ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
+    if ($value == 'none')
+    {
+        $profile_vars['avatar'] = '';
+ 
+        // Reset the attach ID.
+        $cur_profile['id_attach'] = 0;
+        $cur_profile['attachment_type'] = 0;
+        $cur_profile['filename'] = '';
+ 
+        removeAttachments(array('id_member' => $memID));
+    }
+	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
 		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || !is_valid_email($_POST['gravatarEmail']))
 			$profile_vars['avatar'] = 'gravatar://';
 		else
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
+
+		// Clear current profile...
+		$cur_profile['id_attach'] = 0;
+		$cur_profile['attachment_type'] = 0;
+		$cur_profile['filename'] = '';
 
 		// Get rid of their old avatar. (if uploaded.)
 		removeAttachments(array('id_member' => $memID));
@@ -2590,11 +2600,21 @@ function profileSaveAvatarData(&$value)
 		$profile_vars['avatar'] = strtr(empty($_POST['file']) ? (empty($_POST['cat']) ? '' : $_POST['cat']) : $_POST['file'], array('&amp;' => '&'));
 		$profile_vars['avatar'] = preg_match('~^([\w !@%*=#()[\]&.,-]+/)?[\w !@%*=#()[\]&.,-]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($modSettings['avatar_directory'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.gif' ? '' : $profile_vars['avatar']) : '';
 
+		// Clear current profile...
+		$cur_profile['id_attach'] = 0;
+		$cur_profile['attachment_type'] = 0;
+		$cur_profile['filename'] = '';
+
 		// Get rid of their old avatar. (if uploaded.)
 		removeAttachments(array('id_member' => $memID));
 	}
 	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && strtolower(substr($_POST['userpicpersonal'], 0, 7)) == 'http://' && empty($modSettings['avatar_download_external']))
 	{
+		// We need these clean...
+		$cur_profile['id_attach'] = 0;
+		$cur_profile['attachment_type'] = 0;
+		$cur_profile['filename'] = '';
+
 		// Remove any attached avatar...
 		removeAttachments(array('id_member' => $memID));
 
@@ -2664,6 +2684,11 @@ function profileSaveAvatarData(&$value)
 					loadSource('Subs-Graphics');
 					if (!downloadAvatar($uploadDir . '/avatar_tmp_' . $memID, $memID, $modSettings['avatar_max_width_upload'], $modSettings['avatar_max_height_upload']))
 						return 'bad_avatar';
+
+					// Clear current profile...
+					$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
+					$cur_profile['attachment_type'] = $modSettings['new_avatar_data']['filename'];
+					$cur_profile['filename'] = $modSettings['new_avatar_data']['type'];
 				}
 				else
 					return 'bad_avatar';
@@ -2744,8 +2769,6 @@ function profileSaveAvatarData(&$value)
 	// Setup the profile variables so it shows things right on display!
 	$cur_profile['avatar'] = $profile_vars['avatar'];
 
-	// If we're here we've done good - but don't save based on avatar_choice - skip it ;)
-	$profile_vars['avatar'] = $profile_vars['avatar'];
 	return false;
 }
 

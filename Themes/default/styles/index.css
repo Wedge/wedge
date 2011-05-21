@@ -1078,18 +1078,20 @@ dl.settings
 	margin: 0 0 10px
 	padding: 0
 	dt, dd
-		width: 48%
 		float: left
 		padding: 0
 	dt
 		margin: 0 0 10px
 		clear: both
+		width: 40%
 	dt.windowbg final
 		width: 98%
 		margin: 0 0 3px 0
 		padding: 0 0 5px 0
 	dd
 		margin: 0 0 3px 1.5%
+		width: 56%
+		overflow: auto
 	img
 		margin: 0 10px 0 0
 

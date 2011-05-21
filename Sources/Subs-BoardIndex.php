@@ -90,10 +90,12 @@ function getBoardIndex($boardIndexOptions)
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = wesql::fetch_assoc($result_boards))
 	{
+		// Perhaps we are ignoring this board?
+		$ignoreThisBoard = in_array($row_board['id_board'], $user_info['ignoreboards']);
+		$row_board['is_read'] = !empty($row_board['is_read']) || $ignoreThisBoard ? '1' : '0';
+
 		if ($boardIndexOptions['include_categories'])
 		{
-			$ignoreThisBoard = in_array($row_board['id_board'], $user_info['ignoreboards']);
-			$row_board['is_read'] = !empty($row_board['is_read']) || $ignoreThisBoard ? '1' : '0';
 			// Haven't set this category yet.
 			if (empty($categories[$row_board['id_cat']]))
 			{

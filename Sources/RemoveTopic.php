@@ -122,7 +122,7 @@ function DeleteMessage()
 	wesql::free_result($request);
 
 	// Verify they can see this!
-	if ($modSettings['postmod_active'] && !$approved && $poster != $user_info['id'])
+	if ($modSettings['postmod_active'] && !$approved && !empty($poster) && $poster != $user_info['id'])
 		isAllowedTo('approve_posts');
 
 	if ($poster == $user_info['id'])

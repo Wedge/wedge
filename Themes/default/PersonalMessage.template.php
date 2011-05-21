@@ -1008,7 +1008,7 @@ function template_send()
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
 		<hr>
 		', $context['quoted_message']['body'], '
-	</div>';
+	</div><br class="clear">';
 
 	add_js_file(array(
 		'scripts/pm.js',
