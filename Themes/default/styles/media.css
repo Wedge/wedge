@@ -453,8 +453,8 @@ table.aelista
 	border: 1px solid #ccc
 	visibility: hidden
 	padding: 4px
-	margin: 0
-	opacity: 0
+	z-index: 10
+	margin, opacity: 0
 	transition: opacity .5s
 	border-radius: 8px
 	.indpic:hover &

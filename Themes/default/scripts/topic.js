@@ -623,8 +623,10 @@ UserMenu.prototype.switchMenu = function (oLink)
 		details = oLink.id.substr(2).split('_'),
 		iMsg = details[0], iUserId = details[1],
 		pos = $(oLink).offset(), h4 = $(oLink).parent(),
+		umme = 'umme',
+		mmove = 'mousemove.' + umme,
 		leave = function (e) {
-			if (!e || e.relatedTarget.className != 'umme')
+			if (!e || e.relatedTarget.className != umme)
 			{
 				h4.removeClass();
 				$(this).remove();
@@ -651,10 +653,10 @@ UserMenu.prototype.switchMenu = function (oLink)
 	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
 		.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 })
 		.mouseleave(leave).show(500, function () {
-			$('body').unbind('mousemove.umme');
+			$('body').unbind(mmove);
 			// Once the animation is completed, is the mouse still inside the menu area?
-			if (mtarget && mtarget.className != 'umme' && !$(mtarget).parents('#userMenu' + iMsg).length)
+			if (mtarget && mtarget.className != umme && !$(mtarget).parents('#userMenu' + iMsg).length)
 				leave();
 		});
-	$('body').bind('mousemove.umme', function (e) { mtarget = e.target; });
+	$('body').bind(mmove, function (e) { mtarget = e.target; });
 };

@@ -1,11 +1,11 @@
 
 /*
 	Without the following hack, Opera will add an horizontal scrollbar on the body
-	whenever you hover your mouse over a thumbnail.
+	in album pages. This also forces me to add a hack to zoomedia.js... Grmpf.
 */
 
 .aevisio
-	z-index: 1
+	z-index: 10
 
 .indpic
 	position: relative

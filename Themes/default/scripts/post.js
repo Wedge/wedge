@@ -577,7 +577,7 @@ function wedgeAttachSelect(oOptions)
 		if (that.checkExtension(element.value))
 		{
 			// Hide this input.
-			$(element).css({ position: 'absolute', left: '-1000px' });
+			$(element).css({ position: 'absolute', left: -1000 });
 
 			// Add a new file selector.
 			that.createFileSelector();

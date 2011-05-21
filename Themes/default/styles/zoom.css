@@ -8,9 +8,10 @@
 	display: inline-block
 
 .zoom-base
-	// We set visibility to hidden to avoid getting 0 on child $zoom_desc's height()
+	// We set visibility to hidden to avoid getting 0 on child zoom-desc's height
 	visibility: hidden
 	position: absolute
+	top, left: 0
 	background: #fff
 	border: 1px solid #ccc
 	box-shadow: 0 0 18px #666
@@ -20,28 +21,36 @@
 	padding: 10px
 	text-align: center
 	img.scale
-		width: 100%
-		margin, height: auto
+		margin: auto
 
 #zoom-close
-	display: inline-block
+	display: none
 	position: absolute
 	top, left: -12px
 	width, height: 30px
 	background: url($images/aeva/close.png) no-repeat
 
-#zoom-desc extends #zoom-content
+.zoom-desc-contain
 	box-sizing: border-box
-	margin: 0 12px 12px
+	overflow: hidden
+	margin: 0 10px 10px
 	text-align: left
 	cursor: default
 	color: #000
-	padding: 0
 	.mg_desc
 		color: #999
 
-.zoom-overlay
+#zoom-desc
+	height: auto
+
+.zoom-overlay, .zoom-html
 	display: none
+
+.zoom-html
+	color: #333
+	// Override media.css
+	a:link, a:visited
+		color: #de874d
 
 /*
 .zoom-expand
@@ -53,7 +62,6 @@
 
 .zoom-loading
 	position: absolute
-	display: block
 	color: black
 	font-size: 8pt
 	font-weight: bold
@@ -61,31 +69,29 @@
 	padding: 5px 5px 0 28px
 	border: 1px solid rgba(255,255,255, .25)
 	border-radius: 8px
-	margin: 4px
 	background-color: rgba(255,255,255, .5)
 	background-position: 8px 6px
 	height: 20px
-
-.zoom-html
-	display: none
-
-.zoom-white extends .zoom-base
-.zoom-black extends .zoom-base
-	background: #000
-	border: 1px solid #333
-	#zoom-desc
-		color: #fff
-		.mg_desc
-			color: #ccc
+	z-index: 1000
 
 .zoom-drop-shadow extends .zoom-base
 	background: #777
 	border: 0
 	#zoom-content
-		padding: 0 0 10px
-	#zoom-desc
+		padding: 0 0 8px
+		margin: 0
+	.zoom-desc-contain, .zoom-html
 		color: #fff
 		a
 			color: #fc9
 		.mg_desc
 			color: #ccc
+
+.zoom-white extends .zoom-base
+.zoom-black extends .zoom-base
+	background: #000
+	border: 1px solid #333
+	.zoom-desc-contain, .zoom-html
+		color: #fff
+		.mg_desc
+			color: #aaa

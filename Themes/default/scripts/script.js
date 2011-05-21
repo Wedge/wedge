@@ -636,7 +636,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 				is_fixed = this.style.position == "fixed";
 
 				// Position it to absolute, except if it's already fixed
-				$(this).css({ position: is_fixed ? "fixed" : "absolute", "z-index": 999 });
+				$(this).css({ position: is_fixed ? "fixed" : "absolute", zIndex: 999 });
 
 				origMouse = { X: e.pageX, Y: e.pageY };
 				currentPos = { X: parseInt(is_fixed ? this.style.right : this.offsetLeft, 10), Y: parseInt(is_fixed ? this.style.bottom : this.offsetTop, 10) };
