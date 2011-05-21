@@ -16,6 +16,7 @@
 	border: 1px solid #ccc
 	box-shadow: 0 0 18px #666
 	border-radius: 8px
+	z-index: 1
 
 #zoom-content
 	padding: 10px

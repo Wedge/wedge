@@ -2477,11 +2477,11 @@ function template_profile_avatar_select()
 	echo '
 					<dt>
 						<strong id="personal_picture">', $txt['personal_picture'], '</strong>
-						<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked' : '') . '><label for="avatar_choice_none"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['no_avatar'] . '</label><br>
-						', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
+						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked' : '') . '> ' . $txt['no_avatar'] . '</label><br>
+						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_external']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_upload']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
 					</dt>
 					<dd>';
 
@@ -2688,6 +2688,7 @@ function template_profile_avatar_select()
 				$("#avatar_gravatar").show();' : '', '
 			break;
 		}
+		return true;
 	}');
 }
 

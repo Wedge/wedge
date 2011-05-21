@@ -2440,13 +2440,13 @@ function aeva_getMedia()
 
 	if (isset($_SERVER['HTTP_RANGE']))
 	{
-        if ($seek_start > 0 || $seek_end < ($size - 1))
+		if ($seek_start > 0 || $seek_end < ($size - 1))
 			header('HTTP/1.1 206 Partial Content');
 
 		header('Accept-Ranges: bytes');
 		header('Content-Range: bytes ' . $seek_start . '-' . $seek_end . '/' . $size);
 	}
-    else
+	else
 		header('Accept-Ranges: bytes');
 
 	header('Content-Length: ' . ($seek_end - $seek_start + 1));

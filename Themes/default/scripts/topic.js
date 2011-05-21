@@ -360,30 +360,36 @@ function InTopicModeration(oOptions)
 
 InTopicModeration.prototype.handleClick = function(oCheckbox)
 {
+	var
+		opt = this.opt,
+		button_strip = opt.sButtonStrip,
+		use_image = opt.bUseImageButton,
+		display = opt.sButtonStripDisplay;
+
 	if (!this.bButtonsShown)
 	{
 		// Make sure it can go somewhere.
-		if ($('#' + this.opt.sButtonStripDisplay + ' div').length() == 0)
-			$('<div id="' + this.opt.sButtonStripDisplay + '" class="' + (this.opt.sButtonStripClass ? this.opt.sButtonStripClass : 'buttonlist floatbottom') + '"><ul></ul></div>').appendTo('#' + this.opt.sButtonStrip);
+		if (!$('#' + display).length)
+			$('<div id="' + display + '" class="' + (opt.sButtonStripClass ? opt.sButtonStripClass : 'buttonlist floatleft') + '"><ul></ul></div>').appendTo('#' + button_strip);
 		else
-			$('#' + this.opt.sButtonStripDisplay).show();
+			$('#' + display).show();
 
 		// Add the 'remove selected items' button.
-		if (this.opt.bCanRemove)
-			wedge_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
-				sId: this.opt.sSelf + '_remove_button',
-				sText: this.opt.sRemoveButtonLabel,
-				sImage: this.opt.sRemoveButtonImage,
-				sCustom: ' onclick="return ' + this.opt.sSelf + '.handleSubmit(\'remove\')"'
+		if (opt.bCanRemove)
+			wedge_addButton(button_strip, use_image, {
+				sId: opt.sSelf + '_remove_button',
+				sText: opt.sRemoveButtonLabel,
+				sImage: opt.sRemoveButtonImage,
+				sCustom: ' onclick="return ' + opt.sSelf + '.handleSubmit(\'remove\')"'
 			});
 
 		// Add the 'restore selected items' button.
-		if (this.opt.bCanRestore)
-			wedge_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
-				sId: this.opt.sSelf + '_restore_button',
-				sText: this.opt.sRestoreButtonLabel,
-				sImage: this.opt.sRestoreButtonImage,
-				sCustom: ' onclick="return ' + this.opt.sSelf + '.handleSubmit(\'restore\')"'
+		if (opt.bCanRestore)
+			wedge_addButton(button_strip, use_image, {
+				sId: opt.sSelf + '_restore_button',
+				sText: opt.sRestoreButtonLabel,
+				sImage: opt.sRestoreButtonImage,
+				sCustom: ' onclick="return ' + opt.sSelf + '.handleSubmit(\'restore\')"'
 			});
 
 		// Adding these buttons once should be enough.
@@ -395,13 +401,13 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	var i = this.iNumSelected;
 
 	// Show the number of messages selected in the button.
-	if (this.opt.bCanRemove && !this.opt.bUseImageButton)
-		var but1 = $('#' + this.opt.sSelf + '_remove_button')
-			.html(this.opt.sRemoveButtonLabel + ' [' + i + ']');
+	if (opt.bCanRemove && !use_image)
+		var but1 = $('#' + opt.sSelf + '_remove_button')
+			.html(opt.sRemoveButtonLabel + ' [' + i + ']');
 
-	if (this.opt.bCanRestore && !this.opt.bUseImageButton)
-		var but2 = $('#' + this.opt.sSelf + '_restore_button')
-			.html(this.opt.sRestoreButtonLabel + ' [' + i + ']');
+	if (opt.bCanRestore && !use_image)
+		var but2 = $('#' + opt.sSelf + '_restore_button')
+			.html(opt.sRestoreButtonLabel + ' [' + i + ']');
 
 	if (but1 && i < 1 && but1.is(':visible'))
 		but1.fadeOut(300).hide();
@@ -413,7 +419,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 		but2.fadeIn(300).show();
 
 	// Try to restore the correct position.
-	$('#' + this.opt.sButtonStrip + ' li').slice(-3, -1).toggleClass('position_holder', i > 0).toggleClass('last', i < 1);
+	$('#' + button_strip + ' li').slice(-3, -1).toggleClass('position_holder', i > 0).toggleClass('last', i < 1);
 };
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)

@@ -320,7 +320,7 @@ img.new_posts
 	padding: 24px 4px 4px
 	width: auto
 	white-space: nowrap
-	z-index: 50
+	z-index: 0
 	border: 1px solid rgba(0,0,0, .2)
 	border-radius: 5px
 	box-shadow: 0 0 6px rgba(0,0,0, .15)
@@ -333,7 +333,7 @@ img.new_posts
 
 .umme
 	position: relative
-	z-index: 60
+	z-index: 1
 
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
@@ -597,10 +597,10 @@ ul.post_options
 			margin: 0
 			float: left
 		li select, li *[type=checkbox]
-			margin: 0 0.2em 0 0
+			margin: 0 .2em 0 0
 
 	#event_main select
-		margin: 0 0.2em 0 0
+		margin: 0 .2em 0 0
 
 /* Styles for edit poll section.
 ---------------------------------------------------- */
@@ -1240,7 +1240,7 @@ dl
 	td
 		text-align: center
 		&.stats_day
-			padding: 0 3em
+			padding: 0 0 0 3em
 			text-align: left
 	th
 		width: 15%
@@ -1283,10 +1283,10 @@ dl.stats
 #stats th
 	&.stats_year, &.stats_month
 		width: 25%
-		padding: 0.3em 0.75em
+		padding: .3em 0 .3em .75em
 		text-align: left
 	&.stats_month
-		padding: 0.3em 1.5em
+		padding: .3em 0 .3em 1.5em
 
 /* Styles for the calendar section.
 ------------------------------------------------- */

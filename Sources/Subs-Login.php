@@ -94,7 +94,7 @@ function DoLogin()
 	loadSource('Subs-Auth');
 
 	// Call login integration functions.
-	call_hook('login', array($user_settings['member_name'], isset($_REQUEST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime']));
+	call_hook('login', array($user_settings['member_name'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime']));
 
 	// Get ready to set the cookie...
 	$username = $user_settings['member_name'];

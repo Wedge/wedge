@@ -1382,7 +1382,7 @@ function ModifyLanguage()
 			if (is_dir($curPath))
 				deltree($curPath);
 
-        // Fifth, members can no longer use this language.
+		// Fifth, members can no longer use this language.
 		wesql::query('
 			UPDATE {db_prefix}members
 			SET lngfile = {string:empty_string}
@@ -1400,7 +1400,7 @@ function ModifyLanguage()
 			cache_put_data('known_languages_all', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 		}
 
-		// Seventh, if we deleted the default language, set us back to english?
+		// Seventh, if we deleted the default language, set us back to English?
 		if ($context['lang_id'] == $language)
 		{
 			loadSource('Subs-Admin');

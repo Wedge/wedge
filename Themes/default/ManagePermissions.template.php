@@ -132,7 +132,7 @@ function template_permission_index()
 		echo '
 							</select>
 						</dt>
-						<dd style="overflow:auto;">
+						<dd class="flow_auto">
 							<select name="permissions">
 								<option value="">(', $txt['permissions_select_permission'], ')</option>';
 

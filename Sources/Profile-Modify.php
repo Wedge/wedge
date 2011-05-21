@@ -27,7 +27,7 @@ if (!defined('SMF'))
 
 /*	This file has the primary job of showing and editing people's profiles.
 	It also allows the user to change some of their or another's preferences,
-	and such things.  It uses the following functions:
+	and such things. It uses the following functions:
 
 	void loadProfileFields(bool force_reload = false)
 		// !!!
@@ -268,7 +268,7 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => create_function('&$value', '
 				global $txt, $user_info, $modSettings, $cur_profile, $context;
 
-				// Bad date!  Go try again - please?
+				// Bad date! Go try again - please?
 				if (($value = strtotime($value)) === -1)
 				{
 					$value = $cur_profile[\'date_registered\'];
@@ -2201,7 +2201,7 @@ function ignoreboards($memID)
 				'boards' => array()
 			);
 
-		// Set this board up, and let the template know when it's a child.  (indent them..)
+		// Set this board up, and let the template know when it's a child. (Indent them..)
 		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = array(
 			'id' => $row['id_board'],
 			'name' => $row['name'],
@@ -2568,17 +2568,17 @@ function profileSaveAvatarData(&$value)
 		}
 	}
 
-    if ($value == 'none')
-    {
-        $profile_vars['avatar'] = '';
+	if ($value == 'none')
+	{
+		$profile_vars['avatar'] = '';
  
-        // Reset the attach ID.
-        $cur_profile['id_attach'] = 0;
-        $cur_profile['attachment_type'] = 0;
-        $cur_profile['filename'] = '';
+		// Reset the attach ID.
+		$cur_profile['id_attach'] = 0;
+		$cur_profile['attachment_type'] = 0;
+		$cur_profile['filename'] = '';
  
-        removeAttachments(array('id_member' => $memID));
-    }
+		removeAttachments(array('id_member' => $memID));
+	}
 	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.

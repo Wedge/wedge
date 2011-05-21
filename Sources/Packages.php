@@ -1095,7 +1095,7 @@ function PackageInstall()
 		deltree($boarddir . '/Packages/temp');
 
 	// Log what we just did.
-	logAction($context['uninstalling'] ? 'uninstall_package' : (!empty($is_upgrade) ? 'upgrade_package' : 'install_package'), array('package' => $smcFunc['htmlspecialchars']($packageInfo['name']), 'version' => $smcFunc['htmlspecialchars']($packageInfo['version'])), 'admin');
+	logAction($context['uninstalling'] ? 'uninstall_package' : (!empty($is_upgrade) ? 'upgrade_package' : 'install_package'), array('package' => westr::htmlspecialchars($packageInfo['name']), 'version' => westr::htmlspecialchars($packageInfo['version'])), 'admin');
 
 	// Just in case, let's clear the whole cache to avoid anything going up the swanny.
 	clean_cache();
@@ -1495,8 +1495,8 @@ function ViewOperations()
 
 	// Ok let's get the content of the file.
 	$context['operations'] = array(
-		'search' => strtr(htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['search_original']), array('[' => '&#91;', ']' => '&#93;')),
-		'replace' => strtr(htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['replace_original']), array('[' => '&#91;', ']' => '&#93;')),
+		'search' => strtr(westr::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['search_original']), array('[' => '&#91;', ']' => '&#93;')),
+		'replace' => strtr(westr::htmlspecialchars($mod_actions[$_REQUEST['operation_key']]['replace_original']), array('[' => '&#91;', ']' => '&#93;')),
 		'position' => $mod_actions[$_REQUEST['operation_key']]['position'],
 	);
 	// Let's do some formatting...
