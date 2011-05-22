@@ -107,6 +107,7 @@ ul#noava
 	margin: 0
 
 #edgehide extends #edge
+	display: block
 	position: relative
 	#sidebar
 		position: absolute
@@ -1349,11 +1350,12 @@ table
 		padding: 0 0 8px
 		margin: 10px 0
 		border-bottom: 1px solid #ccc
-		text-transform: uppercase
 	h5.hd extends h4.hd
 		color: #963
 	h6.hd extends h4.hd
 		color: #639
+	.hd img
+		vertical-align: -4px
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
