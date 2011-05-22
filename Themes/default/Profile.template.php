@@ -2477,11 +2477,11 @@ function template_profile_avatar_select()
 	echo '
 					<dt>
 						<strong id="personal_picture">', $txt['personal_picture'], '</strong>
-						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked' : '') . '> ' . $txt['no_avatar'] . '</label><br>
-						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_external']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_upload']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
-						', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="return swap_avatar(this);" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
+						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this.id);" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked' : '') . '> ' . $txt['no_avatar'] . '</label><br>
+						<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="return swap_avatar(this.id);" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked' : '') . '> ' . $txt['choose_avatar_gallery'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_external']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this.id);" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked' : '') . '> ' . $txt['my_own_pic'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_upload']) ? '<label' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '><input type="radio" onclick="return swap_avatar(this.id);" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked' : '') . '> ' . $txt['avatar_will_upload'] . '</label><br>' : '', '
+						', !empty($context['member']['avatar']['allow_gravatar']) ? '<label><input type="radio" onclick="return swap_avatar(this.id);" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked' : '') . '> ' . $txt['use_gravatar'] . '</label>' : '', '
 					</dt>
 					<dd>';
 
@@ -2491,7 +2491,7 @@ function template_profile_avatar_select()
 		echo '
 						<div id="avatar_server_stored">
 							<div>
-								<select name="cat" id="cat" size="10" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
+								<select name="cat" id="cat" size="6" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
 		// This lists all the file categories.
 		foreach ($context['avatars'] as $avatar)
 			echo '
@@ -2502,7 +2502,7 @@ function template_profile_avatar_select()
 								</select>
 							</div>
 							<div>
-								<select name="file" id="file" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
+								<select name="file" id="file" style="display: none" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
 							</div>
 							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
 						</div>';
@@ -2648,46 +2648,15 @@ function template_profile_avatar_select()
 	echo '
 					</dd>';
 
-	add_js(!empty($context['member']['avatar']['allow_server_stored']) ? '
-	$("#avatar_server_stored").' . ($context['member']['avatar']['choice'] == 'server_stored' ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-	$("#avatar_external").' . (($context['member']['avatar']['choice'] == 'external') ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-	$("#avatar_upload").' . (($context['member']['avatar']['choice'] == 'upload') ? 'show' : 'hide') . '();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
-	$("#avatar_gravatar").' . (($context['member']['avatar']['choice'] == 'gravatar' || (empty($context['member']['avatar']['allow_server_stored']))) ? 'show' : 'hide') . '();' : '', '
+	add_js('
+	swap_avatar("avatar_choice_', $context['member']['avatar']['choice'], '");
 
-	function swap_avatar(type)
-	{
-		switch (type.id)
-		{
-			case "avatar_choice_server_stored":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				$("#avatar_server_stored").show();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
-				$("#avatar_gravatar").hide();' : '', '
-			break;
-			case "avatar_choice_external":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				$("#avatar_external").show();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
-				$("#avatar_gravatar").hide();' : '', '
-			break;
-			case "avatar_choice_upload":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				$("#avatar_upload").show();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
-				$("#avatar_gravatar").hide();' : '', '
-			break;
-			case "avatar_choice_none":
-				', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
-				', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-				', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-			break;
-			case "avatar_choice_gravatar":', !empty($context['member']['avatar']['allow_server_stored']) ? '
-				$("#avatar_server_stored").hide();' : '', !empty($context['member']['avatar']['allow_external']) ? '
-				$("#avatar_external").hide();' : '', !empty($context['member']['avatar']['allow_upload']) ? '
-				$("#avatar_upload").hide();' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
-				$("#avatar_gravatar").show();' : '', '
-			break;
-		}
+	function swap_avatar(id)
+	{', !empty($context['member']['avatar']['allow_server_stored']) ? '
+		$("#avatar_server_stored").toggle(id == "avatar_choice_server_stored");' : '', !empty($context['member']['avatar']['allow_external']) ? '
+		$("#avatar_external").toggle(id == "avatar_choice_external");' : '', !empty($context['member']['avatar']['allow_upload']) ? '
+		$("#avatar_upload").toggle(id == "avatar_choice_upload");' : '', !empty($context['member']['avatar']['allow_gravatar']) ? '
+		$("#avatar_gravatar").toggle(id == "avatar_choice_gravatar");' : '', '
 		return true;
 	}');
 }

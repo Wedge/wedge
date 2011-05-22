@@ -462,6 +462,9 @@ table.aelista
 		opacity: 1
 		transition: opacity .5s
 
+.aelink
+	float: right
+
 .pics
 	margin: auto
 

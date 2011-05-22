@@ -128,27 +128,41 @@
 				padding = double_padding / 2;
 
 				if (desc)
+				{
 					$zoom_desc.css(css_width, $zoom_desc.css(css_width)).html(desc);
 
-				// Is it a narrow element with a long description? If yes, enlarge its parent to at least 500px.
-				if (img_width < 500 && ($zoom_desc.outerWidth(true) > img_width || $zoom_desc.outerHeight(true) > 200))
-				{
-					var resized = true;
-					$img.css({
-						maxWidth: width,
-						maxHeight: height
-					});
-					$zoom.css(css_width, Math.max($zoom_desc.outerWidth(), 500));
-					$zoom_desc.css(css_width, 'auto');
+					// If the viewport is too small, keep only the links in the description, reduce the picture height
+					// to match the maximum height, and resize the description to match the new picture width.
+					if ($zoom.height() > win_height && !is_html)
+					{
+						$zoom_desc.html($zoom_desc.find('.aelink'));
+						$img.css('height', $img.height() + win_height - $zoom.height());
+						$zoom.css('height', win_height);
+						$zoom_desc.css('width', $img.width());
+						$zoom.css('width', $zoom.width());
+						$img.css({ width: 'auto', height: 'auto' });
+					}
+
+					// Is it a narrow element with a long description? If yes, enlarge its parent to at least 500px.
+					if (img_width < 500 && ($zoom_desc.outerWidth(true) > img_width || $zoom_desc.outerHeight(true) > 200))
+					{
+						var resized = true;
+						$img.css({
+							maxWidth: width,
+							maxHeight: height
+						});
+						$zoom.css(css_width, Math.max($zoom_desc.outerWidth(), 500));
+						$zoom_desc.css(css_width, 'auto');
+					}
 				}
 
 				// Target size -- make sure it's within the browser viewport.
 				var
 					width = $zoom.width(),
 					height = $zoom.height(),
-					on_width = win_height < height ? width * (win_height / height) : width,
+					on_width = height > win_height ? width * (win_height / height) : width,
 					on_height = Math.min(win_height, height),
-					on_top = Math.max((win_height - on_height) / 2 + scrollTop, 0),
+					on_top = Math.max(0, (win_height - on_height) / 2 + scrollTop),
 					on_left = (win_width - on_width) / 2 + scrollLeft;
 
 				if (!resized)
