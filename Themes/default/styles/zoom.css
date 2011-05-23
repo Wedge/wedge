@@ -6,6 +6,7 @@
 
 .zoom
 	display: inline-block
+	position: relative
 
 .zoom-base
 	// We set visibility to hidden to avoid getting 0 on child zoom-desc's height
@@ -41,8 +42,9 @@
 	.mg_desc
 		color: #999
 
+// !!! Useless?
 #zoom-desc
-	height: auto
+	width, height: auto
 
 .zoom-overlay, .zoom-html
 	display: none
@@ -80,7 +82,8 @@
 	border: 0
 	#zoom-content
 		padding: 0 0 8px
-		margin: 0
+	.zoom-html
+		padding: 10px
 	.zoom-desc-contain, .zoom-html
 		color: #fff
 		a

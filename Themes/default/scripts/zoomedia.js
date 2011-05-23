@@ -17,6 +17,7 @@
 			img_width, img_height, show_loading,
 			padding, double_padding,
 			css_width = 'width',
+			css_auto = 'auto',
 
 			zoom = '#zoom', $zoom, $zoom_desc, $zoom_close,
 			$zoom_content, $zoom_desc_contain,
@@ -26,23 +27,19 @@
 			outline = options.outline || '',
 
 			zooming = active = false,
-			original_size = {}, ofs,
+			original_size = {},
 			win = $(window);
 
 		$(this).each(function () {
-			// A small hack for Opera due to the bug mentioned in media.opera.css...
-			ofs = !is_opera ? $(this).offset() : { top: 0, left: 0 };
 			$(this).click(show).dblclick(function (e) {
 				if (zooming)
 					double_clicked = true;
 				return false;
 			});
-			if (is_opera)
-				$(this).css('position', 'relative');
 			$('<div id="shim_' + this.id + '">').appendTo(this).css({
 				position: 'absolute',
-				left: ofs.left,
-				top: ofs.top,
+				left: 0,
+				top: 0,
 				width: $(this).width(),
 				height: $(this).height(),
 				zIndex: 2
@@ -129,22 +126,23 @@
 
 				if (desc)
 				{
-					$zoom_desc.css(css_width, $zoom_desc.css(css_width)).html(desc);
+					// Force width on description, to see what height we end up with.
+					$zoom_desc.css(css_width, is_ie6 || is_ie7 ? $img.width() - double_padding : $zoom_desc.width()).html(desc);
 
 					// If the viewport is too small, keep only the links in the description, reduce the picture height
 					// to match the maximum height, and resize the description to match the new picture width.
-					if ($zoom.height() > win_height && !is_html)
+					if (!is_html && $zoom.height() > win_height)
 					{
-						$zoom_desc.html($zoom_desc.find('.aelink'));
-						$img.css('height', $img.height() + win_height - $zoom.height());
-						$zoom.css('height', win_height);
-						$zoom_desc.css('width', $img.width());
-						$zoom.css('width', $zoom.width());
-						$img.css({ width: 'auto', height: 'auto' });
+						$zoom_desc.css(css_width, css_auto).html($zoom_desc.find('.aelink'));
+						$img.css({ width: css_auto, height: $img.height() + win_height - $zoom.height() });
+						$zoom_desc.css(css_width, $zoom_desc.width());
+						$zoom.css({ width: $zoom.width(), height: $zoom.height() });
+						$img.css('height', css_auto);
+						img_width = $img.width();
+						img_height = $img.height();
 					}
-
 					// Is it a narrow element with a long description? If yes, enlarge its parent to at least 500px.
-					if (img_width < 500 && ($zoom_desc.outerWidth(true) > img_width || $zoom_desc.outerHeight(true) > 200))
+					else if (!is_html && img_width < 500 && ($zoom_desc.outerWidth(true) > img_width || $zoom_desc.outerHeight(true) > 200))
 					{
 						var resized = true;
 						$img.css({
@@ -152,7 +150,7 @@
 							maxHeight: height
 						});
 						$zoom.css(css_width, Math.max($zoom_desc.outerWidth(), 500));
-						$zoom_desc.css(css_width, 'auto');
+						$zoom_desc.css(css_width, css_auto);
 					}
 				}
 
@@ -160,13 +158,13 @@
 				var
 					width = $zoom.width(),
 					height = $zoom.height(),
-					on_width = height > win_height ? width * (win_height / height) : width,
-					on_height = Math.min(win_height, height),
+					on_width = !is_html && height > win_height ? width * (win_height / height) : width,
+					on_height = !is_html ? Math.min(win_height, height) : height,
 					on_top = Math.max(0, (win_height - on_height) / 2 + scrollTop),
 					on_left = (win_width - on_width) / 2 + scrollLeft;
 
-				if (!resized)
-					$img.css(css_width, '100%');
+				if (!resized && !is_html)
+					$img.css({ width: '100%', height: css_auto });
 
 				$zoom.css({
 					left: original_size.x - padding,
@@ -212,7 +210,7 @@
 
 			var $frame = $anchor.next('.zoom-html'), fw = $frame.width(), fh = $frame.height();
 			if (!fw)
-				$('<img>').load(whenReady).attr('src', url);
+				$('<img>').bind('load.zoom', whenReady).attr('src', url);
 			else
 				whenReady.call($frame.clone().addClass('nodrag').appendTo($zoom_content).show()[0]);
 
@@ -227,18 +225,18 @@
 			{
 				var pos = $img.offset();
 				loading(pos.left + $img.width() / 2, pos.top + $img.height() / 2);
-				$img.unbind('load').load(function () {
+				$img.unbind('load.zoom').load(function () {
 					var
 						wt = img.naturalWidth,
 						ht = img.naturalHeight,
 						rezoom = function () {
 							done_loading();
-							$zoom_desc.css(css_width, 'auto');
+							$zoom_desc.css(css_width, css_auto);
 							$zoom.animate({
-								left: '-=' + (wt - img_width) / 2,
-								top: '-=' + (ht - img_height) / 2,
-								width: '+=' + (wt - img_width),
-								height: '+=' + (ht - img_height)
+								left: '-=' + (wt - $img.width()) / 2,
+								top: '-=' + (ht - $img.height()) / 2,
+								width: '+=' + (wt - $img.width()),
+								height: '+=' + (ht - $img.height())
 							}, 500, null, function () {
 								$zoom_close.show();
 							});
@@ -267,7 +265,7 @@
 			show_loading = setTimeout(function () {
 				var loa = $('<div class="zoom-loading">' + (lang.loading || '') + '</div>').click(function () {
 					zooming = false;
-					$img.unbind('load');
+					$('img').unbind('load.zoom');
 					$(this).remove();
 					return false;
 				}).mousedown(false);
