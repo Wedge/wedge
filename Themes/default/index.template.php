@@ -108,8 +108,7 @@ function template_html_above()
 
 	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
-	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">
-	<meta name="description" content="', $context['page_title_html_safe'], '">', !empty($context['meta_keywords']) ? '
+	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">', !empty($context['meta_keywords']) ? '
 	<meta name="keywords" content="' . $context['meta_keywords'] . '">' : '', '
 	<meta name="generator" content="Wedge">';
 

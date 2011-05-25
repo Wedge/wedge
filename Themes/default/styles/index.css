@@ -110,6 +110,7 @@ ul#noava
 	display: block
 	position: relative
 	#sidebar
+		display: block
 		position: absolute
 		left: -260px
 		transition: left .3s ease
@@ -117,6 +118,7 @@ ul#noava
 		:hover
 			left: -40px
 	#main_content
+		display: block
 		width: 100%
 
 #main_content

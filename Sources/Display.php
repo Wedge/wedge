@@ -1217,6 +1217,8 @@ function prepareDisplayContext($reset = false)
 		return false;
 	}
 
+	call_hook('display_prepare_post', array(&$counter, &$message));
+
 	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
 	if (empty($context['icon_sources']))
 	{
@@ -1344,18 +1346,18 @@ function prepareDisplayContext($reset = false)
 	$context['last_msg_id'] = $message['id_msg'];
 	$context['last_post_length'] = $context['current_post_length'];
 
-	// 1. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
-	if ($can_pm === null)
-	{
-		$can_pm = allowedTo('pm_send');
-		$profile_own = allowedTo('profile_view_own');
-		$profile_any = allowedTo('profile_view_any');
-		$buddy = allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']);
-	}
-
 	// Now, to business. Is it not a guest, and we haven't done this before?
 	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
 	{
+		// 1. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
+		if ($can_pm === null)
+		{
+			$can_pm = allowedTo('pm_send');
+			$profile_own = allowedTo('profile_view_own');
+			$profile_any = allowedTo('profile_view_any');
+			$buddy = allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']);
+		}
+
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
 		$menu = array();
 		if ($output['is_message_author'])
@@ -1389,6 +1391,8 @@ function prepareDisplayContext($reset = false)
 		if (!empty($menu))
 			$context['user_menu'][$output['member']['id']] = $menu;
 	}
+
+	call_hook('display_post_done', array(&$counter, &$output));
 
 	if (empty($options['view_newest_first']))
 		$counter++;
