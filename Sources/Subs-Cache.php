@@ -405,7 +405,8 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
 	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */...
 	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final); // Which we save.
-	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip comments like me. OMG does this mean I'm gonn
+	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.
+	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -506,6 +507,14 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 		$final .= $cont;
 	}
 
+	// We make sure to remove jQuery (if present) before we pack the file.
+	if (strpos($id, 'jquery') !== false)
+	{
+		preg_match('~<wedge_jquery>(.*?)</wedge_jquery>~s', $final, $jquery);
+		if (!empty($jquery[1]))
+			$final = str_replace($jquery[0], 'WEDGE_JQUERY();', $final);
+	}
+
 	// Call the minify process, either JSMin or Packer.
 	if ($minify === 'jsmin')
 	{
@@ -527,10 +536,12 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 			foreach ($comments[1] as $comment)
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
-		// Adding a semicolon after a function/prototype declaration is mandatory in Packer.
-		// The original SMF code didn't bother with that, and developers are advised NOT to
-		// follow that 'advice'. If you can't fix your scripts, uncomment the following
-		// block. Semicolons will be added automatically, at a small performance cost.
+		/*
+			Adding a semicolon after a function/prototype declaration is mandatory in Packer.
+			The original SMF code didn't bother with that, and developers are advised NOT to
+			follow that 'advice'. If you can't fix your scripts, uncomment the following
+			block. Semicolons will be added automatically, at a small performance cost.
+		*/
 
 		/*
 		$max = strlen($final);
@@ -557,7 +568,19 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 			$i++;
 		}
 		*/
+
+		/*
+			Another note: Packer doesn't seem to support things like this:
+				for (var something in { some: 1, object: 2 })
+			It can be fixed by replacing the $VAR_TIDY line in Class-Packer.php with:
+				private $VAR_TIDY = '/\\b(var|function)\\b|\\s(in\\s+[^;{]+|in(?=[);]|$))/';
+			But this is (relatively) untested, so I chose not to include it.
+		*/
 	}
+
+	// ...And we restore jQuery.
+	if (isset($jquery, $jquery[1]))
+		$final = str_replace('WEDGE_JQUERY();', trim($jquery[1]) . "\n", $final);
 
 	if ($gzip)
 		$final = gzencode($final, 9);
