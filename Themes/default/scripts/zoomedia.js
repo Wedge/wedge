@@ -100,6 +100,7 @@
 
 			loading(original_size.x + original_size.w / 2, original_size.y + original_size.h / 2);
 
+			// This gets executed once the item to zoom is ready to show.
 			var whenReady = function () {
 
 				img = this;
@@ -127,17 +128,19 @@
 				if (desc)
 				{
 					// Force width on description, to see what height we end up with.
-					$zoom_desc.css(css_width, is_ie6 || is_ie7 ? $img.width() - double_padding : $zoom_desc.width()).html(desc);
+					$zoom.css('visibility', 'visible').show().css('top', scrollTop);
+					$zoom_desc.css(css_width, is_ie7 ? img_width - 20 + double_padding : $zoom_desc_contain.width()).html(desc);
 
 					// If the viewport is too small, keep only the links in the description, reduce the picture height
 					// to match the maximum height, and resize the description to match the new picture width.
+					// (This code could be much simpler, but it wouldn't work on IE6/7. Known song.)
 					if (!is_html && $zoom.height() > win_height)
 					{
-						$zoom_desc.css(css_width, css_auto).html($zoom_desc.find('.aelink'));
-						$img.css({ width: css_auto, height: $img.height() + win_height - $zoom.height() });
-						$zoom_desc.css(css_width, $zoom_desc.width());
+						$zoom_desc.html($zoom_desc.find('.aelink').addClass('lonely')).css(css_width, css_auto);
+						if ($zoom.height() > win_height)
+							$img.css({ width: css_auto, height: $img.height() + win_height - $zoom.height() });
+						$zoom_desc.css(css_width, $zoom_desc_contain.width());
 						$zoom.css({ width: $zoom.width(), height: $zoom.height() });
-						$img.css('height', css_auto);
 						img_width = $img.width();
 						img_height = $img.height();
 					}
@@ -190,7 +193,8 @@
 						if (options.noScale)
 							$zoom_content.html(img);
 
-						$zoom_desc_contain.css('overflow', 'visible');
+						if (!is_ie7)
+							$zoom_desc_contain.css('overflow', 'visible');
 						$zoom.css('zIndex', 999);
 
 						// Now that our animation is finished, let's check whether
@@ -315,6 +319,6 @@
 			);
 			return false;
 		}
-	}
+	};
 
 })(jQuery);

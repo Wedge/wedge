@@ -42,9 +42,9 @@
 	.mg_desc
 		color: #999
 
-// !!! Useless?
-#zoom-desc
-	width, height: auto
+.lonely
+	float: none
+	text-align: center
 
 .zoom-overlay, .zoom-html
 	display: none
@@ -81,9 +81,11 @@
 	background: #777
 	border: 0
 	#zoom-content
-		padding: 0 0 8px
+		padding: 0
 	.zoom-html
 		padding: 10px
+	.zoom-desc-contain
+		margin-top: 5px
 	.zoom-desc-contain, .zoom-html
 		color: #fff
 		a
