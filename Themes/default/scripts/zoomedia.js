@@ -129,8 +129,6 @@
 				{
 					// Force width on description, to see what height we end up with.
 					$zoom_desc.css(css_width, $zoom_desc_contain.width()).html(desc);
-					if (!is_ie7)
-						$zoom_desc_contain.css('overflow', 'hidden');
 
 					// If the viewport is too small, keep only the links in the description, reduce the picture height
 					// to match the maximum height, and resize the description to match the new picture width.
@@ -167,6 +165,7 @@
 					on_top = Math.max(0, (win_height - on_height) / 2 + scrollTop),
 					on_left = (win_width - on_width) / 2 + scrollLeft;
 
+				$zoom_desc_contain.css('overflow', 'hidden');
 				if (!resized && !is_html)
 					$img.css({ width: '100%', height: css_auto });
 
