@@ -34,13 +34,12 @@
 
 .zoom-desc-contain
 	box-sizing: border-box
-	overflow: hidden
 	margin: 0 10px 10px
 	text-align: left
 	cursor: default
 	color: #000
 	.mg_desc
-		color: #999
+		color: #888
 
 .lonely
 	float: none
@@ -94,6 +93,9 @@
 			color: #ccc
 
 .zoom-white extends .zoom-base
+.zoom-glass extends .zoom-base
+	background: linear-gradient(bottom, #fff, rgba(255,255,255, .9) 100px, rgba(0,0,0, .2) 100%, rgba(0,0,0, .2))
+
 .zoom-black extends .zoom-base
 	background: #000
 	border: 1px solid #333

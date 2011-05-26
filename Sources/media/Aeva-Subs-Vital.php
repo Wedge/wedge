@@ -474,7 +474,8 @@ function aeva_initZoom($autosize, $peralbum = array())
 			playTitle: "', $txt['media_zoom_play'], '",
 			pauseTitle: "', $txt['media_zoom_pause'], '"
 		},
-		outline: "', empty($peralbum) || $peralbum['outline'] == 'white' ? 'white' : ($peralbum['outline'] == 'black' ? 'black' : 'drop-shadow'), '"
+		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '",
+		expand: ', !isset($peralbum['expand']) ? 800 : (int) $peralbum['expand'], '
 	});
 ');
 	return;
@@ -529,11 +530,8 @@ function aeva_initZoom($autosize, $peralbum = array())
 	if (empty($peralbum))
 		return;
 
-	add_js(($peralbum['outline'] == 'drop-shadow' ? '' : '
-	hs.outlineType = \'' . $peralbum['outline'] . '\';') . ($peralbum['autosize'] == 'yes' ? '' : '
-	hs.allowSizeReduction = false;') . (!isset($peralbum['expand']) || $peralbum['expand'] == 250 ? '' : '
-	hs.expandDuration = ' . $peralbum['expand'] . ';
-	hs.restoreDuration = ' . $peralbum['expand'] . ';'));
+	add_js($peralbum['autosize'] == 'yes' ? '' : '
+	hs.allowSizeReduction = false;');
 
 	return;
 }

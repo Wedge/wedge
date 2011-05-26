@@ -25,6 +25,7 @@
 			options = options || {},
 			lang = options.lang || {},
 			outline = options.outline || '',
+			duration = options.expand || 800,
 
 			zooming = active = false,
 			original_size = {},
@@ -119,7 +120,6 @@
 
 				done_loading();
 				$zoom_desc_contain.toggle(desc != '');
-
 				$zoom_content.html(options.noScale ? '' : $img.addClass('scale'));
 
 				double_padding = $zoom.width() - img_width;
@@ -128,12 +128,12 @@
 				if (desc)
 				{
 					// Force width on description, to see what height we end up with.
-					$zoom.css('visibility', 'visible').show().css('top', scrollTop);
-					$zoom_desc.css(css_width, is_ie7 ? img_width - 20 + double_padding : $zoom_desc_contain.width()).html(desc);
+					$zoom_desc.css(css_width, $zoom_desc_contain.width()).html(desc);
+					$zoom_desc_contain.css('overflow', 'hidden');
 
 					// If the viewport is too small, keep only the links in the description, reduce the picture height
 					// to match the maximum height, and resize the description to match the new picture width.
-					// (This code could be much simpler, but it wouldn't work on IE6/7. Known song.)
+					// (This code could be simpler, but it wouldn't work on IE. Known song.)
 					if (!is_html && $zoom.height() > win_height)
 					{
 						$zoom_desc.html($zoom_desc.find('.aelink').addClass('lonely')).css(css_width, css_auto);
@@ -170,31 +170,27 @@
 					$img.css({ width: '100%', height: css_auto });
 
 				$zoom.css({
-					left: original_size.x - padding,
-					top: original_size.y - padding,
-					width: original_size.w + double_padding,
-					height: original_size.h + double_padding
-				});
-
-				if (options.closeOnClick)
-					$zoom.click(hide);
-
-				$zoom.toggle(is_html).css('visibility', 'visible').animate(
-					{
+						left: original_size.x - padding,
+						top: original_size.y - padding,
+						width: original_size.w + double_padding,
+						height: original_size.h + double_padding,
+						visibility: 'visible'
+					})
+				.toggle(is_html)
+				.animate({
 						left: on_left,
 						top: on_top,
 						width: on_width,
 						height: on_height,
 						opacity: is_html ? '+=0' : 'show'
 					},
-					800,
+					duration,
 					null,
 					function () {
 						if (options.noScale)
 							$zoom_content.html(img);
 
-						if (!is_ie7)
-							$zoom_desc_contain.css('overflow', 'visible');
+						$zoom_desc_contain.css('overflow', 'visible');
 						$zoom.css('zIndex', 999);
 
 						// Now that our animation is finished, let's check whether
@@ -208,8 +204,8 @@
 						}
 						zooming = false;
 						active = true;
-					}
-				).dragslide();
+					})
+				.dragslide();
 			};
 
 			var $frame = $anchor.next('.zoom-html'), fw = $frame.width(), fh = $frame.height();
@@ -301,6 +297,7 @@
 				$zoom_content.html('');
 
 			$zoom_close.hide();
+			$zoom_desc_contain.css('overflow', 'hidden');
 			$zoom.animate(
 				{
 					left: original_size.x - padding,
@@ -309,7 +306,7 @@
 					height: original_size.h + double_padding,
 					opacity: 'hide'
 				},
-				800,
+				duration,
 				null,
 				function () {
 					zooming = false;
