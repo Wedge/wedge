@@ -494,7 +494,7 @@ function template_convert_entities()
 		</we:title>
 		<div class="windowbg wrc">
 			<p>', $txt['entity_convert_introduction'], '</p>
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 				<input type="submit" value="', $txt['entity_convert_proceed'], '">
 			</form>
 		</div>

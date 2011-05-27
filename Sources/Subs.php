@@ -915,7 +915,10 @@ function writeLog($force = false)
 
 		// In the case of a dlattach action, session_var may not be set.
 		if (!isset($context['session_var']))
+		{
 			$context['session_var'] = $_SESSION['session_var'];
+			$context['session_query'] = $context['session_var'] . '=' . $_SESSION['session_value'];
+		}
 
 		unset($serialized['sesc'], $serialized[$context['session_var']]);
 		$serialized = serialize($serialized);

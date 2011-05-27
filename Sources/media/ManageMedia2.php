@@ -85,7 +85,7 @@ function aeva_admin_maintenance()
 
 	// Construct the template array
 	$context['aeva_dos'] = array();
-	$end_url = ($album ? ';album=' . $album : '') . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$end_url = ($album ? ';album=' . $album : '') . ';' . $context['session_query'];
 	foreach ($sas as $sa)
 		if ($sa !== 'clear')
 			$context['aeva_dos']['tasks'][] = array(
@@ -275,7 +275,7 @@ function aeva_admin_maintenance_regenerate()
 		$context['aeva_maintenance_done'] = 'pending';
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_pending'], $total_done, $total_to_do);
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=regen' . ($album ? ';album=' . $album : '') . ';st=' . $_GET['st'] . ';start=' . $total_done . ';' . $context['session_var'] . '=' . $context['session_id']);
+		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=regen' . ($album ? ';album=' . $album : '') . ';st=' . $_GET['st'] . ';start=' . $total_done . ';' . $context['session_query']);
 	}
 	// We are done! We are done!!!
 	else
@@ -611,7 +611,7 @@ function aeva_admin_maintenance_finderrors()
 	if ($total - ((int) $_REQUEST['start'] + $per_load) > 0)
 	{
 		$context['aeva_maintenance_done'] = 'pending';
-		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_finderror_pending'], (int) $_REQUEST['start'] + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=finderrors;start=' . ((int) $_REQUEST['start'] + $per_load) . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_finderror_pending'], (int) $_REQUEST['start'] + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=finderrors;start=' . ((int) $_REQUEST['start'] + $per_load) . ';' . $context['session_query']);
 		$_SESSION['aeva_errors'] = $errors;
 		return;
 	}
@@ -918,7 +918,7 @@ function aeva_admin_maintenance_clear()
 	if ($start + $per_load < $total)
 	{
 		$context['aeva_maintenance_done'] = 'pending';
-		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_clear_pending'], $start + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=clear;start=' . ((int) $_REQUEST['start'] + $per_load) . ';total=' . $total . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_clear_pending'], $start + $per_load, $total, $scripturl . '?action=admin;area=aeva_maintenance;sa=clear;start=' . ((int) $_REQUEST['start'] + $per_load) . ';total=' . $total . ';' . $context['session_query']);
 		return;
 	}
 
@@ -980,7 +980,7 @@ function aeva_admin_maintenance_checkfiles()
 		else
 		{
 			$context['aeva_maintenance_done'] = 'error';
-			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkfiles_found'], count($extra_items), round($extra_size/1024), $scripturl . '?action=admin;area=aeva_maintenance;sa=checkfiles;delete;' . $context['session_var'] . '=' . $context['session_id']);
+			$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_checkfiles_found'], count($extra_items), round($extra_size/1024), $scripturl . '?action=admin;area=aeva_maintenance;sa=checkfiles;delete;' . $context['session_query']);
 			$context['aeva_maintenance_message'] .= '<ul class="normallist margintop"><li class="largepadding">' . implode('</li><li class="largepadding">', $extra_items) . '</li></ul>';
 		}
 	}
@@ -1059,7 +1059,7 @@ function aeva_admin_maintenance_checkorphans()
 
 		aeva_updateSettings('total_files', $total_files, true);
 		$context['aeva_maintenance_message'] = 'Phase 1/3 - ' . sprintf($txt['media_admin_maintenance_operation_pending'], 0, $amSettings['total_files']);
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=1;start=0;' . $context['session_var'] . '=' . $context['session_id']);
+		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=1;start=0;' . $context['session_query']);
 		return;
 	}
 
@@ -1119,7 +1119,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 1, 3) . ' - ' . sprintf($txt['media_admin_maintenance_operation_pending'], $start + $items_done, $amSettings['total_files']);
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($items_left < 500 && $items_done == $items_left ? '2' : '1;start=' . ($start + $items_done)) . ';' . $context['session_var'] . '=' . $context['session_id']);
+		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($items_left < 500 && $items_done == $items_left ? '2' : '1;start=' . ($start + $items_done)) . ';' . $context['session_query']);
 		return;
 	}
 
@@ -1137,7 +1137,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 2, 3) . ' - ' . $txt['media_admin_maintenance_operation_pending_raw'];
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '2;start=' . base64_encode($cancel_scan) : '3') . ';' . $context['session_var'] . '=' . $context['session_id']);
+		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '2;start=' . base64_encode($cancel_scan) : '3') . ';' . $context['session_query']);
 		return;
 	}
 
@@ -1153,7 +1153,7 @@ function aeva_admin_maintenance_checkorphans()
 		// Let the server breathe -- relaunch the script.
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_maintenance_operation_phase'], 3, 3) . ' - ' . $txt['media_admin_maintenance_operation_pending_raw'];
 		// Send the header
-		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '3;start=' . base64_encode($cancel_scan) : 'done') . ';' . $context['session_var'] . '=' . $context['session_id']);
+		aeva_refreshPage($scripturl . '?action=admin;area=aeva_maintenance;sa=checkorphans' . $url_album . ';phase=' . ($cancel_scan ? '3;start=' . base64_encode($cancel_scan) : 'done') . ';' . $context['session_query']);
 		return;
 	}
 
@@ -1236,7 +1236,7 @@ function aeva_admin_bans()
 
 	// Get the index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=admin;area=aeva_bans;' . $context['session_var'] . '=' . $context['session_id'], $_REQUEST['start'], $total_logs, 20);
+	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
 
 	// Finish it off
 	loadSubTemplate('aeva_admin_bans');
@@ -1267,13 +1267,13 @@ function aeva_admin_bans_add()
 	$context['aeva_curr_members'] = implode(',',$context['aeva_curr_members']);
 
 	// Construct the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=add;' . $context['session_var'] . '=' . $context['session_id'];
+	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=add;' . $context['session_query'];
 	$context['aeva_form'] = array(
 		'banning' => array(
 			'fieldname' => 'banning',
 			'type' => 'text',
 			'value' => $context['aeva_curr_members'],
-			'label' => $txt['media_admin_banning'] . ' <a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'label' => $txt['media_admin_banning'] . ' <a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 			'custom' => 'id="banning"',
 		),
 		'type' => array(
@@ -1377,7 +1377,7 @@ function aeva_admin_bans_add()
 		);
 		aeva_logModAction($opts);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query']);
 	}
 }
 
@@ -1456,7 +1456,7 @@ function aeva_admin_bans_edit()
 	wesql::free_result($request);
 
 	// Construct the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=edit;in=' . $_REQUEST['in'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=edit;in=' . $_REQUEST['in'] . ';' . $context['session_query'];
 	$context['aeva_form'] = array(
 		'banning' => array(
 			'fieldname' => 'banning',
@@ -1536,7 +1536,7 @@ function aeva_admin_bans_edit()
 			)
 		);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query']);
 	}
 }
 

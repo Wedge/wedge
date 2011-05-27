@@ -247,7 +247,7 @@ function aeva_admin_embed()
 			aeva_settings($settings, $sitelist[$stype], $stype, $checkall);
 
 	// Render the form
-	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_var'].'='.$context['session_id'];
+	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_query'];
 	if (!empty($warning_message))
 		$context['aeva_form']['warning'] = array('type' => 'info', 'label' => '', 'fieldname' => 'info', 'value' => $warning_message, 'options' => array(), 'multi' => false, 'next' => null, 'subtext' => '', 'skip_left' => true);
 

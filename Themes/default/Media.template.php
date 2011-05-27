@@ -47,11 +47,11 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_unapproved_items']))
-			printf($txt['media_unapproved_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_items']);
+			printf($txt['media_unapproved_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], $amSettings['num_unapproved_items']);
 		if (!empty($amSettings['num_unapproved_comments']))
-			printf($txt['media_unapproved_coms_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_comments']);
+			printf($txt['media_unapproved_coms_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], $amSettings['num_unapproved_comments']);
 		if (!empty($amSettings['num_unapproved_albums']))
-			printf($txt['media_unapproved_albums_notice'], $scripturl . '?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_unapproved_albums']);
+			printf($txt['media_unapproved_albums_notice'], $scripturl . '?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], $amSettings['num_unapproved_albums']);
 		echo '</div>';
 	}
 
@@ -61,9 +61,9 @@ function template_aeva_header()
 		echo '
 	<div class="unapproved_notice">';
 		if (!empty($amSettings['num_reported_items']))
-			printf($txt['media_reported_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;items;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_reported_items']);
+			printf($txt['media_reported_items_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;items;' . $context['session_query'], $amSettings['num_reported_items']);
 		if (!empty($amSettings['num_reported_comments']))
-			printf($txt['media_reported_comments_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;comments;' . $context['session_var'] . '=' . $context['session_id'], $amSettings['num_reported_comments']);
+			printf($txt['media_reported_comments_notice'] . '<br>', $scripturl . '?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], $amSettings['num_reported_comments']);
 		echo '</div>';
 	}
 
@@ -688,7 +688,7 @@ function template_aeva_item_playlists()
 				<strong><a href="', $galurl, 'sa=playlists;in=', $p['id'], '">', $p['name'], '</a></strong>', empty($p['owner_id']) ? '' : '
 				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
 				<br><span class="smalltext">', $txt['media_items'], ': ', $p['num_items'], $p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br>
-				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>',
+				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_query'] . '" style="text-decoration: none"><img src="' . $settings['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>',
 				'</span>
 			</td>', $res == 3 ? '
 		</tr>' : '';
@@ -768,7 +768,7 @@ function template_aeva_item_comments()
 					<a href="' . $galurl . 'sa=report;type=comment;in=' . $c['id_comment'] . '">
 						<img src="' . $settings['images_aeva'] . '/report.png"> ' . $txt['media_report_this_item'] . '
 					</a>' : '', !$c['approved'] && $c['can_delete'] ? '
-					<a href="' . $scripturl . '?action=media;area=moderate;sa=submissions;do=approve;in=' . $c['id_comment'] . ';type=coms;' . $context['session_var'] . '=' . $context['session_id'] . '">
+					<a href="' . $scripturl . '?action=media;area=moderate;sa=submissions;do=approve;in=' . $c['id_comment'] . ';type=coms;' . $context['session_query'] . '">
 						<img src="' . $settings['images_aeva'] . '/tick.png" title="' . $txt['media_admin_approve'] . '"> ' . $txt['media_admin_approve'] . '
 					</a>' : '', '
 				</div>';
@@ -1064,10 +1064,10 @@ function template_aeva_viewAlbum()
 					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
 			if ($user_info['is_admin'])
 				echo '
-					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
+					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
 			if (aeva_allowedTo('moderate') && $album_data['approved'] == 0)
 				echo '
-					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
+					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
 		}
 
 		if (aeva_allowedTo('multi_download'))
@@ -1076,7 +1076,7 @@ function template_aeva_viewAlbum()
 
 		if (aeva_allowedTo('access_unseen'))
 			echo '
-					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_var'], '=', $context['session_id'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
+					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
 
 		echo '
 				</ul>
@@ -1171,8 +1171,8 @@ function template_aeva_unseen()
 	{
 		$mark_seen = array();
 		if (strpos($context['aeva_page_index'], '<a') !== false)
-			$mark_seen['pageseen'] = array('text' => 'media_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_var'] . '=' . $context['session_id']);
-		$mark_seen['markseen'] = array('text' => 'media_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_var'] . '=' . $context['session_id']);
+			$mark_seen['pageseen'] = array('text' => 'media_page_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;' . (isset($_GET['start']) ? 'start=' . $_GET['start'] . ';' : '') . 'pageseen=' . implode(',', array_keys($context['aeva_items'])) . ';' . $context['session_query']);
+		$mark_seen['markseen'] = array('text' => 'media_mark_as_seen', 'image' => 'markread.gif', 'lang' => true, 'url' => $galurl . 'sa=unseen;markseen;' . $context['session_query']);
 		template_button_strip($mark_seen);
 	}
 
@@ -1240,7 +1240,7 @@ function template_aeva_search_searching()
 				</td>
 				<td class="w50 left">
 					<input name="sch_mem" id="sch_mem" type="text" size="25">
-					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_var'] . '=', $context['session_id'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
+					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_query'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
 				</td>
 			</tr>
 			<tr>

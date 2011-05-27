@@ -80,7 +80,7 @@ function template_summary()
 	// Can they add this member as a buddy?
 	if (!empty($context['can_have_buddy']) && !$context['user']['is_owner'])
 		echo '
-				<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_var'], '=', $context['session_id'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
+				<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_query'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
 
 	echo '
 				</span>';
@@ -206,7 +206,7 @@ function template_summary()
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
-				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=activateaccount;' . $context['session_var'] . '=' . $context['session_id'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
+				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=activateaccount;' . $context['session_query'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
 
 		// If the current member is banned, show a message and possibly a link to the ban.
 		if (!empty($context['member']['bans']))
@@ -348,7 +348,7 @@ function template_showDrafts()
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
 						<li class="reply_button"><a href="', $scripturl . '?action=post;', ($post['topic']['no_edit'] || empty($post['topic']['id'])) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
-						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
+						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
 				</div>
 				<br class="clear">
@@ -438,7 +438,7 @@ function template_showPosts()
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])
 					echo '
-							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
+							<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove'], '</span></a></li>';
 
 				echo '
 						</ul>
@@ -576,7 +576,7 @@ function template_editBuddies()
 				<td>', $buddy['aim']['link'], '</td>
 				<td>', $buddy['yim']['link'], '</td>
 				<td>', $buddy['msn']['link'], '</td>
-				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '"></a></td>
+				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_query'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '"></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -656,7 +656,7 @@ function template_editIgnoreList()
 				<td>', $member['aim']['link'], '</td>
 				<td>', $member['yim']['link'], '</td>
 				<td>', $member['msn']['link'], '</td>
-				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '"></a></td>
+				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_query'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '"></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -1705,7 +1705,7 @@ function template_groupMembership()
 				// Can they leave their group?
 				if ($group['can_leave'])
 					echo '
-							<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=groupmembership;' . $context['session_var'] . '=' . $context['session_id'] . ';gid=' . $group['id'] . '">' . $txt['leave_group'] . '</a>';
+							<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=groupmembership;' . $context['session_query'] . ';gid=' . $group['id'] . '">' . $txt['leave_group'] . '</a>';
 				echo '
 						</td>
 					</tr>';
@@ -1751,7 +1751,7 @@ function template_groupMembership()
 
 				if ($group['type'] == 3)
 					echo '
-							<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';save;area=groupmembership;', $context['session_var'], '=', $context['session_id'], ';gid=', $group['id'], '">', $txt['join_group'], '</a>';
+							<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';save;area=groupmembership;', $context['session_query'], ';gid=', $group['id'], '">', $txt['join_group'], '</a>';
 				elseif ($group['type'] == 2 && $group['pending'])
 					echo '
 							', $txt['approval_pending'];
@@ -2710,7 +2710,7 @@ function template_profile_theme_pick()
 						<strong>', $txt['current_theme'], ':</strong>
 					</dt>
 					<dd>
-						', $context['member']['theme']['name'], ' <a href="', $scripturl, '?action=theme;sa=pick;u=', $context['id_member'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['change'], '</a>
+						', $context['member']['theme']['name'], ' <a href="', $scripturl, '?action=theme;sa=pick;u=', $context['id_member'], ';', $context['session_query'], '">', $txt['change'], '</a>
 					</dd>';
 }
 

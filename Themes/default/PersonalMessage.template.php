@@ -153,7 +153,7 @@ function template_folder()
 			// Build the normal button array.
 			$conversation_buttons = array(
 				'reply' => array('text' => 'reply_to_all', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $context['current_pm'] . ';u=all', 'active' => true),
-				'delete' => array('text' => 'delete_conversation', 'image' => 'delete.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions%5B' . $context['current_pm'] . '%5D=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'custom' => 'onclick="return confirm(' . $remove_confirm . ');"'),
+				'delete' => array('text' => 'delete_conversation', 'image' => 'delete.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions%5B' . $context['current_pm'] . '%5D=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_query'], 'custom' => 'onclick="return confirm(' . $remove_confirm . ');"'),
 			);
 
 			// Show the conversation buttons.
@@ -372,7 +372,7 @@ function template_folder()
 					<li class="forward_button"><a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $txt['reply_quote'], '</a></li>';
 			}
 			echo '
-					<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');">', $txt['delete'], '</a></li>';
+					<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');">', $txt['delete'], '</a></li>';
 
 			if (empty($context['display_mode']))
 				echo '
@@ -469,7 +469,7 @@ function template_folder()
 		if (!empty($context['message_can_unread'][$message['id']]))
 			echo '
 			<div class="righttext reportlinks">
-				<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['mark_unread'], '</a>
+				<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>
 			</div>';
 
 		echo '
@@ -1066,7 +1066,7 @@ function template_ask_delete()
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $txt['delete_all_confirm'], '</p><br>
-			<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
+			<strong><a href="', $scripturl, '?action=pm;sa=removeall2;f=', $context['folder'], ';', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '">', $txt['yes'], '</a> - <a href="javascript:history.go(-1);">', $txt['no'], '</a></strong>
 		</div>';
 }
 
@@ -1313,7 +1313,7 @@ function template_rules()
 
 	if (!empty($context['rules']))
 		echo '
-			[<a href="', $scripturl, '?action=pm;sa=manrules;apply;', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ');">', $txt['pm_apply_rules'], '</a>]';
+			[<a href="', $scripturl, '?action=pm;sa=manrules;apply;', $context['session_query'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ');">', $txt['pm_apply_rules'], '</a>]';
 
 	if (!empty($context['rules']))
 		echo '
@@ -1688,7 +1688,7 @@ function template_pm_drafts()
 				<div class="floatright">
 					<ul class="reset smalltext quickbuttons">
 						<li class="reply_button"><a href="', $scripturl . '?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '"><span>', $txt['edit_draft'], '</span></a></li>
-						<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
+						<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
 				</div>
 				<br class="clear">

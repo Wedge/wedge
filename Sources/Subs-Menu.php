@@ -57,7 +57,7 @@ function createMenu($menuData, $menuOptions = array())
 			cache_put_data('theme_settings-' . $theme . ':' . $user_info['id'], null, 60);
 
 		// Redirect as this seems to work best.
-		$redirect_url = isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' . (isset($_GET['action']) ? $_GET['action'] : 'admin') . (isset($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' . (isset($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' . (isset($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_var'] . '=' . $context['session_id'];
+		$redirect_url = isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' . (isset($_GET['action']) ? $_GET['action'] : 'admin') . (isset($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' . (isset($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' . (isset($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query'];
 		redirectexit($redirect_url);
 	}
 
@@ -113,7 +113,7 @@ function createMenu($menuData, $menuOptions = array())
 
 	// Only include the session ID in the URL if it's strictly necessary.
 	if (empty($menuOptions['disable_url_session_check']))
-		$menu_context['extra_parameters'] .= ';' . $context['session_var'] . '=' . $context['session_id'];
+		$menu_context['extra_parameters'] .= ';' . $context['session_query'];
 
 	$include_data = array();
 

@@ -215,7 +215,7 @@ function BrowseMailQueue()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '[<a href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mailqueue_clear_list_warning']) . ');">' . $txt['mailqueue_clear_list'] . '</a>] <input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');" class="delete">',
+				'value' => '[<a href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_query'] . '" onclick="return confirm(' . JavaScriptEscape($txt['mailqueue_clear_list_warning']) . ');">' . $txt['mailqueue_clear_list'] . '</a>] <input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');" class="delete">',
 			),
 		),
 	);
@@ -404,7 +404,7 @@ function pauseMailQueueClear()
 	if (microtime(true) - $time_start < 5)
 		return;
 
-	$context['continue_get_data'] = '?action=admin;area=mailqueue;sa=clear;te=' . $_GET['te'] . ';sent=' . $_GET['sent'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['continue_get_data'] = '?action=admin;area=mailqueue;sa=clear;te=' . $_GET['te'] . ';sent=' . $_GET['sent'] . ';' . $context['session_query'];
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';

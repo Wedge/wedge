@@ -163,7 +163,7 @@ function EditSearchSettings($return_config = false)
 		checkSession();
 
 		saveDBSettings($config_vars);
-		redirectexit('action=admin;area=managesearch;sa=settings;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=managesearch;sa=settings;' . $context['session_query']);
 	}
 
 	// Prep the template!

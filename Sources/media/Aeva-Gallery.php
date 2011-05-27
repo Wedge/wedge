@@ -229,7 +229,7 @@ function aeva_initGallery($gal_url = null)
 		$areas['admin'] = array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
-			'href' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_var'] . '=' . $context['session_id'],
+			'href' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_query'],
 			'enabled' => aeva_allowedTo('manage'),
 		);
 		$areas['moderate'] = array(
@@ -336,24 +336,24 @@ function aeva_initGallery($gal_url = null)
 		$media_areas['admin'] = array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
-			'url' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_var'] . '=' . $context['session_id'],
+			'url' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_query'],
 			'permission' => array('media_manage'),
 			'areas' => array(
 				'settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
-					'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_var'] . '=' . $context['session_id'],
+					'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_query'],
 				),
 				'embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
-					'href' => $scripturl . '?action=admin;area=aeva_embed;' . $context['session_var'] . '=' . $context['session_id'],
+					'href' => $scripturl . '?action=admin;area=aeva_embed;' . $context['session_query'],
 				),
 				'albums' => array(
 					'label' => $txt['media_admin_labels_albums'],
-					'href' => $scripturl . '?action=admin;area=aeva_albums;' . $context['session_var'] . '=' . $context['session_id'],
+					'href' => $scripturl . '?action=admin;area=aeva_albums;' . $context['session_query'],
 				),
 				'maintenance' => array(
 					'label' => $txt['media_admin_labels_maintenance'],
-					'href' => $scripturl . '?action=admin;area=aeva_maintenance;' . $context['session_var'] . '=' . $context['session_id'],
+					'href' => $scripturl . '?action=admin;area=aeva_maintenance;' . $context['session_query'],
 				),
 			),
 		);

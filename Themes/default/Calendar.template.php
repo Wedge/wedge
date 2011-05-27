@@ -12,7 +12,7 @@ function template_main()
 
 	// Build the calendar button array.
 	$calendar_buttons = array(
-		'post_event' => array('test' => 'can_post', 'text' => 'calendar_post_event', 'image' => 'calendarpe.gif', 'lang' => true, 'url' => $scripturl . '?action=calendar;sa=post;month=' . $context['current_month'] . ';year=' . $context['current_year'] . ';' . $context['session_var'] . '=' . $context['session_id']),
+		'post_event' => array('test' => 'can_post', 'text' => 'calendar_post_event', 'image' => 'calendarpe.gif', 'lang' => true, 'url' => $scripturl . '?action=calendar;sa=post;month=' . $context['current_month'] . ';year=' . $context['current_year'] . ';' . $context['session_query']),
 	);
 
 	template_button_strip($calendar_buttons, 'right');
@@ -313,7 +313,7 @@ function template_show_month_grid($grid_name)
 				// Should the day number be a link?
 				if (!empty($modSettings['cal_daysaslink']) && $context['can_post'])
 					echo '
-						<a href="', $scripturl, '?action=calendar;sa=post;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';day=', $day['day'], ';', $context['session_var'], '=', $context['session_id'], '">', $day['day'], '</a>';
+						<a href="', $scripturl, '?action=calendar;sa=post;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';day=', $day['day'], ';', $context['session_query'], '">', $day['day'], '</a>';
 				else
 					echo '
 						', $day['day'];
@@ -445,7 +445,7 @@ function template_show_week_grid($grid_name)
 			// Should the day number be a link?
 			if (!empty($modSettings['cal_daysaslink']) && $context['can_post'])
 				echo '
-						<a href="', $scripturl, '?action=calendar;sa=post;month=', $month_data['current_month'], ';year=', $month_data['current_year'], ';day=', $day['day'], ';', $context['session_var'], '=', $context['session_id'], '">', $day['day'], '</a>';
+						<a href="', $scripturl, '?action=calendar;sa=post;month=', $month_data['current_month'], ';year=', $month_data['current_year'], ';day=', $day['day'], ';', $context['session_query'], '">', $day['day'], '</a>';
 			else
 				echo '
 						', $day['day'];

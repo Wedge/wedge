@@ -290,7 +290,7 @@ function ModifyGeneralSettings($return_config = false)
 		}
 
 		saveSettings($config_vars);
-		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_query']);
 	}
 
 	// Fill the config array.
@@ -339,7 +339,7 @@ function ModifyDatabaseSettings($return_config = false)
 	if (isset($_REQUEST['save']))
 	{
 		saveSettings($config_vars);
-		redirectexit('action=admin;area=serversettings;sa=database;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=database;' . $context['session_query']);
 	}
 
 	// Fill the config array.
@@ -393,7 +393,7 @@ function ModifyCookieSettings($return_config = false)
 			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id, $context['server']['needs_login_fix']);
 		}
 
-		redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_query']);
 	}
 
 	// Fill the config array.
@@ -424,7 +424,7 @@ function ModifyCacheSettings($return_config = false)
 		$modSettings['cache_enable'] = 1;
 		cache_put_data('modSettings', null, 90);
 
-		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cache;save';
@@ -524,7 +524,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 		}
 
 		saveDBSettings($config_vars);
-		redirectexit('action=admin;area=serversettings;sa=loads;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=loads;' . $context['session_query']);
 	}
 
 	prepareDBSettingContext($config_vars);
@@ -560,7 +560,7 @@ function ModifyProxySettings($return_config = false)
 		$modSettings['cache_enable'] = 1;
 		cache_put_data('modSettings', null, 90);
 
-		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_query']);
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=proxy;save';
@@ -643,7 +643,7 @@ function AddLanguage()
 						'version' => $file->fetch('version'),
 						'utf8' => $file->fetch('utf8'),
 						'description' => $file->fetch('description'),
-						'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_var'] . '=' . $context['session_id'],
+						'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_query'],
 					);
 				}
 			}
@@ -1409,7 +1409,7 @@ function ModifyLanguage()
 		}
 
 		// Eighth, get out of here.
-		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_query']);
 	}
 
 	// Saving primary settings?

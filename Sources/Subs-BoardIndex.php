@@ -104,7 +104,7 @@ function getBoardIndex($boardIndexOptions)
 					'name' => $row_board['cat_name'],
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && $row_board['is_collapsed'] > 0,
 					'can_collapse' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1,
-					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_var'] . '=' . $context['session_id'] . '#category_' . $row_board['id_cat'] : '',
+					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_query'] . '#category_' . $row_board['id_cat'] : '',
 					'collapse_image' => isset($row_board['can_collapse']) ? '<div class="catfold' . ($row_board['is_collapsed'] > 0 ? '' : ' fold') . '"></div>' : '',
 					'href' => $scripturl . '#category_' . $row_board['id_cat'],
 					'boards' => array(),

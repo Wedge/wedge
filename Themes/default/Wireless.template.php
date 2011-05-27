@@ -35,7 +35,7 @@ function template_wap2_boardindex()
 	{
 		if (!empty($category['boards']) || $category['is_collapsed'])
 			echo '
-		<p class="title">', $category['can_collapse'] ? '<a href="' . $scripturl . '?action=collapse;c=' . $category['id'] . ';sa=' . ($category['is_collapsed'] ? 'expand;' : 'collapse;') . $context['session_var'] . '=' . $context['session_id'] . ';wap2">' : '', $category['name'], $category['can_collapse'] ? '</a>' : '', '</p>';
+		<p class="title">', $category['can_collapse'] ? '<a href="' . $scripturl . '?action=collapse;c=' . $category['id'] . ';sa=' . ($category['is_collapsed'] ? 'expand;' : 'collapse;') . $context['session_query'] . ';wap2">' : '', $category['name'], $category['can_collapse'] ? '</a>' : '', '</p>';
 
 		foreach ($category['boards'] as $board)
 		{
@@ -59,7 +59,7 @@ function template_wap2_boardindex()
 		<p class="win"><a href="', $scripturl, '?action=unread;wap2">', $txt['wireless_recent_unread_posts'], '</a></p>
 		<p class="win"><a href="', $scripturl, '?action=unreadreplies;wap2">', $txt['wireless_recent_unread_replies'], '</a></p>
 		<hr />
-		<p class="win"><a href="', $scripturl, '?action=logout;', $context['session_var'], '=', $context['session_id'], ';wap2">', $txt['wireless_options_logout'], '</a></p>';
+		<p class="win"><a href="', $scripturl, '?action=logout;', $context['session_query'], ';wap2">', $txt['wireless_options_logout'], '</a></p>';
 	}
 }
 
@@ -145,7 +145,7 @@ function template_wap2_display()
 	echo '
 		<p class="title">', $txt['wireless_navigation'], '</p>
 		<p class="win">[0] <a href="', $context['links']['up'], ';wap2" accesskey="0">', $txt['wireless_navigation_index'], '</a></p>', $context['user']['is_logged'] ? '
-		<p class="win">[1] <a href="' . $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time']. ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';wap2" accesskey="1">' . $txt['mark_unread'] . '</a></p>' : '', !empty($context['links']['next']) ? '
+		<p class="win">[1] <a href="' . $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time']. ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query'] . ';wap2" accesskey="1">' . $txt['mark_unread'] . '</a></p>' : '', !empty($context['links']['next']) ? '
 		<p class="win">[#] <a href="' . $context['links']['next'] . ';wap2' . $context['wireless_moderate'] . '" accesskey="#">' . $txt['wireless_navigation_next'] . '</a></p>' : '', !empty($context['links']['prev']) ? '
 		<p class="win">[*] <a href="' . $context['links']['prev'] . ';wap2' . $context['wireless_moderate'] . '" accesskey="*">' . $txt['wireless_navigation_prev'] . '</a></p>' : '', $context['can_reply'] ? '
 		<p class="win"><a href="' . $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';wap2">' . $txt['reply'] . '</a></p>' : '';
@@ -157,10 +157,10 @@ function template_wap2_display()
 	{
 		if ($context['can_sticky'])
 			echo '
-				<p class="win"><a href="', $scripturl, '?action=sticky;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';wap2">', $txt['wireless_display_' . ($context['is_sticky'] ? 'unsticky' : 'sticky')], '</a></p>';
+				<p class="win"><a href="', $scripturl, '?action=sticky;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], ';wap2">', $txt['wireless_display_' . ($context['is_sticky'] ? 'unsticky' : 'sticky')], '</a></p>';
 		if ($context['can_lock'])
 			echo '
-				<p class="win"><a href="', $scripturl, '?action=lock;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';wap2">', $txt['wireless_display_' . ($context['is_locked'] ? 'unlock' : 'lock')], '</a></p>';
+				<p class="win"><a href="', $scripturl, '?action=lock;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], ';wap2">', $txt['wireless_display_' . ($context['is_locked'] ? 'unlock' : 'lock')], '</a></p>';
 	}
 }
 
@@ -266,7 +266,7 @@ function template_wap2_pm()
 	if ($_REQUEST['action'] == 'findmember')
 	{
 		echo '
-				<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], ';wap2" method="post">
+				<form action="', $scripturl, '?action=findmember;', $context['session_query'], ';wap2" method="post">
 					<p class="cat">', $txt['wireless_pm_search_member'], '</p>
 					<p class="title">', $txt['find_members'], '</p>
 					<p class="win">
@@ -354,7 +354,7 @@ function template_wap2_pm()
 			}
 			echo '
 				', empty($ids) ? '' : '<input type="hidden" name="u" value="' . $ids . '" />', '<br />
-						<a href="', $scripturl, '?action=findmember', empty($ids) ? '' : ';u=' . $ids, ';', $context['session_var'], '=', $context['session_id'], ';wap2">', $txt['wireless_pm_search_member'], '</a>', empty($user_info['buddies']) ? '' : '<br />
+						<a href="', $scripturl, '?action=findmember', empty($ids) ? '' : ';u=' . $ids, ';', $context['session_query'], ';wap2">', $txt['wireless_pm_search_member'], '</a>', empty($user_info['buddies']) ? '' : '<br />
 						<a href="' . $scripturl . '?action=pm;sa=addbuddy' . (empty($ids) ? '' : ';u=' . $ids) . ';wap2">' . $txt['wireless_pm_add_buddy'] . '</a>', '
 					</p>
 					<p class="win">

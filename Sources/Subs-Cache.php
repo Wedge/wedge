@@ -159,7 +159,6 @@ function add_css_file($original_files = array(), $add_link = false)
 	// Delete all duplicates.
 	$files = $original_files = array_keys(array_flip($original_files));
 
-	// Make sure custom.css, if available, is added last.
 	foreach ($files as $file)
 		foreach ($context['css_generic_files'] as $gen)
 			$files[] = $file . '.' . $gen;

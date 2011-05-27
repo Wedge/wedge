@@ -157,7 +157,7 @@ function DoLogin()
 	if (empty($maintenance) || allowedTo('admin_forum'))
 		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
 	else
-		redirectexit('action=logout;' . $context['session_var'] . '=' . $context['session_id'], $context['server']['needs_login_fix']);
+		redirectexit('action=logout;' . $context['session_query'], $context['server']['needs_login_fix']);
 }
 
 // MD5 Encryption used for older passwords.

@@ -698,7 +698,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 				),
 			),
 			'form' => array(
-				'href' => !empty($chmodOptions['destination_url']) ? $chmodOptions['destination_url'] : $scripturl . '?action=admin;area=packages;sa=perms;restore;' . $context['session_var'] . '=' . $context['session_id'],
+				'href' => !empty($chmodOptions['destination_url']) ? $chmodOptions['destination_url'] : $scripturl . '?action=admin;area=packages;sa=perms;restore;' . $context['session_query'],
 			),
 			'additional_rows' => array(
 				array(
@@ -718,7 +718,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 		// Work out what columns and the like to show.
 		if (!empty($_POST['restore_perms']))
 		{
-			$listOptions['additional_rows'][1]['value'] = sprintf($txt['package_restore_permissions_action_done'], $scripturl . '?action=admin;area=packages;sa=perms;' . $context['session_var'] . '=' . $context['session_id']);
+			$listOptions['additional_rows'][1]['value'] = sprintf($txt['package_restore_permissions_action_done'], $scripturl . '?action=admin;area=packages;sa=perms;' . $context['session_query']);
 			unset($listOptions['columns']['check'], $listOptions['form'], $listOptions['additional_rows'][0]);
 
 			loadSubTemplate('show_list');

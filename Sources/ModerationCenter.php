@@ -413,7 +413,7 @@ function ModBlockNotes()
 			),
 			'time' => timeformat($note['log_time']),
 			'text' => parse_bbc($note['body']),
-			'delete_href' => $scripturl . '?action=moderate;area=index;notes;delete=' . $note['id_note'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+			'delete_href' => $scripturl . '?action=moderate;area=index;notes;delete=' . $note['id_note'] . ';' . $context['session_query'],
 		);
 	}
 
@@ -1468,7 +1468,7 @@ function ViewWarningLog()
 		'title' => $txt['mc_warning_log_title'],
 		'items_per_page' => $modSettings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warnings_none'],
-		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=log;' . $context['session_var'] . '=' . $context['session_id'],
+		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=log;' . $context['session_query'],
 		'default_sort_col' => 'time',
 		'get_items' => array(
 			'function' => 'list_getWarnings',
@@ -1664,7 +1664,7 @@ function ViewWarningTemplates()
 		'title' => $txt['mc_warning_templates_title'],
 		'items_per_page' => $modSettings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warning_templates_none'],
-		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=templates;' . $context['session_var'] . '=' . $context['session_id'],
+		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=templates;' . $context['session_query'],
 		'default_sort_col' => 'title',
 		'get_items' => array(
 			'function' => 'list_getWarningTemplates',

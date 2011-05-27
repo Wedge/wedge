@@ -152,7 +152,7 @@ function template_admin()
 		bLoadUpdateNotification: true,
 		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']) . '
+		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '
 	});');
 }
 
@@ -917,7 +917,7 @@ function template_edit_profile_field()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -1234,7 +1234,7 @@ function template_core_features()
 					<div class="windowbg', $alternate < 2 ? '2' : '', ' wrc">
 						<img class="features_image ping" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '">
 						<div class="features_switch" id="js_feature_', $id, '" style="display: none">
-							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_var'], '=', $context['session_id'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
+							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_query'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
 								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" class="ping" id="switch_', $id, '" style="margin-top: 1.3em" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
 							</a>
 						</div>
@@ -1278,7 +1278,7 @@ function template_add_language()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['add_language'], '
 			</we:cat>
@@ -1370,7 +1370,7 @@ function template_download_language()
 	// Provide something of an introduction...
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['languages_download'], '
 			</we:cat>
@@ -1815,7 +1815,7 @@ function template_repair_boards()
 					', $txt['errors_fix'], '
 				</p>
 				<p class="padding">
-					<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
+					<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
 				</p>';
 		}
 		else

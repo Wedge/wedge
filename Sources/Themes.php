@@ -252,7 +252,7 @@ function ThemeAdmin()
 				));
 		}
 
-		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=admin');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=admin');
 	}
 }
 
@@ -317,7 +317,7 @@ function ThemeList()
 			);
 		}
 
-		redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=theme;sa=list;' . $context['session_query']);
 	}
 
 	loadTemplate('Themes');
@@ -509,7 +509,7 @@ function SetThemeOptions()
 		cache_put_data('theme_settings-' . $_GET['th'], null, 90);
 		cache_put_data('theme_settings-1', null, 90);
 
-		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=reset');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=reset');
 	}
 	elseif (isset($_POST['submit']) && $_POST['who'] == 1)
 	{
@@ -626,7 +626,7 @@ function SetThemeOptions()
 			}
 		}
 
-		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=reset');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=reset');
 	}
 	elseif (!empty($_GET['who']) && $_GET['who'] == 2)
 	{
@@ -660,7 +660,7 @@ function SetThemeOptions()
 			)
 		);
 
-		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=reset');
+		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=reset');
 	}
 
 	$old_id = $settings['theme_id'];
@@ -839,7 +839,7 @@ function SetThemeSettings()
 		// Invalidate the cache.
 		updateSettings(array('settings_updated' => time()));
 
-		redirectexit('action=admin;area=theme;sa=settings;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=theme;sa=settings;th=' . $_GET['th'] . ';' . $context['session_query']);
 	}
 
 	loadSubTemplate('set_settings');
@@ -939,7 +939,7 @@ function RemoveTheme()
 	else
 		updateSettings(array('knownThemes' => $known));
 
-	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
+	redirectexit('action=admin;area=theme;sa=list;' . $context['session_query']);
 }
 
 // Choose a theme from a list.
@@ -985,7 +985,7 @@ function PickTheme()
 				'id_theme' => $id,
 				'styling' => $css
 			));
-			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
+			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change the default/guest theme.
 		elseif ($_REQUEST['u'] == '-1')
@@ -994,7 +994,7 @@ function PickTheme()
 				'theme_guests' => $id,
 				'theme_styling_guests' => $css
 			));
-			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
+			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change a specific member's theme.
 		else
@@ -1327,7 +1327,7 @@ function ThemeInstall()
 			$extracted = read_tgz_file($_REQUEST['theme_gz'], $boarddir . '/Themes/' . $theme_name, false, true);
 		}
 		else
-			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
+			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 	}
 
 	// Something go wrong?
@@ -1441,7 +1441,7 @@ function ThemeInstall()
 		updateSettings(array('knownThemes' => strtr($modSettings['knownThemes'] . ',' . $id_theme, array(',,' => ','))));
 	}
 
-	redirectexit('action=admin;area=theme;sa=install;theme_id=' . $id_theme . ';' . $context['session_var'] . '=' . $context['session_id']);
+	redirectexit('action=admin;area=theme;sa=install;theme_id=' . $id_theme . ';' . $context['session_query']);
 }
 
 function EditTheme()
@@ -1568,7 +1568,7 @@ function EditTheme()
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;directory=' . $temp,
+				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $temp,
 				'size' => '',
 			));
 		}
@@ -1640,7 +1640,7 @@ function EditTheme()
 				fwrite($fp, $_POST['entire_file']);
 				fclose($fp);
 
-				redirectexit('action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;directory=' . dirname($_REQUEST['filename']));
+				redirectexit('action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . dirname($_REQUEST['filename']));
 			}
 		}
 		// Session timed out.
@@ -1746,7 +1746,7 @@ function get_file_listing($path, $relative)
 				'is_template' => false,
 				'is_image' => false,
 				'is_editable' => false,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;directory=' . $relative . $entry,
+				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;directory=' . $relative . $entry,
 				'size' => '',
 			);
 		else
@@ -1764,7 +1764,7 @@ function get_file_listing($path, $relative)
 				'is_template' => preg_match('~\.template\.php$~', $entry) != 0,
 				'is_image' => preg_match('~\.(jpg|jpeg|gif|bmp|png)$~', $entry) != 0,
 				'is_editable' => is_writable($path . '/' . $entry) && preg_match('~\.(php|pl|css|js|vbs|xml|xslt|txt|xsl|html|htm|shtm|shtml|asp|aspx|cgi|py)$~', $entry) != 0,
-				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=edit;filename=' . $relative . $entry,
+				'href' => $scripturl . '?action=admin;area=theme;th=' . $_GET['th'] . ';' . $context['session_query'] . ';sa=edit;filename=' . $relative . $entry,
 				'size' => $size,
 				'last_modified' => timeformat(filemtime($path . '/' . $entry)),
 			);
@@ -1814,7 +1814,7 @@ function CopyTemplate()
 		fwrite($fp, file_get_contents($filename));
 		fclose($fp);
 
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=copy');
+		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_query'] . ';sa=copy');
 	}
 	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^./\\\\:\0]\.[^./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
 	{
@@ -1829,7 +1829,7 @@ function CopyTemplate()
 		fwrite($fp, file_get_contents($filename));
 		fclose($fp);
 
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=copy');
+		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_query'] . ';sa=copy');
 	}
 
 	$templates = array();

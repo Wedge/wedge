@@ -590,7 +590,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 		echo '
 					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
+					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_query'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
 				</td>
 			</tr>';
 		$alt = !$alt;
@@ -672,7 +672,7 @@ function template_servers()
 		echo '
 					<li class="flow_auto">
 						<span class="floatleft">' . $server['name'] . '</span>
-						<span class="package_server floatright"><a href="' . $scripturl . '?action=admin;area=packages;get;sa=remove;server=' . $server['id'] . ';', $context['session_var'], '=', $context['session_id'], '">[ ' . $txt['delete'] . ' ]</a></span>
+						<span class="package_server floatright"><a href="' . $scripturl . '?action=admin;area=packages;get;sa=remove;server=' . $server['id'] . ';', $context['session_query'], '">[ ' . $txt['delete'] . ' ]</a></span>
 						<span class="package_server floatright"><a href="' . $scripturl . '?action=admin;area=packages;get;sa=browse;server=' . $server['id'] . '">[ ' . $txt['package_browse'] . ' ]</a></span>
 					</li>';
 
@@ -704,7 +704,7 @@ function template_servers()
 			</fieldset>
 			<fieldset>
 				<legend>', $txt['package_download_by_url'], '</legend>
-				<form action="', $scripturl, '?action=admin;area=packages;get;sa=download;byurl;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+				<form action="', $scripturl, '?action=admin;area=packages;get;sa=download;byurl;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 					<dl class="settings">
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>
@@ -1112,7 +1112,7 @@ function template_control_chmod()
 			sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
 
 		// Post the data out.
-		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_var'] . '=' . $context['session_id'] . '\', sPostData, testFTPResults);
+		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
 	}
 	function testFTPResults(oXMLDoc)
 	{
@@ -1221,7 +1221,7 @@ function template_file_permissions()
 		else if (can_ajax)
 		{
 			ajax_indicator(true);
-			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
+			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 		}
 		// Otherwise reload.
 		else
@@ -1239,7 +1239,7 @@ function template_file_permissions()
 	{
 		ajax_indicator(true);
 
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_var'], '=', $context['session_id'], '\', onNewFolderReceived);
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{
@@ -1461,7 +1461,7 @@ function template_file_permissions()
 		</div>
 	</div>
 
-	<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+	<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 		<we:title>
 			<span class="fperm floatright">', $txt['package_file_perms_new_status'], '</span>
 			', $txt['package_file_perms'], '
@@ -1591,7 +1591,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 			echo '
 			<tr class="windowbg center" id="content_', $cur_ident, '">
 				<td style="width: 30%" class="smalltext left">' . str_repeat('&nbsp;', $level * 5), '
-					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '<a id="link_' . $cur_ident . '" href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident . '/' . $name) . ';back_look=' . $context['back_look_data'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . $cur_ident . '" onclick="return expandFolder(\'' . $cur_ident . '\', \'' . addcslashes($ident . '/' . $name, "'\\") . '\');">' : '';
+					', (!empty($dir['type']) && $dir['type'] == 'dir_recursive') || !empty($dir['list_contents']) ? '<a id="link_' . $cur_ident . '" href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident . '/' . $name) . ';back_look=' . $context['back_look_data'] . ';' . $context['session_query'] . '#fol_' . $cur_ident . '" onclick="return expandFolder(\'' . $cur_ident . '\', \'' . addcslashes($ident . '/' . $name, "'\\") . '\');">' : '';
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 				echo '
@@ -1623,7 +1623,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 		echo '
 			<tr class="windowbg" id="content_', $js_ident, '_more">
 				<td class="smalltext" style="width: 40%">' . str_repeat('&nbsp;', $level * 5), '
-					&#171; <a href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident) . ';fileoffset=', ($context['file_offset'] + $context['file_limit']), ';' . $context['session_var'] . '=' . $context['session_id'] . '#fol_' . preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident) . '">', $txt['package_file_perms_more_files'], '</a> &#187;
+					&#171; <a href="' . $scripturl . '?action=admin;area=packages;sa=perms;find=' . base64_encode($ident) . ';fileoffset=', ($context['file_offset'] + $context['file_limit']), ';' . $context['session_query'] . '#fol_' . preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident) . '">', $txt['package_file_perms_more_files'], '</a> &#187;
 				</td>
 				<td colspan="6"></td>
 			</tr>';
@@ -1658,7 +1658,7 @@ function template_action_permissions()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_var'], '=', $context['session_id'], '" id="perm_submit" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_query'], '" id="perm_submit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['package_file_perms_applying'], '
 			</we:cat>';

@@ -877,7 +877,7 @@ function ConvertEntities()
 			{
 				// Calculate an approximation of the percentage done.
 				$context['continue_percent'] = round(100 * ($context['table'] + ($context['start'] / $max_value)) / $context['num_tables'], 1);
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=convertentities;table=' . $context['table'] . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=convertentities;table=' . $context['table'] . ';start=' . $context['start'] . ';' . $context['session_query'];
 				return;
 			}
 		}
@@ -1051,7 +1051,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=0;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=0;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((100 * $_REQUEST['start'] / $max_topics) / $total_steps);
 
 				return;
@@ -1106,7 +1106,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=1;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=1;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((200 + 100 * $_REQUEST['start'] / $max_topics) / $total_steps);
 
 				return;
@@ -1159,7 +1159,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=2;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=2;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((300 + 100 * $_REQUEST['start'] / $max_topics) / $total_steps);
 
 				return;
@@ -1212,7 +1212,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=3;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=3;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((400 + 100 * $_REQUEST['start'] / $max_topics) / $total_steps);
 
 				return;
@@ -1265,7 +1265,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=4;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=4;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((500 + 100 * $_REQUEST['start'] / $max_topics) / $total_steps);
 
 				return;
@@ -1311,7 +1311,7 @@ function AdminBoardRecount()
 
 		if (microtime(true) - $time_start > 3)
 		{
-			$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=6;start=0;' . $context['session_var'] . '=' . $context['session_id'];
+			$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=6;start=0;' . $context['session_query'];
 			$context['continue_percent'] = round(700 / $total_steps);
 
 			return;
@@ -1354,7 +1354,7 @@ function AdminBoardRecount()
 
 			if (microtime(true) - $time_start > 3)
 			{
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=6;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=6;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
 				$context['continue_percent'] = round((700 + 100 * $_REQUEST['start'] / $modSettings['maxMsgID']) / $total_steps);
 
 				return;
@@ -1703,7 +1703,7 @@ function MaintainRecountPosts()
 	// Continue?
 	if ($context['start'] < $member_count)
 	{
-		$context['continue_get_data'] = '?action=admin;area=maintain;sa=members;activity=recountposts;start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+		$context['continue_get_data'] = '?action=admin;area=maintain;sa=members;activity=recountposts;start=' . $context['start'] . ';' . $context['session_query'];
 		$context['continue_percent'] = round(100 * $context['start'] / $member_count);
 
 		return;
@@ -1767,7 +1767,7 @@ function MaintainMassMoveTopics()
 		$total_topics = (int) $_REQUEST['totaltopics'];
 
 	// Seems like we need this here.
-	$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
 
 	// We have topics to move so start the process.
 	if (!empty($total_topics))
@@ -1810,7 +1810,7 @@ function MaintainMassMoveTopics()
 			{
 				// What's the percent?
 				$context['continue_percent'] = round(100 * ($context['start'] / $total_topics), 1);
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+				$context['continue_get_data'] = '?action=admin;area=maintain;sa=topics;activity=massmove;id_board_from=' . $id_board_from . ';id_board_to=' . $id_board_to . ';totaltopics=' . $total_topics . ';start=' . $context['start'] . ';' . $context['session_query'];
 
 				// Let the template system do it's thang.
 				return;

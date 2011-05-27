@@ -408,7 +408,7 @@ function ModifyCoreFeatures($return_config = false)
 			if (isset($feature['save_callback'])) // Standard save callback?
 				$feature['save_callback'](!empty($_POST[$post_var_prefix . $id]));
 
-		redirectexit('action=admin;area=corefeatures;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=admin;area=corefeatures;' . $context['session_query']);
 	}
 
 	// Put them in context.
@@ -418,7 +418,7 @@ function ModifyCoreFeatures($return_config = false)
 			'title' => isset($feature['title']) ? $feature['title'] : $txt['core_settings_item_' . $id],
 			'desc' => isset($feature['desc']) ? $feature['desc'] : $txt['core_settings_item_' . $id . '_desc'],
 			'enabled' => isset($feature['setting']) && !empty($modSettings[$feature['setting']]),
-			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_var'] . '=' . $context['session_id'] : '',
+			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_query'] : '',
 		);
 
 	// Are they a new user?
@@ -1176,7 +1176,7 @@ function pauseSignatureApplySettings()
 	if (time() - array_sum(explode(' ', $sig_start)) < 3)
 		return;
 
-	$context['continue_get_data'] = '?action=admin;area=featuresettings;sa=sig;apply;step=' . $_GET['step'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['continue_get_data'] = '?action=admin;area=featuresettings;sa=sig;apply;step=' . $_GET['step'] . ';' . $context['session_query'];
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';

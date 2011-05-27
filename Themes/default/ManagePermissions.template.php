@@ -255,7 +255,7 @@ function template_by_board()
 	if (!$context['edit_all'])
 		echo '
 		<div class="righttext">
-			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_var'], '=', $context['session_id'], '">[', $txt['permissions_board_all'], ']</a>
+			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
 		</div>';
 
 	foreach ($context['categories'] as $category)
@@ -279,7 +279,7 @@ function template_by_board()
 			echo '
 				<li class="flow_hidden windowbg', $alternate ? '' : '2', '">
 					<span class="perm_board floatleft">
-						<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_var'], '=', $context['session_id'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
+						<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_query'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
 					</span>
 					<span class="perm_boardprofile floatleft">';
 
@@ -297,7 +297,7 @@ function template_by_board()
 			}
 			else
 				echo '
-						<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_var'], '=', $context['session_id'], '"> [', $board['profile_name'], ']</a>';
+						<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_query'], '"> [', $board['profile_name'], ']</a>';
 
 			echo '
 					</span>
@@ -318,7 +318,7 @@ function template_by_board()
 			<input type="submit" name="save_changes" value="', $txt['save'], '" class="save">';
 	else
 		echo '
-			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_var'], '=', $context['session_id'], '">[', $txt['permissions_board_all'], ']</a>';
+			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>';
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -360,7 +360,7 @@ function template_edit_profiles()
 							<input type="text" name="rename_profile[', $profile['id'], ']" value="', $profile['name'], '">';
 		else
 			echo '
-							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $profile['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $profile['name'], '</a>';
+							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $profile['id'], ';', $context['session_query'], '">', $profile['name'], '</a>';
 
 		echo '
 						</td>
@@ -1017,7 +1017,7 @@ function template_postmod_permissions()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=postmod;', $context['session_var'], '=', $context['session_id'], '" method="post" name="postmodForm" id="postmodForm" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=permissions;sa=postmod;', $context['session_query'], '" method="post" name="postmodForm" id="postmodForm" accept-charset="UTF-8">
 			<we:title>
 				', $txt['permissions_post_moderation'], '
 			</we:title>';

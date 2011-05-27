@@ -88,7 +88,7 @@ function aeva_modCP_submissions()
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.approved = 0
 			LIMIT {int:start}, {int:per_page}', array('start' => (int) $_REQUEST['start'], 'per_page' => $per_page));
-		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=items;' . $context['session_var'] . '='.$context['session_id'];
+		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=items;' . $context['session_query'];
 		$edit_link = $galurl . 'sa=post;in=%s';
 		$view_link = $galurl . 'sa=item;in=%s';
 		$total = $amSettings['num_unapproved_items'];
@@ -101,7 +101,7 @@ function aeva_modCP_submissions()
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.album_of)
 			WHERE a.approved = 0
 			LIMIT {int:start}, {int:per_page}', array('start' => (int) $_REQUEST['start'], 'per_page' => $per_page));
-		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=albums;' . $context['session_var'] . '='.$context['session_id'];
+		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=albums;' . $context['session_query'];
 		$edit_link = $galurl . 'area=mya;sa=edit;in=%s';
 		$view_link = $galurl . 'sa=album;in=%s';
 		$total = $amSettings['num_unapproved_albums'];
@@ -115,7 +115,7 @@ function aeva_modCP_submissions()
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = c.id_member)
 			WHERE c.approved = 0
 			LIMIT {int:start}, {int:per_page}', array('start' => (int) $_REQUEST['start'], 'per_page' => $per_page));
-		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=coms;' . $context['session_var'] . '='.$context['session_id'];
+		$del_link = $galurl . 'area=moderate;sa=submissions;do=delete;in=%s;type=coms;' . $context['session_query'];
 		$edit_link = $galurl . 'sa=edit;type=comment;in=%s';
 		$view_link = $galurl . 'sa=item;in=%s#com%s';
 		$total = $amSettings['num_unapproved_comments'];
@@ -141,7 +141,7 @@ function aeva_modCP_submissions()
 
 	// Page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=submissions;filter=' . $filter . ';' . $context['session_var'] . '=' . $context['session_id'], $_REQUEST['start'], $total, $per_page);
+	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=submissions;filter=' . $filter . ';' . $context['session_query'], $_REQUEST['start'], $total, $per_page);
 
 	// We're done!
 	$context['aeva_filter'] = $filter;
@@ -149,9 +149,9 @@ function aeva_modCP_submissions()
 
 	// Get the subtabs
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'items'),
-		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_var'] . '='.$context['session_id'], 'active' => $filter == 'coms'),
-		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_var'] . '=' . $context['session_id'], 'active' => $filter == 'albums'),
+		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'active' => $filter == 'items'),
+		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'active' => $filter == 'coms'),
+		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'active' => $filter == 'albums'),
 	);
 
 	// HTML headers
@@ -455,8 +455,8 @@ function aeva_modCP_reports()
 
 	// Header tabs
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'aeva2_items', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;items;' . $context['session_var'] . '='.$context['session_id'], 'active' => $type == 'item'),
-		'comments' => array('title' => 'aeva2_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;comments;' . $context['session_var'] . '='.$context['session_id'], 'active' => $type == 'comment'),
+		'items' => array('title' => 'aeva2_items', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;items;' . $context['session_query'], 'active' => $type == 'item'),
+		'comments' => array('title' => 'aeva2_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], 'active' => $type == 'comment'),
 	);
 
 	// Load all the reports
@@ -504,7 +504,7 @@ function aeva_modCP_reports()
 	// page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=reports;' . (isset($_REQUEST['comments']) ? 'comments' : '')
-		. $context['session_var'] . '=' . $context['session_id'], $_REQUEST['start'], $amSettings[$type == 'comment' ? 'num_reported_comments' : 'num_reported_items'], 20);
+		. $context['session_query'], $_REQUEST['start'], $amSettings[$type == 'comment' ? 'num_reported_comments' : 'num_reported_items'], 20);
 	$context['aeva_report_type'] = $type;
 
 	loadTemplate('ManageMedia');
@@ -750,7 +750,7 @@ function aeva_modCP_modLog()
 	// Page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=modlog;' . (!empty($id_member) ? 'qsearch=' . $id_member . ';' : '')
-		. $context['session_var'] . '=' . $context['session_id'], $_REQUEST['start'], $total_logs, 30);
+		. $context['session_query'], $_REQUEST['start'], $total_logs, 30);
 
 	if (!empty($id_member))
 		$context['aeva_filter'] = sprintf($txt['media_admin_modlog_filter'], $scripturl . '?action=profile;u=' . $id_member, $member_name);

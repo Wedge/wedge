@@ -1715,6 +1715,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
+	$context['session_query'] = $context['session_var'] . '=' . $context['session_id'];
 	$context['forum_name'] = $mbname;
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
 	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? $context['forum_name_html_safe']
@@ -2011,7 +2012,7 @@ function loadTemplate($template_name, $fatal = true)
 			loadLanguage('Errors');
 			echo '
 <div class="alert errorbox">
-	<a href="', $scripturl . '?action=admin;area=theme;sa=settings;th=1;' . $context['session_var'] . '=' . $context['session_id'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
+	<a href="', $scripturl . '?action=admin;area=theme;sa=settings;th=1;' . $context['session_query'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
 </div>';
 		}
 

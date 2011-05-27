@@ -68,7 +68,7 @@ function template_maintenance()
 			', $txt['attachment_integrity_check'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+			<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 				<p>', $txt['attachment_integrity_check_desc'], '</p>
 				<input type="submit" name="submit" value="', $txt['attachment_check_now'], '" class="submit">
 			</form>
@@ -142,7 +142,7 @@ function template_attachment_repair()
 	{
 		echo '
 	<div id="manage_attachments">
-		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['repair_attachments'], '
 			</we:cat>

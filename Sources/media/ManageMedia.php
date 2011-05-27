@@ -504,11 +504,11 @@ function aeva_admin_settings()
 
 		// If the Clear Thumbnails setting was changed, we redirect to the hidden maintenance area that renames all thumbnails.
 		if (!empty($update_thumbnames))
-			redirectexit($scripturl.'?action=admin;area=aeva_maintenance;sa=clear;'.$context['session_var'].'='.$context['session_id']);
+			redirectexit($scripturl.'?action=admin;area=aeva_maintenance;sa=clear;'.$context['session_query']);
 	}
 
 	// Render the form
-	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_var'].'='.$context['session_id'];
+	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_query'];
 
 	foreach ($settings as $setting => $options)
 	{
@@ -723,7 +723,7 @@ function aeva_admin_FTPImport()
 			media_resetUnseen();
 			$context['is_halted'] = true;
 			$context['total_files'] = $amSettings['tmp_ftp_num_files'];
-			aeva_refreshPage($scripturl . '?action=admin;area=aeva_ftp;start=' . $context['ftp_done'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+			aeva_refreshPage($scripturl . '?action=admin;area=aeva_ftp;start=' . $context['ftp_done'] . ';' . $context['session_query']);
 		}
 		else
 			wesql::query('
@@ -739,7 +739,7 @@ function aeva_admin_perms()
 {
 	global $context, $txt, $user_info, $scripturl, $amSettings;
 
-	$context['base_url'] = $scripturl . '?action=admin;area=aeva_perms;' . $context['session_var'] . '=' . $context['session_id'];
+	$context['base_url'] = $scripturl . '?action=admin;area=aeva_perms;' . $context['session_query'];
 
 	// Sub-actions...
 	$sa = array(
@@ -1395,7 +1395,7 @@ function aeva_admin_quotas_add()
 
 	// Name not being submitted?
 	if (empty($_POST['name']))
-		redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_query']);
 
 	// Insert it!
 	wesql::insert('',
@@ -1404,7 +1404,7 @@ function aeva_admin_quotas_add()
 		array('quota_prof', westr::htmlspecialchars($_POST['name']))
 	);
 
-	redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_var'] . '=' . $context['session_id']);
+	redirectexit($scripturl . '?action=admin;area=aeva_quotas;' . $context['session_query']);
 }
 
 // Viewing a single group?
@@ -1538,7 +1538,7 @@ function aeva_admin_quotas_edit()
 			$limits[$type] = $amSettings['max_file_size'];
 
 	// Set the form
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_quotas;sa=edit;in=' . $context['aeva_profile']['id'] . ';group=' . $context['aeva_group']['id'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_quotas;sa=edit;in=' . $context['aeva_profile']['id'] . ';group=' . $context['aeva_group']['id'] . ';' . $context['session_query'];
 
 	$context['aeva_form'] = array(
 		'title' => array(
@@ -1585,7 +1585,7 @@ function aeva_admin_quotas_edit()
 			);
 		}
 
-		redirectexit($scripturl . '?action=admin;area=aeva_quotas;sa=view;in=' . $context['aeva_profile']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit($scripturl . '?action=admin;area=aeva_quotas;sa=view;in=' . $context['aeva_profile']['id'] . ';' . $context['session_query']);
 	}
 }
 
@@ -1781,7 +1781,7 @@ function aeva_admin_fields_edit()
 			'value' => $field['searchable'],
 		),
 	);
-	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_fields;sa=edit;in=' . $field['id'] . ';' . $context['session_var'] . '=' . $context['session_id'];
+	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_fields;sa=edit;in=' . $field['id'] . ';' . $context['session_query'];
 
 	loadSubTemplate('aeva_form');
 
@@ -1864,7 +1864,7 @@ function aeva_admin_fields_edit()
 				array($field_name, $field_desc, $albums, $options, $field_type, $field_bbc, $field_req, $field_searchable)
 			);
 
-		redirectexit($scripturl . '?action=admin;area=aeva_fields;' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit($scripturl . '?action=admin;area=aeva_fields;' . $context['session_query']);
 	}
 }
 

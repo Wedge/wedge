@@ -570,7 +570,7 @@ function Display()
 				'id' => $row['id_event'],
 				'title' => $row['title'],
 				'can_edit' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-				'modify_href' => $scripturl . '?action=post;msg=' . $topicinfo['id_first_msg'] . ';topic=' . $topic . '.0;calendar;eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
+				'modify_href' => $scripturl . '?action=post;msg=' . $topicinfo['id_first_msg'] . ';topic=' . $topic . '.0;calendar;eventid=' . $row['id_event'] . ';' . $context['session_query'],
 				'start_date' => timeformat($start_date, $date_string, 'none'),
 				'start_timestamp' => $start_date,
 				'end_date' => timeformat($end_date, $date_string, 'none'),
@@ -1381,7 +1381,7 @@ function prepareDisplayContext($reset = false)
 			if ($profile_any)
 				$menu[] = 'po: \';area=showposts\'';
 			if ($buddy)
-				$menu[] = ($memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab') . ': \'?action=buddy;u=%id%;' . $context['session_var'] . '=' . $context['session_id'] . '\'';
+				$menu[] = ($memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab') . ': \'?action=buddy;u=%id%;' . $context['session_query'] . '\'';
 			if ($context['can_report_moderator'])
 				$menu[] = 're: \'?action=reporttm;topic=' . $context['current_topic'] . '.0;msg=%msg%\'';
 		}
@@ -1594,7 +1594,7 @@ function QuickInTopicModeration()
 
 	// We are restoring messages. We handle this in another place.
 	if (isset($_REQUEST['restore_selected']))
-		redirectexit('action=restoretopic;msgs=' . implode(',', $messages) . ';' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=restoretopic;msgs=' . implode(',', $messages) . ';' . $context['session_query']);
 
 	// Allowed to delete any message?
 	if (allowedTo('delete_any'))

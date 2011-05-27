@@ -42,7 +42,7 @@ function QuickModeration()
 
 	// Let's go straight to the restore area.
 	if (isset($_REQUEST['qaction']) && $_REQUEST['qaction'] == 'restore' && !empty($_REQUEST['topics']))
-		redirectexit('action=restoretopic;topics=' . implode(',', $_REQUEST['topics']) . ';' . $context['session_var'] . '=' . $context['session_id']);
+		redirectexit('action=restoretopic;topics=' . implode(',', $_REQUEST['topics']) . ';' . $context['session_query']);
 
 	if (isset($_SESSION['topicseen_cache']))
 		$_SESSION['topicseen_cache'] = array();
