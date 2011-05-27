@@ -684,8 +684,8 @@ function _linkMagic()
 
 function _testStyle(sty)
 {
-	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ];
-	for (var i in stys) if (_w.style[stys[i]] !== undefined) return true;
+	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
+	for (i in stys) if (_w.style[stys[i]] !== undefined) return true;
 	return false;
 }
 
@@ -693,8 +693,7 @@ function _testStyle(sty)
  * Dropdown menu in JS with CSS fallback, Wedge style.
  * It may not show, but it took me years to refine it. -- Nao
  */
-var
-	menu_baseId = 0, hoverable = 0, menu_delay = [], menu_ieshim = [];
+var menu_baseId = hoverable = 0, menu_delay = [], menu_ieshim = [];
 
 function initMenu(menu)
 {
@@ -750,18 +749,20 @@ function menu_show_shim(showsh, ieid, j)
 // Entering a menu entry?
 function menu_show_me()
 {
-	var hasul = $('ul', this).first()[0], is_top = this.parentNode.className == 'menu', d = document.dir;
+	var
+		hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
+		id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir;
 
-	if (hoverable && hasul && hasul.style.visibility == 'visible')
-		return menu_hide_children(this.id);
+	if (hoverable && is_visible)
+		return menu_hide_children(id);
 
 	if (hasul)
 	{
-		hasul.style.visibility = 'visible';
-		hasul.style.opacity = 1;
-		hasul.style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? 0 : this.parentNode.clientWidth - 5) + 'px';
+		style.visibility = 'visible';
+		style.opacity = 1;
+		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? 0 : parent.clientWidth - 5) + 'px';
 		if (is_ie6)
-			menu_show_shim(true, this.id, hasul);
+			menu_show_shim(true, id, hasul);
 	}
 
 	if (!is_top || !$('h4', this).first().addClass('hove').length)
@@ -770,11 +771,12 @@ function menu_show_me()
 				$(this).addClass('hove');
 		});
 
-	$('ul', this).first()
-		.css(is_top ? { marginTop: is_ie6 || is_ie7 ? -6 : 18 } : { marginLeft: this.parentNode.clientWidth })
-		.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 24 } : { marginLeft: this.parentNode.clientWidth - 5 }, 'fast');
+	if (!is_visible)
+		$('ul', this).first()
+			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? -6 : 18 } : { marginLeft: parent.clientWidth })
+			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 24 } : { marginLeft: parent.clientWidth - 5 }, 'fast');
 
-	clearTimeout(menu_delay[this.id.substring(2)]);
+	clearTimeout(menu_delay[id.substring(2)]);
 
 	$(this).siblings('li').each(function () { menu_hide_children(this.id); });
 }
