@@ -1,0 +1,7 @@
+
+// Old Safaris don't support linear-gradient but support webkit-gradient, so we'll
+// be providing a fallback, and then repeat the original request (for newer Safaris.)
+
+.zoom-glass
+	background: -webkit-gradient(linear, left bottom, left top, from(#fff), to(rgba(0,0,0, .2)), color-stop(50%, rgba(255,255,255, .9)))
+	background: linear-gradient(bottom, #fff, rgba(255,255,255, .9) 100px, rgba(0,0,0, .2) 100%)

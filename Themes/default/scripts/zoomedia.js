@@ -170,12 +170,12 @@
 					$img.css({ width: '100%', height: css_auto });
 
 				$zoom.css({
-						left: original_size.x - padding,
-						top: original_size.y - padding,
-						width: original_size.w + double_padding,
-						height: original_size.h + double_padding,
-						visibility: 'visible'
-					})
+					left: original_size.x - padding,
+					top: original_size.y - padding,
+					width: original_size.w + double_padding,
+					height: original_size.h + double_padding,
+					visibility: 'visible'
+				})
 				.toggle(is_html)
 				.animate({
 						left: on_left,

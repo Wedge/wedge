@@ -144,7 +144,7 @@ function template_boardindex()
 					echo '
 				<tr id="board_', $board['id'], '_children">
 					<td colspan="3" class="children windowbg', $alt ? '2' : '', '">
-						<strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '
+						<strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '
 					</td>
 				</tr>';
 				}

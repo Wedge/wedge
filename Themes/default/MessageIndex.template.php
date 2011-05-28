@@ -578,7 +578,7 @@ function template_messageindex_childboards()
 		echo '
 	<div class="childboards" id="board_', $context['current_board'], '_childboards">
 		<we:cat>
-			', $txt['parent_boards'], '
+			', $txt['sub_boards'], '
 		</we:cat>
 		<div class="table_frame">
 			<table id="board_list" class="table_list">
@@ -647,7 +647,7 @@ function template_messageindex_childboards()
 					</td>
 				</tr>';
 
-			// Show the "Child Boards: ". (there's a link_children but we're going to bold the new ones...)
+			// Show the "Child Boards: " area. (There's a link_children but we're going to bold the new ones...)
 			if (!empty($board['children']))
 			{
 				// Sort the links into an array with new boards bold so it can be imploded.
@@ -668,7 +668,7 @@ function template_messageindex_childboards()
 					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 				}
 				echo '
-				<tr id="board_', $board['id'], '_children"><td colspan="3" class="children windowbg"><strong>', $txt['parent_boards'], '</strong>: ', implode(', ', $children), '</td></tr>';
+				<tr id="board_', $board['id'], '_children"><td colspan="3" class="children windowbg"><strong>', $txt['sub_boards'], '</strong>: ', implode(', ', $children), '</td></tr>';
 			}
 		}
 		echo '

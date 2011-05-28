@@ -354,11 +354,11 @@ em
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg extends .grad700
 	color: #000
-	background-color: #f3f3f3
+	background-color: #f9f6f0
 	background-position: 0 -550px
 
 .windowbg2 extends .windowbg
-	background-color: #f6f3f0
+	background-color: #f3f7f3
 
 .windowbg3 extends .windowbg
 	background-color: #cad3cd
@@ -1322,7 +1322,7 @@ table
 .round-bottom
 	border-radius: 0 0 8px 8px
 
-// Help popups' body
+// Help popup's body
 #help_page
 	padding: 1em
 
@@ -1345,19 +1345,22 @@ table
 .wrc
 	p
 		margin: 0 0 .5em
-	h4.hd
-		color: #369
-		font-size: 120%
+	h6
+		color: #666
 		font-weight: 700
-		padding: 0 0 8px
+		padding: 0 0 6px
 		margin: 10px 0
 		border-bottom: 1px solid #ccc
-	h5.hd extends h4.hd
+		text-transform: uppercase
+		font-family: Tahoma, Verdana
+		img
+			vertical-align: -3px
+	h6.top
+		margin-top: 0
+	h6.alt
 		color: #963
-	h6.hd extends h4.hd
-		color: #639
-	.hd img
-		vertical-align: -4px
+	h6.alt2
+		color: #396
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */

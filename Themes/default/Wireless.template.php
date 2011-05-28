@@ -73,7 +73,7 @@ function template_wap2_messageindex()
 	if (!empty($context['boards']))
 	{
 		echo '
-		<p class="title">', $txt['parent_boards'], '</p>';
+		<p class="title">', $txt['sub_boards'], '</p>';
 		foreach ($context['boards'] as $board)
 			echo '
 		<p class="win">', $board['new'] ? '<span class="updated">[-] </span>' : ($board['children_new'] ? '[-<span class="updated">] </span>' : '[-] '), '<a href="', $scripturl, '?board=', $board['id'], '.0;wap2">', $board['name'], '</a></p>';
