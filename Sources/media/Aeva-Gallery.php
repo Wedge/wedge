@@ -1471,17 +1471,22 @@ function aeva_mgPost()
 			ORDER BY m.id_media DESC
 			LIMIT 1', array('me' => $user_info['id']));
 
-		if (wesql::num_rows($request) == 0)
-			$latest_album = 0;
-		else
-			list ($latest_album) = wesql::fetch_row($request);
+		list ($latest_album) = wesql::num_rows($request) == 0 ? array(0) : wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		$id = 0;
 		$allowed_albums = albumsAllowedTo(array('add_images', 'add_videos', 'add_audios', 'add_docs', 'add_embeds'), true);
 		aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1);
-		$q = @$allowed_albums[$latest_album]['quota'];
+
 		$albums = array();
+		$q = @$allowed_albums[$latest_album]['quota'];
+		if (empty($q))
+			$q = array(
+				'audio' => $amSettings['max_file_size'],
+				'video' => $amSettings['max_file_size'],
+				'image' => $amSettings['max_file_size'],
+				'doc' => $amSettings['max_file_size'],
+			);
 
 		add_js('
 	function updateQuota(i, v, a, d)
@@ -1493,12 +1498,10 @@ function aeva_mgPost()
 	}');
 
 		foreach ($context['aeva_album_list'] as $list)
-		{
 			$albums[$list] = array(
 				str_repeat('&nbsp;&nbsp;&nbsp;', $context['aeva_albums'][$list]['child_level']) . $context['aeva_albums'][$list]['name'],
 				$list == $latest_album,
 				' onclick="updateQuota(' . $q['image'] . ', ' . $q['video'] . ', ' . $q['audio'] . ', ' . $q['doc'] . ');"');
-		}
 	}
 
 	$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));

@@ -241,7 +241,7 @@ function template_show_month_grid($grid_name)
 	if (empty($calendar_data['disable_title']))
 	{
 		echo '
-			<we:cat>
+			', $grid_name == 'main' ? '<we:cat>' : '<we:title2>', '
 				<div class="centertext" style="font-size: ', $calendar_data['size'] == 'large' ? 'large' : 'small', ';">';
 
 		if (empty($calendar_data['next_calendar']['disabled']) && $calendar_data['show_next_prev'])
@@ -261,7 +261,7 @@ function template_show_month_grid($grid_name)
 
 		echo '
 				</div>
-			</we:cat>';
+			', $grid_name == 'main' ? '</we:cat>' : '</we:title2>';
 	}
 
 	echo '

@@ -317,6 +317,8 @@ em
 	padding: .9em 1.2em
 	border-radius: 12px
 	border: 1px solid rgba(0,0,0, .1)
+	p
+		margin: 0 0 .5em
 
 .wrc_top extends .wrc
 	border-radius: 12px 12px 0 0
@@ -1339,28 +1341,25 @@ table
 	h2 extends .title2
 		margin-bottom: 12px !important
 
-/* The main content area.
+/* Intertitles
 ------------------------------------------------------- */
 
-.wrc
-	p
-		margin: 0 0 .5em
-	h6
-		color: #666
-		font-weight: 700
-		padding: 0 0 6px
-		margin: 10px 0
-		border-bottom: 1px solid #ccc
-		text-transform: uppercase
-		font-family: Tahoma, Verdana
-		img
-			vertical-align: -3px
-	h6.top
-		margin-top: 0
-	h6.alt
-		color: #963
-	h6.alt2
-		color: #396
+h6
+	color: #666
+	font-weight: 700
+	padding: 0 0 6px
+	margin: 10px 0
+	border-bottom: 1px solid #ccc
+	text-transform: uppercase
+	font-family: Tahoma, Verdana
+	img
+		vertical-align: -3px
+h6.top
+	margin-top: 0
+h6.alt
+	color: #963
+h6.alt2
+	color: #396
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */

@@ -879,8 +879,13 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 		LEFT JOIN {db_prefix}media_quotas AS q ON (
 			q.id_profile = a.id_quota_profile AND
 			q.id_group IN ({array_int:groups}) AND
-			q.type = CASE p.permission WHEN {string:add_image} THEN {string:image} WHEN {string:add_audio} THEN {string:audio}
-			WHEN {string:add_video} THEN {string:video} WHEN {string:add_embed} THEN {string:embed} WHEN {string:add_doc} THEN {string:doc} END
+			q.type = CASE p.permission
+				WHEN {string:add_image} THEN {string:image}
+				WHEN {string:add_audio} THEN {string:audio}
+				WHEN {string:add_video} THEN {string:video}
+				WHEN {string:add_embed} THEN {string:embed}
+				WHEN {string:add_doc} THEN {string:doc}
+			END
 		)
 		WHERE p.permission IN ({array_string:permissions})
 			AND p.id_group IN ({array_int:groups})';
