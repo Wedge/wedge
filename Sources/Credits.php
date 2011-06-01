@@ -57,8 +57,7 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'<b>Wedgeward</b> (Peter Spicer',
-						'Ren&eacute;-Gilles Deberdt)',
+						'<b>Wedgeward</b> (Peter Spicer &amp; Ren&eacute;-Gilles Deberdt)',
 					),
 				),
 				array(

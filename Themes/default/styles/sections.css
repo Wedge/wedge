@@ -825,14 +825,12 @@ tr.highlight td
 	padding: .3em .7em
 
 #credits
-	p
-		padding: 0
+	p, .intro
 		font-style: italic
-		margin: 0
-	dl
-		line-height: 1.5em
-	dd
-		padding: 5px 0
+	p
+		margin: 8px 4px 0
+	.list
+		padding: 5px 0 5px 30px
 
 /* Styles for generic tables.
 ------------------------------------------------------- */
@@ -1251,7 +1249,7 @@ dl.stats
 	margin: 0
 	padding: 0
 	dt
-		width: 54%
+		max-width: 90%
 		float: left
 		margin: 0 0 4px
 		line-height: 16px
@@ -1259,26 +1257,27 @@ dl.stats
 		clear: both
 		font-size: 1em
 	dd
-		text-align: right
-		width: 45%
+		max-width: 90%
+		float, text-align: right
 		font-size: 1em
-		float: right
 		margin: 0 0 4px
 		line-height: 16px
 		padding: 0
 
-.statsbar div.bar
-	float: left
-	background: url($images/bar_stats.png) no-repeat
-	display: block
-	margin: 0 4px
-	height: 16px
-	div
-		position: relative
-		right: -4px
-		padding: 0 4px 0 0
-		background: url($images/bar_stats.png) no-repeat 100%
+.statsbar
+	width: 45%
+	div.bar
+		float: left
+		background: url($images/bar_stats.png) no-repeat
+		display: block
+		margin: 0 4px
 		height: 16px
+		div
+			position: relative
+			right: -4px
+			padding: 0 4px 0 0
+			background: url($images/bar_stats.png) no-repeat 100%
+			height: 16px
 
 #stats th
 	&.stats_year, &.stats_month

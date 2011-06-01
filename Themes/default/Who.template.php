@@ -129,21 +129,24 @@ function template_credits()
 	foreach ($context['credits'] as $section)
 	{
 		if (isset($section['pretext']))
-		echo '
-		<div class="windowbg wrc">
-			<p>', $section['pretext'], '</p>
+			echo '
+		<div class="windowbg wrc intro">
+			', $section['pretext'], '
 		</div>';
 
+		echo '
+		<div style="width: 49%; float: left; margin: 0 .5%">';
+
 		if (isset($section['title']))
-		echo '
-		<we:title>
-			', $section['title'], '
-		</we:title>';
+			echo '
+			<we:title>
+				', $section['title'], '
+			</we:title>';
 
 		echo '
-		<div class="windowbg2 wrc">
-			<dl>';
+			<div class="windowbg2 wrc">';
 
+		$top = true;
 		foreach ($section['groups'] as $group)
 		{
 			if (empty($group['members']))
@@ -151,56 +154,42 @@ function template_credits()
 
 			if (isset($group['title']))
 				echo '
-				<dt>
-					<strong>', $group['title'], '</strong>
-				</dt>
-				<dd>';
+				<h6', $top ? ' class="top"' : '', '>', $group['title'], '</h6>
+				<ul>
+					<li>', implode('</li>
+					<li>', $group['members']), '</li>
+				</ul>';
 
-			// Try to make this read nicely.
-			if (count($group['members']) <= 2)
-				echo implode(' ' . $txt['credits_and'] . ' ', $group['members']);
-			else
-			{
-				$last_peep = array_pop($group['members']);
-				echo implode(', ', $group['members']), ' ', $txt['credits_and'], ' ', $last_peep;
-			}
-
-			echo '
-				</dd>';
+			$top = false;
 		}
-
-		echo '
-			</dl>';
 
 		if (isset($section['posttext']))
 			echo '
-			<p class="posttext">', $section['posttext'], '</p>';
+				<p class="posttext">', $section['posttext'], '</p>';
 
 		echo '
+			</div>
 		</div>';
 	}
 
 	echo '
-		<we:cat>
-			', $txt['credits_copyright'], '
-		</we:cat>
-		<div class="windowbg wrc">
-			<dl>
-				<dt><strong>', $txt['credits_forum'], '</strong></dt>
-				<dd>', $context['copyrights']['smf'], '</dd>
-			</dl>';
+		<div style="width: 49%; float: left; margin: 0 .5%">
+			<we:cat>
+				', $txt['credits_copyright'], '
+			</we:cat>
+			<div class="windowbg wrc">
+				<h6 class="top">', $txt['credits_forum'], '</h6>
+				<div class="list">', $context['copyrights']['smf'], '</dd>';
 
 	if (!empty($context['copyrights']['mods']))
-	{
 		echo '
-			<dl>
-				<dt><strong>', $txt['credits_modifications'], '</strong></dt>
-				<dd>', implode('</dd><dd>', $context['copyrights']['mods']), '</dd>
-			</dl>';
-	}
+				<h6>', $txt['credits_modifications'], '</h6>
+				<div class="list">', implode('</div><div class="list">', $context['copyrights']['mods']), '</div>';
 
 	echo '
+			</div>
 		</div>
-	</div>';
+	</div>
+	<br class="clear">';
 }
 ?>
