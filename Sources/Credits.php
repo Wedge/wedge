@@ -57,7 +57,11 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
-						'<b>Wedgeward</b> (Peter Spicer &amp; Ren&eacute;-Gilles Deberdt)',
+						'<b>Wedgeward</b> &ndash;
+						<br>
+						<div class="floatleft"><img src="http://wedge.org/about/pete.png" style="display: block; margin: 8px auto 4px">Peter Spicer</div>
+						<div class="floatleft"><img src="http://wedge.org/about/nao.png" style="display: block; margin: 8px auto 4px">Ren&eacute;-Gilles Deberdt</div>
+						<br class="clear">',
 					),
 				),
 				array(
@@ -70,10 +74,10 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_consultants'],
 					'members' => array(
-						'live627 (John Rayes)',
+						'Aaron (Aaron van Geffen)',
 						'Bloc (Bjoern Kristiansen)',
 						'Dragooon (Shitiz Garg)',
-						'A&auml;ron (A&auml;ron van Geffen)',
+						'live627 (John Rayes)',
 						'TE (Thorsten Eurich)',
 					),
 				),
@@ -103,26 +107,25 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
-						'Norv',
-						'A&auml;ron van Geffen',
+						'Aaron (Aaron van Geffen)',
 						'Antechinus',
-						'Bjoern "Bloc" Kristiansen',
-						'Hendrik Jan "Compuart" Visser',
-						'Juan "JayBachatero" Hernandez',
-						'Karl "RegularExpression" Benson',
-						$user_info['is_admin'] ? 'Matt "Grudge" Wolf' : 'Grudge',
-						'Michael "Thantos" Miller',
-						'Sinan "[SiNaN]" &Ccedil;evik',
-						'Theodore "Orstio" Hildebrandt',
-						'Thorsten "TE" Eurich',
+						'Bloc (Bjoern Kristiansen)',
+						'Compuart (Hendrik Jan Visser)',
+						'Grudge' . ($user_info['is_admin'] ? ' (Matt Wolf)' : ''),
+						'JayBachatero (Juan Hernandez)',
+						'Nao &#23578; (Ren&eacute;-Gilles Deberdt)',
+						'Norv',
+						'Orstio (Theodore Hildebrandt)',
+						'regularexpression (Karl Benson)',
+						'[SiNaN] (Sinan &Ccedil;evik)',
+						'TE (Thorsten Eurich)',
+						'Thantos (Michael Miller)',
 						'winrules',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_consultants'],
 					'members' => array(
-						'Brett Flannigan',
-						'Ren&eacute;-Gilles "Nao &#23578;" Deberdt',
 					),
 				),
 				array(

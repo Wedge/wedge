@@ -4,7 +4,7 @@ body
 	zoom: 1
 
 body, td, .normaltext
-	font-family: Verdana, arial, helvetica, serif
+	font-family: Verdana, Arial, sans-serif
 	font-size: small
 
 *, a:link, a:visited, a:hover, a:active

@@ -173,7 +173,7 @@ function template_credits()
 	}
 
 	echo '
-		<div style="width: 49%; float: left; margin: 0 .5%">
+		<div class="clear">
 			<we:cat>
 				', $txt['credits_copyright'], '
 			</we:cat>
@@ -189,7 +189,6 @@ function template_credits()
 	echo '
 			</div>
 		</div>
-	</div>
-	<br class="clear">';
+	</div>';
 }
 ?>

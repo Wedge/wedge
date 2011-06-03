@@ -10,8 +10,8 @@
 #board_list
 	box-sizing: border-box
 	td.info a.subject
-		font-weight: bold
-		font-size: 110%
+		font-weight: 700
+		font-size: 120%
 		color: $board_col
 	td.children
 		color: #555
@@ -132,7 +132,7 @@ img.new_posts
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
 .prevnext_prev extends .cell
-	font: .7em Verdana, "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	font: .7em Verdana, Arial, sans-serif
 	text-align: left
 	width: 150px
 

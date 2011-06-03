@@ -50,7 +50,7 @@ function template_main()
 					<input type="hidden" name="poll" value="', $context['poll']['id'], '">
 					<fieldset id="poll_main">
 						<legend><span ', (isset($context['poll_error']['no_question']) ? ' class="error"' : ''), '>', $txt['poll_question'], ':</span></legend>
-						<input type="text" name="question" size="80" value="', $context['poll']['question'], '">
+						<input type="text" name="question" value="', $context['poll']['question'], '" size="80" maxlength="255">
 						<ul class="poll_main" id="pollMoreOptions">';
 
 	foreach ($context['choices'] as $choice)

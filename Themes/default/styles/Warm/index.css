@@ -132,7 +132,7 @@ tr.titlebg th, tr.catbg th
 .catbase
 	background: rgba(0,0,0, .03)
 	text-shadow: white 0 1px 2px
-	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, arial, helvetica, sans-serif
+	font: 700 1.4em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, Arial, sans-serif
 	img
 		vertical-align: -2px
 

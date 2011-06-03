@@ -253,7 +253,7 @@ iframe.aext
 		margin: auto
 
 .mg_large
-	font-size: 110%
+	font-size: 11pt
 	font-weight: bold
 	letter-spacing: -0.5px
 	padding-bottom: 4px
@@ -318,7 +318,7 @@ table.foxy_side
 .foxy_playlist_name
 	color: inherit
 	white-space: nowrap
-	font: 16pt/20pt bold Tahoma, arial, helvetica
+	font: 16pt/20pt bold Tahoma, sans-serif
 	margin: 0
 	padding: 0
 
@@ -331,7 +331,7 @@ table.foxy_side
 	vertical-align: middle
 
 .title_rss, .sort_options
-	font: 8pt Verdana, Tahoma, arial, helvetica !important
+	font: 8pt Verdana, sans-serif !important
 
 .title_rss
 	img
@@ -366,7 +366,7 @@ ul.aevadesc
 	display: inline
 
 .aeva_quickmod_bar
-	font: 0.85em Verdana, Tahoma, arial, helvetica
+	font: 0.85em Verdana, sans-serif
 	float: right
 	line-height: 27px
 	margin-top: -5px
