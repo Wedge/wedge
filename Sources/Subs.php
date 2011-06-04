@@ -753,7 +753,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if (!isset($non_twelve_hour))
 		$non_twelve_hour = trim(strftime('%p')) === '';
 	if ($non_twelve_hour && strpos($str, '%p') !== false)
-		$str = str_replace('%p', (strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
+		$str = str_replace('%p', strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm'], $str);
 
 	if ($user_info['setlocale'])
 	{

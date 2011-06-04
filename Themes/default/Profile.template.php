@@ -2376,12 +2376,13 @@ function template_profile_group_manage()
 
 	echo '
 						</span>
-						<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none;">', $txt['additional_membergroups_show'], '</a>
+						<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none">', $txt['additional_membergroups_show'], '</a>
 					</dd>';
 
-	add_js('
-	$("#additional_groupsList").hide();
-	$("#additional_groupsLink").show();');
+	// No need to hide the additional group list if it's short enough...
+	if (count($context['member_groups']) > 4)
+		add_js('
+	$("#additional_groupsList, #additional_groupsLink").toggle();');
 }
 
 // Callback function for entering a birthdate!

@@ -198,7 +198,7 @@ function cleanRequest()
 				if ($m[1] == '')
 					$_REQUEST['u'] = $_GET['u'] = $user_info['id'];
 				else
-					$_REQUEST['user'] = $_GET['user'] = $m[1];
+					$_REQUEST['user'] = $_GET['user'] = urldecode($m[1]);
 				$_REQUEST['action'] = $_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.

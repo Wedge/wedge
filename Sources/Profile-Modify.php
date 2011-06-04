@@ -595,7 +595,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['secret_answer'],
 			'subtext' => $txt['secret_desc2'],
 			'size' => 20,
-			'postinput' => '<span class="smalltext" style="margin-left: 4ex;"><a href="' . $scripturl . '?action=help;in=secret_why_blank" onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a></span>',
+			'postinput' => '<dfn>(<a href="' . $scripturl . '?action=help;in=secret_why_blank" onclick="return reqWin(this);">' . $txt['secret_why_blank'] . '</a>)</dfn>',
 			'value' => '',
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
