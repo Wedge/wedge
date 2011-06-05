@@ -123,20 +123,19 @@ function template_info_center_statistics()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
-	if (!$settings['show_stats_index'])
-		return;
-
-	echo '
+	if ($settings['show_stats_index'])
+		echo '
 				<we:title2>
 					<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>
 					', $txt['forum_stats'], '
 				</we:title2>
-				<p>
-					', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '. ', !empty($settings['show_latest_member']) ? $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong>' : '', '<br>
-					', (!empty($context['latest_post']) ? $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['time'] . ')<br>' : ''), '
-					<a href="', $scripturl, '?action=recent">', $txt['recent_view'], '</a>', $context['show_stats'] ? '<br>
-					<a href="' . $scripturl . '?action=stats">' . $txt['more_stats'] . '</a>' : '', '
-				</p>';
+				<ul>
+					<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($settings['show_latest_member']) ? '
+					<li>' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong></li>' : '', !empty($context['latest_post']) ? '
+					<li>' . $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['time'] . ')</li>' : '', '
+					<li><a href="', $scripturl, '?action=recent">', $txt['recent_view'], '</a></li>', $context['show_stats'] ? '
+					<li><a href="' . $scripturl . '?action=stats">' . $txt['more_stats'] . '</a></li>' : '', '
+				</ul>';
 }
 
 function template_info_center_usersonline()
