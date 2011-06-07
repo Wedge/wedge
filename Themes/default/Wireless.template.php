@@ -1,7 +1,16 @@
 <?php
-// Version: 2.0 RC5; Wireless
+/**
+ * Wedge
+ *
+ * Displays the limited WAP2 view, using XHTMLMP (XHTML Mobile Profile)
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
-// XHTMLMP (XHTML Mobile Profile) templates used for WAP 2.0 start here
 function template_wap2_above()
 {
 	global $context, $settings, $options, $user_info;

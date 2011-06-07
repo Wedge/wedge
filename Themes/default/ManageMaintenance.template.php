@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageMaintenance
+/**
+ * Wedge
+ *
+ * Interface for the maintenance tasks, to display the different options required to be presented.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Template for the database maintenance tasks.
 function template_maintain_database()

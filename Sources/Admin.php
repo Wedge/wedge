@@ -1,26 +1,15 @@
 <?php
-/**********************************************************************************
-* Admin.php                                                                       *
-***********************************************************************************
-* SMF: Simple Machines Forum                                                      *
-* Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
-* =============================================================================== *
-* Software Version:           SMF 2.0 RC5                                         *
-* Software by:                Simple Machines (http://www.simplemachines.org)     *
-* Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
-*           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
-* Support, News, Updates at:  http://www.simplemachines.org                       *
-***********************************************************************************
-* This program is free software; you may redistribute it and/or modify it under   *
-* the terms of the provided license as published by Simple Machines LLC.          *
-*                                                                                 *
-* This program is distributed in the hope that it is and will be useful, but      *
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE.                                            *
-*                                                                                 *
-* See the "license.txt" file for details of the Simple Machines license.          *
-* The latest version can always be found at http://www.simplemachines.org.        *
-**********************************************************************************/
+/**
+ * Wedge
+ *
+ * Initialises the administration panel area for Wedge and routes the request appropriately.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
@@ -716,6 +705,23 @@ function AdminHome()
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
 	}
+
+	// Lastly, fill in the blanks in the support resources paragraphs.
+	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
+		'http://wiki.simplemachines.org/',
+		'http://wiki.simplemachines.org/smf/features2',
+		'http://wiki.simplemachines.org/smf/options2',
+		'http://wiki.simplemachines.org/smf/themes2',
+		'http://wiki.simplemachines.org/smf/packages2'
+	);
+
+	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
+		'http://www.simplemachines.org/community/',
+		'http://www.simplemachines.org/redirect/english_support',
+		'http://www.simplemachines.org/redirect/international_support_boards',
+		'http://www.simplemachines.org/redirect/smf_support',
+		'http://www.simplemachines.org/redirect/customize_support'
+	);
 }
 
 // This allocates out all the search stuff.

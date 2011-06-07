@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Reports
+/**
+ * Wedge
+ *
+ * Displays the different kinds of administrative reports.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Choose which type of report to run?
 function template_report_type()

@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Calendar
+/**
+ * Wedge
+ *
+ * Displays the main calendar, plus the previous and next month mini-calendars, as well as the event posting interface.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // The main calendar - January, for example.
 function template_main()

@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Admin
+/**
+ * Wedge
+ *
+ * The main administration template, including the home page, credits, file versions, censored words, pending-completion, generic settings handling and more.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // This is the administration center home.
 function template_admin()

@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; PersonalMessage
+/**
+ * Wedge
+ *
+ * Displays all information relating to users' personal messages.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // This is the main sidebar for the personal messages section.
 function template_pm_above()
@@ -914,7 +924,7 @@ function template_send()
 		echo '
 			<div class="errorbox">
 				<strong>', $txt['error_while_submitting'], '</strong>
-				<ul>';
+				<ul class="reset">';
 
 		foreach ($context['post_error']['messages'] as $error)
 			echo '

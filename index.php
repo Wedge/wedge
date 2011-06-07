@@ -1,39 +1,19 @@
 <?php
-/**********************************************************************************
-* index.php                                                                       *
-***********************************************************************************
-* SMF: Simple Machines Forum                                                      *
-* Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
-* =============================================================================== *
-* Software Version:           SMF 2.0 RC5                                         *
-* Software by:                Simple Machines (http://www.simplemachines.org)     *
-* Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
-*           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
-* Support, News, Updates at:  http://www.simplemachines.org                       *
-***********************************************************************************
-* This program is free software; you may redistribute it and/or modify it under   *
-* the terms of the provided license as published by Simple Machines LLC.          *
-*                                                                                 *
-* This program is distributed in the hope that it is and will be useful, but      *
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE.                                            *
-*                                                                                 *
-* See the "license.txt" file for details of the Simple Machines license.          *
-* The latest version can always be found at http://www.simplemachines.org.        *
-**********************************************************************************/
+/**
+ * Wedge
+ *
+ * Bootstrap for Wedge, where all forum access will begin and all go through the same setup and security. This also lists the master set of actions:
+ *    'action-in-url' => array('Source-File.php', 'FunctionToCall'),
+ * Then, you can access the FunctionToCall() function from Source-File.php with the URL index.php?action=action-in-url.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
-/*	This, as you have probably guessed, is the crux on which SMF functions.
-	Everything should start here, so all the setup and security is done
-	properly.  The most interesting part of this file is the action array.
-	It is formatted as such:
-
-		'action-in-url' => array('Source-File.php', 'FunctionToCall'),
-
-	Then, you can access the FunctionToCall() function from Source-File.php
-	with the URL index.php?action=action-in-url.  Relatively simple, no?
-*/
-
-$forum_version = 'SMF 2.0 RC5 (Wedge 0.1)';
+$forum_version = 'SMF 2.0 (Wedge 0.1)';
 define('WEDGE_VERSION', '0.1 (SMF 2.0 RC5)');
 
 // Knock knock! We're entering through the front door.

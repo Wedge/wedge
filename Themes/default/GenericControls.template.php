@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; GenericControls
+/**
+ * Wedge
+ *
+ * Displays the visual verification interface.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // What's this, verification?!
 function template_control_verification($verify_id, $display_type = 'all', $reset = false)

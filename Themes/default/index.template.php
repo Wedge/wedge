@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; index
+/**
+ * Wedge
+ *
+ * The core template that underpins the entire layout, including key configuration settings.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 /*
 	This template is probably the most important one in the theme.
@@ -367,7 +377,7 @@ function template_body_below()
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
 			<li><a id="site_credits" href="', $scripturl, '?action=credits"><span>', $txt['site_credits'], '</span></a></li>
-			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check/referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>
+			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>
 			<li class="last">|&nbsp;&nbsp;<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
 		</ul>';
 

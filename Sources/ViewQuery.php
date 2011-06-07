@@ -1,44 +1,30 @@
 <?php
-/**********************************************************************************
-* ViewQuery.php                                                                   *
-***********************************************************************************
-* SMF: Simple Machines Forum                                                      *
-* Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
-* =============================================================================== *
-* Software Version:           SMF 2.0 RC5                                         *
-* Software by:                Simple Machines (http://www.simplemachines.org)     *
-* Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
-*           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
-* Support, News, Updates at:  http://www.simplemachines.org                       *
-***********************************************************************************
-* This program is free software; you may redistribute it and/or modify it under   *
-* the terms of the provided license as published by Simple Machines LLC.          *
-*                                                                                 *
-* This program is distributed in the hope that it is and will be useful, but      *
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE.                                            *
-*                                                                                 *
-* See the "license.txt" file for details of the Simple Machines license.          *
-* The latest version can always be found at http://www.simplemachines.org.        *
-**********************************************************************************/
+/**
+ * Wedge
+ *
+ * This file is concerned with viewing queries, and is used for debugging.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
 define('WEDGE_NO_LOG', 1);
 
-/*	This file is concerned with viewing queries, and is used for debugging.
-	It contains only one function:
-
-	void ViewQuery()
-		- toggles the session variable 'view_queries'.
-		- views a list of queries and analyzes them.
-		- requires the admin_forum permission.
-		- is accessed via ?action=viewquery.
-		- strings in this function have not been internationalized.
-*/
-
-// See the queries....
+/**
+ * Displays queries we have previously logged through execution and allows for some analysis.
+ *
+ * - Toggles the session variable 'view_queries'.
+ * - Outputs a list of the queries stored in the session.
+ * - Requires permissions as set in the administration panel, namely admin, moderator, regular member or guest.
+ * - Accessed via ?action=viewquery
+ * - Strings in this function have not, and do not need to be, internationalized; it is internal debugging data only.
+ */
 function ViewQuery()
 {
 	global $scripturl, $user_info, $settings, $context, $db_connection, $modSettings, $boarddir, $txt, $db_show_debug;

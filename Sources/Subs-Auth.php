@@ -1,34 +1,20 @@
 <?php
-/**********************************************************************************
-* Subs-Auth.php                                                                   *
-***********************************************************************************
-* SMF: Simple Machines Forum                                                      *
-* Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
-* =============================================================================== *
-* Software Version:           SMF 2.0 RC5                                         *
-* Software by:                Simple Machines (http://www.simplemachines.org)     *
-* Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
-*           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
-* Support, News, Updates at:  http://www.simplemachines.org                       *
-***********************************************************************************
-* This program is free software; you may redistribute it and/or modify it under   *
-* the terms of the provided license as published by Simple Machines LLC.          *
-*                                                                                 *
-* This program is distributed in the hope that it is and will be useful, but      *
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE.                                            *
-*                                                                                 *
-* See the "license.txt" file for details of the Simple Machines license.          *
-* The latest version can always be found at http://www.simplemachines.org.        *
-**********************************************************************************/
+/**
+ * Wedge
+ *
+ * Various functions in it to do with authentication, user handling, and the like.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has functions in it to do with authentication, user handling,
-	and the like.  It provides these functions:
-
-	void setLoginCookie(int cookie_length, int id_member, string password = '')
+/*	void setLoginCookie(int cookie_length, int id_member, string password = '')
 		- sets the SMF-style login cookie and session based on the id_member
 		  and password passed.
 		- password should be already encrypted with the cookie salt.
@@ -174,13 +160,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		loadSession();
 		session_regenerate_id();
 		$_SESSION = $oldSessionData;
-
-		// Is the new session's cookie stored?
-		if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()] != session_id())
-		{
-			$sessionCookieLifetime = @ini_get('session.cookie_lifetime');
-			setcookie(session_name(), session_id(), time() + (empty($sessionCookieLifetime) ? $cookie_length : $sessionCookieLifetime), $cookie_url[1], $cookie_url[0], !empty($modSettings['secureCookies']));
-		}
 
 		$_SESSION['login_' . $cookiename] = $data;
 	}

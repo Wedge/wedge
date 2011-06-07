@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; GenericMenu
+/**
+ * Wedge
+ *
+ * Creates the generic sidebar/dropdown menu as used in the admin and profile areas.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // This contains the html for the generic sidebar.
 function template_generic_menu_sidebar()

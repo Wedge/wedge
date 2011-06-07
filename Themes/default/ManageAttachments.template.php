@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageAttachments
+/**
+ * Wedge
+ *
+ * Display the configuration of attachments and avatars, as well as being able to browse the uploaded files.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Template template wraps around the simple settings page to add javascript functionality.
 function template_avatar_settings_above()

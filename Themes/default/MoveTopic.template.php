@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; MoveTopic
+/**
+ * Wedge
+ *
+ * Displays the interface for moving a topic to another board.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Show an interface for selecting which board to move a post to.
 function template_main()

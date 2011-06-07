@@ -1,4 +1,15 @@
 <?php
+/**
+ * Wedge
+ *
+ * Filters URLs for pretty formatting purposes.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 /*
 	Pretty URLs - custom Wedge version.

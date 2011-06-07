@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageNews
+/**
+ * Wedge
+ *
+ * Displays the interface for editing news items as well as composing and sending the newsletter.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Form for editing current news on the site.
 function template_edit_news()

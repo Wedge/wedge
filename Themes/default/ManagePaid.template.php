@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManagePaid
+/**
+ * Wedge
+ *
+ * Displays the configuration options as well as profile area for paid subscriptions.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // The template for adding or editing a subscription.
 function template_modify_subscription()

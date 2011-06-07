@@ -1,7 +1,16 @@
 <?php
-// Version: 2.0 RC5; Login
+/**
+ * Wedge
+ *
+ * Displays the main login form as well as the maintenance lock out screen.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
-// This is just the basic "login" form.
 function template_login()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;

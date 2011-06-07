@@ -438,8 +438,9 @@ ul.quickbuttons
 	padding: 1em 1em 0 0
 	margin: 0 1em 0 0
 	border-top: 1px solid #99a
-	img.smiley
-		vertical-align: bottom
+
+img.smiley
+	vertical-align: bottom
 
 .signature
 	#forumposts &, .post &

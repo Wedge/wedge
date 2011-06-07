@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Memberlist
+/**
+ * Wedge
+ *
+ * Displays the user-visible member list and limited search function form.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Displays a sortable listing of all members registered on the forum.
 function template_main()

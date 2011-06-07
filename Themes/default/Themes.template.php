@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Themes
+/**
+ * Wedge
+ *
+ * Listing available themes, available theme options, and general theme configuration.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // The main sub template - for theme administration.
 function template_main()

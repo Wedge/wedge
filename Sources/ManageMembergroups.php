@@ -1,26 +1,15 @@
 <?php
-/**********************************************************************************
-* ManageMembergroups.php                                                          *
-***********************************************************************************
-* SMF: Simple Machines Forum                                                      *
-* Open-Source Project Inspired by Zef Hemel (zef@zefhemel.com)                    *
-* =============================================================================== *
-* Software Version:           SMF 2.0 RC5                                         *
-* Software by:                Simple Machines (http://www.simplemachines.org)     *
-* Copyright 2006-2010 by:     Simple Machines LLC (http://www.simplemachines.org) *
-*           2001-2006 by:     Lewis Media (http://www.lewismedia.com)             *
-* Support, News, Updates at:  http://www.simplemachines.org                       *
-***********************************************************************************
-* This program is free software; you may redistribute it and/or modify it under   *
-* the terms of the provided license as published by Simple Machines LLC.          *
-*                                                                                 *
-* This program is distributed in the hope that it is and will be useful, but      *
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY    *
-* or FITNESS FOR A PARTICULAR PURPOSE.                                            *
-*                                                                                 *
-* See the "license.txt" file for details of the Simple Machines license.          *
-* The latest version can always be found at http://www.simplemachines.org.        *
-**********************************************************************************/
+/**
+ * Wedge
+ *
+ * General configuration of membergroups, from name to rank images to post counts if appropriate.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
@@ -408,6 +397,27 @@ function AddMembergroup()
 		{
 			$copy_id = $_POST['perm_type'] == 'copy' ? (int) $_POST['copyperm'] : (int) $_POST['inheritperm'];
 
+            // Are you a powerful admin?
+			if (!allowedTo('admin_forum'))
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT group_type
+					FROM {db_prefix}membergroups
+					WHERE id_group = {int:copy_from}
+					LIMIT {int:limit}',
+					array(
+						'copy_from' => $copy_id,
+						'limit' => 1,
+					)
+				);
+				list ($copy_type) = $smcFunc['db_fetch_row']($request);
+				$smcFunc['db_free_result']($request);
+
+				// Protected groups are... well, protected!
+				if ($copy_type == 1)
+					fatal_lang_error('membergroup_does_not_exist');
+			}
+
 			// Don't allow copying of a real priviledged person!
 			loadSource('ManagePermissions');
 			loadIllegalPermissions();
@@ -549,12 +559,14 @@ function AddMembergroup()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . '
+			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, id_group != {int:global_mod_group}, group_name',
 		array(
 			'moderator_group' => 3,
 			'global_mod_group' => 2,
 			'min_posts' => -1,
+			'is_protected' => 1,
 		)
 	);
 	$context['groups'] = array();
@@ -567,7 +579,8 @@ function AddMembergroup()
 
 	$result = wesql::query('
 		SELECT id_board, name, child_level
-		FROM {db_prefix}boards',
+		FROM {db_prefix}boards
+		ORDER BY board_order',
 		array(
 		)
 	);
@@ -640,6 +653,23 @@ function EditMembergroup()
 		// Validate the session.
 		checkSession();
 
+		// Can they really inherit from this group?
+		if ($_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT group_type
+				FROM {db_prefix}membergroups
+				WHERE id_group = {int:inherit_from}
+				LIMIT {int:limit}',
+				array(
+					'inherit_from' => $_POST['group_inherit'],
+					'limit' => 1,
+				)
+			);
+			list ($inherit_type) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+		}
+
 		// Set variables to their proper value.
 		$_POST['max_messages'] = isset($_POST['max_messages']) ? (int) $_POST['max_messages'] : 0;
 		$_POST['min_posts'] = isset($_POST['min_posts'], $_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
@@ -647,7 +677,7 @@ function EditMembergroup()
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
-		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 ? (int) $_POST['group_inherit'] : -2;
+		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 && (empty($inherit_type) || $inherit_type != 1) ? (int) $_POST['group_inherit'] : -2;
 
 		// !!! Don't set online_color for the Moderators group?
 
@@ -965,7 +995,8 @@ function EditMembergroup()
 	{
 		$result = wesql::query('
 			SELECT id_board, name, child_level, FIND_IN_SET({string:current_group}, member_groups) != 0 AS can_access
-			FROM {db_prefix}boards',
+			FROM {db_prefix}boards
+			ORDER BY board_order',
 			array(
 				'current_group' => (int) $_REQUEST['group'],
 			)
@@ -986,13 +1017,15 @@ function EditMembergroup()
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:current_group}' .
 			(empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . '
+			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+			AND group_type != {int:is_protected}') . '
 			AND id_group NOT IN (1, 3)
 			AND id_parent = {int:not_inherited}',
 		array(
 			'current_group' => (int) $_REQUEST['group'],
 			'min_posts' => -1,
 			'not_inherited' => -2,
+			'is_protected' => 1,
 		)
 	);
 	$context['inheritable_groups'] = array();

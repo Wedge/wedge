@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Recent
+/**
+ * Wedge
+ *
+ * Displays the list of very recent posts, the list of all unread posts and the list of all updated topics (that you've replied to before)
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 function template_main()
 {

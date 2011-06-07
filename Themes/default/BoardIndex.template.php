@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; BoardIndex
+/**
+ * Wedge
+ *
+ * Displays the main listing of boards.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 function template_boardindex()
 {

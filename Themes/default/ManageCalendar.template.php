@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageCalendar
+/**
+ * Wedge
+ *
+ * Interface for managing holidays in the calendar.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Editing or adding holidays.
 function template_edit_holiday()

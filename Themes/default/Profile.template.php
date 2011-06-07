@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Profile
+/**
+ * Wedge
+ *
+ * Displays all profile-related information.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Template for the profile side bar - goes before any other profile template.
 function template_profile_above()
@@ -64,7 +74,7 @@ function template_summary()
 	if (!empty($context['custom_fields']))
 	{
 		foreach ($context['custom_fields'] as $field)
-			if ($field['placement'] == 1 || empty($field['output_html']))
+			if (($field['placement'] == 1 || empty($field['output_html'])) && !empty($field['value']))
 				echo '
 					<li class="custom_field">', $field['output_html'], '</li>';
 	}

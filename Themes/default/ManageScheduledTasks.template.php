@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageScheduledTasks
+/**
+ * Wedge
+ *
+ * Displays the list and configuration of different scheduled tasks.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Template for listing all scheduled tasks.
 function template_view_scheduled_tasks()

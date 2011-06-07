@@ -1,8 +1,17 @@
 <?php
 /**
- * CSS file parser, written by Nao for Wedge. (c) 2011 Wedgeward
- * Released under the Wedge license. http://wedge.org/license/
+ * Wedge
  *
+ * Sass-like parser/compiler to build CSS files.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
+
+/**
  * Uses some code and ideas from Shaun Inman's CSS Cacheer library
  * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
  * Also implements concepts and ideas from Sass (http://sass-lang.com)

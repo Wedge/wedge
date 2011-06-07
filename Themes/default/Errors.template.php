@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Errors
+/**
+ * Wedge
+ *
+ * Displays fatal errors to the user, plus the error log and displaying a file that had an error, to help debug it.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // !!!
 /*	This template file contains only the sub template fatal_error. It is

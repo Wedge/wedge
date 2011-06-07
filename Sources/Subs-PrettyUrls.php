@@ -1,4 +1,15 @@
 <?php
+/**
+ * Wedge
+ *
+ * Support for handling so-called pretty URLs.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');

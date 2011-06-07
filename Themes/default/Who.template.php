@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; Who
+/**
+ * Wedge
+ *
+ * Displaying the list of users that are online and what they are doing, as well as credits.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // The only template in the file.
 function template_main()

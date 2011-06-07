@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageBans
+/**
+ * Wedge
+ *
+ * The interface for creating and editing bans.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 function template_ban_edit()
 {

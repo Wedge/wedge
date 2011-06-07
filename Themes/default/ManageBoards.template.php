@@ -1,5 +1,15 @@
 <?php
-// Version: 2.0 RC5; ManageBoards
+/**
+ * Wedge
+ *
+ * User interface for creating boards and categories, and editing boards in general.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Template for listing all the current categories and boards.
 function template_main()
