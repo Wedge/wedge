@@ -6,7 +6,7 @@
  * modifications to preserve some comments (see below). Also, rather than using
  * stdin/stdout, JSMin::minify() accepts a string as input and returns another
  * string as output.
- * 
+ *
  * Comments containing IE conditional compilation are preserved, as are multi-line
  * comments that begin with "/*!" (for documentation purposes). In the latter case
  * newlines are inserted around the comment to enhance readability.

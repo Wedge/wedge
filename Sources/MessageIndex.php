@@ -372,7 +372,7 @@ function MessageIndex()
 				censorText($row['first_subject']);
 				censorText($row['first_body']);
 				$row['first_body'] = parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']);
-				
+
 				// Is the theme requesting previews? Better set up the last post for them too. Not likely, but hey.
 				if (!empty($settings['message_index_preview']))
 				{

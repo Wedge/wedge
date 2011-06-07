@@ -1509,7 +1509,7 @@ function MaintainPurgeInactiveMembers()
 		$where_vars = array(
 			'time_limit' => $time_limit,
 		);
-		
+
 		if ($_POST['del_type'] == 'activated')
 		{
 			$where = 'mem.date_registered < {int:time_limit} AND mem.is_activated = {int:is_activated}';

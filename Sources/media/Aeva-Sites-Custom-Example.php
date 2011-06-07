@@ -107,7 +107,7 @@ Here, you can also change specific settings for existing sites, with a bit of co
 
 	'pattern' =>			[Regex] Match these URLs for embedding															(Mandatory)
 	'movie' =>				The FINAL embed URL, (any flashVars should be added as querystring)								(Mandatory)
-							$1 = FULL raw link / $2, $3... etc are any patterns you specify for parts 
+							$1 = FULL raw link / $2, $3... etc are any patterns you specify for parts
 							Note, &ampersands don't need to be encoded. All ampersands in final 'object' are made into &amp;
 	'size' =>				An array with width & height of the embedded object (in pixels, or set to 0 for 100%)			(Mandatory)
 	'ui-height' =>			This integer indicates the height of the video's user interface. This is only used to

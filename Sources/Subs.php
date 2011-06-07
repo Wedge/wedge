@@ -752,7 +752,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
 
 		if (strpos($str, '%p') !== false)
-			$str = str_replace('%p', (strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
+			$str = str_replace('%p', strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm'], $str);
 	}
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
@@ -1465,7 +1465,8 @@ function ob_sessrewrite($buffer)
 		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);
 		$queriesDiff = $db_count - $old_db_count;
 		if ($user_info['is_admin'])
-			$loadTime .= ' (' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
+			$loadTime .= '</li>
+			<li class="rd">(' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
 		$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 	}
 

@@ -361,7 +361,7 @@ function loadUserSettings()
 		$cache_groups = $user_info['groups'];
 		asort($cache_groups);
 		$cache_groups = implode(',', $cache_groups);
-		
+
 		$temp = cache_get_data('board_access_' . $cache_groups, 300);
 		if ($temp === null || time() - 240 > $modSettings['settings_updated'])
 		{

@@ -416,7 +416,7 @@ ul.aevadesc
 	list-style-image: url($images/aeva/bullet_rem.png)
 
 table.aelista
-	padding: 8px 4px
+	margin: -8px
 	tr td
 		padding: 10px
 		line-height: 1.4em

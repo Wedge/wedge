@@ -2556,12 +2556,12 @@ function profileSaveAvatarData(&$value)
 	if ($value == 'none')
 	{
 		$profile_vars['avatar'] = '';
- 
+
 		// Reset the attach ID.
 		$cur_profile['id_attach'] = 0;
 		$cur_profile['attachment_type'] = 0;
 		$cur_profile['filename'] = '';
- 
+
 		removeAttachments(array('id_member' => $memID));
 	}
 	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))

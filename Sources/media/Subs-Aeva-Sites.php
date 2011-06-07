@@ -2453,7 +2453,7 @@ $sites = array(
 		'pattern' => '(http://tu\.tv/tutvweb\.swf\?xtp=(?:\d{1,10}))',
 		'movie' => '$2',
 		'size' => array(425, 350),
-		// http://tu.tv/tutvweb.swf?xtp=312541 
+		// http://tu.tv/tutvweb.swf?xtp=312541
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://tu\.tv/[^"]*?xtp=(\d{1,10})"></param><param name="wmode" value="transparent"></param><embed[^<>]*?></embed></object>(?:<br /><a href="http://www\.tu\.tv"><img[^<>]*?></a><br />)?',
 		'fix-html-url' => 'http://tu.tv/tutvweb.swf?xtp=$1',
 		'lookup-url' => 'http://(?:www\.)?tu\.tv/videos/(?:[\w-]{3,50})',

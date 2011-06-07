@@ -43,7 +43,7 @@ function Credits($in_admin = false)
 						'<b>Wedgeward</b> &ndash;
 						<br>
 						<div class="floatleft"><img src="http://wedge.org/about/pete.png" style="display: block; margin: 8px auto 4px">Peter Spicer</div>
-						<div class="floatleft"><img src="http://wedge.org/about/nao.png" style="display: block; margin: 8px auto 4px">Ren&eacute;-Gilles Deberdt</div>
+						<div class="floatleft" style="margin-left: 8px"><img src="http://wedge.org/about/nao.png" style="display: block; margin: 8px auto 4px">Ren&eacute;-Gilles Deberdt</div>
 						<br class="clear">',
 					),
 				),

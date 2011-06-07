@@ -1279,7 +1279,7 @@ function prepareDisplayContext($reset = false)
 		else
 			$merge_safe = ($context['current_post_length'] + $context['last_post_length'] + $context['correct_post_length']) < $modSettings['max_messageLength'];
 	}
-	else 
+	else
 		$context['current_post_length'] = 0;
 
 	// Run BBC interpreter on the message.

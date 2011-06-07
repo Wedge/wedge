@@ -1666,8 +1666,6 @@ function aeva_getOnlineType($actions)
 	if (!is_array($actions) || !isset($actions['action']) || $actions['action'] != 'media')
 		return false;
 
-	aeva_loadLanguage('media_wo_home');
-
 	// Admin area?
 	if (isset($actions['area']))
 		return array(allowedTo('media_manage') ? 'direct' : 'hidden', $txt['media_wo_admin']);
@@ -1684,36 +1682,32 @@ function aeva_getOnlineType($actions)
 	$sa = isset($actions['sa']) ? $actions['sa'] : 'home';
 	switch ($sa)
 	{
-		case 'home';
-			$ret[1] = $txt['media_wo_home'];
-			$ret[0] = 'direct';
-		break;
 		case 'item';
-			$ret[3] = 'item';
-			$ret[2] = $actions['in'];
-			$ret[1] = 'item';
 			$ret[0] = 'fetch';
+			$ret[1] = 'item';
+			$ret[2] = $actions['in'];
+			$ret[3] = 'item';
 		break;
 		case 'album';
-			$ret[3] = 'album';
-			$ret[2] = $actions['in'];
-			$ret[1] = 'album';
 			$ret[0] = 'fetch';
+			$ret[1] = 'album';
+			$ret[2] = $actions['in'];
+			$ret[3] = 'album';
 		break;
 		case 'post';
 			if (isset($actions['in']))
 			{
-				$ret[3] = 'item';
-				$ret[2] = $actions['in'];
-				$ret[1] = 'edit';
 				$ret[0] = 'fetch';
+				$ret[1] = 'edit';
+				$ret[2] = $actions['in'];
+				$ret[3] = 'item';
 			}
 			else
 			{
-				$ret[3] = 'album';
-				$ret[2] = isset($actions['album']) ? $actions['album'] : 0;
-				$ret[1] = 'add';
 				$ret[0] = 'fetch';
+				$ret[1] = 'add';
+				$ret[2] = isset($actions['album']) ? $actions['album'] : 0;
+				$ret[3] = 'album';
 			}
 		break;
 		case 'unseen';
@@ -1721,36 +1715,29 @@ function aeva_getOnlineType($actions)
 			$ret[1] = $txt['media_wo_unseen'];
 		break;
 		case 'comment';
-			$ret[3] = 'item';
-			$ret[2] = $actions['in'];
-			$ret[1] = 'comment';
 			$ret[0] = allowedTo('media_comment') ? 'fetch' : 'hidden';
+			$ret[1] = 'comment';
+			$ret[2] = $actions['in'];
+			$ret[3] = 'item';
 		break;
 		case 'report';
-			$ret[3] = 'item';
-			$ret[2] = $actions['in'];
-			$ret[1] = 'report';
 			$ret[0] = allowedTo('media_report_items') ? 'fetch' : 'hidden';
+			$ret[1] = 'report';
+			$ret[2] = $actions['in'];
+			$ret[3] = 'item';
 		break;
 		case 'search';
 			$ret[0] = allowedTo('media_search') ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_search'];
 		break;
-		case 'stats';
-			$ret[0] = 'direct';
-			$ret[1] = $txt['media_wo_stats'];
-		break;
-		case 'vua';
-			$ret[0] = 'direct';
-			$ret[1] = $txt['media_wo_vua'];
-		break;
 		case 'mya';
 			$ret[0] = !$user_info['is_guest'] ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_ua'];
 		break;
+		// home, vua, rss, stats...
 		default;
 			$ret[0] = 'direct';
-			$ret[1] = $txt['media_wo_unknown'];
+			$ret[1] = $txt['media_wo_' . (isset($txt['media_wo_' . $sa]) ? $sa : 'unknown')];
 		break;
 	}
 
@@ -2794,7 +2781,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 
 	if (!$skip_table)
 		echo '
-	<table class="w100 cs0 aelista">';
+	<div class="wrc windowbg2"><table class="cs0 aelista">';
 
 	foreach ($albums as $album)
 	{
@@ -2808,8 +2795,8 @@ function aeva_listChildren(&$albums, $skip_table = false)
 			echo '<tr>';
 
 		echo '
-		<td style="width: 5%" class="windowbg top right">', $album['icon']['src'], '</td>
-		<td', $i <= $cols ? ' style="width: ' . $w45 . '%"' : '', ' class="windowbg2 top">
+		<td style="width: 5%" class="top right">', $album['icon']['src'], '</td>
+		<td', $i <= $cols ? ' style="width: ' . $w45 . '%"' : '', ' class="top">
 			<div class="mg_large">', $can_moderate_here ? '
 				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
@@ -2839,13 +2826,13 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	{
 		while (($i++ % $cols != 0) && !$is_alone)
 			echo '
-		<td class="windowbg"></td><td class="windowbg2"></td>';
+		<td colspan="2"></td>';
 		echo '</tr>';
 	}
 
 	if (!$skip_table)
 		echo '
-	</table>';
+	</table></div>';
 }
 
 // Sub-template for showing item lists

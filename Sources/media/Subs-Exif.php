@@ -12,12 +12,12 @@ if (!defined('SMF'))
 	http://www.offsky.com/software/exif/index.php
 	jake@olefsky.com
 
-	This program is free software; you can redistribute it and/or modify it under the terms of 
-	the GNU General Public License as published by the Free Software Foundation; either version 2 
+	This program is free software; you can redistribute it and/or modify it under the terms of
+	the GNU General Public License as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 	See the GNU General Public License for more details. http:// www.gnu.org/copyleft/gpl.html
 
 	SUMMARY:
@@ -74,7 +74,7 @@ function lookup_tag($tag) {
 		case '8298': $tag = 'Copyright'; break;
 		case '8649': $tag = 'PhotoshopSettings'; break;
 		case '8769': $tag = 'ExifOffset'; break;
-		case '8825': $tag = 'GPSInfoOffset'; break;            
+		case '8825': $tag = 'GPSInfoOffset'; break;
 		case '9286': $tag = 'UserCommentOld'; break;
 
 		case '829a': $tag = 'ExposureTime'; break;
@@ -154,7 +154,7 @@ function lookup_tag($tag) {
 		case '011b': $tag = 'ThumbnailYResolution'; break;
 		case '011c': $tag = 'PlanarConfiguration'; break;
 		case '0128': $tag = 'ThumbnailResolutionUnit'; break;
-		case '0201': $tag = 'JpegIFOffset'; break;        
+		case '0201': $tag = 'JpegIFOffset'; break;
 		case '0202': $tag = 'JpegIFByteCount'; break;
 		case '0212': $tag = 'YCbCrSubSampling'; break;
 
@@ -239,7 +239,7 @@ function formatData($type,$tag,$intel,$data) {
 			$data = $top.' dots per ResolutionUnit';
 		} else if ($tag == '829a') {
 			if ($top != 0 && ($bottom % $top) == 0) {
-				$data = '1/'.round($bottom/$top, 0).' sec'; 
+				$data = '1/'.round($bottom/$top, 0).' sec';
 			} else {
 				if ($bottom == 1) {
 					$data = $top.' sec';
@@ -255,19 +255,19 @@ function formatData($type,$tag,$intel,$data) {
 			// ApertureValue is given in the APEX Mode. Many thanks to Matthieu Froment for this code
 			$data = exp(($data*log(2))/2);
 			$data = round($data, 1);
-			$data='f/'.$data; 
+			$data='f/'.$data;
 		} else if ($tag == '920a') {
 			$data = $data.' mm';
 		} else if ($tag == '8827') {
 			$data = 'ISO '.$data;
 		} else if ($tag == '9201') {
 			// The ShutterSpeedValue is given in the APEX mode. Many thanks to Matthieu Froment for this code
-			$data = exp($data * log(2)); 
+			$data = exp($data * log(2));
 			if ($data > 1) $data = floor($data);
 			if ($data > 0) {
 				$data = 1/$data;
 				$n=0; $d=0;
-				ConvertToFraction($data, $n, $d); 
+				ConvertToFraction($data, $n, $d);
 				if ($n >= 1 && $d == 1) $data = $n.' sec';
 				else $data = $n.'/'.$d.' sec';
 			} else {
@@ -473,9 +473,9 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset)
 		} else if (preg_match('~SANYO~i',$make)) {
 			parseSanyo($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
-	} else if (preg_match('~Panasonic~i',$make)) { 
-		parsePanasonic($data,$result,$seek,$globalOffset); 
-		$result[$ifd_name]['KnownMaker'] = 1; 
+	} else if (preg_match('~Panasonic~i',$make)) {
+		parsePanasonic($data,$result,$seek,$globalOffset);
+		$result[$ifd_name]['KnownMaker'] = 1;
 		} else {
 			$result[$ifd_name]['KnownMaker'] = 0;
 		}
@@ -535,7 +535,7 @@ function read_exif_data_raw($path,$verbose)
 		fclose($in);
 		fclose($seek);
 		return $result;
-	}  
+	}
 
 	$result['ValidIPTCData'] = 0;
 	$result['ValidJFIFData'] = 0;
@@ -554,7 +554,7 @@ function read_exif_data_raw($path,$verbose)
 			if (hexdec($size)-2 > 0) {
 				$data = fread( $in, hexdec($size)-2);
 				$result['JFIF']['Data'] = $data;
-			} 
+			}
 
 			$result['JFIF']['Identifier'] = substr($data,0,5);;
 			$result['JFIF']['ExtensionCode'] =  bin2hex(substr($data,6,1));
@@ -568,7 +568,7 @@ function read_exif_data_raw($path,$verbose)
 			if (hexdec($size)-2 > 0) {
 				$data = fread( $in, hexdec($size)-2);
 				$result['IPTC']['Data'] = $data ;
-			} 
+			}
 			$globalOffset+=hexdec($size)+2;
 
 		} else if ($data == 'ffe2') {
@@ -578,7 +578,7 @@ function read_exif_data_raw($path,$verbose)
 			if (hexdec($size)-2 > 0) {
 				$data = fread( $in, hexdec($size)-2);
 				$result['APP2']['Data'] = $data ;
-			} 
+			}
 			$globalOffset+=hexdec($size)+2;
 
 		} else if ($data == 'fffe') {
@@ -588,7 +588,7 @@ function read_exif_data_raw($path,$verbose)
 			if (hexdec($size)-2 > 0) {
 				$data = fread( $in, hexdec($size)-2);
 				$result['COM']['Data'] = $data ;
-			} 
+			}
 			$globalOffset+=hexdec($size)+2;
 
 		} else if ($data == 'ffe1') {
@@ -719,7 +719,7 @@ function read_exif_data_raw($path,$verbose)
 				$result['Errors'] = $result['Errors']+1;
 			}
 			$result['IFD1']['ThumbnailData'] = $data;
-	} 
+	}
 
 	if (!isset($result['SubIFD']['ExifInteroperabilityOffset']) || $result['SubIFD']['ExifInteroperabilityOffset'] == 0) {
 		fclose($in);
@@ -784,7 +784,7 @@ function ConvertToFraction($v, &$n, &$d)
 
 		$f = 1 / $f;
 	}
-}  
+}
 
 // Calculates the 35mm-equivalent focal length from the reported sensor resolution, by Tristan Harward.
 function get35mmEquivFocalLength(&$result)
@@ -845,7 +845,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result)
 
 		if($tag=="0204") {
 			$data=$data."x";
-		} 
+		}
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 
 		$data = bin2hex($data);
@@ -1243,7 +1243,7 @@ function formatFujifilmData($type,$tag,$intel,$data) {
 
 		if($tag=="1011") {
 			$data=$data." EV";
-		} 
+		}
 
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		$data = bin2hex($data);
@@ -1484,12 +1484,12 @@ function formatGPSData($type,$tag,$intel,$data) {
 
 								if($tag=="0002" || $tag=="0004") {
 
-			if($intel==1){ 
-				$seconds = GPSRational(substr($data,0,16),$intel); 
-				$hour = GPSRational(substr($data,32,16),$intel); 
-			} else { 
-				$hour= GPSRational(substr($data,0,16),$intel); 
-				$seconds = GPSRational(substr($data,32,16),$intel); 
+			if($intel==1){
+				$seconds = GPSRational(substr($data,0,16),$intel);
+				$hour = GPSRational(substr($data,32,16),$intel);
+			} else {
+				$hour= GPSRational(substr($data,0,16),$intel);
+				$seconds = GPSRational(substr($data,32,16),$intel);
 			}
 			$minutes = GPSRational(substr($data,16,16),$intel);
 
@@ -1533,7 +1533,7 @@ function formatGPSData($type,$tag,$intel,$data) {
 								} else if($tag=="0005"){
 										if($data == "00000000"){ $data = 'Above Sea Level'; }
 										else if($data == "01000000"){ $data = 'Below Sea Level'; }
-								} 
+								}
 
 	} else {
 		$data = bin2hex($data);
@@ -1637,7 +1637,7 @@ function lookup_Nikon_tag($tag,$model) {
 			case "0082": $tag = "Adapter";break;
 			case "0083": $tag = "LensType";break;
 			case "0084": $tag = "LensInfo";break;
-			case "0085": $tag = "ManualFocusDistance";break; 
+			case "0085": $tag = "ManualFocusDistance";break;
 			case "0086": $tag = "DigitalZoom";break;
 			case "0087": $tag = "FlashUsed";break;
 			case "0088": $tag = "AFFocusPosition";break;
@@ -1649,7 +1649,7 @@ function lookup_Nikon_tag($tag,$model) {
 
 			default: $tag = "unknown:".$tag;break;
 		}
-	} 
+	}
 
 	return $tag;
 }
@@ -1670,13 +1670,13 @@ function formatNikonData($type,$tag,$intel,$model,$data) {
 
 		if($tag=="0085" && $model==1) {
 			$data=$data." m";
-		} 
+		}
 		if($tag=="0086" && $model==1) {
 			$data=$data."x";
-		} 
+		}
 		if($tag=="000a" && $model==0) {
 			$data=$data."x";
-		} 
+		}
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		$data = bin2hex($data);
 		if($intel==1) $data = intel2Moto($data);
@@ -1909,10 +1909,10 @@ function formatOlympusData($type,$tag,$intel,$data) {
 
 		if($tag=="0204") {
 			$data=$data."x";
-		} 
+		}
 		if($tag=="0205") {
 			$data=$top."/".$bottom;
-		} 
+		}
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		$data = bin2hex($data);
 		if($intel==1) $data = intel2Moto($data);
@@ -2059,7 +2059,7 @@ function formatPanasonicData($type,$tag,$intel,$data) {
 			if($data == 256) $data = "9-area-focusing";
 			else if($data == 16) $data = "1-area-focusing";
 			else $data = "Unknown (".$data.")";
-		} 
+		}
 
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
 		$data = bin2hex($data);
@@ -2141,7 +2141,7 @@ function formatPanasonicData($type,$tag,$intel,$data) {
 		}
 		if($tag=="0023") {
 			$data=$data." EV";
-		} 
+		}
 		if($tag=="0024") {
 			$data = $data;
 		}
@@ -2190,7 +2190,7 @@ function formatPanasonicData($type,$tag,$intel,$data) {
 		}
 		if($tag=="0036") {
 			$data=$data;
-		} 
+		}
 	} else if($type=="UNDEFINED") {
 
 	} else {

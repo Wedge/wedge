@@ -132,10 +132,9 @@ function template_html_above()
 		echo '
 	<link rel="canonical" href="', $context['canonical_url'], '">';
 
-	// Show all the relative links, such as search, contents, and the like.
+	// Show all the relative links, such as search.
 	echo '
-	<link rel="search" href="', $scripturl, '?action=search">
-	<link rel="contents" href="', $scripturl, '">';
+	<link rel="search" href="', $scripturl, '?action=search">';
 
 	// If RSS feeds are enabled, advertise the presence of one.
 	if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
@@ -244,7 +243,7 @@ function template_sidebar_above()
 
 	echo '<we:sidebar><div class="column">
 			<we:title>
-				<span class="greeting">', $txt['hello_member_ndt'], ' <span>', $context['user']['name'], '</span></span>
+				<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
 			</we:title>
 			<div id="userbox">';
 
@@ -375,18 +374,20 @@ function template_body_below()
 	echo '
 	<div id="footer"><div class="frame">
 		<ul class="reset">
-			<li class="copyright">', theme_copyright(), '</li>
-			<li><a id="site_credits" href="', $scripturl, '?action=credits"><span>', $txt['site_credits'], '</span></a></li>
-			<li>|&nbsp;&nbsp;<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '"><span>', $txt['html5'], '</span></a></li>
-			<li class="last">|&nbsp;&nbsp;<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
-		</ul>';
+			<li class="copyright">', theme_copyright(), '</li>';
 
 	// Show the load time?
 	if ($context['show_load_time'])
 		echo '
-		<p><!-- insert stats here --></p>';
+			<li class="stats"><!-- insert stats here --></li>';
 
 	echo '
+			<li class="links">
+				<a id="site_credits" href="', $scripturl, '?action=credits">', $txt['site_credits'], '</a> |
+				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
+				<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win">', $txt['wap2'], '</a>
+			</li>
+		</ul>
 	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
 </div>
 ', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : '
