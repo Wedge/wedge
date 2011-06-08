@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays fatal errors to the user, plus the error log and displaying a file that had an error, to help debug it.
+ * Displays fatal errors, the error log, and handles showing buggy lines within file context, to help with debugging.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -11,13 +11,7 @@
  * @version 0.1
  */
 
-// !!!
-/*	This template file contains only the sub template fatal_error. It is
-	shown when an error occurs, and should show at least a back button and
-	$context['error_message'].
-*/
-
-// Show an error message.....
+// Show an error message. This should have at least a back button and $context['error_message'].
 function template_fatal_error()
 {
 	global $context, $settings, $options, $txt;

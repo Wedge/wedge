@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displaying user specific theme options.
+ * Displays user-specific theme options.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

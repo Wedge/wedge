@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles logging out of a previously-logged-in member.
+ * Handles logging out any previously logged-in member.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

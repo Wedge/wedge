@@ -448,7 +448,7 @@ function template_aeva_admin_about()
 					<tr><td height="207">
 						<table class="w100 cp4 cs1 windowbg" style="height: 172px">
 							<tr>
-								<td class="windowbg w50">', $txt['media_admin_smf_ver'], ': ', $context['aeva_data']['smf'], '</td>
+								<td class="windowbg w50">', $txt['media_admin_smf_ver'], ': ', $context['aeva_data']['wedge'], '</td>
 								<td class="windowbg w50">', $txt['media_admin_php_ver'], ': ', $context['aeva_data']['php'], '</td>
 							</tr>
 							<tr>

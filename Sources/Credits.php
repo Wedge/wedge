@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file deals with keeping track of all the credits, and displaying them to everyone, or just within the admin panel.
+ * The Who's Who of Wedge Wardens. Keeps track of all the credits, and displays them to everyone, or just within the admin panel.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

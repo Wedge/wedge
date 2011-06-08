@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * It is here expressly to find and retrieve information about posted topics, messages, and the like, that you have not yet read.
+ * Finds and retrieves information about posted topics, messages, and whatever you haven't read yet.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

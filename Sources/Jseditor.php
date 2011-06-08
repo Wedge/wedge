@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles the processing required to switch betwen WYSIWYG and bbcode-only editing modes.
+ * Handles the processing required to switch between WYSIWYG and BBCode-only editing modes.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

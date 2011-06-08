@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file provides the handling for stickying topics from the main topic view.
+ * Handles setting topics to sticky from the main topic view.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

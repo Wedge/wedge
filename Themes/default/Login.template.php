@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the main login form as well as the maintenance lock out screen.
+ * Displays the main login form as well as the maintenance lock-out screen.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

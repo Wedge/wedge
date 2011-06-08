@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Initialises the administration panel area for Wedge and routes the request appropriately.
+ * Initializes the administration panel area for Wedge and routes the request appropriately.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

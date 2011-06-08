@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Get the latest posts of a forum.
+ * Retrieves the latest posts of a forum.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

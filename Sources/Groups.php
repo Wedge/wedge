@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Show group information and allows users with manage-membergroups permission to add/remove members.
+ * Shows group information and allows users with manage-membergroups permission to add/remove members.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

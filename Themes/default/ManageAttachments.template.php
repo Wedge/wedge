@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Display the configuration of attachments and avatars, as well as being able to browse the uploaded files.
+ * Displays the configuration of attachments and avatars, and allows to browse the uploaded files.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

@@ -763,8 +763,8 @@ function aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$widt
 
 function aeva_foxy_rss()
 {
-	global $context, $scripturl, $txt, $modSettings, $user_info, $amSettings;
-	global $query_this, $forum_version, $cdata_override, $db_show_debug;
+	global $context, $scripturl, $txt, $modSettings, $user_info;
+	global $amSettings, $query_this, $db_show_debug;
 
 	$amSettings['max_rss_items'] = !isset($amSettings['max_rss_items']) ? 10 : $amSettings['max_rss_items'];
 	if (empty($amSettings['max_rss_items']))

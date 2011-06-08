@@ -47,9 +47,9 @@ if (!defined('SMF'))
 	void SplitSelectTopics()
 		- allows the user to select the messages to be split.
 		- is accessed with ?action=splittopics;sa=selectTopics.
-		- uses 'select' sub template of the SplitTopics template or (for
-		  XMLhttp) the 'split' sub template of the Xml template.
-		- supports XMLhttp for adding/removing a message to the selection.
+		- uses 'select' subtemplate of the SplitTopics template or, for
+		  Ajax, the 'split' subtemplate of the Xml template.
+		- supports Ajax for adding/removing a message to the selection.
 		- uses a session variable to store the selected topics.
 		- shows two independent page indexes for both the selected and
 		  not-selected messages (;topic=1.x;start2=y).
@@ -472,7 +472,7 @@ function SplitSelectTopics()
 		wesql::free_result($request);
 	}
 
-	// The XMLhttp method only needs the stuff that changed, so let's compare.
+	// The XMLhttp (Ajax) method only needs the stuff that changed, so let's compare.
 	if (isset($_REQUEST['xml']))
 	{
 		$changes = array(

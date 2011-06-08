@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Payment gateway for paid subscritions through PayPal
+ * Pluggable payment gateway for subscriptions paid through PayPal.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

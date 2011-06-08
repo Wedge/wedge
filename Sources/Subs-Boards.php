@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Provides support for minor board related operations, such as marking them read.
+ * Provides support for minor board-related operations, such as marking them read.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

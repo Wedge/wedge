@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handle gathering data on, and allowing editing of, user profiles - can include preferences too.
+ * Handles gathering data on, and allowing editing of, user profiles - can include preferences too.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

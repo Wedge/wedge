@@ -3436,7 +3436,8 @@ function aeva_theme_url($file)
 
 function aeva_profile($id, $name, $func = 'aeva')
 {
-	global $scripturl, $context, $forum_version, $txt;
+	global $scripturl, $txt;
+
 	return empty($id) ? (empty($name) ? $txt['guest'] : $name) : ('<a href="' . $scripturl . '?action=profile;u=' . $id . ';area=' . $func . '">' . $name .'</a>');
 }
 

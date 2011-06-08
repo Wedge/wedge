@@ -2,7 +2,8 @@
 /**
  * Wedge
  *
- * Handles virtually all aspects of perosnal messages.
+ * Handles virtually all aspects of PMs (personal messages):
+ * viewing, sending, deleting and marking them.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -14,9 +15,8 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file is mainly meant for viewing personal messages.  It also sends,
-	deletes, and marks personal messages.  For compatibility reasons, they are
-	often called "instant messages".  The following functions are used:
+/*	For compatibility reasons, PMs may be called "instant messages".
+	The following functions are used:
 
 	void MessageMain()
 		// !!! ?action=pm

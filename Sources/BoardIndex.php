@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file provides the primary view for the board index; also known as the list of all boards, and the default initial of the forum.
+ * This file provides the primary view for the board index; also known as the list of all boards, and the default home page of the forum.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

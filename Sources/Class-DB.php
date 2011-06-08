@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * The general database singleton with query parameterisation.
+ * The general database singleton with query parametrization.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

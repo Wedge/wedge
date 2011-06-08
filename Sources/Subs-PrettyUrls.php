@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Support for handling so-called pretty URLs.
+ * Support for handling URL post-processing.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -89,13 +89,6 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 						array('c', 'c', 'c', 'tm', 'tm', 'tm', 'r', 'r', 'r', '-', '-'), $text); // © ™ ® nbsp
 	$text = preg_replace('/(&#(\d{1,7}|x[0-9a-f]{1,6});)/e', 'entity_replace(\'$2\')', $text); // Turns &#12345; to %AB%CD
 
-// gen-delims = :/?#[]@
-// sub-delims = !$&'()*+,;=
-
-// punct:	!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
-// -delim: "%-.<>\^_`{|}~
-// keep:	$%_
-// $text = preg_replace(array('/([\x00-\x11\x13-\x1f\x80-\x9f\xa0-\xff])/', '/&[^;]*?;/', '~([^a-z0-9\x12\$%_-])~'), '-', $text);
 	$text = preg_replace(array('/[\x00-\x1f\x80-\xff]/', '/&[^;]*?;/', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
 	$text = str_replace(array('"',"'"), chr(18), $text);
 

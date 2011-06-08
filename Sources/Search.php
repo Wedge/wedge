@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Gathers all relevant information for the purposes of displaying a search form to the user.
+ * Gathers all relevant information for the purpose of displaying a search form to the user.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -16,7 +16,7 @@ if (!defined('SMF'))
 
 /*	These functions are here for searching, and they are:
 
-	void Search1()
+	void Search()
 		- shows the screen to search forum posts (action=search), and uses the
 		  simple version if the simpleSearch setting is enabled.
 		- uses the main sub template of the Search template.
@@ -26,14 +26,6 @@ if (!defined('SMF'))
 		- the form redirects to index.php?action=search2.
 
 */
-
-// This defines two version types for checking the API's are compatible with this version of SMF.
-$GLOBALS['search_versions'] = array(
-	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'SMF 2.0',
-	// This is the minimum version of SMF that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('SMF 2+0=Beta=2', array('+' => '.', '=' => ' ')),
-);
 
 // Ask the user what they want to search for.
 function Search()

@@ -1062,7 +1062,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 
 	// We haven't found the package script yet...
 	$script = false;
-	$the_version = strtr($forum_version, array('SMF ' => ''));
+	$the_version = strtr($forum_version, array('Wedge ' => ''));
 
 	// Emulation support...
 	if (!empty($_SESSION['version_emulate']))

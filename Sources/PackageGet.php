@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles browsing packages from a package server and downloading that package to the local server.
+ * Handles browsing packages from a package server and downloading packages to the local server.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -310,7 +310,7 @@ function PackageGBrowse()
 			$default_title = westr::htmlspecialchars($listing->fetch('default-website/@title'));
 	}
 
-	$the_version = strtr($forum_version, array('SMF ' => ''));
+	$the_version = strtr($forum_version, array('Wedge ' => ''));
 	if (!empty($_SESSION['version_emulate']))
 		$the_version = $_SESSION['version_emulate'];
 

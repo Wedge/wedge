@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file provides the handling for some of the AJAX operations, naming the very generic ones fired through action=xmlhttp.
+ * This file provides the handling for some of the AJAX operations, namely the very generic ones fired through action=ajax.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -17,12 +17,12 @@ if (!defined('SMF'))
 define('WEDGE_NO_LOG', 1);
 
 /**
- * This function handles the initial interaction from action=xmlhttp, loading the template then directing process to the appropriate handler.
+ * This function handles the initial interaction from action=ajax, loading the template then directing process to the appropriate handler.
  *
  * @see GetJumpTo()
  * @see ListMessageIcons()
  */
-function Xmlhttp()
+function Ajax()
 {
 	loadTemplate('Xml');
 

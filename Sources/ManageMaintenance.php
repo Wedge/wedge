@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Various maintenance related tasks, including member re-attribution, cleaning the forum cache and so on.
+ * Various maintenance-related tasks, including member re-attribution, cleaning the forum cache and so on.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

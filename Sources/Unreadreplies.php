@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file is here expressly to find and retrieve information about recently posted topics that we've posted in before.
+ * Finds and retrieves information about recently posted topics that we've posted in before.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

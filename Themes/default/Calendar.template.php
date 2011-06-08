@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the main calendar, plus the previous and next month mini-calendars, as well as the event posting interface.
+ * Displays the main calendar, plus the previous and next month mini-calendars, as well as the event-posting interface.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

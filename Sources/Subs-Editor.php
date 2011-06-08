@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles the visual verifications (including CAPTCHA) generation and validation (and delegating image/sound generation elsewhere)
+ * Handles the generation and validation of visual verifications and CAPTCHAs, as well as delegating image/sound generation elsewhere.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

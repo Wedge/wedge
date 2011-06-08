@@ -206,7 +206,7 @@ function loadUserSettings()
 	{
 		// Let's not update the last visit time in these cases...
 		// 1. SSI doesn't count as visiting the forum.
-		// 2. RSS feeds and XMLHTTP requests don't count either.
+		// 2. RSS feeds and Ajax requests don't count either.
 		// 3. If it was set within this session, no need to set it again.
 		// 4. New session, yet updated < five hours ago? Maybe cache can help.
 		if (SMF != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))

@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the search and browse features for the admin-only memberlist.
+ * Displays the search and browse features for the admin-only member list.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Various functions in it to do with authentication, user handling, and the like.
+ * Various functions to do with authentication, user handling, and the like.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

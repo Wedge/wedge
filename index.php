@@ -2,8 +2,11 @@
 /**
  * Wedge
  *
- * Bootstrap for Wedge, where all forum access will begin and all go through the same setup and security. This also lists the master set of actions:
+ * Bootstrap for Wedge, where all forum access will begin and all go through the same setup and security.
+ * This also lists the master set of actions. Just add your custom entries to the $action_list array:
+ *
  *    'action-in-url' => array('Source-File.php', 'FunctionToCall'),
+ *
  * Then, you can access the FunctionToCall() function from Source-File.php with the URL index.php?action=action-in-url.
  *
  * @package wedge
@@ -13,13 +16,11 @@
  * @version 0.1
  */
 
-$forum_version = 'SMF 2.0 (Wedge 0.1)';
-define('WEDGE_VERSION', '0.1 (SMF 2.0 RC5)');
+$forum_version = 'Wedge 0.1';
+define('WEDGE_VERSION', '0.1');
 
 // Knock knock! We're entering through the front door.
 define('SMF', 1);
-// We're still in Alpha...
-define('CACHE_SUFFIX', 'a');
 
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime'))
@@ -134,7 +135,7 @@ $action_list = array(
 	'viewquery' => array('ViewQuery.php', 'ViewQuery'),
 	'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
 	'who' => array('Who.php', 'Who'),
-	'xmlhttp' => array('Xmlhttp.php', 'Xmlhttp'),
+	'ajax' => array('Ajax.php', 'Ajax'),
 );
 
 // Clean the request variables, add slashes, etc.

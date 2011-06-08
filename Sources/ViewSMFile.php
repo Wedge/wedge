@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file deals with outputting remote files from home, that have already been cached locally.
+ * Outputs remote files, provided they've been cached locally.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

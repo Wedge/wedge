@@ -34,20 +34,12 @@ if (!defined('SMF'))
 		- passes sorting duty to the current API.
 */
 
-// This defines two version types for checking the API's are compatible with this version of SMF.
-$GLOBALS['search_versions'] = array(
-	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'SMF 2.0',
-	// This is the minimum version of SMF that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('SMF 2+0=Beta=2', array('+' => '.', '=' => ' ')),
-);
-
 // Gather the results and show them.
 function Search2()
 {
 	global $scripturl, $modSettings, $sourcedir, $txt, $db_connection;
 	global $user_info, $context, $options, $messages_request, $boards_can;
-	global $excludedWords, $participants, $search_versions, $searchAPI;
+	global $excludedWords, $participants, $searchAPI;
 
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
@@ -117,10 +109,10 @@ function Search2()
 
 	loadSource('SearchAPI-' . ucwords($modSettings['search_index']));
 
-	// Create an instance of the search API and check it is valid for this version of SMF.
+	// Create an instance of the search API.
 	$search_class_name = $modSettings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
-	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()) || $search_versions['forum_version'] < $searchAPI->min_smf_version || $search_versions['search_version'] > $searchAPI->version_compatible)
+	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
 	{
 		// Log the error.
 		loadLanguage('Errors');

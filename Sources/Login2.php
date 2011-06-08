@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles the receipt of the login-form, validating password and so on.
+ * Handles the receipt of the login form, password validation and so on.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

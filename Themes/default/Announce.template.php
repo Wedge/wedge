@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the different aspects of announcing a post, naming gathering the groups it should be sent to, as well as showing progress.
+ * Displays the different aspects of announcing a post, namely gathering the groups it should be sent to, as well as showing progress.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

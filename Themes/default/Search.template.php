@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Display the search interface and results.
+ * Displays the search interface and results.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

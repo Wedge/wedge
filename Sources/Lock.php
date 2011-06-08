@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file provides the handling for locking topics from the main topic view.
+ * Handles locking and unlocking topics from the main topic view.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

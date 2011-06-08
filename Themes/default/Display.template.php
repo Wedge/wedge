@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays a given topic, be it a blog or forum topic.
+ * Displays a given topic, be it a blog post or forum topic.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

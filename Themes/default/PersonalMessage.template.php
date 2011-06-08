@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays all information relating to users' personal messages.
+ * Displays your personal messages, as well as all related information.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

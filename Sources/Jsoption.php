@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Set a theme option from JavaScript.
+ * Handles setting theme options from JavaScript.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

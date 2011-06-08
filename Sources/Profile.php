@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Initialises the profile area for Wedge and routes the request appropriately.
+ * Initializes the profile area for Wedge and routes the request appropriately.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

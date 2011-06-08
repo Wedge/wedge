@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displaying forum statistics.
+ * Displays forum statistics.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the print-page view of a topic.
+ * Displays the printer-friendly version of a topic page.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

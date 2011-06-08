@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles all actions concerning polls (other than creating them)
+ * Handles all actions concerning polls (other than creating them.)
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

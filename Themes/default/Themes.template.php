@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Listing available themes, available theme options, and general theme configuration.
+ * Lists available themes, available theme options, and general theme configuration.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

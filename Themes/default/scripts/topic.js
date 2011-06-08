@@ -151,7 +151,7 @@ QuickReply.prototype.quote = function (iMessage)
 	}
 };
 
-// This is the callback function used after the XMLHttp request.
+// This is the callback function used after the Ajax request.
 QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 {
 	oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
@@ -211,13 +211,13 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 	if (this.sCurMessageId)
 		this.modifyCancel();
 
-	// Send out the XMLHttp request to get more info
+	// Send out the Ajax request to get more info
 	ajax_indicator(true);
 
 	getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
 };
 
-// The callback function used for the XMLHttp request retrieving the message.
+// The callback function used for the Ajax request retrieving the message.
 QuickModify.prototype.onMessageReceived = function (XMLDoc)
 {
 	// Hide the 'loading...' sign.
@@ -284,14 +284,14 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
-	// Send in the XMLHttp request and let's hope for the best.
+	// Send in the Ajax request and let's hope for the best.
 	ajax_indicator(true);
 	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sSessionVar + "=" + sSessionId + ";xml", x.join("&"), this.onModifyDone);
 
 	return false;
 };
 
-// Callback function of the XMLHttp request sending the modified message.
+// Callback function of the Ajax request sending the modified message.
 QuickModify.prototype.onModifyDone = function (XMLDoc)
 {
 	// We've finished the loading part.
@@ -504,7 +504,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
-		getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
+		getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=ajax;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
 	}
 
 	// Set the position of the container.
@@ -520,7 +520,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 	$('body').mousedown(this.onWindowMouseDown);
 };
 
-// Setup the list of icons once it is received through XMLHttp.
+// Setup the list of icons once it is received through Ajax.
 IconList.prototype.onIconsReceived = function (oXMLDoc)
 {
 	var sItems = '', br = this.opt.sBackReference, bord = this.opt.sItemBorder, bg = this.opt.sItemBackground;

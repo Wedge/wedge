@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file is concerned with viewing queries, and is used for debugging.
+ * This file is concerned with viewing SQL queries, and is used for debugging.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -160,7 +160,7 @@ function ViewQuery()
 			if ($result === false)
 			{
 				echo '
-	<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex;">
+	<table class="cp4 cs0" style="border: 1px; empty-cells: show; font-family: serif; margin-bottom: 2ex">
 		<tr><td>', wesql::error($db_connection), '</td></tr>
 	</table>';
 				continue;

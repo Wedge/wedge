@@ -286,7 +286,7 @@ function aeva_admin_about()
 		'magickwand' => isset($data['mw']) ? $txt['media_yes'] : $txt['media_no'],
 		'imagemagick' => isset($imv) ? $txt['media_yes'] . ' ' . $imv : $txt['media_no'],
 		'php' => phpversion(),
-		'smf' => $forum_version,
+		'wedge' => $forum_version,
 		'safe_mode' => $data['safe_mode'],
 	);
 

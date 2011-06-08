@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles various security related tasks, including permissions and filtering of input based on known malicious behavior.
+ * Handles various security-related tasks, including permissions and filtering of input based on known malicious behavior.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

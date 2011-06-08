@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handle all aspects of moving topics from one board to another.
+ * Handles all aspects of moving topics from one board to another.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

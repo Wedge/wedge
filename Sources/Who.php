@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file is mainly concerned, or that is to say only concerned, with the Who's Online list.
+ * This file is all about showing you the Who's Online list.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

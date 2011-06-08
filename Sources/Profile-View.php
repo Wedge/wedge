@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * handles gathering information for read-only areas of the user profile system.
+ * Handles gathering information for read-only areas of the user profile system.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

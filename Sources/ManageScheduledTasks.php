@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Configuration page and task lok access for scheduled tasks, to configuration what should run, when, and what has previously run.
+ * Configuration page and task log access for scheduled tasks, to determine what should run, when, and what has previously run.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -37,7 +37,6 @@ if (!defined('SMF'))
 		// !!!
 */
 
-// !!!
 function ManageScheduledTasks()
 {
 	global $context, $txt, $modSettings;

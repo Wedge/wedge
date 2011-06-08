@@ -19,7 +19,7 @@ if (!defined('SMF'))
  *
  * Accessed via action=quotefast, this function is used from the main topic area (for quick reply), the replies part of the main reply area to get a previous post, and have it quoted correctly, to be inserted into the editor box - or it can be invoked for the Quick Modify system to return the original message.
  *
- * - This function is called using XMLHttpRequest for an inline insert into the actual post editor.
+ * - This function is called using Ajax for an inline insert into the actual post editor.
  * - Loads the Post language file
  * - Identifies the boards the current user can moderate through (to ensure all the right boards are available), then loads the post details from the database.
  * - The post is passed through un_preparsecode so that it is editor-safe, then censored, and finally line breaks are fixed.

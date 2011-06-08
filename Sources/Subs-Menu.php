@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * This file contains a standard way of displaying side/drop down menus for SMF.
+ * This file contains a standard way of displaying side/drop down menus for Wedge.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

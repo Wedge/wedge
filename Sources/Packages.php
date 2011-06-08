@@ -1250,7 +1250,7 @@ function PackageBrowse()
 			'version' => $installed_mod['version'],
 		);
 
-	$the_version = strtr($forum_version, array('SMF ' => ''));
+	$the_version = strtr($forum_version, array('Wedge ' => ''));
 
 	// Here we have a little code to help those who class themselves as something of gods, version emulation ;)
 	if (isset($_GET['version_emulate']))
@@ -1262,7 +1262,7 @@ function PackageBrowse()
 	}
 	if (!empty($_SESSION['version_emulate']))
 	{
-		$context['forum_version'] = 'SMF ' . $_SESSION['version_emulate'];
+		$context['forum_version'] = 'Wedge ' . $_SESSION['version_emulate'];
 		$the_version = $_SESSION['version_emulate'];
 	}
 

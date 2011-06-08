@@ -21,7 +21,7 @@ var
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
 	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down;
 
-// Load an XML document using XMLHttpRequest.
+// Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback)
 {
 	return $.ajax(typeof funcCallback != 'undefined' ?
@@ -30,7 +30,7 @@ function getXMLDocument(sUrl, funcCallback)
 	);
 }
 
-// Send a post form to the server using XMLHttpRequest.
+// Send a post form to the server using Ajax.
 function sendXMLDocument(sUrl, sContent, funcCallback)
 {
 	$.ajax($.extend({}, { url: sUrl, data: sContent, type: 'POST', context: this }, typeof funcCallback != 'undefined' ? { success: funcCallback } : {}));
@@ -470,7 +470,7 @@ function grabJumpToContent()
 
 	ajax_indicator(true);
 
-	$('smf item', getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml').responseXML).each(function () {
+	$('smf item', getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
 		aBoardsAndCategories.push({
 			id: parseInt(this.getAttribute('id'), 10),
 			isCategory: this.getAttribute('type') == 'category',

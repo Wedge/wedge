@@ -55,7 +55,7 @@ function Stats()
 			$_SESSION['expanded_stats'][$year] = array_diff($_SESSION['expanded_stats'][$year], array($month));
 	}
 
-	// Handle the XMLHttpRequest.
+	// Handle the Ajax request.
 	if (isset($_REQUEST['xml']))
 	{
 		// Collapsing stats only needs adjustments of the session variables.

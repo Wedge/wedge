@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the list of very recent posts, the list of all unread posts and the list of all updated topics (that you've replied to before)
+ * Displays the following lists: very recent posts, unread posts and unread replies (unread posts in topics you replied to before.)
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

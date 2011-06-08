@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Manage the settings for forum news, plus all newsletter configuration and sending.
+ * Manages the settings for forum news, plus all newsletter configuration and sending.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
