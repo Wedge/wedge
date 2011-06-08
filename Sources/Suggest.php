@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Handles requests to action=suggest for the purposes of supporting the auto-suggest functionality.
+ * Handles requests to action=suggest, for the purpose of supporting the auto-suggest functionality.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org

@@ -247,16 +247,12 @@ function smf_openID_return()
 	$signed = explode(',', $_GET['openid_signed']);
 	$verify_str = '';
 	foreach ($signed as $sign)
-	{
 		$verify_str .= $sign . ':' . strtr($_GET['openid_' . str_replace('.', '_', $sign)], array('&amp;' => '&')) . "\n";
-	}
 
 	$verify_str = base64_encode(sha1_hmac($verify_str, $secret));
 
 	if ($verify_str != $_GET['openid_sig'])
-	{
 		fatal_lang_error('openid_sig_invalid', 'critical');
-	}
 
 	if (!isset($_SESSION['openid']['saved_data'][$_GET['t']]))
 		fatal_lang_error('openid_load_data');

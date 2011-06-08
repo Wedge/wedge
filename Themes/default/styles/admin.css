@@ -54,25 +54,19 @@ ol.search_results
 
 #live_news
 	width: 64%
-	div.wrc
-		padding: 0
-		dl
-			padding: 0.5em
+	div.wrc dl
+		padding: 0.5em
 
 #supportVersionsTable
 	width: 34%
 
 #version_details
-	overflow: auto
-	height: 9.5em
+	overflow-y: auto
+	height: 10.5em
 
-#smfAnnouncements
-	font-size: 0.9em
-	height: 13.5em
-	padding: 0 0.5em
+#wedge_news
+	height: 10.5em
 	overflow: auto
-
-#smfAnnouncements
 	dt
 		border-bottom: 1px dashed #000
 	dd
@@ -83,17 +77,16 @@ ol.search_results
 	display: none
 	margin: 0.5em 0 0
 
-#quick_tasks, #quick_tasks ul
-	margin: 0
-	padding: 0
-
-#quick_tasks li
-	float: left
-	list-style-type: none
-	margin: 0
-	padding: 0.5em 0
-	width: 49.5%
-	height: 4.5em
+#quick_tasks
+	&, ul
+		margin, padding: 0
+	li
+		float: left
+		list-style-type: none
+		margin: 0
+		padding: 0.5em 0
+		width: 49.5%
+		height: 4.5em
 
 .quick_task
 	display: block
@@ -104,6 +97,9 @@ ol.search_results
 .home_image
 	float: left
 	margin: 0 1em 1em 1em
+
+#yourVersion, #wedgeVersion
+	white-space: nowrap
 
 
 /* Common admin center classes.

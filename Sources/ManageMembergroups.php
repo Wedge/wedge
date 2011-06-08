@@ -397,10 +397,10 @@ function AddMembergroup()
 		{
 			$copy_id = $_POST['perm_type'] == 'copy' ? (int) $_POST['copyperm'] : (int) $_POST['inheritperm'];
 
-            // Are you a powerful admin?
+			// Are you a powerful admin?
 			if (!allowedTo('admin_forum'))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = wesql::query('
 					SELECT group_type
 					FROM {db_prefix}membergroups
 					WHERE id_group = {int:copy_from}
@@ -410,15 +410,15 @@ function AddMembergroup()
 						'limit' => 1,
 					)
 				);
-				list ($copy_type) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				list ($copy_type) = wesql::fetch_row($request);
+				wesql::free_result($request);
 
-				// Protected groups are... well, protected!
+				// Protected groups are, well... Protected!
 				if ($copy_type == 1)
 					fatal_lang_error('membergroup_does_not_exist');
 			}
 
-			// Don't allow copying of a real priviledged person!
+			// Don't allow copying of a real privileged person!
 			loadSource('ManagePermissions');
 			loadIllegalPermissions();
 
@@ -656,7 +656,7 @@ function EditMembergroup()
 		// Can they really inherit from this group?
 		if ($_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = wesql::query('
 				SELECT group_type
 				FROM {db_prefix}membergroups
 				WHERE id_group = {int:inherit_from}
@@ -666,8 +666,8 @@ function EditMembergroup()
 					'limit' => 1,
 				)
 			);
-			list ($inherit_type) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($inherit_type) = wesql::fetch_row($request);
+			wesql::free_result($request);
 		}
 
 		// Set variables to their proper value.

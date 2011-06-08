@@ -306,14 +306,14 @@ class wesql
 		$query_errno = mysql_errno($connection);
 
 		// Error numbers:
-		//    1016: Can't open file '....MYI'
-		//    1030: Got error ??? from table handler.
-		//    1034: Incorrect key file for table.
-		//    1035: Old key file for table.
-		//    1205: Lock wait timeout exceeded.
-		//    1213: Deadlock found.
-		//    2006: Server has gone away.
-		//    2013: Lost connection to server during query.
+		//		1016: Can't open file '....MYI'
+		//		1030: Got error ??? from table handler.
+		//		1034: Incorrect key file for table.
+		//		1035: Old key file for table.
+		//		1205: Lock wait timeout exceeded.
+		//		1213: Deadlock found.
+		//		2006: Server has gone away.
+		//		2013: Lost connection to server during query.
 
 		// Log the error.
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))

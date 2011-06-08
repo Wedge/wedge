@@ -15,7 +15,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /*	This file's central purpose of existence is that of making the package
-	manager work nicely.  It contains functions for handling tar.gz and zip
+	manager work nicely. It contains functions for handling tar.gz and zip
 	files, as well as a simple xml parser to handle the xml package stuff.
 	Not to mention a few functions to make file handling easier.
 
@@ -85,13 +85,13 @@ if (!defined('SMF'))
 			string method = 'install', string previous_version = '')
 		- parses the actions in addon-info.xml files from packages.
 		- package should be an xmlArray with addon-info as its base.
-		- testing_only should be true if the package should not actually be
-		   applied.
-		- method is upgrade, install, or uninstall.  Its default is install.
+		- testing_only should be true if the package should not actually
+		  be applied.
+		- method is upgrade, install, or uninstall. Its default is install.
 		- previous_version should be set to the previous installed version
-		   of this package, if any.
-		- does not handle failure terribly well; testing first is always
-		   better.
+		  of this package, if any.
+		- does not handle failure terribly well; testing first is
+		  always better.
 		- returns an array of those changes made.
 
 	bool matchPackageVersion(string version, string versions)
@@ -177,7 +177,7 @@ function read_tgz_file($gzfilename, $destination, $single_file = false, $overwri
 	return read_tgz_data($data, $destination, $single_file, $overwrite, $files_to_extract);
 }
 
-// Extract tar.gz data.  If destination is null, return a listing.
+// Extract tar.gz data. If destination is null, return a listing.
 function read_tgz_data($data, $destination, $single_file = false, $overwrite = false, $files_to_extract = null)
 {
 	// Make sure we have this loaded.
@@ -241,7 +241,7 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 		$header = substr($data, $offset << 9, 512);
 		$current = unpack('a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1type/a100linkname/a6magic/a2version/a32uname/a32gname/a8devmajor/a8devminor/a155path', $header);
 
-		// Blank record?  This is probably at the end of the file.
+		// Blank record? This is probably at the end of the file.
 		if (empty($current['filename']))
 		{
 			$offset += 512;
@@ -328,7 +328,7 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 		return $return;
 }
 
-// Extract zip data.  If destination is null, return a listing.
+// Extract zip data. If destination is null, return a listing.
 function read_zip_data($data, $destination, $single_file = false, $overwrite = false, $files_to_extract = null)
 {
 	umask(0);
@@ -401,7 +401,7 @@ function read_zip_data($data, $destination, $single_file = false, $overwrite = f
 		if ($file_info['compressed_size'] != $file_info['size'])
 			$file_info['data'] = @gzinflate($file_info['data']);
 
-		// Okay!  We can write this file, looks good from here...
+		// Okay! We can write this file, looks good from here...
 		if ($write_this && $destination !== null)
 		{
 			if (strpos($file_info['filename'], '/') !== false && !$single_file)
@@ -410,7 +410,7 @@ function read_zip_data($data, $destination, $single_file = false, $overwrite = f
 			// If we're looking for a specific file, and this is it... ka-bam, baby.
 			if ($single_file && ($destination == $file_info['filename'] || $destination == '*/' . basename($file_info['filename'])))
 				return $file_info['data'];
-			// Oh?  Another file.  Fine.  You don't like this file, do you?  I know how it is.  Yeah... just go away.  No, don't apologize.  I know this file's just not *good enough* for you.
+			// Oh? Another file. Fine. You don't like this file, do you? I know how it is. Yeah... just go away. No, don't apologize. I know this file's just not *good enough* for you.
 			elseif ($single_file)
 				continue;
 			// Don't really want this?
@@ -1056,7 +1056,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 {
 	global $boarddir, $forum_version, $context, $temp_path, $language;
 
-	// Mayday!  That action doesn't exist!!
+	// Mayday! That action doesn't exist!!
 	if (empty($packageXML) || !$packageXML->exists($method))
 		return array();
 
@@ -1148,7 +1148,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 				}
 			}
 
-			// !!! TODO: Make sure the file actually exists?  Might not work when testing?
+			// !!! TODO: Make sure the file actually exists? Might not work when testing?
 			if ($action->exists('@type') && $action->fetch('@type') == 'inline')
 			{
 				$filename = $temp_path . '$auto_' . $temp_auto++ . ($actionType == 'readme' || $actionType == 'redirect' ? '.txt' : ($actionType == 'code' || $actionType == 'database' ? '.php' : '.mod'));
@@ -1820,7 +1820,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 			// Okay, we're creating this file then...?
 			elseif (!file_exists($working_file))
 				$working_data = '';
-			// Phew, it exists!  Load 'er up!
+			// Phew, it exists! Load 'er up!
 			else
 				$working_data = str_replace("\r", '', package_get_contents($working_file));
 
@@ -1940,7 +1940,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 							$actual_operation['searches'][$i]['preg_search'] = preg_replace('~[ \t]+~', '[ \t]+', $actual_operation['searches'][$i]['preg_search']);
 					}
 
-					// Shuzzup.  This is done so we can safely use a regular expression. ($0 is bad!!)
+					// Shuzzup. This is done so we can safely use a regular expression. ($0 is bad!!)
 					$actual_operation['searches'][$i]['preg_replace'] = strtr($search['add'], array('$' => '[$PACK' . 'AGE1$]', '\\' => '[$PACK' . 'AGE2$]'));
 
 					// Before, so the replacement comes after the search subject :P
@@ -2499,7 +2499,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 			$data .= fread($fp, 4096);
 		fclose($fp);
 
-		// All done, right?  Good.
+		// All done, right? Good.
 		$ftp->check_response(226);
 		$ftp->close();
 	}

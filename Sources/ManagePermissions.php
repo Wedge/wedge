@@ -1465,7 +1465,9 @@ function loadAllPermissions($loadType = 'classic')
 		),
 	);
 
-	/*   The format of this list is as follows:
+	/*
+		The format of this list is as follows:
+
 		'membergroup' => array(
 			'permissions_inside' => array(has_multiple_options, classic_view_group, simple_view_group(_own)*, simple_view_group_any*),
 		),

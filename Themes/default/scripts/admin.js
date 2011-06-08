@@ -50,7 +50,7 @@ smf_AdminIndex.prototype.showCurrentVersion = function ()
 	if (!('smfVersion' in window))
 		return;
 
-	$('#' + this.opt.sSmfVersionContainerId).html(window.smfVersion);
+	$('#' + this.opt.sWedgeVersionContainerId).html(window.smfVersion);
 
 	var
 		oYourVersionContainer = $('#' + this.opt.sYourVersionContainerId),

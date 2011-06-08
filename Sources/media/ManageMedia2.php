@@ -66,12 +66,11 @@ function aeva_admin_maintenance()
 	$album = $context['aeva_maintain_album'] = !empty($_GET['album']) ? (int) $_GET['album'] : 0;
 
 	// Load the subs
-	// array(
-	//   'sa' => array('function', (bool) is_utility),
-	// );
+	//	array(
+	//		'sa' => array('function', (bool) is_utility),
+	//	);
 	// Use $context['aeva_maintenance_message'] to show a message
-	// $context['aeva_maintenance_done'] can have false (not shown), 'error' (red), ' pending'(yellow), true (green)
-	// Title is fetched as $txt['media_admin_maintenance_'.sa];
+	// $context['aeva_maintenance_done'] can have false (not shown), 'error' (red), 'pending' (yellow), or true (green.)
 
 	$sas = $album ? array(
 		'checkorphans',

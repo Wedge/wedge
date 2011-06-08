@@ -45,7 +45,7 @@ function template_admin()
 	echo '
 		<div class="roundframe">
 			<div id="welcome">
-				<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
+				<strong>', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</strong>
 				', sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help']), '
 			</div>
 		</div>';
@@ -70,7 +70,7 @@ function template_admin()
 					', $txt['live'], '
 				</we:title>
 				<div class="windowbg wrc">
-					<div id="smfAnnouncements">', $txt['lfyi'], '</div>
+					<div id="wedge_news">', $txt['lfyi'], '</div>
 				</div>
 			</div>';
 
@@ -84,9 +84,9 @@ function template_admin()
 					<div id="version_details">
 						<strong>', $txt['support_versions'], ':</strong><br>
 						', $txt['support_versions_forum'], ':
-						<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em><br>
+						<em id="yourVersion">', $context['forum_version'], '</em><br>
 						', $txt['support_versions_current'], ':
-						<em id="smfVersion" class="nowrap">??</em><br>
+						<em id="wedgeVersion">??</em><br>
 						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
 
 	// Display all the members who can administrate the forum.
@@ -150,10 +150,10 @@ function template_admin()
 				%message%
 			</dd>
 		'), ',
-		sAnnouncementContainerId: \'smfAnnouncements\',
+		sAnnouncementContainerId: \'wedge_news\',
 
 		bLoadVersions: true,
-		sSmfVersionContainerId: \'smfVersion\',
+		sWedgeVersionContainerId: \'wedgeVersion\',
 		sYourVersionContainerId: \'yourVersion\',
 		sVersionOutdatedTemplate: ' . JavaScriptEscape('
 			<span class="alert">%currentVersion%</span>
@@ -181,9 +181,9 @@ function template_credits()
 		<div class="windowbg wrc">
 			<strong>', $txt['support_versions'], ':</strong><br>
 				', $txt['support_versions_forum'], ':
-			<em id="yourVersion" class="nowrap">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>
+			<em id="yourVersion">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>
 				', $txt['support_versions_current'], ':
-			<em id="smfVersion" class="nowrap">??</em><br>';
+			<em id="wedgeVersion">??</em><br>';
 
 	// Display all the variables we have server information for.
 	foreach ($context['current_versions'] as $version)
@@ -283,7 +283,7 @@ function template_credits()
 
 	if (window.smfVersion)
 	{
-		$("#smfVersion").html(window.smfVersion);
+		$("#wedgeVersion").html(window.smfVersion);
 
 		var yourVer = $("#yourVersion"), currentVersion = yourVer.text();
 		if (currentVersion != window.smfVersion)
@@ -495,10 +495,12 @@ function template_view_versions()
 		</div>
 		<br class="clear">';
 
-	/* Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
-	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
-	   red.  It also contains the function, swapOption, that toggles showing the detailed information for each of the
-	   file categories. (sources, languages, and templates.) */
+	/*
+		Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
+		held at simplemachines.org and works out if they are up to date. If they aren't it colors that files number
+		red. It also contains the function, swapOption, that toggles showing the detailed information for each of the
+		file categories. (sources, languages, and templates.)
+	*/
 	add_js_file($scripturl . '?action=viewsmfile;filename=detailed-version.js', true);
 	add_js_file('scripts/admin.js');
 
@@ -535,21 +537,21 @@ function template_edit_censored()
 	// Show text boxes for censoring [bad   ] => [good  ].
 	foreach ($context['censored_words'] as $vulgar => $proper)
 		echo '
-				<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" value="', $vulgar, '" size="20"> => <input type="text" name="censor_proper[]" value="', $proper, '" size="20"></div>';
+				<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" value="', $vulgar, '" size="20"> => <input type="text" name="censor_proper[]" value="', $proper, '" size="20"></div>';
 
 	// Now provide a way to censor more words.
 	echo '
 				<noscript>
 					<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> => <input type="text" name="censor_proper[]" size="20"></div>
 				</noscript>
-				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none;" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
+				<div id="moreCensoredWords"></div><div style="margin-top: 1ex; display: none" id="moreCensoredWords_link"><a href="#" onclick="addNewWord(); return false;">', $txt['censor_clickadd'], '</a></div>';
 
 	add_js('
 	$("#moreCensoredWords_link").show();
 
 	function addNewWord()
 	{
-		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="20"> => <input type="text" name="censor_proper[]" size="20"><\' + \'/div>\');
+		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> => <input type="text" name="censor_proper[]" size="20"><\' + \'/div>\');
 	}');
 
 	echo '
@@ -604,26 +606,26 @@ function template_not_done()
 
 	if (!empty($context['continue_percent']))
 		echo '
-			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
-				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['continue_percent'], '%</div>
-					<div style="width: ', $context['continue_percent'], '%; height: 12pt; z-index: 1; background-color: red;">&nbsp;</div>
+			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
+				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
+					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['continue_percent'], '%</div>
+					<div style="width: ', $context['continue_percent'], '%; height: 12pt; z-index: 1; background-color: red">&nbsp;</div>
 				</div>
 			</div>';
 
 	if (!empty($context['substep_enabled']))
 		echo '
-			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
+			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
 				<span class="smalltext">', $context['substep_title'], '</span>
-				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $context['substep_continue_percent'], '%</div>
-					<div style="width: ', $context['substep_continue_percent'], '%; height: 12pt; z-index: 1; background-color: blue;">&nbsp;</div>
+				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
+					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['substep_continue_percent'], '%</div>
+					<div style="width: ', $context['substep_continue_percent'], '%; height: 12pt; z-index: 1; background-color: blue">&nbsp;</div>
 				</div>
 			</div>';
 
 	echo '
-			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0;" name="autoSubmit" id="autoSubmit">
-				<div style="margin: 1ex; text-align: right;"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '"></div>
+			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0" name="autoSubmit" id="autoSubmit">
+				<div style="margin: 1ex; text-align: right"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '"></div>
 				', $context['continue_post_data'], '
 			</form>
 		</div>
@@ -1129,7 +1131,7 @@ function template_admin_search_results()
 	echo '
 	<we:cat>
 		<div class="floatright">
-			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline;" id="quick_search">
+			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline" id="quick_search">
 				<input type="search" name="search_term" value="', $context['search_term'], '" class="search">
 				<input type="hidden" name="search_type" value="', $context['search_type'], '">
 				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '">
@@ -1230,7 +1232,7 @@ function template_core_features()
 	}
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=corefeatures;" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=corefeatures" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['core_settings_title'], '
 			</we:cat>
@@ -1441,7 +1443,7 @@ function template_download_language()
 						<div class="smalltext">', $txt['languages_download_dest'], ': ', $file['destination'], '</div>
 					</td>
 					<td>
-						<span style="color: ', ($file['writable'] ? 'green' : 'red'), ';">', ($file['writable'] ? $txt['yes'] : $txt['no']), '</span>
+						<span style="color: ', ($file['writable'] ? 'green' : 'red'), '">', ($file['writable'] ? $txt['yes'] : $txt['no']), '</span>
 					</td>
 					<td>
 						', $file['exists'] ? ($file['exists'] == 'same' ? $txt['languages_download_exists_same'] : $txt['languages_download_exists_different']) : $txt['no'], '
@@ -1663,11 +1665,11 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="width: 96%;">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="width: 96%">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '">
-						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="width: 96%;">', $entry['value'], '</textarea>
+						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="width: 96%">', $entry['value'], '</textarea>
 					</dd>';
 			$cached = array();
 		}
@@ -1682,7 +1684,7 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="width: 96%;">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="width: 96%">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 					</dd>';
@@ -1734,8 +1736,8 @@ function template_callback_question_answer_list()
 			</dd>';
 
 	echo '
-		<dt id="add_more_question_placeholder" style="display: none;"></dt><dd></dd>
-		<dt id="add_more_link_div" style="display: none;">
+		<dt id="add_more_question_placeholder" style="display: none"></dt><dd></dd>
+		<dt id="add_more_link_div" style="display: none">
 			<a href="#" onclick="addAnotherQuestion(); return false;">&#171; ', $txt['setup_verification_add_more'], ' &#187;</a>
 
 		</dt><dd></dd>';

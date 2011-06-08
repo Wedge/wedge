@@ -16,7 +16,7 @@ if (!defined('SMF'))
 
 /*	This file concerns itself almost completely with theme administration.
 	Its tasks include changing theme settings, installing and removing
-	themes, choosing the current theme, and editing themes.  This is done in:
+	themes, choosing the current theme, and editing themes. This is done in:
 
 	void ThemesMain()
 		- manages the action and delegates control to the proper sub action.
@@ -81,8 +81,8 @@ if (!defined('SMF'))
 		- any support website for the theme should be in website.
 		- layers and templates (non-default) should go in those elements ;).
 		- if the images dir isn't images, specify in the images element.
-		- any extra rows for themes should go in extra, serialized.
-		   (as in array(variable => value).)
+		- any extra rows for themes should go in extra, serialized,
+		  as in "array(variable => value)".
 		- tar and gzip the directory - and you're done!
 		- please include any special license in a license.txt file.
 	// !!! Thumbnail?

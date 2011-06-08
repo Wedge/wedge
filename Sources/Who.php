@@ -32,19 +32,25 @@ if (!defined('SMF'))
 
 	Adding actions to the Who's Online list:
 	---------------------------------------------------------------------------
-		Adding actions to this list is actually relatively easy....
-		- for actions anyone should be able to see, just add a string named
-		   whoall_ACTION.  (where ACTION is the action used in index.php.)
-		- for actions that have a subaction which should be represented
-		   differently, use whoall_ACTION_SUBACTION.
-		- for actions that include a topic, and should be restricted, use
-		   whotopic_ACTION, or for subactions to be represented differently,
-		   use whotopic_ACTION_SUBACTION.
-		- for actions that use a message, by msg or quote, use whopost_ACTION.
-		- for administrator-only actions, use whoadmin_ACTION.
-		- for actions that should be viewable only with certain permissions,
-		   use whoallow_ACTION and add a list of possible permissions to the
-		   $allowedActions array, using ACTION as the key.
+		Adding actions to this list is actually fairly easy....
+
+		- For actions anyone should be able to see, just add a string named
+		  whoall_ACTION, where ACTION is the action used in index.php.
+
+		- For actions that have a subaction which should be represented
+		  differently, use whoall_ACTION_SUBACTION.
+
+		- For actions that include a topic, and should be restricted, use
+		  whotopic_ACTION, or for subactions to be represented differently,
+		  use whotopic_ACTION_SUBACTION.
+
+		- For actions that use a message, by msg or quote, use whopost_ACTION.
+
+		- For administrator-only actions, use whoadmin_ACTION.
+
+		- For actions that should be viewable only with certain permissions,
+		  use whoallow_ACTION and add a list of possible permissions to the
+		  $allowedActions array, using ACTION as the key.
 */
 
 // Who's online, and what are they doing?
@@ -325,7 +331,7 @@ function determineActions($urls, $preferred_prefix = false)
 		// Check if there was no action or the action is display.
 		if (!isset($actions['action']) || $actions['action'] == 'display')
 		{
-			// It's a topic!  Must be!
+			// It's a topic! Must be!
 			if (isset($actions['topic']))
 			{
 				// Assume they can't view it, and queue it up for later.
@@ -339,7 +345,7 @@ function determineActions($urls, $preferred_prefix = false)
 				$data[$k] = $txt['who_hidden'];
 				$board_ids[$actions['board']][$k] = $txt['who_board'];
 			}
-			// It's the board index!!  It must be!
+			// It's the board index!! It must be!
 			else
 				$data[$k] = $txt['who_index'];
 		}
@@ -352,7 +358,7 @@ function determineActions($urls, $preferred_prefix = false)
 			// Viewing/editing a profile.
 			if ($actions['action'] == 'profile')
 			{
-				// Whose?  Their own?
+				// Whose? Their own?
 				if (empty($actions['u']))
 					$actions['u'] = $url[1];
 

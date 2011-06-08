@@ -68,8 +68,8 @@ if (!defined('SMF'))
 	string range2ip(array $low, array $high)
 		- reverse function of ip2range().
 		- converts a given array of IP numbers to a single string
-		- range2ip(array(10, 10, 10, 0), array(10, 10, 20, 255)) returns
-		   '10.10.10-20.*
+		- range2ip(array(10, 10, 10, 0), array(10, 10, 20, 255))
+		  returns '10.10.10-20.*
 
 	array checkExistingTriggerIP(array $ip_array, string $fullip)
 		- checks whether a given IP range already exists in the trigger list.

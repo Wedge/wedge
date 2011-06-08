@@ -247,7 +247,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 		return $link;
 }
 
-// Recent post list:   [board] Subject by Poster	Date
+// Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
@@ -404,7 +404,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 		</table>';
 }
 
-// Recent topic list:   [board] Subject by Poster	Date
+// Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
