@@ -1110,7 +1110,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 	{
 		$actionType = $action->name();
 
-		if ($actionType == 'readme' || $actionType == 'code' || $actionType == 'database' || $actionType == 'modification' || $actionType == 'redirect')
+		if ($actionType == 'readme' || $actionType == 'code' || $actionType == 'database' || $actionType == 'modification' || $actionType == 'redirect' || $actionType == 'add-hook' || $actionType == 'remove-hook')
 		{
 			// Allow for translated readme files.
 			if ($actionType == 'readme')
@@ -1168,6 +1168,15 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 				'parse_bbc' => $action->exists('@parsebbc') && $action->fetch('@parsebbc') == 'true',
 				'language' => ($actionType == 'readme' && $action->exists('@lang') && $action->fetch('@lang') == $language) ? $language : '',
 			);
+
+			if ($actionType == 'add-hook' || $actionType == 'remove-hook')
+			{
+				$return[count($return)-1] += array(
+					'hook' =>  $action->fetch('@hook'),
+					'function' => $action->fetch('@function'),
+					'hookfile' => $action->exists('@filename') ? parse_path('$sourcedir/' . $action->fetch('@filename') . '.php') : '',
+				);
+			}
 
 			continue;
 		}
@@ -1326,7 +1335,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 	$not_done = array(array('type' => '!'));
 	foreach ($return as $action)
 	{
-		if ($action['type'] == 'modification' || $action['type'] == 'code' || $action['type'] == 'database' || $action['type'] == 'redirect')
+		if ($action['type'] == 'modification' || $action['type'] == 'code' || $action['type'] == 'database' || $action['type'] == 'redirect' || $action['type'] == 'add-hook' || $action['type'] == 'remove-hook')
 			$not_done[] = $action;
 
 		if ($action['type'] == 'create-dir')

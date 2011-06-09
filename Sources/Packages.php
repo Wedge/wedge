@@ -585,6 +585,16 @@ function PackageInstallTest()
 					$themeFinds['other_themes'][] = strtolower(strtr(parse_path($action['unparsed_filename']), array('\\' => '/')) . '/' . basename($action['filename']));
 			}
 		}
+		elseif (in_array($action['type'], array('add-hook', 'remove-hook')))
+		{
+			$thisAction = array(
+				'type' => $action['type'] == 'add-hook' ? $txt['package_add_hook'] : $txt['package_remove_hook'],
+			);
+			if (empty($action['hookfile']))
+				$thisAction['action'] = sprintf($txt['hook_nofile'], westr::htmlspecialchars($action['hook']), westr::htmlspecialchars($action['function']));
+			else
+				$thisAction['action'] = sprintf($txt['hook_file'], westr::htmlspecialchars($action['hook']), westr::htmlspecialchars($action['function']), westr::htmlspecialchars(strtr($action['hookfile'], array($boarddir => '.'))));
+		}
 
 		if (empty($thisAction))
 			continue;
@@ -682,7 +692,7 @@ function PackageInstallTest()
 function PackageInstall()
 {
 	global $boarddir, $txt, $context, $boardurl, $scripturl, $modSettings;
-	global $user_info;
+	global $user_info, $sourcedir;
 
 	// Make sure we don't install this mod twice.
 	checkSubmitOnce('check');
@@ -951,6 +961,15 @@ function PackageInstall()
 				);
 
 				$context['redirect_url'] = strtr($context['redirect_url'], $urls);
+			}
+			// Handle hooks
+			elseif ($action['type'] == 'add-hook' && !empty($action['hook']) && !empty($action['function']))
+			{
+				add_hook($action['hook'], $action['function'], strtr($action['hookfile'], array($sourcedir . '/' => '', '.php' => '')), true);
+			}
+			elseif ($action['type'] == 'remove-hook' && !empty($action['hook']) && !empty($action['function']))
+			{
+				remove_hook($action['hook'], $action['function'], strtr($action['hookfile'], array($sourcedir . '/' => '', '.php' => '')));
 			}
 		}
 
@@ -1258,7 +1277,7 @@ function PackageBrowse()
 		if ($_GET['version_emulate'] === 0 && isset($_SESSION['version_emulate']))
 			unset($_SESSION['version_emulate']);
 		elseif ($_GET['version_emulate'] !== 0)
-			$_SESSION['version_emulate'] = strtr($_GET['version_emulate'], array('-' => ' ', '+' => ' ', 'SMF ' => ''));
+			$_SESSION['version_emulate'] = strtr($_GET['version_emulate'], array('-' => ' ', '+' => ' ', 'Wedge ' => ''));
 	}
 	if (!empty($_SESSION['version_emulate']))
 	{

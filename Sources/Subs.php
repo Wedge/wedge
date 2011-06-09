@@ -3092,10 +3092,17 @@ function add_hook($hook, $function, $file = '', $register = true)
 {
 	global $modSettings, $sourcedir;
 
-	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file))))
+	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
 		$file = '';
 
 	$function .= '|' . $file;
+
+	if ($register && !isset($modSettings['registered_hooks'][$hook]))
+		$modSettings['registered_hooks'][$hook] = array();
+	elseif (!$register && !isset($modSettings['hooks'][$hook]))
+		$modSettings['hooks'][$hook] = array();
+
+	$in_hook = false;
 
 	// Do nothing if it's already there, except if we're
 	// asking for registration and it isn't registered yet.
@@ -3109,8 +3116,8 @@ function add_hook($hook, $function, $file = '', $register = true)
 		return;
 
 	// Add to the permanent registered list.
-	$modSettings['registered_hooks'][$hook][] = $function;
 	$hooks = $modSettings['registered_hooks'];
+	$hooks[$hook][] = $function;
 	updateSettings(array('registered_hooks' => serialize($hooks)));
 	$modSettings['registered_hooks'] = $hooks;
 }
@@ -3122,11 +3129,17 @@ function add_hook($hook, $function, $file = '', $register = true)
  *
  * @param string $hook The name of the hook that has one or more functions attached.
  * @param string $function The name of the function whose name should be removed from the named hook.
+ * @param string $file The file where Wedge can find that function, in loadSource() format. To include /Sources/MyFile.php, simply use 'MyFile'. Use '../MyFile' if it's in the root folder, etc. Leave blank if you know it'll be loaded at any time.
  * @todo Modify the function to return true on success and false on fail.
  */
-function remove_hook($hook, $function)
+function remove_hook($hook, $function, $file = '')
 {
 	global $modSettings;
+
+	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file))))
+		$file = '';
+
+	$function .= '|' . $file;
 
 	// You can only remove it's available.
 	if (empty($modSettings['hooks'][$hook]) || !in_array($function, $modSettings['hooks'][$hook]))
@@ -3138,8 +3151,10 @@ function remove_hook($hook, $function)
 		return;
 
 	// Also remove it from the registered hooks.
-	$modSettings['registered_hooks'][$hook] = array_diff($modSettings['registered_hooks'][$hook], (array) $function);
 	$hooks = $modSettings['registered_hooks'];
+	$hooks[$hook] = array_diff($hooks[$hook], (array) $function);
+	if (empty($hooks[$hook]))
+		unset($hooks[$hook]);
 	updateSettings(array('registered_hooks' => serialize($hooks)));
 	$modSettings['registered_hooks'] = $hooks;
 }
