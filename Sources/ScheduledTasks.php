@@ -49,7 +49,7 @@ if (!defined('SMF'))
 	void loadEssentialThemeData()
 		// !!!
 
-	void scheduled_fetchSMfiles()
+	void scheduled_fetchRemoteFiles()
 		// !!!
 
 	void scheduled_birthdayemails()
@@ -1241,7 +1241,7 @@ function loadEssentialThemeData()
 	loadLanguage('index+Modifications');
 }
 
-function scheduled_fetchSMfiles()
+function scheduled_fetchRemoteFiles()
 {
 	global $txt, $language, $settings, $forum_version, $modSettings;
 

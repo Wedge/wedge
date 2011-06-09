@@ -1105,12 +1105,14 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 	$temp_path = $boarddir . '/Packages/temp/' . (isset($context['base_path']) ? $context['base_path'] : '');
 
 	$context['readmes'] = array();
+	$action_list = array_flip(array('code', 'database', 'modification', 'redirect', 'add-hook', 'remove-hook'));
+
 	// This is the testing phase... nothing shall be done yet.
 	foreach ($actions as $action)
 	{
 		$actionType = $action->name();
 
-		if ($actionType == 'readme' || $actionType == 'code' || $actionType == 'database' || $actionType == 'modification' || $actionType == 'redirect' || $actionType == 'add-hook' || $actionType == 'remove-hook')
+		if ($actionType == 'readme' || isset($action_list[$actionType]))
 		{
 			// Allow for translated readme files.
 			if ($actionType == 'readme')
@@ -1174,7 +1176,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 				$return[count($return)-1] += array(
 					'hook' =>  $action->fetch('@hook'),
 					'function' => $action->fetch('@function'),
-					'hookfile' => $action->exists('@filename') ? parse_path('$sourcedir/' . $action->fetch('@filename') . '.php') : '',
+					'hookfile' => $action->exists('@filename') ? $action->fetch('@filename') : '',
 				);
 			}
 
@@ -1335,7 +1337,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 	$not_done = array(array('type' => '!'));
 	foreach ($return as $action)
 	{
-		if ($action['type'] == 'modification' || $action['type'] == 'code' || $action['type'] == 'database' || $action['type'] == 'redirect' || $action['type'] == 'add-hook' || $action['type'] == 'remove-hook')
+		if (isset($action_list[$action['type']]))
 			$not_done[] = $action;
 
 		if ($action['type'] == 'create-dir')
@@ -1502,7 +1504,7 @@ function parse_path($path)
 		'$smileys_dir' => $modSettings['smileys_dir'],
 	);
 
-	// do we parse in a package directory?
+	// Do we parse in a package directory?
 	if (!empty($temp_path))
 		$dirs['$package'] = $temp_path;
 

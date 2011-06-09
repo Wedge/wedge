@@ -4,4 +4,4 @@
 
 .zoom-glass
 	background: -webkit-gradient(linear, left bottom, left top, from(#fff), to(rgba(128,128,128, .5)), color-stop(50%, rgba(255,255,255, .9)))
-	background: linear-gradient(bottom, #fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5) 100%)
+	background: -webkit-linear-gradient(bottom, #fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5) 100%)

@@ -71,7 +71,7 @@ function template_main()
 							<dd>', $context['online_today'], '</dd>
 							<dt>', $txt['users_online'], ':</dt>
 							<dd>', $context['users_online'], '</dd>
-							<dt>', $txt['most_online'], ':</dt>
+							<dt>', $txt['most_online_ever'], ':</dt>
 							<dd>', $context['most_members_online']['number'], ' - ', $context['most_members_online']['date'], '</dd>';
 
 	if (!empty($modSettings['hitStats']))
@@ -298,7 +298,7 @@ function template_main()
 						<th>', $txt['stats_new_topics'], '</th>
 						<th>', $txt['stats_new_posts'], '</th>
 						<th>', $txt['stats_new_members'], '</th>
-						<th', empty($modSettings['hitStats']) ? ' class="last_th"' : '', '>', $txt['smf_stats_14'], '</th>';
+						<th', empty($modSettings['hitStats']) ? ' class="last_th"' : '', '>', $txt['most_online'], '</th>';
 
 		if (!empty($modSettings['hitStats']))
 			echo '

@@ -121,7 +121,6 @@ $action_list = array(
 	'search' => array('Search.php', 'Search'),
 	'search2' => array('Search2.php', 'Search2'),
 	'sendtopic' => array('SendTopic.php', 'EmailUser'),
-	'smstats' => array('SMStats.php', 'SMStats'),
 	'suggest' => array('Suggest.php', 'Suggest'),
 	'spellcheck' => array('Spellcheck.php', 'Spellcheck'),
 	'splittopics' => array('SplitTopics.php', 'SplitTopics'),
@@ -311,7 +310,7 @@ function smf_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode', 'openidreturn'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';

@@ -3102,15 +3102,13 @@ function add_hook($hook, $function, $file = '', $register = true)
 	elseif (!$register && !isset($modSettings['hooks'][$hook]))
 		$modSettings['hooks'][$hook] = array();
 
-	$in_hook = false;
-
 	// Do nothing if it's already there, except if we're
 	// asking for registration and it isn't registered yet.
 	if ((!$register || in_array($function, $modSettings['registered_hooks'][$hook])) && ($in_hook = in_array($function, $modSettings['hooks'][$hook])))
 		return;
 
 	// Add it!
-	if (!$in_hook)
+	if (empty($in_hook))
 		$modSettings['hooks'][$hook][] = $function;
 	if (!$register)
 		return;
@@ -3134,9 +3132,9 @@ function add_hook($hook, $function, $file = '', $register = true)
  */
 function remove_hook($hook, $function, $file = '')
 {
-	global $modSettings;
+	global $modSettings, $sourcedir;
 
-	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file))))
+	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
 		$file = '';
 
 	$function .= '|' . $file;

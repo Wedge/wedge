@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Sass-like parser/compiler to build CSS files.
+ * WeCSS is a pre-parser for CSS files, bringing new possibilities to CSS.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -372,28 +372,37 @@ class wecss_color extends wecss
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
 				$hsl = $hsl ? $hsl : wecss::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
-				// Run our functions
+				// This is where we run our color functions...
+
+				// Change alpha (transparency) level
 				if ($code === 'alpha')
 					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
 
+				// Darken the color (brightness down)
 				elseif ($code === 'darken')
 					$hsl['l'] -= $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
+				// Lighten the color (brightness up)
 				elseif ($code === 'lighten')
 					$hsl['l'] += $parg[0] ? $hsl['l'] * $parg[0] : $arg[0];
 
+				// Desaturize the color (saturation down, gets color closer to grayscale)
 				elseif ($code === 'desaturize')
 					$hsl['s'] -= $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
+				// Saturize the color (saturation up, gets color further away from grayscale)
 				elseif ($code === 'saturize')
 					$hsl['s'] += $parg[0] ? $hsl['s'] * $parg[0] : $arg[0];
 
+				// Change color hue (moves it over the virtual color wheel by X degrees)
 				elseif ($code === 'hue')
 					$hsl['h'] += $parg[0] ? $parg[0] * 360 : $arg[0];
 
+				// Get color's complement (retrieves the color at the opposite end of the color wheel)
 				elseif ($code === 'complement')
 					$hsl['h'] += 180;
 
+				// Change color's channels individually (red, green, blue and alpha components)
 				elseif ($code === 'channels')
 				{
 					if ($color === 0)
@@ -409,9 +418,11 @@ class wecss_color extends wecss
 				else
 				{
 					// Do modders want to add their own color processor? Send them all the data they might need.
+					// If they want even more, send them the author. Careful though, he's French. He bites.
 					$hook = call_hook('css_color', array(&$nc, &$hsl, &$color, &$arg, &$parg, &$dec));
 
-					// Set $nc or $hsl, and then return true to tell Wedge you were there.
+					// Attention modders: at the end of your hook function, set $nc or $hsl,
+					// and then *return true* to tell Wedge you were here. Oh, and Brooks too.
 					if (empty($hook))
 						continue;
 				}
