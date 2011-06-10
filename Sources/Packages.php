@@ -593,7 +593,7 @@ function PackageInstallTest()
 			if (empty($action['hookfile']))
 				$thisAction['action'] = sprintf($txt['hook_nofile'], westr::htmlspecialchars($action['hook']), westr::htmlspecialchars($action['function']));
 			else
-				$thisAction['action'] = sprintf($txt['hook_file'], westr::htmlspecialchars($action['hook']), westr::htmlspecialchars($action['function']), westr::htmlspecialchars(strtr($action['hookfile'], array($boarddir => '.'))));
+				$thisAction['action'] = sprintf($txt['hook_file'], westr::htmlspecialchars($action['hook']), westr::htmlspecialchars($action['function']), 'Sources/' . westr::htmlspecialchars($action['hookfile']) . '.php');
 		}
 
 		if (empty($thisAction))
@@ -965,11 +965,11 @@ function PackageInstall()
 			// Handle hooks
 			elseif ($action['type'] == 'add-hook' && !empty($action['hook']) && !empty($action['function']))
 			{
-				add_hook($action['hook'], $action['function'], strtr($action['hookfile'], array($sourcedir . '/' => '', '.php' => '')), true);
+				add_hook($action['hook'], $action['function'], $action['hookfile'], true);
 			}
 			elseif ($action['type'] == 'remove-hook' && !empty($action['hook']) && !empty($action['function']))
 			{
-				remove_hook($action['hook'], $action['function'], strtr($action['hookfile'], array($sourcedir . '/' => '', '.php' => '')));
+				remove_hook($action['hook'], $action['function'], $action['hookfile']);
 			}
 		}
 

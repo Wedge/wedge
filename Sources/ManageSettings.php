@@ -556,11 +556,11 @@ function ModifyLayoutSettings($return_config = false)
 			array('check', 'onlineEnable'),
 			array('check', 'enableVBStyleLogin'),
 		'',
-			// Automagic image resizing.
+			// Automatic image resizing.
 			array('int', 'max_image_width'),
 			array('int', 'max_image_height'),
 		'',
-			// This is like debugging sorta.
+			// This is sort of like debugging.
 			array('check', 'timeLoadPageEnable'),
 	);
 
