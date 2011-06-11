@@ -339,7 +339,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_description_desc'], '</dfn>
 					</dt>
 					<dd>
-						<textarea name="desc" rows="6" style="width: 98%">', $context['board']['description'], '</textarea>
+						<textarea name="desc" rows="6" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong>

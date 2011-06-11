@@ -2363,7 +2363,7 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.gif',
 			'external' => 'http://'
 		);
-		$context['member']['avatar']['href'] = $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar';
+		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $cur_profile['filename'];
 	}
 	elseif (stristr($cur_profile['avatar'], 'http://') && $context['member']['avatar']['allow_external'])
 		$context['member']['avatar'] += array(

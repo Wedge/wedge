@@ -97,7 +97,7 @@ function Search2()
 	// Are you allowed?
 	isAllowedTo('search_posts');
 
-	loadSource('Display');
+	loadSource(array('Display', 'Subs-Package'));
 
 	// Search has a special database set.
 	wesql::extend('search');
@@ -112,7 +112,7 @@ function Search2()
 	// Create an instance of the search API.
 	$search_class_name = $modSettings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
-	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
+	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()) || !matchPackageVersion($search_versions['forum_version'], $searchAPI->min_smf_version . '-' . $searchAPI->version_compatible))
 	{
 		// Log the error.
 		loadLanguage('Errors');

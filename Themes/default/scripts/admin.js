@@ -104,52 +104,52 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 
 smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 {
-	// Are they equal, maybe?
-	if (sCurrent == sTarget)
-		return false;
+	var aVersions = aParts = new Array();
+	var aCompare = new Array(sCurrent, sTarget);
 
-	var aCurrentVersion = sCurrent.split('.'), aTargetVersion = sTarget.split('.');
-
-	for (var i = 0, n = (aCurrentVersion.length > aTargetVersion.length ? aCurrentVersion.length : aTargetVersion.length); i < n; i++)
+	for (var i = 0; i < 2; i++)
 	{
-		// Make sure both are set.
-		if (typeof aCurrentVersion[i] == 'undefined')
-			aCurrentVersion[i] = '0';
-		else if (typeof aTargetVersion[i] == 'undefined')
-			aTargetVersion[i] = '0';
+		// Clean the version and extract the version parts.
+		var sClean = aCompare[i].toLowerCase().replace(/ /g, '');
+		aParts = sClean.match(/(\d+)(?:\.(\d+|))?(?:\.)?(\d+|)(?:(alpha|beta|rc)(\d+|)(?:\.)?(\d+|))?(?:(dev))?(\d+|)/);
 
-		// If they are same, move to the next set.
-		if (aCurrentVersion[i] == aTargetVersion[i])
-			continue;
+		// No matches?
+		if (aParts == null)
+			return false;
 
-		var aCurrentDev = null, aTargetDev = null;
-
-		if (aCurrentVersion[i].indexOf('Beta') != -1 || aCurrentVersion[i].indexOf('RC') != -1)
-			aCurrentDev = aCurrentVersion[i].match(/(\d+)\s*(Beta|RC)\s*(\d+)/);
-		if (aTargetVersion[i].indexOf('Beta') != -1 || aTargetVersion[i].indexOf('RC') != -1)
-			aTargetDev = aTargetVersion[i].match(/(\d+)\s*(Beta|RC)\s*(\d+)/);
-
-		// Did we get a dev version? This is bad...
-		if (aCurrentDev != null || aTargetDev != null)
-		{
-			if (aCurrentDev == null)
-				return parseInt(aCurrentVersion[i], 10) < parseInt(aTargetDev[1], 10);
-			else if (aTargetDev == null)
-				return parseInt(aCurrentDev[1], 10) <= parseInt(aTargetVersion[i], 10);
-			else if (aCurrentDev[1] != aTargetDev[1])
-				return parseInt(aCurrentDev[1], 10) < parseInt(aTargetDev[1], 10);
-			else if (aCurrentDev[2] != aTargetDev[2])
-				return aTargetDev[2] == 'RC';
-			else
-				return parseInt(aCurrentDev[3], 10) < parseInt(aTargetDev[3], 10);
-		}
-		// Otherwise a simple comparison...
-		else
-			return parseInt(aCurrentVersion[i], 10) < parseInt(aTargetVersion[i], 10);
+		// Build an array of parts.
+		aVersions[i] = [
+			aParts[1] > 0 ? parseInt(aParts[1]) : 0,
+			aParts[2] > 0 ? parseInt(aParts[2]) : 0,
+			aParts[3] > 0 ? parseInt(aParts[3]) : 0,
+			typeof(aParts[4]) == 'undefined' ? 'stable' : aParts[4],
+			aParts[5] > 0 ? parseInt(aParts[5]) : 0,
+			aParts[6] > 0 ? parseInt(aParts[6]) : 0,
+			typeof(aParts[7]) != 'undefined',
+		];
 	}
 
+	// Loop through each category.
+	for (i = 0; i < 7; i++)
+	{
+		// Is there something for us to calculate?
+		if (aVersions[0][i] != aVersions[1][i])
+		{
+			// Dev builds are a problematic exception.
+			// (stable) dev < (stable) but (unstable) dev = (unstable)
+			if (i == 3)
+				return aVersions[0][i] < aVersions[1][i] ? !aVersions[1][6] : aVersions[0][6];
+			else if (i == 6)
+				return aVersions[0][6] ? aVersions[1][3] == 'stable' : false;
+			// Otherwise a simple comparison.
+			else
+				return aVersions[0][i] < aVersions[1][i];
+		}
+	}
+
+	// They are the same!
 	return false;
-};
+}
 
 smf_ViewVersions.prototype.determineVersions = function ()
 {
