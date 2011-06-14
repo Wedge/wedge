@@ -1300,7 +1300,7 @@ function prepareDisplayContext($reset = false)
 		'timestamp' => forum_time(true, $message['poster_time']),
 		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
-			'time' => timeformat($message['modified_time']),
+			'time' => on_timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
 			'name' => $message['modified_name']
 		),
