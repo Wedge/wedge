@@ -1,6 +1,6 @@
 <?php
 
-// This file is here solely to protect your generic_images folder.
+// This file is here solely to protect your icons folder.
 
 // Look for Settings.php....
 if (file_exists(dirname(dirname(dirname(__FILE__))) . '/Settings.php'))
