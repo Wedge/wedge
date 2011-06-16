@@ -319,7 +319,7 @@ function template_modify_board()
 		echo '
 					<dt>
 						<strong>', $txt['pretty']['url'], ':</strong>
-						<p class="smalltext">', $txt['pretty']['url_desc'], '</p>
+						<dfn>', $txt['pretty']['url_desc'], '</dfn>
 					</dt>
 					<dd class="nowrap">
 						<select dir="rtl" name="pretty_url_dom">';
