@@ -66,8 +66,8 @@ function template_latest_news()
 	// This requires a lot of javascript...
 	//!!! Put this in its own file!!
 	add_js_file(array(
-		$scripturl . '?action=viewsmfile;filename=current-version.js',
-		$scripturl . '?action=viewsmfile;filename=latest-news.js'
+		$scripturl . '?action=viewremote;filename=current-version.js',
+		$scripturl . '?action=viewremote;filename=latest-news.js'
 	), true);
 	add_js_file('scripts/admin.js');
 

@@ -132,7 +132,8 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		noScrollbars = noScrollbars && (noScrollbars === true);
 
 	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
-	$.event.fix(window.event).stopPropagation();
+	if (window.event)
+		$.event.fix(window.event).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
 	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == desktopURL)

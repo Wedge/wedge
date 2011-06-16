@@ -16,8 +16,8 @@ if (!defined('SMF'))
 
 define('WEDGE_NO_LOG', 1);
 
-// Get one of the admin information files from Simple Machines.
-function ViewSMFile()
+// Get one of the admin information files from Wedge.org.
+function ViewRemote()
 {
 	global $context, $modSettings;
 

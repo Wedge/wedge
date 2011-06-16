@@ -68,6 +68,7 @@ $context = array(
 $action_list = array(
 	'activate' => array('Activate.php', 'Activate'),
 	'admin' => array('Admin.php', 'Admin'),
+	'ajax' => array('Ajax.php', 'Ajax'),
 	'announce' => array('Announce.php', 'Announce'),
 	'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 	'buddy' => array('Buddy.php', 'Buddy'),
@@ -132,9 +133,8 @@ $action_list = array(
 	'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
 	'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
 	'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-	'viewsmfile' => array('ViewSMFile.php', 'ViewSMFile'),
+	'viewremote' => array('ViewRemote.php', 'ViewRemote'),
 	'who' => array('Who.php', 'Who'),
-	'ajax' => array('Ajax.php', 'Ajax'),
 );
 
 // Clean the request variables, add slashes, etc.

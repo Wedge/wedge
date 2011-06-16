@@ -2714,7 +2714,8 @@ function setupMenuContext()
 	$context['allow_pm'] = allowedTo('pm_read');
 
 	// Recalculate the number of unseen media items
-	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
+	// !!! The defined() is only here in case we're executing the Media DB installer separately.
+	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1 && SMF !== 'SSI')
 	{
 		loadSource('media/Subs-Media');
 		loadMediaSettings();

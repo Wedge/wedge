@@ -127,8 +127,8 @@ function template_admin()
 	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
 		add_js_file(array(
-			$scripturl . '?action=viewsmfile;filename=current-version.js',
-			$scripturl . '?action=viewsmfile;filename=latest-news.js'
+			$scripturl . '?action=viewremote;filename=current-version.js',
+			$scripturl . '?action=viewremote;filename=latest-news.js'
 		), true);
 
 	add_js_file('scripts/admin.js');
@@ -271,9 +271,9 @@ function template_credits()
 
 	// Now we just have to include the script and wait ;).
 	add_js_file(array(
-		$scripturl . '?action=viewsmfile;filename=current-version.js',
-		$scripturl . '?action=viewsmfile;filename=latest-news.js',
-		$scripturl . '?action=viewsmfile;filename=latest-support.js'
+		$scripturl . '?action=viewremote;filename=current-version.js',
+		$scripturl . '?action=viewremote;filename=latest-news.js',
+		$scripturl . '?action=viewremote;filename=latest-support.js'
 	), true);
 
 	// This sets the latest support stuff.
@@ -501,7 +501,7 @@ function template_view_versions()
 		red. It also contains the function, swapOption, that toggles showing the detailed information for each of the
 		file categories. (sources, languages, and templates.)
 	*/
-	add_js_file($scripturl . '?action=viewsmfile;filename=detailed-version.js', true);
+	add_js_file($scripturl . '?action=viewremote;filename=detailed-version.js', true);
 	add_js_file('scripts/admin.js');
 
 	add_js('

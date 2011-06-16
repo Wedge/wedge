@@ -473,7 +473,7 @@ function template_browse()
 	window.smfVersion = "', $context['forum_version'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
-		add_js_file($scripturl . '?action=viewsmfile;filename=latest-packages.js', true);
+		add_js_file($scripturl . '?action=viewremote;filename=latest-packages.js', true);
 
 	add_js('
 	if (typeof(window.smfLatestPackages) != "undefined")
