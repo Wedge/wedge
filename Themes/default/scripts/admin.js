@@ -122,10 +122,10 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 			aParts[1] > 0 ? parseInt(aParts[1]) : 0,
 			aParts[2] > 0 ? parseInt(aParts[2]) : 0,
 			aParts[3] > 0 ? parseInt(aParts[3]) : 0,
-			typeof(aParts[4]) == 'undefined' ? 'stable' : aParts[4],
+			typeof aParts[4] == 'undefined' ? 'stable' : aParts[4],
 			aParts[5] > 0 ? parseInt(aParts[5]) : 0,
 			aParts[6] > 0 ? parseInt(aParts[6]) : 0,
-			typeof(aParts[7]) != 'undefined',
+			typeof aParts[7] != 'undefined',
 		];
 	}
 
@@ -153,31 +153,31 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 
 smf_ViewVersions.prototype.determineVersions = function ()
 {
-	var oHighYour = {
-		Sources: '??',
-		Default: '??',
-		Languages: '??',
-		Templates: '??'
-	};
-	var oHighCurrent = {
-		Sources: '??',
-		Default: '??',
-		Languages: '??',
-		Templates: '??'
-	};
-	var oLowVersion = {
-		Sources: false,
-		Default: false,
-		Languages: false,
-		Templates: false
-	};
-
-	var sSections = [
-		'Sources',
-		'Default',
-		'Languages',
-		'Templates'
-	];
+	var
+		oHighYour = {
+			Sources: '??',
+			Default: '??',
+			Languages: '??',
+			Templates: '??'
+		},
+		oHighCurrent = {
+			Sources: '??',
+			Default: '??',
+			Languages: '??',
+			Templates: '??'
+		},
+		oLowVersion = {
+			Sources: false,
+			Default: false,
+			Languages: false,
+			Templates: false
+		},
+		sSections = [
+			'Sources',
+			'Default',
+			'Languages',
+			'Templates'
+		];
 
 	for (var i = 0, n = sSections.length; i < n; i++)
 	{

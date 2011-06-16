@@ -6,7 +6,7 @@
 		height: 80px
 
 #main_screen
-	padding: 0 40px
+	padding: 16px 40px 0
 	h2
 		font-size: 1.5em
 		border-bottom: 1px solid #d05800
@@ -53,3 +53,11 @@ a:link, a:hover, a:visited
 .overall_progress
 	position: relative
 	margin: -24px 3px 0 8px
+
+#version_warning
+	margin: 2ex
+	padding: 2ex
+	border: 2px dashed #a92174
+	color: black
+	background-color: #fbbbe2
+	display: none
