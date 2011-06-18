@@ -1380,7 +1380,7 @@ class wedit
 			return;
 
 		// The array below makes it dead easy to add images to this control.
-		// Add a button to the array through the integration hook, and everything else is done for you!
+		// Add a button to the array through the hook, and everything else is done for you!
 		// 'image' can hold a full button URL, or the position within the default bbcode sprite (sprite.png)
 		// The first column is taken by the button backgrounds; array(5, 1) means "6th button, 2nd row".
 		$this->bbc = array();

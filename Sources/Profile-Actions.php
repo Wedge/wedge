@@ -49,7 +49,7 @@ function activateAccount($memID)
 			redirectexit();
 		}
 
-		// Let the integrations know of the activation.
+		// Let the hooks know of the activation.
 		call_hook('activate', array($user_profile[$memID]['member_name']));
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.

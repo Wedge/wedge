@@ -151,7 +151,7 @@ function Activate()
 		return;
 	}
 
-	// Let the integration know that they've been activated!
+	// Let the hook know that they've been activated!
 	call_hook('activate', array($row['member_name']));
 
 	// Validation complete - update the database!

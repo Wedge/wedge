@@ -38,8 +38,8 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 	if (!('smfAnnouncements' in window) || !('length' in window.smfAnnouncements))
 		return;
 
-	var sMessages = '';
-	for (var i = 0; i < window.smfAnnouncements.length; i++)
+	var sMessages = '', i;
+	for (i = 0; i < window.smfAnnouncements.length; i++)
 		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
 
 	$('#' + this.opt.sAnnouncementContainerId).html(this.opt.sAnnouncementTemplate.replace('%content%', sMessages));
@@ -104,13 +104,15 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 
 smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 {
-	var aVersions = aParts = new Array();
-	var aCompare = new Array(sCurrent, sTarget);
+	var
+		aVersions = aParts = [],
+		aCompare = [sCurrent, sTarget],
+		i, sClean;
 
-	for (var i = 0; i < 2; i++)
+	for (i = 0; i < 2; i++)
 	{
 		// Clean the version and extract the version parts.
-		var sClean = aCompare[i].toLowerCase().replace(/ /g, '');
+		sClean = aCompare[i].toLowerCase().replace(/ /g, '');
 		aParts = sClean.match(/(\d+)(?:\.(\d+|))?(?:\.)?(\d+|)(?:(alpha|beta|rc)(\d+|)(?:\.)?(\d+|))?(?:(dev))?(\d+|)/);
 
 		// No matches?
@@ -177,9 +179,10 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			'Default',
 			'Languages',
 			'Templates'
-		];
+		],
+		i, sFilename, sYourVersion, sVersionType;
 
-	for (var i = 0, n = sSections.length; i < n; i++)
+	for (i = 0, n = sSections.length; i < n; i++)
 	{
 		// Collapse all sections.
 		$('#' + sSections[i]).hide();
@@ -198,14 +201,14 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	if (!('smfVersions' in window))
 		window.smfVersions = {};
 
-	for (var sFilename in window.smfVersions)
+	for (sFilename in window.smfVersions)
 	{
 		if (!$('#current' + sFilename).length)
 			continue;
 
-		var sYourVersion = $('#your' + sFilename).html(), sCurVersionType;
+		sYourVersion = $('#your' + sFilename).html(), sCurVersionType;
 
-		for (var sVersionType in oLowVersion)
+		for (sVersionType in oLowVersion)
 			if (sFilename.substr(0, sVersionType.length) == sVersionType)
 			{
 				sCurVersionType = sVersionType;

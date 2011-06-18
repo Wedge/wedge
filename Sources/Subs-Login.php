@@ -15,7 +15,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /*	This file is concerned pretty entirely, as you see from its name, with
-	matters supporting logging in and out members, and the validation of that.  It contains:
+	matters supporting logging in and out members, and the validation of that. It contains:
 
 	string md5_hmac(string data, string key)
 		- old style SMF 1.0.x/YaBB SE 1.5.x hashing.
@@ -82,14 +82,14 @@ function DoLogin()
 	// Load cookie authentication stuff.
 	loadSource('Subs-Auth');
 
-	// Call login integration functions.
+	// Call login hook functions.
 	call_hook('login', array($user_settings['member_name'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime']));
 
 	// Get ready to set the cookie...
 	$username = $user_settings['member_name'];
 	$user_info['id'] = $user_settings['id_member'];
 
-	// Bam!  Cookie set.  A session too, just in case.
+	// Bam! Cookie set. A session too, just in case.
 	setLoginCookie(60 * $modSettings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
 	// Reset the login threshold.
@@ -289,7 +289,7 @@ function sha1_kt($t)
 
 function sha1_rol($num, $cnt)
 {
-	// Unfortunately, PHP uses unsigned 32-bit longs only.  So we have to kludge it a bit.
+	// Unfortunately, PHP uses unsigned 32-bit longs only. So we have to kludge it a bit.
 	if ($num & 0x80000000)
 		$a = ($num >> 1 & 0x7fffffff) >> (31 - $cnt);
 	else
@@ -339,9 +339,8 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	if ($number_tries > 5)
 		fatal_lang_error('login_threshold_brute_fail', 'critical');
 
-	// Otherwise set the members data. If they correct on their first attempt then we actually clear it, otherwise we set it!
+	// Otherwise set the member's data. If they're correct on their first attempt then we actually clear it, otherwise we set it!
 	updateMemberData($id_member, array('passwd_flood' => $was_correct && $number_tries == 1 ? '' : $time_stamp . '|' . $number_tries));
-
 }
 
 ?>

@@ -20,10 +20,9 @@ if (!defined('SMF'))
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
  * - Save the value in cache for next time.
- * - Set the timezone (for PHP 5.1+)
+ * - Set the timezone (mandatory for PHP 5.1+)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
- * - Check if WEDGE_HOOK_SETTINGS is used and if so, add the settings there to the current integration hooks for this page only.
  * - Run any functions specified in the pre_load hook.
  */
 function reloadSettings()
@@ -97,14 +96,14 @@ function reloadSettings()
 	// Is post moderation alive and well?
 	$modSettings['postmod_active'] = !empty($modSettings['postmod_enabled']);
 
-	// Call pre-load integration functions.
+	// Call pre-load hook functions.
 	call_hook('pre_load');
 }
 
 /**
  * Loads the user general details, including username, id, groups, and a few more things.
  *
- * - Firstly, checks the verify_user integration hook, in case the user id is being supplied from another application.
+ * - Firstly, checks the verify_user hook, in case the user id is being supplied from another application.
  * - If it is not, check the cookies to see if a user identity is being provided.
  * - Failing that, investigate the session data (which optionally will be checking the User Agent matches)
  * - Having established the user id, proceed to load the current member's data (from cache as appropriate) and make sure it is cached.
@@ -122,7 +121,7 @@ function loadUserSettings()
 
 	$id_member = 0;
 
-	// Check first the integration, then the cookie, and last the session.
+	// Check first the hook, then the cookie, and last the session.
 	if (count($hook_ids = call_hook('verify_user')) > 0)
 	{
 		foreach ($hook_ids as $hook_id)
@@ -178,7 +177,7 @@ function loadUserSettings()
 		// Did we find 'im? If not, junk it.
 		if (!empty($user_settings))
 		{
-			// As much as the password should be right, we can assume the integration set things up.
+			// As much as the password should be right, we can assume the hook set things up.
 			if (!empty($already_verified) && $already_verified === true)
 				$check = true;
 			// SHA-1 passwords should be 40 characters long.
@@ -1422,7 +1421,7 @@ function detectBrowser()
  * - Initialize the theme by calling the init subtemplate.
  * - Load any theme specific language files.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
- * - Call the load_theme integration hook.
+ * - Call the load_theme hook.
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {

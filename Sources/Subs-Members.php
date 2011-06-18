@@ -153,7 +153,7 @@ function deleteMembers($users, $check_not_admin = false)
 	$log_inserts = array();
 	foreach ($user_log_details as $user)
 	{
-		// Integration rocks!
+		// Hooks rock!
 		call_hook('delete_member', array($user[0]));
 
 		// Add it to the administration log for future reference.

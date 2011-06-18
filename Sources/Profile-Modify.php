@@ -1737,7 +1737,7 @@ function authentication($memID, $saving = false)
 
 			if (empty($post_errors))
 			{
-				// Integration?
+				// Hook?
 				call_hook('reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd1']));
 
 				// Go then.

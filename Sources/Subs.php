@@ -261,7 +261,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
  *
  * This function ensures the member table is updated for one, multiple or all users. Note:
  * - If level 2 caching is in use, the appropriate cache data will be flushed with the new values.
- * - The change_member_data integration hook where any of the common values are updated.
+ * - The change_member_data hook where any of the common values are updated.
  * - {@link updateStats() is also called so that if we have updated post count, post count groups will also be managed automatically.
  * - This function should always be called for updating member data rather than updating the members table directly.
  * - All string data should have been processed with htmlspecialchars for security; no sanitisation is performed on the data.
@@ -289,7 +289,7 @@ function updateMemberData($members, $data)
 
 	if (!empty($modSettings['hooks']['change_member_data']))
 	{
-		// Only a few member variables are really interesting for integration.
+		// Only a few member variables are really interesting for hooks.
 		$hook_vars = array(
 			'member_name',
 			'real_name',
@@ -1005,7 +1005,7 @@ function writeLog($force = false)
  * This often marks the end of general processing, since ultimately it diverts execution to {@link obExit()} which means a closedown of processing, buffers and final output. Things to note:
  * - A call is made before continuing to ensure that the mail queue is processed.
  * - Session IDs (where applicable, e.g. for those without cookies) are added in if needed.
- * - The redirect integration hook is called, just before the actual redirect, in case the integration wishes to alter where redirection occurs.
+ * - The redirect hook is called, just before the actual redirect, in case the hook wishes to alter where redirection occurs.
  * - The source of redirection is noted in the session when in debug mode.
  *
  * @param string $setLocation The string representing the URL. If an internal (into the forum) link, this should be in the form of action=whatever (i.e. without the full domain and path to index.php, or the ?). Note this can be an external URL too.
@@ -1062,7 +1062,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
 	}
 
-	// Maybe integrations want to change where we are heading?
+	// Maybe hooks want to change where we are heading?
 	call_hook('redirect', array(&$setLocation, &$refresh));
 
 	if ($permanent)
@@ -1092,7 +1092,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  * - A call will be put in to work on the mail queue.
  * - Make sure the page title is sanitised.
  * - Begin the session ID injecting output buffer.
- * - Ensure any integration-hooked buffers are called.
+ * - Ensure any hooked buffers are called.
  * - Display the header if correct to display then main page content, then the contents of $context['include_after_template'], followed by footer if correct to display, and lastly by debug data if enabled and available.
  * - Store the user agent string from the browser for security comparisons next page load.
  *
@@ -3039,7 +3039,7 @@ function smf_seed_generator()
 }
 
 /**
- * Calls a given integration hook at the related point in the code.
+ * Calls a given hook at the related point in the code.
  *
  * Each of the hooks is an array of functions within $modSettings['hooks'], to be called at relevant points in the code, such as $modSettings['hooks']['login'] which is run during login (to facilitate login into an integrated application.)
  *
@@ -3079,7 +3079,7 @@ function call_hook($hook, $parameters = array())
 }
 
 /**
- * Add a function to one of the integration hook stacks.
+ * Add a function to one of the hook stacks.
  * Gotta love hooks. What? I said hooks, not hookers.
  *
  * This function adds a function to be called. It also prevents duplicates on the same hook.
@@ -3122,7 +3122,7 @@ function add_hook($hook, $function, $file = '', $register = true)
 }
 
 /**
- * Remove a function from one of the integration hook stacks.
+ * Remove a function from one of the hook stacks.
  *
  * This function not only removes the hook from the local registry, but also from the master registry. Note that this function does not check whether the named function is callable, simply that it is part of the stack - it can be used on the file-include hook as well. If the function is not attached to the named hook, the function will simply return.
  *

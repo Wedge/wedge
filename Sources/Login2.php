@@ -142,7 +142,7 @@ function Login2()
 		return;
 	}
 
-	// Are we using any sort of integration to validate the login?
+	// Are we using any sort of hook to validate the login?
 	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
 	{
 		$context['login_errors'] = array($txt['login_hash_error']);

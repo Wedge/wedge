@@ -197,7 +197,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from'], '@') . '>' . $line_break;
 	$headers .= 'X-Mailer: SMF' . $line_break;
 
-	// Pass this to the integration before we start modifying the output -- it'll make it easier later.
+	// Pass this to the hook before we start modifying the output -- it'll make it easier later.
 	if (in_array(false, call_hook('outgoing_email', array(&$subject, &$message, &$headers)), true))
 		return false;
 
