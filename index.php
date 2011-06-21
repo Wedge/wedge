@@ -222,9 +222,9 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 // After all this time... after everything we saw, after everything we lost... I have only one thing to say to you... bye!
 $function();
 
-// Just quickly sneak the RSS stuff in...
-if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_rss'))
-	loadSubTemplate('sidebar_rss', 'sidebar', false);
+// Just quickly sneak the feed stuff in...
+if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
+	loadSubTemplate('sidebar_feed', 'sidebar', false);
 
 obExit(null, null, true);
 
@@ -289,7 +289,7 @@ function smf_main()
 	is_not_banned();
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
-	if (!empty($topic) && ($action !== 'feed') && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
+	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)

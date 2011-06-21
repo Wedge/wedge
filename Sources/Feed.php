@@ -23,8 +23,8 @@ define('WEDGE_NO_LOG', 1);
 		  registered members, and 'profile' for a member's profile.
 		- To display a member's profile, a user id has to be given. (;u=1)
 		- uses the Stats language file.
-		- outputs an rss feed instead of a proprietary one if the 'type' get
-		  parameter is 'rss' or 'rss2'.
+		- outputs an Atom feed, unless the 'type' get parameter is
+		  set to 'rss', 'rss2' or 'rdf'.
 		- does not use any templates, sub templates, or template layers.
 		- is accessed via ?action=feed.
 
@@ -62,7 +62,7 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $topic, $board, $board_info, $context, $scripturl, $txt, $modSettings;
-	global $query_this, $forum_version, $cdata_override, $user_info;
+	global $query_this, $forum_version, $user_info;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -70,7 +70,7 @@ function Feed()
 
 	loadLanguage('Stats');
 
-	// Default to latest 5.  No more than 255, please. Why 255, I don't know. Because it sounds geeky?
+	// Default to latest 5. No more than 255, please. Why 255, I don't know. Because it sounds geeky?
 	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 5 : min((int) $_GET['limit'], 255);
 
 	$query_this = 1;
@@ -222,8 +222,8 @@ function Feed()
 		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 100 - $_GET['limit'] * 5);
 	}
 
-	// Show in rss or proprietary format?
-	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('smf', 'rss', 'rss2', 'atom', 'rdf', 'webslice')) ? $_GET['type'] : 'smf';
+	// Show in Atom, RSS or RDF?
+	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom', 'rdf')) ? $_GET['type'] : 'atom';
 
 	// !!! Birthdays?
 
@@ -236,17 +236,6 @@ function Feed()
 	);
 	if (empty($_GET['sa']) || !isset($subActions[$_GET['sa']]))
 		$_GET['sa'] = 'recent';
-
-	//!!! Temp - webslices doesn't do everything yet.
-	if ($xml_format == 'webslice' && $_GET['sa'] != 'recent')
-		$xml_format = 'rss2';
-	// If this is webslices we kinda cheat - we allow a template that we call direct for the HTML, and we override the CDATA.
-	elseif ($xml_format == 'webslice')
-	{
-		$context['user'] += $user_info;
-		$cdata_override = true;
-		loadTemplate('Xml');
-	}
 
 	// We only want some information, not all of it.
 	$cachekey = array($xml_format, $_GET['action'], $_GET['limit'], $_GET['sa']);
@@ -277,9 +266,9 @@ function Feed()
 	else
 		ob_start();
 
-	if ($xml_format == 'smf' || isset($_REQUEST['debug']))
+	if (isset($_REQUEST['debug']))
 		header('Content-Type: text/xml; charset=UTF-8');
-	elseif ($xml_format == 'rss' || $xml_format == 'rss2' || $xml_format == 'webslice')
+	elseif ($xml_format == 'rss' || $xml_format == 'rss2')
 		header('Content-Type: application/rss+xml; charset=UTF-8');
 	elseif ($xml_format == 'atom')
 		header('Content-Type: application/atom+xml; charset=UTF-8');
@@ -289,7 +278,7 @@ function Feed()
 	// First, output the xml header.
 	echo '<?xml version="1.0" encoding="UTF-8"?' . '>';
 
-	// Are we outputting an rss feed or one with more information?
+	// Are we outputting an RSS feed or one with more information?
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
 	{
 		// Start with an RSS 2.0 header.
@@ -308,48 +297,7 @@ function Feed()
 	</channel>
 </rss>';
 	}
-	elseif ($xml_format == 'webslice')
-	{
-		$context['recent_posts_data'] = $xml;
-
-		// This always has RSS 2
-		echo '
-<rss version="2.0" xmlns:mon="http://www.microsoft.com/schemas/rss/monitoring/2007" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
-	<channel>
-		<title>', $feed_title, ' - ', $txt['recent_posts'], '</title>
-		<link>', $scripturl, '?action=recent</link>
-		<description><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></description>
-		<item>
-			<title>', $feed_title, ' - ', $txt['recent_posts'], '</title>
-			<link>', $scripturl, '?action=recent</link>
-			<description><![CDATA[
-				', template_webslice_header_above(), '
-				', template_webslice_recent_posts(), '
-				', template_webslice_header_below(), '
-			]]></description>
-		</item>
-	</channel>
-</rss>';
-	}
-	elseif ($xml_format == 'atom')
-	{
-		echo '
-<feed xmlns="http://www.w3.org/2005/Atom">
-	<title>', $feed_title, '</title>
-	<link rel="alternate" type="text/html" href="', $scripturl, '" />
-
-	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
-	<tagline><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></tagline>
-	<generator uri="http://wedge.org" version="', strtr($forum_version, array('Wedge ' => '')), '">Wedge</generator>
-	<author>
-		<name>', strip_tags($context['forum_name']), '</name>
-	</author>';
-
-		dumpTags($xml, 2, 'entry', $xml_format);
-
-		echo '
-</feed>';
-	}
+	// Or maybe RDF?
 	elseif ($xml_format == 'rdf')
 	{
 		echo '
@@ -376,27 +324,33 @@ function Feed()
 		echo '
 </rdf:RDF>';
 	}
-	// Otherwise, we're using our proprietary formats - they give more data, though.
+	// Otherwise this is the default (Atom feed.)
 	else
 	{
 		echo '
-<smf:xml-feed xmlns:smf="http://www.simplemachines.org/" xmlns="http://www.simplemachines.org/xml/', $_GET['sa'], '" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">';
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>', $feed_title, '</title>
+	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 
-		// Dump out that associative array.  Indent properly.... and use the right names for the base elements.
-		dumpTags($xml, 1, $subActions[$_GET['sa']][1], $xml_format);
+	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
+	<tagline><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></tagline>
+	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">Wedge</generator>
+	<author>
+		<name>', strip_tags($context['forum_name']), '</name>
+	</author>';
+
+		dumpTags($xml, 2, 'entry', $xml_format);
 
 		echo '
-</smf:xml-feed>';
-}
+</feed>';
+	}
 
 	obExit(false);
 }
 
 function cdata_parse($data)
 {
-	global $cdata_override;
-
-	return !empty($cdata_override) ? $data : '<![CDATA[' . str_replace(']]>', ']]>]]&gt;<![CDATA[', $data) . ']]>';
+	return '<![CDATA[' . str_replace(']]>', ']]>]]&gt;<![CDATA[', $data) . ']]>';
 }
 
 function dumpTags($data, $i, $tag = null, $xml_format = '')
@@ -442,7 +396,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 
 			if (is_array($val))
 			{
-				// An array.  Dump it, and then indent the tag.
+				// An array. Dump it, and then indent the tag.
 				dumpTags($val, $i + 1, null, $xml_format);
 				echo "\n", str_repeat("\t", $i), '</', $key, '>';
 			}
@@ -476,7 +430,7 @@ function getXmlMembers($xml_format)
 	$data = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		// Make the data look rss-ish.
+		// Make the data look RSS-ish.
 		if ($xml_format == 'rss' || $xml_format == 'rss2')
 			$data[] = array(
 				'title' => cdata_parse($row['real_name']),
@@ -584,7 +538,7 @@ function getXmlNews($xml_format)
 		censorText($row['body']);
 		censorText($row['subject']);
 
-		// Being news, this actually makes sense in rss format.
+		// Being news, this actually makes sense in RSS format.
 		if ($xml_format == 'rss' || $xml_format == 'rss2')
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
@@ -764,7 +718,7 @@ function getXmlRecent($xml_format)
 				'id' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
-		// A lot of information here.  Should be enough to please the rss-ers.
+		// A lot of information here. Should be enough to please the RSS-ers.
 		else
 			$data[] = array(
 				'time' => htmlspecialchars(strip_tags(timeformat($row['poster_time']))),
@@ -813,7 +767,7 @@ function getXmlProfile($xml_format)
 	if (!loadMemberContext($_GET['u']) || !allowedTo('profile_view_any'))
 		return array();
 
-	// Okay, I admit it, I'm lazy.  Stupid $_GET['u'] is long and hard to type.
+	// Okay, I admit it, I'm lazy. Stupid $_GET['u'] is long and hard to type.
 	$profile = &$memberContext[$_GET['u']];
 
 	if ($xml_format == 'rss' || $xml_format == 'rss2')

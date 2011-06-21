@@ -1734,7 +1734,7 @@ function aeva_getOnlineType($actions)
 			$ret[0] = !$user_info['is_guest'] ? 'direct' : 'hidden';
 			$ret[1] = $txt['media_wo_ua'];
 		break;
-		// home, vua, rss, stats...
+		// home, vua, XML feed, stats...
 		default;
 			$ret[0] = 'direct';
 			$ret[1] = $txt['media_wo_' . (isset($txt['media_wo_' . $sa]) ? $sa : 'unknown')];

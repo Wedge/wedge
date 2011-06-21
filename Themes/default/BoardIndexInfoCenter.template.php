@@ -37,11 +37,7 @@ function template_info_center_recentposts()
 					<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '"></a>
 					', $txt['recent_posts'], '
 				</we:title2>
-				<div class="hslice" id="recent_posts_content">
-					<div class="entry-title" style="display: none;">', $context['forum_name_html_safe'], ' - ', $txt['recent_posts'], '</div>
-					<div class="entry-content" style="display: none;">
-						<a rel="feedurl" href="', $scripturl, '?action=feed;type=webslice">', $txt['subscribe_webslice'], '</a>
-					</div>';
+				<div id="recent_posts_content">';
 
 	// Only show one post.
 	if ($settings['number_recent_posts'] == 1)
@@ -139,7 +135,7 @@ function template_info_center_statistics()
 					<a href="', $scripturl, '?action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>
 					', $txt['forum_stats'], '
 				</we:title2>
-				<ul>
+				<ul class="stats">
 					<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($settings['show_latest_member']) ? '
 					<li>' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong></li>' : '', !empty($context['latest_post']) ? '
 					<li>' . $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['time'] . ')</li>' : '', '

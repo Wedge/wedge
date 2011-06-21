@@ -92,7 +92,7 @@ function template_unread()
 
 	if ($show_checkboxes)
 		echo '
-		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;">
+		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unread', $context['querystring_board_limits'], '">';
@@ -211,10 +211,10 @@ function template_unread()
 		}
 
 		if (!empty($context['topics']))
-			$mark_read['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.gif', 'lang' => true, 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true);
+			$mark_read['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.gif', 'lang' => true, 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'class' => 'active');
 		else
 			echo '
-					<tr style="display: none;"><td></td></tr>';
+					<tr style="display: none"><td></td></tr>';
 
 		echo '
 					</tbody>
@@ -266,7 +266,7 @@ function template_replies()
 
 	if ($show_checkboxes)
 		echo '
-		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;">
+		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unreadreplies', $context['querystring_board_limits'], '">';

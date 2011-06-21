@@ -100,7 +100,7 @@ function template_aeva_subtabs()
 			$buttons[] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
-				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
+				'class' => $tab['class']
 			);
 		template_button_strip($buttons, '');
 	}
@@ -113,7 +113,7 @@ function template_aeva_subtabs()
 			$buttons[] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
-				'custom' => $tab['active'] ? 'class="currentbutton"' : '',
+				'class' => $tab['class']
 			);
 		template_button_strip($buttons, '');
 	}
@@ -124,7 +124,7 @@ function template_aeva_home()
 	global $context, $amSettings, $txt, $galurl, $scripturl, $settings;
 
 	$has_albums = count($context['aeva_albums']) > 0;
-	$can_rss = empty($amSettings['disable_rss']);
+	$can_feed = empty($amSettings['disable_feed']);
 
 	// The Albums!
 	echo '
@@ -150,8 +150,8 @@ function template_aeva_home()
 	{
 		echo '
 	<we:title>
-		', $txt['media_recent_items'], $can_rss ?
-		' <a href="'.$galurl.'sa=rss"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
+		', $txt['media_recent_items'], $can_feed ?
+		' <a href="' . $galurl . 'sa=feed"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
 	</we:title>';
 
 		// Page index and sorting things
@@ -197,8 +197,8 @@ function template_aeva_home()
 		echo '
 	<div', !empty($context['recent_albums']) ? ' class="recent_comments"' : '', '>
 		<we:title>
-			', $txt['media_recent_comments'], $can_rss ?
-			' <a href="'.$galurl.'sa=rss;type=comments"><img src="'.$settings['images_aeva'].'/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
+			', $txt['media_recent_comments'], $can_feed ?
+			' <a href="' . $galurl . 'sa=feed;type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
 		</we:title>
 		<div class="windowbg wrc smalltext">
 			<div style="line-height: 1.4em">';
@@ -705,8 +705,8 @@ function template_aeva_item_comments()
 	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info, $options;
 
 	echo '
-		<we:cat>', empty($amSettings['disable_rss']) ? '
-			<a href="' . $galurl . 'sa=rss;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
+		<we:cat>', empty($amSettings['disable_feed']) ? '
+			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
 				<span class="feed_icon"></span>
 				' . $txt['media_comments'] . '
 			</a>' : '
@@ -1028,9 +1028,9 @@ function template_aeva_viewAlbum()
 	echo '</td>
 		<td style="padding: 12px 12px 6px 12px">
 			<div class="mg_large mg_pb4">', !empty($album_data['passwd']) ? aeva_lockedAlbum($album_data['passwd'], $album_data['id'], $album_data['owner']) : '',
-			$album_data['name'], empty($amSettings['disable_rss']) ? '&nbsp;&nbsp;&nbsp;<span class="title_rss">
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . '"><span class="feed_icon"></span> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
+			$album_data['name'], empty($amSettings['disable_feed']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . '"><span class="feed_icon"></span> ' . $txt['media_items'] . '</a>
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
 			<div>', $album_data['type2'], !empty($album_data['owner']['id']) ? '
 			- ' . $txt['media_owner'] . ': ' . aeva_profile($album_data['owner']['id'], $album_data['owner']['name']) : '', '
 			- ', $album_data['num_items'] == 0 ? $txt['media_no_items'] : $album_data['num_items'] . ' ' . $txt['media_lower_item' . ($album_data['num_items'] == 1 ? '' : 's')], !empty($album_data['last_item']) ? ' - ' . $txt['media_latest_item'] . ': <a href="'.$galurl.'sa=item;in='.$album_data['last_item'].'">'.$album_data['last_item_title'].'</a> (' . $album_data['last_item_date'] . ')' : '', '</div>', !empty($album_data['description']) ? '
@@ -1092,9 +1092,9 @@ function template_aeva_viewAlbum()
 	if (!empty($context['aeva_sub_albums']))
 	{
 		echo '
-		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], empty($amSettings['disable_rss']) ? '&nbsp;&nbsp;&nbsp;<span class="title_rss">
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=rss;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
+		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], empty($amSettings['disable_feed']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_items'] . '</a>
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
 		aeva_listChildren($context['aeva_sub_albums']);
 	}
 
@@ -1286,15 +1286,15 @@ function template_aeva_viewUserAlbums()
 	echo '
 	<div class="pagelinks" style="padding: 0">', $txt['media_pages'], ': ', $context['aeva_page_index'], '</div>';
 
-	$can_rss = empty($amSettings['disable_rss']);
+	$can_feed = empty($amSettings['disable_feed']);
 	foreach ($context['aeva_user_albums'] as $id => $album)
 	{
 		$first = current($album);
 		echo '
 	<div class="cat_heading">
 		<we:title>
-			', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_rss ?
-			' <a href="' . $galurl . 'sa=rss;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', '
+			', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_feed ?
+			' <a href="' . $galurl . 'sa=feed;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
 		</we:title>
 	</div>';
 
@@ -1721,7 +1721,7 @@ function template_aeva_profile_summary()
 	global $txt, $galurl, $context, $settings, $scripturl, $user_info, $galurl, $amSettings;
 
 	$member = &$context['aeva_member'];
-	$can_rss = empty($amSettings['disable_rss']);
+	$can_feed = empty($amSettings['disable_feed']);
 
 	echo '
 		<table class="bordercolor w100 cs1 cp4">
@@ -1736,8 +1736,8 @@ function template_aeva_profile_summary()
 			</tr>
 			<tr>
 				<td class="windowbg2">
-					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
-					', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/rss.png" alt="RSS" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
+					', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
+					', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
 					', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
 					', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
 				</td>
@@ -1749,7 +1749,7 @@ function template_aeva_profile_summary()
 
 		echo '
 			<tr class="titlebg">
-				<td>', $can_rss ? '<a href="' . $galurl . 'sa=rss;user=' . $member['id'] . ';albums" class="feed_icon"></a> ' : '', $txt['media_albums'], '</td>
+				<td>', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';albums" class="feed_icon"></a> ' : '', $txt['media_albums'], '</td>
 			</tr>
 			<tr>
 				<td>';

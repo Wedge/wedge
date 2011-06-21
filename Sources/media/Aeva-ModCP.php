@@ -149,9 +149,9 @@ function aeva_modCP_submissions()
 
 	// Get the subtabs
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'active' => $filter == 'items'),
-		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'active' => $filter == 'coms'),
-		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'active' => $filter == 'albums'),
+		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'class' => $filter == 'items' ? 'active' : ''),
+		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'class' => $filter == 'coms' ? 'active' : ''),
+		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'class' => $filter == 'albums' ? 'active' : ''),
 	);
 
 	// HTML headers

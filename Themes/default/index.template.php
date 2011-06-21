@@ -118,14 +118,7 @@ function template_html_above()
 
 	echo theme_base_css(), '
 	<title>', $context['page_title_html_safe'], '</title>
-	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">', !empty($context['meta_keywords']) ? '
-	<meta name="keywords" content="' . $context['meta_keywords'] . '">' : '', '
-	<meta name="generator" content="Wedge">';
-
-	// Please don't index these, Mr Robotto.
-	if (!empty($context['robot_no_index']))
-		echo '
-	<meta name="robots" content="noindex">';
+	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">';
 
 	// Present a canonical url for search engines to prevent duplicate content in their indices.
 	if (!empty($context['canonical_url']))
@@ -136,10 +129,10 @@ function template_html_above()
 	echo '
 	<link rel="search" href="', $scripturl, '?action=search">';
 
-	// If RSS feeds are enabled, advertise the presence of one.
+	// If feeds are enabled, advertise the presence of one.
 	if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
 		echo '
-	<link rel="alternate" type="application/rss+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['rss'], '" href="', $scripturl, '?action=feed;type=rss">';
+	<link rel="alternate" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '" href="', $scripturl, '?action=feed">';
 
 	// If we're viewing a topic, these should be the previous and next topics, respectively.
 	if (!empty($context['prev_topic']))
@@ -149,14 +142,21 @@ function template_html_above()
 		echo '
 	<link rel="next" href="', $scripturl, '?topic=', $context['next_topic'], '.0">';
 
-	// If we're in a board, or a topic for that matter, the index will be the board's index.
-	if (!empty($context['current_board']))
-		echo '
-	<link rel="index" href="', $scripturl, '?board=', $context['current_board'], '.0">';
-
 	if ($context['browser']['is_iphone'])
 		echo '
 	<meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=2.0; minimum-scale=0.5; user-scalable=1;">';
+
+	if (!empty($context['meta_keywords']))
+		echo '
+	<meta name="keywords" content="' . $context['meta_keywords'] . '">';
+
+	// Please don't index these, Mr Robotto.
+	if (!empty($context['robot_no_index']))
+		echo '
+	<meta name="robots" content="noindex">';
+
+	echo '
+	<meta name="generator" content="Wedge">';
 
 	// Output any remaining HTML headers. (Mods may easily add code there.)
 	echo $context['header'], '
@@ -306,39 +306,39 @@ function template_sidebar_above()
 			</div>';
 }
 
-// This natty little function makes pretty RSS stuff in the sidebar. Mostly autonomous, it's lovely for that.
+// This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
 // This function is only added to the list if the feeds are available, so we don't even need to check anything.
-function template_sidebar_rss()
+function template_sidebar_feed()
 {
 	global $topic, $board, $txt, $context, $scripturl, $modSettings, $settings, $board_info;
 
 	echo '
 			<we:title>
 				<div class="feed_icon"></div>
-				', $txt['rss'], '
+				', $txt['feed'], '
 			</we:title>
-			<dl id="rss">';
+			<dl id="feed">';
 
-	// Topic RSS links
+	// Topic feed
 	if (!empty($topic))
 		echo '
-				<dt>', $txt['rss_current_topic'], '</dt>
-				<dd>', sprintf($txt['rss_posts'], $scripturl . '?topic=' . $topic . ';action=feed;type=rss'), '</dd>';
+				<dt>', $txt['feed_current_topic'], '</dt>
+				<dd>', sprintf($txt['feed_posts'], $scripturl . '?topic=' . $topic . ';action=feed'), '</dd>';
 
-	// Board level RSS links
+	// Board level feed
 	if (!empty($board))
 	{
-		$rss = $scripturl . '?board=' . $board_info['id'] . ';action=feed;type=rss';
+		$feed = $scripturl . '?board=' . $board_info['id'] . ';action=feed';
 		echo '
-				<dt>', $board_info['type'] == 'blog' ? $txt['rss_current_blog'] : $txt['rss_current_board'], '</dt>
-				<dd>', sprintf($txt['rss_posts'], $rss), ' / ', sprintf($txt['rss_topics'], $rss . ';sa=news'), '</dd>';
+				<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_board'], '</dt>
+				<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>';
 	}
 
-	// Forum wide and end
-	$rss = $scripturl . '?action=feed;type=rss';
+	// Forum-wide and end
+	$feed = $scripturl . '?action=feed';
 	echo '
-				<dt>', $txt['rss_everywhere'], '</dt>
-				<dd>', sprintf($txt['rss_posts'], $rss), ' / ', sprintf($txt['rss_topics'], $rss . ';sa=news'), '</dd>
+				<dt>', $txt['feed_everywhere'], '</dt>
+				<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>
 			</dl>';
 }
 
@@ -572,7 +572,7 @@ function template_button_strip($button_strip, $direction = 'right', $strip_optio
 	foreach ($button_strip as $key => $value)
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
-				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (isset($value['active']) ? ' active' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
+				<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (!empty($value['class']) ? ' ' . $value['class'] : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
 
 	// No buttons? No button strip either.
 	if (empty($buttons))

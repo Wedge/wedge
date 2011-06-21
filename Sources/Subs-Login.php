@@ -239,11 +239,7 @@ function sha1_core($x, $len)
 
 	for ($i = 0, $n = count($x); $i < $n; $i += 16)
 	{
-		$olda = $a;
-		$oldb = $b;
-		$oldc = $c;
-		$oldd = $d;
-		$olde = $e;
+		list ($olda, $oldb, $oldc, $oldd, $olde) = array($a, $b, $c, $d, $e);
 
 		for ($j = 0; $j < 80; $j++)
 		{
@@ -298,7 +294,7 @@ function sha1_rol($num, $cnt)
 	return ($num << $cnt) | $a;
 }
 
-// This protects against brute force attacks on a member's password. Importantly even if the password was right we DON'T TELL THEM!
+// This protects against brute force attacks on a member's password. Importantly, even if the password was right, we DON'T TELL THEM!
 function validatePasswordFlood($id_member, $password_flood_value = false, $was_correct = false)
 {
 	global $cookiename;

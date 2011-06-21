@@ -28,7 +28,7 @@
 	aeva_foxy_notify_items($album, $items)
 	aeva_foxy_remote_image($link)
 	aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$width, &$height)
-	aeva_foxy_rss()
+	aeva_foxy_feed()
 	aeva_foxy_get_xml_items()
 	aeva_foxy_get_xml_comments()
 	aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_media DESC', $field_sort = 0)
@@ -758,22 +758,22 @@ function aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$widt
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// MEDIA RSS FEEDS
+// MEDIA FEEDS
 ///////////////////////////////////////////////////////////////////////////////
 
-function aeva_foxy_rss()
+function aeva_foxy_feed()
 {
 	global $context, $scripturl, $txt, $modSettings, $user_info;
 	global $amSettings, $query_this, $db_show_debug;
 
-	$amSettings['max_rss_items'] = !isset($amSettings['max_rss_items']) ? 10 : $amSettings['max_rss_items'];
-	if (empty($amSettings['max_rss_items']))
+	$amSettings['max_feed_items'] = !isset($amSettings['max_feed_items']) ? 10 : $amSettings['max_feed_items'];
+	if (empty($amSettings['max_feed_items']))
 		return;
 
 	loadSource('Feed');
 
 	// Default to latest 10. No more than 255, please.
-	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 10 : min((int) $_GET['limit'], $amSettings['max_rss_items']);
+	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 10 : min((int) $_GET['limit'], $amSettings['max_feed_items']);
 	$type = !isset($_GET['type']) || $_GET['type'] != 'comments' ? 'items' : 'comments';
 
 	// Handle the cases where an album, albums, or other things are asked for.
@@ -910,12 +910,12 @@ function aeva_foxy_rss()
 	<channel>
 		<title><![CDATA[', $feed_title, ']]></title>
 		<link>', $scripturl . '?action=media</link>
-		<description><![CDATA[', !empty($txt['media_rss_desc']) ? $txt['media_rss_desc'] : '', ']]></description>';
+		<description><![CDATA[', !empty($txt['media_feed_desc']) ? $txt['media_feed_desc'] : '', ']]></description>';
 
 	// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
 	dumpTags($xml, 2, 'item', 'rss2');
 
-	// Output the footer of the xml.
+	// Output the footer of the XML.
 	echo '
 	</channel>
 </rss>';

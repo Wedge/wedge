@@ -330,10 +330,10 @@ table.foxy_side
 .aevera
 	vertical-align: middle
 
-.title_rss, .sort_options
+.title_feed, .sort_options
 	font: 8pt Verdana, sans-serif !important
 
-.title_rss
+.title_feed
 	img
 		vertical-align: text-top !important
 	a

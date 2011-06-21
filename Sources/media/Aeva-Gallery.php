@@ -213,9 +213,9 @@ function aeva_initGallery($gal_url = null)
 			'file' => 'Aeva-Gallery',
 			'function' => 'aeva_quickmodAlbum',
 		),
-		'rss' => array(
+		'feed' => array(
 			'file' => 'Aeva-Foxy',
-			'function' => 'aeva_foxy_rss',
+			'function' => 'aeva_foxy_feed',
 		),
 		'addview' => array('function' => 'aeva_addView'),
 	);
@@ -477,7 +477,7 @@ function aeva_initGallery($gal_url = null)
 				if (!empty($sadetails['title']))
 					$context['aeva_header']['areatabs'][$sa] = array(
 						'title' => $sadetails['title'],
-						'active' => $surlvar == $sa || (empty($surlvar) && !empty($sadetails['default'])),
+						'class' => $surlvar == $sa || (empty($surlvar) && !empty($sadetails['default'])) ? 'active' : '',
 						'url' => isset($areas[$area]['href']) ? $areas[$area]['href'] : $galurl . (isset($areas[$area]['url_index']) ? $areas[$area]['url_index'] : 'sa') . '=' . $area . ';' . (isset($details['sub_url_index']) ? $details['sub_url_index'] : 'do') . '=' . $sa,
 					);
 			}
