@@ -287,7 +287,7 @@ function Feed()
 	<channel>
 		<title>', $feed_title, '</title>
 		<link>', $scripturl, '</link>
-		<description><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></description>';
+		<description><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></description>';
 
 		// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
 		dumpTags($xml, 2, 'item', $xml_format);
@@ -305,7 +305,7 @@ function Feed()
 	<channel rdf:about="', $scripturl, '">
 		<title>', $feed_title, '</title>
 		<link>', $scripturl, '</link>
-		<description><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></description>
+		<description><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></description>
 		<items>
 			<rdf:Seq>';
 
@@ -333,7 +333,7 @@ function Feed()
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 
 	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
-	<tagline><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></tagline>
+	<tagline><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></tagline>
 	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">Wedge</generator>
 	<author>
 		<name>', strip_tags($context['forum_name']), '</name>

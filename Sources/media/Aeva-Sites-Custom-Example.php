@@ -47,7 +47,6 @@ $sites[] = array(
 	'title' => 'Example Website',
 	'website' => 'http://www.example.com',
 	'type' => 'custom',
-	'added' => '5.2',
 	'pattern' => 'http://(?:www\.)?example\.com/video/([0-9a-z]{8})',
 	'movie' => 'http://www.example.com/player.swf?id=$2',
 	'size' => array(425, 344),
@@ -99,7 +98,6 @@ Here, you can also change specific settings for existing sites, with a bit of co
 
 	'id' =>					Unique ID for the site, 3+ characters comprising A-Z/0-9 - e.g. ytb for YouTube					(Mandatory)
 	'title' =>				Website's name - shown in the Admin area for each site as hover link title						(Mandatory)
-	'added' =>				Version of Aeva that added support for this site (all pre-v4 are "<4.0", otherwise "5.1", etc)	(Optional)
 	'website' =>			Website URL (to main site) - used in Admin area only											(Optional)
 	'type' =>				Category where the site will be listed in the Admin area (local|pop|video|audio|other...)		(Mandatory - defaults to video)
 	'plugin' =>				Type of plugin used by the site, either flash|divx|wmp|quicktime|realmedia						(Optional - defaults to flash)
@@ -134,8 +132,8 @@ Here, you can also change specific settings for existing sites, with a bit of co
 	'lookup-unencode' =>	Set true or 1 if you want html entities to be reversed in the URL								(Optional)
 	'lookup-urldecode' =>	Number of times to run urldecode on the final url. Normally 1, but one site requires 2			(Optional)
 	'lookup-skip-empty' =>	Keep looking if the current site lookup didn't work. Useful for white-labelled networks			(Optional)
-	// Example URLs			I included example URLs with every site to show the format supported and to make sure
-							that they work for future compatibility.
+	// Sample URLs			I included test case URLs with every site to show the format supported and to help
+							ensure that they work for future compatibility.
 
 */
 

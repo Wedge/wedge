@@ -20,7 +20,7 @@ if (!defined('SMF'))
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
  * - Save the value in cache for next time.
- * - Set the timezone (mandatory for PHP 5.1+)
+ * - Set the timezone (mandatory in PHP)
  * - Check the load average settings if available.
  * - Check whether post moderation is enabled.
  * - Run any functions specified in the pre_load hook.

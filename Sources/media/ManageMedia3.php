@@ -347,8 +347,8 @@ function aeva_show_sitelist_updates()
 		$new_sites[$s['id']] = $s['title'] . '@' . serialize($s);
 	unset($sites);
 
-	$sites_added = function_exists('array_diff_key') ? array_diff_key($new_sites, $old_sites) : array_flip(array_diff(array_flip($new_sites), array_flip($old_sites)));
-	$sites_removed = function_exists('array_diff_key') ? array_diff_key($old_sites, $new_sites) : array_flip(array_diff(array_flip($old_sites), array_flip($new_sites)));
+	$sites_added = array_diff_key($new_sites, $old_sites);
+	$sites_removed = array_diff_key($old_sites, $new_sites);
 	$sites_modified = array();
 	foreach (array_keys($new_sites) as $a)
 		if (isset($old_sites[$a]) && $old_sites[$a] != $new_sites[$a])

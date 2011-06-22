@@ -335,10 +335,9 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_callable('glob'))
-		foreach (glob($cachedir . '/' . $id . '*' . $ext) as $del)
-			if (!strpos($del, $latest_date))
-				@unlink($del);
+	foreach (glob($cachedir . '/' . $id . '*' . $ext) as $del)
+		if (!strpos($del, $latest_date))
+			@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
@@ -459,10 +458,9 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	$dir = $settings['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	if (is_callable('glob'))
-		foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
-			if (!strpos($del, $latest_date))
-				@unlink($del);
+	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
+		if (!strpos($del, $latest_date))
+			@unlink($del);
 
 	$minify = empty($modSettings['minify']) ? 'none' : $modSettings['minify'];
 
