@@ -61,6 +61,7 @@ function reloadSettings()
 			$modSettings['defaultMaxMembers'] = 30;
 		$modSettings['registered_hooks'] = empty($modSettings['registered_hooks']) ? array() : unserialize($modSettings['registered_hooks']);
 		$modSettings['hooks'] = $modSettings['registered_hooks'];
+		$modSettings['pretty_filters'] = unserialize($modSettings['pretty_filters']);
 
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('modSettings', $modSettings, 90);

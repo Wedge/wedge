@@ -43,7 +43,7 @@ function cleanRequest()
 	// Makes it easier to refer to things this way.
 	// !!! Change this once the feature is deemed to be stable.
 
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($modSettings['pretty_filters']['boards']))
 	{
 		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
 		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');

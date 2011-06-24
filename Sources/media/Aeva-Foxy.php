@@ -895,7 +895,7 @@ function aeva_foxy_feed()
 	$feed_title = westr::htmlspecialchars(strip_tags($context['forum_name'])) . ' - ' . $txt['media_gallery'] . (isset($feed_title) ? $feed_title : '');
 
 	// Support for PrettyURLs rewriting
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($modSettings['pretty_filters']['actions']))
 	{
 		$insideurl = preg_quote($scripturl, '~');
 		$context['pretty']['search_patterns'][]  = '~(<link>|<guid>)' . $insideurl . '([^<]*?[?;&](action)=[^#<]+)~';

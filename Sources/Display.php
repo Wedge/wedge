@@ -63,7 +63,7 @@ function Display()
 
 	// 301 redirects on old-school queries like "?topic=242.0"
 	// !!! Should we just be taking the original HTTP var and redirect to it?
-	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($modSettings['pretty_enable_filters']))
+	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($modSettings['pretty_filters']['topics']))
 	{
 		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
 		header('HTTP/1.1 301 Moved Permanently');

@@ -654,7 +654,7 @@ function EditBoard2()
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['board_name']);
 		$boardOptions['board_description'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['desc']);
-		if (!empty($modSettings['pretty_enable_filters']))
+		if (!empty($modSettings['pretty_filters']['boards']))
 		{
 			$boardOptions['pretty_url'] = $_POST['pretty_url'];
 			$boardOptions['pretty_url_dom'] = $_POST['pretty_url_dom'];

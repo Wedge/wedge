@@ -2007,9 +2007,6 @@ function ModifyPrettyURLs()
 		),
 	);
 
-	// Load the URL filters
-	$context['pretty']['filters'] = !empty($modSettings['pretty_filters']) ? unserialize($modSettings['pretty_filters']) : array();
-
 	// Are we repopulating now?
 	if (isset($_REQUEST['refill']))
 	{
@@ -2022,16 +2019,17 @@ function ModifyPrettyURLs()
 	elseif (isset($_REQUEST['save']))
 	{
 		$is_enabled = false;
-		foreach ($context['pretty']['filters'] as $filter)
-			$is_enabled |= ($context['pretty']['filters'][$filter['id']]['enabled'] = isset($_POST['pretty_filter_' . $filter['id']]) ? 1 : 0);
+		foreach ($modSettings['pretty_filters'] as $id => &$filter)
+			$is_enabled |= ($filter = isset($_POST['pretty_filter_' . $id]) ? 1 : 0);
 
 		updateSettings(
 			array(
 				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
-				'pretty_filters' => serialize($context['pretty']['filters']),
+				'pretty_filters' => serialize($modSettings['pretty_filters']),
 			)
 		);
+		$modSettings['pretty_filters'] = unserialize($modSettings['pretty_filters']);
 
 		if (isset($_REQUEST['pretty_cache']))
 			wesql::query('
@@ -2046,8 +2044,6 @@ function ModifyPrettyURLs()
 		redirectexit('action=admin;area=featuresettings;sa=pretty');
 	}
 
-	// Load the settings up
-	$context['pretty']['settings']['enable'] = !empty($modSettings['pretty_enable_filters']) ? $modSettings['pretty_enable_filters'] : 0;
 	$context['pretty']['settings']['cache'] = !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : 0;
 }
 

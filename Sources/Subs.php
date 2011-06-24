@@ -1049,10 +1049,10 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	{
 		loadSource('PrettyUrls-Filters');
 		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
-		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
-		foreach ($filter_callbacks as $callback)
+		foreach ($modSettings['pretty_filters'] as $filter)
 		{
-			$pretty_url = call_user_func('pretty_filter_' . $callback, $url);
+			if (!empty($filter))
+				$pretty_url = call_user_func('pretty_filter_' . $filter, $url);
 			if (isset($pretty_url[0]['replacement']))
 				break;
 		}
@@ -1267,7 +1267,7 @@ function ob_sessrewrite($buffer)
 		);
 
 	// Rewrite the buffer with pretty URLs!
-	if (!empty($modSettings['pretty_enable_filters']) && !empty($modSettings['pretty_filters']))
+	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		// !!!	$insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
 		$insideurl = preg_quote($scripturl, '~');
@@ -1286,6 +1286,7 @@ function ob_sessrewrite($buffer)
 
 		// Making sure we don't execute patterns twice.
 		$context['pretty']['search_patterns'] = array_flip(array_flip($context['pretty']['search_patterns']));
+
 		foreach ($context['pretty']['search_patterns'] as $pattern)
 		{
 			preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
@@ -1339,11 +1340,11 @@ function ob_sessrewrite($buffer)
 			if (count($uncached_urls) != 0)
 			{
 				// Run each filter callback function on each URL
-				if (!function_exists('pretty_urls_topic_filter'))
+				if (!function_exists('pretty_filter_topics'))
 					loadSource('PrettyUrls-Filters');
-				$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
-				foreach ($filter_callbacks as $callback)
-					$uncached_urls = call_user_func('pretty_filter_' . $callback, $uncached_urls);
+				foreach ($modSettings['pretty_filters'] as $filter)
+					if (!empty($filter))
+						$uncached_urls = call_user_func('pretty_filter_' . $filter, $uncached_urls);
 
 				// Fill the cached URLs array
 				$cache_data = array();
