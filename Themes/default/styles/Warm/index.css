@@ -174,3 +174,6 @@ $alphamix = rgb(241,243,234)
 $main_bg  = rgb(241,243,234)
 $main_bg  = rgb(246,248,239)
 $head_bg  = rgba(233,235,186,.66)
+
+#sidebar
+	text-align: right

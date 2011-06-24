@@ -1052,7 +1052,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
 		foreach ($filter_callbacks as $callback)
 		{
-			$pretty_url = call_user_func($callback, $url);
+			$pretty_url = call_user_func('pretty_filter_' . $callback, $url);
 			if (isset($pretty_url[0]['replacement']))
 				break;
 		}
@@ -1343,7 +1343,7 @@ function ob_sessrewrite($buffer)
 					loadSource('PrettyUrls-Filters');
 				$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
 				foreach ($filter_callbacks as $callback)
-					$uncached_urls = call_user_func($callback, $uncached_urls);
+					$uncached_urls = call_user_func('pretty_filter_' . $callback, $uncached_urls);
 
 				// Fill the cached URLs array
 				$cache_data = array();

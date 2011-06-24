@@ -350,7 +350,7 @@ function Feed()
 
 function cdata_parse($data)
 {
-	return '<![CDATA[' . str_replace(']]>', ']]>]]&gt;<![CDATA[', $data) . ']]>';
+	return '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 }
 
 function dumpTags($data, $i, $tag = null, $xml_format = '')

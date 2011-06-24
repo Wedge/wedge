@@ -1923,11 +1923,10 @@ function template_pretty_urls()
 	<div class="windowbg2 wrc">
 		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
 			<fieldset>
-				<label><input type="checkbox" name="pretty_enable"', ($context['pretty']['settings']['enable'] ? ' checked' : ''), '>
-				', $txt['pretty_enable'], '</label>
-				<br>
-				<label><input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
-				', $txt['pretty_cache'], '</label>
+				<label>
+					<input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
+					', $txt['pretty_cache'], '
+				</label>
 			</fieldset>';
 
 	// Display the filters
@@ -1940,8 +1939,10 @@ function template_pretty_urls()
 		foreach ($context['pretty']['filters'] as $filter)
 			echo '
 				<div>
-					<label><input type="checkbox" name="pretty_filter_', $filter['id'], '"', $filter['enabled'] ? ' checked' : '', '>
-					', $txt['pretty_filter_' . $filter['id']], '</label>
+					<label>
+						<input type="checkbox" name="pretty_filter_', $filter['id'], '"', $filter['enabled'] ? ' checked' : '', '>
+						', $txt['pretty_filter_' . $filter['id']], '
+					</label>
 				</div>';
 
 		echo '
@@ -1957,10 +1958,6 @@ function template_pretty_urls()
 		', $txt['pretty_maintenance'], '
 	</we:cat>
 	<div class="windowbg wrc">
-		<form id="pretty_maintain_reset" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;reset" method="post" accept-charset="UTF-8">
-			<input type="submit" value="', $txt['pretty_reset'], '">
-		</form>
-
 		<form id="pretty_maintain_refill" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;refill" method="post" accept-charset="UTF-8">
 			<input type="submit" value="', $txt['pretty_refill'], '" style="margin-top: 10px">
 		</form>

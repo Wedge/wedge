@@ -28,7 +28,7 @@ if (!defined('SMF'))
 
 // Build the table of pretty topic URLs
 // This function used to do a lot more, it no longer does, but I still kept the same name.
-function pretty_synchronise_topic_urls()
+function pretty_synchronize_topic_urls()
 {
 	global $modSettings;
 
@@ -90,7 +90,7 @@ function pretty_synchronise_topic_urls()
 }
 
 // Filter miscellaneous action urls
-function pretty_urls_actions_filter($urls)
+function pretty_filter_actions($urls)
 {
 	global $boardurl, $scripturl;
 
@@ -126,7 +126,7 @@ function pretty_urls_actions_filter($urls)
 }
 
 // Filter topic urls
-function pretty_urls_topic_filter($urls)
+function pretty_filter_topics($urls)
 {
 	global $boardurl, $scripturl, $modSettings, $context;
 
@@ -274,7 +274,7 @@ function pretty_urls_topic_filter($urls)
 }
 
 // Filter board urls
-function pretty_urls_board_filter($urls)
+function pretty_filter_boards($urls)
 {
 	global $boardurl, $scripturl, $modSettings, $context;
 
@@ -329,7 +329,7 @@ function pretty_urls_board_filter($urls)
 }
 
 // Filter profiles
-function pretty_profiles_filter($urls)
+function pretty_filter_profiles($urls)
 {
 	global $boardurl, $scripturl, $modSettings;
 

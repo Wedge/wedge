@@ -1985,7 +1985,8 @@ function ModifyGeneralModSettings($return_config = false)
 */
 
 // !!! To-do:
-//		- Disable the area and feature, and explain why, if $boardurl has a subfolder name in it!
+//		- Specifically allow for subdomains
+//		- Disable the area and subdomain feature, and explain why, if $boardurl has a subfolder name in it!
 //			i.e. if (preg_match('~://[^/]+/[^/]+~', $boardurl))
 
 // Shell for all the Pretty URL interfaces
@@ -1999,12 +2000,6 @@ function ModifyPrettyURLs()
 	// Core settings
 	$context['pretty']['settings']['core'] = array(
 		array(
-			'id' => 'pretty_enable_filters',
-			'label' => $txt['pretty_enable'],
-			'type' => 'text',
-			'value' => !empty($modSettings['pretty_enable_filters']) ? $modSettings['pretty_enable_filters'] : '',
-		),
-		array(
 			'id' => 'pretty_enable_cache',
 			'label' => $txt['pretty_cache'],
 			'type' => 'text',
@@ -2012,34 +2007,27 @@ function ModifyPrettyURLs()
 		),
 	);
 
-	// Load the filters data
+	// Load the URL filters
 	$context['pretty']['filters'] = !empty($modSettings['pretty_filters']) ? unserialize($modSettings['pretty_filters']) : array();
 
-	// Are we resetting now?
-	if (isset($_REQUEST['reset']))
-	{
-		loadSource('Subs-PrettyUrls');
-		$output = install_pretty_urls();
-		$context['reset_output'] = $output . $txt['pretty_went_right'];
-	}
-
 	// Are we repopulating now?
-	elseif (isset($_REQUEST['refill']))
+	if (isset($_REQUEST['refill']))
 	{
 		loadSource('PrettyUrls-Filters');
-		$output = pretty_synchronise_topic_urls();
+		$output = pretty_synchronize_topic_urls();
 		$context['reset_output'] = $output . $txt['pretty_converted'];
 	}
 
 	// Are we saving settings now?
 	elseif (isset($_REQUEST['save']))
 	{
+		$is_enabled = false;
 		foreach ($context['pretty']['filters'] as $filter)
-			$context['pretty']['filters'][$filter['id']]['enabled'] = isset($_POST['pretty_filter_' . $filter['id']]) ? 1 : 0;
+			$is_enabled |= ($context['pretty']['filters'][$filter['id']]['enabled'] = isset($_POST['pretty_filter_' . $filter['id']]) ? 1 : 0);
 
 		updateSettings(
 			array(
-				'pretty_enable_filters' => isset($_POST['pretty_enable']) ? $_POST['pretty_enable'] : false,
+				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
 				'pretty_filters' => serialize($context['pretty']['filters']),
 			)

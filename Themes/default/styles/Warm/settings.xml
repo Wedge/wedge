@@ -80,7 +80,7 @@
 
 	<css for="no_browser"><![CDATA[
 	.ie_sucks_anyway {}
-	]]></code>
+	]]></css>
 
 	<!--
 		Blocks. These examples are actually fairly useless since they just
