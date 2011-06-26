@@ -1377,12 +1377,12 @@ function detectBrowser()
 	$browser['version'] = $ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
 	$browser['is_ie8down'] = $is_ie && $ver <= 8;
-	for ($i = 6; $i <= 9; $i++)
+	for ($i = 6; $i <= 10; $i++)
 		$browser['is_ie' . $i] = $is_ie && $ver == $i;
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'chrome', 'iphone', 'tablet', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9') as $agent)
+	foreach (array('opera', 'chrome', 'iphone', 'tablet', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9', 'ie10') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{

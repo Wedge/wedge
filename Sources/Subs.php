@@ -1049,10 +1049,10 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	{
 		loadSource('PrettyUrls-Filters');
 		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
-		foreach ($modSettings['pretty_filters'] as $filter)
+		foreach ($modSettings['pretty_filters'] as $id => $enabled)
 		{
-			if (!empty($filter))
-				$pretty_url = call_user_func('pretty_filter_' . $filter, $url);
+			if ($enabled)
+				$pretty_url = call_user_func('pretty_filter_' . $id, $url);
 			if (isset($pretty_url[0]['replacement']))
 				break;
 		}
@@ -1342,9 +1342,9 @@ function ob_sessrewrite($buffer)
 				// Run each filter callback function on each URL
 				if (!function_exists('pretty_filter_topics'))
 					loadSource('PrettyUrls-Filters');
-				foreach ($modSettings['pretty_filters'] as $filter)
-					if (!empty($filter))
-						$uncached_urls = call_user_func('pretty_filter_' . $filter, $uncached_urls);
+				foreach ($modSettings['pretty_filters'] as $id => $enabled)
+					if ($enabled)
+						$uncached_urls = call_user_func('pretty_filter_' . $id, $uncached_urls);
 
 				// Fill the cached URLs array
 				$cache_data = array();

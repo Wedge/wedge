@@ -1936,12 +1936,12 @@ function template_pretty_urls()
 			<fieldset>
 				<legend>', $txt['pretty_filters'], '</legend>';
 
-		foreach ($context['pretty']['filters'] as $filter)
+		foreach ($context['pretty']['filters'] as $id => $enabled)
 			echo '
 				<div>
 					<label>
-						<input type="checkbox" name="pretty_filter_', $filter['id'], '"', $filter['enabled'] ? ' checked' : '', '>
-						', $txt['pretty_filter_' . $filter['id']], '
+						<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '', '>
+						', $txt['pretty_filter_' . $id], '
 					</label>
 				</div>';
 

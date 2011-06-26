@@ -292,7 +292,6 @@ class wecss_color extends wecss
 		global $browser;
 		static $test_gradient_support = true, $no_gradients;
 
-		$is_ie = $browser['is_ie8down'] || $browser['is_ie9'];
 		if ($test_gradient_support)
 		{
 			$test_gradient_support = false;
@@ -318,6 +317,8 @@ class wecss_color extends wecss
 			$grad = '-o-' . $grad;
 		elseif ($browser['is_gecko'])
 			$grad = '-moz-' . $grad;
+		elseif ($browser['is_ie10'])
+			$grad = '-ms-' . $grad;
 		elseif ($browser['is_webkit'])
 			$grad = '-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))';
 

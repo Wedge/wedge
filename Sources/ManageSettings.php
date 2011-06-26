@@ -2006,6 +2006,7 @@ function ModifyPrettyURLs()
 			'value' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : '',
 		),
 	);
+	$context['pretty']['filters'] = $modSettings['pretty_filters'];
 
 	// Are we repopulating now?
 	if (isset($_REQUEST['refill']))
