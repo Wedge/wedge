@@ -56,9 +56,9 @@ function template_main()
 function template_sidebar()
 {
 	echo '
-			<div id="month_grid">',
-				template_show_month_grid('prev'), template_show_month_grid('current'), template_show_month_grid('next'), '
-			</div>';
+		<div id="month_grid">',
+			template_show_month_grid('prev'), template_show_month_grid('current'), template_show_month_grid('next'), '
+		</div>';
 }
 
 // Template for posting a calendar event.

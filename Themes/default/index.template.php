@@ -76,9 +76,9 @@ function template_init()
 		// with browser names and a "else" fallback. This can also be done in settings.xml
 		// with the <block name="..." for="ie6,ie7"> keyword.
 		'sidebar'	=> array(
-			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top">{body}</td>',
-			'ie7'	=> '<table id="edge"><tr><td id="sidebar" class="top">{body}</td>',
-			'else'	=> '<div id="edge"><aside id="sidebar">{body}</aside>',
+			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
+			'ie7'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
+			'else'	=> '<div id="edge"><aside id="sidebar"><div class="column">{body}</div></aside>',
 		),
 
 		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
@@ -241,69 +241,69 @@ function template_sidebar_above()
 {
 	global $txt, $scripturl, $context;
 
-	echo '<we:sidebar><div class="column">
-			<we:title>
-				<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
-			</we:title>
-			<div id="userbox">';
+	echo '<we:sidebar>
+		<we:title>
+			<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
+		</we:title>
+		<div id="userbox">';
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
 	if ($context['user']['is_logged'])
 	{
 		echo empty($context['user']['avatar']) ? '
-				<ul id="noava">' : '
-				' . $context['user']['avatar']['image'] . '
-				<ul>', '
-					<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
-					<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
+			<ul id="noava">' : '
+			' . $context['user']['avatar']['image'] . '
+			<ul>', '
+				<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
+				<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 
 		// Are there any members waiting for approval?
 		if (!empty($context['unapproved_members']))
 			echo '
-					<li>', $context['unapproved_members'] == 1 ? $txt['approve_thereis'] : $txt['approve_thereare'], ' <a href="', $scripturl, '?action=admin;area=viewmembers;sa=browse;type=approve">', $context['unapproved_members'] == 1 ? $txt['approve_member'] : $context['unapproved_members'] . ' ' . $txt['approve_members'], '</a> ', $txt['approve_members_waiting'], '</li>';
+				<li>', $context['unapproved_members'] == 1 ? $txt['approve_thereis'] : $txt['approve_thereare'], ' <a href="', $scripturl, '?action=admin;area=viewmembers;sa=browse;type=approve">', $context['unapproved_members'] == 1 ? $txt['approve_member'] : $context['unapproved_members'] . ' ' . $txt['approve_members'], '</a> ', $txt['approve_members_waiting'], '</li>';
 
 		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
 			echo '
-					<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
+				<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
 
 		echo '
-				</ul>
-				<p>', $context['current_time'], '</p>';
+			</ul>
+			<p>', $context['current_time'], '</p>';
 
 		// Is the forum in maintenance mode?
 		if ($context['in_maintenance'] && $context['user']['is_admin'])
 			echo '
-				<p class="notice">', $txt['maintain_mode_on'], '</p>';
+			<p class="notice">', $txt['maintain_mode_on'], '</p>';
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
 	{
 		echo '
-				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
-					<div class="info">', $txt['login_or_register'], '</div>
-					<input type="text" name="user" size="10">
-					<input type="password" name="passwrd" size="10">
-					<select name="cookielength">
-						<option value="60">', $txt['one_hour'], '</option>
-						<option value="1440">', $txt['one_day'], '</option>
-						<option value="10080">', $txt['one_week'], '</option>
-						<option value="43200">', $txt['one_month'], '</option>
-						<option value="-1" selected>', $txt['forever'], '</option>
-					</select>
-					<input type="submit" value="', $txt['login'], '" class="submit"><br>
-					<div class="info">', $txt['quick_login_dec'], '</div>';
+			<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+				<div class="info">', $txt['login_or_register'], '</div>
+				<input type="text" name="user" size="10">
+				<input type="password" name="passwrd" size="10">
+				<select name="cookielength">
+					<option value="60">', $txt['one_hour'], '</option>
+					<option value="1440">', $txt['one_day'], '</option>
+					<option value="10080">', $txt['one_week'], '</option>
+					<option value="43200">', $txt['one_month'], '</option>
+					<option value="-1" selected>', $txt['forever'], '</option>
+				</select>
+				<input type="submit" value="', $txt['login'], '" class="submit"><br>
+				<div class="info">', $txt['quick_login_dec'], '</div>';
 
 		if (!empty($modSettings['enableOpenID']))
 			echo '
-					<br><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login">';
+				<br><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login">';
 
 		echo '
-					<input type="hidden" name="hash_passwrd" value="">
-				</form>';
+				<input type="hidden" name="hash_passwrd" value="">
+			</form>';
 	}
 
 	echo '
-			</div>';
+		</div>';
 }
 
 // This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
@@ -313,39 +313,39 @@ function template_sidebar_feed()
 	global $topic, $board, $txt, $context, $scripturl, $modSettings, $settings, $board_info;
 
 	echo '
-			<we:title>
-				<div class="feed_icon"></div>
-				', $txt['feed'], '
-			</we:title>
-			<dl id="feed">';
+		<we:title>
+			<div class="feed_icon"></div>
+			', $txt['feed'], '
+		</we:title>
+		<dl id="feed">';
 
 	// Topic feed
 	if (!empty($topic))
 		echo '
-				<dt>', $txt['feed_current_topic'], '</dt>
-				<dd>', sprintf($txt['feed_posts'], $scripturl . '?topic=' . $topic . ';action=feed'), '</dd>';
+			<dt>', $txt['feed_current_topic'], '</dt>
+			<dd>', sprintf($txt['feed_posts'], $scripturl . '?topic=' . $topic . ';action=feed'), '</dd>';
 
 	// Board level feed
 	if (!empty($board))
 	{
 		$feed = $scripturl . '?board=' . $board_info['id'] . ';action=feed';
 		echo '
-				<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_board'], '</dt>
-				<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>';
+			<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_board'], '</dt>
+			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>';
 	}
 
 	// Forum-wide and end
 	$feed = $scripturl . '?action=feed';
 	echo '
-				<dt>', $txt['feed_everywhere'], '</dt>
-				<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>
-			</dl>';
+			<dt>', $txt['feed_everywhere'], '</dt>
+			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>
+		</dl>';
 }
 
 function template_sidebar_below()
 {
 	echo '
-		</div></we:sidebar>';
+		</we:sidebar>';
 }
 
 function template_main_above()

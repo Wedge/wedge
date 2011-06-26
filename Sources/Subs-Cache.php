@@ -354,8 +354,8 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		new wecss_math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
 	);
 
-	// rgba to rgb conversion for IE 6/7
-	if ($context['browser']['is_ie8down'])
+	// rgba to rgb conversion for IE 6/7/8/9
+	if ($context['browser']['is_ie'])
 		$plugins[] = new wecss_rgba();
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...

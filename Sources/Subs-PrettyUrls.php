@@ -127,6 +127,7 @@ function trimpercent($str)
 // !!!	return trim(preg_replace('/(%f[0-4](%([8-9a-b]([0-9a-f](%([8-9a-b]([0-9a-f](%[8-9a-b]?)?)?)?)?)?)?)?|%e[0-9a-f](%([8-9a-b]([0-9a-f](%[8-9a-b]?)?)?)?)?|%d[0-9a-f](%[8-9a-b]?)?|%c[2-9a-f](%[8-9a-b]?)?|%[0-f]?)$/', '', $str), '-' . chr(18));
 }
 
+// Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
 function is_already_taken($url, $id, $id_owner)
 {
 	global $context;

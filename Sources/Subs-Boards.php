@@ -757,7 +757,6 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['pretty_url']) || isset($boardOptions['pretty_url_dom']))
 	{
 		$dom = isset($boardOptions['pretty_url_dom']) ? strtolower($boardOptions['pretty_url_dom']) : '';
-		$dom = preg_match('~(?:[a-z0-9-]+\.)?[^.]+\.\w{2,4}~', $dom) ? $dom : 'noisen.com'; // !!! Fix hardcoded string.
 		$purl = isset($boardOptions['pretty_url']) ? strtolower($boardOptions['pretty_url']) : '';
 
 		//	Get ex-name...
@@ -770,19 +769,12 @@ function modifyBoard($board_id, &$boardOptions)
 
 		list ($ex_name, $id_owner) = wesql::fetch_row($result);
 		wesql::free_result($result);
-		preg_match('~(?:([a-z0-9-]+)\.)?([^.]+\.\w{2,4})(?:/([a-z0-9/-]+))?~', $ex_name, $m);
-		if (empty($m[2]))
-			$m[2] = 'noisen.com';
 
 		loadSource('Subs-PrettyUrls');
 
 		// Everything was empty? Generate a default name
-		if (empty($purl) && $dom == 'noisen.com')
+		if (empty($purl))
 			$purl = $boardOptions['board_name'];
-
-// !!! @todo: Analyze this.
-//		if (strpos($boardOptions['pretty_url'], '.noisen.com') !== false)
-//			$boardOptions['pretty_url'] = substr($context['board']['url'], 0, strpos($context['board']['url'], '.noisen.com'));
 
 		// Generate a new one
 		$pretty_url = pretty_generate_url($purl, false, true);

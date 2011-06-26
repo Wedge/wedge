@@ -26,18 +26,18 @@ function template_generic_menu_sidebar()
 	{
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
-			<we:title2>';
+		<we:title2>';
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			echo '
-				<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" id="sidebar_toggle"></a>';
+			<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" id="sidebar_toggle"></a>';
 
 		echo '
-				', $section['title'];
+			', $section['title'];
 
 		echo '
-			</we:title2>
-			<ul class="smalltext left_menu">';
+		</we:title2>
+		<ul class="smalltext left_menu">';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
 		foreach ($section['areas'] as $i => $area)
@@ -47,32 +47,32 @@ function template_generic_menu_sidebar()
 			{
 				if (empty($area))
 					echo '
-				<li class="separator"><a><hr></a></li>';
+			<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 
 			echo '
-				<li>';
+			<li>';
 
 			// Is this the current area, or just some area?
 			if ($i == $menu_context['current_area'])
 			{
 				echo '
-					<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
+				<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
 
 				if (empty($context['tabs']))
 					$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : array();
 			}
 			else
 				echo '
-					<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
+				<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
 
 			echo '
-				</li>';
+			</li>';
 		}
 
 		echo '
-			</ul>';
+		</ul>';
 
 		$firstSection = false;
 	}

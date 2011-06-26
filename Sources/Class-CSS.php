@@ -305,8 +305,8 @@ class wecss_color extends wecss
 		$dir = empty($input[4]) ? 'top' : $input[4];
 
 		// IE 6, 7 and 8 will need a filter to apply the transparency effect, except for IE9. Also, IE8 can do without hasLayout.
-		if ($browser['is_ie8down'])
-			return $input[1] . 'background: none' . $input[1] . (!$browser['is_ie8'] ? 'zoom: 1' . $input[1] : '') .
+		if ($browser['is_ie8down'] || ($browser['is_ie9'] && $bg1 != $bg2))
+			return $input[1] . 'background: none' . $input[1] . ($browser['is_ie6'] || $browser['is_ie7'] ? 'zoom: 1' . $input[1] : '') .
 				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')';
 
 		// Better than nothing...
@@ -896,7 +896,9 @@ class wecss_rgba extends wecss
 
 	function process(&$css)
 	{
-		$css = preg_replace_callback('~(colorstr=)?((?:rgba|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
+		global $browser;
+
+		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgba|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
 	}
 }
 
