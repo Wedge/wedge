@@ -41,7 +41,7 @@ function template_error_log()
 	var lastClicked = "";');
 
 	echo '
-	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="if (lastClicked == \'remove_all\') if (!confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ')) return false; return true;">
+	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="return (lastClicked != \'remove_all\') || confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ');">
 		<div class="clear_right">
 			<we:title>
 				<a href="', $scripturl, '?action=help;in=error_log" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -80,7 +80,7 @@ function template_error_log()
 			<tr class="titlebg left">
 				<td colspan="3">
 					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
-					<label><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
+					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
 
@@ -139,7 +139,7 @@ function template_error_log()
 			<tr class="titlebg left">
 				<td colspan="3">
 					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
-					&nbsp;<label><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
+					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
 	else

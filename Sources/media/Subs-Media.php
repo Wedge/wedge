@@ -2905,8 +2905,8 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
 		<div class="indpic center' . ($i['approved'] ? '' : ' unapp') . '" style="width: ' . ($amSettings['max_thumb_width'] + 20) . 'px">
-			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_zoom'] ? ' id="hsm' . $in_page . '" class="zoom"'
-			. ($is_embed ? ' rel="media" data-width="' . $siz[1] . '"' : '') : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
+			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_zoom'] ? ' id="hsm' . $in_page . '" class="zoom'
+			. ($is_embed ? ' is_media" data-width="' . $siz[1] : '') . '"' : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
 			. $inside_caption . '
 
 			<div style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '

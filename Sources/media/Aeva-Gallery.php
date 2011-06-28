@@ -1204,10 +1204,12 @@ function aeva_viewItem()
 	$item_data['last_edited'] = !empty($item_data['last_edited']) && $item_data['last_edited'] != '0' ? timeformat($item_data['last_edited']) : '';
 	$item_data['last_edited_by'] = !empty($item_data['last_edited']) && $item_data['last_edited'] != '0' && $item_data['last_edited_by'] !== -2 ? aeva_profile($item_data['last_edited_by'], $item_data['last_edited_name']) : -2;
 
-	// Edit and report?
+	// More permissions?
 	$item_data['can_approve'] = aeva_allowedTo('moderate') || ($is_owner && aeva_allowedTo('auto_approve_item'));
 	$item_data['can_edit'] = aeva_allowedTo('moderate') || ($is_owner && aeva_allowedTo('edit_own_item'));
 	$item_data['can_report'] = aeva_allowedTo('report_item');
+	$item_data['can_download'] = aeva_allowedTo('download_item') && $item_data['type'] != 'embed';
+	$item_data['can_add_playlist'] = isset($item_data['playlists']['current']) && !empty($item_data['playlists']['mine']);
 
 	// If we can moderate a comment, or approve/unapprove our own items without being a moderator, load the moderator strings.
 	if ($can_delete_one_comment || ($item_data['can_approve'] && !aeva_allowedTo('moderate')))
@@ -1247,12 +1249,12 @@ function aeva_viewItem()
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
 		'aeva_item_main',
-		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? '' : 'aeva_item_details',
+		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
 	));
-	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
+	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
 		loadSubTemplate('aeva_item_details', 'sidebar');
 }
 

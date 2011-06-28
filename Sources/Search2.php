@@ -112,7 +112,7 @@ function Search2()
 	// Create an instance of the search API.
 	$search_class_name = $modSettings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
-	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()) || !matchPackageVersion($search_versions['forum_version'], $searchAPI->min_smf_version . '-' . $searchAPI->version_compatible))
+	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
 	{
 		// Log the error.
 		loadLanguage('Errors');

@@ -480,7 +480,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 ');
 	return;
 
-	// !! WIP !! To be removed.
+	// !!! WIP !! @todo: Remove this.
 
 	$not_single = empty($peralbum) ? 'true' : 'false';
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
@@ -518,10 +518,11 @@ function aeva_initZoom($autosize, $peralbum = array())
 	});
 
 	$("a.zoom").click(function () {
-		if (this.rel == "media")
-			mediaOptions.width = $(this).data("width");
-		return this.rel == "html" ? hs.htmlExpand(this) : (this.rel == "embed" ? hs.expand(this) :
-			  (this.rel == "media" ? hs.htmlExpand(this, mediaOptions) : hs.expand(this, slideOptions)));
+		var $this = $(this);
+		if ($this.hasClass("is_media"))
+			mediaOptions.width = $this.data("width");
+		return $this.hasClass("is_html") ? hs.htmlExpand(this) : ($this.hasClass("is_embed") ? hs.expand(this) :
+			  ($this.hasClass("is_media") ? hs.htmlExpand(this, mediaOptions) : hs.expand(this, slideOptions)));
 	});', $autosize ? '' : '
 
 	hs.allowSizeReduction = false;

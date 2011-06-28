@@ -37,7 +37,7 @@
 					double_clicked = true;
 				return false;
 			});
-			$('<div id="shim_' + this.id + '">').appendTo(this).css({
+			$('<div>').appendTo(this).css({
 				position: 'absolute',
 				left: 0,
 				top: 0,
@@ -64,7 +64,7 @@
 					<div class="zoom-desc-contain">\
 						<div id="zoom-desc" class="nodrag"></div>\
 					</div>\
-					<a href="#" title="Close" id="zoom-close"></a>\
+					<a href="#" title="' + (lang.closeTitle || '') + '" id="zoom-close"></a>\
 				</div>');
 
 			$zoom = $(zoom);

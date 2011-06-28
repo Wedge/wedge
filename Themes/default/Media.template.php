@@ -200,16 +200,14 @@ function template_aeva_home()
 			', $txt['media_recent_comments'], $can_feed ?
 			' <a href="' . $galurl . 'sa=feed;type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
 		</we:title>
-		<div class="windowbg wrc smalltext">
-			<div style="line-height: 1.4em">';
+		<div class="windowbg wrc" style="line-height: 1.4em">';
 
 		foreach ($context['recent_comments'] as $i)
 			echo '
-				<div>', $txt['media_comment_in'], ' <a href="', $i['url'], '">', $i['media_title'], '</a> ', $txt['media_by'],
-				' ', $i['member_link'], ' ', is_numeric($i['posted_on'][0]) ? $txt['media_on_date'] . ' ' : '', $i['posted_on'], '</div>';
+			<div>', $txt['media_comment_in'], ' <a href="', $i['url'], '">', $i['media_title'], '</a> ', $txt['media_by'],
+			' ', $i['member_link'], ' ', is_numeric($i['posted_on'][0]) ? $txt['media_on_date'] . ' ' : '', $i['posted_on'], '</div>';
 
 		echo '
-			</div>
 		</div>
 	</div>';
 	}
@@ -222,7 +220,7 @@ function template_aeva_home()
 		<we:title>
 			', $txt['media_recent_albums'], '
 		</we:title>
-		<div class="windowbg wrc smalltext" style="line-height: 1.4em">';
+		<div class="windowbg wrc" style="line-height: 1.4em">';
 
 		foreach ($context['recent_albums'] as $i)
 			echo '
@@ -243,7 +241,7 @@ function template_aeva_home()
 	<we:title>
 		<img src="', $settings['images_aeva'], '/chart_bar.png" class="vam">&nbsp;<a href="', $galurl, 'sa=stats">', $txt['media_stats'], '</a>
 	</we:title>
-	<div class="windowbg wrc smalltext" style="line-height: 1.4em">
+	<div class="windowbg wrc" style="line-height: 1.4em">
 		<table class="w100 cs0 cp0"><tr><td>
 			<div>', $txt['media_total_items'], ': ', $amSettings['total_items'], '</div>
 			<div>', $txt['media_total_albums'], ': ', $amSettings['total_albums'], '</div>
@@ -444,9 +442,9 @@ function template_aeva_item_details()
 				<dt>', $txt['media_views'], '</dt>
 				<dd>', $item['views'], '</dd>', !empty($item['downloads']) ? '
 				<dt>' . $txt['media_downloads'] . '</dt>
-				<dd>' . $item['downloads'] . '</dd>' : '', '
-				<dt>', $txt['media_rating'], '</dt>
-				<dd id="ratingElement">', template_aeva_rating_object($item), '</dd>', !empty($item['num_comments']) ? '
+				<dd>' . $item['downloads'] . '</dd>' : '', $item['can_rate'] || $item['voters'] > 0 ? '
+				<dt>' . $txt['media_rating'] . '</dt>
+				<dd id="ratingElement">' . template_aeva_rating_object($item) . '</dd>' : '', !empty($item['num_comments']) ? '
 				<dt>' . $txt['media_comments'] . '</dt>
 				<dd>' . $item['num_comments'] . '</dd>' : '';
 
@@ -476,7 +474,7 @@ function template_aeva_item_details()
 		echo '
 				<dt>', $txt['media_embed_bbc'], '</dt>
 				<dd>
-					<input id="bbc_embed" type="text" size="20" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="selectText(this);" readonly>
+					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="selectText(this);" readonly>
 					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 600, 400, false, true);" class="help"></a>
 				</dd>';
 
@@ -509,7 +507,7 @@ function template_aeva_item_details()
 			<we:block header="', westr::safe($txt['media_extra_info']), '">';
 
 		echo $amSettings['use_zoom'] ? '
-				<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom" rel="html">'
+				<div class="info"><img src="' . $settings['images_aeva'] . '/magnifier.png" class="vam"> <a href="#" class="zoom is_html">'
 				. $txt['media_meta_entries'] . '</a> (' . count($item['extra_info']) . ')
 				<div class="zoom-html">
 					<div class="ae_header" style="margin-bottom: 8px"><we:title>' . $txt['media_extra_info'] . '</we:title></div>' : '', '
@@ -550,12 +548,15 @@ function template_aeva_item_actions()
 {
 	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info;
 
+	if (!$item['can_report'] && !$item['can_edit'] && !$item['can_approve'] && !$item['can_download'] && !$item['can_add_playlist'])
+		return;
+
 	echo '
 		<we:block class="windowbg actions images" style="line-height: 16px; vertical-align: text-bottom">';
 
 	if ($item['can_report'])
 		echo '
-			<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_zoom'] ? ' class="zoom" rel="html"' : '', '>
+			<a href="', $galurl, 'sa=report;type=item;in=', $item['id_media'] . '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '>
 				<img src="', $settings['images_aeva'], '/report.png">&nbsp;', $txt['media_report_this_item'], '
 			</a>';
 
@@ -565,10 +566,10 @@ function template_aeva_item_actions()
 				<form action="', $galurl, 'sa=report;type=item;in=', $item['id_media'], '" method="post">
 					<h3>', $txt['media_reporting_this_item'], '</h3>
 					<hr>', $txt['media_reason'], '<br>
-					<textarea cols="" rows="8" style="width: 98%" name="reason"></textarea>
+					<textarea rows="8" style="width: 98%" name="reason"></textarea>
 					<p class="mgra">
-						<input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva">
-						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="aeva_cancel">
+						<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
+						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
 					</p>
 				</form>
 			</div>';
@@ -576,7 +577,7 @@ function template_aeva_item_actions()
 	if ($item['can_edit'])
 		echo '
 			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom" rel="html"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"',
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"',
 			'><img src="', $settings['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_zoom'])
@@ -586,19 +587,19 @@ function template_aeva_item_actions()
 					<h3>', $txt['media_delete_this_item'], '</h3>
 					<hr>', $txt['quickmod_confirm'], '
 					<p class="mgra">
-						<input type="submit" value="', $txt['media_yes'], '" class="aeva_ok">
-						<input type="button" onclick="return hs.close(this);" value="', $txt['media_no'], '" class="aeva_cancel">
+						<input type="submit" value="', $txt['media_yes'], '" class="submit">
+						<input type="button" onclick="return hs.close(this);" value="', $txt['media_no'], '" class="cancel">
 					</p>
 				</form>
 			</div>';
 
-	if (aeva_allowedTo('download_item') && $item['type'] != 'embed')
+	if ($item['can_download'])
 		echo '
 			<a href="', $galurl, 'sa=media;in=', $item['id_media'], ';dl"><img src="', $settings['images_aeva'], '/download.png">&nbsp;', $txt['media_download_this_item'], '</a>';
 
 	if ($item['can_edit'] && !empty($context['aeva_move_albums']))
 		echo '
-			<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom" rel="html"' : '', '><img src="', $settings['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
+			<a href="', $galurl, 'sa=move;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : '', '><img src="', $settings['images_aeva'], '/arrow_out.png">&nbsp;', $txt['media_move_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_zoom'])
 	{
@@ -626,7 +627,10 @@ function template_aeva_item_actions()
 
 			echo '
 					</select>
-					<p class="mgra"><input type="submit" value="', $txt['media_submit'], '" class="aeva_ok" name="submit_aeva"> <input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel"></p>
+					<p class="mgra">
+						<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
+						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
+					</p>
 				</form>
 			</div>';
 	}
@@ -636,10 +640,10 @@ function template_aeva_item_actions()
 		echo '
 			<a href="', $galurl, 'sa=', $un, 'approve;in=', $item['id_media'], '"><img src="', $settings['images_aeva'], '/', $un, 'tick.png">&nbsp;', $txt['media_admin_' . $un . 'approve'], '</a>';
 
-	if (isset($item['playlists'], $item['playlists']['current']) && !empty($item['playlists']['mine']))
+	if ($item['can_add_playlist'])
 	{
 		echo '
-			<a href="#" class="zoom" rel="html"><img src="', $settings['images_aeva'], '/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
+			<a href="#" class="zoom is_html"><img src="', $settings['images_aeva'], '/playlist.png">&nbsp;', $txt['media_add_to_playlist'], '</a>
 
 			<div class="zoom-html">
 				<form action="', $galurl, 'sa=item;in=', $item['id_media'], '" method="post" style="line-height: 2.2em">
@@ -2012,7 +2016,7 @@ function template_aeva_rating_object($item)
 	global $context, $settings, $txt, $galurl;
 
 	$object = ($item['can_rate'] ? '
-				<form action="'.$galurl.'sa=item;in='.$item['id_media'].'" method="post" id="ratingForm">' : '') . '
+				<form action="' . $galurl . 'sa=item;in=' . $item['id_media'] . '" method="post" id="ratingForm">' : '') . '
 					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$settings['images_url'].'/star.gif">', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (aeva_allowedTo('whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (aeva_allowedTo('whoratedwhat') ? '</a>' : '') . ')' : '') .
 					(!empty($item['weighted']) ? ' (' . $txt['media_weighted_mean'] . ': ' . sprintf('%01.2f', $item['weighted']) . ')' : '');
 
