@@ -990,7 +990,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$members_denied_write = !empty($denied_write) ? aeva_getFromMemberlist($denied_write, $owner) : array();
 
 	$can_auto_approve = aeva_allowedTo('auto_approve_albums') || aeva_allowedTo('moderate');
-	$will_be_unapproved = $is_admin ? false : ($is_edit ? (!empty($amSettings['album_edit_unapprove']) || $still_unapproved) && !$can_auto_approve : !$can_auto_approve);
+	$will_be_unapproved = !$is_admin && !$can_auto_approve && ($is_edit ? !empty($amSettings['album_edit_unapprove']) || $still_unapproved : true);
 
 	$peralbum = $is_add ? array() : unserialize($peralbum_options);
 	$peralbum['zoom'] = isset($peralbum['zoom']) && $peralbum['zoom'] == 'no' ? 'no' : 'yes';

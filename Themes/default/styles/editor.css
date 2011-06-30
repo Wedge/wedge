@@ -5,8 +5,9 @@
 	padding: 2px !important
 	margin: 0
 
-.rich_editor_frame
+.rich_editor, .rich_editor_frame
 	background: #fff
+	color: #000
 
 // The resize handle.
 .richedit_resize

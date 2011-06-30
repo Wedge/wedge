@@ -1514,15 +1514,15 @@ function loadAllPermissions($loadType = 'classic')
 			'profile_remote_avatar' => array(false, 'profile', 'use_avatar'),
 
 			'media_access' => array(false, 'media', 'media'),
-			'media_moderate' => array(false, 'media', 'media'),
-			'media_manage' => array(false, 'media', 'media'),
 			'media_access_unseen' => array(false, 'media', 'media'),
+			'media_viewprofile' => array(false, 'media', 'media'),
 			'media_search' => array(false, 'media', 'media'),
 			'media_add_playlists' => array(false, 'media', 'media'),
 			'media_add_user_album' => array(false, 'media', 'media'),
 			'media_auto_approve_albums' => array(false, 'media', 'media'),
 			'media_moderate_own_albums' => array(false, 'media', 'media'),
-			'media_viewprofile' => array(false, 'media', 'media'),
+			'media_moderate' => array(false, 'media', 'media'),
+			'media_manage' => array(false, 'media', 'media'),
 		),
 		'board' => array(
 			'moderate_board' => array(false, 'general_board', 'moderate'),
@@ -2246,6 +2246,13 @@ function loadIllegalGuestPermissions()
 		'modify_replies',
 		'send_mail',
 		'approve_posts',
+		'media_access_unseen',
+		'media_add_playlists',
+		'media_add_user_album',
+		'media_auto_approve_albums',
+		'media_moderate_own_albums',
+		'media_moderate',
+		'media_manage',
 	);
 
 	call_hook('illegal_guest_perms');
