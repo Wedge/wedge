@@ -62,6 +62,7 @@ function Credits($in_admin = false)
 						'Dragooon (Shitiz Garg)',
 						'live627 (John Rayes)',
 						'TE (Thorsten Eurich)',
+						'[Unknown]',
 					),
 				),
 				array(

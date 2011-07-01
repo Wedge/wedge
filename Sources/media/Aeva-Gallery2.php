@@ -1,16 +1,16 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com & SMF-Media.com									*
-*****************************************************************
-* Aeva-Gallery2.php - more gallery-related actions				*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * More gallery-related actions.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');

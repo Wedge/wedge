@@ -1,16 +1,16 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com & SMF-Media.com									*
-*****************************************************************
-* Aeva-Media.php - media handler object							*
-*****************************************************************
-* This file (and only this file) is released under the			*
-* LGPL v2.1 license. More details here:							*
-* http://www.gnu.org/licenses/lgpl-2.1.html						*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * Media handler object.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Media handler class
 // This is for various image functions, supporting libraries such as GD2, IMageMagick and FFMpeg (when compiled with PHP).

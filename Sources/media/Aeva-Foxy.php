@@ -1,17 +1,17 @@
 <?php
-/****************************************************************
-* Foxy! extras for Aeva Media									*
-* © Nao [noisen.com]											*
-*****************************************************************
-* Aeva-Foxy.php													*
-* A plugin that shows foxy playlists for your media content		*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * Show playlists, create album topics, deal with gallery feeds, etc.
+ * All of these features were previously exclusive to Aeva Media 2.x (commercial version).
+ * Licensed exclusively for use in Wedge.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 /*
 

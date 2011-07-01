@@ -176,7 +176,6 @@ function smc_SmileyBox(oOptions)
 {
 	this.opt = oOptions;
 	this.oSmileyRowsContent = {};
-	this.oSmileyPopupWindow = null;
 
 	// Get the HTML content of the smileys visible on the post screen.
 	this.getSmileyRowsContent('postform');
@@ -190,12 +189,12 @@ function smc_SmileyBox(oOptions)
 	}));
 
 	// Initialize the smileys.
-	this.initSmileys('postform', document);
+	this.initSmileys('postform');
 
 	// Initialize the [more] button.
 	if (this.opt.oSmileyLocations.popup.length > 0)
 		$('#' + this.opt.sUniqueId + '_addMoreSmileys').data('that', this).click(function () {
-			$(this).data('that').handleShowMoreSmileys();
+			$(this).hide().data('that').handleShowMoreSmileys();
 			return false;
 		});
 }
@@ -226,21 +225,17 @@ smc_SmileyBox.prototype.getSmileyRowsContent = function(sLocation)
 	}
 };
 
-smc_SmileyBox.prototype.initSmileys = function(sLocation, oDocument)
+smc_SmileyBox.prototype.initSmileys = function(sLocation)
 {
 	for (var iSmileyRowIndex = 0, iSmileyRowCount = this.opt.oSmileyLocations[sLocation].length; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
-	{
 		for (var iSmileyIndex = 0, iSmileyCount = this.opt.oSmileyLocations[sLocation][iSmileyRowIndex].length; iSmileyIndex < iSmileyCount; iSmileyIndex++)
-		{
-			var oSmiley = oDocument.getElementById(this.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString());
-			oSmiley.instanceRef = this;
-			oSmiley.style.cursor = 'pointer';
-			oSmiley.onclick = function () {
-				this.instanceRef.clickHandler(this);
-				return false;
-			};
-		}
-	}
+			$('#' + this.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString())
+				.data('that', this)
+				.css('cursor', 'pointer')
+				.click(function () {
+					$(this).data('that').clickHandler(this);
+					return false;
+				});
 };
 
 smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
@@ -255,37 +250,14 @@ smc_SmileyBox.prototype.clickHandler = function(oSmileyImg)
 
 smc_SmileyBox.prototype.handleShowMoreSmileys = function()
 {
-	// Focus the window if it's already opened.
-	if (this.oSmileyPopupWindow != null && 'closed' in this.oSmileyPopupWindow && !this.oSmileyPopupWindow.closed)
-	{
-		this.oSmileyPopupWindow.focus();
-		return;
-	}
-
 	// Get the smiley HTML.
 	this.getSmileyRowsContent('popup');
 
-	// Open the popup.
-	this.oSmileyPopupWindow = window.open('about:blank', this.opt.sUniqueId + '_addMoreSmileysPopup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,width=480,height=220,resizable=yes');
-
-	// Paste the template in the popup.
-	this.oSmileyPopupWindow.document.open('text/html', 'replace');
-	this.oSmileyPopupWindow.document.write(this.opt.sMoreSmileysPopupTemplate.easyReplace({
-		smileyRows: this.oSmileyRowsContent.popup,
-		moreSmileysCloseLinkId: this.opt.sUniqueId + '_closeMoreSmileys'
-	}));
-	this.oSmileyPopupWindow.document.close();
+	// Show the new smileys below the old ones.
+	$('#' + this.opt.sContainerDiv).append(this.oSmileyRowsContent.popup);
 
 	// Initialize the smileys that are in the popup window.
-	this.initSmileys('popup', this.oSmileyPopupWindow.document);
-
-	// Add a function to the close window button.
-	var aCloseLink = this.oSmileyPopupWindow.document.getElementById(this.opt.sUniqueId + '_closeMoreSmileys');
-	aCloseLink.instanceRef = this;
-	aCloseLink.onclick = function() {
-		this.instanceRef.oSmileyPopupWindow.close();
-		return false;
-	};
+	this.initSmileys('popup');
 };
 
 /*

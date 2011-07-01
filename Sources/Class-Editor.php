@@ -2301,23 +2301,7 @@ class wedit
 		sMoreSmileysTemplate: ' . JavaScriptEscape('
 			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
 		') . ',
-		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . ',
-		sMoreSmileysPopupTemplate: ' . JavaScriptEscape('<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>' . $txt['more_smileys_title'] . '</title>
-	<link rel="stylesheet" href="' . $context['cached_css'] . '">
-</head>
-<body id="help_popup">
-	<div class="windowbg wrc">
-		%smileyRows%
-		<div class="smalltext centertext">
-			<a href="#" id="%moreSmileysCloseLinkId%">' . $txt['more_smileys_close_window'] . '</a>
-		</div>
-	</div>
-</body>
-</html>') . '
+		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . '
 	});');
 		}
 

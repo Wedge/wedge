@@ -1,16 +1,16 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com													*
-*****************************************************************
-* ManageMedia3.php - admin area for the auto-embedder			*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * Admin area for the auto-embedder.
+ * Uses portions written by Karl Benson.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Prevent attempts to access this file directly
 if (!defined('SMF'))

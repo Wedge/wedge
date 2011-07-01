@@ -1,17 +1,16 @@
 <?php
-/****************************************************************
-* Wedge Media													*
-* © Wedgeward													*
-* Uses portions written by Shitiz Garg							*
-*****************************************************************
-* Aeva-Subs-Vital.php - database functions, etc.				*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * Database functions for the gallery, etc.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 /*
 	Contains vital media functions, previously half of Subs-Media.php....

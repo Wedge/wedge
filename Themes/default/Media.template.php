@@ -1,34 +1,16 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com & SMF-Media.com									*
-*****************************************************************
-* Aeva.template.php												*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* Support and updates for this software can be found at			*
-* http://aeva.noisen.com and http://smf-media.com				*
-****************************************************************/
-
-function template_aeva_popup_above()
-{
-	echo '
-	<div id="content_section">
-		<div class="frame">
-			<div style="padding: 14px 0">';
-}
-
-function template_aeva_popup_below()
-{
-	echo '
-			</div>
-		</div>
-		<div class="popup_copyright">', theme_copyright(), '</div>
-	</div>';
-}
+/**
+ * Wedge
+ *
+ * The media template. This is where we show the gallery.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 function template_aeva_header()
 {

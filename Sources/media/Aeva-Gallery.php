@@ -1,16 +1,16 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com & SMF-Media.com									*
-*****************************************************************
-* Aeva-Gallery.php - main gallery-related actions				*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * Main gallery-related actions.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking Attempt...');
@@ -82,9 +82,9 @@ function aeva_initGallery($gal_url = null)
 	// Load stuff
 	loadMediaSettings($gal_url, true, true);
 
-	// If we're in a popup, don't show the theme's body area, show Aeva Media's light body instead.
+	// If we're in a popup, don't show the theme's body area.
 	if (isset($_REQUEST['noh']))
-		hideChrome(array('html', 'aeva_popup'));
+		hideChrome();
 
 	// If you are not allowed to enter......What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')

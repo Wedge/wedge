@@ -1,15 +1,15 @@
 /*!
- * up.js
+ * Wedge
  *
- * Mass uploader for Wedge
- * © Dragooon and Nao for wedge.org
- * Handler for uploading files using Yahoo UI Yup
+ * Mass uploader code for Wedge. Handler for uploading
+ * files using Yahoo UI's Uploader module.
+ * Uses portions written by Shitiz Garg.
  *
- * Users of this software are bound by the terms of the
- * Wedge license. You can view it online at http://wedge.org/license/
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
  *
- * Support and updates for this software can be found at
- * http://wedge.org
+ * @version 0.1
  */
 
 var Yup = {

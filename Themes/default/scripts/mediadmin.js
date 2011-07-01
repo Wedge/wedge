@@ -1,12 +1,15 @@
-// Wedge Media
-// © wedgeforum.com
-// mediadmin.js
-//
-// Users of this software are bound by the terms of the
-// Wedge license. You can view it online at http://wedgeforum.com/license/
-//
-// Support and updates for this software can be found at
-// http://wedgeforum.com
+/**
+ * Wedge
+ *
+ * Helper functions for the media admin area.
+ * Uses portions written by Shitiz Garg.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // !!! Needs a rewrite to use the Wedge toggle...
 function admin_toggle(id)

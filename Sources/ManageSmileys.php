@@ -135,10 +135,10 @@ function EditSmileySettings($return_config = false)
 		array('title', 'settings'),
 			// Inline permissions.
 			array('permissions', 'manage_smileys'),
+			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_note']),
 		'',
 			array('select', 'smiley_sets_default', $smiley_context),
 			array('check', 'smiley_sets_enable'),
-			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_note']),
 			array('text', 'smileys_url'),
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found']),
 		'',

@@ -1,24 +1,19 @@
 <?php
-/****************************************************************
-* Aeva Media													*
-* © Noisen.com													*
-*****************************************************************
-* Aeva-Embed.php - the original auto-embedder (aka Aeva)		*
-*****************************************************************
-* Users of this software are bound by the terms of the			*
-* Aeva Media license. You can view it in the license_am.txt		*
-* file, or online at http://noisen.com/license-am2.php			*
-*																*
-* For support and updates, go to http://aeva.noisen.com			*
-****************************************************************/
+/**
+ * Wedge
+ *
+ * The original auto-embedder, Aeva!
+ * Uses portions written by Karl Benson.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
-
-/****************************************
-* The original Aeva auto-embedder code!	*
-* © noisen.com							*
-****************************************/
 
 // Main auto embed function
 function aeva_main(&$message)
