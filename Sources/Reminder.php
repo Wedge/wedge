@@ -138,7 +138,7 @@ function RemindPick()
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
 			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
-			'IP' => $user_info['ip'],
+			'IP' => format_ip($user_info['ip']),
 			'MEMBERNAME' => $row['member_name'],
 			'OPENID' => $row['openid_uri'],
 		);
