@@ -52,21 +52,15 @@ ol.search_results
 	overflow: hidden
 	margin: 1em 0
 
-#live_news
-	width: 64%
-	div.wrc dl
-		padding: 0.5em
-
-#supportVersionsTable
-	width: 34%
-
 #version_details
 	overflow-y: auto
 	height: 10.5em
+	font-size: 85%
 
 #wedge_news
 	height: 10.5em
 	overflow: auto
+	font-size: 85%
 	dt
 		border-bottom: 1px dashed #000
 	dd

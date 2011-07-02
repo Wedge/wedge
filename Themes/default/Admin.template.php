@@ -29,7 +29,6 @@ function template_admin()
 					<select name="search_type">
 						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
 						<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
-						<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected' : ''), '>', $txt['admin_search_type_online'], '</option>
 					</select>
 					<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
 				</div>
@@ -60,52 +59,6 @@ function template_admin()
 				<div id="update_message" class="smalltext"></div>
 			</div>
 		</div>
-		<div id="admin_main_section">';
-
-	// Display the "live news" from simplemachines.org.
-	echo '
-			<div id="live_news" class="floatleft">
-				<we:title>
-					<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-					', $txt['live'], '
-				</we:title>
-				<div class="windowbg wrc">
-					<div id="wedge_news">', $txt['lfyi'], '</div>
-				</div>
-			</div>';
-
-	// Show the user version information from their server.
-	echo '
-			<div id="supportVersionsTable" class="floatright">
-				<we:title>
-					<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
-				</we:title>
-				<div class="windowbg wrc">
-					<div id="version_details">
-						<strong>', $txt['support_versions'], ':</strong><br>
-						', $txt['support_versions_forum'], ':
-						<em id="yourVersion">', $context['forum_version'], '</em><br>
-						', $txt['support_versions_current'], ':
-						<em id="wedgeVersion">??</em><br>
-						', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
-
-	// Display all the members who can administrate the forum.
-	echo '
-						<br>
-						<strong>', $txt['administrators'], ':</strong>
-						', implode(', ', $context['administrators']);
-	// If we have lots of admins... don't show them all.
-	if (!empty($context['more_admins_link']))
-		echo '
-						(', $context['more_admins_link'], ')';
-
-	echo '
-					</div>
-				</div>
-			</div>
-		</div>';
-
-	echo '
 		<div class="windowbg2 wrc clear_right">
 			<ul id="quick_tasks" class="flow_hidden">';
 
@@ -164,6 +117,49 @@ function template_admin()
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
 		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '
 	});');
+}
+
+// Display the "live news" from wedge.org.
+function template_admin_live_news()
+{
+	global $txt, $scripturl;
+	echo '
+			<we:title>
+				<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+				', $txt['live'], '
+			</we:title>
+			<div id="wedge_news">', $txt['lfyi'], '</div>';
+}
+
+// Display version numbers and who the admins are.
+function template_admin_support_info()
+{
+	global $scripturl, $txt, $context;
+	// Show the user version information from their server.
+	echo '
+			<we:title>
+				<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
+			</we:title>
+			<div id="version_details">
+				<strong>', $txt['support_versions'], ':</strong><br>
+				', $txt['support_versions_forum'], ':
+				<em id="yourVersion">', $context['forum_version'], '</em><br>
+				', $txt['support_versions_current'], ':
+				<em id="wedgeVersion">??</em><br>
+				', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
+
+	// Display all the members who can administrate the forum.
+	echo '
+				<br>
+				<strong>', $txt['administrators'], ':</strong>
+				', implode(', ', $context['administrators']);
+	// If we have lots of admins... don't show them all.
+	if (!empty($context['more_admins_link']))
+		echo '
+				(', $context['more_admins_link'], ')';
+
+	echo '
+			</div>';
 }
 
 // Show some support information and credits to those who helped make this.
