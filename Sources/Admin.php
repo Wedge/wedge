@@ -508,7 +508,6 @@ function Admin()
 					),
 				),
 				'reports' => array(
-					'enabled' => !empty($modSettings['reports_enabled']),
 					'label' => $txt['generate_reports'],
 					'file' => 'Reports',
 					'function' => 'ReportsMain',

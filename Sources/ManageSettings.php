@@ -293,11 +293,6 @@ function ModifyCoreFeatures($return_config = false)
 				}
 			'),
 		),
-		// report generator.
-		'rg' => array(
-			'url' => 'action=admin;area=reports',
-			'setting' => 'reports_enabled',
-		),
 		// Search engines
 		'sp' => array(
 			'url' => 'action=admin;area=sengines',
