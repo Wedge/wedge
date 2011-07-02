@@ -633,7 +633,8 @@ class Shrinker {
 	private $SCOPED			= '/~#(\\d+)~/';
 	private $VAR			= '/\\bvar\\b/';
 	private $VARS			= '/\\bvar\\s+[\\w$]+[^;#]*|\\bfunction\\s+[\\w$]+/';
-	private $VAR_TIDY		= '/\\b(var|function)\\b|\\sin\\s+[^;]+/';
+	// The following line is from Packer 4. See my original bug report: http://dean.edwards.name/weblog/2007/04/packer3/#comment377355
+	private $VAR_TIDY		= '/\\b(const|let|var|function|catch\\s*\\()\\b|\\s+in\\b[^;]*/';
 	private $VAR_EQUAL		= '/\\s*=[^,;]*/';
 
 	private $count = 0; // number of variables

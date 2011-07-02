@@ -219,7 +219,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
 		'',
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
-		array('from_email', $txt['admin_from_email'], 'db', 'text', null, 'from_email'),
+		array('mail_from', $txt['admin_from_email'], 'db', 'text', null, 'mail_from'),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),

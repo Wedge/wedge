@@ -122,10 +122,6 @@ if (!defined('SMF'))
 		- email is sent to all groups that have the moderate_forum permission.
 		- uses the Login language file.
 		- the language set by each member is being used (if available).
-
-	Sending emails from SMF:
-	---------------------------------------------------------------------------
-		// !!!
 */
 
 // Send off an email.
@@ -195,7 +191,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 
 	if ($message_id !== null && empty($modSettings['mail_no_message_id']))
 		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from'], '@') . '>' . $line_break;
-	$headers .= 'X-Mailer: SMF' . $line_break;
+	$headers .= 'X-Mailer: Wedge' . $line_break;
 
 	// Pass this to the hook before we start modifying the output -- it'll make it easier later.
 	if (in_array(false, call_hook('outgoing_email', array(&$subject, &$message, &$headers)), true))
@@ -205,7 +201,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$orig_message = $message;
 
 	// The mime boundary separates the different alternative versions.
-	$mime_boundary = 'SMF-' . md5($message . time());
+	$mime_boundary = 'Wedge-' . md5($message . time());
 
 	// Using mime, as it allows to send a plain unencoded alternative.
 	$headers .= 'Mime-Version: 1.0' . $line_break;
@@ -1509,7 +1505,7 @@ function createAttachment(&$attachmentOptions)
 		return false;
 	}
 
-	// These are the only valid image types for SMF.
+	// These are the only valid image types for Wedge.
 	$validImageTypes = array(
 		1 => 'gif',
 		2 => 'jpeg',
