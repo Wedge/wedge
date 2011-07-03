@@ -960,8 +960,7 @@ function saveProfileFields()
 // Save the profile changes....
 function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 {
-	global $user_info, $txt, $modSettings, $user_profile;
-	global $context, $settings;
+	global $user_info, $txt, $modSettings, $user_profile, $context, $settings;
 
 	// These make life easier....
 	$old_profile = &$user_profile[$memID];
@@ -1335,8 +1334,7 @@ function editBuddyIgnoreLists($memID)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddies($memID)
 {
-	global $txt, $scripturl, $modSettings;
-	global $context, $user_profile, $memberContext;
+	global $txt, $scripturl, $modSettings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
@@ -1442,8 +1440,7 @@ function editBuddies($memID)
 // Allows the user to view their ignore list, as well as the option to manage members on it.
 function editIgnoreList($memID)
 {
-	global $txt, $scripturl, $modSettings;
-	global $context, $user_profile, $memberContext;
+	global $txt, $scripturl, $modSettings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
