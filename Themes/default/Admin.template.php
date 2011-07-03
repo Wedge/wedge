@@ -59,7 +59,7 @@ function template_admin()
 				<div id="update_message" class="smalltext"></div>
 			</div>
 		</div>
-		<div class="windowbg2 wrc clear_right">
+		<div class="windowbg2 wrc clear_right" style="margin-top: 6px">
 			<ul id="quick_tasks" class="flow_hidden">';
 
 	foreach ($context['quick_admin_tasks'] as $task)

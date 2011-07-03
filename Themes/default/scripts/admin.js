@@ -24,7 +24,7 @@ function smf_AdminIndex(oOptions)
 	if (this.opt.bLoadAnnouncements)
 		this.setAnnouncements();
 
-	// Load the current SMF and your SMF version numbers.
+	// Load the current Wedge and your Wedge version numbers.
 	if (this.opt.bLoadVersions)
 		this.showCurrentVersion();
 
@@ -35,14 +35,29 @@ function smf_AdminIndex(oOptions)
 
 smf_AdminIndex.prototype.setAnnouncements = function ()
 {
-	if (!('smfAnnouncements' in window) || !('length' in window.smfAnnouncements))
+	var opt = this.opt, sMessages = '', ann = window.wedgeAnnouncements, i, j, k;
+	var time_replace = function (str, va, nu) {
+		if (va == 'month')
+			return opt.sMonths[nu - 1];
+		if (va == 'shortmonth')
+			return opt.sMonthsShort[nu - 1];
+		if (va == 'day')
+			return opt.sMonths[nu];
+		if (va == 'shortday')
+			return opt.sMonthsShort[nu];
+	};
+
+	if (!('wedgeAnnouncements' in window) || !('length' in ann))
 		return;
 
-	var sMessages = '', i;
-	for (i = 0; i < window.smfAnnouncements.length; i++)
-		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
+	for (i = 0, k = ann.length; i < k; i++)
+		sMessages += opt.sAnnouncementMessageTemplate
+						.replace('%href%', ann[i].href)
+						.replace('%subject%', ann[i].subject)
+						.replace('%time%', ann[i].time.replace(/\$(shortmonth|month|shortday|day)-(\d+)/g, time_replace))
+						.replace('%message%', ann[i].message);
 
-	$('#' + this.opt.sAnnouncementContainerId).html(this.opt.sAnnouncementTemplate.replace('%content%', sMessages));
+	$('#' + opt.sAnnouncementContainerId).html(opt.sAnnouncementTemplate.replace('%content%', sMessages));
 };
 
 smf_AdminIndex.prototype.showCurrentVersion = function ()
@@ -180,7 +195,7 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			'Languages',
 			'Templates'
 		],
-		i, sFilename, sYourVersion, sVersionType;
+		i, n, sFilename, sYourVersion, sVersionType;
 
 	for (i = 0, n = sSections.length; i < n; i++)
 	{

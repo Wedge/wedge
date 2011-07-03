@@ -763,6 +763,10 @@ function setupAdminSidebar()
 			</dd>
 		'), ',
 		sAnnouncementContainerId: \'wedge_news\',
+		sMonths: [\'', implode('\', \'', $txt['months']), '\'],
+		sMonthsShort: [\'', implode('\', \'', $txt['months_short']), '\'],
+		sDays: [\'', implode('\', \'', $txt['days']), '\'],
+		sDaysShort: [\'', implode('\', \'', $txt['days_short']), '\'],
 
 		bLoadVersions: true,
 		sWedgeVersionContainerId: \'wedgeVersion\',

@@ -43,14 +43,6 @@ function ViewRemote()
 	list ($file_data, $filetype) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	// !!! Temp.
-	// Figure out if sesc is still being used.
-	if (strpos($file_data, ';sesc=') !== false)
-		$file_data = '
-if (!(\'smfForum_sessionvar\' in window))
-	window.smfForum_sessionvar = \'sesc\';
-' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
-
 	// Let's make sure we aren't going to output anything nasty.
 	@ob_end_clean();
 	if (!empty($modSettings['enableCompressedOutput']))

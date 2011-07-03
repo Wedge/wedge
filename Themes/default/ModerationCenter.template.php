@@ -60,7 +60,7 @@ function template_latest_news()
 			', $txt['mc_latest_news'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<div id="smfAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
+			<div id="wedgeAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
 		</div>';
 
 	// This requires a lot of javascript...
@@ -85,7 +85,7 @@ function template_latest_news()
 			<dd>
 				%message%
 			</dd>'), ',
-		sAnnouncementContainerId: \'smfAnnouncements\'
+		sAnnouncementContainerId: \'wedgeAnnouncements\'
 	});');
 }
 

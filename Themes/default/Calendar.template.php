@@ -264,10 +264,10 @@ function template_show_month_grid($grid_name)
 
 		if ($calendar_data['show_next_prev'])
 			echo '
-					', $txt['months_titles'][$calendar_data['current_month']], ' ', $calendar_data['current_year'];
+					', $txt['months'][$calendar_data['current_month']], ' ', $calendar_data['current_year'];
 		else
 			echo '
-					<a href="', $scripturl, '?action=calendar;year=', $calendar_data['current_year'], ';month=', $calendar_data['current_month'], '">', $txt['months_titles'][$calendar_data['current_month']], ' ', $calendar_data['current_year'], '</a>';
+					<a href="', $scripturl, '?action=calendar;year=', $calendar_data['current_year'], ';month=', $calendar_data['current_month'], '">', $txt['months'][$calendar_data['current_month']], ' ', $calendar_data['current_year'], '</a>';
 
 		echo '
 				</div>
@@ -430,7 +430,7 @@ function template_show_week_grid($grid_name)
 					<span class="floatright"><a href="', $calendar_data['next_week']['href'], '">&#187;</a></span>';
 
 		echo '
-					<a href="', $scripturl, '?action=calendar;month=', $month_data['current_month'], ';year=', $month_data['current_year'], '">', $txt['months_titles'][$month_data['current_month']], ' ', $month_data['current_year'], '</a>', empty($done_title) && !empty($calendar_data['week_number']) ? (' - ' . $txt['calendar_week'] . ' ' . $calendar_data['week_number']) : '', '
+					<a href="', $scripturl, '?action=calendar;month=', $month_data['current_month'], ';year=', $month_data['current_year'], '">', $txt['months'][$month_data['current_month']], ' ', $month_data['current_year'], '</a>', empty($done_title) && !empty($calendar_data['week_number']) ? (' - ' . $txt['calendar_week'] . ' ' . $calendar_data['week_number']) : '', '
 				</div>
 			</we:cat>';
 
