@@ -729,7 +729,7 @@ function AdminHome()
 // We have to do some stuff for the admin sidebar.
 function setupAdminSidebar()
 {
-	global $modSettings, $txt;
+	global $modSettings, $txt, $context, $scripturl;
 
 	loadSubTemplate(array('admin_live_news', 'admin_support_info'), 'sidebar');
 
