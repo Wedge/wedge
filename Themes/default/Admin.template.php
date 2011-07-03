@@ -452,9 +452,9 @@ function template_view_versions()
 
 	/*
 		Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
-		held at simplemachines.org and works out if they are up to date. If they aren't it colors that files number
-		red. It also contains the function, swapOption, that toggles showing the detailed information for each of the
-		file categories. (sources, languages, and templates.)
+		held at wedge.org and works out if they are up to date. If they aren't it colors that files number red.
+		It also contains the function, swapOption, that toggles showing the detailed information for each of
+		the file categories. (Sources, languages, and templates.)
 	*/
 	add_js_file($scripturl . '?action=viewremote;filename=detailed-version.js', true);
 	add_js_file('scripts/admin.js');

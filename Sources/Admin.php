@@ -699,7 +699,7 @@ function AdminCredits()
 
 	$context['current_versions'] = array(
 		'php' => array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION),
-		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => ''),
+		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => min(mysql_get_server_info(), mysql_get_client_info())),
 		'server' => array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']),
 	);
 

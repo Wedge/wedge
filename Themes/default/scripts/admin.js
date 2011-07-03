@@ -151,7 +151,7 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 
 	// They are the same!
 	return false;
-}
+};
 
 smf_ViewVersions.prototype.determineVersions = function ()
 {
