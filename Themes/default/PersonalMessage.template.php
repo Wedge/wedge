@@ -1110,9 +1110,10 @@ function template_labels()
 		<we:cat>
 			', $txt['pm_manage_labels'], '
 		</we:cat>
-		<div class="description">
+		<p class="description">
 			', $txt['pm_labels_desc'], '
-		</div>
+		</p>
+
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
@@ -1202,9 +1203,10 @@ function template_report_message()
 		<we:cat>
 			', $txt['pm_report_title'], '
 		</we:cat>
-		<div class="description">
+		<p class="description">
 			', $txt['pm_report_desc'], '
-		</div>
+		</p>
+
 		<div class="windowbg wrc">
 			<dl class="settings">';
 
@@ -1271,9 +1273,10 @@ function template_rules()
 		<we:cat>
 			', $txt['pm_manage_rules'], '
 		</we:cat>
-		<div class="description">
+		<p class="description">
 			', $txt['pm_manage_rules_desc'], '
-		</div>
+		</p>
+
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
@@ -1659,7 +1662,7 @@ function template_pm_drafts()
 			<img src="', $settings['images_url'], '/icons/im_newmsg.gif">
 			', $txt['showDrafts'], '
 		</we:cat>
-		<p class="windowbg description">
+		<p class="description">
 			', $txt['showDrafts_desc'];
 
 	if (!empty($modSettings['pruneSaveDrafts']))

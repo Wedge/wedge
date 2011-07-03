@@ -325,6 +325,7 @@ function template_showDrafts()
 
 	echo '
 		</p>
+
 		<div class="pagesection">
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
@@ -551,9 +552,10 @@ function template_editBuddies()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<we:title>
+		<we:cat>
 			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['editBuddies'], '
-		</we:title>
+		</we:cat>
+
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
@@ -631,9 +633,9 @@ function template_editIgnoreList()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	echo '
-		<we:title>
+		<we:cat>
 			<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['editIgnoreList'], '
-		</we:title>
+		</we:cat>
 		<table class="table_grid w100 cs1 cp4 centertext">
 			<tr class="catbg">
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
@@ -803,7 +805,7 @@ function template_trackIP()
 		</we:title>';
 	if (empty($context['ips']))
 		echo '
-		<p class="windowbg2 description"><em>', $txt['no_members_from_ip'], '</em></p>';
+		<p class="description"><em>', $txt['no_members_from_ip'], '</em></p>';
 	else
 	{
 		echo '
@@ -848,10 +850,8 @@ function template_showPermissions()
 		</we:cat>';
 
 	if ($context['member']['has_all_permissions'])
-	{
 		echo '
-		<p class="windowbg description">', $txt['showPermissions_all'], '</p>';
-	}
+		<p class="description">', $txt['showPermissions_all'], '</p>';
 	else
 	{
 		echo '
@@ -920,7 +920,7 @@ function template_showPermissions()
 		}
 		else
 			echo '
-			<p class="windowbg2 description">', $txt['showPermissions_none_general'], '</p>';
+			<p class="description">', $txt['showPermissions_none_general'], '</p>';
 
 		// Board permission section.
 		echo '
@@ -982,7 +982,7 @@ function template_showPermissions()
 		}
 		else
 			echo '
-			<p class="windowbg2 description">', $txt['showPermissions_none_board'], '</p>';
+			<p class="description">', $txt['showPermissions_none_board'], '</p>';
 
 	echo '
 		</div>';
@@ -1167,7 +1167,7 @@ function template_edit_options()
 	// Have we some description?
 	if ($context['page_desc'])
 		echo '
-			<p class="windowbg description">', $context['page_desc'], '</p>';
+			<p class="description">', $context['page_desc'], '</p>';
 
 	echo '
 			<div class="windowbg2 wrc">';
@@ -1585,7 +1585,7 @@ function template_notification()
 				<img src="', $settings['images_url'], '/icons/profile_sm.gif">
 				', $txt['profile'], '
 			</we:cat>
-			<p class="windowbg description">', $txt['notification_info'], '</p>
+			<p class="description">', $txt['notification_info'], '</p>
 			<div class="windowbg2 wrc">
 				<form action="', $scripturl, '?action=profile;area=notification;save" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">';
 
@@ -2233,13 +2233,13 @@ function template_deleteAccount()
 	// The main containing header.
 	echo '
 		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
-			<we:title>
+			<we:cat>
 				<img src="', $settings['images_url'], '/icons/profile_sm.gif">', $txt['deleteAccount'], '
-			</we:title>';
+			</we:cat>';
 	// If deleting another account give them a lovely info box.
 	if (!$context['user']['is_owner'])
 		echo '
-			<p class="windowbg2 description">', $txt['deleteAccount_desc'], '</p>';
+			<p class="description">', $txt['deleteAccount_desc'], '</p>';
 	echo '
 			<div class="windowbg2 wrc">';
 
@@ -2253,7 +2253,7 @@ function template_deleteAccount()
 	{
 		echo '
 				<div class="alert">', $txt['own_profile_confirm'], '</div>
-				<div>
+				<div style="margin: 15px 0 0">
 					<strong', (isset($context['modify_error']['bad_password']) || isset($context['modify_error']['no_password']) ? ' class="error"' : ''), '>', $txt['current_password'], ': </strong>
 					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="submit" value="', $txt['yes'], '" class="delete">
@@ -2760,7 +2760,7 @@ function template_authentication_method()
 				<img src="', $settings['images_url'], '/icons/profile_sm.gif">
 				', $txt['authentication'], '
 			</we:cat>
-			<p class="windowbg description">', $txt['change_authentication'], '</p>
+			<p class="description">', $txt['change_authentication'], '</p>
 			<div class="windowbg2 wrc">
 				<dl>
 					<dt>

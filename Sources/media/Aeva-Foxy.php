@@ -180,8 +180,7 @@ function aeva_foxy_playlist()
 	<script><!-- // --><![CDATA[
 		function foxyComment(id)
 		{
-			var sh1 = document.getElementById("foxyDescription" + id);
-			var sh2 = document.getElementById("foxyComment" + id);
+			var sh1 = document.getElementById("foxyDescription" + id), sh2 = document.getElementById("foxyComment" + id);
 			if (sh1) sh1.style.display = "none";
 			if (sh2) sh2.style.display = "block";
 			return false;

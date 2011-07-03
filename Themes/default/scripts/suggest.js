@@ -1,4 +1,4 @@
-/*
+/**
  * Create and manage an auto-suggest control.
  */
 function smc_AutoSuggest(oOptions)
@@ -103,8 +103,8 @@ smc_AutoSuggest.prototype.handleKey = function(oEvent)
 			return true;
 
 		// Loop through the display data trying to find our entry.
-		var bPrevHandle = false, oToHighlight = null;
-		for (var i = 0; i < this.aDisplayData.length; i++)
+		var bPrevHandle = false, oToHighlight = null, i;
+		for (i = 0; i < this.aDisplayData.length; i++)
 		{
 			// If we're going up and yet the top one was already selected don't go around.
 			if (iKeyPress == 38 && i == 0 && this.oSelectedDiv != null && this.oSelectedDiv == this.aDisplayData[i])
@@ -308,8 +308,8 @@ smc_AutoSuggest.prototype.populateDiv = function(aResults)
 		return true;
 	}
 
-	var aNewDisplayData = [];
-	for (var i = 0; i < (aResults.length > this.iMaxDisplayQuantity ? this.iMaxDisplayQuantity : aResults.length); i++)
+	var aNewDisplayData = [], i;
+	for (i = 0; i < (aResults.length > this.iMaxDisplayQuantity ? this.iMaxDisplayQuantity : aResults.length); i++)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
 			.data({ sItemId: aResults[i].sItemId, that: this })
@@ -424,9 +424,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	else if (sSearchString.substr(0, sRealLastSearch.length) == sRealLastSearch)
 	{
 		// Instead of hitting the server again, just narrow down the results...
-		var aNewCache = [];
-		var j = 0;
-		for (var k = 0; k < this.aCache.length; k++)
+		for (var aNewCache = [], j = 0, k = 0; k < this.aCache.length; k++)
 			if (this.aCache[k].sItemName.substr(0, sSearchString.length).toLowerCase() == sLowercaseSearch)
 				aNewCache[j++] = this.aCache[k];
 

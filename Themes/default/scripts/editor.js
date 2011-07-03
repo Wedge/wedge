@@ -556,12 +556,11 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 
 		this.insertText(smileytext);
 	}
-
 	// Otherwise we need to do a whole image...
 	else
 	{
 		var iUniqueSmileyId = 1000 + Math.floor(Math.random() * 100000);
-		this.insertText('<img src="' + oSmileyProperties.sSrc + '" id="smiley_' + iUniqueSmileyId + '_' + oSmileyProperties.sSrc.replace(/^.*\//, '') + '" onresizestart="return false;" class="bottom" title="' + oSmileyProperties.sDescription.php_htmlspecialchars() + '" style="padding: 0 3px 0 3px">');
+		this.insertText('<img src="' + oSmileyProperties.sSrc + '" id="smiley_' + iUniqueSmileyId + '_' + oSmileyProperties.sSrc.replace(/^.*\//, '') + '" onresizestart="return false;" class="bottom" title="' + oSmileyProperties.sDescription.php_htmlspecialchars() + '" style="padding: 0 3px">');
 	}
 };
 

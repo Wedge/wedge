@@ -55,9 +55,9 @@ function template_aeva_header()
 	<we:cat>
 		', !isset($context['aeva_header']['data']['title']) ? $txt['media_gallery'] : $context['aeva_header']['data']['title'], '
 	</we:cat>
-	<div class="windowbg wrc description">
+	<p class="description">
 		', $context['aeva_header']['data']['description'], '
-	</div>';
+	</p>';
 }
 
 function template_show_version_update()
@@ -1710,86 +1710,68 @@ function template_aeva_profile_summary()
 	$can_feed = empty($amSettings['disable_feed']);
 
 	echo '
-		<table class="bordercolor w100 cs1 cp4">
-			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png">&nbsp;&nbsp;', $txt['media_profile_sum_pt'], '</td>
-			</tr>
-			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_sum_desc'], '</td>
-			</tr>
-			<tr class="titlebg">
-				<td>', $txt['media_profile_stats'], '</td>
-			</tr>
-			<tr>
-				<td class="windowbg2">
-					', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
-					', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
-					', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
-					', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
-				</td>
-			</tr>';
+		<we:cat>
+			<img src="', $settings['images_url'], '/admin/mgallery.png" style="vertical-align: 0">
+			', $txt['media_profile_sum_pt'], '
+		</we:cat>
+		<p class="description">
+			', $txt['media_profile_sum_desc'], '
+		</p>
+
+		<we:title>
+			', $txt['media_profile_stats'], '
+		</we:title>
+		<div class="windowbg2 wrc">
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
+			', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
+			', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
+		</div>';
 
 	if (!empty($member['user_albums']))
 	{
 		$can_moderate = aeva_allowedTo('moderate');
 
 		echo '
-			<tr class="titlebg">
-				<td>', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';albums" class="feed_icon"></a> ' : '', $txt['media_albums'], '</td>
-			</tr>
-			<tr>
-				<td>';
+		<we:title>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';albums" class="feed_icon"></a> ' : '', $txt['media_albums'], '
+		</we:title>';
 
 		aeva_listChildren($member['user_albums']);
-
-		echo '
-				</td>
-			</tr>';
 	}
-
-	echo '
-		</table>';
 
 	if (!empty($member['recent_items']))
 	{
 		echo '
-		<table class="bordercolor margintop w100 cs1 cp4">
-			<tr class="titlebg">
-				<td>', $txt['media_recent_items'], '</td>
-			</tr>
-		</table>
+		<we:title>
+			', $txt['media_recent_items'], '
+		</we:title>
 
-		<div id="home">
-			<div id="recent_items">',
-				aeva_listItems($member['recent_items']), '
-			</div>
+		<div class="windowbg2 wrc" id="recent_items">',
+			aeva_listItems($member['recent_items']), '
 		</div>';
 	}
 
 	if (!empty($member['top_albums']))
 	{
 		echo '
-		<table class="bordercolor margintop w100 cs1 cp4">
-			<tr class="titlebg">
-				<td>', $txt['media_top_albums'], '</td>
-			</tr>
-			<tr>
-				<td style="padding: 0px">
-					<table class="w100 cs0 cp8">';
+		<we:title>
+			', $txt['media_top_albums'], '
+		</we:title>
+		<div class="windowbg2 wrc">
+			<table class="w100 cs1 cp4">';
 
 		foreach ($member['top_albums'] as $album)
 			echo '
-						<tr>
-							<td class="windowbg2 w50"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
-							<td class="windowbg2" style="width: 40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
-							<td class="windowbg2" style="width: 10%">', $album['total_items'], '</td>
-						</tr>';
+				<tr>
+					<td class="windowbg2 w50"><a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a></td>
+					<td class="windowbg2" style="width: 40%"><div class="aeva_statsbar" style="width: ', $album['percent'], 'px"></div></td>
+					<td class="windowbg2" style="width: 10%">', $album['total_items'], '</td>
+				</tr>';
 
 		echo '
-					</table>
-				</td>
-			</tr>
-		</table>';
+			</table>
+		</div>';
 	}
 	template_aeva_below();
 }
@@ -1800,22 +1782,20 @@ function template_aeva_profile_viewitems()
 	global $context, $txt, $galurl, $settings;
 
 	echo '
-		<table class="bordercolor w100 cs1 cp4">
-			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png">&nbsp;&nbsp;', $txt['media_profile_viewitems_pt'], '</td>
-			</tr>
-			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewitems_desc'], '</td>
-			</tr>
-		</table>
+		<we:cat>
+			<img src="', $settings['images_url'], '/admin/mgallery.png" style="vertical-align: 0">
+			', $txt['media_profile_viewitems_pt'], '
+		</we:cat>
+		<p class="description">
+			', $txt['media_profile_viewitems_desc'], '
+		</p>
 
-		<div id="home">
-			<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
-			<div id="recent_items">',
-				aeva_listItems($context['aeva_items']), '
-			</div>
-			<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
-		</div>';
+		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
+		<div id="recent_items">',
+			aeva_listItems($context['aeva_items']), '
+		</div>
+		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>';
+
 	template_aeva_below();
 }
 
@@ -1825,14 +1805,13 @@ function template_aeva_profile_viewcoms()
 	global $context, $txt, $settings;
 
 	echo '
-		<table class="bordercolor w100 cs1 cp4">
-			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png">&nbsp;&nbsp;', $txt['media_profile_viewcoms_pt'], '</td>
-			</tr>
-			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewcoms_desc'], '</td>
-			</tr>
-		</table>
+		<we:cat>
+			<img src="', $settings['images_url'], '/admin/mgallery.png" style="vertical-align: 0">
+			', $txt['media_profile_viewcoms_pt'], '
+		</we:cat>
+		<p class="description">
+			', $txt['media_profile_viewcoms_desc'], '
+		</p>
 
 		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
 		<div>';
@@ -1861,14 +1840,13 @@ function template_aeva_profile_viewvotes()
 	global $context, $txt, $settings, $scripturl;
 
 	echo '
-		<table class="bordercolor w100 cs1 cp4">
-			<tr class="titlebg">
-				<td><img src="', $settings['images_url'], '/admin/mgallery.png">&nbsp;&nbsp;', $txt['media_profile_viewvotes_pt'], '</td>
-			</tr>
-			<tr>
-				<td class="windowbg smalltext" style="padding: 2ex">', $txt['media_profile_viewvotes_desc'], '</td>
-			</tr>
-		</table>
+		<we:cat>
+			<img src="', $settings['images_url'], '/admin/mgallery.png" style="vertical-align: 0">
+			', $txt['media_profile_viewvotes_pt'], '
+		</we:cat>
+		<p class="description">
+			', $txt['media_profile_viewvotes_desc'], '
+		</p>
 
 		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
 		<div style="padding: 4px 0">';

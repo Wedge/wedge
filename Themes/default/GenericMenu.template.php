@@ -240,7 +240,7 @@ function template_generic_tabs()
 	</we:cat>';
 
 	echo '
-	<p class="windowbg description">
+	<p class="description">
 		', !empty($selected_tab['description']) ? $selected_tab['description'] : $tab_context['description'], '
 	</p>';
 
