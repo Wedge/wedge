@@ -657,7 +657,9 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	loadSubTemplate(array('admin_live_news', 'admin_support_info'), 'sidebar');
+	// Set up the sidebar information, like the news and so on, and introduce all the JavaScript we'll need.
+	setupAdminSidebar();
+
 	loadSubTemplate($context['admin_area'] == 'credits' ? 'credits' : 'admin');
 	$context['page_title'] = $context['admin_area'] == 'credits' ? $txt['support_credits_title'] : $txt['admin_center'];
 
@@ -722,6 +724,55 @@ function AdminHome()
 		'http://www.simplemachines.org/redirect/smf_support',
 		'http://www.simplemachines.org/redirect/customize_support'
 	);
+}
+
+// We have to do some stuff for the admin sidebar.
+function setupAdminSidebar()
+{
+	global $modSettings, $txt;
+
+	loadSubTemplate(array('admin_live_news', 'admin_support_info'), 'sidebar');
+
+	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
+	if (empty($modSettings['disable_smf_js']))
+		add_js_file(array(
+			$scripturl . '?action=viewremote;filename=current-version.js',
+			$scripturl . '?action=viewremote;filename=latest-news.js'
+		), true);
+
+	add_js_file('scripts/admin.js');
+
+	// This sets the announcements and current versions themselves ;)
+	add_js('
+	var oAdminIndex = new smf_AdminIndex({
+		sSelf: \'oAdminCenter\',
+
+		bLoadAnnouncements: true,
+		sAnnouncementTemplate: ', JavaScriptEscape('
+			<dl>
+				%content%
+			</dl>
+		'), ',
+		sAnnouncementMessageTemplate: ', JavaScriptEscape('
+			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
+			<dd>
+				%message%
+			</dd>
+		'), ',
+		sAnnouncementContainerId: \'wedge_news\',
+
+		bLoadVersions: true,
+		sWedgeVersionContainerId: \'wedgeVersion\',
+		sYourVersionContainerId: \'yourVersion\',
+		sVersionOutdatedTemplate: ' . JavaScriptEscape('
+			<span class="alert">%currentVersion%</span>
+		') . ',
+
+		bLoadUpdateNotification: true,
+		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
+		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
+		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '
+	});');
 }
 
 // This allocates out all the search stuff.

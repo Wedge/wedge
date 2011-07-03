@@ -76,47 +76,6 @@ function template_admin()
 		</div>
 	</div>
 	<br class="clear">';
-
-	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
-	if (empty($modSettings['disable_smf_js']))
-		add_js_file(array(
-			$scripturl . '?action=viewremote;filename=current-version.js',
-			$scripturl . '?action=viewremote;filename=latest-news.js'
-		), true);
-
-	add_js_file('scripts/admin.js');
-
-	// This sets the announcements and current versions themselves ;)
-	add_js('
-	var oAdminIndex = new smf_AdminIndex({
-		sSelf: \'oAdminCenter\',
-
-		bLoadAnnouncements: true,
-		sAnnouncementTemplate: ', JavaScriptEscape('
-			<dl>
-				%content%
-			</dl>
-		'), ',
-		sAnnouncementMessageTemplate: ', JavaScriptEscape('
-			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
-			<dd>
-				%message%
-			</dd>
-		'), ',
-		sAnnouncementContainerId: \'wedge_news\',
-
-		bLoadVersions: true,
-		sWedgeVersionContainerId: \'wedgeVersion\',
-		sYourVersionContainerId: \'yourVersion\',
-		sVersionOutdatedTemplate: ' . JavaScriptEscape('
-			<span class="alert">%currentVersion%</span>
-		') . ',
-
-		bLoadUpdateNotification: true,
-		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
-		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '
-	});');
 }
 
 // Display the "live news" from wedge.org.
