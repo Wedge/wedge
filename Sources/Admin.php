@@ -44,7 +44,7 @@ if (!defined('SMF'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
+	global $forum_version, $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
 
 	// Load the language and templates....
 	loadLanguage('Admin');
@@ -72,7 +72,7 @@ function Admin()
 				),
 				'credits' => array(
 					'label' => $txt['support_credits_title'],
-					'function' => 'AdminHome',
+					'function' => 'AdminCredits',
 					'icon' => 'support.gif',
 				),
 				'',
@@ -604,6 +604,11 @@ function Admin()
 	// Why on the admin are we?
 	$context['admin_area'] = $admin_include_data['current_area'];
 
+	// Set up the sidebar information, like the news and so on, and introduce all the JavaScript we'll need.
+	$context['can_admin'] = allowedTo('admin_forum');
+	$context['forum_version'] = $forum_version;
+	setupAdminSidebar();
+
 	// Now - finally - call the right place!
 	if (isset($admin_include_data['file']))
 		loadSource($admin_include_data['file']);
@@ -614,54 +619,10 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $boardurl, $modSettings;
 
-	// You have to be able to do at least one of the below to see this page.
-	isAllowedTo(array('admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'));
-
-	// Find all of this forum's administrators...
-	loadSource('Subs-Membergroups');
-
-	// Add a 'more' link if there are more than 32.
-	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
-		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
-
-	// Load the credits stuff.
-	loadSource('Credits');
-	Credits(true);
-
-	// This makes it easier to get the latest news with your time format.
-	$context['time_format'] = urlencode($user_info['time_format']);
-
-	$context['current_versions'] = array(
-		'php' => array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION),
-		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => ''),
-		'server' => array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']),
-	);
-	$context['forum_version'] = $forum_version;
-
-	// Get a list of current server versions.
-	loadSource('Subs-Admin');
-	$checkFor = array(
-		'gd',
-		'db_server',
-		'eaccelerator',
-		'phpa',
-		'apc',
-		'memcache',
-		'xcache',
-		'php',
-		'server',
-	);
-	$context['current_versions'] = getServerVersions($checkFor);
-
-	$context['can_admin'] = allowedTo('admin_forum');
-
-	// Set up the sidebar information, like the news and so on, and introduce all the JavaScript we'll need.
-	setupAdminSidebar();
-
-	loadSubTemplate($context['admin_area'] == 'credits' ? 'credits' : 'admin');
-	$context['page_title'] = $context['admin_area'] == 'credits' ? $txt['support_credits_title'] : $txt['admin_center'];
+	loadSubTemplate('admin');
+	$context['page_title'] = $txt['admin_center'];
 
 	// The format of this array is: permission, action, title, description, icon.
 	$quick_admin_tasks = array(
@@ -707,6 +668,40 @@ function AdminHome()
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
 		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
 	}
+}
+
+// Display support information and credits.
+function AdminCredits()
+{
+	global $context, $txt;
+
+	// Things we need, to make us go.
+	loadSubTemplate('credits');
+	loadSource(array('Credits', 'Subs-Admin'));
+
+	Credits(true);
+
+	// Get a list of current server versions.
+	$checkFor = array(
+		'gd',
+		'db_server',
+		'eaccelerator',
+		'phpa',
+		'apc',
+		'memcache',
+		'xcache',
+		'php',
+		'server',
+	);
+	$context['current_versions'] = getServerVersions($checkFor);
+
+	$context['page_title'] = $txt['support_credits_title'];
+
+	$context['current_versions'] = array(
+		'php' => array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION),
+		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => ''),
+		'server' => array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']),
+	);
 
 	// Lastly, fill in the blanks in the support resources paragraphs.
 	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
@@ -731,6 +726,14 @@ function setupAdminSidebar()
 {
 	global $modSettings, $txt, $context, $scripturl;
 
+	// Find all of this forum's administrators...
+	loadSource('Subs-Membergroups');
+
+	// Add a 'more' link if there are more than 32.
+	if (listMembergroupMembers_Href($context['administrators'], 1, 32) && allowedTo('manage_membergroups'))
+		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
+
+	// Add the blocks into the sidebar.
 	loadSubTemplate(array('admin_live_news', 'admin_support_info'), 'sidebar');
 
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
