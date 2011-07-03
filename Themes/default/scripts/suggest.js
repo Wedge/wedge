@@ -13,6 +13,13 @@ function smc_AutoSuggest(oOptions)
 
 	// Store the handle to the text box.
 	var oText = $('#' + this.opt.sControlId)[0];
+
+	// An annoying bug in Packer makes some servers crash on long strings.
+	// It is probably when it attempts to find comments and make sure they aren't enclosed in strings.
+	// I don't know more. Let's keep it quiet, shall we?
+	var sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>';
+	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%" onclick="return %self%.deleteAddedItem(%item_id%);">';
+
 	this.oTextHandle = oText;
 
 	this.oSuggestDivHandle = null;
@@ -42,7 +49,7 @@ function smc_AutoSuggest(oOptions)
 	// Are there any items that should be added in advance?
 	this.aListItems = 'aListItems' in this.opt ? this.opt.aListItems : [];
 
-	this.sItemTemplate = 'sItemTemplate' in this.opt ? this.opt.sItemTemplate : '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%" onclick="return %self%.deleteAddedItem(%item_id%);">';
+	this.sItemTemplate = 'sItemTemplate' in this.opt ? this.opt.sItemTemplate : sItemTemplate;
 	this.sTextDeleteItem = 'sTextDeleteItem' in this.opt ? this.opt.sTextDeleteItem : '';
 	this.sURLMask = 'sURLMask' in this.opt ? this.opt.sURLMask : '';
 
