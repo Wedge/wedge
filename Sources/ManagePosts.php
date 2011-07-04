@@ -204,6 +204,10 @@ function ModifyPostSettings($return_config = false)
 			array('int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']),
 			array('int', 'max_urlLength'),
 		'',
+			// Automatic image resizing.
+			array('int', 'max_image_width'),
+			array('int', 'max_image_height'),
+		'',
 			// Posting time limits...
 			array('int', 'spamWaitTime', 'postinput' => $txt['manageposts_seconds']),
 			array('int', 'edit_wait_time', 'postinput' => $txt['manageposts_seconds']),

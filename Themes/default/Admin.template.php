@@ -41,14 +41,6 @@ function template_admin()
 			', $txt['admin_center'], '
 		</we:cat>';
 
-	echo '
-		<div class="roundframe">
-			<div id="welcome">
-				<strong>', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</strong>
-				', sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help']), '
-			</div>
-		</div>';
-
 	// Is there an update available?
 	echo '
 		<div id="update_section">
@@ -58,22 +50,38 @@ function template_admin()
 			<div class="windowbg wrc">
 				<div id="update_message" class="smalltext"></div>
 			</div>
-		</div>
-		<div class="windowbg2 wrc clear_right" style="margin-top: 6px">
-			<ul id="quick_tasks" class="flow_hidden">';
+		</div>';
 
-	foreach ($context['quick_admin_tasks'] as $task)
+	// Now, let's do the main admin stuff. We'll take an alias to the menu stuff because it's simply easier than fighting with anything else.
+	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
+
+	$use_bg2 = false;
+	foreach ($menu_context['sections'] as $section_id => $section)
+	{
 		echo '
-				<li>
-					', !empty($task['icon']) ? '<a href="' . $task['href'] . '"><img src="' . $settings['default_images_url'] . '/admin/' . $task['icon'] . '" class="home_image ping"></a>' : '', '
-					<h5>', $task['link'], '</h5>
-					<span class="task">', $task['description'], '</span>
-				</li>';
+		<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', '">
+			<legend>', $section['title'], '</legend>';
 
+		foreach ($section['areas'] as $area_id => $area)
+		{
+			if (empty($area['label']) || $area_id == 'index')
+				continue;
+
+			if (empty($area['bigicon']))
+				$area['bigicon'] = '<img src="' . $context['menu_image_path'] . '/features_and_options.png">';
+
+			echo '
+				<div class="admin_item inline-block"><a href="', $scripturl, '?action=admin;area=', $area_id, ';' , $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
+		}
+
+		echo '
+		</fieldset>';
+
+		$use_bg2 = !$use_bg2;
+	}
+
+	// And we're done.
 	echo '
-			</ul>
-			<div class="clear"></div>
-		</div>
 	</div>
 	<br class="clear">';
 }
@@ -130,24 +138,7 @@ function template_credits()
 	echo '
 
 	<div id="admincenter">
-		<we:cat>
-			', $txt['support_title'], '
-		</we:cat>
-		<div class="windowbg wrc">
-			<strong>', $txt['support_versions'], ':</strong><br>
-				', $txt['support_versions_forum'], ':
-			<em id="yourVersion">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>
-				', $txt['support_versions_current'], ':
-			<em id="wedgeVersion">??</em><br>';
-
-	// Display all the variables we have server information for.
-	foreach ($context['current_versions'] as $version)
-		echo '
-			', $version['title'], ':
-			<em>', $version['version'], '</em><br>';
-
-	echo '
-		</div>';
+		';
 
 	// Point the admin to common support resources.
 	echo '
@@ -212,38 +203,6 @@ function template_credits()
 		</div>
 	</div>
 	<br class="clear">';
-
-	// This makes all the support information available to the support script...
-	add_js('
-	var smfSupportVersions = {};
-
-	smfSupportVersions.forum = "', $context['forum_version'], '";');
-
-	// Don't worry, none of this is logged, it's just used to give information that might be of use.
-	foreach ($context['current_versions'] as $variable => $version)
-		add_js('
-	smfSupportVersions.', $variable, ' = "', $version['version'], '";');
-
-	// Now we just have to include the script and wait ;).
-	add_js_file(array(
-		$scripturl . '?action=viewremote;filename=current-version.js',
-		$scripturl . '?action=viewremote;filename=latest-news.js',
-		$scripturl . '?action=viewremote;filename=latest-support.js'
-	), true);
-
-	// This sets the latest support stuff.
-	add_js('
-	if (window.smfLatestSupport)
-		$("#latestSupport").html(window.smfLatestSupport);
-
-	if (window.smfVersion)
-	{
-		$("#wedgeVersion").html(window.smfVersion);
-
-		var yourVer = $("#yourVersion"), currentVersion = yourVer.text();
-		if (currentVersion != window.smfVersion)
-			yourVer.wrap(\'<span class="alert"></span>\');
-	}');
 }
 
 // Displays information about file versions installed, and compares them to current version.
@@ -257,6 +216,52 @@ function template_view_versions()
 			', $txt['admin_version_check'], '
 		</we:cat>
 		<div class="information">', $txt['version_check_desc'], '</div>
+		<we:cat>
+			', $txt['support_title'], '
+		</we:cat>
+		<div class="windowbg wrc">
+			<strong>', $txt['support_versions'], ':</strong><br>
+				', $txt['support_versions_forum'], ':
+			<em id="yourVersion">', $context['forum_version'], '</em><br>
+				', $txt['support_versions_current'], ':
+			<em id="wedgeVersion">??</em><br>';
+
+	// Display all the variables we have server information for, and the Wedge version itself.
+	foreach ($context['current_versions'] as $version)
+		echo '
+			', $version['title'], ':
+			<em>', $version['version'], '</em><br>';
+
+	echo '
+		</div>';
+
+	// And the JS to include all the version numbers, not to mention the actual information we need.
+	add_js_file(array(
+		$scripturl . '?action=viewremote;filename=current-version.js',
+		$scripturl . '?action=viewremote;filename=detailed-version.js',
+	), true);
+
+	add_js('
+	if (window.smfVersion)
+	{
+		$("#wedgeVersion").html(window.smfVersion);
+
+		var yourVer = $("#yourVersion"), currentVersion = yourVer.text();
+		if (currentVersion != window.smfVersion)
+			yourVer.wrap(\'<span class="alert"></span>\');
+	}');
+
+	// And pass through the versions in case we want to make use of any of them.
+	add_js('
+	var smfSupportVersions = {};
+
+	smfSupportVersions.forum = "', $context['forum_version'], '";');
+
+	foreach ($context['current_versions'] as $variable => $version)
+		add_js('
+	smfSupportVersions.', $variable, ' = "', $version['version'], '";');
+
+	echo '
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg left">
@@ -273,7 +278,7 @@ function template_view_versions()
 				</thead>
 				<tbody>';
 
-	// The current version of the core SMF package.
+	// The current version of the core Wedge package.
 	echo '
 					<tr>
 						<td class="windowbg">

@@ -58,6 +58,11 @@ ol.search_results
 	font-size: 10pt
 	margin: 1em 0
 
+.admin_item
+	width: 100px
+	font-size: 85%
+	text-align: center
+
 #wedge_news
 	overflow-y: auto
 	max-height: 10.5em

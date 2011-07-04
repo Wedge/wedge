@@ -148,6 +148,12 @@ function createMenu($menuData, $menuOptions = array())
 						else
 							$here['icon'] = '';
 
+						// Does this area have its own icon?
+						if (!empty($area['bigicon']))
+							$here['bigicon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['bigicon'] . '">';
+						else
+							$here['bigicon'] = '';
+
 						// Did it have subsections?
 						if (!empty($area['subsections']))
 						{

@@ -246,11 +246,6 @@ function ModifyCoreFeatures($return_config = false)
 					return array();
 			'),
 		),
-		// Calendar
-		'cd' => array(
-			'url' => 'action=admin;area=managecalendar',
-			'setting' => 'cal_enabled',
-		),
 		// Moderation Log
 		'ml' => array(
 			'url' => 'action=admin;area=logs;sa=modlog',
@@ -267,30 +262,6 @@ function ModifyCoreFeatures($return_config = false)
 				loadSource(\'PostModeration\');
 				approveAllData();
 				return array(\'warning_moderate\' => 0);
-			'),
-		),
-		// Paid Subscriptions.
-		'ps' => array(
-			'url' => 'action=admin;area=paidsubscribe',
-			'setting' => 'paid_enabled',
-			'setting_callback' => create_function('$value', '
-				// Set the correct disabled value for scheduled task.
-				wesql::query(\'
-					UPDATE {db_prefix}scheduled_tasks
-					SET disabled = {int:disabled}
-					WHERE task = {string:task}\',
-					array(
-						\'disabled\' => $value ? 0 : 1,
-						\'task\' => \'paid_subscriptions\',
-					)
-				);
-
-				// Should we calculate next trigger?
-				if ($value)
-				{
-					loadSource(\'ScheduledTasks\');
-					CalculateNextTrigger(\'paid_subscriptions\');
-				}
 			'),
 		),
 		// Search engines
@@ -545,10 +516,6 @@ function ModifyLayoutSettings($return_config = false)
 			array('check', 'topbottomEnable'),
 			array('check', 'onlineEnable'),
 			array('check', 'enableVBStyleLogin'),
-		'',
-			// Automatic image resizing.
-			array('int', 'max_image_width'),
-			array('int', 'max_image_height'),
 		'',
 			// This is sort of like debugging.
 			array('check', 'timeLoadPageEnable'),

@@ -86,7 +86,7 @@ function ManagePaidSubscriptions()
 	);
 
 	// Default the sub-action to 'view subscriptions', but only if they have already set things up..
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_currency_symbol']) ? 'view' : 'settings');
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_enabled']) && !empty($modSettings['paid_currency_symbol']) ? 'view' : 'settings');
 
 	// Make sure you can do this.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
@@ -124,6 +124,12 @@ function ModifySubscriptionSettings($return_config = false)
 
 	// These are all the default settings.
 	$config_vars = array(
+			array('check', 'paid_enabled', 'subtext' => $txt['paid_enabled_desc']),
+	);
+
+	if (!empty($modSettings['paid_enabled']))
+	{
+		$config_vars = array_merge($config_vars, array(
 			array('select', 'paid_email', array(0 => $txt['paid_email_no'], 1 => $txt['paid_email_error'], 2 => $txt['paid_email_all']), 'subtext' => $txt['paid_email_desc']),
 			array('text', 'paid_email_to', 'subtext' => $txt['paid_email_to_desc'], 'size' => 60),
 		'',
@@ -131,18 +137,20 @@ function ModifySubscriptionSettings($return_config = false)
 			array('text', 'paid_currency_code', 'subtext' => $txt['paid_currency_code_desc'], 'size' => 5, 'force_div_id' => 'custom_currency_code_div'),
 			array('text', 'paid_currency_symbol', 'subtext' => $txt['paid_currency_symbol_desc'], 'size' => 8, 'force_div_id' => 'custom_currency_symbol_div'),
 			array('check', 'paidsubs_test', 'subtext' => $txt['paidsubs_test_desc'], 'onclick' => 'return $(\'#paidsubs_test\').attr(\'checked\') ? confirm(' . JavaScriptEscape($txt['paidsubs_test_confirm']) . ') : true;'),
-	);
+		));
+	
 
-	// Now load all the other gateway settings.
-	$gateways = loadPaymentGateways();
-	foreach ($gateways as $gateway)
-	{
-		$gatewayClass = new $gateway['display_class']();
-		$setting_data = $gatewayClass->getGatewaySettings();
-		if (!empty($setting_data))
+		// Now load all the other gateway settings.
+		$gateways = loadPaymentGateways();
+		foreach ($gateways as $gateway)
 		{
-			$config_vars[] = array('title', $gatewayClass->title, 'text_label' => (isset($txt['paidsubs_gateway_title_' . $gatewayClass->title]) ? $txt['paidsubs_gateway_title_' . $gatewayClass->title] : $gatewayClass->title));
-			$config_vars = array_merge($config_vars, $setting_data);
+			$gatewayClass = new $gateway['display_class']();
+			$setting_data = $gatewayClass->getGatewaySettings();
+			if (!empty($setting_data))
+			{
+				$config_vars[] = array('title', $gatewayClass->title, 'text_label' => (isset($txt['paidsubs_gateway_title_' . $gatewayClass->title]) ? $txt['paidsubs_gateway_title_' . $gatewayClass->title] : $gatewayClass->title));
+				$config_vars = array_merge($config_vars, $setting_data);
+			}
 		}
 	}
 
@@ -181,13 +189,39 @@ function ModifySubscriptionSettings($return_config = false)
 	{
 		checkSession();
 
-		// Sort out the currency stuff.
-		if ($_POST['paid_currency'] != 'other')
+		// If we've gone from enabled to disabled or back, fix the scheduled task.
+		$new_value = !empty($_POST['paid_enabled']) ? 1 : 0;
+		$old_value = !empty($modSettings['paid_enabled']) ? 1 : 0;
+		if ($new_value != $old_value)
 		{
-			$_POST['paid_currency_code'] = $_POST['paid_currency'];
-			$_POST['paid_currency_symbol'] = $txt[$_POST['paid_currency'] . '_symbol'];
+			wesql::query('
+				UPDATE {db_prefix}scheduled_tasks
+				SET disabled = {int:disabled}
+				WHERE task = {string:task}',
+				array(
+					'disabled' => $new_value ? 0 : 1,
+					'task' => 'paid_subscriptions',
+				)
+			);
+
+			// Should we calculate next trigger?
+			if ($new_value)
+			{
+				loadSource('ScheduledTasks');
+				CalculateNextTrigger('paid_subscriptions');
+			}
 		}
-		unset($config_vars['dummy_currency']);
+
+		if ($new_value)
+		{
+			// Sort out the currency stuff.
+			if (!empty($_POST['paid_currency']) && $_POST['paid_currency'] != 'other')
+			{
+				$_POST['paid_currency_code'] = $_POST['paid_currency'];
+				$_POST['paid_currency_symbol'] = $txt[$_POST['paid_currency'] . '_symbol'];
+			}
+			unset($config_vars['dummy_currency']);
+		}
 
 		saveDBSettings($config_vars);
 

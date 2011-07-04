@@ -61,54 +61,6 @@ function Admin()
 
 	// Define all the menu structure - see Subs-Menu.php for details!
 	$admin_areas = array(
-		'forum' => array(
-			'title' => $txt['admin_main'],
-			'permission' => array('admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'),
-			'areas' => array(
-				'index' => array(
-					'label' => $txt['admin_center'],
-					'function' => 'AdminHome',
-					'icon' => 'administration.gif',
-				),
-				'credits' => array(
-					'label' => $txt['support_credits_title'],
-					'function' => 'AdminCredits',
-					'icon' => 'support.gif',
-				),
-				'',
-				'news' => array(
-					'label' => $txt['news_title'],
-					'file' => 'ManageNews',
-					'function' => 'ManageNews',
-					'icon' => 'news.gif',
-					'permission' => array('edit_news', 'send_mail', 'admin_forum'),
-					'subsections' => array(
-						'editnews' => array($txt['admin_edit_news'], 'edit_news'),
-						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
-						'settings' => array($txt['settings'], 'admin_forum'),
-					),
-				),
-				'',
-				'packages' => array(
-					'label' => $txt['package'],
-					'file' => 'Packages',
-					'function' => 'Packages',
-					'permission' => array('admin_forum'),
-					'icon' => 'packages.gif',
-					'subsections' => array(
-						'browse' => array($txt['browse_packages']),
-						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
-						'perms' => array($txt['package_file_perms']),
-						'options' => array($txt['package_settings']),
-					),
-				),
-				'search' => array(
-					'function' => 'AdminSearch',
-					'permission' => array('admin_forum'),
-					'select' => 'index'
-				),
-			),
-		),
 		'config' => array(
 			'title' => $txt['admin_config'],
 			'permission' => array('admin_forum'),
@@ -158,12 +110,24 @@ function Admin()
 						'proxy' => array($txt['proxy_settings']),
 					),
 				),
+				'mailqueue' => array(
+					'label' => $txt['mailqueue_title'],
+					'file' => 'ManageMail',
+					'function' => 'ManageMail',
+					'icon' => 'mail.gif',
+					'bigicon' => 'mail_settings.png',
+					'subsections' => array(
+						'browse' => array($txt['mailqueue_browse'], 'admin_forum'),
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
+					),
+				),
 				'',
 				'languages' => array(
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageServer',
 					'function' => 'ManageLanguages',
 					'icon' => 'languages.gif',
+					'bigicon' => 'languages.png',
 					'subsections' => array(
 						'edit' => array($txt['language_edit']),
 						'add' => array($txt['language_add']),
@@ -190,23 +154,11 @@ function Admin()
 						'edit' => array($txt['themeadmin_edit_title']),
 					),
 				),
-				'',
-				'modsettings' => array(
-					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifyModSettings',
-					'icon' => 'modifications.gif',
-					'subsections' => array(
-						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook
-						// to automatically insert your menu entry into this spot.
-					),
-				),
 			),
 		),
 		'layout' => array(
 			'title' => $txt['layout_controls'],
-			'permission' => array('manage_boards', 'admin_forum', 'manage_smileys', 'manage_attachments', 'moderate_forum'),
+			'permission' => array('manage_boards', 'admin_forum', 'manage_smileys', 'manage_attachments', 'moderate_forum', 'edit_news', 'send_mail'),
 			'areas' => array(
 				'manageboards' => array(
 					'label' => $txt['admin_boards'],
@@ -256,6 +208,7 @@ function Admin()
 					'file' => 'ManageAttachments',
 					'function' => 'ManageAttachments',
 					'icon' => 'attachment.gif',
+					'bigicon' => 'attach.png',
 					'permission' => array('manage_attachments'),
 					'subsections' => array(
 						'browse' => array($txt['attachment_manager_browse']),
@@ -270,11 +223,11 @@ function Admin()
 					'file' => 'ManageCalendar',
 					'function' => 'ManageCalendar',
 					'icon' => 'calendar.gif',
+					'bigicon' => !empty($modSettings['cal_enabled']) ? 'calendar_on.png' : 'calendar_off.png',
 					'permission' => array('admin_forum'),
-					'enabled' => !empty($modSettings['cal_enabled']),
 					'subsections' => array(
-						'holidays' => array($txt['manage_holidays'], 'admin_forum', 'enabled' => !empty($modSettings['cal_enabled'])),
-						'settings' => array($txt['calendar_settings'], 'admin_forum'),
+						'holidays' => array($txt['manage_holidays'], 'enabled' => !empty($modSettings['cal_enabled'])),
+						'settings' => array($txt['calendar_settings']),
 					),
 				),
 				'managesearch' => array(
@@ -282,10 +235,39 @@ function Admin()
 					'file' => 'ManageSearch',
 					'function' => 'ManageSearch',
 					'icon' => 'search.gif',
+					'bigicon' => 'search.png',
 					'permission' => array('admin_forum'),
 					'subsections' => array(
 						'weights' => array($txt['search_weights']),
 						'method' => array($txt['search_method']),
+						'settings' => array($txt['settings']),
+					),
+				),
+				'',
+				'news' => array(
+					'label' => $txt['news_title'],
+					'file' => 'ManageNews',
+					'function' => 'ManageNews',
+					'icon' => 'news.gif',
+					'permission' => array('edit_news', 'send_mail', 'admin_forum'),
+					'subsections' => array(
+						'editnews' => array($txt['admin_edit_news'], 'edit_news'),
+						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
+						'settings' => array($txt['settings'], 'admin_forum'),
+					),
+				),
+				'',
+				'sengines' => array(
+					'label' => $txt['search_engines'],
+					'enabled' => !empty($modSettings['spider_mode']),
+					'file' => 'ManageSearchEngines',
+					'icon' => 'engines.gif',
+					'function' => 'SearchEngines',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'stats' => array($txt['spider_stats']),
+						'logs' => array($txt['spider_logs']),
+						'spiders' => array($txt['spiders']),
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -317,6 +299,7 @@ function Admin()
 				'aeva_embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
 					'icon' => 'aeva.png',
+					'bigicon' => !empty($modSettings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
 					'enabled' => !empty($modSettings['embed_enabled']),
 					'subsections' => array(
 						'config' => 'media_admin_settings_config',
@@ -383,6 +366,7 @@ function Admin()
 					'file' => 'ManageMembers',
 					'function' => 'ViewMembers',
 					'icon' => 'members.gif',
+					'bigicon' => 'members.png',
 					'permission' => array('moderate_forum'),
 					'subsections' => array(
 						'all' => array($txt['view_all_members']),
@@ -394,6 +378,7 @@ function Admin()
 					'file' => 'ManageMembergroups',
 					'function' => 'ModifyMembergroups',
 					'icon' => 'membergroups.gif',
+					'bigicon' => 'membergroups.png',
 					'permission' => array('manage_membergroups'),
 					'subsections' => array(
 						'index' => array($txt['membergroups_edit_groups'], 'manage_membergroups'),
@@ -406,6 +391,7 @@ function Admin()
 					'file' => 'ManagePermissions',
 					'function' => 'ModifyPermissions',
 					'icon' => 'permissions.gif',
+					'bigicon' => 'permissions.png',
 					'permission' => array('manage_permissions'),
 					'subsections' => array(
 						'index' => array($txt['permissions_groups'], 'manage_permissions'),
@@ -420,6 +406,7 @@ function Admin()
 					'file' => 'ManageRegistration',
 					'function' => 'RegCenter',
 					'icon' => 'regcenter.gif',
+					'bigicon' => 'registration.png',
 					'permission' => array('admin_forum', 'moderate_forum'),
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
@@ -433,6 +420,7 @@ function Admin()
 					'file' => 'ManageBans',
 					'function' => 'Ban',
 					'icon' => 'ban.gif',
+					'bigicon' => 'banlist.png',
 					'permission' => 'manage_bans',
 					'subsections' => array(
 						'list' => array($txt['ban_edit_list']),
@@ -443,28 +431,13 @@ function Admin()
 				),
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
-					'enabled' => !empty($modSettings['paid_enabled']),
 					'file' => 'ManagePaid',
 					'icon' => 'paid.gif',
+					'bigicon' => !empty($modSettings['paid_enabled']) ? 'paid_subs_on.png' : 'paid_subs_off.png',
 					'function' => 'ManagePaidSubscriptions',
 					'permission' => 'admin_forum',
 					'subsections' => array(
-						'view' => array($txt['paid_subs_view']),
-						'settings' => array($txt['settings']),
-					),
-				),
-				'',
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'enabled' => !empty($modSettings['spider_mode']),
-					'file' => 'ManageSearchEngines',
-					'icon' => 'engines.gif',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => array(
-						'stats' => array($txt['spider_stats']),
-						'logs' => array($txt['spider_logs']),
-						'spiders' => array($txt['spiders']),
+						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($modSettings['paid_enabled'])),
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -478,6 +451,7 @@ function Admin()
 					'label' => $txt['maintain_title'],
 					'file' => 'ManageMaintenance',
 					'icon' => 'maintain.gif',
+					'bigicon' => 'maintenance.png',
 					'function' => 'ManageMaintenance',
 					'subsections' => array(
 						'routine' => array($txt['maintain_sub_routine'], 'admin_forum'),
@@ -490,6 +464,7 @@ function Admin()
 					'label' => $txt['maintain_tasks'],
 					'file' => 'ManageScheduledTasks',
 					'icon' => 'scheduled.gif',
+					'bigicon' => 'scheduled_tasks.png',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => array(
 						'tasks' => array($txt['maintain_tasks'], 'admin_forum'),
@@ -497,27 +472,19 @@ function Admin()
 					),
 				),
 				'',
-				'mailqueue' => array(
-					'label' => $txt['mailqueue_title'],
-					'file' => 'ManageMail',
-					'function' => 'ManageMail',
-					'icon' => 'mail.gif',
-					'subsections' => array(
-						'browse' => array($txt['mailqueue_browse'], 'admin_forum'),
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
-					),
-				),
 				'reports' => array(
 					'label' => $txt['generate_reports'],
 					'file' => 'Reports',
 					'function' => 'ReportsMain',
 					'icon' => 'reports.gif',
+					'bigicon' => 'reports.png',
 				),
 				'',
 				'logs' => array(
 					'label' => $txt['logs'],
 					'function' => 'AdminLogs',
 					'icon' => 'logs.gif',
+					'bigicon' => 'logs.png',
 					'subsections' => array(
 						'errorlog' => array($txt['errlog'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
@@ -537,7 +504,41 @@ function Admin()
 				),
 			),
 		),
+		'addons' => array(
+			'title' => $txt['package'],
+			'permission' => array('admin_forum'),
+			'areas' => array(
+				'packages' => array(
+					'label' => $txt['package'],
+					'file' => 'Packages',
+					'function' => 'Packages',
+					'permission' => array('admin_forum'),
+					'icon' => 'packages.gif',
+					'subsections' => array(
+						'browse' => array($txt['browse_packages']),
+						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
+						'perms' => array($txt['package_file_perms']),
+						'options' => array($txt['package_settings']),
+					),
+				),
+				'modsettings' => array(
+					'label' => $txt['admin_modifications'],
+					'file' => 'ManageSettings',
+					'function' => 'ModifyModSettings',
+					'icon' => 'modifications.gif',
+					'subsections' => array(
+						'general' => array($txt['mods_cat_modifications_misc']),
+						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook
+						// to automatically insert your menu entry into this spot.
+					),
+				),
+			),
+		),
 	);
+
+	$menuOptions = array();
+	if (isset($_GET['togglebar']) && (empty($_GET['area']) || $_GET['area'] == 'index'))
+		$menuOptions['toggle_redirect_url'] = 'action=admin;' . $context['session_query'];
 
 	// Temp compatibility code for Aeva Media integration...
 	foreach ($admin_areas['media']['areas'] as &$tab)
@@ -574,12 +575,34 @@ function Admin()
 	validateSession();
 
 	// Actually create the menu!
-	$admin_include_data = createMenu($admin_areas);
+	$admin_include_data = createMenu($admin_areas, $menuOptions);
 	unset($admin_areas);
 
 	// Nothing valid?
 	if ($admin_include_data == false)
 		fatal_lang_error('no_access', false);
+
+	// The admin search function used to depend on the front page, but really, there's no need to put that into the menu...
+	// Note that we have to explicitly override the default menu behaviour here because the menu code never expects to have items from outside it.
+	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
+	if (!empty($_REQUEST['area']) && $_REQUEST['area'] == 'search')
+	{
+		$admin_include_data['current_area'] = 'search';
+		$admin_include_data['function'] = 'AdminSearch';
+		$admin_include_data['label'] = $txt['admin_main'];
+		$menu_context['current_section'] = '';
+		$menu_context['current_area'] = '';
+		$menu_context['toggle_url'] = $menu_context['base_url'] . $menu_context['extra_parameters'] . ';togglebar';
+	}
+	// The admin front page is not part of the above. But if you can see any of the items in the admin panel, you can see the front page too.
+	elseif (empty($_GET['area']) || $_GET['area'] != $menu_context['current_area'])
+	{
+		$admin_include_data['current_area'] = 'index';
+		$admin_include_data['function'] = 'AdminHome';
+		$menu_context['current_section'] = '';
+		$menu_context['current_area'] = '';
+		$menu_context['toggle_url'] = $menu_context['base_url'] . $menu_context['extra_parameters'] . ';togglebar';
+	}
 
 	// Build the link tree.
 	$context['linktree'][] = array(
@@ -624,101 +647,8 @@ function AdminHome()
 	loadSubTemplate('admin');
 	$context['page_title'] = $txt['admin_center'];
 
-	// The format of this array is: permission, action, title, description, icon.
-	$quick_admin_tasks = array(
-		array('', 'credits', 'support_credits_title', 'support_credits_info', 'support_and_credits.png'),
-		array('admin_forum', 'featuresettings', 'modSettings_title', 'modSettings_info', 'features_and_options.png'),
-		array('admin_forum', 'maintain', 'maintain_title', 'maintain_info', 'forum_maintenance.png'),
-		array('manage_permissions', 'permissions', 'edit_permissions', 'edit_permissions_info', 'permissions.png'),
-		array('admin_forum', 'theme;sa=admin;' . $context['session_query'], 'theme_admin', 'theme_admin_info', 'themes_and_layout.png'),
-		array('admin_forum', 'packages', 'package', 'package_info', 'packages.png'),
-		array('manage_smileys', 'smileys', 'smileys_manage', 'smileys_manage_info', 'smilies_and_messageicons.png'),
-		array('moderate_forum', 'viewmembers', 'admin_users', 'member_center_info', 'members.png'),
-	);
-
-	$context['quick_admin_tasks'] = array();
-	foreach ($quick_admin_tasks as $task)
-	{
-		if (!empty($task[0]) && !allowedTo($task[0]))
-			continue;
-
-		$context['quick_admin_tasks'][] = array(
-			'href' => $scripturl . '?action=admin;area=' . $task[1],
-			'link' => '<a href="' . $scripturl . '?action=admin;area=' . $task[1] . '">' . $txt[$task[2]] . '</a>',
-			'title' => $txt[$task[2]],
-			'description' => $txt[$task[3]],
-			'icon' => $task[4],
-			'is_last' => false
-		);
-	}
-
-	if (count($context['quick_admin_tasks']) % 2 == 1)
-	{
-		$context['quick_admin_tasks'][] = array(
-			'href' => '',
-			'link' => '',
-			'title' => '',
-			'description' => '',
-			'is_last' => true
-		);
-		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
-	}
-	elseif (count($context['quick_admin_tasks']) != 0)
-	{
-		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 1]['is_last'] = true;
-		$context['quick_admin_tasks'][count($context['quick_admin_tasks']) - 2]['is_last'] = true;
-	}
-}
-
-// Display support information and credits.
-function AdminCredits()
-{
-	global $context, $txt;
-
-	// Things we need, to make us go.
-	loadSubTemplate('credits');
-	loadSource(array('Credits', 'Subs-Admin'));
-
-	Credits(true);
-
-	// Get a list of current server versions.
-	$checkFor = array(
-		'gd',
-		'db_server',
-		'eaccelerator',
-		'phpa',
-		'apc',
-		'memcache',
-		'xcache',
-		'php',
-		'server',
-	);
-	$context['current_versions'] = getServerVersions($checkFor);
-
-	$context['page_title'] = $txt['support_credits_title'];
-
-	$context['current_versions'] = array(
-		'php' => array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION),
-		'db' => array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => min(mysql_get_server_info(), mysql_get_client_info())),
-		'server' => array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']),
-	);
-
-	// Lastly, fill in the blanks in the support resources paragraphs.
-	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
-		'http://wiki.simplemachines.org/',
-		'http://wiki.simplemachines.org/smf/features2',
-		'http://wiki.simplemachines.org/smf/options2',
-		'http://wiki.simplemachines.org/smf/themes2',
-		'http://wiki.simplemachines.org/smf/packages2'
-	);
-
-	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
-		'http://www.simplemachines.org/community/',
-		'http://www.simplemachines.org/redirect/english_support',
-		'http://www.simplemachines.org/redirect/international_support_boards',
-		'http://www.simplemachines.org/redirect/smf_support',
-		'http://www.simplemachines.org/redirect/customize_support'
-	);
+	// For readability.
+	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
 }
 
 // We have to do some stuff for the admin sidebar.

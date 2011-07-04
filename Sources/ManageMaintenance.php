@@ -1435,6 +1435,22 @@ function VersionDetail()
 
 	// Call the function that'll get all the version info we need.
 	loadSource('Subs-Admin');
+
+	// Get a list of current server versions.
+	$checkFor = array(
+		'gd',
+		'db_server',
+		'eaccelerator',
+		'phpa',
+		'apc',
+		'memcache',
+		'xcache',
+		'php',
+		'server',
+	);
+	$context['current_versions'] = getServerVersions($checkFor);
+
+	// Now the file versions.
 	$versionOptions = array(
 		'include_ssi' => true,
 		'include_subscriptions' => true,
