@@ -137,18 +137,7 @@ function template_credits()
 	// Show the user version information from their server.
 	echo '
 
-	<div id="admincenter">
-		';
-
-	// Point the admin to common support resources.
-	echo '
-		<we:cat>
-			', $txt['support_resources'], '
-		</we:cat>
-		<div class="windowbg2 wrc">
-			<p>', $txt['support_resources_p1'], '</p>
-			<p>', $txt['support_resources_p2'], '</p>
-		</div>';
+	<div id="admincenter">';
 
 	// Display latest support questions from simplemachines.org.
 	echo '
