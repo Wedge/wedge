@@ -195,6 +195,7 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			'Languages',
 			'Templates'
 		],
+		that = this,
 		i, n, sFilename, sYourVersion, sVersionType;
 
 	for (i = 0, n = sSections.length; i < n; i++)
@@ -203,13 +204,9 @@ smf_ViewVersions.prototype.determineVersions = function ()
 		$('#' + sSections[i]).hide();
 
 		// Make all section links clickable.
-		$('#' + sSections[i] + '-link').each(function () {
-			this.instanceRef = this;
-			this.sSection = sSections[i];
-			this.onclick = function () {
-				this.instanceRef.swapOption(this, this.sSection);
-				return false;
-			};
+		$('#' + sSections[i] + '-link').data('section', sSections[i]).click(function () {
+			that.swapOption(this, $(this).data('section'));
+			return false;
 		});
 	}
 

@@ -75,10 +75,7 @@ function getServerVersions($checkFor)
 		if (!wesql::is_connected())
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
-		{
-			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => '');
-			$versions['db_server']['version'] = wedbExtra::get_version();
-		}
+			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => wedbExtra::get_version());
 	}
 
 	// If we're using memcache we need the server info.

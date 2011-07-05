@@ -819,16 +819,18 @@ function template_modify_group_classic($type)
 				if ($has_display_content)
 				{
 					echo '
-					<tr class="catbg">
-						<th colspan="2" class="w100 left"><strong class="smalltext">', $permissionGroup['name'], '</strong></th>';
+					<tr class="catbg center">
+						<th colspan="2" class="w100">
+							', $permissionGroup['name'], '
+						</th>';
 					if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
 						echo '
 						<th colspan="3" style="width: 10px"></th>';
 					else
 						echo '
-						<th class="center"><div>', $txt['permissions_option_on'], '</div></th>
-						<th class="center"><div>', $txt['permissions_option_off'], '</div></th>
-						<th class="center"><div>', $txt['permissions_option_deny'], '</div></th>';
+						<th>', $txt['permissions_option_on'], '</th>
+						<th>', $txt['permissions_option_off'], '</th>
+						<th>', $txt['permissions_option_deny'], '</th>';
 					echo '
 					</tr>';
 				}
@@ -841,7 +843,7 @@ function template_modify_group_classic($type)
 				if ($permission['hidden'] || $permissionGroup['hidden'])
 				{
 					echo '
-					<tr style="display: none;">
+					<tr style="display: none">
 						<td>';
 
 					if ($permission['has_own_any'])
@@ -965,7 +967,7 @@ function template_inline_permissions()
 				<dt>
 					<span class="perms"><strong>', $txt['permissions_option_on'], '</strong></span>
 					<span class="perms"><strong>', $txt['permissions_option_off'], '</strong></span>
-					<span class="perms" style="color: red;"><strong>', $txt['permissions_option_deny'], '</strong></span>
+					<span class="perms" style="color: red"><strong>', $txt['permissions_option_deny'], '</strong></span>
 				</dt>
 				<dd>
 				</dd>';
@@ -991,11 +993,11 @@ function template_inline_permissions()
 			echo '
 				</dt>
 				<dd>
-					<span', $group['is_postgroup'] ? ' style="font-style: italic;"' : '', '>', $group['name'], '</span>
+					<span', $group['is_postgroup'] ? ' style="font-style: italic"' : '', '>', $group['name'], '</span>
 				</dd>';
 		else
 			echo '
-					<span', $group['is_postgroup'] ? ' style="font-style: italic;"' : '', '>', $group['name'], '</span>
+					<span', $group['is_postgroup'] ? ' style="font-style: italic"' : '', '>', $group['name'], '</span>
 				</li>';
 	}
 
@@ -1009,7 +1011,7 @@ function template_inline_permissions()
 	echo '
 		</fieldset>
 
-		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" style="display: none;">[ ', $txt['avatar_select_permission'], ' ]</a>';
+		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" style="display: none">[ ', $txt['avatar_select_permission'], ' ]</a>';
 
 	add_js('
 	$("#', $context['current_permission'], '").hide();
@@ -1118,7 +1120,7 @@ function template_postmod_permissions()
 				<input type="submit" name="save_changes" value="', $txt['permissions_commit'], '" class="submit">
 			</div>
 		</form>
-		<p class="smalltext" style="padding-left: 10px;">
+		<p class="smalltext" style="padding-left: 10px">
 			<strong>', $txt['permissions_post_moderation_legend'], ':</strong><br>
 			<img src="', $settings['default_images_url'], '/admin/post_moderation_allow.gif" alt="', $txt['permissions_post_moderation_allow'], '"> - ', $txt['permissions_post_moderation_allow'], '<br>
 			<img src="', $settings['default_images_url'], '/admin/post_moderation_moderate.gif" alt="', $txt['permissions_post_moderation_moderate'], '"> - ', $txt['permissions_post_moderation_moderate'], '<br>
