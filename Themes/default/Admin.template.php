@@ -105,7 +105,7 @@ function template_admin_support_info()
 	// Show the user version information from their server.
 	echo '
 			<we:title>
-				<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
+				', $txt['support_title'], '
 			</we:title>
 			<div id="version_details">
 				<strong>', $txt['support_versions'], ':</strong><br>

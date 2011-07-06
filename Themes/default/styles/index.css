@@ -103,6 +103,10 @@ body
 			margin: 0 0 2px 0
 			padding: 0
 
+#feed
+	overflow: hidden
+	margin: 1em 0
+
 ul#noava
 	margin: 0
 

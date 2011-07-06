@@ -62,6 +62,7 @@ ol.search_results
 	width: 100px
 	font-size: 85%
 	text-align: center
+	vertical-align: top
 
 #wedge_news
 	overflow-y: auto
