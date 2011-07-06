@@ -152,6 +152,7 @@ function SetCensor()
 			'censor_proper' => implode("\n", $censored_proper),
 			'censorWholeWord' => empty($_POST['censorWholeWord']) ? '0' : '1',
 			'censorIgnoreCase' => empty($_POST['censorIgnoreCase']) ? '0' : '1',
+			'allow_no_censored' => empty($_POST['allow_no_censored']) ? '0' : '1',
 		);
 
 		updateSettings($updates);

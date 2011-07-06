@@ -56,6 +56,9 @@ function ManageMail()
 
 	// By default we want to browse
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'browse';
+	if (empty($modSettings['mail_queue']))
+		$_REQUEST['sa'] = 'settings';
+
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Load up all the tabs...

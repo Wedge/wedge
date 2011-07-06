@@ -117,7 +117,7 @@ function Admin()
 					'icon' => 'mail.gif',
 					'bigicon' => 'mail_settings.png',
 					'subsections' => array(
-						'browse' => array($txt['mailqueue_browse'], 'admin_forum'),
+						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
 						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
 					),
 				),

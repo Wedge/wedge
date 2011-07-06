@@ -1278,7 +1278,7 @@ function &censorText(&$text, $force = false)
 	global $modSettings, $options, $settings, $txt;
 	static $censor_vulgar = null, $censor_proper;
 
-	if ((!empty($options['show_no_censored']) && $settings['allow_no_censored'] && !$force) || empty($modSettings['censor_vulgar']))
+	if ((!empty($options['show_no_censored']) && $modSettings['allow_no_censored'] && !$force) || empty($modSettings['censor_vulgar']))
 		return $text;
 
 	// If they haven't yet been loaded, load them.

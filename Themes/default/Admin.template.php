@@ -500,7 +500,7 @@ function template_edit_censored()
 
 	function addNewWord()
 	{
-		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> => <input type="text" name="censor_proper[]" size="20"><\' + \'/div>\');
+		$("#moreCensoredWords").append(\'<div style="margin-top: 1ex"><input type="text" name="censor_vulgar[]" size="20"> =&gt; <input type="text" name="censor_proper[]" size="20"><\' + \'/div>\');
 	}');
 
 	echo '
@@ -517,6 +517,12 @@ function template_edit_censored()
 					</dt>
 					<dd>
 						<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($modSettings['censorIgnoreCase']) ? '' : ' checked', '>
+					</dd>
+					<dt>
+						<label for="censorAllowDisable_check">', $txt['allow_no_censored'], ':</label>
+					</dt>
+					<dd>
+						<input type="checkbox" name="allow_no_censored" value="1" id="censorAllowDisable_check"', empty($modSettings['allow_no_censored']) ? '' : ' checked', '>
 					</dd>
 				</dl>
 				<input type="submit" name="save_censor" value="', $txt['save'], '" class="save">
