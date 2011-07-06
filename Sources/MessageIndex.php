@@ -624,8 +624,8 @@ function MessageIndex()
 		'markread' => array('text' => 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_query']),
 	);
 
-	// They can only mark read if they are logged in and it's enabled!
-	if (!$context['user']['is_logged'] || !$settings['show_mark_read'])
+	// They can only mark read if they are logged in!
+	if (!$context['user']['is_logged'])
 		unset($context['button_list']);
 
 	// Allow adding new buttons easily.

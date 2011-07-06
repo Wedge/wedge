@@ -88,7 +88,7 @@ function template_unread()
 	echo '
 	<div id="recent">';
 
-	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
+	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
 
 	if ($show_checkboxes)
 		echo '
@@ -97,21 +97,18 @@ function template_unread()
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unread', $context['querystring_board_limits'], '">';
 
-	if ($settings['show_mark_read'])
-	{
-		// Generate the button strip.
-		$mark_read = array(
-			'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_query']),
-		);
+	// Generate the button strip.
+	$mark_read = array(
+		'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_query']),
+	);
 
-		if ($show_checkboxes)
-			$mark_read['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.gif',
-				'lang' => true,
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
-	}
+	if ($show_checkboxes)
+		$mark_read['markselectread'] = array(
+			'text' => 'quick_mod_markread',
+			'image' => 'markselectedread.gif',
+			'lang' => true,
+			'url' => 'javascript:document.quickModForm.submit();',
+		);
 
 	if (!empty($context['topics']))
 	{
@@ -262,7 +259,7 @@ function template_replies()
 	echo '
 	<div id="recent">';
 
-	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $settings['show_mark_read'];
+	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
 
 	if ($show_checkboxes)
 		echo '
@@ -271,7 +268,7 @@ function template_replies()
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unreadreplies', $context['querystring_board_limits'], '">';
 
-	if (isset($context['topics_to_mark']) && !empty($settings['show_mark_read']))
+	if (isset($context['topics_to_mark']))
 	{
 		// Generate the button strip.
 		$mark_read = array(

@@ -268,7 +268,7 @@ function template_boardindex_below()
 	</div>';
 
 		// Show the mark all as read button?
-		if ($settings['show_mark_read'] && !empty($context['categories']))
+		if (!empty($context['categories']))
 			echo '<div class="mark_read">', template_button_strip($mark_read_button, 'right'), '</div>';
 	}
 	else
