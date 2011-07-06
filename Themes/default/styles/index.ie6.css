@@ -61,6 +61,9 @@ li.separator
 
 #top_section
 	height: 1%
+	.frame
+		p, h2
+			display: inline
 
 // Generic lists header
 // Side paddings must NOT be defined here.
@@ -112,8 +115,20 @@ li.separator
 	.cat
 		clear: both
 
+.postheader
+	display: block
+
 .keyinfo
 	padding-bottom: 6px
+	float: left
+	display: block
+	width: 47%
+
+ul.quickbuttons
+	display: block
+	width: 40%
+	li
+		width: 1%
 
 .inner
 	clear: both
@@ -277,9 +292,6 @@ input.save
 input.new
 	background-position: 4px -94px
 
-#upper_section .frame h1
-	display: inline // IE6 double margin bug fix
-
 // IE6 needs inline-block to be reset to inline separately... How annoying.
 .inline-block
 	display: inline
@@ -289,6 +301,7 @@ input.new
 	background-image: url($images/boardstatus-ie6.png)
 
 #upper_section h1
+	display: inline // IE6 double margin bug fix
 	filter: glow(color=#666666, strength=3)
 
 .windowbg
@@ -301,9 +314,15 @@ hr
 dl.settings dd
 	float: none
 
+ul.stats
+	margin: 3px 0 0
+
 #linktree
 	li
 		white-space: nowrap
 		margin-right: 5px
 		&.last
 			white-space: normal
+
+body
+	background-image: none

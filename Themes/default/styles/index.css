@@ -36,11 +36,12 @@
  */
 
 // Set a fontsize that will look the same in all browsers.
-body
+body extends .grad700
 	background: #444
 	color: #ccc
-	font: 78%/130% $main_font
-	margin, padding: 0
+	font: 88%/130% $main_font
+	margin: 0
+	padding: 0 6px
 
 
 /* Main layout declarations (body, sidebar...)
@@ -59,7 +60,7 @@ body
 #content
 	color: #444
 	div.frame
-		padding: 0 40px 20px
+		padding: 0 30px 20px
 		max-width: 1200px
 		margin: auto
 
@@ -77,13 +78,13 @@ body
 	background: #f2f3ea
 	border-radius: 8px
 	.column
-		padding: 12px
+		padding: 8px 12px 12px
 
 #userbox
 	overflow: hidden
 	margin: 1em 0
 	a
-		color: #600
+		color: #a54
 		border-bottom: 1px dotted #600
 		text-decoration: none
 	img.avatar
@@ -103,10 +104,6 @@ body
 			margin: 0 0 2px 0
 			padding: 0
 
-#feed
-	overflow: hidden
-	margin: 1em 0
-
 ul#noava
 	margin: 0
 
@@ -116,6 +113,7 @@ ul#noava
 	#sidebar
 		display: block
 		position: absolute
+		z-index: 8
 		left: -260px
 		transition: left .3s ease
 		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
@@ -131,18 +129,18 @@ ul#noava
 	min-height: 200px
 	padding: 4px 0 12px 30px
 
+// Top header (search box, etc.)
 #top_section
 	overflow: hidden
 	padding: 8px 30px
 	.frame
-		overflow: auto
 		p, h2
-			text-align, float: left
 			display: inline-block
-			margin: .5em 1em 0 0
+			margin: .4em 1em 0 0
+			padding: 0
 		h2 extends .arrows
-			background-position: right -52px
-			margin-right: .4em
+			background-position: right -51px
+			margin-right: .3em
 			padding-right: 18px
 		form
 			text-align, float: right
@@ -158,22 +156,15 @@ ul#noava
 		float: left
 		a
 			color: lighten(hue(#fc9, 20), 10%)
-			font: bold 2.9em $big_font
+			font: bold 2.9em $head_font
 			text-shadow: 0 0 8px #333
 
-// Float these items to the right
-#siteslogan, #wedgelogo
+#siteslogan
 	float: right
 	line-height: 3em
 
-#wedgelogo extends .minilogo
-	width: 75px
-	height: 30px
-	margin: 10px 12px 0
-
-// The upper_section, float the two each way
+// Banner header
 #upper_section
-	border-top: 3px solid darken(#fd9604, 20%)
 	background: url($images/theme/bg.jpg)
 	height: 100px
 	overflow: hidden
@@ -186,13 +177,13 @@ ul#noava
 // The navigation list (i.e. linktree)
 #linktree
 	clear: both
+	color: #999
 	padding: 0 0 1.5em
 	a
 		color: #963
 	ul
 		padding: 7px
-		margin: 0 15px
-		font: 105% Tahoma, Verdana
+		margin: 0 12px
 		overflow: hidden
 		list-style: none
 		border: 1px dotted #999
@@ -201,7 +192,7 @@ ul#noava
 			display: inline
 			line-height: 20px
 			padding: .5em 1.4em .5em 0
-			background-position: right -45px
+			background-position: right -44px
 			&.last
 				background: none
 
@@ -213,21 +204,25 @@ ul#noava
 // The footer with copyright links etc.
 #footer
 	margin: 0 auto
-	border-top: 3px solid #fd9604
+	border-top: 3px solid #bdb5b5
 	div.frame extends .wedgesymbol
 		padding: 10px 20px
-	p
-		font-size: .9em
+	a
+		color: #fff
+		border-bottom: 1px dashed #fff
+		text-decoration: none
 	ul
 		padding: 0 0 8px 0
 		li
-			font-size: .9em
-			display: inline
+			display: block
 			padding: 0 2px
-			&.copyright
-				display: block
-			a
-				color: #fff
+			line-height: 160%
+			&.rd, &.stats
+				display: inline
+			&.links
+				margin: 0 -8px
+				a
+					margin: 0 8px
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -250,7 +245,7 @@ a.new_win
 	:link, :visited
 		color: #679
 
-// We live in your shadow.
+// We worship his shadow.
 .hide
 	display: none
 
@@ -284,6 +279,11 @@ fieldset
 	legend
 		font-weight: bold
 		color: #666
+	&.windowbg legend
+		background: $main_bg
+		border: 1px solid rgba(0, 0, 0, .1)
+		border-radius: 6px
+		padding: 2px 6px
 
 // No image should have a border when linked.
 a img
@@ -309,10 +309,7 @@ em
 	background-repeat: no-repeat
 
 .wedgesymbol
-	background: transparent url($images/wedgesight.png) 99% 70% no-repeat
-
-.minilogo
-	background: transparent url($images/minilogo.png) no-repeat
+	background: transparent url($images/wedgesight.png) 99% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc
@@ -320,7 +317,7 @@ em
 	margin-bottom: 4px
 	padding: .9em 1.2em
 	border-radius: 12px
-	border: 1px solid rgba(0,0,0, .1)
+	// !!! border: 1px solid rgba(0,0,0, .1)
 	p
 		margin: 0 0 .5em
 
@@ -359,18 +356,17 @@ em
 
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg extends .grad700
-	color: #000
-	background-color: #f9f6f0
+	color: #444
+	background-color: #f5f5f5
 	background-position: 0 -550px
+	a
+		color: #47a
 
 .windowbg2 extends .windowbg
 	background-color: #f3f7f3
 
 .windowbg3 extends .windowbg
 	background-color: #cad3cd
-
-.windowbg a
-	color: #47a
 
 .inline-block
 	display: inline-block
@@ -395,6 +391,8 @@ input, select, textarea
 	background: #fff
 	border: 1px solid #7f9db9
 	padding: 2px
+	:hover, :focus
+		border: 1px solid #454545
 
 // Select elements look horrible with the extra padding, so leave them unpadded.
 select
@@ -411,19 +409,16 @@ select.qaction, input.qaction
 textarea
 	font: 100%/130% $main_font
 
-// Buttons should be styled a bit differently, in order to make them look more button'ish.
-input, textarea, select
-	:hover, :focus
-		border: 1px solid #454545
-
 input[type=submit], input[type=button], .ie_button
 	background: #d6e6e6 url($images/theme/bevel.png)
 	border: 1px solid
 	border-color: #ccc #999 #999 #ccc
 	cursor: pointer
-	padding: 3px 4px
-	color: #555
+	height, line-height: 24px
+	font-size: 13px
 	border-radius: 5px
+	padding: 0 5px
+	color: #555
 	:hover
 		background-color: #dee
 		color: #000
@@ -432,31 +427,31 @@ input.submit
 	background: url($images/buttons.png) no-repeat $bevel
 	padding-left: 24px
 	background-color: #e2f3ea
-	background-position: 4px 2px, 0 0
+	background-position: 4px 3px, 0 0, 0 0
 	:hover
 		background-color: #e8f9f0
 
 input.delete extends input.submit
 	background-color: #f5efe9
-	background-position: 4px -30px, 0 0
+	background-position: 4px -29px, 0 0, 0 0
 	:hover
 		background-color: #fbf5ef
 
 input.save extends input.submit
 	background-color: #dff3e8
-	background-position: 4px -62px, 0 0
+	background-position: 4px -61px, 0 0, 0 0
 	:hover
 		background-color: #e5f9ed
 
 input.new extends input.submit
 	background-color: #e0eaf6
-	background-position: 4px -94px, 0 0
+	background-position: 4px -93px, 0 0, 0 0
 	:hover
 		background-color: #e6f0fc
 
 input.spell extends input.submit
 	background-color: #e0eaf6
-	background-position: 4px -126px, 0 0
+	background-position: 4px -125px, 0 0, 0 0
 	:hover
 		background-color: #e6f0fc
 
@@ -489,36 +484,30 @@ input[type=file]
 ------------------------------------------------------- */
 
 .menu
-	font: 105% "Tahoma", Verdana
+	font-family: $menu_font
+	line-height: 120%
 	min-height: 2em
 	display: block
 	margin: 0
-	padding: 5px 5px 2px
+	padding: 5px 0 2px
 
 #navi
 	color: #999
-	border-bottom: 3px solid #fd9604
+	border-bottom: 3px solid #bdb5b5
 	overflow: hidden
-	padding: 0 30px
+	padding: 0 25px
 
 #main_menu
-	padding: 4px 0 0
+	padding: 5px 0 0
 	float: left
 	width: 100%
 	min-height: 0
 	h4 a
 		color: #fff
-	// Specific colors for the main menu, because it's on a dark background...
-	li.chosen h4
-		margin-bottom: 0
-		padding-bottom: 5px
-		border-radius: 6px 6px 0 0
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
 		background: #5a6c85 url($images/menu.gif) no-repeat 98% -28px
-		a
-			color: white
 
 .menu li a
 	display: block
@@ -533,24 +522,25 @@ input[type=file]
 	background-position: 98% 2px
 	padding: 3px 19px 3px 6px
 	font-weight: normal
-	margin-bottom: 2px
+	margin-bottom: 5px
 	margin-right: 2px
 	a
 		border, padding: 0
 
 .menu li ul
-	background: rgba(255, 248, 240, .94) // !!! background: #fff8f1
+	background: rgba(255, 248, 240, .94)
 	position: absolute
 	display: block
 	border: 1px solid #bbb
 	z-index: 42
 	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
 	border-radius: 0 10px 10px 0
+	font-size: 10pt
 	clear: left
 	visibility: hidden
 	opacity, padding: 0
 	transition: opacity .3s ease
-	margin-top: 24px
+	margin-top: 27px
 
 .css > li > ul
 	transition: opacity .15s ease
@@ -579,13 +569,13 @@ input[type=file]
 .menu .chosen h4
 	background-color: #3fa6c3
 	background-position: 98% -28px
-	font: bold .95em/1.3em Verdana
+	font-weight: 700
 	color: #fff
 	a
 		color: #fff
 
 li.active > a
-	font: bold .95em/1.3em Verdana
+	font-weight: 700
 
 li.subsection > a extends .arrows
 	background-position: 98% -46px
@@ -594,7 +584,6 @@ li.subsection > a extends .arrows
 .css > li li:hover, li.hove
 	color: #000
 	border-radius: 0 9px 9px 0
-	// !!! background-color: #ebe7e2
 	background-color: rgba(0,0,0, .075)
 
 .menu > li > a, .menu h4
@@ -611,7 +600,9 @@ li.subsection > a extends .arrows
 			background-color: rgba(0,0,0, .075)
 
 #main_menu .chosen h4, #context_menus .chosen h4
-	background-color: #fd9604
+	background-color: #95a89d
+	&.hove
+		background-color: lighten(#95a89d, 8%)
 
 .nodrop h4, #main_menu .nodrop h4
 	background-image: none
@@ -640,7 +631,7 @@ li.separator
 		opacity: 1
 
 #main_content .menu
-	margin-bottom: 8px
+	margin-bottom: 4px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -651,7 +642,7 @@ li.separator
 	float: left
 	width, height: 16px
 	padding: 0
-	margin: 2px 4px 0 2px
+	margin: 3px 4px 0 2px
 	background-repeat: no-repeat
 	background-image: url($images/icons/sprite.png)
 	background-position: -74px 0
@@ -736,12 +727,10 @@ header, footer, aside, section, article, nav
 // Default font sizes: small (8pt), normal (10pt), and large (14pt)
 .smalltext, tr.smalltext th
 	font-size: .85em
-	font-family: $main_font
 
 .middletext
 	font-size: .9em
 	line-height: 1em
-	font-family: $main_font
 
 .normaltext
 	font-size: 1em
@@ -799,16 +788,23 @@ blockquote.bbc_standard_quote
 	font-size: 90%
 	color: #000
 	line-height: 1.4em
-	background: #d7ecda url($images/theme/quote.png) .1em .1em no-repeat
+	background: url($images/theme/quote.png) .1em .1em no-repeat
 	border: 1px dotted #99a
 	padding: 1.2em 2.2em
 	margin: .1em 0 .5em
 	overflow: auto
 	border-radius: 6px
+	.windowbg &
+		background-color: rgb(232, 232, 232)
+	.windowbg2 &
+		background-color: rgb(235, 241, 227)
 
 // Alternate blockquote stylings
 blockquote.bbc_alternate_quote extends blockquote.bbc_standard_quote
-	background-color: #cadfcd
+	.windowbg &
+		background-color: darken(rgb(232, 232, 232), 4%)
+	.windowbg2 &
+		background-color: darken(rgb(235, 241, 227), 4%)
 
 // A code block - maybe PHP ;)
 code.bbc_code, code.php_code
@@ -972,9 +968,6 @@ tr.catbg, tr.titlebg
 .postbg
 	border-left, border-right: 1px solid #7f7f7f
 
-.post
-	font-face: $post_font
-
 // The page navigation area
 .pagesection
 	font-size: .9em
@@ -1100,7 +1093,6 @@ dl.settings
 	dd
 		margin: 0 0 3px 1.5%
 		width: 56%
-		overflow: auto
 	img
 		margin: 0 10px 0 0
 
@@ -1108,10 +1100,11 @@ dl.settings
 dfn
 	display: block
 	padding: 3px 20px 3px 8px
-	font: italic 85% Verdana
+	font-style: italic
+	font-size: 95%
 	color: #888
 
-dl#rss
+dl#feed
 	clear: right
 	overflow: auto
 	margin: 10px 0 0
@@ -1135,7 +1128,7 @@ dl#rss
 	padding: 5px 10px 5px
 	margin-bottom: 4px
 	border: 1px solid rgba(0,0,0, .15)
-	font: 700 1.4em/20px $big_font
+	font: 700 140%/20px $head_font
 	img
 		vertical-align: -3px
 		padding-right: 2px
@@ -1153,11 +1146,14 @@ dl#rss
 	color: white
 	a
 		color: white
+		font-family: Arial, sans-serif
+		font-weight: 400
 		text-decoration: underline
-		font-size: .92em
 		text-shadow: none
 		:hover
 			color: #fc9
+	img
+		padding-right: 4px
 
 .cat final
 	background-color: #c3b9c3
@@ -1185,7 +1181,10 @@ dl#rss
 		color: channels(gray,0,0,30%)
 
 .cat final, .title final
-	font: bold 10pt/18px Verdana
+	font: bold 1.2em/1.2em $head_font
+
+.title final
+	font: 400 1em $main_font
 
 // A general table class
 .table_grid
@@ -1195,7 +1194,7 @@ dl#rss
 	tr.catbg th
 		white-space: nowrap
 	tr.catbg, tr.titlebg
-		font-size: 9pt
+		font-size: 10pt
 		th
 			padding: 4px 3px
 	th.last_th input
@@ -1268,9 +1267,11 @@ img.left
 img.right
 	float: right
 
-/* It's important to repeat left/right/center statements to
-   respect child priority when setting multiple classes in a table
-   <table><tr class="center"><td class="left"> should be left-aligned. */
+/*
+	It's important to repeat left/right/center statements to
+	respect child priority when setting multiple classes in a table.
+	<table><tr class="center"><td class="left"> should be left-aligned.
+*/
 table
 	&.cs0
 		border-collapse: separate
@@ -1349,13 +1350,12 @@ table
 ------------------------------------------------------- */
 
 h6
-	color: #666
-	font-weight: 700
-	padding: 0 0 6px
-	margin: 10px 0
+	color: #866
+	padding: 0 0 5px
+	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font-family: Tahoma, Verdana
+	font: 700 9pt Tahoma, Verdana
 	img
 		vertical-align: -3px
 h6.top
@@ -1409,14 +1409,15 @@ h6.alt2
 		display: block
 		text-transform: uppercase
 		text-decoration: none
-		font-size: .8em
+		font-family: Tahoma
+		font-size: 10px
 		color: #000
-		border: 1px solid rgba(0,0,0, .1)
+		border: 1px solid rgba(0,0,0, .07)
 		background: #e8e8e8
 		height, line-height: 17px
-		padding: 1px 7px 0
+		padding: 0 7px
 		margin: 0 0 0 4px
-		border-radius: 5px
+		border-radius: 6px
 		:hover
 			background: #fd9604
 			color: #fff
@@ -1475,14 +1476,18 @@ th.last_th
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-/* They can be put anywhere, they'll be considered as globals.
-   They can even be redefined later in the source code, even in a
-   satellite stylesheet, and will take effect in parent files as well. */
+/*
+	They can be put anywhere, they'll be considered as globals.
+	They can even be redefined later in the source code, even in a
+	satellite stylesheet, and will take effect in parent files as well.
+*/
 
-$main_font = "Verdana, Arial, Helvetica, sans-serif"
-$post_font = Verdana, Georgia, "Segoe UI", Geneva, verdana, sans-serif
-$big_font = "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-$bevel = ", url($images/theme/bevel.png)"
+$main_font = Arial, sans-serif
+$menu_font = Arial, sans-serif
+$post_font = Arial, sans-serif
+$head_font = "PT Sans", Arial, sans-serif
+$bevel = ", url($images/theme/bevel.png), -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
+$bevel {ie9} = ", url($images/theme/bevel.png)"
 $bevel {ie6,ie7,ie8} = ""
 $ie-max-width = "max-width"
 $ie-max-width {ie6} = "width"
@@ -1494,13 +1499,15 @@ $footer_bg = #e8e3cb
 $sidebar-width = "240px"
 $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode
 
-// These are unused for now, but I like 'em...
+// Unused, but I like to keep these around...
 $other_bg = #e7e9b8
 $reddish = "#cc6600"
 
-/* $alphamix is a RGB value that should stand for your main area's background.
-   You only need it if you're using alpha values in your CSS. Don't use a variable
-   name in it, it's already complicated enough to calculate... */
+/*
+	$alphamix is a RGB value that should stand for your main area's background.
+	You only need it if you're using alpha values in your CSS. Don't use a variable
+	name in it, it's already complicated enough to calculate...
+*/
 
 $alphamix = #fffdfa
 

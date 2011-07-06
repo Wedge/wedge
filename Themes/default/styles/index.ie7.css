@@ -7,6 +7,10 @@
 .table_grid thead th
 	padding-top, padding-bottom: 0 !important
 
+#top_section .frame
+	p, h2
+		display: inline
+
 
 /* Overrides for the messageindex template
 ------------------------------------------------------- */
@@ -46,6 +50,17 @@
 	.pagesection
 		height: 1%
 
+.postheader
+	display: block
+
+.keyinfo
+	float: left
+	display: block
+	width: 47%
+
+ul.quickbuttons
+	display: block
+	width: 40%
 
 /* Overrides for the profile template
 ------------------------------------------------------- */

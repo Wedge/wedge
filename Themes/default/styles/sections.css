@@ -10,8 +10,7 @@
 #board_list
 	box-sizing: border-box
 	td.info a.subject
-		font-weight: 700
-		font-size: 120%
+		font: 700 120% $head_font
 		color: $board_col
 	td.children
 		color: #555
@@ -28,9 +27,11 @@
 		text-align: center
 		width: 6%
 
+ul.stats
+	padding-left: 24px
+
 p.moderators
-	font-size: .8em
-	font-family: verdana, sans-serif
+	font-size: 80%
 
 // The posting icons
 #posting_icons
@@ -132,18 +133,24 @@ img.new_posts
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
 .prevnext_prev extends .cell
-	font: .7em Verdana, Arial, sans-serif
+	font: normal 60%/1.3em Arial
 	text-align: left
-	width: 150px
+	width: 20%
+	a
+		color: $reddish
 
 .prevnext_next extends .prevnext_prev
 	text-align: right
 
 #top_subject extends .cell
 	padding: 4px 8px
+	letter-spacing: -1px
+	font-family: Arial, sans-serif
 
 // The jump to box
 #display_jump_to extends .cell
+	font-family: Arial, sans-serif
+	font-size: .8em
 	select, input
 		font-size: 8pt
 		padding: 2px 2px 0
@@ -263,8 +270,17 @@ img.new_posts
 .postarea, .moderatorbar
 	margin: 0 0 0 16em
 
-.postarea div.flow_hidden
+.postheader extends .flow_hidden
 	width: 100%
+	display: table
+	h5
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		line-height, height: 1.2em
+
+.keyinfo
+	display: table-cell
 
 .moderatorbar
 	clear: right
@@ -280,7 +296,7 @@ img.new_posts
 
 	h4
 		margin: .2em 0 .2em 1.1em
-		font-size, line-height: 120%
+		font: 700 120%/120% $head_font
 		overflow: hidden
 		text-overflow: ellipsis
 		:hover, &.show
@@ -310,7 +326,8 @@ img.new_posts
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	line-height: 1.4em
+	font-family: $post_font
+	line-height: 130%
 	padding: .1em 0
 
 // The user menu in the post display.
@@ -330,6 +347,7 @@ img.new_posts
 	padding: 2px 4px
 	div
 		padding: 1px 0
+		font: 9pt Verdana, sans-serif
 
 .umme
 	position: relative
@@ -359,10 +377,6 @@ img.new_posts
 	img
 		padding: 6px 3px
 
-.keyinfo
-	float: left
-	width: 50%
-
 // The quick edit button
 .modifybutton
 	background: url($images/icons/modify_inline.gif) no-repeat 0 0
@@ -380,23 +394,19 @@ div.quickbuttons_wrap
 	width: 100%
 	float: left
 
-ul.quickbuttons
-	margin: .9em 11px 0 0
-	clear: right
-	float: right
-	text-align: right
-	font: normal .95em/22px "Trebuchet MS", arial, sans-serif
+ul.quickbuttons extends ul.reset
+	margin: 0 3% 0 0
+	clear, float, text-align: right
+	display: table-cell
+	font: 400 12px/20px "Trebuchet MS", Tahoma, sans-serif
 	text-transform: uppercase
-	li
-		float: left
-		display: inline
-		margin: 0 0 0 10px
+	li extends .inline-block
+		margin: 0 0 0 5px
 		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
 		a
 			padding: 0 0 0 22px
 			display: block
 			height: 20px
-			float: left
 	li.inline_mod_check
 		margin-left: 5px
 	a:hover
@@ -410,7 +420,7 @@ ul.quickbuttons
 	 */
 
 	li.quote_button
-		background-position: 0 0
+		background-position: 3px 0
 	li.remove_button
 		background-position: 0 -30px
 	li.modify_button
@@ -419,16 +429,16 @@ ul.quickbuttons
 		background-position: 0 -90px
 	li.restore_button
 		background-position: 0 -120px
-	li.split_button
-		background-position: 0 -150px
 	li.reply_button
 		background-position: 0 -180px
 	li.reply_all_button
 		background-position: 0 -180px
 	li.notify_button
 		background-position: 0 -210px
+	li.split_button
+		background-position: 4px -150px
 	li.mergepost_button
-		background-position: 2px -242px
+		background-position: 4px -242px
 
 .post
 	margin-top: .5em
@@ -555,6 +565,8 @@ ul.post_options
 // The smiley strip
 #smileyBox_message
 	margin: .5em
+	max-height: 120px
+	overflow-y: auto
 
 #preview_body extends .windowbg
 
@@ -925,9 +937,7 @@ dl
 	width: 20%
 	float: left
 	h4
-		font-size: 135%
-		font-weight: 100
-		line-height: 105%
+		font: 700 120%/105% $head_font
 		white-space: pre-wrap
 		overflow: hidden
 		span.position
@@ -964,7 +974,7 @@ dl
 		float: left
 		margin: 0 0 3px
 		padding: 0
-		font-weight: bold
+		font-weight: 700
 		clear: both
 	dd
 		width: 65%
@@ -1389,7 +1399,7 @@ span.hidelink
 	.search
 		background-position: 5px 4px
 	.submit
-		background-position: 4px 4px
+		background-position: 4px 3px, 0 0, 0 0
 
 /* Styles for the advanced search section.
 ------------------------------------------------- */
@@ -1515,7 +1525,7 @@ span.hidelink
 	height: height($images_dir/icons/feed.png)px
 	text-decoration: none
 	vertical-align: -3px
-	.catrss &
+	.catfeed &
 		margin-left: -4px
 
 .arrow_left extends .inline-block

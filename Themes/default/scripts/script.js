@@ -773,8 +773,8 @@ function menu_show_me()
 
 	if (!is_visible)
 		$('ul', this).first()
-			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? -6 : 18 } : { marginLeft: parent.clientWidth })
-			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 24 } : { marginLeft: parent.clientWidth - 5 }, 'fast');
+			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: parent.clientWidth })
+			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 27 } : { marginLeft: parent.clientWidth - 5 }, 'fast');
 
 	clearTimeout(menu_delay[id.substring(2)]);
 

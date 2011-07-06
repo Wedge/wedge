@@ -31,3 +31,17 @@ input.new
 
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
+
+.postheader
+	display: block
+
+.keyinfo
+	float: left
+	display: block
+	width: 47%
+
+ul.quickbuttons
+	display: block
+	width: 40%
+	li
+		width: 1%
