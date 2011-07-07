@@ -17,17 +17,6 @@ div.subheader
 		margin: 0
 		padding: 6px
 
-.aeva_ok
-	font-size: 8pt
-	line-height: 8pt
-	border: 1px solid black
-	padding: 3px 3px 3px 21px
-	margin: 0
-	background: #def url($images/aeva/accept.png) 1px 2px no-repeat
-
-.aeva_cancel extends .aeva_ok
-	background-image: url($images/aeva/cancel.png)
-
 .aep
 	margin: 6px auto
 
@@ -437,11 +426,6 @@ table.aelista
 
 .tlf
 	table-layout: fixed
-
-.popup_copyright
-	font-size: 0.9em
-	padding: 0 6px 12px 6px
-	text-align: center
 
 .ae_details
 	position: relative

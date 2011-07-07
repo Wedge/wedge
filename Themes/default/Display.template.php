@@ -115,7 +115,7 @@ function template_main()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc">
+				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc', $message['id'] == $context['first_message'] ? ' first-post' : '', '">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
@@ -281,17 +281,22 @@ function template_main()
 							</ul>
 						</div>
 						<div class="postarea">
-							<div class="flow_hidden">';
+							<div class="postheader">
+								<div class="keyinfo">
+									<div class="messageicon">
+										<img src="', $message['icon_url'] . '"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
+									</div>
+									<h5 id="subject_', $message['id'], '">
+										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
+									</h5>
+									<div class="smalltext">&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', '</strong> ', $message['time'], ' &#187;</div>
+									<div id="msg_', $message['id'], '_quick_mod"></div>
+								</div>';
 
 		// If this is the first post, (#0) just say when it was posted - otherwise give the reply #.
 		if ($message['can_approve'] || $context['can_reply'] || $message['can_modify'] || $message['can_remove'] || $context['can_split'] || $context['can_restore_msg'])
 			echo '
-								<ul class="reset quickbuttons">';
-
-		// Can we merge this post to the previous one? (Normally requires same author)
-		if ($message['can_mergeposts'])
-			echo '
-									<li class="mergepost_button"><a href="', $scripturl, '?action=mergeposts;pid=', $message['id'], ';msgid=', $message['last_post_id'], ';topic=', $context['current_topic'], '">', $txt['merge_double'], '</a></li>';
+								<ul class="quickbuttons">';
 
 		// Maybe we can approve it, maybe we should?
 		if ($message['can_approve'])
@@ -323,6 +328,11 @@ function template_main()
 			echo '
 									<li class="split_button"><a href="', $scripturl, '?action=splittopics;topic=', $context['current_topic'], '.0;at=', $message['id'], '">', $txt['split'], '</a></li>';
 
+		// Can we merge this post to the previous one? (Normally requires same author)
+		if ($message['can_mergeposts'])
+			echo '
+									<li class="mergepost_button"><a href="', $scripturl, '?action=mergeposts;pid=', $message['id'], ';msgid=', $message['last_post_id'], ';topic=', $context['current_topic'], '">', $txt['merge_double'], '</a></li>';
+
 		// Can we restore topics?
 		if ($context['can_restore_msg'])
 			echo '
@@ -338,16 +348,6 @@ function template_main()
 								</ul>';
 
 		echo '
-								<div class="keyinfo">
-									<div class="messageicon">
-										<img src="', $message['icon_url'] . '"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
-									</div>
-									<h5 id="subject_', $message['id'], '">
-										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
-									</h5>
-									<div class="smalltext">&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', '</strong> ', $message['time'], ' &#187;</div>
-									<div id="msg_', $message['id'], '_quick_mod"></div>
-								</div>
 							</div>';
 
 		// Ignoring this user? Hide the post.
