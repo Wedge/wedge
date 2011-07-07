@@ -87,13 +87,13 @@ body
 		a
 			color: #fff
 
-blockquote.bbc_standard_quote
+.bbc_quote blockquote
 	background-color: #e8eee8
 
-blockquote.bbc_alternate_quote
+.alternate blockquote
 	background-color: #e3eae3
 
-code.bbc_code, code.php_code
+.bbc_code code, .php_code code
 	background: #eef5ec
 
 

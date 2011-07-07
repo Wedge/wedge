@@ -169,13 +169,13 @@ a, #linktree a
 /* Some BBC related styles.
 ------------------------------------------------------- */
 
-blockquote.bbc_standard_quote
+.bbc_quote blockquote
 	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat
 
-blockquote.bbc_alternate_quote
+.alternate blockquote
 	background-color: #daddef
 
-code.bbc_code, code.php_code
+.bbc_code code, .php_code code
 	background: #eef
 	white-space: pre
 

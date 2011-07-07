@@ -784,8 +784,8 @@ ul.reset, ul.reset li
 	margin: 3px 2px 3px 3px !important
 
 // A quote, usually from another post.
-blockquote.bbc_standard_quote
-	font-size: 90%
+.bbc_quote blockquote
+	font-size: 92%
 	color: #000
 	line-height: 1.4em
 	background: url($images/theme/quote.png) .1em .1em no-repeat
@@ -800,31 +800,33 @@ blockquote.bbc_standard_quote
 		background-color: rgb(235, 241, 227)
 
 // Alternate blockquote stylings
-blockquote.bbc_alternate_quote extends blockquote.bbc_standard_quote
+.alternate > blockquote
 	.windowbg &
 		background-color: darken(rgb(232, 232, 232), 4%)
 	.windowbg2 &
 		background-color: darken(rgb(235, 241, 227), 4%)
 
-// A code block - maybe PHP ;)
-code.bbc_code, code.php_code
-	display: block
-	font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
-	background: #eef
-	border-top: 2px solid #999
-	border-bottom: 2px solid #999
-	padding: 3px 1em
-	overflow: auto
-	white-space: pre
-	// Show a scrollbar after about 24 lines.
-	max-height: 24em
+// A code block - regular or with PHP syntax highlighting
+.bbc_code, .php_code
+	code
+		display: block
+		font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+		background: #eef
+		border-top: 2px solid #999
+		border-bottom: 2px solid #999
+		padding: 3px 1em
+		overflow: auto
+		white-space: pre
+		// Show a scrollbar after about 24 lines.
+		max-height: 24em
 
 // The "Quote:" and "Code:" header parts...
-.codeheader, .quoteheader
-	color: #666
-	font-size: 90%
-	font-weight: bold
-	padding: 0 .3em
+.bbc_code, .bbc_quote
+	header
+		color: #666
+		font-size: 80%
+		font-weight: bold
+		padding: 0 .3em
 
 // For links to change the code stuff...
 .codeoperation

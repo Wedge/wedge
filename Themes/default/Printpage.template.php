@@ -80,7 +80,7 @@ function template_print_above()
 			{
 				font-size: x-small;
 			}
-			.smalltext, .quoteheader, .codeheader
+			.smalltext, .bbc_quote header, .bbc_code header
 			{
 				font-size: x-small;
 			}

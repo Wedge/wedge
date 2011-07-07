@@ -247,6 +247,7 @@ img.new_posts
 		margin: 0 7.7em 0 10px
 	.modified
 		float: left
+		color: #a0aaa0
 	.reportlinks
 		margin-right: 1.5em
 		text-align: right
@@ -1433,8 +1434,8 @@ span.hidelink
 
 /* Styles for the search results page.
 ------------------------------------------------- */
-.topic_table td
-	blockquote, .quoteheader
+.topic_table .bbc_quote
+	&, header
 		margin: .5em
 
 .search_results_posts

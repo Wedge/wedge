@@ -10,7 +10,7 @@ body, td, .normaltext
 *, a:link, a:visited, a:hover, a:active
 	color: #000 !important
 
-.smalltext, .quoteheader, .codeheader
+.smalltext, .bbc_quote header, .bbc_code header
 	font-size: x-small
 
 .largetext
