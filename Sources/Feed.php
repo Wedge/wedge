@@ -24,7 +24,7 @@ define('WEDGE_NO_LOG', 1);
 		- To display a member's profile, a user id has to be given. (;u=1)
 		- uses the Stats language file.
 		- outputs an Atom feed, unless the 'type' get parameter is
-		  set to 'rss', 'rss2' or 'rdf'.
+		  set to 'rss', or 'rss2'.
 		- does not use any templates, sub templates, or template layers.
 		- is accessed via ?action=feed.
 
@@ -222,8 +222,8 @@ function Feed()
 		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 100 - $_GET['limit'] * 5);
 	}
 
-	// Show in Atom, RSS or RDF?
-	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom', 'rdf')) ? $_GET['type'] : 'atom';
+	// Show in Atom, or RSS?
+	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom')) ? $_GET['type'] : 'atom';
 
 	// !!! Birthdays?
 
@@ -272,8 +272,6 @@ function Feed()
 		header('Content-Type: application/rss+xml; charset=UTF-8');
 	elseif ($xml_format == 'atom')
 		header('Content-Type: application/atom+xml; charset=UTF-8');
-	elseif ($xml_format == 'rdf')
-		header('Content-Type: ' . ($context['browser']['is_ie'] ? 'text/xml' : 'application/rdf+xml') . '; charset=UTF-8');
 
 	// First, output the xml header.
 	echo '<?xml version="1.0" encoding="UTF-8"?' . '>';
@@ -296,33 +294,6 @@ function Feed()
 		echo '
 	</channel>
 </rss>';
-	}
-	// Or maybe RDF?
-	elseif ($xml_format == 'rdf')
-	{
-		echo '
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://purl.org/rss/1.0/">
-	<channel rdf:about="', $scripturl, '">
-		<title>', $feed_title, '</title>
-		<link>', $scripturl, '</link>
-		<description><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></description>
-		<items>
-			<rdf:Seq>';
-
-		foreach ($xml as $item)
-			echo '
-				<rdf:li rdf:resource="', $item['link'], '" />';
-
-		echo '
-			</rdf:Seq>
-		</items>
-	</channel>
-';
-
-		dumpTags($xml, 1, 'item', $xml_format);
-
-		echo '
-</rdf:RDF>';
 	}
 	// Otherwise this is the default (Atom feed.)
 	else
@@ -383,13 +354,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		else
 		{
 			// Beginning tag.
-			if ($xml_format == 'rdf' && $key == 'item' && isset($val['link']))
-			{
-				echo '<', $key, ' rdf:about="', $val['link'], '">';
-				echo "\n", str_repeat("\t", $i + 1);
-				echo '<dc:format>text/html</dc:format>';
-			}
-			elseif ($xml_format == 'atom' && $key == 'summary')
+			if ($xml_format == 'atom' && $key == 'summary')
 				echo '<', $key, ' type="html">';
 			else
 				echo '<', $key, '>';
@@ -438,11 +403,6 @@ function getXmlMembers($xml_format)
 				'comments' => $scripturl . '?action=pm;sa=send;u=' . $row['id_member'],
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['date_registered']),
 				'guid' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			);
-		elseif ($xml_format == 'rdf')
-			$data[] = array(
-				'title' => cdata_parse($row['real_name']),
-				'link' => $scripturl . '?action=profile;u=' . $row['id_member'],
 			);
 		elseif ($xml_format == 'atom')
 			$data[] = array(
@@ -549,12 +509,6 @@ function getXmlNews($xml_format)
 				'category' => '<![CDATA[' . $row['bname'] . ']]>',
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['poster_time']),
 				'guid' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-			);
-		elseif ($xml_format == 'rdf')
-			$data[] = array(
-				'title' => cdata_parse($row['subject']),
-				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-				'description' => cdata_parse($row['body']),
 			);
 		elseif ($xml_format == 'atom')
 			$data[] = array(
@@ -693,12 +647,6 @@ function getXmlRecent($xml_format)
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['poster_time']),
 				'guid' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg']
 			);
-		elseif ($xml_format == 'rdf')
-			$data[] = array(
-				'title' => $row['subject'],
-				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-				'description' => cdata_parse($row['body']),
-			);
 		elseif ($xml_format == 'atom')
 			$data[] = array(
 				'title' => $row['subject'],
@@ -778,12 +726,6 @@ function getXmlProfile($xml_format)
 			'comments' => $scripturl . '?action=pm;sa=send;u=' . $profile['id'],
 			'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['date_registered']),
 			'guid' => $scripturl . '?action=profile;u=' . $profile['id'],
-		));
-	elseif ($xml_format == 'rdf')
-		$data = array(array(
-			'title' => cdata_parse($profile['name']),
-			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
-			'description' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 		));
 	elseif ($xml_format == 'atom')
 		$data[] = array(
