@@ -357,7 +357,7 @@ em
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg extends .grad700
 	color: #444
-	background-color: #f5f5f5
+	background-color: #f2f3ea // !!! #f9f6f0
 	background-position: 0 -550px
 	a
 		color: #47a
@@ -366,7 +366,7 @@ em
 	background-color: #f3f7f3
 
 .windowbg3 extends .windowbg
-	background-color: #cad3cd
+	background-color: #f0f0f0
 
 .inline-block
 	display: inline-block
@@ -388,7 +388,7 @@ form
 input, select, textarea
 	font: 95%/115% $main_font
 	color: #000
-	background: #fff
+	background: $main_bg
 	border: 1px solid #7f9db9
 	padding: 2px
 	:hover, :focus
@@ -455,8 +455,10 @@ input.spell extends input.submit
 	:hover
 		background-color: #e6f0fc
 
-input.cancel
+input.cancel extends input.submit
 	background-color: #fff0e3
+	background-position: 0 100px, 0 0, 0 0
+	padding-left: 5px
 	:hover
 		background-color: #fff5e8
 
@@ -528,7 +530,7 @@ input[type=file]
 		border, padding: 0
 
 .menu li ul
-	background: rgba(255, 248, 240, .94)
+	background: $menu_bg
 	position: absolute
 	display: block
 	border: 1px solid #bbb
@@ -784,27 +786,30 @@ ul.reset, ul.reset li
 	margin: 3px 2px 3px 3px !important
 
 // A quote, usually from another post.
-.bbc_quote blockquote
-	font-size: 92%
-	color: #000
-	line-height: 1.4em
-	background: url($images/theme/quote.png) .1em .1em no-repeat
-	border: 1px dotted #99a
-	padding: 1.2em 2.2em
-	margin: .1em 0 .5em
-	overflow: auto
+.bbc_quote
 	border-radius: 6px
-	.windowbg &
-		background-color: rgb(232, 232, 232)
-	.windowbg2 &
-		background-color: rgb(235, 241, 227)
-
-// Alternate blockquote stylings
-.alternate > blockquote
-	.windowbg &
-		background-color: darken(rgb(232, 232, 232), 4%)
-	.windowbg2 &
-		background-color: darken(rgb(235, 241, 227), 4%)
+	border: 1px dotted #99a
+	background: -prefix-linear-gradient(rgba(255, 255, 255, .5), rgba(255, 240, 240, .2))
+	margin: 0 0 .5em
+	header
+		color: #666
+		font-size: 80%
+		font-weight: bold
+		padding: 2px 2px 2px 24px
+		border-bottom: 0
+		background: url($images/theme/quote.png) 2px 3px no-repeat
+	blockquote
+		font-size: 92%
+		color: #000
+		line-height: 1.4em
+		border-top: 1px dotted #99a
+		padding: 1.2em 2.2em
+		margin: 0
+		overflow: auto
+		background: rgba(0, 0, 0, .05)
+		border-radius: 6px 6px 0 0
+	footer
+		display: none
 
 // A code block - regular or with PHP syntax highlighting
 .bbc_code, .php_code
@@ -821,12 +826,11 @@ ul.reset, ul.reset li
 		max-height: 24em
 
 // The "Quote:" and "Code:" header parts...
-.bbc_code, .bbc_quote
-	header
-		color: #666
-		font-size: 80%
-		font-weight: bold
-		padding: 0 .3em
+.bbc_code header
+	color: #666
+	font-size: 80%
+	font-weight: bold
+	padding: 0 .3em
 
 // For links to change the code stuff...
 .codeoperation
@@ -1148,7 +1152,7 @@ dl#feed
 	color: white
 	a
 		color: white
-		font-family: Arial, sans-serif
+		font-family: $main_font
 		font-weight: 400
 		text-decoration: underline
 		text-shadow: none
@@ -1341,8 +1345,6 @@ table
 		text-decoration: underline
 	> div
 		box-shadow: 2px 2px 8px 0 rgba(0,0,0, .25)
-	.windowbg final
-		background-color: #f0f0f0
 
 #help_page, #helf
 	h2 extends .title2
@@ -1485,17 +1487,21 @@ th.last_th
 */
 
 $main_font = Arial, sans-serif
-$menu_font = Arial, sans-serif
-$post_font = Arial, sans-serif
-$head_font = "PT Sans", Arial, sans-serif
-$bevel = ", url($images/theme/bevel.png), -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$bevel {ie9} = ", url($images/theme/bevel.png)"
+$menu_font = $main_font
+$post_font = $main_font
+$head_font = "PT Sans", $main_font
+
+$bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
+$button_gradient = ", -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
+$button_gradient {ie9} = ""
+
 $ie-max-width = "max-width"
 $ie-max-width {ie6} = "width"
+
 $main_bg = #fffdfa
 $head_bg = rgba(221,200,137,0.66)
-$menu_bg = #f7f0da
+$menu_bg = rgba(255, 248, 240, .94)
 $board_col = #d97b33
 $footer_bg = #e8e3cb
 $sidebar-width = "240px"

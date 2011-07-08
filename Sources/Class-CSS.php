@@ -34,6 +34,7 @@ class wecss
 
 		return $a === 1 ? '#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
+
 	// Converts from hue to RGB
 	protected function hue2rgb($m1, $m2, $h)
 	{
@@ -272,11 +273,11 @@ class wecss_var extends wecss
 			array_multisort($keys, SORT_DESC, $css_vars);
 		}
 
-		// Replace recursively - good for variables referencing variables
-		$count = 1;
+		// Replace recursively - good for variables referencing variables. Also has a safety against endless loops.
+		$left = $count = 1;
 		if (!empty($css_vars))
-			while ($count)
-				$css = str_replace(array_keys($css_vars), array_values($css_vars), $css, $count);
+			while ($left && $count++ < 10)
+				$css = str_replace(array_keys($css_vars), array_values($css_vars), $css, $left);
 	}
 }
 

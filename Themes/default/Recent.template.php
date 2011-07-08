@@ -34,7 +34,7 @@ function template_main()
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
-					<span class="smalltext">&#171;&nbsp;', $txt['last_post'], ': ', $post['time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
+					<span class="smalltext">&#171;&nbsp;', $post['time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">', $post['message'], '</div>';
 
