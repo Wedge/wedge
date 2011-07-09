@@ -172,11 +172,11 @@ iframe.aext
 	#viewitem &
 		width: 220px
 		.block
-			gradient-background: rgba(0,0,0, .05)
+			gradient: rgba(0,0,0, .05)
 	#sidebar &
 		width: auto
 		.block
-			gradient-background: rgba(255,255,255, .3)
+			gradient: rgba(255,255,255, .3)
 
 .selected a
 	color: inherit !important

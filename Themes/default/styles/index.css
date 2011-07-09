@@ -172,7 +172,7 @@ ul#noava
 	.frame
 		width: 100%
 		height: 100px
-		gradient-background: $head_bg, darken($head_bg, 20%), top
+		gradient: $head_bg, darken($head_bg, 20%)
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -789,12 +789,11 @@ ul.reset, ul.reset li
 .bbc_quote
 	border-radius: 6px
 	border: 1px dotted #99a
-	background: -prefix-linear-gradient(rgba(255, 255, 255, .5), rgba(255, 240, 240, .2))
+	gradient: rgba(255, 255, 255, .5), rgba(230, 255, 235, .3)
 	margin: 0 0 .5em
 	header
 		color: #666
-		font-size: 80%
-		font-weight: bold
+		font: 400 80% "Lucida Sans Unicode", $main_font
 		padding: 2px 2px 2px 24px
 		border-bottom: 0
 		background: url($images/theme/quote.png) 2px 3px no-repeat
@@ -806,8 +805,8 @@ ul.reset, ul.reset li
 		padding: 1.2em 2.2em
 		margin: 0
 		overflow: auto
-		background: rgba(0, 0, 0, .05)
-		border-radius: 6px 6px 0 0
+		background: rgba(0, 0, 0, .07)
+		border-radius: 6px
 	footer
 		display: none
 

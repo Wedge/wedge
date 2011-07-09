@@ -286,8 +286,9 @@ class wecss_var extends wecss
  */
 class wecss_color extends wecss
 {
-	// Transform "gradient-background: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
-	// You can add a second parameter for an actual gradient effect, and a third: top (vertical gradient) or left (horizontal.)
+	// Transforms "gradient: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
+	// Transforms "gradient: color1, color2, [top|left]?" into linear-gradient([top|left]?, color1, color2), or the equivalent IE filter.
+	// The direction parameter is optional.
 	protected static function gradient_background($input)
 	{
 		global $browser;
@@ -313,7 +314,7 @@ class wecss_color extends wecss
 		if ($no_gradients)
 			return $input[1] . 'background-color: ' . $bg1;
 
-		$grad = 'linear-gradient(' . $dir . ', %1$s, %2$s)';
+		$grad = 'linear-gradient(' . ($dir == 'top' ? '' : $dir . ', ') . '%1$s, %2$s)';
 		if ($browser['is_opera'])
 			$grad = '-o-' . $grad;
 		elseif ($browser['is_gecko'])
@@ -435,7 +436,7 @@ class wecss_color extends wecss
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient-background\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_color::gradient_background', $css);
+		$css = preg_replace_callback('~(\n[\t ]*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
