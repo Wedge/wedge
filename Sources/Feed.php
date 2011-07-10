@@ -193,7 +193,7 @@ function Feed()
 	elseif (!empty($topic))
 	{
 		$request = wesql::query('
-			SELECT t.num_replies, t.id_topic, m.subject
+			SELECT t.id_topic, m.subject
 			FROM {db_prefix}topics AS t, {db_prefix}messages AS m
 			WHERE t.id_topic = {int:current_topic}
 				AND m.id_msg = t.id_first_msg
@@ -337,6 +337,12 @@ function cdata_parse($data)
 	return strpos($data, '</') === false && strpos($data, '&') === false ? $data : '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 }
 
+function uuid_gen($str)
+{
+	$md5 = md5($str);
+	return 'urn:uuid:' . substr($md5,  0,  8) . '-' . substr($md5,  8,  4) . '-' . substr($md5, 12,  4) . '-' . substr($md5, 16,  4) . '-' . substr($md5, 20, 12);
+}
+
 function dumpTags($data, $i, $tag = null, $xml_format = '')
 {
 	global $modSettings, $context, $scripturl;
@@ -427,7 +433,7 @@ function getXmlMembers($xml_format)
 				'link' => $scripturl . '?action=profile;u=' . $row['id_member'],
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['date_registered']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['last_login']),
-				'id' => $ex_scripturl . '?action=profile;u=' . $row['id_member'],
+				'id' => uuid_gen($ex_scripturl . '?action=profile;u=' . $row['id_member']),
 			);
 	}
 	wesql::free_result($request);
@@ -454,8 +460,8 @@ function getXmlNews($xml_format)
 		$request = wesql::query('
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
-				m.icon, t.id_topic, t.id_board, t.num_replies, b.name AS bname,
-				mem.hide_email, IFNULL(mem.id_member, 0) AS id_member,
+				m.icon, t.id_topic, t.id_board, b.name AS bname, mem.hide_email,
+				IFNULL(mem.id_member, 0) AS id_member,
 				IFNULL(mem.email_address, m.poster_email) AS poster_email,
 				IFNULL(mem.real_name, m.poster_name) AS poster_name
 			FROM {db_prefix}topics AS t
@@ -534,7 +540,7 @@ function getXmlNews($xml_format)
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'modified' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => $ex_scripturl . '?topic=' . $row['id_topic'] . '.0',
+				'id' => uuid_gen($ex_scripturl . '?topic=' . $row['id_topic'] . '.0'),
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 	}
@@ -594,16 +600,13 @@ function getXmlRecent($xml_format)
 	$request = wesql::query('
 		SELECT
 			m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.id_topic, t.id_board,
-			b.name AS bname, t.num_replies, m.id_member, m.icon, mf.id_member AS id_first_member,
-			IFNULL(mem.real_name, m.poster_name) AS poster_name, mf.subject AS first_subject,
-			IFNULL(memf.real_name, mf.poster_name) AS first_poster_name, mem.hide_email,
-			IFNULL(mem.email_address, m.poster_email) AS poster_email, m.modified_time
+			b.name AS bname, m.id_member, m.icon, m.modified_time, mem.hide_email,
+			IFNULL(mem.email_address, m.poster_email) AS poster_email,
+			IFNULL(mem.real_name, m.poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
-			INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-			LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)
 		WHERE m.id_msg IN ({array_int:message_list})
 			' . (empty($board) ? '' : 'AND t.id_board = {int:current_board}') . '
 		ORDER BY m.id_msg DESC
@@ -644,7 +647,7 @@ function getXmlRecent($xml_format)
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 				'summary' => cdata_parse($row['body']),
 				'category' => array(
-					'term' => $row['id_board'],
+					'term' => $row['id_board'], // !!! Could also store id_topic?
 					'label' => $row['bname'],
 				),
 				'author' => array(
@@ -654,33 +657,8 @@ function getXmlRecent($xml_format)
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => $ex_scripturl . '?msg=' . $row['id_msg'],
+				'id' => uuid_gen($ex_scripturl . '?msg=' . $row['id_msg']),
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
-			);
-		// A lot of information here. Should be enough to please the RSS-ers.
-		else
-			$data[] = array(
-				'starter' => array(
-					'name' => cdata_parse($row['first_poster_name']),
-					'id' => $row['id_first_member'],
-					'link' => !empty($row['id_first_member']) ? $scripturl . '?action=profile;u=' . $row['id_first_member'] : ''
-				),
-				'poster' => array(
-					'name' => cdata_parse($row['poster_name']),
-					'id' => $row['id_member'],
-					'link' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : ''
-				),
-				'topic' => array(
-					'subject' => cdata_parse($row['first_subject']),
-					'id' => $row['id_topic'],
-					'link' => $scripturl . '?topic=' . $row['id_topic'] . '.new#new'
-				),
-				'board' => array(
-					'name' => cdata_parse($row['bname']),
-					'id' => $row['id_board'],
-					'link' => $scripturl . '?board=' . $row['id_board'] . '.0'
-				),
-				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg']
 			);
 	}
 	wesql::free_result($request);
@@ -727,15 +705,15 @@ function getXmlProfile($xml_format)
 			),
 			'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['date_registered']),
 			'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['last_login']),
-			'id' => $ex_scripturl . '?action=profile;u=' . $profile['id'],
+			'id' => uuid_gen($ex_scripturl . '?action=profile;u=' . $profile['id']),
 			'logo' => !empty($profile['avatar']) ? $profile['avatar']['url'] : '',
 		);
+
+/*
 	else
 	{
 		$data = array(
 			'username' => $user_info['is_admin'] || $user_info['id'] == $profile['id'] ? cdata_parse($profile['username']) : '',
-			'name' => cdata_parse($profile['name']),
-			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
 			'posts' => $profile['posts'],
 			'post-group' => cdata_parse($profile['post_group']),
 			'language' => cdata_parse($profile['language']),
@@ -791,6 +769,7 @@ function getXmlProfile($xml_format)
 			$data['age'] = $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1);
 		}
 	}
+*/
 
 	// Save some memory.
 	unset($profile, $memberContext[$_GET['u']]);
