@@ -274,8 +274,10 @@ function Feed()
 	{
 		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][]  = '~(<link>|<comments>|<guid>|<scheme>|<uri>)'.$insideurl.'([^<]*?[?;&](board|topic|u)=[^#<]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<link>|<comments>|<guid>|<scheme>|<uri>)'.$insideurl.'([^<]*?[?;&](board|topic|u)=([^<]+))~';
+		$context['pretty']['search_patterns'][]  = '~(<link>|<comments>|<guid>|<uri>)' . $insideurl . '([^<"]*?[?;&](board|topic|u)=[^#<"]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<link>|<comments>|<guid>|<uri>)' . $insideurl . '([^<"]*?[?;&](board|topic|u)=([^<"]+))~';
+		$context['pretty']['search_patterns'][]  = '~(<category scheme=)"' . $insideurl . '([^<"]*?[?;&](board|topic|u)=[^#<"]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<category scheme=)"' . $insideurl . '([^<"]*?[?;&](board|topic|u)=([^#<"]+"))~';
 	}
 
 	if (isset($_REQUEST['debug']))
@@ -297,7 +299,7 @@ function Feed()
 	<channel>
 		<title>', $feed_title, '</title>
 		<link>', $scripturl, '</link>
-		<description><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></description>';
+		<description>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</description>';
 
 		// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
 		dumpTags($xml, 2, 'item', $xml_format);
@@ -315,7 +317,7 @@ function Feed()
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
-	<tagline><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></tagline>
+	<tagline>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</tagline>
 	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">Wedge</generator>
 	<author>
 		<name>', strip_tags($context['forum_name']), '</name>
@@ -332,7 +334,7 @@ function Feed()
 
 function cdata_parse($data)
 {
-	return '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
+	return strpos($data, '</') === false && strpos($data, '&') === false ? $data : '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 }
 
 function dumpTags($data, $i, $tag = null, $xml_format = '')
@@ -353,9 +355,12 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		echo "\n", str_repeat("\t", $i);
 
 		// Grr, I hate kludges... almost worth doing it properly, here, but not quite.
-		if ($xml_format == 'atom' && $key == 'link')
+		if ($xml_format == 'atom' && ($key == 'link' || $key == 'category'))
 		{
-			echo '<link rel="alternate" type="text/html" href="', $val, '" />';
+			if ($key == 'link')
+				echo '<link rel="alternate" type="text/html" href="', $val, '" />';
+			else
+				echo '<category', empty($val['scheme']) ? '' : ' scheme="' . $val['scheme'] . '"', ' term="', $val['term'], '" label="', str_replace('"', '&quot;', $val['label']), '" />';
 			continue;
 		}
 
@@ -366,7 +371,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		{
 			// Beginning tag.
 			if ($xml_format == 'atom' && $key == 'summary')
-				echo '<', $key, ' type="html">';
+				echo '<summary type="html">';
 			else
 				echo '<', $key, '>';
 
@@ -520,8 +525,7 @@ function getXmlNews($xml_format)
 				'summary' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'],
-					'label' => cdata_parse($row['bname']),
-					'scheme' => $scripturl . '?board=' . $row['id_board'] . '.0',
+					'label' => $row['bname'],
 				),
 				'author' => array(
 					'name' => cdata_parse($row['poster_name']),
@@ -641,7 +645,7 @@ function getXmlRecent($xml_format)
 				'summary' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'],
-					'label' => cdata_parse($row['bname'])
+					'label' => $row['bname'],
 				),
 				'author' => array(
 					'name' => cdata_parse($row['poster_name']),
