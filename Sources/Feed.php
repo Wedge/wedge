@@ -23,8 +23,8 @@ define('WEDGE_NO_LOG', 1);
 		  registered members, and 'profile' for a member's profile.
 		- To display a member's profile, a user id has to be given. (;u=1)
 		- uses the Stats language file.
-		- outputs an Atom feed, unless the 'type' get parameter is
-		  set to 'rss', or 'rss2'.
+		- outputs an Atom feed, unless the 'type' get parameter
+		  is set to 'rss' or 'rss2'.
 		- does not use any templates, sub templates, or template layers.
 		- is accessed via ?action=feed.
 
@@ -62,7 +62,7 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $topic, $board, $board_info, $context, $scripturl, $txt, $modSettings;
-	global $query_this, $forum_version, $user_info;
+	global $query_this, $forum_version, $user_info, $ex_scripturl;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -225,6 +225,11 @@ function Feed()
 	// Show in Atom, or RSS?
 	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom')) ? $_GET['type'] : 'atom';
 
+	// $ex_scripturl should be the original $scripturl from the first time you activated this Atom feed.
+	if (empty($modSettings['feed_root']))
+		updateSettings(array('feed_root' => $scripturl));
+	$ex_scripturl = $modSettings['feed_root'];
+
 	// !!! Birthdays?
 
 	// List all the different types of data they can pull.
@@ -263,8 +268,15 @@ function Feed()
 	ob_end_clean();
 	if (!empty($modSettings['enableCompressedOutput']))
 		@ob_start('ob_gzhandler');
-	else
-		ob_start();
+
+	// Pretty URLs need to be rewritten
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		ob_start('ob_sessrewrite');
+		$insideurl = preg_quote($scripturl, '~');
+		$context['pretty']['search_patterns'][]  = '~(<link>|<comments>|<guid>|<scheme>|<uri>)'.$insideurl.'([^<]*?[?;&](board|topic|u)=[^#<]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<link>|<comments>|<guid>|<scheme>|<uri>)'.$insideurl.'([^<]*?[?;&](board|topic|u)=([^<]+))~';
+	}
 
 	if (isset($_REQUEST['debug']))
 		header('Content-Type: text/xml; charset=UTF-8');
@@ -302,7 +314,6 @@ function Feed()
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
-
 	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
 	<tagline><![CDATA[', strip_tags($txt['xml_feed_desc']), ']]></tagline>
 	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">Wedge</generator>
@@ -310,7 +321,7 @@ function Feed()
 		<name>', strip_tags($context['forum_name']), '</name>
 	</author>';
 
-		dumpTags($xml, 2, 'entry', $xml_format);
+		dumpTags($xml, 1, 'entry', $xml_format);
 
 		echo '
 </feed>';
@@ -377,7 +388,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 
 function getXmlMembers($xml_format)
 {
-	global $scripturl;
+	global $scripturl, $ex_scripturl;
 
 	if (!allowedTo('view_mlist'))
 		return array();
@@ -404,21 +415,14 @@ function getXmlMembers($xml_format)
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['date_registered']),
 				'guid' => $scripturl . '?action=profile;u=' . $row['id_member'],
 			);
-		elseif ($xml_format == 'atom')
+		// Atom?
+		else
 			$data[] = array(
 				'title' => cdata_parse($row['real_name']),
 				'link' => $scripturl . '?action=profile;u=' . $row['id_member'],
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['date_registered']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['last_login']),
-				'id' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			);
-		// More logical format for the data, but harder to apply.
-		else
-			$data[] = array(
-				'name' => cdata_parse($row['real_name']),
-				'time' => htmlspecialchars(strip_tags(timeformat($row['date_registered']))),
-				'id' => $row['id_member'],
-				'link' => $scripturl . '?action=profile;u=' . $row['id_member']
+				'id' => $ex_scripturl . '?action=profile;u=' . $row['id_member'],
 			);
 	}
 	wesql::free_result($request);
@@ -428,8 +432,8 @@ function getXmlMembers($xml_format)
 
 function getXmlNews($xml_format)
 {
-	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this, $settings, $context;
+	global $user_info, $scripturl, $ex_scripturl, $modSettings;
+	global $board, $query_this, $settings, $context;
 
 	/* Find the latest posts that:
 		- are the first post in their topic.
@@ -445,8 +449,7 @@ function getXmlNews($xml_format)
 		$request = wesql::query('
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
-				m.icon, t.id_topic, t.id_board, t.num_replies,
-				b.name AS bname,
+				m.icon, t.id_topic, t.id_board, t.num_replies, b.name AS bname,
 				mem.hide_email, IFNULL(mem.id_member, 0) AS id_member,
 				IFNULL(mem.email_address, m.poster_email) AS poster_email,
 				IFNULL(mem.real_name, m.poster_name) AS poster_name
@@ -506,45 +509,29 @@ function getXmlNews($xml_format)
 				'description' => cdata_parse($row['body']),
 				'author' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
 				'comments' => $scripturl . '?action=post;topic=' . $row['id_topic'] . '.0',
-				'category' => '<![CDATA[' . $row['bname'] . ']]>',
+				'category' => cdata_parse($row['bname']),
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['poster_time']),
 				'guid' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 			);
-		elseif ($xml_format == 'atom')
+		else
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 				'summary' => cdata_parse($row['body']),
-				'category' => array('term' => $row['id_board'], 'label' => cdata_parse($row['bname'])),
+				'category' => array(
+					'term' => $row['id_board'],
+					'label' => cdata_parse($row['bname']),
+					'scheme' => $scripturl . '?board=' . $row['id_board'] . '.0',
+				),
 				'author' => array(
-					'name' => $row['poster_name'],
+					'name' => cdata_parse($row['poster_name']),
 					'email' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
 					'uri' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'modified' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
+				'id' => $ex_scripturl . '?topic=' . $row['id_topic'] . '.0',
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
-			);
-		// The biggest difference here is more information.
-		else
-			$data[] = array(
-				'time' => htmlspecialchars(strip_tags(timeformat($row['poster_time']))),
-				'id' => $row['id_topic'],
-				'subject' => cdata_parse($row['subject']),
-				'body' => cdata_parse($row['body']),
-				'poster' => array(
-					'name' => cdata_parse($row['poster_name']),
-					'id' => $row['id_member'],
-					'link' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-				),
-				'topic' => $row['id_topic'],
-				'board' => array(
-					'name' => cdata_parse($row['bname']),
-					'id' => $row['id_board'],
-					'link' => $scripturl . '?board=' . $row['id_board'] . '.0',
-				),
-				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 			);
 	}
 	wesql::free_result($request);
@@ -554,8 +541,8 @@ function getXmlNews($xml_format)
 
 function getXmlRecent($xml_format)
 {
-	global $user_info, $scripturl, $modSettings, $board;
-	global $query_this, $settings, $context;
+	global $user_info, $scripturl, $ex_scripturl, $modSettings;
+	global $board, $query_this, $settings, $context;
 
 	$done = false;
 	$loops = 0;
@@ -638,7 +625,7 @@ function getXmlRecent($xml_format)
 		// Doesn't work as well as news, but it kinda does..
 		if ($xml_format == 'rss' || $xml_format == 'rss2')
 			$data[] = array(
-				'title' => $row['subject'],
+				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 				'description' => cdata_parse($row['body']),
 				'author' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
@@ -649,7 +636,7 @@ function getXmlRecent($xml_format)
 			);
 		elseif ($xml_format == 'atom')
 			$data[] = array(
-				'title' => $row['subject'],
+				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 				'summary' => cdata_parse($row['body']),
 				'category' => array(
@@ -657,22 +644,18 @@ function getXmlRecent($xml_format)
 					'label' => cdata_parse($row['bname'])
 				),
 				'author' => array(
-					'name' => $row['poster_name'],
+					'name' => cdata_parse($row['poster_name']),
 					'email' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
 					'uri' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : ''
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
+				'id' => $ex_scripturl . '?msg=' . $row['id_msg'],
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 		// A lot of information here. Should be enough to please the RSS-ers.
 		else
 			$data[] = array(
-				'time' => htmlspecialchars(strip_tags(timeformat($row['poster_time']))),
-				'id' => $row['id_msg'],
-				'subject' => cdata_parse($row['subject']),
-				'body' => cdata_parse($row['body']),
 				'starter' => array(
 					'name' => cdata_parse($row['first_poster_name']),
 					'id' => $row['id_first_member'],
@@ -703,7 +686,8 @@ function getXmlRecent($xml_format)
 
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info;
+	global $scripturl, $ex_scripturl, $memberContext;
+	global $user_profile, $modSettings, $user_info;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)
@@ -739,7 +723,7 @@ function getXmlProfile($xml_format)
 			),
 			'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['date_registered']),
 			'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['last_login']),
-			'id' => $scripturl . '?action=profile;u=' . $profile['id'],
+			'id' => $ex_scripturl . '?action=profile;u=' . $profile['id'],
 			'logo' => !empty($profile['avatar']) ? $profile['avatar']['url'] : '',
 		);
 	else

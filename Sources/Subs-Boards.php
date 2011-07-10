@@ -759,7 +759,7 @@ function modifyBoard($board_id, &$boardOptions)
 		$dom = isset($boardOptions['pretty_url_dom']) ? strtolower($boardOptions['pretty_url_dom']) : '';
 		$purl = isset($boardOptions['pretty_url']) ? strtolower($boardOptions['pretty_url']) : '';
 
-		//	Get ex-name...
+		// Get ex-name...
 		$result = wesql::query('
 			SELECT url, id_cat
 			FROM {db_prefix}boards
