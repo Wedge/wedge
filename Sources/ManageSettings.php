@@ -1516,6 +1516,113 @@ function EditCustomProfiles()
 			'placement' => 0,
 		);
 
+	// Some of the more common field types. For each of the templates, the sub-array indicates the form element that needs to be adjusted.
+	// Note that I'm mainly not bothering with anything daft like $txt strings - the string will be the same in every language because it's a name.
+	$context['template_fields'] = array(
+		'social' => array(
+			'facebook' => array(
+				'field_name' => 'Facebook',
+				'field_desc' => $txt['your_facebook'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="facebook" href="http://www.facebook.com/profile.php?id={INPUT}" target="_blank" title="Facebook - {INPUT}"><img src="{IMAGES_URL}/facebook.png" alt="Facebook - {INPUT}"></a>',
+				'field_type' => 'text',
+				'max_length' => '32',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[0-9]{,11}|[a-z0-9.]{3,32}~i',
+				'private' => '0', // users can see it, owner can edit it
+			),
+			'twitter' => array(
+				'field_name' => 'Twitter',
+				'field_desc' => $txt['your_twitter'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="twitter" href="http://twitter.com/#!/{INPUT}" target="_blank" title="Twitter - {INPUT}"><img src="{IMAGES_URL}/twitter.png" alt="Twitter - {INPUT}"></a>',
+				'field_type' => 'text',
+				'max_length' => '16',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[a-z0-9_]{1,16}~i',
+				'private' => '0', // users can see it, owner can edit it
+			),
+		),
+		'im' => array(
+			'aim' => array(
+				'field_name' => 'AOL Instant Messenger',
+				'field_desc' => $txt['your_aim'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="aim" href="aim:goim?screenname={INPUT}&amp;message=' . $txt['aim_default_message'] . '" target="_blank" title="AIM - {INPUT}"><img src="{IMAGES_URL}/aim.gif" alt="AIM - {INPUT}"></a>',
+				'field_type' => 'text',
+				'max_length' => '50',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[a-z][0-9a-z.-]{1,31}~i',
+				'private' => '0', // users can see it, owner can edit it
+			),
+			'yim' => array(
+				'field_name' => 'Yahoo! Messenger',
+				'field_desc' => $txt['your_yim'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="yim" href="http://edit.yahoo.com/config/send_webmesg?.target={INPUT}" target="_blank" title="Yahoo! Messenger - {INPUT}"><img src="http://opi.yahoo.com/online?m=g&amp;t=0&amp;u={INPUT}" alt="Yahoo! Messenger - {INPUT}"></a>',
+				'field_type' => 'text',
+				'max_length' => '50',
+				'bbc' => false,
+				'mask' => 'email',
+				'private' => '0', // users can see it, owner can edit it
+			),
+			'live' => array(
+				'field_name' => 'MSN/Live',
+				'field_desc' => $txt['msn_email_address'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="msn" href="http://members.msn.com/{INPUT}" target="_blank" title="Live - {INPUT}"><img src="{IMAGES_URL}/msntalk.gif" alt="Live - {INPUT}"></a>',
+				'field_type' => 'text',
+				'max_length' => '50',
+				'bbc' => false,
+				'mask' => 'email',
+				'private' => '0', // users can see it, owner can edit it
+			),
+			'icq' => array(
+				'field_name' => 'ICQ',
+				'field_desc' => $txt['your_icq'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1', // with icons
+				'enclose' => '<a class="icq" href="http://www.icq.com/whitepages/about_me.php?uin={INPUT}" target="_blank" title="ICQ - {INPUT}"><img src="http://status.icq.com/online.gif?img=5&amp;icq={INPUT}" alt="ICQ - {INPUT}" width="18" height="18"></a>',
+				'field_type' => 'text',
+				'max_length' => '12',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[1-9][0-9]{4,9}~i', // The lowest was 10000, highest unknown but 10 digits total should cover it
+				'private' => '0', // users can see it, owner can edit it
+			),
+		),
+		'gaming' => array(
+			'steam' => array(
+				'field_name' => 'Steam',
+				'field_desc' => $txt['your_steam'],
+				'profile_area' => 'forumprofile',
+				'display' => true,
+				'placement' => '1',
+				'enclose' => '<a class="steam" href="http://steamcommunity.com/id/{INPUT}" target="_blank" title="Steam - {INPUT}"><img src="{IMAGES_URL}/steam.png"></a>',
+				'field_type' => 'text',
+				'max_length' => '50',
+				'bbc' => false,
+				'mask' => 'regex',
+				'regex' => '~[0-9a-z_-]{2,50}~i',
+				'private' => '0', // users can see it, owner can edit it
+			),
+		),
+	);
+
 	// Are we saving?
 	if (isset($_POST['save']))
 	{

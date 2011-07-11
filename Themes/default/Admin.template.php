@@ -888,7 +888,79 @@ function template_edit_profile_field()
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
-			<div class="windowbg wrc">
+			<div class="windowbg wrc">';
+
+	// If this is a new field, display the templates. (If it's not, leave them hidden to prevent overwriting accidentally with a template.)
+	if (empty($context['fid']))
+	{
+		echo '
+				<fieldset>
+					<legend>', $txt['custom_edit_templates'], '</legend>
+					', $txt['custom_edit_templates_desc'], '
+					<dl class="settings">
+						<dt>
+							<strong>', $txt['custom_edit_a_template'], ':</strong>
+						</dt>
+						<dd>
+							<select id="field_template" onchange="insertTemplate();">
+								<option value="" selected>', $txt['custom_edit_templates_select'], '</option>';
+
+		foreach ($context['template_fields'] as $field_group => $fields)
+		{
+			echo '
+								<optgroup label="', $txt['custom_edit_tplgrp_' . $field_group], '">';
+
+			foreach ($fields as $field_id => $field)
+				echo '
+									<option value="', $field_id, '">', $field['field_name'], '</option>';
+
+			echo '
+								</optgroup>';
+		}
+
+		echo '
+							</select>
+				</fieldset>';
+
+		add_js('
+	function insertTemplate()
+	{
+		var
+			field = $("#field_template").val();
+		if (field == "" || !insertTemplate.templates[field])
+			return;
+
+		for (i in insertTemplate.templates[field])
+		{
+			switch (i)
+			{
+				case "display":	// these are checkboxes
+				case "bbc":
+					$("input[name=\"" + i + "\"]").attr("checked", insertTemplate.templates[field][i]);
+					break;
+				case "field_desc": // these are textareas
+				case "enclose":
+					$("textarea[name=\"" + i + "\"]").html(insertTemplate.templates[field][i]);
+					break;
+				default: // everything else (which should be input[type="text"] or select and thus support .val()
+					$("[name=\"" + i + "\"]").val(insertTemplate.templates[field][i]);
+					break;
+			}
+		}
+
+		updateInputBoxes();
+	};');
+
+	// Before we output the template fields, we need to reform the array slightly for the JS's benefit.
+	$fields = array();
+	foreach ($context['template_fields'] as $field_list)
+		$fields = array_merge($fields, $field_list);
+
+	add_js ('
+	insertTemplate.templates = ', json_encode($fields), ';');
+	}
+
+	echo '
 				<fieldset>
 					<legend>', $txt['custom_edit_general'], '</legend>
 
