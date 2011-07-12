@@ -282,7 +282,6 @@ function Register2($verifiedOpenID = false)
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
 		'website_url', 'website_title',
-		'aim', 'yim',
 		'location', 'birthdate',
 		'time_format',
 		'buddy_list',
@@ -295,7 +294,6 @@ function Register2($verifiedOpenID = false)
 	$possible_ints = array(
 		'pm_email_notify',
 		'notify_types',
-		'icq',
 		'gender',
 		'id_theme',
 	);
@@ -320,9 +318,6 @@ function Register2($verifiedOpenID = false)
 		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && westr::strlen($_POST['real_name']) < 60)
 			$possible_strings[] = 'real_name';
 	}
-
-	if (isset($_POST['msn']) && is_valid_email($_POST['msn']))
-		$profile_strings[] = 'msn';
 
 	// Handle a string as a birthdate...
 	if (isset($_POST['birthdate']) && $_POST['birthdate'] != '')

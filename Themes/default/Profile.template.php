@@ -79,11 +79,7 @@ function template_summary()
 					<li class="custom_field">', $field['output_html'], '</li>';
 	}
 
-	echo !isset($context['disabled_fields']['icq']) && !empty($context['member']['icq']['link']) ? '
-					<li>' . $context['member']['icq']['link'] . '</li>' : '', !isset($context['disabled_fields']['msn']) && !empty($context['member']['msn']['link']) ? '
-					<li>' . $context['member']['msn']['link'] . '</li>' : '', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '
-					<li>' . $context['member']['aim']['link'] . '</li>' : '', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '
-					<li>' . $context['member']['yim']['link'] . '</li>' : '', '
+	echo '
 			</ul>
 			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 
@@ -561,10 +557,6 @@ function template_editBuddies()
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
-				<th scope="col">', $txt['icq'], '</th>
-				<th scope="col">', $txt['aim'], '</th>
-				<th scope="col">', $txt['yim'], '</th>
-				<th scope="col">', $txt['msn'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
 
@@ -584,10 +576,6 @@ function template_editBuddies()
 				<td class="left">', $buddy['link'], '</td>
 				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '"></a></td>
 				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '"></a>'), '</td>
-				<td>', $buddy['icq']['link'], '</td>
-				<td>', $buddy['aim']['link'], '</td>
-				<td>', $buddy['yim']['link'], '</td>
-				<td>', $buddy['msn']['link'], '</td>
 				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_query'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '"></a></td>
 			</tr>';
 
@@ -641,10 +629,6 @@ function template_editIgnoreList()
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
-				<th scope="col">', $txt['icq'], '</th>
-				<th scope="col">', $txt['aim'], '</th>
-				<th scope="col">', $txt['yim'], '</th>
-				<th scope="col">', $txt['msn'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
 
@@ -664,10 +648,6 @@ function template_editIgnoreList()
 				<td class="left">', $member['link'], '</td>
 				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
 				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
-				<td>', $member['icq']['link'], '</td>
-				<td>', $member['aim']['link'], '</td>
-				<td>', $member['yim']['link'], '</td>
-				<td>', $member['msn']['link'], '</td>
 				<td><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_query'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '"></a></td>
 			</tr>';
 

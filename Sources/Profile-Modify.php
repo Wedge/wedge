@@ -169,18 +169,6 @@ function loadProfileFields($force_reload = false)
 	*/
 
 	$profile_fields = array(
-		'aim' => array(
-			'type' => 'text',
-			'label' => $txt['aim'],
-			'subtext' => $txt['your_aim'],
-			'size' => 24,
-			'value' => strtr(empty($cur_profile['aim']) ? '' : $cur_profile['aim'], '+', ' '),
-			'permission' => 'profile_extra',
-			'input_validate' => create_function('&$value', '
-				$value = strtr($value, \' \', \'+\');
-				return true;
-			'),
-		),
 		'avatar_choice' => array(
 			'type' => 'callback',
 			'callback_func' => 'avatar_select',
@@ -313,21 +301,6 @@ function loadProfileFields($force_reload = false)
 				return true;
 			'),
 		),
-		'icq' => array(
-			'type' => 'text',
-			'label' => $txt['icq'],
-			'subtext' => $txt['your_icq'],
-			'size' => 24,
-			'permission' => 'profile_extra',
-			// Need to make sure ICQ doesn't equal 0.
-			'input_validate' => create_function('&$value', '
-				if (empty($value))
-					$value = \'\';
-				else
-					$value = (int) $value;
-				return true;
-			'),
-		),
 		// Selecting group membership is a complicated one so we treat it separate!
 		'id_group' => array(
 			'type' => 'callback',
@@ -434,23 +407,6 @@ function loadProfileFields($force_reload = false)
 					}
 				}
 				return false;
-			'),
-		),
-		'msn' => array(
-			'type' => 'email',
-			'label' => $txt['msn'],
-			'subtext' => $txt['msn_email_address'],
-			'size' => 24,
-			'permission' => 'profile_extra',
-			'input_validate' => create_function('&$value', '
-				global $cur_profile;
-				// Make sure the msn one is an email address, not something like \'none\' :P.
-				if ($value != \'\' && !is_valid_email($value))
-				{
-					$value = $cur_profile[\'msn\'];
-					return false;
-				}
-				return true;
 			'),
 		),
 		'passwrd1' => array(
@@ -720,14 +676,6 @@ function loadProfileFields($force_reload = false)
 				return true;
 			'),
 			'link_with' => 'website',
-		),
-		'yim' => array(
-			'type' => 'text',
-			'label' => $txt['yim'],
-			'subtext' => $txt['your_yim'],
-			'size' => 24,
-			'input_attr' => array('maxlength="32"'),
-			'permission' => 'profile_extra',
 		),
 	);
 
@@ -1580,7 +1528,6 @@ function forumProfile($memID)
 		array(
 			'avatar_choice', 'hr', 'personal_text', 'hr',
 			'bday1', 'location', 'gender', 'hr',
-			'icq', 'aim', 'msn', 'yim', 'hr',
 			'usertitle', 'signature', 'hr',
 			'website_title', 'website_url',
 		)
