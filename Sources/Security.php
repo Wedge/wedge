@@ -368,7 +368,7 @@ function is_not_banned($forceCheck = false)
 		{
 			loadSource('Subs-Auth');
 			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0);
+			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0, true);
 		}
 	}
 
@@ -408,7 +408,7 @@ function is_not_banned($forceCheck = false)
 		// A goodbye present.
 		loadSource('Subs-Auth');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], 0);
+		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], 0, true);
 
 		// Don't scare anyone, now.
 		$_GET['action'] = '';

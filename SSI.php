@@ -1468,7 +1468,7 @@ function ssi_pollVote()
 
 		loadSource('Subs-Auth');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0);
+		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0, true);
 	}
 
 	redirectexit('topic=' . $row['id_topic'] . '.0');
