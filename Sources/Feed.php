@@ -683,16 +683,17 @@ function getXmlProfile($xml_format)
 
 	// Okay, I admit it, I'm lazy. Stupid $_GET['u'] is long and hard to type.
 	$profile = &$memberContext[$_GET['u']];
+	$data = array();
 
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
-		$data = array(array(
+		$data[] = array(
 			'title' => cdata_parse($profile['name']),
 			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
 			'description' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 			'comments' => $scripturl . '?action=pm;sa=send;u=' . $profile['id'],
 			'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['date_registered']),
 			'guid' => $scripturl . '?action=profile;u=' . $profile['id'],
-		));
+		);
 	elseif ($xml_format == 'atom')
 		$data[] = array(
 			'title' => cdata_parse($profile['name']),

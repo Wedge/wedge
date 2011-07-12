@@ -435,7 +435,7 @@ function wedge_fix_browser_css($matches)
 	global $context, $prefix;
 
 	if (!empty($prefix) && (!$context['browser']['is_opera'] || strpos($matches[0], 'bo') !== 0))
-		return $prefix . $matches[0] . ';' . $matches[0];
+		return $prefix . $matches[0];
 
 	return $matches[0];
 }

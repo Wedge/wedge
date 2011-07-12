@@ -785,21 +785,26 @@ ul.reset, ul.reset li
 	border-right: 1px solid #fff
 	margin: 3px 2px 3px 3px !important
 
+// The "Quote:" and "Code:" header parts...
+.bbc_code, .bbc_quote
+	header
+		color: #666
+		border-bottom: 0
+		font: 400 80% "Lucida Sans Unicode", "Trebuchet MS", $main_font
+		padding: .3em
+
 // A quote, usually from another post.
 .bbc_quote
 	border-radius: 6px
 	border: 1px dotted #99a
 	gradient: rgba(255, 255, 255, .5), rgba(230, 255, 235, .3)
 	margin: 0 0 .5em
-	header
-		color: #666
-		font: 400 80% "Lucida Sans Unicode", "Trebuchet MS", $main_font
+	// The "Quote:" header part...
+	> header
 		padding: 2px 2px 2px 24px
-		border-bottom: 0
 		background: url($images/theme/quote.png) 2px 3px no-repeat
-	blockquote
+	> blockquote
 		font-size: 92%
-		color: #000
 		line-height: 1.4em
 		border-top: 1px dotted #99a
 		padding: 1.2em 2.2em
@@ -807,7 +812,7 @@ ul.reset, ul.reset li
 		overflow: auto
 		background: rgba(0, 0, 0, .07)
 		border-radius: 6px
-	footer
+	> footer
 		display: none
 
 // A code block - regular or with PHP syntax highlighting
@@ -815,7 +820,7 @@ ul.reset, ul.reset li
 	code
 		display: block
 		font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
-		background: #eef
+		background: rgba(240, 235, 255, .5)
 		border-top: 2px solid #999
 		border-bottom: 2px solid #999
 		padding: 3px 1em
@@ -823,13 +828,6 @@ ul.reset, ul.reset li
 		white-space: pre
 		// Show a scrollbar after about 24 lines.
 		max-height: 24em
-
-// The "Quote:" and "Code:" header parts...
-.bbc_code header
-	color: #666
-	font-size: 80%
-	font-weight: bold
-	padding: 0 .3em
 
 // For links to change the code stuff...
 .codeoperation
@@ -1354,11 +1352,12 @@ table
 
 h6
 	color: #866
-	padding: 0 0 5px
+	padding: 0 0 3px
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 700 9pt Tahoma, Verdana
+	letter-spacing: 1px
+	font: 700 9pt Corbel, Tahoma, Verdana
 	img
 		vertical-align: -3px
 h6.top
