@@ -278,11 +278,10 @@ fieldset
 	border-radius: 10px
 	legend
 		font-weight: bold
-		color: #666
+		color: #866
 	&.windowbg legend
 		background: $main_bg
-		border: 1px solid rgba(0, 0, 0, .1)
-		border-radius: 6px
+		border-radius: 0 0 6px 6px
 		padding: 2px 6px
 
 // No image should have a border when linked.
@@ -1346,6 +1345,8 @@ table
 #help_page, #helf
 	h2 extends .title2
 		margin-bottom: 12px !important
+	.windowbg
+		border: 1px solid #d0d0d0
 
 /* Intertitles
 ------------------------------------------------------- */
@@ -1356,8 +1357,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	letter-spacing: 1px
-	font: 700 9pt Corbel, Tahoma, Verdana
+	font: 700 9pt Tahoma, Verdana
 	img
 		vertical-align: -3px
 h6.top

@@ -1531,7 +1531,7 @@ function EditCustomProfiles()
 				'max_length' => '32',
 				'bbc' => false,
 				'mask' => 'regex',
-				'regex' => '~[0-9]{,11}|[a-z0-9.]{3,32}~i',
+				'regex' => '~[0-9]{1,11}|[a-z0-9.]{3,32}~i',
 				'private' => '0', // users can see it, owner can edit it
 			),
 			'twitter' => array(

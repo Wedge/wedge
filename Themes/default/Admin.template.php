@@ -888,7 +888,7 @@ function template_edit_profile_field()
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
-			<div class="windowbg wrc">';
+			<div class="windowbg2 wrc">';
 
 	// If this is a new field, display the templates. (If it's not, leave them hidden to prevent overwriting accidentally with a template.)
 	if (empty($context['fid']))
@@ -897,6 +897,7 @@ function template_edit_profile_field()
 				<fieldset>
 					<legend>', $txt['custom_edit_templates'], '</legend>
 					', $txt['custom_edit_templates_desc'], '
+					<br><br>
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['custom_edit_a_template'], ':</strong>
@@ -920,6 +921,8 @@ function template_edit_profile_field()
 
 		echo '
 							</select>
+						</dd>
+					</dl>
 				</fieldset>';
 
 		add_js('
@@ -951,12 +954,12 @@ function template_edit_profile_field()
 		updateInputBoxes();
 	};');
 
-	// Before we output the template fields, we need to reform the array slightly for the JS's benefit.
-	$fields = array();
-	foreach ($context['template_fields'] as $field_list)
-		$fields = array_merge($fields, $field_list);
+		// Before we output the template fields, we need to reform the array slightly for the JS's benefit.
+		$fields = array();
+		foreach ($context['template_fields'] as $field_list)
+			$fields = array_merge($fields, $field_list);
 
-	add_js ('
+		add_js ('
 	insertTemplate.templates = ', json_encode($fields), ';');
 	}
 

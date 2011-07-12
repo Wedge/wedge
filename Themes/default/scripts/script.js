@@ -118,8 +118,10 @@ String.prototype.easyReplace = function (oReplacements)
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 {
 	var
-		desktopURL = from && from.href ? from.href : from, vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto';
+		help_page = from && from.href ? from.href : from,
+		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
+		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto',
+		title = $(from).next('strong').text();
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
@@ -135,12 +137,15 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 	$.event.fix(window.event).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
-	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == desktopURL)
+	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == help_page)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
-	$('<div class="windowbg wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>').hide()
-		.load(desktopURL, function () {
+	$('<div class="windowbg wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
+		.hide()
+		.load(help_page, function () {
+			if (title)
+				$('.windowbg2', this).first().prepend('<h6 class="top">' + title + '</h6>');
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : auto,
 				width: alternateWidth - 25,
@@ -150,7 +155,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 			}).fadeIn(300);
 			$('#helf').dragslide();
 		}).appendTo(
-			$('<div id="helf"></div>').data('src', desktopURL).css({
+			$('<div id="helf"></div>').data('src', help_page).css({
 				position: is_ie6 ? 'absolute' : 'fixed',
 				width: alternateWidth,
 				height: alternateHeight ? alternateHeight : auto,
