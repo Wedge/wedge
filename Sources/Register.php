@@ -111,6 +111,15 @@ function Register($reg_errors = array())
 			$context['agreement'] = '';
 	}
 
+	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.
+	if (!isset($_SESSION['register']))
+		$_SESSION['register'] = array(
+			'timenow' => time(),
+			'limit' => 10, // minimum number of seconds required on this page for registration
+		);
+	else
+		$_SESSION['register']['timenow'] = time();
+
 	if (!empty($modSettings['userLanguage']))
 	{
 		$selectedLanguage = empty($_SESSION['language']) ? $language : $_SESSION['language'];
@@ -251,6 +260,16 @@ function Register2($verifiedOpenID = false)
 				foreach ($context['visual_verification'] as $error)
 					$reg_errors[] = $txt['error_' . $error];
 			}
+		}
+
+		// Check the time gate for miscreants. First make sure they came from somewhere that actually set it up.
+		if (empty($_SESSION['register']['timenow']) || empty($_SESSION['register']['limit']))
+			redirectexit('action=register');
+		// Failing that, check the time on it.
+		if (time() - $_SESSION['register']['timenow'] < $_SESSION['register']['limit'])
+		{
+			loadLanguage('Errors');
+			$reg_errors[] = $txt['error_too_quickly'];
 		}
 	}
 
@@ -436,6 +455,7 @@ function Register2($verifiedOpenID = false)
 	if (!empty($reg_errors))
 	{
 		$_REQUEST['step'] = 2;
+		$_SESSION['register']['limit'] = 5; // If they've filled in some details, they won't need the full 10 seconds of the limit.
 		return Register($reg_errors);
 	}
 	// If they're wanting to use OpenID we need to validate them first.
@@ -466,6 +486,7 @@ function Register2($verifiedOpenID = false)
 	{
 		$reg_errors = array_merge($reg_errors, $memberID);
 		$_REQUEST['step'] = 2;
+		$_SESSION['register']['limit'] = 5; // If they've filled in some details, they won't need the full 10 seconds of the limit.
 		return Register($reg_errors);
 	}
 
@@ -485,6 +506,7 @@ function Register2($verifiedOpenID = false)
 	// Basic template variable setup.
 	elseif (!empty($modSettings['registration_method']))
 	{
+		unset($_SESSION['register']); // Don't need the time gate now.
 		loadTemplate('Register');
 		loadSubTemplate('after');
 		$context += array(
