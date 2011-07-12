@@ -16,33 +16,12 @@ function template_admin()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	// Welcome message for the admin.
+	// Welcome the admin, and mention any outstanding updates.
 	echo '
-	<div id="admincenter">';
-
-	if ($context['user']['is_admin'])
-		echo '
-		<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8">
-			<we:cat>
-				<div id="quick_search">
-					<input type="search" name="search_term" placeholder="', $txt['admin_search'], '" class="search">
-					<select name="search_type">
-						<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
-						<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
-					</select>
-					<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
-				</div>
-				', $txt['admin_center'], '
-			</we:cat>
-		</form>';
-	else
-		echo '
+	<div id="admincenter">
 		<we:cat>
 			', $txt['admin_center'], '
-		</we:cat>';
-
-	// Is there an update available?
-	echo '
+		</we:cat>
 		<div id="update_section">
 			<we:cat>
 				<div id="update_title"></div>
@@ -52,6 +31,23 @@ function template_admin()
 			</div>
 		</div>';
 
+	if ($context['user']['is_admin'])
+		echo '
+		<div id="quick_search">
+			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
+				<input type="search" name="search_term" placeholder="', $txt['admin_search'], '" class="search">
+				<select name="search_type">
+					<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
+					<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
+				</select>
+				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
+			</form>
+			', $txt['admin_search_welcome'], '
+		</div>';
+
+	echo '
+		<div id="admin_home">';
+
 	// Now, let's do the main admin stuff. We'll take an alias to the menu stuff because it's simply easier than fighting with anything else.
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
 
@@ -59,8 +55,8 @@ function template_admin()
 	foreach ($menu_context['sections'] as $section_id => $section)
 	{
 		echo '
-		<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', '">
-			<legend>', $section['title'], '</legend>';
+			<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', '">
+				<legend>', $section['title'], '</legend>';
 
 		foreach ($section['areas'] as $area_id => $area)
 		{
@@ -75,7 +71,7 @@ function template_admin()
 		}
 
 		echo '
-		</fieldset>';
+			</fieldset>';
 
 		$use_bg2 = !$use_bg2;
 	}

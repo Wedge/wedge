@@ -2,12 +2,12 @@
 /* Styles for the admin quick search.
 ------------------------------------------------------- */
 #quick_search
-	overflow: hidden
+	padding: 8px
 	line-height: 20px
-	font-size: 0.8em !important
-	float: right
-	img
-		padding-top: 5px
+	form
+		float: right
+		padding: 18px 0 0 12px
+		font-size: 0.8em !important
 
 ol.search_results
 	margin-top, padding-top: 0
@@ -474,8 +474,11 @@ ul.moderation_notes
 	td div.marginleft
 		margin: 0 0 0 1ex
 
-#admincenter .wrc, #manage_boards .wrc, #manage_maintenance .wrc, #manage_mail .wrc
-	margin-bottom: 4px
+/* Miscellaneous.
+------------------------------------------------- */
+#admincenter, #manage_boards, #manage_maintenance, #manage_mail
+	& .wrc
+		margin-bottom: 4px
 
 .pretty_filter
 	color: #888
