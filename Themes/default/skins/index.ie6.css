@@ -115,14 +115,25 @@ li.separator
 	.cat
 		clear: both
 
+.post_wrapper
+	display: block
+	margin: 0 -1.2em
+
 .postheader
 	display: block
+
+.poster
+	float: left
+	padding-right: 0
 
 .keyinfo
 	padding-bottom: 6px
 	float: left
 	display: block
 	width: 47%
+
+.moderatorbar
+	display: block
 
 ul.quickbuttons
 	display: block

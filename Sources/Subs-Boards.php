@@ -605,11 +605,11 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['id_theme'] = (int) $boardOptions['board_theme'];
 	}
 
-	// Set the styling for this board.
-	if (isset($boardOptions['board_styling']))
+	// Set the skin for this board.
+	if (isset($boardOptions['board_skin']))
 	{
-		$boardUpdates[] = 'styling = {string:styling}';
-		$boardUpdateParameters['styling'] = $boardOptions['board_styling'];
+		$boardUpdates[] = 'skin = {string:skin}';
+		$boardUpdateParameters['skin'] = $boardOptions['board_skin'];
 	}
 
 	// Should the board theme override the user preferred theme?
@@ -831,7 +831,7 @@ function createBoard($boardOptions)
 		'posts_count' => true,
 		'override_theme' => false,
 		'board_theme' => 0,
-		'board_styling' => 'styles',
+		'board_skin' => 'skins',
 		'access_groups' => array(),
 		'board_description' => '',
 		'profile' => 1,
@@ -1116,7 +1116,7 @@ function getBoardTree($restrict = false)
 	$request = wesql::query('
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
-			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.styling, b.override_theme, b.id_profile, b.redirect,
+			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.skin, b.override_theme, b.id_profile, b.redirect,
 			b.redirect_newtab, b.num_posts, b.language, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
@@ -1164,7 +1164,7 @@ function getBoardTree($restrict = false)
 				'posts' => $row['num_posts'],
 				'topics' => $row['num_topics'],
 				'theme' => $row['id_theme'],
-				'styling' => $row['styling'],
+				'skin' => $row['skin'],
 				'override_theme' => $row['override_theme'],
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],

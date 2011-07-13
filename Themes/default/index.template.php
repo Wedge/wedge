@@ -54,8 +54,8 @@ function template_init()
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
 	$settings['require_theme_strings'] = false;
 
-	/* You can define blocks for your theme, with default contents. Then, stylings can override them through
-		the settings.xml file (see the styles/Warm/settings.xml file for a sample implementation.)
+	/* You can define blocks for your theme, with default contents. Then, skins can override them through
+		the skin.xml file (see the skins/Warm/skin.xml file for a sample implementation.)
 		Block names are case-sensitive, for performance reasons. */
 
 	$settings['blocks'] = array(
@@ -73,7 +73,7 @@ function template_init()
 						. '<if:footer><footer>{footer}</footer></if:footer></section>',
 
 		// Our sidebar. Note that we can serve different content to different browsers by using an array
-		// with browser names and a "else" fallback. This can also be done in settings.xml
+		// with browser names and a "else" fallback. This can also be done in skin.xml
 		// with the <block name="..." for="ie6,ie7"> keyword.
 		'sidebar'	=> array(
 			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
@@ -89,7 +89,7 @@ function template_init()
 			'else'	=> '<div id="main_content">{body}</div></div>',
 		),
 
-		// The main header of the website. Feel free to redefine it in your stylings and themes.
+		// The main header of the website. Feel free to redefine it in your skins and themes.
 		'header'	=> '
 			<if:logo><h1>
 				<a href="{scripturl}">{logo}</a>

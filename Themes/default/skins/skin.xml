@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!--
-	See Warm/settings.xml for descriptions and more options.
+	See Warm/skin.xml for descriptions and more options.
 -->
-<styling>
+<skin>
 
 	<name>
 		Wine
@@ -23,4 +23,4 @@
 	$('#main_content').insertBefore('#edge');
 	]]></code>
 
-</styling>
+</skin>

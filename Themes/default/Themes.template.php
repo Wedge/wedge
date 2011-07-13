@@ -60,14 +60,14 @@ function template_main()
 	$("#known_themes_list").hide();
 	$("#known_themes_link").show();');
 
-	$styling = empty($modSettings['theme_styling_guests']) ? 'styles' : $modSettings['theme_styling_guests'];
+	$skin = empty($modSettings['theme_skin_guests']) ? 'skins' : $modSettings['theme_skin_guests'];
 
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'] as $theme)
 	{
-		echo '<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] && $styling == 'styles' ? ' selected' : '', '>', $theme['name'], '</option>';
-		if (!empty($theme['stylings']))
-			wedge_show_stylings($theme, $theme['stylings'], 1, $modSettings['theme_guests'], $styling);
+		echo '<option value="', $theme['id'], '"', $modSettings['theme_guests'] == $theme['id'] && $skin == 'skins' ? ' selected' : '', '>', $theme['name'], '</option>';
+		if (!empty($theme['skins']))
+			wedge_show_skins($theme, $theme['skins'], 1, $modSettings['theme_guests'], $skin);
 	}
 
 	echo '
@@ -87,8 +87,8 @@ function template_main()
 	{
 		echo '
 							<option value="', $theme['id'], '">', $theme['name'], '</option>';
-		if (!empty($theme['stylings']))
-			wedge_show_stylings($theme, $theme['stylings'], 1, '', '');
+		if (!empty($theme['skins']))
+			wedge_show_skins($theme, $theme['skins'], 1, '', '');
 	}
 
 	echo '
@@ -392,7 +392,7 @@ function template_set_settings()
 						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;filename=index.template.php">', $txt['theme_edit_index'], '</a>
 					</li>
 					<li>
-						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;directory=styles">', $txt['theme_edit_style'], '</a>
+						<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';', $context['session_query'], ';sa=edit;directory=skins">', $txt['theme_edit_style'], '</a>
 					</li>
 				</ul>
 			</div>';
@@ -536,7 +536,7 @@ function template_pick()
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
 	{
-		$thumbnail = '/' . (empty($theme['id']) ? $modSettings['theme_styling_guests'] : 'styles') . '/thumbnail.jpg';
+		$thumbnail = '/' . (empty($theme['id']) ? $modSettings['theme_skin_guests'] : 'skins') . '/thumbnail.jpg';
 		$thumbnail_href = file_exists($theme['theme_dir'] . $thumbnail) ? $theme['theme_url'] . $thumbnail : '';
 
 		echo '
@@ -561,16 +561,16 @@ function template_pick()
 					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_query'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a></li>
 				</ul>';
 
-		if ($theme['id'] !== 0 && !empty($theme['stylings']))
+		if ($theme['id'] !== 0 && !empty($theme['skins']))
 		{
 			echo '
 				<div style="margin-top: 8px; clear: right">
 					<we:title>
-						', $txt['theme_stylings'], '
+						', $txt['theme_skins'], '
 					</we:title>
 				</div>';
 
-			template_list_stylings($theme, $theme['id']);
+			template_list_skins($theme, $theme['id']);
 		}
 
 		echo '
@@ -583,11 +583,11 @@ function template_pick()
 	<br class="clear">';
 }
 
-function template_list_stylings(&$theme, $theme_id)
+function template_list_skins(&$theme, $theme_id)
 {
 	global $txt, $context, $scripturl;
 
-	foreach ($theme['stylings'] as $sty)
+	foreach ($theme['skins'] as $sty)
 	{
 		$target = $theme_id . '_' . base64_encode($sty['dir']);
 		$thumbnail_href = isset($theme['theme_dir']) && file_exists($theme['theme_dir'] . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme['theme_url'] . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
@@ -601,12 +601,12 @@ function template_list_stylings(&$theme, $theme_id)
 					</we:title2>
 					<p>', $sty['comment'], '</p>
 					<ul class="reset">
-						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">[', $txt['theme_styling_set'], ']</a></li>
-						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">[', $txt['theme_styling_preview'], ']</a></li>
+						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">[', $txt['theme_skin_set'], ']</a></li>
+						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">[', $txt['theme_skin_preview'], ']</a></li>
 					</ul>';
 
-		if (!empty($sty['stylings']))
-			template_list_stylings($sty, $theme_id);
+		if (!empty($sty['skins']))
+			template_list_skins($sty, $theme_id);
 
 		echo '
 				</div>';
@@ -660,7 +660,7 @@ function template_edit_list()
 		<div class="windowbg', $alternate ? '' : '2', ' wrc">
 			<ul class="reset">
 				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_query'], ';sa=edit">', $txt['themeadmin_edit_browse'], '</a></li>', $theme['can_edit_style'] ? '
-				<li><a href="' . $scripturl . '?action=admin;area=theme;th=' . $theme['id'] . ';' . $context['session_query'] . ';sa=edit;directory=styles">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
+				<li><a href="' . $scripturl . '?action=admin;area=theme;th=' . $theme['id'] . ';' . $context['session_query'] . ';sa=edit;directory=skins">' . $txt['themeadmin_edit_style'] . '</a></li>' : '', '
 				<li><a href="', $scripturl, '?action=admin;area=theme;th=', $theme['id'], ';', $context['session_query'], ';sa=copy">', $txt['themeadmin_edit_copy_template'], '</a></li>
 			</ul>
 		</div>';
@@ -777,10 +777,8 @@ function template_edit_style()
 	<div id="admincenter">';
 
 	add_js('
-	var previewData = "";
-	var previewTimeout;
+	var previewData = "", previewTimeout, refreshPreviewCache;
 	var editFilename = ', JavaScriptEscape($context['edit_filename']), ';
-	var refreshPreviewCache;
 
 	function navigateCallback(response)
 	{
@@ -789,7 +787,7 @@ function template_edit_style()
 
 		// Revert to the theme they actually use ;)
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['styling']) ? '_' . base64_encode($user_info['styling']) : '', ';preview;" + (new Date().getTime());
+		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + (new Date().getTime());
 
 		refreshPreviewCache = null;
 		refreshPreview(false);
@@ -830,8 +828,7 @@ function template_edit_style()
 
 	if ($context['browser']['is_ie'])
 		add_js('
-				var sheets = frames["css_preview_box"].document.styleSheets;
-				for (var j = 0; j < sheets.length; j++)
+				for (var j = 0, sheets = frames["css_preview_box"].document.styleSheets; j < sheets.length; j++)
 				{
 					if (sheets[j].id == "css_preview_box")
 						sheets[j].cssText = document.forms.stylesheetForm.entire_file.value;
@@ -866,8 +863,7 @@ function template_edit_style()
 			// Next, fix all its links so we can handle them and reapply the new CSS!
 			frames["css_preview_box"].onload = function ()
 			{
-				var fixLinks = frames["css_preview_box"].document.getElementsByTagName("a");
-				for (var i = 0; i < fixLinks.length; i++)
+				for (var i = 0, fixLinks = frames["css_preview_box"].document.getElementsByTagName("a"); i < fixLinks.length; i++)
 				{
 					if (fixLinks[i].onclick)
 						continue;

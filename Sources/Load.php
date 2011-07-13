@@ -298,7 +298,7 @@ function loadUserSettings()
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
-		'styling' => empty($user_settings['styling']) ? 'styles' : $user_settings['styling'],
+		'skin' => empty($user_settings['skin']) ? 'skins' : $user_settings['skin'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -500,7 +500,7 @@ function loadBoard()
 	{
 		$board_info = array(
 			'moderators' => array(),
-			'styling' => 'styles',
+			'skin' => 'skins',
 		);
 		return;
 	}
@@ -529,7 +529,7 @@ function loadBoard()
 			SELECT
 				c.id_cat, b.name AS bname, b.url, b.id_owner, b.description, b.num_topics, b.member_groups,
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
-				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.styling,
+				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
 				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends, b.wedge_type, b.sort_method,
 				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
@@ -577,7 +577,7 @@ function loadBoard()
 				'parent_boards' => getBoardParents($row['id_parent']),
 				'parent' => $row['id_parent'],
 				'child_level' => $row['child_level'],
-				'styling' => $row['styling'],
+				'skin' => $row['skin'],
 				'theme' => $row['id_theme'],
 				'override_theme' => !empty($row['override_theme']),
 				'profile' => $row['id_profile'],
@@ -669,7 +669,7 @@ function loadBoard()
 			// Otherwise the topic is invalid, there are no moderators, etc.
 			$board_info = array(
 				'moderators' => array(),
-				'styling' => 'styles',
+				'skin' => 'skins',
 				'error' => 'exist',
 			);
 			$topic = null;
@@ -1402,33 +1402,33 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		$th = explode('_', $_REQUEST['theme']);
 		$id_theme = (int) $th[0];
-		$styling = isset($th[1]) ? base64_decode($th[1]) : '';
+		$skin = isset($th[1]) ? base64_decode($th[1]) : '';
 		$_SESSION['id_theme'] = $id_theme;
-		$_SESSION['styling'] = $styling;
+		$_SESSION['skin'] = $skin;
 	}
 	// The theme was specified by REQUEST... previously.
 	elseif (!empty($_SESSION['id_theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$id_theme = (int) $_SESSION['id_theme'];
-		$styling = !empty($_SESSION['styling']) ? $_SESSION['styling'] : '';
+		$skin = !empty($_SESSION['skin']) ? $_SESSION['skin'] : '';
 	}
 	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
 	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$id_theme = $user_info['theme'];
-		$styling = $user_info['styling'];
+		$skin = $user_info['skin'];
 	}
 	// The theme was specified by the board.
 	elseif (!empty($board_info['theme']))
 	{
 		$id_theme = $board_info['theme'];
-		$styling = isset($board_info['styling']) ? $board_info['styling'] : '';
+		$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
 	}
 	// The theme is the forum's default.
 	else
 	{
 		$id_theme = $modSettings['theme_guests'];
-		$styling = $modSettings['theme_styling_guests'];
+		$skin = $modSettings['theme_skin_guests'];
 	}
 
 	// Verify the id_theme... no foul play.
@@ -1436,7 +1436,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!empty($board_info['theme']) && $board_info['override_theme'])
 	{
 		$id_theme = $board_info['theme'];
-		$styling = isset($board_info['styling']) ? $board_info['styling'] : '';
+		$skin = isset($board_info['skin']) ? $board_info['skin'] : '';
 	}
 	// If they have specified a particular theme to use with SSI allow it to be used.
 	elseif (!empty($ssi_theme) && $id_theme == $ssi_theme)
@@ -1450,9 +1450,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$id_theme = (int) $id_theme;
 
 	// Time to determine our CSS list...
-	// First, load our requested styling folder.
-	$context['styling'] = empty($styling) ? 'styles' : ($styling === 'styles' || strpos($styling, 'styles/') === 0 ? '' : 'styles/') . $styling;
-	$folders = explode('/', $context['styling']);
+	// First, load our requested skin folder.
+	$context['skin'] = empty($skin) ? 'skins' : ($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
+	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();
 	$current_folder = '';
 	foreach ($folders as $folder)
@@ -1768,7 +1768,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	execSubTemplate('init', 'ignore');
 
 	// Now we initialize the search/replace pairs for template blocks.
-	// They can be set up in a styling's settings.xml file.
+	// They can be set up in a skin's skin.xml file.
 	$context['blocks'] = array();
 
 	if (!empty($settings['blocks']))

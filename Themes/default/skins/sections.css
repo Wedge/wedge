@@ -866,6 +866,8 @@ tr.highlight td
 	// The subject column
 	td
 		font-size: 1em
+	td.subject
+		padding: 5px 8px
 	td.subject p,
 	td.stats
 		font-size: .85em
@@ -879,7 +881,7 @@ tr.highlight td
 	td.lockedbg2,
 	td.locked_sticky2
 		background-repeat: no-repeat
-		background-position: 98% 4px
+		background-position: 99% .5em
 	td.stickybg2
 		background-image: url($images/icons/quick_sticky.gif)
 	td.lockedbg2
@@ -897,7 +899,7 @@ tr.highlight td
 	td.windowbg2.my
 		background-image: url($images/icons/quick_my.gif)
 		background-repeat: no-repeat
-		background-position: 98% 4px
+		background-position: 99% .5em
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <!--
-	This file can be ommitted from your styling, in which case it will use
-	the folder name as the styling name, and "add" as the styling type.
+	This file can be ommitted from your skin, in which case it will use
+	the folder name as the skin name, and "add" as the skin type.
 	Make sure to save the file as UTF-8 if you're using special characters in it.
 -->
-<styling>
+<skin>
 
 	<!--
-		Name. This will only be shown to anyone who can change a styling.
+		Name. This will only be shown to anyone who can change a skin.
 	-->
 
 	<name>
@@ -16,14 +16,14 @@
 
 	<!--
 		Type. Possible values:
-			- add (default, add this styling to the root style)
+			- add (default, add this skin to the root style)
 			- replace (discard the root style and consider this as the basic style)
 
 		Warnings:
 			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
 			- These files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
-			- If you're offering nested stylings (/styles/styling1/styling2/), styling2 can only be of the "add" type,
-			  otherwise it should obviously be set in a top-level folder. (/styles/styling2/)
+			- If you're offering nested skins (/skins/skin1/skin2/), skin2 can only be of the "add" type,
+			  otherwise it should obviously be set in a top-level folder. (/skins/skin2/)
 	-->
 
 	<type>
@@ -32,7 +32,7 @@
 
 	<!--
 		Comment. This HTML text will only be shown to users when selecting
-		a styling, either for the default forum theme (admins), board theme
+		a skin, either for the default forum theme (admins), board theme
 		(board owners) and default theme override (regular users, if allowed.)
 
 		Use the opportunity to communicate credits or details to users.
@@ -49,7 +49,7 @@
 		"for" keyword. You can also require some JavaScript files to be loaded,
 		use the "include" keyword to specify a comma-separated list of files.
 		They should either use a relative path based on the current theme, or
-		the $here variable which acts as an alias to the styling's folder.
+		the $here variable which acts as an alias to the skin's folder.
 		If you use both keywords, use them in this order: for, and include.
 
 		In the examples below, we're applying PNG compatibility fixes to IE6
@@ -98,4 +98,4 @@
 	</block>
 	<block name="title"><header class="title">{body}</header></block>
 
-</styling>
+</skin>

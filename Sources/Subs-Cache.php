@@ -128,7 +128,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 /**
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
- * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current styling.
+ * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
  * @param boolean $add_link Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
@@ -149,16 +149,16 @@ function add_css_file($original_files = array(), $add_link = false)
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$styling = empty($context['styling']) ? 'styles' : $context['styling'];
+	$skin = empty($context['skin']) ? 'skins' : $context['skin'];
 
 	foreach ($files as $i => &$file)
 	{
 		if (strpos($file, '.css') === false)
 		{
-			$dir = $styling;
+			$dir = $skin;
 			$ofile = $file;
 			$file = $dir . '/' . $ofile . '.css';
-			// Does this file at least exist in the current styling...? If not, try the parent styling, until our hands are empty.
+			// Does this file at least exist in the current skin...? If not, try the parent skin, until our hands are empty.
 			while (!empty($dir) && !file_exists($settings['theme_dir'] . '/' . $file) && !file_exists($settings['default_theme_dir'] . '/' . $file))
 			{
 				$dir = $dir === '.' ? '' : dirname($dir);
@@ -179,7 +179,7 @@ function add_css_file($original_files = array(), $add_link = false)
 
 	$folder = end($context['css_folders']);
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'styles' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder);
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 7) : $folder);
 	$id .= (empty($id) ? '' : '-') . implode('-', $original_files) . '-';
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
@@ -225,7 +225,7 @@ function wedge_cache_css()
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$context['extra_styling_css'] = '';
+	$context['extra_skin_css'] = '';
 
 	// Make sure custom.css, if available, is added last.
 	$css_files = array_merge($context['css_main_files'], (array) 'custom');
@@ -241,11 +241,11 @@ function wedge_cache_css()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
 
-		if (file_exists($fold . 'settings.xml'))
+		if (file_exists($fold . 'skin.xml'))
 		{
-			$set = file_get_contents($fold . '/settings.xml');
-			// If this is a replace-type styling, erase all of the parent files.
-			if ($folder !== 'styles' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
+			$set = file_get_contents($fold . '/skin.xml');
+			// If this is a replace-type skin, erase all of the parent files.
+			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
 				$css = array();
 		}
 
@@ -263,15 +263,15 @@ function wedge_cache_css()
 	}
 
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'styles' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'styles/') === 0 ? substr($folder, 7) : $folder) . '-';
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 7) : $folder) . '-';
 
-	// The deepest styling gets CSS/JavaScript attention.
+	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
-					$context['extra_styling_css'] .= rtrim($match[2], "\t");
+					$context['extra_skin_css'] .= rtrim($match[2], "\t");
 
 		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
 		{
@@ -284,7 +284,7 @@ function wedge_cache_css()
 				{
 					$includes = array_map('trim', explode(',', $match[2]));
 					// If we have an include param in the code tag, it should either use 'scripts/something.js' (in which case it'll
-					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the styling folder.
+					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
 					if (strpos($match[2], '$here') !== false)
 						foreach ($includes as &$scr)
 							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);
@@ -583,15 +583,15 @@ function theme_base_css()
 	echo '
 	<link rel="stylesheet" href="', $context['cached_css'], '">';
 
-	if (!empty($context['extra_styling_css']))
+	if (!empty($context['extra_skin_css']))
 	{
 		global $user_info;
 
 		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
-		if (strpos($context['extra_styling_css'], '$behavior') !== false)
-			$context['extra_styling_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
-				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['extra_styling_css']);
-		echo "\n\t<style>", $context['extra_styling_css'], "\t</style>";
+		if (strpos($context['extra_skin_css'], '$behavior') !== false)
+			$context['extra_skin_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
+				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['extra_skin_css']);
+		echo "\n\t<style>", $context['extra_skin_css'], "\t</style>";
 	}
 }
 

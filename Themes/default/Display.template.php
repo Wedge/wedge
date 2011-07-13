@@ -418,30 +418,30 @@ function template_main()
 		}
 
 		echo '
-						</div>
-						<div class="moderatorbar">
-							<div class="smalltext modified" id="modified_', $message['id'], '">';
+							<div class="moderatorbar">
+								<div class="smalltext modified" id="modified_', $message['id'], '">';
 
 		// Show "« Last Edit: Time by Person »" if this post was edited.
 		if ($settings['show_modify'] && !empty($message['modified']['name']))
 			echo '
-								&#171; <em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;';
+									&#171; <em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;';
 
 		echo '
-							</div>
-							<div class="smalltext reportlinks">';
+								</div>
+								<div class="smalltext reportlinks">';
 
 		// Maybe they want to report this post to the moderator(s)?
 		if ($context['can_report_moderator'])
 			echo '
-								<a href="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0;msg=', $message['id'], '">', $txt['report_to_mod'], '</a> &nbsp;';
+									<a href="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0;msg=', $message['id'], '">', $txt['report_to_mod'], '</a> &nbsp;';
 
 		// Can we issue a warning because of this post?  Remember, we can't give guests warnings.
 		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])
 			echo '
-								<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>';
+									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>';
 
 		echo '
+								</div>
 							</div>';
 
 		// Are there any custom profile fields for above the signature?

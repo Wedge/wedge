@@ -1,6 +1,6 @@
 
 /*!
- * Wine (Default) styling for Wedge
+ * Wine (Default) skin for Wedge
  * (c) 2011, Wedgeward (http://wedge.org)
  */
 
@@ -28,11 +28,11 @@
  * $language - current user's language (e.g. $images/$language/new.gif)
  * $images - current theme's image folder URL
  * $theme - current theme's root folder URL
- * $here - current styling's root folder URL
+ * $here - current skin's root folder URL
  * $root - forum's root URL
  *
- * e.g. If you have a file called sprite.png in your custom "styles/Hello/World"
- * styling folder, link to url($here/sprite.png) rather than url(sprite.png).
+ * e.g. If you have a file called sprite.png in your custom "skins/Hello/World"
+ * skin folder, link to url($here/sprite.png) rather than url(sprite.png).
  */
 
 // Set a fontsize that will look the same in all browsers.
@@ -97,7 +97,7 @@ body extends .grad700
 		font-size: .9em
 	ul
 		padding: 0
-		margin: 0 0 0 85px
+		margin: 0 0 0 95px
 		list-style-type: disc
 		li
 			font-size: .9em
@@ -345,7 +345,7 @@ em
 	background-color: hue(lighten(#936f69, 50%), -90)
 	color: #fff
 	a
-		color: #e0eeff
+		color: #eef0ff
 
 .wefoot extends .grad40
 	background-color: hue(lighten(#936f69, 50%), 90)

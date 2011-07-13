@@ -183,7 +183,7 @@ function ThemeAdmin()
 			);
 		wesql::free_result($request);
 
-		// While we're at it, get all stylings...
+		// While we're at it, get all skins...
 		$request = wesql::query('
 			SELECT id_theme, value AS dir
 			FROM {db_prefix}themes
@@ -194,7 +194,7 @@ function ThemeAdmin()
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
-			$context['themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['dir'] . '/styles');
+			$context['themes'][$row['id_theme']]['skins'] = wedge_get_skin_list($row['dir'] . '/skins');
 		wesql::free_result($request);
 
 		// Can we create a new theme?
@@ -227,7 +227,7 @@ function ThemeAdmin()
 		updateSettings(array(
 			'theme_allow' => $_POST['options']['theme_allow'],
 			'theme_guests' => $arrh[0],
-			'theme_styling_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'styles',
+			'theme_skin_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'skins',
 			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
 
@@ -237,7 +237,7 @@ function ThemeAdmin()
 			if ((int) $reset[0] == 0 || in_array($reset[0], $_POST['options']['known_themes']))
 				updateMemberData(null, array(
 					'id_theme' => (int) $_POST['theme_reset'],
-					'styling' => isset($reset[1]) ? base64_decode($reset[1]) : 'styles'
+					'skin' => isset($reset[1]) ? base64_decode($reset[1]) : 'skins'
 				));
 		}
 
@@ -946,7 +946,7 @@ function PickTheme()
 	);
 
 	$_SESSION['id_theme'] = 0;
-	$_SESSION['styling'] = '';
+	$_SESSION['skin'] = '';
 
 	// Have we made a decision, or are we just browsing?
 	if (isset($_GET['th']))
@@ -955,14 +955,14 @@ function PickTheme()
 
 		$th = explode('_', $_GET['th']);
 		$id = (int) $th[0];
-		$css = isset($th[1]) ? base64_decode($th[1]) : 'styles';
+		$css = isset($th[1]) ? base64_decode($th[1]) : 'skins';
 
 		// Save for this user.
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
 		{
 			updateMemberData($user_info['id'], array(
 				'id_theme' => $id,
-				'styling' => $css
+				'skin' => $css
 			));
 			redirectexit('action=profile;area=theme');
 		}
@@ -972,7 +972,7 @@ function PickTheme()
 		{
 			updateMemberData(null, array(
 				'id_theme' => $id,
-				'styling' => $css
+				'skin' => $css
 			));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
@@ -981,7 +981,7 @@ function PickTheme()
 		{
 			updateSettings(array(
 				'theme_guests' => $id,
-				'theme_styling_guests' => $css
+				'theme_skin_guests' => $css
 			));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
@@ -990,7 +990,7 @@ function PickTheme()
 		{
 			updateMemberData((int) $_REQUEST['u'], array(
 				'id_theme' => $id,
-				'styling' => $css
+				'skin' => $css
 			));
 			redirectexit('action=profile;u=' . (int) $_REQUEST['u'] . ';area=theme');
 		}
@@ -1001,21 +1001,21 @@ function PickTheme()
 	{
 		$context['current_member'] = $user_info['id'];
 		$context['current_theme'] = $user_info['theme'];
-		$context['current_styling'] = $user_info['styling'];
+		$context['current_skin'] = $user_info['skin'];
 	}
 	// Everyone can't choose just one.
 	elseif ($_REQUEST['u'] == '0')
 	{
 		$context['current_member'] = 0;
 		$context['current_theme'] = 0;
-		$context['current_styling'] = 'styles';
+		$context['current_skin'] = 'skins';
 	}
 	// Guests and such...
 	elseif ($_REQUEST['u'] == '-1')
 	{
 		$context['current_member'] = -1;
 		$context['current_theme'] = $modSettings['theme_guests'];
-		$context['current_styling'] = $modSettings['theme_styling_guests'];
+		$context['current_skin'] = $modSettings['theme_skin_guests'];
 	}
 	// Someone else :P
 	else
@@ -1023,7 +1023,7 @@ function PickTheme()
 		$context['current_member'] = (int) $_REQUEST['u'];
 
 		$request = wesql::query('
-			SELECT id_theme, styling
+			SELECT id_theme, skin
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
@@ -1031,7 +1031,7 @@ function PickTheme()
 				'current_member' => $context['current_member'],
 			)
 		);
-		list ($context['current_theme'], $context['current_styling']) = wesql::fetch_row($request);
+		list ($context['current_theme'], $context['current_skin']) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
@@ -1066,7 +1066,7 @@ function PickTheme()
 				);
 			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
 			if ($row['variable'] == 'theme_dir')
-				$context['available_themes'][$row['id_theme']]['stylings'] = wedge_get_styling_list($row['value'] . '/styles');
+				$context['available_themes'][$row['id_theme']]['skins'] = wedge_get_skin_list($row['value'] . '/skins');
 		}
 		wesql::free_result($request);
 	}
@@ -1212,11 +1212,11 @@ function ThemeInstall()
 			@apache_reset_timeout();
 
 		// Create subdirectories for css and javascript files.
-		mkdir($theme_dir . '/styles', 0777);
+		mkdir($theme_dir . '/skins', 0777);
 		mkdir($theme_dir . '/scripts', 0777);
 
 		// Copy over the default non-theme files.
-		$to_copy = array('/index.php', '/index.template.php', '/styles/index.css', '/styles/rtl.css', '/scripts/theme.js');
+		$to_copy = array('/index.php', '/index.template.php', '/skins/index.css', '/skins/rtl.css', '/scripts/theme.js');
 		foreach ($to_copy as $file)
 		{
 			copy($settings['default_theme_dir'] . $file, $theme_dir . $file);
@@ -1477,7 +1477,7 @@ function EditTheme()
 		foreach ($context['themes'] as $key => $theme)
 		{
 			// There has to be a Settings template!
-			if (!file_exists($theme['theme_dir'] . '/index.template.php') && !file_exists($theme['theme_dir'] . '/styles/index.css'))
+			if (!file_exists($theme['theme_dir'] . '/index.template.php') && !file_exists($theme['theme_dir'] . '/skins/index.css'))
 				unset($context['themes'][$key]);
 			else
 			{
@@ -1495,7 +1495,7 @@ function EditTheme()
 						fclose($fp);
 
 						// Can we find a version comment, at all?
-						if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i' . $template . '(?:[\s]{2}|\*/)~i', $header, $match) == 1)
+						if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
 						{
 							$ver = $match[1];
 							if (!isset($context['themes'][$key]['version']) || $context['themes'][$key]['version'] > $ver)
@@ -1503,7 +1503,7 @@ function EditTheme()
 						}
 					}
 
-				$context['themes'][$key]['can_edit_style'] = file_exists($theme['theme_dir'] . '/styles/index.css');
+				$context['themes'][$key]['can_edit_style'] = file_exists($theme['theme_dir'] . '/skins/index.css');
 			}
 		}
 
@@ -1903,13 +1903,13 @@ function CopyTemplate()
 }
 
 /**
- * Get a list of all stylings available for a given theme folder.
+ * Get a list of all skins available for a given theme folder.
  */
-function wedge_get_styling_list($dir, $files = array())
+function wedge_get_skin_list($dir, $files = array())
 {
 	global $settings;
 
-	$styles = array();
+	$skins = array();
 
 	$files = empty($files) ? scandir($dir) : $files;
 	foreach ($files as $file)
@@ -1920,36 +1920,36 @@ function wedge_get_styling_list($dir, $files = array())
 		$these_files = scandir($this_dir);
 		if (!in_array('index.css', $these_files))
 			continue;
-		if (in_array('settings.xml', $these_files))
+		if (in_array('skin.xml', $these_files))
 		{
 			// I'm not actually parsing it XML-style... Mwahaha! I'm evil.
-			$setxml = file_get_contents($this_dir . '/settings.xml');
-			$style = array(
+			$setxml = file_get_contents($this_dir . '/skin.xml');
+			$skin = array(
 				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
 				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
 				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
 			);
 		}
 		else
-			$style = array(
+			$skin = array(
 				'name' => $file,
 				'type' => 'add',
 				'comment' => '',
 			);
-		$minus_this = strpos($this_dir, '/styles/') + ($style['type'] == 'add' ? 1 : 8);
-		$style['dir'] = substr($this_dir, $minus_this);
-		$styles[$this_dir] = $style;
-		$sub_styles = wedge_get_styling_list($this_dir, $these_files);
-		if (!empty($sub_styles))
-			$styles[$this_dir]['stylings'] = $sub_styles;
+		$minus_this = strpos($this_dir, '/skins/') + ($skin['type'] == 'add' ? 1 : 8);
+		$skin['dir'] = substr($this_dir, $minus_this);
+		$skins[$this_dir] = $skin;
+		$sub_skins = wedge_get_skin_list($this_dir, $these_files);
+		if (!empty($sub_skins))
+			$skins[$this_dir]['skins'] = $sub_skins;
 	}
-	return $styles;
+	return $skins;
 }
 
 /**
  * Return a list of <option> variables for use in Themes and ManageBoard templates.
  */
-function wedge_show_stylings(&$theme, &$style, $level, $current_theme_id, $current_styling)
+function wedge_show_skins(&$theme, &$style, $level, $current_theme_id, $current_skin)
 {
 	global $context;
 
@@ -1958,9 +1958,9 @@ function wedge_show_stylings(&$theme, &$style, $level, $current_theme_id, $curre
 	foreach ($style as $sty)
 	{
 		$intro = '&nbsp;' . str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
-		echo '<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $theme['id'] && $current_styling == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
-		if (!empty($sty['stylings']))
-			wedge_show_stylings($theme, $sty['stylings'], $level + 1, $current_theme_id, $current_styling);
+		echo '<option value="', $theme['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $theme['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
+		if (!empty($sty['skins']))
+			wedge_show_skins($theme, $sty['skins'], $level + 1, $current_theme_id, $current_skin);
 		$current++;
 	}
 }
