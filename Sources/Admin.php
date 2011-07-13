@@ -81,7 +81,7 @@ function Admin()
 						'basic' => array($txt['mods_cat_features']),
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
-						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => !empty($modSettings['cf_enabled'])),
+						'profile' => array($txt['custom_profile_shorttitle']),
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),

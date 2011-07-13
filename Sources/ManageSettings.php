@@ -223,29 +223,6 @@ function ModifyCoreFeatures($return_config = false)
 			'url' => 'action=admin;area=aeva_embed',
 			'setting' => 'embed_enabled',
 		),
-		// Custom profile fields
-		'cp' => array(
-			'url' => 'action=admin;area=featuresettings;sa=profile',
-			'setting' => 'cf_enabled',
-			'save_callback' => create_function('$value', '
-				if (!$value)
-				{
-					wesql::query(\'
-						UPDATE {db_prefix}custom_fields
-						SET active = 0\');
-				}
-			'),
-			'setting_callback' => create_function('$value', '
-				if (!$value)
-					return array(
-						\'disabled_profile_fields\' => \'\',
-						\'registration_fields\' => \'\',
-						\'displayFields\' => \'\',
-					);
-				else
-					return array();
-			'),
-		),
 		// Moderation Log
 		'ml' => array(
 			'url' => 'action=admin;area=logs;sa=modlog',
@@ -1919,7 +1896,7 @@ function EditCustomProfiles()
 		}
 		wesql::free_result($request);
 
-		updateSettings(array('displayFields' => serialize($fields)));
+		updateSettings(array('displayFields' => !empty($fields) ? serialize($fields) : ''));
 		redirectexit('action=admin;area=featuresettings;sa=profile');
 	}
 }
