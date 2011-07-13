@@ -164,7 +164,7 @@ function ModifySubscriptionSettings($return_config = false)
 	// Some important context stuff
 	$context['page_title'] = $txt['settings'];
 	loadSubTemplate('show_settings');
-	$context['settings_message'] = '<span class="smalltext">' . $txt['paid_note'] . '</span>';
+	$context['settings_message'] = $txt['paid_note'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'settings';
 
 	// Get the final touches in place.

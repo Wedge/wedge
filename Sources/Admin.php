@@ -92,6 +92,7 @@ function Admin()
 					'icon' => 'security.gif',
 					'subsections' => array(
 						'general' => array($txt['mods_cat_security_general']),
+						'',
 						'spam' => array($txt['antispam_title']),
 						'moderation' => array($txt['moderation_settings_short'], 'enabled' => substr($modSettings['warning_settings'], 0, 1) == 1),
 					),
@@ -106,6 +107,7 @@ function Admin()
 					'subsections' => array(
 						'edit' => array($txt['language_edit']),
 						'add' => array($txt['language_add']),
+						'',
 						'settings' => array($txt['language_settings']),
 					),
 				),
@@ -144,6 +146,7 @@ function Admin()
 					'subsections' => array(
 						'main' => array($txt['boardsEdit']),
 						'newcat' => array($txt['mboards_new_cat']),
+						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -155,11 +158,12 @@ function Admin()
 					'icon' => 'posts.gif',
 					'subsections' => array(
 						'posts' => array($txt['manageposts_settings']),
+						'topics' => array($txt['manageposts_topic_settings']),
+						'',
 						'bbc' => array($txt['manageposts_bbc_settings']),
 						'censor' => array($txt['admin_censored_words']),
-						'topics' => array($txt['manageposts_topic_settings']),
-						'drafts' => array($txt['manageposts_draft_settings']),
 						'merge' => array($txt['manageposts_merge']),
+						'drafts' => array($txt['manageposts_draft_settings']),
 					),
 				),
 				'',
@@ -175,6 +179,7 @@ function Admin()
 						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($modSettings['smiley_enable'])),
 						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($modSettings['smiley_enable'])),
 						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($modSettings['messageIcons_enable'])),
+						'',
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -187,8 +192,10 @@ function Admin()
 					'permission' => array('manage_attachments'),
 					'subsections' => array(
 						'browse' => array($txt['attachment_manager_browse']),
+						'',
 						'attachments' => array($txt['attachment_manager_settings']),
 						'avatars' => array($txt['attachment_manager_avatar_settings']),
+						'',
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
@@ -202,6 +209,7 @@ function Admin()
 					'permission' => array('admin_forum'),
 					'subsections' => array(
 						'holidays' => array($txt['manage_holidays'], 'enabled' => !empty($modSettings['cal_enabled'])),
+						'',
 						'settings' => array($txt['calendar_settings']),
 					),
 				),
@@ -215,6 +223,7 @@ function Admin()
 					'subsections' => array(
 						'weights' => array($txt['search_weights']),
 						'method' => array($txt['search_method']),
+						'',
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -228,6 +237,7 @@ function Admin()
 					'subsections' => array(
 						'editnews' => array($txt['admin_edit_news'], 'edit_news'),
 						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
+						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -255,6 +265,7 @@ function Admin()
 						'stats' => array($txt['spider_stats']),
 						'logs' => array($txt['spider_logs']),
 						'spiders' => array($txt['spiders']),
+						'',
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -298,20 +309,11 @@ function Admin()
 						'index' => array($txt['media_admin_labels_index']),
 						'normal' => array($txt['media_admin_filter_normal_albums']),
 						'featured' => array($txt['media_admin_filter_featured_albums']),
+						'',
 						'add' => array($txt['media_admin_add_album']),
 					),
 				),
-				'aeva_bans' => array(
-					'label' => $txt['media_admin_labels_bans'],
-					'enabled' => !empty($modSettings['media_enabled']),
-					'icon' => 'ban.gif',
-					'file' => 'media/ManageMedia',
-					'function' => 'aeva_admin_init',
-					'subsections' => array(
-						'index' => array($txt['media_admin_labels_index']),
-						'add' => array($txt['media_admin_bans_add']),
-					),
-				),
+				'',
 				'aeva_fields' => array(
 					'label' => $txt['media_cf'],
 					'enabled' => !empty($modSettings['media_enabled']),
@@ -323,6 +325,7 @@ function Admin()
 						'edit' => array($txt['media_cf_add']),
 					),
 				),
+				'',
 				'aeva_perms' => array(
 					'label' => $txt['media_admin_labels_perms'],
 					'enabled' => !empty($modSettings['media_enabled']),
@@ -337,6 +340,18 @@ function Admin()
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 				),
+				'aeva_bans' => array(
+					'label' => $txt['media_admin_labels_bans'],
+					'enabled' => !empty($modSettings['media_enabled']),
+					'icon' => 'ban.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
+					'subsections' => array(
+						'index' => array($txt['media_admin_labels_index']),
+						'add' => array($txt['media_admin_bans_add']),
+					),
+				),
+				'',
 				'aeva_ftp' => array(
 					'label' => $txt['media_admin_labels_ftp'],
 					'enabled' => !empty($modSettings['media_enabled']),
@@ -362,6 +377,7 @@ function Admin()
 						'search' => array($txt['mlist_search']),
 					),
 				),
+				'',
 				'membergroups' => array(
 					'label' => $txt['admin_groups'],
 					'file' => 'ManageMembergroups',
@@ -372,6 +388,7 @@ function Admin()
 					'subsections' => array(
 						'index' => array($txt['membergroups_edit_groups'], 'manage_membergroups'),
 						'add' => array($txt['membergroups_new_group'], 'manage_membergroups'),
+						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -387,9 +404,11 @@ function Admin()
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions', 'enabled' => $modSettings['postmod_active']),
+						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'',
 				'regcenter' => array(
 					'label' => $txt['registration_center'],
 					'file' => 'ManageRegistration',
@@ -401,6 +420,7 @@ function Admin()
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
 						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
+						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -418,6 +438,7 @@ function Admin()
 						'log' => array($txt['ban_log']),
 					),
 				),
+				'',
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
 					'file' => 'ManagePaid',
@@ -427,6 +448,7 @@ function Admin()
 					'permission' => 'admin_forum',
 					'subsections' => array(
 						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($modSettings['paid_enabled'])),
+						'',
 						'settings' => array($txt['settings']),
 					),
 				),
@@ -445,6 +467,7 @@ function Admin()
 						'general' => array($txt['general_settings']),
 						'database' => array($txt['database_paths_settings']),
 						'cookie' => array($txt['cookies_sessions_settings']),
+						'',
 						'cache' => array($txt['caching_settings']),
 						'loads' => array($txt['load_balancing_settings']),
 						'proxy' => array($txt['proxy_settings']),
@@ -458,6 +481,7 @@ function Admin()
 					'bigicon' => 'mail_settings.png',
 					'subsections' => array(
 						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
+						'',
 						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
 					),
 				),
@@ -482,6 +506,7 @@ function Admin()
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
 						'index' => array($txt['media_admin_maintenance_all_tasks']),
+						'',
 						'recount' => array($txt['media_admin_maintenance_recount']),
 						'checkfiles' => array($txt['media_admin_maintenance_checkfiles']),
 						'finderrors' => array($txt['media_admin_maintenance_finderrors']),
@@ -515,11 +540,13 @@ function Admin()
 					'bigicon' => 'logs.png',
 					'subsections' => array(
 						'errorlog' => array($txt['errlog'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
+						'',
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'modlog' => array($txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'banlog' => array($txt['ban_log'], 'manage_bans'),
 						'spiderlog' => array($txt['spider_logs'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
+						'',
 						'pruning' => array($txt['pruning_title'], 'admin_forum'),
 					),
 				),
@@ -546,6 +573,7 @@ function Admin()
 						'browse' => array($txt['browse_packages']),
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
 						'perms' => array($txt['package_file_perms']),
+						'',
 						'options' => array($txt['package_settings']),
 					),
 				),
@@ -810,7 +838,7 @@ function AdminSearchInternal()
 			$search_data['sections'][] = array($menu_item['label'], 'area=' . $menu_key);
 			if (!empty($menu_item['subsections']))
 				foreach ($menu_item['subsections'] as $key => $sublabel)
-					if (isset($sublabel['label']))
+					if (isset($sublabel, $sublabel['label']))
 						$search_data['sections'][] = array($sublabel['label'], 'area=' . $menu_key . ';sa=' . $key);
 		}
 	}

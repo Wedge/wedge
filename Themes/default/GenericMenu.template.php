@@ -137,8 +137,13 @@ function template_generic_menu_dropdown()
 
 				foreach ($area['subsections'] as $sa => $sub)
 				{
-					if (!empty($sub['disabled']))
+					if (empty($sub))
+					{
+						if (is_numeric($sa))
+							echo '
+					<li class="separator"><a><hr></a></li>';
 						continue;
+					}
 
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
 
@@ -186,12 +191,9 @@ function template_generic_tabs()
 	// Exactly how many tabs do we have?
 	foreach ($context['tabs'] as $id => $tab)
 	{
-		// Can this not be accessed?
-		if (!empty($tab['disabled']))
-		{
-			$tab_context['tabs'][$id]['disabled'] = true;
+		// Is this menu item a separator, or disabled?
+		if (empty($tab) || !empty($tab['disabled']))
 			continue;
-		}
 
 		// Did this not even exist - or do we not have a label?
 		if (!isset($tab_context['tabs'][$id]))
@@ -250,7 +252,7 @@ function template_generic_tabs()
 
 	// Print out all the items in this tab.
 	foreach ($tab_context['tabs'] as $sa => $tab)
-		if (empty($tab['disabled']))
+		if (!empty($tab))
 			echo '
 		<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '>
 			<h4><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], isset($tab['add_params']) ? $tab['add_params'] : '', '">', $tab['label'], '</a></h4>

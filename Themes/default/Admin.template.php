@@ -58,7 +58,7 @@ function template_admin()
 			continue;
 
 		echo '
-			<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', '">
+			<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', ' wrc">
 				<legend>', $section['title'], '</legend>';
 
 		foreach ($section['areas'] as $area_id => $area)
@@ -1950,37 +1950,30 @@ function template_pretty_urls()
 		', $txt['pretty_settings'], '
 	</we:cat>
 	<div class="windowbg2 wrc">
-		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">
-			<fieldset>
-				<label>
-					<input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
-					', $txt['pretty_cache'], '
-				</label>
-			</fieldset>';
+		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">';
 
 	// Display the filters
 	if (!empty($context['pretty']['filters']))
-	{
-		echo '
-			<fieldset>
-				<legend>', $txt['pretty_filters'], '</legend>';
-
 		foreach ($context['pretty']['filters'] as $id => $enabled)
 			echo '
-				<div>
-					<label>
-						<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '', '>
-						', $txt['pretty_filter_' . $id], '
-					</label>
-				</div>';
-
-		echo '
-			</fieldset>';
-	}
+			<div>
+				<label>
+					<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '', '>
+					', $txt['pretty_filter_' . $id], '
+				</label>
+			</div>';
 
 	echo '
-			<input type="submit" name="save" value="', $txt['pretty_save'], '">
+			<hr>
+			<label>
+				<input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
+				', $txt['pretty_cache'], '
+			</label>
+			<div class="floatright">
+				<input type="submit" name="save" value="', $txt['pretty_save'], '">
+			</div>
 		</form>
+		<br class="clear">
 	</div>
 	<br>
 	<we:cat>
@@ -1988,7 +1981,7 @@ function template_pretty_urls()
 	</we:cat>
 	<div class="windowbg wrc">
 		<form id="pretty_maintain_refill" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;refill" method="post" accept-charset="UTF-8">
-			<input type="submit" value="', $txt['pretty_refill'], '" style="margin-top: 10px">
+			<input type="submit" value="', $txt['pretty_refill'], '">
 		</form>
 	</div>';
 }

@@ -134,25 +134,18 @@ function createMenu($menuData, $menuOptions = array())
 					if (empty($area['hidden']))
 					{
 						$menu_context['sections'][$section_id]['title'] = $section['title'];
-
 						$here = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
+
 						// We'll need the ID as well...
 						$menu_context['sections'][$section_id]['id'] = $section_id;
-						// Does it have a custom URL?
+
+						// Does this area have a custom URL?
 						if (isset($area['custom_url']))
 							$here['url'] = $area['custom_url'];
 
-						// Does this area have its own icon?
-						if (!empty($area['icon']))
-							$here['icon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '">&nbsp;&nbsp;';
-						else
-							$here['icon'] = '';
-
-						// Does this area have its own icon?
-						if (!empty($area['bigicon']))
-							$here['bigicon'] = '<img src="' . $context['menu_image_path'] . '/' . $area['bigicon'] . '">';
-						else
-							$here['bigicon'] = '';
+						// Does it have its own icon and bigicon?
+						$here['icon'] = empty($area['icon']) ? '' : '<img src="' . $context['menu_image_path'] . '/' . $area['icon'] . '">&nbsp;&nbsp;';
+						$here['bigicon'] = empty($area['bigicon']) ? '' : '<img src="' . $context['menu_image_path'] . '/' . $area['bigicon'] . '">';
 
 						// Did it have subsections?
 						if (!empty($area['subsections']))
@@ -161,11 +154,10 @@ function createMenu($menuData, $menuOptions = array())
 							$first_sa = $last_sa = null;
 							foreach ($area['subsections'] as $sa => $sub)
 							{
-								if ((empty($sub[1]) || allowedTo($sub[1])) && (!isset($sub['enabled']) || !empty($sub['enabled'])))
+								if (!empty($sub) && (empty($sub[1]) || allowedTo($sub[1])) && (!isset($sub['enabled']) || !empty($sub['enabled'])))
 								{
 									if ($first_sa == null)
 										$first_sa = $sa;
-
 									$here['subsections'][$sa] = array('label' => $sub[0]);
 									// Custom URL?
 									if (isset($sub['url']))
@@ -189,9 +181,9 @@ function createMenu($menuData, $menuOptions = array())
 									// Let's assume this is the last, for now.
 									$last_sa = $sa;
 								}
-								// Mark it as disabled...
+								// Mark it as disabled/deleted...
 								else
-									$here['subsections'][$sa]['disabled'] = true;
+									$here['subsections'][$sa] = '';
 							}
 
 							// Set which one is first, last and selected in the group.
@@ -254,14 +246,29 @@ function createMenu($menuData, $menuOptions = array())
 		return false;
 	}
 
+	// Clean up orphan separators
 	foreach ($menu_context['sections'] as &$section)
 	{
 		$areas =& $section['areas'];
 		while (reset($areas) == '' && array_shift($areas) !== null);
 		while (end($areas) == '' && array_pop($areas) !== null);
+		$ex = false;
 		foreach ($areas as $id => &$area)
 		{
-			if (!empty($ex) && is_numeric($id))
+			// Submenu separators make processing 3x slower. But it's not even a millisecond...
+			if (!empty($area['subsections']))
+			{
+				while (reset($area['subsections']) === '' && array_shift($area['subsections']) !== null);
+				while (end($area['subsections']) === '' && array_pop($area['subsections']) !== null);
+				$exs = false;
+				foreach ($area['subsections'] as $ids => &$sub)
+				{
+					if (!empty($exs) && is_numeric($ids))
+						unset($areas[$id][$ids]);
+					$exs = is_numeric($ids);
+				}
+			}
+			if ($ex && is_numeric($id))
 				unset($areas[$id]);
 			$ex = is_numeric($id);
 		}
