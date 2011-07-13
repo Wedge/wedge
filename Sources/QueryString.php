@@ -42,6 +42,7 @@ function cleanRequest()
 /*
 	// Makes it easier to refer to things this way.
 	// !!! Change this once the feature is deemed to be stable.
+	// !!! Also make sure the original $boardurl is saved, for Atom's sake.
 
 	if (!empty($modSettings['pretty_filters']['boards']))
 	{

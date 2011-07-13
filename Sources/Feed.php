@@ -62,7 +62,7 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $topic, $board, $board_info, $context, $scripturl, $txt, $modSettings;
-	global $query_this, $forum_version, $user_info, $ex_scripturl;
+	global $query_this, $forum_version, $user_info, $domain;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -225,11 +225,6 @@ function Feed()
 	// Show in Atom, or RSS?
 	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom')) ? $_GET['type'] : 'atom';
 
-	// $ex_scripturl should be the original $scripturl from the first time you activated this Atom feed.
-	if (empty($modSettings['feed_root']))
-		updateSettings(array('feed_root' => $scripturl));
-	$ex_scripturl = $modSettings['feed_root'];
-
 	// !!! Birthdays?
 
 	// List all the different types of data they can pull.
@@ -255,6 +250,13 @@ function Feed()
 		$xml = cache_get_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, 240);
 	if (empty($xml))
 	{
+		if ($xml_format == 'atom')
+		{
+			// Get the original $scripturl from the first time you activated this Atom feed.
+			if (empty($modSettings['feed_root']))
+				updateSettings(array('feed_root' => strtolower($scripturl)));
+			preg_match('~[^/]+//([^/]+)/(.*?)(?:/index.php)?~', $modSettings['feed_root'], $domain);
+		}
 		$xml = $subActions[$_GET['sa']][0]($xml_format);
 
 		if (!empty($modSettings['cache_enable']) && (($user_info['is_guest'] && $modSettings['cache_enable'] >= 3)
@@ -337,16 +339,15 @@ function cdata_parse($data)
 	return strpos($data, '</') === false && strpos($data, '&') === false ? $data : '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 }
 
-function uuid_gen($str)
+function tag_gen($key, $date)
 {
-	$md5 = md5($str);
-	return 'urn:uuid:' . substr($md5,  0,  8) . '-' . substr($md5,  8,  4) . '-' . substr($md5, 12,  4) . '-' . substr($md5, 16,  4) . '-' . substr($md5, 20, 12);
+	global $domain;
+
+	return 'tag:' . $domain[1] . ',' . gmdate('Y-m-d', $date) . ':' . (empty($domain[2]) ? '' : $domain[2] . ':') . $key;
 }
 
 function dumpTags($data, $i, $tag = null, $xml_format = '')
 {
-	global $modSettings, $context, $scripturl;
-
 	// For every array in the data...
 	foreach ($data as $key => $val)
 	{
@@ -399,7 +400,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 
 function getXmlMembers($xml_format)
 {
-	global $scripturl, $ex_scripturl;
+	global $scripturl;
 
 	if (!allowedTo('view_mlist'))
 		return array();
@@ -433,7 +434,7 @@ function getXmlMembers($xml_format)
 				'link' => $scripturl . '?action=profile;u=' . $row['id_member'],
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['date_registered']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['last_login']),
-				'id' => uuid_gen($ex_scripturl . '?action=profile;u=' . $row['id_member']),
+				'id' => tag_gen('member-' . $row['id_member'], $row['date_registered']),
 			);
 	}
 	wesql::free_result($request);
@@ -443,7 +444,7 @@ function getXmlMembers($xml_format)
 
 function getXmlNews($xml_format)
 {
-	global $user_info, $scripturl, $ex_scripturl, $modSettings;
+	global $user_info, $scripturl, $modSettings;
 	global $board, $query_this, $settings, $context;
 
 	/* Find the latest posts that:
@@ -540,7 +541,7 @@ function getXmlNews($xml_format)
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'modified' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => uuid_gen($ex_scripturl . '?topic=' . $row['id_topic'] . '.0'),
+				'id' => tag_gen('topic-' . $row['id_topic'], $row['poster_time']),
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 	}
@@ -551,7 +552,7 @@ function getXmlNews($xml_format)
 
 function getXmlRecent($xml_format)
 {
-	global $user_info, $scripturl, $ex_scripturl, $modSettings;
+	global $user_info, $scripturl, $modSettings;
 	global $board, $query_this, $settings, $context;
 
 	$done = false;
@@ -657,7 +658,7 @@ function getXmlRecent($xml_format)
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
-				'id' => uuid_gen($ex_scripturl . '?msg=' . $row['id_msg']),
+				'id' => tag_gen('msg-' . $row['id_msg'], $row['poster_time']),
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 	}
@@ -668,8 +669,7 @@ function getXmlRecent($xml_format)
 
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $ex_scripturl, $memberContext;
-	global $user_profile, $modSettings, $user_info;
+	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)
@@ -706,62 +706,9 @@ function getXmlProfile($xml_format)
 			),
 			'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['date_registered']),
 			'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['last_login']),
-			'id' => uuid_gen($ex_scripturl . '?action=profile;u=' . $profile['id']),
+			'id' => tag_gen('member-' . $profile['id'], $user_profile[$profile['id']]['date_registered']),
 			'logo' => !empty($profile['avatar']) ? $profile['avatar']['url'] : '',
 		);
-
-/*
-	else
-	{
-		$data = array(
-			'username' => $user_info['is_admin'] || $user_info['id'] == $profile['id'] ? cdata_parse($profile['username']) : '',
-			'posts' => $profile['posts'],
-			'post-group' => cdata_parse($profile['post_group']),
-			'language' => cdata_parse($profile['language']),
-			'last-login' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['last_login']),
-			'registered' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['date_registered'])
-		);
-
-		// Everything below here might not be set, and thus maybe shouldn't be displayed.
-		if ($profile['gender']['name'] != '')
-			$data['gender'] = cdata_parse($profile['gender']['name']);
-
-		if ($profile['avatar']['name'] != '')
-			$data['avatar'] = $profile['avatar']['url'];
-
-		// If they are online, show an empty tag... no reason to put anything inside it.
-		if ($profile['online']['is_online'])
-			$data['online'] = '';
-
-		if ($profile['signature'] != '')
-			$data['signature'] = cdata_parse($profile['signature']);
-		if ($profile['blurb'] != '')
-			$data['blurb'] = cdata_parse($profile['blurb']);
-		if ($profile['location'] != '')
-			$data['location'] = cdata_parse($profile['location']);
-		if ($profile['title'] != '')
-			$data['title'] = cdata_parse($profile['title']);
-
-		if ($profile['website']['title'] != '')
-			$data['website'] = array(
-				'title' => cdata_parse($profile['website']['title']),
-				'link' => $profile['website']['url']
-			);
-
-		if ($profile['group'] != '')
-			$data['position'] = cdata_parse($profile['group']);
-
-		if (in_array($profile['show_email'], array('yes', 'yes_permission_override')))
-			$data['email'] = $profile['email'];
-
-		if (!empty($profile['birth_date']) && substr($profile['birth_date'], 0, 4) != '0000')
-		{
-			list ($birth_year, $birth_month, $birth_day) = sscanf($profile['birth_date'], '%d-%d-%d');
-			$datearray = getdate(forum_time());
-			$data['age'] = $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1);
-		}
-	}
-*/
 
 	// Save some memory.
 	unset($profile, $memberContext[$_GET['u']]);
