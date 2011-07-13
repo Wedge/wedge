@@ -252,7 +252,7 @@ function template_generic_tabs()
 
 	// Print out all the items in this tab.
 	foreach ($tab_context['tabs'] as $sa => $tab)
-		if (!empty($tab))
+		if (!empty($tab) && empty($tab['disabled']))
 			echo '
 		<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '>
 			<h4><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], isset($tab['add_params']) ? $tab['add_params'] : '', '">', $tab['label'], '</a></h4>

@@ -647,7 +647,6 @@ function template_show_settings()
 			if ($config_var['type'] == 'title')
 				echo '
 
-			<div class="settings_cat"></div>
 			<we:cat>
 				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
 					<a href="' . $scripturl . '?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : ''), '

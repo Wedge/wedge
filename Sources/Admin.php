@@ -79,6 +79,7 @@ function Admin()
 					'icon' => 'features.gif',
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
+						'',
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
