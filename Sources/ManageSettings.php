@@ -1503,7 +1503,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1', // with icons
-				'enclose' => '<a class="facebook" href="http://www.facebook.com/profile.php?id={INPUT}" target="_blank" title="Facebook - {INPUT}"><img src="{IMAGES_URL}/facebook.png" alt="Facebook - {INPUT}"></a>',
+				'enclose' => '<a class="facebook" href="http://www.facebook.com/profile.php?id={INPUT}" target="_blank" title="Facebook - {INPUT}"><img src="{IMAGES_URL}/fields/facebook.png" alt="Facebook - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '32',
 				'bbc' => false,
@@ -1517,7 +1517,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1', // with icons
-				'enclose' => '<a class="twitter" href="http://twitter.com/#!/{INPUT}" target="_blank" title="Twitter - {INPUT}"><img src="{IMAGES_URL}/twitter.png" alt="Twitter - {INPUT}"></a>',
+				'enclose' => '<a class="twitter" href="http://twitter.com/#!/{INPUT}" target="_blank" title="Twitter - {INPUT}"><img src="{IMAGES_URL}/fields/twitter.png" alt="Twitter - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '16',
 				'bbc' => false,
@@ -1533,7 +1533,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1', // with icons
-				'enclose' => '<a class="aim" href="aim:goim?screenname={INPUT}&amp;message=' . $txt['aim_default_message'] . '" target="_blank" title="AIM - {INPUT}"><img src="{IMAGES_URL}/aim.gif" alt="AIM - {INPUT}"></a>',
+				'enclose' => '<a class="aim" href="aim:goim?screenname={INPUT}&amp;message=' . $txt['aim_default_message'] . '" target="_blank" title="AIM - {INPUT}"><img src="{IMAGES_URL}/fields/aim.gif" alt="AIM - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '50',
 				'bbc' => false,
@@ -1560,7 +1560,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1', // with icons
-				'enclose' => '<a class="msn" href="http://members.msn.com/{INPUT}" target="_blank" title="Live - {INPUT}"><img src="{IMAGES_URL}/msntalk.gif" alt="Live - {INPUT}"></a>',
+				'enclose' => '<a class="msn" href="http://members.msn.com/{INPUT}" target="_blank" title="Live - {INPUT}"><img src="{IMAGES_URL}/fields/msntalk.gif" alt="Live - {INPUT}"></a>',
 				'field_type' => 'text',
 				'max_length' => '50',
 				'bbc' => false,
@@ -1589,7 +1589,7 @@ function EditCustomProfiles()
 				'profile_area' => 'forumprofile',
 				'display' => true,
 				'placement' => '1',
-				'enclose' => '<a class="steam" href="http://steamcommunity.com/id/{INPUT}" target="_blank" title="Steam - {INPUT}"><img src="{IMAGES_URL}/steam.png"></a>',
+				'enclose' => '<a class="steam" href="http://steamcommunity.com/id/{INPUT}" target="_blank" title="Steam - {INPUT}"><img src="{IMAGES_URL}/fields/steam.png"></a>',
 				'field_type' => 'text',
 				'max_length' => '50',
 				'bbc' => false,
