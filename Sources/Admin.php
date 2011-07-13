@@ -96,31 +96,6 @@ function Admin()
 						'moderation' => array($txt['moderation_settings_short'], 'enabled' => substr($modSettings['warning_settings'], 0, 1) == 1),
 					),
 				),
-				'serversettings' => array(
-					'label' => $txt['admin_server_settings'],
-					'file' => 'ManageServer',
-					'function' => 'ModifySettings',
-					'icon' => 'server.gif',
-					'subsections' => array(
-						'general' => array($txt['general_settings']),
-						'database' => array($txt['database_paths_settings']),
-						'cookie' => array($txt['cookies_sessions_settings']),
-						'cache' => array($txt['caching_settings']),
-						'loads' => array($txt['load_balancing_settings']),
-						'proxy' => array($txt['proxy_settings']),
-					),
-				),
-				'mailqueue' => array(
-					'label' => $txt['mailqueue_title'],
-					'file' => 'ManageMail',
-					'function' => 'ManageMail',
-					'icon' => 'mail.gif',
-					'bigicon' => 'mail_settings.png',
-					'subsections' => array(
-						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
-					),
-				),
 				'',
 				'languages' => array(
 					'label' => $txt['language_configuration'],
@@ -257,6 +232,18 @@ function Admin()
 					),
 				),
 				'',
+				'aeva_embed' => array(
+					'label' => $txt['media_admin_labels_embed'],
+					'icon' => 'aeva.png',
+					'bigicon' => !empty($modSettings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
+					'subsections' => array(
+						'config' => array($txt['media_admin_settings_config']),
+						'sites' => array($txt['media_admin_settings_sites']),
+					),
+				),
+				'',
 				'sengines' => array(
 					'label' => $txt['search_engines'],
 					'enabled' => !empty($modSettings['spider_mode']),
@@ -275,85 +262,87 @@ function Admin()
 		),
 		'media' => array(
 			'title' => $txt['media_title'],
-			'permission' => array('media_manage'),
+			'permission' => array('media_manage'), // if not specified lower down, this will just be inherited, no need to set it individually!
 			'areas' => array(
 				'aeva_about' => array(
 					'label' => $txt['media_admin_labels_about'],
 					'icon' => 'administration.gif',
-					'enabled' => !empty($modSettings['media_enabled']) || !empty($modSettings['embed_enabled']),
+					'enabled' => !empty($modSettings['media_enabled']),
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'about' => 'media_admin_labels_index',
-						'readme' => 'media_admin_readme',
-						'changelog' => 'media_admin_changelog',
+						'about' => array($txt['media_admin_labels_index']),
+						'readme' => array($txt['media_admin_readme']),
+						'changelog' => array($txt['media_admin_changelog']),
 					),
 				),
 				'aeva_settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'corefeatures.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'config' => 'media_admin_settings_config',
-						'meta' => 'media_admin_settings_meta',
-						'layout' => 'media_admin_settings_layout',
-					),
-				),
-				'aeva_embed' => array(
-					'label' => $txt['media_admin_labels_embed'],
-					'icon' => 'aeva.png',
-					'bigicon' => !empty($modSettings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
-					'enabled' => !empty($modSettings['embed_enabled']),
-					'subsections' => array(
-						'config' => 'media_admin_settings_config',
-						'sites' => 'media_admin_settings_sites',
+						'config' => array($txt['media_admin_settings_config']),
+						'meta' => array($txt['media_admin_settings_meta']),
+						'layout' => array($txt['media_admin_settings_layout']),
 					),
 				),
 				'aeva_albums' => array(
 					'label' => $txt['media_admin_labels_albums'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'mgallery.png',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'index' => 'media_admin_labels_index',
-						'normal' => 'media_admin_filter_normal_albums',
-						'featured' => 'media_admin_filter_featured_albums',
-						'add' => 'media_admin_add_album',
-					),
-				),
-				'aeva_maintenance' => array(
-					'label' => $txt['media_admin_labels_maintenance'],
-					'icon' => 'maintain.gif',
-					'subsections' => array(
-						'index' => 'media_admin_maintenance_all_tasks',
-						'recount' => 'media_admin_maintenance_recount',
-						'checkfiles' => 'media_admin_maintenance_checkfiles',
-						'finderrors' => 'media_admin_maintenance_finderrors',
-						'prune' => 'media_admin_maintenance_prune',
+						'index' => array($txt['media_admin_labels_index']),
+						'normal' => array($txt['media_admin_filter_normal_albums']),
+						'featured' => array($txt['media_admin_filter_featured_albums']),
+						'add' => array($txt['media_admin_add_album']),
 					),
 				),
 				'aeva_bans' => array(
 					'label' => $txt['media_admin_labels_bans'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'ban.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'index' => 'media_admin_labels_index',
-						'add' => 'media_admin_bans_add',
+						'index' => array($txt['media_admin_labels_index']),
+						'add' => array($txt['media_admin_bans_add']),
 					),
 				),
 				'aeva_fields' => array(
 					'label' => $txt['media_cf'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'packages.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'index' => 'media_admin_labels_index',
-						'edit' => 'media_cf_add',
+						'index' => array($txt['media_admin_labels_index']),
+						'edit' => array($txt['media_cf_add']),
 					),
 				),
 				'aeva_perms' => array(
 					'label' => $txt['media_admin_labels_perms'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'permissions.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 				),
 				'aeva_quotas' => array(
 					'label' => $txt['media_admin_labels_quotas'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'attachment.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 				),
 				'aeva_ftp' => array(
 					'label' => $txt['media_admin_labels_ftp'],
+					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'boards.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
 				),
 			),
 		),
@@ -447,6 +436,31 @@ function Admin()
 			'title' => $txt['admin_maintenance'],
 			'permission' => array('admin_forum'),
 			'areas' => array(
+				'serversettings' => array(
+					'label' => $txt['admin_server_settings'],
+					'file' => 'ManageServer',
+					'function' => 'ModifySettings',
+					'icon' => 'server.gif',
+					'subsections' => array(
+						'general' => array($txt['general_settings']),
+						'database' => array($txt['database_paths_settings']),
+						'cookie' => array($txt['cookies_sessions_settings']),
+						'cache' => array($txt['caching_settings']),
+						'loads' => array($txt['load_balancing_settings']),
+						'proxy' => array($txt['proxy_settings']),
+					),
+				),
+				'mailqueue' => array(
+					'label' => $txt['mailqueue_title'],
+					'file' => 'ManageMail',
+					'function' => 'ManageMail',
+					'icon' => 'mail.gif',
+					'bigicon' => 'mail_settings.png',
+					'subsections' => array(
+						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
+					),
+				),
 				'maintain' => array(
 					'label' => $txt['maintain_title'],
 					'file' => 'ManageMaintenance',
@@ -458,6 +472,20 @@ function Admin()
 						'database' => array($txt['maintain_sub_database'], 'admin_forum'),
 						'members' => array($txt['maintain_sub_members'], 'admin_forum'),
 						'topics' => array($txt['maintain_sub_topics'], 'admin_forum'),
+					),
+				),
+				'aeva_maintenance' => array(
+					'label' => $txt['media_admin_labels_maintenance'],
+					'enabled' => !empty($modSettings['media_enabled']),
+					'icon' => 'maintain.gif',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
+					'subsections' => array(
+						'index' => array($txt['media_admin_maintenance_all_tasks']),
+						'recount' => array($txt['media_admin_maintenance_recount']),
+						'checkfiles' => array($txt['media_admin_maintenance_checkfiles']),
+						'finderrors' => array($txt['media_admin_maintenance_finderrors']),
+						'prune' => array($txt['media_admin_maintenance_prune']),
 					),
 				),
 				'scheduledtasks' => array(
@@ -539,19 +567,6 @@ function Admin()
 	$menuOptions = array();
 	if (isset($_GET['togglebar']) && (empty($_GET['area']) || $_GET['area'] == 'index'))
 		$menuOptions['toggle_redirect_url'] = 'action=admin;' . $context['session_query'];
-
-	// Temp compatibility code for Aeva Media integration...
-	foreach ($admin_areas['media']['areas'] as &$tab)
-	{
-		$tab['file'] = 'media/ManageMedia';
-		$tab['function'] = 'aeva_admin_init';
-		$tab['permission'] = array('media_manage');
-		$tab['enabled'] = isset($tab['enabled']) ? $tab['enabled'] : !empty($modSettings['media_enabled']);
-		if (!empty($tab['subsections']))
-			foreach ($tab['subsections'] as &$title)
-				$title = array($txt[$title]);
-	}
-	// End of compatibility code.
 
 	// Any files to include for administration?
 	if (!empty($modSettings['integrate_admin_include']))

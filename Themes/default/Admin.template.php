@@ -54,6 +54,9 @@ function template_admin()
 	$use_bg2 = false;
 	foreach ($menu_context['sections'] as $section_id => $section)
 	{
+		if (empty($section) || empty($section['title']))
+			continue;
+
 		echo '
 			<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', '">
 				<legend>', $section['title'], '</legend>';

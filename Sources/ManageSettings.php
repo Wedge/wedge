@@ -218,11 +218,6 @@ function ModifyCoreFeatures($return_config = false)
 			'url' => 'action=admin;area=media',
 			'setting' => 'media_enabled',
 		),
-		// Auto-embedding
-		'e' => array(
-			'url' => 'action=admin;area=aeva_embed',
-			'setting' => 'embed_enabled',
-		),
 		// Moderation Log
 		'ml' => array(
 			'url' => 'action=admin;area=logs;sa=modlog',
