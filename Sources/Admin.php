@@ -378,6 +378,21 @@ function Admin()
 						'search' => array($txt['mlist_search']),
 					),
 				),
+				'regcenter' => array(
+					'label' => $txt['registration_center'],
+					'file' => 'ManageRegistration',
+					'function' => 'RegCenter',
+					'icon' => 'regcenter.gif',
+					'bigicon' => 'registration.png',
+					'permission' => array('admin_forum', 'moderate_forum'),
+					'subsections' => array(
+						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
+						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
+						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
+						'',
+						'settings' => array($txt['settings'], 'admin_forum'),
+					),
+				),
 				'',
 				'membergroups' => array(
 					'label' => $txt['admin_groups'],
@@ -405,22 +420,6 @@ function Admin()
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions', 'enabled' => $modSettings['postmod_active']),
-						'',
-						'settings' => array($txt['settings'], 'admin_forum'),
-					),
-				),
-				'',
-				'regcenter' => array(
-					'label' => $txt['registration_center'],
-					'file' => 'ManageRegistration',
-					'function' => 'RegCenter',
-					'icon' => 'regcenter.gif',
-					'bigicon' => 'registration.png',
-					'permission' => array('admin_forum', 'moderate_forum'),
-					'subsections' => array(
-						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
-						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
-						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
@@ -752,7 +751,7 @@ function setupAdminSidebar()
 		bLoadUpdateNotification: true,
 		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationLink: ' . JavaScriptEscape($scripturl . '?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '
+		sUpdateNotificationLink: we_script + \'?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '\'
 	});');
 }
 

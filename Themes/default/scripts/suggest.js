@@ -57,7 +57,7 @@ function smc_AutoSuggest(oOptions)
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
 
 	// Create a backup text input for single-entry inputs.
-	this.oRealTextHandle = $('<input type="hidden" />', { name: oText.name }).val(oText.value).appendTo(oText.form);
+	this.oRealTextHandle = $('<input type="hidden" name="' + oText.name + '" />').val(oText.value).appendTo(oText.form);
 
 	// Disable autocomplete in any browser by obfuscating the name.
 	var that = this;
@@ -241,8 +241,8 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	var eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
 	$('<div></div>', { id: eid }).html(
 		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
-		.replace(/%item_href%/g, smf_prepareScriptUrl(smf_scripturl) + this.sURLMask.replace(/%item_id%/g, sItemId))
-		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, smf_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
+		.replace(/%item_href%/g, smf_prepareScriptUrl(we_script) + this.sURLMask.replace(/%item_id%/g, sItemId))
+		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
 	).appendTo(this.oItemList);
 
 	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
@@ -458,7 +458,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	sSearchString = sSearchString.php_to8bit().php_urlencode();
 
 	// Get the document.
-	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, smf_prepareScriptUrl(smf_scripturl)).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
+	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, smf_prepareScriptUrl(we_script)).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
 
 	return true;
 };

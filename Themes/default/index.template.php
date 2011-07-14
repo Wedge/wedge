@@ -423,11 +423,11 @@ function template_html_below()
 
 	echo "\n", theme_base_js(), '
 <script><!-- // --><![CDATA[
-	var smf_theme_url = "', $settings['theme_url'], '";
-	var smf_default_theme_url = "', $settings['default_theme_url'], '";
-	var smf_images_url = "', $settings['images_url'], '";
-	var smf_scripturl = "', $scripturl, '";
-	var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
+	var we_script = "', $scripturl, '";
+	var we_default_theme_url = "', $settings['default_theme_url'], '";
+	var we_theme_url = "', $settings['theme_url'], '";
+	var we_images_url = "', $settings['images_url'], '";
+	var we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
 	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
 	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
 
@@ -450,7 +450,7 @@ function template_html_below()
 	});', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
-		window.open(smf_prepareScriptUrl(smf_scripturl) + "action=pm");' : '';
+		window.open(smf_prepareScriptUrl(we_script) + "action=pm");' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!

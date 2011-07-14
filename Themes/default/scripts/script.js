@@ -69,7 +69,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 // Simulate PHP's strtolower (in SOME cases, PHP uses ISO-8859-1 case folding.)
 String.prototype.php_strtolower = function ()
 {
-	return typeof smf_iso_case_folding == 'boolean' && smf_iso_case_folding == true ? this.php_strtr(
+	return typeof we_iso_case_folding == 'boolean' && we_iso_case_folding == true ? this.php_strtr(
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZ\x8a\x8c\x8e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde',
 		'abcdefghijklmnopqrstuvwxyz\x9a\x9c\x9e\xff\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe'
 	) : this.php_strtr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
@@ -121,7 +121,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		help_page = from && from.href ? from.href : from,
 		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
 		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto',
-		title = $(from).next('strong').text();
+		title = $(from).next().text();
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
@@ -134,7 +134,8 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		noScrollbars = noScrollbars && (noScrollbars === true);
 
 	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
-	$.event.fix(window.event).stopPropagation();
+	if (!is_ff)
+		$.event.fix(window.event).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
 	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == help_page)
@@ -241,10 +242,10 @@ function _sessionKeepAlive()
 	var curTime = new Date().getTime();
 
 	// Prevent a Firefox bug from hammering the server.
-	if (smf_scripturl && curTime - _lastKeepAliveCheck > 900000)
+	if (we_script && curTime - _lastKeepAliveCheck > 900000)
 	{
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=keepalive;time=' + curTime;
+		tempImage.src = smf_prepareScriptUrl(we_script) + 'action=keepalive;time=' + curTime;
 		_lastKeepAliveCheck = curTime;
 	}
 	setTimeout('_sessionKeepAlive();', 1200000);
@@ -260,7 +261,7 @@ function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_va
 		additional_vars = '';
 
 	var tempImage = new Image();
-	tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + additional_vars + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
+	tempImage.src = smf_prepareScriptUrl(we_script) + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + additional_vars + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
 }
 
 function smf_avatarResize()
@@ -453,9 +454,10 @@ function selectText(box)
 	box.select();
 }
 
+// Rating boxes in Media area
 function ajaxRating()
 {
-	$('#ratingElement').html('<img src="' + (typeof smf_default_theme_url == "undefined" ? smf_theme_url : smf_default_theme_url) + '/images/loader.gif">');
+	$('#ratingElement').html('<img src="' + (typeof we_default_theme_url == "undefined" ? we_theme_url : we_default_theme_url) + '/images/loader.gif">');
 	sendXMLDocument($('#ratingForm').attr('action') + ';xml', 'rating=' + $('#rating').val(), ajaxRating2);
 }
 
@@ -475,7 +477,7 @@ function grabJumpToContent()
 
 	ajax_indicator(true);
 
-	$('smf item', getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
+	$('smf item', getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
 		aBoardsAndCategories.push({
 			id: parseInt(this.getAttribute('id'), 10),
 			isCategory: this.getAttribute('type') == 'category',
@@ -503,7 +505,7 @@ function JumpTo(opt)
 			  '<select name="' + opt.sContainerId + '_select" id="' + opt.sContainerId + '_select">'
 			+ '<option value="?board=' + opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities() + '</option>'
 			+ '</select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" '
-			+ 'onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + opt.iCurBoardId + '.0\';">')).find('select').focus(grabJumpToContent);
+			+ 'onclick="window.location.href = \'' + smf_prepareScriptUrl(we_script) + 'board=' + opt.iCurBoardId + '.0\';">')).find('select').focus(grabJumpToContent);
 };
 
 // Fill the jump to box with entries. Method of the JumpTo class.
@@ -545,7 +547,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 	// Internet Explorer needs css() to keep the box dropped down.
 	$dropdownList.append(oListFragment).focus().change(function () {
 		if (this.selectedIndex > 0 && ($val = $(this).val()))
-			window.location.href = smf_scripturl + $val.substr(smf_scripturl.indexOf('?') == -1 || $val.substr(0, 1) != '?' ? 0 : 1);
+			window.location.href = we_script + $val.substr(we_script.indexOf('?') == -1 || $val.substr(0, 1) != '?' ? 0 : 1);
 	});
 };
 

@@ -86,9 +86,8 @@ function template_email_members()
 	add_js('
 	function toggleAdvanced(mode)
 	{
-		$("#advanced_settings_div").toggle(mode);
-		$("#gosimple").toggle(mode);
-		$("#goadvanced").toggle(!mode);
+		$("#advanced_settings_div, #gosimple, #goadvanced").toggle();
+		return false;
 	}');
 
 	echo '
@@ -120,14 +119,14 @@ function template_email_members()
 			</div>
 			<br>
 
-			<div id="advanced_select_div" style="display: none">
+			<div class="hide" id="advanced_select_div">
 				<we:cat>
-					<a href="#" onclick="toggleAdvanced(true); return false;" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '">&nbsp;<strong>', $txt['advanced'], '</strong></a>
-					<a href="#" onclick="toggleAdvanced(false); return false;" id="gosimple" style="display: none;"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '">&nbsp;<strong>', $txt['simple'], '</strong></a>
+					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" style="vertical-align: 0">&nbsp;', $txt['advanced'], '</a>
+					<a href="#" onclick="return toggleAdvanced();" id="gosimple" style="display: none"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
 				</we:cat>
 			</div>
 
-			<div class="windowbg2 wrc" id="advanced_settings_div" style="display: none;">
+			<div class="windowbg2 wrc hide" id="advanced_settings_div">
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['admin_news_select_email'], ':</strong>

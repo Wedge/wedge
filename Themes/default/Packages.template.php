@@ -56,7 +56,7 @@ function template_view_package()
 		<div class="windowbg2 wrc">
 			', $context['package_readme'], '
 			<span class="floatright">', $txt['package_available_readme_language'], '
-				<select name="readme_language" id="readme_language" onchange="if (this.options[this.selectedIndex].value) window.location.href = smf_prepareScriptUrl(smf_scripturl + \'', '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', ';package=', $context['filename'], ';readme=\' + this.options[this.selectedIndex].value);">';
+				<select name="readme_language" id="readme_language" onchange="if (this.options[this.selectedIndex].value) window.location.href = smf_prepareScriptUrl(we_script + \'', '?action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', ';package=', $context['filename'], ';readme=\' + this.options[this.selectedIndex].value);">';
 
 		foreach ($context['readmes'] as $a => $b)
 			echo '
@@ -1122,7 +1122,7 @@ function template_control_chmod()
 			sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
 
 		// Post the data out.
-		sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
+		sendXMLDocument(smf_prepareScriptUrl(we_script) + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
 	}
 	function testFTPResults(oXMLDoc)
 	{
@@ -1231,7 +1231,7 @@ function template_file_permissions()
 		else if (can_ajax)
 		{
 			ajax_indicator(true);
-			getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+			getXMLDocument(smf_prepareScriptUrl(we_script) + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 		}
 		// Otherwise reload.
 		else
@@ -1249,7 +1249,7 @@ function template_file_permissions()
 	{
 		ajax_indicator(true);
 
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+		getXMLDocument(smf_prepareScriptUrl(we_script) + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{

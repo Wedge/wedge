@@ -132,7 +132,7 @@ function template_main()
 		echo '
 								<a href="', $message['member']['href'], '" id="um', $message['id'], '_', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 							</h4>
-							<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
+							<ul class="reset" id="msg_', $message['id'], '_extra_info">';
 
 		// Show the member's custom title, if they have one.
 		if (!empty($message['member']['title']))
@@ -277,7 +277,7 @@ function template_main()
 									<h5 id="subject_', $message['id'], '">
 										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
 									</h5>
-									<div class="smalltext">&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', '</strong> ', $message['time'], ' &#187;</div>
+									<span>&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' ', '</strong> ', $message['time'], ' &#187;</span>
 									<div id="msg_', $message['id'], '_quick_mod"></div>
 								</div>';
 
@@ -559,7 +559,6 @@ function template_main()
 	if (can_ajax)
 	{
 		var oQuickModify = new QuickModify({
-			sScriptUrl: smf_scripturl,
 			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
@@ -574,9 +573,9 @@ function template_main()
 					</div>
 				</div>') . ',
 			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
-			sTemplateBodyNormal: ' . JavaScriptEscape('%body%') . ',
+			sTemplateBodyNormal: \'%body%\',
 			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
-			sErrorBorderStyle: ' . JavaScriptEscape('1px solid red') . '
+			sErrorBorderStyle: \'1px solid red\'
 		});
 
 		aJumpTo.push(new JumpTo({
@@ -595,7 +594,6 @@ function template_main()
 		aIconLists.push(new IconList({
 			sBackReference: "aIconLists[" + aIconLists.length + "]",
 			sIconIdPrefix: "msg_icon_",
-			sScriptUrl: smf_scripturl,
 			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
 			iBoardId: ' . $context['current_board'] . ',
 			iTopicId: ' . $context['current_topic'] . ',
@@ -815,8 +813,6 @@ function template_quick_reply()
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
 		iTopicId: ' . $context['current_topic'] . ',
 		iStart: ' . $context['start'] . ',
-		sScriptUrl: smf_scripturl,
-		sImagesUrl: "' . $settings['images_url'] . '",
 		sContainerId: "quickReplyOptions",
 		sImageId: "quickReplyExpand",
 		sJumpAnchor: "quickreply",

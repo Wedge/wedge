@@ -270,8 +270,6 @@ function template_aeva_item_init()
 	add_js('
 	var oQuickReply = new QuickReply({
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		sScriptUrl: smf_scripturl,
-		sImagesUrl: "' . $settings['images_url'] . '",
 		sContainerId: "quickReplyOptions",
 		sImageId: "quickReplyExpand",
 		sJumpAnchor: "quickreply",

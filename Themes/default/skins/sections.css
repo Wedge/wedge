@@ -130,7 +130,7 @@ img.new_posts
 	float: right
 	padding: 4px
 
-/* Styles for the display template (topic view).
+/* Styles for the Display template (topic view).
 ---------------------------------------------------- */
 .prevnext_prev extends .cell
 	font: normal 60%/1.3em Arial
@@ -240,40 +240,39 @@ img.new_posts
 	padding: 0 .2em .2em 0
 	overflow: hidden
 
-// Onto the posts
+#whoisviewing
+	margin: 0
+	padding: .5em
+
+/* Post styling (still in the Display template)
+---------------------------------------------------- */
 #forumposts
+	.wrc
+		display: table
+		width: 100%
+		padding: 0
+
 	// Author and topic information
 	#author
 		margin: 0 7.7em 0 10px
-	.modified
-		float: left
-		color: #a0aaa0
-	.reportlinks
-		margin-right: 1.5em
-		text-align: right
-		clear: right
-		img
-			vertical-align: -3px
 
 	// A post separator, useful when printing.
 	.post_separator
 		display: none
 
-#whoisviewing
-	margin: 0
-	padding: .5em
-
 // Poster and postarea + moderation area underneath
 .post_wrapper
+	display: table-row
 	overflow: auto
-	margin: 0 -1.2em
+	width: 100%
 
-.postarea, .moderatorbar
+.postarea
 	margin: 0 0 0 16em
 
 .postheader extends .flow_hidden
 	width: 100%
 	display: table
+	padding: 10px 0 6px
 	h5
 		overflow: hidden
 		text-overflow: ellipsis
@@ -282,14 +281,30 @@ img.new_posts
 
 .keyinfo
 	display: table-cell
+	vertical-align: middle
+	span
+		font-size: .85em
 
 .moderatorbar
-	clear: right
+	margin: 14px 0 0
+	float: left
+	width: 50%
+	.modified
+		float: right
+		color: #a0aaa0
+	.reportlinks
+		margin-right: 1.5em
+		img
+			vertical-align: -3px
 
 // Poster details and list of items
 .poster
-	float: left
+	display: table-cell
+	background: rgba(0,0,0,.05)
 	width: 15em
+	border-radius: 8px 0 0 8px
+	padding: 10px 12px 12px 0
+	vertical-align: top
 
 	ul
 		padding: 0
@@ -324,12 +339,16 @@ img.new_posts
 			vertical-align: bottom
 			padding: 0 .2em
 
+.postarea
+	display: table-cell
+	padding-left: 16px
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
 	font-family: $post_font
 	line-height: 130%
 	padding: .1em 0
+	clear: right
 
 // The user menu in the post display.
 .usermenu
@@ -396,9 +415,10 @@ div.quickbuttons_wrap
 	float: left
 
 ul.quickbuttons extends ul.reset
-	margin: 0 3% 0 0
-	clear, float, text-align: right
+	padding: 0 3% 0 0
+	clear, text-align: right
 	display: table-cell
+	vertical-align: bottom
 	font: 400 12px/20px "Trebuchet MS", Tahoma, sans-serif
 	text-transform: uppercase
 	li extends .inline-block
@@ -440,10 +460,6 @@ ul.quickbuttons extends ul.reset
 		background-position: 4px -150px
 	li.mergepost_button
 		background-position: 4px -242px
-
-.post
-	margin-top: .5em
-	clear: right
 
 .inner
 	padding: 1em 1em 0 0

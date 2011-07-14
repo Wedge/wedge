@@ -26,7 +26,7 @@ function modify_topic_show_edit(subject)
 function modify_topic_hide_edit(subject)
 {
 	// Re-template the subject!
-	cur_subject_div.html('<a href="' + smf_prepareScriptUrl(smf_scripturl) + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
+	cur_subject_div.html('<a href="' + smf_prepareScriptUrl(we_script) + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
 }
 
 function modify_topic(topic_id, first_msg_id)
@@ -47,7 +47,7 @@ function modify_topic(topic_id, first_msg_id)
 	cur_topic_id = topic_id;
 
 	ajax_indicator(true);
-	getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", onDocReceived_modify_topic);
+	getXMLDocument(smf_prepareScriptUrl(we_script) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", onDocReceived_modify_topic);
 }
 
 function onDocReceived_modify_topic(XMLDoc)
@@ -84,7 +84,7 @@ function modify_topic_save(cur_session_id, cur_session_var)
 	x.push('msg=' + qm.elements.msg.value);
 
 	ajax_indicator(true);
-	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
+	sendXMLDocument(smf_prepareScriptUrl(we_script) + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
 }
@@ -136,13 +136,13 @@ QuickReply.prototype.quote = function (iMessage)
 
 	if (this.bCollapsed)
 	{
-		window.location.href = smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
+		window.location.href = smf_prepareScriptUrl(we_script) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
 		return false;
 	}
 	else
 	{
 		ajax_indicator(true);
-		getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), this.onQuoteReceived);
+		getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), this.onQuoteReceived);
 
 		// Move the view to the quick reply box.
 		window.location.hash = (is_ie ? '' : '#') + this.opt.sJumpAnchor;
@@ -214,7 +214,7 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 	// Send out the Ajax request to get more info
 	ajax_indicator(true);
 
-	getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
+	getXMLDocument.call(this, smf_prepareScriptUrl(we_script) + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
 };
 
 // The callback function used for the Ajax request retrieving the message.
@@ -286,7 +286,7 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 
 	// Send in the Ajax request and let's hope for the best.
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sSessionVar + "=" + sSessionId + ";xml", x.join("&"), this.onModifyDone);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(we_script) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sSessionVar + "=" + sSessionId + ";xml", x.join("&"), this.onModifyDone);
 
 	return false;
 };
@@ -427,7 +427,7 @@ InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 	// Make sure this form isn't submitted in another way than this function.
 	var
 		oForm = $('#' + this.opt.sFormId)[0],
-		oInput = $('<input type="hidden" />', { name: this.opt.sSessionVar }).val(this.opt.sSessionId).appendTo(oForm);
+		oInput = $('<input type="hidden" name="' + this.opt.sSessionVar + '" />').val(this.opt.sSessionId).appendTo(oForm);
 
 	if (sSubmitType == 'remove')
 	{
@@ -504,7 +504,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
-		getXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=ajax;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
+		getXMLDocument.call(this, smf_prepareScriptUrl(we_script) + 'action=ajax;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
 	}
 
 	// Set the position of the container.
@@ -557,7 +557,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 	if (this.iCurMessageId != 0)
 	{
 		ajax_indicator(true);
-		var oXMLDoc = getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
+		var oXMLDoc = getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
 		ajax_indicator(false);
 
 		var oMessage = $('smf message', oXMLDoc.responseXML);
@@ -652,7 +652,7 @@ UserMenu.prototype.switchMenu = function (oLink)
 		if (sLink == '')
 			sLink = oLink.href;
 		else if (sFirstChar == '?')
-			sLink = smf_scripturl + sLink;
+			sLink = we_script + sLink;
 		else if (sFirstChar == ';')
 			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
 

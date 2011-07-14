@@ -625,15 +625,13 @@ function JavaScriptEscape($string)
 	global $scripturl;
 
 	return '\'' . strtr($string, array(
-		"\r" => '',
-		"\n" => '\\n',
-		"\t" => '\\t',
+		"\n" => "\\\n",
 		'\\' => '\\\\',
 		'\'' => '\\\'',
-		'</' => '<\' + \'/',
-		'script' => 'scri\'+\'pt',
-		'<a href' => '<a hr\'+\'ef',
-		$scripturl => $scripturl . '\'+\'',
+		'script' => 'scr\\ipt',
+		'href=' => 'hr\\ef=',
+		'"' . $scripturl => '"' . $scripturl . '"+"',
+		'\'' . $scripturl => '\'' . $scripturl . '\'+\''
 	)) . '\'';
 }
 
@@ -1044,7 +1042,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	elseif (isset($_GET['debug']))
 		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
 
-	//	Redirections should be prettified too
+	// Redirections should be prettified too
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		loadSource('PrettyUrls-Filters');
@@ -1269,7 +1267,7 @@ function ob_sessrewrite($buffer)
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
-		// !!!	$insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
+		// !!! $insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
 		$insideurl = preg_quote($scripturl, '~');
 		$use_cache = !empty($modSettings['pretty_enable_cache']);
 		$session_var = $context['session_var'];
@@ -1280,7 +1278,8 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
 
 		// Find all URLs in the buffer
-		$context['pretty']['search_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=[^"\'#]+)~';
+		$context['pretty']['search_patterns'][] =  '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=[^"\'#]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=([^"]+\"|[^\']+\'))~';
 		$urls_query = array();
 		$uncached_urls = array();
 
@@ -1365,7 +1364,6 @@ function ob_sessrewrite($buffer)
 			}
 
 			// Put the URLs back into the buffer
-			$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)[\"\']'.$insideurl.'([^\"\'#]*?[?;&](board|topic|action)=([^\"]+\"|[^\']+\'))~';
 			foreach ($context['pretty']['replace_patterns'] as $pattern)
 				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
 		}
@@ -1394,8 +1392,7 @@ function ob_sessrewrite($buffer)
 		$thing = substr($thing, 0, -1) . '
 	};
 	$("*[data-eve]").each(function() {
-		var elis = $(this).data("eve");
-		for (var eve in elis)
+		for (var eve = 0, elis = $(this).data("eve"), eil = elis.length; eve < eil; eve++)
 			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 	});';
 		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);

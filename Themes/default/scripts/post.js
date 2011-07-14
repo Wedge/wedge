@@ -105,7 +105,7 @@ function surroundText(text1, text2, oTextHandle)
 	}
 }
 
-// Split a quote if we press Enter inside it.
+// Split a quote (or any unclosed tag) if we press Enter inside it.
 function splitQuote(oEvent)
 {
 	// Did we just press Enter?

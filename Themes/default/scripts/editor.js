@@ -886,7 +886,7 @@ smc_Editor.prototype.removeFormatting = function()
 // Upload/add a media file (picture, video...)
 smc_Editor.prototype.addMedia = function()
 {
-	reqWin(smf_prepareScriptUrl(smf_scripturl) + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true);
+	reqWin(smf_prepareScriptUrl(we_script) + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true);
 
 	return true;
 };
@@ -922,7 +922,7 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	// Get the text.
 	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
 
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(we_script) + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
 };
 
 smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
@@ -982,7 +982,7 @@ smc_Editor.prototype.spellCheckStart = function()
 	if (this.bRichTextEnabled)
 	{
 		var sText = escape(this.getText(true, 1).php_to8bit());
-		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onSpellCheckDataReceived);
+		sendXMLDocument.call(this, smf_prepareScriptUrl(we_script) + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onSpellCheckDataReceived);
 	}
 	// Otherwise start spellchecking right away.
 	else
@@ -1011,7 +1011,7 @@ smc_Editor.prototype.spellCheckEnd = function()
 	if (this.bRichTextEnabled)
 	{
 		var sText = escape(this.getText(true, 0).php_to8bit());
-		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
+		sendXMLDocument.call(this, smf_prepareScriptUrl(we_script) + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
 	}
 	else
 		this.setFocus();

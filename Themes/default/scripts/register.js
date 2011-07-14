@@ -189,7 +189,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			ajax_indicator(true);
 
 		// Request a search on that username.
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_to8bit().php_urlencode(), checkUsernameCallback);
+		getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_to8bit().php_urlencode(), checkUsernameCallback);
 
 		return true;
 	}
@@ -216,7 +216,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			alt = '*';
 
 		imageHandle.attr({
-			src: smf_images_url + '/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
+			src: we_images_url + '/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
 			alt: alt,
 			title: alt
 		});

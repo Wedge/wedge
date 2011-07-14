@@ -2483,8 +2483,8 @@ class wedit
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
 		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . (empty($unparsed_tags) ? '' : ',
-		aProtectTags: ["' . implode('", "', $unparsed_tags) . '"]') . (empty($closed_tags) ? '' : ',
-		aClosedTags: ["' . implode('", "', $closed_tags) . '"]') . '
+		aProtectTags: ["' . implode('", "', array_flip(array_flip($unparsed_tags))) . '"]') . (empty($closed_tags) ? '' : ',
+		aClosedTags: ["' . implode('", "', array_flip(array_flip($closed_tags))) . '"]') . '
 	});
 	smf_editorArray.push(oEditorHandle_' . $this->id . ');');
 	}

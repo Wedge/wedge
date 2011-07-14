@@ -249,12 +249,10 @@ function aeva_admin_embed()
 
 	// Only show the MASTER setting, if it's disabled
 	if (empty($modSettings['embed_enabled']))
-	{
 		$settings = array(
 			'media_title' => array('title', $context['current_area']),
 			'embed_enabled' => array('yesno', $context['current_area']),
 		);
-	}
 
 	// Render the form
 	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_embed;sa='.$context['current_area'].';'.$context['session_query'];
