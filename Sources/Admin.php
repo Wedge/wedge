@@ -751,7 +751,7 @@ function setupAdminSidebar()
 		bLoadUpdateNotification: true,
 		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
 		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationLink: we_script + \'?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query']) . '\'
+		sUpdateNotificationLink: we_script + \'?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query'] . '\'
 	});');
 }
 
