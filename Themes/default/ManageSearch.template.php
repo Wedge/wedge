@@ -367,7 +367,7 @@ function template_spider_edit()
 }
 
 // Show... spider... logs...
-function template_show_spider_logs()
+function template_show_spider_log()
 {
 	global $context, $txt, $settings, $scripturl;
 
@@ -375,22 +375,22 @@ function template_show_spider_logs()
 	<div id="admincenter">';
 
 	// Standard fields.
-	template_show_list('spider_logs');
+	template_show_list('spider_log');
 
 	echo '
 		<br>
 		<we:cat>
-			', $txt['spider_logs_delete'], '
+			', $txt['spider_log_delete'], '
 		</we:cat>
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=logs;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<div class="windowbg wrc">
 				<p>
-					', $txt['spider_logs_delete_older'], '
+					', $txt['spider_log_delete_older'], '
 					<input type="text" name="older" id="older" value="7" size="3">
-					', $txt['spider_logs_delete_day'], '
+					', $txt['spider_log_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="delete_entries" value="', $txt['spider_logs_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_logs_delete_confirm']) . ');" class="delete">
+				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_log_delete_confirm']) . ');" class="delete">
 			</div>
 		</form>
 	</div>

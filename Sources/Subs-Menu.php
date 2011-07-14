@@ -71,9 +71,9 @@ function createMenu($menuData, $menuOptions = array())
 				array $subsections:	Array of subsections from this area.
 
 			For Subsections:
-				string 0:		Text label for this subsection.
-				array 1:		Array of permissions to check for this subsection.
-				bool 2:			Is this the default subaction - if not set for any will default to first...
+				string 0:			Text label for this subsection.
+				array 1:			Array of permissions to check for this subsection.
+				bool 2:				Is this the default subaction - if not set for any will default to first...
 				bool enabled:		Bool to say whether this should be enabled or not.
 	*/
 

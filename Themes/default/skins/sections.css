@@ -267,7 +267,7 @@ img.new_posts
 	width: 100%
 
 .postarea
-	margin: 0 0 0 16em
+	margin: 0 0 0 15em
 
 .postheader extends .flow_hidden
 	width: 100%
@@ -300,8 +300,8 @@ img.new_posts
 // Poster details and list of items
 .poster
 	display: table-cell
-	background: rgba(0,0,0,.05)
-	width: 15em
+	background: rgba(0,0,0,.042)
+	width: 14em
 	border-radius: 8px 0 0 8px
 	padding: 10px 12px 12px 0
 	vertical-align: top
@@ -341,7 +341,7 @@ img.new_posts
 
 .postarea
 	display: table-cell
-	padding-left: 16px
+	padding-left: 14px
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -462,9 +462,9 @@ ul.quickbuttons extends ul.reset
 		background-position: 4px -242px
 
 .inner
-	padding: 1em 1em 0 0
+	padding: 1em .7em 0 .7em
 	margin: 0 1em 0 0
-	border-top: 1px solid #99a
+	border-top: 1px solid #bbb
 
 img.smiley
 	vertical-align: bottom

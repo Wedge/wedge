@@ -26,7 +26,7 @@ function SearchEngines()
 
 	$subActions = array(
 		'editspiders' => 'EditSpider',
-		'logs' => 'SpiderLogs',
+		'logs' => 'SpiderLog',
 		'settings' => 'ManageSearchEngineSettings',
 		'spiders' => 'ViewSpiders',
 		'stats' => 'SpiderStats',
@@ -615,7 +615,7 @@ function consolidateSpiderStats()
 }
 
 // See what spiders have been up to.
-function SpiderLogs()
+function SpiderLog()
 {
 	global $context, $txt, $scripturl, $modSettings;
 
@@ -641,14 +641,14 @@ function SpiderLogs()
 	}
 
 	$listOptions = array(
-		'id' => 'spider_logs',
+		'id' => 'spider_log',
 		'items_per_page' => 20,
-		'title' => $txt['spider_logs'],
-		'no_items_label' => $txt['spider_logs_empty'],
+		'title' => $txt['spider_log'],
+		'no_items_label' => $txt['spider_log_empty'],
 		'base_href' => $context['admin_area'] == 'sengines' ? $scripturl . '?action=admin;area=sengines;sa=logs' : $scripturl . '?action=admin;area=logs;sa=spiderlog',
 		'default_sort_col' => 'log_time',
 		'get_items' => array(
-			'function' => 'list_getSpiderLogs',
+			'function' => 'list_getSpiderLog',
 		),
 		'get_count' => array(
 			'function' => 'list_getNumSpiderLogs',
@@ -692,7 +692,7 @@ function SpiderLogs()
 		'additional_rows' => array(
 			array(
 				'position' => 'after_title',
-				'value' => $txt['spider_logs_info'],
+				'value' => $txt['spider_log_info'],
 				'class' => 'smalltext',
 			),
 		),
@@ -702,15 +702,15 @@ function SpiderLogs()
 	createList($listOptions);
 
 	// Now determine the actions of the URLs.
-	if (!empty($context['spider_logs']['rows']))
+	if (!empty($context['spider_log']['rows']))
 	{
 		$urls = array();
 		// Grab the current /url.
-		foreach ($context['spider_logs']['rows'] as $k => $row)
+		foreach ($context['spider_log']['rows'] as $k => $row)
 		{
 			// Feature disabled?
 			if (empty($row['viewing']['value']) && isset($modSettings['spider_mode']) && $modSettings['spider_mode'] < 3)
-				$context['spider_logs']['rows'][$k]['viewing']['value'] = '<em>' . $txt['spider_disabled'] . '</em>';
+				$context['spider_log']['rows'][$k]['viewing']['value'] = '<em>' . $txt['spider_disabled'] . '</em>';
 			else
 				$urls[$k] = array($row['viewing']['value'], -1);
 		}
@@ -719,17 +719,15 @@ function SpiderLogs()
 		loadSource('Who');
 		$urls = determineActions($urls, 'whospider_');
 		foreach ($urls as $k => $new_url)
-		{
-			$context['spider_logs']['rows'][$k]['viewing']['value'] = $new_url;
-		}
+			$context['spider_log']['rows'][$k]['viewing']['value'] = $new_url;
 	}
 
-	$context['page_title'] = $txt['spider_logs'];
-	loadSubTemplate('show_spider_logs');
-	$context['default_list'] = 'spider_logs';
+	$context['page_title'] = $txt['spider_log'];
+	loadSubTemplate('show_spider_log');
+	$context['default_list'] = 'spider_log';
 }
 
-function list_getSpiderLogs($start, $items_per_page, $sort)
+function list_getSpiderLog($start, $items_per_page, $sort)
 {
 	$request = wesql::query('
 		SELECT sl.id_spider, sl.url, sl.log_time, s.spider_name
@@ -740,12 +738,12 @@ function list_getSpiderLogs($start, $items_per_page, $sort)
 		array(
 		)
 	);
-	$spider_logs = array();
+	$spider_log = array();
 	while ($row = wesql::fetch_assoc($request))
-		$spider_logs[] = $row;
+		$spider_log[] = $row;
 	wesql::free_result($request);
 
-	return $spider_logs;
+	return $spider_log;
 }
 
 function list_getNumSpiderLogs()

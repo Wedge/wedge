@@ -173,8 +173,9 @@ function ManageAttachmentSettings($return_config = false)
 			// Image settings.
 			array('check', 'attachment_image_reencode'),
 		'',
-			array('warning', 'attachment_image_paranoid_warning'),
 			array('check', 'attachment_image_paranoid'),
+		'',
+			array('warning', 'attachment_image_paranoid_warning'),
 		'',
 			// Thumbnail settings.
 			array('check', 'attachmentShowImages'),
@@ -240,8 +241,9 @@ function ManageAvatarSettings($return_config = false)
 			array('check', 'avatar_resize_upload'),
 			array('check', 'avatar_reencode'),
 		'',
-			array('warning', 'avatar_paranoid_warning'),
 			array('check', 'avatar_paranoid'),
+		'',
+			array('warning', 'avatar_paranoid_warning'),
 		'',
 			array('check', 'avatar_download_png'),
 			array('select', 'custom_avatar_enabled', array($txt['option_attachment_dir'], $txt['option_specified_dir']), 'onchange' => 'updateFormStatus();'),

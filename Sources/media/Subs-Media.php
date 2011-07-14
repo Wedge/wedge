@@ -2644,7 +2644,7 @@ function aeva_showThumbnail($data)
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data =
-		($show_main_div ? '<table class="aextbox"' . (!empty($align) ? ' align="' . $align . '"' : '')
+		($show_main_div ? '<table class="aextbox' . (!empty($align) ? ' ' . $align . 'text' : '') . '"'
 		. (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
 		. $box . (empty($inside_caption) ? '' : $inside_caption)
 		. ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '')

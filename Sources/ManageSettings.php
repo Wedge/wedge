@@ -1903,7 +1903,7 @@ function ModifyPruningSettings($return_config = false)
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
 
-	$context['page_title'] = $txt['pruning_title'];
+	$context['page_title'] = $txt['log_pruning'];
 
 	$config_vars = array(
 			// Even do the pruning?
@@ -1956,7 +1956,7 @@ function ModifyPruningSettings($return_config = false)
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=pruning';
-	$context['settings_title'] = $txt['pruning_title'];
+	$context['settings_title'] = $txt['log_pruning'];
 	loadSubTemplate('show_settings');
 
 	// Get the actual values
