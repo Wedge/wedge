@@ -84,7 +84,7 @@ function template_email_members()
 
 	// This is some javascript for the simple/advanced toggling stuff.
 	add_js('
-	function toggleAdvanced(mode)
+	function toggleAdvanced()
 	{
 		$("#advanced_settings_div, #gosimple, #goadvanced").toggle();
 		return false;

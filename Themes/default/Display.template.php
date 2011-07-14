@@ -277,29 +277,24 @@ function template_main()
 
 		echo '
 							<div class="moderatorbar">
-								<div class="smalltext modified" id="modified_', $message['id'], '">';
+								<div class="modified" id="modified_', $message['id'], '">';
 
 		// Show "« Last Edit: Time by Person »" if this post was edited.
 		if ($settings['show_modify'] && !empty($message['modified']['name']))
 			echo '
-									&#171; <em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;';
+									<em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em>';
 
 		echo '
-								</div>
-								<div class="smalltext reportlinks">';
-
-		// Maybe they want to report this post to the moderator(s)?
-		if ($context['can_report_moderator'])
-			echo '
-									<a href="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0;msg=', $message['id'], '">', $txt['report_to_mod'], '</a> &nbsp;';
+								</div>';
 
 		// Can we issue a warning because of this post?  Remember, we can't give guests warnings.
 		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])
 			echo '
-									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>';
+								<div class="report">
+									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
+								</div>';
 
 		echo '
-								</div>
 							</div>';
 
 		// Are there any custom profile fields for above the signature?
@@ -646,6 +641,11 @@ function template_userbox(&$message)
 					echo '
 										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 			}
+
+			// Maybe they want to report this post to the moderator(s)?
+			if ($context['can_report_moderator'] && !$message['is_message_author'])
+				echo '
+										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=reporttm;msg=', $message['id'], '"><img src="', $settings['images_url'], '/reporttm.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
 
 			echo '
 									</ul>

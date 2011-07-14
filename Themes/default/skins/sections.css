@@ -287,12 +287,12 @@ img.new_posts
 
 .moderatorbar
 	margin: 14px 0 0
+	font-size: .85em
 	float: left
 	width: 50%
 	.modified
-		float: right
 		color: #a0aaa0
-	.reportlinks
+	.report
 		margin-right: 1.5em
 		img
 			vertical-align: -3px
