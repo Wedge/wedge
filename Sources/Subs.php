@@ -2532,7 +2532,7 @@ function match_cidr($ip, $cidr_block)
  * - Failing those, call {@link gethostbyaddr()}
  * - If slow, cache the result
  *
- * @param string $ip A single IP address in dotted format (127.0.0.1 for example)
+ * @param string $ip A single IP address, normally formatted.
  * @return string If possible, the hostname associated with that IP address, or empty string if that was not possible.
  */
 function host_from_ip($ip)
@@ -2542,6 +2542,14 @@ function host_from_ip($ip)
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
 	$t = microtime(true);
+
+	// This should work for IPv4, its status is unknown for IPv6 however.
+	if (preg_match('~\d{2,3}(\.\d{1,3}){3}~', $ip) && !isset($host) && is_callable('dns_get_record'))
+	{
+		$details = dns_get_record(implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa', DNS_PTR);
+        if (!empty($details[0]['target']))
+			$host = $details[0]['target'];
+	}
 
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
