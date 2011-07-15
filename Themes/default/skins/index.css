@@ -510,7 +510,8 @@ input[type=file]
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
-		background: #5a6c85 url($images/menu.gif) no-repeat 98% -28px
+		background-color: #5a6c85
+		background-position: 98% -27px
 
 .menu li a
 	display: block
@@ -522,7 +523,7 @@ input[type=file]
 
 .menu h4 extends .arrows
 	float: left
-	background-position: 98% 2px
+	background-position: 98% 3px
 	padding: 3px 19px 3px 6px
 	font-weight: normal
 	margin-bottom: 5px
@@ -566,12 +567,12 @@ input[type=file]
 
 .css h4:hover, h4.hove
 	background-color: rgba(0,0,0, .075)
-	background-position: 98% 2px
+	background-position: 98% 3px
 	color: #000
 
 .menu .chosen h4
 	background-color: #3fa6c3
-	background-position: 98% -28px
+	background-position: 98% -27px
 	font-weight: 700
 	color: #fff
 	a

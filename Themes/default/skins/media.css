@@ -38,7 +38,9 @@ table.aextbox
 
 	img.aext
 		padding: 4px
-		border: 1px solid black
+		border: 1px solid #aaa
+		background: #f3f8f3
+		box-shadow: 3px 3px 4px #ccc
 		margin: 0
 
 iframe.aext

@@ -409,6 +409,9 @@ function Display()
 	censorText($topicinfo['subject']);
 	$context['page_title'] = $topicinfo['subject'];
 
+	// Set the userbox position to the right. Later on, allow users to determine position of sidebar & userbox.
+	$context['post_position'] = 'right';
+
 	loadSubTemplate('display_statistics', 'sidebar');
 
 	// Default this topic to not marked for notifications... of course...

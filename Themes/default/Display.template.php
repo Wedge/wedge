@@ -115,11 +115,12 @@ function template_main()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc', $message['id'] == $context['first_message'] ? ' first-post' : '', '">
+				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
-		echo '
+		if (empty($context['post_position']) || $context['post_position'] === 'left')
+			echo '
 						<div class="poster">',
 							template_userbox($message), '
 						</div>';
@@ -327,7 +328,16 @@ function template_main()
 							<div class="signature" id="msg_', $message['id'], '_signature">', $message['member']['signature'], '</div>';
 
 		echo '
-						</div>
+						</div>';
+
+		// Show information about the poster of this message.
+		if ($context['post_position'] === 'right')
+			echo '
+						<div class="poster">',
+							template_userbox($message), '
+						</div>';
+
+		echo '
 					</div>
 				</div>
 				<hr class="post_separator">';

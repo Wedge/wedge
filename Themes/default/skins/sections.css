@@ -303,13 +303,14 @@ img.new_posts
 	display: table-cell
 	background: rgba(0,0,0,.042)
 	width: 14em
-	border-radius: 8px 0 0 8px
+	border-radius: 12px 0 0 12px
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
 	ul
 		padding: 0
 		margin: 0 1em 0 1.5em
+		line-height: 1.2em
 
 	h4
 		margin: .2em 0 .2em 1.1em
@@ -339,6 +340,14 @@ img.new_posts
 		a img
 			vertical-align: bottom
 			padding: 0 .2em
+
+.right-side .poster
+	border-radius: 0 12px 12px 0
+	text-align: right
+	ul
+		margin: 0 1.3em 0 1em
+	h4
+		margin: .2em 1.1em .2em 0
 
 .postarea
 	display: table-cell
