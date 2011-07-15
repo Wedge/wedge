@@ -120,8 +120,18 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 	var
 		help_page = from && from.href ? from.href : from,
 		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto',
-		title = $(from).next().text();
+		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto', title = $(from).text();
+
+	// Try and get the title for the current link.
+	if (!title)
+	{
+		var nextSib = from.nextSibling;
+		// Newlines are seen as stand-alone text nodes, so skip these...
+		while (nextSib && nextSib.nodeType == 3 && $(nextSib).text().trim() == '')
+			nextSib = nextSib.nextSibling;
+		// Get the final text, remove any dfn (description) tags, and trim the rest.
+		title = $(nextSib).clone().find('dfn').remove().end().text().trim();
+	}
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))

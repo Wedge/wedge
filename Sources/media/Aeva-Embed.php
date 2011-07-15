@@ -1253,7 +1253,7 @@ function aeva_generate_embed_thumb($link, $id_album, $id_file = 0, $folder = '')
 	$thumbs = array(
 		'YouTube' => array(
 			'func' => 'youtubeCreateThumb',
-			'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"#[]*?(?:&|&amp;|/|\?|;|\%3F|\%2F)(?:video_id=|v(?:/|=|\%3D|\%2F))([\w-]{11})',
+			'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:&|&amp;|/|\?|;|\%3F|\%2F)(?:video_id=|v(?:/|=|\%3D|\%2F))|\.be)([\w-]{11})',
 		),
 		'Dailymotion' => array(
 			'func' => 'dailymotionCreateThumb',

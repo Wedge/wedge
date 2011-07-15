@@ -1144,7 +1144,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'change_owner',
 			'value' => $is_add ? $user_info['username'] : $owner_name,
 			'custom' => 'maxlength="30" id="change_owner"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'featured' => array(
 			'label' => $txt['media_featured_album'],
@@ -1243,7 +1243,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_members',
 			'value' => empty($members_allowed) ? '' : implode(', ', $members_allowed),
 			'custom' => 'maxlength="52" id="allowed_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'allowed_write' => array(
 			'label' => $txt['media_allowed_write'],
@@ -1252,7 +1252,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_write',
 			'value' => empty($members_allowed_write) ? '' : implode(', ', $members_allowed_write),
 			'custom' => 'maxlength="52" id="allowed_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_members' => array(
 			'label' => $txt['media_denied_members'],
@@ -1261,7 +1261,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_members',
 			'value' => empty($members_denied) ? '' : implode(', ', $members_denied),
 			'custom' => 'maxlength="52" id="denied_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_write' => array(
 			'label' => $txt['media_denied_write'],
@@ -1270,7 +1270,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_write',
 			'value' => empty($members_denied_write) ? '' : implode(', ', $members_denied_write),
 			'custom' => 'maxlength="52" id="denied_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'hidden' => array(
 			'label' => $txt['media_album_hidden'],

@@ -1224,7 +1224,7 @@ function template_aeva_search_searching()
 				</td>
 				<td class="w50 left">
 					<input name="sch_mem" id="sch_mem" type="text" size="25">
-					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_query'], '" onclick="return reqWin(this.href, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
+					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_query'], '" onclick="return reqWin(this, 350, 400);"><img src="', $settings['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
 				</td>
 			</tr>
 			<tr>

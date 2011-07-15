@@ -1272,7 +1272,7 @@ function aeva_admin_bans_add()
 			'fieldname' => 'banning',
 			'type' => 'text',
 			'value' => $context['aeva_curr_members'],
-			'label' => $txt['media_admin_banning'] . ' <a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_query'] . '" onclick="return reqWin(this.href, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'label' => '<a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a> ' . $txt['media_admin_banning'],
 			'custom' => 'id="banning"',
 		),
 		'type' => array(
