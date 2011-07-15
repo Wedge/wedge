@@ -179,6 +179,10 @@ function Credits($in_admin = false)
 
 	$context['copyrights'] = array(
 		'smf' => sprintf($forum_copyright, $forum_version),
+		'images' => array(
+			'flags' => '<a href="http://famfamfam.com/lab/icons/flags/">FamFamFam Flags</a> &copy; Mark James, 2005',
+			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-11',
+		),
 		'mods' => array(
 		),
 	);

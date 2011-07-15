@@ -119,12 +119,14 @@ function Admin()
 					'function' => 'ThemesMain',
 					'custom_url' => $scripturl . '?action=admin;area=theme;sa=settings;th=' . $settings['theme_id'],
 					'icon' => 'current_theme.gif',
+					'bigicon' => 'current_theme.png',
 				),
 				'theme' => array(
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes',
 					'function' => 'ThemesMain',
 					'icon' => 'themes.gif',
+					'bigicon' => 'themes_and_layout.png',
 					'subsections' => array(
 						'admin' => array($txt['themeadmin_admin_title']),
 						'list' => array($txt['themeadmin_list_title']),
@@ -173,6 +175,7 @@ function Admin()
 					'file' => 'ManageSmileys',
 					'function' => 'ManageSmileys',
 					'icon' => 'smiley.gif',
+					'bigicon' => 'smileys.png',
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
 						'editsets' => array($txt['smiley_sets']),
@@ -234,6 +237,7 @@ function Admin()
 					'file' => 'ManageNews',
 					'function' => 'ManageNews',
 					'icon' => 'news.gif',
+					'bigicon' => 'news_and_newsletters.png',
 					'permission' => array('edit_news', 'send_mail', 'admin_forum'),
 					'subsections' => array(
 						'editnews' => array($txt['admin_edit_news'], 'edit_news'),
@@ -260,6 +264,7 @@ function Admin()
 					'enabled' => !empty($modSettings['spider_mode']),
 					'file' => 'ManageSearchEngines',
 					'icon' => 'engines.gif',
+					'bigicon' => 'search_engines.png',
 					'function' => 'SearchEngines',
 					'permission' => 'admin_forum',
 					'subsections' => array(
@@ -279,6 +284,7 @@ function Admin()
 				'aeva_about' => array(
 					'label' => $txt['media_admin_labels_about'],
 					'icon' => 'administration.gif',
+					'bigicon' => 'about.png',
 					'enabled' => !empty($modSettings['media_enabled']),
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
@@ -292,6 +298,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_settings'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'corefeatures.gif',
+					'bigicon' => 'mediasettings.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -319,6 +326,7 @@ function Admin()
 					'label' => $txt['media_cf'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'packages.gif',
+					'bigicon' => 'custom_fields.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -331,6 +339,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_perms'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'permissions.gif',
+					'bigicon' => 'permissions.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 				),
@@ -345,6 +354,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_bans'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'ban.gif',
+					'bigicon' => 'banlist.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -463,6 +473,7 @@ function Admin()
 					'file' => 'ManageServer',
 					'function' => 'ModifySettings',
 					'icon' => 'server.gif',
+					'bigicon' => 'serversettings.png',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
 						'database' => array($txt['database_paths_settings']),
@@ -502,6 +513,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_maintenance'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'maintain.gif',
+					'bigicon' => 'media_maintenance.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -569,6 +581,7 @@ function Admin()
 					'function' => 'Packages',
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
+					'bigicon' => 'addon_manager.png',
 					'subsections' => array(
 						'browse' => array($txt['browse_packages']),
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
@@ -582,6 +595,7 @@ function Admin()
 					'file' => 'ManageSettings',
 					'function' => 'ModifyModSettings',
 					'icon' => 'modifications.gif',
+					'bigicon' => 'addon_settings.png',
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook

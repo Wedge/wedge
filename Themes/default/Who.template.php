@@ -188,7 +188,9 @@ function template_credits()
 			</we:cat>
 			<div class="windowbg wrc">
 				<h6 class="top">', $txt['credits_forum'], '</h6>
-				<div class="list">', $context['copyrights']['smf'], '</dd>';
+				<div class="list">', $context['copyrights']['smf'], '</div>
+				<h6>', $txt['credits_images'], '</h6>
+				<div class="list">', implode('</div><div class="list">', $context['copyrights']['images']), '</div>';
 
 	if (!empty($context['copyrights']['mods']))
 		echo '
