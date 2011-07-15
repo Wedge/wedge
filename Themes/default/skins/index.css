@@ -121,7 +121,7 @@ ul#noava
 			left: -40px
 	#main_content
 		display: block
-		width: 100%
+		padding: 4px 0 12px 6px
 
 #main_content
 	display: table-cell

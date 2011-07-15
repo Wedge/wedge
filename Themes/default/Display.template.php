@@ -279,10 +279,10 @@ function template_main()
 							<div class="moderatorbar">
 								<div class="modified" id="modified_', $message['id'], '">';
 
-		// Show "« Last Edit: Time by Person »" if this post was edited.
+		// Show "Last Edit on Date by Person" if this post was edited.
 		if ($settings['show_modify'] && !empty($message['modified']['name']))
 			echo '
-									<em>', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em>';
+									', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '';
 
 		echo '
 								</div>';

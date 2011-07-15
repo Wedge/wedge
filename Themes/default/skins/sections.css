@@ -292,6 +292,7 @@ img.new_posts
 	width: 50%
 	.modified
 		color: #a0aaa0
+		font-style: italic
 	.report
 		margin-right: 1.5em
 		img

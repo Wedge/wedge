@@ -298,7 +298,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_settings'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'corefeatures.gif',
-					'bigicon' => 'mediasettings.png',
+					'bigicon' => 'media_settings.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -354,7 +354,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_bans'],
 					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'ban.gif',
-					'bigicon' => 'banlist.png',
+					'bigicon' => 'ban_list.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -439,7 +439,7 @@ function Admin()
 					'file' => 'ManageBans',
 					'function' => 'Ban',
 					'icon' => 'ban.gif',
-					'bigicon' => 'banlist.png',
+					'bigicon' => 'ban_list.png',
 					'permission' => 'manage_bans',
 					'subsections' => array(
 						'list' => array($txt['ban_edit_list']),
@@ -473,7 +473,7 @@ function Admin()
 					'file' => 'ManageServer',
 					'function' => 'ModifySettings',
 					'icon' => 'server.gif',
-					'bigicon' => 'serversettings.png',
+					'bigicon' => 'server_settings.png',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
 						'database' => array($txt['database_paths_settings']),

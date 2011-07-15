@@ -52,7 +52,7 @@ function template_modifydone()
 	if (empty($context['message']['errors']))
 	{
 		echo '
-		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml('&#171; <em>' . $txt['last_edit'] . ': ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name'] . '</em> &#187;'), ']]></modified>
+		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>
 		<subject is_first="', $context['message']['first_in_topic'] ? '1' : '0', '"><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
 		<body><![CDATA[', $context['message']['body'], ']]></body>';
 	}
@@ -74,7 +74,7 @@ function template_modifytopicdone()
 	if (empty($context['message']['errors']))
 	{
 		echo '
-		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml('&#171; <em>' . $txt['last_edit'] . ': ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name'] . '</em> &#187;'), ']]></modified>';
+		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>';
 		if (!empty($context['message']['subject']))
 			echo '
 		<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';

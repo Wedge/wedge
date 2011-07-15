@@ -67,7 +67,7 @@ function template_admin()
 				continue;
 
 			if (empty($area['bigicon']))
-				$area['bigicon'] = '<img src="' . $context['menu_image_path'] . '/features_and_options.png">';
+				$area['bigicon'] = '<img src="' . $context['menu_image_path'] . '/features_and_options.png" style="width: 32px; height: 32px">';
 
 			echo '
 				<div class="admin_item inline-block"><a href="', $scripturl, '?action=admin;area=', $area_id, ';' , $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
