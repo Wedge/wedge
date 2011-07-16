@@ -358,16 +358,16 @@ em
 // Alternating backgrounds for posts, and several other sections of the forum.
 .windowbg extends .grad700
 	color: #444
-	background-color: #f2f3ea // !!! #f9f6f0
+	background-color: $window_bg
 	background-position: 0 -550px
 	a
 		color: #47a
 
 .windowbg2 extends .windowbg
-	background-color: #f3f7f3
+	background-color: $window_bg2
 
 .windowbg3 extends .windowbg
-	background-color: #f0f0f0
+	background-color: $window_bg3
 
 .inline-block
 	display: inline-block
@@ -517,7 +517,7 @@ input[type=file]
 	display: block
 	color: #300
 	text-decoration: none
-	border-left: 4px solid #fbe2c8
+	border-left: 4px solid darken($menu_bg, 10%) // #fbe2c8
 	padding: 6px 8px
 	margin: 0
 
@@ -1501,10 +1501,13 @@ $ie-max-width = "max-width"
 $ie-max-width {ie6} = "width"
 
 $main_bg = #fffdfa
-$head_bg = rgba(221,200,137,0.66)
-$menu_bg = rgba(255, 248, 240, .94)
+$head_bg = rgba(221, 200, 137, .66)
+$menu_bg = rgba(242, 246, 242, .92)
 $board_col = #d97b33
 $footer_bg = #e8e3cb
+$window_bg = #f2f3ea // #f9f6f0
+$window_bg2 = #f3f7f3
+$window_bg3 = #f0f0f0
 $sidebar-width = "240px"
 $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode
 

@@ -378,7 +378,7 @@ function template_aeva_admin_bans()
 
 		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
-				<td>', $txt['media_admin_banned'], '</td>
+				<td>', $txt['user'], '</td>
 				<td>', $txt['media_admin_banned_on'], '</td>
 				<td>', $txt['media_admin_expires_on'], '</td>
 				<td>', $txt['media_admin_ban_type'], '</td>

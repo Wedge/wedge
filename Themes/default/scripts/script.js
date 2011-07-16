@@ -120,7 +120,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 	var
 		help_page = from && from.href ? from.href : from,
 		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
-		helf = $('#helf'), previousTarget = helf.data('src'), auto = 'auto', title = $(from).text();
+		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = $(from).text();
 
 	// Try and get the title for the current link.
 	if (!title)
@@ -130,7 +130,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		while (nextSib && nextSib.nodeType == 3 && $(nextSib).text().trim() == '')
 			nextSib = nextSib.nextSibling;
 		// Get the final text, remove any dfn (description) tags, and trim the rest.
-		title = $(nextSib).clone().find('dfn').remove().end().text().trim();
+		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
 	}
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
@@ -148,7 +148,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 		$.event.fix(window.event).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
-	if ($('body').unbind('click.h') && helf.remove().length && previousTarget == help_page)
+	if ($('body').unbind('click.h') && $helf.remove().length && previousTarget == help_page)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
@@ -164,7 +164,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
 			}).fadeIn(300);
-			$('#helf').dragslide();
+			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({
 				position: is_ie6 ? 'absolute' : 'fixed',
@@ -178,9 +178,9 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$(document).bind('click.h', function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-		if (!$(e.srcElement).parents('#helf').length)
+		if (!$(e.srcElement).parents(helf).length)
 		{
-			$('#helf').remove();
+			$(helf).remove();
 			$(this).unbind(e);
 		}
 	});
@@ -317,7 +317,7 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 		replacement += '<a class="navPages" href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
 
 	if (oldLastPage > 0)
-		replacement += '<span style="font-weight: bold; cursor: pointer;" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> &hellip; </span> ';
+		replacement += '<span style="font-weight: bold; cursor: pointer" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> &hellip; </span> ';
 
 	// The dots were bold, the page numbers are not (in most cases). Replace the dots by the new page links.
 	$(spanNode).unbind('click').css('fontWeight', 'normal').html(replacement);

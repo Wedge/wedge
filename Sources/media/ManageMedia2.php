@@ -1265,6 +1265,17 @@ function aeva_admin_bans_add()
 	}
 	$context['aeva_curr_members'] = implode(',',$context['aeva_curr_members']);
 
+	add_js_file('scripts/suggest.js');
+
+	add_js('
+	var oAttributeMemberSuggest = new smc_AutoSuggest({
+		sSelf: \'oAttributeMemberSuggest\',
+		sSessionId: \'', $context['session_id'], '\',
+		sSessionVar: \'', $context['session_var'], '\',
+		sControlId: \'banning\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+	});');
+
 	// Construct the form
 	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_bans;sa=add;' . $context['session_query'];
 	$context['aeva_form'] = array(
@@ -1272,7 +1283,7 @@ function aeva_admin_bans_add()
 			'fieldname' => 'banning',
 			'type' => 'text',
 			'value' => $context['aeva_curr_members'],
-			'label' => '<a href="' . $scripturl . '?action=findmember;input=banning;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a> ' . $txt['media_admin_banning'],
+			'label' => $txt['media_admin_banning'],
 			'custom' => 'id="banning"',
 		),
 		'type' => array(
