@@ -258,17 +258,18 @@ function template_results()
 
 function template_jump_to()
 {
-	global $context;
+	global $context, $scripturl, $modSettings;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <smf>';
+	$beginning = !empty($modSettings['pretty_enable_filters']) ? $scripturl . '?' : '';
 	foreach ($context['jump_to'] as $category)
 	{
 		echo '
 	<item type="category" id="', $category['id'], '"><![CDATA[', cleanXml($category['name']), ']]></item>';
 		foreach ($category['boards'] as $board)
 			echo '
-	<item type="board" id="', $board['id'], '" childlevel="', $board['child_level'], '"><![CDATA[', cleanXml($board['name']), ']]></item>';
+	<item type="board" level="', $board['child_level'], '" id="', $board['id'], '" url="', $beginning, 'board=', $board['id'], '.0"><![CDATA[', cleanXml($board['name']), ']]></item>';
 	}
 	echo '
 </smf>';

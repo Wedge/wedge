@@ -347,7 +347,7 @@ function template_folder()
 
 			echo '
 				</div>
-				<ul class="reset smalltext quickbuttons">';
+				<ul class="quickbuttons">';
 
 			// Show reply buttons if you have the permission to send PMs.
 			if ($context['can_send_pm'])
@@ -1687,7 +1687,7 @@ function template_pm_drafts()
 
 		echo '
 				<div class="floatright">
-					<ul class="reset smalltext quickbuttons">
+					<ul class="quickbuttons">
 						<li class="reply_button"><a href="', $scripturl . '?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '"><span>', $txt['edit_draft'], '</span></a></li>
 						<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>

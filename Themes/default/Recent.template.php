@@ -41,7 +41,7 @@ function template_main()
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
 			echo '
 				<div class="quickbuttons_wrap">
-					<ul class="reset smalltext quickbuttons">';
+					<ul class="quickbuttons">';
 
 		// If they *can* reply?
 		if ($post['can_reply'])
@@ -83,7 +83,7 @@ function template_main()
 
 function template_unread()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="recent">';
@@ -239,22 +239,12 @@ function template_unread()
 		</form>';
 
 	echo '
-		<div class="description" id="topic_icons">
-			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ' . $txt['locked_topic'] . '<br>
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ' . $txt['sticky_topic'] . '<br>
-			</p>
-			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '
-			</p>
-		</div>
 	</div>';
 }
 
 function template_replies()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
 	<div id="recent">';
@@ -402,16 +392,6 @@ function template_replies()
 		</form>';
 
 	echo '
-		<div class="description flow_auto" id="topic_icons">
-			<p class="smalltext floatleft">
-				<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ' . $txt['locked_topic'] . '<br>
-				<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ' . $txt['sticky_topic'] . '<br>
-			</p>
-			<p class="smalltext">', !empty($modSettings['enableParticipation']) ? '
-				<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] . '<br>' : '', $modSettings['pollMode'] == '1' ? '
-				<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '
-			</p>
-		</div>
 	</div>';
 }
 

@@ -450,7 +450,7 @@ function template_html_below()
 	});', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
-		window.open(smf_prepareScriptUrl(we_script) + "action=pm");' : '';
+		window.open(we_prepareScriptUrl() + "action=pm");' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!

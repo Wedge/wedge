@@ -442,16 +442,10 @@ function template_main()
 		});
 
 		aJumpTo.push(new JumpTo({
+			iBoardId: ' . $context['current_board'] . ',
 			sContainerId: "display_jump_to",
-			sJumpToTemplate: "<label for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
-			iCurBoardId: ' . $context['current_board'] . ',
-			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
-			sCurBoardName: "' . $context['jump_to']['board_name'] . '",
-			sBoardChildLevelIndicator: "==",
-			sBoardPrefix: "=> ",
-			sCatSeparator: "-----------------------------",
-			sCatPrefix: "",
-			sGoButtonLabel: "' . $txt['go'] . '"
+			sJumpToTemplate: \'<label for="%select_id%">' . $txt['jump_to'] . ':<\/label> %dropdown_list%\',
+			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));
 
 		aIconLists.push(new IconList({

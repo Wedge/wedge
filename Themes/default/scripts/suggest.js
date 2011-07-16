@@ -241,7 +241,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	var eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
 	$('<div></div>', { id: eid }).html(
 		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
-		.replace(/%item_href%/g, smf_prepareScriptUrl(we_script) + this.sURLMask.replace(/%item_id%/g, sItemId))
+		.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
 		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
 	).appendTo(this.oItemList);
 
@@ -458,7 +458,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	sSearchString = sSearchString.php_to8bit().php_urlencode();
 
 	// Get the document.
-	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, smf_prepareScriptUrl(we_script)).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
+	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, we_prepareScriptUrl()).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
 
 	return true;
 };

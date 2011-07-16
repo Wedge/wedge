@@ -543,12 +543,6 @@ function MessageIndex()
 		}
 	}
 
-	$context['jump_to'] = array(
-		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => htmlspecialchars(strtr(strip_tags($board_info['name']), array('&amp;' => '&'))),
-		'child_level' => $board_info['child_level'],
-	);
-
 	// Is Quick Moderation active/needed?
 	if (!empty($options['display_quick_mod']) && !empty($context['topics']))
 	{

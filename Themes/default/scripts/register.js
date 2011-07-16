@@ -189,7 +189,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			ajax_indicator(true);
 
 		// Request a search on that username.
-		getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_to8bit().php_urlencode(), checkUsernameCallback);
+		getXMLDocument(we_prepareScriptUrl() + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_to8bit().php_urlencode(), checkUsernameCallback);
 
 		return true;
 	}

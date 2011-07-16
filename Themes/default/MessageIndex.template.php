@@ -235,6 +235,7 @@ function template_main_board()
 
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
@@ -242,29 +243,14 @@ function template_main_board()
 	// Show breadcrumbs at the bottom too.
 	$context['bottom_linktree'] = true;
 
-	echo '
-	<div id="topic_icons">
-		<div class="description">
-			<p class="floatright" id="message_index_jump_to">&nbsp;</p>';
-
 	add_js('
 	if (can_ajax)
 		aJumpTo.push(new JumpTo({
+			iBoardId: ' . $context['current_board'] . ',
 			sContainerId: "message_index_jump_to",
-			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
-			iCurBoardId: ' . $context['current_board'] . ',
-			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
-			sCurBoardName: "' . $context['jump_to']['board_name'] . '",
-			sBoardChildLevelIndicator: "==",
-			sBoardPrefix: "=> ",
-			sCatSeparator: "-----------------------------",
-			sCatPrefix: "",
-			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
+			sJumpToTemplate: "<label for=\"%select_id%\">' . $txt['jump_to'] . ':<\/label> %dropdown_list%",
+			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));');
-
-	echo '
-		</div>
-	</div>';
 
 	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');
@@ -518,6 +504,7 @@ function template_main_blog()
 
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
 		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], !empty($modSettings['topbottomEnable']) ? $context['menu_separator'] . '&nbsp;&nbsp;<a href="#top"><strong>' . $txt['go_up'] . '</strong></a>' : '', '</div>
 	</div>';
 	}
@@ -525,29 +512,14 @@ function template_main_blog()
 	// Show breadcrumbs at the bottom too.
 	$context['bottom_linktree'] = true;
 
-	echo '
-	<div id="topic_icons">
-		<div class="description">
-			<p class="floatright" id="message_index_jump_to">&nbsp;</p>';
-
 	add_js('
 	if (can_ajax)
 		aJumpTo.push(new JumpTo({
+			iBoardId: ' . $context['current_board'] . ',
 			sContainerId: "message_index_jump_to",
-			sJumpToTemplate: "<label class=\"smalltext\" for=\"%select_id%\">' . $context['jump_to']['label'] . ':<" + "/label> %dropdown_list%",
-			iCurBoardId: ' . $context['current_board'] . ',
-			iCurBoardChildLevel: ' . $context['jump_to']['child_level'] . ',
-			sCurBoardName: "' . $context['jump_to']['board_name'] . '",
-			sBoardChildLevelIndicator: "==",
-			sBoardPrefix: "=> ",
-			sCatSeparator: "-----------------------------",
-			sCatPrefix: "",
-			sGoButtonLabel: "' . $txt['quick_mod_go'] . '"
+			sJumpToTemplate: "<label for=\"%select_id%\">' . $txt['jump_to'] . ':<\/label> %dropdown_list%",
+			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));');
-
-	echo '
-		</div>
-	</div>';
 
 	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');

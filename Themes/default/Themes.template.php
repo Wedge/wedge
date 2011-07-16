@@ -787,7 +787,7 @@ function template_edit_style()
 
 		// Revert to the theme they actually use ;)
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(we_script) + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + (new Date().getTime());
+		tempImage.src = we_prepareScriptUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + (new Date().getTime());
 
 		refreshPreviewCache = null;
 		refreshPreview(false);
@@ -805,7 +805,7 @@ function template_edit_style()
 
 		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor, navigateCallback);
 	}
-	navigatePreview(smf_prepareScriptUrl(we_script));
+	navigatePreview(we_prepareScriptUrl());
 
 	function refreshPreview(check)
 	{

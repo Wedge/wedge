@@ -14,9 +14,9 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This is perhaps the most important and probably most accessed files in all
-	of SMF.  This file controls topic and message display.  It
-	does so with the following functions:
+/*	This is perhaps the most important and probably most accessed files
+	in all of Wedge. This file controls topic and message display.
+	It does so with the following functions:
 
 	void Display()
 		- loads the posts in a topic up so they can be displayed.
@@ -851,7 +851,7 @@ function Display()
 	wesql::free_result($request);
 	$posters = array_unique($all_posters);
 
-	// When was the last time this topic was replied to?  Should we warn them about it?
+	// When was the last time this topic was replied to? Should we warn them about it?
 	if (!empty($modSettings['oldTopicDays']))
 	{
 		// Did we already get the last message? If so, we already have the last poster message.
@@ -1025,7 +1025,7 @@ function Display()
 				$attachments[$row['id_msg']][] = $row;
 		}
 
-		// What?  It's not like it *couldn't* be only guests in this topic...
+		// What? It's not like it *couldn't* be only guests in this topic...
 		if (!empty($posters))
 			loadMemberData($posters);
 
@@ -1069,13 +1069,7 @@ function Display()
 		$context['first_new_message'] = false;
 	}
 
-	$context['jump_to'] = array(
-		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => htmlspecialchars(strtr(strip_tags($board_info['name']), array('&amp;' => '&'))),
-		'child_level' => $board_info['child_level'],
-	);
-
-	// Set the callback.  (do you REALIZE how much memory all the messages would take?!?)
+	// Set the callback. (Do you REALIZE how much memory all the messages would take?!?)
 	$context['get_message'] = 'prepareDisplayContext';
 
 	// Now set all the wonderful, wonderful permissions... like moderation ones...
@@ -1132,7 +1126,7 @@ function Display()
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
 
-	// Can restore topic?  That's if the topic is in the recycle board and has a previous restore state.
+	// Can restore topic? That's if the topic is in the recycle board and has a previous restore state.
 	$context['can_restore_topic'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
@@ -1193,7 +1187,7 @@ function prepareDisplayContext($reset = false)
 	if ($messages_request == false)
 		return false;
 
-	// Remember which message this is.  (ie. reply #83)
+	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
 		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
 

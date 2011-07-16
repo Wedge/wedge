@@ -131,7 +131,7 @@ function template_main()
 			// I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
 			// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
 
-			$limit = ceil(($context['num_boards'] + count($context['categories'])) / 2);
+			$limit = max(12, ceil(($context['num_boards'] + count($context['categories'])) / 2));
 			foreach ($context['categories'] as $category)
 			{
 				if ($i++ == $limit)
@@ -419,7 +419,7 @@ function template_results()
 				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '
 				<div class="quickbuttons_wrap">
-					<ul class="reset smalltext quickbuttons">';
+					<ul class="quickbuttons">';
 
 				// If they *can* reply?
 				if ($topic['can_reply'])
@@ -453,26 +453,6 @@ function template_results()
 			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
 		</div>';
 	}
-
-	// Show a jump to box for easy navigation.
-	echo '
-		<br class="clear">
-		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>';
-
-	add_js('
-	if (can_ajax)
-		aJumpTo.push(new JumpTo({
-			sContainerId: "search_jump_to",
-			sJumpToTemplate: ', $context['jump_to']['label'], ',
-			iCurBoardId: 0,
-			iCurBoardChildLevel: 0,
-			sCurBoardName: ', $context['jump_to']['board_name'], ',
-			sBoardChildLevelIndicator: "==",
-			sBoardPrefix: "=> ",
-			sCatSeparator: "-----------------------------",
-			sCatPrefix: "",
-			sGoButtonLabel: ', JavaScriptEscape($txt['quick_mod_go']), '
-		}));');
 }
 
 ?>

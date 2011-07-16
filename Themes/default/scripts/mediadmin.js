@@ -19,7 +19,7 @@ function admin_toggle(id)
 		$('#img_' + id).load(function () {
 			$('#tr_expand_' + id).show();
 			$(this).unbind();
-		}).attr('src', smf_prepareScriptUrl(we_script) + 'action=media;sa=media;in=' + id + ';icon');
+		}).attr('src', we_prepareScriptUrl() + 'action=media;sa=media;in=' + id + ';icon');
 	}
 	else
 	{

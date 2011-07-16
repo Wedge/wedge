@@ -353,7 +353,7 @@ function template_showDrafts()
 
 		echo '
 				<div class="floatright">
-					<ul class="reset smalltext quickbuttons">
+					<ul class="quickbuttons">
 						<li class="reply_button"><a href="', $scripturl . '?action=post;', ($post['topic']['no_edit'] || empty($post['topic']['id'])) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '"><span>', $txt['edit_draft'], '</span></a></li>
 						<li class="remove_button"><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');"><span>', $txt['remove_draft'], '</span></a></li>
 					</ul>
@@ -425,7 +425,7 @@ function template_showPosts()
 			{
 				echo '
 					<div class="floatright">
-						<ul class="reset smalltext quickbuttons">';
+						<ul class="quickbuttons">';
 
 				// If they *can* reply?
 				if ($post['can_reply'])

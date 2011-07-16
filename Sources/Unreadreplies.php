@@ -453,6 +453,9 @@ function Unreadreplies()
 		)
 	);
 
+	loadTemplate('MessageIndex');
+	loadSubTemplate('messageindex_legend', 'sidebar');
+
 	$context['topics'] = array();
 	$topic_ids = array();
 

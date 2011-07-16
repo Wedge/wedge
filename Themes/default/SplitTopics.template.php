@@ -153,7 +153,7 @@ function template_select()
 	{
 		if (!can_ajax)
 			return true;
-		getXMLDocument(smf_prepareScriptUrl(we_script) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
+		getXMLDocument(we_prepareScriptUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
 		return false;
 	}
 	function onDocReceived(XMLDoc)
@@ -192,7 +192,7 @@ function template_select()
 				// Let\'s create a nice container for the message.
 				var newItem = $("<div></div>").html("\
 	<div class=\\"message_header\\">\
-		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + smf_prepareScriptUrl(we_script) + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
+		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + we_prepareScriptUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
 			<img src=\\"', $settings['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\">\
 		</a>\
 		<strong>" + $("subject", this).text() + "</strong> ', $txt['by'], ' <strong>" + $("poster", this).text() + "</strong>\

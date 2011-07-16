@@ -130,6 +130,9 @@ img.new_posts
 	float: right
 	padding: 4px
 
+#message_index_jump_to
+	margin-top: 8px
+
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
 .prevnext_prev extends .cell
@@ -144,16 +147,18 @@ img.new_posts
 
 #top_subject extends .cell
 	padding: 4px 8px
-	letter-spacing: -1px
-	font-family: Arial, sans-serif
 
 // The jump to box
 #display_jump_to extends .cell
-	font-family: Arial, sans-serif
-	font-size: .8em
-	select, input
-		font-size: 8pt
+	select
+		font-size: 9pt
+		letter-spacing: 0
 		padding: 2px 2px 0
+		margin-left: 8px
+
+#top_subject, #display_jump_to
+	font-family: "PT Sans", $main_font
+	letter-spacing: -1px
 
 #postbuttons
 	div.buttons
@@ -427,10 +432,11 @@ div.quickbuttons_wrap
 ul.quickbuttons extends ul.reset
 	padding: 0 3% 0 0
 	clear, text-align: right
-	display: table-cell
 	vertical-align: bottom
 	font: 400 12px/20px "Trebuchet MS", Tahoma, sans-serif
 	text-transform: uppercase
+	#forumposts &
+		display: table-cell
 	li extends .inline-block
 		margin: 0 0 0 5px
 		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
@@ -872,15 +878,8 @@ tr.highlight td
 	.list
 		padding: 5px 0 5px 30px
 
-/* Styles for generic tables.
+/* Styles for the board index's topic table.
 ------------------------------------------------------- */
-#topic_icons
-	margin: 1em 0 0 0
-	.description
-		margin: 0
-	.floatleft
-		padding: 0 10px 0 0
-
 .topic_table
 	.icon, .stats
 		text-align: center

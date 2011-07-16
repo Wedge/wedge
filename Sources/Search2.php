@@ -1511,11 +1511,6 @@ function Search2()
 	$context['page_title'] = $txt['search_results'];
 	$context['get_topics'] = 'prepareSearchContext';
 	$context['can_send_pm'] = allowedTo('pm_send');
-
-	$context['jump_to'] = array(
-		'label' => JavaScriptEscape('<label class="smalltext" for="%select_id%">' . $txt['jump_to'] . ':</label> %dropdown_list%'),
-		'board_name' => JavaScriptEscape($txt['select_destination']),
-	);
 }
 
 // Callback to return messages - saves memory.

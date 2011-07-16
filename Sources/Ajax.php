@@ -50,7 +50,7 @@ function Ajax()
  */
 function GetJumpTo()
 {
-	global $user_info, $context;
+	global $user_info, $context, $modSettings, $scripturl;
 
 	// Find the boards/cateogories they can see.
 	loadSource('Subs-MessageIndex');
@@ -66,6 +66,15 @@ function GetJumpTo()
 		$context['jump_to'][$id_cat]['name'] = un_htmlspecialchars(strip_tags($cat['name']));
 		foreach ($cat['boards'] as $id_board => $board)
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
+	}
+
+	// Pretty URLs need to be rewritten. Just these ones...
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		ob_start('ob_sessrewrite');
+		$insideurl = preg_quote($scripturl, '~');
+		$context['pretty']['search_patterns'][]  = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board)=[^#<"]+)~';
+		$context['pretty']['replace_patterns'][] = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board)=([^#<"]+"))~';
 	}
 
 	loadSubTemplate('jump_to');

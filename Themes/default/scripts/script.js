@@ -255,7 +255,7 @@ function _sessionKeepAlive()
 	if (we_script && curTime - _lastKeepAliveCheck > 900000)
 	{
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(we_script) + 'action=keepalive;time=' + curTime;
+		tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
 		_lastKeepAliveCheck = curTime;
 	}
 	setTimeout('_sessionKeepAlive();', 1200000);
@@ -271,7 +271,7 @@ function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_va
 		additional_vars = '';
 
 	var tempImage = new Image();
-	tempImage.src = smf_prepareScriptUrl(we_script) + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + additional_vars + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
+	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + additional_vars + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
 }
 
 function smf_avatarResize()
@@ -476,91 +476,6 @@ function ajaxRating2(XMLDoc)
 	$('#ratingElement').html($('ratingObject', XMLDoc).text());
 }
 
-
-// This'll contain all JumpTo objects on the page.
-var aJumpTo = [];
-
-// This function will retrieve the contents needed for the jump to boxes.
-function grabJumpToContent()
-{
-	var aBoardsAndCategories = [], i, n;
-
-	ajax_indicator(true);
-
-	$('smf item', getXMLDocument(smf_prepareScriptUrl(we_script) + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
-		aBoardsAndCategories.push({
-			id: parseInt(this.getAttribute('id'), 10),
-			isCategory: this.getAttribute('type') == 'category',
-			name: $(this).text().removeEntities(),
-			is_current: false,
-			childLevel: parseInt(this.getAttribute('childlevel'), 10)
-		});
-	});
-
-	ajax_indicator(false);
-
-	for (i = 0, n = aJumpTo.length; i < n; i++)
-		aJumpTo[i]._fillSelect(aBoardsAndCategories);
-}
-
-// *** JumpTo class.
-function JumpTo(opt)
-{
-	this.opt = opt;
-	var sChildLevelPrefix = new Array(opt.iCurBoardChildLevel + 1).join(opt.sBoardChildLevelIndicator);
-
-	$('#' + opt.sContainerId).html(opt.sJumpToTemplate
-		.replace(/%select_id%/, opt.sContainerId + '_select')
-		.replace(/%dropdown_list%/,
-			  '<select name="' + opt.sContainerId + '_select" id="' + opt.sContainerId + '_select">'
-			+ '<option value="?board=' + opt.iCurBoardId + '.0">' + sChildLevelPrefix + opt.sBoardPrefix + opt.sCurBoardName.removeEntities() + '</option>'
-			+ '</select>&nbsp;<input type="button" value="' + opt.sGoButtonLabel + '" '
-			+ 'onclick="window.location.href = \'' + smf_prepareScriptUrl(we_script) + 'board=' + opt.iCurBoardId + '.0\';">')).find('select').focus(grabJumpToContent);
-};
-
-// Fill the jump to box with entries. Method of the JumpTo class.
-JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
-{
-	var
-		// Create an option that'll be above and below the category.
-		oDashOption = $('<option></option>').append(this.opt.sCatSeparator).attr('disabled', true).val('')[0],
-		// Create a document fragment that'll allowing inserting big parts at once.
-		oListFragment = document.createDocumentFragment(), i, n, sChildLevelPrefix, $val,
-		$dropdownList = $('#' + this.opt.sContainerId + '_select').unbind('focus');
-
-	// Loop through all items to be added.
-	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
-	{
-		// If we've reached the currently selected board add all items so far.
-		if (!aBoardsAndCategories[i].isCategory && aBoardsAndCategories[i].id == this.opt.iCurBoardId)
-		{
-			$dropdownList.prepend(oListFragment);
-			oListFragment = document.createDocumentFragment();
-			continue;
-		}
-
-		if (aBoardsAndCategories[i].isCategory)
-			oListFragment.appendChild(oDashOption.cloneNode(true));
-		else
-			sChildLevelPrefix = new Array(aBoardsAndCategories[i].childLevel + 1).join(this.opt.sBoardChildLevelIndicator);
-
-		oListFragment.appendChild(
-			$('<option>' + (aBoardsAndCategories[i].isCategory ? this.opt.sCatPrefix : sChildLevelPrefix + this.opt.sBoardPrefix) + aBoardsAndCategories[i].name + '</option>')
-				.val(aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0')[0]
-		);
-
-		if (aBoardsAndCategories[i].isCategory)
-			oListFragment.appendChild(oDashOption.cloneNode(true));
-	}
-
-	// Add the remaining items after the currently selected item.
-	// Internet Explorer needs css() to keep the box dropped down.
-	$dropdownList.append(oListFragment).focus().change(function () {
-		if (this.selectedIndex > 0 && ($val = $(this).val()))
-			window.location.href = we_script + $val.substr(we_script.indexOf('?') == -1 || $val.substr(0, 1) != '?' ? 0 : 1);
-	});
-};
-
 // Find the actual position of an item.
 // This is a dummy replacement for add-ons -- might be removed later.
 function smf_itemPos(itemHandle)
@@ -571,9 +486,10 @@ function smf_itemPos(itemHandle)
 
 // This function takes the script URL and prepares it to allow the query string to be appended to it.
 // It also replaces the host name with the current one. Which is required for security reasons.
-function smf_prepareScriptUrl(sUrl)
+function we_prepareScriptUrl()
 {
-	var finalUrl = sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
+	var finalUrl = we_script.indexOf('?') == -1 ? we_script + '?' : we_script +
+		(we_script.charAt(we_script.length - 1) == '?' || we_script.charAt(we_script.length - 1) == '&' || we_script.charAt(we_script.length - 1) == ';' ? '' : ';');
 	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
@@ -686,25 +602,6 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
 		});
 })(jQuery);
 
-/*
-// This will add an extra class to any external links, except those with title="-".
-// Ignored for now because it needs some improvement to the domain name detection.
-function _linkMagic()
-{
-	$('a[title!="-"]').each(function () {
-		var hre = $(this).attr('href');
-		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
-			$(this).addClass('xt');
-	});
-}
-*/
-
-function _testStyle(sty)
-{
-	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
-	for (i in stys) if (_w.style[stys[i]] !== undefined) return true;
-	return false;
-}
 
 /*!
  * Dropdown menu in JS with CSS fallback, Wedge style.
@@ -820,6 +717,100 @@ function menu_hide_children(id)
 
 	if (is_ie6)
 		menu_show_shim(false, id);
+}
+
+
+// This'll contain all JumpTo objects on the page.
+var aJumpTo = [];
+
+// This function will retrieve the contents needed for the jump to boxes.
+function grabJumpToContent()
+{
+	var aBoardsAndCategories = [], i, n;
+
+	ajax_indicator(true);
+
+	$('smf item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
+		aBoardsAndCategories.push({
+			id: parseInt(this.getAttribute('id'), 10),
+			isCategory: this.getAttribute('type') == 'category',
+			name: $(this).text().removeEntities(),
+			url: this.getAttribute('url'),
+			level: parseInt(this.getAttribute('level'), 10)
+		});
+	});
+
+	ajax_indicator(false);
+
+	for (i = 0, n = aJumpTo.length; i < n; i++)
+		aJumpTo[i]._fillSelect(aBoardsAndCategories);
+}
+
+// *** JumpTo class.
+function JumpTo(opt)
+{
+	this.opt = opt;
+	var sContainer = opt.sContainerId;
+
+	$('#' + sContainer).html(opt.sJumpToTemplate
+		.replace(/%select_id%/, sContainer + '_select')
+		.replace(/%dropdown_list%/, '<select name="' + sContainer + '_select" id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>'))
+		.find('select').focus(grabJumpToContent);
+};
+
+// Fill the jump to box with entries. Method of the JumpTo class.
+JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
+{
+	var
+		sList = '', i, n, sChildLevelPrefix, isCategory, $val,
+		oDashOption = '<option disabled>------------------------------</option>',
+		$dropdownList = $('#' + this.opt.sContainerId + '_select').unbind('focus');
+
+	// Loop through all items to be added.
+	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
+	{
+		isCategory = aBoardsAndCategories[i].isCategory;
+
+		if (isCategory)
+			sList += oDashOption;
+		else
+			sChildLevelPrefix = new Array(aBoardsAndCategories[i].level + 1).join('==');
+
+		// Show the board/category option, with special treatment for the current one.
+		sList += '<option value="' + (isCategory ? '#c' + aBoardsAndCategories[i].id : aBoardsAndCategories[i].url) + '"'
+				+ (!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[i].name + ' &lt;=' : '>'
+				+ (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
+
+		if (isCategory)
+			sList += oDashOption;
+	}
+
+	// Add the remaining items after the currently selected item.
+	$dropdownList.append(sList).change(function () {
+		if (this.selectedIndex > 0 && ($val = $(this).val()))
+			window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
+	});
+};
+
+
+/*
+// This will add an extra class to any external links, except those with title="-".
+// Ignored for now because it needs some improvement to the domain name detection.
+function _linkMagic()
+{
+	$('a[title!="-"]').each(function () {
+		var hre = $(this).attr('href');
+		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
+			$(this).addClass('xt');
+	});
+}
+*/
+
+function _testStyle(sty)
+{
+	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
+	for (i in stys) if (_w.style[stys[i]] !== undefined) return true;
+	return false;
 }
 
 // Has your browser got the goods?

@@ -347,7 +347,7 @@ function template_main()
 			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
 				x.push(checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value);
 
-		sendXMLDocument(smf_prepareScriptUrl(we_script) + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
+		sendXMLDocument(we_prepareScriptUrl() + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
 
 		$("#preview_section").show();
 		$("#preview_subject").html(txt_preview_title);
@@ -416,7 +416,7 @@ function template_main()
 
 	if ($context['can_quote'])
 		add_js('
-			newPostsHTML += \'<ul class="reset smalltext quickbuttons" id="msg_\' + id + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
+			newPostsHTML += \'<ul class="quickbuttons" id="msg_\' + id + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
 
 	add_js('
 			newPostsHTML += \'<br class="clear">\';
@@ -755,7 +755,7 @@ function template_show_previous_posts()
 
 		if ($context['can_quote'])
 			echo '
-					<ul class="reset smalltext quickbuttons" id="msg_', $post['id'], '_quote">
+					<ul class="quickbuttons" id="msg_', $post['id'], '_quote">
 						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
 					</ul>';
 
@@ -801,7 +801,7 @@ function template_show_previous_posts()
 	add_js('
 	function insertQuoteFast(messageid)
 	{
-		getXMLDocument(smf_prepareScriptUrl(we_script) + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
+		getXMLDocument(we_prepareScriptUrl() + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
 		return true;
 	}
 	function onDocReceived(XMLDoc)
