@@ -259,25 +259,19 @@ function template_main_board()
 	// Hide certain bits during topic edit.
 	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
 
-	// Use it to detect when we\'ve stopped editing.
-	document.onclick = modify_topic_click;
-
+	// Detect when we\'ve stopped editing.
 	var mouse_on_div;
-	function modify_topic_click()
-	{
+	$(document).click(function () {
 		if (is_editing() && mouse_on_div == 0)
 			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
-	}
+	});
 
 	function modify_topic_keypress(e)
 	{
-		if (typeof(e.keyCode) != "undefined" && e.keyCode == 13)
+		if (e.which == 13)
 		{
 			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
-			if (typeof(e.preventDefault) == "undefined")
-				e.returnValue = false;
-			else
-				e.preventDefault();
+			e.preventDefault();
 		}
 	}');
 }

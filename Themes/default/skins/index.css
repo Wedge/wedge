@@ -313,7 +313,7 @@ em
 	background: transparent url($images/wedgesight.png) 99% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
-.wrc
+.wrc, .wrc_top, .wrc_bottom
 	margin-top: 2px
 	margin-bottom: 4px
 	padding: .9em 1.2em
@@ -322,11 +322,11 @@ em
 	p
 		margin: 0 0 .5em
 
-.wrc_top extends .wrc
+.wrc_top
 	border-radius: 12px 12px 0 0
 	border-bottom, margin-bottom: 0
 
-.wrc_bottom extends .wrc
+.wrc_bottom
 	border-radius: 0 0 12px 12px
 	border-top, margin-top: 0
 
@@ -1502,7 +1502,8 @@ $ie-max-width {ie6} = "width"
 
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$menu_bg = rgba(242, 246, 242, .92)
+$menu_bg = -prefix-linear-gradient(rgba(220, 224, 220, .95), rgba(255, 255, 255, .95))
+$menu_bg {ie} = rgb(247, 252, 247)
 $board_col = #d97b33
 $footer_bg = #e8e3cb
 $window_bg = #f2f3ea // #f9f6f0

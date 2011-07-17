@@ -19,7 +19,7 @@ function is_editing()
 function modify_topic_show_edit(subject)
 {
 	// Just template the subject.
-	cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(event);"><input type="hidden" name="topic" value="' + cur_topic_id + '"><input type="hidden" name="msg" value="' + cur_msg_id.substr(4) + '">');
+	cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(e);"><input type="hidden" name="topic" value="' + cur_topic_id + '"><input type="hidden" name="msg" value="' + cur_msg_id.substr(4) + '">');
 }
 
 // And the reverse for hiding it.
