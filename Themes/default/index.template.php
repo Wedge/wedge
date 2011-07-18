@@ -529,6 +529,12 @@ function template_menu()
 
 			foreach ($item['sub_items'] as $sub_item)
 			{
+				if (empty($sub_item))
+				{
+					echo '
+				<li class="separator"><a><hr></a></li>';
+					continue;
+				}
 				echo '
 				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>', $sub_item['title'], '</a>';
 

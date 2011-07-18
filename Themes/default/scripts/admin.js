@@ -1,13 +1,13 @@
 
 /*
-	smf_AdminIndex(oOptions)
+	we_AdminIndex(oOptions)
 	{
 		public setAnnouncements()
 		public showCurrentVersion()
 		public checkUpdateAvailable()
 	}
 
-	smf_ViewVersions(oOptions)
+	we_ViewVersions(oOptions)
 	{
 		public swapOption(oSendingElement, sName)
 		public compareVersions(sCurrent, sTarget)
@@ -16,7 +16,7 @@
 */
 
 // Handle the JavaScript surrounding the admin and moderation center.
-function smf_AdminIndex(oOptions)
+function we_AdminIndex(oOptions)
 {
 	this.opt = oOptions;
 
@@ -33,9 +33,9 @@ function smf_AdminIndex(oOptions)
 		this.checkUpdateAvailable();
 };
 
-smf_AdminIndex.prototype.setAnnouncements = function ()
+we_AdminIndex.prototype.setAnnouncements = function ()
 {
-	var opt = this.opt, sMessages = '', ann = window.wedgeAnnouncements, i, j, k;
+	var opt = this.opt, sMessages = '', ann = window.wedge_news, i, j, k;
 	var time_replace = function (str, va, nu) {
 		if (va == 'month')
 			return opt.sMonths[nu - 1];
@@ -47,7 +47,7 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 			return opt.sMonthsShort[nu];
 	};
 
-	if (!('wedgeAnnouncements' in window) || !('length' in ann))
+	if (!('wedge_news' in window) || !('length' in ann))
 		return;
 
 	for (i = 0, k = ann.length; i < k; i++)
@@ -60,7 +60,7 @@ smf_AdminIndex.prototype.setAnnouncements = function ()
 	$('#' + opt.sAnnouncementContainerId).html(opt.sAnnouncementTemplate.replace('%content%', sMessages));
 };
 
-smf_AdminIndex.prototype.showCurrentVersion = function ()
+we_AdminIndex.prototype.showCurrentVersion = function ()
 {
 	if (!('smfVersion' in window))
 		return;
@@ -75,7 +75,7 @@ smf_AdminIndex.prototype.showCurrentVersion = function ()
 		oYourVersionContainer.html(this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion));
 };
 
-smf_AdminIndex.prototype.checkUpdateAvailable = function ()
+we_AdminIndex.prototype.checkUpdateAvailable = function ()
 {
 	if (!('smfUpdatePackage' in window))
 		return;
@@ -99,14 +99,14 @@ smf_AdminIndex.prototype.checkUpdateAvailable = function ()
 
 
 
-function smf_ViewVersions(oOptions)
+function we_ViewVersions(oOptions)
 {
 	this.opt = oOptions;
 	this.oSwaps = {};
 	this.determineVersions();
 };
 
-smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
+we_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {
 	// If it is undefined, or currently off, turn it on - otherwise off.
 	this.oSwaps[sName] = !(sName in this.oSwaps) || !this.oSwaps[sName];
@@ -117,7 +117,7 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 	return false;
 };
 
-smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
+we_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 {
 	var
 		aVersions = aParts = [],
@@ -168,7 +168,7 @@ smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
 	return false;
 };
 
-smf_ViewVersions.prototype.determineVersions = function ()
+we_ViewVersions.prototype.determineVersions = function ()
 {
 	var
 		oHighYour = {

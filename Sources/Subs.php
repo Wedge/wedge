@@ -2720,7 +2720,7 @@ function setupMenuContext()
 	$context['allow_pm'] = allowedTo('pm_read');
 
 	// Recalculate the number of unseen media items
-	// !!! The defined() is only here in case we're executing the Media DB installer separately.
+	// !!! @todo: The SSI test is only here for as long as we're executing the Media DB installer separately.
 	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1 && SMF !== 'SSI')
 	{
 		loadSource('media/Subs-Media');
@@ -2775,8 +2775,8 @@ function setupMenuContext()
 			),
 			'admin' => array(
 				'title' => $txt['admin'] . $error_count,
-				'href' => $scripturl . '?action=admin',
-				'show' => $context['allow_admin'],
+				'href' => $context['allow_admin'] ? $scripturl . '?action=admin' : $scripturl . '?action=moderate',
+				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
 					'featuresettings' => array(
 						'title' => $txt['modSettings_title'],
@@ -2799,17 +2799,22 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=packages',
 						'show' => allowedTo('admin_forum'),
 					),
-				),
-			),
-			'moderate' => array(
-				'title' => $txt['moderate'],
-				'href' => $scripturl . '?action=moderate',
-				'show' => $context['allow_moderation_center'],
-				'sub_items' => array(
+					'',
+					'modcenter' => array(
+						'title' => $txt['moderate'],
+						'href' => $scripturl . '?action=moderate',
+						'show' => $context['allow_admin'],
+					),
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
 						'show' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+					),
+					'reports' => array(
+						'title' => $txt['mc_reported_posts'],
+						'href' => $scripturl . '?action=moderate;area=reports',
+						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'is_last' => true,
 					),
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
@@ -2820,12 +2825,6 @@ function setupMenuContext()
 						'title' => $txt['mc_unapproved_attachments'],
 						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
 						'show' => $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
-					),
-					'reports' => array(
-						'title' => $txt['mc_reported_posts'],
-						'href' => $scripturl . '?action=moderate;area=reports',
-						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
-						'is_last' => true,
 					),
 				),
 			),
@@ -2867,6 +2866,7 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=pm',
 						'show' => allowedTo('pm_read'),
 					),
+					'',
 					'pm_send' => array(
 						'title' => $txt['pm_menu_send'],
 						'href' => $scripturl . '?action=pm;sa=send',
@@ -2967,6 +2967,7 @@ function setupMenuContext()
 		// Now we put the items in the context so the theme can use them.
 		$menu_items = array();
 		foreach ($items as $act => $item)
+		{
 			if (!empty($item['show']))
 			{
 				$item['active_item'] = false;
@@ -2981,36 +2982,39 @@ function setupMenuContext()
 
 				// Go through the sub items if there are any.
 				if (!empty($item['sub_items']))
+				{
 					foreach ($item['sub_items'] as $key => $subitem)
 					{
-						if (empty($subitem['show']))
+						if (empty($subitem['show']) && !empty($subitem))
 							unset($item['sub_items'][$key]);
 
 						// 2nd level sub items next...
 						if (!empty($subitem['sub_items']))
-							foreach ($subitem['sub_items'] as $key2 => $sub_item2)
-								if (empty($sub_item2['show']))
+							foreach ($subitem['sub_items'] as $key2 => $subitem2)
+								if (empty($subitem2['show']) && !empty($subitem2))
 									unset($item['sub_items'][$key]['sub_items'][$key2]);
 					}
+				}
 
 				$menu_items[$act] = $item;
 			}
+		}
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 			cache_put_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_items, $cacheTime);
 	}
 
-	$context['menu_items'] = $menu_items;
+	$context['menu_items'] =& $menu_items;
 
 	// Logging out requires the session id in the url.
-	if (isset($context['menu_items']['logout']))
-		$context['menu_items']['logout']['href'] = sprintf($context['menu_items']['logout']['href'], $context['session_var'], $context['session_id']);
+	if (isset($menu_items['logout']))
+		$menu_items['logout']['href'] = sprintf($menu_items['logout']['href'], $context['session_var'], $context['session_id']);
 
 	// Figure out which action we are doing so we can set the active tab.
 	// Default to home.
 	$current_action = 'home';
 
-	if (isset($context['menu_items'][$context['current_action']]))
+	if (isset($menu_items[$context['current_action']]))
 		$current_action = $context['current_action'];
 	elseif ($context['current_action'] == 'search2')
 		$current_action = 'search';
@@ -3023,12 +3027,12 @@ function setupMenuContext()
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'moderate';
 
-	$context['menu_items'][$current_action]['active_item'] = true;
+	$menu_items[$current_action]['active_item'] = true;
 
-	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($context['menu_items']['pm']))
+	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($menu_items['pm']))
 	{
-		$context['menu_items']['pm']['alttitle'] = $context['menu_items']['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
-		$context['menu_items']['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
+		$menu_items['pm']['alttitle'] = $menu_items['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
+		$menu_items['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
 	}
 }
 

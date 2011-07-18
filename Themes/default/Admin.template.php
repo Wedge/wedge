@@ -453,7 +453,7 @@ function template_view_versions()
 	add_js_file('scripts/admin.js');
 
 	add_js('
-	var oViewVersions = new smf_ViewVersions({
+	var oViewVersions = new we_ViewVersions({
 		aKnownLanguages: [
 			\'.', implode('\',
 			\'.', $context['default_known_languages']), '\'

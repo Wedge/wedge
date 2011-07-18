@@ -517,7 +517,7 @@ input[type=file]
 	display: block
 	color: #300
 	text-decoration: none
-	border-left: 4px solid darken($menu_bg, 10%) // #fbe2c8
+	border-left: 4px solid $menu_border // #fbe2c8
 	padding: 6px 8px
 	margin: 0
 
@@ -661,9 +661,6 @@ li.separator
 .m_admin extends .m_home
 	background-position: -36px 0
 
-.m_moderate extends .m_home
-	background-position: -55px 0
-
 .m_profile extends .m_home
 	background-position: 0 0
 
@@ -678,7 +675,7 @@ li.separator
 	width: 14px
 
 .m_media extends .m_home
-	background-position: -222px 0
+	background-position: -55px 0
 	width: 18px
 
 .m_mlist extends .m_home
@@ -1502,8 +1499,9 @@ $ie-max-width {ie6} = "width"
 
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$menu_bg = -prefix-linear-gradient(rgba(220, 224, 220, .95), rgba(255, 255, 255, .95))
+$menu_bg = -prefix-linear-gradient(rgba(230, 234, 230, .95), rgba(255, 255, 255, .95))
 $menu_bg {ie} = rgb(247, 252, 247)
+$menu_border = rgba(220, 224, 220, .95)
 $board_col = #d97b33
 $footer_bg = #e8e3cb
 $window_bg = #f2f3ea // #f9f6f0

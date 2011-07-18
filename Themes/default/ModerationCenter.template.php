@@ -59,8 +59,8 @@ function template_latest_news()
 			<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['mc_latest_news'], '
 		</we:cat>
-		<div class="windowbg wrc">
-			<div id="wedgeAnnouncements" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
+		<div class="windowbg wrc" style="padding: 5px 7px 5px 12px">
+			<div id="wedge_news" class="smalltext">', $txt['mc_cannot_connect_sm'], '</div>
 		</div>';
 
 	// This requires a lot of javascript...
@@ -72,7 +72,7 @@ function template_latest_news()
 	add_js_file('scripts/admin.js');
 
 	add_js('
-	var oAdminIndex = new smf_AdminIndex({
+	var oAdminIndex = new we_AdminIndex({
 		sSelf: \'oAdminCenter\',
 
 		bLoadAnnouncements: true,
@@ -85,7 +85,11 @@ function template_latest_news()
 			<dd>
 				%message%
 			</dd>'), ',
-		sAnnouncementContainerId: \'wedgeAnnouncements\'
+		sAnnouncementContainerId: \'wedge_news\',
+		sMonths: [\'', implode('\', \'', $txt['months']), '\'],
+		sMonthsShort: [\'', implode('\', \'', $txt['months_short']), '\'],
+		sDays: [\'', implode('\', \'', $txt['days']), '\'],
+		sDaysShort: [\'', implode('\', \'', $txt['days_short']), '\']
 	});');
 }
 
