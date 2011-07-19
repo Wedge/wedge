@@ -54,7 +54,7 @@ if (!defined('SMF'))
 function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
-	global $options, $user_info, $board_info, $topic, $board;
+	global $options, $user_info, $board_info, $topic, $board, $boardurl;
 	global $attachments, $messages_request, $topicinfo, $language;
 
 	// What are you gonna display if these are empty?!
@@ -500,6 +500,7 @@ function Display()
 	$context['is_sticky'] = $topicinfo['is_sticky'];
 	$context['is_approved'] = $topicinfo['approved'];
 	$context['user_menu'] = array();
+	$context['action_menu'] = array();
 
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 
@@ -1130,6 +1131,9 @@ function Display()
 	$context['can_restore_topic'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
+	// Don't waste time re-escaping the same string all over...
+	$context['remove_confirm'] = JavaScriptEscape($txt['remove_message_confirm']);
+
 	// Wireless shows a "more" if you can do anything special.
 	if (WIRELESS)
 	{
@@ -1173,6 +1177,46 @@ function Display()
 			)
 		);
 	}
+
+	$context['action_menu_items_show'] = array();
+	$context['action_menu_items'] = array(
+		'ap' => array(
+			'caption' => JavaScriptEscape($txt['approve']),
+			'class' => '\'approve_button\'',
+			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
+		),
+		're' => array(
+			'caption' => JavaScriptEscape($txt['remove']),
+			'class' => '\'remove_button\'',
+			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'click' => '"return confirm(' . JavaScriptEscape($context['remove_confirm']) . ');"',
+		),
+		'sp' => array(
+			'caption' => JavaScriptEscape($txt['split']),
+			'class' => '\'split_button\'',
+			'action' => '\'' . $scripturl . '?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
+		),
+		'me' => array(
+			'caption' => JavaScriptEscape($txt['merge_double']),
+			'class' => '\'mergepost_button\'',
+			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%last%;topic=' . $context['current_topic'] . '\'',
+		),
+		'rs' => array(
+			'caption' => JavaScriptEscape($txt['restore_message']),
+			'class' => '\'restore_button\'',
+			'action' => '\'' . $scripturl . '?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
+		),
+		'rp' => array(
+			'caption' => JavaScriptEscape($txt['report_to_mod']),
+			'class' => '\'\'',
+			'action' => '\'' . $scripturl . '?action=reporttm;topic=' . $context['current_topic'] . ';msg=%id%\'',
+		),
+	);
+	$su = '~' . preg_quote($scripturl, '~');
+	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
+	if (!empty($modSettings['pretty_filters']['actions']))
+		foreach ($context['action_menu_items'] as &$action)
+			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $action['action']);
 }
 
 // Callback for the message display.
@@ -1368,14 +1412,48 @@ function prepareDisplayContext($reset = false)
 				$menu[] = 'po: \';area=showposts\'';
 			if ($buddy)
 				$menu[] = ($memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab') . ': \'?action=buddy;u=%id%;' . $context['session_query'] . '\'';
-			if ($context['can_report_moderator'])
-				$menu[] = 're: \'?action=reporttm;topic=' . $context['current_topic'] . '.0;msg=%msg%\'';
 		}
 
 		// 3. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
 		// This first operation is probably the nastiest abuse going, mostly because it's dealing with a by-ref :S
 		if (!empty($menu))
 			$context['user_menu'][$output['member']['id']] = $menu;
+	}
+
+	// Bit longer, but this should be helpful too... The per-post menu.
+	if ($output['member']['id'] != 0)
+	{
+		// Start by putting the last message's id, for merging purposes.
+		$menu = array($output['last_post_id']);
+
+		// Maybe we can approve it, maybe we should?
+		if ($output['can_approve'])
+			$menu[] = 'ap';
+
+		// How about... even... remove it entirely?!
+		if ($output['can_remove'])
+			$menu[] = 're';
+
+		// What about splitting it off the rest of the topic?
+		if ($context['can_split'] && !empty($context['real_num_replies']))
+			$menu[] = 'sp';
+
+		// Can we merge this post to the previous one? (Normally requires same author)
+		if ($output['can_mergeposts'])
+			$menu[] = 'me';
+
+		// Can we restore topics?
+		if ($context['can_restore_msg'])
+			$menu[] = 'rs';
+
+		if ($context['can_report_moderator'] && !$output['is_message_author'])
+			$menu[] = 'rp';
+
+		if (!empty($menu))
+		{
+			$context['action_menu'][$output['id']] = $menu;
+			$context['action_menu_items_show'] += array_flip($menu);
+		}
 	}
 
 	call_hook('display_post_done', array(&$counter, &$output));

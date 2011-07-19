@@ -366,7 +366,7 @@ img.new_posts
 	clear: right
 
 // The user menu in the post display.
-.usermenu
+.usermenu, .acmenu
 	position: absolute
 	background: rgba(255,255,255,.5)
 	padding: 24px 4px 4px
@@ -378,13 +378,7 @@ img.new_posts
 	box-shadow: 0 0 6px rgba(0,0,0, .15)
 	overflow: hidden
 
-.usermenuitem
-	padding: 2px 4px
-	div
-		padding: 1px 0
-		font: 9pt Verdana, sans-serif
-
-.umme
+.umme, .acme
 	position: relative
 	z-index: 1
 
@@ -456,26 +450,42 @@ ul.quickbuttons extends ul.reset
 	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
 	 */
 
-	li.quote_button
+	.quote_button
 		background-position: 3px 0
-	li.remove_button
-		background-position: 0 -30px
-	li.modify_button
+	.modify_button
 		background-position: 0 -60px
-	li.approve_button
+	.more_button extends .upshrinks
+		background-position: -18px 2px !important
+	.remove_button
+		background-position: 0 -30px
+	.approve_button
 		background-position: 0 -90px
-	li.restore_button
+	.restore_button
 		background-position: 0 -120px
-	li.reply_button
+	.reply_button
 		background-position: 0 -180px
-	li.reply_all_button
+	.reply_all_button
 		background-position: 0 -180px
-	li.notify_button
+	.notify_button
 		background-position: 0 -210px
-	li.split_button
+	.split_button
 		background-position: 4px -150px
-	li.mergepost_button
+	.mergepost_button
 		background-position: 4px -242px
+
+ul.usermenuitem, ul.acmenuitem
+	padding: 2px
+	li
+		display: block
+		text-align: left
+		a
+			padding-right: 4px
+
+ul.usermenuitem li
+	.right-side &
+		text-align: right
+	a
+		padding-left: 4px
 
 .inner
 	padding: 1em .7em 0 .7em

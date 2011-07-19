@@ -614,10 +614,10 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 function UserMenu(oList)
 {
 	this.list = oList;
-	var that = this;
+	var that = this, is_right_side = $('.right-side').length > 0;
 	$('.umme')
 		.mouseenter(function () {
-			that.switchMenu(this);
+			that.switchMenu(this, is_right_side ? 'left' : '');
 		})
 		.mouseleave(function (e) {
 			var usermenu = 'usermenu', target = e.relatedTarget;
@@ -626,26 +626,26 @@ function UserMenu(oList)
 		});
 }
 
-UserMenu.prototype.switchMenu = function (oLink)
+UserMenu.prototype.switchMenu = function (oLink, direction)
 {
 	var
 		details = oLink.id.substr(2).split('_'),
 		iMsg = details[0], iUserId = details[1],
-		pos = $(oLink).offset(), h4 = $(oLink).parent(),
+		pos = $(oLink).offset(), parent = $(oLink).parent(),
 		umme = 'umme',
 		mmove = 'mousemove.' + umme,
 		leave = function (e) {
 			if (!e || e.relatedTarget.className != umme)
 			{
-				h4.removeClass();
+				parent.removeClass();
 				$(this).remove();
 			}
 		};
 
-	if ($('#userMenu' + iMsg).length || !(this.list['user' + iUserId]))
+	if ($('#userMenu' + iMsg).length || !(this.list[iUserId]))
 		return;
 
-	var i, sHTML = '', aLinkList = this.list['user' + iUserId], mtarget;
+	var i, sHTML = '', aLinkList = this.list[iUserId], mtarget;
 	for (i in aLinkList)
 	{
 		var sLink = aLinkList[i].replace(/%id%/, iUserId), sFirstChar = sLink.charAt(0);
@@ -656,15 +656,88 @@ UserMenu.prototype.switchMenu = function (oLink)
 		else if (sFirstChar == ';')
 			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
 
-		sHTML += '<div><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></div>';
+		sHTML += '<li><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></li>';
 	}
-	h4.addClass('show');
-	$('<div class="usermenu" id="userMenu' + iMsg + '"></div>').html('<div class="usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body')
-		.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 })
-		.mouseleave(leave).show(500, function () {
+	parent.addClass('show');
+	var men = $('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body');
+	if (direction == 'left')
+	{
+		var mpo = [ $(men).width(), $(men).height() ], paw = $(oLink).width();
+		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
+			.mouseleave(leave)
+			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
+				men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
+			});
+	}
+	else
+		men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
+	men.mouseleave(leave).show(500, function () {
+		$('body').unbind(mmove);
+		// Once the animation is completed, is the mouse still inside the menu area?
+		if (mtarget && mtarget.className != umme && !$(mtarget).parents('#userMenu' + iMsg).length)
+			leave();
+	});
+	$('body').bind(mmove, function (e) { mtarget = e.target; });
+};
+
+// *** The Action Menu
+// Uses the same codebase as UserMenu... Eventually, we should merge both.
+function AcMenu(oList)
+{
+	this.list = oList;
+	var that = this;
+	$('.acme')
+		.mouseenter(function () {
+			that.switchMenu(this);
+		})
+		.mouseleave(function (e) {
+			var acmenu = 'acmenu', target = e.relatedTarget;
+			if (target.className != acmenu && !$(target).parents('.' + acmenu).length)
+				$('.' + acmenu).remove();
+		});
+}
+
+AcMenu.prototype.switchMenu = function (oLink)
+{
+	var
+		iMsg = oLink.id.substr(2),
+		pos = $(oLink).offset(), parent = $(oLink).parent(),
+		acme = 'acme',
+		mmove = 'mousemove.' + acme,
+		leave = function (e) {
+			if (!e || e.relatedTarget.className != acme)
+			{
+				parent.removeClass('show');
+				$(this).remove();
+			}
+		};
+
+	if ($('#actMenu' + iMsg).length || !(this.list[iMsg]))
+		return;
+
+	var i, j, last, sHTML = '', aLinkList = this.list[iMsg], mtarget, iLast = aLinkList[0];
+	for (i = 1, j = aLinkList.length; i < j; i++)
+	{
+		var pms = oAcMeStrings[aLinkList[i]], sLink = pms[2].replace(/%id%/, iMsg).replace(/%last%/, iLast), sFirstChar = sLink.charAt(0);
+		if (sLink == '')
+			sLink = oLink.href;
+		else if (sFirstChar == '?')
+			sLink = we_script + sLink;
+		else if (sFirstChar == ';')
+			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
+
+		sHTML += '<li' + (pms[1] ? ' class="' + pms[1] + '"' : '') + '><a href="' + sLink + '"' + (pms[3] ? ' onclick=' + pms[3] : '') + '>' + pms[0] + '</a></li>';
+	}
+	parent.addClass('show');
+	var men = $('<div class="acmenu" id="actMenu' + iMsg + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>').hide().appendTo('body');
+	var mpo = [ $(men).width(), $(men).height() ], paw = $(parent).width();
+	men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
+		.mouseleave(leave)
+		.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
+			men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
 			$('body').unbind(mmove);
 			// Once the animation is completed, is the mouse still inside the menu area?
-			if (mtarget && mtarget.className != umme && !$(mtarget).parents('#userMenu' + iMsg).length)
+			if (mtarget && mtarget.className != acme && !$(mtarget).parents('#actMenu' + iMsg).length)
 				leave();
 		});
 	$('body').bind(mmove, function (e) { mtarget = e.target; });

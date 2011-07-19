@@ -2373,7 +2373,7 @@ function template_include($filename, $once = false)
 
 			$error = fetch_web_data($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
 			if (empty($error))
-				$error = $php_errormsg;
+				$error = isset($php_errormsg) ? $php_errormsg : '';
 
 			$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
 

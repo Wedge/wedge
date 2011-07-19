@@ -92,7 +92,6 @@ function template_main()
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
 	$alternate = false;
-	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
 
 	// Get all the messages...
 	while ($message = $context['get_message']())
@@ -145,11 +144,6 @@ function template_main()
 			echo '
 								<ul class="quickbuttons">';
 
-		// Maybe we can approve it, maybe we should?
-		if ($message['can_approve'])
-			echo '
-									<li class="approve_button"><a href="', $scripturl, '?action=moderate;area=postmod;sa=approve;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_query'], '">', $txt['approve'], '</a></li>';
-
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
@@ -165,25 +159,9 @@ function template_main()
 			echo '
 									<li class="modify_button"><a href="', $scripturl, '?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '">', $txt['modify'], '</a></li>';
 
-		// How about... even... remove it entirely?!
-		if ($message['can_remove'])
+		if (!empty($context['action_menu'][$message['id']]))
 			echo '
-									<li class="remove_button"><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
-
-		// What about splitting it off the rest of the topic?
-		if ($context['can_split'] && !empty($context['real_num_replies']))
-			echo '
-									<li class="split_button"><a href="', $scripturl, '?action=splittopics;topic=', $context['current_topic'], '.0;at=', $message['id'], '">', $txt['split'], '</a></li>';
-
-		// Can we merge this post to the previous one? (Normally requires same author)
-		if ($message['can_mergeposts'])
-			echo '
-									<li class="mergepost_button"><a href="', $scripturl, '?action=mergeposts;pid=', $message['id'], ';msgid=', $message['last_post_id'], ';topic=', $context['current_topic'], '">', $txt['merge_double'], '</a></li>';
-
-		// Can we restore topics?
-		if ($context['can_restore_msg'])
-			echo '
-									<li class="restore_button"><a href="', $scripturl, '?action=restoretopic;msgs=', $message['id'], ';', $context['session_query'], '">', $txt['restore_message'], '</a></li>';
+									<li class="more_button"><a id="mm', $message['id'], '" class="acme">', $txt['more_actions'], '</a></li>';
 
 		// Show a checkbox for quick moderation?
 		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $message['can_remove'])
@@ -509,13 +487,38 @@ function template_main()
 		po: ', JavaScriptEscape($txt['usermenu_showposts']), ',
 		ab: ', JavaScriptEscape($txt['usermenu_addbuddy']), ',
 		rb: ', JavaScriptEscape($txt['usermenu_removebuddy']), ',
-		re: ', JavaScriptEscape($txt['report_to_mod']), '
 	};
 	var oUserMenu = new UserMenu({');
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
-		user' . $user . ': { ' . implode(', ', $linklist) . ' }, ';
+		' . $user . ': { ' . implode(', ', $linklist) . ' }, ';
+
+		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
+	});';
+	}
+
+	if (!empty($context['action_menu']))
+	{
+		add_js('
+	var oAcMeStrings = {');
+		foreach ($context['action_menu_items'] as $key => $pmi)
+		{
+			if (!isset($context['action_menu_items_show'][$key]))
+				continue;
+			add_js('
+		' . $key . ': [ ');
+			foreach ($pmi as $item)
+				$context['footer_js'] .= $item . ', ';
+			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
+		}
+		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+	};
+	var oAcMe = new AcMenu({';
+
+		foreach ($context['action_menu'] as $post => $linklist)
+			$context['footer_js'] .= '
+		' . $post . ': [ "' . implode('", "', $linklist) . '" ], ';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
 	});';
