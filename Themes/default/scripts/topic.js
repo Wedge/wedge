@@ -621,7 +621,7 @@ function UserMenu(oList)
 		})
 		.mouseleave(function (e) {
 			var usermenu = 'usermenu', target = e.relatedTarget;
-			if (target.className != usermenu && !$(target).parents('.' + usermenu).length)
+			if (target.className.indexOf(usermenu) == -1 && !$(target).parents('.' + usermenu).length)
 				$('.' + usermenu).remove();
 		});
 }
@@ -635,7 +635,7 @@ UserMenu.prototype.switchMenu = function (oLink, direction)
 		umme = 'umme',
 		mmove = 'mousemove.' + umme,
 		leave = function (e) {
-			if (!e || e.relatedTarget.className != umme)
+			if (!e || e.relatedTarget.className.indexOf(umme) == -1)
 			{
 				parent.removeClass();
 				$(this).remove();
@@ -718,7 +718,7 @@ AcMenu.prototype.switchMenu = function (oLink)
 	var i, j, last, sHTML = '', aLinkList = this.list[iMsg], mtarget, iLast = aLinkList[0];
 	for (i = 1, j = aLinkList.length; i < j; i++)
 	{
-		var pms = oAcMeStrings[aLinkList[i]], sLink = pms[2].replace(/%id%/, iMsg).replace(/%last%/, iLast), sFirstChar = sLink.charAt(0);
+		var pms = oAcMeStrings[aLinkList[i]], sLink = pms[1].replace(/%id%/, iMsg).replace(/%last%/, iLast), sFirstChar = sLink.charAt(0);
 		if (sLink == '')
 			sLink = oLink.href;
 		else if (sFirstChar == '?')
@@ -726,7 +726,11 @@ AcMenu.prototype.switchMenu = function (oLink)
 		else if (sFirstChar == ';')
 			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
 
-		sHTML += '<li' + (pms[1] ? ' class="' + pms[1] + '"' : '') + '><a href="' + sLink + '"' + (pms[3] ? ' onclick=' + pms[3] : '') + '>' + pms[0] + '</a></li>';
+		sHTML += '<li'
+			+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
+			+ (pms[3] ? ' title="' + pms[3] + '"' : '')
+			+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
+			+ '>' + pms[0] + '</a></li>';
 	}
 	parent.addClass('show');
 	var men = $('<div class="acmenu" id="actMenu' + iMsg + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>').hide().appendTo('body');

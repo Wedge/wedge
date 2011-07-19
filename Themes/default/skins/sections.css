@@ -475,17 +475,19 @@ ul.quickbuttons extends ul.reset
 
 ul.usermenuitem, ul.acmenuitem
 	padding: 2px
+	text-align: left
 	li
 		display: block
-		text-align: left
 		a
 			padding-right: 4px
 
-ul.usermenuitem li
-	.right-side &
-		text-align: right
-	a
-		padding-left: 4px
+ul.usermenuitem
+	li
+		overflow: hidden
+		a
+			padding-left: 4px
+	.right-side & li a
+		float: right
 
 .inner
 	padding: 1em .7em 0 .7em

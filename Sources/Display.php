@@ -1182,34 +1182,39 @@ function Display()
 	$context['action_menu_items'] = array(
 		'ap' => array(
 			'caption' => JavaScriptEscape($txt['approve']),
-			'class' => '\'approve_button\'',
 			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'approve_button\'',
 		),
 		're' => array(
 			'caption' => JavaScriptEscape($txt['remove']),
-			'class' => '\'remove_button\'',
 			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
-			'click' => '"return confirm(' . JavaScriptEscape($context['remove_confirm']) . ');"',
+			'class' => '\'remove_button\'',
+			'title' => '\'\'',
+			'custom' => 'onclick="return confirm(' . JavaScriptEscape($context['remove_confirm']) . ');"',
 		),
 		'sp' => array(
 			'caption' => JavaScriptEscape($txt['split']),
-			'class' => '\'split_button\'',
 			'action' => '\'' . $scripturl . '?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
+			'class' => '\'split_button\'',
+			'title' => '\'\'',
 		),
 		'me' => array(
 			'caption' => JavaScriptEscape($txt['merge_double']),
-			'class' => '\'mergepost_button\'',
 			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%last%;topic=' . $context['current_topic'] . '\'',
+			'class' => '\'mergepost_button\'',
+			'title' => '\'\'',
 		),
 		'rs' => array(
 			'caption' => JavaScriptEscape($txt['restore_message']),
-			'class' => '\'restore_button\'',
 			'action' => '\'' . $scripturl . '?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'restore_button\'',
+			'title' => '\'\'',
 		),
 		'rp' => array(
 			'caption' => JavaScriptEscape($txt['report_to_mod']),
-			'class' => '\'\'',
 			'action' => '\'' . $scripturl . '?action=reporttm;topic=' . $context['current_topic'] . ';msg=%id%\'',
+			'class' => '\'\'',
+			'title' => '\'\'',
 		),
 	);
 	$su = '~' . preg_quote($scripturl, '~');
