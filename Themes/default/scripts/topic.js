@@ -611,138 +611,105 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 }
 
 // *** The UserMenu
-function UserMenu(oList)
+function MiniMenu(oList, acme)
 {
 	this.list = oList;
-	var that = this, is_right_side = $('.right-side').length > 0;
-	$('.umme')
+	var that = this, is_right_side = acme ? true : $('.right-side').length > 0;
+	$(acme ? '.acme' : '.umme')
 		.mouseenter(function () {
-			that.switchMenu(this, is_right_side ? 'left' : '');
+			that.switchMenu(this, acme, is_right_side ? 'left' : '');
 		})
 		.mouseleave(function (e) {
-			var usermenu = 'usermenu', target = e.relatedTarget;
-			if (target.className.indexOf(usermenu) == -1 && !$(target).parents('.' + usermenu).length)
-				$('.' + usermenu).remove();
+			var menu = (acme ? 'ac' : 'user') + 'menu', target = e.relatedTarget;
+			if (target.className.indexOf(menu) == -1 && !$(target).parents('.' + menu).length)
+				$('.' + menu).remove();
 		});
 }
 
-UserMenu.prototype.switchMenu = function (oLink, direction)
+MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 {
-	var
-		details = oLink.id.substr(2).split('_'),
-		iMsg = details[0], iUserId = details[1],
-		pos = $(oLink).offset(), parent = $(oLink).parent(),
-		umme = 'umme',
-		mmove = 'mousemove.' + umme,
-		leave = function (e) {
-			if (!e || e.relatedTarget.className.indexOf(umme) == -1)
-			{
-				parent.removeClass();
-				$(this).remove();
-			}
-		};
-
-	if ($('#userMenu' + iMsg).length || !(this.list[iUserId]))
-		return;
-
-	var i, sHTML = '', aLinkList = this.list[iUserId], mtarget;
-	for (i in aLinkList)
-	{
-		var sLink = aLinkList[i].replace(/%id%/, iUserId), sFirstChar = sLink.charAt(0);
-		if (sLink == '')
-			sLink = oLink.href;
-		else if (sFirstChar == '?')
-			sLink = we_script + sLink;
-		else if (sFirstChar == ';')
-			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
-
-		sHTML += '<li><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></li>';
-	}
-	parent.addClass('show');
-	var men = $('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</div>').hide().appendTo('body');
-	if (direction == 'left')
-	{
-		var mpo = [ $(men).width(), $(men).height() ], paw = $(oLink).width();
-		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
-			.mouseleave(leave)
-			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
-				men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
-			});
-	}
+	if (acme)
+		var id = iMsg = oLink.id.substr(2),
 	else
-		men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
-	men.mouseleave(leave).show(500, function () {
-		$('body').unbind(mmove);
-		// Once the animation is completed, is the mouse still inside the menu area?
-		if (mtarget && mtarget.className != umme && !$(mtarget).parents('#userMenu' + iMsg).length)
-			leave();
-	});
-	$('body').bind(mmove, function (e) { mtarget = e.target; });
-};
-
-// *** The Action Menu
-// Uses the same codebase as UserMenu... Eventually, we should merge both.
-function AcMenu(oList)
-{
-	this.list = oList;
-	var that = this;
-	$('.acme')
-		.mouseenter(function () {
-			that.switchMenu(this);
-		})
-		.mouseleave(function (e) {
-			var acmenu = 'acmenu', target = e.relatedTarget;
-			if (target.className != acmenu && !$(target).parents('.' + acmenu).length)
-				$('.' + acmenu).remove();
-		});
-}
-
-AcMenu.prototype.switchMenu = function (oLink)
-{
+	{
+		var
+			details = oLink.id.substr(2).split('_'),
+			iMsg = details[0],
+			id = details[1];
+	}
 	var
-		iMsg = oLink.id.substr(2),
 		pos = $(oLink).offset(), parent = $(oLink).parent(),
-		acme = 'acme',
-		mmove = 'mousemove.' + acme,
+		mm = acme ? 'acme' : 'umme',
+		menuid = (acme ? '#actMenu' : '#userMenu') + iMsg;
+		mmove = 'mousemove.' + mm,
 		leave = function (e) {
-			if (!e || e.relatedTarget.className != acme)
+			if (!e || e.relatedTarget.className.indexOf(mm) == -1)
 			{
 				parent.removeClass('show');
 				$(this).remove();
 			}
 		};
 
-	if ($('#actMenu' + iMsg).length || !(this.list[iMsg]))
+	if ($(menuid).length || !(this.list[id]))
 		return;
 
-	var i, j, last, sHTML = '', aLinkList = this.list[iMsg], mtarget, iLast = aLinkList[0];
-	for (i = 1, j = aLinkList.length; i < j; i++)
+	var sHTML = '', aLinkList = this.list[id], i, j, mtarget, iLast = acme ? aLinkList[0] : 0;
+	if (acme)
 	{
-		var pms = oAcMeStrings[aLinkList[i]], sLink = pms[1].replace(/%id%/, iMsg).replace(/%last%/, iLast), sFirstChar = sLink.charAt(0);
-		if (sLink == '')
-			sLink = oLink.href;
-		else if (sFirstChar == '?')
-			sLink = we_script + sLink;
-		else if (sFirstChar == ';')
-			sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
+		for (i = 1, j = aLinkList.length; i < j; i++)
+		{
+			var pms = oAcMeStrings[aLinkList[i]], sLink = pms[1].replace(/%id%/, id).replace(/%last%/, iLast);
 
-		sHTML += '<li'
-			+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
-			+ (pms[3] ? ' title="' + pms[3] + '"' : '')
-			+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
-			+ '>' + pms[0] + '</a></li>';
+			sHTML += '<li'
+				+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
+				+ (pms[3] ? ' title="' + pms[3] + '"' : '')
+				+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
+				+ '>' + pms[0] + '</a></li>';
+		}
+	}
+	else
+	{
+		for (i in aLinkList)
+		{
+			var sLink = aLinkList[i].replace(/%id%/, id), sFirstChar = sLink.charAt(0);
+			if (sLink == '')
+				sLink = oLink.href;
+			else if (sFirstChar == '?')
+				sLink = we_script + sLink;
+			else if (sFirstChar == ';')
+				sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
+
+			sHTML += '<li><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></li>';
+		}
 	}
 	parent.addClass('show');
-	var men = $('<div class="acmenu" id="actMenu' + iMsg + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>').hide().appendTo('body');
-	var mpo = [ $(men).width(), $(men).height() ], paw = $(parent).width();
-	men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
-		.mouseleave(leave)
-		.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
-			men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
+
+	var men = acme ?
+		$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
+		$('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
+	men.hide().appendTo('body');
+
+	if (direction == 'left')
+	{
+		var mpo = [ $(men).width(), $(men).height() ], paw = acme ? $(parent).width() : $(oLink).width();
+		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
+			.mouseleave(leave)
+			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
+				men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
+				$('body').unbind(mmove);
+				if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
+					leave();
+			});
+	}
+	else
+	{
+		men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
+		men.mouseleave(leave).show(500, function () {
 			$('body').unbind(mmove);
 			// Once the animation is completed, is the mouse still inside the menu area?
-			if (mtarget && mtarget.className != acme && !$(mtarget).parents('#actMenu' + iMsg).length)
+			if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 				leave();
 		});
+	}
 	$('body').bind(mmove, function (e) { mtarget = e.target; });
 };

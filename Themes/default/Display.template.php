@@ -87,7 +87,7 @@ function template_main()
 	// Show the topic information - icon, subject, etc.
 	echo '
 			<div id="forumposts">
-				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
+				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -166,7 +166,7 @@ function template_main()
 		// Show a checkbox for quick moderation?
 		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $message['can_remove'])
 			echo '
-									<li class="inline_mod_check" style="display: none;" id="in_topic_mod_check_', $message['id'], '"></li>';
+									<li class="inline_mod_check hide" id="in_topic_mod_check_', $message['id'], '"></li>';
 
 		if ($message['can_approve'] || $context['can_reply'] || $message['can_modify'] || $message['can_remove'] || $context['can_split'] || $context['can_restore_msg'])
 			echo '
@@ -180,7 +180,7 @@ function template_main()
 			echo '
 							<div id="msg_', $message['id'], '_ignored_prompt">
 								', $txt['ignoring_user'], '
-								<a href="#" id="msg_', $message['id'], '_ignored_link" style="display: none">', $txt['show_ignore_user_post'], '</a>
+								<a href="#" id="msg_', $message['id'], '_ignored_link" class="hide">', $txt['show_ignore_user_post'], '</a>
 							</div>';
 
 		// Show the post itself, finally!
@@ -206,7 +206,7 @@ function template_main()
 		{
 			echo '
 							<div id="msg_', $message['id'], '_footer" class="attachments smalltext">
-								<div style="overflow: ', $context['browser']['is_firefox'] ? 'visible' : 'auto', ';">';
+								<div style="overflow: ', $context['browser']['is_firefox'] ? 'visible' : 'auto', '">';
 
 			$last_approved_state = 1;
 			foreach ($message['attachment'] as $attachment)
@@ -404,8 +404,8 @@ function template_main()
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
-					<div id="error_box" style="padding: 4px;" class="error"></div>
-					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px;" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br>
+					<div id="error_box" style="padding: 4px" class="error"></div>
+					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px" tabindex="' . $context['tabindex']++ . '">%body%</textarea><br>
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" name="msg" value="%msg_id%">
@@ -488,40 +488,40 @@ function template_main()
 		ab: ', JavaScriptEscape($txt['usermenu_addbuddy']), ',
 		rb: ', JavaScriptEscape($txt['usermenu_removebuddy']), ',
 	};
-	var oUserMenu = new UserMenu({');
+	var oUserMenu = new MiniMenu({');
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
 		' . $user . ': { ' . implode(', ', $linklist) . ' }, ';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
-	});';
+	}, false);';
 	}
 
 	if (!empty($context['action_menu']))
 	{
-		add_js('
-	var oAcMeStrings = {');
+		$context['footer_js'] .= '
+	var oAcMeStrings = {';
 		foreach ($context['action_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['action_menu_items_show'][$key]))
 				continue;
-			add_js('
-		' . $key . ': [ ');
+			$context['footer_js'] .= '
+		' . $key . ': [ ';
 			foreach ($pmi as $item)
 				$context['footer_js'] .= $item . ', ';
 			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	};
-	var oAcMe = new AcMenu({';
+	var oAcMe = new MiniMenu({';
 
 		foreach ($context['action_menu'] as $post => $linklist)
 			$context['footer_js'] .= '
 		' . $post . ': [ "' . implode('", "', $linklist) . '" ], ';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
-	});';
+	}, true);';
 	}
 }
 
@@ -613,51 +613,7 @@ function template_userbox(&$message)
 
 		// Show the profile, website, email address, and personal message buttons.
 		if ($settings['show_profile_buttons'])
-		{
-			echo '
-								<li class="profile">
-									<ul>';
-			// Don't show the profile button if you're not allowed to view the profile.
-			if ($message['member']['can_view_profile'])
-				echo '
-										<li><a href="', $message['member']['href'], '">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile']), '</a></li>';
-
-			// Don't show an icon if they haven't specified a website.
-			if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
-				echo '
-										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['www']), '</a></li>';
-
-			// Don't show the email address if they want it hidden.
-			if (in_array($message['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
-				echo '
-										<li><a href="', $scripturl, '?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
-
-			// Since we know this person isn't a guest, you *can* message them.
-			if ($context['can_send_pm'])
-				echo '
-										<li><a href="', $scripturl, '?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
-
-			// Show the IP address if you're suitably privileged.
-			if ($message['can_see_ip'] && !empty($message['member']['ip']))
-			{
-				// Because this seems just a touch convoluted if a single line.
-				if (!$context['can_moderate_forum'])
-					echo '
-										<li><a href="', $scripturl, '?action=help;in=see_member_ip" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
-				else
-					echo '
-										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
-			}
-
-			// Maybe they want to report this post to the moderator(s)?
-			if ($context['can_report_moderator'] && !$message['is_message_author'])
-				echo '
-										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=reporttm;msg=', $message['id'], '"><img src="', $settings['images_url'], '/reporttm.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
-
-			echo '
-									</ul>
-								</li>';
-		}
+			template_profile_icons($message);
 
 		// Any custom fields for standard placement?
 		if (!empty($message['member']['custom_fields']))
@@ -678,6 +634,55 @@ function template_userbox(&$message)
 
 	echo '
 							</ul>';
+}
+
+function template_profile_icons(&$message)
+{
+	global $context, $settings, $txt, $scripturl;
+
+	echo '
+								<li class="profile">
+									<ul>';
+	// Don't show the profile button if you're not allowed to view the profile.
+	if ($message['member']['can_view_profile'])
+		echo '
+										<li><a href="', $message['member']['href'], '">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile']), '</a></li>';
+
+	// Don't show an icon if they haven't specified a website.
+	if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
+		echo '
+										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['www']), '</a></li>';
+
+	// Don't show the email address if they want it hidden.
+	if (in_array($message['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
+		echo '
+										<li><a href="', $scripturl, '?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
+
+	// Since we know this person isn't a guest, you *can* message them.
+	if ($context['can_send_pm'])
+		echo '
+										<li><a href="', $scripturl, '?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
+
+	// Show the IP address if you're suitably privileged.
+	if ($message['can_see_ip'] && !empty($message['member']['ip']))
+	{
+		// Because this seems just a touch convoluted if a single line.
+		if (!$context['can_moderate_forum'])
+			echo '
+										<li><a href="', $scripturl, '?action=help;in=see_member_ip" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+		else
+			echo '
+										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+	}
+
+	// Maybe they want to report this post to the moderator(s)?
+	if ($context['can_report_moderator'] && !$message['is_message_author'])
+		echo '
+										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=reporttm;msg=', $message['id'], '"><img src="', $settings['images_url'], '/reporttm.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
+
+	echo '
+									</ul>
+								</li>';
 }
 
 function template_topic_poll()
@@ -776,7 +781,7 @@ function template_quick_reply()
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 				</we:cat>
-				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' style="display: none"', '>
+				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' class="hide"', '>
 					<div class="roundframe">
 						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
 						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
@@ -808,12 +813,12 @@ function template_quick_reply()
 
 	echo '
 							<div class="quickReplyContent">
-								<div id="bbcBox_message" style="display: none"></div>
-								<div id="smileyBox_message" style="display: none"></div>',
+								<div id="bbcBox_message" class="hide"></div>
+								<div id="smileyBox_message" class="hide"></div>',
 								$context['postbox']->outputEditor(), '
 							</div>
 							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
+								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 							</div>
 							<div class="righttext padding">',
 								$context['postbox']->outputButtons(), '
