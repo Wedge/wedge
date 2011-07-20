@@ -667,8 +667,8 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 				sLink = oLink.href + sLink;
 		}
 
-		sHTML += '<li'
-			+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
+		sHTML += '<li><a href="' + sLink + '"'
+			+ (pms[2] ? ' class="' + pms[2] + '"' : '')
 			+ (pms[3] ? ' title="' + pms[3] + '"' : '')
 			+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
 			+ '>' + pms[0] + '</a></li>';

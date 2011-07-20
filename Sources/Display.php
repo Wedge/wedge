@@ -1178,16 +1178,19 @@ function Display()
 		);
 	}
 
+	// "Mini-menu's small in size, but it's very wise."
 	$short_profiles = !empty($modSettings['pretty_filters']['profiles']);
 	$context['user_menu_items_show'] = array();
 	$context['user_menu_items'] = array(
 		'pr' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_profile']),
 			'action' => '\'\'',
+			'class' => '\'profile_button\'',
 		),
 		'pm' => array(
 			'caption' => JavaScriptEscape($txt['pm_menu_send']),
 			'action' => '\'' . $scripturl . '?action=pm;sa=send;u=%id%\'',
+			'class' => '\'pm_button\'',
 		),
 		'we' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_website']),
@@ -1241,6 +1244,7 @@ function Display()
 			'action' => '\'' . $scripturl . '?action=reporttm;topic=' . $context['current_topic'] . ';msg=%id%\'',
 		),
 	);
+
 	$su = '~' . preg_quote($scripturl, '~');
 	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
 	if (!empty($modSettings['pretty_filters']['actions']))

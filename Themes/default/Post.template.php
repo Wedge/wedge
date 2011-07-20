@@ -416,7 +416,7 @@ function template_main()
 
 	if ($context['can_quote'])
 		add_js('
-			newPostsHTML += \'<ul class="quickbuttons" id="msg_\' + id + \'_quote"><li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');"><span>' . $txt['bbc_quote'] . '</span><\' + \'/a></li></ul>\';');
+			newPostsHTML += \'<ul class="quickbuttons" id="msg_\' + id + \'_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');">' . $txt['bbc_quote'] . '<\' + \'/a></li></ul>\';');
 
 	add_js('
 			newPostsHTML += \'<br class="clear">\';
@@ -756,7 +756,7 @@ function template_show_previous_posts()
 		if ($context['can_quote'])
 			echo '
 					<ul class="quickbuttons" id="msg_', $post['id'], '_quote">
-						<li class="quote_button"><a href="#postmodify" onclick="return insertQuoteFast(', $post['id'], ');"><span>', $txt['bbc_quote'], '</span></a></li>
+						<li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(', $post['id'], ');">', $txt['bbc_quote'], '</a></li>
 					</ul>';
 
 		echo '

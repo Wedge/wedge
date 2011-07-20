@@ -433,17 +433,15 @@ ul.quickbuttons extends ul.reset
 	text-transform: uppercase
 	#forumposts &
 		display: table-cell
-	li extends .inline-block
-		margin: 0 0 0 5px
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
-		a
-			padding: 0 0 0 22px
-			display: block
-			height: 20px
-	li.inline_mod_check
-		margin-left: 5px
 	a:hover
 		color: #a70
+	li extends .inline-block
+		margin: 0 0 0 5px
+		a
+			background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+			padding: 0 4px 0 22px
+			display: block
+			height: 20px
 
 	/**
 	 * This is where you can change the reply/edit/delete etc. icons for your posts.
@@ -475,20 +473,31 @@ ul.quickbuttons extends ul.reset
 	.mergepost_button
 		background-position: 4px -242px
 
+	.profile_button
+		background-image: url($images/icons/profile_sm.gif)
+		background-position: 0 0
+	.email_button
+		background-image: url($images/email_sm.gif)
+		background-position: 0 0
+	.pm_button
+		background-image: url($images/im_on.gif)
+		background-position: 0 0
+	.ip_button
+		background-image: url($images/ip.gif)
+		background-position: 0 0
+
 ul.usermenuitem, ul.acmenuitem
 	padding: 2px
 	text-align: left
 	li
+		overflow: hidden
 		display: block
 		a
-			padding-right: 4px
+			float: right
 
-ul.usermenuitem
-	li
-		overflow: hidden
-		a
-			padding-left: 4px
-	.right-side & li a
+ul.usermenuitem li a
+	float: left
+	.right-side &
 		float: right
 
 .inner
