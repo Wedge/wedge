@@ -1178,6 +1178,35 @@ function Display()
 		);
 	}
 
+	$short_profiles = !empty($modSettings['pretty_filters']['profiles']);
+	$context['user_menu_items_show'] = array();
+	$context['user_menu_items'] = array(
+		'pr' => array(
+			'caption' => JavaScriptEscape($txt['usermenu_profile']),
+			'action' => '\'\'',
+		),
+		'pm' => array(
+			'caption' => JavaScriptEscape($txt['pm_menu_send']),
+			'action' => '\'' . $scripturl . '?action=pm;sa=send;u=%id%\'',
+		),
+		'we' => array(
+			'caption' => JavaScriptEscape($txt['usermenu_website']),
+			'action' => '\'%special%\'',
+		),
+		'po' => array(
+			'caption' => JavaScriptEscape($txt['usermenu_showposts']),
+			'action' => $short_profiles ? '\'?area=showposts\'' : '\'' . $scripturl . '?action=profile;u=%id%;area=showposts\'',
+		),
+		'ab' => array(
+			'caption' => JavaScriptEscape($txt['usermenu_addbuddy']),
+			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+		),
+		'rb' => array(
+			'caption' => JavaScriptEscape($txt['usermenu_removebuddy']),
+			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+		),
+	);
+
 	$context['action_menu_items_show'] = array();
 	$context['action_menu_items'] = array(
 		'ap' => array(
@@ -1196,32 +1225,31 @@ function Display()
 			'caption' => JavaScriptEscape($txt['split']),
 			'action' => '\'' . $scripturl . '?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
 			'class' => '\'split_button\'',
-			'title' => '\'\'',
 		),
 		'me' => array(
 			'caption' => JavaScriptEscape($txt['merge_double']),
-			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%last%;topic=' . $context['current_topic'] . '\'',
+			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%special%;topic=' . $context['current_topic'] . '\'',
 			'class' => '\'mergepost_button\'',
-			'title' => '\'\'',
 		),
 		'rs' => array(
 			'caption' => JavaScriptEscape($txt['restore_message']),
 			'action' => '\'' . $scripturl . '?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'restore_button\'',
-			'title' => '\'\'',
 		),
 		'rp' => array(
 			'caption' => JavaScriptEscape($txt['report_to_mod']),
 			'action' => '\'' . $scripturl . '?action=reporttm;topic=' . $context['current_topic'] . ';msg=%id%\'',
-			'class' => '\'\'',
-			'title' => '\'\'',
 		),
 	);
 	$su = '~' . preg_quote($scripturl, '~');
 	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
 	if (!empty($modSettings['pretty_filters']['actions']))
+	{
+		foreach ($context['user_menu_items'] as &$user)
+			$user['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $user['action']);
 		foreach ($context['action_menu_items'] as &$action)
 			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $action['action']);
+	}
 }
 
 // Callback for the message display.
@@ -1371,7 +1399,7 @@ function prepareDisplayContext($reset = false)
 		$output['can_mergeposts'] &= $counter != 1;
 
 	// Is this user the message author?
-	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
+	$output['is_message_author'] = $is_me = $message['id_member'] == $user_info['id'];
 
 	if (!empty($message['id_member']))
 		$context['last_user_id'] = $message['id_member'];
@@ -1394,35 +1422,37 @@ function prepareDisplayContext($reset = false)
 		}
 
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
-		$menu = array();
-		if ($output['is_message_author'])
+		// Start by putting the user's website URL.
+		$menu = array(!empty($output['member']['website']['url']) ? JavaScriptEscape($output['member']['website']['url']) : '');
+		if ($is_me)
 		{
 			// Can't PM, email, add to buddy list
 			if ($profile_own)
-				$menu[] = 'pr: \'\'';
+				$menu[] = 'pr';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we: ' . JavaScriptEscape($output['member']['website']['url']);
+				$menu[] = 'we';
 			if ($profile_own)
-				$menu[] = 'po: \';area=showposts\'';
+				$menu[] = 'po';
 		}
 		else
 		{
 			if ($profile_any)
-				$menu[] = 'pr: \'\'';
+				$menu[] = 'pr';
 			if ($can_pm)
-				$menu[] = 'pm: \'?action=pm;sa=send;u=%id%\'';
+				$menu[] = 'pm';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we: ' . JavaScriptEscape($output['member']['website']['url']);
+				$menu[] = 'we';
 			if ($profile_any)
-				$menu[] = 'po: \';area=showposts\'';
+				$menu[] = 'po';
 			if ($buddy)
-				$menu[] = ($memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab') . ': \'?action=buddy;u=%id%;' . $context['session_query'] . '\'';
+				$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
 		}
 
-		// 3. If there's a menu, hack the display link into the profile link code. Then add it to the output stack
-		// This first operation is probably the nastiest abuse going, mostly because it's dealing with a by-ref :S
 		if (!empty($menu))
-			$context['user_menu'][$output['member']['id']] = $menu;
+		{
+			$context['user_menu'][$output['id']] = $menu;
+			$context['user_menu_items_show'] += array_flip($menu);
+		}
 	}
 
 	// Bit longer, but this should be helpful too... The per-post menu.
@@ -1451,7 +1481,7 @@ function prepareDisplayContext($reset = false)
 		if ($context['can_restore_msg'])
 			$menu[] = 'rs';
 
-		if ($context['can_report_moderator'] && !$output['is_message_author'])
+		if ($context['can_report_moderator'] && !$is_me)
 			$menu[] = 'rp';
 
 		if (!empty($menu))

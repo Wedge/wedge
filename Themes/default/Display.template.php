@@ -479,29 +479,40 @@ function template_main()
 
 	if (!empty($context['user_menu']))
 	{
-		add_js('
-	var oUserMenuStrings = {
-		pr: ', JavaScriptEscape($txt['usermenu_profile']), ',
-		pm: ', JavaScriptEscape($txt['pm_menu_send']), ',
-		we: ', JavaScriptEscape($txt['usermenu_website']), ',
-		po: ', JavaScriptEscape($txt['usermenu_showposts']), ',
-		ab: ', JavaScriptEscape($txt['usermenu_addbuddy']), ',
-		rb: ', JavaScriptEscape($txt['usermenu_removebuddy']), ',
-	};
-	var oUserMenu = new MiniMenu({');
+		$context['footer_js'] .= '
+	var oUsMe = new MiniMenu({';
 
-		foreach ($context['user_menu'] as $user => $linklist)
+		foreach ($context['user_menu'] as $post => $linklist)
 			$context['footer_js'] .= '
-		' . $user . ': { ' . implode(', ', $linklist) . ' }, ';
+		' . $post . ': [ "' . implode('", "', $linklist) . '" ],';
 
-		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
-	}, false);';
+		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+	}, false, {';
+		foreach ($context['user_menu_items'] as $key => $pmi)
+		{
+			if (!isset($context['user_menu_items_show'][$key]))
+				continue;
+			$context['footer_js'] .= '
+		' . $key . ': [ ';
+			foreach ($pmi as $item)
+				$context['footer_js'] .= $item . ', ';
+			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
+		}
+		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+	});';
 	}
 
 	if (!empty($context['action_menu']))
 	{
 		$context['footer_js'] .= '
-	var oAcMeStrings = {';
+	var oAcMe = new MiniMenu({';
+
+		foreach ($context['action_menu'] as $post => $linklist)
+			$context['footer_js'] .= '
+		' . $post . ': [ "' . implode('", "', $linklist) . '" ],';
+
+		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+	}, true, {';
 		foreach ($context['action_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['action_menu_items_show'][$key]))
@@ -513,15 +524,7 @@ function template_main()
 			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
-	};
-	var oAcMe = new MiniMenu({';
-
-		foreach ($context['action_menu'] as $post => $linklist)
-			$context['footer_js'] .= '
-		' . $post . ': [ "' . implode('", "', $linklist) . '" ], ';
-
-		$context['footer_js'] = substr($context['footer_js'], 0, -2) . '
-	}, true);';
+	});';
 	}
 }
 

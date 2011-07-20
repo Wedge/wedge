@@ -610,17 +610,19 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 		.hide().appendTo($('#' + sButtonStripId + ' ul')).fadeIn(300);
 }
 
+
 // *** The UserMenu
-function MiniMenu(oList, acme)
+function MiniMenu(oList, bAcme, oStrings)
 {
 	this.list = oList;
-	var that = this, is_right_side = acme ? true : $('.right-side').length > 0;
-	$(acme ? '.acme' : '.umme')
+	var that = this, is_right_side = bAcme ? true : $('.right-side').length > 0;
+	this.strings = oStrings;
+	$(bAcme ? '.acme' : '.umme')
 		.mouseenter(function () {
-			that.switchMenu(this, acme, is_right_side ? 'left' : '');
+			that.switchMenu(this, bAcme, is_right_side ? 'left' : '');
 		})
 		.mouseleave(function (e) {
-			var menu = (acme ? 'ac' : 'user') + 'menu', target = e.relatedTarget;
+			var menu = (bAcme ? 'ac' : 'user') + 'menu', target = e.relatedTarget;
 			if (target.className.indexOf(menu) == -1 && !$(target).parents('.' + menu).length)
 				$('.' + menu).remove();
 		});
@@ -629,7 +631,7 @@ function MiniMenu(oList, acme)
 MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 {
 	if (acme)
-		var id = iMsg = oLink.id.substr(2),
+		var id = iMsg = oLink.id.substr(2);
 	else
 	{
 		var
@@ -639,7 +641,7 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	}
 	var
 		pos = $(oLink).offset(), parent = $(oLink).parent(),
-		mm = acme ? 'acme' : 'umme',
+		mm = acme ? 'acme' : 'umme', $body = $('body'),
 		menuid = (acme ? '#actMenu' : '#userMenu') + iMsg;
 		mmove = 'mousemove.' + mm,
 		leave = function (e) {
@@ -653,50 +655,40 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	if ($(menuid).length || !(this.list[id]))
 		return;
 
-	var sHTML = '', aLinkList = this.list[id], i, j, mtarget, iLast = acme ? aLinkList[0] : 0;
-	if (acme)
+	var sHTML = '', aLinkList = this.list[id], i = 1, j = aLinkList.length, mtarget, special = aLinkList[0];
+	for (; i < j; i++)
 	{
-		for (i = 1, j = aLinkList.length; i < j; i++)
+		var pms = this.strings[aLinkList[i]], sLink = pms[1].replace(/%id%/, id).replace(/%special%/, special);
+		if (!acme)
 		{
-			var pms = oAcMeStrings[aLinkList[i]], sLink = pms[1].replace(/%id%/, id).replace(/%last%/, iLast);
-
-			sHTML += '<li'
-				+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
-				+ (pms[3] ? ' title="' + pms[3] + '"' : '')
-				+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
-				+ '>' + pms[0] + '</a></li>';
-		}
-	}
-	else
-	{
-		for (i in aLinkList)
-		{
-			var sLink = aLinkList[i].replace(/%id%/, id), sFirstChar = sLink.charAt(0);
 			if (sLink == '')
 				sLink = oLink.href;
-			else if (sFirstChar == '?')
-				sLink = we_script + sLink;
-			else if (sFirstChar == ';')
-				sLink = oLink.href + (oLink.href.indexOf('?') >= 0 ? sLink : '?' + sLink.substr(1));
-
-			sHTML += '<li><a href="' + sLink.replace(/%msg%/, iMsg) + '">' + oUserMenuStrings[i] + '</a></li>';
+			else if (sLink.charAt(0) == '?')
+				sLink = oLink.href + sLink;
 		}
+
+		sHTML += '<li'
+			+ (pms[2] ? ' class="' + pms[2] + '"' : '') + '><a href="' + sLink + '"'
+			+ (pms[3] ? ' title="' + pms[3] + '"' : '')
+			+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
+			+ '>' + pms[0] + '</a></li>';
 	}
 	parent.addClass('show');
 
 	var men = acme ?
 		$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
 		$('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
-	men.hide().appendTo('body');
+	men.hide().appendTo($body);
 
 	if (direction == 'left')
 	{
 		var mpo = [ $(men).width(), $(men).height() ], paw = acme ? $(parent).width() : $(oLink).width();
-		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0, opacity: 'hide' })
+		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0 })
 			.mouseleave(leave)
 			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
 				men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
-				$('body').unbind(mmove);
+				$body.unbind(mmove);
+				// Once the animation is completed, is the mouse still inside the menu area?
 				if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 					leave();
 			});
@@ -705,11 +697,10 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	{
 		men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
 		men.mouseleave(leave).show(500, function () {
-			$('body').unbind(mmove);
-			// Once the animation is completed, is the mouse still inside the menu area?
+			$body.unbind(mmove);
 			if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 				leave();
 		});
 	}
-	$('body').bind(mmove, function (e) { mtarget = e.target; });
+	$body.bind(mmove, function (e) { mtarget = e.target; });
 };
