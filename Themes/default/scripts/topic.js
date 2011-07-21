@@ -614,9 +614,9 @@ function wedge_addButton(sButtonStripId, bUseImage, oOptions)
 // *** The UserMenu
 function MiniMenu(oList, bAcme, oStrings)
 {
-	this.list = oList;
 	var that = this, is_right_side = bAcme ? true : $('.right-side').length > 0;
-	this.strings = oStrings;
+	that.list = oList;
+	that.strings = oStrings;
 	$(bAcme ? '.acme' : '.umme')
 		.mouseenter(function () {
 			that.switchMenu(this, bAcme, is_right_side ? 'left' : '');
@@ -630,20 +630,13 @@ function MiniMenu(oList, bAcme, oStrings)
 
 MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 {
-	if (acme)
-		var id = iMsg = oLink.id.substr(2);
-	else
-	{
-		var
-			details = oLink.id.substr(2).split('_'),
-			iMsg = details[0],
-			id = details[1];
-	}
 	var
+		details = oLink.id.substr(2).split('_'),
+		iMsg = details[0], id = details[acme ? 0 : 1],
 		pos = $(oLink).offset(), parent = $(oLink).parent(),
-		mm = acme ? 'acme' : 'umme', $body = $('body'),
+		aLinkList = this.list[id], $body = $('body'),
 		menuid = (acme ? '#actMenu' : '#userMenu') + iMsg;
-		mmove = 'mousemove.' + mm,
+		mm = acme ? 'acme' : 'umme', mmove = 'mousemove.' + mm,
 		leave = function (e) {
 			if (!e || e.relatedTarget.className.indexOf(mm) == -1)
 			{
@@ -652,20 +645,16 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 			}
 		};
 
-	if ($(menuid).length || !(this.list[id]))
+	if ($(menuid).length || !aLinkList)
 		return;
 
-	var sHTML = '', aLinkList = this.list[id], i = 1, j = aLinkList.length, mtarget, special = aLinkList[0];
+	var sHTML = '', i = 1, j = aLinkList.length, special = aLinkList[0], mtarget, pms, sLink, $men, mpo, paw;
 	for (; i < j; i++)
 	{
-		var pms = this.strings[aLinkList[i]], sLink = pms[1].replace(/%id%/, id).replace(/%special%/, special);
-		if (!acme)
-		{
-			if (sLink == '')
-				sLink = oLink.href;
-			else if (sLink.charAt(0) == '?')
-				sLink = oLink.href + sLink;
-		}
+		pms = this.strings[aLinkList[i]];
+		sLink = pms[1] ? pms[1].replace(/%id%/, id).replace(/%special%/, special) : oLink.href;
+		if (!acme && sLink.charAt(0) == '?')
+			sLink = oLink.href + sLink;
 
 		sHTML += '<li><a href="' + sLink + '"'
 			+ (pms[2] ? ' class="' + pms[2] + '"' : '')
@@ -675,18 +664,19 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	}
 	parent.addClass('show');
 
-	var men = acme ?
+	$men = acme ?
 		$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
 		$('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
-	men.hide().appendTo($body);
+	$men.hide().appendTo($body);
 
 	if (direction == 'left')
 	{
-		var mpo = [ $(men).width(), $(men).height() ], paw = acme ? $(parent).width() : $(oLink).width();
-		men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0 })
+		mpo = [ $men.width(), $men.height() ];
+		paw = $(acme ? parent : oLink).width();
+		$men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0 })
 			.mouseleave(leave)
 			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
-				men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
+				$men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
 				$body.unbind(mmove);
 				// Once the animation is completed, is the mouse still inside the menu area?
 				if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
@@ -695,8 +685,8 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	}
 	else
 	{
-		men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
-		men.mouseleave(leave).show(500, function () {
+		$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
+		$men.mouseleave(leave).show(500, function () {
 			$body.unbind(mmove);
 			if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 				leave();
