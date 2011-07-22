@@ -329,7 +329,7 @@ function loadUserSettings()
 
 	// Also contains the query string.
 	// Do not print this without sanitizing first!
-	$user_info['url'] = empty($_SERVER['REAL_HTTP_HOST']) ? $user_info['server'] . $_SERVER['REQUEST_URI'] : substr($user_info['server'], 0, strpos($user_info['server'], '/')) . '//' . $_SERVER['HTTP_HOST'] . '/';
+	$user_info['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user_info['server'] : substr($user_info['server'], 0, strpos($user_info['server'], '/')) . '//' . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
 	$user_info['groups'] = array_unique($user_info['groups']);
 	// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.

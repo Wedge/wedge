@@ -549,7 +549,7 @@ function template_userbox(&$message)
 	// Show the member's custom title, if they have one.
 	if (!empty($message['member']['title']))
 		echo '
-								<li class="title">', $message['member']['title'], '</li>';
+								<li class="mtitle">', $message['member']['title'], '</li>';
 
 	// Show the member's primary group (like 'Administrator') if they have one.
 	if (!empty($message['member']['group']))

@@ -668,7 +668,6 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_website',
 			// Fix the URL...
 			'input_validate' => create_function('&$value', '
-
 				if (strlen(trim($value)) > 0 && strpos($value, \'://\') === false)
 					$value = \'http://\' . $value;
 				if (strlen($value) < 8 || (substr($value, 0, 7) !== \'http://\' && substr($value, 0, 8) !== \'https://\'))

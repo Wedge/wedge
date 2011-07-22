@@ -433,15 +433,15 @@ ul.quickbuttons extends ul.reset
 	text-transform: uppercase
 	#forumposts &
 		display: table-cell
-	a:hover
-		color: #a70
 	li extends .inline-block
 		margin: 0 0 0 5px
-		a
-			background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
-			padding: 0 4px 0 22px
-			display: block
-			height: 20px
+	a
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+		padding: 0 4px 0 22px
+		display: block
+		height: 20px
+		:hover
+			color: #a70
 
 	/**
 	 * This is where you can change the reply/edit/delete etc. icons for your posts.
@@ -485,6 +485,19 @@ ul.quickbuttons extends ul.reset
 	.ip_button
 		background-image: url($images/ip.gif)
 		background-position: 0 0
+	.www_button
+		background-image: url($images/www_sm.gif)
+		background-position: 0 0
+	// !!! While waiting for better icons... Here are two temp ones.
+	.post_button
+		background-image: url($images/new_some.png)
+		background-position: 0 0
+		padding-left: 25px
+	.contact_button
+		background-image: url($images/icons/online.gif)
+		background-position: 0 0
+		padding-left: 26px
+
 
 ul.usermenuitem, ul.acmenuitem
 	padding: 2px

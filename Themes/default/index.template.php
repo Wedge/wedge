@@ -195,6 +195,7 @@ function template_body_above()
 			</form>';
 	}
 
+	// !!! @todo: cache this for at least a minute. Also add a skin changer, and cache it as well.
 	$languages = glob($settings['theme_dir'] . '/languages/Flag.*.png');
 	if (count($languages) > 1)
 	{
@@ -220,7 +221,7 @@ function template_body_above()
 
 	echo '
 		</div></div>
-		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none"', '><div class="frame">
+		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame">
 			<we:header logo="', $context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
 		</div></div>
 	</div></div>';

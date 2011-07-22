@@ -499,8 +499,6 @@ function Display()
 	$context['is_locked'] = $topicinfo['locked'];
 	$context['is_sticky'] = $topicinfo['is_sticky'];
 	$context['is_approved'] = $topicinfo['approved'];
-	$context['user_menu'] = array();
-	$context['action_menu'] = array();
 
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 
@@ -1180,6 +1178,7 @@ function Display()
 
 	// "Mini-menu's small in size, but it's very wise."
 	$short_profiles = !empty($modSettings['pretty_filters']['profiles']);
+	$context['user_menu'] = array();
 	$context['user_menu_items_show'] = array();
 	$context['user_menu_items'] = array(
 		'pr' => array(
@@ -1195,21 +1194,26 @@ function Display()
 		'we' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_website']),
 			'action' => '\'%special%\'',
+			'class' => '\'www_button\'',
 		),
 		'po' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_showposts']),
 			'action' => $short_profiles ? '\'?area=showposts\'' : '\'' . $scripturl . '?action=profile;u=%id%;area=showposts\'',
+			'class' => '\'post_button\'',
 		),
 		'ab' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_addbuddy']),
 			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'contact_button\'',
 		),
 		'rb' => array(
 			'caption' => JavaScriptEscape($txt['usermenu_removebuddy']),
 			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'contact_button\'',
 		),
 	);
 
+	$context['action_menu'] = array();
 	$context['action_menu_items_show'] = array();
 	$context['action_menu_items'] = array(
 		'ap' => array(
@@ -1427,7 +1431,7 @@ function prepareDisplayContext($reset = false)
 
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
 		// Start by putting the user's website URL.
-		$menu = array(!empty($output['member']['website']['url']) ? JavaScriptEscape($output['member']['website']['url']) : '');
+		$menu = array(!empty($output['member']['website']['url']) ? $output['member']['website']['url'] : '');
 		if ($is_me)
 		{
 			// Can't PM, email, add to buddy list
