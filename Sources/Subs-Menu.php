@@ -151,13 +151,10 @@ function createMenu($menuData, $menuOptions = array())
 						if (!empty($area['subsections']))
 						{
 							$here['subsections'] = array();
-							$first_sa = $last_sa = null;
 							foreach ($area['subsections'] as $sa => $sub)
 							{
 								if (!empty($sub) && (empty($sub[1]) || allowedTo($sub[1])) && (!isset($sub['enabled']) || !empty($sub['enabled'])))
 								{
-									if ($first_sa == null)
-										$first_sa = $sa;
 									$here['subsections'][$sa] = array('label' => $sub[0]);
 									// Custom URL?
 									if (isset($sub['url']))
@@ -166,10 +163,6 @@ function createMenu($menuData, $menuOptions = array())
 									// A bit complicated - but is this set?
 									if ($menu_context['current_area'] == $area_id)
 									{
-										// Save which is the first...
-										if (empty($first_sa))
-											$first_sa = $sa;
-
 										// Is this the current subsection?
 										if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == $sa)
 											$menu_context['current_subsection'] = $sa;
@@ -177,23 +170,10 @@ function createMenu($menuData, $menuOptions = array())
 										elseif (!isset($menu_context['current_subsection']) && !empty($sub[2]))
 											$menu_context['current_subsection'] = $sa;
 									}
-
-									// Let's assume this is the last, for now.
-									$last_sa = $sa;
 								}
 								// Mark it as disabled/deleted...
 								else
 									$here['subsections'][$sa] = '';
-							}
-
-							// Set which one is first, last and selected in the group.
-							if (!empty($here['subsections']))
-							{
-								$here['subsections'][$context['right_to_left'] ? $last_sa : $first_sa]['is_first'] = true;
-								$here['subsections'][$context['right_to_left'] ? $first_sa : $last_sa]['is_last'] = true;
-
-								if ($menu_context['current_area'] == $area_id && !isset($menu_context['current_subsection']))
-									$menu_context['current_subsection'] = $first_sa;
 							}
 						}
 					}

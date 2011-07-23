@@ -213,9 +213,6 @@ function template_generic_tabs()
 		// Does it have its own help?
 		if (!empty($tab['help']))
 			$tab_context['tabs'][$id]['help'] = $tab['help'];
-		// Is this the last one?
-		if (!empty($tab['is_last']) && !isset($tab_context['override_last']))
-			$tab_context['tabs'][$id]['is_last'] = true;
 	}
 
 	// Find the selected tab

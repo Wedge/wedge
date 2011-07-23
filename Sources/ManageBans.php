@@ -130,7 +130,6 @@ function Ban()
 				'description' => $txt['ban_log_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=log',
 				'is_selected' => $_REQUEST['sa'] == 'log',
-				'is_last' => true,
 			),
 		),
 	);

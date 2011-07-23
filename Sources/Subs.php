@@ -2750,10 +2750,8 @@ function setupMenuContext()
 						'title' => $is_b ? $board_info['name'] : '',
 						'href' => $is_b ? $scripturl . '?board=' . $board_info['id'] . '.0' : '',
 						'show' => $is_b,
-						'is_last' => true,
 					),
 				),
-				'is_last' => $context['right_to_left'],
 			),
 			'search' => array(
 				'title' => $txt['search'],
@@ -2769,13 +2767,12 @@ function setupMenuContext()
 						'title' => $txt['search_advanced'],
 						'href' => $scripturl . '?action=search;advanced',
 						'show' => $context['allow_search'] && !empty($modSettings['simpleSearch']),
-						'is_last' => true,
 					),
 				),
 			),
 			'admin' => array(
 				'title' => $txt['admin'] . $error_count,
-				'href' => $context['allow_admin'] ? $scripturl . '?action=admin' : $scripturl . '?action=moderate',
+				'href' => $scripturl . ($context['allow_admin'] ? '?action=admin' : '?action=moderate'),
 				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
 					'featuresettings' => array(
@@ -2792,7 +2789,6 @@ function setupMenuContext()
 						'title' => $txt['edit_permissions'],
 						'href' => $scripturl . '?action=admin;area=permissions',
 						'show' => allowedTo('manage_permissions'),
-						'is_last' => true,
 					),
 					'packages' => array(
 						'title' => $txt['package'],
@@ -2814,7 +2810,6 @@ function setupMenuContext()
 						'title' => $txt['mc_reported_posts'],
 						'href' => $scripturl . '?action=moderate;area=reports',
 						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
-						'is_last' => true,
 					),
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
@@ -2852,7 +2847,6 @@ function setupMenuContext()
 						'title' => $txt['forumprofile'],
 						'href' => $scripturl . '?action=profile;area=forumprofile',
 						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
-						'is_last' => true,
 					),
 				),
 			),
@@ -2871,13 +2865,11 @@ function setupMenuContext()
 						'title' => $txt['pm_menu_send'],
 						'href' => $scripturl . '?action=pm;sa=send',
 						'show' => allowedTo('pm_send'),
-						'is_last' => true,
 					),
 					'pm_draft' => array(
 						'title' => $txt['pm_menu_drafts'],
 						'href' => $scripturl . '?action=pm;sa=showdrafts',
 						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($modSettings['masterSavePmDrafts']),
-						'is_last' => true,
 					),
 				),
 			),
@@ -2895,7 +2887,6 @@ function setupMenuContext()
 						'title' => $txt['calendar_post_event'],
 						'href' => $scripturl . '?action=calendar;sa=post',
 						'show' => allowedTo('calendar_post'),
-						'is_last' => true,
 					),
 				),
 			),
@@ -2907,13 +2898,12 @@ function setupMenuContext()
 					'home' => array(
 						'title' => $txt['media_home'],
 						'href' => $scripturl . '?action=media',
-						'show' => true,
+						'show' => allowedTo('media_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
 					),
 					'unseen' => array(
 						'title' => $txt['media_unseen'],
 						'href' => $scripturl . '?action=media;sa=unseen',
 						'show' => allowedTo('media_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
-						'is_last' => true,
 					),
 				),
 			),
@@ -2931,7 +2921,6 @@ function setupMenuContext()
 						'title' => $txt['mlist_search'],
 						'href' => $scripturl . '?action=mlist;sa=search',
 						'show' => true,
-						'is_last' => true,
 					),
 				),
 			),
@@ -2939,24 +2928,16 @@ function setupMenuContext()
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
-				'sub_items' => array(
-				),
 			),
 			'register' => array(
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
 				'show' => $user_info['is_guest'],
-				'sub_items' => array(
-				),
-				'is_last' => !$context['right_to_left'],
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
-				'sub_items' => array(
-				),
-				'is_last' => !$context['right_to_left'],
 			),
 		);
 
@@ -2971,14 +2952,6 @@ function setupMenuContext()
 			if (!empty($item['show']))
 			{
 				$item['active_item'] = false;
-
-				// Make sure the last item truly is the last item.
-				if (!empty($item['is_last']))
-				{
-					if (isset($last_item))
-						unset($menu_items[$last_item]['is_last']);
-					$last_item = $act;
-				}
 
 				// Go through the sub items if there are any.
 				if (!empty($item['sub_items']))

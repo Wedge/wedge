@@ -281,13 +281,7 @@ function ViewErrorLog()
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
 
-	// Finally, work out what is the last tab!
-	if (isset($context['error_types'][$sum]))
-		$context['error_types'][$sum]['is_last'] = true;
-	else
-		$context['error_types']['all']['is_last'] = true;
-
-	// And this is pretty basic ;).
+	// And this is pretty basic ;)
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
 	loadSubTemplate('error_log');

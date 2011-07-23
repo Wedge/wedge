@@ -148,22 +148,15 @@ function ViewMembers()
 			'description' => $txt['admin_browse_activate_desc'],
 			'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=activate',
 			'is_selected' => false,
-			'is_last' => true,
 		),
 	);
 
 	// Sort out the tabs for the ones which may not exist!
 	if (!$context['show_activate'] && ($_REQUEST['sa'] != 'browse' || $_REQUEST['type'] != 'activate'))
-	{
-		$context['tabs']['approve']['is_last'] = true;
 		unset($context['tabs']['activate']);
-	}
+
 	if (!$context['show_approve'] && ($_REQUEST['sa'] != 'browse' || $_REQUEST['type'] != 'approve'))
-	{
-		if (!$context['show_activate'] && ($_REQUEST['sa'] != 'browse' || $_REQUEST['type'] != 'activate'))
-			$context['tabs']['search']['is_last'] = true;
 		unset($context['tabs']['approve']);
-	}
 
 	$subActions[$_REQUEST['sa']][0]();
 }
