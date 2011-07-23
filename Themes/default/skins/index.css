@@ -1048,10 +1048,6 @@ a.moderation_link
 		color: red
 		font-weight: bold
 
-// Those [?] icons. This makes your cursor a help icon.
-.help
-	cursor: help
-
 /* AJAX notification bar
 ------------------------------------------------------- */
 

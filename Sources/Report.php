@@ -20,9 +20,9 @@ if (!defined('SMF'))
  * - uses the ReportToModerator template, main sub template.
  * - requires the report_any permission.
  * - uses ReportToModerator2() if post data was sent.
- * - accessed through ?action=reporttm.
+ * - accessed through ?action=report.
  */
-function Reporttm()
+function Report()
 {
 	global $txt, $topic, $modSettings, $user_info, $context;
 
@@ -91,15 +91,15 @@ function Reporttm()
  *
  * - sends off emails to all the moderators.
  * - sends to administrators and global moderators. (1 and 2)
- * - called by Reporttm(), and thus has the same permission and setting requirements as it does.
- * - accessed through ?action=reporttm when posting.
+ * - called by Report(), and thus has the same permission and setting requirements as it does.
+ * - accessed through ?action=report when posting.
  */
 function ReportToModerator2()
 {
 	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $language, $context;
 
 	// Make sure they aren't spamming.
-	spamProtection('reporttm');
+	spamProtection('report');
 
 	loadSource('Subs-Post');
 
@@ -150,7 +150,7 @@ function ReportToModerator2()
 		foreach ($post_errors as $post_error)
 			$context['post_errors'][] = $txt['error_' . $post_error];
 
-		return Reporttm();
+		return Report();
 	}
 
 	// Get the basic topic information, and make sure they can see it.

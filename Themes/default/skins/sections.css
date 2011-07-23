@@ -472,6 +472,9 @@ ul.quickbuttons extends ul.reset
 		background-position: 4px -150px
 	.mergepost_button
 		background-position: 4px -242px
+	.report_button
+		background-image: url($images/report.png)
+		background-position: 0 0
 
 	.profile_button
 		background-image: url($images/icons/profile_sm.gif)
@@ -1590,7 +1593,11 @@ span.hidelink
 	background-position: 0 -28px
 	width, height: 9px
 
-.help extends .inline-block
+// Those [?] icons. This makes your cursor a help icon.
+.helpc
+	cursor: help
+
+.help extends ".helpc, .inline-block"
 	background: url($images/helptopics.gif) no-repeat
 	width, height: 16px
 	vertical-align: -2px

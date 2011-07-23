@@ -482,9 +482,9 @@ function template_main()
 		$context['footer_js'] .= '
 	var oUsMe = new MiniMenu({';
 
-		foreach ($context['user_menu'] as $post => $linklist)
+		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
-		' . $post . ': [ "' . implode('", "', $linklist) . '" ],';
+		' . $user. ': [ "' . implode('", "', $linklist) . '" ],';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	}, false, {';
@@ -672,7 +672,7 @@ function template_profile_icons(&$message)
 		// Because this seems just a touch convoluted if a single line.
 		if (!$context['can_moderate_forum'])
 			echo '
-										<li><a href="', $scripturl, '?action=help;in=see_member_ip" onclick="return reqWin(this);" class="help"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+										<li><a href="', $scripturl, '?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 		else
 			echo '
 										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
@@ -681,7 +681,7 @@ function template_profile_icons(&$message)
 	// Maybe they want to report this post to the moderator(s)?
 	if ($context['can_report_moderator'] && !$message['is_message_author'])
 		echo '
-										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=reporttm;msg=', $message['id'], '"><img src="', $settings['images_url'], '/reporttm.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
+										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $settings['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
 
 	echo '
 									</ul>

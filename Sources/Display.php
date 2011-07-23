@@ -1129,9 +1129,6 @@ function Display()
 	$context['can_restore_topic'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
-	// Don't waste time re-escaping the same string all over...
-	$context['remove_confirm'] = JavaScriptEscape($txt['remove_message_confirm']);
-
 	// Wireless shows a "more" if you can do anything special.
 	if (WIRELESS)
 	{
@@ -1225,8 +1222,7 @@ function Display()
 			'caption' => JavaScriptEscape($txt['remove']),
 			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
-			'title' => '\'\'',
-			'custom' => 'onclick="return confirm(' . JavaScriptEscape($context['remove_confirm']) . ');"',
+			'custom' => JavaScriptEscape('onclick="return confirm(' . JavaScriptEscape($txt['remove_message_confirm']) . ');"'),
 		),
 		'sp' => array(
 			'caption' => JavaScriptEscape($txt['split']),
@@ -1244,8 +1240,10 @@ function Display()
 			'class' => '\'restore_button\'',
 		),
 		'rp' => array(
-			'caption' => JavaScriptEscape($txt['report_to_mod']),
-			'action' => '\'' . $scripturl . '?action=reporttm;topic=' . $context['current_topic'] . ';msg=%id%\'',
+			'caption' => JavaScriptEscape($txt['report']),
+			'action' => '\'' . $scripturl . '?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
+			'class' => '\'report_button\'',
+			'title' => JavaScriptEscape($txt['report_to_mod']),
 		),
 	);
 
@@ -1459,7 +1457,7 @@ function prepareDisplayContext($reset = false)
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu) > 1)
 		{
-			$context['user_menu'][$output['id']] = $menu;
+			$context['user_menu'][$output['member']['id']] = $menu;
 			$context['user_menu_items_show'] += array_flip($menu);
 		}
 	}

@@ -29,9 +29,9 @@
 		sc: the session id, or $context['session_id'].
 
 	The report sub template gets shown from:
-		'?action=reporttm;topic=##.##;msg=##'
+		'?action=report;topic=##.##;msg=##'
 	It should submit to:
-		'?action=reporttm;topic=' . $context['current_topic'] . '.' . $context['start']
+		'?action=report;topic=' . $context['current_topic'] . '.' . $context['start']
 	It only needs to send the following fields:
 		comment: an additional comment to give the moderator.
 		sc: the session id, or $context['session_id'].
@@ -194,7 +194,7 @@ function template_report()
 
 	echo '
 	<div id="report_topic">
-		<form action="', $scripturl, '?action=reporttm;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="msg" value="' . $context['message_id'] . '">
 			<we:cat>
 				', $txt['report_to_mod'], '
