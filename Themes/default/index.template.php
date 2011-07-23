@@ -472,16 +472,17 @@ function theme_linktree($force_show = false, $on_bottom = false)
 	<div id="linktree', $on_bottom ? '_bt' : '', '">';
 
 	// If linktree is empty, just return - also allow an override.
-	if (!empty($context['linktree']) && count($context['linktree']) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
+	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
 		echo '
 		<ul>';
 
 		// Each tree item has a URL and name. Some may have extra_before and extra_after.
-		foreach ($context['linktree'] as $link_num => $tree)
+		$num = 0;
+		foreach ($context['linktree'] as &$tree)
 		{
 			echo '
-			<li', ($link_num == count($context['linktree']) - 1) ? ' class="last"' : '', '>';
+			<li', ++$num == $linksize ? ' class="last"' : '', '>';
 
 			// Show something before the link?
 			if (isset($tree['extra_before']))

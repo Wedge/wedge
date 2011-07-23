@@ -654,7 +654,7 @@ function EditMembergroup()
 		checkSession();
 
 		// Can they really inherit from this group?
-		if ($_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
+		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
 		{
 			$request = wesql::query('
 				SELECT group_type
