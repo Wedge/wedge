@@ -297,11 +297,12 @@ function Feed()
 	{
 		// Start with an RSS 2.0 header.
 		echo '
-<rss version=', $xml_format == 'rss2' ? '"2.0"' : '"0.92"', ' xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
+<rss version=', $xml_format == 'rss2' ? '"2.0"' : '"0.92"', '>
 	<channel>
 		<title>', $feed_title, '</title>
 		<link>', $scripturl, '</link>
-		<description>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</description>';
+		<description>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</description>
+		<language>', strtolower(strtr($txt['lang_locale'], '_', '-')), '</language>';
 
 		// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
 		dumpTags($xml, 2, 'item', $xml_format);
@@ -315,12 +316,14 @@ function Feed()
 	else
 	{
 		echo '
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
-	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
-	<tagline>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</tagline>
-	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">Wedge</generator>
+	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
+	<subtitle type="html">', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</subtitle>
+	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">
+		Wedge
+	</generator>
 	<author>
 		<name>', strip_tags($context['forum_name']), '</name>
 	</author>';
@@ -377,8 +380,8 @@ function dumpTags($data, $i, $tag = null, $xml_format = '')
 		else
 		{
 			// Beginning tag.
-			if ($xml_format == 'atom' && $key == 'summary')
-				echo '<summary type="html">';
+			if ($xml_format == 'atom' && $key == 'content')
+				echo '<content type="html">';
 			else
 				echo '<', $key, '>';
 
@@ -514,6 +517,8 @@ function getXmlNews($xml_format)
 		censorText($row['subject']);
 
 		// Being news, this actually makes sense in RSS format.
+		// Note that pubDate for items was introduced in RSS 0.93, so technically
+		// it doesn't conform to RSS 0.92. I'll tell you what, just use Atom, 'kay?
 		if ($xml_format == 'rss' || $xml_format == 'rss2')
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
@@ -529,7 +534,7 @@ function getXmlNews($xml_format)
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-				'summary' => cdata_parse($row['body']),
+				'content' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'],
 					'label' => $row['bname'],
@@ -540,7 +545,7 @@ function getXmlNews($xml_format)
 					'uri' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
-				'modified' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
+				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
 				'id' => tag_gen('topic-' . $row['id_topic'], $row['poster_time']),
 				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
@@ -646,7 +651,7 @@ function getXmlRecent($xml_format)
 			$data[] = array(
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-				'summary' => cdata_parse($row['body']),
+				'content' => cdata_parse($row['body']),
 				'category' => array(
 					'term' => $row['id_board'], // !!! Could also store id_topic?
 					'label' => $row['bname'],
@@ -698,7 +703,7 @@ function getXmlProfile($xml_format)
 		$data[] = array(
 			'title' => cdata_parse($profile['name']),
 			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
-			'summary' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
+			'content' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 			'author' => array(
 				'name' => $profile['real_name'],
 				'email' => in_array(showEmailAddress(!empty($profile['hide_email']), $profile['id']), array('yes', 'yes_permission_override')) ? $profile['email'] : null,

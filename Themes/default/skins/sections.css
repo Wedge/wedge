@@ -475,6 +475,7 @@ ul.quickbuttons extends ul.reset
 	.report_button
 		background-image: url($images/report.png)
 		background-position: 0 0
+		padding-left: 20px
 
 	.profile_button
 		background-image: url($images/icons/profile_sm.gif)
