@@ -479,24 +479,17 @@ ul.quickbuttons extends ul.reset
 	.email_button
 		background-image: url($images/email_sm.gif)
 		background-position: 0 0
-	.pm_button
-		background-image: url($images/im_on.gif)
-		background-position: 0 0
 	.ip_button
 		background-image: url($images/ip.gif)
 		background-position: 0 0
 	.www_button
 		background-image: url($images/www_sm.gif)
 		background-position: 0 0
-	// !!! While waiting for better icons... Here are two temp ones.
+	// !!! While waiting for better icons... Here's a temp.
 	.post_button
 		background-image: url($images/new_some.png)
 		background-position: 0 0
 		padding-left: 25px
-	.contact_button
-		background-image: url($images/icons/online.gif)
-		background-position: 0 0
-		padding-left: 26px
 
 
 ul.usermenuitem, ul.acmenuitem

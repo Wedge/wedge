@@ -1456,7 +1456,8 @@ function prepareDisplayContext($reset = false)
 				$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
 		}
 
-		if (!empty($menu))
+		// If we can't do anything, it's not even worth recording the user's website...
+		if (count($menu) > 1)
 		{
 			$context['user_menu'][$output['id']] = $menu;
 			$context['user_menu_items_show'] += array_flip($menu);
@@ -1492,12 +1493,16 @@ function prepareDisplayContext($reset = false)
 		if ($context['can_report_moderator'] && !$is_me)
 			$menu[] = 'rp';
 
-		if (!empty($menu))
+		// If we can't do anything, it's not even worth recording the last message ID...
+		if (count($menu) > 1)
 		{
 			$context['action_menu'][$output['id']] = $menu;
 			$context['action_menu_items_show'] += array_flip($menu);
 		}
 	}
+
+	// Don't forget to set this to true in the following hook if you're going to add a non-menu button.
+	$output['has_buttons'] = $context['can_quote'] || $output['can_modify'] || !empty($context['action_menu'][$output['id']]);
 
 	call_hook('display_post_done', array(&$counter, &$output));
 

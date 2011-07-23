@@ -140,7 +140,7 @@ function template_main()
 								</div>';
 
 		// If this is the first post, (#0) just say when it was posted - otherwise give the reply #.
-		if ($message['can_approve'] || $context['can_reply'] || $message['can_modify'] || $message['can_remove'] || $context['can_split'] || $context['can_restore_msg'])
+		if ($message['has_buttons'])
 			echo '
 								<ul class="quickbuttons">';
 

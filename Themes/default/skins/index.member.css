@@ -5,6 +5,16 @@
 		font-weight: bold
 		line-height: 1.5em
 
+// These user menu options definitely aren't available to guests.
+ul.quickbuttons
+	.contact_button
+		background-image: url($images/icons/online.gif)
+		background-position: 0 0
+		padding-left: 26px
+	.pm_button
+		background-image: url($images/im_on.gif)
+		background-position: 0 0
+
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
