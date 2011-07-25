@@ -666,6 +666,26 @@ function comma_format($number, $override_decimal_count = false)
 }
 
 /**
+ * Attempts to find the correct language string for a given numeric string. For example, to be able to find the right string to use for '1 cookie' vs '2 cookies'.
+ *
+ * $txt is checked for prefix_number as a string, e.g. calling $string as 'cookie' and $number as 1, $txt['cookie_1'] will be examined, if present it will be used, otherwise cookie_n will be used instead. Different languages have different needs in this case, so it is up to the language files to provide the different constructions necessary. Note that there will be a call to sprintf as well since the string should contain %s for the number if appropriate as it will be passed through comma_format.
+ *
+ * @param $string The prefix in $txt to check against.
+ * @param $number The number of items to look for.
+ * @return The string as found in $txt (note: the case where _n is used but not present will return an error, it is up to the language files to present a minimum fallback)
+ */
+function number_context($string, $number)
+{
+	global $txt;
+	if (isset($txt[$string . '_' . $number]))
+	{
+		return sprintf($txt[$string . '_' . $number], comma_format($number));
+	}
+	else
+		return sprintf($txt[$string . '_n'], comma_format($number));
+}
+
+/**
  * Format a given timestamp, optionally applying the forum and user offsets, for display including 'Today' and 'Yesterday' prefixes.
  *
  * This function also applies the date/time format string the admin can specify in the admin panel (Features and Options / General) user can specify in their Look and Layout Preferences through strftime.

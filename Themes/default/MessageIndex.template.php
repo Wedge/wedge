@@ -604,8 +604,9 @@ function template_messageindex_childboards()
 			echo '
 					</td>
 					<td class="stats windowbg">
-						<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'],
-						$board['is_redirect'] ? '' : '<br>' . comma_format($board['topics']) . ' ' . $txt['board_topics'], '</p>
+						<p>', number_context($board['is_redirect'] ? 'redirects' : 'posts', $board['posts']), ' <br>
+						', $board['is_redirect'] ? '' : number_context('board_topics', $board['topics']), '
+						</p>
 					</td>
 					<td class="lastpost">';
 

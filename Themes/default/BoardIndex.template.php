@@ -109,8 +109,8 @@ function template_boardindex()
 				echo '
 				</td>
 				<td class="stats">
-					<p>', comma_format($board['posts']), ' ', $board['is_redirect'] ? $txt['redirects'] : $txt['posts'], ' <br>
-					', $board['is_redirect'] ? '' : comma_format($board['topics']) . ' ' . $txt['board_topics'], '
+					<p>', number_context($board['is_redirect'] ? 'redirects' : 'posts', $board['posts']), ' <br>
+					', $board['is_redirect'] ? '' : number_context('board_topics', $board['topics']), '
 					</p>
 				</td>
 				<td class="lastpost">';
